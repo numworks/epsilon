@@ -8,7 +8,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_textField(parentResponder, nullptr, k_textFieldBufferSize, k_textFieldBufferSize, inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
   m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
 {
   // Initialize text field
@@ -39,9 +39,9 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    m_layoutField.layout().serializeParsedExpression(m_textField.textBuffer(), m_textField.textBufferSize());
+    m_layoutField.layout().serializeParsedExpression(m_textField.draftTextBuffer(), k_textFieldBufferSize);
   }
-  return m_textField.textBuffer();
+  return m_textField.draftTextBuffer();
 }
 
 void ExpressionField::setText(const char * text) {

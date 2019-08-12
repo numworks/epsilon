@@ -17,11 +17,8 @@ public:
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   void reinitDraftTextBuffer() { m_contentView.reinitDraftTextBuffer(); }
   bool isEditing() const override;
-  // Which one is usefull?
-  const char * draftTextBuffer() const { return const_cast<TextField *>(this)->m_contentView.editedText(); }
-  size_t textBufferSize() const { return m_contentView.textBufferSize(); }
-  char * textBuffer() { return m_contentView.textBuffer(); }
-  size_t draftTextLength() const; //TODO keep ?
+  char * draftTextBuffer() const { return const_cast<char *>(m_contentView.editedText()); }
+  size_t draftTextLength() const;
   void setText(const char * text);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
@@ -45,9 +42,7 @@ protected:
     bool isEditing() const { return m_isEditing; }
     const char * text() const override;
     const char * editedText() const override;
-    size_t editedTextLength() const override { return m_currentDraftTextLength; } //TODO keep ?
-    size_t textBufferSize() const { return m_textBufferSize; }
-    char * textBuffer() { return m_textBuffer; }
+    size_t editedTextLength() const override { return m_currentDraftTextLength; }
     void setText(const char * text);
     void setAlignment(float horizontalAlignment, float verticalAlignment);
     void setEditing(bool isEditing);
@@ -55,7 +50,7 @@ protected:
     /* If the text to be appended is too long to be added without overflowing the
      * buffer, nothing is done (not even adding few letters from the text to reach
      * the maximum buffer capacity) and false is returned. */
-    bool insertTextAtLocation(const char * text, const char * location) override; // TODO
+    bool insertTextAtLocation(const char * text, const char * location) override;
     KDSize minimalSizeForOptimalDisplay() const override;
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
@@ -77,7 +72,7 @@ protected:
     char * m_textBuffer;
     size_t m_textBufferSize;
     size_t m_draftTextBufferSize;
-    size_t m_currentDraftTextLength; //TODO keep ?
+    size_t m_currentDraftTextLength;
     float m_horizontalAlignment;
     float m_verticalAlignment;
     KDColor m_textColor;

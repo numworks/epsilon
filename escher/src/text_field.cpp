@@ -276,14 +276,12 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   // Handle Toolbox or Var event
   if (handleBoxEvent(event)) {
     if (!isEditing()) {
+      reinitDraftTextBuffer();
       setEditing(true);
     }
     return true;
   }
   if (isEditing() && shouldFinishEditing(event)) {
-    if (m_contentView.textBuffer() != m_contentView.editedText()) {
-      strlcpy(m_contentView.textBuffer(), m_contentView.editedText(), m_contentView.textBufferSize());
-    }
     /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
      * text for instance), the text field will call willResignFirstResponder.
      * This will call textFieldDidAbortEditing if the textfield is still editing,
@@ -291,7 +289,13 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
      * displaying a pop-up before returning to edition.
      * We thus set editing to false. */
     setEditing(false);
-    if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
+    /* We avoid copying the edited text into the other text buffer in case
+     * textFieldDidFinishEditing fails - we then want to be able to abort
+     * edition and find the old text back. Anyway, if textFieldDidFinishEditing
+     * does not fail, it will save the editedText in a model and reload the
+     * content of the textfield buffer using the very same model - that has
+     * been updated. */
+    if (m_delegate->textFieldDidFinishEditing(this, m_contentView.editedText(), event)) {
       // Clean draft text for next use
       reinitDraftTextBuffer();
       /* We allow overscroll to avoid calling layoutSubviews twice because the
@@ -334,6 +338,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Cut && !isEditing()) {
     Clipboard::sharedClipboard()->store(text());
+    reinitDraftTextBuffer();
     setEditing(true);
     return true;
   }
@@ -406,8 +411,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
   } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
+    const char * previousText = m_contentView.text();
     setEditing(true);
-    setText(m_contentView.textBuffer());
+    setText(previousText);
     didHandleEvent = true;
   }
   if (!didHandleEvent) {
@@ -447,6 +453,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   size_t previousTextLength = strlen(text());
 
   if (!isEditing()) {
+    reinitDraftTextBuffer();
     setEditing(true);
   }
 

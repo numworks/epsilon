@@ -21,8 +21,7 @@ ExpressionModelHandle * ExpressionModelStore::privateModelForRecord(Ion::Storage
       return memoizedModelAtIndex(i);
     }
   }
-  setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
-  ExpressionModelHandle * result = memoizedModelAtIndex(m_oldestMemoizedIndex);
+  ExpressionModelHandle * result = setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
   m_oldestMemoizedIndex = (m_oldestMemoizedIndex+1) % maxNumberOfMemoizedModels();
   return result;
 }

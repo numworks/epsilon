@@ -47,9 +47,14 @@ int SequenceStore::sequenceIndexForName(char name) {
   return 0;
 }
 
-void SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+Shared::ExpressionModelHandle * SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
-  m_sequences[cacheIndex] = Sequence(record);
+  int index = cacheIndex;
+  if (!record.isNull()) {
+    index = SequenceStore::sequenceIndexForName(record.fullName()[0]);
+  }
+  m_sequences[index] = Sequence(record);
+  return &m_sequences[index];
 }
 
 Shared::ExpressionModelHandle * SequenceStore::memoizedModelAtIndex(int cacheIndex) const {

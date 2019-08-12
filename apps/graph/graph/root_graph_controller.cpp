@@ -15,8 +15,8 @@ const char * RootGraphController::title() {
   return I18n::translate(I18n::Message::Zeros);
 }
 
-Expression::Coordinate2D RootGraphController::computeNewPointOfInterest(double start, double step, double max, Context * context) {
-  return {.abscissa = functionStore()->modelForRecord(m_record)->nextRootFrom(start, step, max, context), .value = 0.0};
+Coordinate2D RootGraphController::computeNewPointOfInterest(double start, double step, double max, Context * context) {
+  return Coordinate2D(functionStore()->modelForRecord(m_record)->nextRootFrom(start, step, max, context), 0.0);
 }
 
 }

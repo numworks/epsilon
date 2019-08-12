@@ -15,7 +15,7 @@ const char * MinimumGraphController::title() {
   return I18n::translate(I18n::Message::Minimum);
 }
 
-Expression::Coordinate2D MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Coordinate2D MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   return functionStore()->modelForRecord(m_record)->nextMinimumFrom(start, step, max, context);
 }
 
@@ -28,7 +28,7 @@ const char * MaximumGraphController::title() {
   return I18n::translate(I18n::Message::Maximum);
 }
 
-Expression::Coordinate2D MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Coordinate2D MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   return functionStore()->modelForRecord(m_record)->nextMaximumFrom(start, step, max, context);
 }
 

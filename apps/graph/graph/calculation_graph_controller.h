@@ -20,9 +20,9 @@ protected:
   float cursorBottomMarginRatio() override { return 0.15f; }
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
-  Poincare::Expression::Coordinate2D computeNewPointOfInteresetFromAbscissa(double start, int direction);
+  Poincare::Coordinate2D computeNewPointOfInteresetFromAbscissa(double start, int direction);
   CartesianFunctionStore * functionStore() const;
-  virtual Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
+  virtual Poincare::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;

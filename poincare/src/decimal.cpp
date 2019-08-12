@@ -106,11 +106,6 @@ int DecimalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return convertToText(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-static int engineeringExponentFromExponent(int exponent) {
-  int exponentMod3 = exponent % 3;
-  return exponent - (exponentMod3 + (exponentMod3 < 0 ? 3 : 0));
-}
-
 int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
@@ -125,7 +120,6 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
 
   // Compute the exponent
   int exponent = m_exponent;
-  int exponentForEngineeringNotation = engineeringExponentFromExponent(exponent);
 
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
   char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
@@ -139,23 +133,31 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       // if 9999 was rounded to 10000, we need to update exponent and mantissa
       if (Integer::NumberOfBase10DigitsWithoutSign(m) > numberOfSignificantDigits) {
         exponent++;
-        exponentForEngineeringNotation = engineeringExponentFromExponent(exponent);
         m = Integer::Division(m, Integer(10)).quotient;
       }
     }
   }
-  int minimalNumberOfMantissaDigits = mode != Preferences::PrintFloatMode::Engineering ? 1 : exponent - exponentForEngineeringNotation + 1;
-  int numberOfZeroesToAddForEngineering = maxInt(minimalNumberOfMantissaDigits - Integer::NumberOfBase10DigitsWithoutSign(m), 0);
-  assert(mode != Preferences::PrintFloatMode::Engineering || (minimalNumberOfMantissaDigits > 0 && minimalNumberOfMantissaDigits <= 3));
-  if (mode == Preferences::PrintFloatMode::Engineering && numberOfZeroesToAddForEngineering > 0) {
-    for (int i = 0; i < numberOfZeroesToAddForEngineering; i ++) {
-      m = Integer::Multiplication(m, Integer(10));
+  int exponentForEngineeringNotation = 0;
+  int minimalNumberOfMantissaDigits = 1;
+  bool removeZeroes = true;
+  if (mode == Preferences::PrintFloatMode::Engineering) {
+    exponentForEngineeringNotation = PrintFloat::EngineeringExponentFromBase10Exponent(exponent);
+    minimalNumberOfMantissaDigits = PrintFloat::EngineeringMinimalNumberOfDigits(exponent, exponentForEngineeringNotation);
+    int numberOfZeroesToAddForEngineering = PrintFloat::EngineeringNumberOfZeroesToAdd(minimalNumberOfMantissaDigits, Integer::NumberOfBase10DigitsWithoutSign(m));
+    if (numberOfZeroesToAddForEngineering > 0) {
+      for (int i = 0; i < numberOfZeroesToAddForEngineering; i ++) {
+        m = Integer::Multiplication(m, Integer(10));
+      }
+      removeZeroes = false;
     }
   }
-  /* Remove the final 0, that already existed or were created due to tounding.
-   * For example 1.999 with 3 significant digits: the mantissa 1999 is rounded
-   * to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
-  removeZeroAtTheEnd(&m, minimalNumberOfMantissaDigits);
+
+  /* Remove the final zeroes, that already existed or were created due to
+   * rounding. For example 1.999 with 3 significant digits: the mantissa 1999 is
+   * rounded to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
+  if (removeZeroes) {
+    removeZeroAtTheEnd(&m, minimalNumberOfMantissaDigits);
+  }
 
   // Print the sign
   int currentChar = 0;

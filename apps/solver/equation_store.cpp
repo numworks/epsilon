@@ -44,9 +44,10 @@ Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
   return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
 }
 
-void EquationStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+Shared::ExpressionModelHandle * EquationStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   m_equations[cacheIndex] = Equation(record);
+  return &m_equations[cacheIndex];
 }
 
 ExpressionModelHandle * EquationStore::memoizedModelAtIndex(int cacheIndex) const {

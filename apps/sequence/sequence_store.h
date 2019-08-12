@@ -32,9 +32,16 @@ public:
 
 private:
   const char * modelExtension() const override { return Ion::Storage::seqExtension; }
-  /* We don't really use model memoization as the number of Sequence is limited
-   * and we keep enough Sequences to store them all. */
-  void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  /* We don't use model memoization for two reasons:
+   * - the number of Sequence is capped so we keep enough Sequences to store them all.
+   * - evaluating sequences require to evaluate all of them at the same time
+   *   (as they might be co-dependent) which doesn't suit our ring memoization.
+   * To still make it work with the ExpressionModelStore, we force
+   * setMemoizedModelAtIndex to store u, v and w sequences in this order in
+   * m_sequences whatever the value of cacheIndex. We thus return a
+   * ExpressionModelHandle pointer after setting the model as it won't be the
+   * memoized model at cacheIndex. */
+  Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
   mutable Sequence m_sequences[MaxNumberOfSequences];
 };

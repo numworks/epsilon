@@ -43,7 +43,7 @@ protected:
   ExpressionModelHandle * privateModelForRecord(Ion::Storage::Record record) const;
 private:
   void resetMemoizedModelsExceptRecord(const Ion::Storage::Record record = Ion::Storage::Record()) const;
-  virtual void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;
+  virtual ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;
   virtual ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const = 0;
   virtual const char * modelExtension() const = 0;
   /* Memoization of k_maxNumberOfMemoizedModels. When the required model is not

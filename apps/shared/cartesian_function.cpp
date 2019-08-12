@@ -104,14 +104,14 @@ double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::C
   return PoincareHelpers::ApproximateToScalar<double>(integral, context);
 }
 
-Expression::Coordinate2D CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
+Coordinate2D CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
   return PoincareHelpers::NextMinimum(expressionReduced(context), unknownX, start, step, max, context);
 }
 
-Expression::Coordinate2D CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
+Coordinate2D CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
@@ -125,7 +125,7 @@ double CartesianFunction::nextRootFrom(double start, double step, double max, Co
   return PoincareHelpers::NextRoot(expressionReduced(context), unknownX, start, step, max, context);
 }
 
-Expression::Coordinate2D CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
+Coordinate2D CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);

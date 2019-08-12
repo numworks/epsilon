@@ -12,7 +12,7 @@ public:
   const char * title() override;
 private:
   void reloadBannerView() override;
-  Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
+  Poincare::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
   Ion::Storage::Record m_intersectedRecord;
 };
 

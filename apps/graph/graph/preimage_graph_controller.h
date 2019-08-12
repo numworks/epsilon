@@ -16,7 +16,7 @@ public:
   double image() { return m_image; }
   void setImage(double value) { m_image = value; }
 private:
-  Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
+  Poincare::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
   double m_image;
 };
 

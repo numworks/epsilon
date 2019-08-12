@@ -69,13 +69,13 @@ inline void ParseAndSimplifyAndApproximate(const char * text, Poincare::Expressi
   Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, complexFormat, preferences->angleUnit(), symbolicComputation);
 }
 
-inline typename Poincare::Expression::Coordinate2D NextMinimum(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {
+inline typename Poincare::Coordinate2D NextMinimum(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
   return e.nextMinimum(symbol, start, step, max, context, complexFormat, preferences->angleUnit());
 }
 
-inline typename Poincare::Expression::Coordinate2D NextMaximum(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {
+inline typename Poincare::Coordinate2D NextMaximum(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
   return e.nextMaximum(symbol, start, step, max, context, complexFormat, preferences->angleUnit());
@@ -87,7 +87,7 @@ inline double NextRoot(const Poincare::Expression e, const char * symbol, double
   return e.nextRoot(symbol, start, step, max, context, complexFormat, preferences->angleUnit());
 }
 
-inline typename Poincare::Expression::Coordinate2D NextIntersection(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context, const Poincare::Expression expression) {
+inline typename Poincare::Coordinate2D NextIntersection(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context, const Poincare::Expression expression) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
   complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(complexFormat, expression, context);

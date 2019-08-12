@@ -25,11 +25,11 @@ public:
   // Integral
   double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   // Extremum
-  Poincare::Expression::Coordinate2D nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
-  Poincare::Expression::Coordinate2D nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
+  Poincare::Coordinate2D nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
+  Poincare::Coordinate2D nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
   // Roots
   double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
-  Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression expression) const;
+  Poincare::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression expression) const;
 private:
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on

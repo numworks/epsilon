@@ -13,7 +13,7 @@ XYBannerView::XYBannerView(
     parentResponder,
     m_textBody,
     k_abscissaBufferSize,
-    k_abscissaBufferSize,
+    TextField::maxBufferSize(),
     inputEventHandlerDelegate,
     textFieldDelegate,
     Font(),

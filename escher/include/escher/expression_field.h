@@ -37,6 +37,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
+  static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
   static constexpr KDCoordinate k_textFieldHeight = 37;
   static constexpr KDCoordinate k_horizontalMargin = 5;
   static constexpr KDCoordinate k_verticalMargin = 5;

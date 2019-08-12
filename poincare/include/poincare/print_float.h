@@ -32,6 +32,18 @@ public:
   template <class T>
   static int ConvertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode);
 
+  // Engineering notation
+  static int EngineeringExponentFromBase10Exponent(int exponent);
+  static int EngineeringMinimalNumberOfDigits(int exponentBase10, int exponentEngineering) {
+    int result = exponentBase10 - exponentEngineering + 1;
+    assert(result > 0 && result <= 3);
+    return result;
+  }
+  static int EngineeringNumberOfZeroesToAdd(int engineeringMinimalNumberOfDigits, int numberOfDigits) {
+    int number = engineeringMinimalNumberOfDigits - numberOfDigits;
+    return number > 0 ? number : 0;
+  }
+
 private:
   template <class T>
   static int ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros);

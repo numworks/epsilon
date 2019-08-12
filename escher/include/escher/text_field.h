@@ -6,6 +6,14 @@
 #include <escher/text_field_delegate.h>
 #include <string.h>
 
+/* TODO: TextField currently uses using 2 buffers:
+ * - one to keep the displayed text
+ * - another one to edit the text while keeping the previous text in the first
+ *   buffer to be able to abort edition.
+ * We could actually use only one buffer if for all textfields we implement the
+ * delegate method 'textFieldDidAbortEdition' in the way that it reloads the
+ * previous text from the model instead of from the textfield buffer. */
+
 class TextField : public TextInput, public EditableField {
 public:
   TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize,

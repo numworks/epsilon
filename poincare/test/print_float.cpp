@@ -141,7 +141,7 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(123.421f, "1.23421ᴇ2", ScientificMode, 7);
   assert_float_prints_to(123.421f, "123.421", EngineeringMode, 7);
   assert_float_prints_to(123.421f, "123.4", DecimalMode, 4, 6);
-  assert_float_prints_to(123.421f, "1.2ᴇ2", ScientificMode, 4, 8); // 'ᴇ' uses 3 bytes
+  assert_float_prints_to(123.421f, "1.2ᴇ2", ScientificMode, 2, 8); // 'ᴇ' uses 3 bytes
   assert_float_prints_to(123.421f, "123.4", EngineeringMode, 4, 8);
 
   assert_float_prints_to(9.999999f, "1ᴇ1", ScientificMode, 6);

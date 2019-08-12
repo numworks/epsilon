@@ -21,7 +21,7 @@ PreimageGraphController::PreimageGraphController(
 {
 }
 
-Poincare::Expression::Coordinate2D PreimageGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Poincare::Coordinate2D PreimageGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   Poincare::Expression expression = Poincare::Float<double>::Builder(m_image);
   return functionStore()->modelForRecord(m_record)->nextIntersectionFrom(start, step, max, context, expression);
 }

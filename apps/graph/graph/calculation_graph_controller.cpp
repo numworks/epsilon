@@ -19,14 +19,14 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 
 void CalculationGraphController::viewWillAppear() {
   assert(!m_record.isNull());
-  Expression::Coordinate2D pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
-  if (std::isnan(pointOfInterest.abscissa)) {
+  Coordinate2D pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
+  if (std::isnan(pointOfInterest.abscissa())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
     m_graphView->setBannerView(&m_defaultBannerView);
   } else {
     m_isActive = true;
-    m_cursor->moveTo(pointOfInterest.abscissa, pointOfInterest.value);
+    m_cursor->moveTo(pointOfInterest.abscissa(), pointOfInterest.value());
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
@@ -44,7 +44,7 @@ void CalculationGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), CartesianFunction::Symbol());
 }
 
-Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
+Coordinate2D CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
   double step = m_graphRange->xGridUnit()/10.0;
   step = direction < 0 ? -step : step;
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
@@ -69,11 +69,11 @@ bool CalculationGraphController::handleEnter() {
 }
 
 bool CalculationGraphController::moveCursorHorizontally(int direction) {
-  Expression::Coordinate2D newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
-  if (std::isnan(newPointOfInterest.abscissa)) {
+  Coordinate2D newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
+  if (std::isnan(newPointOfInterest.abscissa())) {
     return false;
   }
-  m_cursor->moveTo(newPointOfInterest.abscissa, newPointOfInterest.value);
+  m_cursor->moveTo(newPointOfInterest.abscissa(), newPointOfInterest.value());
   return true;
 }
 

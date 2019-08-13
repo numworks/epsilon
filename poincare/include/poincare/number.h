@@ -7,6 +7,7 @@ namespace Poincare {
 
 /* Number class has 5 subclasses:
  * - Undefined
+ * - Unreal
  * - Rational
  * - Float
  * - Decimal
@@ -24,8 +25,6 @@ public:
 
   double doubleApproximation() const;
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
 };
 
 class Number : public Expression {

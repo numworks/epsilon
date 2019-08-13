@@ -154,9 +154,6 @@ public:
   virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
 
-  /* Complex */
-  virtual bool isReal(Context * context) const { return false; }
-
   /* Simplification */
   /* SimplificationOrder returns:
    *   1 if e1 > e2

@@ -27,7 +27,7 @@ ExpressionNode::Sign ConstantNode::sign(Context * context) const {
   return Sign::Unknown;
 }
 
-bool ConstantNode::isReal(Context * context) const {
+bool ConstantNode::isReal() const {
   return !isIComplex();
 }
 

@@ -21,8 +21,6 @@ public:
   // Properties
   Type type() const override { return Type::RealPart; }
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
 
 private:
   // Layout

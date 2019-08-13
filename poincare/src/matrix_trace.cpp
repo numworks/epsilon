@@ -54,7 +54,7 @@ Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reduction
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }
-  if (SortedIsMatrix(c, reductionContext.context())) {
+  if (c.deepIsMatrix(reductionContext.context())) {
     return *this;
   }
   replaceWithInPlace(c);

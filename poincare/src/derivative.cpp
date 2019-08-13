@@ -142,8 +142,8 @@ Expression Derivative::shallowReduce(Context * context) {
       return e;
     }
   }
-  assert(!SortedIsMatrix(childAtIndex(1), context));
-  if (SortedIsMatrix(childAtIndex(0), context) || SortedIsMatrix(childAtIndex(2), context)) {
+  assert(!childAtIndex(1).deepIsMatrix(context));
+  if (childAtIndex(0).deepIsMatrix(context) || childAtIndex(2).deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
   // TODO: to be implemented diff(+) -> +diff() etc

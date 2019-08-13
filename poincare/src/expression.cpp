@@ -102,6 +102,39 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, bool
   return false;
 }
 
+bool Expression::deepIsMatrix(Context * context) const {
+  /* We could do something virtual instead of implementing a disjunction on
+   * types but in a first try, it was easier to group all code regarding
+   * isMatrix at the same place. */
+  if (IsMatrix(*this, context)) {
+    return true;
+  }
+  // Scalar expressions
+  ExpressionNode::Type types1[] = {ExpressionNode::Type::BinomialCoefficient, ExpressionNode::Type::Derivative, ExpressionNode::Type::Determinant, ExpressionNode::Type::DivisionQuotient, ExpressionNode::Type::DivisionRemainder, ExpressionNode::Type::Factor, ExpressionNode::Type::GreatCommonDivisor, ExpressionNode::Type::Integral, ExpressionNode::Type::LeastCommonMultiple, ExpressionNode::Type::MatrixTrace, ExpressionNode::Type::NthRoot, ExpressionNode::Type::PermuteCoefficient, ExpressionNode::Type::Randint, ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction, ExpressionNode::Type::SquareRoot};
+  if (isOfType(types1, 16)) {
+    return false;
+  }
+  // The children were sorted so any expression which is a matrix (deeply) would be at the end
+  if (IsNAry(*this, context)) {
+    int nbOfChildren = numberOfChildren();
+    assert(nbOfChildren > 0);
+    return childAtIndex(nbOfChildren-1).deepIsMatrix(context);
+  }
+  // Logarithm, Power, Product, Sum are matrices only if their first child is a matrix
+  ExpressionNode::Type types2[] = {ExpressionNode::Type::Logarithm, ExpressionNode::Type::Power, ExpressionNode::Type::Product, ExpressionNode::Type::Sum};
+  if (isOfType(types2, 4)) {
+    assert(numberOfChildren() > 0);
+    return childAtIndex(0).deepIsMatrix(context);
+  }
+  // By default, an expression is a matrix of any of its children is one (eg, Cosine, Decimal...)
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (childAtIndex(i).deepIsMatrix(context)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Expression::IsApproximate(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float;
 }
@@ -122,17 +155,6 @@ bool Expression::IsMatrix(const Expression e, Context * context) {
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixIdentity
     || e.type() == ExpressionNode::Type::MatrixTranspose;
-}
-
-bool Expression::SortedIsMatrix(const Expression e, Context * context) {
-  // TODO should we replace symbols?
-  if (IsMatrix(e, context)) {
-    return true;
-  }
-  if (IsNAry(e, context)) {
-    return NAryExpression::SortedNAryIsMatrix(e, context);
-  }
-  return false;
 }
 
 bool Expression::IsInfinity(const Expression e, Context * context) {

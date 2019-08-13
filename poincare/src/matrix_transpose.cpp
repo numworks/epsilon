@@ -51,7 +51,7 @@ Expression MatrixTranspose::shallowReduce(Context * context) {
     replaceWithInPlace(result);
     return result;
   }
-  if (SortedIsMatrix(c, context)) {
+  if (c.deepIsMatrix(context)) {
     return *this;
   }
   replaceWithInPlace(c);

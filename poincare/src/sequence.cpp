@@ -54,8 +54,8 @@ Expression Sequence::shallowReduce(Context * context) {
       return e;
     }
   }
-  assert(!SortedIsMatrix(childAtIndex(1), context));
-  if (SortedIsMatrix(childAtIndex(2), context) || SortedIsMatrix(childAtIndex(3), context)) {
+  assert(!childAtIndex(1).deepIsMatrix(context));
+  if (childAtIndex(2).deepIsMatrix(context) || childAtIndex(3).deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

@@ -642,6 +642,13 @@ QUIZ_CASE(poincare_simplication_matrix) {
   // Transpose
   assert_parsed_expression_simplify_to("transpose([[1/√(2),1/2,3][2,1,-3]])", "[[√(2)/2,2][1/2,1][3,-3]]");
   assert_parsed_expression_simplify_to("transpose(√(4))", "2");
+
+  // Expressions with unreduced matrix
+  assert_simplify("confidence(cos(2)/25,3)→a");
+  // Check that matrices are not permuted in multiplication
+  assert_parsed_expression_simplify_to("cos(3a)*abs(transpose(a))", "cos(3×confidence(cos(2)/25,3))×abs(transpose(confidence(cos(2)/25,3)))");
+  assert_parsed_expression_simplify_to("abs(transpose(a))*cos(3a)", "abs(transpose(confidence(cos(2)/25,3)))×cos(3×confidence(cos(2)/25,3))");
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_matrices) {

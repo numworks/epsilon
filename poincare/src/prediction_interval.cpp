@@ -56,7 +56,7 @@ Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext re
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (SortedIsMatrix(c0, reductionContext.context()) || SortedIsMatrix(c1, reductionContext.context())) {
+  if (c0.deepIsMatrix(reductionContext.context()) || c1.deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {

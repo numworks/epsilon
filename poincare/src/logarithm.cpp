@@ -127,7 +127,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     }
   }
 
-  if (SortedIsMatrix(childAtIndex(1), reductionContext.context())) {
+  if (childAtIndex(1).deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
 

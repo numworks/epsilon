@@ -45,7 +45,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return e;
     }
   }
-  if (SortedIsMatrix(childAtIndex(1), reductionContext.context())) {
+  if (childAtIndex(1).deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {

@@ -67,6 +67,28 @@ QUIZ_CASE(poincare_properties_is_matrix) {
   assert_expression_has_not_property("2*3+1", &context, Expression::IsMatrix);
 }
 
+void assert_expression_is_deep_matrix(const char * expression) {
+  Shared::GlobalContext context;
+  Expression e = parse_expression(expression, false);
+  quiz_assert_print_if_failure(e.deepIsMatrix(&context), expression);
+}
+
+void assert_expression_is_not_deep_matrix(const char * expression) {
+  Shared::GlobalContext context;
+  Expression e = parse_expression(expression, false);
+  quiz_assert_print_if_failure(!e.deepIsMatrix(&context), expression);
+}
+
+QUIZ_CASE(poincare_properties_deep_is_matrix) {
+  assert_expression_is_not_deep_matrix("diff([[1,2][3,4]],x,2)");
+  assert_expression_is_not_deep_matrix("sign([[1,2][3,4]])");
+  assert_expression_is_not_deep_matrix("3");
+  assert_expression_is_deep_matrix("2*dim(2)");
+  assert_expression_is_deep_matrix("log(confidence(0.2,20))");
+  assert_expression_is_deep_matrix("confidence(0.2,20)^2");
+  assert_expression_is_deep_matrix("cos(confidence(0.2,20))");
+}
+
 QUIZ_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext context;
   assert_expression_has_property("3.4+inf", &context, Expression::IsInfinity);

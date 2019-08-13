@@ -39,7 +39,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
   }
-  if (SortedIsMatrix(c, reductionContext.context())) {
+  if (c.deepIsMatrix(reductionContext.context())) {
     return *this;
   }
   if (c.isReal(reductionContext.context())) {

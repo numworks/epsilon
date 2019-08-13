@@ -60,6 +60,7 @@ Expression MatrixDimension::shallowReduce(Context * context) {
     result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
   }
   result.setDimensions(1, 2);
+  replaceWithInPlace(result);
   return result;
 }
 

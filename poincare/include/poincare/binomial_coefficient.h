@@ -18,9 +18,6 @@ public:
   }
 #endif
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
-
   // Properties
   Type type() const override{ return Type::BinomialCoefficient; }
   template<typename T> static T compute(T k, T n);

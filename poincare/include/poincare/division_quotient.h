@@ -20,9 +20,6 @@ public:
   // ExpressionNode
   Type type() const override { return Type::DivisionQuotient; }
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
-
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }

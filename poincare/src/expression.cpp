@@ -415,6 +415,45 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(P
   return complexFormat;
 }
 
+bool Expression::isReal(Context * context) const {
+  /* We could do something virtual instead of implementing a disjunction on
+   * types but many expressions have the same implementation so it is easier to
+   * factorize it here. */
+
+  // These expressions are real if their children are
+  ExpressionNode::Type types1[] = {ExpressionNode::Type::ArcTangent, ExpressionNode::Type::Conjugate, ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine, ExpressionNode::Type::Tangent};
+  if (isOfType(types1, 5)) {
+    return childAtIndex(0).isReal(context);
+  }
+
+  // These expressions are always real
+  ExpressionNode::Type types2[] = {ExpressionNode::Type::BinomialCoefficient, ExpressionNode::Type::Derivative, ExpressionNode::Type::DivisionQuotient, ExpressionNode::Type::DivisionRemainder, ExpressionNode::Type::GreatCommonDivisor, ExpressionNode::Type::Integral, ExpressionNode::Type::LeastCommonMultiple, ExpressionNode::Type::PermuteCoefficient, ExpressionNode::Type::Randint, ExpressionNode::Type::Random, ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction};
+  if ((isNumber() && !isUndefined()) || isOfType(types2, 12)) {
+    return true;
+  }
+
+  // These expressions are real when they are scalar
+  ExpressionNode::Type types3[] = {ExpressionNode::Type::AbsoluteValue, ExpressionNode::Type::Ceiling, ExpressionNode::Type::ComplexArgument, ExpressionNode::Type::Factorial, ExpressionNode::Type::Floor, ExpressionNode::Type::FracPart, ExpressionNode::Type::ImaginaryPart, ExpressionNode::Type::RealPart};
+  if (isOfType(types3, 8)) {
+    return !deepIsMatrix(context);
+  }
+
+  // NAryExpresions are real if all children are real
+  if (IsNAry(*this, context)) {
+    return convert<NAryExpression>().allChildrenAreReal(context) == 1;
+  }
+
+  if (type() == ExpressionNode::Type::Constant) {
+    return static_cast<ConstantNode *>(node())->isReal();
+  }
+
+  if (type() == ExpressionNode::Type::Power) {
+    return static_cast<PowerNode *>(node())->isReal(context);
+  }
+
+  return false;
+}
+
 /* Comparison */
 
 bool Expression::isIdenticalTo(const Expression e) const {

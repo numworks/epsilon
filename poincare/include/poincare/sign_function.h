@@ -23,8 +23,6 @@ public:
   Sign sign(Context * context) const override;
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
 
 private:
   // Layout

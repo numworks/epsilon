@@ -26,10 +26,6 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * co
   }
 }
 
-bool NAryExpressionNode::isReal(Context * context) const {
-  return NAryExpression(this).allChildrenAreReal(context) == 1;
-}
-
 Expression NAryExpressionNode::squashUnaryHierarchyInPlace() {
   NAryExpression reference = NAryExpression(this);
   if (reference.numberOfChildren() == 1) {

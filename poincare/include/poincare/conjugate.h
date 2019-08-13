@@ -18,8 +18,6 @@ public:
   }
 #endif
 
-  bool isReal(Context * context) const override { return childAtIndex(0)->isReal(context); }
-
   // Properties
   Type type() const override { return Type::Conjugate; }
 private:

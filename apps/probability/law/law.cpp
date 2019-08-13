@@ -1,4 +1,5 @@
 #include "law.h"
+#include <poincare/solver.h>
 #include <cmath>
 #include <float.h>
 
@@ -124,6 +125,31 @@ double Law::rightIntegralInverseForProbability(double * probability) {
 
 double Law::evaluateAtDiscreteAbscissa(int k) const {
   return 0.0;
+}
+
+double Law::cumulativeDistributiveInverseForProbabilityUsingBrentRoots(double * probability) {
+  if (*probability >= 1) {
+    return INFINITY;
+  }
+  if (*probability <= 0) {
+    return 0;
+  }
+  Poincare::Coordinate2D result = Poincare::Solver::BrentMinimum(
+      0.0,
+      20.0, //TODO LEA
+      [](double x, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const Law * law = reinterpret_cast<const Law *>(context1);
+        const double * proba = reinterpret_cast<const double *>(context2);
+        return std::fabs(law->cumulativeDistributiveFunctionAtAbscissa(x) - *proba);
+      },
+      nullptr,
+      Poincare::Preferences::sharedPreferences()->complexFormat(),
+      Poincare::Preferences::sharedPreferences()->angleUnit(),
+      this,
+      probability,
+      nullptr);
+  assert(std::fabs(result.value()) < FLT_EPSILON*10); // TODO FLT_EPSILON is too strict
+  return result.abscissa();
 }
 
 float Law::yMin() const {

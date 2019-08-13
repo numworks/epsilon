@@ -1,6 +1,5 @@
 #include "chi_squared_law.h"
 #include "regularized_gamma.h"
-#include <poincare/solver.h>
 #include <cmath>
 
 namespace Probability {

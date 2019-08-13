@@ -66,7 +66,7 @@ Expression Factor::shallowReduce(Context * context) {
       return e;
     }
   }
-  if (SortedIsMatrix(childAtIndex(0), context)) {
+  if (childAtIndex(0).deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

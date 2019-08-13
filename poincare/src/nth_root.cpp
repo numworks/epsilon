@@ -71,7 +71,7 @@ Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionCont
       return e;
     }
   }
-  if (SortedIsMatrix(childAtIndex(0), reductionContext.context()) || SortedIsMatrix(childAtIndex(1), reductionContext.context())) {
+  if (childAtIndex(0).deepIsMatrix(reductionContext.context()) || childAtIndex(1).deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
   Expression invIndex = Power::Builder(childAtIndex(1), Rational::Builder(-1));

@@ -15,7 +15,7 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * co
        * multiplication) so we never swap 2 matrices. */
       ExpressionNode * cj = childAtIndex(j);
       ExpressionNode * cj1 = childAtIndex(j+1);
-      if (order(cj, cj1, canBeInterrupted) > 0 && (canSwapMatrices || !(Expression::SortedIsMatrix(Expression(cj), context) && Expression::SortedIsMatrix(Expression(cj1), context)))) {
+      if (order(cj, cj1, canBeInterrupted) > 0 && (canSwapMatrices || !(Expression(cj).deepIsMatrix(context) && Expression(cj1).deepIsMatrix(context)))) {
         reference.swapChildrenInPlace(j, j+1);
         isSorted = false;
       }
@@ -91,15 +91,6 @@ int NAryExpression::allChildrenAreReal(Context * context) const {
     i++;
   }
   return result;
-}
-
-bool NAryExpression::SortedNAryIsMatrix(Expression e, Context * context) {
-  assert(IsNAry(e, context));
-  int childrenCount = e.numberOfChildren();
-  if (childrenCount > 0) {
-    return SortedIsMatrix(e.childAtIndex(childrenCount - 1), context);
-  }
-  return false;
 }
 
 }

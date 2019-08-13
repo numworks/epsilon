@@ -64,7 +64,7 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
 
-  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
+  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
 

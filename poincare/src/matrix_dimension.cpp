@@ -47,7 +47,7 @@ Expression MatrixDimension::shallowReduce(Context * context) {
     }
   }
   Expression c = childAtIndex(0);
-  if (SortedIsMatrix(c, context) && c.type() != ExpressionNode::Type::Matrix) {
+  if (c.deepIsMatrix(context) && c.type() != ExpressionNode::Type::Matrix) {
     return *this;
   }
   Matrix result = Matrix::Builder();

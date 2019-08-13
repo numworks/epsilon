@@ -44,7 +44,7 @@ double ChiSquaredLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   }
   const float halfk = m_parameter1/2;
   double result = 0;
-  if (regularizedGamma(halfk, x/2, DBL_EPSILON, 1000, &result)) {
+  if (regularizedGamma(halfk, x/2, k_regularizedGammaPrecision, k_maxRegularizedGammaIterations, &result)) {
     return result;
   }
   return NAN;

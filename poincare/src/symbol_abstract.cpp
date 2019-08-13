@@ -71,14 +71,6 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
   return e;
 }
 
-bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context * context) {
-  Expression e = SymbolAbstract::Expand(symbol, context, false);
-  if (e.isUninitialized()) {
-    return false;
-  }
-  return e.isReal(context);
-}
-
 template Constant SymbolAbstract::Builder<Constant, ConstantNode>(char const*, int);
 template Function SymbolAbstract::Builder<Function, FunctionNode>(char const*, int);
 template Symbol SymbolAbstract::Builder<Symbol, SymbolNode>(char const*, int);

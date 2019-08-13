@@ -24,9 +24,6 @@ public:
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   bool childNeedsUserParentheses(const Expression & child) const override;
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
-
 private:
   // Layout
   bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const override;

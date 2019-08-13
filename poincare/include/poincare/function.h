@@ -29,9 +29,6 @@ public:
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
   float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
-  // Complex
-  bool isReal(Context * context) const override;
-
 private:
   char m_name[0]; // MUST be the last member variable
 

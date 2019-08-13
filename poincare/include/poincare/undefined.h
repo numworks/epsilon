@@ -16,9 +16,6 @@ public:
   }
 #endif
 
-  // Complex
-  bool isReal(Context * context) const override { return false; }
-
   // Properties
   Type type() const override { return Type::Undefined; }
   int polynomialDegree(Context * context, const char * symbolName) const override;

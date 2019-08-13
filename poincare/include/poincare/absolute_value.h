@@ -23,9 +23,6 @@ public:
   Sign sign(Context * context) const override { return Sign::Positive; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
-
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
     return Complex<T>::Builder(std::abs(c));

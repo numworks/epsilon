@@ -21,10 +21,6 @@ public:
   // Properties
   Type type() const override { return Type::Floor; }
 
-
-  // Complex
-  bool isReal(Context * context) const override { return true; }
-
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

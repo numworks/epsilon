@@ -22,7 +22,7 @@ public:
 #endif
 
   // Complex
-  bool isReal(Context * context) const override;
+  bool isReal(Context * context) const;
 
   // Properties
   Type type() const override { return Type::Power; }

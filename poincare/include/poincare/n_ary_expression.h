@@ -20,9 +20,6 @@ public:
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 
-  // Complex
-  bool isReal(Context * context) const override;
-
   // Comparison
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
 

@@ -21,8 +21,6 @@ public:
   // ExpressionNode
   Type type() const override { return Type::DivisionRemainder; }
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
 
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };

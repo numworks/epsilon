@@ -85,15 +85,15 @@ int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolN
 }
 
 bool PowerNode::isReal(Context * context) const {
-  ExpressionNode * base = childAtIndex(0);
-  ExpressionNode * index = childAtIndex(1);
+  Expression base(childAtIndex(0));
+  Expression index(childAtIndex(1));
   // Both base and index are real and:
   // - either base > 0
   // - or index is an integer
-  if (base->isReal(context) &&
-      index->isReal(context) &&
-      (base->sign(context) == Sign::Positive ||
-       (index->type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(index)->isInteger()))) {
+  if (base.isReal(context) &&
+      index.isReal(context) &&
+      (base.sign(context) == Sign::Positive ||
+       (index.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger()))) {
     return true;
   }
   return false;

@@ -189,7 +189,8 @@ public:
   static void SetEncounteredComplex(bool encounterComplex);
   static Preferences::ComplexFormat UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput);
   static Preferences::ComplexFormat UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & e, Context * context);
-  bool isReal(Context * context) const { return node()->isReal(context); }
+  // WARNING: this methods must be called on reduced expressions
+  bool isReal(Context * context) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

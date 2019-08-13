@@ -1,7 +1,7 @@
 #include "chi_squared_law.h"
 #include "regularized_gamma.h"
+#include <poincare/solver.h>
 #include <cmath>
-#include <float.h>
 
 namespace Probability {
 
@@ -57,13 +57,27 @@ double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * proba
   if (*probability <= 0) {
     return 0;
   }
-  return 0;
-  //TODO
+  Poincare::Coordinate2D result = Poincare::Solver::BrentMinimum(
+      0.0,
+      20.0,
+      [](double x, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const ChiSquaredLaw * law = reinterpret_cast<const ChiSquaredLaw *>(context1);
+        const double * proba = reinterpret_cast<const double *>(context2);
+        return std::fabs(law->cumulativeDistributiveFunctionAtAbscissa(x) - *proba);
+      },
+      nullptr,
+      Poincare::Preferences::sharedPreferences()->complexFormat(),
+      Poincare::Preferences::sharedPreferences()->angleUnit(),
+      this,
+      probability,
+      nullptr);
+  assert(std::fabs(result.value()) < FLT_EPSILON*10); // TODO FLT_EPSILON is too strict
+  return result.abscissa();
 }
 
 float ChiSquaredLaw::coefficient() const {
   const float halfk = m_parameter1/2;
-  return 1 / (2 * std::tgamma(halfk));
+  return 1 / (2 * std::exp(std::lgamma(halfk)));
 }
 
 }

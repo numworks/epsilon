@@ -45,7 +45,7 @@ Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reduc
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
   }
-  if (SortedIsMatrix(c, reductionContext.context())) {
+  if (c.deepIsMatrix(reductionContext.context())) {
     return *this;
   }
   bool real = c.isReal(reductionContext.context());

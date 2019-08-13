@@ -51,7 +51,7 @@ Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionC
     }
   }
   Expression c = childAtIndex(0);
-  if (SortedIsMatrix(c, reductionContext.context())) {
+  if (c.deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
   Power p = Power::Builder(c, Rational::Builder(1, 2));

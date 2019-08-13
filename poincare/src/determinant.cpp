@@ -44,7 +44,7 @@ Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reduction
   }
   Expression c0 = childAtIndex(0);
   // det(A) = A if A is not a matrix
-  if (!SortedIsMatrix(c0, reductionContext.context())) {
+  if (!c0.deepIsMatrix(reductionContext.context())) {
     replaceWithInPlace(c0);
     return c0;
   }

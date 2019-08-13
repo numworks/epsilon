@@ -437,7 +437,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
      * interval). */
 
     if (multiplicationChildIndex >= 0) {
-      if (SortedIsMatrix(childAtIndex(multiplicationChildIndex), reductionContext.context())) {
+      if (childAtIndex(multiplicationChildIndex).deepIsMatrix(reductionContext.context())) {
         return *this;
       }
       removeChildInPlace(resultMatrix, resultMatrix.numberOfChildren());

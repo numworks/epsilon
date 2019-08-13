@@ -171,8 +171,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   assert(childrenCount > 1);
   {
     Expression lastChild = childAtIndex(childrenCount - 1);
-    if (SortedIsMatrix(lastChild, reductionContext.context())) {
-      if (!SortedIsMatrix(childAtIndex(0), reductionContext.context())) {
+    if (lastChild.deepIsMatrix(reductionContext.context())) {
+      if (!childAtIndex(0).deepIsMatrix(reductionContext.context())) {
         /* If there is a matrix in the children, the last child is a matrix. If
          * there is a a scalar, the first child is a scalar. We forbid the
          * addition of a matrix and a scalar. */

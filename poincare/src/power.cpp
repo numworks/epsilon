@@ -303,12 +303,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression index = childAtIndex(1);
 
   // Step 0: Handle matrices
-  if (SortedIsMatrix(index, reductionContext.context())) {
+  if (index.deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
   ExpressionNode::Type baseType = base.type();
   ExpressionNode::Type indexType = index.type();
-  if (SortedIsMatrix(base, reductionContext.context())) {
+  if (base.deepIsMatrix(reductionContext.context())) {
     if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
       return replaceWithUndefinedInPlace();
     }

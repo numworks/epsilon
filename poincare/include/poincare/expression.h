@@ -321,12 +321,14 @@ protected:
    * The given Expression should already be reduced and the return Expression
    * is reduced (only a numeral factor was potentially made positive, and if it
    *  was -1, it was removed from the multiplication).
+   * Warning: this must be called on reduced expressions
    */
   Expression makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext);
   Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, complexFormat, angleUnit); }
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
+  // WARNING: this must be called on reduced expressions
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
 private:

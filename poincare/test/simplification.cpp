@@ -972,6 +972,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("(1+√(2))/5", "\u0012√(2)+1\u0013/5");
   assert_parsed_expression_simplify_to("(2+√(6))^2", "4×√(6)+10");
   assert_parsed_expression_simplify_to("tan(3)ln(2)+π", "tan(3)×ln(2)+π");
+  assert_parsed_expression_simplify_to("abs(dim(2))", "[[1,1]]");
 
   // Complex
   assert_parsed_expression_simplify_to("𝐢", "𝐢");

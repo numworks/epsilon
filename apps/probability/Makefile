@@ -45,8 +45,12 @@ i18n_files += $(addprefix apps/probability/,\
   base.universal.i18n\
 )
 
+tests_src += $(addprefix apps/probability/law/,\
+  regularized_gamma.cpp \
+)
 tests_src += $(addprefix apps/probability/test/,\
   erf_inv.cpp\
+  regularized_gamma.cpp\
 )
 
 # Image dependencies

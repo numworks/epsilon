@@ -4,6 +4,8 @@ app_headers += apps/probability/app.h
 app_probability_test_src = $(addprefix apps/probability/,\
   law/erf_inv.cpp \
   law/law.cpp \
+  law/regularized_gamma.cpp \
+  law/helper.cpp \
 )
 
 app_probability_src = $(addprefix apps/probability/,\
@@ -45,9 +47,6 @@ i18n_files += $(addprefix apps/probability/,\
   base.universal.i18n\
 )
 
-tests_src += $(addprefix apps/probability/law/,\
-  regularized_gamma.cpp \
-)
 tests_src += $(addprefix apps/probability/test/,\
   erf_inv.cpp\
   regularized_gamma.cpp\

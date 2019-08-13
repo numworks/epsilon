@@ -2,6 +2,7 @@
 #define PROBABILITY_CHI_SQUARED_LAW_H
 
 #include "one_parameter_law.h"
+#include <float.h>
 
 namespace Probability {
 

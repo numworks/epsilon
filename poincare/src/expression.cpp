@@ -752,27 +752,40 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
 /* Expression roots/extrema solver*/
 
 Coordinate2D Expression::nextMinimum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return nextMinimumOfExpression(symbol, start, step, max, [](const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
-        return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
+  return nextMinimumOfExpression(symbol, start, step, max,
+      [](double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const Expression * expression0 = reinterpret_cast<const Expression *>(context1);
+        const char * symbol = reinterpret_cast<const char *>(context2);
+        return expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit);
 }
 
 Coordinate2D Expression::nextMaximum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
-        return -expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
+  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max,
+      [](double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const Expression * expression0 = reinterpret_cast<const Expression *>(context1);
+        const char * symbol = reinterpret_cast<const char *>(context2);
+        return -expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit);
   return Coordinate2D(minimumOfOpposite.abscissa(), -minimumOfOpposite.value());
 }
 
 double Expression::nextRoot(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return nextIntersectionWithExpression(symbol, start, step, max, [](const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
-        return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
+  return nextIntersectionWithExpression(symbol, start, step, max,
+      [](double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const Expression * expression0 = reinterpret_cast<const Expression *>(context1);
+        const char * symbol = reinterpret_cast<const char *>(context2);
+        return expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit, nullptr);
 }
 
 Coordinate2D Expression::nextIntersection(const char * symbol, double start, double step, double max, Poincare::Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max, [](const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
-        return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
+  double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max,
+      [](double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const Expression * expression0 = reinterpret_cast<const Expression *>(context1);
+        const char * symbol = reinterpret_cast<const char *>(context2);
+        const Expression * expression1 = reinterpret_cast<const Expression *>(context3);
+        return expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression1->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit, expression);
   Coordinate2D result(resultAbscissa, approximateWithValueForSymbol(symbol, resultAbscissa, context, complexFormat, angleUnit));
   if (std::fabs(result.value()) < step*k_solverPrecision) {
@@ -781,7 +794,7 @@ Coordinate2D Expression::nextIntersection(const char * symbol, double start, dou
   return result;
 }
 
-Coordinate2D Expression::nextMinimumOfExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression, bool lookForRootMinimum) const {
+Coordinate2D Expression::nextMinimumOfExpression(const char * symbol, double start, double step, double max, Solver::ValueAtAbscissa evaluate, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression, bool lookForRootMinimum) const {
   Coordinate2D result;
   if (start == max || step == 0.0) {
     return result;
@@ -796,7 +809,7 @@ Coordinate2D Expression::nextMinimumOfExpression(const char * symbol, double sta
     // Because of float approximation, exact zero is never reached
     if (std::fabs(result.abscissa()) < std::fabs(step)*k_solverPrecision) {
       result.setAbscissa(0);
-      result.setValue(evaluate(symbol, 0, context, complexFormat, angleUnit, *this, expression));
+      result.setValue(evaluate(0, context, complexFormat, angleUnit, this, symbol, &expression));
     }
     /* Ignore extremum whose value is undefined or too big because they are
      * really unlikely to be local extremum. */
@@ -818,16 +831,16 @@ Coordinate2D Expression::nextMinimumOfExpression(const char * symbol, double sta
   return result;
 }
 
-void Expression::bracketMinimum(const char * symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluate, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
+void Expression::bracketMinimum(const char * symbol, double start, double step, double max, double result[3], Solver::ValueAtAbscissa evaluate, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
   Coordinate2D p[3] = {
-    Coordinate2D(start, evaluate(symbol, start, context, complexFormat, angleUnit, *this, expression)),
-    Coordinate2D(start+step, evaluate(symbol, start+step, context, complexFormat, angleUnit, *this, expression)),
+    Coordinate2D(start, evaluate(start, context, complexFormat, angleUnit, this, symbol, &expression)),
+    Coordinate2D(start+step, evaluate(start+step, context, complexFormat, angleUnit, this, symbol, &expression)),
     Coordinate2D()
   };
   double x = start+2.0*step;
   while (step > 0.0 ? x <= max : x >= max) {
     p[2].setAbscissa(x);
-    p[2].setValue(evaluate(symbol, x, context, complexFormat, angleUnit, *this, expression));
+    p[2].setValue(evaluate(x, context, complexFormat, angleUnit, this, symbol, &expression));
     if ((p[0].value() > p[1].value() || std::isnan(p[0].value()))
         && (p[2].value() > p[1].value() || std::isnan(p[2].value()))
         && (!std::isnan(p[0].value()) || !std::isnan(p[2].value())))
@@ -849,99 +862,20 @@ void Expression::bracketMinimum(const char * symbol, double start, double step, 
   result[2] = NAN;
 }
 
-Coordinate2D Expression::brentMinimum(const char * symbol, double ax, double bx, EvaluationAtAbscissa evaluate, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
-   * functions without calculating derivatives */
-  if (ax > bx) {
-    return brentMinimum(symbol, bx, ax, evaluate, context, complexFormat, angleUnit, expression);
-  }
-  double e = 0.0;
-  double a = ax;
-  double b = bx;
-  double x = a+k_goldenRatio*(b-a);
-  double v = x;
-  double w = x;
-  double fx = evaluate(symbol, x, context, complexFormat, angleUnit, *this, expression);
-  double fw = fx;
-  double fv = fw;
-
-  double d = NAN;
-  double u, fu;
-
-  for (int i = 0; i < 100; i++) {
-    double m = 0.5*(a+b);
-    double tol1 = k_sqrtEps*std::fabs(x)+1E-10;
-    double tol2 = 2.0*tol1;
-    if (std::fabs(x-m) <= tol2-0.5*(b-a))  {
-      double middleFax = evaluate(symbol, (x+a)/2.0, context, complexFormat, angleUnit, *this, expression);
-      double middleFbx = evaluate(symbol, (x+b)/2.0, context, complexFormat, angleUnit, *this, expression);
-      double fa = evaluate(symbol, a, context, complexFormat, angleUnit, *this, expression);
-      double fb = evaluate(symbol, b, context, complexFormat, angleUnit, *this, expression);
-      if (middleFax-fa <= k_sqrtEps && fx-middleFax <= k_sqrtEps && fx-middleFbx <= k_sqrtEps && middleFbx-fb <= k_sqrtEps) {
-        return Coordinate2D(x, fx);
-      }
-    }
-    double p = 0;
-    double q = 0;
-    double r = 0;
-    if (std::fabs(e) > tol1) {
-      r = (x-w)*(fx-fv);
-      q = (x-v)*(fx-fw);
-      p = (x-v)*q -(x-w)*r;
-      q = 2.0*(q-r);
-      if (q>0.0) {
-        p = -p;
-      } else {
-        q = -q;
-      }
-      r = e;
-      e = d;
-    }
-    if (std::fabs(p) < std::fabs(0.5*q*r) && p<q*(a-x) && p<q*(b-x)) {
-      d = p/q;
-      u= x+d;
-      if (u-a < tol2 || b-u < tol2) {
-        d = x < m ? tol1 : -tol1;
-      }
-    } else {
-      e = x<m ? b-x : a-x;
-      d = k_goldenRatio*e;
-    }
-    u = x + (std::fabs(d) >= tol1 ? d : (d>0 ? tol1 : -tol1));
-    fu = evaluate(symbol, u, context, complexFormat, angleUnit, *this, expression);
-    if (fu <= fx) {
-      if (u<x) {
-        b = x;
-      } else {
-        a = x;
-      }
-      v = w;
-      fv = fw;
-      w = x;
-      fw = fx;
-      x = u;
-      fx = fu;
-    } else {
-      if (u<x) {
-        a = u;
-      } else {
-        b = u;
-      }
-      if (fu <= fw || w == x) {
-        v = w;
-        fv = fw;
-        w = u;
-        fw = fu;
-      } else if (fu <= fv || v == x || v == w) {
-        v = u;
-        fv = fu;
-      }
-    }
-  }
-  return Coordinate2D(x, fx);
+Coordinate2D Expression::brentMinimum(const char * symbol, double ax, double bx, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
+  return Solver::BrentMinimum(
+      ax,
+      bx,
+      evaluation,
+      context,
+      complexFormat,
+      angleUnit,
+      this,
+      symbol,
+      &expression);
 }
 
-double Expression::nextIntersectionWithExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
+double Expression::nextIntersectionWithExpression(const char * symbol, double start, double step, double max, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
   if (start == max || step == 0.0) {
     return NAN;
   }
@@ -957,20 +891,20 @@ double Expression::nextIntersectionWithExpression(const char * symbol, double st
 
   double extremumMax = std::isnan(result) ? max : result;
   Coordinate2D resultExtremum[2] = {
-    nextMinimumOfExpression(symbol, start, step, extremumMax, [](const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
-        if (expression1.isUninitialized()) {
-          return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
-        } else {
-          return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
-        }
-      }, context, complexFormat, angleUnit, expression, true),
-    nextMinimumOfExpression(symbol, start, step, extremumMax, [](const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
-        if (expression1.isUninitialized()) {
-          return -expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
-        } else {
-          return expression1.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
-        }
-      }, context, complexFormat, angleUnit, expression, true)};
+    nextMinimumOfExpression(symbol, start, step, extremumMax,
+        [](double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+          const Expression * expression0 = reinterpret_cast<const Expression *>(context1);
+          const char * symbol = reinterpret_cast<const char *>(context2);
+          const Expression * expression1 = reinterpret_cast<const Expression *>(context3);
+          return expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit) - (expression1->isUninitialized() ? 0.0 : expression1->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit));
+        }, context, complexFormat, angleUnit, expression, true),
+    nextMinimumOfExpression(symbol, start, step, extremumMax,
+        [](double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+          const Expression * expression0 = reinterpret_cast<const Expression *>(context1);
+          const char * symbol = reinterpret_cast<const char *>(context2);
+          const Expression * expression1 = reinterpret_cast<const Expression *>(context3);
+          return (expression1->isUninitialized() ? 0.0 : expression1->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)) - expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
+        }, context, complexFormat, angleUnit, expression, true)};
   for (int i = 0; i < 2; i++) {
     if (!std::isnan(resultExtremum[i].abscissa()) && (std::isnan(result) || std::fabs(result - start) > std::fabs(resultExtremum[i].abscissa() - start))) {
       result = resultExtremum[i].abscissa();
@@ -982,12 +916,12 @@ double Expression::nextIntersectionWithExpression(const char * symbol, double st
   return result;
 }
 
-void Expression::bracketRoot(const char * symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
+void Expression::bracketRoot(const char * symbol, double start, double step, double max, double result[2], Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
   double a = start;
   double b = start+step;
   while (step > 0.0 ? b <= max : b >= max) {
-    double fa = evaluation(symbol, a, context, complexFormat, angleUnit, *this, expression);
-    double fb = evaluation(symbol, b, context, complexFormat, angleUnit,* this, expression);
+    double fa = evaluation(a, context, complexFormat, angleUnit, this, symbol, &expression);
+    double fb = evaluation(b, context, complexFormat, angleUnit, this, symbol, &expression);
     if (fa*fb <= 0) {
       result[0] = a;
       result[1] = b;
@@ -1000,81 +934,18 @@ void Expression::bracketRoot(const char * symbol, double start, double step, dou
   result[1] = NAN;
 }
 
-double Expression::brentRoot(const char * symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  if (ax > bx) {
-    return brentRoot(symbol, bx, ax, precision, evaluation, context, complexFormat, angleUnit, expression);
-  }
-  double a = ax;
-  double b = bx;
-  double c = bx;
-  double d = b-a;
-  double e = b-a;
-  double fa = evaluation(symbol, a, context, complexFormat, angleUnit, *this, expression);
-  if (fa == 0) {
-    // We are looking for a root. If a is already a root, just return it.
-    return a;
-  }
-  double fb = evaluation(symbol, b, context, complexFormat, angleUnit, *this, expression);
-  double fc = fb;
-  for (int i = 0; i < 100; i++) {
-    if ((fb > 0.0 && fc > 0.0) || (fb < 0.0 && fc < 0.0)) {
-      c = a;
-      fc = fa;
-      e = b-a;
-      d = b-a;
-    }
-    if (std::fabs(fc) < std::fabs(fb)) {
-      a = b;
-      b = c;
-      c = a;
-      fa = fb;
-      fb = fc;
-      fc = fa;
-    }
-    double tol1 = 2.0*DBL_EPSILON*std::fabs(b)+0.5*precision;
-    double xm = 0.5*(c-b);
-    if (std::fabs(xm) <= tol1 || fb == 0.0) {
-      double fbcMiddle = evaluation(symbol, 0.5*(b+c), context, complexFormat, angleUnit, *this, expression);
-      double isContinuous = (fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb);
-      if (isContinuous) {
-        return b;
-      }
-    }
-    if (std::fabs(e) >= tol1 && std::fabs(fa) > std::fabs(b)) {
-      double s = fb/fa;
-      double p = 2.0*xm*s;
-      double q = 1.0-s;
-      if (a != c) {
-        q = fa/fc;
-        double r = fb/fc;
-        p = s*(2.0*xm*q*(q-r)-(b-a)*(r-1.0));
-        q = (q-1.0)*(r-1.0)*(s-1.0);
-      }
-      q = p > 0.0 ? -q : q;
-      p = std::fabs(p);
-      double min1 = 3.0*xm*q-std::fabs(tol1*q);
-      double min2 = std::fabs(e*q);
-      if (2.0*p < (min1 < min2 ? min1 : min2)) {
-        e = d;
-        d = p/q;
-      } else {
-        d = xm;
-        e =d;
-      }
-    } else {
-      d = xm;
-      e = d;
-    }
-    a = b;
-    fa = fb;
-    if (std::fabs(d) > tol1) {
-      b += d;
-    } else {
-      b += xm > 0.0 ? tol1 : tol1;
-    }
-    fb = evaluation(symbol, b, context, complexFormat, angleUnit, *this, expression);
-  }
-  return NAN;
+double Expression::brentRoot(const char * symbol, double ax, double bx, double precision, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
+  return Solver::BrentRoot(
+      ax,
+      bx,
+      precision,
+      evaluation,
+      context,
+      complexFormat,
+      angleUnit,
+      this,
+      symbol,
+      &expression);
 }
 
 template float Expression::Epsilon<float>();

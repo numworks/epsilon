@@ -74,11 +74,6 @@ float SymbolNode::characteristicXRange(Context * context, Preferences::AngleUnit
   return isUnknown(UCodePointUnknownX) ? NAN : 0.0f;
 }
 
-bool SymbolNode::isReal(Context * context) const {
-  Symbol s(this);
-  return SymbolAbstract::isReal(s, context);
-}
-
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (isUnknown(UCodePointUnknownX)) {
     return CodePointLayout::Builder('x');

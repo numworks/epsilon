@@ -14,11 +14,6 @@ FunctionNode::FunctionNode(const char * newName, int length) : SymbolAbstractNod
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }
 
-bool FunctionNode::isReal(Context * context) const {
-  Function f(this);
-  return SymbolAbstract::isReal(f, context);
-}
-
 Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Function(this).replaceSymbolWithExpression(symbol, expression);
 }

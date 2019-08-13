@@ -19,8 +19,6 @@ public:
   // ExpressionNode
   Type type() const override { return Type::LeastCommonMultiple; }
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
 
 private:
   /* Layout */

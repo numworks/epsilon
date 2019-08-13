@@ -22,8 +22,6 @@ public:
   Type type() const override { return Type::Integral; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
 
-  // Complex
-  bool isReal(Context * context) const override { return true; }
 
 private:
   // Layout

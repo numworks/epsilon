@@ -19,9 +19,6 @@ public:
   }
 #endif
 
-  // Complex
-  bool isReal(Context * context) const override { return childAtIndex(0)->isReal(context); }
-
   // Properties
   Type type() const override { return Type::Cosine; }
   float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;

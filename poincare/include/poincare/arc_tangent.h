@@ -22,9 +22,6 @@ public:
   // Properties
   Type type() const override { return Type::ArcTangent; }
 
-  // Complex
-  bool isReal(Context * context) const override { return childAtIndex(0)->isReal(context); }
-
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

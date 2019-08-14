@@ -772,6 +772,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("(-8)^(1/5)", "-root(8,5)", User, Radian, Real);
   assert_parsed_expression_simplify_to("(-8)^(1/4)", "unreal", User, Radian, Real);
   assert_parsed_expression_simplify_to("(-8)^(1/3)", "-2", User, Radian, Real);
+  assert_parsed_expression_simplify_to("[[1,2+√(-1)]]", "unreal", User, Radian, Real);
 
   // User defined variable
   assert_parsed_expression_simplify_to("a", "a", User, Radian, Real);
@@ -856,6 +857,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("√(1-𝐢)", "√(2×√(2)+2)/2-√(2×√(2)-2)/2×𝐢", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("tan(23)", "tan(23)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("tan(23+𝐢)", "tan(23+𝐢)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,𝐢]]", User, Radian, Cartesian);
 
   // User defined variable
   assert_parsed_expression_simplify_to("a", "a", User, Radian, Cartesian);
@@ -903,6 +905,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("abs(-3+𝐢)", "√(10)", User, Radian, Polar);
   assert_parsed_expression_simplify_to("conj(2×ℯ^(𝐢×π/2))", "2×ℯ^\u0012-π/2×𝐢\u0013", User, Radian, Polar);
   assert_parsed_expression_simplify_to("-2×ℯ^(𝐢×π/2)", "2×ℯ^\u0012-π/2×𝐢\u0013", User, Radian, Polar);
+  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,ℯ^\u0012π/2×𝐢\u0013]]", User, Radian, Polar);
 
   // User defined variable
   assert_parsed_expression_simplify_to("a", "a", User, Radian, Polar);

@@ -50,7 +50,7 @@ double ChiSquaredLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
 }
 
 double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * probability) {
-  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(proba);
+  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability);
 }
 
 float ChiSquaredLaw::coefficient() const {

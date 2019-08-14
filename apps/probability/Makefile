@@ -53,7 +53,8 @@ tests_src += $(addprefix apps/probability/law/,\
 )
 tests_src += $(addprefix apps/probability/test/,\
   erf_inv.cpp\
-  regularized_gamma.cpp\
+  hypergeometric_function.cpp\
+  regularized_gamma.cpp \
 )
 
 # Image dependencies

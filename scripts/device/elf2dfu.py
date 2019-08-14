@@ -70,6 +70,11 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
     # addresses.
     if (address >= 0x00200000 and address < 0x00210000):
       address = address - 0x00200000 + 0x08000000
+    # TODO: should we pad binary files
+    # (We pad the device binary files because there was a bug in an older
+    # version (< 1.8.0) of the dfu code, and it did not upload properly a binary
+    # of length non-multiple of 32 bits.
+    # open(bin_file(b), "a").write("\xFF\xFF\xFF\xFF")
     targets.append({'address': address, 'name': name, 'data': open(bin_file(b)).read()})
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
   for b in blocks:

@@ -14,12 +14,11 @@ float ChiSquaredLaw::xMax() const {
 }
 
 float ChiSquaredLaw::yMax() const {
-  const float halfk = m_parameter1/2;
   float result;
-  if (halfk <= 1 + FLT_EPSILON) {
+  if (m_parameter1/2.0 <= 1 + FLT_EPSILON) {
     result = 0.5f;
   } else {
-    result = coefficient() * std::pow(halfk - 1, halfk - 1);
+    result = evaluateAtAbscissa(m_parameter1 - 1.0) * 1.2;
   }
   return result * (1.0f + k_displayTopMarginRatio);
 }

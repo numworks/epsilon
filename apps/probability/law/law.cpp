@@ -132,11 +132,11 @@ double Law::cumulativeDistributiveInverseForProbabilityUsingBrentRoots(double * 
     return INFINITY;
   }
   if (*probability <= 0) {
-    return 0;
+    return -INFINITY;
   }
   Poincare::Coordinate2D result = Poincare::Solver::BrentMinimum(
-      0.0,
-      20.0, //TODO LEA
+      xMin(),
+      xMax(),
       [](double x, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
         const Law * law = reinterpret_cast<const Law *>(context1);
         const double * proba = reinterpret_cast<const double *>(context2);

@@ -535,27 +535,14 @@ void makePositive(Expression * e, bool * isNegative) {
   }
 }
 
-void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
-  assert(simplifiedExpression);
-  sSimplificationHasBeenInterrupted = false;
-  // Step 1: we reduce the expression
-  ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation);
-  Expression e = clone().deepReduce(userReductionContext);
-  if (sSimplificationHasBeenInterrupted) {
-    sSimplificationHasBeenInterrupted = false;
-    ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System, symbolicComputation);
-    e = deepReduce(systemReductionContext);
-  }
-  *simplifiedExpression = Expression();
-  if (sSimplificationHasBeenInterrupted) {
-    return;
-  }
+void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert(type() != ExpressionNode::Type::Matrix);
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
    * take into account the complex format to display a+i*b or r*e^(i*th) */
-  if (e.type() == ExpressionNode::Type::ComplexCartesian || e.isReal(context)) {
-    ComplexCartesian ecomplex = e.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(e) : ComplexCartesian::Builder(e, Rational::Builder(0));
+  if (type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) {
+    ComplexCartesian ecomplex = type() == ExpressionNode::Type::ComplexCartesian ? convert<ComplexCartesian>() : ComplexCartesian::Builder(*this, Rational::Builder(0));
     if (approximateExpression) {
-      /* Step 2: Approximation
+      /* Step 1: Approximation
        * We compute the approximate expression from the Cartesian form to avoid
        * unprecision. For example, if the result is the ComplexCartesian(a,b),
        * the final expression is going to be sqrt(a^2+b^2)*exp(i*atan(b/a)...
@@ -569,7 +556,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       ecomplexClone.imag().deepBeautify(userReductionContext);
       *approximateExpression = ecomplexClone.approximate<double>(context, complexFormat, angleUnit);
     }
-    // Step 3: create the simplied expression with the required complex format
+    // Step 2: create the simplied expression with the required complex format
     Expression ra = complexFormat == Preferences::ComplexFormat::Polar ?
       ecomplex.clone().convert<ComplexCartesian>().norm(userReductionContext).shallowReduce(userReductionContext) :
       ecomplex.real();
@@ -586,10 +573,57 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   } else {
     /* Case 2: The reduced expression has a complex component that could not
      * be bubbled up. */
-    *simplifiedExpression = e.deepBeautify(userReductionContext);
+    // Step 1: beautifying
+    *simplifiedExpression = deepBeautify(userReductionContext);
+    // Step 2: approximation
     if (approximateExpression) {
       *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
     }
+  }
+}
+
+void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
+  assert(simplifiedExpression);
+  sSimplificationHasBeenInterrupted = false;
+  // Step 1: we reduce the expression
+  ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation);
+  Expression e = clone().deepReduce(userReductionContext);
+  if (sSimplificationHasBeenInterrupted) {
+    sSimplificationHasBeenInterrupted = false;
+    ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System, symbolicComputation);
+    e = deepReduce(systemReductionContext);
+  }
+  *simplifiedExpression = Expression();
+  if (sSimplificationHasBeenInterrupted) {
+    return;
+  }
+  // Step 2: we approximate and beautify the reduced expression
+  // si matrix à la racine, appeler simplifyAndApproximateOfScalar sur chaque entrée de la matrice, sinon appeler simplifyAndApproximateOfScalar de toi même
+  /* Case 1: the reduced expression is a matrix: We scan the matrix children to
+   * beautify them with the right complex format. */
+  if (e.type() == ExpressionNode::Type::Matrix) {
+    Matrix m = static_cast<Matrix &>(e);
+    *simplifiedExpression = Matrix::Builder();
+    if (approximateExpression) {
+      *approximateExpression = Matrix::Builder();
+    }
+    for (int i = 0; i < e.numberOfChildren(); i++) {
+      Expression simplifiedChild;
+      Expression approximateChild = approximateExpression ? Expression() : nullptr;
+      e.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, &approximateChild, userReductionContext, context, complexFormat, angleUnit);
+      static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
+      if (approximateExpression) {
+        static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild, i, i);
+      }
+    }
+    static_cast<Matrix *>(simplifiedExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
+    if (approximateExpression) {
+      static_cast<Matrix *>(approximateExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
+    }
+  } else {
+    /* Case 2: the reduced expression is scalar or too complex to respect the
+     * complex format. */
+    return e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
   }
 }
 

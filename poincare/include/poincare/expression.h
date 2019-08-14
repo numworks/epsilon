@@ -314,6 +314,7 @@ protected:
   Expression defaultReplaceReplaceableSymbols(Context * context);
 
   /* Simplification */
+  void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   /* makePositiveAnyNegativeNumeralFactor looks for:
    * - a negative numeral
    * - a multiplication who has one numeral child whose is negative

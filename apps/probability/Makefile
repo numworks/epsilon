@@ -6,6 +6,8 @@ app_probability_test_src = $(addprefix apps/probability/,\
   law/incomplete_beta_function.cpp \
   law/law.cpp \
   law/regularized_gamma.cpp \
+  law/chi_squared_law.cpp \
+  law/student_law.cpp \
   law/helper.cpp \
 )
 
@@ -22,12 +24,10 @@ app_probability_src = $(addprefix apps/probability/,\
   cell.cpp \
   image_cell.cpp \
   law/binomial_law.cpp \
-  law/chi_squared_law.cpp \
   law/exponential_law.cpp \
   law/normal_law.cpp \
   law/poisson_law.cpp \
   law/regularized_gamma.cpp \
-  law/student_law.cpp \
   law/two_parameter_law.cpp \
   law/uniform_law.cpp \
   law_controller.cpp \
@@ -54,6 +54,7 @@ tests_src += $(addprefix apps/probability/law/,\
 tests_src += $(addprefix apps/probability/test/,\
   erf_inv.cpp\
   hypergeometric_function.cpp\
+  laws.cpp\
   regularized_gamma.cpp \
 )
 

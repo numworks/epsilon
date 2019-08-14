@@ -4,6 +4,7 @@
 #include <float.h>
 #include <cmath>
 #include "../law/chi_squared_law.h"
+#include "../law/geometric_law.h"
 #include "../law/student_law.h"
 
 void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::Law * law, double x, double result) {
@@ -61,4 +62,17 @@ QUIZ_CASE(student_law) {
   assert_cumulative_distributive_function_direct_and_inverse_is(&law, -4.987, 0.00167496657737900025118837898929768925881944596767425537109375);
   assert_cumulative_distributive_function_direct_and_inverse_is(&law, 1.3, 0.876837383157582639370275501278229057788848876953125);
   assert_cumulative_distributive_function_direct_and_inverse_is(&law, 2.9874567, 0.98612148076325445433809591122553683817386627197265625);
+}
+
+QUIZ_CASE(geometric_law) {
+  // Geometric law with probability of success 0.5
+  Probability::GeometricLaw law;
+  law.setParameterAtIndex(0.5, 0);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&law, 2.0, 0.875);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&law, 3.0, 0.9375);
+
+  // Geometric law with probability of success 0.2
+  law.setParameterAtIndex(0.2, 0);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&law, 7.0, 0.8322278399999998299563230830244719982147216796875);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&law, 3.0, 0.5904);
 }

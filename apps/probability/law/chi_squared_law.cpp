@@ -34,7 +34,8 @@ float ChiSquaredLaw::evaluateAtAbscissa(float x) const {
 }
 
 bool ChiSquaredLaw::authorizedValueAtIndex(float x, int index) const {
-  return x >= FLT_EPSILON;
+  assert(index == 0);
+  return x > 0 && x == (int)x;
 }
 
 double ChiSquaredLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {

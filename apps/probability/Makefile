@@ -3,6 +3,7 @@ app_headers += apps/probability/app.h
 
 app_probability_test_src = $(addprefix apps/probability/,\
   law/erf_inv.cpp \
+  law/incomplete_beta_function.cpp \
   law/law.cpp \
   law/regularized_gamma.cpp \
   law/helper.cpp \
@@ -47,6 +48,9 @@ i18n_files += $(addprefix apps/probability/,\
   base.universal.i18n\
 )
 
+tests_src += $(addprefix apps/probability/law/,\
+  hypergeometric_function.cpp\
+)
 tests_src += $(addprefix apps/probability/test/,\
   erf_inv.cpp\
   regularized_gamma.cpp\

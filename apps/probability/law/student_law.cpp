@@ -1,6 +1,7 @@
 #include "student_law.h"
+#include "incomplete_beta_function.h"
+#include "helper.h"
 #include <cmath>
-#include <float.h>
 
 namespace Probability {
 
@@ -26,8 +27,13 @@ bool StudentLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 double StudentLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return 0;
-  //TODO
+  if (x == 1) {
+    return 0.5;
+  }
+  const float k = m_parameter1;
+  const double sqrtXSquaredPlusK = std::sqrt(x*x + k);
+  double t = (x + sqrtXSquaredPlusK) / (2.0 * sqrtXSquaredPlusK);
+  return IncompleteBetaFunction(k/2.0, k/2.0, t);
 }
 
 double StudentLaw::cumulativeDistributiveInverseForProbability(double * probability) {

@@ -5,6 +5,7 @@
 #include "law/binomial_law.h"
 #include "law/chi_squared_law.h"
 #include "law/exponential_law.h"
+#include "law/geometric_law.h"
 #include "law/normal_law.h"
 #include "law/poisson_law.h"
 #include "law/student_law.h"
@@ -12,6 +13,7 @@
 #include "images/binomial_icon.h"
 #include "images/chi_squared_icon.h"
 #include "images/exponential_icon.h"
+#include "images/geometric_icon.h"
 #include "images/normal_icon.h"
 #include "images/poisson_icon.h"
 #include "images/student_icon.h"
@@ -19,6 +21,7 @@
 #include "images/focused_binomial_icon.h"
 #include "images/focused_chi_squared_icon.h"
 #include "images/focused_exponential_icon.h"
+#include "images/focused_geometric_icon.h"
 #include "images/focused_normal_icon.h"
 #include "images/focused_poisson_icon.h"
 #include "images/focused_student_icon.h"
@@ -55,9 +58,10 @@ static I18n::Message sMessages[] = {
   I18n::Message::Uniforme,
   I18n::Message::Exponential,
   I18n::Message::Normal,
-  I18n::Message::Poisson,
   I18n::Message::ChiSquared,
-  I18n::Message::Student
+  I18n::Message::Student,
+  I18n::Message::Geometric,
+  I18n::Message::Poisson
 };
 
 LawController::LawController(Responder * parentResponder, Law * law, ParametersController * parametersController) :
@@ -122,18 +126,20 @@ void Probability::LawController::willDisplayCellForIndex(HighlightCell * cell, i
     ImageStore::UniformIcon,
     ImageStore::ExponentialIcon,
     ImageStore::NormalIcon,
-    ImageStore::PoissonIcon,
     ImageStore::ChiSquaredIcon,
-    ImageStore::StudentIcon
+    ImageStore::StudentIcon,
+    ImageStore::GeometricIcon,
+    ImageStore::PoissonIcon
   };
   const Image * focusedImages[k_totalNumberOfModels] = {
     ImageStore::FocusedBinomialIcon,
     ImageStore::FocusedUniformIcon,
     ImageStore::FocusedExponentialIcon,
     ImageStore::FocusedNormalIcon,
-    ImageStore::FocusedPoissonIcon,
     ImageStore::FocusedChiSquaredIcon,
-    ImageStore::FocusedStudentIcon
+    ImageStore::FocusedStudentIcon,
+    ImageStore::FocusedGeometricIcon,
+    ImageStore::FocusedPoissonIcon
   };
   myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();
@@ -162,14 +168,18 @@ void Probability::LawController::setLawAccordingToIndex(int index) {
       new(m_law) NormalLaw();
       break;
     case 4:
-      new(m_law) PoissonLaw();
-      break;
-    case 5:
       new(m_law) ChiSquaredLaw();
       break;
-    case 6:
+    case 5:
       new(m_law) StudentLaw();
       break;
+    case 6:
+      new(m_law) GeometricLaw();
+      break;
+    case 7:
+      new(m_law) PoissonLaw();
+      break;
+
     default:
      return;
   }

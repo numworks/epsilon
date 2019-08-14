@@ -2,13 +2,14 @@ apps += Probability::App
 app_headers += apps/probability/app.h
 
 app_probability_test_src = $(addprefix apps/probability/,\
+  law/chi_squared_law.cpp \
   law/erf_inv.cpp \
+  law/geometric_law.cpp \
+  law/helper.cpp \
   law/incomplete_beta_function.cpp \
   law/law.cpp \
   law/regularized_gamma.cpp \
-  law/chi_squared_law.cpp \
   law/student_law.cpp \
-  law/helper.cpp \
 )
 
 app_probability_src = $(addprefix apps/probability/,\
@@ -69,10 +70,12 @@ $(eval $(call depends_on_image,apps/probability/law_controller.cpp,$(addprefix a
   focused_binomial_icon.png \
   focused_chi_squared_icon.png \
   focused_exponential_icon.png \
+  focused_geometric_icon.png \
   focused_normal_icon.png \
   focused_poisson_icon.png \
   focused_student_icon.png \
   focused_uniform_icon.png \
+  geometric_icon.png \
   normal_icon.png \
   poisson_icon.png \
   student_icon.png \

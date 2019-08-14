@@ -67,7 +67,7 @@ bool regularizedGamma(double s, double x, double epsilon, int maxNumberOfIterati
   double infiniteSeriesValue = 0.0;
   if (!Helper::InfiniteSeriesEvaluation(
         1.0/s,
-        [](double previousTerm, double index, double s, double x) { return previousTerm * x / (s + index); },
+        [](double previousTerm, double index, double s, double x, double d1, double d2) { return previousTerm * x / (s + index); },
         epsilon,
         maxNumberOfIterations,
         &infiniteSeriesValue,

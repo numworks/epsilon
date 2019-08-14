@@ -59,7 +59,7 @@ bool Helper::ContinuedFractionEvaluation(ValueForIndex a, ValueForIndex b, int m
   return true;
 }
 
-bool Helper::InfiniteSeriesEvaluation(double firstTerm, TermUpdater termUpdater, double termLimit, int maxNumberOfIterations, double * result, double context1, double context2) {
+bool Helper::InfiniteSeriesEvaluation(double firstTerm, TermUpdater termUpdater, double termLimit, int maxNumberOfIterations, double * result, double context1, double context2, double context3, double context4) {
   double iterationCount = 0.0;
   double currentTerm = firstTerm;
   double sum = currentTerm;
@@ -68,7 +68,7 @@ bool Helper::InfiniteSeriesEvaluation(double firstTerm, TermUpdater termUpdater,
       && std::fabs(currentTerm/sum) > termLimit)
   {
     iterationCount+= 1.0;
-    currentTerm = termUpdater(currentTerm, iterationCount, context1, context2);
+    currentTerm = termUpdater(currentTerm, iterationCount, context1, context2, context3, context4);
     sum+= currentTerm;
   }
   if (iterationCount >= maxNumberOfIterations) {

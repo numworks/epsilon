@@ -31,7 +31,7 @@ double StudentLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
 }
 
 double StudentLaw::cumulativeDistributiveInverseForProbability(double * probability) {
-  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(proba);
+  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability);
 }
 
 float StudentLaw::coefficient() const {

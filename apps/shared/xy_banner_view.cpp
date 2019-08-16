@@ -23,6 +23,7 @@ XYBannerView::XYBannerView(
   ),
   m_ordinateView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
 {
+  m_textBody[0] = 0;
 }
 
 View * XYBannerView::subviewAtIndex(int index) {

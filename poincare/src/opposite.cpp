@@ -37,6 +37,9 @@ bool OppositeNode::childNeedsUserParentheses(const Expression & child) const {
   if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;
   }
+  if (child.type() == Type::Conjugate) {
+    return childNeedsUserParentheses(child.childAtIndex(0));
+  }
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};
   return child.isOfType(types, 3);
 }

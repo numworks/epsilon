@@ -52,13 +52,16 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
   if (c.type() != ExpressionNode::Type::Rational
       || !static_cast<Rational&>(c).isInteger())
   {
-    return replaceWithUndefinedInPlace();
+    return replaceWithUndefinedInPlace(); // TODO: are we sure?
   }
   Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();
   if (Integer::NaturalOrder(dimension, Integer(Integer::k_maxExtractableInteger)) > 0) {
     return *this;
   }
   int dim = dimension.extractedInt();
+  if (dim <= 0) {
+    return replaceWithUndefinedInPlace();
+  }
   Expression result = Matrix::CreateIdentity(dim);
   replaceWithInPlace(result);
   return result;

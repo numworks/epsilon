@@ -536,7 +536,6 @@ void makePositive(Expression * e, bool * isNegative) {
 }
 
 void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  assert(type() != ExpressionNode::Type::Matrix);
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
    * take into account the complex format to display a+i*b or r*e^(i*th) */
   if (type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) {
@@ -598,10 +597,10 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
     return;
   }
   // Step 2: we approximate and beautify the reduced expression
-  // si matrix à la racine, appeler simplifyAndApproximateOfScalar sur chaque entrée de la matrice, sinon appeler simplifyAndApproximateOfScalar de toi même
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to
    * beautify them with the right complex format. */
   if (e.type() == ExpressionNode::Type::Matrix) {
+    // TODO: this method enables to take the complex format into account when the result is a matrix of scalar. It won't work for nested matrices... Find a more elegant and general solution?
     Matrix m = static_cast<Matrix &>(e);
     *simplifiedExpression = Matrix::Builder();
     if (approximateExpression) {

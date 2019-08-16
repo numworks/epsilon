@@ -1,10 +1,27 @@
 #include <poincare/n_ary_expression.h>
+#include <poincare/number.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
 
 namespace Poincare {
+
+bool NAryExpressionNode::childNeedsUserParentheses(const Expression & child) const {
+  /* Expressions like "-2" require parentheses in Addition/Multiplication except
+   * when they are the first operand. */
+  if (((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
+        || child.type() == Type::Opposite)
+        /* We use "hasAncestor" instead of "==" because child might not be the
+         * direct child of the addition/multiplication [e.g. +(conj(-2), 3)] */
+       && !child.node()->hasAncestor(childAtIndex(0), true)) {
+    return true;
+  }
+  if (child.type() == Type::Conjugate) {
+    return childNeedsUserParentheses(child.childAtIndex(0));
+  }
+  return false;
+}
 
 void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {
   Expression reference(this);

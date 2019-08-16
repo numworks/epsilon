@@ -29,17 +29,6 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
 }
 
 // Layout
-bool AdditionNode::childNeedsUserParentheses(const Expression & child) const {
-  if (((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
-        || child.type() == Type::Opposite)
-       && child.node() != childAtIndex(0)) {
-    return true;
-  }
-  if (child.type() == Type::Conjugate) {
-    return childNeedsUserParentheses(child.childAtIndex(0));
-  }
-  return false;
-}
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+");

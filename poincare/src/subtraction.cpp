@@ -24,7 +24,10 @@ int SubtractionNode::polynomialDegree(Context * context, const char * symbolName
 // Private
 
 bool SubtractionNode::childNeedsUserParentheses(const Expression & child) const {
-  if (child.node() == childAtIndex(0)) {
+  /* First operand of a subtraction never requires parentheses.
+   * We use "hasAncestor" instead of "==" because child might not be the direct
+   * child of the subtraction [e.g. 'conj(-2) - 3' ] */
+  if (child.node()->hasAncestor(childAtIndex(0), true)) {
     return false;
   }
   if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {

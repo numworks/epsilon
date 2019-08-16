@@ -51,16 +51,8 @@ int MultiplicationNode::getPolynomialCoefficients(Context * context, const char 
 }
 
 bool MultiplicationNode::childNeedsUserParentheses(const Expression & child) const {
-  if ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
-        || child.type() == ExpressionNode::Type::Opposite)
-  {
-    if (child.node() == childAtIndex(0)) {
-      return false;
-    }
+  if (NAryExpressionNode::childNeedsUserParentheses(child)) {
     return true;
-  }
-  if (child.type() == Type::Conjugate) {
-    return childNeedsUserParentheses(child.childAtIndex(0));
   }
   Type types[] = {Type::Subtraction, Type::Addition};
   return child.isOfType(types, 2);

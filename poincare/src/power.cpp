@@ -100,13 +100,18 @@ bool PowerNode::isReal(Context * context) const {
 }
 
 bool PowerNode::childNeedsUserParentheses(const Expression & child) const {
-  if (child.node() == childAtIndex(0)) {
+  /* We use "hasAncestor" instead of "==" because child might not be the direct
+   * child of thepower [e.g. ^(conj(+(A,B), C)] */
+  if (child.node()->hasAncestor(childAtIndex(0), true)) {
     /* ^(-2.3, 4) --> (-2.3)^{4}
      * ^(2/3, 4) --> (2/3)^{4}
      */
     if ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
        || (child.type() == Type::Rational && !static_cast<const Rational &>(child).isInteger())) {
       return true;
+    }
+    if (child.type() == Type::Conjugate) {
+      return childNeedsUserParentheses(child.childAtIndex(0));
     }
     // ^(2+3,4) --> (2+3)^{4}
     Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};

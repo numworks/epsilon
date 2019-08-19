@@ -180,7 +180,7 @@ void CurveView::computeLabels(Axis axis) {
     int labelMaxSize = k_labelBufferMaxSize;
     if (axis == Axis::Horizontal) {
       float pixelsPerLabel = ((float)Ion::Display::Width)/((float)axisLabelsCount) - k_labelMargin;
-      labelMaxSize = minInt(k_labelBufferMaxSize, pixelsPerLabel/k_font->glyphSize().width());
+      labelMaxSize = minInt(k_labelBufferMaxSize, pixelsPerLabel/k_font->glyphSize().width()+1);
     }
 
     if (labelValue < step && labelValue > -step) {

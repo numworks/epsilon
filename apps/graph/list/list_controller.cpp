@@ -55,11 +55,9 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   if (textLength <= argumentLength) {
     // The user entered an empty name. Use a default function name.
     CartesianFunction::DefaultName(baseName, maxBaseNameSize);
-    size_t defaultNameLength = strlen(baseName);
-    assert(defaultNameLength <= maxBaseNameSize);
-    strlcpy(baseName + defaultNameLength, Function::k_parenthesedArgument, maxBaseNameSize - defaultNameLength);
-    textField->setText(baseName);
-    baseName[defaultNameLength] = 0;
+    /* We don't need to update the textfield edited text here because we are
+     * sure that the default name is compliant. It will thus lead to the end of
+     * edition and its content will be reloaded by willDisplayTitleCellAtIndex. */
   } else {
     assert(argumentLength <= textLength + 1);
     strlcpy(baseName, text, textLength - argumentLength + 1);

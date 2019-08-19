@@ -50,7 +50,9 @@ double ChiSquaredLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
 }
 
 double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * probability) {
-  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability);
+  /* We cannot put xMin because xMin is < 0 for fisplay purposes, and negative
+   * values are not accepted. */
+  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, DBL_EPSILON, xMax());
 }
 
 float ChiSquaredLaw::coefficient() const {

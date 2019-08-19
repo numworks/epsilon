@@ -342,7 +342,6 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   int numberOfCharsForMantissaWithSign = numberOfCharsForMantissaWithoutSign + (f >= 0 ? 0 : 1);
   if (numberOfCharsForMantissaWithSign > bufferSize - 1) {
     // Exception 2: we will overflow the buffer
-    assert(mode == Preferences::PrintFloatMode::Decimal);
     return bufferSize + 1;
   }
 

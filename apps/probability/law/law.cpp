@@ -149,7 +149,7 @@ double Law::cumulativeDistributiveInverseForProbabilityUsingBrentRoots(double * 
       this,
       probability,
       nullptr);
-  assert(std::fabs(result.value()) < FLT_EPSILON*10); // TODO FLT_EPSILON is too strict
+  assert(std::fabs(result.value()) < FLT_EPSILON*100); // TODO FLT_EPSILON is too strict
   return result.abscissa();
 }
 

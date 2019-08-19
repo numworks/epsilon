@@ -4,6 +4,8 @@
 
 namespace Probability {
 
+static inline double maxDouble(double x, double y) { return x > y ? x : y; }
+
 float ChiSquaredLaw::xMin() const {
   return -k_displayLeftMarginRatio * xMax();
 }
@@ -50,9 +52,21 @@ double ChiSquaredLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
 }
 
 double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * probability) {
-  /* We cannot put xMin because xMin is < 0 for fisplay purposes, and negative
-   * values are not accepted. */
-  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, DBL_EPSILON, xMax());
+  /* We have to compute the values of the interval in chich to look for x.
+   * We cannot put xMin because xMin is < 0 for display purposes, and negative
+   * values are not accepted.
+   * The maximum of the interval: we want
+   *    cumulativeDistributiveFunctionAtAbscissa(b) > proba
+   * => regularizedGamma(halfk, b/2, k_regularizedGammaPrecision) >proba
+   * => int(exp(-t)*t^(k/2 - 1), t, 0, b/2)/gamma(k/2) > proba
+   * => int(exp(-t)*t^(k/2 - 1), t, 0, b/2) > proba * gamma(k/2)
+   * true if:  (b/2 - 0) * exp(-(k/2 - 1))*(k/2 - 1)^(k/2 - 1) > proba * gamma(k/2)
+   *         => b/2 * exp(-(k/2 - 1) (1 + ln(k/2 - 1))) > proba * gamma(k/2)
+   *         => b > 2 * proba * gamma(k/2) / exp(-(k/2 - 1) (1 + ln(k/2 - 1))) */
+  const double ceilKOver2 = std::ceil(m_parameter1/2);
+  const double kOver2Minus1 = std::ceil(m_parameter1/2);
+  double xmax = 2 * *probability * std::exp(std::lgamma(ceilKOver2)) / exp(-(kOver2Minus1)*(1 + std::log(kOver2Minus1)));
+  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, DBL_EPSILON, maxDouble(xMax(), xmax));
 }
 
 float ChiSquaredLaw::coefficient() const {

@@ -9,7 +9,7 @@ namespace Probability {
 class ChiSquaredLaw : public OneParameterLaw {
 public:
   static constexpr int k_maxRegularizedGammaIterations = 1000;
-  static constexpr double k_regularizedGammaPrecision = FLT_EPSILON;
+  static constexpr double k_regularizedGammaPrecision = DBL_EPSILON;
 
   ChiSquaredLaw() : OneParameterLaw(1.0f) {}
   I18n::Message title() override { return I18n::Message::ChiSquaredLaw; }

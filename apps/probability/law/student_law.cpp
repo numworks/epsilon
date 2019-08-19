@@ -27,7 +27,7 @@ bool StudentLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 double StudentLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  if (x == 1) {
+  if (x == 0) {
     return 0.5;
   }
   const float k = m_parameter1;
@@ -37,7 +37,14 @@ double StudentLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
 }
 
 double StudentLaw::cumulativeDistributiveInverseForProbability(double * probability) {
-  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, xMin(), xMax());
+  if (*probability == 0.5) {
+    return 0.0;
+  }
+  const double small = DBL_EPSILON;
+  const double big = m_parameter1 >= 1 ? 50.0 : 50 / m_parameter1;
+  double xmin = *probability < 0.5 ? -big : small;
+  double xmax = *probability < 0.5 ? -small : big;
+  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, xmin, xmax);
 }
 
 float StudentLaw::coefficient() const {

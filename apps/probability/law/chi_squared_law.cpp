@@ -60,12 +60,23 @@ double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * proba
    * => regularizedGamma(halfk, b/2, k_regularizedGammaPrecision) >proba
    * => int(exp(-t)*t^(k/2 - 1), t, 0, b/2)/gamma(k/2) > proba
    * => int(exp(-t)*t^(k/2 - 1), t, 0, b/2) > proba * gamma(k/2)
-   * true if:  (b/2 - 0) * exp(-(k/2 - 1))*(k/2 - 1)^(k/2 - 1) > proba * gamma(k/2)
-   *         => b/2 * exp(-(k/2 - 1) (1 + ln(k/2 - 1))) > proba * gamma(k/2)
-   *         => b > 2 * proba * gamma(k/2) / exp(-(k/2 - 1) (1 + ln(k/2 - 1))) */
-  const double ceilKOver2 = std::ceil(m_parameter1/2);
-  const double kOver2Minus1 = std::ceil(m_parameter1/2);
-  double xmax = 2 * *probability * std::exp(std::lgamma(ceilKOver2)) / exp(-(kOver2Minus1)*(1 + std::log(kOver2Minus1)));
+   *
+   * true if: for (k/2 - 1) > 0 which is k > 2
+   *            (b/2 - 0) * exp(-(k/2 - 1))*(k/2 - 1)^(k/2 - 1) > proba * gamma(k/2)
+   *         => b/2 * exp(-(k/2 - 1) (1 - ln(k/2 - 1))) > proba * gamma(k/2)
+   *         => b > 2 * proba * gamma(k/2) / exp(-(k/2 - 1) (1 + ln(k/2 - 1)))
+   *          else
+   *            2/k * (b/2)^(k/2) > proba * gamma(k/2)
+   *         => b^(k/2) > k/2 * 2^(k/2) * proba * gamma(k/2)
+   *         => exp(k/2 * ln(b)) > k/2 * 2^(k/2) * proba * gamma(k/2)
+   *         => b > exp(2/k * ln(k/2 * 2^(k/2) * proba * gamma(k/2))) */
+
+  const double k = m_parameter1;
+  const double ceilKOver2 = std::ceil(k/2);
+  const double kOver2Minus1 = k/2.0 - 1.0;
+  double xmax = m_parameter1 > 2.0 ?
+    2 * *probability * std::exp(std::lgamma(ceilKOver2)) / (exp(-kOver2Minus1) * std::pow(kOver2Minus1, kOver2Minus1)) :
+    std::exp(2/k * std::log(k * std::pow(2.0, kOver2Minus1) * *probability * std::exp(std::lgamma(k/2))));
   return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, DBL_EPSILON, maxDouble(xMax(), xmax));
 }
 

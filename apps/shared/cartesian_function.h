@@ -15,6 +15,7 @@ public:
     Function(record)
   {}
   CodePoint symbol() const override;
+  Poincare::Expression expressionReduced(Poincare::Context * context) const override;
 
   enum class PlotType {
     Cartesian = 0,

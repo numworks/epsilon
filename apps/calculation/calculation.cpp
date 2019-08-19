@@ -33,6 +33,13 @@ Calculation * Calculation::next() const {
   return reinterpret_cast<Calculation *>(const_cast<char *>(result));
 }
 
+void Calculation::tidy() {
+  /* Reset height memoization (the complex format could have changed when
+   * re-entering Calculation app which would impact the heights). */
+  m_height = -1;
+  m_expandedHeight = -1;
+}
+
 const char * Calculation::approximateOutputText() const {
   const char * exactOutput = exactOutputText();
   return exactOutput + strlen(exactOutput) + 1;

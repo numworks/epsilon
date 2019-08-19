@@ -141,6 +141,13 @@ void CalculationStore::deleteAll() {
   resetMemoizedModelsAfterCalculationIndex(-1);
 }
 
+void CalculationStore::tidy() {
+  resetMemoizedModelsAfterCalculationIndex(-1);
+  for (Calculation * c : *this) {
+    c->tidy();
+  }
+}
+
 Expression CalculationStore::ansExpression(Context * context) {
   if (numberOfCalculations() == 0) {
     return Rational::Builder(0);

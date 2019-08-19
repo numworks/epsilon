@@ -50,6 +50,8 @@ public:
   bool operator==(const Calculation& c);
   Calculation * next() const;
 
+  void tidy();
+
   // Texts
   const char * inputText() const { return m_inputText; }
   const char * exactOutputText() const { return m_inputText + strlen(m_inputText) + 1; }

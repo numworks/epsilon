@@ -32,7 +32,7 @@ public:
   void deleteAll();
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Poincare::Expression ansExpression(Poincare::Context * context);
-  void tidy() { resetMemoizedModelsAfterCalculationIndex(-1); }
+  void tidy();
 private:
   static constexpr int k_bufferSize = 10 * 3 * Constant::MaxSerializedExpressionSize;
 

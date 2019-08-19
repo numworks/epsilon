@@ -78,6 +78,18 @@ int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSi
   return numberOfChars + derivativeSize;
 }
 
+Poincare::Expression CartesianFunction::expressionReduced(Poincare::Context * context) const {
+  Poincare::Expression result = ExpressionModelHandle::expressionReduced(context);
+  if (plotType() == PlotType::Parametric && (
+      result.type() != Poincare::ExpressionNode::Type::Matrix ||
+      static_cast<Poincare::Matrix&>(result).numberOfRows() != 2 ||
+      static_cast<Poincare::Matrix&>(result).numberOfColumns() != 1)
+     ) {
+    return Poincare::Expression::Parse("[[undef][undef]]");
+  }
+  return result;
+}
+
 CodePoint CartesianFunction::symbol() const {
   switch (plotType()) {
   case PlotType::Cartesian:

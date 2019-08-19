@@ -14,7 +14,7 @@ public:
 
   // Property
   void text(char * buffer, size_t bufferSize) const { return model()->text(this, buffer, bufferSize, symbol()); }
-  Poincare::Expression expressionReduced(Poincare::Context * context) const { return model()->expressionReduced(this, context); }
+  virtual Poincare::Expression expressionReduced(Poincare::Context * context) const { return model()->expressionReduced(this, context); }
   Poincare::Expression expressionClone() const { return model()->expressionClone(this); }
   Poincare::Layout layout() { return model()->layout(this, symbol()); }
    /* Here, isDefined is the exact contrary of isEmpty. However, for Sequence

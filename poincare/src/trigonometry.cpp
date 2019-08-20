@@ -124,9 +124,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
 
   // Step 0. Map on matrix child if possible
   {
-    Expression mapped = mapIfPossible(e, reductionContext);
-    if (!mapped.isUninitialized()) {
-      return mapped;
+    if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+      return e.mapOnMatrixFirstChild(reductionContext);
     }
   }
 
@@ -295,9 +294,8 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
   assert(isInverseTrigonometryFunction(e));
   // Step 0. Map on matrix child if possible
   {
-    Expression mapped = mapIfPossible(e, reductionContext);
-    if (!mapped.isUninitialized()) {
-      return mapped;
+    if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+      return e.mapOnMatrixFirstChild(reductionContext);
     }
   }
 
@@ -413,13 +411,6 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   }
   assert(angleUnit == Preferences::AngleUnit::Radian);
   return c;
-}
-
-Expression Trigonometry::mapIfPossible(Expression & e, ExpressionNode::ReductionContext reductionContext) {
-  if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return e.mapOnMatrixFirstChild(reductionContext);
-  }
-  return Expression();
 }
 
 template<typename T>

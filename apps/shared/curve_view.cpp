@@ -527,6 +527,10 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   }
 }
 
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter yEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+  drawCurve(ctx, rect, yEvaluation, model, context, color, colorUnderCurve, colorLowerBound, colorUpperBound);
+}
+
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound, float highlightUpperBound) const {
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());

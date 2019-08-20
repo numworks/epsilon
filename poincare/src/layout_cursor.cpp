@@ -95,6 +95,7 @@ void LayoutCursor::addEmptyMatrixLayout() {
 }
 
 void LayoutCursor::addEmptySquareRootLayout() {
+  // TODO: add a horizontal layout only if several children
   HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
   NthRootLayout newChild = NthRootLayout::Builder(child1);
   m_layout.addSibling(this, newChild, false);

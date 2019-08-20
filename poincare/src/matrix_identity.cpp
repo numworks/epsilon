@@ -52,7 +52,7 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
   if (c.type() != ExpressionNode::Type::Rational
       || !static_cast<Rational&>(c).isInteger())
   {
-    return replaceWithUndefinedInPlace(); // TODO: are we sure?
+    return *this;
   }
   Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();
   if (dimension.isNegative()) {

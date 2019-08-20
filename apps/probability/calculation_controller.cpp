@@ -24,10 +24,10 @@ namespace Probability {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
-CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Law * law, Calculation * calculation) :
+CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
   m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView),
-  m_lawCurveView(law, calculation)
+  m_distributionCurveView(distribution, calculation)
 {
 }
 
@@ -43,7 +43,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
   if (index == 1) {
     return m_selectableTableView;
   }
-  return &m_lawCurveView;
+  return &m_distributionCurveView;
 }
 
 void CalculationController::ContentView::layoutSubviews() {
@@ -51,18 +51,18 @@ void CalculationController::ContentView::layoutSubviews() {
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight+2*k_tableMargin;
   m_selectableTableView->setFrame(KDRect(0,  titleHeight, bounds().width(), calculationHeight));
-  m_lawCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight));
+  m_distributionCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight));
 }
 
-CalculationController::CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, Calculation * calculation) :
+CalculationController::CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation) :
   ViewController(parentResponder),
-  m_contentView(&m_selectableTableView, law, calculation),
+  m_contentView(&m_selectableTableView, distribution, calculation),
   m_selectableTableView(this),
-  m_imageCell(&m_selectableTableView, law, calculation, this),
+  m_imageCell(&m_selectableTableView, distribution, calculation, this),
   m_calculation(calculation),
-  m_law(law)
+  m_distribution(distribution)
 {
-  assert(law != nullptr);
+  assert(distribution != nullptr);
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);
   m_selectableTableView.setVerticalCellOverlap(0);
@@ -79,7 +79,7 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
 void CalculationController::didEnterResponderChain(Responder * previousResponder) {
   App::app()->snapshot()->setActivePage(App::Snapshot::Page::Calculations);
   updateTitle();
-  reloadLawCurveView();
+  reloadDistributionCurveView();
   m_selectableTableView.reloadData();
 }
 
@@ -171,7 +171,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     CalculationCell * myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i-1));
     bool calculationCellIsResponder = true;
-    if ((m_law->type() != Law::Type::Normal && i == 3) || (m_calculation->type() == Calculation::Type::Discrete && i == 2)) {
+    if ((m_distribution->type() != Distribution::Type::Normal && i == 3) || (m_calculation->type() == Calculation::Type::Discrete && i == 2)) {
       calculationCellIsResponder = false;
     }
     myCell->setResponder(calculationCellIsResponder);
@@ -222,7 +222,7 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
       floatBody = 1.0;
     }
   }
-  if (!m_law->isContinuous() && (selectedColumn() == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
+  if (!m_distribution->isContinuous() && (selectedColumn() == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
     floatBody = std::round(floatBody);
   }
   m_calculation->setParameterAtIndex(floatBody, selectedColumn()-1);
@@ -233,13 +233,13 @@ bool CalculationController::textFieldDidFinishEditing(TextField * textField, con
   return true;
 }
 
-void CalculationController::reloadLawCurveView() {
-  m_contentView.lawCurveView()->reload();
+void CalculationController::reloadDistributionCurveView() {
+  m_contentView.distributionCurveView()->reload();
 }
 
 void CalculationController::reload() {
   m_selectableTableView.reloadData();
-  reloadLawCurveView();
+  reloadDistributionCurveView();
 }
 
 void CalculationController::setCalculationAccordingToIndex(int index, bool forceReinitialisation) {
@@ -263,18 +263,18 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
     default:
      return;
   }
-  m_calculation->setLaw(m_law);
+  m_calculation->setDistribution(m_distribution);
 }
 
 void CalculationController::updateTitle() {
   int currentChar = 0;
-  for (int index = 0; index < m_law->numberOfParameter(); index++) {
+  for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
     if (currentChar >= k_titleBufferSize) {
       break;
     }
     /* strlcpy returns the size of src, not the size copied, but it is not a
      * problem here. */
-    currentChar += strlcpy(m_titleBuffer+currentChar, I18n::translate(m_law->parameterNameAtIndex(index)), k_titleBufferSize - currentChar);
+    currentChar += strlcpy(m_titleBuffer+currentChar, I18n::translate(m_distribution->parameterNameAtIndex(index)), k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;
     }
@@ -285,7 +285,7 @@ void CalculationController::updateTitle() {
     constexpr int precision = Constant::ShortNumberOfSignificantDigits;
     constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
-    PrintFloat::ConvertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+    PrintFloat::ConvertFloatToText<double>(m_distribution->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     currentChar += strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;

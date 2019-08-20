@@ -38,10 +38,10 @@ double DiscreteCalculation::parameterAtIndex(int index) {
 }
 
 void DiscreteCalculation::compute(int indexKnownElement) {
-  if (m_law == nullptr) {
+  if (m_distribution == nullptr) {
     return;
   }
-  m_result = m_law->evaluateAtDiscreteAbscissa(m_abscissa);
+  m_result = m_distribution->evaluateAtDiscreteAbscissa(m_abscissa);
 }
 
 }

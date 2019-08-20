@@ -3,14 +3,14 @@
 
 #include <escher.h>
 #include "../shared/float_parameter_controller.h"
-#include "law/law.h"
+#include "distribution/distribution.h"
 #include "calculation_controller.h"
 
 namespace Probability {
 
 class ParametersController : public Shared::FloatParameterController {
 public:
-  ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * m_law, CalculationController * calculationController);
+  ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;
   View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
@@ -47,7 +47,7 @@ private:
   constexpr static int k_maxNumberOfCells = 2;
   ContentView m_contentView;
   MessageTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
-  Law * m_law;
+  Distribution * m_distribution;
   CalculationController * m_calculationController;
 };
 

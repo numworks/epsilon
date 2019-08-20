@@ -120,6 +120,7 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
 
+  assertCalculationDisplay("int((ℯ^(-x))-x^(0.5), x, 0, 3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store); // Tests a bug with symbolic computation
   assertCalculationDisplay("int(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
   assertCalculationDisplay("sum(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
   assertCalculationDisplay("product(x,x,1,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);

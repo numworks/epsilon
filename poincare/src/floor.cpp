@@ -1,5 +1,5 @@
 #include <poincare/floor.h>
-#include <poincare/constant.h>
+#include <poincare/decimal.h>
 #include <poincare/floor_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -46,30 +46,15 @@ Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContex
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
   }
-  if (c.type() == ExpressionNode::Type::Constant) {
-    Constant s = static_cast<Constant &>(c);
-    Expression result;
-    if (s.isPi()) {
-      result = Rational::Builder(3);
-    }
-    if (s.isExponential()) {
-      result = Rational::Builder(2);
-    }
-    if (!result.isUninitialized()) {
-      replaceWithInPlace(result);
-      return result;
-    }
-    return *this;
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = static_cast<Rational &>(c);
+    IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+    assert(!div.quotient.isOverflow());
+    Expression result = Rational::Builder(div.quotient);
+    replaceWithInPlace(result);
+    return result;
   }
-  if (c.type() != ExpressionNode::Type::Rational) {
-    return *this;
-  }
-  Rational r = static_cast<Rational &>(c);
-  IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.quotient.isOverflow());
-  Expression result = Rational::Builder(div.quotient);
-  replaceWithInPlace(result);
-  return result;
+  return shallowReduceUsingApproximation(reductionContext);
 }
 
 }

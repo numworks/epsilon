@@ -630,6 +630,7 @@ QUIZ_CASE(poincare_simplication_matrix) {
   assert_parsed_expression_simplify_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
   assert_parsed_expression_simplify_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
   assert_parsed_expression_simplify_to("det([[1,2,3][4π,5,6][7,8,9]])", "24×π-24");
+  assert_parsed_expression_simplify_to("det(identity(5))", "1");
 
   // Dimension
   assert_parsed_expression_simplify_to("dim(3)", "[[1,1]]");

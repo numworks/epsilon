@@ -597,6 +597,15 @@ QUIZ_CASE(poincare_simplication_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(asin(-x))", "-x/√(-x^2+1)", User, Degree);
 }
 
+QUIZ_CASE(poincare_simplication_hyperbolic_trigonometry_functions) {
+  assert_parsed_expression_simplify_to("sinh(0)", "0");
+  assert_parsed_expression_simplify_to("cosh(0)", "1");
+  assert_parsed_expression_simplify_to("tanh(0)", "0");
+  assert_parsed_expression_simplify_to("asinh(0)", "0");
+  assert_parsed_expression_simplify_to("acosh(1)", "0");
+  assert_parsed_expression_simplify_to("atanh(0)", "0");
+}
+
 QUIZ_CASE(poincare_simplication_matrix) {
   // Addition Matrix
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", Undefined::Name());
@@ -699,11 +708,11 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("gcd(1,[[0,180]])", Undefined::Name());
   assert_parsed_expression_simplify_to("gcd([[0,180]],[[1]])", Undefined::Name());
   assert_parsed_expression_simplify_to("acosh([[0,π]])", "[[acosh(0),acosh(π)]]");
-  assert_parsed_expression_simplify_to("asinh([[0,π]])", "[[asinh(0),asinh(π)]]");
-  assert_parsed_expression_simplify_to("atanh([[0,π]])", "[[atanh(0),atanh(π)]]");
-  assert_parsed_expression_simplify_to("cosh([[0,π]])", "[[cosh(0),cosh(π)]]");
-  assert_parsed_expression_simplify_to("sinh([[0,π]])", "[[sinh(0),sinh(π)]]");
-  assert_parsed_expression_simplify_to("tanh([[0,π]])", "[[tanh(0),tanh(π)]]");
+  assert_parsed_expression_simplify_to("asinh([[0,π]])", "[[0,asinh(π)]]");
+  assert_parsed_expression_simplify_to("atanh([[0,π]])", "[[0,atanh(π)]]");
+  assert_parsed_expression_simplify_to("cosh([[0,π]])", "[[1,cosh(π)]]");
+  assert_parsed_expression_simplify_to("sinh([[0,π]])", "[[0,sinh(π)]]");
+  assert_parsed_expression_simplify_to("tanh([[0,π]])", "[[0,tanh(π)]]");
   assert_parsed_expression_simplify_to("im([[1/√(2),1/2][1,-1]])", "[[0,0][0,0]]");
   assert_parsed_expression_simplify_to("im([[1,1+𝐢]])", "[[0,1]]");
   assert_parsed_expression_simplify_to("int([[0,180]],x,1,2)", Undefined::Name());

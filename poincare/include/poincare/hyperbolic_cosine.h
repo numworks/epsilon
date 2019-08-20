@@ -20,6 +20,8 @@ public:
   // Properties
   Type type() const override { return Type::HyperbolicCosine; }
 private:
+  // Simplification
+  Expression imageOfNotableValue() const override { return Rational::Builder(1); }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -280,6 +280,20 @@ Expression Expression::defaultShallowReduce() {
   return *this;
 }
 
+Expression Expression::shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext) {
+  double approx = node()->approximate(double(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
+  /* If approx is capped by the largest integer such as all smaller integers can
+   * be exactly represented in IEEE754, approx is the exact result (no
+   * precision were loss). */
+  if (!std::isnan(approx) && std::fabs(approx) <= k_largestExactIEEE754Integer) {
+    Expression result = Decimal::Builder(approx).shallowReduce();
+    assert(result.type() == ExpressionNode::Type::Rational);
+    replaceWithInPlace(result);
+    return result;
+  }
+  return *this;
+}
+
 bool Expression::SimplificationHasBeenInterrupted() {
   return sSimplificationHasBeenInterrupted;
 }

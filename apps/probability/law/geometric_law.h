@@ -5,6 +5,12 @@
 
 namespace Probability {
 
+/* We chose the definition:
+ * 0 < p <= 1 for success probability
+ * k failures where k ∈ {0, 1, 2, ... }
+ * The law follows the probability distribution of the number of failures before
+ * the first success. */
+
 class GeometricLaw final : public OneParameterLaw {
 public:
   GeometricLaw() : OneParameterLaw(0.5f) {}

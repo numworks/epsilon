@@ -286,6 +286,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   Layout rootLayout = root();
   if (node()->shouldCollapseSiblingsOnRight()) {
     Layout absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
+    // TODO: add a horizontal layout only if several siblings.
     if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
       Layout horRef = HorizontalLayout::Builder();
       replaceChild(absorbingChild, horRef, cursor, true);

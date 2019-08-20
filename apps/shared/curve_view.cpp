@@ -502,19 +502,15 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
-  const float xStep = pixelWidth();
-  float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
-  float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
   float previousX = NAN;
   float x = NAN;
   float previousY = NAN;
   float y = NAN;
-  for (float t = rectMin; t < rectMax; t += xStep) {
-    /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
+  for (float t = tStart; t < tEnd; t += tStep) {
+    /* When |tStart| >> tStep, tEnd + tStep = tStart. In that case, quit
      * the infinite loop. */
-    if (t == t-xStep || t == t+xStep) {
+    if (t == t-tStep || t == t+tStep) {
       return;
     }
     previousX = x;
@@ -527,12 +523,15 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, drawStraightLinesEarly, t - xStep, previousX, previousY, t, x, y, color, k_maxNumberOfIterations);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, drawStraightLinesEarly, t - tStep, previousX, previousY, t, x, y, color, k_maxNumberOfIterations);
   }
 }
 
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter yEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
-  drawCurve(ctx, rect, [](float t, void * model, void * context) {
+  float tStart = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  float tEnd = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+  float tStep = pixelWidth();
+  drawCurve(ctx, rect, tStart, tEnd, tStep, [](float t, void * model, void * context) {
         return t;
       }, yEvaluation, model, context, true, color, colorUnderCurve, colorLowerBound, colorUpperBound);
 }

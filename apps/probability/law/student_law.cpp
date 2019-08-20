@@ -48,7 +48,7 @@ double StudentLaw::cumulativeDistributiveInverseForProbability(double * probabil
   const double big = m_parameter1 >= 1 ? standardBig : standardBig / m_parameter1;
   double xmin = *probability < 0.5 ? -big : small;
   double xmax = *probability < 0.5 ? -small : big;
-  return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, xmin, xmax);
+  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, xmin, xmax);
 }
 
 float StudentLaw::coefficient() const {

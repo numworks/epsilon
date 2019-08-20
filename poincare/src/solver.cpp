@@ -1,4 +1,5 @@
 #include <poincare/solver.h>
+#include <assert.h>
 #include <float.h>
 #include <cmath>
 
@@ -171,6 +172,34 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
     fb = evaluation(b, context, complexFormat, angleUnit, context1, context2, context3);
   }
   return NAN;
+}
+
+Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+  assert(ax < bx);
+  double min = ax;
+  double max = bx;
+  double currentAbscissa = min;
+  double eval = evaluation(currentAbscissa, context, complexFormat, angleUnit, context1, context2, context3);
+  if (eval >= 0) {
+    if (eval <= precision) {
+      // The value on the left bracket is 0, return it.
+      return Coordinate2D(currentAbscissa, eval);
+    }
+    // The minimal value is already bigger than 0, return NAN.
+    return Coordinate2D(currentAbscissa, NAN);
+  }
+  while (max - min > precision) {
+    currentAbscissa = (min + max) / 2.0;
+    eval = evaluation(currentAbscissa, context, complexFormat, angleUnit, context1, context2, context3);
+    if (eval > precision) {
+      max = currentAbscissa;
+    } else if (eval < -precision) {
+      min = currentAbscissa;
+    } else {
+      return Coordinate2D(currentAbscissa, eval);
+    }
+  }
+  return Coordinate2D(currentAbscissa, NAN);
 }
 
 }

@@ -127,7 +127,7 @@ double Law::evaluateAtDiscreteAbscissa(int k) const {
   return 0.0;
 }
 
-double Law::cumulativeDistributiveInverseForProbabilityUsingBrentRoots(double * probability, double ax, double bx) {
+double Law::cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double * probability, double ax, double bx) {
   assert(ax < bx);
   if (*probability >= 1) {
     return INFINITY;
@@ -135,13 +135,14 @@ double Law::cumulativeDistributiveInverseForProbabilityUsingBrentRoots(double * 
   if (*probability <= 0) {
     return -INFINITY;
   }
-  Poincare::Coordinate2D result = Poincare::Solver::BrentMinimum(
+  Poincare::Coordinate2D result = Poincare::Solver::IncreasingFunctionRoot(
       ax,
       bx,
+      DBL_EPSILON,
       [](double x, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
         const Law * law = reinterpret_cast<const Law *>(context1);
         const double * proba = reinterpret_cast<const double *>(context2);
-        return std::fabs(law->cumulativeDistributiveFunctionAtAbscissa(x) - *proba);
+        return law->cumulativeDistributiveFunctionAtAbscissa(x) - *proba; // This needs to be an increasing function
       },
       nullptr,
       Poincare::Preferences::sharedPreferences()->complexFormat(),

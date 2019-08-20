@@ -45,7 +45,7 @@ protected:
   constexpr static float k_displayTopMarginRatio = 0.05f;
   constexpr static float k_displayLeftMarginRatio = 0.05f;
   constexpr static float k_displayRightMarginRatio = 0.05f;
-  double cumulativeDistributiveInverseForProbabilityUsingBrentRoots(double * probability, double ax, double bx);
+  double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double * probability, double ax, double bx);
 private:
   constexpr static float k_displayBottomMarginRatio = 0.2f;
   float yMin() const override;

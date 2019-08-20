@@ -28,7 +28,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     ExpiringPointer<CartesianFunction> f = m_functionStore->modelForRecord(record);;
 
     /* Draw function */
-    drawCurve(ctx, rect, [](float t, void * model, void * context) {
+    drawCartesianCurve(ctx, rect, [](float t, void * model, void * context) {
       CartesianFunction * f = (CartesianFunction *)model;
       Poincare::Context * c = (Poincare::Context *)context;
       return f->evaluateAtAbscissa(t, c);
@@ -39,7 +39,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       float tangentParameter[2];
       tangentParameter[0] = f->approximateDerivative(m_curveViewCursor->x(), context());
       tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateAtAbscissa(m_curveViewCursor->x(), context());
-      drawCurve(ctx, rect, [](float t, void * model, void * context) {
+      drawCartesianCurve(ctx, rect, [](float t, void * model, void * context) {
           float * tangent = (float *)model;
           return tangent[0]*t+tangent[1];
         }, tangentParameter, nullptr, Palette::GreyVeryDark);

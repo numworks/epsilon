@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "calculation/calculation.h"
-#include "law/law.h"
+#include "distribution/distribution.h"
 #include "image_cell.h"
 
 namespace Probability {
@@ -12,7 +12,7 @@ class CalculationController;
 
 class CalculationTypeController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  CalculationTypeController(Responder * parentResponder, Law * law, Calculation * calculation, CalculationController * calculationController);
+  CalculationTypeController(Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController);
   View * view() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -28,7 +28,7 @@ public:
 private:
   ImageCell m_imageCells[k_numberOfImages];
   SelectableTableView m_selectableTableView;
-  Law * m_law;
+  Distribution * m_distribution;
   Calculation * m_calculation;
   CalculationController * m_calculationController;
 };

@@ -3,13 +3,13 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
-#include "../law/chi_squared_law.h"
-#include "../law/regularized_gamma.h"
+#include "../distribution/chi_squared_distribution.h"
+#include "../distribution/regularized_gamma.h"
 
 void assert_regularized_gamma_is(double s, double x, double result) {
   double r = 0.0;
   const double precision = FLT_EPSILON;
-  regularizedGamma(s, x, precision, Probability::ChiSquaredLaw::k_maxRegularizedGammaIterations, &r);
+  regularizedGamma(s, x, precision, Probability::ChiSquaredDistribution::k_maxRegularizedGammaIterations, &r);
   quiz_assert(std::abs(r - result) <= precision);
 }
 
@@ -25,10 +25,10 @@ QUIZ_CASE(regularized_gamma) {
   /* Choose parameters verifying both x >= s + 1.0 and x < s + 1.0 because the
    * algoritm changes.
    * To compute the result for assert_regularized_gamma_is(s, x, result),
-   * compute the value of P(t<2*x) for the chi-squared law with 2*s degrees of
+   * compute the value of P(t<2*x) for the chi-squared distribution with 2*s degrees of
    * freedom. */
 
-  // Chi-squared law with degrees of freedom = 1
+  // Chi-squared distribution with degrees of freedom = 1
   // P(x<0.5)
   assert_regularized_gamma_is(0.5, 0.25, 0.5204998778130465186819719747290946543216705322265625);
   // P(x<0.9)
@@ -59,7 +59,7 @@ QUIZ_CASE(regularized_gamma) {
   assert_regularized_gamma_is(0.5, 4.13, 0.995947187204140771399352161097340285778045654296875);
 
 
-  // Chi-squared law with degrees of freedom = 2
+  // Chi-squared distribution with degrees of freedom = 2
   // P(x<0.5)
   assert_regularized_gamma_is(1.0, 0.25, 0.22119921692859512152296019849018193781375885009765625);
   // P(x<0.9)
@@ -90,7 +90,7 @@ QUIZ_CASE(regularized_gamma) {
   assert_regularized_gamma_is(1.0, 4.13, 0.983917121177411591048667105496861040592193603515625);
 
 
-  // Chi-squared law with degrees of freedom = 3
+  // Chi-squared distribution with degrees of freedom = 3
   // P(x<0.5)
   assert_regularized_gamma_is(1.5, 0.25, 0.081108588345324139634584525992977432906627655029296875);
   // P(x<0.9)

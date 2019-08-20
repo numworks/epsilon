@@ -41,17 +41,17 @@ double RightIntegralCalculation::parameterAtIndex(int index) {
 }
 
 void RightIntegralCalculation::compute(int indexKnownElement) {
-  if (m_law == nullptr) {
+  if (m_distribution == nullptr) {
     return;
   }
   if (indexKnownElement == 0) {
-    m_result = m_law->rightIntegralFromAbscissa(m_lowerBound);
+    m_result = m_distribution->rightIntegralFromAbscissa(m_lowerBound);
   } else {
-    double currentResult = m_law->rightIntegralFromAbscissa(m_lowerBound);
+    double currentResult = m_distribution->rightIntegralFromAbscissa(m_lowerBound);
     if (std::fabs(currentResult - m_result) < std::pow(10.0, - Constant::LargeNumberOfSignificantDigits)) {
       return;
     }
-    m_lowerBound = m_law->rightIntegralInverseForProbability(&m_result);
+    m_lowerBound = m_distribution->rightIntegralInverseForProbability(&m_result);
   }
 }
 

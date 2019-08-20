@@ -44,7 +44,8 @@ double StudentLaw::cumulativeDistributiveInverseForProbability(double * probabil
     return 0.0;
   }
   const double small = DBL_EPSILON;
-  const double big = m_parameter1 >= 1 ? 50.0 : 50 / m_parameter1;
+  const double standardBig = 10000.0;
+  const double big = m_parameter1 >= 1 ? standardBig : standardBig / m_parameter1;
   double xmin = *probability < 0.5 ? -big : small;
   double xmax = *probability < 0.5 ? -small : big;
   return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, xmin, xmax);

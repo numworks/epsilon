@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_CALCULATION_H
 #define PROBABILITE_CALCULATION_H
 
-#include "../law/law.h"
+#include "../distribution/distribution.h"
 
 namespace Probability {
 
@@ -13,10 +13,10 @@ public:
     RightIntegral,
     Discrete,
   };
-  Calculation() : m_law(nullptr) {}
+  Calculation() : m_distribution(nullptr) {}
   virtual ~Calculation() = default;
   virtual Type type() = 0;
-  void setLaw(Law * law);
+  void setDistribution(Distribution * distribution);
   virtual int numberOfParameters() = 0;
   virtual I18n::Message legendForParameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;
@@ -25,7 +25,7 @@ public:
   virtual double upperBound();
 protected:
   virtual void compute(int indexKnownElement) = 0;
-  Law * m_law;
+  Distribution * m_distribution;
 };
 
 }

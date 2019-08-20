@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
-#include "../law/erf_inv.h"
+#include "../distribution/erf_inv.h"
 
 QUIZ_CASE(erf_inv) {
   quiz_assert(erfInv(0.0) == 0.0);

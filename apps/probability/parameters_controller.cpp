@@ -67,14 +67,14 @@ void ParametersController::ContentView::layoutSubviews() {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, CalculationController * calculationController) :
+ParametersController::ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, CalculationController * calculationController) :
   FloatParameterController(parentResponder),
   m_contentView(this, &m_selectableTableView),
   m_menuListCell{},
-  m_law(law),
+  m_distribution(distribution),
   m_calculationController(calculationController)
 {
-  assert(m_law != nullptr);
+  assert(m_distribution != nullptr);
   m_okButton.setMessage(I18n::Message::Next);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_menuListCell[i].setParentResponder(&m_selectableTableView);
@@ -83,7 +83,7 @@ ParametersController::ParametersController(Responder * parentResponder, InputEve
 }
 
 const char * ParametersController::title() {
-  return I18n::translate(m_law->title());
+  return I18n::translate(m_distribution->title());
 }
 
 bool ParametersController::handleEvent(Ion::Events::Event event) {
@@ -103,16 +103,16 @@ void ParametersController::didBecomeFirstResponder() {
 }
 
 void ParametersController::viewWillAppear() {
-  m_contentView.setNumberOfParameters(m_law->numberOfParameter());
-  for (int i = 0; i < m_law->numberOfParameter(); i++) {
-    m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
+  m_contentView.setNumberOfParameters(m_distribution->numberOfParameter());
+  for (int i = 0; i < m_distribution->numberOfParameter(); i++) {
+    m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_distribution->parameterDefinitionAtIndex(i));
   }
   m_contentView.layoutSubviews();
   FloatParameterController::viewWillAppear();
 }
 
 int ParametersController::numberOfRows() {
-  return 1+m_law->numberOfParameter();
+  return 1+m_distribution->numberOfParameter();
 }
 
 void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -123,7 +123,7 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
-  myCell->setMessage(m_law->parameterNameAtIndex(index));
+  myCell->setMessage(m_distribution->parameterNameAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
@@ -134,19 +134,19 @@ HighlightCell * ParametersController::reusableParameterCell(int index, int type)
 }
 
 int ParametersController::reusableParameterCellCount(int type) {
-  return m_law->numberOfParameter();
+  return m_distribution->numberOfParameter();
 }
 
 double ParametersController::parameterAtIndex(int index) {
-  return m_law->parameterValueAtIndex(index);
+  return m_distribution->parameterValueAtIndex(index);
 }
 
 bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
-  if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
+  if (!m_distribution->authorizedValueAtIndex(f, parameterIndex)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_law->setParameterAtIndex(f, parameterIndex);
+  m_distribution->setParameterAtIndex(f, parameterIndex);
   m_calculationController->setCalculationAccordingToIndex(0, true);
   return true;
 }

@@ -2,8 +2,8 @@
 #define PROBABILITY_CALCULATION_CONTROLLER_H
 
 #include <escher.h>
-#include "law/law.h"
-#include "law_curve_view.h"
+#include "distribution/distribution.h"
+#include "distribution_curve_view.h"
 #include "calculation_cell.h"
 #include "responder_image_cell.h"
 #include "calculation/calculation.h"
@@ -13,7 +13,7 @@ namespace Probability {
 
 class CalculationController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
 public:
-  CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, Calculation * calculation);
+  CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation);
   /* Responder */
   void didEnterResponderChain(Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
@@ -41,7 +41,7 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 
-  void reloadLawCurveView();
+  void reloadDistributionCurveView();
   void reload();
   void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
 private:
@@ -50,9 +50,9 @@ private:
   void updateTitle();
   class ContentView : public View {
   public:
-    ContentView(SelectableTableView * selectableTableView, Law * law, Calculation * calculation);
-    LawCurveView * lawCurveView() {
-      return &m_lawCurveView;
+    ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation);
+    DistributionCurveView * distributionCurveView() {
+      return &m_distributionCurveView;
     }
   private:
     constexpr static KDCoordinate k_titleHeightMargin = 5;
@@ -61,14 +61,14 @@ private:
     void layoutSubviews() override;
     MessageTextView m_titleView;
     SelectableTableView * m_selectableTableView;
-    LawCurveView m_lawCurveView;
+    DistributionCurveView m_distributionCurveView;
   };
   ContentView m_contentView;
   SelectableTableView m_selectableTableView;
   ResponderImageCell m_imageCell;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   Calculation * m_calculation;
-  Law * m_law;
+  Distribution * m_distribution;
   constexpr static int k_titleBufferSize = 30;
   char m_titleBuffer[k_titleBufferSize];
 };

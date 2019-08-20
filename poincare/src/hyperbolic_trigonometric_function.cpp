@@ -17,18 +17,23 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
   }
 
   Expression thisExpression = *this;
-
-  // Step 1. Map on matrix child if possible
   Expression c = childAtIndex(0);
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+
+  // Step 0. Map on matrix child if possible
+  if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
   }
 
-  // Step 2. TODO EMILIE ?? Try finding an easy standard calculation reduction
+  // Step 1. Notable values
+  if (node()->isNotableValue(c)) {
+    Expression result = node()->imageOfNotableValue();
+    replaceWithInPlace(result);
+    return result;
+  }
 
-  // Step 3. Look for an expression of type "cosh(acosh(z))", return z
+  // Step 2. Look for an expression of type "cosh(acosh(z))", return z
   ExpressionNode::Type t = type();
-  ExpressionNode::Type childT = childAtIndex(0).type();
+  ExpressionNode::Type childT = c.type();
   {
     Expression result;
     if (t == ExpressionNode::Type::HyperbolicCosine) {
@@ -90,7 +95,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
     }
   }
 
-  // Step 4. Look for an expression of type "cosh(-x)", return "+/-cosh(x)"
+  // Step 3. Look for an expression of type "cosh(-x)", return "+/-cosh(x)"
   if (t != ExpressionNode::Type::HyperbolicArcCosine) {
     Expression positiveArg = childAtIndex(0).makePositiveAnyNegativeNumeralFactor(reductionContext);
     if (!positiveArg.isUninitialized()) {

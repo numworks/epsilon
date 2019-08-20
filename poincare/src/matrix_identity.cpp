@@ -55,14 +55,13 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
     return replaceWithUndefinedInPlace(); // TODO: are we sure?
   }
   Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();
+  if (dimension.isNegative()) {
+    return replaceWithUndefinedInPlace();
+  }
   if (Integer::NaturalOrder(dimension, Integer(Integer::k_maxExtractableInteger)) > 0) {
     return *this;
   }
-  int dim = dimension.extractedInt();
-  if (dim <= 0) {
-    return replaceWithUndefinedInPlace();
-  }
-  Expression result = Matrix::CreateIdentity(dim);
+  Expression result = Matrix::CreateIdentity(dimension.extractedInt());
   replaceWithInPlace(result);
   return result;
 }

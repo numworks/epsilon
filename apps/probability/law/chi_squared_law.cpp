@@ -76,7 +76,7 @@ double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * proba
   const double kOver2Minus1 = k/2.0 - 1.0;
   double xmax = m_parameter1 > 2.0 ?
     2 * *probability * std::exp(std::lgamma(ceilKOver2)) / (exp(-kOver2Minus1) * std::pow(kOver2Minus1, kOver2Minus1)) :
-    std::exp(2/k * std::log(k * std::pow(2.0, kOver2Minus1) * *probability * std::exp(std::lgamma(k/2))));
+    30.0; // Ad hoc value
   return cumulativeDistributiveInverseForProbabilityUsingBrentRoots(probability, DBL_EPSILON, maxDouble(xMax(), xmax));
 }
 

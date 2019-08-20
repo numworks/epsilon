@@ -47,39 +47,24 @@ Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionCont
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
   }
-  if (c.type() == ExpressionNode::Type::Constant) {
-    Constant s = static_cast<Constant&>(c);
-    Expression result;
-    if (s.isPi()) {
-      result = Rational::Builder(4);
-    }
-    if (s.isExponential()) {
-      result = Rational::Builder(3);
-    }
-    if (!result.isUninitialized()) {
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = c.convert<Rational>();
+    IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+    assert(!div.remainder.isOverflow());
+    if (div.remainder.isZero()) {
+      Expression result = Rational::Builder(div.quotient);
       replaceWithInPlace(result);
       return result;
     }
-    return *this;
+    Integer result = Integer::Addition(div.quotient, Integer(1));
+    if (result.isOverflow()) {
+      return *this;
+    }
+    Expression rationalResult = Rational::Builder(result);
+    replaceWithInPlace(rationalResult);
+    return rationalResult;
   }
-  if (c.type() != ExpressionNode::Type::Rational) {
-    return *this;
-  }
-  Rational r = c.convert<Rational>();
-  IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.remainder.isOverflow());
-  if (div.remainder.isZero()) {
-    Expression result = Rational::Builder(div.quotient);
-    replaceWithInPlace(result);
-    return result;
-  }
-  Integer result = Integer::Addition(div.quotient, Integer(1));
-  if (result.isOverflow()) {
-    return *this;
-  }
-  Expression rationalResult = Rational::Builder(result);
-  replaceWithInPlace(rationalResult);
-  return rationalResult;
+  return shallowReduceUsingApproximation(reductionContext);
 }
 
 }

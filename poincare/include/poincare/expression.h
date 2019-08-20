@@ -345,12 +345,18 @@ private:
   void shallowAddMissingParenthesis();
 
   /* Simplification */
+  /* The largest integer such that all smaller integers can be stored without
+   * any precision loss in IEEE754 double representation is 2E53 as the
+   * mantissa is stored on 53 bits (2E308 can be stored exactly in IEEE754
+   * representation but some smaller integers can't - like 2E308-1). */
+  static constexpr double k_largestExactIEEE754Integer = 9007199254740992.0;
   Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
     return node()->deepReduceChildren(reductionContext);
   }
   void defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowReduce();
+  Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
 
   /* Approximation */

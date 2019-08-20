@@ -80,6 +80,7 @@ private:
 
 class Decimal final : public Number {
 friend class Number;
+friend class Expression;
 friend class DecimalNode;
 template<typename T>
 friend class ComplexNode;

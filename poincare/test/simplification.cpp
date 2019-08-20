@@ -348,6 +348,9 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
+  assert_parsed_expression_simplify_to("ceil(2π)", "7");
+  assert_parsed_expression_simplify_to("ceil(123456789012345678901234567892/3)", "41152263004115226300411522631");
+  assert_parsed_expression_simplify_to("ceil(123456789*π)", "387850942");
   assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
   assert_parsed_expression_simplify_to("quo(19,3)", "6");
   assert_parsed_expression_simplify_to("quo(19,0)", Infinity::Name());
@@ -361,6 +364,9 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("factor(10007)", "10007");
   assert_parsed_expression_simplify_to("factor(10007^2)", Undefined::Name());
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
+  assert_parsed_expression_simplify_to("floor(2π)", "6");
+  assert_parsed_expression_simplify_to("floor(123456789012345678901234567892/3)", "41152263004115226300411522630");
+  assert_parsed_expression_simplify_to("floor(123456789*π)", "387850941");
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
@@ -684,7 +690,7 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("factor([[0,180]])", Undefined::Name());
   assert_parsed_expression_simplify_to("[[1,3]]!", "[[1,6]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]!", "[[1,2][6,24]]");
-  assert_parsed_expression_simplify_to("floor([[1/√(2),1/2][1,-1.3]])", "[[floor(√(2)/2),0][1,-2]]");
+  assert_parsed_expression_simplify_to("floor([[1/√(2),1/2][1,-1.3]])", "[[0,0][1,-2]]");
   assert_parsed_expression_simplify_to("floor([[0.3,180]])", "[[0,180]]");
   assert_parsed_expression_simplify_to("frac([[1/√(2),1/2][1,-1.3]])", "[[frac(√(2)/2),1/2][0,7/10]]");
   assert_parsed_expression_simplify_to("frac([[0.3,180]])", "[[3/10,0]]");

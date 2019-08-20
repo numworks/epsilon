@@ -10,8 +10,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr char Function::k_parenthesedArgument[];
-
 bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
   assert(baseName[0] != 0);
 
@@ -64,14 +62,14 @@ void Function::setActive(bool active) {
 
 int Function::nameWithArgument(char * buffer, size_t bufferSize) {
   const char * functionName = fullName();
-  size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
-  assert(baseNameLength <= bufferSize);
-  size_t result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
-  int bufferRemainingSize = bufferSize - (baseNameLength+1);
-  if (bufferRemainingSize > 0) {
-    assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) == 1);
-    UTF8Decoder::CodePointToChars(symbol(), buffer+baseNameLength+1, bufferRemainingSize);
-  }
+  size_t result = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize);
+  assert(result <= bufferSize);
+  buffer[result++] = '(';
+  assert(result <= bufferSize);
+  assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
+  result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
+  assert(result <= bufferSize);
+  result += strlcpy(buffer+result, ")", bufferSize-result);
   return result;
 }
 

@@ -124,6 +124,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
           ExpressionNode::Type t = e.type();
           return (t == ExpressionNode::Type::Random)
             || (t == ExpressionNode::Type::Round)
+            || (t == ExpressionNode::Type::FracPart)
             || (t == ExpressionNode::Type::ConfidenceInterval)
             || (t == ExpressionNode::Type::PredictionInterval);
         },

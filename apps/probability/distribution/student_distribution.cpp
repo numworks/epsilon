@@ -14,12 +14,12 @@ float StudentDistribution::xMax() const {
 }
 
 float StudentDistribution::yMax() const {
-  return coefficient() * (1.0f + k_displayTopMarginRatio);
+  return std::exp(lnCoefficient()) * (1.0f + k_displayTopMarginRatio);
 }
 
 float StudentDistribution::evaluateAtAbscissa(float x) const {
   const float d = m_parameter1;
-  return coefficient() * std::pow(1+std::pow(x,2)/d, -(d+1)/2);
+  return std::exp(lnCoefficient() - (d + 1.0f) / 2.0f * std::log(1.0f + x * x / d));
 }
 
 bool StudentDistribution::authorizedValueAtIndex(float x, int index) const {
@@ -27,7 +27,7 @@ bool StudentDistribution::authorizedValueAtIndex(float x, int index) const {
 }
 
 double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  if (x == 0) {
+  if (x == 0.0) {
     return 0.5;
   }
   /* TODO There are some computation errors, where the probability falsly jumps to 1.
@@ -51,10 +51,9 @@ double StudentDistribution::cumulativeDistributiveInverseForProbability(double *
   return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, xmin, xmax);
 }
 
-float StudentDistribution::coefficient() const {
+float StudentDistribution::lnCoefficient() const {
   const float k = m_parameter1;
-  const float lnOfResult = std::lgamma((k+1)/2) - std::lgamma(k/2) - (M_PI+k)/2;
-  return std::exp(lnOfResult);
+  return std::lgamma((k+1.0f)/2.0f) - std::lgamma(k/2.0f) - (M_PI+k)/2.0f;
 }
 
 }

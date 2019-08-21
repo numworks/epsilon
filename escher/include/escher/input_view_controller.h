@@ -17,6 +17,7 @@ class InputViewController : public ModalViewController, InputEventHandlerDelegat
 public:
   InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
   void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
+  bool isEditing();
   const char * textBody();
   void abortEditionAndDismiss();
 

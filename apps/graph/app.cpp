@@ -73,6 +73,11 @@ InputViewController * App::inputViewController() {
 }
 
 CodePoint App::XNT() {
+  if (m_inputViewController.isEditing()) {
+    int selectedFunctionIndex = m_listController.selectedRow();
+    Ion::Storage::Record record = functionStore()->recordAtIndex(selectedFunctionIndex);
+    return functionStore()->modelForRecord(record)->symbol();
+  }
   return 'x';
 }
 

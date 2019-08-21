@@ -181,7 +181,7 @@ Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precisi
   double currentAbscissa = min;
   double eval = evaluation(currentAbscissa, context, complexFormat, angleUnit, context1, context2, context3);
   if (eval >= 0) {
-    if (eval <= precision) {
+    if (eval <= DBL_EPSILON) {
       // The value on the left bracket is 0, return it.
       return Coordinate2D(currentAbscissa, eval);
     }
@@ -191,15 +191,15 @@ Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precisi
   while (max - min > precision) {
     currentAbscissa = (min + max) / 2.0;
     eval = evaluation(currentAbscissa, context, complexFormat, angleUnit, context1, context2, context3);
-    if (eval > precision) {
+    if (eval > DBL_EPSILON) {
       max = currentAbscissa;
-    } else if (eval < -precision) {
+    } else if (eval < -DBL_EPSILON) {
       min = currentAbscissa;
     } else {
       return Coordinate2D(currentAbscissa, eval);
     }
   }
-  return Coordinate2D(currentAbscissa, NAN);
+  return Coordinate2D(currentAbscissa, std::fabs(eval) < precision ? eval : NAN);
 }
 
 }

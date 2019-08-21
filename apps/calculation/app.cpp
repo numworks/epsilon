@@ -69,8 +69,4 @@ bool App::isAcceptableExpression(const Poincare::Expression expression) {
   return TextFieldDelegateApp::isAcceptableExpression(expression);
 }
 
-char App::XNT() {
-  return 'x';
-}
-
 }

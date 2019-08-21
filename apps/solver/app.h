@@ -36,7 +36,6 @@ public:
   ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   ViewController * intervalController() { return &m_intervalController; }
   void willBecomeInactive() override;
-  char XNT() override;
 private:
   App(Snapshot * snapshot);
   SolutionsController m_solutionsController;

@@ -35,7 +35,6 @@ public:
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;
   bool storeExpressionAllowed() const override { return true; }
-  char XNT() override;
 private:
   App(Snapshot * snapshot);
   HistoryController m_historyController;

@@ -1009,3 +1009,53 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("(((√(6)-√(2))/4)/((√(6)+√(2))/4))+1", "-√(3)+3");
   assert_parsed_expression_simplify_to("1/√(𝐢) × (√(2)-𝐢×√(2))", "-2×𝐢"); // TODO: get rid of complex at denominator?
 }
+
+QUIZ_CASE(poincare_hyperbolic_trigonometry) {
+  // acosh(cosh)
+  assert_parsed_expression_simplify_to("acosh(cosh(3))", "3");
+  assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("acosh(cosh(-3))", "3");
+  assert_parsed_expression_simplify_to("acosh(cosh(3))", "3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2", User, Radian, Real);
+  assert_parsed_expression_simplify_to("acosh(cosh(-3))", "3", User, Radian, Real);
+
+  // cosh(acosh)
+  assert_parsed_expression_simplify_to("cosh(acosh(3))", "3");
+  assert_parsed_expression_simplify_to("cosh(acosh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("cosh(acosh(-3))", "-3");
+  assert_parsed_expression_simplify_to("cosh(acosh(3))", "3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("cosh(acosh(0.5))", "cosh(acosh(1/2))", User, Radian, Real);
+  assert_parsed_expression_simplify_to("cosh(acosh(-3))", "cosh(acosh(-3))", User, Radian, Real);
+
+  // sinh(asinh)
+  assert_parsed_expression_simplify_to("sinh(asinh(3))", "3");
+  assert_parsed_expression_simplify_to("sinh(asinh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("sinh(asinh(-3))", "-3");
+  assert_parsed_expression_simplify_to("sinh(asinh(3))", "3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("sinh(asinh(0.5))", "1/2", User, Radian, Real);
+  assert_parsed_expression_simplify_to("sinh(asinh(-3))", "-3", User, Radian, Real);
+
+  // asinh(sinh)
+  assert_parsed_expression_simplify_to("asinh(sinh(3))", "3");
+  assert_parsed_expression_simplify_to("asinh(sinh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("asinh(sinh(-3))", "-3");
+  assert_parsed_expression_simplify_to("asinh(sinh(3))", "3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("asinh(sinh(0.5))", "1/2", User, Radian, Real);
+  assert_parsed_expression_simplify_to("asinh(sinh(-3))", "-3", User, Radian, Real);
+
+  // tanh(atanh)
+  assert_parsed_expression_simplify_to("tanh(atanh(3))", "3");
+  assert_parsed_expression_simplify_to("tanh(atanh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("tanh(atanh(-3))", "-3");
+  assert_parsed_expression_simplify_to("tanh(atanh(3))", "tanh(atanh(3))", User, Radian, Real);
+  assert_parsed_expression_simplify_to("tanh(atanh(0.5))", "1/2", User, Radian, Real);
+  assert_parsed_expression_simplify_to("tanh(atanh(-3))", "-tanh(atanh(3))", User, Radian, Real);
+
+  // atanh(tanh)
+  assert_parsed_expression_simplify_to("atanh(tanh(3))", "3");
+  assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3");
+  assert_parsed_expression_simplify_to("atanh(tanh(3))", "3", User, Radian, Real);
+  assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2", User, Radian, Real);
+  assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3", User, Radian, Real);
+}

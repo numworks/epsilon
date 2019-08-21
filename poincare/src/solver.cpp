@@ -186,7 +186,7 @@ Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precisi
       return Coordinate2D(currentAbscissa, eval);
     }
     // The minimal value is already bigger than 0, return NAN.
-    return Coordinate2D(currentAbscissa, NAN);
+    return Coordinate2D(NAN, NAN);
   }
   while (max - min > precision) {
     currentAbscissa = (min + max) / 2.0;
@@ -196,10 +196,13 @@ Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precisi
     } else if (eval < -DBL_EPSILON) {
       min = currentAbscissa;
     } else {
-      return Coordinate2D(currentAbscissa, eval);
+      break;
     }
   }
-  return Coordinate2D(currentAbscissa, std::fabs(eval) < precision ? eval : NAN);
+  if (std::fabs(eval) < precision) {
+    return Coordinate2D(currentAbscissa, eval);
+  }
+  return Coordinate2D(NAN, NAN);
 }
 
 }

@@ -81,8 +81,4 @@ SequenceContext * App::localContext() {
   return &m_sequenceContext;
 }
 
-char App::XNT() {
-  return 'n';
-}
-
 }

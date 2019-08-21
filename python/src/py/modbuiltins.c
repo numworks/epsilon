@@ -178,7 +178,7 @@ STATIC mp_obj_t mp_builtin_dir(size_t n_args, const mp_obj_t *args) {
         // Make a list of names in the local namespace
         mp_obj_dict_t *dict = mp_locals_get();
         for (size_t i = 0; i < dict->map.alloc; i++) {
-            if (MP_MAP_SLOT_IS_FILLED(&dict->map, i)) {
+            if (mp_map_slot_is_filled(&dict->map, i)) {
                 mp_obj_list_append(dir, dict->map.table[i].key);
             }
         }
@@ -217,7 +217,12 @@ STATIC mp_obj_t mp_builtin_hash(mp_obj_t o_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_hash_obj, mp_builtin_hash);
 
 STATIC mp_obj_t mp_builtin_hex(mp_obj_t o_in) {
+    #if MICROPY_PY_BUILTINS_STR_OP_MODULO
     return mp_binary_op(MP_BINARY_OP_MODULO, MP_OBJ_NEW_QSTR(MP_QSTR__percent__hash_x), o_in);
+    #else
+    mp_obj_t args[] = { MP_OBJ_NEW_QSTR(MP_QSTR__brace_open__colon__hash_x_brace_close_), o_in };
+    return mp_obj_str_format(MP_ARRAY_SIZE(args), args, NULL);
+    #endif
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_hex_obj, mp_builtin_hex);
 
@@ -311,6 +316,22 @@ MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_min_obj, 1, mp_builtin_min);
 
 #endif
 
+#if MICROPY_PY_BUILTINS_NEXT2
+STATIC mp_obj_t mp_builtin_next(size_t n_args, const mp_obj_t *args) {
+    if (n_args == 1) {
+        mp_obj_t ret = mp_iternext_allow_raise(args[0]);
+        if (ret == MP_OBJ_STOP_ITERATION) {
+            nlr_raise(mp_obj_new_exception(&mp_type_StopIteration));
+        } else {
+            return ret;
+        }
+    } else {
+        mp_obj_t ret = mp_iternext(args[0]);
+        return ret == MP_OBJ_STOP_ITERATION ? args[1] : ret;
+    }
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_next_obj, 1, 2, mp_builtin_next);
+#else
 STATIC mp_obj_t mp_builtin_next(mp_obj_t o) {
     mp_obj_t ret = mp_iternext_allow_raise(o);
     if (ret == MP_OBJ_STOP_ITERATION) {
@@ -320,9 +341,15 @@ STATIC mp_obj_t mp_builtin_next(mp_obj_t o) {
     }
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_next_obj, mp_builtin_next);
+#endif
 
 STATIC mp_obj_t mp_builtin_oct(mp_obj_t o_in) {
+    #if MICROPY_PY_BUILTINS_STR_OP_MODULO
     return mp_binary_op(MP_BINARY_OP_MODULO, MP_OBJ_NEW_QSTR(MP_QSTR__percent__hash_o), o_in);
+    #else
+    mp_obj_t args[] = { MP_OBJ_NEW_QSTR(MP_QSTR__brace_open__colon__hash_o_brace_close_), o_in };
+    return mp_obj_str_format(MP_ARRAY_SIZE(args), args, NULL);
+    #endif
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_oct_obj, mp_builtin_oct);
 
@@ -330,7 +357,7 @@ STATIC mp_obj_t mp_builtin_ord(mp_obj_t o_in) {
     size_t len;
     const byte *str = (const byte*)mp_obj_str_get_data(o_in, &len);
     #if MICROPY_PY_BUILTINS_STR_UNICODE
-    if (MP_OBJ_IS_STR(o_in)) {
+    if (mp_obj_is_str(o_in)) {
         len = utf8_charlen(str, len);
         if (len == 1) {
             return mp_obj_new_int(utf8_get_char(str));
@@ -386,7 +413,7 @@ STATIC mp_obj_t mp_builtin_print(size_t n_args, const mp_obj_t *pos_args, mp_map
     mp_arg_parse_all(0, NULL, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, u.args);
 
     #if MICROPY_PY_IO && MICROPY_PY_SYS_STDFILES
-    // TODO file may not be a concrete object (eg it could be a small-int)
+    mp_get_stream_raise(u.args[ARG_file].u_obj, MP_STREAM_OP_WRITE);
     mp_print_t print = {MP_OBJ_TO_PTR(u.args[ARG_file].u_obj), mp_stream_write_adaptor};
     #endif
 
@@ -444,8 +471,37 @@ MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_repr_obj, mp_builtin_repr);
 
 STATIC mp_obj_t mp_builtin_round(size_t n_args, const mp_obj_t *args) {
     mp_obj_t o_in = args[0];
-    if (MP_OBJ_IS_INT(o_in)) {
-        return o_in;
+    if (mp_obj_is_int(o_in)) {
+        if (n_args <= 1) {
+            return o_in;
+        }
+
+        #if !MICROPY_PY_BUILTINS_ROUND_INT
+        mp_raise_NotImplementedError(NULL);
+        #else
+        mp_int_t num_dig = mp_obj_get_int(args[1]);
+        if (num_dig >= 0) {
+            return o_in;
+        }
+
+        mp_obj_t mult = mp_binary_op(MP_BINARY_OP_POWER, MP_OBJ_NEW_SMALL_INT(10), MP_OBJ_NEW_SMALL_INT(-num_dig));
+        mp_obj_t half_mult =  mp_binary_op(MP_BINARY_OP_FLOOR_DIVIDE, mult, MP_OBJ_NEW_SMALL_INT(2));
+        mp_obj_t modulo = mp_binary_op(MP_BINARY_OP_MODULO, o_in, mult);
+        mp_obj_t rounded = mp_binary_op(MP_BINARY_OP_SUBTRACT, o_in, modulo);
+        if (mp_obj_is_true(mp_binary_op(MP_BINARY_OP_MORE, half_mult, modulo))) {
+            return rounded;
+        } else if (mp_obj_is_true(mp_binary_op(MP_BINARY_OP_MORE, modulo, half_mult))) {
+            return mp_binary_op(MP_BINARY_OP_ADD, rounded, mult);
+        } else {
+            // round to even number
+            mp_obj_t floor = mp_binary_op(MP_BINARY_OP_FLOOR_DIVIDE, o_in, mult);
+            if (mp_obj_is_true(mp_binary_op(MP_BINARY_OP_AND, floor, MP_OBJ_NEW_SMALL_INT(1)))) {
+                return mp_binary_op(MP_BINARY_OP_ADD, rounded, mult);
+            } else {
+                return rounded;
+            }
+        }
+        #endif
     }
 #if MICROPY_PY_BUILTINS_FLOAT
     mp_float_t val = mp_obj_get_float(o_in);

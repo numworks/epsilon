@@ -31,7 +31,7 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
-  float coefficient() const;
+  float lnCoefficient() const;
 };
 
 }

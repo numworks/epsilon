@@ -200,7 +200,6 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_urandom_uniform_obj, mod_urandom_uniform);
 
 #endif // MICROPY_PY_URANDOM_EXTRA_FUNCS
 
-
 #ifdef MICROPY_PY_URANDOM_SEED_INIT_FUNC
 STATIC mp_obj_t mod_urandom___init__() {
     mod_urandom_seed(MP_OBJ_NEW_SMALL_INT(MICROPY_PY_URANDOM_SEED_INIT_FUNC));

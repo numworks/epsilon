@@ -39,6 +39,10 @@ void InputViewController::edit(Responder * caller, Ion::Events::Event event, voi
   m_expressionFieldController.expressionField()->handleEvent(event);
 }
 
+bool InputViewController::isEditing() {
+  return m_expressionFieldController.expressionField()->isEditing();
+}
+
 void InputViewController::abortEditionAndDismiss() {
   m_expressionFieldController.expressionField()->setEditing(false);
   dismissModalViewController();

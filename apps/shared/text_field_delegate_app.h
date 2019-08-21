@@ -14,7 +14,7 @@ class TextFieldDelegateApp : public InputEventHandlerDelegateApp, public TextFie
 public:
   virtual ~TextFieldDelegateApp() = default;
   virtual Poincare::Context * localContext();
-  virtual char XNT();
+  virtual CodePoint XNT() { return 'x'; }
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool isAcceptableText(const char * text);

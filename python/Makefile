@@ -3,8 +3,8 @@ SFLAGS += -Ipython/port
 SFLAGS += -I$(BUILD_DIR)/python/port
 
 # How to maintain this Makefile
-# - Copy PY_CORE_O_BASENAME from py.mk into py_objs
-# - Copy select PY_EXTMOD_O_BASENAME from py.mk into extmod_objs
+# - Copy PY_CORE_O_BASENAME from py.mk into py_src
+# - Copy select PY_EXTMOD_O_BASENAME from py.mk into extmod_src
 # - Edit special-case workarounds below as needed
 
 py_src = $(addprefix python/src/py/,\

@@ -52,6 +52,9 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
       return;
     }
     m_lowerBound = m_distribution->rightIntegralInverseForProbability(&m_result);
+    if (std::isnan(m_lowerBound)) {
+      m_result = NAN;
+    }
   }
 }
 

@@ -23,7 +23,7 @@ float StudentDistribution::evaluateAtAbscissa(float x) const {
 }
 
 bool StudentDistribution::authorizedValueAtIndex(float x, int index) const {
-  return x >= FLT_EPSILON;
+  return x >= FLT_EPSILON && x <= 200.0; // We cannot draw the curve for x > 200 (coefficient() is too small)
 }
 
 double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {

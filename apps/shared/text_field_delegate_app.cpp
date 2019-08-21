@@ -14,10 +14,6 @@ Context * TextFieldDelegateApp::localContext() {
   return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
-char TextFieldDelegateApp::XNT() {
-  return 'x';
-}
-
 bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return isFinishingEvent(event);
 }

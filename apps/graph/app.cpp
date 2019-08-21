@@ -72,7 +72,7 @@ InputViewController * App::inputViewController() {
   return &m_inputViewController;
 }
 
-char App::XNT() {
+CodePoint App::XNT() {
   return 'x';
 }
 

@@ -34,7 +34,7 @@ public:
     return static_cast<App *>(Container::activeApp());
   }
   InputViewController * inputViewController() override;
-  char XNT() override;
+  CodePoint XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
 private:

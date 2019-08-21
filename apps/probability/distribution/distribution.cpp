@@ -129,10 +129,10 @@ double Distribution::evaluateAtDiscreteAbscissa(int k) const {
 
 double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double * probability, double ax, double bx) {
   assert(ax < bx);
-  if (*probability >= 1) {
+  if (*probability >= 1.0) {
     return INFINITY;
   }
-  if (*probability <= 0) {
+  if (*probability <= 0.0) {
     return -INFINITY;
   }
   Poincare::Coordinate2D result = Poincare::Solver::IncreasingFunctionRoot(

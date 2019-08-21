@@ -150,7 +150,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
       this,
       probability,
       nullptr);
-  assert(std::isnan(result.value()) || std::fabs(result.value()) < FLT_EPSILON*100); // TODO FLT_EPSILON is too strict
+  assert(std::isnan(result.value()) || std::fabs(result.value()) < FLT_EPSILON);
   return result.abscissa();
 }
 

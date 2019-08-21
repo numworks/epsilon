@@ -138,7 +138,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
   Poincare::Coordinate2D result = Poincare::Solver::IncreasingFunctionRoot(
       ax,
       bx,
-      DBL_EPSILON,
+      FLT_EPSILON,
       [](double x, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
         const Distribution * distribution = reinterpret_cast<const Distribution *>(context1);
         const double * proba = reinterpret_cast<const double *>(context2);

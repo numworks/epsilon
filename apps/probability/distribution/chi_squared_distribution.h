@@ -30,8 +30,6 @@ public:
   bool authorizedValueAtIndex(float x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
-private:
-  float coefficient() const;
 };
 
 }

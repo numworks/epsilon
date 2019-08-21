@@ -39,7 +39,7 @@ public:
   InputViewController * inputViewController() override;
   // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
-  char XNT() override;
+  CodePoint XNT() override { return 'n'; }
   SequenceContext * localContext() override;
   SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::FunctionApp::functionStore()); }
 private:

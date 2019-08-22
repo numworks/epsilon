@@ -142,6 +142,10 @@ void CalculationStore::deleteAll() {
 }
 
 void CalculationStore::tidy() {
+  if (m_slidedBuffer) {
+    deleteAll();
+    return;
+  }
   resetMemoizedModelsAfterCalculationIndex(-1);
   for (Calculation * c : *this) {
     c->tidy();

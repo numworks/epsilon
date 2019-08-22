@@ -316,6 +316,7 @@ template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>
 template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(TreeHandle*, size_t);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(TreeHandle*, size_t);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(TreeHandle*, size_t);
+template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(TreeHandle*, size_t);
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(TreeHandle*, size_t);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(TreeHandle*, size_t);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(TreeHandle*, size_t);

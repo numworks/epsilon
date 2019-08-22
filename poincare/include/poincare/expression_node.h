@@ -72,6 +72,7 @@ public:
     Logarithm,
     MatrixTrace,
     NaperianLogarithm,
+    NormCDF,
     NthRoot,
     Opposite,
     Parenthesis,

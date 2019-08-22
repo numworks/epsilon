@@ -394,6 +394,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // On R
   assert_expression_approximates_to<double>("cos(2)", "-4.1614683654714ᴇ-1", Radian);
   assert_expression_approximates_to<double>("cos(2)", "0.9993908270191", Degree);
+  assert_expression_approximates_to<double>("cos(2)", "9.9950656036573ᴇ-1", Gradian);
   // Oscillator
   assert_expression_approximates_to<float>("cos(π/2)", "0", Radian);
   assert_expression_approximates_to<double>("cos(3×π/2)", "0", Radian);
@@ -415,6 +416,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // On R
   assert_expression_approximates_to<double>("sin(2)", "9.0929742682568ᴇ-1", Radian);
   assert_expression_approximates_to<double>("sin(2)", "3.4899496702501ᴇ-2", Degree);
+  assert_expression_approximates_to<double>("sin(2)", "3.1410759078128ᴇ-2", Gradian);
   // Oscillator
   assert_expression_approximates_to<float>("sin(π/2)", "1", Radian);
   assert_expression_approximates_to<double>("sin(3×π/2)", "-1", Radian);
@@ -437,6 +439,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // On R
   assert_expression_approximates_to<double>("tan(2)", "-2.1850398632615", Radian);
   assert_expression_approximates_to<double>("tan(2)", "3.4920769491748ᴇ-2", Degree);
+  assert_expression_approximates_to<double>("tan(2)", "3.1426266043351ᴇ-2", Gradian);
   // Tangent-style
   assert_expression_approximates_to<float>("tan(π/2)", Undefined::Name(), Radian);
   assert_expression_approximates_to<double>("tan(3×π/2)", Undefined::Name(), Radian);
@@ -461,6 +464,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("acos(0.5)", "1.0471975511966", Radian);
   assert_expression_approximates_to<double>("acos(0.03)", "1.5407918249714", Radian);
   assert_expression_approximates_to<double>("acos(0.5)", "60", Degree);
+  assert_expression_approximates_to<double>("acos(0.5)", "66.666666666667", Gradian);
   // On [1, inf[
   assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×𝐢", Radian);
   assert_expression_approximates_to<double>("acos(2)", "75.456129290217×𝐢", Degree);
@@ -483,6 +487,9 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("acos(0)", "90", Degree);
   assert_expression_approximates_to<float>("acos(-1)", "180", Degree);
   assert_expression_approximates_to<double>("acos(1)", "0", Degree);
+  assert_expression_approximates_to<double>("acos(0)", "100", Gradian);
+  assert_expression_approximates_to<float>("acos(-1)", "200", Gradian)
+  assert_expression_approximates_to<double>("acos(1)", "0", Gradian);
 
   /* asin: [-1,1]    -> R
    *       ]-inf,-1[ -> -π/2+R×i (odd)

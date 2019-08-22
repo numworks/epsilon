@@ -29,12 +29,12 @@ public:
 private:
   StackViewController * stackController() const;
 #ifdef EPSILON_BOOT_PROMPT
-  constexpr static int k_totalNumberOfCell = 9;
+  constexpr static int k_totalNumberOfCell = 10;
   MessageTableCellWithSwitch m_popUpCell;
 #else
-  constexpr static int k_totalNumberOfCell = 8;
+  constexpr static int k_totalNumberOfCell = 9;
 #endif
-  constexpr static int k_numberOfSimpleChevronCells = 7;
+  constexpr static int k_numberOfSimpleChevronCells = 8;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   SelectableTableView m_selectableTableView;

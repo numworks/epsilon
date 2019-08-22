@@ -15,7 +15,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
 protected:
-  constexpr static int k_totalNumberOfCell = 3;
+  constexpr static int k_totalNumberOfCell = 4;
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   Poincare::Layout layoutForPreferences(I18n::Message message);

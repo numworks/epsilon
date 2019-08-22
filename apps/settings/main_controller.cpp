@@ -12,12 +12,13 @@ const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Me
 const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
+const SettingsMessageTree ledColorChildren[4] = {SettingsMessageTree(I18n::Message::ColorWhite), SettingsMessageTree(I18n::Message::ColorGreen), SettingsMessageTree(I18n::Message::ColorBlue), SettingsMessageTree(I18n::Message::ColorYellow)};
 const SettingsMessageTree aboutChildren[4] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree menu[9] =
+const SettingsMessageTree menu[10] =
 #else
-const SettingsMessageTree menu[8] =
+const SettingsMessageTree menu[9] =
 #endif
   {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
     SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
@@ -26,6 +27,7 @@ const SettingsMessageTree menu[8] =
     SettingsMessageTree(I18n::Message::Brightness),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
+    SettingsMessageTree(I18n::Message::LEDColor, ledColorChildren, 4),
 #if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
   SettingsMessageTree(I18n::Message::BetaPopUp),
 #elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
@@ -33,9 +35,9 @@ const SettingsMessageTree menu[8] =
 #endif
   SettingsMessageTree(I18n::Message::About, aboutChildren, 4)};
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 10);
 #else
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
 #endif
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
@@ -116,9 +118,9 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         subController = &m_examModeController;
         break;
 #ifdef EPSILON_BOOT_PROMPT
-      case 8:
+      case 9:
 #else
-      case 7:
+      case 8:
 #endif
         subController = &m_aboutController;
         break;
@@ -177,7 +179,7 @@ int MainController::typeAtLocation(int i, int j) {
     return 1;
   }
 #ifdef EPSILON_BOOT_PROMPT
-  if (j == 7) {
+  if (j == 8) {
     return 2;
   }
 #endif
@@ -201,7 +203,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
 #ifdef EPSILON_BOOT_PROMPT
-  if (index == 7) {
+  if (index == 8) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -222,6 +224,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       break;
     case 3:
       childIndex = (int)preferences->complexFormat();
+      break;
+    case 7:
+      childIndex = (int)preferences->colorOfLED();
       break;
   }
   I18n::Message message = childIndex >= 0 ? m_messageTreeModel->children(index)->children(childIndex)->label() : I18n::Message::Default;

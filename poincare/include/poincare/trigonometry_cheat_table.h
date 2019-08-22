@@ -23,8 +23,8 @@ public:
   constexpr static int k_numberOfEntries = 37;
   enum class Type {
     AngleInDegrees = 0,
-    AngleInGradians = 1,
-    AngleInRadians = 2,
+    AngleInRadians = 1,
+    AngleInGradians = 2,
     Cosine = 3,
     Sine = 4,
     Tangent = 5

@@ -1,0 +1,117 @@
+<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 948.5 361">
+    <style>
+        .st0{fill:gray}.st1{fill:#f2f2f2}.st2{fill:#ccc}.st3{fill:none}.st4{font-family:&apos;SourceSansPro-Light&apos;}.st5{font-size:21px}.st6{font-family:&apos;SourceSansPro-Regular&apos;}.st7{font-size:20px}.st8{fill:#fff}.st9{font-family:&apos;SourceCodePro-Medium&apos;}.st10{font-size:18px}.st11{font-family:&apos;Apple-Chancery&apos;}.st12{fill:none;stroke:#ffb734;stroke-miterlimit:10}.st13{fill:#ffb734}.st14{fill:none;stroke:#ffb734;stroke-linecap:round;stroke-linejoin:round}.st15{fill:none;stroke:gray;stroke-width:3;stroke-miterlimit:10}
+    </style>
+    <path class="st0" d="M0 0h392.5v32.5H0z"/>
+    <path class="st1" d="M106 68.8h95V133h-95z"/>
+    <path class="st2" d="M106 68.8h95v31.7h-95z"/>
+    <path class="st3" d="M106 77h95v15.4h-95z"/>
+    <text transform="translate(117.265 92.062)" class="st4 st5">
+        Addition
+    </text>
+    <path class="st1" d="M206 180.8h95V245h-95z"/>
+    <path class="st2" d="M206 180.8h95v31.7h-95z"/>
+    <path class="st3" d="M183 189h142v15.4H183z"/>
+    <text transform="translate(217.765 204.062)" class="st4 st5">
+        Addition
+    </text>
+    <path class="st1" d="M0 180.8h90V246H0z"/>
+    <path class="st3" d="M0 223.2h90v23.3H0z"/>
+    <text transform="translate(40.03 237.395)" class="st6 st7">
+        1
+    </text>
+    <path class="st2" d="M0 180.8h90v31.7H0z"/>
+    <path class="st3" d="M2 190h88v19H2z"/>
+    <text transform="translate(10.269 205.061)" class="st4 st5">
+        Rational
+    </text>
+    <path class="st3" d="M0 10h392v19H0z"/>
+    <text transform="translate(147.4 22.725)" class="st8 st9 st10">
+        1 + (π+x)
+    </text>
+    <path class="st1" d="M117 295.8h90V361h-90z"/>
+    <path class="st3" d="M117 337.2h89v23.3h-89z"/>
+    <text transform="translate(155.89 351.395)" class="st6 st7">
+        π
+    </text>
+    <path class="st2" d="M117 295.8h90v31.7h-90z"/>
+    <path class="st3" d="M117 305h89v19h-89z"/>
+    <text transform="translate(129.108 320.061)" class="st4 st5">
+        Symbol
+    </text>
+    <path class="st1" d="M302 294.8h90V360h-90z"/>
+    <path class="st3" d="M302 333.2h90v23.3h-90z"/>
+    <text transform="translate(341.99 350.455)" class="st11 st7">
+        x
+    </text>
+    <path class="st2" d="M302 294.8h90v31.7h-90z"/>
+    <path class="st3" d="M302 304h90v19h-90z"/>
+    <text transform="translate(314.608 319.061)" class="st4 st5">
+        Symbol
+    </text>
+    <path class="st12" d="M173.5 118.5l74 52.7"/>
+    <path class="st13" d="M242.4 172.6l-.2-1 4.9-.6-1-4.9 1-.2 1.2 5.9z"/>
+    <path class="st12" d="M273.5 228.5l78 58.7"/>
+    <path class="st13" d="M346.4 288.4l-.1-1 4.9-.5-.9-4.8 1-.2 1 5.9z"/>
+    <path class="st12" d="M128.5 118.5l-69.8 52.7"/>
+    <path class="st13" d="M58.9 165.9l1 .2-.9 4.8 4.9.5-.1 1-6-.6z"/>
+    <path class="st12" d="M233.5 228.5l-77.8 58.7"/>
+    <path class="st13" d="M155.9 281.9l1 .2-.9 4.8 4.9.5-.1 1-6-.6z"/>
+    <path class="st0" d="M556 0h392.5v33.5H556z"/>
+    <path class="st1" d="M708 70.8h95V135h-95z"/>
+    <path class="st2" d="M708 70.8h95v31.7h-95z"/>
+    <path class="st3" d="M708 79h95v15.4h-95z"/>
+    <text transform="translate(719.265 94.062)" class="st4 st5">
+        Addition
+    </text>
+    <path class="st1" d="M556 181.8h90V247h-90z"/>
+    <path class="st3" d="M556 224.2h90v23.3h-90z"/>
+    <text transform="translate(596.03 238.395)" class="st6 st7">
+        1
+    </text>
+    <path class="st2" d="M556 181.8h90v31.7h-90z"/>
+    <path class="st3" d="M556 191h90v19h-90z"/>
+    <text transform="translate(565.269 206.061)" class="st4 st5">
+        Rational
+    </text>
+    <path class="st3" d="M556 10h392v19H556z"/>
+    <text transform="translate(703.4 22.725)" class="st8 st9 st10">
+        1 + π + x
+    </text>
+    <path class="st1" d="M858 180.8h90V246h-90z"/>
+    <path class="st3" d="M858 222.2h90v23.3h-90z"/>
+    <text transform="translate(897.39 236.395)" class="st6 st7">
+        π
+    </text>
+    <path class="st2" d="M858 180.8h90v31.7h-90z"/>
+    <path class="st3" d="M858 190h90v19h-90z"/>
+    <text transform="translate(870.608 205.061)" class="st4 st5">
+        Symbol
+    </text>
+    <path class="st1" d="M707 181.8h90V247h-90z"/>
+    <path class="st3" d="M707 221.2h91v23.3h-91z"/>
+    <text transform="translate(747.49 238.456)" class="st11 st7">
+        x
+    </text>
+    <path class="st2" d="M707 181.8h90v31.7h-90z"/>
+    <path class="st3" d="M691 191h121v19H691z"/>
+    <text transform="translate(719.108 206.061)" class="st4 st5">
+        Symbol
+    </text>
+    <g>
+        <path class="st14" d="M773.5 118.5l74 54.7"/>
+        <path class="st13" d="M842.4 174.5l-.1-1 4.9-.6-1-4.8 1-.2 1.1 5.9z"/>
+    </g>
+    <g>
+        <path class="st14" d="M731.5 118.5l-72.8 54.7"/>
+        <path class="st13" d="M658.9 167.9l1 .2-.9 4.8 4.9.5-.1 1-6-.6z"/>
+    </g>
+    <g>
+        <path class="st14" d="M752 118.5l-.5 54.4"/>
+        <path class="st13" d="M747.4 169.6l.8-.7 3.3 3.6 3.4-3.5.7.6-4.1 4.4z"/>
+    </g>
+    <g>
+        <path class="st15" d="M413 17.5h119.6"/>
+        <path class="st0" d="M526.6 22.6l5.1-5.1-5.1-5.1h4.3l5.1 5.1-5.1 5.1z"/>
+    </g>
+</svg>

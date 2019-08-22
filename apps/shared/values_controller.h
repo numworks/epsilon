@@ -16,7 +16,6 @@ namespace Shared {
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval);
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   const char * title() override;
   Interval * interval();
   int numberOfColumns() override;

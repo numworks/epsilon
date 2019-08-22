@@ -34,6 +34,15 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       myCell->setAccessoryText(Ion::patchLevel());
       return true;
     }
+    if (selectedRow() == 1) {
+      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+      if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
+        myCell->setAccessoryText("Public"); //Change for public/dev
+        return true;
+      }
+      myCell->setAccessoryText(Ion::customSoftwareVersion());
+      return true;
+    }
     return false;
   }
   return GenericSubController::handleEvent(event);

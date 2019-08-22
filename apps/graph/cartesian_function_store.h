@@ -11,6 +11,8 @@ namespace Graph {
 class CartesianFunctionStore : public Shared::FunctionStore {
 public:
   Shared::ExpiringPointer<Shared::CartesianFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::CartesianFunction>(static_cast<Shared::CartesianFunction *>(privateModelForRecord(record))); }
+  int numberOfActiveFunctionsOfType(Shared::CartesianFunction::PlotType plotType) const;
+  Ion::Storage::Record activeRecordOfTypeAtIndex(Shared::CartesianFunction::PlotType plotType, int index) const;
 private:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }

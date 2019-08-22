@@ -691,14 +691,28 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
   return matrix.shallowReduce(reductionContext);
 }
 
-Expression Expression::radianToDegree() {
-  // e*180/Pi
-  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    // e*180/Pi
+    return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+  }
+  else if (angleUnit == Preferences::AngleUnit::Gradian) {
+    // e*200/Pi
+    return Multiplication::Builder(*this, Rational::Builder(200), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+  }
+  return *this;
 }
 
-Expression Expression::degreeToRadian() {
-  // e*Pi/180
-  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
+Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    // e*Pi/180
+    return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
+  }
+  else if (angleUnit == Preferences::AngleUnit::Gradian) {
+    // e*Pi/200
+    return Multiplication::Builder(*this, Rational::Builder(1, 200), Constant::Builder(UCodePointGreekSmallLetterPi));
+  }
+  return *this;
 }
 
 Expression Expression::reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {

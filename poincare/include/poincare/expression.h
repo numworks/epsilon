@@ -223,8 +223,9 @@ public:
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context);
-  Expression radianToDegree();
-  Expression degreeToRadian();
+
+  Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
+  Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
 
   /* Approximation Helper */
   // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation

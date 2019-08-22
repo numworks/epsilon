@@ -3,6 +3,9 @@
 #include <apps/i18n.h>
 #include "global_preferences.h"
 #include <assert.h>
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
   ViewController(nullptr),
@@ -56,10 +59,24 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     ExamPopUpController * controller = (ExamPopUpController *)context;
     GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Deactivate;
     GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
+    Preferences * preferences = Preferences::sharedPreferences();
     AppsContainer * container = (AppsContainer *)controller->app()->container();
     if (controller->isActivatingExamMode()) {
       container->reset();
-      Ion::LED::setColor(KDColorBlue);
+      switch ((int)preferences->colorOfLED()) {
+        case 0:
+          Ion::LED::setColor(KDColorWhite);
+          break;
+        case 1:
+          Ion::LED::setColor(KDColorGreen);
+          break;
+        case 2:
+          Ion::LED::setColor(KDColorBlue);
+          break;
+        case 3:
+          Ion::LED::setColor(KDColorYellow);
+          break;
+      }
       Ion::LED::setBlinking(1000, 0.1f);
     } else {
       Ion::LED::setColor(KDColorBlack);

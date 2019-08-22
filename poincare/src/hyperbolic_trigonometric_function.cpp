@@ -27,7 +27,6 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
   // Step 2. TODO EMILIE ?? Try finding an easy standard calculation reduction
 
   // Step 3. Look for an expression of type "cosh(acosh(z))", return z
-  // TODO LEA OK ? Definition domains
   ExpressionNode::Type t = type();
   ExpressionNode::Type childT = childAtIndex(0).type();
   {

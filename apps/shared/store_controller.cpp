@@ -151,17 +151,12 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     bool shouldHaveLeftSeparator = i % DoublePairStore::k_numberOfColumnsPerSeries == 0;
     static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
-  // Handle empty cells
+  // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
-  if (j > numberOfElementsInCol) {
+  if (j > numberOfElementsInCol + 1) {
     StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
-    if (numberOfElementsInCol + 1 < j) {
-      myCell->setHide(true);
-    } else {
-      myCell->setEven(j%2 == 0);
-      myCell->setHide(false);
-    }
+    myCell->setHide(true);
     return;
   }
   if (typeAtLocation(i, j) == k_editableCellType) {

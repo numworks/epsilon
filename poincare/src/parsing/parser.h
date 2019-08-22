@@ -120,6 +120,7 @@ private:
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
+    &NormCDF::s_functionHelper,
     &PermuteCoefficient::s_functionHelper,
     &SimplePredictionInterval::s_functionHelper,
     &PredictionInterval::s_functionHelper,

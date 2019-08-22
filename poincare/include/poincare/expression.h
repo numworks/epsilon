@@ -65,6 +65,7 @@ class Expression : public TreeHandle {
   friend class Multiplication;
   friend class MultiplicationNode;
   friend class NaperianLogarithm;
+  friend class NormCDF;
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
@@ -274,7 +275,11 @@ protected:
     assert(children.type() == ExpressionNode::Type::Matrix);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1));
   }
-
+  template<typename U>
+  static Expression UntypedBuilderThreeChildren(Expression children) {
+    assert(children.type() == ExpressionNode::Type::Matrix);
+    return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2));
+  }
 
   template<class T> T convert() const {
     /* This function allows to convert Expression to derived Expressions.

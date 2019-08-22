@@ -175,7 +175,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
    * Store in the exactOutput. */
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
+    constexpr int bufferSize = Constant::MaxSerializedExpressionSize + 30;
     char buffer[bufferSize];
     Preferences * preferences = Preferences::sharedPreferences();
     Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(exactOutputText(), context, false);

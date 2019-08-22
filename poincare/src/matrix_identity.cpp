@@ -31,7 +31,7 @@ template<typename T>
 Evaluation<T> MatrixIdentityNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   T r = input.toScalar(); // Undefined if the child is not real
-  if (!std::isnan(r) && !std::isinf(r) && r > 0 // The child is defined and positive
+  if (!std::isnan(r) && !std::isinf(r) && r > (T)0.0 // The child is defined and positive
       && std::ceil(r) == std::floor(r) // The child is an integer
       &&  r < ((float) INT_MAX)) // The child is not too big
   {
@@ -55,13 +55,15 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
     return *this;
   }
   Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();
-  if (dimension.isNegative()) {
+  if (dimension.isNegative() || dimension.isZero()) {
     return replaceWithUndefinedInPlace();
   }
   if (Integer::NaturalOrder(dimension, Integer(Integer::k_maxExtractableInteger)) > 0) {
     return *this;
   }
-  Expression result = Matrix::CreateIdentity(dimension.extractedInt());
+  int dim = dimension.extractedInt();
+  assert(dim != 0);
+  Expression result = Matrix::CreateIdentity(dim);
   replaceWithInPlace(result);
   return result;
 }

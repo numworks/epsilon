@@ -8,8 +8,8 @@
 
 void assert_hypergeometric_is(double a, double b, double c, double z, double result) {
   double r = 0.0;
-  const double precision = Probability::StudentDistribution::k_hypergeometricFunctionPrecision;
-  quiz_assert(hypergeometricFunction(a, b, c, z, precision, Probability::StudentDistribution::k_maxHypergeometricFunctionIterations, &r));
+  const double precision = FLT_EPSILON;
+  quiz_assert(hypergeometricFunction(a, b, c, z, precision, 1000, &r));
   quiz_assert(std::abs(r - result)/result <= 100 * precision); // Multiply by 100 because precision is too strict
 }
 

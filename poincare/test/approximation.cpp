@@ -468,27 +468,33 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // On [1, inf[
   assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×𝐢", Radian);
   assert_expression_approximates_to<double>("acos(2)", "75.456129290217×𝐢", Degree);
+  assert_expression_approximates_to<double>("acos(2)", "83.84×𝐢", Gradian, Cartesian, 4);
   // Symmetry: odd on imaginary
   assert_expression_approximates_to<double>("acos(-2)", "3.1415926535898-1.3169578969248×𝐢", Radian);
   assert_expression_approximates_to<double>("acos(-2)", "180-75.456129290217×𝐢", Degree);
+  assert_expression_approximates_to<double>("acos(-2)", "200-83.84×𝐢", Gradian, Cartesian, 4);
   // On ]-inf, -1[
   assert_expression_approximates_to<double>("acos(-32)", "3.14159265359-4.158638853279×𝐢", Radian, Cartesian, 13);
   assert_expression_approximates_to<float>("acos(-32)", "180-238.3×𝐢", Degree, Cartesian, 4);
+  assert_expression_approximates_to<float>("acos(-32)", "200-264.7×𝐢", Gradian, Cartesian, 4);
   // On R×i
   assert_expression_approximates_to<float>("acos(3×𝐢)", "1.5708-1.8184×𝐢", Radian, Cartesian, 5);
   assert_expression_approximates_to<float>("acos(3×𝐢)", "90-104.19×𝐢", Degree, Cartesian, 5);
+  assert_expression_approximates_to<float>("acos(3×𝐢)", "100-115.8×𝐢", Gradian, Cartesian, 4);
   // Symmetry: odd on imaginary
   assert_expression_approximates_to<float>("acos(-3×𝐢)", "1.5708+1.8184×𝐢", Radian, Cartesian, 5);
   assert_expression_approximates_to<float>("acos(-3×𝐢)", "90+104.19×𝐢", Degree, Cartesian, 5);
+  assert_expression_approximates_to<float>("acos(-3×𝐢)", "100+115.8×𝐢", Gradian, Cartesian, 4);
   // On C
   assert_expression_approximates_to<float>("acos(𝐢-4)", "2.8894-2.0966×𝐢", Radian, Cartesian, 5);
   assert_expression_approximates_to<float>("acos(𝐢-4)", "165.551-120.126×𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("acos(𝐢-4)", "183.9-133.5×𝐢", Gradian, Cartesian, 4);
   // Key values
   assert_expression_approximates_to<double>("acos(0)", "90", Degree);
   assert_expression_approximates_to<float>("acos(-1)", "180", Degree);
   assert_expression_approximates_to<double>("acos(1)", "0", Degree);
   assert_expression_approximates_to<double>("acos(0)", "100", Gradian);
-  assert_expression_approximates_to<float>("acos(-1)", "200", Gradian)
+  assert_expression_approximates_to<float>("acos(-1)", "200", Gradian);
   assert_expression_approximates_to<double>("acos(1)", "0", Gradian);
 
   /* asin: [-1,1]    -> R

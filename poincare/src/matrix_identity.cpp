@@ -58,7 +58,7 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
   if (dimension.isNegative() || dimension.isZero()) {
     return replaceWithUndefinedInPlace();
   }
-  if (Integer::NaturalOrder(dimension, Integer(Integer::k_maxExtractableInteger)) > 0) {
+  if (Integer::NaturalOrder(dimension, Integer(15)) > 0) { // For now, after 15 it would fill the pool
     return *this;
   }
   int dim = dimension.extractedInt();

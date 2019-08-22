@@ -66,9 +66,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
-    if (myEditableValueCell->editableTextCell()->textField()->isEditing()) {
-      return;
-    }
+    assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
     myCell->setEven(j%2 == 0);
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits)];
     // Special case 1: last row

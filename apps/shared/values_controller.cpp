@@ -39,24 +39,6 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   }
 }
 
-bool ValuesController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  int row = selectedRow();
-  int nbOfRows = numberOfRows();
-  bool didFinishEditing = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
-  if (didFinishEditing) {
-    if (nbOfRows != numberOfRows()) {
-      // Reload the whole table, if a value is appended.
-      selectableTableView()->reloadData();
-    } else {
-      // Reload the row, if an existing value is edited.
-      for (int i = 0; i < numberOfColumns(); i++) {
-        selectableTableView()->reloadCellAtLocation(i, row);
-      }
-    }
-  }
-  return didFinishEditing;
-}
-
 const char * ValuesController::title() {
   return I18n::translate(I18n::Message::ValuesTab);
 }

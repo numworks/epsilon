@@ -27,10 +27,8 @@ constexpr SettingsMessageTree s_modelMenu[] =
 
 constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 9);
 
-
 I18n::Message MainController::promptMessage() const {
   return I18n::Message::UpdatePopUp;
-
 }
 
 const SettingsMessageTree * MainController::model() {

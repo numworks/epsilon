@@ -53,7 +53,7 @@ int PreferencesController::reusableCellCount(int type) {
 Layout PreferencesController::layoutForPreferences(I18n::Message message) {
   switch (message) {
     // Angle Unit
-    case I18n::Message::Degres:
+    case I18n::Message::Degrees:
     {
       const char * degEx = "90°";
       return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);

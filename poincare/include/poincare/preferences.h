@@ -11,22 +11,22 @@ public:
     Edition2D,
     Edition1D
   };
-  /* The 'PrintFlotMode' refers to the way to display float 'scientific' or
+  /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
    * auto mode tries to return 'natural' float like (0.021) and switches to
    * scientific mode if the float is too small or too big regarding the number
    * of significant digits. */
-  enum class PrintFloatMode {
+  enum class PrintFloatMode : uint8_t {
     Decimal = 0,
     Scientific = 1,
     Engineering = 2,
   };
-  enum class ComplexFormat {
+  enum class ComplexFormat : uint8_t {
     Real = 0,
     Cartesian = 1,
     Polar = 2
   };
-  enum class AngleUnit {
+  enum class AngleUnit : uint8_t {
     Degree = 0,
     Radian = 1,
     Gradian = 2

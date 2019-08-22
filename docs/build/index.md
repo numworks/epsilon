@@ -9,20 +9,21 @@ breadcrumb: SDK
 
 ### Windows
 
-We recommend using the [Msys2](https://www.msys2.org/) environment to install all the required tools. We support Windows 7 and up. Once Msys2 has been installed, launch the Msys2 terminal application, and enter the following commands
+We recommend using the [Msys2](https://www.msys2.org/) environment to install most of the required tools. We support Windows 7 and up. Once Msys2 has been installed, launch the Msys2 terminal application, and enter the following commands
 
 ```
-pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-fltk git make bison python
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-fltk git make python
 export PATH=/mingw64/bin:$PATH
 ```
 
+Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
+
 ### macOS
 
-We recommend using [Homebrew](https://brew.sh) to install most dependencies. Once you have installed Homebrew, install all the dependencies with the following command:
+We recommend using [Homebrew](https://brew.sh) to install all dependencies. Once you have installed Homebrew, install all the dependencies with the following command:
 
 ```
-brew reinstall fltk freetype dfu-util libpng pkg-config
-brew cask reinstall gcc-arm-embedded
+brew install armmbed/formulae/arm-none-eabi-gcc fltk freetype dfu-util libpng pkg-config
 ```
 
 ### Debian or Ubuntu
@@ -30,8 +31,10 @@ brew cask reinstall gcc-arm-embedded
 Installing the required tools is just a command away:
 
 ```
-apt-get install bison build-essential dfu-util flex gcc-arm-none-eabi git libfltk1.3-dev libfreetype6-dev libpng12-dev
+apt-get install build-essential dfu-util gcc-arm-none-eabi git libfltk1.3-dev libfreetype6-dev libpng12-dev
 ```
+
+Note that you may want to use the latest version of [GCC distributed by ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) instead of the one provided by your distribution. In that case you can skip the `gcc-arm-none-eabi` package.
 
 ## Retrieve the source code
 
@@ -61,5 +64,4 @@ make
 make epsilon_flash
 ```
 
-## What's next
-Congratulations, you've built your first firmware! If you want to dive deeper into the code, you can either read about our <a href="../embedded/">design considerations</a> or discover <a href="../architecture/">Epsilon's architecture</a>.
+Congratulations, you're running your very own version of Epsilon!

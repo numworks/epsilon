@@ -67,21 +67,19 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == 1);
   int index = 1;
-  for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
-    Ion::Storage::Record record = functionStore()->definedRecordAtIndex(k);
+  for (int k = 0; k < functionStore()->numberOfActiveFunctions(); k++) {
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(k);
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
-    if (f->isActive()) {
+    if (i == index) {
+      return record;
+    }
+    index++;
+    if (f->displayDerivative()) {
       if (i == index) {
+        *isDerivative = true;
         return record;
       }
       index++;
-      if (f->displayDerivative()) {
-        if (i == index) {
-          *isDerivative = true;
-          return record;
-        }
-        index++;
-      }
     }
   }
   assert(false);
@@ -133,9 +131,7 @@ void ValuesController::updateNumberOfColumns() {
   int result = 1;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    if (f->isActive()) {
-      result += 1 + f->displayDerivative();
-    }
+    result += 1 + f->displayDerivative();
   }
   m_numberOfColumns = result;
 }

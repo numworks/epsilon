@@ -58,16 +58,15 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * degEx = "90°";
       return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
     }
+    case I18n::Message::Radian:
+      return FractionLayout::Builder(
+          CodePointLayout::Builder(UCodePointGreekSmallLetterPi, k_layoutFont),
+          CodePointLayout::Builder('2', k_layoutFont));
     case I18n::Message::Gradians:
     {
       const char * degEx = "100 gon";
       return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
     }
-    case I18n::Message::Radian:
-      return FractionLayout::Builder(
-          CodePointLayout::Builder(UCodePointGreekSmallLetterPi, k_layoutFont),
-          CodePointLayout::Builder('2', k_layoutFont));
-
     // Display Mode format
     case I18n::Message::Decimal:
       return LayoutHelper::String("0.1234", 6, k_layoutFont);

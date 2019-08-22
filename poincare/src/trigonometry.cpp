@@ -40,8 +40,11 @@ static Expression piExpression(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Radian) {
     return static_cast<Expression>(Constant::Builder(UCodePointGreekSmallLetterPi));
   }
-  assert(angleUnit == Preferences::AngleUnit::Degree || angleUnit == Preferences::AngleUnit::Gradian);
-  return static_cast<Expression>(Rational::Builder(180));
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    return static_cast<Expression>(Rational::Builder(180));
+  }
+  assert(angleUnit == Preferences::AngleUnit::Gradian);
+  return static_cast<Expression>(Rational::Builder(200));
 }
 
 float Trigonometry::characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit) {

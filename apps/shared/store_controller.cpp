@@ -93,13 +93,7 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     }
     return true;
   }
-  bool didFinishEditing = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
-  if (didFinishEditing) {
-    // FIXME Find out if redrawing errors can be suppressed without always reloading all the data
-    // See Shared::ValuesController::textFieldDidFinishEditing
-    selectableTableView()->reloadData();
-  }
-  return didFinishEditing;
+  return EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
 }
 
 bool StoreController::textFieldDidAbortEditing(TextField * textField) {

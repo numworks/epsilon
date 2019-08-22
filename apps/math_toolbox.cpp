@@ -24,7 +24,7 @@ const ToolboxMessageTree complexChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate)
 };
 
-const ToolboxMessageTree probabilityChildren[] = {
+const ToolboxMessageTree combinatoricsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination),
   ToolboxMessageTree::Leaf(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation)
 };
@@ -84,7 +84,7 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
   ToolboxMessageTree::Node(I18n::Message::Calculation, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
-  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
+  ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
   ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
 #if LIST_ARE_DEFINED

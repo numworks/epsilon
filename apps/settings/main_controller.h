@@ -8,6 +8,7 @@
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
 #include "sub_menu/preferences_controller.h"
+#include "sub_menu/contributors_controller.h"
 
 namespace Settings {
 
@@ -29,12 +30,12 @@ public:
 private:
   StackViewController * stackController() const;
 #ifdef EPSILON_BOOT_PROMPT
-  constexpr static int k_totalNumberOfCell = 10;
+  constexpr static int k_totalNumberOfCell = 11;
   MessageTableCellWithSwitch m_popUpCell;
 #else
-  constexpr static int k_totalNumberOfCell = 9;
+  constexpr static int k_totalNumberOfCell = 10;
 #endif
-  constexpr static int k_numberOfSimpleChevronCells = 8;
+  constexpr static int k_numberOfSimpleChevronCells = 9;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   SelectableTableView m_selectableTableView;
@@ -44,6 +45,7 @@ private:
   LanguageController m_languageController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
+  ContributorsController m_contributorsController;
 
 };
 

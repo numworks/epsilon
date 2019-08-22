@@ -14,11 +14,12 @@ const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree ledColorChildren[4] = {SettingsMessageTree(I18n::Message::ColorWhite), SettingsMessageTree(I18n::Message::ColorGreen), SettingsMessageTree(I18n::Message::ColorBlue), SettingsMessageTree(I18n::Message::ColorYellow)};
 const SettingsMessageTree aboutChildren[4] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
+const SettingsMessageTree contributorsChildren[2] = {SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons)};
 
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree menu[10] =
+const SettingsMessageTree menu[11] =
 #else
-const SettingsMessageTree menu[9] =
+const SettingsMessageTree menu[10] =
 #endif
   {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
     SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
@@ -33,11 +34,12 @@ const SettingsMessageTree menu[9] =
 #elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif
-  SettingsMessageTree(I18n::Message::About, aboutChildren, 4)};
+  SettingsMessageTree(I18n::Message::About, aboutChildren, 4),
+  SettingsMessageTree(I18n::Message::Contributors, contributorsChildren, 2)};
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 10);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 11);
 #else
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 10);
 #endif
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
@@ -52,7 +54,8 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_displayModeController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
   m_examModeController(this),
-  m_aboutController(this)
+  m_aboutController(this),
+  m_contributorsController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -116,6 +119,13 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         assert(false);
       case 6:
         subController = &m_examModeController;
+        break;
+#ifdef EPSILON_BOOT_PROMPT
+      case 10:
+#else
+      case 9:
+#endif
+        subController = &m_contributorsController;
         break;
 #ifdef EPSILON_BOOT_PROMPT
       case 9:

@@ -28,8 +28,8 @@ public:
   };
   enum class AngleUnit {
     Degree = 0,
-    Gradian = 1,
-    Radian = 2
+    Radian = 1,
+    Gradian = 2
   };
   Preferences();
   static Preferences * sharedPreferences();

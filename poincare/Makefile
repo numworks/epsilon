@@ -93,6 +93,7 @@ poincare_src += $(addprefix poincare/src/,\
   multiplication.cpp \
   n_ary_expression.cpp \
   naperian_logarithm.cpp \
+  norm_cdf.cpp \
   nth_root.cpp \
   number.cpp \
   opposite.cpp \

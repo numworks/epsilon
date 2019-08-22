@@ -1,3 +1,2 @@
-output
-build/device/elf2dfu.pyc
+/output/
 build/device/**/*.pyc

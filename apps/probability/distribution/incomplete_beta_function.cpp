@@ -47,7 +47,7 @@ double IncompleteBetaFunction(double a, double b, double x) {
     /*Use Lentz's algorithm to evaluate the continued fraction.*/
     double f = 1.0, c = 1.0, d = 0.0;
 
-    //TODO LEA: Use Helper::ContinuedFractionEvaluation
+    //TODO Use Helper::ContinuedFractionEvaluation
     int i, m;
     for (i = 0; i <= 200; ++i) {
         m = i/2;

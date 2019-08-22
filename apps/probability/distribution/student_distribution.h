@@ -8,9 +8,6 @@ namespace Probability {
 
 class StudentDistribution : public OneParameterDistribution {
 public:
-  static constexpr int k_maxHypergeometricFunctionIterations = 1000; // TODO LEA factorize with Chi Squared
-  static constexpr double k_hypergeometricFunctionPrecision = DBL_EPSILON;
-
   StudentDistribution() : OneParameterDistribution(1.0f) {}
   I18n::Message title() override { return I18n::Message::StudentDistribution; }
   Type type() const override { return Type::Student; }

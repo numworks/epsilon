@@ -16,6 +16,17 @@ using namespace Shared;
 
 namespace Regression {
 
+static double toRadians(Poincare::Preferences::AngleUnit angleUnit) {
+  switch (Poincare::Preferences::sharedPreferences()->angleUnit()) {
+    case Poincare::Preferences::AngleUnit::Degree:
+      return M_PI/180.0;
+    case Poincare::Preferences::AngleUnit::Gradian:
+      return M_PI/200.0;
+    default:
+      return 1;
+  }
+}
+
 Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
     const char * s = "a·sin(b·X+c)+d";
@@ -29,7 +40,7 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Preferences::AngleUnit::Radian ? x : x * M_PI/180.0;
+  double radianX = x * toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
   return a*sin(b*radianX+c)+d;
 }
 
@@ -37,7 +48,7 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Preferences::AngleUnit::Radian ? x : x * M_PI/180.0;
+  double radianX = x * toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
   if (derivateCoefficientIndex == 0) {
     // Derivate: sin(b*x+c)
     return sin(b*radianX+c);

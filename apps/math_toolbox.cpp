@@ -29,6 +29,23 @@ const ToolboxMessageTree combinatoricsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation)
 };
 
+const ToolboxMessageTree normalDistributionChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::NormCDFCommandWithArg, I18n::Message::NormCDF),
+  ToolboxMessageTree::Leaf(I18n::Message::NormCDF2CommandWithArg, I18n::Message::NormCDF2),
+  ToolboxMessageTree::Leaf(I18n::Message::InvNormCommandWithArg, I18n::Message::InvNorm),
+  ToolboxMessageTree::Leaf(I18n::Message::NormPDFCommandWithArg, I18n::Message::NormPDF)
+};
+
+const ToolboxMessageTree binomialDistributionChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::BinomialFDPCommandWithArg, I18n::Message::BinomialFDP),
+  ToolboxMessageTree::Leaf(I18n::Message::BinomialCDFCommandWithArg, I18n::Message::BinomialCDF),
+  ToolboxMessageTree::Leaf(I18n::Message::InvBinomialCommandWithArg, I18n::Message::InvBinomial),
+};
+
+const ToolboxMessageTree probabilityChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::NormalDistribution, normalDistributionChildren),
+  ToolboxMessageTree::Node(I18n::Message::BinomialDistribution, binomialDistributionChildren)};
+
 const ToolboxMessageTree arithmeticChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor),
   ToolboxMessageTree::Leaf(I18n::Message::LcmCommandWithArg, I18n::Message::LeastCommonMultiple),
@@ -85,6 +102,7 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Calculation, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
   ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
   ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
 #if LIST_ARE_DEFINED

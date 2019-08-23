@@ -1,6 +1,7 @@
 #include "intersection_graph_controller.h"
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
+#include <poincare/preferences.h>
 
 using namespace Shared;
 
@@ -18,7 +19,7 @@ const char * IntersectionGraphController::title() {
 
 void IntersectionGraphController::reloadBannerView() {
   CalculationGraphController::reloadBannerView();
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
   const char * legend = "=";
@@ -32,7 +33,7 @@ void IntersectionGraphController::reloadBannerView() {
   numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize-numberOfChar-1, CartesianFunction::Symbol());
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Poincare::Preferences::MediumNumberOfSignificantDigits);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
   bannerView()->ordinateView()->setText(buffer);

@@ -21,7 +21,7 @@ private:
   constexpr static int k_maxNumberOfCells = 50;
   constexpr static int k_maxNumberOfFunctions = 5;
   Ion::Storage::Record recordAtColumn(int i) override;
-  bool isDerivativeColumn(int i);
+  Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;

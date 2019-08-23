@@ -48,7 +48,21 @@ Expression NormCDF::shallowReduce(ExpressionNode::ReductionContext reductionCont
       return e;
     }
   }
-  //TODO LEA
+
+  Expression mu = childAtIndex(1);
+  Expression var = childAtIndex(2);
+  Context * context = reductionContext.context();
+
+  // Check mu and var
+  bool muAndVarOK = false;
+  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
+  if (!couldCheckMuAndVar) {
+    return *this;
+  }
+  if (!muAndVarOK) {
+    return replaceWithUndefinedInPlace();
+  }
+
   return *this;
 }
 

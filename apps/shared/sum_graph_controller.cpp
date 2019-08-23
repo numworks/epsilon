@@ -3,6 +3,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/preferences.h>
 #include "poincare_helpers.h"
 
 #include <assert.h>
@@ -177,9 +178,11 @@ void SumGraphController::LegendView::setLegendMessage(I18n::Message message, Ste
 }
 
 void SumGraphController::LegendView::setEditableZone(double d) {
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-  PrintFloat::ConvertFloatToText<double>(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
- m_editableZone.setText(buffer);
+  constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
+  constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize];
+  PrintFloat::ConvertFloatToText<double>(d, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+  m_editableZone.setText(buffer);
 }
 
 void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, Layout functionLayout) {
@@ -189,24 +192,29 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   if (step == Step::FirstParameter) {
     m_sumLayout = LayoutHelper::CodePointString(sigma, sigmaLength);
   } else if (step == Step::SecondParameter) {
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-    PrintFloat::ConvertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
+    constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+    char buffer[bufferSize];
+    PrintFloat::ConvertFloatToText<double>(start, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     m_sumLayout = CondensedSumLayout::Builder(
         LayoutHelper::CodePointString(sigma, sigmaLength),
         LayoutHelper::String(buffer, strlen(buffer), k_font),
         EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
   } else {
-    char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    PrintFloat::ConvertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int sizeForPrecision = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+    constexpr int bufferSize = 2 + sizeForPrecision;
+    char buffer[bufferSize];
+    PrintFloat::ConvertFloatToText<double>(start, buffer, sizeForPrecision, precision, Preferences::PrintFloatMode::Decimal);
     Layout start = LayoutHelper::String(buffer, strlen(buffer), k_font);
-    PrintFloat::ConvertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    PrintFloat::ConvertFloatToText<double>(end, buffer, sizeForPrecision, precision, Preferences::PrintFloatMode::Decimal);
     Layout end = LayoutHelper::String(buffer, strlen(buffer), k_font);
     m_sumLayout = CondensedSumLayout::Builder(
         LayoutHelper::CodePointString(sigma, sigmaLength),
         start,
         end);
     strlcpy(buffer, "= ", 3);
-    PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, sizeForPrecision, precision);
     m_sumLayout = HorizontalLayout::Builder(
         m_sumLayout,
         functionLayout,

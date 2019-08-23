@@ -3,7 +3,6 @@ app_headers += apps/probability/app.h
 
 app_probability_test_src = $(addprefix apps/probability/,\
   distribution/chi_squared_distribution.cpp \
-  distribution/erf_inv.cpp \
   distribution/geometric_distribution.cpp \
   distribution/helper.cpp \
   distribution/incomplete_beta_function.cpp \
@@ -53,7 +52,6 @@ tests_src += $(addprefix apps/probability/distribution/,\
   hypergeometric_function.cpp\
 )
 tests_src += $(addprefix apps/probability/test/,\
-  erf_inv.cpp\
   hypergeometric_function.cpp\
   distributions.cpp\
   regularized_gamma.cpp \

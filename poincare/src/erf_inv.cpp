@@ -1,7 +1,8 @@
-#include "erf_inv.h"
-#include "distribution.h"
+#include <poincare/erf_inv.h>
 #include <cmath>
 #include <float.h>
+
+namespace Poincare {
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -113,4 +114,6 @@ double erfInv(double x) {
     p = INFINITY;
   }
   return p * x;
+}
+
 }

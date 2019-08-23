@@ -30,8 +30,10 @@ poincare_src += $(addprefix poincare/src/,\
 
 poincare_src += $(addprefix poincare/src/,\
   init.cpp \
+  erf_inv.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
+  normal_distribution.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/,\
@@ -144,6 +146,7 @@ tests_src += $(addprefix poincare/test/,\
   approximation.cpp\
   arithmetic.cpp\
   context.cpp\
+  erf_inv.cpp \
   expression.cpp\
   expression_order.cpp\
   expression_properties.cpp\

@@ -1,8 +1,8 @@
 #include "graph_controller_helper.h"
 #include "../../shared/function_banner_delegate.h"
 #include "../app.h"
-#include "../../constant.h"
 #include "../../shared/poincare_helpers.h"
+#include <poincare/preferences.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -20,7 +20,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 
 void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record) {
   ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(record);
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize, CartesianFunction::Symbol());
@@ -28,7 +28,7 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   double y = function->approximateDerivative(cursor->x(), App::app()->localContext());
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Constant::ShortNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Preferences::ShortNumberOfSignificantDigits);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
   bannerView()->derivativeView()->setText(buffer);

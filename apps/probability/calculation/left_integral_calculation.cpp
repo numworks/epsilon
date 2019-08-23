@@ -1,7 +1,7 @@
 #include "left_integral_calculation.h"
-#include <assert.h>
-#include <ion.h>
+#include <poincare/preferences.h>
 #include <cmath>
+#include <assert.h>
 
 namespace Probability {
 
@@ -48,7 +48,7 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
     m_result = m_distribution->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
   } else {
     double currentResult = m_distribution->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
-    if (std::fabs(currentResult - m_result) < std::pow(10.0, - Constant::LargeNumberOfSignificantDigits)) {
+    if (std::fabs(currentResult - m_result) < std::pow(10.0, - Poincare::Preferences::LargeNumberOfSignificantDigits)) {
       return;
     }
     m_upperBound = m_distribution->cumulativeDistributiveInverseForProbability(&m_result);

@@ -1,10 +1,9 @@
 #ifndef PROBABILITE_DISTRIBUTION_H
 #define PROBABILITE_DISTRIBUTION_H
 
-#include <escher.h>
-#include "../../constant.h"
 #include "../../shared/curve_view_range.h"
 #include <apps/i18n.h>
+#include <poincare/preferences.h>
 
 namespace Probability {
 
@@ -40,7 +39,7 @@ public:
   virtual double evaluateAtDiscreteAbscissa(int k) const;
   constexpr static int k_maxNumberOfOperations = 1000000;
 protected:
-  static_assert(Constant::LargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
+  static_assert(Poincare::Preferences::LargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static float k_displayTopMarginRatio = 0.05f;
   constexpr static float k_displayLeftMarginRatio = 0.05f;

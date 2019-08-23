@@ -1,7 +1,7 @@
 #include "right_integral_calculation.h"
-#include <assert.h>
-#include <ion.h>
+#include <poincare/preferences.h>
 #include <cmath>
+#include <assert.h>
 
 namespace Probability {
 
@@ -48,7 +48,7 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
     m_result = m_distribution->rightIntegralFromAbscissa(m_lowerBound);
   } else {
     double currentResult = m_distribution->rightIntegralFromAbscissa(m_lowerBound);
-    if (std::fabs(currentResult - m_result) < std::pow(10.0, - Constant::LargeNumberOfSignificantDigits)) {
+    if (std::fabs(currentResult - m_result) < std::pow(10.0, - Poincare::Preferences::LargeNumberOfSignificantDigits)) {
       return;
     }
     m_lowerBound = m_distribution->rightIntegralInverseForProbability(&m_result);

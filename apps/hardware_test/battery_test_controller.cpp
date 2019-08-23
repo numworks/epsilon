@@ -1,6 +1,5 @@
 #include "battery_test_controller.h"
 #include <apps/shared/post_and_hardware_tests.h>
-#include "../constant.h"
 #include "app.h"
 extern "C" {
 #include <assert.h>
@@ -43,14 +42,16 @@ void BatteryTestController::viewWillAppear() {
 }
 
 void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryCharging) {
-  constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr int sizeForPrecision = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferLevel[bufferLevelSize];
   const char * legend = "Battery level: ";
   int legendLength = strlcpy(bufferLevel, legend, bufferLevelSize);
-  PrintFloat::ConvertFloatToText<float>(batteryLevel, bufferLevel+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+  PrintFloat::ConvertFloatToText<float>(batteryLevel, bufferLevel+legendLength, sizeForPrecision, precision, Preferences::PrintFloatMode::Decimal);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
-  constexpr size_t bufferChargingSize = ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferChargingSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferCharging[bufferChargingSize];
   int numberOfChars = 0;
   legend = "Battery charging: ";

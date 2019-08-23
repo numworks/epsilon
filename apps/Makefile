@@ -17,7 +17,6 @@ app_src += $(addprefix apps/,\
   backlight_dimming_timer.cpp \
   battery_timer.cpp \
   battery_view.cpp \
-  constant.cpp \
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
   global_preferences.cpp \

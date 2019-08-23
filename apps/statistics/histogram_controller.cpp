@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "app.h"
+#include <poincare/preferences.h>
 #include <cmath>
 #include <assert.h>
 #include <float.h>
@@ -94,7 +95,8 @@ void HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
     return;
   }
-  const size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2;
+  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::bufferSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   int numberOfChar = 0;
 
@@ -107,7 +109,7 @@ void HistogramController::reloadBannerView() {
   // Add lower bound
   if (selectedSeriesIndex() >= 0) {
     double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
 
   numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
@@ -115,7 +117,7 @@ void HistogramController::reloadBannerView() {
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
   numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
@@ -132,7 +134,7 @@ void HistogramController::reloadBannerView() {
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
@@ -146,7 +148,7 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);
   }
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);

@@ -4,12 +4,12 @@
 #include "shared/function.h"
 #include "shared/cartesian_function.h"
 #include "graph/cartesian_function_store.h"
-#include "constant.h"
 #include <escher/metric.h>
-#include <assert.h>
-#include <poincare/matrix_layout.h>
-#include <poincare/layout_helper.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare/layout_helper.h>
+#include <poincare/matrix_layout.h>
+#include <poincare/preferences.h>
+#include <assert.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -236,7 +236,7 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
   }
   assert(index >= m_firstMemoizedLayoutIndex && index < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
   if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
-    m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
+    m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::ExpressionFromRecord(record).createLayout(Preferences::sharedPreferences()->displayMode(), Preferences::ShortNumberOfSignificantDigits);
   }
   return m_layouts[index-m_firstMemoizedLayoutIndex];
 }

@@ -319,6 +319,7 @@ template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNo
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(TreeHandle*, size_t);
 template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(TreeHandle*, size_t);
 template NormCDF2 TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>(TreeHandle*, size_t);
+template NormPDF TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(TreeHandle*, size_t);
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(TreeHandle*, size_t);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(TreeHandle*, size_t);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(TreeHandle*, size_t);

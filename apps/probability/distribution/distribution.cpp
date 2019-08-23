@@ -34,7 +34,7 @@ double Distribution::rightIntegralFromAbscissa(double x) const {
 }
 
 double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
-  if (b < a) {
+  if (b <= a) {
     return 0.0;
   }
   if (isContinuous()) {

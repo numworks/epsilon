@@ -1,5 +1,5 @@
-#ifndef POINCARE_NORMCDF_H
-#define POINCARE_NORMCDF_H
+#ifndef POINCARE_NORM_CDF_H
+#define POINCARE_NORM_CDF_H
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>

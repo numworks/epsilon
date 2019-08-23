@@ -1,6 +1,7 @@
 #include <poincare/normal_distribution.h>
 #include <poincare/erf_inv.h>
 #include <cmath>
+#include <float.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -47,10 +48,14 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
 
 template<typename T>
 T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(T probability) {
-  if (probability >= (T)1.0) {
+  if (probability > (T)1.0 || probability < (T)0.0) {
+    return NAN;
+  }
+  T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
+  if (((T)1.0) - probability < precision) {
     return INFINITY;
   }
-  if (probability <= (T)0.0) {
+  if (probability < precision) {
     return -INFINITY;
   }
   if (probability < (T)0.5) {

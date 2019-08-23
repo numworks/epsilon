@@ -75,6 +75,7 @@ public:
     NaperianLogarithm,
     NormCDF,
     NormCDF2,
+    NormPDF,
     NthRoot,
     Opposite,
     Parenthesis,

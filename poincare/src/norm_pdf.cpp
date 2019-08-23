@@ -37,9 +37,7 @@ Evaluation<T> NormPDFNode::templatedApproximate(Context * context, Preferences::
   T mu = muEvaluation.toScalar();
   T var = varEvaluation.toScalar();
 
-  if (std::isnan(x) || std::isnan(mu) || std::isnan(var)) {
-    return Complex<T>::Undefined();
-  }
+  // EvaluateAtAbscissa handles bad mu and var values
   return Complex<T>::Builder(NormalDistribution::EvaluateAtAbscissa(x, mu, var));
 }
 

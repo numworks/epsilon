@@ -39,7 +39,7 @@ Evaluation<T> NormCDF2Node::templatedApproximate(Context * context, Preferences:
   T mu = muEvaluation.toScalar();
   T var = varEvaluation.toScalar();
 
-  if (std::isnan(a) || std::isnan(b) || std::isnan(mu) || std::isnan(var)) {
+  if (std::isnan(a) || std::isnan(b) || !NormalDistribution::ParametersAreOK(mu,var)) {
     return Complex<T>::Undefined();
   }
   if (b <= a) {

@@ -82,6 +82,7 @@ poincare_src += $(addprefix poincare/src/,\
   infinity.cpp \
   integer.cpp \
   integral.cpp \
+  inv_norm.cpp \
   layout_helper.cpp \
   least_common_multiple.cpp \
   logarithm.cpp \

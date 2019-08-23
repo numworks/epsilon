@@ -1,12 +1,12 @@
 #include "solutions_controller.h"
 #include "app.h"
-#include "../constant.h"
 #include "../shared/poincare_helpers.h"
 #include <assert.h>
 #include <limits.h>
 #include <poincare/layout_helper.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/preferences.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -188,8 +188,10 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
     // Value of the variable or discriminant
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
-      char bufferValue[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-      PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+      constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+      constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+      char bufferValue[bufferSize];
+      PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, bufferSize, precision);
       valueCell->setText(bufferValue);
     } else {
       Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);

@@ -1,7 +1,7 @@
 #include "values_controller.h"
 #include "function_app.h"
-#include "../constant.h"
 #include "poincare_helpers.h"
+#include <poincare/preferences.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -156,7 +156,8 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
   // The cell is not a title cell and not editable
   if (j > 0 && i > 0) {
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(precision)];
     // Special case: last row
     if (j == numberOfRows() - 1) {
       int numberOfIntervalElements = m_interval->numberOfElements();
@@ -170,8 +171,8 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
     double x = m_interval->element(j-1);
-    PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, cellBufferSize(i), Constant::LargeNumberOfSignificantDigits);
-  myValueCell->setText(buffer);
+    PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, cellBufferSize(i), precision);
+    myValueCell->setText(buffer);
   }
 }
 

@@ -1,6 +1,6 @@
 #include "float_parameter_controller.h"
-#include "../constant.h"
 #include "../shared/poincare_helpers.h"
+#include <poincare/preferences.h>
 #include <assert.h>
 #include <cmath>
 
@@ -108,8 +108,10 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   if (myCell->isEditing()) {
     return;
   }
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  PrintFloat::ConvertFloatToText<double>(parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize];
+  PrintFloat::ConvertFloatToText<double>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
   myCell->setAccessoryText(buffer);
 }
 

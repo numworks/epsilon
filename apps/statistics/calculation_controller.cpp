@@ -1,6 +1,7 @@
 #include "calculation_controller.h"
-#include <apps/i18n.h>
 #include "../shared/poincare_helpers.h"
+#include <poincare/preferences.h>
+#include <apps/i18n.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -97,8 +98,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   int seriesIndex = m_store->indexOfKthNonEmptySeries(i-1);
   double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
   EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize];
+  PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
   calculationCell->setText(buffer);
 }
 

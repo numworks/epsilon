@@ -1,9 +1,9 @@
 #include <quiz.h>
-#include <string.h>
-#include <assert.h>
+#include <poincare/erf_inv.h>
 #include <float.h>
 #include <cmath>
-#include "../distribution/erf_inv.h"
+
+using namespace Poincare;
 
 QUIZ_CASE(erf_inv) {
   quiz_assert(erfInv(0.0) == 0.0);

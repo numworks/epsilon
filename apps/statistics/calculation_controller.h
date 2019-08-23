@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <poincare/print_float.h>
+#include <poincare/preferences.h>
 #include "store.h"
 #include "calculation_selectable_table_view.h"
 #include "../shared/hideable_even_odd_cell.h"
@@ -10,7 +11,6 @@
 #include "../shared/separator_even_odd_buffer_text_cell.h"
 #include "../shared/store_title_cell.h"
 #include "../shared/tab_table_controller.h"
-#include "../constant.h"
 
 namespace Statistics {
 
@@ -56,7 +56,7 @@ private:
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 175;
   // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
-  static constexpr KDCoordinate k_calculationCellWidth = 7*(Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits));
+  static constexpr KDCoordinate k_calculationCellWidth = 7*(Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits));
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
 

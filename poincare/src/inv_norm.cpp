@@ -50,15 +50,42 @@ Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionCont
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
+  Expression c2 = childAtIndex(2);
+  Context * context = reductionContext.context();
+
+  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context) || c2.deepIsMatrix(context)) {
+    return replaceWithUndefinedInPlace();
+  }
+
+  if (!c1.isReal(context) || !c2.isReal(context)) {
+    // If we cannot check that mu and variance are real, return
+    return *this;
+  }
+
   {
-    Context * context = reductionContext.context();
-    Expression c2 = childAtIndex(2);
-    if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context) || c2.deepIsMatrix(context)) {
+    ExpressionNode::Sign s = c2.sign(context);
+    if (s == ExpressionNode::Sign::Negative) {
       return replaceWithUndefinedInPlace();
     }
-    if (c0.type() != ExpressionNode::Type::Rational) {
+    // If we cannot check that the variance is positive, return
+    if (s != ExpressionNode::Sign::Positive) {
       return *this;
     }
+  }
+
+  // If we cannot check that the variance is not null, return
+  if (c2.type() != ExpressionNode::Type::Rational) {
+    return *this;
+  }
+  {
+    Rational r2 = static_cast<Rational &>(c2);
+    if (r2.isZero()) {
+      return replaceWithUndefinedInPlace();
+    }
+  }
+
+  if (c0.type() != ExpressionNode::Type::Rational) {
+    return *this;
   }
   // Undef if x < 0 or x > 1
   Rational r0 = static_cast<Rational &>(c0);

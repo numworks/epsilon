@@ -1,5 +1,6 @@
 #include <poincare/normal_distribution.h>
 #include <poincare/erf_inv.h>
+#include <poincare/rational.h>
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -36,6 +37,44 @@ bool NormalDistribution::ParametersAreOK(T mu, T var) {
   return !std::isnan(mu) && !std::isnan(var)
     && !std::isinf(mu) && !std::isinf(var)
     && var > (T)0.0;
+}
+
+bool NormalDistribution::ExpressionParametersAreOK(bool * result, const Expression & mu, const Expression & var, Context * context) {
+  assert(result != nullptr);
+  if (mu.deepIsMatrix(context) || var.deepIsMatrix(context)) {
+    *result = false;
+    return true;
+  }
+
+  if (!mu.isReal(context) || !var.isReal(context)) {
+    // We cannot check that mu and variance are real
+    return false;
+  }
+
+  {
+    ExpressionNode::Sign s = var.sign(context);
+    if (s == ExpressionNode::Sign::Negative) {
+      *result = false;
+      return true;
+    }
+    // We cannot check that the variance is positive
+    if (s != ExpressionNode::Sign::Positive) {
+      return false;
+    }
+  }
+
+  if (var.type() != ExpressionNode::Type::Rational) {
+    // We cannot check that the variance is not null
+    return false;
+  }
+
+  const Rational rationalVar = static_cast<const Rational &>(var);
+  if (rationalVar.isZero()) {
+    *result = false;
+    return true;
+  }
+  *result = true;
+  return true;
 }
 
 template<typename T>

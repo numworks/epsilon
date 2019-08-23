@@ -52,6 +52,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/norm_cdf.h>
+#include <poincare/norm_cdf2.h>
 #include <poincare/nth_root.h>
 #include <poincare/number.h>
 #include <poincare/opposite.h>

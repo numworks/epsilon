@@ -54,6 +54,7 @@ class Expression : public TreeHandle {
   friend class HyperbolicTrigonometricFunction;
   friend class ImaginaryPart;
   friend class Integral;
+  friend class InvNorm;
   friend class LeastCommonMultiple;
   friend class Logarithm;
   friend class Matrix;

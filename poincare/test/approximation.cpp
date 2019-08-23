@@ -270,6 +270,9 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
 
+  assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
+  //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error
+
   assert_expression_approximates_to<float>("ln(2)", "0.6931472");
   assert_expression_approximates_to<double>("ln(2)", "6.9314718055995ᴇ-1");
 

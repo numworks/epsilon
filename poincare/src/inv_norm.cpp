@@ -46,14 +46,14 @@ Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionCont
       return e;
     }
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
-  Expression c2 = childAtIndex(2);
+  Expression a = childAtIndex(0);
+  Expression mu = childAtIndex(1);
+  Expression var = childAtIndex(2);
   Context * context = reductionContext.context();
 
   // Check mu and var
   bool muAndVarOK = false;
-  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, c1, c2, context);
+  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
   if (!couldCheckMuAndVar) {
     return *this;
   }
@@ -62,39 +62,39 @@ Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionCont
   }
 
   // Check a
-  if (c0.deepIsMatrix(context)) {
+  if (a.deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
-  if (c0.type() != ExpressionNode::Type::Rational) {
+  if (a.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
 
   // Special values
 
-  // Undef if x < 0 or x > 1
-  Rational r0 = static_cast<Rational &>(c0);
-  if (r0.isNegative()) {
+  // Undef if a < 0 or a > 1
+  Rational rationalA = static_cast<Rational &>(a);
+  if (rationalA.isNegative()) {
     return replaceWithUndefinedInPlace();
   }
-  Integer a = r0.unsignedIntegerNumerator();
-  Integer b = r0.integerDenominator();
-  if (b.isLowerThan(a)) {
+  Integer num = rationalA.unsignedIntegerNumerator();
+  Integer den = rationalA.integerDenominator();
+  if (den.isLowerThan(num)) {
     return replaceWithUndefinedInPlace();
   }
 
-  // -INF if x == 0 and +INF if  x == 1
-  bool is0 = r0.isZero();
-  bool is1 = !is0 && r0.isOne();
+  // -INF if a == 0 and +INF if a == 1
+  bool is0 = rationalA.isZero();
+  bool is1 = !is0 && rationalA.isOne();
   if (is0 || is1) {
     Expression result = Infinity::Builder(is0);
     replaceWithInPlace(result);
     return result;
   }
 
-  // mu if x == 0.5
-  if (r0.isHalf()) {
-    replaceWithInPlace(c1);
-    return c1;
+  // mu if a == 0.5
+  if (rationalA.isHalf()) {
+    replaceWithInPlace(mu);
+    return mu;
   }
 
   return *this;

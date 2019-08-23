@@ -220,16 +220,7 @@ int ValuesController::reusableCellCount(int type) {
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
-  if (j == 0) {
-    if (i == 0) {
-      return 0;
-    }
-    return 1;
-  }
-  if (i == 0) {
-    return 2;
-  }
-  return 3;
+  return (i > 0) + 2 * (j > 0);
 }
 
 bool ValuesController::isEmpty() const {

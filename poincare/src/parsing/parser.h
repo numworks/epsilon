@@ -123,6 +123,7 @@ private:
     &Logarithm::s_functionHelper,
     &NormCDF::s_functionHelper,
     &NormCDF2::s_functionHelper,
+    &NormPDF::s_functionHelper,
     &PermuteCoefficient::s_functionHelper,
     &SimplePredictionInterval::s_functionHelper,
     &PredictionInterval::s_functionHelper,

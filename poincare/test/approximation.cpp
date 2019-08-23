@@ -285,6 +285,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("normcdf2(0.5, 3.6, 1.3, 3.4)", "0.3436388");
   assert_expression_approximates_to<double>("normcdf2(0.5, 3.6, 1.3, 3.4)", "3.4363881299147ᴇ-1");
 
+  assert_expression_approximates_to<float>("normpdf(1.2, 3.4, 5.6)", "0.06594901");
+
   assert_expression_approximates_to<float>("permute(10, 4)", "5040");
   assert_expression_approximates_to<double>("permute(10, 4)", "5040");
 

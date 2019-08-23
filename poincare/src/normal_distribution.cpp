@@ -60,6 +60,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
 }
 
 template float NormalDistribution::EvaluateAtAbscissa<float>(float, float, float);
+template double NormalDistribution::EvaluateAtAbscissa<double>(double, double, double);
 template float NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float, float);
 template double NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double, double);
 template float NormalDistribution::CumulativeDistributiveInverseForProbability<float>(float, float, float);

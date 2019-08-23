@@ -23,8 +23,9 @@ T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T sigm
   return StandardNormalCumulativeDistributiveFunctionAtAbscissa<T>((x-mu)/std::fabs(sigma));
 }
 
-double NormalDistribution::CumulativeDistributiveInverseForProbability(double probability, float mu, float sigma) {
-  if (sigma == 0.0f) {
+template<typename T>
+T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability, T mu, T sigma) {
+  if (sigma == (T)0.0) {
     return NAN;
   }
   return StandardNormalCumulativeDistributiveInverseForProbability(probability) * std::fabs(sigma) + mu;
@@ -44,7 +45,8 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
   return ((T)0.5) + ((T)0.5) * std::erf(abscissa/std::sqrt(((T)2.0)));
 }
 
-double NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(double probability) {
+template<typename T>
+T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(T probability) {
   if (probability >= 1.0) {
     return INFINITY;
   }
@@ -52,13 +54,15 @@ double NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbabi
     return -INFINITY;
   }
   if (probability < 0.5) {
-    return -StandardNormalCumulativeDistributiveInverseForProbability(1-probability);
+    return -StandardNormalCumulativeDistributiveInverseForProbability(1.0-probability);
   }
   return std::sqrt(2.0) * erfInv(2.0 * probability - 1.0);
 }
 
 template float NormalDistribution::EvaluateAtAbscissa<float>(float, float, float);
-template double NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double, double);
 template float NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float, float);
+template double NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double, double);
+template float NormalDistribution::CumulativeDistributiveInverseForProbability<float>(float, float, float);
+template double NormalDistribution::CumulativeDistributiveInverseForProbability<double>(double, double, double);
 
 }

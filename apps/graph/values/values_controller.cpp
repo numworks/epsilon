@@ -69,21 +69,19 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfActiveFunctions(); k++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(k);
-    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
-    if (i == index) {
+    if (index <= i && i < index + numberOfColumnsForRecord(record)) {
+      *isDerivative = i != index;
       return record;
     }
-    index++;
-    if (f->displayDerivative()) {
-      if (i == index) {
-        *isDerivative = true;
-        return record;
-      }
-      index++;
-    }
+    index += numberOfColumnsForRecord(record);
   }
   assert(false);
   return nullptr;
+}
+
+int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
+  ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
+  return 1 + f->displayDerivative();
 }
 
 int ValuesController::maxNumberOfCells() {
@@ -130,8 +128,8 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
 void ValuesController::updateNumberOfColumns() {
   int result = 1;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    result += 1 + f->displayDerivative();
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
+    result += numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = result;
 }

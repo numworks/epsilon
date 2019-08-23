@@ -7,29 +7,29 @@
 namespace Poincare {
 
 template<typename T>
-T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T sigma) {
-  assert(!std::isnan(x) && !std::isnan(mu) && !std::isnan(sigma));
-  if (sigma == (T)0.0) {
+T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T var) {
+  assert(!std::isnan(x) && !std::isnan(mu) && !std::isnan(var));
+  if (var == (T)0.0) {
     return NAN;
   }
-  const float xMinusMuOverSigma = (x - mu)/sigma;
-  return ((T)1.0)/(std::fabs(sigma) * std::sqrt(((T)2.0) * M_PI)) * std::exp(-((T)0.5) * xMinusMuOverSigma * xMinusMuOverSigma);
+  const float xMinusMuOverVar = (x - mu)/var;
+  return ((T)1.0)/(std::fabs(var) * std::sqrt(((T)2.0) * M_PI)) * std::exp(-((T)0.5) * xMinusMuOverVar * xMinusMuOverVar);
 }
 
 template<typename T>
-T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T sigma) {
-  if (sigma == (T)0.0) {
+T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T var) {
+  if (var == (T)0.0) {
     return NAN;
   }
-  return StandardNormalCumulativeDistributiveFunctionAtAbscissa<T>((x-mu)/std::fabs(sigma));
+  return StandardNormalCumulativeDistributiveFunctionAtAbscissa<T>((x-mu)/std::fabs(var));
 }
 
 template<typename T>
-T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability, T mu, T sigma) {
-  if (sigma == (T)0.0) {
+T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability, T mu, T var) {
+  if (var == (T)0.0) {
     return NAN;
   }
-  return StandardNormalCumulativeDistributiveInverseForProbability(probability) * std::fabs(sigma) + mu;
+  return StandardNormalCumulativeDistributiveInverseForProbability(probability) * std::fabs(var) + mu;
 }
 
 template<typename T>

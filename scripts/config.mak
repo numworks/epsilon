@@ -4,7 +4,7 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 11.2.0
-EPSILON_CUSTOM_VERSION ?= 1.6
+EPSILON_CUSTOM_VERSION ?= 1.7
 EPSILON_ONBOARDING_APP ?= 1
 # Valid values are "none", "update", "beta"
 EPSILON_BOOT_PROMPT ?= none

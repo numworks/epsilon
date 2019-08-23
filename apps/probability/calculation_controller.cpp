@@ -1,5 +1,4 @@
 #include "calculation_controller.h"
-#include "../constant.h"
 #include "../shared/poincare_helpers.h"
 #include "app.h"
 #include "calculation/discrete_calculation.h"
@@ -14,6 +13,7 @@
 #include "images/focused_calcul2_icon.h"
 #include "images/focused_calcul3_icon.h"
 #include "images/focused_calcul4_icon.h"
+#include <poincare/preferences.h>
 #include <assert.h>
 #include <cmath>
 
@@ -179,7 +179,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     if (field->isEditing()) {
       return;
     }
-    constexpr int precision = Constant::LargeNumberOfSignificantDigits;
+    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
     PrintFloat::ConvertFloatToText<double>(m_calculation->parameterAtIndex(i-1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
@@ -282,7 +282,7 @@ void CalculationController::updateTitle() {
     if (currentChar >= k_titleBufferSize) {
       break;
     }
-    constexpr int precision = Constant::ShortNumberOfSignificantDigits;
+    constexpr int precision = Preferences::ShortNumberOfSignificantDigits;
     constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
     PrintFloat::ConvertFloatToText<double>(m_distribution->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);

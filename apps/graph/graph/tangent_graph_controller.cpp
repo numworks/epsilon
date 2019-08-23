@@ -1,6 +1,7 @@
 #include "tangent_graph_controller.h"
 #include "../../shared/poincare_helpers.h"
 #include "../app.h"
+#include <poincare/preferences.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -64,21 +65,22 @@ void TangentGraphController::reloadBannerView() {
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), CartesianFunction::Symbol());
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   Poincare::Context * context = textFieldDelegateApp()->localContext();
 
+  constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
   ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), context);
-  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
   m_bannerView->aView()->setText(buffer);
 
   legend = "b=";
   legendLength = strlcpy(buffer, legend, bufferSize);
   y = -y*m_cursor->x()+function->evaluateAtAbscissa(m_cursor->x(), context);
-  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

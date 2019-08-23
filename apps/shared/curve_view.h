@@ -1,12 +1,11 @@
 #ifndef SHARED_CURVE_VIEW_H
 #define SHARED_CURVE_VIEW_H
 
-#include <escher.h>
-#include <cmath>
+#include "banner_view.h"
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
-#include "banner_view.h"
-#include <apps/constant.h>
+#include <poincare/preferences.h>
+#include <cmath>
 
 namespace Shared {
 
@@ -47,7 +46,7 @@ protected:
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_numberSignificantDigits = 6;
-  constexpr static int k_bigNumberSignificantDigits = Constant::LargeNumberOfSignificantDigits;
+  constexpr static int k_bigNumberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
   constexpr static int k_labelBufferMaxSize = 1 + k_bigNumberSignificantDigits + 3 + 3 + 1; // '-' + significant digits + '.' + "E-" + 3 digits + null-terminating char
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;

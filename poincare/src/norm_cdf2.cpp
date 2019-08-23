@@ -32,20 +32,20 @@ Evaluation<T> NormCDF2Node::templatedApproximate(Context * context, Preferences:
   Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> bEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> muEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> sigmaEvaluation = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> varEvaluation = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
 
   T a = aEvaluation.toScalar();
   T b = bEvaluation.toScalar();
   T mu = muEvaluation.toScalar();
-  T sigma = sigmaEvaluation.toScalar();
+  T var = varEvaluation.toScalar();
 
-  if (std::isnan(a) || std::isnan(b) || std::isnan(mu) || std::isnan(sigma)) {
+  if (std::isnan(a) || std::isnan(b) || std::isnan(mu) || std::isnan(var)) {
     return Complex<T>::Undefined();
   }
   if (b <= a) {
     return Complex<T>::Builder((T)0.0);
   }
-  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, sigma) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
+  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, var) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, var));
 }
 
 Expression NormCDF2::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

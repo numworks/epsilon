@@ -35,9 +35,7 @@ Evaluation<T> InvNormNode::templatedApproximate(Context * context, Preferences::
   T mu = muEvaluation.toScalar();
   T var = varEvaluation.toScalar();
 
-  if (std::isnan(a) || std::isnan(mu) || std::isnan(var)) {
-    return Complex<T>::Undefined();
-  }
+  // CumulativeDistributiveInverseForProbability handles bad mu and var values
   return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveInverseForProbability<T>(a, mu, var));
 }
 

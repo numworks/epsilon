@@ -33,13 +33,11 @@ Evaluation<T> NormCDFNode::templatedApproximate(Context * context, Preferences::
   Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> varEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
 
-  T a = aEvaluation.toScalar();
-  T mu = muEvaluation.toScalar();
-  T var = varEvaluation.toScalar();
+  const T a = aEvaluation.toScalar();
+  const T mu = muEvaluation.toScalar();
+  const T var = varEvaluation.toScalar();
 
-  if (std::isnan(a) || std::isnan(mu) || std::isnan(var)) {
-    return Complex<T>::Undefined();
-  }
+  // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
   return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, var));
 }
 

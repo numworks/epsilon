@@ -8,8 +8,7 @@ namespace Poincare {
 
 template<typename T>
 T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T var) {
-  assert(!std::isnan(x) && !std::isnan(mu) && !std::isnan(var));
-  if (var == (T)0.0) {
+  if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(mu, var)){
     return NAN;
   }
   const float xMinusMuOverVar = (x - mu)/var;
@@ -18,7 +17,7 @@ T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T var) {
 
 template<typename T>
 T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T var) {
-  if (var == (T)0.0) {
+  if (!ParametersAreOK(mu, var)) {
     return NAN;
   }
   return StandardNormalCumulativeDistributiveFunctionAtAbscissa<T>((x-mu)/std::fabs(var));
@@ -26,14 +25,24 @@ T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T var)
 
 template<typename T>
 T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability, T mu, T var) {
-  if (var == (T)0.0) {
+  if (!ParametersAreOK(mu, var)) {
     return NAN;
   }
   return StandardNormalCumulativeDistributiveInverseForProbability(probability) * std::fabs(var) + mu;
 }
 
 template<typename T>
+bool NormalDistribution::ParametersAreOK(T mu, T var) {
+  return !std::isnan(mu) && !std::isnan(var)
+    && !std::isinf(mu) && !std::isinf(var)
+    && var > (T)0.0;
+}
+
+template<typename T>
 T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T abscissa) {
+  if (std::isnan(abscissa) || std::isinf(abscissa)) {
+    return NAN;
+  }
   if (abscissa == (T)0.0) {
     return (T)0.5;
   }
@@ -48,7 +57,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
 
 template<typename T>
 T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(T probability) {
-  if (probability > (T)1.0 || probability < (T)0.0) {
+  if (probability > (T)1.0 || probability < (T)0.0 || std::isnan(probability) || std::isinf(probability)) {
     return NAN;
   }
   T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
@@ -70,5 +79,7 @@ template float NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<floa
 template double NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double, double);
 template float NormalDistribution::CumulativeDistributiveInverseForProbability<float>(float, float, float);
 template double NormalDistribution::CumulativeDistributiveInverseForProbability<double>(double, double, double);
+template bool NormalDistribution::ParametersAreOK(float mu, float var);
+template bool NormalDistribution::ParametersAreOK(double mu, double var);
 
 }

@@ -302,6 +302,7 @@ template HyperbolicTangent TreeHandle::FixedArityBuilder<HyperbolicTangent, Hype
 template ImaginaryPart TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>(TreeHandle*, size_t);
 template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(TreeHandle*, size_t);
 template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(TreeHandle*, size_t);
+template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(TreeHandle*, size_t);
 template LeastCommonMultiple TreeHandle::FixedArityBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(TreeHandle*, size_t);
 template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(TreeHandle*, size_t);
 template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(TreeHandle*, size_t);

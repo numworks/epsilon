@@ -47,16 +47,16 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
 
 template<typename T>
 T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(T probability) {
-  if (probability >= 1.0) {
+  if (probability >= (T)1.0) {
     return INFINITY;
   }
-  if (probability <= 0.0) {
+  if (probability <= (T)0.0) {
     return -INFINITY;
   }
-  if (probability < 0.5) {
-    return -StandardNormalCumulativeDistributiveInverseForProbability(1.0-probability);
+  if (probability < (T)0.5) {
+    return -StandardNormalCumulativeDistributiveInverseForProbability(((T)1.0)-probability);
   }
-  return std::sqrt(2.0) * erfInv(2.0 * probability - 1.0);
+  return std::sqrt((T)2.0) * erfInv(((T)2.0) * probability - (T)1.0);
 }
 
 template float NormalDistribution::EvaluateAtAbscissa<float>(float, float, float);

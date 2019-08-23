@@ -68,6 +68,7 @@ public:
     HyperbolicTangent,
     ImaginaryPart,
     Integral,
+    InvNorm,
     LeastCommonMultiple,
     Logarithm,
     MatrixTrace,

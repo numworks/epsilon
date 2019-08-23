@@ -1060,7 +1060,7 @@ QUIZ_CASE(poincare_hyperbolic_trigonometry) {
   assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3", User, Radian, Real);
 }
 
-QUIZ_CASE(poincare_probabolity) {
+QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(0,2,3)", "-inf");
   assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");

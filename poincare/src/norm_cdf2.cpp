@@ -55,7 +55,21 @@ Expression NormCDF2::shallowReduce(ExpressionNode::ReductionContext reductionCon
       return e;
     }
   }
-  //TODO LEA
+  // TODO Factorize with norm_cdf and inv_norm ?
+  Expression mu = childAtIndex(2);
+  Expression var = childAtIndex(3);
+  Context * context = reductionContext.context();
+
+  // Check mu and var
+  bool muAndVarOK = false;
+  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
+  if (!couldCheckMuAndVar) {
+    return *this;
+  }
+  if (!muAndVarOK) {
+    return replaceWithUndefinedInPlace();
+  }
+
   return *this;
 }
 

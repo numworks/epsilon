@@ -66,6 +66,7 @@ class Expression : public TreeHandle {
   friend class MultiplicationNode;
   friend class NaperianLogarithm;
   friend class NormCDF;
+  friend class NormCDF2;
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
@@ -279,6 +280,11 @@ protected:
   static Expression UntypedBuilderThreeChildren(Expression children) {
     assert(children.type() == ExpressionNode::Type::Matrix);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2));
+  }
+  template<typename U>
+  static Expression UntypedBuilderFourChildren(Expression children) {
+    assert(children.type() == ExpressionNode::Type::Matrix);
+    return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3));
   }
 
   template<class T> T convert() const {

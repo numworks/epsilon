@@ -20,7 +20,7 @@ public:
   // Proba
 
   // Cumulative distributive inverse for function defined on N (positive integers)
-  template<typename T> static T CumulativeDistributiveInverseForNDefinedFunction(T probability, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr);
+  template<typename T> static T CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr);
 
   // Cumulative distributive function for function defined on N (positive integers)
   template<typename T> static T CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1 = nullptr, const void * context2 = nullptr, const void * context3 = nullptr);

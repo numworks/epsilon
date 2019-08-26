@@ -58,27 +58,12 @@ double Distribution::cumulativeDistributiveInverseForProbability(double * probab
   if (*probability <= 0.0) {
     return 0.0;
   }
-  double p = 0.0;
-  int k = 0;
-  double delta = 0.0;
-  do {
-    delta = std::fabs(*probability-p);
-    p += evaluateAtDiscreteAbscissa(k++);
-    if (p >= k_maxProbability && std::fabs(*probability-1.0) <= delta) {
-      *probability = 1.0;
-      return k-1.0;
-    }
-  } while (std::fabs(*probability-p) <= delta && k < k_maxNumberOfOperations && p < 1.0);
-  p -= evaluateAtDiscreteAbscissa(--k);
-  if (k == k_maxNumberOfOperations) {
-    *probability = 1.0;
-    return INFINITY;
-  }
-  *probability = p;
-  if (std::isnan(*probability)) {
-    return NAN;
-  }
-  return k-1.0;
+  return Poincare::Solver::CumulativeDistributiveInverseForNDefinedFunction<double>(probability,
+        [](double k, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const Distribution * distribution = reinterpret_cast<const Distribution *>(context1);
+        return distribution->evaluateAtDiscreteAbscissa(k);
+      }, nullptr, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::AngleUnit::Degree, this);
+    // Context, complex format and angle unit are dummy values
 }
 
 double Distribution::rightIntegralInverseForProbability(double * probability) {

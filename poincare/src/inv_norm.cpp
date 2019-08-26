@@ -41,25 +41,15 @@ Evaluation<T> InvNormNode::templatedApproximate(Context * context, Preferences::
 
 Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = Expression::defaultShallowReduce();
-    if (e.isUndefined()) {
+    bool stopReduction = false;
+    Expression e = NormalDistributionFunction::shallowReduce(reductionContext.context(), &stopReduction);
+    if (stopReduction) {
       return e;
     }
   }
   Expression a = childAtIndex(0);
   Expression mu = childAtIndex(1);
-  Expression var = childAtIndex(2);
   Context * context = reductionContext.context();
-
-  // Check mu and var
-  bool muAndVarOK = false;
-  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
-  if (!couldCheckMuAndVar) {
-    return *this;
-  }
-  if (!muAndVarOK) {
-    return replaceWithUndefinedInPlace();
-  }
 
   // Check a
   if (a.deepIsMatrix(context)) {

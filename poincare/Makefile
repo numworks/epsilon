@@ -30,6 +30,7 @@ poincare_src += $(addprefix poincare/src/,\
 
 poincare_src += $(addprefix poincare/src/,\
   init.cpp \
+  binomial_distribution.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
@@ -44,7 +45,9 @@ poincare_src += $(addprefix poincare/src/,\
   arc_sine.cpp \
   arc_tangent.cpp \
   arithmetic.cpp \
+  binom_cdf.cpp \
   binomial_coefficient.cpp \
+  binomial_distribution_function.cpp \
   ceiling.cpp \
   complex.cpp \
   complex_argument.cpp \

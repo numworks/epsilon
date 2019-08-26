@@ -117,6 +117,7 @@ private:
     &MatrixIdentity::s_functionHelper,
     &ImaginaryPart::s_functionHelper,
     &Integral::s_functionHelper,
+    &InvBinom::s_functionHelper,
     &MatrixInverse::s_functionHelper,
     &InvNorm::s_functionHelper,
     &LeastCommonMultiple::s_functionHelper,

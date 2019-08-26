@@ -46,6 +46,10 @@ bool NormalDistribution::ExpressionParametersAreOK(bool * result, const Expressi
     return true;
   }
 
+  if (mu.isUndefined() || var.isUndefined() || Expression::IsInfinity(mu, context) || Expression::IsInfinity(var,context)) {
+    *result = false;
+    return true;
+  }
   if (!mu.isReal(context) || !var.isReal(context)) {
     // We cannot check that mu and variance are real
     return false;

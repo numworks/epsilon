@@ -47,6 +47,7 @@ public:
     ArcCosine,
     ArcSine,
     ArcTangent,
+    BinomCDF,
     BinomialCoefficient,
     Ceiling,
     ComplexArgument,

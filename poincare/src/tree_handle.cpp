@@ -266,6 +266,7 @@ template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(TreeHandle*, s
 template ArcCosine TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(TreeHandle*, size_t);
 template ArcSine TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(TreeHandle*, size_t);
 template ArcTangent TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(TreeHandle*, size_t);
+template BinomCDF TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>(TreeHandle*, size_t);
 template BinomialCoefficient TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>(TreeHandle*, size_t);
 template BinomialCoefficientLayout TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(TreeHandle*, size_t);
 template Ceiling TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>(TreeHandle*, size_t);

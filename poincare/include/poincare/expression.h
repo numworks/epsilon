@@ -27,6 +27,7 @@ class Expression : public TreeHandle {
   friend class ArcTangent;
   friend class Arithmetic;
   friend class BinomialCoefficient;
+  friend class BinomialDistributionFunction;
   friend class Ceiling;
   friend class CommonLogarithm;
   template<typename T>

@@ -77,7 +77,12 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
   if (nIsZero && (pIsZero || pIsOne)) {
     return NAN;
   }
-
+  if (std::abs(probability) < precision) {
+    if (pIsOne) {
+      return 0;
+    }
+    return NAN;
+  }
   if (std::abs(probability - (T)1.0) < precision) {
     return n;
   }

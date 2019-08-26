@@ -72,7 +72,19 @@ Expression InvBinom::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return replaceWithUndefinedInPlace();
   }
 
-  // TODO LEA if a == 0, check p ?
+  // If a == 0, check p
+  if (rationalA.isZero()) {
+    Expression p = childAtIndex(2);
+    if (p.type() != ExpressionNode::Type::Rational) {
+      return *this;
+    }
+    if (static_cast<Rational &>(p).isOne()) {
+      Expression result = Rational::Builder(0);
+      replaceWithInPlace(result);
+      return result;
+    }
+    return replaceWithUndefinedInPlace();
+  }
   // n if a == 1
   if (rationalA.isOne()) {
     replaceWithInPlace(n);

@@ -1,9 +1,7 @@
 #include "normal_distribution.h"
 #include <poincare/normal_distribution.h>
-#include <assert.h>
 #include <cmath>
 #include <float.h>
-#include <ion.h>
 
 namespace Probability {
 

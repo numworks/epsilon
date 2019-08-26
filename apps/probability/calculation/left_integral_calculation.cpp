@@ -47,9 +47,11 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
   if (indexKnownElement == 0) {
     m_result = m_distribution->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
   } else {
-    double currentResult = m_distribution->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
-    if (std::fabs(currentResult - m_result) < std::pow(10.0, - Poincare::Preferences::LargeNumberOfSignificantDigits)) {
-      return;
+    if (!std::isnan(m_upperBound)) {
+      double currentResult = m_distribution->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
+      if (std::fabs(currentResult - m_result) < std::pow(10.0, - Poincare::Preferences::LargeNumberOfSignificantDigits)) {
+        return;
+      }
     }
     m_upperBound = m_distribution->cumulativeDistributiveInverseForProbability(&m_result);
     if (std::isnan(m_upperBound)) {

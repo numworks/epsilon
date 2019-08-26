@@ -37,7 +37,7 @@ const ToolboxMessageTree normalDistributionChildren[] = {
 };
 
 const ToolboxMessageTree binomialDistributionChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::BinomialFDPCommandWithArg, I18n::Message::BinomialFDP),
+  ToolboxMessageTree::Leaf(I18n::Message::BinomialPDFCommandWithArg, I18n::Message::BinomialPDF),
   ToolboxMessageTree::Leaf(I18n::Message::BinomialCDFCommandWithArg, I18n::Message::BinomialCDF),
   ToolboxMessageTree::Leaf(I18n::Message::InvBinomialCommandWithArg, I18n::Message::InvBinomial),
 };

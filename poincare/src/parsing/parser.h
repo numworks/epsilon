@@ -101,6 +101,7 @@ private:
     &HyperbolicArcTangent::s_functionHelper,
     &BinomCDF::s_functionHelper,
     &BinomialCoefficient::s_functionHelper,
+    &BinomPDF::s_functionHelper,
     &Ceiling::s_functionHelper,
     &ConfidenceInterval::s_functionHelper,
     &Conjugate::s_functionHelper,

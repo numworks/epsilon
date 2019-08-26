@@ -33,7 +33,7 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
   if (x > n) {
     return(T)0;
   }
-  T lResult = std::lgamma(n+(T)1.0) - std::lgamma(std::floor(x)+(T)1.0) - std::lgamma(n - std::floor(x)+(T)1.0)+
+  T lResult = std::lgamma(n+(T)1.0) - std::lgamma(std::floor(x)+(T)1.0) - std::lgamma(n - std::floor(x)+(T)1.0) +
     std::floor(x)*std::log(p) + (n-std::floor(x))*std::log((T)(1.0)-p);
   return std::exp(lResult);
 }

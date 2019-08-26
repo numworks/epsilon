@@ -240,8 +240,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("binomial(10, 4)", "210");
   assert_expression_approximates_to<double>("binomial(10, 4)", "210");
 
-  assert_expression_approximates_to<float>("binompdf(4, 9, 0.7)", "0.0735138");
-  assert_expression_approximates_to<double>("binompdf(5.3, 9, 0.7)", "0735138");
+  assert_expression_approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", Degree, Cartesian, 6); // FIXME: precision problem
+  assert_expression_approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
 
   assert_expression_approximates_to<float>("ceil(0.2)", "1");
   assert_expression_approximates_to<double>("ceil(0.2)", "1");

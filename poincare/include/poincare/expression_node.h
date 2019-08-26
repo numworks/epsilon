@@ -49,6 +49,7 @@ public:
     ArcTangent,
     BinomCDF,
     BinomialCoefficient,
+    BinomPDF,
     Ceiling,
     ComplexArgument,
     Conjugate,

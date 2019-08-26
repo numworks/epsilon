@@ -69,6 +69,9 @@ double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(doubl
    *         => b^(k/2) > k/2 * 2^(k/2) * proba * gamma(k/2)
    *         => exp(k/2 * ln(b)) > k/2 * 2^(k/2) * proba * gamma(k/2)
    *         => b > exp(2/k * ln(k/2 * 2^(k/2) * proba * gamma(k/2))) */
+  if (*probability < DBL_EPSILON) {
+    return 0.0;
+  }
   const double k = m_parameter1;
   const double ceilKOver2 = std::ceil(k/2.0f);
   const double kOver2Minus1 = k/2.0f - 1.0f;

@@ -1,4 +1,5 @@
 #include "function_banner_delegate.h"
+#include <ion/unicode/utf8_decoder.h>
 #include "poincare_helpers.h"
 #include <poincare/preferences.h>
 
@@ -12,7 +13,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   char buffer[bufferSize];
   const char * space = " ";
   int numberOfChar = 0;
-  buffer[numberOfChar++] = function->symbol();
+  numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, bufferSize-numberOfChar);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer + numberOfChar, "=", bufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);

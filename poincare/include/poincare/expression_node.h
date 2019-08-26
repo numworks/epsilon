@@ -70,6 +70,7 @@ public:
     HyperbolicTangent,
     ImaginaryPart,
     Integral,
+    InvBinom,
     InvNorm,
     LeastCommonMultiple,
     Logarithm,

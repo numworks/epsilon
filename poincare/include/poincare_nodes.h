@@ -42,6 +42,7 @@
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/integral.h>
+#include <poincare/inv_binom.h>
 #include <poincare/inv_norm.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/logarithm.h>

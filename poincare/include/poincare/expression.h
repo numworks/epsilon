@@ -66,9 +66,10 @@ class Expression : public TreeHandle {
   friend class Multiplication;
   friend class MultiplicationNode;
   friend class NaperianLogarithm;
-  friend class NormPDF;
+  friend class NormalDistributionFunction;
   friend class NormCDF;
   friend class NormCDF2;
+  friend class NormPDF;
   friend class NthRoot;
   friend class Number;
   friend class Opposite;

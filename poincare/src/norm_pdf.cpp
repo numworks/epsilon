@@ -23,10 +23,6 @@ int NormPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NormPDF::s_functionHelper.name());
 }
 
-Expression NormPDFNode::shallowReduce(ReductionContext reductionContext) {
-  return NormPDF(this).shallowReduce(reductionContext);
-}
-
 template<typename T>
 Evaluation<T> NormPDFNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
@@ -39,30 +35,6 @@ Evaluation<T> NormPDFNode::templatedApproximate(Context * context, Preferences::
 
   // EvaluateAtAbscissa handles bad mu and var values
   return Complex<T>::Builder(NormalDistribution::EvaluateAtAbscissa(x, mu, var));
-}
-
-Expression NormPDF::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  {
-    Expression e = Expression::defaultShallowReduce();
-    if (e.isUndefined()) {
-      return e;
-    }
-  }
-  Expression mu = childAtIndex(1);
-  Expression var = childAtIndex(2);
-  Context * context = reductionContext.context();
-
-  // Check mu and var
-  bool muAndVarOK = false;
-  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
-  if (!couldCheckMuAndVar) {
-    return *this;
-  }
-  if (!muAndVarOK) {
-    return replaceWithUndefinedInPlace();
-  }
-
-  return *this;
 }
 
 }

@@ -81,9 +81,9 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
   if (std::abs(probability - (T)1.0) < precision) {
     return n;
   }
-
+  T proba = probability;
   return Solver::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      probability,
+      &proba,
       [](double x, Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * n, const void * p, const void * isDouble) {
         if (*(bool *)isDouble) {
           return (double)BinomialDistribution::EvaluateAtAbscissa<T>(x, *(reinterpret_cast<const double *>(n)), *(reinterpret_cast<const double *>(p)));

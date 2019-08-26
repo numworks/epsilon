@@ -1,4 +1,5 @@
 #include "binomial_distribution.h"
+#include <poincare/binomial_distribution.h>
 #include <assert.h>
 #include <cmath>
 
@@ -20,6 +21,10 @@ I18n::Message BinomialDistribution::parameterDefinitionAtIndex(int index) {
   } else {
     return I18n::Message::SuccessProbability;
   }
+}
+
+float BinomialDistribution::evaluateAtAbscissa(float x) const {
+  return Poincare::BinomialDistribution::EvaluateAtAbscissa<float>(x, m_parameter1, m_parameter2);
 }
 
 float BinomialDistribution::xMin() const {
@@ -68,13 +73,7 @@ bool BinomialDistribution::authorizedValueAtIndex(float x, int index) const {
 }
 
 double BinomialDistribution::cumulativeDistributiveInverseForProbability(double * probability) {
-  if (m_parameter1 == 0.0 && (m_parameter2 == 0.0 || m_parameter2 == 1.0)) {
-    return NAN;
-  }
-  if (*probability >= 1.0) {
-    return m_parameter1;
-  }
-  return Distribution::cumulativeDistributiveInverseForProbability(probability);
+  return Poincare::BinomialDistribution::CumulativeDistributiveInverseForProbability<double>(*probability, m_parameter1, m_parameter2);
 }
 
 double BinomialDistribution::rightIntegralInverseForProbability(double * probability) {
@@ -87,38 +86,8 @@ double BinomialDistribution::rightIntegralInverseForProbability(double * probabi
   return Distribution::rightIntegralInverseForProbability(probability);
 }
 
-template<typename T>
-T BinomialDistribution::templatedApproximateAtAbscissa(T x) const {
-  if (m_parameter1 == 0) {
-    if (m_parameter2 == 0 || m_parameter2 == 1) {
-      return NAN;
-    }
-    if (floor(x) == 0) {
-      return 1;
-    }
-    return 0;
-  }
-  if (m_parameter2 == 1) {
-    if (floor(x) == m_parameter1) {
-      return 1;
-    }
-    return 0;
-  }
-  if (m_parameter2 == 0) {
-    if (floor(x) == 0) {
-      return 1;
-    }
-    return 0;
-  }
-  if (x > m_parameter1) {
-    return 0;
-  }
-  T lResult = std::lgamma((T)(m_parameter1+1.0)) - std::lgamma(std::floor(x)+(T)1.0) - std::lgamma((T)m_parameter1 - std::floor(x)+(T)1.0)+
-    std::floor(x)*std::log((T)m_parameter2) + ((T)m_parameter1-std::floor(x))*std::log((T)(1.0-m_parameter2));
-  return std::exp(lResult);
+double BinomialDistribution::evaluateAtDiscreteAbscissa(int k) const {
+  return Poincare::BinomialDistribution::EvaluateAtAbscissa<double>((double) k, (double)m_parameter1, (double)m_parameter2);
 }
 
 }
-
-template float Probability::BinomialDistribution::templatedApproximateAtAbscissa(float x) const;
-template double Probability::BinomialDistribution::templatedApproximateAtAbscissa(double x) const;

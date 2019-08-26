@@ -234,8 +234,14 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("abs([[3+2𝐢,3+4𝐢][5+2𝐢,3+2𝐢]])", "[[3.605551,5][5.385165,3.605551]]");
   assert_expression_approximates_to<double>("abs([[3+2𝐢,3+4𝐢][5+2𝐢,3+2𝐢]])", "[[3.605551275464,5][5.3851648071345,3.605551275464]]");
 
+  assert_expression_approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", Degree, Cartesian, 6); // FIXME: precision problem
+  assert_expression_approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902");
+
   assert_expression_approximates_to<float>("binomial(10, 4)", "210");
   assert_expression_approximates_to<double>("binomial(10, 4)", "210");
+
+  assert_expression_approximates_to<float>("binompdf(4, 9, 0.7)", "0.0735138");
+  assert_expression_approximates_to<double>("binompdf(5.3, 9, 0.7)", "0735138");
 
   assert_expression_approximates_to<float>("ceil(0.2)", "1");
   assert_expression_approximates_to<double>("ceil(0.2)", "1");
@@ -269,6 +275,9 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
+
+  assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
+  assert_expression_approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
 
   assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
   //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error

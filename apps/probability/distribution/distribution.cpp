@@ -7,21 +7,12 @@ namespace Probability {
 
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (!isContinuous()) {
-    int end = std::round(x);
-    double result = 0.0;
-    for (int k = 0; k <=end; k++) {
-      result += evaluateAtDiscreteAbscissa(k);
-      /* Avoid too long loop */
-      if (k > k_maxNumberOfOperations) {
-        break;
-      }
-      if (result >= k_maxProbability) {
-        result = 1.0;
-        break;
-      }
-
-    }
-    return result;
+    return Poincare::Solver::CumulativeDistributiveFunctionForNDefinedFunction<double>(x,
+        [](double k, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+        const Distribution * distribution = reinterpret_cast<const Distribution *>(context1);
+        return distribution->evaluateAtDiscreteAbscissa(k);
+      }, nullptr, Poincare::Preferences::ComplexFormat::Real, Poincare::Preferences::AngleUnit::Degree, this);
+    // Context, complex format and angle unit are dummy values
   }
   return 0.0;
 }

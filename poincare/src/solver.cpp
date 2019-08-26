@@ -205,4 +205,51 @@ Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precisi
   return Coordinate2D(NAN, NAN);
 }
 
+template<typename T>
+T Solver::CumulativeDistributiveInverseForNDefinedFunction(T probability, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+  T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
+  assert(probability <= (((T)1.0) - precision) && probability > precision);
+  T p = 0.0;
+  int k = 0;
+  T delta = 0.0;
+  do {
+    delta = std::fabs(probability-p);
+    p += evaluation(k++, context, complexFormat, angleUnit, context1, context2, context3);
+    if (p >= k_maxProbability && std::fabs(probability-1.0) <= delta) {
+      return (T)(k-1);
+    }
+  } while (std::fabs(probability-p) <= delta && k < k_maxNumberOfOperations && p < 1.0);
+  p -= evaluation(--k, context, complexFormat, angleUnit, context1, context2, context3);
+  if (k == k_maxNumberOfOperations) {
+    return INFINITY;
+  }
+  if (std::isnan(p)) {
+    return NAN;
+  }
+  return k-1;
+}
+
+template<typename T>
+T Solver::CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+  int end = std::round(x);
+  double result = 0.0;
+  for (int k = 0; k <=end; k++) {
+    result += evaluation(k, context, complexFormat, angleUnit, context1, context2, context3);
+    /* Avoid too long loop */
+    if (k > k_maxNumberOfOperations) {
+      break;
+    }
+    if (result >= k_maxProbability) {
+      result = 1.0;
+      break;
+    }
+  }
+  return result;
+}
+
+template float Solver::CumulativeDistributiveInverseForNDefinedFunction(float, ValueAtAbscissa, Context *, Preferences::ComplexFormat, Preferences::AngleUnit, const void *, const void *, const void *);
+template double Solver::CumulativeDistributiveInverseForNDefinedFunction(double, ValueAtAbscissa, Context *, Preferences::ComplexFormat, Preferences::AngleUnit, const void *, const void *, const void *);
+template float Solver::CumulativeDistributiveFunctionForNDefinedFunction(float, ValueAtAbscissa, Context *, Preferences::ComplexFormat, Preferences::AngleUnit, const void *, const void *, const void *);
+template double Solver::CumulativeDistributiveFunctionForNDefinedFunction(double, ValueAtAbscissa, Context *, Preferences::ComplexFormat, Preferences::AngleUnit, const void *, const void *, const void *);
+
 }

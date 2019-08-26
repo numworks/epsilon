@@ -99,6 +99,7 @@ private:
     &HyperbolicArcSine::s_functionHelper,
     &ArcTangent::s_functionHelper,
     &HyperbolicArcTangent::s_functionHelper,
+    &BinomCDF::s_functionHelper,
     &BinomialCoefficient::s_functionHelper,
     &Ceiling::s_functionHelper,
     &ConfidenceInterval::s_functionHelper,

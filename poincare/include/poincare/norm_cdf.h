@@ -2,11 +2,11 @@
 #define POINCARE_NORM_CDF_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/expression.h>
+#include <poincare/normal_distribution_function.h>
 
 namespace Poincare {
 
-class NormCDFNode final : public ExpressionNode  {
+class NormCDFNode final : public NormalDistributionFunctionNode  {
 public:
 
   // TreeNode
@@ -28,23 +28,17 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
-  // Simplication
-  Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
-  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
-
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
-class NormCDF final : public Expression {
+class NormCDF final : public NormalDistributionFunction {
 public:
-  NormCDF(const NormCDFNode * n) : Expression(n) {}
+  NormCDF(const NormCDFNode * n) : NormalDistributionFunction(n) {}
   static NormCDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("normcdf", 3, &UntypedBuilderThreeChildren<NormCDF>);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

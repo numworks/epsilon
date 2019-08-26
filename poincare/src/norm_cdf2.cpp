@@ -23,10 +23,6 @@ int NormCDF2Node::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NormCDF2::s_functionHelper.name());
 }
 
-Expression NormCDF2Node::shallowReduce(ReductionContext reductionContext) {
-  return NormCDF2(this).shallowReduce(reductionContext);
-}
-
 template<typename T>
 Evaluation<T> NormCDF2Node::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
@@ -46,31 +42,6 @@ Evaluation<T> NormCDF2Node::templatedApproximate(Context * context, Preferences:
     return Complex<T>::Builder((T)0.0);
   }
   return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, var) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, var));
-}
-
-Expression NormCDF2::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  {
-    Expression e = Expression::defaultShallowReduce();
-    if (e.isUndefined()) {
-      return e;
-    }
-  }
-  // TODO Factorize with norm_cdf and inv_norm ?
-  Expression mu = childAtIndex(2);
-  Expression var = childAtIndex(3);
-  Context * context = reductionContext.context();
-
-  // Check mu and var
-  bool muAndVarOK = false;
-  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
-  if (!couldCheckMuAndVar) {
-    return *this;
-  }
-  if (!muAndVarOK) {
-    return replaceWithUndefinedInPlace();
-  }
-
-  return *this;
 }
 
 }

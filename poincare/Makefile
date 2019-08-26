@@ -99,6 +99,7 @@ poincare_src += $(addprefix poincare/src/,\
   norm_cdf.cpp \
   norm_cdf2.cpp \
   norm_pdf.cpp \
+  normal_distribution_function.cpp \
   nth_root.cpp \
   number.cpp \
   opposite.cpp \

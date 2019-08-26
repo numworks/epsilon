@@ -23,10 +23,6 @@ int NormCDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NormCDF::s_functionHelper.name());
 }
 
-Expression NormCDFNode::shallowReduce(ReductionContext reductionContext) {
-  return NormCDF(this).shallowReduce(reductionContext);
-}
-
 template<typename T>
 Evaluation<T> NormCDFNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
@@ -39,31 +35,6 @@ Evaluation<T> NormCDFNode::templatedApproximate(Context * context, Preferences::
 
   // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
   return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, var));
-}
-
-Expression NormCDF::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  {
-    Expression e = Expression::defaultShallowReduce();
-    if (e.isUndefined()) {
-      return e;
-    }
-  }
-
-  Expression mu = childAtIndex(1);
-  Expression var = childAtIndex(2);
-  Context * context = reductionContext.context();
-
-  // Check mu and var
-  bool muAndVarOK = false;
-  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
-  if (!couldCheckMuAndVar) {
-    return *this;
-  }
-  if (!muAndVarOK) {
-    return replaceWithUndefinedInPlace();
-  }
-
-  return *this;
 }
 
 }

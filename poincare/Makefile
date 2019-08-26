@@ -48,6 +48,7 @@ poincare_src += $(addprefix poincare/src/,\
   binom_cdf.cpp \
   binomial_coefficient.cpp \
   binomial_distribution_function.cpp \
+  binom_pdf.cpp \
   ceiling.cpp \
   complex.cpp \
   complex_argument.cpp \

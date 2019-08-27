@@ -96,16 +96,6 @@ Function Function::Builder(const char * name, size_t length, Expression child) {
   return f;
 }
 
-Expression Function::UntypedBuilder(const char * name, size_t length, Expression child, Context * context) {
-  /* Create an expression only if it is not in the context or defined as a
-   * function */
-  Function f = Function::Builder(name, length, child);
-  if (SymbolAbstract::ValidInContext(f, context)) {
-    return f;
-  }
-  return Expression();
-}
-
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   // Replace the symbol in the child
   childAtIndex(0).replaceSymbolWithExpression(symbol, expression);

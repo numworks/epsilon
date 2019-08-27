@@ -65,19 +65,12 @@ class SymbolAbstract : public Expression {
 public:
   const char * name() const { return node()->name(); }
   static size_t TruncateExtension(char * dst, const char * src, size_t len);
-  static bool ValidInContext(SymbolAbstract & s, Context * context) {
-    // Retrive from context the expression corresponding to s
-    Expression f = context ? context->expressionForSymbol(s, false) : Expression();
-    return f.isUninitialized() || f.type() == s.type();
-  }
   static bool matches(const SymbolAbstract & symbol, ExpressionTest test, Context * context);
   constexpr static size_t k_maxNameSize = 8;
-
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
   template <typename T, typename U>
   static T Builder(const char * name, int length);
-
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
   static Expression Expand(const SymbolAbstract & symbol, Context * context, bool clone);

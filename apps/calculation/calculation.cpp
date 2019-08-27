@@ -142,6 +142,12 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   {
     // If the approximate result is 'unreal' or the exact result is 'undef'
     m_displayOutput = DisplayOutput::ApproximateOnly;
+  } else if (strcmp(approximateOutputText(), Undefined::Name()) == 0
+      && strcmp(inputText(), exactOutputText()) == 0)
+  {
+    /* If the approximate result is 'undef' and the input and exactOutput are
+     * equal */
+    m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (input().recursivelyMatches(Expression::IsApproximate, context)
       || exactOutput().recursivelyMatches(Expression::IsApproximate, context))
   {

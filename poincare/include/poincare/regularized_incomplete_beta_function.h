@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_INCOMPLETE_BETA_FUNCTION_H
-#define PROBABILITY_INCOMPLETE_BETA_FUNCTION_H
+#ifndef POINCARE_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
+#define POINCARE_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
 
 /*
  * zlib License
@@ -28,7 +28,10 @@
 
 
 // WARNING: this code has been modified
+namespace Poincare {
 
-double IncompleteBetaFunction(double a, double b, double x);
+double RegularizedIncompleteBetaFunction(double a, double b, double x);
+
+}
 
 #endif

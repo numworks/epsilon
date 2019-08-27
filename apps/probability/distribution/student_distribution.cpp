@@ -1,5 +1,5 @@
 #include "student_distribution.h"
-#include "incomplete_beta_function.h"
+#include <poincare/regularized_incomplete_beta_function.h>
 #include "helper.h"
 #include <cmath>
 
@@ -36,7 +36,7 @@ double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) c
   const float k = m_parameter1;
   const double sqrtXSquaredPlusK = std::sqrt(x*x + k);
   double t = (x + sqrtXSquaredPlusK) / (2.0 * sqrtXSquaredPlusK);
-  return IncompleteBetaFunction(k/2.0, k/2.0, t);
+  return Poincare::RegularizedIncompleteBetaFunction(k/2.0, k/2.0, t);
 }
 
 double StudentDistribution::cumulativeDistributiveInverseForProbability(double * probability) {

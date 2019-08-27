@@ -54,22 +54,11 @@ float BinomialDistribution::yMax() const {
 
 bool BinomialDistribution::authorizedValueAtIndex(float x, int index) const {
   if (index == 0) {
-    /* As the cumulative probability are computed by looping over all discrete
-     * abscissa within the interesting range, the complexity of the cumulative
-     * probability is linear with the size of the range. Here we cap the maximal
-     * size of the range to 10000. If one day we want to increase or get rid of
-     *  this cap, we should implement the explicit formula of the cumulative
-     *  probability (which depends on an incomplete beta function) to make the
-     *  comlexity O(1). */
-    if (x != (int)x || x < 0.0f || x > 99999.0f) {
-      return false;
-    }
-    return true;
+    // n must be a positive integer
+    return (x == (int)x) && x >= 0.0f;
   }
-  if (x < 0.0f || x > 1.0f) {
-    return false;
-  }
-  return true;
+  // p must be between 0 and 1
+  return (x >= 0.0f) && (x <= 1.0f);
 }
 
 double BinomialDistribution::cumulativeDistributiveInverseForProbability(double * probability) {

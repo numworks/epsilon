@@ -25,19 +25,21 @@
 
 // WARNING: this code has been modified
 
-#include "incomplete_beta_function.h"
+#include <poincare/regularized_incomplete_beta_function.h>
 #include <math.h>
 #include <cmath>
+
+namespace Poincare {
 
 #define STOP 1.0e-8
 #define TINY 1.0e-30
 
-double IncompleteBetaFunction(double a, double b, double x) {
+double RegularizedIncompleteBetaFunction(double a, double b, double x) {
     if (x < 0.0 || x > 1.0) return NAN;
 
     /*The continued fraction converges nicely for x < (a+1)/(a+b+2)*/
     if (x > (a+1.0)/(a+b+2.0)) {
-        return (1.0-IncompleteBetaFunction(b,a,1.0-x)); /*Use the fact that beta is symmetrical.*/
+        return (1.0-RegularizedIncompleteBetaFunction(b,a,1.0-x)); /*Use the fact that beta is symmetrical.*/
     }
 
     /*Find the first part before the continued fraction.*/
@@ -79,4 +81,6 @@ double IncompleteBetaFunction(double a, double b, double x) {
     }
 
     return NAN; /*Needed more loops, did not converge.*/
+}
+
 }

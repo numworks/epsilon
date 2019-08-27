@@ -1,5 +1,6 @@
 #include <poincare/binomial_distribution.h>
 #include <poincare/rational.h>
+#include <poincare/regularized_incomplete_beta_function.h>
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -49,16 +50,8 @@ T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n, T p) 
   if (x >= n) {
     return (T)1.0;
   }
-  bool isDouble = sizeof(T) == sizeof(double);
-  return Solver::CumulativeDistributiveFunctionForNDefinedFunction<T>(
-      x,
-      [](double abscissa, Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * n, const void * p, const void * isDouble) {
-        if (*(bool *)isDouble) {
-          return (double)BinomialDistribution::EvaluateAtAbscissa<T>(abscissa, *(reinterpret_cast<const double *>(n)), *(reinterpret_cast<const double *>(p)));
-        }
-        return (double)BinomialDistribution::EvaluateAtAbscissa<T>(abscissa, *(reinterpret_cast<const float *>(n)), *(reinterpret_cast<const float *>(p)));
-      }, (Context *)nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, &n, &p, &isDouble);
-    // Context, complex format and angle unit are dummy values
+  T floorX = std::floor(x);
+  return RegularizedIncompleteBetaFunction(n-floorX, floorX+1.0, 1.0-p);
 }
 
 template<typename T>
@@ -100,14 +93,6 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
 
 template<typename T>
 bool BinomialDistribution::ParametersAreOK(T n, T p) {
-  /* TODO As the cumulative probability are computed by looping over all discrete
-   * abscissa within the interesting range, the complexity of the cumulative
-   * probability is linear with the size of the range. Here we cap the maximal
-   * size of the range to 10000. If one day we want to increase or get rid of
-   *  this cap, we should implement the explicit formula of the cumulative
-   *  probability (which depends on an incomplete beta function) to make the
-   *  comlexity O(1). */
-  //TODO LEA n doit être <= 99999.0f) {
   return !std::isnan(n) && !std::isnan(p)
     && !std::isinf(n) && !std::isinf(p)
     && (n == (int)n) && (n >= (T)0)

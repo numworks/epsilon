@@ -119,13 +119,17 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (input().recursivelyMatches(
         [](const Expression e, Context * c) {
-          constexpr int approximateOnlyTypesCount = 5;
+          constexpr int approximateOnlyTypesCount = 9;
           /* If the input contains the following types, we only display the
            * approximate output. */
           ExpressionNode::Type approximateOnlyTypes[approximateOnlyTypesCount] = {
             ExpressionNode::Type::Random,
             ExpressionNode::Type::Round,
             ExpressionNode::Type::FracPart,
+            ExpressionNode::Type::Integral,
+            ExpressionNode::Type::Product,
+            ExpressionNode::Type::Sum,
+            ExpressionNode::Type::Derivative,
             ExpressionNode::Type::ConfidenceInterval,
             ExpressionNode::Type::PredictionInterval
           };

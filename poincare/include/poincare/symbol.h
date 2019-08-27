@@ -60,7 +60,6 @@ public:
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
   static Symbol Builder(CodePoint name);
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
-  static Expression UntypedBuilder(const char * name, size_t length, Context * context);
 
   // Symbol properties
   bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX) || node()->isUnknown(UCodePointUnknownN); }

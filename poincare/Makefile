@@ -35,6 +35,7 @@ poincare_src += $(addprefix poincare/src/,\
   exception_checkpoint.cpp \
   helpers.cpp \
   normal_distribution.cpp \
+  regularized_incomplete_beta_function.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/,\

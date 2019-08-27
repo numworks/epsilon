@@ -171,15 +171,13 @@ int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
 }
 
 HighlightCell * ValuesController::reusableCell(int index, int type) {
-  assert(index >= 0);
+  assert(0 <= index && index < reusableCellCount(type));
   switch (type) {
     case 0:
-      assert(index == 0);
       return &m_abscissaTitleCell;
     case 1:
       return functionTitleCells(index);
     case 2:
-      assert(index < k_maxNumberOfAbscissaCells);
       return &m_abscissaCells[index];
     case 3:
       return floatCells(index);

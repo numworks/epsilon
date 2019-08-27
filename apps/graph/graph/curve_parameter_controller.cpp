@@ -1,5 +1,6 @@
 #include "curve_parameter_controller.h"
 #include "graph_controller.h"
+#include "../app.h"
 #include <apps/i18n.h>
 #include <assert.h>
 
@@ -29,8 +30,9 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (selectedRow() == 0 || selectedRow() == 1))) {
-    switch (selectedRow()) {
+  int index = cellIndex(selectedRow());
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (index == 0 || index == 1))) {
+    switch (index) {
       case 0:
       {
         m_calculationParameterController.setRecord(m_record);
@@ -54,18 +56,23 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int CurveParameterController::numberOfRows() {
-  return k_totalNumberOfCells;
+  return reusableCellCount();
 };
 
 HighlightCell * CurveParameterController::reusableCell(int index) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCells);
+  assert(0 <= index && index < reusableCellCount());
   HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
-  return cells[index];
+  return cells[cellIndex(index)];
 }
 
 int CurveParameterController::reusableCellCount() {
-  return k_totalNumberOfCells;
+  Shared::ExpiringPointer<CartesianFunction> f = App::app()->functionStore()->modelForRecord(m_record);
+  return 3 - (f->plotType() != CartesianFunction::PlotType::Cartesian) * 2;
+}
+
+int CurveParameterController::cellIndex(int visibleCellIndex) const {
+  Shared::ExpiringPointer<CartesianFunction> f = App::app()->functionStore()->modelForRecord(m_record);
+  return (f->plotType() != CartesianFunction::PlotType::Cartesian) + visibleCellIndex;
 }
 
 FunctionGoToParameterController * CurveParameterController::goToParameterController() {

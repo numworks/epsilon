@@ -19,10 +19,10 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
+  int cellIndex(int visibleCellIndex) const;
   Shared::FunctionGoToParameterController * goToParameterController() override;
   Shared::FunctionGoToParameterController m_goToParameterController;
   GraphController * m_graphController;
-  constexpr static int k_totalNumberOfCells = 3;
   MessageTableCellWithChevron m_calculationCell;
   MessageTableCellWithSwitch m_derivativeCell;
   CalculationParameterController m_calculationParameterController;

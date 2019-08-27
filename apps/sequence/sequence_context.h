@@ -41,15 +41,15 @@ public:
     m_doubleSequenceContext(),
     m_sequenceStore(sequenceStore),
     m_parentContext(parentContext) {}
-  /* expressionForSymbol & setExpressionForSymbolName directly call the parent
+  /* expressionForSymbolAbstract & setExpressionForSymbolAbstractName directly call the parent
    * context respective methods. Indeed, special chars like n, u(n), u(n+1),
    * v(n), v(n+1) are taken into accound only when evaluating sequences which
    * is done in another context. */
-  const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol, bool clone) override {
-    return m_parentContext->expressionForSymbol(symbol, clone);
+  const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone) override {
+    return m_parentContext->expressionForSymbolAbstract(symbol, clone);
   }
-  void setExpressionForSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Poincare::Context * context) override {
-    m_parentContext->setExpressionForSymbol(expression, symbol, context);
+  void setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Poincare::Context * context) override {
+    m_parentContext->setExpressionForSymbolAbstract(expression, symbol, context);
   }
   template<typename T> T valueOfSequenceAtPreviousRank(int sequenceIndex, int rank) const {
     if (sizeof(T) == sizeof(float)) {

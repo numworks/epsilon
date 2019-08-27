@@ -100,22 +100,16 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     selectableTableView()->reloadData();
     return true;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (selectedRow() == -1) {
-      return header()->handleEvent(event);
-    }
-    if (selectedRow() == 0) {
-      if (selectedColumn() == 0) {
-        configureAbscissa();
-        return true;
-      }
-      configureFunction();
-      return true;
-    }
-    return false;
-  }
   if (selectedRow() == -1) {
     return header()->handleEvent(event);
+  }
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
+    if (selectedColumn() == 0) {
+      configureAbscissa();
+      return true;
+    }
+    configureFunction();
+    return true;
   }
   return false;
 }

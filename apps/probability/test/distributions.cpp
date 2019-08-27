@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
+#include "../distribution/binomial_distribution.h"
 #include "../distribution/chi_squared_distribution.h"
 #include "../distribution/geometric_distribution.h"
 #include "../distribution/student_distribution.h"
@@ -11,7 +12,7 @@ void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
-  quiz_assert(std::abs(r-result)/result < FLT_EPSILON);
+  quiz_assert(std::abs(r-result) < FLT_EPSILON || std::abs(r-result)/result < FLT_EPSILON);
 
   r = distribution->cumulativeDistributiveInverseForProbability(&result);
   quiz_assert(!std::isnan(r));
@@ -21,6 +22,21 @@ void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::
 }
 
 //TODO other distributions
+
+QUIZ_CASE(binomial_distribution) {
+  // B(32, 0.6)
+  Probability::BinomialDistribution distribution;
+  distribution.setParameterAtIndex(32.0, 0);
+  distribution.setParameterAtIndex(0.6, 1);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 19.0, 0.53819340022502382137048471122398041188716888427734375);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 10.0, 0.00094770581410635293569122428181117356871254742145538330078125);
+
+  // B(17, 0.1)
+  distribution.setParameterAtIndex(17.0, 0);
+  distribution.setParameterAtIndex(0.1, 1);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 0.0, 0.166771816996665822596668249389040283858776092529296875);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.0, 0.4817852491014791294077213024138472974300384521484375);
+}
 
 QUIZ_CASE(chi_squared_distribution) {
   // Chi Squared distribution with 1 degree of freedom

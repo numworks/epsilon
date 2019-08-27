@@ -126,15 +126,6 @@ Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::C
   return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Expression Symbol::UntypedBuilder(const char * name, size_t length, Context * context) {
-  // create an expression only if it is not in the context or defined as a symbol
-  Symbol s = Symbol::Builder(name, length);
-  if (SymbolAbstract::ValidInContext(s, context)) {
-    return s;
-  }
-  return Expression();
-}
-
 bool SymbolNode::isUnknown(CodePoint unknownSymbol) const {
   bool result = UTF8Helper::CodePointIs(m_name, unknownSymbol);
   if (result) {

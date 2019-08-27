@@ -174,6 +174,7 @@ tests_src += $(addprefix poincare/test/,\
   print_float.cpp\
   print_int.cpp\
   rational.cpp\
+  regularized_incomplete_beta_function.cpp \
   simplification.cpp\
 )
 

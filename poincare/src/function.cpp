@@ -129,7 +129,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
 }
 
 Expression Function::shallowReplaceReplaceableSymbols(Context * context) {
-  Expression e = context->expressionForSymbol(*this, true);
+  Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     return *this;
   }
@@ -154,7 +154,7 @@ VariableContext Function::unknownXContext(Context & parentContext) const {
   /* If the parentContext already has an expression for UnknownX, we have to
    * replace in childAtIndex(0) any occurence of UnknownX by its value in
    * parentContext. That way, we handle: evaluatin f(x-1) with x = 2 & f:x->x^2 */
-  Expression unknownXValue = parentContext.expressionForSymbol(unknownXSymbol, true);
+  Expression unknownXValue = parentContext.expressionForSymbolAbstract(unknownXSymbol, true);
   if (!unknownXValue.isUninitialized()) {
     xContext = static_cast<VariableContext &>(parentContext); // copy the parentContext
     child.replaceSymbolWithExpression(unknownXSymbol, unknownXValue);
@@ -164,7 +164,7 @@ VariableContext Function::unknownXContext(Context & parentContext) const {
   assert(!child.recursivelyMatches([](const Expression e, Context * context, bool replaceSymbol) {
         return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol &>(e).isSystemSymbol();
       }, parentContext, false));
-  xContext.setExpressionForSymbol(child, unknownXSymbol, xContext);
+  xContext.setExpressionForSymbolAbstract(child, unknownXSymbol, xContext);
   return xContext;
 }
 #endif

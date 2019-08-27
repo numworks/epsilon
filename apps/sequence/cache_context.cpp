@@ -14,7 +14,7 @@ CacheContext<T>::CacheContext(Context * parentContext) :
 }
 
 template<typename T>
-const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & symbol, bool clone) {
+const Expression CacheContext<T>::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
   // [u|v|w](n(+1)?)
   if (symbol.type() == ExpressionNode::Type::Symbol
     && symbol.name()[0] >= SequenceStore::k_sequenceNames[0][0]
@@ -24,12 +24,12 @@ const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & sym
     Symbol s = const_cast<Symbol &>(static_cast<const Symbol &>(symbol));
     return Float<T>::Builder(m_values[nameIndexForSymbol(s)][rankIndexForSymbol(s)]);
   }
-  return m_parentContext->expressionForSymbol(symbol, clone);
+  return m_parentContext->expressionForSymbolAbstract(symbol, clone);
 }
 
 template<typename T>
-void CacheContext<T>::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
-  m_parentContext->setExpressionForSymbol(expression, symbol, context);
+void CacheContext<T>::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
+  m_parentContext->setExpressionForSymbolAbstract(expression, symbol, context);
 }
 
 template<typename T>

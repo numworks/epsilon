@@ -235,7 +235,7 @@ Expression Symbol::shallowReplaceReplaceableSymbols(Context * context) {
   if (isSystemSymbol()) {
     return *this;
   }
-  Expression e = context->expressionForSymbol(*this, true);
+  Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     return *this;
   }

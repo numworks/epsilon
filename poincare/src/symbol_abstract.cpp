@@ -60,7 +60,7 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
   bool isFunction = symbol.type() == ExpressionNode::Type::Function;
   /* Always clone the expression for Function because we are going to alter e
    * by replacing all UnknownX in it. */
-  Expression e = context->expressionForSymbol(symbol, clone || isFunction);
+  Expression e = context->expressionForSymbolAbstract(symbol, clone || isFunction);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);

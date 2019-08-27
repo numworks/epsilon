@@ -320,9 +320,9 @@ bool Expression::hasReplaceableSymbols(Context * context) const {
   return recursivelyMatches([](const Expression e, Context * context) {
       return (e.type() == ExpressionNode::Type::Symbol
           && !static_cast<const Symbol &>(e).isSystemSymbol()
-          && !context->expressionForSymbol(static_cast<const Symbol &>(e), false).isUninitialized())
+          && !context->expressionForSymbolAbstract(static_cast<const Symbol &>(e), false).isUninitialized())
       || (e.type() == ExpressionNode::Type::Function
-           && !context->expressionForSymbol(static_cast<const Function &>(e), false).isUninitialized());
+           && !context->expressionForSymbolAbstract(static_cast<const Function &>(e), false).isUninitialized());
       }, context, false);
 }
 

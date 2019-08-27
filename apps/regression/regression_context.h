@@ -9,7 +9,7 @@ namespace Regression {
 class RegressionContext : public Shared::StoreContext {
 public:
   using Shared::StoreContext::StoreContext;
-  const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol, bool clone) override;
+  const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone) override;
 };
 
 }

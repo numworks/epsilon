@@ -18,22 +18,22 @@ void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>::Builder(value);
 }
 
-void VariableContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
+void VariableContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
   if (strcmp(symbol.name(), m_name) == 0) {
     if (expression.isUninitialized()) {
       return;
     }
     m_value = expression.clone();
   } else {
-    m_parentContext->setExpressionForSymbol(expression, symbol, context);
+    m_parentContext->setExpressionForSymbolAbstract(expression, symbol, context);
   }
 }
 
-const Expression VariableContext::expressionForSymbol(const SymbolAbstract & symbol, bool clone) {
+const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
   if (strcmp(symbol.name(), m_name) == 0) {
     return clone ? m_value.clone() : m_value;
   } else {
-    return m_parentContext->expressionForSymbol(symbol, clone);
+    return m_parentContext->expressionForSymbolAbstract(symbol, clone);
   }
 }
 

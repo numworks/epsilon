@@ -2,6 +2,7 @@ apps += Probability::App
 app_headers += apps/probability/app.h
 
 app_probability_test_src = $(addprefix apps/probability/,\
+  distribution/binomial_distribution.cpp \
   distribution/chi_squared_distribution.cpp \
   distribution/geometric_distribution.cpp \
   distribution/helper.cpp \
@@ -9,6 +10,7 @@ app_probability_test_src = $(addprefix apps/probability/,\
   distribution/distribution.cpp \
   distribution/regularized_gamma.cpp \
   distribution/student_distribution.cpp \
+  distribution/two_parameter_distribution.cpp \
 )
 
 app_probability_src = $(addprefix apps/probability/,\
@@ -23,12 +25,10 @@ app_probability_src = $(addprefix apps/probability/,\
   calculation_type_controller.cpp \
   cell.cpp \
   image_cell.cpp \
-  distribution/binomial_distribution.cpp \
   distribution/exponential_distribution.cpp \
   distribution/normal_distribution.cpp \
   distribution/poisson_distribution.cpp \
   distribution/regularized_gamma.cpp \
-  distribution/two_parameter_distribution.cpp \
   distribution/uniform_distribution.cpp \
   distribution_controller.cpp \
   distribution_curve_view.cpp \

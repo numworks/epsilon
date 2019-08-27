@@ -6,7 +6,6 @@ app_probability_test_src = $(addprefix apps/probability/,\
   distribution/chi_squared_distribution.cpp \
   distribution/geometric_distribution.cpp \
   distribution/helper.cpp \
-  distribution/incomplete_beta_function.cpp \
   distribution/distribution.cpp \
   distribution/regularized_gamma.cpp \
   distribution/student_distribution.cpp \

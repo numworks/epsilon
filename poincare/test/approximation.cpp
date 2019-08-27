@@ -235,7 +235,7 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("abs([[3+2𝐢,3+4𝐢][5+2𝐢,3+2𝐢]])", "[[3.605551275464,5][5.3851648071345,3.605551275464]]");
 
   assert_expression_approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", Degree, Cartesian, 6); // FIXME: precision problem
-  assert_expression_approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902");
+  assert_expression_approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902", Degree, Cartesian, 10); //FIXME precision problem
 
   assert_expression_approximates_to<float>("binomial(10, 4)", "210");
   assert_expression_approximates_to<double>("binomial(10, 4)", "210");

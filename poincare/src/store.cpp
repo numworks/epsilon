@@ -38,7 +38,7 @@ template<typename T>
 Evaluation<T> StoreNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
-   * setExpressionForSymbol. */
+   * setExpressionForSymbolAbstract. */
   Expression storedExpression = Store(this).storeValueForSymbol(context, complexFormat, angleUnit);
   assert(!storedExpression.isUninitialized());
   return storedExpression.node()->approximate(T(), context, complexFormat, angleUnit);
@@ -80,8 +80,8 @@ Expression Store::storeValueForSymbol(Context * context, Preferences::ComplexFor
     finalValue = childAtIndex(0);
   }
   assert(!finalValue.isUninitialized());
-  context->setExpressionForSymbol(finalValue, symbol(), context);
-  Expression storedExpression = context->expressionForSymbol(symbol(), true);
+  context->setExpressionForSymbolAbstract(finalValue, symbol(), context);
+  Expression storedExpression = context->expressionForSymbolAbstract(symbol(), true);
 
   if (storedExpression.isUninitialized()) {
     return Undefined::Builder();

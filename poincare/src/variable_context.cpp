@@ -1,6 +1,7 @@
 #include <poincare/variable_context.h>
 #include <poincare/preferences.h>
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 
 #include <cmath>
 
@@ -20,6 +21,7 @@ void VariableContext::setApproximationForVariable(T value) {
 
 void VariableContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
   if (strcmp(symbol.name(), m_name) == 0) {
+    assert(symbol.type() == ExpressionNode::Type::Symbol);
     if (expression.isUninitialized()) {
       return;
     }
@@ -31,7 +33,10 @@ void VariableContext::setExpressionForSymbolAbstract(const Expression & expressi
 
 const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
   if (strcmp(symbol.name(), m_name) == 0) {
-    return clone ? m_value.clone() : m_value;
+    if (symbol.type() == ExpressionNode::Type::Symbol) {
+      return clone ? m_value.clone() : m_value;
+    }
+    return Undefined::Builder();
   } else {
     return m_parentContext->expressionForSymbolAbstract(symbol, clone);
   }

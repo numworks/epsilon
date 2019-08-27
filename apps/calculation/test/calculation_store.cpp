@@ -120,16 +120,16 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
 
-  assertCalculationDisplay("int((ℯ^(-x))-x^(0.5), x, 0, 3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store); // Tests a bug with symbolic computation
-  assertCalculationDisplay("int(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
-  assertCalculationDisplay("sum(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
-  assertCalculationDisplay("product(x,x,1,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
-  assertCalculationDisplay("diff(x^2,x,3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
+  assertCalculationDisplay("int((ℯ^(-x))-x^(0.5), x, 0, 3)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store); // Tests a bug with symbolic computation
+  assertCalculationDisplay("int(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("sum(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  assertCalculationDisplay("product(x,x,1,2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("diff(x^2,x,3)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
   assertCalculationDisplay("2→x", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
-  assertCalculationDisplay("int(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
-  assertCalculationDisplay("sum(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
-  assertCalculationDisplay("product(x,x,1,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
-  assertCalculationDisplay("diff(x^2,x,3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
+  assertCalculationDisplay("int(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("sum(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  assertCalculationDisplay("product(x,x,1,2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("diff(x^2,x,3)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
 
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }

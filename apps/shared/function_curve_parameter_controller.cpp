@@ -11,10 +11,6 @@ FunctionCurveParameterController::FunctionCurveParameterController() :
 {
 }
 
-View * FunctionCurveParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void FunctionCurveParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
@@ -34,10 +30,6 @@ bool FunctionCurveParameterController::handleGotoSelection() {
 
 KDCoordinate FunctionCurveParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
-}
-
-void FunctionCurveParameterController::setRecord(Ion::Storage::Record record) {
-  m_record = record;
 }
 
 }

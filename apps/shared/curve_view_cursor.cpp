@@ -3,22 +3,23 @@
 
 namespace Shared {
 
-CurveViewCursor::CurveViewCursor() :
-  m_x(NAN),
-  m_y(NAN)
-{
-}
+CurveViewCursor::CurveViewCursor() : m_t(NAN), m_x(NAN), m_y(NAN) {}
 
-void CurveViewCursor::moveTo(double x, double y) {
-  m_x = clipped(x, false);
+void CurveViewCursor::moveTo(double t, double x, double y) {
+  m_t = clipped(t, false);
+  m_x = clipped(x, false); //TODO LEA ?
   m_y = clipped(y, true);
 }
 
 double CurveViewCursor::clipped(double x, bool canBeInfinite) {
   double maxValue = canBeInfinite ? INFINITY : k_maxFloat;
-  double clippedX = x > k_maxFloat ? maxValue : x;
-  clippedX = clippedX < - k_maxFloat ? -maxValue : clippedX;
-  return clippedX;
+  if (x > k_maxFloat) {
+    return maxValue;
+  }
+  if (x < -k_maxFloat) {
+    return -maxValue;
+  }
+  return x;
 }
 
 }

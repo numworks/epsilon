@@ -40,17 +40,17 @@ void IntersectionGraphController::reloadBannerView() {
   bannerView()->reload();
 }
 
-Poincare::Coordinate2D IntersectionGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Poincare::Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   // TODO The following three lines should be factored.
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-  Poincare::Coordinate2D result = Poincare::Coordinate2D(NAN, NAN);
+  Poincare::Coordinate2D<double> result = Poincare::Coordinate2D<double>(NAN, NAN);
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     if (record != m_record) {
       Poincare::Expression e = functionStore()->modelForRecord(record)->expressionReduced(context);
-      Poincare::Coordinate2D intersection = Shared::PoincareHelpers::NextIntersection(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context, e);
+      Poincare::Coordinate2D<double> intersection = Shared::PoincareHelpers::NextIntersection(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context, e);
       if ((std::isnan(result.abscissa()) || std::fabs(intersection.abscissa()-start) < std::fabs(result.abscissa()-start)) && !std::isnan(intersection.abscissa())) {
         m_intersectedRecord = record;
         result = (std::isnan(result.abscissa()) || std::fabs(intersection.abscissa()-start) < std::fabs(result.abscissa()-start)) ? intersection : result;

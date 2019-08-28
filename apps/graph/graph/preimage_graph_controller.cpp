@@ -23,7 +23,7 @@ PreimageGraphController::PreimageGraphController(
 {
 }
 
-Poincare::Coordinate2D PreimageGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Poincare::Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   // TODO The following three lines should be factored.
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];

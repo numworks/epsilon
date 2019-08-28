@@ -26,17 +26,22 @@ public:
   void setPlotType(PlotType plotType);
 
   // Evaluation
-  float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, context);
+  Poincare::Coordinate2D<float> evaluateAtParameter(float t, Poincare::Context * context) const override {
+    return templatedApproximateAtParameter(t, context);
   }
-  double evaluateAtAbscissa(double x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, context);
+  Poincare::Coordinate2D<double> evaluateAtParameter(double t, Poincare::Context * context) const override {
+    return templatedApproximateAtParameter(t, context);
   }
   // Derivative
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context) const;
+  // tMin and tMax
+  double tMin() const;
+  double tMax() const;
+  void setTMin(double tMin);
+  void setTMax(double tMax);
 private:
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on
@@ -53,9 +58,15 @@ private:
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
+    double tMin() const { return m_tMin; }
+    double tMax() const { return m_tMax; }
+    void setTMin(double tMin) { m_tMin = tMin; }
+    void setTMax(double tMax) { m_tMax = tMax; }
   private:
     PlotType m_plotType;
     bool m_displayDerivative;
+    double m_tMin;
+    bool m_tMax;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];

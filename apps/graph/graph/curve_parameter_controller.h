@@ -18,6 +18,7 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void viewDidDisappear() override;
 private:
   bool shouldDisplayCalculationAndDerivative() const;
   int cellIndex(int visibleCellIndex) const;

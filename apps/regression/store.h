@@ -70,8 +70,8 @@ public:
   double squaredCorrelationCoefficient(int series) const;
 private:
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;
-  float maxValueOfColumn(int series, int i) const;
-  float minValueOfColumn(int series, int i) const;
+  float maxValueOfColumn(int series, int i) const; //TODO LEA why float ?
+  float minValueOfColumn(int series, int i) const; //TODO LEA why float ?
   Model * regressionModel(int index);
   uint32_t m_seriesChecksum[k_numberOfSeries];
   Model::Type m_regressionTypes[k_numberOfSeries];

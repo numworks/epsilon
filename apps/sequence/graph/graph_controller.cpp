@@ -67,8 +67,8 @@ bool GraphController::textFieldDidFinishEditing(TextField * textField, const cha
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = yValue(selectedCurveIndex(), floatBody, myApp->localContext());
-  m_cursor->moveTo(floatBody, y);
+  double y = xyValues(selectedCurveIndex(), floatBody, myApp->localContext()).y();
+  m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
   m_view.reload();
@@ -94,13 +94,13 @@ bool GraphController::moveCursorHorizontally(int direction) {
     return false;
   }
   Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-  double y = s->evaluateAtAbscissa(x, textFieldDelegateApp()->localContext());
-  m_cursor->moveTo(x, y);
+  double y = s->evaluateAtParameter(x, textFieldDelegateApp()->localContext()).y();
+  m_cursor->moveTo(x, x, y);
   return true;
 }
 
-double GraphController::defaultCursorAbscissa() {
-  return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorAbscissa()));
+double GraphController::defaultCursorT() {
+  return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorT()));
 }
 
 }

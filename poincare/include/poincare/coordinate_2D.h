@@ -5,6 +5,7 @@
 
 namespace Poincare {
 
+// TODO LEA RUBEN x1 and x2 instead of x y
 template <typename T>
 class Coordinate2D final {
 public:

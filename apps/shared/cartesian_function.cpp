@@ -112,6 +112,16 @@ void CartesianFunction::setPlotType(PlotType plotType) {
   return recordData()->setPlotType(plotType);
 }
 
+Coordinate2D<double> CartesianFunction::xyEvaluationAtParameter(double t, Poincare::Context * context) const {
+  Coordinate2D<double> x1x2 = evaluateAtParameter(t, context);
+  PlotType type = plotType();
+  if (type == PlotType::Cartesian || type == PlotType::Parametric) {
+    return x1x2;
+  }
+  assert(type == PlotType::Polar);
+  return Coordinate2D<double>(x1x2.y() * std::cos(x1x2.x()*3.14/180.0), x1x2.y() * std::sin(x1x2.x()*3.14/180.0)); //TODO LEA RUBEN
+}
+
 bool CartesianFunction::displayDerivative() const {
   return recordData()->displayDerivative();
 }
@@ -159,17 +169,28 @@ CartesianFunction::CartesianFunctionRecordDataBuffer * CartesianFunction::record
 }
 
 template<typename T>
-T CartesianFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
+Coordinate2D<T> CartesianFunction::templatedApproximateAtParameter(T t, Poincare::Context * context) const {
   if (isCircularlyDefined(context)) {
-    return NAN;
+    return Coordinate2D<T>(NAN, NAN);
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknownX[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-  return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, context);
+  char unknown[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, symbol());
+  PlotType type = plotType();
+  if (type == PlotType::Cartesian || type == PlotType::Polar) {
+    return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknown, t, context));
+  }
+  assert(type == PlotType::Parametric);
+  Expression e = expressionReduced(context);
+  assert(e.type() == ExpressionNode::Type::Matrix);
+  assert(static_cast<Poincare::Matrix&>(e).numberOfRows() == 2);
+  assert(static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);
+  return Coordinate2D<T>(
+      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context),
+      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
 
-template float CartesianFunction::templatedApproximateAtAbscissa<float>(float, Poincare::Context *) const;
-template double CartesianFunction::templatedApproximateAtAbscissa<double>(double, Poincare::Context *) const;
+template Coordinate2D<float> CartesianFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
+template Coordinate2D<double> CartesianFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;
 
 }

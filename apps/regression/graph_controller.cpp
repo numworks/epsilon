@@ -234,12 +234,16 @@ bool GraphController::moveCursorHorizontally(int direction) {
     int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
-      m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+      double x = m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex);
+      double y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
+      m_cursor->moveTo(x, x, y);
       return true;
     }
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
-      m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
+      double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+      double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+      m_cursor->moveTo(x, x, y);
       return true;
     }
     return false;
@@ -247,7 +251,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
     m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   double y = yValue(*m_selectedSeriesIndex, x, globalContext());
-  m_cursor->moveTo(x, y);
+  m_cursor->moveTo(x, x, y);
   return true;
 }
 
@@ -268,7 +272,7 @@ bool GraphController::handleEnter() {
 void GraphController::initCursorParameters() {
   double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
-  m_cursor->moveTo(x, y);
+  m_cursor->moveTo(x, x, y);
   if (m_store->yAuto()) {
     m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   }
@@ -324,7 +328,7 @@ bool GraphController::moveCursorVertically(int direction) {
     // Select the regression
     *m_selectedSeriesIndex = closestRegressionSeries;
     selectRegressionCurve();
-    m_cursor->moveTo(x, yValue(*m_selectedSeriesIndex, x, context));
+    m_cursor->moveTo(x, x, yValue(*m_selectedSeriesIndex, x, context));
     return true;
   }
 
@@ -335,10 +339,14 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedDotIndex = dotSelected;
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       // Select the mean dot
-      m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
+      double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+      double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+      m_cursor->moveTo(x, x, y);
     } else {
       // Select a data point dot
-      m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+      double x = m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex);
+      double y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
+      m_cursor->moveTo(x, x, y);
     }
     return true;
   }
@@ -357,6 +365,10 @@ uint32_t GraphController::rangeVersion() {
 
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
   return newIndex != currentIndex && !m_store->seriesIsEmpty(newIndex);
+}
+
+Coordinate2D<double> GraphController::xyValues(int curveIndex, double x, Poincare::Context * context) const {
+  return Coordinate2D<double>(x, yValue(curveIndex, x, context));
 }
 
 double GraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {

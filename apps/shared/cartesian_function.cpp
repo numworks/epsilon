@@ -121,7 +121,14 @@ Poincare::Coordinate2D<T> CartesianFunction::privateEvaluateXYAtParameter(T t, P
   }
   assert(type == PlotType::Polar);
   T factor = (T)1.0;
-  // TODO LEA RUBEN
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    factor = (T) (M_PI/180.0);
+  } else if (angleUnit == Preferences::AngleUnit::Gradian) {
+    factor = (T) (M_PI/200.0);
+  } else {
+    assert(angleUnit == Preferences::AngleUnit::Radian);
+  }
   return Coordinate2D<T>(x1x2.x2() * std::cos(x1x2.x1()*factor), x1x2.x2() * std::sin(x1x2.x1()*factor));
 }
 

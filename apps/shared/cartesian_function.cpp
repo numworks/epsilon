@@ -112,14 +112,17 @@ void CartesianFunction::setPlotType(PlotType plotType) {
   return recordData()->setPlotType(plotType);
 }
 
-Coordinate2D<double> CartesianFunction::evaluateXYAtParameter(double t, Poincare::Context * context) const {
-  Coordinate2D<double> x1x2 = evaluate2DAtParameter(t, context);
+template <typename T>
+Poincare::Coordinate2D<T> CartesianFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context) const {
+  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context);
   PlotType type = plotType();
   if (type == PlotType::Cartesian || type == PlotType::Parametric) {
     return x1x2;
   }
   assert(type == PlotType::Polar);
-  return Coordinate2D<double>(x1x2.y() * std::cos(x1x2.x()*3.14/180.0), x1x2.y() * std::sin(x1x2.x()*3.14/180.0)); //TODO LEA RUBEN
+  T factor = (T)1.0;
+  // TODO LEA RUBEN
+  return Coordinate2D<T>(x1x2.x2() * std::cos(x1x2.x1()*factor), x1x2.x2() * std::sin(x1x2.x1()*factor));
 }
 
 bool CartesianFunction::displayDerivative() const {

@@ -14,6 +14,7 @@ public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
   static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
+  //TODO LEA RUBEN EvaluateModelWithParameter that returns Coordinate2D<float>
   typedef float (*EvaluateModelWithParameter)(float t, void * model, void * context);
   enum class Axis {
     Horizontal = 0,

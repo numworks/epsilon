@@ -26,7 +26,8 @@ void CalculationGraphController::viewWillAppear() {
     m_graphView->setBannerView(&m_defaultBannerView);
   } else {
     m_isActive = true;
-    m_cursor->moveTo(pointOfInterest.x(), pointOfInterest.y());
+    assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
+    m_cursor->moveTo(pointOfInterest.x(), pointOfInterest.x(), pointOfInterest.y());
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
@@ -73,7 +74,8 @@ bool CalculationGraphController::moveCursorHorizontally(int direction) {
   if (std::isnan(newPointOfInterest.x())) {
     return false;
   }
-  m_cursor->moveTo(newPointOfInterest.x(), newPointOfInterest.y());
+  assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
+  m_cursor->moveTo(newPointOfInterest.x(), newPointOfInterest.x(), newPointOfInterest.y());
   return true;
 }
 

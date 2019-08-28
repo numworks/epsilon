@@ -26,6 +26,7 @@ public:
   void setPlotType(PlotType plotType);
 
   // Evaluation
+  Poincare::Coordinate2D<double> xyEvaluationAtParameter(double t, Poincare::Context * context) const;
   Poincare::Coordinate2D<float> evaluateAtParameter(float t, Poincare::Context * context) const override {
     return templatedApproximateAtParameter(t, context);
   }
@@ -38,8 +39,8 @@ public:
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context) const;
   // tMin and tMax
-  double tMin() const;
-  double tMax() const;
+  double tMin() const override;
+  double tMax() const override;
   void setTMin(double tMin);
   void setTMax(double tMax);
 private:
@@ -52,7 +53,9 @@ private:
     CartesianFunctionRecordDataBuffer(KDColor color) :
       FunctionRecordDataBuffer(color),
       m_plotType(PlotType::Cartesian),
-      m_displayDerivative(false)
+      m_displayDerivative(false),
+      m_tMin(0.0),
+      m_tMax(396.0) // TODO LEA RUBEN
     {}
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
@@ -66,7 +69,7 @@ private:
     PlotType m_plotType;
     bool m_displayDerivative;
     double m_tMin;
-    bool m_tMax;
+    double m_tMax;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];
@@ -81,7 +84,7 @@ private:
   size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordDataBuffer); }
   const ExpressionModel * model() const override { return &m_model; }
   CartesianFunctionRecordDataBuffer * recordData() const;
-  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
+  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context) const;
   Model m_model;
 };
 

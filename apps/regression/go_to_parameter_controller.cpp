@@ -52,7 +52,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
       if (std::fabs(unknown - f) < DBL_EPSILON) {
         // If the computed value is NaN and the current abscissa is solution
         m_graphController->selectRegressionCurve();
-        m_cursor->moveTo(x, unknown);
+        m_cursor->moveTo(x, x, unknown);
         return true;
       }
     }
@@ -62,7 +62,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
   }
   m_graphController->selectRegressionCurve();
   if (m_xPrediction) {
-    m_cursor->moveTo(f, unknown);
+    m_cursor->moveTo(f, f, unknown);
   } else {
     double yFromX = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), unknown);
     /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
@@ -71,7 +71,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_cursor->moveTo(unknown, yFromX);
+    m_cursor->moveTo(unknown, unknown, yFromX);
   }
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());

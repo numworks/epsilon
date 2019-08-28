@@ -34,13 +34,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       drawCartesianCurve(ctx, rect, [](float t, void * model, void * context) {
             CartesianFunction * f = (CartesianFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateAtAbscissa(t, c);
+            return f->evaluateAtParameter(t, c).y();
           }, f.operator->(), context(), f->color(), record == m_selectedRecord, m_highlightedStart, m_highlightedEnd);
       /* Draw tangent */
       if (m_tangent && record == m_selectedRecord) {
         float tangentParameter[2];
         tangentParameter[0] = f->approximateDerivative(m_curveViewCursor->x(), context());
-        tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateAtAbscissa(m_curveViewCursor->x(), context());
+        tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateAtParameter(m_curveViewCursor->x(), context()).y();
         drawCartesianCurve(ctx, rect, [](float t, void * model, void * context) {
               float * tangent = (float *)model;
               return tangent[0]*t+tangent[1];
@@ -48,18 +48,18 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }
       break;
     case Shared::CartesianFunction::PlotType::Polar:
-      drawCurve(ctx, rect, 0.0f, 396.0f, 36.0f, [](float t, void * model, void * context) {
+      drawCurve(ctx, rect, 0.0f, 396.0f, 36.0f, [](float t, void * model, void * context) { //TODO LEA RUBEN use the models's tMin, tMax
             CartesianFunction * f = (CartesianFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateAtAbscissa(t, c) * std::cos(t);
+            return f->evaluateAtParameter(t, c).y() * std::cos(t);
           }, [](float t, void * model, void * context) {
             CartesianFunction * f = (CartesianFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateAtAbscissa(t, c) * std::sin(t);
+            return f->evaluateAtParameter(t, c).y() * std::sin(t);
           }, f.operator->(), context(), false, f->color());
       break;
     case Shared::CartesianFunction::PlotType::Parametric:
-      drawCurve(ctx, rect, 0.0f, 396.0f, 36.0f, [](float t, void * model, void * context) {
+      drawCurve(ctx, rect, 0.0f, 396.0f, 36.0f, [](float t, void * model, void * context) { //TODO LEA RUBEN use the models's tMin, tMax
             CartesianFunction * f = (CartesianFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             if (f->isCircularlyDefined(c)) {

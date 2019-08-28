@@ -186,8 +186,8 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
-  m_cursor->moveTo(floatBody, y);
+  Coordinate2D<double> xy = xyValues(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, xy.x(), xy.y());
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
   curveView()->reload();
@@ -221,6 +221,8 @@ bool InteractiveCurveViewController::isCursorVisible() {
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
+  return 0; //TODO LEA
+#if 0
   double x = m_cursor->x();
   double y = m_cursor->y();
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
@@ -273,6 +275,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     }
   }
   return nextCurveIndex;
+#endif
 }
 
 float InteractiveCurveViewController::cursorBottomMarginRatio() {

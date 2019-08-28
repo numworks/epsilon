@@ -17,15 +17,15 @@ const char * FunctionGoToParameterController::title() {
 
 double FunctionGoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
-  return m_cursor->x();
+  return m_cursor->t();
 }
 
 bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   FunctionApp * myApp = FunctionApp::app();
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
-  double y = function->evaluateAtAbscissa(f, myApp->localContext());
-  m_cursor->moveTo(f, y);
+  Poincare::Coordinate2D<double> xy = function->evaluateAtParameter(f, myApp->localContext());
+  m_cursor->moveTo(f, xy.x(), xy.y());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   /* The range might have evolved to center around the cursor but we don't want

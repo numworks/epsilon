@@ -57,11 +57,11 @@ public:
   bool isDefined() override;
   bool isEmpty() override;
   // Approximation
-  float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context));
+  Poincare::Coordinate2D<float> evaluateAtParameter(float x, Poincare::Context * context) const override {
+    return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
-  double evaluateAtAbscissa(double x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context));
+  Poincare::Coordinate2D<double> evaluateAtParameter(double x, Poincare::Context * context) const override {
+    return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
   template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx) const;
 

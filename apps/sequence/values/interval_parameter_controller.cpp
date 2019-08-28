@@ -10,16 +10,6 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
 {
 }
 
-void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows()-1) {
-    return;
-  }
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::NStart, I18n::Message::NEnd, I18n::Message::Step};
-  myCell->setMessage(labels[index]);
-  FloatParameterController::willDisplayCellForIndex(cell, index);
-}
-
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f < 0) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);

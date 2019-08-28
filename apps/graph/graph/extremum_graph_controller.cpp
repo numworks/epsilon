@@ -15,7 +15,7 @@ const char * MinimumGraphController::title() {
   return I18n::translate(I18n::Message::Minimum);
 }
 
-Coordinate2D MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Coordinate2D<double> MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   // TODO The following three lines should be factored.
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
@@ -32,7 +32,7 @@ const char * MaximumGraphController::title() {
   return I18n::translate(I18n::Message::Maximum);
 }
 
-Coordinate2D MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Coordinate2D<double> MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   // TODO The following three lines should be factored.
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];

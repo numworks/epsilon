@@ -17,7 +17,6 @@ class ValuesController : public EditableCellTableViewController, public ButtonRo
 public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, IntervalParameterController * intervalParameterController, Interval * interval);
   const char * title() override;
-  Interval * interval();
   int numberOfColumns() override;
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

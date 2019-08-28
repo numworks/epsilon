@@ -19,6 +19,7 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
+  bool shouldDisplayCalculationAndDerivative() const;
   int cellIndex(int visibleCellIndex) const;
   Shared::FunctionGoToParameterController * goToParameterController() override;
   Shared::FunctionGoToParameterController m_goToParameterController;

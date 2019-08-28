@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-Coordinate2D Solver::BrentMinimum(double ax, double bx, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+Coordinate2D<double> Solver::BrentMinimum(double ax, double bx, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */
   if (ax > bx) {
@@ -34,7 +34,7 @@ Coordinate2D Solver::BrentMinimum(double ax, double bx, ValueAtAbscissa evaluati
       double fa = evaluation(a, context, complexFormat, angleUnit, context1, context2, context3);
       double fb = evaluation(b, context, complexFormat, angleUnit, context1, context2, context3);
       if (middleFax-fa <= k_sqrtEps && fx-middleFax <= k_sqrtEps && fx-middleFbx <= k_sqrtEps && middleFbx-fb <= k_sqrtEps) {
-        return Coordinate2D(x, fx);
+        return Coordinate2D<double>(x, fx);
       }
     }
     double p = 0;
@@ -94,7 +94,7 @@ Coordinate2D Solver::BrentMinimum(double ax, double bx, ValueAtAbscissa evaluati
       }
     }
   }
-  return Coordinate2D(x, fx);
+  return Coordinate2D<double>(x, fx);
 }
 
 double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
@@ -174,7 +174,7 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
   return NAN;
 }
 
-Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
   assert(ax < bx);
   double min = ax;
   double max = bx;
@@ -183,10 +183,10 @@ Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precisi
   if (eval >= 0) {
     if (eval <= DBL_EPSILON) {
       // The value on the left bracket is 0, return it.
-      return Coordinate2D(currentAbscissa, eval);
+      return Coordinate2D<double>(currentAbscissa, eval);
     }
     // The minimal value is already bigger than 0, return NAN.
-    return Coordinate2D(NAN, NAN);
+    return Coordinate2D<double>(NAN, NAN);
   }
   while (max - min > precision) {
     currentAbscissa = (min + max) / 2.0;
@@ -200,9 +200,9 @@ Coordinate2D Solver::IncreasingFunctionRoot(double ax, double bx, double precisi
     }
   }
   if (std::fabs(eval) < precision) {
-    return Coordinate2D(currentAbscissa, eval);
+    return Coordinate2D<double>(currentAbscissa, eval);
   }
-  return Coordinate2D(NAN, NAN);
+  return Coordinate2D<double>(NAN, NAN);
 }
 
 template<typename T>

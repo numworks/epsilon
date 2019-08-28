@@ -111,7 +111,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
   if (*probability <= 0.0) {
     return -INFINITY;
   }
-  Poincare::Coordinate2D result = Poincare::Solver::IncreasingFunctionRoot(
+  Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
       ax,
       bx,
       FLT_EPSILON,

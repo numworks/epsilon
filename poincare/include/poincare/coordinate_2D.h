@@ -8,14 +8,14 @@ namespace Poincare {
 template <typename T>
 class Coordinate2D final {
 public:
-  Coordinate2D(T abscissa = NAN, T value = NAN) : m_abscissa(abscissa), m_value(value) {}
-  T abscissa() const { return m_abscissa; }
-  T value() const { return m_value; }
-  void setAbscissa(T a) { m_abscissa = a; }
-  void setValue(T v) { m_value = v; }
+  Coordinate2D(T x = NAN, T y = NAN) : m_x(x), m_y(y) {}
+  T x() const { return m_x; }
+  T y() const { return m_y; }
+  void setX(T x) { m_x = x; }
+  void setY(T y) { m_y = y; }
 private:
-  T m_abscissa;
-  T m_value;
+  T m_x;
+  T m_y;
 };
 
 }

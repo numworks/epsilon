@@ -20,13 +20,13 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 void CalculationGraphController::viewWillAppear() {
   assert(!m_record.isNull());
   Coordinate2D<double> pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
-  if (std::isnan(pointOfInterest.abscissa())) {
+  if (std::isnan(pointOfInterest.x())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
     m_graphView->setBannerView(&m_defaultBannerView);
   } else {
     m_isActive = true;
-    m_cursor->moveTo(pointOfInterest.abscissa(), pointOfInterest.value());
+    m_cursor->moveTo(pointOfInterest.x(), pointOfInterest.y());
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
@@ -70,10 +70,10 @@ bool CalculationGraphController::handleEnter() {
 
 bool CalculationGraphController::moveCursorHorizontally(int direction) {
   Coordinate2D<double> newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
-  if (std::isnan(newPointOfInterest.abscissa())) {
+  if (std::isnan(newPointOfInterest.x())) {
     return false;
   }
-  m_cursor->moveTo(newPointOfInterest.abscissa(), newPointOfInterest.value());
+  m_cursor->moveTo(newPointOfInterest.x(), newPointOfInterest.y());
   return true;
 }
 

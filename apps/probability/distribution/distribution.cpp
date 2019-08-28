@@ -126,8 +126,8 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
       this,
       probability,
       nullptr);
-  assert(std::isnan(result.value()) || std::fabs(result.value()) < FLT_EPSILON);
-  return result.abscissa();
+  assert(std::isnan(result.y()) || std::fabs(result.y()) < FLT_EPSILON);
+  return result.x();
 }
 
 float Distribution::yMin() const {

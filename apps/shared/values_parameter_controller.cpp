@@ -3,9 +3,8 @@
 
 namespace Shared {
 
-ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title) :
+ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController) :
   ViewController(parentResponder),
-  m_pageTitle(title),
   m_deleteColumn(I18n::Message::Default),
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::Default),

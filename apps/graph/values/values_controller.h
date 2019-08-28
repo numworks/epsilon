@@ -30,6 +30,7 @@ private:
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;
   ViewController * functionParameterController() override;
+  I18n::Message valuesParameterControllerPageTitle() const override;
 
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];

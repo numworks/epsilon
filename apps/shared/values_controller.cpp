@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
+ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, IntervalParameterController * intervalParameterController, Interval * interval) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_interval(interval),
@@ -17,7 +17,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView(this),
   m_abscissaTitleCell(),
   m_abscissaCells{},
-  m_abscissaParameterController(this, intervalParameterController, parameterTitle),
+  m_abscissaParameterController(this, intervalParameterController),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
@@ -88,6 +88,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     ViewController * parameterController = nullptr;
     if (typeAtLocation(selectedColumn(), 0) == 0) {
+      m_abscissaParameterController.setPageTitle(valuesParameterControllerPageTitle());
       parameterController = &m_abscissaParameterController;
     } else {
       parameterController = functionParameterController();

@@ -26,6 +26,7 @@ private:
   EvenOddBufferTextCell * floatCells(int j) override;
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::ValuesController::functionStore()); }
   ViewController * functionParameterController() override;
+  I18n::Message valuesParameterControllerPageTitle() const override;
 #if COPY_COLUMN
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif

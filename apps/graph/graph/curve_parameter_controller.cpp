@@ -30,7 +30,13 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  int index = cellIndex(selectedRow());
+  int index;
+  if (shouldDisplayCalculationAndDerivative()) {
+    index = selectedRow();
+  } else {
+    assert(selectedRow() == 0);
+    index = 1;
+  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (index == 0 || index == 1))) {
     switch (index) {
       case 0:
@@ -49,6 +55,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
         return true;
       }
       default:
+        assert(false);
         return false;
     }
   }
@@ -66,13 +73,20 @@ HighlightCell * CurveParameterController::reusableCell(int index) {
 }
 
 int CurveParameterController::reusableCellCount() {
+  return 1 + (shouldDisplayCalculationAndDerivative() ? 2 : 0);
+}
+
+bool CurveParameterController::shouldDisplayCalculationAndDerivative() const {
   Shared::ExpiringPointer<CartesianFunction> f = App::app()->functionStore()->modelForRecord(m_record);
-  return 3 - (f->plotType() != CartesianFunction::PlotType::Cartesian) * 2;
+  return f->plotType() == CartesianFunction::PlotType::Cartesian;
 }
 
 int CurveParameterController::cellIndex(int visibleCellIndex) const {
-  Shared::ExpiringPointer<CartesianFunction> f = App::app()->functionStore()->modelForRecord(m_record);
-  return (f->plotType() != CartesianFunction::PlotType::Cartesian) + visibleCellIndex;
+  if (shouldDisplayCalculationAndDerivative()) {
+   return visibleCellIndex;
+  }
+  assert(visibleCellIndex == 0);
+  return 1;
 }
 
 FunctionGoToParameterController * CurveParameterController::goToParameterController() {

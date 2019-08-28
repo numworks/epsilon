@@ -7,7 +7,7 @@ using namespace Shared;
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
+  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
 #if COPY_COLUMN
@@ -80,6 +80,10 @@ ViewController * ValuesController::functionParameterController() {
 #else
   return nullptr;
 #endif
+}
+
+I18n::Message ValuesController::valuesParameterControllerPageTitle() const {
+  return I18n::Message::NColumn;
 }
 
 }

@@ -51,10 +51,6 @@ int ValuesController::numberOfColumns() {
   return m_numberOfColumns;
 }
 
-Interval * ValuesController::interval() {
-  return m_interval;
-}
-
 bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     if (selectedRow() == -1) {

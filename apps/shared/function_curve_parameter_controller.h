@@ -9,10 +9,10 @@ namespace Shared {
 class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   FunctionCurveParameterController();
-  View * view() override;
+  View * view() override { return &m_selectableTableView; }
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
-  void setRecord(Ion::Storage::Record recor);
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   bool handleGotoSelection();
   MessageTableCellWithChevron m_goToCell;

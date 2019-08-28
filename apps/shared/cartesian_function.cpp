@@ -112,8 +112,8 @@ void CartesianFunction::setPlotType(PlotType plotType) {
   return recordData()->setPlotType(plotType);
 }
 
-Coordinate2D<double> CartesianFunction::xyEvaluationAtParameter(double t, Poincare::Context * context) const {
-  Coordinate2D<double> x1x2 = evaluateAtParameter(t, context);
+Coordinate2D<double> CartesianFunction::evaluateXYAtParameter(double t, Poincare::Context * context) const {
+  Coordinate2D<double> x1x2 = evaluate2DAtParameter(t, context);
   PlotType type = plotType();
   if (type == PlotType::Cartesian || type == PlotType::Parametric) {
     return x1x2;

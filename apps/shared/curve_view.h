@@ -5,6 +5,7 @@
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
 #include <poincare/preferences.h>
+#include <poincare/coordinate_2D.h>
 #include <cmath>
 
 namespace Shared {
@@ -14,8 +15,8 @@ public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
   static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
-  //TODO LEA RUBEN EvaluateModelWithParameter that returns Coordinate2D<float>
-  typedef float (*EvaluateModelWithParameter)(float t, void * model, void * context);
+  typedef Poincare::Coordinate2D<float> (*EvaluateXYForParameter)(float t, void * model, void * context);
+  typedef float (*EvaluateYForX)(float x, void * model, void * context);
   enum class Axis {
     Horizontal = 0,
     Vertical = 1
@@ -63,9 +64,9 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
-  void drawCartesianCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter yEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
-  void drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
+  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawCartesianCurve(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const;
@@ -84,7 +85,7 @@ private:
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const;
+  void jointDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const;
   /* Join two dots with a straight line. */
   void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the

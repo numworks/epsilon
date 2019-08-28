@@ -67,7 +67,7 @@ bool GraphController::textFieldDidFinishEditing(TextField * textField, const cha
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = xyValues(selectedCurveIndex(), floatBody, myApp->localContext()).y();
+  double y = xyValues(selectedCurveIndex(), floatBody, myApp->localContext()).x2();
   m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
@@ -94,7 +94,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
     return false;
   }
   Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-  double y = s->evaluateAtParameter(x, textFieldDelegateApp()->localContext()).y();
+  double y = s->evaluateXYAtParameter(x, textFieldDelegateApp()->localContext()).x2();
   m_cursor->moveTo(x, x, y);
   return true;
 }

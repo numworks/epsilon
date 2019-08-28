@@ -41,8 +41,8 @@ public:
   int nameWithArgument(char * buffer, size_t bufferSize);
 
   // Evaluation
-  virtual Poincare::Coordinate2D<float> evaluateAtParameter(float t, Poincare::Context * context) const = 0;
-  virtual Poincare::Coordinate2D<double> evaluateAtParameter(double t, Poincare::Context * context) const = 0;
+  virtual Poincare::Coordinate2D<float> evaluate2DAtParameter(float t, Poincare::Context * context) const = 0;
+  virtual Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const = 0;
 protected:
   /* FunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a Function. We want to avoid padding which would:

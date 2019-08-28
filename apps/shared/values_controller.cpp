@@ -329,7 +329,7 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
   ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   //TODO LEA RUBEN Careful with merge
   //TODO LEA RUBEN change with evaluationOfParameterAtColumn?
-  Poincare::Coordinate2D<double> xy = function->evaluateAtParameter(abscissa, textFieldDelegateApp()->localContext());
+  Poincare::Coordinate2D<double> xy = function->evaluate2DAtParameter(abscissa, textFieldDelegateApp()->localContext());
   return xy.y();
 }
 

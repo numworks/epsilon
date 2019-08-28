@@ -47,7 +47,7 @@ bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, co
   }
   ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   assert(function->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
-  double y = function->evaluateAtParameter(floatBody, myApp->localContext()).y();
+  double y = function->evaluate2DAtParameter(floatBody, myApp->localContext()).x2();
   m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
@@ -82,7 +82,7 @@ void TangentGraphController::reloadBannerView() {
   legendLength = strlcpy(buffer, legend, bufferSize);
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   assert(function->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
-  y = -y*m_cursor->x()+function->evaluateAtParameter(m_cursor->x(), myApp->localContext()).y();
+  y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), myApp->localContext()).x2();
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();

@@ -889,7 +889,7 @@ Coordinate2D<double> Expression::nextMaximum(const char * symbol, double start, 
         const char * symbol = reinterpret_cast<const char *>(context2);
         return -expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit);
-  return Coordinate2D<double>(minimumOfOpposite.x(), -minimumOfOpposite.y());
+  return Coordinate2D<double>(minimumOfOpposite.x1(), -minimumOfOpposite.x2());
 }
 
 double Expression::nextRoot(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
@@ -910,8 +910,8 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
         return expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression1->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit, expression);
   Coordinate2D<double> result(resultAbscissa, approximateWithValueForSymbol(symbol, resultAbscissa, context, complexFormat, angleUnit));
-  if (std::fabs(result.y()) < step*k_solverPrecision) {
-    result.setY(0.0);
+  if (std::fabs(result.x2()) < step*k_solverPrecision) {
+    result.setX2(0.0);
   }
   return result;
 }
@@ -929,26 +929,26 @@ Coordinate2D<double> Expression::nextMinimumOfExpression(const char * symbol, do
     result = brentMinimum(symbol, bracket[0], bracket[2], evaluate, context, complexFormat, angleUnit, expression);
     x = bracket[1];
     // Because of float approximation, exact zero is never reached
-    if (std::fabs(result.x()) < std::fabs(step)*k_solverPrecision) {
-      result.setX(0);
-      result.setY(evaluate(0, context, complexFormat, angleUnit, this, symbol, &expression));
+    if (std::fabs(result.x1()) < std::fabs(step)*k_solverPrecision) {
+      result.setX1(0);
+      result.setX2(evaluate(0, context, complexFormat, angleUnit, this, symbol, &expression));
     }
     /* Ignore extremum whose value is undefined or too big because they are
      * really unlikely to be local extremum. */
-    if (std::isnan(result.y()) || std::fabs(result.y()) > k_maxFloat) {
-      result.setX(NAN);
+    if (std::isnan(result.x2()) || std::fabs(result.x2()) > k_maxFloat) {
+      result.setX1(NAN);
     }
     // Idem, exact 0 never reached
-    if (std::fabs(result.y()) < std::fabs(step)*k_solverPrecision) {
-      result.setY(0);
+    if (std::fabs(result.x2()) < std::fabs(step)*k_solverPrecision) {
+      result.setX2(0);
     }
-    endCondition = std::isnan(result.x()) && (step > 0.0 ? x <= max : x >= max);
+    endCondition = std::isnan(result.x1()) && (step > 0.0 ? x <= max : x >= max);
     if (lookForRootMinimum) {
-      endCondition |= std::fabs(result.y()) > 0 && (step > 0.0 ? x <= max : x >= max);
+      endCondition |= std::fabs(result.x2()) > 0 && (step > 0.0 ? x <= max : x >= max);
     }
   } while (endCondition);
-  if (lookForRootMinimum && std::fabs(result.y()) > 0) {
-    result.setX(NAN);
+  if (lookForRootMinimum && std::fabs(result.x2()) > 0) {
+    result.setX1(NAN);
   }
   return result;
 }
@@ -961,18 +961,18 @@ void Expression::bracketMinimum(const char * symbol, double start, double step, 
   };
   double x = start+2.0*step;
   while (step > 0.0 ? x <= max : x >= max) {
-    p[2].setX(x);
-    p[2].setY(evaluate(x, context, complexFormat, angleUnit, this, symbol, &expression));
-    if ((p[0].y() > p[1].y() || std::isnan(p[0].y()))
-        && (p[2].y() > p[1].y() || std::isnan(p[2].y()))
-        && (!std::isnan(p[0].y()) || !std::isnan(p[2].y())))
+    p[2].setX1(x);
+    p[2].setX2(evaluate(x, context, complexFormat, angleUnit, this, symbol, &expression));
+    if ((p[0].x2() > p[1].x2() || std::isnan(p[0].x2()))
+        && (p[2].x2() > p[1].x2() || std::isnan(p[2].x2()))
+        && (!std::isnan(p[0].x2()) || !std::isnan(p[2].x2())))
     {
-      result[0] = p[0].x();
-      result[1] = p[1].x();
-      result[2] = p[2].x();
+      result[0] = p[0].x1();
+      result[1] = p[1].x1();
+      result[2] = p[2].x1();
       return;
     }
-    if (p[0].y() > p[1].y() && p[1].y() == p[2].y()) {
+    if (p[0].x2() > p[1].x2() && p[1].x2() == p[2].x2()) {
     } else {
       p[0] = p[1];
       p[1] = p[2];
@@ -1028,8 +1028,8 @@ double Expression::nextIntersectionWithExpression(const char * symbol, double st
           return (expression1->isUninitialized() ? 0.0 : expression1->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)) - expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
         }, context, complexFormat, angleUnit, expression, true)};
   for (int i = 0; i < 2; i++) {
-    if (!std::isnan(resultExtremum[i].x()) && (std::isnan(result) || std::fabs(result - start) > std::fabs(resultExtremum[i].x() - start))) {
-      result = resultExtremum[i].x();
+    if (!std::isnan(resultExtremum[i].x1()) && (std::isnan(result) || std::fabs(result - start) > std::fabs(resultExtremum[i].x1() - start))) {
+      result = resultExtremum[i].x1();
     }
   }
   if (std::fabs(result) < std::fabs(step)*k_solverPrecision) {

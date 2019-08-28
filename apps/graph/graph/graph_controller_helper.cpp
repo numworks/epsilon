@@ -24,7 +24,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     t += dir; //TODO LEA delt
   }
 
-  Coordinate2D<double> xy = function->xyEvaluationAtParameter(t, App::app()->localContext());
+  Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());
   cursor->moveTo(t, xy.x(), xy.y());
   return true;
 }

@@ -26,11 +26,11 @@ public:
   void setPlotType(PlotType plotType);
 
   // Evaluation
-  Poincare::Coordinate2D<double> xyEvaluationAtParameter(double t, Poincare::Context * context) const;
-  Poincare::Coordinate2D<float> evaluateAtParameter(float t, Poincare::Context * context) const override {
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const;
+  Poincare::Coordinate2D<float> evaluate2DAtParameter(float t, Poincare::Context * context) const override {
     return templatedApproximateAtParameter(t, context);
   }
-  Poincare::Coordinate2D<double> evaluateAtParameter(double t, Poincare::Context * context) const override {
+  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const override {
     return templatedApproximateAtParameter(t, context);
   }
   // Derivative

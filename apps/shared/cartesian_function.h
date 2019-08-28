@@ -26,13 +26,16 @@ public:
   void setPlotType(PlotType plotType);
 
   // Evaluation
-  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const;
-  Poincare::Coordinate2D<float> evaluate2DAtParameter(float t, Poincare::Context * context) const override {
+  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const {
     return templatedApproximateAtParameter(t, context);
   }
-  Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const override {
-    return templatedApproximateAtParameter(t, context);
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const override {
+    return privateEvaluateXYAtParameter<float>(t, context);
   }
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const override {
+    return privateEvaluateXYAtParameter<double>(t, context);
+  }
+
   // Derivative
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
@@ -44,6 +47,7 @@ public:
   void setTMin(double tMin);
   void setTMax(double tMax);
 private:
+  template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on
    * Shared::Function::FunctionRecordDataBuffer about packing. */

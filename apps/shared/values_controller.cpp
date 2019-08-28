@@ -328,9 +328,9 @@ int ValuesController::maxNumberOfElements() const {
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   //TODO LEA RUBEN Careful with merge
-  //TODO LEA RUBEN change with evaluationOfParameterAtColumn?
-  Poincare::Coordinate2D<double> xy = function->evaluate2DAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  return xy.y();
+  //TODO LEA RUBEN change with evaluationOfParameterAtColumn? evaluate2DAtParameter ?
+  Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
+  return xy.x2();
 }
 
 void ValuesController::updateNumberOfColumns() {

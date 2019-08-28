@@ -128,6 +128,22 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
   return PoincareHelpers::ApproximateToScalar<double>(derivative, context);
 }
 
+double CartesianFunction::tMin() const {
+  return recordData()->tMin();
+}
+
+double CartesianFunction::tMax() const {
+  return recordData()->tMax();
+}
+
+void CartesianFunction::setTMin(double tMin) {
+  recordData()->setTMin(tMin);
+}
+
+void CartesianFunction::setTMax(double tMax) {
+  recordData()->setTMax(tMax);
+}
+
 void * CartesianFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
   return (char *)record->value().buffer+sizeof(CartesianFunctionRecordDataBuffer);
 }

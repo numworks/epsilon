@@ -33,12 +33,16 @@ public:
   KDColor color() const;
   void setActive(bool active);
 
+  // Definition Interval
+  virtual double tMin() const { return NAN; }
+  virtual double tMax() const { return NAN; }
+
   // Name
   int nameWithArgument(char * buffer, size_t bufferSize);
 
   // Evaluation
-  virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const = 0;
-  virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const = 0;
+  virtual Poincare::Coordinate2D<float> evaluateAtParameter(float t, Poincare::Context * context) const = 0;
+  virtual Poincare::Coordinate2D<double> evaluateAtParameter(double t, Poincare::Context * context) const = 0;
 protected:
   /* FunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a Function. We want to avoid padding which would:

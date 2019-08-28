@@ -25,13 +25,13 @@ protected:
   bool handleEnter() override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   virtual void selectFunctionWithCursor(int functionIndex);
-  virtual double defaultCursorAbscissa();
+  virtual double defaultCursorT();
   virtual FunctionStore * functionStore() const;
 
   // Closest vertical curve helper
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   int selectedCurveIndex() const override { return *m_indexFunctionSelectedByCursor; }
-  double yValue(int curveIndex, double x, Poincare::Context * context) const override;
+  Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;
   int numberOfCurves() const override;
 
 private:

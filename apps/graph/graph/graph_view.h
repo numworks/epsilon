@@ -8,7 +8,6 @@ namespace Graph {
 
 class GraphView : public Shared::FunctionGraphView {
 public:
-
   GraphView(CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void reload() override;

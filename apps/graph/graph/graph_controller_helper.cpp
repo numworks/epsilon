@@ -11,10 +11,21 @@ namespace Graph {
 
 bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record) {
   ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(record);
-  double xCursorPosition = cursor->x();
-  double x = xCursorPosition + (direction > 0 ? 1.0 : -1.0) * range->xGridUnit()/numberOfStepsInGradUnit;
-  double y = function->evaluateAtAbscissa(x, App::app()->localContext());
-  cursor->moveTo(x, y);
+  double tCursorPosition = cursor->t();
+  double t = tCursorPosition;
+  double dir = (direction > 0 ? 1.0 : -1.0);
+  CartesianFunction::PlotType type = function->plotType();
+  if (type == CartesianFunction::PlotType::Cartesian) {
+    t+= dir * range->xGridUnit()/numberOfStepsInGradUnit;
+  } else if (type == CartesianFunction::PlotType::Polar) {
+    t += dir; //TODO LEA delt
+  } else {
+    assert(type == CartesianFunction::PlotType::Parametric);
+    t += dir; //TODO LEA delt
+  }
+
+  Coordinate2D<double> xy = function->xyEvaluationAtParameter(t, App::app()->localContext());
+  cursor->moveTo(t, xy.x(), xy.y());
   return true;
 }
 

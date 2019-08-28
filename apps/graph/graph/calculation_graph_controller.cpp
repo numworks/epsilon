@@ -20,14 +20,14 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 void CalculationGraphController::viewWillAppear() {
   assert(!m_record.isNull());
   Coordinate2D<double> pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
-  if (std::isnan(pointOfInterest.x())) {
+  if (std::isnan(pointOfInterest.x1())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
     m_graphView->setBannerView(&m_defaultBannerView);
   } else {
     m_isActive = true;
     assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
-    m_cursor->moveTo(pointOfInterest.x(), pointOfInterest.x(), pointOfInterest.y());
+    m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(), pointOfInterest.x2());
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
@@ -71,11 +71,11 @@ bool CalculationGraphController::handleEnter() {
 
 bool CalculationGraphController::moveCursorHorizontally(int direction) {
   Coordinate2D<double> newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
-  if (std::isnan(newPointOfInterest.x())) {
+  if (std::isnan(newPointOfInterest.x1())) {
     return false;
   }
   assert(App::app()->functionStore()->modelForRecord(m_record)->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
-  m_cursor->moveTo(newPointOfInterest.x(), newPointOfInterest.x(), newPointOfInterest.y());
+  m_cursor->moveTo(newPointOfInterest.x1(), newPointOfInterest.x1(), newPointOfInterest.x2());
   return true;
 }
 

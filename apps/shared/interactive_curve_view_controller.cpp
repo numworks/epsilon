@@ -187,7 +187,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
     return false;
   }
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
-  m_cursor->moveTo(floatBody, xy.x(), xy.y());
+  m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
   curveView()->reload();

@@ -51,9 +51,9 @@ Poincare::Coordinate2D<double> IntersectionGraphController::computeNewPointOfInt
     if (record != m_record) {
       Poincare::Expression e = functionStore()->modelForRecord(record)->expressionReduced(context);
       Poincare::Coordinate2D<double> intersection = Shared::PoincareHelpers::NextIntersection(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context, e);
-      if ((std::isnan(result.x()) || std::fabs(intersection.x()-start) < std::fabs(result.x()-start)) && !std::isnan(intersection.x())) {
+      if ((std::isnan(result.x1()) || std::fabs(intersection.x1()-start) < std::fabs(result.x1()-start)) && !std::isnan(intersection.x1())) {
         m_intersectedRecord = record;
-        result = (std::isnan(result.x()) || std::fabs(intersection.x()-start) < std::fabs(result.x()-start)) ? intersection : result;
+        result = (std::isnan(result.x1()) || std::fabs(intersection.x1()-start) < std::fabs(result.x1()-start)) ? intersection : result;
       }
     }
   }

@@ -76,6 +76,13 @@ int CurveParameterController::reusableCellCount() {
   return 1 + (shouldDisplayCalculationAndDerivative() ? 2 : 0);
 }
 
+void CurveParameterController::viewDidDisappear() {
+  /* Deselect the table properly because it needs to be relayouted the next time
+   * it appears: the number of rows might change according to the plot type. */
+  m_selectableTableView.deselectTable(false);
+  m_selectableTableView.setFrame(KDRectZero);
+}
+
 bool CurveParameterController::shouldDisplayCalculationAndDerivative() const {
   Shared::ExpiringPointer<CartesianFunction> f = App::app()->functionStore()->modelForRecord(m_record);
   return f->plotType() == CartesianFunction::PlotType::Cartesian;

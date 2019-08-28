@@ -15,7 +15,7 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
-  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval);
+  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, IntervalParameterController * intervalParameterController, Interval * interval);
   const char * title() override;
   Interval * interval();
   int numberOfColumns() override;
@@ -71,6 +71,7 @@ private:
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   virtual ViewController * functionParameterController() = 0;
+  virtual I18n::Message valuesParameterControllerPageTitle() const = 0;
   ValuesParameterController m_abscissaParameterController;
   Button m_setIntervalButton;
 };

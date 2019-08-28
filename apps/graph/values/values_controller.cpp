@@ -9,7 +9,7 @@ using namespace Poincare;
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::X, &m_intervalParameterController, interval),
+  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, &m_intervalParameterController, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionParameterController(this),
@@ -111,6 +111,10 @@ ViewController * ValuesController::functionParameterController() {
   }
   m_functionParameterController.setRecord(record);
   return &m_functionParameterController;
+}
+
+I18n::Message ValuesController::valuesParameterControllerPageTitle() const {
+  return I18n::Message::X;
 }
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {

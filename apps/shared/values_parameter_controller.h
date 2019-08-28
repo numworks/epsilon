@@ -7,10 +7,10 @@
 namespace Shared {
 class ValuesParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title);
-
+  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController);
   View * view() override;
   const char * title() override;
+  void setPageTitle(I18n::Message pageTitle) { m_pageTitle = pageTitle; }
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void didBecomeFirstResponder() override;

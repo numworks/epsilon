@@ -29,7 +29,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       drawCartesianCurve(ctx, rect, [](float abscissa, void * model, void * context) {
           Model * regressionModel = static_cast<Model *>(model);
           double * regressionCoefficients = static_cast<double *>(context);
-          return (float)regressionModel->evaluate(regressionCoefficients, abscissa);
+          return Poincare::Coordinate2D<float>(abscissa, (float)regressionModel->evaluate(regressionCoefficients, abscissa));
           },
           seriesModel, m_store->coefficientsForSeries(series, globContext), color);
       for (int index = 0; index < m_store->numberOfPairsOfSeries(series); index++) {

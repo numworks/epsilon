@@ -24,7 +24,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     rectXMin = rectXMin < 0 ? 0 : rectXMin;
     float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
     for (int x = rectXMin; x < rectXMax; x += step) {
-      float y = s->evaluateAtParameter((float)x, context()).y();
+      float y = s->evaluateXYAtParameter((float)x, context()).x2();
       if (std::isnan(y)) {
         continue;
       }

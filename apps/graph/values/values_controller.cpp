@@ -152,7 +152,7 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
     return function->approximateDerivative(abscissa, context);
   }
   //TODO LEA RUBEN
-  return function->evaluateAtParameter(abscissa, context).x();
+  return function->evaluate2DAtParameter(abscissa, context).x1();
 }
 
 void ValuesController::updateNumberOfColumns() {

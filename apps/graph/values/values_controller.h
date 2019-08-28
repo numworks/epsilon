@@ -15,7 +15,6 @@ public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval, ButtonRowController * header);
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
-  Shared::IntervalParameterController * intervalParameterController() override;
   void updateNumberOfColumns() override;
 private:
   constexpr static int k_maxNumberOfCells = 50;
@@ -29,6 +28,9 @@ private:
   CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::ValuesController::functionStore()); }
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;
+  Shared::IntervalParameterController * intervalParameterController() override {
+    return &m_intervalParameterController;
+  }
   ViewController * functionParameterController() override;
   I18n::Message valuesParameterControllerPageTitle() const override;
 

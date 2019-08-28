@@ -55,10 +55,6 @@ I18n::Message ValuesController::emptyMessage() {
   return I18n::Message::NoActivatedFunction;
 }
 
-IntervalParameterController * ValuesController::intervalParameterController() {
-  return &m_intervalParameterController;
-}
-
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   bool isDerivative = false;
   return recordAtColumn(i, &isDerivative);

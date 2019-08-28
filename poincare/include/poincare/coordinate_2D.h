@@ -5,18 +5,17 @@
 
 namespace Poincare {
 
-// TODO LEA RUBEN x1 and x2 instead of x y
 template <typename T>
 class Coordinate2D final {
 public:
-  Coordinate2D(T x = NAN, T y = NAN) : m_x(x), m_y(y) {}
-  T x() const { return m_x; }
-  T y() const { return m_y; }
-  void setX(T x) { m_x = x; }
-  void setY(T y) { m_y = y; }
+  Coordinate2D(T x1 = NAN, T x2 = NAN) : m_x1(x1), m_x2(x2) {}
+  T x1() const { return m_x1; }
+  T x2() const { return m_x2; }
+  void setX1(T x1) { m_x1 = x1; }
+  void setX2(T x2) { m_x2 = x2; }
 private:
-  T m_x;
-  T m_y;
+  T m_x1;
+  T m_x2;
 };
 
 }

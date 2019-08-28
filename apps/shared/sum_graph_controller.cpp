@@ -66,8 +66,7 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   assert(!m_record.isNull());
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
 
-  Coordinate2D<double> xy = function->evaluate2DAtParameter(x, myApp->localContext()); //TODO LEA assertion that x = t?
-  double y = xy.y();
+  double y = function->evaluateXYAtParameter(x, myApp->localContext()).x2(); //TODO LEA assertion that x = t?
   m_cursor->moveTo(x, x, y);
   if (m_step == Step::SecondParameter) {
     m_graphView->setAreaHighlight(m_startSum, m_cursor->x());

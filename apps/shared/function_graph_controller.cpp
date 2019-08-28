@@ -107,10 +107,10 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     const int balancedBound = std::floor((tMax-tMin)/2/step);
     for (int j = -balancedBound; j <= balancedBound ; j++) {
       float t = (tMin+tMax)/2 + step * j;
-      Coordinate2D<float> xy = f->evaluate2DAtParameter(t, context);
-      float x = xy.x();
+      Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
+      float x = xy.x1();
       if (!std::isnan(x) && !std::isinf(x) && x >= xMin && x <= xMax) {
-        float y = xy.y();
+        float y = xy.x2();
         if (!std::isnan(y) && !std::isinf(y)) {
           min = minFloat(min, y);
           max = maxFloat(max, y);
@@ -139,13 +139,13 @@ void FunctionGraphController::initCursorParameters() {
   Coordinate2D<double> xy;
   do {
     ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
-    xy = firstFunction->evaluate2DAtParameter(t, context);
-  } while ((std::isnan(xy.y()) || std::isinf(xy.y())) && functionIndex < functionStore()->numberOfActiveFunctions());
-  m_cursor->moveTo(t, xy.x(), xy.y());
-  functionIndex = (std::isnan(xy.y()) || std::isinf(xy.y())) ? 0 : functionIndex - 1;
+    xy = firstFunction->evaluateXYAtParameter(t, context);
+  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && functionIndex < functionStore()->numberOfActiveFunctions());
+  m_cursor->moveTo(t, xy.x1(), xy.x2());
+  functionIndex = (std::isnan(xy.x2()) || std::isinf(xy.x2())) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);
   if (interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->panToMakePointVisible(xy.x(), xy.y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+    interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   }
 }
 
@@ -181,7 +181,7 @@ bool FunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int curr
 }
 
 Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t, Poincare::Context * context) const {
-  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluate2DAtParameter(t, context);
+  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateXYAtParameter(t, context);
 }
 
 int FunctionGraphController::numberOfCurves() const {

@@ -44,10 +44,6 @@ I18n::Message ValuesController::emptyMessage() {
   return I18n::Message::NoActivatedSequence;
 }
 
-IntervalParameterController * ValuesController::intervalParameterController() {
-  return &m_intervalParameterController;
-}
-
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   if (floatBody < 0) {
       return false;

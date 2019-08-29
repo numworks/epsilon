@@ -73,8 +73,9 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   return &m_floatCells[j];
 }
 
-Shared::ValuesFunctionParameterController * ValuesController::functionParameterController() {
+ViewController * ValuesController::functionParameterController() {
 #if COPY_COLUMN
+  m_sequenceParameterController.setRecord(recordAtColumn(selectedColumn()));
   return &m_sequenceParameterController;
 #else
   return nullptr;

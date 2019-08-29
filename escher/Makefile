@@ -35,6 +35,7 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
   message_table_cell_with_chevron.cpp \
+  message_table_cell_with_chevron_and_buffer.cpp \
   message_table_cell_with_chevron_and_message.cpp \
   message_table_cell_with_chevron_and_expression.cpp \
   message_table_cell_with_editable_text.cpp \

@@ -22,14 +22,6 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   }
 }
 
-bool ValuesController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtLocation(selectedColumn(), selectedRow()) == 1 && isDerivativeColumn(selectedColumn())) {
-    configureDerivativeFunction();
-    return true;
-  }
-  return Shared::ValuesController::handleEvent(event);
-}
-
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
@@ -113,12 +105,6 @@ bool ValuesController::isDerivativeColumn(int i) {
   return false;
 }
 
-void ValuesController::configureDerivativeFunction() {
-  m_derivativeParameterController.setRecord(recordAtColumn(selectedColumn()));
-  StackViewController * stack = stackController();
-  stack->push(&m_derivativeParameterController);
-}
-
 int ValuesController::maxNumberOfCells() {
   return k_maxNumberOfCells;
 }
@@ -138,6 +124,11 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
 }
 
 ViewController * ValuesController::functionParameterController() {
+  bool isDerivative = isDerivativeColumn(selectedColumn());
+  if (isDerivative) {
+    m_derivativeParameterController.setRecord(recordAtColumn(selectedColumn()));
+    return &m_derivativeParameterController;
+  }
   m_functionParameterController.setRecord(recordAtColumn(selectedColumn()));
   return &m_functionParameterController;
 }

@@ -253,7 +253,6 @@ void ValuesController::configureFunction() {
     return;
   }
 #endif
-  functionParameterController()->setRecord(recordAtColumn(selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());
 }

@@ -25,10 +25,10 @@ private:
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   EvenOddBufferTextCell * floatCells(int j) override;
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::ValuesController::functionStore()); }
+  ViewController * functionParameterController() override;
 #if COPY_COLUMN
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif
-  Shared::ValuesFunctionParameterController * functionParameterController() override;
   IntervalParameterController m_intervalParameterController;
 };
 

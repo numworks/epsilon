@@ -72,7 +72,7 @@ private:
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
-  virtual ValuesFunctionParameterController * functionParameterController() = 0;
+  virtual ViewController * functionParameterController() = 0;
   ValuesParameterController m_abscissaParameterController;
   Button m_setIntervalButton;
 };

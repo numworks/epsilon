@@ -137,7 +137,8 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   return &m_floatCells[j];
 }
 
-FunctionParameterController * ValuesController::functionParameterController() {
+ViewController * ValuesController::functionParameterController() {
+  m_functionParameterController.setRecord(recordAtColumn(selectedColumn()));
   return &m_functionParameterController;
 }
 

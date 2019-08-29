@@ -13,7 +13,7 @@ namespace Graph {
 
 class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate {
 public:
-  ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer);
+  ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, InputEventHandlerDelegate * inputEventHandlerDelegate);
   const char * title() override;
   void renameSelectedFunction();
   // TextFieldDelegate

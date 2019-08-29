@@ -3,6 +3,7 @@
 
 #include <apps/shared/list_parameter_controller.h>
 #include "type_parameter_controller.h"
+#include "domain_parameter_controller.h"
 
 namespace Graph {
 
@@ -10,11 +11,12 @@ class ListController;
 
 class ListParameterController : public Shared::ListParameterController {
 public:
-  ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr) :
-    Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage, tableDelegate),
+  ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, InputEventHandlerDelegate * inputEventHandlerDelegate) :
+    Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
     m_listController(listController),
     m_typeCell(),
     m_typeParameterController(this),
+    m_domainParameterController(nullptr, inputEventHandlerDelegate),
     m_renameCell(I18n::Message::Rename)
   {}
   // ListViewDataSource
@@ -29,7 +31,9 @@ private:
   void renameFunction();
   ListController * m_listController;
   MessageTableCellWithChevronAndMessage m_typeCell;
+  MessageTableCellWithChevronAndBuffer m_functionDomain;
   TypeParameterController m_typeParameterController;
+  DomainParameterController m_domainParameterController;
   MessageTableCell m_renameCell;
 };
 

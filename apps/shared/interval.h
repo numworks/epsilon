@@ -11,9 +11,9 @@ public:
   int numberOfElements();
   void deleteElementAtIndex(int index);
   double element(int i);
-  double start();
-  double end();
-  double step();
+  double start() const { return m_start; }
+  double end() const { return m_end; }
+  double step() const { return m_step; }
   void setStart(double f);
   void setEnd(double f);
   void setStep(double f);
@@ -31,7 +31,7 @@ private:
 };
 
 typedef void (Interval::*SetterPointer)(double);
-typedef double (Interval::*GetterPointer)();
+typedef double (Interval::*GetterPointer)() const;
 
 }
 

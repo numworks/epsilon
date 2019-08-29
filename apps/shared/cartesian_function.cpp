@@ -109,6 +109,10 @@ CartesianFunction::PlotType CartesianFunction::plotType() const {
 void CartesianFunction::setPlotType(PlotType plotType) {
   /* Reset memoized layout. */
   m_model.tidy();
+  double tMin = plotType == PlotType::Cartesian ? -INFINITY : 0.0;
+  double tMax = plotType == PlotType::Cartesian ? INFINITY : 360.0;
+  setTMin(tMin);
+  setTMax(tMax);
   return recordData()->setPlotType(plotType);
 }
 

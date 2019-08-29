@@ -58,8 +58,8 @@ private:
       FunctionRecordDataBuffer(color),
       m_plotType(PlotType::Cartesian),
       m_displayDerivative(false),
-      m_tMin(0.0),
-      m_tMax(396.0) // TODO LEA RUBEN
+      m_tMin(-INFINITY),
+      m_tMax(INFINITY)
     {}
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }

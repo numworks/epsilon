@@ -86,11 +86,15 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return header()->handleEvent(event);
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
+    ViewController * parameterController = nullptr;
     if (typeAtLocation(selectedColumn(), 0) == 0) {
-      configureAbscissa();
-      return true;
+      parameterController = &m_abscissaParameterController;
+    } else {
+      parameterController = functionParameterController();
     }
-    configureFunction();
+    if (parameterController) {
+      stackController()->push(parameterController);
+    }
     return true;
   }
   return false;
@@ -237,24 +241,6 @@ Responder * ValuesController::tabController() const {
 
 StackViewController * ValuesController::stackController() const {
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
-}
-
-void ValuesController::configureAbscissa() {
-  StackViewController * stack = stackController();
-  stack->push(&m_abscissaParameterController);
-}
-
-void ValuesController::configureFunction() {
-#if COPY_COLUMN
-#else
-  /* Temporary: the sequence value controller does not have a function parameter
-   * controller yet but it shoult come soon. */
-  if (functionParameterController() == nullptr) {
-    return;
-  }
-#endif
-  StackViewController * stack = stackController();
-  stack->push(functionParameterController());
 }
 
 bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {

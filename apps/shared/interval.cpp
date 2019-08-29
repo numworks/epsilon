@@ -31,18 +31,6 @@ double Interval::element(int i) {
   return m_intervalBuffer[i];
 }
 
-double Interval::start() {
-  return m_start;
-}
-
-double Interval::end() {
-  return m_end;
-}
-
-double Interval::step() {
-  return m_step;
-}
-
 void Interval::setStart(double f) {
   m_start = f;
   m_needCompute = true;

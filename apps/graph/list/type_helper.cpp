@@ -10,9 +10,9 @@ namespace PlotTypeHelper {
 I18n::Message Message(int index) {
   assert(0 <= index && index < NumberOfTypes);
   static constexpr I18n::Message message[NumberOfTypes] = {
-    I18n::Message::Cartesian,
-    I18n::Message::Polar,
-    I18n::Message::Parametric
+    I18n::Message::CartesianType,
+    I18n::Message::PolarType,
+    I18n::Message::ParametricType
   };
   return message[index];
 }

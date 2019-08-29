@@ -28,11 +28,14 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = m_functionStore->activeRecordAtIndex(i);
     ExpiringPointer<CartesianFunction> f = m_functionStore->modelForRecord(record);;
+    Shared::CartesianFunction::PlotType type = f->plotType();
+    float tmin = f->tMin();
+    float tmax = f->tMax();
+    float tstep = (tmax-tmin)/10.0f;
 
-    switch (f->plotType()) {
-
-    case Shared::CartesianFunction::PlotType::Cartesian:
-      drawCartesianCurve(ctx, rect, [](float t, void * model, void * context) {
+    // Cartesian
+    if (type == Shared::CartesianFunction::PlotType::Cartesian) {
+      drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
             CartesianFunction * f = (CartesianFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
@@ -42,46 +45,45 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float tangentParameter[2];
         tangentParameter[0] = f->approximateDerivative(m_curveViewCursor->x(), context());
         tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
-        drawCartesianCurve(ctx, rect, [](float t, void * model, void * context) {
+        drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, [](float t, void * model, void * context) {
               float * tangent = (float *)model;
               return Poincare::Coordinate2D<float>(t, tangent[0]*t+tangent[1]);
             }, tangentParameter, nullptr, Palette::GreyVeryDark);
       }
-      break;
-
-    case Shared::CartesianFunction::PlotType::Polar:
-      drawCurve(ctx, rect, 0.0f, 396.0f, 36.0f, [](float t, void * model, void * context) { //TODO LEA RUBEN use the models's tMin, tMax
-            CartesianFunction * f = (CartesianFunction *)model;
-            Poincare::Context * c = (Poincare::Context *)context;
-            return f->evaluateXYAtParameter(t, c);
-          }, f.operator->(), context(), false, f->color());
-      break;
-
-    case Shared::CartesianFunction::PlotType::Parametric:
-      drawCurve(ctx, rect, 0.0f, 396.0f, 36.0f, [](float t, void * model, void * context) { //TODO LEA RUBEN use the models's tMin, tMax
-            CartesianFunction * f = (CartesianFunction *)model;
-            Poincare::Context * c = (Poincare::Context *)context;
-            if (f->isCircularlyDefined(c)) {
-              return Poincare::Coordinate2D<float>(NAN, NAN);
-            }
-            constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-            char unknownX[bufferSize];
-            Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-            Poincare::VariableContext variableContext(unknownX, c);
-            variableContext.setApproximationForVariable(t);
-            Poincare::Expression e = f->expressionReduced(c);
-            assert(e.type() == Poincare::ExpressionNode::Type::Matrix
-                && static_cast<Poincare::Matrix&>(e).numberOfRows() == 2
-                && static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);
-            Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-            Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, c);
-            return Poincare::Coordinate2D<float>(e.childAtIndex(0).approximateToScalar<float>(&variableContext, complexFormat, preferences->angleUnit()), e.childAtIndex(1).approximateToScalar<float>(&variableContext, complexFormat, preferences->angleUnit()));
-          }, f.operator->(), context(), false, f->color());
-      break;
-
-    default:
-      assert(false);
+      return;
     }
+
+    // Polar
+    if (type == Shared::CartesianFunction::PlotType::Polar) {
+      drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
+          CartesianFunction * f = (CartesianFunction *)model;
+          Poincare::Context * c = (Poincare::Context *)context;
+          return f->evaluateXYAtParameter(t, c);
+        }, f.operator->(), context(), false, f->color());
+      return;
+    }
+
+    // Parametric
+    assert(type == Shared::CartesianFunction::PlotType::Parametric);
+    drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
+        CartesianFunction * f = (CartesianFunction *)model;
+        Poincare::Context * c = (Poincare::Context *)context;
+        if (f->isCircularlyDefined(c)) {
+          return Poincare::Coordinate2D<float>(NAN, NAN);
+        }
+        constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+        char unknownX[bufferSize];
+        Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+        Poincare::VariableContext variableContext(unknownX, c);
+        variableContext.setApproximationForVariable(t);
+        Poincare::Expression e = f->expressionReduced(c);
+        assert(e.type() == Poincare::ExpressionNode::Type::Matrix
+            && static_cast<Poincare::Matrix&>(e).numberOfRows() == 2
+            && static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);
+        Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
+        Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, c);
+        return Poincare::Coordinate2D<float>(e.childAtIndex(0).approximateToScalar<float>(&variableContext, complexFormat, preferences->angleUnit()), e.childAtIndex(1).approximateToScalar<float>(&variableContext, complexFormat, preferences->angleUnit()));
+        }, f.operator->(), context(), false, f->color());
   }
 }
 

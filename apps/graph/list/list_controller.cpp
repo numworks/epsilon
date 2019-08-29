@@ -9,7 +9,7 @@ using namespace Shared;
 
 namespace Graph {
 
-ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer) :
+ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   m_functionTitleCells{ //TODO find better initialization
     TextFieldFunctionTitleCell(this),
@@ -19,7 +19,7 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
     TextFieldFunctionTitleCell(this),
   },
   m_expressionCells{},
-  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
+  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, inputEventHandlerDelegate)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);

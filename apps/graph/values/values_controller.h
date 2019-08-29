@@ -30,7 +30,7 @@ private:
   CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::ValuesController::functionStore()); }
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;
-  FunctionParameterController * functionParameterController() override;
+  ViewController * functionParameterController() override;
 
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];

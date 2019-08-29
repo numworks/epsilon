@@ -51,7 +51,7 @@ void App::Snapshot::tidy() {
 
 App::App(Snapshot * snapshot) :
   FunctionApp(snapshot, &m_inputViewController),
-  m_listController(&m_listFooter, &m_listHeader, &m_listFooter),
+  m_listController(&m_listFooter, &m_listHeader, &m_listFooter, this),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),

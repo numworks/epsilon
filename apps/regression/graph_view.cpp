@@ -26,7 +26,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     if (!m_store->seriesIsEmpty(series)) {
       KDColor color = Palette::DataColor[series];
       Model * seriesModel = m_store->modelForSeries(series);
-      drawCartesianCurve(ctx, rect, [](float abscissa, void * model, void * context) {
+      drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, [](float abscissa, void * model, void * context) {
           Model * regressionModel = static_cast<Model *>(model);
           double * regressionCoefficients = static_cast<double *>(context);
           return Poincare::Coordinate2D<float>(abscissa, (float)regressionModel->evaluate(regressionCoefficients, abscissa));

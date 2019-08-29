@@ -55,8 +55,6 @@ private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-  void configureAbscissa();
-  void configureFunction();
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElementsInColumn(int columnIndex) override;

@@ -66,7 +66,9 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   assert(!m_record.isNull());
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
 
-  double y = function->evaluateXYAtParameter(x, myApp->localContext()).x2(); //TODO LEA assertion that x = t?
+  /* TODO We would like to assert that the function is not a parametered
+   * function, so we can indeed evaluate the function for parameter x. */
+  double y = function->evaluateXYAtParameter(x, myApp->localContext()).x2();
   m_cursor->moveTo(x, x, y);
   if (m_step == Step::SecondParameter) {
     m_graphView->setAreaHighlight(m_startSum, m_cursor->x());

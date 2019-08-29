@@ -189,7 +189,7 @@ Coordinate2D<T> CartesianFunction::templatedApproximateAtParameter(T t, Poincare
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknown[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, symbol());
+  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknownX);
   PlotType type = plotType();
   if (type == PlotType::Cartesian || type == PlotType::Polar) {
     return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknown, t, context));

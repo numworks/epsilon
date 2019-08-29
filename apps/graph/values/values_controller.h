@@ -13,7 +13,6 @@ namespace Graph {
 class ValuesController : public Shared::ValuesController {
 public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval, ButtonRowController * header);
-  bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
   Shared::IntervalParameterController * intervalParameterController() override;
@@ -23,7 +22,6 @@ private:
   constexpr static int k_maxNumberOfFunctions = 5;
   Ion::Storage::Record recordAtColumn(int i) override;
   bool isDerivativeColumn(int i);
-  void configureDerivativeFunction();
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;

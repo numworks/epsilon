@@ -528,9 +528,12 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
   }
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
-  float tStart = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
-  float tEnd = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+  float tStart = maxFloat(xMin, pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin));
+  float tEnd = minFloat(xMax, pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin));
+  if (tStart > tEnd) {
+    return;
+  }
   float tStep = pixelWidth();
   drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, colorUnderCurve, colorLowerBound, colorUpperBound);
 }

@@ -25,7 +25,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
     return;
   }
   if (m_distribution->isContinuous()) {
-    drawCartesianCurve(ctx, rect, EvaluateXYAtAbscissa, m_distribution, nullptr, Palette::YellowDark, true, lowerBound, upperBound);
+    drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr, Palette::YellowDark, true, lowerBound, upperBound);
   } else {
     drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::GreyMiddle, Palette::YellowDark, lowerBound, upperBound+0.5f);
   }
@@ -55,7 +55,7 @@ void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, flo
   // Draw a centered reduced normal curve
   NormalDistribution n;
   constCastedThis->setCurveViewRange(&n);
-  drawCartesianCurve(ctx, rect, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, colorLowerBound, colorUpperBound);
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, colorLowerBound, colorUpperBound);
 
   // Put back the previous curve view range
   constCastedThis->setCurveViewRange(previousRange);

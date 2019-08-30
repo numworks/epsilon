@@ -9,7 +9,7 @@ using namespace Poincare;
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, &m_intervalParameterController, interval),
+  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionParameterController(this),

@@ -7,7 +7,7 @@
 namespace Shared {
 class ValuesParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController);
+  ValuesParameterController(Responder * parentResponder);
   View * view() override;
   const char * title() override;
   void setPageTitle(I18n::Message pageTitle) { m_pageTitle = pageTitle; }
@@ -29,7 +29,6 @@ private:
   MessageTableCell m_deleteColumn;
   MessageTableCellWithChevron m_setInterval;
   SelectableTableView m_selectableTableView;
-  IntervalParameterController * m_intervalParameterController;
 };
 
 }

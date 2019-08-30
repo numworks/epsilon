@@ -36,6 +36,9 @@ public:
   CodePoint XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
+  ValuesController * valuesController() override {
+    return &m_valuesController;
+  }
   InputViewController * inputViewController() override {
     return &m_inputViewController;
   }

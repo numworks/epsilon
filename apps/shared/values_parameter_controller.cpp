@@ -1,17 +1,17 @@
 #include "values_parameter_controller.h"
+#include "function_app.h"
 #include <assert.h>
 
 namespace Shared {
 
-ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController) :
+ValuesParameterController::ValuesParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_deleteColumn(I18n::Message::Default),
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::Default),
 #endif
   m_setInterval(I18n::Message::Default),
-  m_selectableTableView(this, this, this),
-  m_intervalParameterController(intervalParameterController)
+  m_selectableTableView(this, this, this)
 {
 }
 
@@ -46,10 +46,11 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 #else
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
 #endif
+    IntervalParameterController * intervalParameterController = FunctionApp::app()->valuesController()->intervalParameterController();
     switch (selectedRow()) {
       case 0:
       {
-        Interval * interval = m_intervalParameterController->interval();
+        Interval * interval = intervalParameterController->interval();
         interval->clear();
         StackViewController * stack = ((StackViewController *)parentResponder());
         stack->pop();
@@ -65,7 +66,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 #endif
       {
         StackViewController * stack = ((StackViewController *)parentResponder());
-        stack->push(m_intervalParameterController);
+        stack->push(intervalParameterController);
         return true;
       }
       default:

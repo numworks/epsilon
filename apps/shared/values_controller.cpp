@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, IntervalParameterController * intervalParameterController, Interval * interval) :
+ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Interval * interval) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_interval(interval),
@@ -17,7 +17,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView(this),
   m_abscissaTitleCell(),
   m_abscissaCells{},
-  m_abscissaParameterController(this, intervalParameterController),
+  m_abscissaParameterController(this),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());

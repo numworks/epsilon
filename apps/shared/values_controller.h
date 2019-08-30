@@ -15,12 +15,13 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
-  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, IntervalParameterController * intervalParameterController, Interval * interval);
+  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Interval * interval);
   const char * title() override;
   int numberOfColumns() override;
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  virtual IntervalParameterController * intervalParameterController() = 0;
   int numberOfButtons(ButtonRowController::Position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
@@ -68,7 +69,6 @@ private:
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
-  virtual IntervalParameterController * intervalParameterController() = 0;
   virtual ViewController * functionParameterController() = 0;
   virtual I18n::Message valuesParameterControllerPageTitle() const = 0;
   ValuesParameterController m_abscissaParameterController;

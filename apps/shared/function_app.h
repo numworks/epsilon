@@ -5,6 +5,7 @@
 #include "function_store.h"
 #include "curve_view_cursor.h"
 #include "interval.h"
+#include "values_controller.h"
 
 namespace Shared {
 
@@ -36,6 +37,7 @@ public:
   }
   virtual ~FunctionApp() = default;
   virtual FunctionStore * functionStore() { return static_cast<FunctionApp::Snapshot *>(snapshot())->functionStore(); }
+  virtual ValuesController * valuesController() = 0;
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
 

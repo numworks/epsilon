@@ -40,6 +40,9 @@ public:
   CodePoint XNT() override { return 'n'; }
   SequenceContext * localContext() override;
   SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::FunctionApp::functionStore()); }
+  ValuesController * valuesController() override {
+    return &m_valuesController;
+  }
   InputViewController * inputViewController() override {
     return &m_inputViewController;
   }

@@ -50,7 +50,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               return Poincare::Coordinate2D<float>(t, tangent[0]*t+tangent[1]);
             }, tangentParameter, nullptr, Palette::GreyVeryDark);
       }
-      return;
+      continue;
     }
 
     // Polar
@@ -60,7 +60,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           Poincare::Context * c = (Poincare::Context *)context;
           return f->evaluateXYAtParameter(t, c);
         }, f.operator->(), context(), false, f->color());
-      return;
+      continue;
     }
 
     // Parametric

@@ -145,6 +145,24 @@ void CartesianFunction::setDisplayDerivative(bool display) {
   return recordData()->setDisplayDerivative(display);
 }
 
+int CartesianFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+  PlotType type = plotType();
+  if (type == PlotType::Cartesian) {
+    return Function::printValue(cursorT, cursorX, cursorY, buffer, bufferSize, precision, context);
+  }
+  if (type == PlotType::Polar) {
+    return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
+  }
+  assert(type == PlotType::Parametric);
+  int result = 0;
+  result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
+  result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
+  result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
+  result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
+  result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
+  return result;
+}
+
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
   Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the

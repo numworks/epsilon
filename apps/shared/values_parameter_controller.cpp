@@ -50,9 +50,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         Interval * interval = m_intervalParameterController->interval();
-        interval->setEnd(0.0);
-        interval->setStep(1.0);
-        interval->setStart(1.0);
+        interval->clear();
         StackViewController * stack = ((StackViewController *)parentResponder());
         stack->pop();
         return true;

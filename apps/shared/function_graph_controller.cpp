@@ -148,8 +148,6 @@ void FunctionGraphController::initCursorParameters() {
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
-  return false; //TODO LEA
-#if 0
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   int nextActiveFunctionIndex = InteractiveCurveViewController::closestCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context);
@@ -157,9 +155,9 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
     return false;
   }
   selectFunctionWithCursor(nextActiveFunctionIndex);
-  m_cursor->moveTo(m_cursor->x(), yValue(nextActiveFunctionIndex, m_cursor->x(), context));
+  Poincare::Coordinate2D<double> cursorPosition = xyValues(nextActiveFunctionIndex, m_cursor->x(), context);
+  m_cursor->moveTo(cursorPosition.x1(), cursorPosition.x1(), cursorPosition.x2());
   return true;
-#endif
 }
 
 CurveView * FunctionGraphController::curveView() {

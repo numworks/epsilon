@@ -221,8 +221,6 @@ bool InteractiveCurveViewController::isCursorVisible() {
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
-  return 0; //TODO LEA
-#if 0
   double x = m_cursor->x();
   double y = m_cursor->y();
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
@@ -232,7 +230,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
       continue;
     }
-    double newY = yValue(i, x, context);
+    double newY = xyValues(i, x, context).x2();
     if (!suitableYValue(newY)) {
       continue;
     }
@@ -275,7 +273,6 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     }
   }
   return nextCurveIndex;
-#endif
 }
 
 float InteractiveCurveViewController::cursorBottomMarginRatio() {

@@ -28,7 +28,7 @@ public:
   virtual void tidy() const;
 protected:
   // Setters helper
-  static Poincare::Expression BuildExpressionFromText(const char * c, char symbol = 0);
+  static Poincare::Expression BuildExpressionFromText(const char * c, CodePoint symbol = 0);
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
 private:

@@ -92,10 +92,14 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     double tMin = f->tMin();
     if (std::isnan(tMin)) {
       tMin = xMin;
+    } else if (f->shouldClipTRangeToXRange()) {
+      tMin = maxFloat(tMin, xMin);
     }
     double tMax = f->tMax();
     if (std::isnan(tMax)) {
       tMax = xMax;
+    } else if (f->shouldClipTRangeToXRange()) {
+      tMax = minFloat(tMax, xMax);
     }
     const int balancedBound = std::floor((tMax-tMin)/2/step);
     for (int j = -balancedBound; j <= balancedBound ; j++) {

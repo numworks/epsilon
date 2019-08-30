@@ -176,17 +176,11 @@ Token Tokenizer::popToken() {
     result.setCodePoint(c);
     return result;
   }
-  if (c == UCodePointGreekSmallLetterTheta) {
+  if (c == UCodePointSquareRoot
+      || c == UCodePointGreekSmallLetterTheta)
+  {
     Token result(Token::Identifier);
-    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(UCodePointGreekSmallLetterTheta));
-    return result;
-  }
-  if (c == UCodePointSquareRoot) {
-    Token result(Token::Identifier);
-    // TODO compute size manually?
-    constexpr int squareRootCharLength = 3;
-    assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSquareRoot) == squareRootCharLength);
-    result.setString(start, squareRootCharLength);
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;
   }
   if (c == UCodePointEmpty) {

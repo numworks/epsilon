@@ -27,11 +27,9 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   }
   if (type == CartesianFunction::PlotType::Cartesian) {
     t+= dir * range->xGridUnit()/numberOfStepsInGradUnit;
-  } else if (type == CartesianFunction::PlotType::Polar) {
-    t += dir; //TODO LEA delt
   } else {
-    assert(type == CartesianFunction::PlotType::Parametric);
-    t += dir; //TODO LEA delt
+    assert(type == CartesianFunction::PlotType::Polar || type == CartesianFunction::PlotType::Parametric);
+    t += dir * (tMax-tMin)/k_definitionDomainDivisor;
   }
   t = maxFloat(minFloat(t, tMax), tMin); // Stay inside the definition domain
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());

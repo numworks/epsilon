@@ -28,10 +28,10 @@ void BannerView::layoutSubviews() {
     return;
   }
   /* We iterate on subviews, adding their width until we exceed the view bound.
-  * The last subview that exceeds the bound is recorded as the first subview of
-  * the next line. For the current line, we scan again the subviews and frame
-  * them by equally distributing the remaining width. We then jump to the next
-  * line and iterate the process. */
+   * The last subview that exceeds the bound is recorded as the first subview of
+   * the next line. For the current line, we scan again the subviews and frame
+   * them by equally distributing the remaining width. We then jump to the next
+   * line and iterate the process. */
   const KDCoordinate lineWidth = m_frame.width();
   KDCoordinate remainingWidth = lineWidth;
   int indexOfFirstViewOfCurrentLine = 0;

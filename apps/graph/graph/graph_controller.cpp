@@ -33,14 +33,6 @@ void GraphController::viewWillAppear() {
   selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
 }
 
-bool GraphController::displayDerivativeInBanner() const {
-  return m_displayDerivativeInBanner;
-}
-
-void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
-  m_displayDerivativeInBanner = displayDerivative;
-}
-
 float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
@@ -54,18 +46,10 @@ float GraphController::interestingXHalfRange() const {
   return (characteristicRange > 0.0f ? 1.6f*characteristicRange : InteractiveCurveViewRangeDelegate::interestingXHalfRange());
 }
 
-int GraphController::estimatedBannerNumberOfLines() const {
-  return 1 + m_displayDerivativeInBanner;
-}
-
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
   ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
-}
-
-BannerView * GraphController::bannerView() {
-  return &m_bannerView;
 }
 
 void GraphController::reloadBannerView() {
@@ -80,18 +64,6 @@ void GraphController::reloadBannerView() {
 bool GraphController::moveCursorHorizontally(int direction) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record);
-}
-
-InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
-  return m_graphRange;
-}
-
-GraphView * GraphController::functionGraphView() {
-  return &m_view;
-}
-
-CurveParameterController * GraphController::curveParameterController() {
-  return &m_curveParameterController;
 }
 
 }

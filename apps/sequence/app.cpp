@@ -59,10 +59,6 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-InputViewController * App::inputViewController() {
-  return &m_inputViewController;
-}
-
 SequenceContext * App::localContext() {
   return &m_sequenceContext;
 }

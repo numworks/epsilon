@@ -68,10 +68,6 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-InputViewController * App::inputViewController() {
-  return &m_inputViewController;
-}
-
 CodePoint App::XNT() {
   if (m_inputViewController.isEditing()) {
     int selectedFunctionIndex = m_listController.selectedRow();

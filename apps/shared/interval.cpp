@@ -59,6 +59,13 @@ void Interval::reset() {
   m_needCompute = true;
 }
 
+void Interval::clear() {
+  m_start = 1.0;
+  m_end = 0.0;
+  m_step = 1.0;
+  m_needCompute = true;
+}
+
 void Interval::computeElements() {
   if (!m_needCompute) {
     return;

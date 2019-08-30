@@ -176,6 +176,11 @@ Token Tokenizer::popToken() {
     result.setCodePoint(c);
     return result;
   }
+  if (c == UCodePointGreekSmallLetterTheta) {
+    Token result(Token::Identifier);
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(UCodePointGreekSmallLetterTheta));
+    return result;
+  }
   if (c == UCodePointSquareRoot) {
     Token result(Token::Identifier);
     // TODO compute size manually?

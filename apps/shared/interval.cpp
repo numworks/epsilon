@@ -4,12 +4,9 @@
 namespace Shared {
 
 Interval::Interval() :
-  m_numberOfElements(0),
-  m_start(0.0),
-  m_end(10.0),
-  m_step(1.0),
-  m_needCompute(true)
+  m_numberOfElements(0)
 {
+  reset();
 }
 
 int Interval::numberOfElements() {
@@ -53,6 +50,13 @@ void Interval::setElement(int i, double f) {
   if (i == numberOfElements()) {
     m_numberOfElements++;
   }
+}
+
+void Interval::reset() {
+  m_start = 0.0;
+  m_end = 10.0;
+  m_step = 1.0;
+  m_needCompute = true;
 }
 
 void Interval::computeElements() {

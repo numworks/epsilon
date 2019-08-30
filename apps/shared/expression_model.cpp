@@ -122,7 +122,7 @@ void ExpressionModel::tidy() const {
   m_circular = 0;
 }
 
-Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, char symbol) {
+Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol) {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {

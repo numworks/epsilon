@@ -42,6 +42,7 @@ public:
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context) const;
   // tMin and tMax
+  bool shouldClipTRangeToXRange() const override { return plotType() == PlotType::Cartesian; }
   double tMin() const override;
   double tMax() const override;
   void setTMin(double tMin);

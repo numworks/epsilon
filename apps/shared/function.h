@@ -34,6 +34,7 @@ public:
   void setActive(bool active);
 
   // Definition Interval
+  virtual bool shouldClipTRangeToXRange() const { return true; } // Returns true if the function will not be displayed if t is outside x range.
   virtual double tMin() const { return NAN; }
   virtual double tMax() const { return NAN; }
 

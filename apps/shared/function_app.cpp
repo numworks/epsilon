@@ -12,9 +12,6 @@ FunctionApp::Snapshot::Snapshot() :
   m_rangeVersion(0),
   m_angleUnitVersion(Preferences::AngleUnit::Radian)
 {
-  m_interval.setStart(0);
-  m_interval.setEnd(10);
-  m_interval.setStep(1);
 }
 
 void FunctionApp::Snapshot::reset() {

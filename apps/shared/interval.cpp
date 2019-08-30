@@ -5,10 +5,10 @@ namespace Shared {
 
 Interval::Interval() :
   m_numberOfElements(0),
-  m_start(0),
-  m_end(0),
-  m_step(0),
-  m_needCompute(false)
+  m_start(0.0),
+  m_end(10.0),
+  m_step(1.0),
+  m_needCompute(true)
 {
 }
 

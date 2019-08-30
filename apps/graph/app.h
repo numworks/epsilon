@@ -33,10 +33,12 @@ public:
   static App * app() {
     return static_cast<App *>(Container::activeApp());
   }
-  InputViewController * inputViewController() override;
   CodePoint XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
+  InputViewController * inputViewController() override {
+    return &m_inputViewController;
+  }
 private:
   App(Snapshot * snapshot);
   ListController m_listController;

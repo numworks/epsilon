@@ -2,6 +2,7 @@
 #include "global_context.h"
 #include "poincare_helpers.h"
 #include <poincare/horizontal_layout.h>
+#include <poincare/undefined.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -42,11 +43,15 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poinca
 Expression ExpressionModel::expressionReduced(const Storage::Record * record, Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
-    m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
-    PoincareHelpers::Simplify(&m_expression, context);
-    // simplify might return an uninitialized Expression if interrupted
-    if (m_expression.isUninitialized()) {
+    if (isCircularlyDefined(record, context)) {
+      m_expression = Undefined::Builder();
+    } else {
       m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+      PoincareHelpers::Simplify(&m_expression, context);
+      // simplify might return an uninitialized Expression if interrupted
+      if (m_expression.isUninitialized()) {
+        m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+      }
     }
   }
   return m_expression;

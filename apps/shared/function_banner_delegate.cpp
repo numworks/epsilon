@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore) {
+void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   constexpr int bufferSize = k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
@@ -20,7 +20,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
 
   constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
 
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(cursor->x(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(cursor->t(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
   bannerView()->abscissaValue()->setText(buffer);
@@ -28,7 +28,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   numberOfChar = function->nameWithArgument(buffer, bufferSize);
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, "=", bufferSize-numberOfChar);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, precision);
+  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, precision, context);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
   bannerView()->ordinateView()->setText(buffer);

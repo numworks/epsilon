@@ -41,6 +41,9 @@ public:
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context) const;
+
+  int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+
   // tMin and tMax
   bool shouldClipTRangeToXRange() const override { return plotType() == PlotType::Cartesian; }
   double tMin() const override;

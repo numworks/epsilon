@@ -1,5 +1,6 @@
 #include "function_graph_controller.h"
 #include "function_app.h"
+#include "../apps_container.h"
 #include <poincare/coordinate_2D.h>
 #include <assert.h>
 #include <cmath>
@@ -71,7 +72,7 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
 void FunctionGraphController::reloadBannerView() {
   assert(functionStore()->numberOfActiveFunctions() > 0);
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore());
+  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

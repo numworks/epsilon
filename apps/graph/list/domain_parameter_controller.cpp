@@ -32,29 +32,27 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
   Shared::CartesianFunction::PlotType plotType = function()->plotType();
-  I18n::Message * labels;
   switch (plotType) {
     case Shared::CartesianFunction::PlotType::Cartesian:
     {
-      I18n::Message l[k_totalNumberOfCell] = {I18n::Message::XMin, I18n::Message::XMax};
-      labels = l;
+      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XMin, I18n::Message::XMax};
+      myCell->setMessage(labels[index]);
       break;
     }
     case Shared::CartesianFunction::PlotType::Parametric:
     {
-      I18n::Message l[k_totalNumberOfCell] = {I18n::Message::TMin, I18n::Message::TMax};
-      labels = l;
+      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::TMin, I18n::Message::TMax};
+      myCell->setMessage(labels[index]);
       break;
     }
     default:
     {
       assert(plotType == Shared::CartesianFunction::PlotType::Polar);
-      I18n::Message l[k_totalNumberOfCell] = {I18n::Message::ThetaMin, I18n::Message::ThetaMax};
-      labels = l;
+      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ThetaMin, I18n::Message::ThetaMax};
+      myCell->setMessage(labels[index]);
       break;
     }
   }
-  myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 

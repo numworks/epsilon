@@ -18,18 +18,18 @@ public:
   GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
-  bool displayDerivativeInBanner() const;
-  void setDisplayDerivativeInBanner(bool displayDerivative);
+  bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
+  void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
   float interestingXHalfRange() const override;
 private:
-  int estimatedBannerNumberOfLines() const override;
+  int estimatedBannerNumberOfLines() const override { return 1 + m_displayDerivativeInBanner; }
   void selectFunctionWithCursor(int functionIndex) override;
-  BannerView * bannerView() override;
+  BannerView * bannerView() override { return &m_bannerView; }
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;
-  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
-  GraphView * functionGraphView() override;
-  CurveParameterController * curveParameterController() override;
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
+  GraphView * functionGraphView() override { return &m_view; }
+  CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;

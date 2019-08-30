@@ -27,7 +27,7 @@ private:
   BannerView * bannerView() override { return &m_bannerView; }
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;
-  bool moveCursorVertically(int direction) override { return false; } // TODO Emilie
+  int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }

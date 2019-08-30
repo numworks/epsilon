@@ -286,7 +286,7 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // Find the closest regression
   int selectedRegressionIndex = *m_selectedDotIndex == -1 ? *m_selectedSeriesIndex : -1;
-  int closestRegressionSeries = InteractiveCurveViewController::closestCurveIndexVertically(direction > 0, selectedRegressionIndex, context);
+  int closestRegressionSeries = closestCurveIndexVertically(direction > 0, selectedRegressionIndex, context);
 
   // Find the closest dot
   int closestDotSeries = -1;

@@ -1,4 +1,5 @@
 #include "function.h"
+#include "poincare_helpers.h"
 #include "poincare/src/parsing/parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -58,6 +59,10 @@ KDColor Function::color() const {
 
 void Function::setActive(bool active) {
   recordData()->setActive(active);
+}
+
+int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }
 
 int Function::nameWithArgument(char * buffer, size_t bufferSize) {

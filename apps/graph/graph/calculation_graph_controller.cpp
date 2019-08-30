@@ -1,5 +1,6 @@
 #include "calculation_graph_controller.h"
 #include "../app.h"
+#include "../../apps_container.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -42,7 +43,7 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void CalculationGraphController::reloadBannerView() {
-  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore());
+  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
 }
 
 Coordinate2D<double> CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {

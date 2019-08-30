@@ -133,7 +133,8 @@ Poincare::Coordinate2D<T> CartesianFunction::privateEvaluateXYAtParameter(T t, P
   } else {
     assert(angleUnit == Preferences::AngleUnit::Radian);
   }
-  return Coordinate2D<T>(x1x2.x2() * std::cos(x1x2.x1()*factor), x1x2.x2() * std::sin(x1x2.x1()*factor));
+  const float angle = x1x2.x1()*factor;
+  return Coordinate2D<T>(x1x2.x2() * std::cos(angle), x1x2.x2() * std::sin(angle));
 }
 
 bool CartesianFunction::displayDerivative() const {

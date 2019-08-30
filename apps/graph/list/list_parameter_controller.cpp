@@ -23,6 +23,20 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
   }
 }
 
+bool ListParameterController::handleEvent(Ion::Events::Event event) {
+  if (Shared::ListParameterController::handleEvent(event)) {
+    return true;
+  }
+  if (event == Ion::Events::Right) {
+    int selectedR = selectedRow();
+    if (selectedR == 0 || selectedR == 1) {
+      // Go in the submenu
+      return handleEnterOnRow(selectedR);
+    }
+  }
+  return false;
+}
+
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if ((cell == &m_typeCell || cell == &m_functionDomain) && !m_record.isNull()) {

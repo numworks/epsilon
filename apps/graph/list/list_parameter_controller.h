@@ -19,6 +19,7 @@ public:
     m_domainParameterController(nullptr, inputEventHandlerDelegate),
     m_renameCell(I18n::Message::Rename)
   {}
+  bool handleEvent(Ion::Events::Event event) override;
   // ListViewDataSource
   HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;

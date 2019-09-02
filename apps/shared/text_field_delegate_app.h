@@ -18,7 +18,8 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool isAcceptableText(const char * text);
-  bool hasUndefinedValue(const char * text, double & value);
+  template<typename T>
+  bool hasUndefinedValue(const char * text, T & value);
 protected:
   TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
   bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);

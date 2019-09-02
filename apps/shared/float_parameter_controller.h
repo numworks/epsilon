@@ -10,6 +10,7 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
+template<typename T>
 class FloatParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public ParameterTextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
@@ -31,7 +32,7 @@ public:
 protected:
   int activeCell();
   StackViewController * stackController();
-  virtual double parameterAtIndex(int index) = 0;
+  virtual T parameterAtIndex(int index) = 0;
   SelectableTableView m_selectableTableView;
   ButtonWithSeparator m_okButton;
 private:
@@ -39,7 +40,7 @@ private:
   virtual void buttonAction();
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
-  virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;
+  virtual bool setParameterAtIndex(int parameterIndex, T f) = 0;
 };
 
 }

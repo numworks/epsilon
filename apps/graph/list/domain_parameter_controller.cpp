@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 DomainParameterController::DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
-  FloatParameterController(parentResponder),
+  FloatParameterController<double>(parentResponder),
   m_domainCells{},
   m_record()
 {

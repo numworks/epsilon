@@ -27,6 +27,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     function->setPlotType(plotType);
     StackViewController * stack = stackController();
     stack->pop();
+    stack->pop();
     return true;
   }
   if (event == Ion::Events::Left && !m_record.isNull()) {

@@ -21,6 +21,7 @@ public:
   bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
   void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
   float interestingXHalfRange() const override;
+
 private:
   int estimatedBannerNumberOfLines() const override { return 1 + m_displayDerivativeInBanner; }
   void selectFunctionWithCursor(int functionIndex) override;
@@ -33,6 +34,9 @@ private:
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
+  bool displaysNonCartesianFunctions() const;
+  bool defautRangeIsNormalized() const override { return displaysNonCartesianFunctions(); }
+
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;

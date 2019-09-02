@@ -7,7 +7,7 @@
 
 namespace Solver {
 
-class IntervalController : public Shared::FloatParameterController {
+class IntervalController : public Shared::FloatParameterController<double> {
 public:
   IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore);
   const char * title() override;

@@ -137,11 +137,11 @@ int ParametersController::reusableParameterCellCount(int type) {
   return m_distribution->numberOfParameter();
 }
 
-double ParametersController::parameterAtIndex(int index) {
+float ParametersController::parameterAtIndex(int index) {
   return m_distribution->parameterValueAtIndex(index);
 }
 
-bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
+bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
   if (!m_distribution->authorizedValueAtIndex(f, parameterIndex)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;

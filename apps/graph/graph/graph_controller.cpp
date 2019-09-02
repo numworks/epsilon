@@ -34,10 +34,15 @@ void GraphController::viewWillAppear() {
 }
 
 float GraphController::interestingXHalfRange() const {
+  if (displaysNonCartesianFunctions())
+  {
+    return 5.0f;
+  }
   float characteristicRange = 0.0f;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+  CartesianFunctionStore * store = functionStore();
+  for (int i = 0; i < store->numberOfActiveFunctions(); i++) {
+    ExpiringPointer<CartesianFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
@@ -81,6 +86,12 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
     return FunctionGraphController::defaultCursorT(record);
   }
   return function->tMin();
+}
+
+bool GraphController::displaysNonCartesianFunctions() const {
+  CartesianFunctionStore * store = functionStore();
+  return store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Polar) > 0
+    || store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Parametric) > 0;
 }
 
 }

@@ -11,6 +11,9 @@ namespace Sequence {
 class ValuesController : public Shared::ValuesController {
 public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval, ButtonRowController * header);
+  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
+    return const_cast<Button *>(&m_setIntervalButton);
+  }
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
 private:
@@ -33,6 +36,7 @@ private:
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif
   IntervalParameterController m_intervalParameterController;
+  Button m_setIntervalButton;
 };
 
 }

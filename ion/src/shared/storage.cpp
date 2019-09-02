@@ -43,8 +43,11 @@ Storage::Record::Record(const char * fullName) {
     return;
   }
   const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
-  assert(*dotChar != 0);
-  assert(*(dotChar+1) != 0); // Assert there is an extension
+  // If no extension, return empty record
+  if (*dotChar == 0 || *(dotChar+1) == 0) {
+    m_fullNameCRC32 = 0;
+    return;
+  }
   new (this) Record(fullName, dotChar - fullName, dotChar+1, (fullName + strlen(fullName)) - (dotChar+1));
 }
 

@@ -122,8 +122,8 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   return range;
 }
 
-double FunctionGraphController::defaultCursorT() {
-  return 0.0; //TODO LEA interactiveCurveViewRange()->xCenter();
+double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
+  return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {
@@ -131,12 +131,14 @@ FunctionStore * FunctionGraphController::functionStore() const {
 }
 
 void FunctionGraphController::initCursorParameters() {
-  double t = defaultCursorT();
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   int functionIndex = 0;
   Coordinate2D<double> xy;
+  double t;
   do {
-    ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex++);
+    ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(record);
+    t = defaultCursorT(record);
     xy = firstFunction->evaluateXYAtParameter(t, context);
   } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && functionIndex < functionStore()->numberOfActiveFunctions());
   m_cursor->moveTo(t, xy.x1(), xy.x2());

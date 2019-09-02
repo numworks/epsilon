@@ -71,7 +71,7 @@ int GraphController::closestCurveIndexVertically(bool goingUp, int currentSelect
   if (functionStore()->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Cartesian) == nbOfActiveFunctions) {
     return FunctionGraphController::closestCurveIndexVertically(goingUp, currentSelectedCurve, context);
   }
-  int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? 1 : -1);
+  int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? -1 : 1);
   return nextActiveFunctionIndex >= nbOfActiveFunctions ? -1 : nextActiveFunctionIndex;
 }
 

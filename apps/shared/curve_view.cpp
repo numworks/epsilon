@@ -507,11 +507,14 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
   float x = NAN;
   float previousY = NAN;
   float y = NAN;
-  for (float t = tStart; t < tEnd; t += tStep) {
+  for (float t = tStart; t <= tEnd; t += tStep) {
     /* When |tStart| >> tStep, tEnd + tStep = tStart. In that case, quit
      * the infinite loop. */
     if (t == t-tStep || t == t+tStep) {
       return;
+    }
+    if (t == tEnd) {
+      t = tEnd - FLT_EPSILON;
     }
     previousX = x;
     previousY = y;

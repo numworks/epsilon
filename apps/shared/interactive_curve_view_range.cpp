@@ -146,9 +146,16 @@ void InteractiveCurveViewRange::setDefault() {
   if (m_delegate == nullptr) {
     return;
   }
-  m_yAuto = true;
   m_xMax = m_delegate->interestingXHalfRange();
   setXMin(-m_xMax);
+  if (!m_delegate->defautRangeIsNormalized()) {
+    m_yAuto = true;
+    return;
+  }
+  m_yAuto = false;
+  m_yMax = 3.0f;
+  setYMin(-m_yMax);
+  normalize();
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {

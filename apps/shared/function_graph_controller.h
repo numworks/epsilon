@@ -25,7 +25,7 @@ protected:
   bool handleEnter() override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   virtual void selectFunctionWithCursor(int functionIndex);
-  virtual double defaultCursorT();
+  virtual double defaultCursorT(Ion::Storage::Record record);
   virtual FunctionStore * functionStore() const;
 
   // Closest vertical curve helper

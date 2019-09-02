@@ -99,8 +99,8 @@ bool GraphController::moveCursorHorizontally(int direction) {
   return true;
 }
 
-double GraphController::defaultCursorT() {
-  return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorT()));
+double GraphController::defaultCursorT(Ion::Storage::Record record) {
+  return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorT(record)));
 }
 
 }

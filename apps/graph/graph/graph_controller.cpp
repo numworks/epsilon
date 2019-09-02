@@ -75,4 +75,12 @@ int GraphController::closestCurveIndexVertically(bool goingUp, int currentSelect
   return nextActiveFunctionIndex >= nbOfActiveFunctions ? -1 : nextActiveFunctionIndex;
 }
 
+double GraphController::defaultCursorT(Ion::Storage::Record record) {
+  ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
+  if (function->plotType() == CartesianFunction::PlotType::Cartesian) {
+    return FunctionGraphController::defaultCursorT(record);
+  }
+  return function->tMin();
+}
+
 }

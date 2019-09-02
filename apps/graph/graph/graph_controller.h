@@ -28,6 +28,7 @@ private:
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const override;
+  double defaultCursorT(Ion::Storage::Record record) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }

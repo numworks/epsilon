@@ -26,7 +26,7 @@ private:
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction) override;
-  double defaultCursorT() override;
+  double defaultCursorT(Ion::Storage::Record record) override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }

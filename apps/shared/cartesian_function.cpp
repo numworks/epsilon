@@ -2,6 +2,7 @@
 #include "expression_model_store.h"
 #include "poincare_helpers.h"
 #include <poincare/derivative.h>
+#include <poincare/matrix.h>
 #include <poincare/serialization_helper.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -106,14 +107,40 @@ CartesianFunction::PlotType CartesianFunction::plotType() const {
   return recordData()->plotType();
 }
 
-void CartesianFunction::setPlotType(PlotType plotType) {
+void CartesianFunction::setPlotType(PlotType newPlotType) {
+  PlotType currentPlotType = plotType();
+  if (newPlotType == currentPlotType) {
+    return;
+  }
   /* Reset memoized layout. */
+  Expression e = expressionClone();
   m_model.tidy();
-  double tMin = plotType == PlotType::Cartesian ? -INFINITY : 0.0;
-  double tMax = plotType == PlotType::Cartesian ? INFINITY : 360.0;
+  double tMin = newPlotType == PlotType::Cartesian ? -INFINITY : 0.0;
+  double tMax = newPlotType == PlotType::Cartesian ? INFINITY : 360.0;
   setTMin(tMin);
   setTMax(tMax);
-  return recordData()->setPlotType(plotType);
+  recordData()->setPlotType(newPlotType);
+  if (currentPlotType == PlotType::Parametric) {
+    // Change [x(t) y(t)] to y(t)
+    if (e.type() == ExpressionNode::Type::Matrix
+        && static_cast<Poincare::Matrix&>(e).numberOfRows() == 2
+        && static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1)
+    {
+      Expression nextContent = e.childAtIndex(1);
+      /* We need to detach it, otherwise nextContent will think it has a parent
+       * when we retrieve it from the storage. */
+      nextContent.detachFromParent();
+      setExpressionContent(nextContent);
+    }
+    return;
+  } else if (newPlotType == PlotType::Parametric) {
+    // Change y(t) to [t y(t)]
+    Matrix newExpr = Matrix::Builder();
+    newExpr.addChildAtIndexInPlace(Symbol::Builder(UCodePointUnknownX), 0, 0);
+    newExpr.addChildAtIndexInPlace(e, newExpr.numberOfChildren(), newExpr.numberOfChildren());
+    newExpr.setDimensions(2, 1);
+    setExpressionContent(newExpr);
+  }
 }
 
 template <typename T>

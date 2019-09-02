@@ -49,14 +49,14 @@ double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
 }
 
 double Distribution::cumulativeDistributiveInverseForProbability(double * probability) {
-  if (*probability >= 1.0) {
+  if (*probability > 1.0 - DBL_EPSILON) {
     return INFINITY;
   }
   if (isContinuous()) {
     return 0.0;
   }
-  if (*probability <= 0.0) {
-    return 0.0;
+  if (*probability < DBL_EPSILON) {
+    return -1.0;
   }
   return Poincare::Solver::CumulativeDistributiveInverseForNDefinedFunction<double>(probability,
         [](double k, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {

@@ -50,10 +50,12 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
     if (m_distribution->authorizedValueAtIndex(m_lowerBound, 0)) {
       double currentResult = m_distribution->rightIntegralFromAbscissa(m_lowerBound);
       if (std::fabs(currentResult - m_result) < std::pow(10.0, - Poincare::Preferences::LargeNumberOfSignificantDigits)) {
+        m_result = currentResult;
         return;
       }
     }
     m_lowerBound = m_distribution->rightIntegralInverseForProbability(&m_result);
+    m_result = m_distribution->rightIntegralFromAbscissa(m_lowerBound);
     if (std::isnan(m_lowerBound)) {
       m_result = NAN;
     }

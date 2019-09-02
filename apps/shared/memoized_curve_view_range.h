@@ -19,9 +19,9 @@ public:
   virtual void setXMax(float f);
   virtual void setYMin(float f);
   virtual void setYMax(float f);
+  float defaultRangeLengthFor(float position) const;
 
 protected:
-  float defaultRangeLengthFor(float position) const;
   // Window bounds of the data
   float m_xMin;
   float m_xMax;

@@ -4,8 +4,11 @@
 #include <poincare/tree_pool.h>
 #include <stdio.h>
 
-namespace Poincare {
+namespace Shared {
+  class CartesianFunction;
+}
 
+namespace Poincare {
 /* TODO: implement an iterator over the children, so we can use "for (TreeHandle
  * c : children)" instead of a for loop over the child index. This should be
  * faster, as we do not have to recompute childAtIndex(i) at each iteration.
@@ -22,6 +25,7 @@ namespace Poincare {
 class TreeHandle {
   template<class T>
   friend class ArrayBuilder;
+  friend class ::Shared::CartesianFunction;
   friend class TreeNode;
   friend class TreePool;
 public:

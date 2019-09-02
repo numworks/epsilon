@@ -10,6 +10,7 @@ public:
   bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange);
   virtual float interestingXMin() const { return -interestingXHalfRange(); }
   virtual float interestingXHalfRange() const { return 10.0f; }
+  virtual bool defautRangeIsNormalized() const { return false; }
 protected:
   struct Range {
     float min;

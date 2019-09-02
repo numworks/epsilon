@@ -397,14 +397,22 @@ Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, Expressi
    * in the matrix. */
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
+    /* We clone the current matrix to extract its children later. We can't clone
+     * its children directly. Indeed, the current matrix node (this->node()) is
+     * located before the exception checkpoint. In order to clone its chidlren,
+     * we would temporary increase the reference counter of each child (also
+     * located before the checkpoint). If an exception is raised before
+     * destroying the child handle, its reference counter would be off by one
+     * after the long jump. */
+    Matrix cl = clone().convert<Matrix>();
     *couldCompute = true;
     /* Create the matrix (A|I) with A is the input matrix and I the dim
      * identity matrix */
     Matrix matrixAI = Matrix::Builder();
     for (int i = 0; i < dim; i++) {
       for (int j = 0; j < dim; j++) {
-        Expression mChildIJ = const_cast<Matrix *>(this)->matrixChild(i, j);
-        matrixAI.addChildAtIndexInPlace(mChildIJ.clone(), i*2*dim+j, i*2*dim+j);
+        Expression mChildIJ = cl.matrixChild(i, j);
+        matrixAI.addChildAtIndexInPlace(mChildIJ, i*2*dim+j, i*2*dim+j);
       }
       for (int j = dim; j < 2*dim; j++) {
         matrixAI.addChildAtIndexInPlace(j-dim == i ? Rational::Builder(1) : Rational::Builder(0), i*2*dim+j, i*2*dim+j);

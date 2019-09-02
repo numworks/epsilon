@@ -17,13 +17,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView(this),
   m_abscissaTitleCell(),
   m_abscissaCells{},
-  m_abscissaParameterController(this),
-  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
-    ValuesController * valuesController = (ValuesController *) context;
-    StackViewController * stack = ((StackViewController *)valuesController->stackController());
-    stack->push(valuesController->intervalParameterController());
-    return true;
-  }, this), k_font)
+  m_abscissaParameterController(this)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setTopMargin(k_topMargin);
@@ -120,10 +114,6 @@ int ValuesController::numberOfButtons(ButtonRowController::Position) const {
     return 0;
   }
   return 1;
-}
-
-Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  return (Button *)&m_setIntervalButton;
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

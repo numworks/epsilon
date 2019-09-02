@@ -23,7 +23,6 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
   virtual IntervalParameterController * intervalParameterController() = 0;
   int numberOfButtons(ButtonRowController::Position) const override;
-  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
@@ -42,6 +41,7 @@ public:
   static constexpr KDCoordinate k_abscissaCellWidth = 100;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 protected:
+  static constexpr const KDFont * k_font = KDFont::SmallFont;
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   virtual void updateNumberOfColumns();
@@ -51,7 +51,6 @@ protected:
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
 private:
-  static constexpr const KDFont * k_font = KDFont::SmallFont;
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
@@ -72,7 +71,6 @@ private:
   virtual ViewController * functionParameterController() = 0;
   virtual I18n::Message valuesParameterControllerPageTitle() const = 0;
   ValuesParameterController m_abscissaParameterController;
-  Button m_setIntervalButton;
 };
 
 }

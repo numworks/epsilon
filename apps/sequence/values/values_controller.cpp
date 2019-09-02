@@ -13,7 +13,13 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
 #if COPY_COLUMN
   m_sequenceParameterController('n'),
 #endif
-  m_intervalParameterController(this, inputEventHandlerDelegate, m_interval)
+  m_intervalParameterController(this, inputEventHandlerDelegate, m_interval),
+  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
+    ValuesController * valuesController = (ValuesController *) context;
+    StackViewController * stack = ((StackViewController *)valuesController->stackController());
+    stack->push(valuesController->intervalParameterController());
+    return true;
+  }, this), k_font)
 {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
     m_sequenceTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);

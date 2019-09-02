@@ -14,7 +14,13 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_floatCells{},
   m_functionParameterController(this),
   m_intervalParameterController(this, inputEventHandlerDelegate, m_interval),
-  m_derivativeParameterController(this)
+  m_derivativeParameterController(this),
+  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
+    ValuesController * valuesController = (ValuesController *) context;
+    StackViewController * stack = ((StackViewController *)valuesController->stackController());
+    stack->push(valuesController->intervalParameterController());
+    return true;
+  }, this), k_font)
 {
   for (int i = 0; i < k_maxNumberOfFunctions; i++) {
     m_functionTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);

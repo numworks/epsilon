@@ -4,7 +4,7 @@
 namespace Shared {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
-  FloatParameterController(parentResponder),
+  FloatParameterController<double>(parentResponder),
   m_cursor(cursor),
   m_graphRange(graphRange),
   m_abscisseCell(&m_selectableTableView, inputEventHandlerDelegate, this, symbol)

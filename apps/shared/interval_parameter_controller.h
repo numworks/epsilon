@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class IntervalParameterController : public Shared::FloatParameterController {
+class IntervalParameterController : public Shared::FloatParameterController<double> {
 public:
   IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval);
   Interval * interval();

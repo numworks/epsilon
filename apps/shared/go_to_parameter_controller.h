@@ -8,7 +8,7 @@
 
 namespace Shared {
 
-class GoToParameterController : public FloatParameterController {
+class GoToParameterController : public FloatParameterController<double> {
 public:
   GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   int numberOfRows() override;

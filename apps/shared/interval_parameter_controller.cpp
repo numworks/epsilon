@@ -4,7 +4,7 @@
 namespace Shared {
 
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval) :
-  FloatParameterController(parentResponder),
+  FloatParameterController<double>(parentResponder),
   m_interval(interval),
   m_intervalCells{}
 {

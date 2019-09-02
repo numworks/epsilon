@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store) :
-  FloatParameterController(parentResponder),
+  FloatParameterController<double>(parentResponder),
   m_cells{},
   m_store(store)
 {

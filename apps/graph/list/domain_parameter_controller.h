@@ -9,7 +9,7 @@
 
 namespace Graph {
 
-class DomainParameterController : public Shared::FloatParameterController {
+class DomainParameterController : public Shared::FloatParameterController<double> {
 public:
   DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
 

@@ -6,7 +6,7 @@ using namespace Poincare;
 namespace Shared {
 
 RangeParameterController::RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
-  FloatParameterController(parentResponder),
+  FloatParameterController<float>(parentResponder),
   m_interactiveRange(interactiveRange),
   m_xRangeCells{},
   m_yRangeCells{},
@@ -79,14 +79,14 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   return FloatParameterController::handleEvent(event);
 }
 
-double RangeParameterController::parameterAtIndex(int parameterIndex) {
+float RangeParameterController::parameterAtIndex(int parameterIndex) {
   ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
     &InteractiveCurveViewRange::xMax, &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
   return (m_interactiveRange->*getters[index])();
 }
 
-bool RangeParameterController::setParameterAtIndex(int parameterIndex, double f) {
+bool RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
   ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
     &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;

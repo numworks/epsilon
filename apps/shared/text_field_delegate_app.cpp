@@ -40,8 +40,9 @@ bool TextFieldDelegateApp::isAcceptableText(const char * text) {
   return isAcceptable;
 }
 
-bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) {
-  value = PoincareHelpers::ApproximateToScalar<double>(text, localContext());
+template<typename T>
+bool TextFieldDelegateApp::hasUndefinedValue(const char * text, T & value) {
+  value = PoincareHelpers::ApproximateToScalar<T>(text, localContext());
   bool isUndefined = std::isnan(value) || std::isinf(value);
   if (isUndefined) {
     displayWarning(I18n::Message::UndefinedValue);
@@ -114,5 +115,8 @@ bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression
   }
   return true;
 }
+
+template bool TextFieldDelegateApp::hasUndefinedValue(const char * text, float & value);
+template bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value);
 
 }

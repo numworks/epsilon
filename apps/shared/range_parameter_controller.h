@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class RangeParameterController : public FloatParameterController {
+class RangeParameterController : public FloatParameterController<float> {
 public:
   RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange);
   const char * title() override;
@@ -32,8 +32,8 @@ private:
   };
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  double parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, double f) override;
+  float parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfEditableTextCell = 2;
   constexpr static int k_numberOfConvertibleTextCell = 2;
   constexpr static int k_numberOfTextCell = k_numberOfEditableTextCell+k_numberOfConvertibleTextCell;

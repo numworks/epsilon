@@ -7,7 +7,7 @@ namespace Sequence {
 
 class IntervalParameterController : public Shared::IntervalParameterController {
 public:
-  IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval);
+  using Shared::IntervalParameterController::IntervalParameterController;
   bool setParameterAtIndex(int parameterIndex, double f) override;
 };
 

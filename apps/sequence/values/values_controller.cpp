@@ -2,8 +2,6 @@
 #include <assert.h>
 #include <cmath>
 
-using namespace Shared;
-
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
@@ -26,7 +24,7 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
   }, this), k_font)
 {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
-    m_sequenceTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
+    m_sequenceTitleCells[i].setOrientation(Shared::FunctionTitleCell::Orientation::HorizontalIndicator);
   }
   setupAbscissaCellsAndTitleCells(inputEventHandlerDelegate);
 }

@@ -33,8 +33,8 @@ public:
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp
+
   bool isAcceptableExpression(const Poincare::Expression expression) override;
-  bool storeExpressionAllowed() const override { return true; }
 private:
   App(Snapshot * snapshot);
   HistoryController m_historyController;

@@ -24,7 +24,7 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
   }
   if (min == max) {
     // Add same margin on top of / below the curve, to center it on the screen
-    float step = max != 0.0f ? 2.0f * interactiveCurveViewRange->defaultRangeLengthFor(max) : 1.0f;
+    float step = max != 0.0f ? 2.0f * Range1D::defaultRangeLengthFor(max) : 1.0f;
     min = min - step;
     max = max + step;
   }

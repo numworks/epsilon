@@ -81,10 +81,6 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
   float xMax = interactiveCurveViewRange->xMax();
-  /* In practice, a step smaller than a pixel's width is needed for sampling
-   * the values of a function. Otherwise some relevant extremal values may be
-   * missed. */
-  const float step = curveView()->pixelWidth() / 2;
   assert(functionStore()->numberOfActiveFunctions() > 0);
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
@@ -102,6 +98,11 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     } else if (f->shouldClipTRangeToXRange()) {
       tMax = minFloat(tMax, xMax);
     }
+  /* In practice, a step smaller than a pixel's width is needed for sampling
+   * the values of a function. Otherwise some relevant extremal values may be
+   * missed. */
+    float rangeStep = f->rangeStep();
+    const float step = std::isnan(rangeStep) ? curveView()->pixelWidth() / 2.0f : rangeStep;
     const int balancedBound = std::floor((tMax-tMin)/2/step);
     for (int j = -balancedBound; j <= balancedBound ; j++) {
       float t = (tMin+tMax)/2 + step * j;

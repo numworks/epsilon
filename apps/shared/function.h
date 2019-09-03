@@ -37,6 +37,7 @@ public:
   virtual bool shouldClipTRangeToXRange() const { return true; } // Returns true if the function will not be displayed if t is outside x range.
   virtual double tMin() const { return NAN; }
   virtual double tMax() const { return NAN; }
+  virtual float rangeStep() const { return NAN; }
 
   // Name
   int nameWithArgument(char * buffer, size_t bufferSize);

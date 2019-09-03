@@ -62,7 +62,7 @@ private:
   virtual int estimatedBannerNumberOfLines() const { return 1; }
 
   // InteractiveCurveViewRangeDelegate
-  float addMargin(float x, float range, bool isMin) override;
+  float addMargin(float x, float range, bool isVertical, bool isMin) override;
 
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;

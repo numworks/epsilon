@@ -1,10 +1,12 @@
 #include "graph_controller.h"
 #include "../app.h"
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Graph {
 
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
 static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
@@ -31,6 +33,72 @@ void GraphController::viewWillAppear() {
   m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + m_displayDerivativeInBanner);
   FunctionGraphController::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
+}
+
+void GraphController::interestingFunctionRange(ExpiringPointer<CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const {
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  const int balancedBound = std::floor((tMax-tMin)/2/step);
+  for (int j = -balancedBound; j <= balancedBound ; j++) {
+    float t = (tMin+tMax)/2 + step * j;
+    Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
+    float x = xy.x1();
+    float y = xy.x2();
+    if (!std::isnan(x) && !std::isinf(x) && !std::isnan(y) && !std::isinf(y)) {
+      *xm = minFloat(*xm, x);
+      *xM = maxFloat(*xM, x);
+      *ym = minFloat(*ym, y);
+      *yM = maxFloat(*yM, y);
+    }
+  }
+}
+
+void GraphController::interestingRanges(float * xm, float * xM, float * ym, float * yM) const {
+  float resultxMin = FLT_MAX;
+  float resultxMax = -FLT_MAX;
+  float resultyMin = FLT_MAX;
+  float resultyMax = -FLT_MAX;
+  float xMin = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMin();
+  float xMax = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMax();
+  /* In practice, a step smaller than a pixel's width is needed for sampling
+   * the values of a function. Otherwise some relevant extremal values may be
+   * missed. */
+  assert(functionStore()->numberOfActiveFunctions() > 0);
+  if (displaysNonCartesianFunctions()) {
+    for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+      ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+      if (f->plotType() == CartesianFunction::PlotType::Cartesian) {
+        continue;
+      }
+      /* Scan x-range from the middle to the extrema in order to get balanced
+       * y-range for even functions (y = 1/x). */
+      double tMin = f->tMin();
+      double tMax = f->tMax();
+      assert(!std::isnan(tMin));
+      assert(!std::isnan(tMax));
+      interestingFunctionRange(f, tMin, tMax, (tMax - tMin)/30, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
+    }
+  } else {
+    resultxMin = xMin;
+    resultxMax = xMax;
+  }
+  const float step = const_cast<GraphController *>(this)->curveView()->pixelWidth() / 2;
+  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    if (f->plotType() != CartesianFunction::PlotType::Cartesian) {
+      continue;
+    }
+    /* Scan x-range from the middle to the extrema in order to get balanced
+     * y-range for even functions (y = 1/x). */
+    assert(!std::isnan(f->tMin()));
+    assert(!std::isnan(f->tMax()));
+    double tMin = maxFloat(f->tMin(), xMin);
+    double tMax = minFloat(f->tMax(), xMax);
+    interestingFunctionRange(f, tMin, tMax, step, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
+  }
+  *xm = resultxMin;
+  *xM = resultxMax;
+  *ym = resultyMin;
+  *yM = resultyMax;
 }
 
 float GraphController::interestingXHalfRange() const {

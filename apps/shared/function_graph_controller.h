@@ -34,6 +34,7 @@ protected:
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;
   int numberOfCurves() const override;
   void initCursorParameters() override;
+  CurveView * curveView() override;
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;
@@ -44,7 +45,6 @@ private:
 
   // InteractiveCurveViewController
   bool moveCursorVertically(int direction) override;
-  CurveView * curveView() override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
 

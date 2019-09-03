@@ -8,15 +8,13 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Interval * interval) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, Interval * interval) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_interval(interval),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
   m_selectableTableView(this),
-  m_abscissaTitleCell(),
-  m_abscissaCells{},
   m_abscissaParameterController(this)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
@@ -25,11 +23,20 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView.setBottomMargin(k_bottomMargin);
   m_selectableTableView.setLeftMargin(k_leftMargin);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_abscissaTitleCell.setMessageFont(k_font);
-  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
-    m_abscissaCells[i].setParentResponder(&m_selectableTableView);
-    m_abscissaCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_abscissaCells[i].editableTextCell()->textField()->setFont(k_font);
+}
+
+void ValuesController::setupAbscissaCellsAndTitleCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
+  int numberOfAbscissaCells = abscissaCellsCount();
+  for (int i = 0; i < numberOfAbscissaCells; i++) {
+    EvenOddEditableTextCell * c = abscissaCells(i);
+    c->setParentResponder(&m_selectableTableView);
+    c->editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
+    c->editableTextCell()->textField()->setFont(k_font);
+  }
+  int numberOfAbscissaTitleCells = abscissaTitleCellsCount();
+  for (int i = 0; i < numberOfAbscissaTitleCells; i++) {
+    EvenOddMessageTextCell * c = abscissaTitleCells(i);
+    c->setMessageFont(k_font);
   }
 }
 
@@ -160,13 +167,13 @@ int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
 HighlightCell * ValuesController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   switch (type) {
-    case 0:
-      return &m_abscissaTitleCell;
-    case 1:
+    case k_abscissaTitleCellType:
+      return abscissaTitleCells(index);
+    case k_functionTitleCellType:
       return functionTitleCells(index);
-    case 2:
-      return &m_abscissaCells[index];
-    case 3:
+    case k_editableValueCellType:
+      return abscissaCells(index);
+    case k_notEditableValueCellType:
       return floatCells(index);
     default:
       assert(false);
@@ -176,13 +183,13 @@ HighlightCell * ValuesController::reusableCell(int index, int type) {
 
 int ValuesController::reusableCellCount(int type) {
   switch (type) {
-    case 0:
-      return 3;
-    case 1:
+    case k_abscissaTitleCellType:
+      return abscissaTitleCellsCount();
+    case k_functionTitleCellType:
       return maxNumberOfFunctions();
-    case 2:
-      return k_maxNumberOfAbscissaCells;
-    case 3:
+    case k_editableValueCellType:
+      return abscissaCellsCount();
+    case k_notEditableValueCellType:
       return maxNumberOfCells();
     default:
       assert(false);

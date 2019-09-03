@@ -51,7 +51,7 @@ public:
   double tMax() const override;
   void setTMin(double tMin);
   void setTMax(double tMax);
-  float rangeStep() const override { return (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
+  float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
 
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification

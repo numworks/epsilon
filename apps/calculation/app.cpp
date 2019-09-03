@@ -66,7 +66,7 @@ bool App::isAcceptableExpression(const Poincare::Expression expression) {
       return false;
     }
   }
-  return TextFieldDelegateApp::isAcceptableExpression(expression);
+  return !expression.isUninitialized();
 }
 
 }

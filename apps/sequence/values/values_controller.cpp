@@ -28,14 +28,12 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
-  // The cell is the abscissa title cell:
-  if (typeAtLocation(i,j) == 0) {
+  if (typeAtLocation(i,j) == k_abscissaTitleCellType) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
     mytitleCell->setMessage(I18n::Message::N);
     return;
   }
-  // The cell is a function title cell:
-  if (typeAtLocation(i,j) == 1) {
+  if (typeAtLocation(i,j) == k_functionTitleCellType) {
     SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
     Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
     myCell->setLayout(sequence->nameLayout());

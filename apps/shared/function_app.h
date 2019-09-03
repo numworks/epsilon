@@ -4,7 +4,6 @@
 #include "expression_field_delegate_app.h"
 #include "function_store.h"
 #include "curve_view_cursor.h"
-#include "interval.h"
 #include "values_controller.h"
 
 namespace Shared {
@@ -19,13 +18,11 @@ public:
     uint32_t * rangeVersion() { return &m_rangeVersion; }
     Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
     virtual FunctionStore * functionStore() = 0;
-    Interval * interval() { return &m_interval; }
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
     void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   protected:
     CurveViewCursor m_cursor;
-    Interval m_interval;
   private:
     int m_indexFunctionSelectedByCursor;
     uint32_t m_modelVersion;
@@ -40,7 +37,6 @@ public:
     return static_cast<Snapshot *>(::App::snapshot());
   }
   virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
-  Interval * interval() { return snapshot()->interval(); }
   virtual ValuesController * valuesController() = 0;
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;

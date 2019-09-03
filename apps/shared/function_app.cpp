@@ -6,7 +6,6 @@ namespace Shared {
 
 FunctionApp::Snapshot::Snapshot() :
   m_cursor(),
-  m_interval(),
   m_indexFunctionSelectedByCursor(0),
   m_modelVersion(0),
   m_rangeVersion(0),
@@ -15,7 +14,6 @@ FunctionApp::Snapshot::Snapshot() :
 }
 
 void FunctionApp::Snapshot::reset() {
-  m_interval.reset();
   m_indexFunctionSelectedByCursor = 0;
   m_modelVersion = 0;
   m_rangeVersion = 0;

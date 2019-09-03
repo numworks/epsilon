@@ -7,6 +7,7 @@
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/function_app.h"
+#include "../shared/interval.h"
 
 namespace Graph {
 
@@ -22,20 +23,27 @@ public:
   public:
     Snapshot();
     App * unpack(Container * container) override;
+    void reset() override;
     Descriptor * descriptor() override;
     CartesianFunctionStore * functionStore() override;
     Shared::InteractiveCurveViewRange * graphRange();
+    Shared::Interval * interval() { return &m_interval; }
   private:
     void tidy() override;
     CartesianFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
+    Shared::Interval m_interval;
   };
   static App * app() {
     return static_cast<App *>(Container::activeApp());
   }
+  Snapshot * snapshot() const {
+    return static_cast<Snapshot *>(::App::snapshot());
+  }
   CodePoint XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
+  Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override {
     return &m_valuesController;
   }

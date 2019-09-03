@@ -42,7 +42,7 @@ private:
   ViewController * functionParameterController() override;
   I18n::Message valuesParameterControllerPageTitle() const override;
 
-  int m_numberOfColumnsForType[3];
+  int m_numberOfColumnsForType[Shared::CartesianFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   FunctionParameterController m_functionParameterController;

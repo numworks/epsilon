@@ -10,6 +10,7 @@ public:
   constexpr static int LargeNumberOfSignificantDigits = 7;
   constexpr static int MediumNumberOfSignificantDigits = 5;
   constexpr static int ShortNumberOfSignificantDigits = 4;
+  constexpr static int VeryShortNumberOfSignificantDigits = 2;
 
   enum class EditionMode {
     Edition2D,

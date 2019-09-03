@@ -60,7 +60,7 @@ private:
     return Interval::k_maxNumberOfElements;
   };
   virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex);
-  constexpr static int k_maxNumberOfAbscissaCells = 10;
+  constexpr static int k_maxNumberOfAbscissaCells = 30;
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
   SelectableTableView m_selectableTableView;
@@ -76,4 +76,3 @@ private:
 }
 
 #endif
-

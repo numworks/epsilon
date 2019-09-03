@@ -2,9 +2,9 @@
 
 namespace Shared {
 
-IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval) :
+IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   FloatParameterController<double>(parentResponder),
-  m_interval(interval),
+  m_interval(nullptr),
   m_intervalCells{},
   m_title(I18n::Message::IntervalSet)
 {

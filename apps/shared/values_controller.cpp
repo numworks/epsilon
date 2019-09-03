@@ -86,6 +86,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     ViewController * parameterController = nullptr;
     if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
       m_abscissaParameterController.setPageTitle(valuesParameterControllerPageTitle());
+      intervalParameterController()->setInterval(m_interval);
       parameterController = &m_abscissaParameterController;
     } else {
       parameterController = functionParameterController();

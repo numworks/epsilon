@@ -9,7 +9,7 @@
 
 namespace Graph {
 
-class DomainParameterController : public Shared::FloatParameterController<double> {
+class DomainParameterController : public Shared::FloatParameterController<float> {
 public:
   DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
 
@@ -26,8 +26,8 @@ private:
   int reusableParameterCellCount(int type) override;
   HighlightCell * reusableParameterCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
-  bool setParameterAtIndex(int parameterIndex, double f) override;
-  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override;
+  float parameterAtIndex(int index) override;
   void buttonAction() override;
   Shared::ExpiringPointer<Shared::CartesianFunction> function();
   MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];

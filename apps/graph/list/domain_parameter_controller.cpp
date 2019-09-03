@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 DomainParameterController::DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
-  FloatParameterController<double>(parentResponder),
+  FloatParameterController<float>(parentResponder),
   m_domainCells{},
   m_record()
 {
@@ -73,11 +73,11 @@ bool DomainParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-double DomainParameterController::parameterAtIndex(int index) {
+float DomainParameterController::parameterAtIndex(int index) {
   return index == 0 ? function()->tMin() : function()->tMax();
 }
 
-bool DomainParameterController::setParameterAtIndex(int parameterIndex, double f) {
+bool DomainParameterController::setParameterAtIndex(int parameterIndex, float f) {
   // TODO: what to do if the xmin > xmax?
   parameterIndex == 0 ? function()->setTMin(f) : function()->setTMax(f);
   return true;

@@ -15,7 +15,7 @@ namespace Graph {
 
 class ValuesController : public Shared::ValuesController {
 public:
-  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval, ButtonRowController * header);
+  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header);
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
     return const_cast<Button *>(&m_setIntervalButton);
   }
@@ -37,6 +37,7 @@ private:
   Ion::Storage::Record recordAtColumn(int i) override;
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
+  Shared::Interval * intervalAtColumn(int columnIndex) override;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;

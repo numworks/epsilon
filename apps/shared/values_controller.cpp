@@ -8,10 +8,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, Interval * interval) :
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_interval(interval),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
   m_selectableTableView(this),
@@ -75,7 +74,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace && selectedRow() > 0 &&
       selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
-    m_interval->deleteElementAtIndex(selectedRow()-1);
+    intervalAtColumn(selectedColumn())->deleteElementAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }
@@ -86,7 +85,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     ViewController * parameterController = nullptr;
     if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
       m_abscissaParameterController.setPageTitle(valuesParameterControllerPageTitle());
-      intervalParameterController()->setInterval(m_interval);
+      intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
       parameterController = &m_abscissaParameterController;
     } else {
       parameterController = functionParameterController();
@@ -134,7 +133,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     if (j == numberOfElementsInColumn(i) + 1) {
       buffer[0] = 0;
     } else {
-      double x = m_interval->element(j-1);
+      double x = intervalAtColumn(i)->element(j-1);
       PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, cellBufferSize(i), precision);
     }
     static_cast<EvenOddBufferTextCell *>(cell)->setText(buffer);
@@ -241,16 +240,16 @@ bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_interval->setElement(rowIndex-1, floatBody);
+  intervalAtColumn(columnIndex)->setElement(rowIndex-1, floatBody);
   return true;
 }
 
 double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_interval->element(rowIndex-1);
+  return intervalAtColumn(columnIndex)->element(rowIndex-1);
 }
 
 int ValuesController::numberOfElementsInColumn(int columnIndex) {
-  return m_interval->numberOfElements();
+  return intervalAtColumn(columnIndex)->numberOfElements();
 }
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {

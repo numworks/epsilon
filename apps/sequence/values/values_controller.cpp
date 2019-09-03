@@ -1,11 +1,12 @@
 #include "values_controller.h"
 #include <assert.h>
 #include <cmath>
+#include "../app.h"
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, interval),
+ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, header),
   m_sequenceTitleCells{},
   m_floatCells{},
   m_abscissaTitleCell(),
@@ -18,7 +19,7 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     IntervalParameterController * controller = valuesController->intervalParameterController();
-    controller->setInterval(valuesController->m_interval);
+    controller->setInterval(valuesController->intervalAtColumn(valuesController->selectedColumn()));
     stack->push(controller);
     return true;
   }, this), k_font)
@@ -56,6 +57,10 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
       return false;
   }
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
+}
+
+Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
+  return App::app()->interval();
 }
 
 ViewController * ValuesController::functionParameterController() {

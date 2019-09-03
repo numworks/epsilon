@@ -3,6 +3,8 @@
 #include "poincare_helpers.h"
 #include <poincare/derivative.h>
 #include <poincare/matrix.h>
+#include <poincare/multiplication.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -122,7 +124,8 @@ void CartesianFunction::setPlotType(PlotType newPlotType) {
   recordData()->setPlotType(newPlotType);
   if (currentPlotType == PlotType::Parametric) {
     // Change [x(t) y(t)] to y(t)
-    if (e.type() == ExpressionNode::Type::Matrix
+    if (!e.isUninitialized()
+        && e.type() == ExpressionNode::Type::Matrix
         && static_cast<Poincare::Matrix&>(e).numberOfRows() == 2
         && static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1)
     {
@@ -137,6 +140,8 @@ void CartesianFunction::setPlotType(PlotType newPlotType) {
     // Change y(t) to [t y(t)]
     Matrix newExpr = Matrix::Builder();
     newExpr.addChildAtIndexInPlace(Symbol::Builder(UCodePointUnknownX), 0, 0);
+    // if y(t) was not uninitialized, insert [t 2t] to set an example
+    e = e.isUninitialized() ? Multiplication::Builder(Rational::Builder(2), Symbol::Builder(UCodePointUnknownX)) : e;
     newExpr.addChildAtIndexInPlace(e, newExpr.numberOfChildren(), newExpr.numberOfChildren());
     newExpr.setDimensions(2, 1);
     setExpressionContent(newExpr);

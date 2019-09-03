@@ -4,13 +4,14 @@
 #include <escher.h>
 #include "interval.h"
 #include "float_parameter_controller.h"
+#include <assert.h>
 
 namespace Shared {
 
 class IntervalParameterController : public Shared::FloatParameterController<double> {
 public:
   IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval);
-  Interval * interval();
+  Interval * interval() { assert(m_interval); return m_interval; }
   const char * title() override;
   void setTitle(I18n::Message title) { m_title = title; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;

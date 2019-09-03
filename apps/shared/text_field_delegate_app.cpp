@@ -82,7 +82,7 @@ bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   if (exp.isUninitialized()) {
     return false;
   }
-  if (!storeExpressionAllowed() && exp.type() == ExpressionNode::Type::Store) {
+  if (exp.type() == ExpressionNode::Type::Store) {
     return false;
   }
   return true;

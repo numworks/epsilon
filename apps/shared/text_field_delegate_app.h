@@ -25,7 +25,6 @@ protected:
   bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
   bool isFinishingEvent(Ion::Events::Event event);
   virtual bool isAcceptableExpression(const Poincare::Expression expression);
-  virtual bool storeExpressionAllowed() const { return false; }
   static bool ExpressionCanBeSerialized(const Poincare::Expression expression, bool replaceAns, Poincare::Expression ansExpression);
 };
 

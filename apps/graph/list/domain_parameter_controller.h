@@ -29,7 +29,8 @@ private:
   bool setParameterAtIndex(int parameterIndex, float f) override;
   float parameterAtIndex(int index) override;
   void buttonAction() override;
-  Shared::ExpiringPointer<Shared::CartesianFunction> function();
+  InfinityTolerance infinityAllowanceForRow(int row) const override;
+  Shared::ExpiringPointer<Shared::CartesianFunction> function() const;
   MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
 };

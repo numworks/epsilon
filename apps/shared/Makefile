@@ -52,6 +52,7 @@ app_shared_src = $(addprefix apps/shared/,\
   parameter_text_field_delegate.cpp \
   post_and_hardware_tests.cpp \
   range_parameter_controller.cpp \
+  range_1D.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \
   scrollable_exact_approximate_expressions_cell.cpp \

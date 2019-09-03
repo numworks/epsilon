@@ -56,7 +56,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
 
 int ValuesController::typeAtLocation(int i, int j) {
   int plotTypeIndex = 0;
-  while (plotTypeIndex < 3 && i >= m_numberOfColumnsForType[plotTypeIndex]) {
+  while (plotTypeIndex < CartesianFunction::k_numberOfPlotTypes && i >= m_numberOfColumnsForType[plotTypeIndex]) {
     i -= m_numberOfColumnsForType[plotTypeIndex++];
   }
   return Shared::ValuesController::typeAtLocation(i, j);
@@ -77,7 +77,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   int plotTypeIndex = 0;
-  while (plotTypeIndex < 3 && i >= m_numberOfColumnsForType[plotTypeIndex]) {
+  while (plotTypeIndex < CartesianFunction::k_numberOfPlotTypes && i >= m_numberOfColumnsForType[plotTypeIndex]) {
     i -= m_numberOfColumnsForType[plotTypeIndex++];
   }
   CartesianFunction::PlotType plotType = static_cast<CartesianFunction::PlotType>(plotTypeIndex);
@@ -153,7 +153,7 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
 }
 
 void ValuesController::updateNumberOfColumns() {
-  for (int plotTypeIndex = 0; plotTypeIndex < 3; plotTypeIndex++) {
+  for (int plotTypeIndex = 0; plotTypeIndex <  CartesianFunction::k_numberOfPlotTypes; plotTypeIndex++) {
     m_numberOfColumnsForType[plotTypeIndex] = 0;
   }
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
@@ -163,7 +163,7 @@ void ValuesController::updateNumberOfColumns() {
     m_numberOfColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = 0;
-  for (int plotTypeIndex = 0; plotTypeIndex < 3; plotTypeIndex++) {
+  for (int plotTypeIndex = 0; plotTypeIndex < CartesianFunction::k_numberOfPlotTypes; plotTypeIndex++) {
     m_numberOfColumnsForType[plotTypeIndex] += (m_numberOfColumnsForType[plotTypeIndex] > 0);
     m_numberOfColumns += m_numberOfColumnsForType[plotTypeIndex];
   }

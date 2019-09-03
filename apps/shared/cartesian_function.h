@@ -19,6 +19,7 @@ public:
   CodePoint symbol() const override;
   Poincare::Expression expressionReduced(Poincare::Context * context) const override;
 
+  static constexpr int k_numberOfPlotTypes = 3;
   enum class PlotType {
     Cartesian = 0,
     Polar = 1,

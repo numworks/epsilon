@@ -216,19 +216,19 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
   return PoincareHelpers::ApproximateToScalar<double>(derivative, context);
 }
 
-double CartesianFunction::tMin() const {
+float CartesianFunction::tMin() const {
   return recordData()->tMin();
 }
 
-double CartesianFunction::tMax() const {
+float CartesianFunction::tMax() const {
   return recordData()->tMax();
 }
 
-void CartesianFunction::setTMin(double tMin) {
+void CartesianFunction::setTMin(float tMin) {
   recordData()->setTMin(tMin);
 }
 
-void CartesianFunction::setTMax(double tMax) {
+void CartesianFunction::setTMax(float tMax) {
   recordData()->setTMax(tMax);
 }
 

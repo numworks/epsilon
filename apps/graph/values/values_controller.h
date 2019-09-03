@@ -5,6 +5,7 @@
 #include "../../shared/buffer_function_title_cell.h"
 #include "../../shared/values_controller.h"
 #include "../../shared/interval_parameter_controller.h"
+#include "interval_parameter_selector_controller.h"
 #include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
 
@@ -20,6 +21,9 @@ public:
   I18n::Message emptyMessage() override;
   Shared::IntervalParameterController * intervalParameterController() override {
     return &m_intervalParameterController;
+  }
+  IntervalParameterSelectorController * intervalParameterSelectorController() {
+    return &m_intervalParameterSelectorController;
   }
   void updateNumberOfColumns() override;
 private:
@@ -41,6 +45,7 @@ private:
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
+  IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
 };

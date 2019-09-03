@@ -131,7 +131,7 @@ void CartesianFunction::setPlotType(PlotType newPlotType) {
   Expression e = expressionClone();
   m_model.tidy();
   double tMin = newPlotType == PlotType::Cartesian ? -INFINITY : 0.0;
-  double tMax = newPlotType == PlotType::Cartesian ? INFINITY : 360.0;
+  double tMax = newPlotType == PlotType::Cartesian ? INFINITY : 2.0*M_PI;
   setTMin(tMin);
   setTMax(tMax);
   recordData()->setPlotType(newPlotType);

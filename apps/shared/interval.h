@@ -21,7 +21,7 @@ public:
   void reset();
   void clear();
   // TODO: decide the max number of elements after optimization
-  constexpr static int k_maxNumberOfElements = 100;
+  constexpr static int k_maxNumberOfElements = 50;
 private:
   void computeElements();
   int m_numberOfElements;

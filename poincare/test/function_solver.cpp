@@ -45,10 +45,10 @@ void assert_next_extrema_are(
     } else if (extremumType == ExtremumType::Root) {
       nextExtrema = Coordinate2D<double>(e.nextRoot(symbol, currentStart, step, max, context, complexFormat, angleUnit), 0.0 );
     }
-    currentStart = nextExtrema.x() + step;
+    currentStart = nextExtrema.x1() + step;
     quiz_assert_log_if_failure(
-        (doubles_are_approximately_equal(extrema[i].x(), nextExtrema.x()))
-        && (doubles_are_approximately_equal(extrema[i].y(), nextExtrema.y())),
+        (doubles_are_approximately_equal(extrema[i].x1(), nextExtrema.x1()))
+        && (doubles_are_approximately_equal(extrema[i].x2(), nextExtrema.x2())),
         e);
   }
 }
@@ -195,10 +195,10 @@ void assert_next_intersections_are(
   for (int i = 0; i < numberOfIntersections; i++) {
     quiz_assert_log_if_failure(!std::isnan(currentStart), e);
     Coordinate2D<double> nextIntersection = e.nextIntersection(symbol, currentStart, step, max, context, complexFormat, angleUnit, otherExpression);
-    currentStart = nextIntersection.x() + step;
+    currentStart = nextIntersection.x1() + step;
     quiz_assert_log_if_failure(
-        (doubles_are_approximately_equal(intersections[i].x(), nextIntersection.x()))
-        && (doubles_are_approximately_equal(intersections[i].y(), nextIntersection.y())),
+        (doubles_are_approximately_equal(intersections[i].x1(), nextIntersection.x1()))
+        && (doubles_are_approximately_equal(intersections[i].x2(), nextIntersection.x2())),
         e);
   }
 }

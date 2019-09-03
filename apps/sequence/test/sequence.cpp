@@ -40,7 +40,7 @@ void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequenc
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < MaxNumberOfSequences; i++) {
       if (seqs[i]->isDefined()) {
-        double un = seqs[i]->evaluateAtAbscissa((double)j, &sequenceContext);
+        double un = seqs[i]->evaluateXYAtParameter((double)j, &sequenceContext).x2();
         quiz_assert((std::isnan(un) && std::isnan(result[i][j])) || (un == result[i][j]));
       }
     }

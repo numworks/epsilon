@@ -6,7 +6,8 @@ namespace Shared {
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval) :
   FloatParameterController<double>(parentResponder),
   m_interval(interval),
-  m_intervalCells{}
+  m_intervalCells{},
+  m_title(I18n::Message::IntervalSet)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableTableView);
@@ -15,7 +16,7 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
 }
 
 const char * IntervalParameterController::title() {
-  return I18n::translate(I18n::Message::IntervalSet);
+  return I18n::translate(m_title);
 }
 
 int IntervalParameterController::numberOfRows() {

@@ -29,6 +29,11 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
+void App::Snapshot::reset() {
+  Shared::FunctionApp::Snapshot::reset();
+  m_interval.reset();
+}
+
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;

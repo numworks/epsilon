@@ -28,6 +28,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
     StackViewController * stack = (StackViewController *)parentResponder();
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();
     controller->setTitle(messageAtIndex(selectedRow()));
+    controller->setInterval(App::app()->interval());
     stack->push(controller);
     return true;
   }

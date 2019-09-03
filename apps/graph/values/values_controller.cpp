@@ -15,7 +15,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_abscissaTitleCells{},
   m_abscissaCells{},
   m_functionParameterController(this),
-  m_intervalParameterController(this, inputEventHandlerDelegate, m_interval),
+  m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;

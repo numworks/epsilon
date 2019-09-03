@@ -54,6 +54,14 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 }
 
+int ValuesController::typeAtLocation(int i, int j) {
+  int plotTypeIndex = 0;
+  while (plotTypeIndex < 3 && i >= m_numberOfColumnsForType[plotTypeIndex]) {
+    i -= m_numberOfColumnsForType[plotTypeIndex++];
+  }
+  return Shared::ValuesController::typeAtLocation(i, j);
+}
+
 I18n::Message ValuesController::emptyMessage() {
   if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
@@ -68,14 +76,21 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == 1);
+  int plotTypeIndex = 0;
+  while (plotTypeIndex < 3 && i >= m_numberOfColumnsForType[plotTypeIndex]) {
+    i -= m_numberOfColumnsForType[plotTypeIndex++];
+  }
+  CartesianFunction::PlotType plotType = static_cast<CartesianFunction::PlotType>(plotTypeIndex);
   int index = 1;
-  for (int k = 0; k < functionStore()->numberOfActiveFunctions(); k++) {
-    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(k);
-    if (index <= i && i < index + numberOfColumnsForRecord(record)) {
-      *isDerivative = i != index;
+  for (int k = 0; k < functionStore()->numberOfActiveFunctionsOfType(plotType); k++) {
+    Ion::Storage::Record record = functionStore()->activeRecordOfTypeAtIndex(plotType, k);
+    const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
+    if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
+      ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
+      *isDerivative = i != index && f->plotType() == CartesianFunction::PlotType::Cartesian;
       return record;
     }
-    index += numberOfColumnsForRecord(record);
+    index += numberOfColumnsForCurrentRecord;
   }
   assert(false);
   return nullptr;
@@ -83,7 +98,10 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
 
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
   ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
-  return 1 + f->displayDerivative();
+  CartesianFunction::PlotType plotType = f->plotType();
+  return 1 +
+    (plotType == CartesianFunction::PlotType::Cartesian && f->displayDerivative()) +
+    (plotType == CartesianFunction::PlotType::Parametric);
 }
 
 int ValuesController::maxNumberOfCells() {
@@ -107,6 +125,9 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
 ViewController * ValuesController::functionParameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
+  if (functionStore()->modelForRecord(record)->plotType() != CartesianFunction::PlotType::Cartesian) {
+    return nullptr;
+  }
   if (isDerivative) {
     m_derivativeParameterController.setRecord(record);
     return &m_derivativeParameterController;
@@ -132,12 +153,20 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
 }
 
 void ValuesController::updateNumberOfColumns() {
-  int result = 1;
+  for (int plotTypeIndex = 0; plotTypeIndex < 3; plotTypeIndex++) {
+    m_numberOfColumnsForType[plotTypeIndex] = 0;
+  }
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
-    result += numberOfColumnsForRecord(record);
+    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
+    int plotTypeIndex = static_cast<int>(f->plotType());
+    m_numberOfColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
   }
-  m_numberOfColumns = result;
+  m_numberOfColumns = 0;
+  for (int plotTypeIndex = 0; plotTypeIndex < 3; plotTypeIndex++) {
+    m_numberOfColumnsForType[plotTypeIndex] += (m_numberOfColumnsForType[plotTypeIndex] > 0);
+    m_numberOfColumns += m_numberOfColumnsForType[plotTypeIndex];
+  }
 }
 
 }

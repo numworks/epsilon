@@ -177,7 +177,7 @@ HighlightCell * ValuesController::reusableCell(int index, int type) {
 int ValuesController::reusableCellCount(int type) {
   switch (type) {
     case 0:
-      return 1;
+      return 3;
     case 1:
       return maxNumberOfFunctions();
     case 2:

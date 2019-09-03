@@ -18,6 +18,7 @@ public:
     return const_cast<Button *>(&m_setIntervalButton);
   }
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+  int typeAtLocation(int i, int j) override;
   I18n::Message emptyMessage() override;
   Shared::IntervalParameterController * intervalParameterController() override {
     return &m_intervalParameterController;
@@ -25,10 +26,10 @@ public:
   IntervalParameterSelectorController * intervalParameterSelectorController() {
     return &m_intervalParameterSelectorController;
   }
-  void updateNumberOfColumns() override;
 private:
   constexpr static int k_maxNumberOfCells = 50;
   constexpr static int k_maxNumberOfFunctions = 5;
+  void updateNumberOfColumns() override;
   Ion::Storage::Record recordAtColumn(int i) override;
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
@@ -41,6 +42,7 @@ private:
   ViewController * functionParameterController() override;
   I18n::Message valuesParameterControllerPageTitle() const override;
 
+  int m_numberOfColumnsForType[3];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   FunctionParameterController m_functionParameterController;

@@ -59,9 +59,6 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
   float resultyMax = -FLT_MAX;
   float xMin = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMin();
   float xMax = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMax();
-  /* In practice, a step smaller than a pixel's width is needed for sampling
-   * the values of a function. Otherwise some relevant extremal values may be
-   * missed. */
   assert(functionStore()->numberOfActiveFunctions() > 0);
   if (displaysNonCartesianFunctions()) {
     for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
@@ -106,10 +103,6 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
 }
 
 float GraphController::interestingXHalfRange() const {
-  if (displaysNonCartesianFunctions())
-  {
-    return 5.0f;
-  }
   float characteristicRange = 0.0f;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   CartesianFunctionStore * store = functionStore();

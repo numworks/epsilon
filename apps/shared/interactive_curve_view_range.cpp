@@ -152,16 +152,9 @@ void InteractiveCurveViewRange::setDefault() {
     m_yAuto = true;
     return;
   }
-#if 0
-  m_yAuto = false;
-  m_xMax = NormalizedXHalfRange();
-  setXMin(-NormalizedXHalfRange());
-  m_yMax = NormalizedYHalfRange();
-  setYMin(-NormalizedYHalfRange());
-  normalize();
-#else
-  m_yAuto = false;
 
+  m_yAuto = false;
+  // Compute the interesting ranges
   float a,b,c,d;
   m_delegate->interestingRanges(&a, &b, &c, &d);
   MemoizedCurveViewRange::setXMin(a);
@@ -169,12 +162,15 @@ void InteractiveCurveViewRange::setDefault() {
   MemoizedCurveViewRange::setYMin(c);
   MemoizedCurveViewRange::setYMax(d);
 
+  // Add margins
   float xRange = m_xMax - m_xMin;
   float yRange = m_yMax - m_yMin;
   m_xMin = m_delegate->addMargin(m_xMin, xRange, false, true);
   MemoizedCurveViewRange::setXMax(m_delegate->addMargin(m_xMax, xRange, false, false));
   m_yMin = m_delegate->addMargin(m_yMin, yRange, true, true);
   MemoizedCurveViewRange::setYMax(m_delegate->addMargin(m_yMax, yRange, true, false));
+
+  // Normalize the axes, so that a polar circle is displayed as a circle
   xRange = m_xMax - m_xMin;
   yRange = m_yMax - m_yMin;
   float xyRatio = xRange/yRange;
@@ -192,7 +188,6 @@ void InteractiveCurveViewRange::setDefault() {
     m_yMin -= delta;
     MemoizedCurveViewRange::setYMax(m_yMax+delta);
   }
-#endif
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {

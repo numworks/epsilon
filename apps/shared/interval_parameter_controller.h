@@ -12,6 +12,7 @@ public:
   IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval);
   Interval * interval();
   const char * title() override;
+  void setTitle(I18n::Message title) { m_title = title; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int numberOfRows() override;
 protected:
@@ -25,6 +26,7 @@ private:
   double parameterAtIndex(int index) override;
   void buttonAction() override;
   MessageTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
+  I18n::Message m_title;
 };
 
 }

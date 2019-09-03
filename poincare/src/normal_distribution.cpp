@@ -83,17 +83,17 @@ bool NormalDistribution::ExpressionParametersAreOK(bool * result, const Expressi
 
 template<typename T>
 T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T abscissa) {
-  if (std::isnan(abscissa) || std::isinf(abscissa)) {
+  if (std::isnan(abscissa)) {
     return NAN;
+  }
+  if (std::isinf(abscissa) || abscissa > k_boundStandardNormalDistribution) {
+    return (T)1.0;
   }
   if (abscissa == (T)0.0) {
     return (T)0.5;
   }
   if (abscissa < (T)0.0) {
     return ((T)1.0) - StandardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
-  }
-  if (abscissa > k_boundStandardNormalDistribution) {
-    return (T)1.0;
   }
   return ((T)0.5) + ((T)0.5) * std::erf(abscissa/std::sqrt(((T)2.0)));
 }

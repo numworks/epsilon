@@ -26,6 +26,7 @@ app_graph_src = $(addprefix apps/graph/,\
   list/type_parameter_controller.cpp \
   values/derivative_parameter_controller.cpp \
   values/function_parameter_controller.cpp \
+  values/interval_parameter_selector_controller.cpp \
   values/values_controller.cpp \
 )
 

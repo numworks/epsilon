@@ -40,7 +40,13 @@ public:
   static constexpr KDCoordinate k_rightMargin = 15;
   static constexpr KDCoordinate k_abscissaCellWidth = 100;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
+
 protected:
+  static constexpr int k_abscissaTitleCellType = 0;
+  static constexpr int k_functionTitleCellType = 1;
+  static constexpr int k_editableValueCellType = 2;
+  static constexpr int k_notEditableValueCellType = 3;
+
   static constexpr const KDFont * k_font = KDFont::SmallFont;
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;

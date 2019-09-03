@@ -34,7 +34,9 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   int typeAtLoc = typeAtLocation(i,j);
   if (typeAtLoc == k_abscissaTitleCellType) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
-    mytitleCell->setMessage(I18n::Message::X); //TODO LEA
+    Ion::Storage::Record record = recordAtColumn(i+1);
+    Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
+    mytitleCell->setMessage(function->parameterMessageName());
     return;
   }
   if (typeAtLoc == k_functionTitleCellType) {

@@ -209,6 +209,7 @@ template<typename T>
 T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
   T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   assert(*probability <= (((T)1.0) - precision) && *probability >= precision);
+  (void) precision;
   T p = 0.0;
   int k = 0;
   T delta = 0.0;

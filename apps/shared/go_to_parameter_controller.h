@@ -14,6 +14,7 @@ public:
   int numberOfRows() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
+  void setParameterName(I18n::Message message) { m_abscisseCell.setMessage(message); }
   CurveViewCursor * m_cursor;
   InteractiveCurveViewRange * m_graphRange;
 private:

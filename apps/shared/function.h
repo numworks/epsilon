@@ -3,6 +3,7 @@
 
 #include <poincare/function.h>
 #include <poincare/symbol.h>
+#include <escher/i18n.h>
 #include "expression_model_handle.h"
 
 #if __EMSCRIPTEN__
@@ -42,6 +43,7 @@ public:
   // Name
   int nameWithArgument(char * buffer, size_t bufferSize);
   virtual int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
+  virtual I18n::Message parameterMessageName() const;
 
   // Evaluation
   virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const = 0;

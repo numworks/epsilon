@@ -14,6 +14,7 @@ public:
   CartesianFunction(Ion::Storage::Record record = Record()) :
     Function(record)
   {}
+  I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override;
   Poincare::Expression expressionReduced(Poincare::Context * context) const override;
 

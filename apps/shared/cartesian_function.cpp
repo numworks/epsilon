@@ -8,6 +8,7 @@
 #include <poincare/serialization_helper.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <apps/i18n.h>
 #include <float.h>
 #include <cmath>
 
@@ -91,6 +92,18 @@ Poincare::Expression CartesianFunction::expressionReduced(Poincare::Context * co
     return Poincare::Expression::Parse("[[undef][undef]]");
   }
   return result;
+}
+
+I18n::Message CartesianFunction::parameterMessageName() const {
+  PlotType type = plotType();
+  if (type == PlotType::Cartesian) {
+    return I18n::Message::X;
+  }
+  if (type == PlotType::Polar) {
+    return I18n::Message::Theta;
+  }
+  assert(plotType() == PlotType::Parametric);
+  return I18n::Message::T;
 }
 
 CodePoint CartesianFunction::symbol() const {

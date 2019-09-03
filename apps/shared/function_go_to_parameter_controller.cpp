@@ -39,6 +39,9 @@ bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, do
 
 void FunctionGoToParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
+  FunctionApp * myApp = FunctionApp::app();
+  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  setParameterName(function->parameterMessageName());
 }
 
 }

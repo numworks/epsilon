@@ -9,7 +9,7 @@ using namespace Poincare;
 namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, interval),
+  Shared::ValuesController(parentResponder, header, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionParameterController(this),
@@ -26,18 +26,18 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     m_functionTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
     m_functionTitleCells[i].setFont(KDFont::SmallFont);
   }
+  setupAbscissaCellsAndTitleCells(inputEventHandlerDelegate);
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
-  // The cell is the abscissa title cell:
-  if (typeAtLocation(i,j) == k_abscissaTitleCellType) {
+  int typeAtLoc = typeAtLocation(i,j);
+  if (typeAtLoc == k_abscissaTitleCellType) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
-    mytitleCell->setMessage(I18n::Message::X);
+    mytitleCell->setMessage(I18n::Message::X); //TODO LEA
     return;
   }
-  // The cell is a function title cell:
-  if (typeAtLocation(i,j) == k_functionTitleCellType) {
+  if (typeAtLoc == k_functionTitleCellType) {
     Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
     const size_t bufferNameSize = Shared::Function::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
@@ -51,6 +51,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     }
     myFunctionCell->setText(bufferName);
     myFunctionCell->setColor(function->color());
+    return;
+  }
+  if (typeAtLoc == k_editableValueCellType) {
+    StoreCell * storeCell = (StoreCell *)cell;
+    storeCell->setSeparatorLeft(i > 0);
   }
 }
 

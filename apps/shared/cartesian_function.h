@@ -3,6 +3,7 @@
 
 #include "global_context.h"
 #include "function.h"
+#include "range_1D.h"
 #include <poincare/symbol.h>
 
 namespace Shared {
@@ -47,10 +48,10 @@ public:
 
   // tMin and tMax
   bool shouldClipTRangeToXRange() const override { return plotType() == PlotType::Cartesian; }
-  double tMin() const override;
-  double tMax() const override;
-  void setTMin(double tMin);
-  void setTMax(double tMax);
+  float tMin() const override;
+  float tMax() const override;
+  void setTMin(float tMin);
+  void setTMax(float tMax);
   float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
 
 private:
@@ -66,22 +67,20 @@ private:
       FunctionRecordDataBuffer(color),
       m_plotType(PlotType::Cartesian),
       m_displayDerivative(false),
-      m_tMin(-INFINITY),
-      m_tMax(INFINITY)
+      m_domain(-INFINITY, INFINITY)
     {}
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
-    double tMin() const { return m_tMin; }
-    double tMax() const { return m_tMax; }
-    void setTMin(double tMin) { m_tMin = tMin; }
-    void setTMax(double tMax) { m_tMax = tMax; }
+    float tMin() const { return m_domain.min(); }
+    float tMax() const { return m_domain.max(); }
+    void setTMin(float tMin) { m_domain.setMin(tMin); }
+    void setTMax(float tMax) { m_domain.setMax(tMax); }
   private:
     PlotType m_plotType;
     bool m_displayDerivative;
-    double m_tMin;
-    double m_tMax;
+    Range1D m_domain;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];

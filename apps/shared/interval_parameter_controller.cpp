@@ -1,5 +1,4 @@
 #include "interval_parameter_controller.h"
-#include <assert.h>
 
 namespace Shared {
 
@@ -31,10 +30,6 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::Start, I18n::Message::End, I18n::Message::Step};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
-}
-
-Interval * IntervalParameterController::interval() {
-  return m_interval;
 }
 
 double IntervalParameterController::parameterAtIndex(int index) {

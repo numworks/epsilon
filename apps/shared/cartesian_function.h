@@ -50,7 +50,10 @@ public:
   double tMax() const override;
   void setTMin(double tMin);
   void setTMax(double tMax);
+  float rangeStep() const override { return (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
+
 private:
+  constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on

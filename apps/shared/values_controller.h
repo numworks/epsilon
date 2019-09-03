@@ -15,7 +15,7 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
-  ValuesController(Responder * parentResponder, ButtonRowController * header, Interval * interval);
+  ValuesController(Responder * parentResponder, ButtonRowController * header);
   const char * title() override;
   int numberOfColumns() override;
   virtual bool handleEvent(Ion::Events::Event event) override;
@@ -55,7 +55,6 @@ protected:
   virtual void updateNumberOfColumns();
   virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
-  Interval * m_interval;
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
 private:
@@ -64,6 +63,7 @@ private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElementsInColumn(int columnIndex) override;
+  virtual Interval * intervalAtColumn(int columnIndex) = 0;
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;
   };

@@ -10,7 +10,7 @@ namespace Sequence {
 
 class ValuesController : public Shared::ValuesController {
 public:
-  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval, ButtonRowController * header);
+  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header);
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
     return const_cast<Button *>(&m_setIntervalButton);
   }
@@ -21,6 +21,7 @@ public:
   }
 private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
+  Shared::Interval * intervalAtColumn(int columnIndex) override;
   int maxNumberOfCells() override { return k_maxNumberOfCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfSequences; }
   constexpr static int k_maxNumberOfSequences = 3;

@@ -75,12 +75,16 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
       double tMax = f->tMax();
       assert(!std::isnan(tMin));
       assert(!std::isnan(tMax));
-      interestingFunctionRange(f, tMin, tMax, (tMax - tMin)/30, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
+      assert(!std::isnan(f->rangeStep()));
+      interestingFunctionRange(f, tMin, tMax, f->rangeStep(), &resultxMin, &resultxMax, &resultyMin, &resultyMax);
     }
   } else {
     resultxMin = xMin;
     resultxMax = xMax;
   }
+  /* In practice, a step smaller than a pixel's width is needed for sampling
+   * the values of a function. Otherwise some relevant extremal values may be
+   * missed. */
   const float step = const_cast<GraphController *>(this)->curveView()->pixelWidth() / 2;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));

@@ -31,13 +31,13 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
-  if (typeAtLocation(i,j) == 0) {
+  if (typeAtLocation(i,j) == k_abscissaTitleCellType) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
     mytitleCell->setMessage(I18n::Message::X);
     return;
   }
   // The cell is a function title cell:
-  if (typeAtLocation(i,j) == 1) {
+  if (typeAtLocation(i,j) == k_functionTitleCellType) {
     Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
     const size_t bufferNameSize = Shared::Function::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
@@ -75,7 +75,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 }
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
-  assert(typeAtLocation(i, 0) == 1);
+  assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   int plotTypeIndex = 0;
   while (plotTypeIndex < 3 && i >= m_numberOfColumnsForType[plotTypeIndex]) {
     i -= m_numberOfColumnsForType[plotTypeIndex++];

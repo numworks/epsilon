@@ -146,16 +146,53 @@ void InteractiveCurveViewRange::setDefault() {
   if (m_delegate == nullptr) {
     return;
   }
-  m_xMax = m_delegate->interestingXHalfRange();
-  setXMin(-m_xMax);
   if (!m_delegate->defautRangeIsNormalized()) {
+    m_xMax = m_delegate->interestingXHalfRange();
+    setXMin(-m_xMax);
     m_yAuto = true;
     return;
   }
+#if 0
   m_yAuto = false;
-  m_yMax = 3.0f;
-  setYMin(-m_yMax);
+  m_xMax = NormalizedXHalfRange();
+  setXMin(-NormalizedXHalfRange());
+  m_yMax = NormalizedYHalfRange();
+  setYMin(-NormalizedYHalfRange());
   normalize();
+#else
+  m_yAuto = false;
+
+  float a,b,c,d;
+  m_delegate->interestingRanges(&a, &b, &c, &d);
+  MemoizedCurveViewRange::setXMin(a);
+  MemoizedCurveViewRange::setXMax(b);
+  MemoizedCurveViewRange::setYMin(c);
+  MemoizedCurveViewRange::setYMax(d);
+
+  float xRange = m_xMax - m_xMin;
+  float yRange = m_yMax - m_yMin;
+  m_xMin = m_delegate->addMargin(m_xMin, xRange, false, true);
+  MemoizedCurveViewRange::setXMax(m_delegate->addMargin(m_xMax, xRange, false, false));
+  m_yMin = m_delegate->addMargin(m_yMin, yRange, true, true);
+  MemoizedCurveViewRange::setYMax(m_delegate->addMargin(m_yMax, yRange, true, false));
+  xRange = m_xMax - m_xMin;
+  yRange = m_yMax - m_yMin;
+  float xyRatio = xRange/yRange;
+  float normalizedXYRatio = NormalizedXHalfRange()/NormalizedYHalfRange();
+  if (xyRatio < normalizedXYRatio) {
+    float newXRange = normalizedXYRatio * yRange;
+    assert(newXRange > xRange);
+    float delta = (newXRange - xRange) / 2.0f;
+    m_xMin -= delta;
+    MemoizedCurveViewRange::setXMax(m_xMax+delta);
+  } else if (xyRatio > normalizedXYRatio) {
+    float newYRange = NormalizedYHalfRange()/NormalizedXHalfRange() * xRange;
+    assert(newYRange > yRange);
+    float delta = (newYRange - yRange) / 2.0f;
+    m_yMin -= delta;
+    MemoizedCurveViewRange::setYMax(m_yMax+delta);
+  }
+#endif
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {

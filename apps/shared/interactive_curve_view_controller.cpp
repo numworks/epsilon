@@ -35,7 +35,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
 {
 }
 
-float InteractiveCurveViewController::addMargin(float x, float range, bool isMin) {
+float InteractiveCurveViewController::addMargin(float x, float range, bool isVertical, bool isMin) {
   /* We are adding margins. Let's name:
    *   - The current range: rangeBefore
    *   - The next range: rangeAfter
@@ -60,8 +60,8 @@ float InteractiveCurveViewController::addMargin(float x, float range, bool isMin
    * topRatioBefore = topRatioAfter, we would create too small margins and the
    * controller might need to pan right after a Y auto calibration. */
 
-  float topMarginRatio = cursorTopMarginRatio();
-  float bottomMarginRatio = cursorBottomMarginRatio();
+  float topMarginRatio = isVertical ? cursorTopMarginRatio() : k_cursorRightMarginRatio;
+  float bottomMarginRatio = isVertical ? cursorBottomMarginRatio() : k_cursorLeftMarginRatio;
   assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
   float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
   float ratio = isMin ? -bottomMarginRatio : topMarginRatio;

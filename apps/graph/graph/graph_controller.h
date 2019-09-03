@@ -21,7 +21,7 @@ public:
   bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
   void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
   float interestingXHalfRange() const override;
-
+  void interestingRanges(float * xm, float * xM, float * ym, float * yM) const override;
 private:
   int estimatedBannerNumberOfLines() const override { return 1 + m_displayDerivativeInBanner; }
   void selectFunctionWithCursor(int functionIndex) override;
@@ -36,6 +36,7 @@ private:
   CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool displaysNonCartesianFunctions() const;
   bool defautRangeIsNormalized() const override { return displaysNonCartesianFunctions(); }
+  void interestingFunctionRange(Shared::ExpiringPointer<Shared::CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
 
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;

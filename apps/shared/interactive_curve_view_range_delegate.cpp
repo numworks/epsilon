@@ -19,7 +19,7 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
   if (max < min) {
     range = 0.0f;
   }
-  if (interactiveCurveViewRange->yMin() == addMargin(min, range, true) && interactiveCurveViewRange->yMax() == addMargin(max, range, false)) {
+  if (interactiveCurveViewRange->yMin() == addMargin(min, range, true, true) && interactiveCurveViewRange->yMax() == addMargin(max, range, true, false)) {
     return false;
   }
   if (min == max) {
@@ -33,8 +33,8 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
     max = 1.0f;
   }
   range = max - min;
-  interactiveCurveViewRange->setYMin(addMargin(min, range, true));
-  interactiveCurveViewRange->setYMax(addMargin(max, range, false));
+  interactiveCurveViewRange->setYMin(addMargin(min, range, true, true));
+  interactiveCurveViewRange->setYMax(addMargin(max, range, true, false));
   if (std::isinf(interactiveCurveViewRange->xMin())) {
     interactiveCurveViewRange->setYMin(-FLT_MAX);
   }

@@ -8,8 +8,8 @@ using namespace Poincare;
 
 namespace Graph {
 
-ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, interval),
+ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, header),
   m_functionTitleCells{},
   m_floatCells{},
   m_abscissaTitleCells{},
@@ -112,6 +112,10 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
   return 1 +
     (plotType == CartesianFunction::PlotType::Cartesian && f->displayDerivative()) +
     (plotType == CartesianFunction::PlotType::Parametric);
+}
+
+Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
+  return App::app()->interval();
 }
 
 int ValuesController::maxNumberOfCells() {

@@ -137,16 +137,18 @@ bool FloatParameterController<T>::textFieldShouldFinishEditing(TextField * textF
 template<typename T>
 bool FloatParameterController<T>::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   T floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  int row = selectedRow();
+  InfinityTolerance infTolerance = infinityAllowanceForRow(row);
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity)) {
     return false;
   }
-  if (!setParameterAtIndex(selectedRow(), floatBody)) {
+  if (!setParameterAtIndex(row, floatBody)) {
     return false;
   }
   m_selectableTableView.reloadCellAtLocation(0, activeCell());
   m_selectableTableView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    m_selectableTableView.selectCellAtLocation(selectedColumn(), selectedRow()+1);
+    m_selectableTableView.selectCellAtLocation(selectedColumn(), row + 1);
   } else {
     m_selectableTableView.handleEvent(event);
   }

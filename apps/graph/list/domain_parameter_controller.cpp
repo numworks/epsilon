@@ -89,10 +89,18 @@ void DomainParameterController::buttonAction() {
   stack->pop();
 }
 
-Shared::ExpiringPointer<Shared::CartesianFunction> DomainParameterController::function() {
+Shared::ExpiringPointer<Shared::CartesianFunction> DomainParameterController::function() const {
   assert(!m_record.isNull());
   App * myApp = App::app();
   return myApp->functionStore()->modelForRecord(m_record);
+}
+
+FloatParameterController<float>::InfinityTolerance DomainParameterController::infinityAllowanceForRow(int row) const {
+  Shared::CartesianFunction::PlotType plotType = function()->plotType();
+  if (plotType == Shared::CartesianFunction::PlotType::Cartesian) {
+    return row == 0 ? FloatParameterController<float>::InfinityTolerance::MinusInfinity : FloatParameterController<float>::InfinityTolerance::PlusInfinity;
+  }
+  return FloatParameterController<float>::InfinityTolerance::None;
 }
 
 }

@@ -30,6 +30,11 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 protected:
+  enum class InfinityTolerance {
+    None,
+    PlusInfinity,
+    MinusInfinity
+  };
   int activeCell();
   StackViewController * stackController();
   virtual T parameterAtIndex(int index) = 0;
@@ -38,6 +43,7 @@ protected:
 private:
   constexpr static int k_buttonMargin = 6;
   virtual void buttonAction();
+  virtual InfinityTolerance infinityAllowanceForRow(int row) const { return InfinityTolerance::None; }
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
   virtual bool setParameterAtIndex(int parameterIndex, T f) = 0;

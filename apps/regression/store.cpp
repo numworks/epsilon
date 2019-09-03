@@ -59,7 +59,7 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
     for (int i = 0; i <= numberOfPoints; i++) {
       double currentX = i < numberOfPoints ? m_data[series][0][i] : meanOfColumn(series, 0);
       double currentY = i < numberOfPoints ? m_data[series][1][i] : meanOfColumn(series, 1);
-      if (m_xMin <= currentX && currentX <= m_xMax // The next dot is within the window abscissa bounds
+      if (xMin() <= currentX && currentX <= xMax() // The next dot is within the window abscissa bounds
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
           && ((currentY > y && direction > 0) // The next dot is above/under y
             || (currentY < y && direction < 0)

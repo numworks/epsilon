@@ -7,9 +7,11 @@ using namespace Shared;
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, interval),
+  Shared::ValuesController(parentResponder, header, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
+  m_abscissaTitleCell(),
+  m_abscissaCells{},
 #if COPY_COLUMN
   m_sequenceParameterController('n'),
 #endif
@@ -24,6 +26,7 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
     m_sequenceTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
   }
+  setupAbscissaCellsAndTitleCells(inputEventHandlerDelegate);
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -53,24 +56,6 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
       return false;
   }
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
-}
-
-int ValuesController::maxNumberOfCells() {
-  return k_maxNumberOfCells;
-}
-
-int ValuesController::maxNumberOfFunctions() {
-  return k_maxNumberOfSequences;
-}
-
-SequenceTitleCell * ValuesController::functionTitleCells(int j) {
-  assert(j >= 0 && j < k_maxNumberOfSequences);
-  return &m_sequenceTitleCells[j];
-}
-
-EvenOddBufferTextCell * ValuesController::floatCells(int j) {
-  assert(j >= 0 && j < k_maxNumberOfCells);
-  return &m_floatCells[j];
 }
 
 ViewController * ValuesController::functionParameterController() {

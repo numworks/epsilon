@@ -21,17 +21,36 @@ public:
   }
 private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
-  int maxNumberOfCells() override;
-  int maxNumberOfFunctions() override;
-  constexpr static int k_maxNumberOfCells = 30;
+  int maxNumberOfCells() override { return k_maxNumberOfCells; }
+  int maxNumberOfFunctions() override { return k_maxNumberOfSequences; }
   constexpr static int k_maxNumberOfSequences = 3;
-  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfSequences];
-  SequenceTitleCell * functionTitleCells(int j) override;
-  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
-  EvenOddBufferTextCell * floatCells(int j) override;
+  constexpr static int k_maxNumberOfCells = k_maxNumberOfSequences * k_maxNumberOfRows;
+
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::ValuesController::functionStore()); }
   ViewController * functionParameterController() override;
   I18n::Message valuesParameterControllerPageTitle() const override;
+  int abscissaCellsCount() const override { return k_maxNumberOfRows; }
+  EvenOddEditableTextCell * abscissaCells(int j) override {
+    assert (j >= 0 && j < k_maxNumberOfRows);
+    return &m_abscissaCells[j];
+  }
+  int abscissaTitleCellsCount() const override { return 1; }
+  EvenOddMessageTextCell * abscissaTitleCells(int j) override {
+    assert (j >= 0 && j < abscissaTitleCellsCount());
+    return &m_abscissaTitleCell;
+  }
+  SequenceTitleCell * functionTitleCells(int j) override {
+    assert(j >= 0 && j < k_maxNumberOfSequences);
+    return &m_sequenceTitleCells[j];
+  }
+  EvenOddBufferTextCell * floatCells(int j) override {
+    assert(j >= 0 && j < k_maxNumberOfCells);
+    return &m_floatCells[j];
+  }
+  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfSequences];
+  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
+  EvenOddMessageTextCell m_abscissaTitleCell;
+  EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfRows];
 #if COPY_COLUMN
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif

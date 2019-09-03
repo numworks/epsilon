@@ -15,7 +15,7 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
-  ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Interval * interval);
+  ValuesController(Responder * parentResponder, ButtonRowController * header, Interval * interval);
   const char * title() override;
   int numberOfColumns() override;
   virtual bool handleEvent(Ion::Events::Event event) override;
@@ -46,8 +46,10 @@ protected:
   static constexpr int k_functionTitleCellType = 1;
   static constexpr int k_editableValueCellType = 2;
   static constexpr int k_notEditableValueCellType = 3;
+  constexpr static int k_maxNumberOfRows = 10;
 
   static constexpr const KDFont * k_font = KDFont::SmallFont;
+  void setupAbscissaCellsAndTitleCells(InputEventHandlerDelegate * inputEventHandlerDelegate);
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   virtual void updateNumberOfColumns();
@@ -66,14 +68,15 @@ private:
     return Interval::k_maxNumberOfElements;
   };
   virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex);
-  constexpr static int k_maxNumberOfAbscissaCells = 30;
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
   SelectableTableView m_selectableTableView;
-  EvenOddMessageTextCell m_abscissaTitleCell;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
-  EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
+  virtual int abscissaCellsCount() const = 0;
+  virtual EvenOddEditableTextCell * abscissaCells(int j) = 0;
+  virtual int abscissaTitleCellsCount() const = 0;
+  virtual EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
   virtual ViewController * functionParameterController() = 0;
   virtual I18n::Message valuesParameterControllerPageTitle() const = 0;
   ValuesParameterController m_abscissaParameterController;

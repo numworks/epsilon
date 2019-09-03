@@ -18,7 +18,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
-    stack->push(valuesController->intervalParameterController());
+    stack->push(valuesController->intervalParameterSelectorController());
     return true;
   }, this), k_font)
 {

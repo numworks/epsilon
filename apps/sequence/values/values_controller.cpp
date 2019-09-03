@@ -15,11 +15,13 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
 #if COPY_COLUMN
   m_sequenceParameterController('n'),
 #endif
-  m_intervalParameterController(this, inputEventHandlerDelegate, m_interval),
+  m_intervalParameterController(this, inputEventHandlerDelegate),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
-    stack->push(valuesController->intervalParameterController());
+    IntervalParameterController * controller = valuesController->intervalParameterController();
+    controller->setInterval(valuesController->m_interval);
+    stack->push(controller);
     return true;
   }, this), k_font)
 {

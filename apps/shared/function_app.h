@@ -36,7 +36,11 @@ public:
     return static_cast<FunctionApp *>(Container::activeApp());
   }
   virtual ~FunctionApp() = default;
-  virtual FunctionStore * functionStore() { return static_cast<FunctionApp::Snapshot *>(snapshot())->functionStore(); }
+  Snapshot * snapshot() const {
+    return static_cast<Snapshot *>(::App::snapshot());
+  }
+  virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
+  Interval * interval() { return snapshot()->interval(); }
   virtual ValuesController * valuesController() = 0;
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;

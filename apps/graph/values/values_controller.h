@@ -6,6 +6,7 @@
 #include "../../shared/values_controller.h"
 #include "../../shared/interval_parameter_controller.h"
 #include "../../shared/store_cell.h"
+#include "abscissa_title_cell.h"
 #include "interval_parameter_selector_controller.h"
 #include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
@@ -45,14 +46,14 @@ private:
   int abscissaCellsCount() const override { return k_maxNumberOfAbscissaCells; }
   EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfAbscissaCells); return &m_abscissaCells[j]; }
   int abscissaTitleCellsCount() const override { return Shared::CartesianFunction::k_numberOfPlotTypes; }
-  EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCell[j]; }
+  EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   ViewController * functionParameterController() override;
   I18n::Message valuesParameterControllerPageTitle() const override;
 
   int m_numberOfColumnsForType[Shared::CartesianFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
-  EvenOddMessageTextCell m_abscissaTitleCell[Shared::CartesianFunction::k_numberOfPlotTypes];
+  AbscissaTitleCell m_abscissaTitleCells[Shared::CartesianFunction::k_numberOfPlotTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;

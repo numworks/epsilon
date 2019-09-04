@@ -12,6 +12,8 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   Shared::ValuesController(parentResponder, header, interval),
   m_functionTitleCells{},
   m_floatCells{},
+  m_abscissaTitleCells{},
+  m_abscissaCells{},
   m_functionParameterController(this),
   m_intervalParameterController(this, inputEventHandlerDelegate, m_interval),
   m_derivativeParameterController(this),
@@ -33,10 +35,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   int typeAtLoc = typeAtLocation(i,j);
   if (typeAtLoc == k_abscissaTitleCellType) {
-    EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
+    AbscissaTitleCell * myTitleCell = (AbscissaTitleCell *)cell;
     Ion::Storage::Record record = recordAtColumn(i+1);
     Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
-    mytitleCell->setMessage(function->parameterMessageName());
+    myTitleCell->setMessage(function->parameterMessageName());
+    myTitleCell->setSeparatorLeft(i > 0);
     return;
   }
   if (typeAtLoc == k_functionTitleCellType) {

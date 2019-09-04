@@ -66,6 +66,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 #endif
       {
         StackViewController * stack = ((StackViewController *)parentResponder());
+        intervalParameterController->setTitle(I18n::Message::IntervalSet);
         stack->push(intervalParameterController);
         return true;
       }

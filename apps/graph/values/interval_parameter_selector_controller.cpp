@@ -27,7 +27,8 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();
-    controller->setTitle(messageAtIndex(selectedRow()));
+    Shared::CartesianFunction::PlotType plotType = plotTypeAtRow(selectedRow());
+    controller->setTitle(messageForType(plotType));
     controller->setInterval(App::app()->interval());
     stack->push(controller);
     return true;
@@ -49,16 +50,23 @@ int IntervalParameterSelectorController::reusableCellCount() {
 }
 
 void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(0 <= index && index < MaxNumberOfRows);
-  static_cast<MessageTableCellWithChevron *>(cell)->setMessage(messageAtIndex(index));
+  assert(0 <= index && index < numberOfRows());
+  Shared::CartesianFunction::PlotType plotType = plotTypeAtRow(index);
+  static_cast<MessageTableCellWithChevron *>(cell)->setMessage(messageForType(plotType));
 }
 
-I18n::Message IntervalParameterSelectorController::messageAtIndex(int index) {
-  assert(0 <= index && index < MaxNumberOfRows);
-  constexpr I18n::Message message[MaxNumberOfRows] = {
-    I18n::Message::IntervalX
+Shared::CartesianFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {
+  assert(0 <= j && j < numberOfRows());
+  return static_cast<Shared::CartesianFunction::PlotType>(j);
+}
+
+I18n::Message IntervalParameterSelectorController::messageForType(Shared::CartesianFunction::PlotType plotType) {
+  constexpr I18n::Message message[Shared::CartesianFunction::k_numberOfPlotTypes] = {
+    I18n::Message::IntervalX,
+    I18n::Message::IntervalTheta,
+    I18n::Message::IntervalT
   };
-  return message[index];
+  return message[static_cast<size_t>(plotType)];
 }
 
 }

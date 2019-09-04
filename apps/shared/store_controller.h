@@ -46,8 +46,6 @@ public:
 
 protected:
   static constexpr KDCoordinate k_cellWidth = 116;
-  static constexpr KDCoordinate k_margin = 8;
-  static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
   constexpr static int k_maxNumberOfEditableCells = (Ion::Display::Width/k_cellWidth+2) * ((Ion::Display::Height - Metric::TitleBarHeight - Metric::TabHeight)/k_cellHeight+2);
   constexpr static int k_numberOfTitleCells = 4;
   static constexpr int k_titleCellType = 0;
@@ -62,7 +60,7 @@ protected:
   // Responder
   void didBecomeFirstResponder() override;
   private:
-    static constexpr KDCoordinate k_margin = 8;
+    static constexpr KDCoordinate k_margin = 5;
     static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
     static constexpr KDCoordinate k_formulaInputHeight = 31;
     int numberOfSubviews() const override { return 1 + m_displayFormulaInputView; }

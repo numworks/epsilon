@@ -44,7 +44,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   }
   Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
   bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
-  mytitleCell->setSeparatorLeft(isValuesColumn);
+  mytitleCell->setSeparatorLeft(i > 0 && isValuesColumn);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
   assert(seriesIndex >= 0 && seriesIndex < DoublePairStore::k_numberOfSeries);
   if (isValuesColumn) {

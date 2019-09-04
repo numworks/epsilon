@@ -162,7 +162,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (typeAtLocation(i, j) == k_editableCellType) {
     static_cast<StoreCell *>(cell)->setHide(false);
   }
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::PrintFloatMode::Decimal);
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }
 
 const char * StoreController::title() {

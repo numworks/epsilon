@@ -158,8 +158,15 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
   if (isDerivative) {
     return function->approximateDerivative(abscissa, context);
   }
-  //TODO LEA RUBEN
-  return function->evaluate2DAtParameter(abscissa, context).x1();
+  Poincare::Coordinate2D<double> eval = function->evaluate2DAtParameter(abscissa, context);
+  if (function->plotType() != CartesianFunction::PlotType::Parametric
+      || (columnIndex == numberOfColumns() - 1
+        || !((typeAtLocation(columnIndex+1, 0) == k_functionTitleCellType)
+          && recordAtColumn(columnIndex+1) == record)))
+  {
+    return eval.x2();
+  }
+  return eval.x1();
 }
 
 void ValuesController::updateNumberOfColumns() {

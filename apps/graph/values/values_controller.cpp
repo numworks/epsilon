@@ -108,7 +108,7 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
-  return App::app()->interval();
+  return App::app()->intervalForType(plotTypeAtColumn(&columnIndex));
 }
 
 CartesianFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {

@@ -56,7 +56,7 @@ void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell 
 }
 
 Shared::CartesianFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {
-  assert(0 <= j && j < numberOfRows());
+  assert(0 <= j && j < const_cast<IntervalParameterSelectorController *>(this)->numberOfRows());
   return static_cast<Shared::CartesianFunction::PlotType>(j);
 }
 

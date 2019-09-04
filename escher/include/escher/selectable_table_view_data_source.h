@@ -3,16 +3,21 @@
 
 #include <escher/scroll_view_data_source.h>
 
-class SelectableTableView;
-
 class SelectableTableViewDataSource : public ScrollViewDataSource {
 public:
-  SelectableTableViewDataSource();
-  int selectedRow();
-  int selectedColumn();
-  void selectRow(int j);
-  void selectColumn(int i);
-  void selectCellAtLocation(int i, int j);
+  SelectableTableViewDataSource() :
+    m_selectedCellX(0),
+    m_selectedCellY(-1)
+  {
+  }
+  int selectedRow() { return m_selectedCellY; }
+  int selectedColumn() { return m_selectedCellX; }
+  void selectRow(int j) { m_selectedCellY = j; }
+  void selectColumn(int i) { m_selectedCellX = i; }
+  void selectCellAtLocation(int i, int j) {
+    m_selectedCellX = i;
+    m_selectedCellY = j;
+  }
 private:
   int m_selectedCellX;
   int m_selectedCellY;

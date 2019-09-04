@@ -65,10 +65,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
-  int plotTypeIndex = 0;
-  while (plotTypeIndex < CartesianFunction::k_numberOfPlotTypes && i >= m_numberOfColumnsForType[plotTypeIndex]) {
-    i -= m_numberOfColumnsForType[plotTypeIndex++];
-  }
+  plotTypeAtColumn(&i);
   return Shared::ValuesController::typeAtLocation(i, j);
 }
 
@@ -86,11 +83,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  int plotTypeIndex = 0;
-  while (plotTypeIndex < CartesianFunction::k_numberOfPlotTypes && i >= m_numberOfColumnsForType[plotTypeIndex]) {
-    i -= m_numberOfColumnsForType[plotTypeIndex++];
-  }
-  CartesianFunction::PlotType plotType = static_cast<CartesianFunction::PlotType>(plotTypeIndex);
+  CartesianFunction::PlotType plotType = plotTypeAtColumn(&i);
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfActiveFunctionsOfType(plotType); k++) {
     Ion::Storage::Record record = functionStore()->activeRecordOfTypeAtIndex(plotType, k);
@@ -116,6 +109,15 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
   return App::app()->interval();
+}
+
+CartesianFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
+  int plotTypeIndex = 0;
+  while (plotTypeIndex < CartesianFunction::k_numberOfPlotTypes && *i >= m_numberOfColumnsForType[plotTypeIndex]) {
+    *i -= m_numberOfColumnsForType[plotTypeIndex++];
+  }
+  assert(plotTypeIndex < CartesianFunction::k_numberOfPlotTypes);
+  return static_cast<CartesianFunction::PlotType>(plotTypeIndex);
 }
 
 int ValuesController::maxNumberOfCells() {

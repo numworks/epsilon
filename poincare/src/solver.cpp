@@ -174,7 +174,7 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
   return NAN;
 }
 
-Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double resultPrecision, double valuePrecision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
   assert(ax < bx);
   double min = ax;
   double max = bx;
@@ -188,7 +188,7 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
     // The minimal value is already bigger than 0, return NAN.
     return Coordinate2D<double>(NAN, NAN);
   }
-  while (max - min > precision) {
+  while (max - min > resultPrecision) {
     currentAbscissa = (min + max) / 2.0;
     eval = evaluation(currentAbscissa, context, complexFormat, angleUnit, context1, context2, context3);
     if (eval > DBL_EPSILON) {
@@ -199,7 +199,7 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
       break;
     }
   }
-  if (std::fabs(eval) < precision) {
+  if (std::fabs(eval) < valuePrecision) {
     return Coordinate2D<double>(currentAbscissa, eval);
   }
   return Coordinate2D<double>(NAN, NAN);

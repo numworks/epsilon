@@ -20,7 +20,7 @@ public:
   Poincare::Expression expressionReduced(Poincare::Context * context) const override;
 
   static constexpr int k_numberOfPlotTypes = 3;
-  enum class PlotType {
+  enum class PlotType : uint8_t {
     Cartesian = 0,
     Polar = 1,
     Parametric = 2

@@ -94,7 +94,15 @@ KDRect ScrollView::visibleContentRect() {
 }
 
 void ScrollView::layoutSubviews() {
-  KDRect innerFrame = decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), bounds());
+  KDRect r1 = KDRectZero;
+  KDRect r2 = KDRectZero;
+  KDRect innerFrame = decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), bounds(), &r1, &r2);
+  if (!r1.isEmpty()) {
+    markRectAsDirty(r1);
+  }
+  if (!r2.isEmpty()) {
+    markRectAsDirty(r2);
+  }
   m_innerView.setFrame(innerFrame);
   KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin - innerFrame.x(), m_topMargin - innerFrame.y()));
   KDRect contentFrame = KDRect(absoluteOffset, contentSize());
@@ -128,17 +136,19 @@ View * ScrollView::BarDecorator::indicatorAtIndex(int index) {
   return &m_horizontalBar;
 }
 
-KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame) {
-  KDCoordinate hBarFrameBreadth = k_barsFrameBreadth * m_horizontalBar.update(
-    content.width(),
-    offset.x(),
-    frame.width()
-  );
-  KDCoordinate vBarFrameBreadth = k_barsFrameBreadth * m_verticalBar.update(
-    content.height(),
-    offset.y(),
-    frame.height()
-  );
+KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) {
+  bool hBarWasVisible = m_horizontalBar.visible();
+  bool hBarIsVisible = m_horizontalBar.update(content.width(), offset.x(), frame.width());
+  bool vBarWasVisible = m_verticalBar.visible();
+  bool vBarIsVisible = m_verticalBar.update(content.height(), offset.y(), frame.height());
+
+  KDCoordinate hBarFrameBreadth = k_barsFrameBreadth * hBarIsVisible;
+  KDCoordinate vBarFrameBreadth = k_barsFrameBreadth * vBarIsVisible;
+
+  // Mark the vertical and horizontal rects as dirty id needed
+  *dirtyRect1 = hBarWasVisible == hBarIsVisible ? KDRectZero : KDRect(frame.width() - k_barsFrameBreadth, 0, k_barsFrameBreadth, frame.height());
+  *dirtyRect2 = vBarWasVisible == vBarIsVisible ? KDRectZero : KDRect(0, frame.height() - k_barsFrameBreadth, frame.width(), k_barsFrameBreadth);
+
   /* If the two indicators are visible, we leave an empty rectangle in the right
    * bottom corner. Otherwise, the only indicator uses all the height/width. */
   m_verticalBar.setFrame(KDRect(
@@ -166,7 +176,8 @@ View * ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
   }
 }
 
-KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame) {
+KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) {
+  // There is no need to dirty the rects
   KDSize arrowSize = KDFont::LargeFont->glyphSize();
   KDCoordinate topArrowFrameBreadth = arrowSize.height() * m_topArrow.update(0 < offset.y());
   KDCoordinate rightArrowFrameBreadth = arrowSize.width() * m_rightArrow.update(offset.x() + frame.width() < content.width());

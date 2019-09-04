@@ -16,6 +16,13 @@ const char * IntervalParameterSelectorController::title() {
   return I18n::translate(I18n::Message::IntervalSet);
 }
 
+void IntervalParameterSelectorController::viewDidDisappear() {
+  /* Deselect the table properly because it needs to be relayouted the next time
+   * it appears: the number of rows might change according to the plot type. */
+  m_selectableTableView.deselectTable(false);
+  m_selectableTableView.setFrame(KDRectZero);
+}
+
 void IntervalParameterSelectorController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
@@ -37,8 +44,17 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
 }
 
 int IntervalParameterSelectorController::numberOfRows() {
-  return MaxNumberOfRows;
-};
+  int rowCount = 0;
+  int plotTypeIndex = 0;
+  Shared::CartesianFunction::PlotType plotType;
+  while (plotTypeIndex < Shared::CartesianFunction::k_numberOfPlotTypes) {
+    plotType = static_cast<Shared::CartesianFunction::PlotType>(plotTypeIndex);
+    bool plotTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfType(plotType) > 0;
+    rowCount += plotTypeIsShown;
+    plotTypeIndex++;
+  }
+  return rowCount;
+}
 
 HighlightCell * IntervalParameterSelectorController::reusableCell(int index) {
   assert(0 <= index && index < reusableCellCount());
@@ -46,7 +62,7 @@ HighlightCell * IntervalParameterSelectorController::reusableCell(int index) {
 }
 
 int IntervalParameterSelectorController::reusableCellCount() {
-  return MaxNumberOfRows;
+  return Shared::CartesianFunction::k_numberOfPlotTypes;
 }
 
 void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -56,8 +72,20 @@ void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell 
 }
 
 Shared::CartesianFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {
-  assert(0 <= j && j < const_cast<IntervalParameterSelectorController *>(this)->numberOfRows());
-  return static_cast<Shared::CartesianFunction::PlotType>(j);
+  int rowCount = 0;
+  int plotTypeIndex = 0;
+  Shared::CartesianFunction::PlotType plotType;
+  while (plotTypeIndex < Shared::CartesianFunction::k_numberOfPlotTypes) {
+    plotType = static_cast<Shared::CartesianFunction::PlotType>(plotTypeIndex);
+    bool plotTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfType(plotType) > 0;
+    if (plotTypeIsShown && rowCount == j) {
+      break;
+    }
+    rowCount += plotTypeIsShown;
+    plotTypeIndex++;
+  }
+  assert(rowCount == j);
+  return plotType;
 }
 
 I18n::Message IntervalParameterSelectorController::messageForType(Shared::CartesianFunction::PlotType plotType) {

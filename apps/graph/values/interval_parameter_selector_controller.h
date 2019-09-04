@@ -11,6 +11,7 @@ public:
   IntervalParameterSelectorController();
   const char * title() override;
   View * view() override { return &m_selectableTableView; }
+  void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
@@ -19,10 +20,9 @@ public:
   HighlightCell * reusableCell(int index) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  static constexpr int MaxNumberOfRows = Shared::CartesianFunction::k_numberOfPlotTypes;
   Shared::CartesianFunction::PlotType plotTypeAtRow(int j) const;
   I18n::Message messageForType(Shared::CartesianFunction::PlotType plotType);
-  MessageTableCellWithChevron m_intervalParameterCell[MaxNumberOfRows];
+  MessageTableCellWithChevron m_intervalParameterCell[Shared::CartesianFunction::k_numberOfPlotTypes];
   SelectableTableView m_selectableTableView;
 };
 

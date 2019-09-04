@@ -35,7 +35,7 @@ public:
     virtual ~Decorator() = default;
     virtual int numberOfIndicators() const { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
-    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) { return frame; }
+    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
   };
 
@@ -44,7 +44,7 @@ public:
     BarDecorator() : m_verticalBar(), m_horizontalBar() {}
     int numberOfIndicators() const override { return 2; }
     View * indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) override;
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
   private:
@@ -63,7 +63,7 @@ public:
     {}
     int numberOfIndicators() const override { return 4; }
     View * indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) override;
     void setBackgroundColor(KDColor c) override;
   private:
     ScrollViewArrow m_topArrow;

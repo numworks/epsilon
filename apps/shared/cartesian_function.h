@@ -67,8 +67,8 @@ private:
     CartesianFunctionRecordDataBuffer(KDColor color) :
       FunctionRecordDataBuffer(color),
       m_plotType(PlotType::Cartesian),
-      m_displayDerivative(false),
-      m_domain(-INFINITY, INFINITY)
+      m_domain(-INFINITY, INFINITY),
+      m_displayDerivative(false)
     {}
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
@@ -80,8 +80,8 @@ private:
     void setTMax(float tMax) { m_domain.setMax(tMax); }
   private:
     PlotType m_plotType;
-    bool m_displayDerivative;
     Range1D m_domain;
+    bool m_displayDerivative;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];

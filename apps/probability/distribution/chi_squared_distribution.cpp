@@ -40,7 +40,7 @@ bool ChiSquaredDistribution::authorizedValueAtIndex(float x, int index) const {
 }
 
 double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  if (x < 0.0) {
+  if (x < DBL_EPSILON) {
     return 0.0;
   }
   double result = 0.0;
@@ -79,7 +79,7 @@ double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(doubl
     2.0 * *probability * std::exp(std::lgamma(ceilKOver2)) / (exp(-kOver2Minus1) * std::pow(kOver2Minus1, kOver2Minus1)) :
     30.0; // Ad hoc value
   xmax = std::isnan(xmax) ? 1000000000.0 : xmax;
-  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, DBL_EPSILON, maxDouble(xMax(), xmax));
+  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, FLT_EPSILON, maxDouble(xMax(), xmax));
 }
 
 }

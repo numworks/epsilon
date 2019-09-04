@@ -19,7 +19,6 @@ extern "C" {
 namespace Poincare {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 PrintFloat::Long::Long(int64_t i) :
   m_negative(i < 0)
@@ -242,14 +241,15 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     if (exponentInBase10 >= 0) {
       numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
     } else {
+      /* exponentInBase10 < 0, so we add |exponentInBase10| to count 0 added
+       * before significant digits */
       numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits - exponentInBase10;
     }
   } else if (mode == Preferences::PrintFloatMode::Scientific) {
     numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
   } else {
     assert(mode == Preferences::PrintFloatMode::Engineering);
-    numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits + maxInt(0, (numberOfSignificantDigits%3) - numberOfSignificantDigits + 1);
-    assert(numberOfCharsForMantissaWithoutSign <= numberOfSignificantDigits);
+    numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
   }
 
   /* The number of digits in a mantissa is capped because the maximal int64_t is

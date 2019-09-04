@@ -80,17 +80,17 @@ Layout Calculation::createApproximateOutputLayout(Context * context) {
 }
 
 KDCoordinate Calculation::height(Context * context, bool expanded) {
-  KDCoordinate * memoizedHeight = expanded ? &m_expandedHeight : &m_height;
-  if (*memoizedHeight < 0) {
+  KDCoordinate result =  expanded ? m_expandedHeight : m_height;
+  if (result < 0) {
     DisplayOutput display = displayOutput(context);
     Layout inputLayout = createInputLayout();
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
     if (display == DisplayOutput::ExactOnly) {
       KDCoordinate exactOutputHeight = createExactOutputLayout().layoutSize().height();
-      *memoizedHeight = inputHeight+exactOutputHeight;
+      result = inputHeight+exactOutputHeight;
     } else if (display == DisplayOutput::ApproximateOnly || (!expanded && display == DisplayOutput::ExactAndApproximateToggle)) {
       KDCoordinate approximateOutputHeight = createApproximateOutputLayout(context).layoutSize().height();
-      *memoizedHeight = inputHeight+approximateOutputHeight;
+      result = inputHeight+approximateOutputHeight;
     } else {
       assert(display == DisplayOutput::ExactAndApproximate || (display == DisplayOutput::ExactAndApproximateToggle && expanded));
       Layout approximateLayout = createApproximateOutputLayout(context);
@@ -98,17 +98,23 @@ KDCoordinate Calculation::height(Context * context, bool expanded) {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = maxCoordinate(exactLayout.baseline(), approximateLayout.baseline()) + maxCoordinate(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
-      *memoizedHeight = inputHeight + outputHeight;
+      result = inputHeight + outputHeight;
     }
     /* For all display output except ExactAndApproximateToggle, the selected
      * height and the usual height are identical. We update both heights in
      * theses cases. */
     if (display != DisplayOutput::ExactAndApproximateToggle) {
-      m_height = *memoizedHeight;
-      m_expandedHeight = *memoizedHeight;
+      m_height = result;
+      m_expandedHeight = result;
+    } else {
+      if (expanded) {
+        m_expandedHeight = result;
+      } else {
+        m_height = result;
+      }
     }
   }
-  return *memoizedHeight;
+  return result;
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context * context) {

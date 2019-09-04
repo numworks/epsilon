@@ -72,7 +72,6 @@ private:
   /* SequenceRecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in
    * Shared::Function::FunctionRecordDataBuffer about packing. */
-#pragma pack(push,1)
   class SequenceRecordDataBuffer : public FunctionRecordDataBuffer {
   public:
     SequenceRecordDataBuffer(KDColor color) :
@@ -100,12 +99,11 @@ private:
 #if __EMSCRIPTEN__
     // See comment about emscripten alignement in Shared::Function::FunctionRecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_short m_initialConditionSizes[2];
+    emscripten_align1_short m_initialConditionSizes[2] __attribute__((packed));
 #else
-    uint16_t m_initialConditionSizes[2];
+    uint16_t m_initialConditionSizes[2] __attribute__((packed));
 #endif
   };
-#pragma pack(pop)
 
   class SequenceModel : public Shared::ExpressionModel {
   public:

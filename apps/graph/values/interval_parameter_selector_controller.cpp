@@ -29,7 +29,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();
     Shared::CartesianFunction::PlotType plotType = plotTypeAtRow(selectedRow());
     controller->setTitle(messageForType(plotType));
-    controller->setInterval(App::app()->interval());
+    controller->setInterval(App::app()->intervalForType(plotType));
     stack->push(controller);
     return true;
   }

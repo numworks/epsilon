@@ -38,6 +38,7 @@ private:
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
+  Shared::CartesianFunction::PlotType plotTypeAtColumn(int * i) const;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;

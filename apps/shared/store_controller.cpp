@@ -148,7 +148,7 @@ int StoreController::typeAtLocation(int i, int j) {
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle the separator
   if (typeAtLocation(i, j) == k_editableCellType) {
-    bool shouldHaveLeftSeparator = i % DoublePairStore::k_numberOfColumnsPerSeries == 0;
+    bool shouldHaveLeftSeparator = i > 0 && ( i % DoublePairStore::k_numberOfColumnsPerSeries == 0);
     static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
   // Handle hidden cells

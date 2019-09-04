@@ -61,8 +61,7 @@ private:
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on
    * Shared::Function::FunctionRecordDataBuffer about packing. */
-#pragma pack(push,1)
-  class CartesianFunctionRecordDataBuffer : public FunctionRecordDataBuffer {
+  class __attribute__((packed)) CartesianFunctionRecordDataBuffer : public FunctionRecordDataBuffer {
   public:
     CartesianFunctionRecordDataBuffer(KDColor color) :
       FunctionRecordDataBuffer(color),
@@ -86,7 +85,6 @@ private:
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];
   };
-#pragma pack(pop)
   class Model : public ExpressionModel {
   public:
     void * expressionAddress(const Ion::Storage::Record * record) const override;

@@ -84,6 +84,9 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
   if (floatBody < 1) {
    floatBody = 1;
   }
+  if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Engineering && floatBody < 3) {
+    floatBody = 3;
+  }
   if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
     floatBody = PrintFloat::k_numberOfStoredSignificantDigits;
   }

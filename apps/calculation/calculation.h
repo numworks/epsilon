@@ -16,7 +16,7 @@ class CalculationStore;
  *  |m_displayOutput|  m_height  |m_expandedHeight|m_equalSign|m_inputText|m_exactOuputText|m_approximateOuputText|
  *
  * */
-#pragma pack(push,1)
+
 class Calculation {
 public:
   enum class EqualSign : uint8_t {
@@ -77,12 +77,11 @@ private:
    * by user (of maximum length TextField::maxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...) */
   DisplayOutput m_displayOutput;
-  KDCoordinate m_height;
-  KDCoordinate m_expandedHeight;
+  KDCoordinate m_height __attribute__((packed));
+  KDCoordinate m_expandedHeight __attribute__((packed));
   EqualSign m_equalSign;
   char m_inputText[0]; // MUST be the last member variable
 };
-#pragma pack(pop)
 
 }
 

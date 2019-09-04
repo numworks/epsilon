@@ -111,10 +111,12 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
   if (*probability <= 0.0) {
     return -INFINITY;
   }
+  double valuePrecision = FLT_EPSILON;
   Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
       ax,
       bx,
-      FLT_EPSILON,
+      DBL_EPSILON,
+      valuePrecision,
       [](double x, Poincare::Context * context, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
         const Distribution * distribution = reinterpret_cast<const Distribution *>(context1);
         const double * proba = reinterpret_cast<const double *>(context2);
@@ -126,7 +128,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
       this,
       probability,
       nullptr);
-  assert(std::isnan(result.x2()) || std::fabs(result.x2()) < FLT_EPSILON);
+  assert(std::isnan(result.x2()) || std::fabs(result.x2()) < valuePrecision);
   return result.x1();
 }
 

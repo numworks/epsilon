@@ -2,6 +2,7 @@
 #define GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 
 #include <escher.h>
+#include "../../shared/cartesian_function.h"
 
 namespace Graph {
 
@@ -18,8 +19,9 @@ public:
   HighlightCell * reusableCell(int index) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  static constexpr int MaxNumberOfRows = 1;
-  I18n::Message messageAtIndex(int index);
+  static constexpr int MaxNumberOfRows = Shared::CartesianFunction::k_numberOfPlotTypes;
+  Shared::CartesianFunction::PlotType plotTypeAtRow(int j) const;
+  I18n::Message messageForType(Shared::CartesianFunction::PlotType plotType);
   MessageTableCellWithChevron m_intervalParameterCell[MaxNumberOfRows];
   SelectableTableView m_selectableTableView;
 };

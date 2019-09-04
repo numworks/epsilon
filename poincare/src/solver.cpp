@@ -174,19 +174,18 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
   return NAN;
 }
 
-Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double resultPrecision, double valuePrecision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3) {
+Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double resultPrecision, double valuePrecision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3, double * resultEvaluation) {
   assert(ax < bx);
   double min = ax;
   double max = bx;
   double currentAbscissa = min;
   double eval = evaluation(currentAbscissa, context, complexFormat, angleUnit, context1, context2, context3);
   if (eval >= 0) {
-    if (eval <= DBL_EPSILON) {
-      // The value on the left bracket is 0, return it.
-      return Coordinate2D<double>(currentAbscissa, eval);
+    if (resultEvaluation != nullptr) {
+      *resultEvaluation = eval;
     }
     // The minimal value is already bigger than 0, return NAN.
-    return Coordinate2D<double>(NAN, NAN);
+    return Coordinate2D<double>(currentAbscissa, eval);
   }
   while (max - min > resultPrecision) {
     currentAbscissa = (min + max) / 2.0;
@@ -199,10 +198,10 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
       break;
     }
   }
-  if (std::fabs(eval) < valuePrecision) {
-    return Coordinate2D<double>(currentAbscissa, eval);
+  if (resultEvaluation != nullptr) {
+    *resultEvaluation = eval;
   }
-  return Coordinate2D<double>(NAN, NAN);
+  return Coordinate2D<double>(currentAbscissa, eval);
 }
 
 template<typename T>

@@ -54,7 +54,6 @@ protected:
    * - increase the size of the storage file
    * - introduce junk memory zone which are then crc-ed in Storage::checksum
    *   creating dependency on uninitialized values. */
-#pragma pack(push,1)
   class FunctionRecordDataBuffer {
   public:
     FunctionRecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
@@ -73,13 +72,12 @@ protected:
      * version of uint16_t type to avoid producing an alignment error on the
      * emscripten platform. */
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_short m_color;
+    emscripten_align1_short m_color __attribute__((packed));
 #else
-    uint16_t m_color;
+    uint16_t m_color __attribute__((packed));
 #endif
     bool m_active;
   };
-#pragma pack(pop)
 private:
   FunctionRecordDataBuffer * recordData() const;
 };

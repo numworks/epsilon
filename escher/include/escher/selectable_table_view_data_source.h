@@ -10,8 +10,8 @@ public:
     m_selectedCellY(-1)
   {
   }
-  int selectedRow() { return m_selectedCellY; }
-  int selectedColumn() { return m_selectedCellX; }
+  int selectedRow() const { return m_selectedCellY; }
+  int selectedColumn() const { return m_selectedCellX; }
   void selectRow(int j) { m_selectedCellY = j; }
   void selectColumn(int i) { m_selectedCellX = i; }
   void selectCellAtLocation(int i, int j) {

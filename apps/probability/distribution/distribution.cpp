@@ -128,7 +128,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
       nullptr);
   /* Either no result was found, the precision is ok or the result was outside
    * the given ax bx bounds */
-  assert(std::isnan(result.x2()) || std::fabs(result.x2()) <= DBL_EPSILON || result.x1() == ax);
+  assert(std::isnan(result.x2()) || std::fabs(result.x2()) <= 100.0*DBL_EPSILON || result.x1() == ax);
   return result.x1();
 }
 

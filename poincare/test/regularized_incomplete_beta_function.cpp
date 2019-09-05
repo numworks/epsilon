@@ -7,7 +7,7 @@ using namespace Poincare;
 
 void assert_regularized_incomplete_beta_function_is(double a, double b, double x, double result) {
   double r = RegularizedIncompleteBetaFunction(a, b, x);
-  quiz_assert(std::abs(r - result) < FLT_EPSILON/10.0);
+  quiz_assert(std::fabs(r - result) < FLT_EPSILON/10.0);
 }
 
 QUIZ_CASE(regularized_incomplete_beta_function) {

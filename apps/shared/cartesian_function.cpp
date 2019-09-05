@@ -95,15 +95,7 @@ Poincare::Expression CartesianFunction::expressionReduced(Poincare::Context * co
 }
 
 I18n::Message CartesianFunction::parameterMessageName() const {
-  PlotType type = plotType();
-  if (type == PlotType::Cartesian) {
-    return I18n::Message::X;
-  }
-  if (type == PlotType::Polar) {
-    return I18n::Message::Theta;
-  }
-  assert(plotType() == PlotType::Parametric);
-  return I18n::Message::T;
+  return ParameterMessageForPlotType(plotType());
 }
 
 CodePoint CartesianFunction::symbol() const {
@@ -159,6 +151,17 @@ void CartesianFunction::setPlotType(PlotType newPlotType) {
     newExpr.setDimensions(2, 1);
     setExpressionContent(newExpr);
   }
+}
+
+I18n::Message CartesianFunction::ParameterMessageForPlotType(PlotType plotType) {
+  if (plotType == PlotType::Cartesian) {
+    return I18n::Message::X;
+  }
+  if (plotType == PlotType::Polar) {
+    return I18n::Message::Theta;
+  }
+  assert(plotType == PlotType::Parametric);
+  return I18n::Message::T;
 }
 
 template <typename T>

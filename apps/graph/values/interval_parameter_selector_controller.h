@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "../../shared/cartesian_function.h"
+#include <apps/shared/interval_parameter_controller.h>
 
 namespace Graph {
 
@@ -19,6 +20,7 @@ public:
   int reusableCellCount() override;
   HighlightCell * reusableCell(int index) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::CartesianFunction::PlotType plotType);
 private:
   Shared::CartesianFunction::PlotType plotTypeAtRow(int j) const;
   I18n::Message messageForType(Shared::CartesianFunction::PlotType plotType);

@@ -34,10 +34,6 @@ public:
   Responder * defaultController() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  static constexpr KDCoordinate k_topMargin = Metric::CommonSmallMargin;
-  static constexpr KDCoordinate k_bottomMargin = Metric::CommonSmallMargin;
-  static constexpr KDCoordinate k_leftMargin = Metric::CommonSmallMargin;
-  static constexpr KDCoordinate k_rightMargin = Metric::CommonRightMargin;
   static constexpr KDCoordinate k_abscissaCellWidth = 100;
   static constexpr KDCoordinate k_ordinateCellWidth = 100;
 

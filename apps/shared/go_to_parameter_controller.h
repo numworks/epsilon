@@ -14,14 +14,14 @@ public:
   int numberOfRows() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
-  void setParameterName(I18n::Message message) { m_abscisseCell.setMessage(message); }
+  void setParameterName(I18n::Message message) { m_parameterCell.setMessage(message); }
   CurveViewCursor * m_cursor;
   InteractiveCurveViewRange * m_graphRange;
 private:
   void buttonAction() override;
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  MessageTableCellWithEditableText m_abscisseCell;
+  MessageTableCellWithEditableText m_parameterCell;
 };
 
 }

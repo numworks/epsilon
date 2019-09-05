@@ -29,6 +29,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     m_functionTitleCells[i].setFont(KDFont::SmallFont);
   }
   setupAbscissaCellsAndTitleCells(inputEventHandlerDelegate);
+  m_selectableTableView.setDelegate(this);
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -99,6 +100,15 @@ I18n::Message ValuesController::emptyMessage() {
     return I18n::Message::NoFunction;
   }
   return I18n::Message::NoActivatedFunction;
+}
+
+void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  const int i = selectedColumn();
+  const int j = selectedRow();
+  const int numberOfElementsInCol = numberOfElementsInColumn(i);
+  if (j > 1 + numberOfElementsInCol) {
+    selectCellAtLocation(i, 1 + numberOfElementsInCol);
+  }
 }
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {

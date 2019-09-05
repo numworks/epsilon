@@ -56,11 +56,12 @@ protected:
   virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
   int numberOfElementsInColumn(int columnIndex) override;
+  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
+  SelectableTableView m_selectableTableView;
 private:
   Responder * tabController() const override;
-  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
@@ -70,7 +71,6 @@ private:
   virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex);
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
-  SelectableTableView m_selectableTableView;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;

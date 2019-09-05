@@ -32,8 +32,36 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
+  // Handle hidden cells
   int typeAtLoc = typeAtLocation(i,j);
+  if (typeAtLoc == k_editableValueCellType) {
+    StoreCell * storeCell = (StoreCell *)cell;
+    storeCell->setSeparatorLeft(i > 0);
+  }
+
+  const int numberOfElementsInCol = numberOfElementsInColumn(i);
+  if (j == numberOfElementsInCol+1) {
+    if (typeAtLoc == k_notEditableValueCellType) {
+      Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
+      myCell->setText("");
+    } else if (typeAtLoc == k_editableValueCellType) {
+      StoreCell * myCell = static_cast<StoreCell *>(cell);
+      myCell->editableTextCell()->textField()->setText("");
+    }
+    return;
+  }
+  if (j > numberOfElementsInCol + 1) {
+    if (typeAtLoc == k_notEditableValueCellType) {
+      Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
+      myCell->setHide(true);
+    } else if (typeAtLoc == k_editableValueCellType) {
+      StoreCell * myCell = static_cast<StoreCell *>(cell);
+      myCell->setHide(true);
+    }
+    return;
+  }
+
+  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   if (typeAtLoc == k_abscissaTitleCellType) {
     AbscissaTitleCell * myTitleCell = (AbscissaTitleCell *)cell;
     Ion::Storage::Record record = recordAtColumn(i+1);
@@ -58,10 +86,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     myFunctionCell->setColor(function->color());
     return;
   }
-  if (typeAtLoc == k_editableValueCellType) {
-    StoreCell * storeCell = (StoreCell *)cell;
-    storeCell->setSeparatorLeft(i > 0);
-  }
+
 }
 
 int ValuesController::typeAtLocation(int i, int j) {

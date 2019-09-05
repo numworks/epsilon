@@ -55,6 +55,7 @@ protected:
   virtual void updateNumberOfColumns();
   virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
+  int numberOfElementsInColumn(int columnIndex) override;
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
 private:
@@ -62,7 +63,6 @@ private:
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  int numberOfElementsInColumn(int columnIndex) override;
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;

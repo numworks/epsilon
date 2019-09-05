@@ -27,6 +27,7 @@ public:
   };
   PlotType plotType() const;
   void setPlotType(PlotType plotType);
+  static I18n::Message ParameterMessageForPlotType(PlotType plotType);
 
   // Evaluation
   Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const {

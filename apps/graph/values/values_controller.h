@@ -14,7 +14,7 @@
 
 namespace Graph {
 
-class ValuesController : public Shared::ValuesController {
+class ValuesController : public Shared::ValuesController, public SelectableTableViewDelegate {
 public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header);
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
@@ -29,6 +29,7 @@ public:
   IntervalParameterSelectorController * intervalParameterSelectorController() {
     return &m_intervalParameterSelectorController;
   }
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
   constexpr static int k_maxNumberOfFunctions = 5;
   constexpr static int k_maxNumberOfAbscissaCells = Shared::CartesianFunction::k_numberOfPlotTypes * k_maxNumberOfRows;

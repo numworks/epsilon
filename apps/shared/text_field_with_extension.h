@@ -22,6 +22,7 @@ public:
     TextField(parentResponder, textBuffer, textBufferSize, draftTextBufferSize, inputEventHandlerDelegate, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
     m_extensionLength(extensionLength)
   {}
+  void setExtensionLength(size_t extensionLength) { m_extensionLength = extensionLength; }
 private:
   void willSetCursorLocation(const char * * location) override;
   bool privateRemoveEndOfLine() override;

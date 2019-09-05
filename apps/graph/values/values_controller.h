@@ -40,6 +40,7 @@ private:
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
+  I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   Shared::CartesianFunction::PlotType plotTypeAtColumn(int * i) const;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
@@ -52,7 +53,6 @@ private:
   int abscissaTitleCellsCount() const override { return Shared::CartesianFunction::k_numberOfPlotTypes; }
   EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   ViewController * functionParameterController() override;
-  I18n::Message valuesParameterControllerPageTitle() const override;
 
   int m_numberOfColumnsForType[Shared::CartesianFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];

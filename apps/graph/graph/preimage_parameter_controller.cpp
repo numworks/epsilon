@@ -15,8 +15,7 @@ PreimageParameterController::PreimageParameterController(
     parentResponder,
     inputEventHandlerDelegate,
     graphRange,
-    cursor,
-    I18n::Message::Y
+    cursor
   ),
   m_preimageGraphController(preimageGraphController)
 {

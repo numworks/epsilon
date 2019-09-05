@@ -8,7 +8,7 @@ namespace Sequence {
 
 CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   FunctionCurveParameterController(),
-  m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor, I18n::Message::N),
+  m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor),
   m_sumCell(I18n::Message::TermSum),
   m_graphController(graphController)
 {

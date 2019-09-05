@@ -13,8 +13,8 @@ template<typename T>
 void assert_next_and_previous_IEEE754_is(T a, T b) {
   T next = IEEE754<T>::next(a);
   T previous = IEEE754<T>::previous(b);
-  assert((std::isnan(next) && std::isnan(b)) || next == b);
-  assert((std::isnan(previous) && std::isnan(a)) || previous == a);
+  quiz_assert((std::isnan(next) && std::isnan(b)) || next == b);
+  quiz_assert((std::isnan(previous) && std::isnan(a)) || previous == a);
 }
 
 QUIZ_CASE(ieee754_next_and_previous) {
@@ -37,7 +37,7 @@ QUIZ_CASE(ieee754_next_and_previous) {
   assert_next_and_previous_IEEE754_is<double>(-0.0, 0.0);
   assert_next_and_previous_IEEE754_is<double>(-4.94065645841246544176568792868E-324, -0.0);
   assert_next_and_previous_IEEE754_is<double>(-1.38737906372912431085182213247E201, -1.38737906372912403890916981028E201);
-  assert(IEEE754<double>::next(1.79769313486231570814527423732E308) == INFINITY);
-  assert(IEEE754<double>::previous(-1.79769313486231570814527423732E308) == -INFINITY);
+  quiz_assert(IEEE754<double>::next(1.79769313486231570814527423732E308) == INFINITY);
+  quiz_assert(IEEE754<double>::previous(-1.79769313486231570814527423732E308) == -INFINITY);
 
 }

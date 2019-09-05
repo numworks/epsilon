@@ -57,6 +57,7 @@ protected:
   bool m_numberOfColumnsNeedUpdate;
   SelectableTableView m_selectableTableView;
 private:
+  virtual void setStartEndMessages(Shared::IntervalParameterController * controller, int column) = 0;
   Responder * tabController() const override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;

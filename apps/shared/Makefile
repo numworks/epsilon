@@ -37,6 +37,7 @@ app_shared_src = $(addprefix apps/shared/,\
   function_store.cpp \
   function_title_cell.cpp \
   go_to_parameter_controller.cpp \
+  hideable_even_odd_buffer_text_cell.cpp \
   hideable_even_odd_cell.cpp \
   hideable_even_odd_editable_text_cell.cpp \
   initialisation_parameter_controller.cpp \

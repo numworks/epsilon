@@ -20,6 +20,7 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
 
 void GoToParameterController::setXPrediction(bool xPrediction) {
   m_xPrediction = xPrediction;
+  setParameterName(xPrediction ? I18n::Message::X : I18n::Message::Y);
 }
 
 const char * GoToParameterController::title() {
@@ -76,19 +77,6 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   return true;
-}
-
-void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows()-1) {
-    return;
-  }
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
-  if (m_xPrediction) {
-    myCell->setMessage(I18n::Message::X);
-  } else {
-    myCell->setMessage(I18n::Message::Y);
-  }
-  FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
 }

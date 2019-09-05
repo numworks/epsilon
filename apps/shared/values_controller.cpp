@@ -250,14 +250,6 @@ int ValuesController::numberOfElementsInColumn(int columnIndex) {
   return intervalAtColumn(columnIndex)->numberOfElements();
 }
 
-double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
-  //TODO LEA RUBEN Careful with merge
-  //TODO LEA RUBEN change with evaluationOfParameterAtColumn? evaluate2DAtParameter ?
-  Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  return xy.x2();
-}
-
 void ValuesController::updateNumberOfColumns() {
   m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
 }

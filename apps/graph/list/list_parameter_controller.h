@@ -11,14 +11,7 @@ class ListController;
 
 class ListParameterController : public Shared::ListParameterController {
 public:
-  ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, InputEventHandlerDelegate * inputEventHandlerDelegate) :
-    Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
-    m_listController(listController),
-    m_typeCell(),
-    m_typeParameterController(this),
-    m_domainParameterController(nullptr, inputEventHandlerDelegate),
-    m_renameCell(I18n::Message::Rename)
-  {}
+  ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, InputEventHandlerDelegate * inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;
   // ListViewDataSource
   HighlightCell * reusableCell(int index, int type) override;

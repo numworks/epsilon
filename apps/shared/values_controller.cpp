@@ -17,10 +17,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_abscissaParameterController(this)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setTopMargin(k_topMargin);
-  m_selectableTableView.setRightMargin(k_rightMargin);
-  m_selectableTableView.setBottomMargin(k_bottomMargin);
-  m_selectableTableView.setLeftMargin(k_leftMargin);
+  m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
 }
 

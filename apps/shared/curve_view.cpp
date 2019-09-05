@@ -503,11 +503,16 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 constexpr static int k_maxNumberOfIterations = 10;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+  float previousT = NAN;
+  float t = NAN;
   float previousX = NAN;
   float x = NAN;
   float previousY = NAN;
   float y = NAN;
-  for (float t = tStart; t <= tEnd; t += tStep) {
+  int i = 0;
+  do {
+    previousT = t;
+    t = tStart + (i++) * tStep;
     /* When |tStart| >> tStep, tEnd + tStep = tStart. In that case, quit
      * the infinite loop. */
     if (t == t-tStep || t == t+tStep) {
@@ -527,8 +532,8 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    jointDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, t - tStep, previousX, previousY, t, x, y, color, k_maxNumberOfIterations);
-  }
+    jointDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, k_maxNumberOfIterations);
+  } while (t < tEnd);
 }
 
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {

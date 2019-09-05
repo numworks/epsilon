@@ -6,7 +6,9 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
   FloatParameterController<double>(parentResponder),
   m_interval(nullptr),
   m_intervalCells{},
-  m_title(I18n::Message::IntervalSet)
+  m_title(I18n::Message::IntervalSet),
+  m_startMessage(I18n::Message::XStart),
+  m_endMessage(I18n::Message::XEnd)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableTableView);
@@ -22,13 +24,20 @@ int IntervalParameterController::numberOfRows() {
   return k_totalNumberOfCell+1;
 }
 
+void IntervalParameterController::setStartEndMessages(I18n::Message startMessage, I18n::Message endMessage) {
+  m_startMessage = startMessage;
+  m_endMessage = endMessage;
+}
+
 void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == numberOfRows()-1) {
     return;
   }
+
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::Start, I18n::Message::End, I18n::Message::Step};
-  myCell->setMessage(labels[index]);
+  assert(index >= 0 && index < 3);
+  I18n::Message m = index == 0 ? m_startMessage : (index == 1 ? m_endMessage : I18n::Message::Step);
+  myCell->setMessage(m);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 

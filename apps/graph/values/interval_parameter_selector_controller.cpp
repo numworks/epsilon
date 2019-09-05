@@ -36,6 +36,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();
     Shared::CartesianFunction::PlotType plotType = plotTypeAtRow(selectedRow());
     controller->setTitle(messageForType(plotType));
+    setStartEndMessages(controller, plotType);
     controller->setInterval(App::app()->intervalForType(plotType));
     stack->push(controller);
     return true;
@@ -95,6 +96,17 @@ I18n::Message IntervalParameterSelectorController::messageForType(Shared::Cartes
     I18n::Message::IntervalT
   };
   return message[static_cast<size_t>(plotType)];
+}
+
+void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::CartesianFunction::PlotType plotType) {
+  if (plotType == Shared::CartesianFunction::PlotType::Cartesian) {
+    controller->setStartEndMessages(I18n::Message::XStart, I18n::Message::XEnd);
+  } else if (plotType == Shared::CartesianFunction::PlotType::Polar) {
+    controller->setStartEndMessages(I18n::Message::ThetaStart, I18n::Message::ThetaEnd);
+  } else {
+    assert(plotType == Shared::CartesianFunction::PlotType::Parametric);
+    controller->setStartEndMessages(I18n::Message::TStart, I18n::Message::TEnd);
+  }
 }
 
 }

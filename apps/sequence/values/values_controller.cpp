@@ -52,6 +52,10 @@ I18n::Message ValuesController::emptyMessage() {
   return I18n::Message::NoActivatedSequence;
 }
 
+void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
+  m_intervalParameterController.setStartEndMessages(I18n::Message::NStart, I18n::Message::NEnd);
+}
+
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   if (floatBody < 0) {
       return false;

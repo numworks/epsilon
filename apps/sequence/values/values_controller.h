@@ -20,6 +20,7 @@ public:
     return &m_intervalParameterController;
   }
 private:
+  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;

@@ -20,12 +20,16 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
-    if (valuesController->intervalParameterSelectorController()->numberOfRows() == 1) {
-      valuesController->intervalParameterController()->setInterval(valuesController->intervalAtColumn(0));
-      stack->push(valuesController->intervalParameterController());
+    IntervalParameterSelectorController * intervalSelectorController = valuesController->intervalParameterSelectorController();
+    if (intervalSelectorController->numberOfRows() == 1) {
+      IntervalParameterController * intervalController = valuesController->intervalParameterController();
+      intervalController->setInterval(valuesController->intervalAtColumn(0));
+      int i = 1;
+      intervalSelectorController->setStartEndMessages(intervalController, valuesController->plotTypeAtColumn(&i));
+      stack->push(intervalController);
       return true;
     }
-    stack->push(valuesController->intervalParameterSelectorController());
+    stack->push(intervalSelectorController);
     return true;
   }, this), k_font)
 {
@@ -99,7 +103,6 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     myFunctionCell->setColor(function->color());
     return;
   }
-
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
@@ -220,6 +223,11 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
     return eval.x2();
   }
   return eval.x1();
+}
+
+void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
+  int c = column+1;
+  m_intervalParameterSelectorController.setStartEndMessages(controller, plotTypeAtColumn(&c));
 }
 
 void ValuesController::updateNumberOfColumns() {

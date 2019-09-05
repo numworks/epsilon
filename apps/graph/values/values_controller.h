@@ -35,6 +35,7 @@ private:
   constexpr static int k_maxNumberOfAbscissaCells = Shared::CartesianFunction::k_numberOfPlotTypes * k_maxNumberOfRows;
   constexpr static int k_maxNumberOfCells = k_maxNumberOfFunctions * k_maxNumberOfRows;
 
+  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   void updateNumberOfColumns() override;
   Ion::Storage::Record recordAtColumn(int i) override;
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);

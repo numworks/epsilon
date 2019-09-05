@@ -7,7 +7,7 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
   FloatParameterController<double>(parentResponder),
   m_cursor(cursor),
   m_graphRange(graphRange),
-  m_abscisseCell(&m_selectableTableView, inputEventHandlerDelegate, this, symbol)
+  m_parameterCell(&m_selectableTableView, inputEventHandlerDelegate, this, symbol)
 {
 }
 
@@ -17,7 +17,7 @@ int GoToParameterController::numberOfRows() {
 
 HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {
   assert(index == 0);
-  return &m_abscisseCell;
+  return &m_parameterCell;
 }
 
 int GoToParameterController::reusableParameterCellCount(int type) {

@@ -54,8 +54,10 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     if (typeAtLoc == k_notEditableValueCellType) {
       Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
       myCell->setHide(true);
+      myCell->setText("");
     } else if (typeAtLoc == k_editableValueCellType) {
       StoreCell * myCell = static_cast<StoreCell *>(cell);
+      myCell->editableTextCell()->textField()->setText("");
       myCell->setHide(true);
     }
     return;

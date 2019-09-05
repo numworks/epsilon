@@ -513,13 +513,14 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
   do {
     previousT = t;
     t = tStart + (i++) * tStep;
-    /* When |tStart| >> tStep, tEnd + tStep = tStart. In that case, quit
-     * the infinite loop. */
-    if (t == t-tStep || t == t+tStep) {
-      return;
+    if (t <= tStart) {
+      t = tStart + FLT_EPSILON;
     }
-    if (t == tEnd) {
+    if (t >= tEnd) {
       t = tEnd - FLT_EPSILON;
+    }
+    if (previousT == t) {
+      break;
     }
     previousX = x;
     previousY = y;
@@ -533,7 +534,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
     jointDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, k_maxNumberOfIterations);
-  } while (t < tEnd);
+  } while (true);
 }
 
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {

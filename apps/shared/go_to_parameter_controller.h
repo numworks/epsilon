@@ -10,7 +10,7 @@ namespace Shared {
 
 class GoToParameterController : public FloatParameterController<double> {
 public:
-  GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
+  GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   int numberOfRows() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:

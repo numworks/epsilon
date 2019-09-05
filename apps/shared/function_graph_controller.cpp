@@ -158,8 +158,8 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
     return false;
   }
   selectFunctionWithCursor(nextActiveFunctionIndex);
-  Poincare::Coordinate2D<double> cursorPosition = xyValues(nextActiveFunctionIndex, m_cursor->x(), context);
-  m_cursor->moveTo(cursorPosition.x1(), cursorPosition.x1(), cursorPosition.x2());
+  Poincare::Coordinate2D<double> cursorPosition = xyValues(nextActiveFunctionIndex, m_cursor->t(), context);
+  m_cursor->moveTo(m_cursor->t(), cursorPosition.x1(), cursorPosition.x2());
   return true;
 }
 

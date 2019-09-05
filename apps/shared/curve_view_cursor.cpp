@@ -1,4 +1,5 @@
 #include "curve_view_cursor.h"
+#include <assert.h>
 #include <cmath>
 
 namespace Shared {
@@ -6,8 +7,9 @@ namespace Shared {
 CurveViewCursor::CurveViewCursor() : m_t(NAN), m_x(NAN), m_y(NAN) {}
 
 void CurveViewCursor::moveTo(double t, double x, double y) {
+  assert(!std::isnan(t));
   m_t = clipped(t, false);
-  m_x = clipped(x, false); //TODO LEA ?
+  m_x = clipped(x, true);
   m_y = clipped(y, true);
 }
 

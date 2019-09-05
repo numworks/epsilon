@@ -10,7 +10,7 @@ static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::Function::k_parenthesedArgumentLength, this, m_textFieldBuffer, k_textFieldBufferSize, k_textFieldBufferSize, nullptr, listController, font, 1.0f, 0.5f)
+  m_textField(Shared::Function::k_parenthesedThetaArgumentByteLength, this, m_textFieldBuffer, k_textFieldBufferSize, k_textFieldBufferSize, nullptr, listController, font, 1.0f, 0.5f)
 {
 }
 
@@ -26,6 +26,8 @@ Responder * TextFieldFunctionTitleCell::responder() {
 void TextFieldFunctionTitleCell::setEditing(bool editing) {
   Container::activeApp()->setFirstResponder(&m_textField);
   const char * previousText = m_textField.text();
+  bool titleIncludesTheta = *(UTF8Helper::CodePointSearch(previousText, UCodePointGreekSmallLetterTheta)) != 0;
+  m_textField.setExtensionLength(titleIncludesTheta ? Shared::Function::k_parenthesedThetaArgumentByteLength : Shared::Function::k_parenthesedXNTArgumentByteLength);
   m_textField.setEditing(true);
   m_textField.setText(previousText);
 }
@@ -42,10 +44,6 @@ void TextFieldFunctionTitleCell::setEven(bool even) {
 void TextFieldFunctionTitleCell::setColor(KDColor color) {
   FunctionTitleCell::setColor(color);
   m_textField.setTextColor(color);
-}
-
-void TextFieldFunctionTitleCell::setText(const char * title) {
-  m_textField.setText(title);
 }
 
 void TextFieldFunctionTitleCell::setHorizontalAlignment(float alignment) {

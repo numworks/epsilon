@@ -15,7 +15,6 @@ public:
   TextField * textField() { return &m_textField; }
   void setEditing(bool editing);
   bool isEditing() const;
-  void setText(const char * textContent);
   void setHorizontalAlignment(float alignment);
 
   // FunctionTitleCell

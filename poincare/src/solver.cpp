@@ -176,7 +176,7 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
 }
 
 
-Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double resultPrecision, double valuePrecision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3, double * resultEvaluation) {
+Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double resultPrecision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3, double * resultEvaluation) {
   assert(ax < bx);
   double min = ax;
   double max = bx;

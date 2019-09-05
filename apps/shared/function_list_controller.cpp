@@ -237,7 +237,7 @@ void FunctionListController::configureFunction(Ion::Storage::Record record) {
 
 void FunctionListController::computeTitlesColumnWidth(bool forceMax) {
   if (forceMax) {
-    m_titlesColumnWidth = nameWidth(Function::k_maxNameWithArgumentSize - 1)+k_functionTitleSumOfMargins;
+    m_titlesColumnWidth = nameWidth(Poincare::SymbolAbstract::k_maxNameSize + Function::k_parenthesedArgumentCodePointLength - 1)+k_functionTitleSumOfMargins;
     return;
   }
   KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
@@ -266,7 +266,7 @@ KDCoordinate FunctionListController::maxFunctionNameWidth() {
     assert(dotPosition != nullptr);
     maxNameLength = maxInt(maxNameLength, dotPosition-functionName);
   }
-  return nameWidth(maxNameLength + Function::k_parenthesedArgumentLength);
+  return nameWidth(maxNameLength + Function::k_parenthesedArgumentCodePointLength);
 }
 
 void FunctionListController::didChangeModelsList() {

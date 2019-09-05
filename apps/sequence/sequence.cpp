@@ -8,12 +8,17 @@
 #include <poincare/integer.h>
 #include "../shared/poincare_helpers.h"
 #include <string.h>
+#include <apps/i18n.h>
 #include <cmath>
 
 using namespace Shared;
 using namespace Poincare;
 
 namespace Sequence {
+
+I18n::Message Sequence::parameterMessageName() const {
+  return I18n::Message::N;
+}
 
 void Sequence::tidy() {
   m_definition.tidyName();

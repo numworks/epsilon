@@ -26,6 +26,7 @@ public:
   Sequence(Ion::Storage::Record record = Record()) :
     Function(record),
     m_nameLayout() {}
+  I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return 'n'; }
   void tidy() override;
   // MetaData getters

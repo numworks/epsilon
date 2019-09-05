@@ -3,7 +3,6 @@
 #include "poincare/src/parsing/parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <apps/i18n.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -64,10 +63,6 @@ void Function::setActive(bool active) {
 
 int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
-}
-
-I18n::Message Function::parameterMessageName() const {
-  return I18n::Message::X;
 }
 
 int Function::nameWithArgument(char * buffer, size_t bufferSize) {

@@ -61,12 +61,12 @@ private:
   Responder * tabController() const override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
+  virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) = 0;
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
   virtual I18n::Message valuesParameterMessageAtColumn(int columnIndex) const = 0;
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;
   };
-  virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex);
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;

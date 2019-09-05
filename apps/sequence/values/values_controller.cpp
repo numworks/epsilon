@@ -63,6 +63,12 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
 
+double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
+  ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
+  return xy.x2();
+}
+
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
   return App::app()->interval();
 }

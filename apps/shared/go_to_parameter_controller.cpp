@@ -3,11 +3,11 @@
 
 namespace Shared {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   FloatParameterController<double>(parentResponder),
   m_cursor(cursor),
   m_graphRange(graphRange),
-  m_parameterCell(&m_selectableTableView, inputEventHandlerDelegate, this, symbol)
+  m_parameterCell(&m_selectableTableView, inputEventHandlerDelegate, this)
 {
 }
 

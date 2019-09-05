@@ -121,7 +121,6 @@ int displayUniformTilingSize10(KDColor c) {
   constexpr int stampWidthPull = 80;
   KDColor stamp[stampHeightPull*stampHeightPull];
 
-  KDColor resetColor = (c == KDColorBlack ? KDColorWhite : KDColorBlack);
   for (int i=0; i<Ion::Display::Width/stampWidthPull; i++) {
     for (int j=0; j<Ion::Display::Height/stampHeightPull; j++) {
       for (int k=0; k<stampWidthPull*stampHeightPull; k++) {

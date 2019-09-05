@@ -10,7 +10,7 @@ void assert_regularized_gamma_is(double s, double x, double result) {
   double r = 0.0;
   const double precision = FLT_EPSILON;
   regularizedGamma(s, x, precision, Probability::ChiSquaredDistribution::k_maxRegularizedGammaIterations, &r);
-  quiz_assert(std::abs(r - result) <= precision);
+  quiz_assert(std::fabs(r - result) <= precision);
 }
 
 QUIZ_CASE(regularized_gamma) {

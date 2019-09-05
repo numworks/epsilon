@@ -20,6 +20,11 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
+    if (valuesController->intervalParameterSelectorController()->numberOfRows() == 1) {
+      valuesController->intervalParameterController()->setInterval(valuesController->intervalAtColumn(0));
+      stack->push(valuesController->intervalParameterController());
+      return true;
+    }
     stack->push(valuesController->intervalParameterSelectorController());
     return true;
   }, this), k_font)

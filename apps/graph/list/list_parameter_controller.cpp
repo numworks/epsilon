@@ -3,12 +3,24 @@
 #include "type_helper.h"
 #include "../../shared/poincare_helpers.h"
 #include "../app.h"
+#include <escher/metric.h>
 #include <assert.h>
 
 using namespace Shared;
 using namespace Poincare;
 
 namespace Graph {
+
+ListParameterController::ListParameterController(ListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, InputEventHandlerDelegate * inputEventHandlerDelegate) :
+  Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
+  m_listController(listController),
+  m_typeCell(),
+  m_typeParameterController(this),
+  m_domainParameterController(nullptr, inputEventHandlerDelegate),
+  m_renameCell(I18n::Message::Rename)
+{
+  m_selectableTableView.setMargins(Metric::CommonTopMargin, Metric::CommonTopMargin, Metric::CommonBottomMargin, Metric::CommonTopMargin); // Reduce the margins to make te text fit
+}
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
   switch (type) {

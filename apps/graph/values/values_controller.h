@@ -3,6 +3,7 @@
 
 #include "../cartesian_function_store.h"
 #include "../../shared/buffer_function_title_cell.h"
+#include "../../shared/hideable_even_odd_buffer_text_cell.h"
 #include "../../shared/values_controller.h"
 #include "../../shared/interval_parameter_controller.h"
 #include "../../shared/store_cell.h"
@@ -54,7 +55,7 @@ private:
 
   int m_numberOfColumnsForType[Shared::CartesianFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
-  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
+  Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   AbscissaTitleCell m_abscissaTitleCells[Shared::CartesianFunction::k_numberOfPlotTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   FunctionParameterController m_functionParameterController;

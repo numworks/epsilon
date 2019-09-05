@@ -15,11 +15,12 @@ int Interval::numberOfElements() {
 }
 
 void Interval::deleteElementAtIndex(int index) {
-  m_numberOfElements--;
-  for (int k = index; k < m_numberOfElements; k++) {
+  assert(!m_needCompute);
+  assert(m_numberOfElements > 0);
+  for (int k = index; k < m_numberOfElements-1; k++) {
     m_intervalBuffer[k] = m_intervalBuffer[k+1];
   }
-  m_intervalBuffer[m_numberOfElements] = 0.0f;
+  m_numberOfElements--;
 }
 
 double Interval::element(int i) {
@@ -70,7 +71,7 @@ void Interval::computeElements() {
   if (!m_needCompute) {
     return;
   }
-  if ( m_start > m_end) {
+  if (m_start > m_end) {
     m_numberOfElements = 0;
   } else {
     m_numberOfElements = m_step > 0 ? 1 + (m_end - m_start)/m_step : k_maxNumberOfElements;

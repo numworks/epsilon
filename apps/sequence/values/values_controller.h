@@ -22,6 +22,7 @@ public:
 private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
+  I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   int maxNumberOfCells() override { return k_maxNumberOfCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfSequences; }
   constexpr static int k_maxNumberOfSequences = 3;
@@ -29,7 +30,6 @@ private:
 
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::ValuesController::functionStore()); }
   ViewController * functionParameterController() override;
-  I18n::Message valuesParameterControllerPageTitle() const override;
   int abscissaCellsCount() const override { return k_maxNumberOfRows; }
   EvenOddEditableTextCell * abscissaCells(int j) override {
     assert (j >= 0 && j < k_maxNumberOfRows);

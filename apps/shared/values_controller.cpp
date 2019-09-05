@@ -84,7 +84,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     ViewController * parameterController = nullptr;
     if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
-      m_abscissaParameterController.setPageTitle(valuesParameterControllerPageTitle());
+      m_abscissaParameterController.setPageTitle(valuesParameterMessageAtColumn(selectedColumn()));
       intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
       parameterController = &m_abscissaParameterController;
     } else {

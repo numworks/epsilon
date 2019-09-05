@@ -65,6 +65,7 @@ private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
+  virtual I18n::Message valuesParameterMessageAtColumn(int columnIndex) const = 0;
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;
   };
@@ -78,7 +79,6 @@ private:
   virtual int abscissaTitleCellsCount() const = 0;
   virtual EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
   virtual ViewController * functionParameterController() = 0;
-  virtual I18n::Message valuesParameterControllerPageTitle() const = 0;
   ValuesParameterController m_abscissaParameterController;
 };
 

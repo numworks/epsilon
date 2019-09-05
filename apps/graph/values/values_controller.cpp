@@ -74,9 +74,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   if (typeAtLoc == k_abscissaTitleCellType) {
     AbscissaTitleCell * myTitleCell = (AbscissaTitleCell *)cell;
-    Ion::Storage::Record record = recordAtColumn(i+1);
-    Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
-    myTitleCell->setMessage(function->parameterMessageName());
+    myTitleCell->setMessage(valuesParameterMessageAtColumn(i));
     myTitleCell->setSeparatorLeft(i > 0);
     return;
   }
@@ -155,6 +153,10 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
   return App::app()->intervalForType(plotTypeAtColumn(&columnIndex));
 }
 
+I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
+  return CartesianFunction::ParameterMessageForPlotType(plotTypeAtColumn(&columnIndex));
+}
+
 CartesianFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
   int plotTypeIndex = 0;
   while (plotTypeIndex < CartesianFunction::k_numberOfPlotTypes && *i >= m_numberOfColumnsForType[plotTypeIndex]) {
@@ -194,10 +196,6 @@ ViewController * ValuesController::functionParameterController() {
   }
   m_functionParameterController.setRecord(record);
   return &m_functionParameterController;
-}
-
-I18n::Message ValuesController::valuesParameterControllerPageTitle() const {
-  return I18n::Message::X;
 }
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {

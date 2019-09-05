@@ -63,6 +63,10 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
   return App::app()->interval();
 }
 
+I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
+  return I18n::Message::NColumn;
+}
+
 ViewController * ValuesController::functionParameterController() {
 #if COPY_COLUMN
   m_sequenceParameterController.setRecord(recordAtColumn(selectedColumn()));
@@ -70,10 +74,6 @@ ViewController * ValuesController::functionParameterController() {
 #else
   return nullptr;
 #endif
-}
-
-I18n::Message ValuesController::valuesParameterControllerPageTitle() const {
-  return I18n::Message::NColumn;
 }
 
 }

@@ -1,4 +1,5 @@
 #include <poincare/solver.h>
+#include <poincare/ieee754.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -174,6 +175,7 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
   return NAN;
 }
 
+
 Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double resultPrecision, double valuePrecision, ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const void * context1, const void * context2, const void * context3, double * resultEvaluation) {
   assert(ax < bx);
   double min = ax;
@@ -184,11 +186,24 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
     if (resultEvaluation != nullptr) {
       *resultEvaluation = eval;
     }
-    // The minimal value is already bigger than 0, return NAN.
+    // The minimal value is already bigger than 0, return min.
     return Coordinate2D<double>(currentAbscissa, eval);
   }
   while (max - min > resultPrecision) {
     currentAbscissa = (min + max) / 2.0;
+    /* If the mean between min and max is the same double (in IEEE754
+     * representation) as one of the bounds - min or max, we look for another
+     * representable double between min and max strictly. If there is, we choose
+     * it instead, otherwise, we reached the most precise result possible. */
+    if (currentAbscissa == min) {
+      currentAbscissa = IEEE754<double>::next(min);
+    }
+    if (currentAbscissa == max) {
+      currentAbscissa = IEEE754<double>::previous(max);
+    }
+    if (currentAbscissa == min || currentAbscissa == max) {
+      break;
+    }
     eval = evaluation(currentAbscissa, context, complexFormat, angleUnit, context1, context2, context3);
     if (eval > DBL_EPSILON) {
       max = currentAbscissa;

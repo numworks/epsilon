@@ -96,10 +96,28 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     bool isDerivative = false;
     Ion::Storage::Record record = recordAtColumn(i, &isDerivative);
     Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
-    if (isDerivative) {
-      function->derivativeNameWithArgument(bufferName, bufferNameSize);
+    if (function->plotType() == CartesianFunction::PlotType::Parametric) {
+      bool isX = false;
+      if (i+1 < numberOfColumns() && typeAtLocation(i+1,j) == k_functionTitleCellType) {
+        isX = recordAtColumn(i+1) == record;
+        function = functionStore()->modelForRecord(record); // To pass Expiring pointer assertions
+      }
+      if (isX) {
+        // This is the parametric function x column title
+        function->name(bufferName, bufferNameSize);
+        myFunctionCell->setHorizontalAlignment(1.0f);
+      } else {
+        // This is the parametric function y column title
+        myFunctionCell->setHorizontalAlignment(0.0f);
+        strlcpy(bufferName, "(t)", bufferNameSize);
+      }
     } else {
-      function->nameWithArgument(bufferName, bufferNameSize);
+      myFunctionCell->setHorizontalAlignment(0.5f);
+      if (isDerivative) {
+        function->derivativeNameWithArgument(bufferName, bufferNameSize);
+      } else {
+        function->nameWithArgument(bufferName, bufferNameSize);
+      }
     }
     myFunctionCell->setText(bufferName);
     myFunctionCell->setColor(function->color());

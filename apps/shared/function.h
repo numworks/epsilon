@@ -22,8 +22,10 @@ public:
   };
   /* Possible arguments: n, x, t, θ
    * The CodePoint θ is two char long. */
-  constexpr static int k_parenthesedArgumentLength = 4;
-  constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedArgumentLength; /* Function name and null-terminating char + "(x)" */;
+  constexpr static int k_parenthesedArgumentCodePointLength = 3;
+  constexpr static int k_parenthesedThetaArgumentByteLength = 4;
+  constexpr static int k_parenthesedXNTArgumentByteLength = 3;
+  constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(x)" */;
   static bool BaseNameCompliant(const char * baseName, NameNotCompliantError * error = nullptr);
 
   // Constructors

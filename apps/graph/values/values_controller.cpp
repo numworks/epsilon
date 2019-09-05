@@ -41,16 +41,6 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
-  if (j == numberOfElementsInCol+1) {
-    if (typeAtLoc == k_notEditableValueCellType) {
-      Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
-      myCell->setText("");
-    } else if (typeAtLoc == k_editableValueCellType) {
-      StoreCell * myCell = static_cast<StoreCell *>(cell);
-      myCell->editableTextCell()->textField()->setText("");
-    }
-    return;
-  }
   if (j > numberOfElementsInCol + 1) {
     if (typeAtLoc == k_notEditableValueCellType) {
       Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
@@ -58,6 +48,25 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     } else if (typeAtLoc == k_editableValueCellType) {
       StoreCell * myCell = static_cast<StoreCell *>(cell);
       myCell->setHide(true);
+    }
+    return;
+  } else {
+    if (typeAtLoc == k_notEditableValueCellType) {
+      Shared::Hideable * myCell = static_cast<Shared::Hideable *>(static_cast<Shared::HideableEvenOddBufferTextCell *>(cell));
+      myCell->setHide(false);
+    } else if (typeAtLoc == k_editableValueCellType) {
+      StoreCell * myCell = static_cast<StoreCell *>(cell);
+      myCell->setHide(false);
+    }
+  }
+  if (j == numberOfElementsInCol+1) {
+    static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
+    if (typeAtLoc == k_notEditableValueCellType) {
+      Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
+      myCell->setText("");
+    } else if (typeAtLoc == k_editableValueCellType) {
+      StoreCell * myCell = static_cast<StoreCell *>(cell);
+      myCell->editableTextCell()->textField()->setText("");
     }
     return;
   }

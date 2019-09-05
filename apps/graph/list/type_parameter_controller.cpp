@@ -51,7 +51,7 @@ void TypeParameterController::viewWillAppear() {
 }
 
 KDCoordinate TypeParameterController::rowHeight(int j) {
-  return PlotTypeHelper::Layout(j).layoutSize().height() + 15;
+  return PlotTypeHelper::Layout(j).layoutSize().height() + 14;
 }
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

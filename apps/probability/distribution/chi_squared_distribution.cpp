@@ -51,7 +51,7 @@ double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x
 }
 
 double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(double * probability) {
-  /* We have to compute the values of the interval in chich to look for x.
+  /* We have to compute the values of the interval in which to look for x.
    * We cannot put xMin because xMin is < 0 for display purposes, and negative
    * values are not accepted.
    * The maximum of the interval: we want

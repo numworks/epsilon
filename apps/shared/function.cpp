@@ -65,9 +65,14 @@ int Function::printValue(double cursorT, double cursorX, double cursorY, char * 
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }
 
+int Function::name(char * buffer, size_t bufferSize) {
+  return SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
+}
+
 int Function::nameWithArgument(char * buffer, size_t bufferSize) {
-  const char * functionName = fullName();
-  size_t result = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize);
+  int funcNameSize = name(buffer, bufferSize);
+  assert(funcNameSize > 0);
+  size_t result = funcNameSize;
   assert(result <= bufferSize);
   buffer[result++] = '(';
   assert(result <= bufferSize);

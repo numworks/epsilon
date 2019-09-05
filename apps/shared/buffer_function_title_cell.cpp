@@ -5,7 +5,7 @@ namespace Shared {
 
 BufferFunctionTitleCell::BufferFunctionTitleCell(Orientation orientation, const KDFont * font) :
   FunctionTitleCell(orientation),
-  m_bufferTextView(font, 0.5f, 0.5f)
+  m_bufferTextView(font, 0.5f, k_verticalAlignment)
 {
 }
 

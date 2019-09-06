@@ -40,8 +40,7 @@ int ListController::numberOfExpressionRows() const {
 
 KDCoordinate ListController::expressionRowHeight(int j) {
   KDCoordinate defaultHeight = Metric::StoreRowHeight;
-  if (modelStore()->numberOfModels() < modelStore()->maxNumberOfModels() && j == numberOfRows() - 1) {
-    // Add sequence row
+  if (isAddEmptyRow(j)) {
     return defaultHeight;
   }
   Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));

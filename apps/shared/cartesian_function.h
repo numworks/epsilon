@@ -70,12 +70,12 @@ private:
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double step, double max, Poincare::Context * context, ComputePointOfInterest compute) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
-  /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
+  /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on
    * Shared::Function::RecordDataBuffer about packing. */
-  class __attribute__((packed)) CartesianFunctionRecordDataBuffer : public Function::RecordDataBuffer {
+  class __attribute__((packed)) RecordDataBuffer : public Function::RecordDataBuffer {
   public:
-    CartesianFunctionRecordDataBuffer(KDColor color) :
+    RecordDataBuffer(KDColor color) :
       Function::RecordDataBuffer(color),
       m_plotType(PlotType::Cartesian),
       m_domain(-INFINITY, INFINITY),
@@ -103,9 +103,9 @@ private:
   private:
     size_t expressionSize(const Ion::Storage::Record * record) const override;
   };
-  size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordDataBuffer); }
+  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel * model() const override { return &m_model; }
-  CartesianFunctionRecordDataBuffer * recordData() const;
+  RecordDataBuffer * recordData() const;
   template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context) const;
   Model m_model;
 };

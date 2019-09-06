@@ -40,7 +40,7 @@ private:
   void reinitSelectedExpression(Shared::ExpiringPointer<Shared::ExpressionModelHandle> model) override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;
-  SequenceStore * modelStore() override { return static_cast<SequenceStore *>(Shared::FunctionListController::modelStore()); }
+  SequenceStore * modelStore() override;
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];

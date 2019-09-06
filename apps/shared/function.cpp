@@ -83,10 +83,10 @@ int Function::nameWithArgument(char * buffer, size_t bufferSize) {
   return result;
 }
 
-Function::FunctionRecordDataBuffer * Function::recordData() const {
+Function::RecordDataBuffer * Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<FunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 }

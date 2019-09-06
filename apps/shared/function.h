@@ -54,14 +54,14 @@ public:
   virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const = 0;
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
-  /* FunctionRecordDataBuffer is the layout of the data buffer of Record
+  /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Function. We want to avoid padding which would:
    * - increase the size of the storage file
    * - introduce junk memory zone which are then crc-ed in Storage::checksum
    *   creating dependency on uninitialized values. */
-  class FunctionRecordDataBuffer {
+  class RecordDataBuffer {
   public:
-    FunctionRecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
+    RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }
@@ -84,7 +84,7 @@ protected:
     bool m_active;
   };
 private:
-  FunctionRecordDataBuffer * recordData() const;
+  RecordDataBuffer * recordData() const;
 };
 
 }

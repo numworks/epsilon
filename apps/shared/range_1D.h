@@ -12,7 +12,7 @@
 namespace Shared {
 
 /* This class is used in a DataBuffer of a Storage::Record. See comment in
- * Shared::Function::FunctionRecordDataBuffer about packing. */
+ * Shared::Function::RecordDataBuffer about packing. */
 
 class __attribute__((packed)) Range1D final {
 public:
@@ -30,7 +30,7 @@ public:
   static float defaultRangeLengthFor(float position);
 private:
 #if __EMSCRIPTEN__
-    // See comment about emscripten alignement in Shared::Function::FunctionRecordDataBuffer
+    // See comment about emscripten alignement in Shared::Function::RecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
     emscripten_align1_float m_min __attribute__((packed));
     emscripten_align1_float m_max __attribute__((packed));

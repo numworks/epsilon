@@ -16,7 +16,7 @@ static inline float minFloat(float x, float y) { return x < y ? x : y; }
 static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
-    View * cursorView, View * okView, bool displayBanner) :
+    CursorView * cursorView, View * okView, bool displayBanner) :
   View(),
   m_bannerView(bannerView),
   m_curveViewCursor(curveViewCursor),
@@ -68,7 +68,7 @@ void CurveView::setCurveViewRange(CurveViewRange * curveViewRange) {
  * might be identical to the previous one and in that case layoutSubviews will
  * do nothing). */
 
-void CurveView::setCursorView(View * cursorView) {
+void CurveView::setCursorView(CursorView * cursorView) {
   markRectAsDirty(cursorFrame());
   m_cursorView = cursorView;
   markRectAsDirty(cursorFrame());
@@ -709,7 +709,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
 
 void CurveView::layoutSubviews() {
   if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
-    m_cursorView->setFrame(cursorFrame());
+    m_cursorView->setCursorFrame(cursorFrame());
   }
   if (m_bannerView != nullptr) {
     m_bannerView->setFrame(bannerFrame());

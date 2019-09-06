@@ -91,7 +91,7 @@ Poincare::Layout Sequence::nameLayout() {
 }
 
 bool Sequence::isDefined() {
-  SequenceRecordDataBuffer * data = recordData();
+  RecordDataBuffer * data = recordData();
   switch (type()) {
     case Type::Explicit:
       return value().size > metaDataSize();
@@ -103,7 +103,7 @@ bool Sequence::isDefined() {
 }
 
 bool Sequence::isEmpty() {
-  SequenceRecordDataBuffer * data = recordData();
+  RecordDataBuffer * data = recordData();
   switch (type()) {
     case Type::Explicit:
       return Function::isEmpty();
@@ -195,10 +195,10 @@ Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Contex
   return Poincare::Sum::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Sum takes ownership of args
 }
 
-Sequence::SequenceRecordDataBuffer * Sequence::recordData() const {
+Sequence::RecordDataBuffer * Sequence::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<SequenceRecordDataBuffer *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 /* Sequence Model */
@@ -227,13 +227,13 @@ void Sequence::SequenceModel::updateNewDataWithExpression(Ion::Storage::Record *
 /* Definition Handle*/
 
 void * Sequence::DefinitionModel::expressionAddress(const Ion::Storage::Record * record) const {
-  return (char *)record->value().buffer+sizeof(SequenceRecordDataBuffer);
+  return (char *)record->value().buffer+sizeof(RecordDataBuffer);
 }
 
 size_t Sequence::DefinitionModel::expressionSize(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
-  SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
-  return data.size-sizeof(SequenceRecordDataBuffer) - dataBuffer->initialConditionSize(0) - dataBuffer->initialConditionSize(1);
+  RecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
+  return data.size-sizeof(RecordDataBuffer) - dataBuffer->initialConditionSize(0) - dataBuffer->initialConditionSize(1);
 }
 
 void Sequence::DefinitionModel::buildName(Sequence * sequence) {
@@ -258,7 +258,7 @@ void Sequence::DefinitionModel::buildName(Sequence * sequence) {
 
 void * Sequence::InitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
-  SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
+  RecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
   size_t offset = conditionIndex() == 0 ? data.size - dataBuffer->initialConditionSize(0) - dataBuffer->initialConditionSize(1) : data.size - dataBuffer->initialConditionSize(1) ;
   return (char *)data.buffer+offset;
 }

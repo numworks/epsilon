@@ -64,7 +64,7 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
 }
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  Shared::ExpiringPointer<Shared::Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
   return xy.x2();
 }

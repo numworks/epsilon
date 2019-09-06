@@ -168,11 +168,11 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poin
 }
 
 void ListController::resolveEquations() {
-  if (m_equationStore->numberOfDefinedModels() == 0) {
+  if (modelStore()->numberOfDefinedModels() == 0) {
     Container::activeApp()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  EquationStore::Error e = m_equationStore->exactSolve(textFieldDelegateApp()->localContext());
+  EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext());
   switch (e) {
     case EquationStore::Error::EquationUndefined:
       Container::activeApp()->displayWarning(I18n::Message::UndefinedEquation);
@@ -202,7 +202,7 @@ void ListController::resolveEquations() {
 }
 
 void ListController::reloadButtonMessage() {
-  footer()->setMessageOfButtonAtIndex(m_equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, 0);
+  footer()->setMessageOfButtonAtIndex(modelStore()->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, 0);
 }
 
 void ListController::addEmptyModel() {
@@ -217,7 +217,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 }
 
 void ListController::reloadBrace() {
-  EquationListView::BraceStyle braceStyle = m_equationStore->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (m_equationStore->numberOfModels() == m_equationStore->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
+  EquationListView::BraceStyle braceStyle = modelStore()->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
   m_equationListView.setBraceStyle(braceStyle);
 }
 

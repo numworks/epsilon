@@ -100,7 +100,6 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
   Storage::Record record = recordAtIndex(index);
-  assert(Shared::Function::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
   if (m_currentPage == Page::Expression) {
@@ -188,8 +187,6 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
 
   // Get the name text to insert
   Storage::Record record = recordAtIndex(selectedRow);
-  assert(Shared::Function::k_maxNameWithArgumentSize > 0);
-  assert(Shared::Function::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
   constexpr size_t nameToHandleMaxSize = Shared::Function::k_maxNameWithArgumentSize;
   char nameToHandle[nameToHandleMaxSize];
   size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);

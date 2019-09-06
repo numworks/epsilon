@@ -291,4 +291,8 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
   return true;
 }
 
+SequenceStore * ListController::modelStore() {
+  return App::app()->functionStore();
+}
+
 }

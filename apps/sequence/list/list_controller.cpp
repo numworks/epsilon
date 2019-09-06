@@ -230,10 +230,6 @@ int ListController::modelIndexForRow(int j) {
   return sequenceIndex;
 }
 
-bool ListController::isAddEmptyRow(int j) {
-  return modelStore()->numberOfModels() < modelStore()->maxNumberOfModels() && j == numberOfRows() - 1;
-}
-
 int ListController::sequenceDefinitionForRow(int j) {
   if (j < 0) {
     return j;

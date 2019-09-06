@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Sequence {
 
 GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
+  CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_sequenceStore(sequenceStore)
 {

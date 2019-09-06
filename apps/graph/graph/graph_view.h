@@ -9,7 +9,7 @@ namespace Graph {
 class GraphView : public Shared::FunctionGraphView {
 public:
   GraphView(CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * graphRange,
-    Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
+    Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
   void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void drawTangent(bool tangent) { m_tangent = tangent; }

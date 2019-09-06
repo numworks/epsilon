@@ -43,10 +43,7 @@ Button * ListController::buttonAtIndex(int index, ButtonRowController::Position 
 }
 
 int ListController::typeAtLocation(int i, int j) {
-  if (j == m_equationStore->numberOfModels()) {
-    return 1;
-  }
-  return 0;
+  return isAddEmptyRow(j);
 }
 
 HighlightCell * ListController::reusableCell(int index, int type) {
@@ -71,7 +68,7 @@ int ListController::reusableCellCount(int type) {
 }
 
 void ListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index != m_equationStore->numberOfModels()) {
+  if (!isAddEmptyRow(index)) {
     willDisplayExpressionCellAtIndex(cell, index);
   }
   cell->setHighlighted(index == selectedRow());

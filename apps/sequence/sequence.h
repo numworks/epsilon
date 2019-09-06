@@ -71,12 +71,12 @@ public:
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
 
-  /* SequenceRecordDataBuffer is the layout of the data buffer of Record
+  /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in
    * Shared::Function::RecordDataBuffer about packing. */
-  class SequenceRecordDataBuffer : public Shared::Function::RecordDataBuffer {
+  class RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
-    SequenceRecordDataBuffer(KDColor color) :
+    RecordDataBuffer(KDColor color) :
       Shared::Function::RecordDataBuffer(color),
       m_type(Type::Explicit),
       m_initialRank(0),
@@ -149,9 +149,9 @@ private:
   };
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
-  size_t metaDataSize() const override { return sizeof(SequenceRecordDataBuffer); }
+  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_definition; }
-  SequenceRecordDataBuffer * recordData() const;
+  RecordDataBuffer * recordData() const;
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;
   SecondInitialConditionModel m_secondInitialCondition;

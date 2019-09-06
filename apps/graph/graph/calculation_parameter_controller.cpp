@@ -1,5 +1,6 @@
 #include "calculation_parameter_controller.h"
 #include "graph_controller.h"
+#include "../app.h"
 #include <assert.h>
 #include <cmath>
 
@@ -31,6 +32,10 @@ View * CalculationParameterController::view() {
   return &m_selectableTableView;
 }
 
+void CalculationParameterController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+}
+
 void CalculationParameterController::didBecomeFirstResponder() {
   m_selectableTableView.selectCellAtLocation(0, 0);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -39,38 +44,18 @@ void CalculationParameterController::didBecomeFirstResponder() {
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && row == 0)) {
-    ViewController * controller = nullptr;
-    switch(row) {
-      case 0:
-        m_preimageParameterController.setRecord(m_record);
-        controller = &m_preimageParameterController;
-        break;
-      case 1:
-        m_intersectionGraphController.setRecord(m_record);
-        controller = &m_intersectionGraphController;
-        break;
-      case 2:
-        m_maximumGraphController.setRecord(m_record);
-        controller = &m_maximumGraphController;
-        break;
-      case 3:
-        m_minimumGraphController.setRecord(m_record);
-        controller = &m_minimumGraphController;
-        break;
-      case 4:
-        m_rootGraphController.setRecord(m_record);
-        controller = &m_rootGraphController;
-        break;
-      case 5:
-        m_tangentGraphController.setRecord(m_record);
-        controller = &m_tangentGraphController;
-        break;
-      case 6:
-        m_integralGraphController.setRecord(m_record);
-        controller = &m_integralGraphController;
-        break;
-      default:
-        return false;
+    static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController};
+    int displayIntersection = shouldDisplayIntersection();
+    int indexController = row == 0 ? 0 : row + !displayIntersection;
+    ViewController * controller = controllers[indexController];
+    if (row == 0) {
+      m_preimageParameterController.setRecord(m_record);
+    } else if (row == 4 + displayIntersection) {
+      m_tangentGraphController.setRecord(m_record);
+    } else if (row == 5 + displayIntersection) {
+      m_integralGraphController.setRecord(m_record);
+    } else {
+      static_cast<CalculationGraphController *>(controller)->setRecord(m_record);
     }
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     if (row > 0) {
@@ -89,8 +74,8 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int CalculationParameterController::numberOfRows() {
-  constexpr int k_totalNumberOfCells = k_totalNumberOfReusableCells + 1;
-  return k_totalNumberOfCells;
+  // Inverse row + [optional intersection row] + all other rows (max, min zeros, tangent, integral)
+  return 1 + shouldDisplayIntersection() + k_totalNumberOfReusableCells - 1;
 };
 
 KDCoordinate CalculationParameterController::rowHeight(int j) {
@@ -120,14 +105,23 @@ int CalculationParameterController::typeAtLocation(int i, int j) {
 }
 
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index >= 0 && index <= numberOfRows());
   if (cell != &m_preimageCell) {
     I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Tangent, I18n::Message::Integral};
-    static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1]);
+    static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
   }
 }
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
+}
+
+bool CalculationParameterController::shouldDisplayIntersection() const {
+  CartesianFunctionStore * store = App::app()->functionStore();
+  int numberOfCartesianFunctions = store->numberOfActiveFunctionsOfType(Shared::CartesianFunction::PlotType::Cartesian);
+  // Intersection row is displayed when all functions are cartesian and there are least two of them
+  // TODO: compute intersections between polar/parametric/cartesian functions?
+  return numberOfCartesianFunctions > 1 && numberOfCartesianFunctions == store->numberOfActiveFunctions();
 }
 
 }

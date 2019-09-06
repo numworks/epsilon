@@ -30,6 +30,8 @@ public:
   bool authorizedValueAtIndex(float x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
+private:
+  static constexpr double k_maxK = 31500.0;
 };
 
 }

@@ -36,7 +36,7 @@ float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
 
 bool ChiSquaredDistribution::authorizedValueAtIndex(float x, int index) const {
   assert(index == 0);
-  return x > 0.0f && x == (float)((int)x);
+  return x > 0.0f && x == (float)((int)x) && x <= k_maxK;
 }
 
 double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {

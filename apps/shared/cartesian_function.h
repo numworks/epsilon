@@ -72,11 +72,11 @@ private:
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on
-   * Shared::Function::FunctionRecordDataBuffer about packing. */
-  class __attribute__((packed)) CartesianFunctionRecordDataBuffer : public FunctionRecordDataBuffer {
+   * Shared::Function::RecordDataBuffer about packing. */
+  class __attribute__((packed)) CartesianFunctionRecordDataBuffer : public Function::RecordDataBuffer {
   public:
     CartesianFunctionRecordDataBuffer(KDColor color) :
-      FunctionRecordDataBuffer(color),
+      Function::RecordDataBuffer(color),
       m_plotType(PlotType::Cartesian),
       m_domain(-INFINITY, INFINITY),
       m_displayDerivative(false)

@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 GraphView::GraphView(CartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
+  CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_functionStore(functionStore),
   m_tangent(false)

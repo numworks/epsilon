@@ -82,9 +82,9 @@ void GraphController::viewWillAppear() {
   /* Since *m_selectedDotIndex is altered by initCursorParameters(),
    * the following must absolutely come at the end. */
   if (*m_selectedDotIndex >= 0) {
-    m_view.setCursorView(static_cast<View *>(&m_crossCursorView));
+    m_view.setCursorView(static_cast<Shared::CursorView *>(&m_crossCursorView));
   } else {
-    m_view.setCursorView(static_cast<View *>(&m_roundCursorView));
+    m_view.setCursorView(static_cast<Shared::CursorView *>(&m_roundCursorView));
     m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
   }
 }

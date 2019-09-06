@@ -7,7 +7,7 @@ using namespace Poincare;
 namespace Shared {
 
 FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
+  CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
   m_selectedRecord(),
   m_highlightedStart(NAN),

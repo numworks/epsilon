@@ -10,7 +10,6 @@ namespace Solver {
 ListController::ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer) :
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
-  m_equationStore(equationStore),
   m_equationListView(this),
   m_expressionCells{},
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
@@ -219,6 +218,10 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 void ListController::reloadBrace() {
   EquationListView::BraceStyle braceStyle = modelStore()->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
   m_equationListView.setBraceStyle(braceStyle);
+}
+
+EquationStore * ListController::modelStore() {
+  return App::app()->equationStore();
 }
 
 SelectableTableView * ListController::selectableTableView() {

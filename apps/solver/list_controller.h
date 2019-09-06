@@ -51,13 +51,12 @@ private:
   void addEmptyModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
-  EquationStore * modelStore() override { return m_equationStore; }
+  EquationStore * modelStore() override;
   StackViewController * stackController() const;
   InputViewController * inputController() override;
   // ListViewDataSource
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override { return ListViewDataSource::cumulatedHeightFromIndex(j); }
   int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
-  EquationStore * m_equationStore;
   EquationListView m_equationListView;
   EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Button m_resolveButton;

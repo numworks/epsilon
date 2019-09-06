@@ -53,7 +53,6 @@ protected:
   StackViewController * stackController() const;
   void configureFunction(Ion::Storage::Record record);
   void computeTitlesColumnWidth(bool forceMax = false);
-  FunctionStore * modelStore() override;
   KDCoordinate baseline(int j);
   void resetMemoizationForIndex(int index) override;
   void shiftMemoization(bool newCellIsUnder) override;

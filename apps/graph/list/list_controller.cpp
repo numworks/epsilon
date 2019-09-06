@@ -118,7 +118,7 @@ bool ListController::textFieldDidAbortEditing(TextField * textField) {
   // Put the name column back to normal size
   computeTitlesColumnWidth();
   selectableTableView()->reloadData();
-  ExpiringPointer<Function> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  ExpiringPointer<CartesianFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -165,7 +165,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
     // Set name and color if the name is not being edited
-    ExpiringPointer<Function> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+    ExpiringPointer<CartesianFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
     KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
     titleCell->setColor(functionNameColor);
@@ -177,16 +177,20 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   assert(j >= 0 && j < modelStore()->numberOfModels());
   Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  ExpiringPointer<Function> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<CartesianFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }
 
-void ListController::setFunctionNameInTextField(ExpiringPointer<Function> function, TextField * textField) {
+void ListController::setFunctionNameInTextField(ExpiringPointer<CartesianFunction> function, TextField * textField) {
   assert(textField != nullptr);
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar);
   textField->setText(bufferName);
+}
+
+CartesianFunctionStore * ListController::modelStore() {
+  return App::app()->functionStore();
 }
 
 }

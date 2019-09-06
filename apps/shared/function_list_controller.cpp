@@ -248,10 +248,6 @@ TabViewController * FunctionListController::tabController() const {
   return static_cast<TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
-FunctionStore * FunctionListController::modelStore() {
-  return FunctionApp::app()->functionStore();
-}
-
 InputViewController * FunctionListController::inputController() {
   return FunctionApp::app()->inputViewController();
 }

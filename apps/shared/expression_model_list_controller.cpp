@@ -146,6 +146,10 @@ int ExpressionModelListController::numberOfExpressionRows() const {
   return modelsCount + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
 }
 
+bool ExpressionModelListController::isAddEmptyRow(int j) {
+  return j == numberOfExpressionRows() - 1 && modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
+}
+
 KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
   if (isAddEmptyRow(j)) {
     return Metric::StoreRowHeight;
@@ -252,10 +256,6 @@ bool ExpressionModelListController::removeModelRow(Ion::Storage::Record record) 
   modelStore()->removeModel(record);
   didChangeModelsList();
   return true;
-}
-
-bool ExpressionModelListController::isAddEmptyRow(int j) {
-  return j == modelStore()->numberOfModels();
 }
 
 void ExpressionModelListController::resetMemoizationForIndex(int index) {

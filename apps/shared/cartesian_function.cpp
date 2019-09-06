@@ -58,7 +58,7 @@ CartesianFunction CartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus 
   // Create the record
   char nameBuffer[SymbolAbstract::k_maxNameSize];
   int numberOfColors = sizeof(Palette::DataColor)/sizeof(KDColor);
-  CartesianFunctionRecordDataBuffer data(Palette::DataColor[s_colorIndex++ % numberOfColors]);
+  RecordDataBuffer data(Palette::DataColor[s_colorIndex++ % numberOfColors]);
   if (baseName == nullptr) {
     DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
     baseName = nameBuffer;
@@ -261,17 +261,17 @@ void CartesianFunction::setTMax(float tMax) {
 }
 
 void * CartesianFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
-  return (char *)record->value().buffer+sizeof(CartesianFunctionRecordDataBuffer);
+  return (char *)record->value().buffer+sizeof(RecordDataBuffer);
 }
 
 size_t CartesianFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
-  return record->value().size-sizeof(CartesianFunctionRecordDataBuffer);
+  return record->value().size-sizeof(RecordDataBuffer);
 }
 
-CartesianFunction::CartesianFunctionRecordDataBuffer * CartesianFunction::recordData() const {
+CartesianFunction::RecordDataBuffer * CartesianFunction::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<CartesianFunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 template<typename T>

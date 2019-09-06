@@ -11,7 +11,7 @@ namespace Sequence {
 CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
   InteractiveCurveViewRange(delegate)
 {
-  m_xRange.setMin(-k_displayLeftMarginRatio * xMax(), k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMin(-k_displayLeftMarginRatio * xMax(), k_lowerMaxFloat, k_upperMaxFloat);
 }
 
 void CurveViewRange::roundAbscissa() {

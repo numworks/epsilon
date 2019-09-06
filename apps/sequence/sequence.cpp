@@ -104,14 +104,11 @@ bool Sequence::isDefined() {
 
 bool Sequence::isEmpty() {
   RecordDataBuffer * data = recordData();
-  switch (type()) {
-    case Type::Explicit:
-      return Function::isEmpty();
-    case Type::SingleRecurrence:
-      return Function::isEmpty() && data->initialConditionSize(0) == 0;
-    default:
-      return Function::isEmpty() && data->initialConditionSize(0) == 0 && data->initialConditionSize(1) == 0;
-  }
+  Type type = data->type();
+  return Function::isEmpty() &&
+    (type == Type::Explicit ||
+      (data->initialConditionSize(0) == 0 &&
+        (type == Type::SingleRecurrence || data->initialConditionSize(1) == 0)));
 }
 
 template<typename T>

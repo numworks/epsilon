@@ -12,7 +12,7 @@ namespace Shared {
 class FunctionGraphView : public CurveView {
 public:
   FunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor,
-    BannerView * bannerView, View * cursorView);
+    BannerView * bannerView, CursorView * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Poincare::Context * context);
   Poincare::Context * context() const;

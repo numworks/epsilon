@@ -4,6 +4,7 @@
 #include "banner_view.h"
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
+#include "cursor_view.h"
 #include <poincare/preferences.h>
 #include <poincare/coordinate_2D.h>
 #include <cmath>
@@ -24,15 +25,15 @@ public:
   CurveView(CurveViewRange * curveViewRange = nullptr,
       CurveViewCursor * curveViewCursor = nullptr,
       BannerView * bannerView = nullptr,
-      View * cursorView = nullptr,
+      CursorView * cursorView = nullptr,
       View * okView = nullptr,
       bool displayBanner = true);
   virtual void reload();
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
-  View * cursorView() { return m_cursorView; }
-  void setCursorView(View * cursorView);
+  CursorView * cursorView() { return m_cursorView; }
+  void setCursorView(Shared::CursorView * cursorView);
   View * bannerView() { return m_bannerView; }
   void setBannerView(View * bannerView);
   void setOkView(View * okView);
@@ -104,7 +105,7 @@ private:
   float labelValueAtIndex(Axis axis, int i) const;
   bool bannerIsVisible() const;
   CurveViewRange * m_curveViewRange;
-  View * m_cursorView;
+  CursorView * m_cursorView;
   View * m_okView;
   bool m_forceOkDisplay;
   bool m_mainViewSelected;

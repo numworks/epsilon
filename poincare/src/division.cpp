@@ -35,7 +35,7 @@ bool DivisionNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * c
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 5);
 }
 
 int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

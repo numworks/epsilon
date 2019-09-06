@@ -21,6 +21,7 @@ public:
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate rowHeight(int j) override;
@@ -30,6 +31,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
+  bool shouldDisplayIntersection() const;
   MessageTableCellWithChevron m_preimageCell;
   constexpr static int k_totalNumberOfReusableCells = 6;
   MessageTableCell m_cells[k_totalNumberOfReusableCells];

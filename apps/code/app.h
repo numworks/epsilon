@@ -74,7 +74,7 @@ private:
    * buffer here and we give to controllers that load Python environment. We
    * also memoize the last Python user to avoid re-initiating MicroPython when
    * unneeded. */
-  static constexpr int k_pythonHeapSize = 16384;
+  static constexpr int k_pythonHeapSize = 32768;
   char m_pythonHeap[k_pythonHeapSize];
   const void * m_pythonUser;
 

@@ -20,7 +20,7 @@ endif
 
 ifeq ($(LTO),1)
 # Use link-time optimization if LTO=1
-SFLAGS += -flto
+SFLAGS += -flto -Wl,--gc-sections
 else
 # Otherwise, just get rid of unused symbols
 LDFLAGS += -Wl,--gc-sections

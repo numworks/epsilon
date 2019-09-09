@@ -1,5 +1,5 @@
-#ifndef SHARED_CARTESIAN_FUNCTION_H
-#define SHARED_CARTESIAN_FUNCTION_H
+#ifndef SHARED_CONTINUOUS_FUNCTION_H
+#define SHARED_CONTINUOUS_FUNCTION_H
 
 /* Although the considered functions are not generally continuous
  * mathematically speaking, the present class is named ContinuousFunction to

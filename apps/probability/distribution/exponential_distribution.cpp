@@ -11,8 +11,12 @@ float ExponentialDistribution::xMin() const {
 float ExponentialDistribution::xMax() const {
   assert(m_parameter1 != 0.0f);
   float result = 5.0f/m_parameter1;
-  if (result <= 0.0f) {
+  if (result <= FLT_EPSILON) {
     result = 1.0f;
+  }
+  if (std::isinf(result)) {
+    // Lower xMax. It is used for drawing so the value is not that important.
+    return 1.0f/m_parameter1;
   }
   return result * (1.0f + k_displayRightMarginRatio);
 }

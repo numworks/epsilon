@@ -48,7 +48,7 @@ void App::Snapshot::setOpt(const char * name, char * value) {
   if (strcmp(name, "script") == 0) {
     m_scriptStore.deleteAllScripts();
     char * separator = const_cast<char *>(UTF8Helper::CodePointSearch(value, ':'));
-    if (!separator) {
+    if (*separator == 0) {
       return;
     }
     *separator = 0;

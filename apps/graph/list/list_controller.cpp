@@ -49,8 +49,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   assert(textField != nullptr);
   // Compute the new name
   size_t textLength = strlen(text);
-  bool textIncludesTheta = UTF8Helper::CodePointSearch(text, UCodePointGreekSmallLetterTheta) != nullptr;
-  size_t argumentLength = textIncludesTheta ? Function::k_parenthesedThetaArgumentByteLength : Function::k_parenthesedXNTArgumentByteLength;
+  size_t argumentLength = UTF8Helper::HasCodePoint(text, UCodePointGreekSmallLetterTheta) ? Function::k_parenthesedThetaArgumentByteLength : Function::k_parenthesedXNTArgumentByteLength;
   constexpr int maxBaseNameSize = Function::k_maxNameWithArgumentSize;
   char baseName[maxBaseNameSize];
   if (textLength <= argumentLength) {

@@ -226,6 +226,7 @@ const char * CalculationStore::lastCalculationPosition(const char * calculations
   int calculationIndex = 0;
   while (calculationIndex < m_numberOfCalculations - 1) {
     c = c->next();
+    calculationIndex++;
   }
   return reinterpret_cast<const char *>(c);
 }

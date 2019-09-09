@@ -63,6 +63,8 @@ public:
   // Roots
   Poincare::Coordinate2D<double> nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
+  // Integral
+  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);

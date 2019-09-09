@@ -42,7 +42,6 @@ private:
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
   virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;
-  virtual Poincare::Expression sumBetweenBounds(ExpiringPointer<Function> function, double start, double end, Poincare::Context * context) const = 0;
   class LegendView : public View {
   public:
     LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);

@@ -66,6 +66,7 @@ public:
   }
   template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx) const;
 
+  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;

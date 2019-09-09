@@ -46,7 +46,7 @@ private:
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;
-  CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::ValuesController::functionStore()); }
+  ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfAbscissaCells; }

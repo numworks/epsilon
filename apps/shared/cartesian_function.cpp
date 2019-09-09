@@ -274,6 +274,10 @@ Coordinate2D<T> CartesianFunction::templatedApproximateAtParameter(T t, Poincare
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
 
+Coordinate2D<double> CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
+  return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, step, max, context), 0.0); });
+}
+
 Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, CartesianFunction * f) const {
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
@@ -291,6 +295,19 @@ Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, doubl
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, context, f->expressionReduced(context));
 }
 
+Coordinate2D<double> CartesianFunction::nextPointOfInterestFrom(double start, double step, double max, Context * context, ComputePointOfInterest compute) const {
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownX[bufferSize];
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  if (step > 0.0f) {
+    start = maxDouble(start, tMin());
+    max = minDouble(max, tMax());
+  } else {
+    start = minDouble(start, tMax());
+    max = maxDouble(max, tMin());
+  }
+  return compute(expressionReduced(context), unknownX, start, step, max, context);
+}
 
 template Coordinate2D<float> CartesianFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
 template Coordinate2D<double> CartesianFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;

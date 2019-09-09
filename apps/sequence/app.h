@@ -46,7 +46,7 @@ public:
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
   SequenceContext * localContext() override;
-  SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::FunctionApp::functionStore()); }
+  SequenceStore * functionStore() override { return snapshot()->functionStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override {
     return &m_valuesController;

@@ -19,7 +19,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
-  Shared::ExpiringPointer<Shared::CartesianFunction> function();
+  Shared::ExpiringPointer<Shared::ContinuousFunction> function();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else

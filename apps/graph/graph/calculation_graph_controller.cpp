@@ -53,7 +53,7 @@ Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAb
   return computeNewPointOfInterest(start, step, max, textFieldDelegateApp()->localContext());
 }
 
-CartesianFunctionStore * CalculationGraphController::functionStore() const {
+ContinuousFunctionStore * CalculationGraphController::functionStore() const {
   return App::app()->functionStore();
 }
 

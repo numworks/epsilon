@@ -81,7 +81,7 @@ KDCoordinate DerivativeParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-CartesianFunctionStore * DerivativeParameterController::functionStore() {
+ContinuousFunctionStore * DerivativeParameterController::functionStore() {
   return App::app()->functionStore();
 }
 

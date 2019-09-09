@@ -2,20 +2,20 @@
 #define SHARED_STORE_TITLE_CELL_H
 
 #include "buffer_function_title_cell.h"
+#include "separable.h"
 
 namespace Shared {
 
-class StoreTitleCell : public BufferFunctionTitleCell {
+class StoreTitleCell : public BufferFunctionTitleCell, public Separable {
 public:
   StoreTitleCell() :
     BufferFunctionTitleCell(Orientation::HorizontalIndicator, KDFont::SmallFont),
-    m_separatorLeft(false)
+    Separable()
   {}
-  void setSeparatorLeft(bool separator);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews() override;
 private:
-  bool m_separatorLeft;
+  void didSetSeparator() override;
 };
 
 }

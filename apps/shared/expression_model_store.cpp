@@ -53,7 +53,7 @@ int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
   return result;
 }
 
-Ion::Storage::Record ExpressionModelStore::recordStatifyingTestAtIndex(int i, ModelTest test) const {
+Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test) const {
   assert(i >= 0 && i < numberOfDefinedModels());
   int index = 0;
   int currentModelIndex = 0;

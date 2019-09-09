@@ -1,7 +1,7 @@
 #ifndef GRAPH_VALUES_CONTROLLER_H
 #define GRAPH_VALUES_CONTROLLER_H
 
-#include "../cartesian_function_store.h"
+#include "../continuous_function_store.h"
 #include "../../shared/buffer_function_title_cell.h"
 #include "../../shared/hideable_even_odd_buffer_text_cell.h"
 #include "../../shared/values_controller.h"

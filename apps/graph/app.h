@@ -25,8 +25,8 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    CartesianFunctionStore * functionStore() override;
-    Shared::InteractiveCurveViewRange * graphRange();
+    CartesianFunctionStore * functionStore() override { return &m_functionStore; }
+    Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * intervalForType(Shared::CartesianFunction::PlotType plotType) {
       return m_interval + static_cast<size_t>(plotType);
     }

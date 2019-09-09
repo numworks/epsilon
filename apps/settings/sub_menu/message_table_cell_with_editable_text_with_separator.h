@@ -17,7 +17,7 @@ public:
   MessageTableCellWithEditableText * messageTableCellWithEditableText() { return &m_cell; }
   constexpr static KDCoordinate k_margin = 10;
 private:
-  constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

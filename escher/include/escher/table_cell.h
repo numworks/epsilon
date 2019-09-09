@@ -2,6 +2,7 @@
 #define ESCHER_TABLE_CELL_H
 
 #include <escher/highlight_cell.h>
+#include <escher/metric.h>
 
 class TableCell : public HighlightCell {
 public:
@@ -18,7 +19,7 @@ protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_labelMargin = 10;
   constexpr static KDCoordinate k_accessoryMargin = 10;
 private:

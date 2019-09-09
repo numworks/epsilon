@@ -30,6 +30,7 @@ public:
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisHeight = 18;
+  constexpr static KDCoordinate CellSeparatorThickness = 1;
   constexpr static KDCoordinate TableSeparatorThickness = 5;
   constexpr static KDCoordinate ExpressionViewHorizontalMargin = 5;
 };

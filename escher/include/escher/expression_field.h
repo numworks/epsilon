@@ -3,6 +3,7 @@
 
 #include <escher/layout_field.h>
 #include <escher/layout_field_delegate.h>
+#include <escher/metric.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 #include <poincare/layout.h>
@@ -41,7 +42,7 @@ private:
   static constexpr KDCoordinate k_textFieldHeight = 37;
   static constexpr KDCoordinate k_horizontalMargin = 5;
   static constexpr KDCoordinate k_verticalMargin = 5;
-  constexpr static int k_separatorThickness = 1;
+  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
   KDCoordinate maximalHeight() const;
   TextField m_textField;

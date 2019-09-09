@@ -20,7 +20,7 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 
 void CalculationGraphController::viewWillAppear() {
   assert(!m_record.isNull());
-  Coordinate2D<double> pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
+  Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), 1);
   if (std::isnan(pointOfInterest.x1())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
@@ -46,7 +46,7 @@ void CalculationGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
 }
 
-Coordinate2D<double> CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
+Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, int direction) {
   double step = m_graphRange->xGridUnit()/10.0;
   step = direction < 0 ? -step : step;
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
@@ -71,7 +71,7 @@ bool CalculationGraphController::handleEnter() {
 }
 
 bool CalculationGraphController::moveCursorHorizontally(int direction) {
-  Coordinate2D<double> newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
+  Coordinate2D<double> newPointOfInterest = computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction);
   if (std::isnan(newPointOfInterest.x1())) {
     return false;
   }

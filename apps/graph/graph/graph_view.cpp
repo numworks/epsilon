@@ -1,14 +1,14 @@
 #include "graph_view.h"
+#include "../app.h"
 #include <assert.h>
 
 using namespace Shared;
 
 namespace Graph {
 
-GraphView::GraphView(CartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
+GraphView::GraphView(InteractiveCurveViewRange * graphRange,
+  CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
-  m_functionStore(functionStore),
   m_tangent(false)
 {
 }
@@ -23,9 +23,10 @@ void GraphView::reload() {
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
-  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    Ion::Storage::Record record = m_functionStore->activeRecordAtIndex(i);
-    ExpiringPointer<CartesianFunction> f = m_functionStore->modelForRecord(record);;
+  CartesianFunctionStore * functionStore = App::app()->functionStore();
+  for (int i = 0; i < functionStore->numberOfActiveFunctions(); i++) {
+    Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
+    ExpiringPointer<CartesianFunction> f = functionStore->modelForRecord(record);;
     Shared::CartesianFunction::PlotType type = f->plotType();
     float tmin = f->tMin();
     float tmax = f->tMax();

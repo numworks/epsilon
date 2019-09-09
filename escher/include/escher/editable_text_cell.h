@@ -3,6 +3,7 @@
 
 #include <escher/responder.h>
 #include <escher/highlight_cell.h>
+#include <escher/metric.h>
 #include <escher/text_field_delegate.h>
 #include <escher/text_field.h>
 #include <poincare/print_float.h>
@@ -29,7 +30,7 @@ public:
   void didBecomeFirstResponder() override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
-  constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatBufferSize];
   KDCoordinate m_topMargin;

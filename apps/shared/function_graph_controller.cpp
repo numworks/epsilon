@@ -10,8 +10,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-static inline int minFloat(float x, float y) { return x < y ? x : y; }
-static inline int maxFloat(float x, float y) { return x > y ? x : y; }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),

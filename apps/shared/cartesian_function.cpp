@@ -2,6 +2,7 @@
 #include "expression_model_store.h"
 #include "poincare_helpers.h"
 #include <poincare/derivative.h>
+#include <poincare/integral.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
@@ -320,6 +321,16 @@ Coordinate2D<double> CartesianFunction::nextPointOfInterestFrom(double start, do
     max = maxDouble(max, tMin());
   }
   return compute(expressionReduced(context), unknownX, start, step, max, context);
+}
+
+Poincare::Expression CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
+  assert(plotType() == PlotType::Cartesian);
+  start = maxDouble(start, tMin());
+  end = minDouble(end, tMax());
+  return Poincare::Integral::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
+  /* TODO: when we approximate integral, we might want to simplify the integral
+   * here. However, we might want to do it once for all x (to avoid lagging in
+   * the derivative table. */
 }
 
 template Coordinate2D<float> CartesianFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;

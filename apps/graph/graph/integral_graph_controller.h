@@ -15,7 +15,6 @@ private:
   I18n::Message legendMessageAtStep(Step step) override;
   double cursorNextStep(double position, int direction) override;
   Poincare::Layout createFunctionLayout(Shared::ExpiringPointer<Shared::Function> function) override;
-  Poincare::Expression sumBetweenBounds(Shared::ExpiringPointer<Shared::Function> function, double start, double end, Poincare::Context * context) const override;
 };
 
 }

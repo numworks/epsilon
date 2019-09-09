@@ -51,6 +51,7 @@ public:
   // Evaluation
   virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const = 0;
   virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const = 0;
+  virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
   /* FunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a Function. We want to avoid padding which would:

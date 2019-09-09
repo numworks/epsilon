@@ -274,6 +274,14 @@ Coordinate2D<T> CartesianFunction::templatedApproximateAtParameter(T t, Poincare
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
 
+Coordinate2D<double> CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
+  return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return PoincareHelpers::NextMinimum(e, symbol, start, step, max, context); });
+}
+
+Coordinate2D<double> CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
+  return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return PoincareHelpers::NextMaximum(e, symbol, start, step, max, context); });
+}
+
 Coordinate2D<double> CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
   return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, step, max, context), 0.0); });
 }

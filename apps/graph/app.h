@@ -44,7 +44,7 @@ public:
   }
   CodePoint XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
-  CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
+  CartesianFunctionStore * functionStore() override { return snapshot()->functionStore(); }
   Shared::Interval * intervalForType(Shared::CartesianFunction::PlotType plotType) {
     return snapshot()->intervalForType(plotType);
   }

@@ -49,7 +49,7 @@ bool LanguageController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int LanguageController::numberOfRows() {
+int LanguageController::numberOfRows() const {
   return I18n::NumberOfLanguages;
 }
 
@@ -61,7 +61,7 @@ HighlightCell * LanguageController::reusableCell(int index) {
   return &m_cells[index];
 }
 
-int LanguageController::reusableCellCount() {
+int LanguageController::reusableCellCount() const {
   return I18n::NumberOfLanguages;
 }
 

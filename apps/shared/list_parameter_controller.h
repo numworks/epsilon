@@ -17,7 +17,7 @@ public:
   void setRecord(Ion::Storage::Record record);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  int numberOfRows() override { return totalNumberOfCells(); }
+  int numberOfRows() const override { return totalNumberOfCells(); }
 
   // ListViewDataSource
   KDCoordinate rowHeight(int j) override { return Metric::ParameterCellHeight; }

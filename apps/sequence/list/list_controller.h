@@ -19,7 +19,7 @@ class ListController : public Shared::FunctionListController, public Shared::Inp
 public:
   ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
-  int numberOfExpressionRows() override;
+  int numberOfExpressionRows() const override;
   KDCoordinate expressionRowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;

@@ -37,7 +37,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int CurveParameterController::numberOfRows() {
+int CurveParameterController::numberOfRows() const {
   return k_totalNumberOfCells;
 };
 
@@ -48,7 +48,7 @@ HighlightCell * CurveParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int CurveParameterController::reusableCellCount() {
+int CurveParameterController::reusableCellCount() const {
   return k_totalNumberOfCells;
 }
 

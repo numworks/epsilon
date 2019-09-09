@@ -13,9 +13,9 @@ public:
   CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
 private:
   constexpr static int k_totalNumberOfCells = 2;
   GoToParameterController * goToParameterController() override;

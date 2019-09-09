@@ -17,7 +17,7 @@ public:
   const char * title() override;
 
   // ListViewDataSource
-  int numberOfRows() override;
+  int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }

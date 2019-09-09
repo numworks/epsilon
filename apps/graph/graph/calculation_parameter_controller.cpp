@@ -73,7 +73,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int CalculationParameterController::numberOfRows() {
+int CalculationParameterController::numberOfRows() const {
   // Inverse row + [optional intersection row] + all other rows (max, min zeros, tangent, integral)
   return 1 + shouldDisplayIntersection() + k_totalNumberOfReusableCells - 1;
 };

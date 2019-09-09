@@ -62,7 +62,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int CurveParameterController::numberOfRows() {
+int CurveParameterController::numberOfRows() const {
   return reusableCellCount();
 };
 
@@ -72,7 +72,7 @@ HighlightCell * CurveParameterController::reusableCell(int index) {
   return cells[cellIndex(index)];
 }
 
-int CurveParameterController::reusableCellCount() {
+int CurveParameterController::reusableCellCount() const {
   return 1 + (shouldDisplayCalculationAndDerivative() ? 2 : 0);
 }
 

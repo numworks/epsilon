@@ -19,7 +19,7 @@ public:
   int numberOfButtons(ButtonRowController::Position position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   /* ListViewDataSource */
-  int numberOfRows() override { return numberOfExpressionRows(); }
+  int numberOfRows() const override { return numberOfExpressionRows(); }
   KDCoordinate rowHeight(int j) override{ return ExpressionModelListController::memoizedRowHeight(j); }
   KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
   int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }

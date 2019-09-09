@@ -19,7 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   //ListViewDataSource
-  int numberOfRows() override;
+  int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;

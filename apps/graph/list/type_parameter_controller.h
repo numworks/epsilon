@@ -23,7 +23,7 @@ public:
   void viewWillAppear() override;
 
   // ListViewDataSource
-  int numberOfRows() override { return k_numberOfTypes; }
+  int numberOfRows() const override { return k_numberOfTypes; }
   KDCoordinate rowHeight(int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   MessageTableCellWithExpression * reusableCell(int index, int type) override;

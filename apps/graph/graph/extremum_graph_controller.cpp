@@ -16,11 +16,7 @@ const char * MinimumGraphController::title() {
 }
 
 Coordinate2D<double> MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
-  // TODO The following three lines should be factored.
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknownX[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-  return Shared::PoincareHelpers::NextMinimum(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context);
+  return functionStore()->modelForRecord(m_record)->nextMinimumFrom(start, step, max, context);
 }
 
 MaximumGraphController::MaximumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor) :
@@ -33,11 +29,7 @@ const char * MaximumGraphController::title() {
 }
 
 Coordinate2D<double> MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
-  // TODO The following three lines should be factored.
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknownX[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-  return Shared::PoincareHelpers::NextMaximum(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context);
+  return functionStore()->modelForRecord(m_record)->nextMaximumFrom(start, step, max, context);
 }
 
 }

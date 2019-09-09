@@ -1,4 +1,4 @@
-#include "cartesian_function.h"
+#include "continuous_function.h"
 #include "poincare_helpers.h"
 #include <apps/constant.h>
 #include <poincare/derivative.h>

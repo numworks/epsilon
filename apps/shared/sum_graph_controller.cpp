@@ -62,6 +62,9 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
+  if (std::isnan(x)) {
+    return true;
+  }
   FunctionApp * myApp = FunctionApp::app();
   assert(!m_record.isNull());
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);

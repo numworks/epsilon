@@ -27,14 +27,14 @@ public:
     Descriptor * descriptor() override;
     ContinuousFunctionStore * functionStore() override { return &m_functionStore; }
     Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
-    Shared::Interval * intervalForType(Shared::CartesianFunction::PlotType plotType) {
+    Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
       return m_interval + static_cast<size_t>(plotType);
     }
   private:
     void tidy() override;
     ContinuousFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
-    Shared::Interval m_interval[Shared::CartesianFunction::k_numberOfPlotTypes];
+    Shared::Interval m_interval[Shared::ContinuousFunction::k_numberOfPlotTypes];
   };
   static App * app() {
     return static_cast<App *>(Container::activeApp());
@@ -45,7 +45,7 @@ public:
   CodePoint XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
-  Shared::Interval * intervalForType(Shared::CartesianFunction::PlotType plotType) {
+  Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
     return snapshot()->intervalForType(plotType);
   }
   ValuesController * valuesController() override {

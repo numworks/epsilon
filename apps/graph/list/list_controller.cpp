@@ -54,7 +54,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   char baseName[maxBaseNameSize];
   if (textLength <= argumentLength) {
     // The user entered an empty name. Use a default function name.
-    CartesianFunction::DefaultName(baseName, maxBaseNameSize);
+    ContinuousFunction::DefaultName(baseName, maxBaseNameSize);
     /* We don't need to update the textfield edited text here because we are
      * sure that the default name is compliant. It will thus lead to the end of
      * edition and its content will be reloaded by willDisplayTitleCellAtIndex. */
@@ -118,7 +118,7 @@ bool ListController::textFieldDidAbortEditing(TextField * textField) {
   // Put the name column back to normal size
   computeTitlesColumnWidth();
   selectableTableView()->reloadData();
-  ExpiringPointer<CartesianFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  ExpiringPointer<ContinuousFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -165,7 +165,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
     // Set name and color if the name is not being edited
-    ExpiringPointer<CartesianFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+    ExpiringPointer<ContinuousFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
     KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
     titleCell->setColor(functionNameColor);
@@ -177,12 +177,12 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   assert(j >= 0 && j < modelStore()->numberOfModels());
   Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  ExpiringPointer<CartesianFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }
 
-void ListController::setFunctionNameInTextField(ExpiringPointer<CartesianFunction> function, TextField * textField) {
+void ListController::setFunctionNameInTextField(ExpiringPointer<ContinuousFunction> function, TextField * textField) {
   assert(textField != nullptr);
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar);

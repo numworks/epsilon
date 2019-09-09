@@ -1,6 +1,14 @@
 #ifndef SHARED_CARTESIAN_FUNCTION_H
 #define SHARED_CARTESIAN_FUNCTION_H
 
+/* Although the considered functions are not generally continuous
+ * mathematically speaking, the present class is named ContinuousFunction to
+ * mark the difference with the Sequence class.
+ *
+ * We could not simply name it Function, since such a class already exists:
+ * it is the base class of ContinuousFunction and Sequence.
+ */
+
 #include "global_context.h"
 #include "function.h"
 #include "range_1D.h"
@@ -9,11 +17,11 @@
 
 namespace Shared {
 
-class CartesianFunction : public Function {
+class ContinuousFunction : public Function {
 public:
   static void DefaultName(char buffer[], size_t bufferSize);
-  static CartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
-  CartesianFunction(Ion::Storage::Record record = Record()) :
+  static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
+  ContinuousFunction(Ion::Storage::Record record = Record()) :
     Function(record)
   {}
   I18n::Message parameterMessageName() const override;
@@ -71,7 +79,7 @@ private:
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double step, double max, Poincare::Context * context, ComputePointOfInterest compute) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
   /* RecordDataBuffer is the layout of the data buffer of Record
-   * representing a CartesianFunction. See comment on
+   * representing a ContinuousFunction. See comment on
    * Shared::Function::RecordDataBuffer about packing. */
   class __attribute__((packed)) RecordDataBuffer : public Function::RecordDataBuffer {
   public:

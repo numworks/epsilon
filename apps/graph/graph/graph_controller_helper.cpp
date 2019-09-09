@@ -10,17 +10,17 @@ using namespace Poincare;
 namespace Graph {
 
 bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record) {
-  ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(record);
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   double tCursorPosition = cursor->t();
   double t = tCursorPosition;
   double tMin = function->tMin();
   double tMax = function->tMax();
   double dir = (direction > 0 ? 1.0 : -1.0);
-  CartesianFunction::PlotType type = function->plotType();
-  if (type == CartesianFunction::PlotType::Cartesian) {
+  ContinuousFunction::PlotType type = function->plotType();
+  if (type == ContinuousFunction::PlotType::Cartesian) {
     t+= dir * range->xGridUnit()/numberOfStepsInGradUnit;
   } else {
-    assert(type == CartesianFunction::PlotType::Polar || type == CartesianFunction::PlotType::Parametric);
+    assert(type == ContinuousFunction::PlotType::Polar || type == ContinuousFunction::PlotType::Parametric);
     t += dir * (tMax-tMin)/k_definitionDomainDivisor;
   }
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());
@@ -29,7 +29,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 }
 
 void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record) {
-  ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(record);
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";

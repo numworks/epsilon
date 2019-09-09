@@ -95,8 +95,8 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     char bufferName[bufferNameSize];
     bool isDerivative = false;
     Ion::Storage::Record record = recordAtColumn(i, &isDerivative);
-    Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
-    if (function->plotType() == CartesianFunction::PlotType::Parametric) {
+    Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
+    if (function->plotType() == ContinuousFunction::PlotType::Parametric) {
       bool isX = false;
       if (i+1 < numberOfColumns() && typeAtLocation(i+1,j) == k_functionTitleCellType) {
         isX = recordAtColumn(i+1) == record;
@@ -153,14 +153,14 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  CartesianFunction::PlotType plotType = plotTypeAtColumn(&i);
+  ContinuousFunction::PlotType plotType = plotTypeAtColumn(&i);
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfActiveFunctionsOfType(plotType); k++) {
     Ion::Storage::Record record = functionStore()->activeRecordOfTypeAtIndex(plotType, k);
     const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
-      ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
-      *isDerivative = i != index && f->plotType() == CartesianFunction::PlotType::Cartesian;
+      ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+      *isDerivative = i != index && f->plotType() == ContinuousFunction::PlotType::Cartesian;
       return record;
     }
     index += numberOfColumnsForCurrentRecord;
@@ -170,11 +170,11 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
 }
 
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
-  ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
-  CartesianFunction::PlotType plotType = f->plotType();
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+  ContinuousFunction::PlotType plotType = f->plotType();
   return 1 +
-    (plotType == CartesianFunction::PlotType::Cartesian && f->displayDerivative()) +
-    (plotType == CartesianFunction::PlotType::Parametric);
+    (plotType == ContinuousFunction::PlotType::Cartesian && f->displayDerivative()) +
+    (plotType == ContinuousFunction::PlotType::Parametric);
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
@@ -182,16 +182,16 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return CartesianFunction::ParameterMessageForPlotType(plotTypeAtColumn(&columnIndex));
+  return ContinuousFunction::ParameterMessageForPlotType(plotTypeAtColumn(&columnIndex));
 }
 
-CartesianFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
+ContinuousFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
   int plotTypeIndex = 0;
-  while (plotTypeIndex < CartesianFunction::k_numberOfPlotTypes && *i >= m_numberOfColumnsForType[plotTypeIndex]) {
+  while (plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes && *i >= m_numberOfColumnsForType[plotTypeIndex]) {
     *i -= m_numberOfColumnsForType[plotTypeIndex++];
   }
-  assert(plotTypeIndex < CartesianFunction::k_numberOfPlotTypes);
-  return static_cast<CartesianFunction::PlotType>(plotTypeIndex);
+  assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
+  return static_cast<ContinuousFunction::PlotType>(plotTypeIndex);
 }
 
 int ValuesController::maxNumberOfCells() {
@@ -215,7 +215,7 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
 ViewController * ValuesController::functionParameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (functionStore()->modelForRecord(record)->plotType() != CartesianFunction::PlotType::Cartesian) {
+  if (functionStore()->modelForRecord(record)->plotType() != ContinuousFunction::PlotType::Cartesian) {
     return nullptr;
   }
   if (isDerivative) {
@@ -229,13 +229,13 @@ ViewController * ValuesController::functionParameterController() {
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
-  Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
+  Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   if (isDerivative) {
     return function->approximateDerivative(abscissa, context);
   }
   Poincare::Coordinate2D<double> eval = function->evaluate2DAtParameter(abscissa, context);
-  if (function->plotType() != CartesianFunction::PlotType::Parametric
+  if (function->plotType() != ContinuousFunction::PlotType::Parametric
       || (columnIndex == numberOfColumns() - 1
         || !((typeAtLocation(columnIndex+1, 0) == k_functionTitleCellType)
           && recordAtColumn(columnIndex+1) == record)))
@@ -251,17 +251,17 @@ void ValuesController::setStartEndMessages(Shared::IntervalParameterController *
 }
 
 void ValuesController::updateNumberOfColumns() const {
-  for (int plotTypeIndex = 0; plotTypeIndex <  CartesianFunction::k_numberOfPlotTypes; plotTypeIndex++) {
+  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
     m_numberOfColumnsForType[plotTypeIndex] = 0;
   }
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
-    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
+    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
     int plotTypeIndex = static_cast<int>(f->plotType());
     m_numberOfColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = 0;
-  for (int plotTypeIndex = 0; plotTypeIndex < CartesianFunction::k_numberOfPlotTypes; plotTypeIndex++) {
+  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
     m_numberOfColumnsForType[plotTypeIndex] += (m_numberOfColumnsForType[plotTypeIndex] > 0);
     m_numberOfColumns += m_numberOfColumnsForType[plotTypeIndex];
   }

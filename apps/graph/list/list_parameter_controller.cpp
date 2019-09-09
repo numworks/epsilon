@@ -54,7 +54,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if ((cell == &m_typeCell || cell == &m_functionDomain) && !m_record.isNull()) {
     App * myApp = App::app();
     assert(!m_record.isNull());
-    Shared::ExpiringPointer<Shared::CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
+    Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     if (cell == &m_typeCell) {
       m_typeCell.setMessage(I18n::Message::CurveType);
       int row = static_cast<int>(function->plotType());

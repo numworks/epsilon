@@ -1,5 +1,5 @@
-#ifndef GRAPH_CARTESIAN_FUNCTION_STORE_H
-#define GRAPH_CARTESIAN_FUNCTION_STORE_H
+#ifndef GRAPH_CONTINUOUS_FUNCTION_STORE_H
+#define GRAPH_CONTINUOUS_FUNCTION_STORE_H
 
 #include "../shared/cartesian_function.h"
 #include "../shared/function_store.h"

@@ -5,7 +5,7 @@
 #include "banner_view.h"
 #include "../../shared/simple_interactive_curve_view_controller.h"
 #include "../../shared/function_banner_delegate.h"
-#include "../cartesian_function_store.h"
+#include "../continuous_function_store.h"
 
 namespace Graph {
 

@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "list_parameter_controller.h"
 #include "text_field_function_title_cell.h"
-#include "../cartesian_function_store.h"
+#include "../continuous_function_store.h"
 #include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>

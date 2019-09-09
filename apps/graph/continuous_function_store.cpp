@@ -1,4 +1,4 @@
-#include "cartesian_function_store.h"
+#include "continuous_function_store.h"
 extern "C" {
 #include <assert.h>
 #include <stddef.h>

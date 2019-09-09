@@ -112,7 +112,7 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
 float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  CartesianFunctionStore * store = functionStore();
+  ContinuousFunctionStore * store = functionStore();
   for (int i = 0; i < store->numberOfActiveFunctions(); i++) {
     ExpiringPointer<CartesianFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
@@ -164,7 +164,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
 }
 
 bool GraphController::displaysNonCartesianFunctions() const {
-  CartesianFunctionStore * store = functionStore();
+  ContinuousFunctionStore * store = functionStore();
   return store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Polar) > 0
     || store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Parametric) > 0;
 }

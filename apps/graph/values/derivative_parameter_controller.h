@@ -25,7 +25,7 @@ public:
     m_record = record;
   }
 private:
-  CartesianFunctionStore * functionStore();
+  ContinuousFunctionStore * functionStore();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else

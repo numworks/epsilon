@@ -21,7 +21,7 @@ protected:
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
-  CartesianFunctionStore * functionStore() const;
+  ContinuousFunctionStore * functionStore() const;
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;

@@ -23,7 +23,7 @@ void GraphView::reload() {
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
-  CartesianFunctionStore * functionStore = App::app()->functionStore();
+  ContinuousFunctionStore * functionStore = App::app()->functionStore();
   for (int i = 0; i < functionStore->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
     ExpiringPointer<CartesianFunction> f = functionStore->modelForRecord(record);;

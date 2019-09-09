@@ -189,7 +189,7 @@ void ListController::setFunctionNameInTextField(ExpiringPointer<CartesianFunctio
   textField->setText(bufferName);
 }
 
-CartesianFunctionStore * ListController::modelStore() {
+ContinuousFunctionStore * ListController::modelStore() {
   return App::app()->functionStore();
 }
 

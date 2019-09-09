@@ -9,7 +9,7 @@ using namespace Shared;
 
 namespace Graph {
 
-int CartesianFunctionStore::numberOfActiveFunctionsOfType(CartesianFunction::PlotType plotType) const {
+int ContinuousFunctionStore::numberOfActiveFunctionsOfType(CartesianFunction::PlotType plotType) const {
   int count = 0;
   for (int i = 0; i < numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = activeRecordAtIndex(i);
@@ -19,7 +19,7 @@ int CartesianFunctionStore::numberOfActiveFunctionsOfType(CartesianFunction::Plo
   return count;
 }
 
-Ion::Storage::Record CartesianFunctionStore::activeRecordOfTypeAtIndex(CartesianFunction::PlotType plotType, int index) const {
+Ion::Storage::Record ContinuousFunctionStore::activeRecordOfTypeAtIndex(CartesianFunction::PlotType plotType, int index) const {
   int count = 0;
   Ion::Storage::Record record;
   for (int i = 0; i < numberOfActiveFunctions(); i++) {
@@ -35,19 +35,19 @@ Ion::Storage::Record CartesianFunctionStore::activeRecordOfTypeAtIndex(Cartesian
   return record;
 }
 
-Ion::Storage::Record::ErrorStatus CartesianFunctionStore::addEmptyModel() {
+Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   Ion::Storage::Record::ErrorStatus error;
   CartesianFunction newModel = CartesianFunction::NewModel(&error);
   return error;
 }
 
-ExpressionModelHandle * CartesianFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+ExpressionModelHandle * ContinuousFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   m_functions[cacheIndex] = CartesianFunction(record);
   return &m_functions[cacheIndex];
 }
 
-ExpressionModelHandle * CartesianFunctionStore::memoizedModelAtIndex(int cacheIndex) const {
+ExpressionModelHandle * ContinuousFunctionStore::memoizedModelAtIndex(int cacheIndex) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_functions[cacheIndex];
 }

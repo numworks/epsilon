@@ -189,6 +189,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
 }
 
 Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
+  assert(std::round(start) == start && std::round(end) == end);
   return Poincare::Sum::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Sum takes ownership of args
 }
 

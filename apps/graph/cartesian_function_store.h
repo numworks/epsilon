@@ -8,7 +8,7 @@
 
 namespace Graph {
 
-class CartesianFunctionStore : public Shared::FunctionStore {
+class ContinuousFunctionStore : public Shared::FunctionStore {
 public:
   Shared::ExpiringPointer<Shared::CartesianFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::CartesianFunction>(static_cast<Shared::CartesianFunction *>(privateModelForRecord(record))); }
   int numberOfActiveFunctionsOfType(Shared::CartesianFunction::PlotType plotType) const;

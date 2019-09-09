@@ -9,7 +9,7 @@
 #include "../../shared/curve_view_cursor.h"
 #include "../../shared/round_cursor_view.h"
 #include "../../shared/interactive_curve_view_range.h"
-#include "../cartesian_function_store.h"
+#include "../continuous_function_store.h"
 
 namespace Graph {
 

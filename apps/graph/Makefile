@@ -3,7 +3,7 @@ app_headers += apps/graph/app.h
 
 app_graph_src = $(addprefix apps/graph/,\
   app.cpp \
-  cartesian_function_store.cpp \
+  continuous_function_store.cpp \
   graph/banner_view.cpp \
   graph/calculation_graph_controller.cpp \
   graph/calculation_parameter_controller.cpp \

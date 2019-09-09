@@ -538,10 +538,12 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
 }
 
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
-  float tStart = maxFloat(xMin, pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin));
-  float tEnd = minFloat(xMax, pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin));
-  assert(!std::isinf(tStart) && !std::isnan(tStart) && !std::isinf(tEnd) && !std::isnan(tEnd) );
-  if (tStart > tEnd) {
+  float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+  float tStart = std::isnan(rectLeft) ? xMin : maxFloat(xMin, rectLeft);
+  float tEnd = std::isnan(rectRight) ? xMax : minFloat(xMax, rectRight);
+  assert(!std::isnan(tStart) && !std::isnan(tEnd));
+  if (std::isinf(tStart) || std::isinf(tEnd) || tStart > tEnd) {
     return;
   }
   float tStep = pixelWidth();

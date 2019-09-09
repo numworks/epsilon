@@ -149,11 +149,11 @@ Responder * SolutionsController::defaultController() {
 
 /* TableViewDataSource */
 
-int SolutionsController::numberOfRows() {
+int SolutionsController::numberOfRows() const {
   return m_equationStore->numberOfSolutions();
 }
 
-int SolutionsController::numberOfColumns() {
+int SolutionsController::numberOfColumns() const {
   return 2;
 }
 

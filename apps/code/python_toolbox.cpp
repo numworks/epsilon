@@ -374,7 +374,7 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
   return true;
 }
 
-const ToolboxMessageTree * PythonToolbox::rootModel() {
+const ToolboxMessageTree * PythonToolbox::rootModel() const {
   return &toolboxModel;
 }
 

@@ -58,7 +58,7 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int DerivativeParameterController::numberOfRows() {
+int DerivativeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
@@ -73,7 +73,7 @@ HighlightCell * DerivativeParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int DerivativeParameterController::reusableCellCount() {
+int DerivativeParameterController::reusableCellCount() const {
   return k_totalNumberOfCell;
 }
 

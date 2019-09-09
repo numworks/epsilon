@@ -40,7 +40,7 @@ const char * ValuesController::title() {
   return I18n::translate(I18n::Message::ValuesTab);
 }
 
-int ValuesController::numberOfColumns() {
+int ValuesController::numberOfColumns() const {
   if (m_numberOfColumnsNeedUpdate) {
     updateNumberOfColumns();
     m_numberOfColumnsNeedUpdate = false;
@@ -246,11 +246,11 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
   return intervalAtColumn(columnIndex)->element(rowIndex-1);
 }
 
-int ValuesController::numberOfElementsInColumn(int columnIndex) {
-  return intervalAtColumn(columnIndex)->numberOfElements();
+int ValuesController::numberOfElementsInColumn(int columnIndex) const {
+  return const_cast<ValuesController *>(this)->intervalAtColumn(columnIndex)->numberOfElements();
 }
 
-void ValuesController::updateNumberOfColumns() {
+void ValuesController::updateNumberOfColumns() const {
   m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
 }
 

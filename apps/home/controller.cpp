@@ -91,11 +91,11 @@ View * Controller::view() {
   return &m_view;
 }
 
-int Controller::numberOfRows() {
+int Controller::numberOfRows() const {
   return ((numberOfIcons()-1)/k_numberOfColumns)+1;
 }
 
-int Controller::numberOfColumns() {
+int Controller::numberOfColumns() const {
   return k_numberOfColumns;
 }
 
@@ -111,7 +111,7 @@ HighlightCell * Controller::reusableCell(int index) {
   return &m_cells[index];
 }
 
-int Controller::reusableCellCount() {
+int Controller::reusableCellCount() const {
   return k_maxNumberOfCells;
 }
 
@@ -128,7 +128,7 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   }
 }
 
-int Controller::numberOfIcons() {
+int Controller::numberOfIcons() const {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
   assert(container->numberOfApps() > 0);
   return container->numberOfApps() - 1;

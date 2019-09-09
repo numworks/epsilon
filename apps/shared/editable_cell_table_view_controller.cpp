@@ -56,7 +56,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   return true;
 }
 
-int EditableCellTableViewController::numberOfRows() {
+int EditableCellTableViewController::numberOfRows() const {
   int numberOfModelElements = 0;
   for (int i = 0; i < numberOfColumns(); i++) {
     numberOfModelElements = maxInt(numberOfModelElements, numberOfElementsInColumn(i));

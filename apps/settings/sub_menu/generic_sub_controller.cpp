@@ -39,7 +39,7 @@ bool GenericSubController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int GenericSubController::numberOfRows() {
+int GenericSubController::numberOfRows() const {
   if (m_messageTreeModel) {
     return m_messageTreeModel->numberOfChildren();
   }

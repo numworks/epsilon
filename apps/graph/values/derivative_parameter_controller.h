@@ -17,10 +17,10 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const  override;
   void setRecord(Ion::Storage::Record record) {
     m_record = record;
   }

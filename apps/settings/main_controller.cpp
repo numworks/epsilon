@@ -85,7 +85,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int MainController::numberOfRows() {
+int MainController::numberOfRows() const {
   return model()->numberOfChildren();
 };
 

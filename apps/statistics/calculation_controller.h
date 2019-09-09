@@ -25,8 +25,8 @@ public:
   Responder * defaultController() override;
 
   // TableViewDataSource
-  int numberOfRows() override { return k_totalNumberOfRows; }
-  int numberOfColumns() override;
+  int numberOfRows() const override { return k_totalNumberOfRows; }
+  int numberOfColumns() const override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override { return k_cellHeight; }

@@ -25,8 +25,8 @@ public:
   /* SimpleListViewDataSource */
   KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override { return k_totalNumberOfCell; }
-  int numberOfRows() override { return k_totalNumberOfCell; }
+  int reusableCellCount() const override { return k_totalNumberOfCell; }
+  int numberOfRows() const override { return k_totalNumberOfCell; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
 private:

@@ -11,7 +11,7 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
 {
 }
 
-int GoToParameterController::numberOfRows() {
+int GoToParameterController::numberOfRows() const {
   return 2;
 }
 

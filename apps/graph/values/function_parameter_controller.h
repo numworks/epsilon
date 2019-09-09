@@ -13,9 +13,9 @@ class FunctionParameterController : public Shared::ValuesFunctionParameterContro
 public:
   FunctionParameterController(ValuesController * valuesController);
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:

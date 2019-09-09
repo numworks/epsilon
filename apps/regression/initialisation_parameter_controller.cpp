@@ -37,7 +37,7 @@ bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int InitialisationParameterController::numberOfRows() {
+int InitialisationParameterController::numberOfRows() const {
   return k_totalNumberOfCells;
 };
 
@@ -48,7 +48,7 @@ HighlightCell * InitialisationParameterController::reusableCell(int index) {
   return &m_cells[index];
 }
 
-int InitialisationParameterController::reusableCellCount() {
+int InitialisationParameterController::reusableCellCount() const {
   return k_totalNumberOfCells;
 }
 

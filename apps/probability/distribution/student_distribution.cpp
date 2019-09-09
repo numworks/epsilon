@@ -31,7 +31,7 @@ double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) c
     return 0.5;
   }
   if (std::isinf(x)) {
-    return 1.0;
+    return x > 0 ? 1.0 : 0.0;
   }
   /* TODO There are some computation errors, where the probability falsly jumps to 1.
    * k = 0.001 and P(x < 42000000) (for 41000000 it is around 0.5)
@@ -47,8 +47,7 @@ double StudentDistribution::cumulativeDistributiveInverseForProbability(double *
     return 0.0;
   }
   const double small = DBL_EPSILON;
-  const double standardBig = 10000.0;
-  const double big = m_parameter1 >= 1 ? standardBig : standardBig / m_parameter1;
+  const double big = 1E10;
   double xmin = *probability < 0.5 ? -big : small;
   double xmax = *probability < 0.5 ? -small : big;
   return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, xmin, xmax);

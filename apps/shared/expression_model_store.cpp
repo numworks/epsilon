@@ -54,13 +54,12 @@ int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
 }
 
 Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test) const {
-  assert(i >= 0 && i < numberOfDefinedModels());
+  assert(0 <= i && i < numberOfModelsSatisfyingTest(test));
   int index = 0;
   int currentModelIndex = 0;
   Ion::Storage::Record r = recordAtIndex(currentModelIndex++);
   ExpressionModelHandle * m = privateModelForRecord(r);
   while (!m->isNull()) {
-    assert(currentModelIndex <= numberOfModels());
     if (test(m)) {
       if (i == index) {
         return r;

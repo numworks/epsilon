@@ -26,7 +26,7 @@ bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
   return MathToolbox::handleEventForRow(event, mathToolboxIndex(selectedRow()));
 }
 
-int SequenceToolbox::numberOfRows() {
+int SequenceToolbox::numberOfRows() const {
   if (stackDepth() == 0) {
     return MathToolbox::numberOfRows()+m_numberOfAddedCells;
   }

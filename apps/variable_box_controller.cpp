@@ -69,7 +69,7 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
   return NestedMenuController::handleEvent(event);
 }
 
-int VariableBoxController::numberOfRows() {
+int VariableBoxController::numberOfRows() const {
   switch (m_currentPage) {
     case Page::RootMenu:
       return k_numberOfMenuRows;

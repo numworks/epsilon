@@ -9,7 +9,7 @@ public:
   MathToolbox();
 protected:
   bool selectLeaf(int selectedRow) override;
-  const ToolboxMessageTree * rootModel() override;
+  const ToolboxMessageTree * rootModel() const override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;

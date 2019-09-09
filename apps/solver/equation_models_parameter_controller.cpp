@@ -60,7 +60,7 @@ bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int EquationModelsParameterController::numberOfRows() {
+int EquationModelsParameterController::numberOfRows() const {
   return k_numberOfExpressionCells+1;
 };
 

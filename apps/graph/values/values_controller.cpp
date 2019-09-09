@@ -250,7 +250,7 @@ void ValuesController::setStartEndMessages(Shared::IntervalParameterController *
   m_intervalParameterSelectorController.setStartEndMessages(controller, plotTypeAtColumn(&c));
 }
 
-void ValuesController::updateNumberOfColumns() {
+void ValuesController::updateNumberOfColumns() const {
   for (int plotTypeIndex = 0; plotTypeIndex <  CartesianFunction::k_numberOfPlotTypes; plotTypeIndex++) {
     m_numberOfColumnsForType[plotTypeIndex] = 0;
   }

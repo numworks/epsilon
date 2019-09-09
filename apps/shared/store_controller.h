@@ -28,7 +28,7 @@ public:
   bool textFieldDidAbortEditing(TextField * textField) override;
 
   // TableViewDataSource
-  int numberOfColumns() override;
+  int numberOfColumns() const override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
@@ -84,7 +84,7 @@ private:
     return m_contentView.dataView();
   }
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  int numberOfElementsInColumn(int columnIndex) override;
+  int numberOfElementsInColumn(int columnIndex) const override;
   int maxNumberOfElements() const override {
     return DoublePairStore::k_maxNumberOfPairs;
   };

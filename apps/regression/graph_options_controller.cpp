@@ -54,7 +54,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int GraphOptionsController::numberOfRows() {
+int GraphOptionsController::numberOfRows() const {
   return k_numberOfParameterCells + 1;
 }
 

@@ -111,7 +111,7 @@ void ParametersController::viewWillAppear() {
   FloatParameterController::viewWillAppear();
 }
 
-int ParametersController::numberOfRows() {
+int ParametersController::numberOfRows() const {
   return 1+m_distribution->numberOfParameter();
 }
 

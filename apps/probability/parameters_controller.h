@@ -17,7 +17,7 @@ public:
   void reinitCalculation();
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;

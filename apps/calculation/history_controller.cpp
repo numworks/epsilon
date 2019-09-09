@@ -127,7 +127,7 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   Container::activeApp()->setFirstResponder(selectedCell);
 }
 
-int HistoryController::numberOfRows() {
+int HistoryController::numberOfRows() const {
   return m_calculationStore->numberOfCalculations();
 };
 

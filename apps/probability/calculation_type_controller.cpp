@@ -59,7 +59,7 @@ bool CalculationTypeController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int CalculationTypeController::numberOfRows() {
+int CalculationTypeController::numberOfRows() const {
   if (m_distribution->isContinuous()) {
     return k_numberOfImages-1;
   }
@@ -80,7 +80,7 @@ HighlightCell * CalculationTypeController::reusableCell(int index) {
   return &m_imageCells[index];
 }
 
-int CalculationTypeController::reusableCellCount() {
+int CalculationTypeController::reusableCellCount() const {
   return k_numberOfImages;
 }
 

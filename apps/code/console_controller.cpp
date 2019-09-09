@@ -196,7 +196,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int ConsoleController::numberOfRows() {
+int ConsoleController::numberOfRows() const {
   return m_consoleStore.numberOfLines()+1;
 }
 

@@ -156,7 +156,7 @@ void MenuController::scriptContentEditionDidFinish() {
   reloadConsole();
 }
 
-int MenuController::numberOfRows() {
+int MenuController::numberOfRows() const {
   return m_scriptStore->numberOfScripts() + m_shouldDisplayAddScriptRow;
 }
 

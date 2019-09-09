@@ -12,7 +12,7 @@ public:
   IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore);
   const char * title() override;
   View * view() override { return &m_contentView; }
-  int numberOfRows() override;
+  int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;

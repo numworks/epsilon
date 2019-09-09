@@ -92,7 +92,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int TypeParameterController::numberOfRows() {
+int TypeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
@@ -103,7 +103,7 @@ HighlightCell * TypeParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int TypeParameterController::reusableCellCount() {
+int TypeParameterController::reusableCellCount() const {
   return k_totalNumberOfCell;
 }
 

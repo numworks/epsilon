@@ -17,10 +17,10 @@ public:
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
 
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:

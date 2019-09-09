@@ -59,7 +59,7 @@ const char * IntervalController::title() {
   return I18n::translate(I18n::Message::SearchInverval);
 }
 
-int IntervalController::numberOfRows() {
+int IntervalController::numberOfRows() const {
   return k_maxNumberOfCells+1;
 }
 

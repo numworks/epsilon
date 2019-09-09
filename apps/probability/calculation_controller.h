@@ -25,8 +25,8 @@ public:
   void viewDidDisappear() override;
 
   /* TableViewDataSource */
-  int numberOfRows() override;
-  int numberOfColumns() override;
+  int numberOfRows() const override;
+  int numberOfColumns() const override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;

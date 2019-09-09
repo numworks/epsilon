@@ -22,7 +22,7 @@ const char * DomainParameterController::title() {
   return I18n::translate(I18n::Message::FunctionDomain);
 }
 
-int DomainParameterController::numberOfRows() {
+int DomainParameterController::numberOfRows() const {
   return k_totalNumberOfCell+1;
 }
 

@@ -11,7 +11,7 @@ class HistogramParameterController : public Shared::FloatParameterController<dou
 public:
   HistogramParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegateApp, Store * store);
   const char * title() override;
-  int numberOfRows() override { return 1+k_numberOfCells; }
+  int numberOfRows() const override { return 1+k_numberOfCells; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_numberOfCells = 2;

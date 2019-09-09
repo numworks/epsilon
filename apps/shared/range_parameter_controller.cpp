@@ -27,7 +27,7 @@ const char * RangeParameterController::title() {
   return I18n::translate(I18n::Message::Axis);
 }
 
-int RangeParameterController::numberOfRows() {
+int RangeParameterController::numberOfRows() const {
   return k_numberOfTextCell+2;
 }
 

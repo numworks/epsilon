@@ -138,7 +138,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   return true;
 }
 
-const ToolboxMessageTree * MathToolbox::rootModel() {
+const ToolboxMessageTree * MathToolbox::rootModel() const {
   return &toolboxModel;
 }
 

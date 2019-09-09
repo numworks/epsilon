@@ -50,7 +50,7 @@ Responder * CalculationController::defaultController() {
 
 // TableViewDataSource
 
-int CalculationController::numberOfColumns() {
+int CalculationController::numberOfColumns() const {
   return 1 + m_store->numberOfNonEmptySeries();
 }
 

@@ -20,7 +20,7 @@ const char * IntervalParameterController::title() {
   return I18n::translate(m_title);
 }
 
-int IntervalParameterController::numberOfRows() {
+int IntervalParameterController::numberOfRows() const {
   return k_totalNumberOfCell+1;
 }
 

@@ -12,7 +12,7 @@ NestedMenuController::Stack::State::State(int selectedRow, KDCoordinate vertical
 {
 }
 
-bool NestedMenuController::Stack::State::isNull(){
+bool NestedMenuController::Stack::State::isNull() const {
   if (m_selectedRow == -1) {
     return true;
   }
@@ -34,7 +34,7 @@ NestedMenuController::Stack::State * NestedMenuController::Stack::stateAtIndex(i
   return &m_statesStack[index];
 }
 
-int NestedMenuController::Stack::depth() {
+int NestedMenuController::Stack::depth() const {
   int depth = 0;
   for (int i = 0; i < k_maxModelTreeDepth; i++) {
     depth += (!m_statesStack[i].isNull());
@@ -131,7 +131,7 @@ HighlightCell * NestedMenuController::reusableCell(int index, int type) {
   return nodeCellAtIndex(index);
 }
 
-int NestedMenuController::stackDepth() {
+int NestedMenuController::stackDepth() const {
   return m_stack.depth();
 }
 

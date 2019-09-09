@@ -140,11 +140,10 @@ int ExpressionModelListController::memoizedIndexFromCumulatedHeight(KDCoordinate
   return notMemoizedIndexFromCumulatedHeight(offsetY);
 }
 
-int ExpressionModelListController::numberOfExpressionRows() {
-  if (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()) {
-    return modelStore()->numberOfModels();
-  }
-  return 1 + modelStore()->numberOfModels();
+int ExpressionModelListController::numberOfExpressionRows() const {
+  const ExpressionModelStore * store = const_cast<ExpressionModelListController *>(this)->modelStore();
+  int modelsCount = store->numberOfModels();
+  return modelsCount + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
 }
 
 KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {

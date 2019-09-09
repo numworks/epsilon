@@ -114,11 +114,11 @@ Responder * CalculationController::defaultController() {
   return tabController();
 }
 
-int CalculationController::numberOfRows() {
+int CalculationController::numberOfRows() const {
   return 1 + k_totalNumberOfDoubleBufferRows + 4 + maxNumberOfCoefficients() + hasLinearRegression() * 2;
 }
 
-int CalculationController::numberOfColumns() {
+int CalculationController::numberOfColumns() const {
   return 1 + m_store->numberOfNonEmptySeries();
 }
 

@@ -106,7 +106,7 @@ bool StoreController::textFieldDidAbortEditing(TextField * textField) {
 }
 
 
-int StoreController::numberOfColumns() {
+int StoreController::numberOfColumns() const {
   return DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_numberOfSeries;
 }
 
@@ -221,7 +221,7 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
   return m_store->get(seriesAtColumn(columnIndex), columnIndex%DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
-int StoreController::numberOfElementsInColumn(int columnIndex) {
+int StoreController::numberOfElementsInColumn(int columnIndex) const {
   return m_store->numberOfPairsOfSeries(seriesAtColumn(columnIndex));
 }
 

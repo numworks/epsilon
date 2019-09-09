@@ -15,7 +15,7 @@ protected:
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   // TableViewDataSource
-  virtual int numberOfExpressionRows();
+  virtual int numberOfExpressionRows() const;
   KDCoordinate memoizedRowHeight(int j);
   KDCoordinate memoizedCumulatedHeightFromIndex(int j);
   int memoizedIndexFromCumulatedHeight(KDCoordinate offsetY);

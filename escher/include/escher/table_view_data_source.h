@@ -6,8 +6,8 @@
 
 class TableViewDataSource {
 public:
-  virtual int numberOfRows() = 0;
-  virtual int numberOfColumns() = 0;
+  virtual int numberOfRows() const = 0;
+  virtual int numberOfColumns() const = 0;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j);
   virtual KDCoordinate columnWidth(int i) = 0;
   virtual KDCoordinate rowHeight(int j) = 0;

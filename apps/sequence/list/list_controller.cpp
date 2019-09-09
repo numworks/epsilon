@@ -27,16 +27,15 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::SequenceTab);
 }
 
-int ListController::numberOfExpressionRows() {
+int ListController::numberOfExpressionRows() const {
   int numberOfRows = 0;
-  for (int i = 0; i < modelStore()->numberOfModels(); i++) {
-    Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(i));
+  SequenceStore * store = const_cast<ListController *>(this)->modelStore();
+  const int modelsCount = store->numberOfModels();
+  for (int i = 0; i < modelsCount; i++) {
+    Sequence * sequence = store->modelForRecord(store->recordAtIndex(i));
     numberOfRows += sequence->numberOfElements();
   }
-  if (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()) {
-    return numberOfRows;
-  }
-  return 1 + numberOfRows;
+  return numberOfRows + (modelsCount == store->maxNumberOfModels()? 0 : 1);
 };
 
 KDCoordinate ListController::expressionRowHeight(int j) {

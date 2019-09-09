@@ -11,7 +11,7 @@ class RangeParameterController : public FloatParameterController<float> {
 public:
   RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange);
   const char * title() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;

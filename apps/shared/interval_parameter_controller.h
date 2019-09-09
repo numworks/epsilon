@@ -16,7 +16,7 @@ public:
   const char * title() override;
   void setTitle(I18n::Message title) { m_title = title; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   void setStartEndMessages(I18n::Message startMessage, I18n::Message endMessage);
 protected:
   constexpr static int k_totalNumberOfCell = 3;

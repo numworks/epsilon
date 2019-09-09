@@ -78,7 +78,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int ValuesParameterController::numberOfRows() {
+int ValuesParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
@@ -89,7 +89,7 @@ HighlightCell * ValuesParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int ValuesParameterController::reusableCellCount() {
+int ValuesParameterController::reusableCellCount() const {
   return k_totalNumberOfCell;
 }
 

@@ -16,11 +16,11 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
 private:
   class ContentView : public View {
   public:

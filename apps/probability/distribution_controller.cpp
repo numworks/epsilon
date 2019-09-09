@@ -104,7 +104,7 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   return false;
 }
 
-int Probability::DistributionController::numberOfRows() {
+int Probability::DistributionController::numberOfRows() const {
   return k_totalNumberOfModels;
 };
 
@@ -114,7 +114,7 @@ HighlightCell * Probability::DistributionController::reusableCell(int index) {
   return &m_cells[index];
 }
 
-int Probability::DistributionController::reusableCellCount() {
+int Probability::DistributionController::reusableCellCount() const {
   return k_totalNumberOfModels;
 }
 

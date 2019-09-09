@@ -62,7 +62,7 @@ public:
   Poincare::Coordinate2D<double> nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
   // Roots
   Poincare::Coordinate2D<double> nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
-  Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, CartesianFunction * f) const;
+  Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);

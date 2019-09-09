@@ -128,8 +128,13 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
       nullptr);
   /* Either no result was found, the precision is ok or the result was outside
    * the given ax bx bounds */
-  assert(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON || std::fabs(result.x1()- ax) < FLT_EPSILON || std::fabs(result.x1() - bx) < FLT_EPSILON);
-  return result.x1();
+   if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON || std::fabs(result.x1()- ax) < FLT_EPSILON || std::fabs(result.x1() - bx) < FLT_EPSILON)) {
+     /* TODO We would like to put this as an assertion, but sometimes we do get
+      * false result: we replace them with inf to make the problem obvisous to
+      * the student. */
+     return *probability > 0.5 ? INFINITY : -INFINITY;
+   }
+   return result.x1();
 }
 
 float Distribution::yMin() const {

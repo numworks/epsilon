@@ -43,14 +43,6 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-CartesianFunctionStore * App::Snapshot::functionStore() {
-  return &m_functionStore;
-}
-
-InteractiveCurveViewRange * App::Snapshot::graphRange() {
-  return &m_graphRange;
-}
-
 void App::Snapshot::tidy() {
   m_functionStore.tidy();
   m_graphRange.setDelegate(nullptr);

@@ -16,6 +16,9 @@ using namespace Poincare;
 
 namespace Shared {
 
+static inline double maxDouble(double x, double y) { return x > y ? x : y; }
+static inline double minDouble(double x, double y) { return x < y ? x : y; }
+
 void CartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   static constexpr const char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
@@ -270,6 +273,24 @@ Coordinate2D<T> CartesianFunction::templatedApproximateAtParameter(T t, Poincare
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), unknown, t, context),
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
+
+Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, CartesianFunction * f) const {
+  assert(plotType() == PlotType::Cartesian);
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownX[bufferSize];
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  double domainMin = maxDouble(tMin(), f->tMin());
+  double domainMax = minDouble(tMax(), f->tMax());
+  if (step > 0.0f) {
+    start = maxDouble(start, domainMin);
+    max = minDouble(max, domainMax);
+  } else {
+    start = minDouble(start, domainMax);
+    max = maxDouble(max, domainMin);
+  }
+  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, context, f->expressionReduced(context));
+}
+
 
 template Coordinate2D<float> CartesianFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
 template Coordinate2D<double> CartesianFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;

@@ -20,10 +20,10 @@ void TypeParameterController::didBecomeFirstResponder() {
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(!m_record.isNull());
-    Shared::CartesianFunction::PlotType plotType = static_cast<Shared::CartesianFunction::PlotType>(selectedRow());
+    Shared::ContinuousFunction::PlotType plotType = static_cast<Shared::ContinuousFunction::PlotType>(selectedRow());
     App * myApp = App::app();
     assert(!m_record.isNull());
-    Shared::ExpiringPointer<Shared::CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
+    Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit());
     StackViewController * stack = stackController();
     stack->pop();
@@ -44,7 +44,7 @@ const char * TypeParameterController::title() {
 void TypeParameterController::viewWillAppear() {
   App * myApp = App::app();
   assert(!m_record.isNull());
-  Shared::ExpiringPointer<Shared::CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
   int row = static_cast<int>(function->plotType());
   selectCellAtLocation(0, row);
   m_selectableTableView.reloadData();

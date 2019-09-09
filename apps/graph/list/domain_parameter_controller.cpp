@@ -31,15 +31,15 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  Shared::CartesianFunction::PlotType plotType = function()->plotType();
+  Shared::ContinuousFunction::PlotType plotType = function()->plotType();
   switch (plotType) {
-    case Shared::CartesianFunction::PlotType::Cartesian:
+    case Shared::ContinuousFunction::PlotType::Cartesian:
     {
       I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XMin, I18n::Message::XMax};
       myCell->setMessage(labels[index]);
       break;
     }
-    case Shared::CartesianFunction::PlotType::Parametric:
+    case Shared::ContinuousFunction::PlotType::Parametric:
     {
       I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::TMin, I18n::Message::TMax};
       myCell->setMessage(labels[index]);
@@ -47,7 +47,7 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
     }
     default:
     {
-      assert(plotType == Shared::CartesianFunction::PlotType::Polar);
+      assert(plotType == Shared::ContinuousFunction::PlotType::Polar);
       I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ThetaMin, I18n::Message::ThetaMax};
       myCell->setMessage(labels[index]);
       break;
@@ -89,15 +89,15 @@ void DomainParameterController::buttonAction() {
   stack->pop();
 }
 
-Shared::ExpiringPointer<Shared::CartesianFunction> DomainParameterController::function() const {
+Shared::ExpiringPointer<Shared::ContinuousFunction> DomainParameterController::function() const {
   assert(!m_record.isNull());
   App * myApp = App::app();
   return myApp->functionStore()->modelForRecord(m_record);
 }
 
 FloatParameterController<float>::InfinityTolerance DomainParameterController::infinityAllowanceForRow(int row) const {
-  Shared::CartesianFunction::PlotType plotType = function()->plotType();
-  if (plotType == Shared::CartesianFunction::PlotType::Cartesian) {
+  Shared::ContinuousFunction::PlotType plotType = function()->plotType();
+  if (plotType == Shared::ContinuousFunction::PlotType::Cartesian) {
     return row == 0 ? FloatParameterController<float>::InfinityTolerance::MinusInfinity : FloatParameterController<float>::InfinityTolerance::PlusInfinity;
   }
   return FloatParameterController<float>::InfinityTolerance::None;

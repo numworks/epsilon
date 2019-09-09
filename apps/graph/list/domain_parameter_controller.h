@@ -30,7 +30,7 @@ private:
   float parameterAtIndex(int index) override;
   void buttonAction() override;
   InfinityTolerance infinityAllowanceForRow(int row) const override;
-  Shared::ExpiringPointer<Shared::CartesianFunction> function() const;
+  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
 };

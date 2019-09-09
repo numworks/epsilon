@@ -26,8 +26,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   for (int i = 0; i < functionStore->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-    ExpiringPointer<CartesianFunction> f = functionStore->modelForRecord(record);;
-    Shared::CartesianFunction::PlotType type = f->plotType();
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);;
+    Shared::ContinuousFunction::PlotType type = f->plotType();
     float tmin = f->tMin();
     float tmax = f->tMax();
     /* The step is a fraction of tmax-tmin. We will evaluate the function at
@@ -44,9 +44,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     float tstep = (tmax-tmin)/10.0938275501223f;
 
     // Cartesian
-    if (type == Shared::CartesianFunction::PlotType::Cartesian) {
+    if (type == Shared::ContinuousFunction::PlotType::Cartesian) {
       drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
-            CartesianFunction * f = (CartesianFunction *)model;
+            ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), f->color(), record == m_selectedRecord, m_highlightedStart, m_highlightedEnd);
@@ -64,9 +64,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }
 
     // Polar
-    if (type == Shared::CartesianFunction::PlotType::Polar) {
+    if (type == Shared::ContinuousFunction::PlotType::Polar) {
       drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
-          CartesianFunction * f = (CartesianFunction *)model;
+          ContinuousFunction * f = (ContinuousFunction *)model;
           Poincare::Context * c = (Poincare::Context *)context;
           return f->evaluateXYAtParameter(t, c);
         }, f.operator->(), context(), false, f->color());
@@ -74,9 +74,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }
 
     // Parametric
-    assert(type == Shared::CartesianFunction::PlotType::Parametric);
+    assert(type == Shared::ContinuousFunction::PlotType::Parametric);
     drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
-        CartesianFunction * f = (CartesianFunction *)model;
+        ContinuousFunction * f = (ContinuousFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;
         return f->evaluateXYAtParameter(t, c);
       }, f.operator->(), context(), false, f->color());

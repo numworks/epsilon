@@ -34,7 +34,7 @@ void GraphController::viewWillAppear() {
   selectFunctionWithCursor(indexFunctionSelectedByCursor());
 }
 
-void GraphController::interestingFunctionRange(ExpiringPointer<CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const {
+void GraphController::interestingFunctionRange(ExpiringPointer<ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   const int balancedBound = std::floor((tMax-tMin)/2/step);
   for (int j = -balancedBound; j <= balancedBound ; j++) {
@@ -60,8 +60,8 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
   if (displaysNonCartesianFunctions()) {
     const int functionsCount = functionStore()->numberOfActiveFunctions();
     for (int i = 0; i < functionsCount; i++) {
-      ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-      if (f->plotType() == CartesianFunction::PlotType::Cartesian) {
+      ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+      if (f->plotType() == ContinuousFunction::PlotType::Cartesian) {
         continue;
       }
       /* Scan x-range from the middle to the extrema in order to get balanced
@@ -86,8 +86,8 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
    * missed. */
   const float step = const_cast<GraphController *>(this)->curveView()->pixelWidth() / 2;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    if (f->plotType() != CartesianFunction::PlotType::Cartesian) {
+    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    if (f->plotType() != ContinuousFunction::PlotType::Cartesian) {
       continue;
     }
     /* Scan x-range from the middle to the extrema in order to get balanced
@@ -114,7 +114,7 @@ float GraphController::interestingXHalfRange() const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   ContinuousFunctionStore * store = functionStore();
   for (int i = 0; i < store->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<CartesianFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
+    ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
@@ -125,14 +125,14 @@ float GraphController::interestingXHalfRange() const {
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
-  ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
 }
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   bool displayDerivative = m_displayDerivativeInBanner &&
-    functionStore()->modelForRecord(record)->plotType() == CartesianFunction::PlotType::Cartesian;
+    functionStore()->modelForRecord(record)->plotType() == ContinuousFunction::PlotType::Cartesian;
   m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
   FunctionGraphController::reloadBannerView();
   if (!displayDerivative) {
@@ -148,7 +148,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
 
 int GraphController::closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
   int nbOfActiveFunctions = functionStore()-> numberOfActiveFunctions();
-  if (functionStore()->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Cartesian) == nbOfActiveFunctions) {
+  if (functionStore()->numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Cartesian) == nbOfActiveFunctions) {
     return FunctionGraphController::closestCurveIndexVertically(goingUp, currentSelectedCurve, context);
   }
   int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? -1 : 1);
@@ -156,8 +156,8 @@ int GraphController::closestCurveIndexVertically(bool goingUp, int currentSelect
 }
 
 double GraphController::defaultCursorT(Ion::Storage::Record record) {
-  ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(record);
-  if (function->plotType() == CartesianFunction::PlotType::Cartesian) {
+  ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
+  if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
     return FunctionGraphController::defaultCursorT(record);
   }
   return function->tMin();
@@ -165,8 +165,8 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
 
 bool GraphController::displaysNonCartesianFunctions() const {
   ContinuousFunctionStore * store = functionStore();
-  return store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Polar) > 0
-    || store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Parametric) > 0;
+  return store->numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar) > 0
+    || store->numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric) > 0;
 }
 
 bool GraphController::shouldSetDefaultOnModelChange() const {

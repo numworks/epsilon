@@ -34,7 +34,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();
-    Shared::CartesianFunction::PlotType plotType = plotTypeAtRow(selectedRow());
+    Shared::ContinuousFunction::PlotType plotType = plotTypeAtRow(selectedRow());
     controller->setTitle(messageForType(plotType));
     setStartEndMessages(controller, plotType);
     controller->setInterval(App::app()->intervalForType(plotType));
@@ -47,9 +47,9 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
 int IntervalParameterSelectorController::numberOfRows() const {
   int rowCount = 0;
   int plotTypeIndex = 0;
-  Shared::CartesianFunction::PlotType plotType;
-  while (plotTypeIndex < Shared::CartesianFunction::k_numberOfPlotTypes) {
-    plotType = static_cast<Shared::CartesianFunction::PlotType>(plotTypeIndex);
+  Shared::ContinuousFunction::PlotType plotType;
+  while (plotTypeIndex < Shared::ContinuousFunction::k_numberOfPlotTypes) {
+    plotType = static_cast<Shared::ContinuousFunction::PlotType>(plotTypeIndex);
     bool plotTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfType(plotType) > 0;
     rowCount += plotTypeIsShown;
     plotTypeIndex++;
@@ -63,21 +63,21 @@ HighlightCell * IntervalParameterSelectorController::reusableCell(int index) {
 }
 
 int IntervalParameterSelectorController::reusableCellCount() const {
-  return Shared::CartesianFunction::k_numberOfPlotTypes;
+  return Shared::ContinuousFunction::k_numberOfPlotTypes;
 }
 
 void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < numberOfRows());
-  Shared::CartesianFunction::PlotType plotType = plotTypeAtRow(index);
+  Shared::ContinuousFunction::PlotType plotType = plotTypeAtRow(index);
   static_cast<MessageTableCellWithChevron *>(cell)->setMessage(messageForType(plotType));
 }
 
-Shared::CartesianFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {
+Shared::ContinuousFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {
   int rowCount = 0;
   int plotTypeIndex = 0;
-  Shared::CartesianFunction::PlotType plotType;
-  while (plotTypeIndex < Shared::CartesianFunction::k_numberOfPlotTypes) {
-    plotType = static_cast<Shared::CartesianFunction::PlotType>(plotTypeIndex);
+  Shared::ContinuousFunction::PlotType plotType;
+  while (plotTypeIndex < Shared::ContinuousFunction::k_numberOfPlotTypes) {
+    plotType = static_cast<Shared::ContinuousFunction::PlotType>(plotTypeIndex);
     bool plotTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfType(plotType) > 0;
     if (plotTypeIsShown && rowCount == j) {
       break;
@@ -89,8 +89,8 @@ Shared::CartesianFunction::PlotType IntervalParameterSelectorController::plotTyp
   return plotType;
 }
 
-I18n::Message IntervalParameterSelectorController::messageForType(Shared::CartesianFunction::PlotType plotType) {
-  constexpr I18n::Message message[Shared::CartesianFunction::k_numberOfPlotTypes] = {
+I18n::Message IntervalParameterSelectorController::messageForType(Shared::ContinuousFunction::PlotType plotType) {
+  constexpr I18n::Message message[Shared::ContinuousFunction::k_numberOfPlotTypes] = {
     I18n::Message::IntervalX,
     I18n::Message::IntervalTheta,
     I18n::Message::IntervalT
@@ -98,13 +98,13 @@ I18n::Message IntervalParameterSelectorController::messageForType(Shared::Cartes
   return message[static_cast<size_t>(plotType)];
 }
 
-void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::CartesianFunction::PlotType plotType) {
-  if (plotType == Shared::CartesianFunction::PlotType::Cartesian) {
+void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::PlotType plotType) {
+  if (plotType == Shared::ContinuousFunction::PlotType::Cartesian) {
     controller->setStartEndMessages(I18n::Message::XStart, I18n::Message::XEnd);
-  } else if (plotType == Shared::CartesianFunction::PlotType::Polar) {
+  } else if (plotType == Shared::ContinuousFunction::PlotType::Polar) {
     controller->setStartEndMessages(I18n::Message::ThetaStart, I18n::Message::ThetaEnd);
   } else {
-    assert(plotType == Shared::CartesianFunction::PlotType::Parametric);
+    assert(plotType == Shared::ContinuousFunction::PlotType::Parametric);
     controller->setStartEndMessages(I18n::Message::TStart, I18n::Message::TEnd);
   }
 }

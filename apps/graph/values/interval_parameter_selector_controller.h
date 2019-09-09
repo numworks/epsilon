@@ -20,11 +20,11 @@ public:
   int reusableCellCount() const override;
   HighlightCell * reusableCell(int index) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::CartesianFunction::PlotType plotType);
+  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::PlotType plotType);
 private:
-  Shared::CartesianFunction::PlotType plotTypeAtRow(int j) const;
-  I18n::Message messageForType(Shared::CartesianFunction::PlotType plotType);
-  MessageTableCellWithChevron m_intervalParameterCell[Shared::CartesianFunction::k_numberOfPlotTypes];
+  Shared::ContinuousFunction::PlotType plotTypeAtRow(int j) const;
+  I18n::Message messageForType(Shared::ContinuousFunction::PlotType plotType);
+  MessageTableCellWithChevron m_intervalParameterCell[Shared::ContinuousFunction::k_numberOfPlotTypes];
   SelectableTableView m_selectableTableView;
 };
 

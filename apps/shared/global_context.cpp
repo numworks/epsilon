@@ -32,7 +32,7 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
-  CartesianFunction f = CartesianFunction(record);
+  ContinuousFunction f = ContinuousFunction(record);
   return f.expressionClone();
 }
 
@@ -42,7 +42,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     return PoincareHelpers::CreateLayout(ExpressionFromSymbolRecord(record));
   } else {
     assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension)));
-    return CartesianFunction(record).layout();
+    return ContinuousFunction(record).layout();
   }
 }
 
@@ -113,13 +113,13 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const 
   if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     // The previous record was not a function. Destroy it and create the new record.
     previousRecord.destroy();
-    CartesianFunction newModel = CartesianFunction::NewModel(&error, symbol.name());
+    ContinuousFunction newModel = ContinuousFunction::NewModel(&error, symbol.name());
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     recordToSet = newModel;
   }
-  error = CartesianFunction(recordToSet).setExpressionContent(expressionToStore);
+  error = ContinuousFunction(recordToSet).setExpressionContent(expressionToStore);
   return error;
 }
 

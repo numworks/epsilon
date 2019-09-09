@@ -69,7 +69,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   }
 }
 
-ExpiringPointer<CartesianFunction> FunctionParameterController::function() {
+ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 

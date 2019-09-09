@@ -22,7 +22,7 @@ namespace Shared {
 static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 static inline double minDouble(double x, double y) { return x < y ? x : y; }
 
-void CartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
+void ContinuousFunction::DefaultName(char buffer[], size_t bufferSize) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   static constexpr const char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'
@@ -53,7 +53,7 @@ void CartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   assert(currentNumberLength >= 0 && currentNumberLength < availableBufferSize);
 }
 
-CartesianFunction CartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
+ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
   // Create the record
   char nameBuffer[SymbolAbstract::k_maxNameSize];
@@ -67,14 +67,14 @@ CartesianFunction CartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus 
 
   // Return if error
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
-    return CartesianFunction();
+    return ContinuousFunction();
   }
 
-  // Return the CartesianFunction withthe new record
-  return CartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
+  // Return the ContinuousFunction withthe new record
+  return ContinuousFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
-int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
+int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
   // Fill buffer with f(x). Keep size for derivative sign.
   int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
   int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
@@ -88,7 +88,7 @@ int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSi
   return numberOfChars + derivativeSize;
 }
 
-Poincare::Expression CartesianFunction::expressionReduced(Poincare::Context * context) const {
+Poincare::Expression ContinuousFunction::expressionReduced(Poincare::Context * context) const {
   Poincare::Expression result = ExpressionModelHandle::expressionReduced(context);
   if (plotType() == PlotType::Parametric && (
       result.type() != Poincare::ExpressionNode::Type::Matrix ||
@@ -100,11 +100,11 @@ Poincare::Expression CartesianFunction::expressionReduced(Poincare::Context * co
   return result;
 }
 
-I18n::Message CartesianFunction::parameterMessageName() const {
+I18n::Message ContinuousFunction::parameterMessageName() const {
   return ParameterMessageForPlotType(plotType());
 }
 
-CodePoint CartesianFunction::symbol() const {
+CodePoint ContinuousFunction::symbol() const {
   switch (plotType()) {
   case PlotType::Cartesian:
     return 'x';
@@ -116,11 +116,11 @@ CodePoint CartesianFunction::symbol() const {
   }
 }
 
-CartesianFunction::PlotType CartesianFunction::plotType() const {
+ContinuousFunction::PlotType ContinuousFunction::plotType() const {
   return recordData()->plotType();
 }
 
-void CartesianFunction::setPlotType(PlotType newPlotType, Poincare::Preferences::AngleUnit angleUnit) {
+void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences::AngleUnit angleUnit) {
   PlotType currentPlotType = plotType();
   if (newPlotType == currentPlotType) {
     return;
@@ -174,7 +174,7 @@ void CartesianFunction::setPlotType(PlotType newPlotType, Poincare::Preferences:
   }
 }
 
-I18n::Message CartesianFunction::ParameterMessageForPlotType(PlotType plotType) {
+I18n::Message ContinuousFunction::ParameterMessageForPlotType(PlotType plotType) {
   if (plotType == PlotType::Cartesian) {
     return I18n::Message::X;
   }
@@ -186,7 +186,7 @@ I18n::Message CartesianFunction::ParameterMessageForPlotType(PlotType plotType) 
 }
 
 template <typename T>
-Poincare::Coordinate2D<T> CartesianFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context) const {
+Poincare::Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Poincare::Context * context) const {
   Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context);
   PlotType type = plotType();
   if (type == PlotType::Cartesian || type == PlotType::Parametric) {
@@ -206,15 +206,15 @@ Poincare::Coordinate2D<T> CartesianFunction::privateEvaluateXYAtParameter(T t, P
   return Coordinate2D<T>(x1x2.x2() * std::cos(angle), x1x2.x2() * std::sin(angle));
 }
 
-bool CartesianFunction::displayDerivative() const {
+bool ContinuousFunction::displayDerivative() const {
   return recordData()->displayDerivative();
 }
 
-void CartesianFunction::setDisplayDerivative(bool display) {
+void ContinuousFunction::setDisplayDerivative(bool display) {
   return recordData()->setDisplayDerivative(display);
 }
 
-int CartesianFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
   PlotType type = plotType();
   if (type == PlotType::Cartesian) {
     return Function::printValue(cursorT, cursorX, cursorY, buffer, bufferSize, precision, context);
@@ -232,7 +232,7 @@ int CartesianFunction::printValue(double cursorT, double cursorX, double cursorY
   return result;
 }
 
-double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
+double ContinuousFunction::approximateDerivative(double x, Poincare::Context * context) const {
   assert(plotType() == PlotType::Cartesian);
   if (x < tMin() || x > tMax()) {
     return NAN;
@@ -244,38 +244,38 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
   return PoincareHelpers::ApproximateToScalar<double>(derivative, context);
 }
 
-float CartesianFunction::tMin() const {
+float ContinuousFunction::tMin() const {
   return recordData()->tMin();
 }
 
-float CartesianFunction::tMax() const {
+float ContinuousFunction::tMax() const {
   return recordData()->tMax();
 }
 
-void CartesianFunction::setTMin(float tMin) {
+void ContinuousFunction::setTMin(float tMin) {
   recordData()->setTMin(tMin);
 }
 
-void CartesianFunction::setTMax(float tMax) {
+void ContinuousFunction::setTMax(float tMax) {
   recordData()->setTMax(tMax);
 }
 
-void * CartesianFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
+void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
   return (char *)record->value().buffer+sizeof(RecordDataBuffer);
 }
 
-size_t CartesianFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
+size_t ContinuousFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
   return record->value().size-sizeof(RecordDataBuffer);
 }
 
-CartesianFunction::RecordDataBuffer * CartesianFunction::recordData() const {
+ContinuousFunction::RecordDataBuffer * ContinuousFunction::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
   return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 template<typename T>
-Coordinate2D<T> CartesianFunction::templatedApproximateAtParameter(T t, Poincare::Context * context) const {
+Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincare::Context * context) const {
   if (isCircularlyDefined(context) || t < tMin() || t > tMax()) {
     return Coordinate2D<T>(plotType() == PlotType::Cartesian ? t : NAN, NAN);
   }
@@ -296,19 +296,19 @@ Coordinate2D<T> CartesianFunction::templatedApproximateAtParameter(T t, Poincare
       PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), unknown, t, context));
 }
 
-Coordinate2D<double> CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
+Coordinate2D<double> ContinuousFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
   return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return PoincareHelpers::NextMinimum(e, symbol, start, step, max, context); });
 }
 
-Coordinate2D<double> CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
+Coordinate2D<double> ContinuousFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
   return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return PoincareHelpers::NextMaximum(e, symbol, start, step, max, context); });
 }
 
-Coordinate2D<double> CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
+Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double step, double max, Context * context) const {
   return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, step, max, context), 0.0); });
 }
 
-Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin, double eDomainMax) const {
+Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin, double eDomainMax) const {
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
@@ -325,7 +325,7 @@ Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, doubl
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, context, e);
 }
 
-Coordinate2D<double> CartesianFunction::nextPointOfInterestFrom(double start, double step, double max, Context * context, ComputePointOfInterest compute) const {
+Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double step, double max, Context * context, ComputePointOfInterest compute) const {
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
@@ -340,7 +340,7 @@ Coordinate2D<double> CartesianFunction::nextPointOfInterestFrom(double start, do
   return compute(expressionReduced(context), unknownX, start, step, max, context);
 }
 
-Poincare::Expression CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
+Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
   assert(plotType() == PlotType::Cartesian);
   start = maxDouble(start, tMin());
   end = minDouble(end, tMax());
@@ -350,7 +350,7 @@ Poincare::Expression CartesianFunction::sumBetweenBounds(double start, double en
    * the derivative table. */
 }
 
-template Coordinate2D<float> CartesianFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
-template Coordinate2D<double> CartesianFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;
+template Coordinate2D<float> ContinuousFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
+template Coordinate2D<double> ContinuousFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;
 
 }

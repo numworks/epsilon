@@ -33,7 +33,7 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   Shared::FunctionApp::Snapshot::reset();
-  for (int i = 0; i < Shared::CartesianFunction::k_numberOfPlotTypes; i++) {
+  for (int i = 0; i < Shared::ContinuousFunction::k_numberOfPlotTypes; i++) {
     m_interval[i].reset();
   }
 }

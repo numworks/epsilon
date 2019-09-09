@@ -81,8 +81,8 @@ void CurveParameterController::viewWillAppear() {
 }
 
 bool CurveParameterController::shouldDisplayCalculationAndDerivative() const {
-  Shared::ExpiringPointer<CartesianFunction> f = App::app()->functionStore()->modelForRecord(m_record);
-  return f->plotType() == CartesianFunction::PlotType::Cartesian;
+  Shared::ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
+  return f->plotType() == ContinuousFunction::PlotType::Cartesian;
 }
 
 int CurveParameterController::cellIndex(int visibleCellIndex) const {

@@ -32,7 +32,7 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
   constexpr static int k_maxNumberOfFunctions = 5;
-  constexpr static int k_maxNumberOfAbscissaCells = Shared::CartesianFunction::k_numberOfPlotTypes * k_maxNumberOfRows;
+  constexpr static int k_maxNumberOfAbscissaCells = Shared::ContinuousFunction::k_numberOfPlotTypes * k_maxNumberOfRows;
   constexpr static int k_maxNumberOfCells = k_maxNumberOfFunctions * k_maxNumberOfRows;
 
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
@@ -42,7 +42,7 @@ private:
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
-  Shared::CartesianFunction::PlotType plotTypeAtColumn(int * i) const;
+  Shared::ContinuousFunction::PlotType plotTypeAtColumn(int * i) const;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;
@@ -51,14 +51,14 @@ private:
   EvenOddBufferTextCell * floatCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfAbscissaCells; }
   EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfAbscissaCells); return &m_abscissaCells[j]; }
-  int abscissaTitleCellsCount() const override { return Shared::CartesianFunction::k_numberOfPlotTypes; }
+  int abscissaTitleCellsCount() const override { return Shared::ContinuousFunction::k_numberOfPlotTypes; }
   EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   ViewController * functionParameterController() override;
 
-  mutable int m_numberOfColumnsForType[Shared::CartesianFunction::k_numberOfPlotTypes];
+  mutable int m_numberOfColumnsForType[Shared::ContinuousFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
-  AbscissaTitleCell m_abscissaTitleCells[Shared::CartesianFunction::k_numberOfPlotTypes];
+  AbscissaTitleCell m_abscissaTitleCells[Shared::ContinuousFunction::k_numberOfPlotTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfAbscissaCells];
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;

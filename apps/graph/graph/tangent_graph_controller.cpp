@@ -46,8 +46,8 @@ bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, co
   if (myApp->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
-  assert(function->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
+  assert(function->plotType() == Shared::ContinuousFunction::PlotType::Cartesian);
   double y = function->evaluate2DAtParameter(floatBody, myApp->localContext()).x2();
   m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
@@ -74,7 +74,7 @@ void TangentGraphController::reloadBannerView() {
   constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
-  ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), context);
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
   m_bannerView->aView()->setText(buffer);
@@ -82,7 +82,7 @@ void TangentGraphController::reloadBannerView() {
   legend = "b=";
   legendLength = strlcpy(buffer, legend, bufferSize);
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
-  assert(function->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
+  assert(function->plotType() == Shared::ContinuousFunction::PlotType::Cartesian);
   y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), myApp->localContext()).x2();
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
   m_bannerView->bView()->setText(buffer);

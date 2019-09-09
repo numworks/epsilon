@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 namespace Shared {
-  class CartesianFunction;
+  class ContinuousFunction;
 }
 
 namespace Poincare {
@@ -25,7 +25,7 @@ namespace Poincare {
 class TreeHandle {
   template<class T>
   friend class ArrayBuilder;
-  friend class ::Shared::CartesianFunction;
+  friend class ::Shared::ContinuousFunction;
   friend class TreeNode;
   friend class TreePool;
 public:

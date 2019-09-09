@@ -1,10 +1,8 @@
 #ifndef GRAPH_CONTINUOUS_FUNCTION_STORE_H
 #define GRAPH_CONTINUOUS_FUNCTION_STORE_H
 
-#include "../shared/cartesian_function.h"
 #include "../shared/function_store.h"
-#include <stdint.h>
-#include <escher.h>
+#include "../shared/continuous_function.h"
 
 namespace Graph {
 

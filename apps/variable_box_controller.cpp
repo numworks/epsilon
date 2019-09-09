@@ -1,6 +1,6 @@
 #include "variable_box_controller.h"
 #include "shared/global_context.h"
-#include "shared/cartesian_function.h"
+#include "shared/continuous_function.h"
 #include <escher/metric.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/layout_helper.h>

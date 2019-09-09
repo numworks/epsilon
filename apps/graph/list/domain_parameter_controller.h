@@ -3,7 +3,7 @@
 
 #include <escher/message_table_cell_with_expression.h>
 #include <ion/storage.h>
-#include "../../shared/cartesian_function.h"
+#include "../../shared/continuous_function.h"
 #include "../../shared/expiring_pointer.h"
 #include "../../shared/float_parameter_controller.h"
 

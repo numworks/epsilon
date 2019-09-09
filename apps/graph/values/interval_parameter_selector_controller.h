@@ -2,8 +2,8 @@
 #define GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 
 #include <escher.h>
-#include "../../shared/cartesian_function.h"
 #include <apps/shared/interval_parameter_controller.h>
+#include "../../shared/continuous_function.h"
 
 namespace Graph {
 

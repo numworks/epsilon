@@ -61,7 +61,8 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
   float xMax = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMax();
   assert(functionStore()->numberOfActiveFunctions() > 0);
   if (displaysNonCartesianFunctions()) {
-    for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+    const int functionsCount = functionStore()->numberOfActiveFunctions();
+    for (int i = 0; i < functionsCount; i++) {
       ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
       if (f->plotType() == CartesianFunction::PlotType::Cartesian) {
         continue;
@@ -74,6 +75,10 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
       assert(!std::isnan(tMax));
       assert(!std::isnan(f->rangeStep()));
       interestingFunctionRange(f, tMin, tMax, f->rangeStep(), &resultxMin, &resultxMax, &resultyMin, &resultyMax);
+    }
+    if (resultxMin > resultxMax) {
+      resultxMin = - Range1D::k_default;
+      resultxMax = Range1D::k_default;
     }
   } else {
     resultxMin = xMin;
@@ -96,6 +101,11 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
     double tMax = minFloat(f->tMax(), xMax);
     interestingFunctionRange(f, tMin, tMax, step, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
   }
+  if (resultyMin > resultyMax) {
+    resultyMin = - Range1D::k_default;
+    resultyMax = Range1D::k_default;
+  }
+
   *xm = resultxMin;
   *xM = resultxMax;
   *ym = resultyMin;

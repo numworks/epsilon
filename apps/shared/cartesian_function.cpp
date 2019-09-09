@@ -286,13 +286,13 @@ Coordinate2D<double> CartesianFunction::nextRootFrom(double start, double step, 
   return nextPointOfInterestFrom(start, step, max, context, [](Expression e, char * symbol, double start, double step, double max, Context * context) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, step, max, context), 0.0); });
 }
 
-Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, CartesianFunction * f) const {
+Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin, double eDomainMax) const {
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-  double domainMin = maxDouble(tMin(), f->tMin());
-  double domainMax = minDouble(tMax(), f->tMax());
+  double domainMin = maxDouble(tMin(), eDomainMin);
+  double domainMax = minDouble(tMax(), eDomainMax);
   if (step > 0.0f) {
     start = maxDouble(start, domainMin);
     max = minDouble(max, domainMax);
@@ -300,7 +300,7 @@ Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, doubl
     start = minDouble(start, domainMax);
     max = maxDouble(max, domainMin);
   }
-  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, context, f->expressionReduced(context));
+  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, context, e);
 }
 
 Coordinate2D<double> CartesianFunction::nextPointOfInterestFrom(double start, double step, double max, Context * context, ComputePointOfInterest compute) const {

@@ -215,6 +215,9 @@ int CartesianFunction::printValue(double cursorT, double cursorX, double cursorY
 }
 
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
+  if (x < tMin() || x > tMax()) {
+    return NAN;
+  }
   Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid

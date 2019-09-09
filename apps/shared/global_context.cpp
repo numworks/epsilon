@@ -1,5 +1,5 @@
 #include "global_context.h"
-#include "cartesian_function.h"
+#include "continuous_function.h"
 #include "poincare_helpers.h"
 #include <poincare/undefined.h>
 #include <assert.h>

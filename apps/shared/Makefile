@@ -1,5 +1,5 @@
 app_shared_test_src = $(addprefix apps/shared/,\
-  cartesian_function.cpp\
+  continuous_function.cpp\
   curve_view_range.cpp \
   double_pair_store.cpp \
   expression_model.cpp \

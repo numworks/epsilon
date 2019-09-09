@@ -29,7 +29,7 @@ private:
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::CartesianFunction> function, TextField * textField);
+  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::ContinuousFunction> function, TextField * textField);
   ContinuousFunctionStore * modelStore() override;
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];

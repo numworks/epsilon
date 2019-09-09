@@ -24,12 +24,12 @@ void IntersectionGraphController::reloadBannerView() {
   const char * space = " ";
   const char * legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
-  ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(m_record);
   int numberOfChar = f->nameWithArgument(buffer, bufferSize-2);
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   // keep 1 char for '=';
-  ExpiringPointer<CartesianFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
+  ExpiringPointer<ContinuousFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
   numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize-numberOfChar-1);
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
@@ -46,7 +46,7 @@ Poincare::Coordinate2D<double> IntersectionGraphController::computeNewPointOfInt
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     if (record != m_record) {
-      CartesianFunction f = *(functionStore()->modelForRecord(record));
+      ContinuousFunction f = *(functionStore()->modelForRecord(record));
       Poincare::Coordinate2D<double> intersection = functionStore()->modelForRecord(m_record)->nextIntersectionFrom(start, step, max, context, f.expressionReduced(context), f.tMin(), f.tMax());
       if ((std::isnan(result.x1()) || std::fabs(intersection.x1()-start) < std::fabs(result.x1()-start)) && !std::isnan(intersection.x1())) {
         m_intersectedRecord = record;

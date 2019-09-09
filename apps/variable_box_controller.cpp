@@ -106,7 +106,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else {
     assert(m_currentPage == Page::Function);
-    CartesianFunction f(record);
+    ContinuousFunction f(record);
     symbolLength = f.nameWithArgument(
         symbolName,
         Shared::Function::k_maxNameWithArgumentSize

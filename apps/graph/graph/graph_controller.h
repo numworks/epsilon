@@ -36,7 +36,7 @@ private:
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool displaysNonCartesianFunctions() const;
   bool defautRangeIsNormalized() const override { return displaysNonCartesianFunctions(); }
-  void interestingFunctionRange(Shared::ExpiringPointer<Shared::CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
+  void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
   bool shouldSetDefaultOnModelChange() const override;
 
   Shared::RoundCursorView m_cursorView;

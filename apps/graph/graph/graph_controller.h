@@ -33,7 +33,7 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
-  CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
+  ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool displaysNonCartesianFunctions() const;
   bool defautRangeIsNormalized() const override { return displaysNonCartesianFunctions(); }
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;

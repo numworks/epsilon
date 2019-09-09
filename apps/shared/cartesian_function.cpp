@@ -215,6 +215,7 @@ int CartesianFunction::printValue(double cursorT, double cursorX, double cursorY
 }
 
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
+  assert(plotType() == PlotType::Cartesian);
   if (x < tMin() || x > tMax()) {
     return NAN;
   }
@@ -307,6 +308,7 @@ Coordinate2D<double> CartesianFunction::nextIntersectionFrom(double start, doubl
 }
 
 Coordinate2D<double> CartesianFunction::nextPointOfInterestFrom(double start, double step, double max, Context * context, ComputePointOfInterest compute) const {
+  assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);

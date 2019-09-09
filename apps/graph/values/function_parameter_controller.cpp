@@ -38,7 +38,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int FunctionParameterController::numberOfRows() {
+int FunctionParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
@@ -53,7 +53,7 @@ HighlightCell * FunctionParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int FunctionParameterController::reusableCellCount() {
+int FunctionParameterController::reusableCellCount() const {
   return k_totalNumberOfCell;
 }
 

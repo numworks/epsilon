@@ -18,11 +18,11 @@ public:
   void viewWillAppear() override;
 
   /* TableViewDataSource */
-  int numberOfRows() override { return this->numberOfExpressionRows(); }
+  int numberOfRows() const override { return this->numberOfExpressionRows(); }
   KDCoordinate rowHeight(int j) override { return ExpressionModelListController::memoizedRowHeight(j); }
   KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
   int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
-  int numberOfColumns() override { return 2; }
+  int numberOfColumns() const override { return 2; }
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;

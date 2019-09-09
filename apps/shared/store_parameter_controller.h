@@ -18,7 +18,7 @@ public:
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override { return k_totalNumberOfCell; }
+  int numberOfRows() const override { return k_totalNumberOfCell; }
   KDCoordinate rowHeight(int j) override { return Metric::ParameterCellHeight; }
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

@@ -105,11 +105,11 @@ void CalculationController::viewDidDisappear() {
   ViewController::viewDidDisappear();
 }
 
-int CalculationController::numberOfRows() {
+int CalculationController::numberOfRows() const {
   return 1;
 }
 
-int CalculationController::numberOfColumns() {
+int CalculationController::numberOfColumns() const {
   return m_calculation->numberOfParameters()+1;
 }
 

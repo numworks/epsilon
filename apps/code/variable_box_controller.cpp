@@ -47,7 +47,7 @@ static bool shouldAddObject(const char * name, int maxLength) {
   return true;
 }
 
-int VariableBoxController::numberOfRows() {
+int VariableBoxController::numberOfRows() const {
   assert(m_scriptNodesCount <= k_maxScriptNodesCount);
   return m_scriptNodesCount;
 }

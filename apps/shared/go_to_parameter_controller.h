@@ -11,7 +11,7 @@ namespace Shared {
 class GoToParameterController : public FloatParameterController<double> {
 public:
   GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
-  int numberOfRows() override;
+  int numberOfRows() const override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   void setParameterName(I18n::Message message) { m_parameterCell.setMessage(message); }

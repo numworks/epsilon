@@ -44,7 +44,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
   return false;
 }
 
-int IntervalParameterSelectorController::numberOfRows() {
+int IntervalParameterSelectorController::numberOfRows() const {
   int rowCount = 0;
   int plotTypeIndex = 0;
   Shared::CartesianFunction::PlotType plotType;
@@ -62,7 +62,7 @@ HighlightCell * IntervalParameterSelectorController::reusableCell(int index) {
   return m_intervalParameterCell + index;
 }
 
-int IntervalParameterSelectorController::reusableCellCount() {
+int IntervalParameterSelectorController::reusableCellCount() const {
   return Shared::CartesianFunction::k_numberOfPlotTypes;
 }
 

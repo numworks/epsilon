@@ -20,13 +20,13 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  virtual int numberOfRows() override { return 1; }
+  virtual int numberOfRows() const override { return 1; }
   KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
   virtual HighlightCell * reusableCell(int index) override {
     assert(index == 0);
     return &m_copyColumn;
   }
-  virtual int reusableCellCount() override { return 1; }
+  virtual int reusableCellCount() const override { return 1; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   MessageTableCellWithChevron m_copyColumn;

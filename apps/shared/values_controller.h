@@ -17,7 +17,7 @@ class ValuesController : public EditableCellTableViewController, public ButtonRo
 public:
   ValuesController(Responder * parentResponder, ButtonRowController * header);
   const char * title() override;
-  int numberOfColumns() override;
+  int numberOfColumns() const override;
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -48,13 +48,13 @@ protected:
   void setupAbscissaCellsAndTitleCells(InputEventHandlerDelegate * inputEventHandlerDelegate);
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
-  virtual void updateNumberOfColumns();
+  virtual void updateNumberOfColumns() const;
   virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
-  int numberOfElementsInColumn(int columnIndex) override;
+  int numberOfElementsInColumn(int columnIndex) const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-  int m_numberOfColumns;
-  bool m_numberOfColumnsNeedUpdate;
+  mutable int m_numberOfColumns;
+  mutable bool m_numberOfColumnsNeedUpdate;
   SelectableTableView m_selectableTableView;
 private:
   virtual void setStartEndMessages(Shared::IntervalParameterController * controller, int column) = 0;

@@ -36,7 +36,7 @@ private:
   constexpr static int k_maxNumberOfCells = k_maxNumberOfFunctions * k_maxNumberOfRows;
 
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
-  void updateNumberOfColumns() override;
+  void updateNumberOfColumns() const override;
   Ion::Storage::Record recordAtColumn(int i) override;
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
@@ -55,7 +55,7 @@ private:
   EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   ViewController * functionParameterController() override;
 
-  int m_numberOfColumnsForType[Shared::CartesianFunction::k_numberOfPlotTypes];
+  mutable int m_numberOfColumnsForType[Shared::CartesianFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   AbscissaTitleCell m_abscissaTitleCells[Shared::CartesianFunction::k_numberOfPlotTypes];

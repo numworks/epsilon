@@ -15,9 +15,9 @@ public:
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
   HighlightCell * reusableCell(int index) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::CartesianFunction::PlotType plotType);

@@ -11,7 +11,7 @@ class SequenceToolbox : public MathToolbox {
 public:
   SequenceToolbox();
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;

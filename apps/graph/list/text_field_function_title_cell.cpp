@@ -30,6 +30,7 @@ void TextFieldFunctionTitleCell::setEditing(bool editing) {
   m_textField.setExtensionLength(extensionLength);
   m_textField.setEditing(true);
   m_textField.setText(previousText);
+  m_textField.setDraftTextBufferSize(Poincare::SymbolAbstract::k_maxNameSize+extensionLength);
 }
 
 bool TextFieldFunctionTitleCell::isEditing() const {

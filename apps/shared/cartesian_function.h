@@ -5,6 +5,7 @@
 #include "function.h"
 #include "range_1D.h"
 #include <poincare/symbol.h>
+#include <poincare/coordinate_2D.h>
 
 namespace Shared {
 
@@ -56,6 +57,8 @@ public:
   void setTMax(float tMax);
   float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
 
+  // Cartesian calculation
+  Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, CartesianFunction * f) const;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;

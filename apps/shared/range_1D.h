@@ -12,7 +12,8 @@ namespace Shared {
 class __attribute__((packed)) Range1D final {
 public:
   constexpr static float k_minFloat = 1E-4f;
-  Range1D(float min = -10.0f, float max = 10.0f) :
+  constexpr static float k_default = 10.0f;
+  Range1D(float min = -k_default, float max = k_default) :
     m_min(min),
     m_max(max)
   {}

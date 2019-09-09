@@ -57,6 +57,7 @@ app_shared_src = $(addprefix apps/shared/,\
   round_cursor_view.cpp \
   scrollable_exact_approximate_expressions_cell.cpp \
   scrollable_exact_approximate_expressions_view.cpp \
+  separable.cpp \
   separator_even_odd_buffer_text_cell.cpp \
   simple_interactive_curve_view_controller.cpp \
   store_cell.cpp \

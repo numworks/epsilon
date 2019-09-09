@@ -26,8 +26,8 @@ Responder * TextFieldFunctionTitleCell::responder() {
 void TextFieldFunctionTitleCell::setEditing(bool editing) {
   Container::activeApp()->setFirstResponder(&m_textField);
   const char * previousText = m_textField.text();
-  bool titleIncludesTheta = *(UTF8Helper::CodePointSearch(previousText, UCodePointGreekSmallLetterTheta)) != 0;
-  m_textField.setExtensionLength(titleIncludesTheta ? Shared::Function::k_parenthesedThetaArgumentByteLength : Shared::Function::k_parenthesedXNTArgumentByteLength);
+  int extensionLength = UTF8Helper::HasCodePoint(previousText, UCodePointGreekSmallLetterTheta) ? Shared::Function::k_parenthesedThetaArgumentByteLength : Shared::Function::k_parenthesedXNTArgumentByteLength;
+  m_textField.setExtensionLength(extensionLength);
   m_textField.setEditing(true);
   m_textField.setText(previousText);
 }

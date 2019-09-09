@@ -55,6 +55,11 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   return currentPointer;
 }
 
+bool HasCodePoint(const char * s, CodePoint c) {
+  assert(c != 0);
+  return *CodePointSearch(s, c) != 0;
+}
+
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition) {
   if (goingLeft && initialPosition == s) {
     return s;
@@ -144,7 +149,7 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
   } else {
     assert(stoppingPosition != nullptr);
     // Find the null-terminating code point
-    const char * nullTermination = CodePointSearch(currentPointer, UCodePointNull);
+    const char * nullTermination = currentPointer + strlen(currentPointer);
     /* Copy what remains of the buffer after the stopping position for code
      * point removal */
     memmove(buffer + bufferIndex, stoppingPosition, nullTermination - stoppingPosition + 1);

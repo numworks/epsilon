@@ -43,12 +43,13 @@ void ExpressionModelStore::tidy() {
 int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
   int count = 0;
   int index = 0;
+  Ion::Storage::Record record;
   do {
-    ExpressionModelHandle * m = privateModelForRecord(recordAtIndex(index++));
-    if (m->isNull()) {
+    record = recordAtIndex(index++);
+    if (record.isNull()) {
       break;
     }
-    if (test(m)) {
+    if (test(privateModelForRecord(record))) {
       count++;
     }
   } while (true);
@@ -62,12 +63,11 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, Mo
   Ion::Storage::Record record;
   do {
     record = recordAtIndex(index++);
-    ExpressionModelHandle * m = privateModelForRecord(record);
-    if (m->isNull()) {
+    if (record.isNull()) {
       assert(false);
       break;
     }
-    if (test(m)) {
+    if (test(privateModelForRecord(record))) {
       if (i == count) {
         break;
       }

@@ -55,11 +55,7 @@ void RoundCursorView::setCursorFrame(KDRect f) {
     ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, s_cursorWorkingBuffer);
     // Set the frame
     m_frame = f;
-    // Draw the cursor
-    KDPoint translation = f.origin().translatedBy(previousRelativeFrame.origin().opposite());
-    ctx->setOrigin(previousFrame.origin().translatedBy(translation));
-    ctx->setClippingRect(previousFrame.translatedBy(translation));
-    drawRect(ctx, f);
+    markRectAsDirty(bounds());
     return;
   }
 #endif

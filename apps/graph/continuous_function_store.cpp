@@ -9,32 +9,6 @@ using namespace Shared;
 
 namespace Graph {
 
-int ContinuousFunctionStore::numberOfActiveFunctionsOfType(ContinuousFunction::PlotType plotType) const {
-  int count = 0;
-  for (int i = 0; i < numberOfActiveFunctions(); i++) {
-    Ion::Storage::Record record = activeRecordAtIndex(i);
-    ExpiringPointer<ContinuousFunction> function = modelForRecord(record);
-    count += (plotType == function->plotType());
-  }
-  return count;
-}
-
-Ion::Storage::Record ContinuousFunctionStore::activeRecordOfTypeAtIndex(ContinuousFunction::PlotType plotType, int index) const {
-  int count = 0;
-  Ion::Storage::Record record;
-  for (int i = 0; i < numberOfActiveFunctions(); i++) {
-    record = activeRecordAtIndex(i);
-    ExpiringPointer<ContinuousFunction> function = modelForRecord(record);
-    if (plotType == function->plotType()) {
-      if (count == index) {
-        break;
-      }
-      count++;
-    }
-  }
-  return record;
-}
-
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   Ion::Storage::Record::ErrorStatus error;
   ContinuousFunction newModel = ContinuousFunction::NewModel(&error);

@@ -57,8 +57,6 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
   float resultxMax = -FLT_MAX;
   float resultyMin = FLT_MAX;
   float resultyMax = -FLT_MAX;
-  float xMin = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMin();
-  float xMax = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMax();
   assert(functionStore()->numberOfActiveFunctions() > 0);
   if (displaysNonCartesianFunctions()) {
     const int functionsCount = functionStore()->numberOfActiveFunctions();
@@ -81,8 +79,8 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
       resultxMax = Range1D::k_default;
     }
   } else {
-    resultxMin = xMin;
-    resultxMax = xMax;
+    resultxMin = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMin();
+    resultxMax = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMax();
   }
   /* In practice, a step smaller than a pixel's width is needed for sampling
    * the values of a function. Otherwise some relevant extremal values may be
@@ -97,8 +95,8 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
      * y-range for even functions (y = 1/x). */
     assert(!std::isnan(f->tMin()));
     assert(!std::isnan(f->tMax()));
-    double tMin = maxFloat(f->tMin(), xMin);
-    double tMax = minFloat(f->tMax(), xMax);
+    double tMin = maxFloat(f->tMin(), resultxMin);
+    double tMax = minFloat(f->tMax(), resultxMax);
     interestingFunctionRange(f, tMin, tMax, step, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
   }
   if (resultyMin > resultyMax) {

@@ -59,21 +59,22 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, Mo
   assert(0 <= i && i < numberOfModelsSatisfyingTest(test));
   int index = 0;
   int currentModelIndex = 0;
+  Ion::Storage::Record record;
   do {
-    Ion::Storage::Record r = recordAtIndex(currentModelIndex++);
-    ExpressionModelHandle * m = privateModelForRecord(r);
+    record = recordAtIndex(currentModelIndex++);
+    ExpressionModelHandle * m = privateModelForRecord(record);
     if (m->isNull()) {
+      assert(false);
       break;
     }
     if (test(m)) {
       if (i == index) {
-        return r;
+        break;
       }
       index++;
     }
   } while (true);
-  assert(false);
-  return Ion::Storage::Record();
+  return record;
 }
 
 void ExpressionModelStore::resetMemoizedModelsExceptRecord(const Ion::Storage::Record record) const {

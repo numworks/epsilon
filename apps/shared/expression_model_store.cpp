@@ -43,13 +43,15 @@ void ExpressionModelStore::tidy() {
 int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
   int result = 0;
   int i = 0;
-  ExpressionModelHandle * m = privateModelForRecord(recordAtIndex(i++));
-  while (!m->isNull()) {
+  do {
+    ExpressionModelHandle * m = privateModelForRecord(recordAtIndex(i++));
+    if (m->isNull()) {
+      break;
+    }
     if (test(m)) {
       result++;
     }
-    m = privateModelForRecord(recordAtIndex(i++));
-  }
+  } while (true);
   return result;
 }
 
@@ -57,18 +59,19 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, Mo
   assert(0 <= i && i < numberOfModelsSatisfyingTest(test));
   int index = 0;
   int currentModelIndex = 0;
-  Ion::Storage::Record r = recordAtIndex(currentModelIndex++);
-  ExpressionModelHandle * m = privateModelForRecord(r);
-  while (!m->isNull()) {
+  do {
+    Ion::Storage::Record r = recordAtIndex(currentModelIndex++);
+    ExpressionModelHandle * m = privateModelForRecord(r);
+    if (m->isNull()) {
+      break;
+    }
     if (test(m)) {
       if (i == index) {
         return r;
       }
       index++;
     }
-    r = recordAtIndex(currentModelIndex++);
-    m = privateModelForRecord(r);
-  }
+  } while (true);
   assert(false);
   return Ion::Storage::Record();
 }

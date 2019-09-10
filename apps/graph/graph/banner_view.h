@@ -6,6 +6,7 @@
 namespace Graph {
 
 class BannerView : public Shared::XYBannerView {
+  friend class GraphController;
 public:
   BannerView(
     Responder * parentResponder,

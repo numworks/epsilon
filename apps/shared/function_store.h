@@ -13,13 +13,17 @@ class FunctionStore : public ExpressionModelStore {
 public:
   FunctionStore() : ExpressionModelStore() {}
   uint32_t storeChecksum();
-  int numberOfActiveFunctions() const { return numberOfModelsSatisfyingTest(&isFunctionActive); }
-  Ion::Storage::Record activeRecordAtIndex(int i) const { return recordSatisfyingTestAtIndex(i, &isFunctionActive); }
+  int numberOfActiveFunctions() const {
+    return numberOfModelsSatisfyingTest(&isFunctionActive, nullptr);
+  }
+  Ion::Storage::Record activeRecordAtIndex(int i) const {
+    return recordSatisfyingTestAtIndex(i, &isFunctionActive, nullptr);
+  }
   ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<Function>(static_cast<Function *>(privateModelForRecord(record))); }
 protected:
-  static bool isFunctionActive(ExpressionModelHandle * model) {
+  static bool isFunctionActive(ExpressionModelHandle * model, void * context) {
     // An active function must be defined
-    return isModelDefined(model) && static_cast<Function *>(model)->isActive();
+    return isModelDefined(model, context) && static_cast<Function *>(model)->isActive();
   }
 };
 

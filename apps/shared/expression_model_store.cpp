@@ -40,7 +40,7 @@ void ExpressionModelStore::tidy() {
   resetMemoizedModelsExceptRecord();
 }
 
-int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
+int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test, void * context) const {
   int count = 0;
   int index = 0;
   Ion::Storage::Record record;
@@ -49,15 +49,15 @@ int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
     if (record.isNull()) {
       break;
     }
-    if (test(privateModelForRecord(record))) {
+    if (test(privateModelForRecord(record), context)) {
       count++;
     }
   } while (true);
   return count;
 }
 
-Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test) const {
-  assert(0 <= i && i < numberOfModelsSatisfyingTest(test));
+Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test, void * context) const {
+  assert(0 <= i && i < numberOfModelsSatisfyingTest(test, context));
   int count = 0;
   int index = 0;
   Ion::Storage::Record record;
@@ -67,7 +67,7 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, Mo
       assert(false);
       break;
     }
-    if (test(privateModelForRecord(record))) {
+    if (test(privateModelForRecord(record), context)) {
       if (i == count) {
         break;
       }

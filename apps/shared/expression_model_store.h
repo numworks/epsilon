@@ -19,9 +19,13 @@ public:
   // By default, the number of models is not bounded
   virtual int maxNumberOfModels() const { return -1; }
   int numberOfModels() const;
-  int numberOfDefinedModels() const { return numberOfModelsSatisfyingTest(&isModelDefined); }
   Ion::Storage::Record recordAtIndex(int i) const;
-  Ion::Storage::Record definedRecordAtIndex(int i) const { return recordSatisfyingTestAtIndex(i, &isModelDefined); }
+  int numberOfDefinedModels() const {
+    return numberOfModelsSatisfyingTest(&isModelDefined, nullptr);
+  }
+  Ion::Storage::Record definedRecordAtIndex(int i) const {
+    return recordSatisfyingTestAtIndex(i, &isModelDefined, nullptr);
+  }
   ExpiringPointer<ExpressionModelHandle> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<ExpressionModelHandle>(privateModelForRecord(record)); }
 
   // Add and Remove
@@ -35,10 +39,10 @@ public:
 protected:
   constexpr static int k_maxNumberOfMemoizedModels = 10;
   int maxNumberOfMemoizedModels() const { return maxNumberOfModels() < 0 ? k_maxNumberOfMemoizedModels : maxNumberOfModels(); }
-  typedef bool (*ModelTest)(ExpressionModelHandle * model);
-  int numberOfModelsSatisfyingTest(ModelTest test) const;
-  Ion::Storage::Record recordSatisfyingTestAtIndex(int i, ModelTest test) const;
-  static bool isModelDefined(ExpressionModelHandle * model) {
+  typedef bool (*ModelTest)(ExpressionModelHandle * model, void * context);
+  int numberOfModelsSatisfyingTest(ModelTest test, void * context) const;
+  Ion::Storage::Record recordSatisfyingTestAtIndex(int i, ModelTest test, void * context) const;
+  static bool isModelDefined(ExpressionModelHandle * model, void * context) {
     return model->isDefined();
   }
   ExpressionModelHandle * privateModelForRecord(Ion::Storage::Record record) const;

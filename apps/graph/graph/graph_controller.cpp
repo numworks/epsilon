@@ -30,9 +30,9 @@ I18n::Message GraphController::emptyMessage() {
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
   m_view.setCursorView(&m_cursorView);
-  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + m_displayDerivativeInBanner);
   FunctionGraphController::viewWillAppear();
-  selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
+  // Update the cursor color and the derivative display in the banner view
+  selectFunctionWithCursor(indexFunctionSelectedByCursor());
 }
 
 void GraphController::interestingFunctionRange(ExpiringPointer<CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const {
@@ -130,11 +130,16 @@ void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
   ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
+  int numberBannerViewSubviews = k_numberOfBannerViewSubviewsWithoutDerivate + (m_displayDerivativeInBanner && f->plotType() == CartesianFunction::PlotType::Cartesian);
+  if (m_bannerView.numberOfSubviews() != numberBannerViewSubviews) {
+    m_bannerView.setNumberOfSubviews(numberBannerViewSubviews);
+    reloadBannerView();
+  }
 }
 
 void GraphController::reloadBannerView() {
   FunctionGraphController::reloadBannerView();
-  if (!m_displayDerivativeInBanner) {
+  if (m_bannerView.numberOfSubviews() == k_numberOfBannerViewSubviewsWithoutDerivate) {
     return;
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());

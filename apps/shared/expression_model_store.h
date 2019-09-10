@@ -19,9 +19,9 @@ public:
   // By default, the number of models is not bounded
   virtual int maxNumberOfModels() const { return -1; }
   int numberOfModels() const;
-  int numberOfDefinedModels() const { return numberOfModelsSatisfyingTest([](ExpressionModelHandle * m) { return m->isDefined(); }); }
+  int numberOfDefinedModels() const { return numberOfModelsSatisfyingTest(&isModelDefined); }
   Ion::Storage::Record recordAtIndex(int i) const;
-  Ion::Storage::Record definedRecordAtIndex(int i) const { return recordSatisfyingTestAtIndex(i, [](ExpressionModelHandle * m) { return m->isDefined(); }); }
+  Ion::Storage::Record definedRecordAtIndex(int i) const { return recordSatisfyingTestAtIndex(i, &isModelDefined); }
   ExpiringPointer<ExpressionModelHandle> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<ExpressionModelHandle>(privateModelForRecord(record)); }
 
   // Add and Remove
@@ -38,6 +38,9 @@ protected:
   typedef bool (*ModelTest)(ExpressionModelHandle * model);
   int numberOfModelsSatisfyingTest(ModelTest test) const;
   Ion::Storage::Record recordSatisfyingTestAtIndex(int i, ModelTest test) const;
+  static bool isModelDefined(ExpressionModelHandle * model) {
+    return model->isDefined();
+  }
   ExpressionModelHandle * privateModelForRecord(Ion::Storage::Record record) const;
 private:
   void resetMemoizedModelsExceptRecord(const Ion::Storage::Record record = Ion::Storage::Record()) const;

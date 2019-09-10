@@ -41,37 +41,37 @@ void ExpressionModelStore::tidy() {
 }
 
 int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
-  int result = 0;
-  int i = 0;
+  int count = 0;
+  int index = 0;
   do {
-    ExpressionModelHandle * m = privateModelForRecord(recordAtIndex(i++));
+    ExpressionModelHandle * m = privateModelForRecord(recordAtIndex(index++));
     if (m->isNull()) {
       break;
     }
     if (test(m)) {
-      result++;
+      count++;
     }
   } while (true);
-  return result;
+  return count;
 }
 
 Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test) const {
   assert(0 <= i && i < numberOfModelsSatisfyingTest(test));
+  int count = 0;
   int index = 0;
-  int currentModelIndex = 0;
   Ion::Storage::Record record;
   do {
-    record = recordAtIndex(currentModelIndex++);
+    record = recordAtIndex(index++);
     ExpressionModelHandle * m = privateModelForRecord(record);
     if (m->isNull()) {
       assert(false);
       break;
     }
     if (test(m)) {
-      if (i == index) {
+      if (i == count) {
         break;
       }
-      index++;
+      count++;
     }
   } while (true);
   return record;

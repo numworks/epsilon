@@ -31,7 +31,6 @@ void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
-  // Update the cursor color and the derivative display in the banner view
   selectFunctionWithCursor(indexFunctionSelectedByCursor());
 }
 
@@ -128,19 +127,17 @@ void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
   ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
-  int numberBannerViewSubviews = k_numberOfBannerViewSubviewsWithoutDerivate + (m_displayDerivativeInBanner && f->plotType() == CartesianFunction::PlotType::Cartesian);
-  if (m_bannerView.numberOfSubviews() != numberBannerViewSubviews) {
-    m_bannerView.setNumberOfSubviews(numberBannerViewSubviews);
-    reloadBannerView();
-  }
 }
 
 void GraphController::reloadBannerView() {
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  bool displayDerivative = m_displayDerivativeInBanner &&
+    functionStore()->modelForRecord(record)->plotType() == CartesianFunction::PlotType::Cartesian;
+  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
   FunctionGraphController::reloadBannerView();
-  if (m_bannerView.numberOfSubviews() == k_numberOfBannerViewSubviewsWithoutDerivate) {
+  if (!displayDerivative) {
     return;
   }
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record);
 }
 

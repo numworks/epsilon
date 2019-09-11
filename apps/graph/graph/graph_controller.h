@@ -23,7 +23,6 @@ public:
   float interestingXHalfRange() const override;
   void interestingRanges(float * xm, float * xM, float * ym, float * yM) const override;
 private:
-  static constexpr int k_numberOfBannerViewSubviewsWithoutDerivate = Shared::XYBannerView::k_numberOfSubviews;
   int estimatedBannerNumberOfLines() const override { return 1 + m_displayDerivativeInBanner; }
   void selectFunctionWithCursor(int functionIndex) override;
   BannerView * bannerView() override { return &m_bannerView; }

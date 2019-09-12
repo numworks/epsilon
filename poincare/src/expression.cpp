@@ -416,12 +416,6 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   return degree;
 }
 
-Expression Expression::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  assert(!symbol.isUninitialized());
-  assert(symbol.type() == ExpressionNode::Type::Symbol);
-  return node()->replaceUnknown(symbol, unknownSymbol);
-}
-
 /* Complex */
 
 bool Expression::EncounteredComplex() {

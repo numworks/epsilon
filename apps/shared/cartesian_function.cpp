@@ -1,6 +1,7 @@
 #include "cartesian_function.h"
 #include "expression_model_store.h"
 #include "poincare_helpers.h"
+#include <apps/constant.h>
 #include <poincare/derivative.h>
 #include <poincare/integral.h>
 #include <poincare/matrix.h>
@@ -123,15 +124,29 @@ void CartesianFunction::setPlotType(PlotType newPlotType) {
   if (newPlotType == currentPlotType) {
     return;
   }
-  /* Reset memoized layout. */
-  Expression e = expressionClone();
+
+  recordData()->setPlotType(newPlotType);
+
+  // Recompute the layouts
   m_model.tidy();
+
+  // Recompute the definition domain
   double tMin = newPlotType == PlotType::Cartesian ? -INFINITY : 0.0;
   double tMax = newPlotType == PlotType::Cartesian ? INFINITY : 2.0*M_PI;
   setTMin(tMin);
   setTMax(tMax);
-  recordData()->setPlotType(newPlotType);
+
+  /* Recompute the unknowns. For instance, if the function was f(x) = xθ, it is
+   * stored as f(?) = ?θ. When switching to polar type, it should be stored as
+   * f(?) = ?? */
+  constexpr int previousTextContentMaxSize = Constant::MaxSerializedExpressionSize;
+  char previousTextContent[previousTextContentMaxSize];
+  m_model.text(this, previousTextContent, previousTextContentMaxSize, symbol());
+  setContent(previousTextContent);
+
+  // Handle parametric function switch
   if (currentPlotType == PlotType::Parametric) {
+    Expression e = expressionClone();
     // Change [x(t) y(t)] to y(t)
     if (!e.isUninitialized()
         && e.type() == ExpressionNode::Type::Matrix
@@ -146,6 +161,7 @@ void CartesianFunction::setPlotType(PlotType newPlotType) {
     }
     return;
   } else if (newPlotType == PlotType::Parametric) {
+    Expression e = expressionClone();
     // Change y(t) to [t y(t)]
     Matrix newExpr = Matrix::Builder();
     newExpr.addChildAtIndexInPlace(Symbol::Builder(UCodePointUnknownX), 0, 0);

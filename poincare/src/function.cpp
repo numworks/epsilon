@@ -133,6 +133,16 @@ Expression Function::shallowReplaceReplaceableSymbols(Context * context) {
   if (e.isUninitialized()) {
     return *this;
   }
+  // If the function contains itself, return undefined
+  if (e.hasExpression([](Expression e, const void * context) {
+          if (e.type() != ExpressionNode::Type::Function) {
+            return false;
+          }
+          return strcmp(static_cast<Function&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
+        }, reinterpret_cast<const void *>(name())))
+  {
+    return replaceWithUndefinedInPlace();
+  }
   e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), childAtIndex(0));
   replaceWithInPlace(e);
   return e;

@@ -234,6 +234,16 @@ Expression Symbol::shallowReplaceReplaceableSymbols(Context * context) {
   if (e.isUninitialized()) {
     return *this;
   }
+  // If the symbol contains itself, return undefined
+  if (e.hasExpression([](Expression e, const void * context) {
+          if (e.type() != ExpressionNode::Type::Symbol) {
+            return false;
+          }
+          return strcmp(static_cast<Symbol&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
+        }, reinterpret_cast<const void *>(name())))
+  {
+    return replaceWithUndefinedInPlace();
+  }
   replaceWithInPlace(e);
   return e;
 }

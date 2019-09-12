@@ -144,6 +144,8 @@ public:
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context, bool replaceSymbols = true) const;
+  typedef bool (*ExpressionTypeTest)(const Expression e, const void * context);
+  bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches

@@ -37,6 +37,7 @@ private:
   bool displaysNonCartesianFunctions() const;
   bool defautRangeIsNormalized() const override { return displaysNonCartesianFunctions(); }
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
+  bool shouldSetDefaultOnModelChange() const override;
 
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;

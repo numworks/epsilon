@@ -18,8 +18,7 @@ private:
 
 static constexpr CodePoint UCodePointNull                     = 0x0;
 
-/* 0x1 and 0x2 represent soh and stx. They are not used, so we can use them for
- * another purpose */
+// 0x1 represents soh. It is not used, so we can use it for another purpose.
 static constexpr CodePoint UCodePointUnknownX                 = 0x1;
 
 static constexpr CodePoint UCodePointTabulation               = 0x9;

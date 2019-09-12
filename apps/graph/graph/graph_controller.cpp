@@ -169,4 +169,8 @@ bool GraphController::displaysNonCartesianFunctions() const {
     || store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Parametric) > 0;
 }
 
+bool GraphController::shouldSetDefaultOnModelChange() const {
+  return displaysNonCartesianFunctions();
+}
+
 }

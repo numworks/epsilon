@@ -144,7 +144,7 @@ Responder * InteractiveCurveViewController::defaultController() {
 void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newModelVersion = modelVersion();
   if (*m_modelVersion != newModelVersion) {
-    if (*m_modelVersion == 0 || numberOfCurves() == 1) {
+    if (*m_modelVersion == 0 || numberOfCurves() == 1 || shouldSetDefaultOnModelChange()) {
       interactiveCurveViewRange()->setDefault();
     }
     *m_modelVersion = newModelVersion;

@@ -64,6 +64,7 @@ private:
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) override;
 
+  virtual bool shouldSetDefaultOnModelChange() const { return false; }
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;

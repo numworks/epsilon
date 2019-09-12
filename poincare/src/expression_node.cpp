@@ -18,10 +18,6 @@ Expression ExpressionNode::replaceSymbolWithExpression(const SymbolAbstract & sy
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 
-Expression ExpressionNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  return Expression(this).defaultReplaceSymbolWithExpression(symbol, unknownSymbol);
-}
-
 Expression ExpressionNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(false);
   return Expression();

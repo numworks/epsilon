@@ -151,7 +151,6 @@ public:
    */
   virtual bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  /*!*/ virtual Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
   /*!*/ virtual Expression setSign(Sign s, ReductionContext reductionContext);
   virtual int polynomialDegree(Context * context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;

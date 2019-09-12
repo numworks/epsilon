@@ -28,10 +28,6 @@ Expression SymbolNode::replaceSymbolWithExpression(const SymbolAbstract & symbol
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
-Expression SymbolNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  return Symbol(this).replaceUnknown(symbol, unknownSymbol);
-}
-
 int SymbolNode::polynomialDegree(Context * context, const char * symbolName) const {
   if (strcmp(m_name, symbolName) == 0) {
     return 1;
@@ -207,11 +203,6 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
     return value;
   }
   return *this;
-}
-
-Expression Symbol::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  assert(unknownSymbol.type() == ExpressionNode::Type::Symbol);
-  return replaceSymbolWithExpression(symbol, unknownSymbol);
 }
 
 int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {

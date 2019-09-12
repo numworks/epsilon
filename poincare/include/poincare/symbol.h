@@ -22,7 +22,6 @@ public:
   // Expression Properties
   Type type() const override { return Type::Symbol; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
-  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
@@ -70,7 +69,6 @@ public:
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReplaceReplaceableSymbols(Context * context);
 private:

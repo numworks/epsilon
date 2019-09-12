@@ -102,6 +102,19 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, bool
   return false;
 }
 
+bool Expression::hasExpression(ExpressionTypeTest test, const void * context) const {
+  if (test(*this, context)) {
+    return true;
+  }
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    if (childAtIndex(i).hasExpression(test, context)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Expression::deepIsMatrix(Context * context) const {
   /* We could do something virtual instead of implementing a disjunction on
    * types but in a first try, it was easier to group all code regarding

@@ -105,7 +105,7 @@ void MicroPython::init(void * heapStart, void * heapEnd) {
 #else
   volatile int stackTop;
   mp_stack_set_top((void *)(&stackTop));
-  mp_stack_set_limit(4000);
+  mp_stack_set_limit(8192);
 #endif
   gc_init(heapStart, heapEnd);
   mp_init();
@@ -138,9 +138,9 @@ void gc_collect(void) {
   /* On the device, the stack is stored in reverse order, but it might not be
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
-  size_t stackLength;
+  size_t stackLengthInByte;
   void ** scanStart;
-  if ((uintptr_t)python_stack_top > (uintptr_t)&regs) {
+  if ((uintptr_t)python_stack_top > (uintptr_t)regs_ptr) {
 
     /* To compute the stack length:
      *                                  regs
@@ -149,7 +149,7 @@ void gc_collect(void) {
      *                             ^&regs                        ^python_stack_top
      * */
 
-    stackLength = ceil((float)((uintptr_t)python_stack_top - (uintptr_t)&regs) / (float)sizeof(uintptr_t));
+    stackLengthInByte = (uintptr_t)python_stack_top - (uintptr_t)regs_ptr;
     scanStart = regs_ptr;
 
   } else {
@@ -161,12 +161,13 @@ void gc_collect(void) {
      *           ^python_stack_top                ^&regs
      * */
 
-    size_t sizeOfRegs = ceil(((float)sizeof(regs))/(float)sizeof(uintptr_t));
-    stackLength = (size_t)ceil(((float)((uintptr_t)(&regs) - (uintptr_t)python_stack_top)) / (float)sizeof(uintptr_t)) + sizeOfRegs;
+    stackLengthInByte = (uintptr_t)regs_ptr - (uintptr_t)python_stack_top + sizeof(regs);
     scanStart = (void **)python_stack_top;
 
   }
-  gc_collect_root(scanStart, stackLength);
+  /* Memory error detectors might find an error here as they might split regs
+   * and stack memory zones. */
+  gc_collect_root(scanStart, stackLengthInByte/sizeof(void *));
 
   gc_collect_end();
 }

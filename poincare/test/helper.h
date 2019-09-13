@@ -19,8 +19,6 @@ constexpr Poincare::Preferences::PrintFloatMode DecimalMode = Poincare::Preferen
 constexpr Poincare::Preferences::PrintFloatMode ScientificMode = Poincare::Preferences::PrintFloatMode::Scientific;
 
 bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression got);
-void translate_in_special_chars(char * expression);
-void translate_in_ASCII_chars(char * expression);
 Poincare::Expression parse_expression(const char * expression, bool canBeUnparsable = false);
 Poincare::Expression parse_and_simplify(const char * expression);
 
@@ -41,6 +39,7 @@ void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expre
 
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = Poincare::ExpressionNode::ReductionTarget::User, Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::AngleUnit::Radian, Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::ComplexFormat::Cartesian);
 void assert_parsed_expression_serialize_to(Poincare::Expression expression, const char * serializedExpression, Poincare::Preferences::PrintFloatMode mode = DecimalMode, int numberOfSignifiantDigits = 7);
+void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout);
 
 
 // Layouts

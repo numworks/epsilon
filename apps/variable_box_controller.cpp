@@ -1,18 +1,21 @@
 #include "variable_box_controller.h"
 #include "shared/global_context.h"
 #include "shared/poincare_helpers.h"
-#include "shared/storage_function.h"
-#include "shared/storage_cartesian_function.h"
-#include "graph/storage_cartesian_function_store.h"
+#include "shared/function.h"
+#include "shared/cartesian_function.h"
+#include "graph/cartesian_function_store.h"
 #include "constant.h"
 #include <escher/metric.h>
 #include <assert.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/layout_helper.h>
+#include <ion/unicode/utf8_decoder.h>
 
 using namespace Poincare;
 using namespace Shared;
 using namespace Ion;
+
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 VariableBoxController::VariableBoxController() :
   NestedMenuController(nullptr, I18n::Message::Variables),
@@ -74,9 +77,9 @@ int VariableBoxController::numberOfRows() {
     case Page::RootMenu:
       return k_numberOfMenuRows;
     case Page::Expression:
-      return Storage::sharedStorage()->numberOfRecordsWithExtension(GlobalContext::expExtension);
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
-      return Storage::sharedStorage()->numberOfRecordsWithExtension(GlobalContext::funcExtension);
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::funcExtension);
     default:
       return 0;
   }
@@ -100,18 +103,18 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
   Storage::Record record = recordAtIndex(index);
-  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
-  char symbolName[Shared::StorageFunction::k_maxNameWithArgumentSize];
+  assert(Shared::Function::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
   if (m_currentPage == Page::Expression) {
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else {
     assert(m_currentPage == Page::Function);
-    StorageCartesianFunction f(record);
+    CartesianFunction f(record);
     symbolLength = f.nameWithArgument(
         symbolName,
-        Shared::StorageFunction::k_maxNameWithArgumentSize,
-        Graph::StorageCartesianFunctionStore::Symbol());
+        Shared::Function::k_maxNameWithArgumentSize,
+        Shared::CartesianFunction::Symbol());
   }
   Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);
@@ -123,7 +126,7 @@ KDCoordinate VariableBoxController::rowHeight(int index) {
   if (m_currentPage != Page::RootMenu) {
     Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
     if (!layoutR.isUninitialized()) {
-      return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
+      return maxCoordinate(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
   }
   return NestedMenuController::rowHeight(index);
@@ -188,20 +191,20 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
 
   // Get the name text to insert
   Storage::Record record = recordAtIndex(selectedRow);
-  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > 0);
-  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
-  constexpr size_t nameToHandleMaxSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
+  assert(Shared::Function::k_maxNameWithArgumentSize > 0);
+  assert(Shared::Function::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  constexpr size_t nameToHandleMaxSize = Shared::Function::k_maxNameWithArgumentSize;
   char nameToHandle[nameToHandleMaxSize];
   size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
 
   if (m_currentPage == Page::Function) {
     // Add parentheses to a function name
     assert(nameLength < nameToHandleMaxSize);
-    nameToHandle[nameLength++] = '(';
+    nameLength += UTF8Decoder::CodePointToChars('(', nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
     assert(nameLength < nameToHandleMaxSize);
-    nameToHandle[nameLength++] = Ion::Charset::Empty;
+    nameLength+= UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
     assert(nameLength < nameToHandleMaxSize);
-    nameToHandle[nameLength++] = ')';
+    nameLength += UTF8Decoder::CodePointToChars(')', nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength] = 0;
   }
@@ -240,7 +243,7 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
 
 const char * VariableBoxController::extension() const {
   assert(m_currentPage != Page::RootMenu);
-  return m_currentPage == Page::Function ? GlobalContext::funcExtension : GlobalContext::expExtension;
+  return m_currentPage == Page::Function ? Ion::Storage::funcExtension : Ion::Storage::expExtension;
 }
 
 Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {

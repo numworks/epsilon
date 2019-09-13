@@ -5,6 +5,9 @@
 
 namespace Poincare {
 
+/* TODO: Also keep a m_codePoint ? Redundant with m_name, but faster constants
+ * comparison */
+
 class ConstantNode final : public SymbolAbstractNode {
 public:
   ConstantNode(const char * newName, int length);
@@ -35,27 +38,28 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
   /* Symbol properties */
-  bool isPi() const { return isConstantChar(Ion::Charset::SmallPi); }
-  bool isExponential() const { return isConstantChar(Ion::Charset::Exponential); }
-  bool isIComplex() const { return isConstantChar(Ion::Charset::IComplex); }
+  bool isPi() const { return isConstantCodePoint(UCodePointGreekSmallLetterPi); }
+  bool isExponential() const { return isConstantCodePoint(UCodePointScriptSmallE); }
+  bool isIComplex() const { return isConstantCodePoint(UCodePointMathematicalBoldSmallI); }
+  CodePoint codePoint() const;
 
   // Comparison
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
 private:
   char m_name[0]; // MUST be the last member variable
 
   size_t nodeSize() const override { return sizeof(ConstantNode); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  bool isConstantChar(char c) const { const char constantName[2] = {c, 0}; return strcmp(m_name, constantName) == 0; }
+  bool isConstantCodePoint(CodePoint c) const;
 };
 
 class Constant final : public SymbolAbstract {
 public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
-  static Constant Builder(char name) { return SymbolAbstract::Builder<Constant, ConstantNode>(&name, 1); }
+  static Constant Builder(CodePoint c);
 
   // Constant properties
   bool isPi() const { return node()->isPi(); }

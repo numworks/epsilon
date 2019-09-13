@@ -8,6 +8,7 @@ namespace Calculation {
 class ScrollableExpressionView : public ScrollableView, public ScrollViewDataSource {
 public:
   ScrollableExpressionView(Responder * parentResponder);
+  Poincare::Layout layout() const;
   void setLayout(Poincare::Layout layout);
   void setBackgroundColor(KDColor backgroundColor) override;
   void setExpressionBackgroundColor(KDColor backgroundColor);

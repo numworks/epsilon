@@ -95,11 +95,12 @@ const ToolboxMessageTree MathModuleChildren[] = {
 const ToolboxMessageTree KandinskyModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportKandinsky, I18n::Message::PythonImportKandinsky, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromKandinsky, I18n::Message::PythonImportFromKandinsky, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKandinskyFunction, I18n::Message::PythonKandinskyFunction, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKandinskyFunction, I18n::Message::PythonKandinskyFunction, false, I18n::Message::PythonCommandKandinskyFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetPixel, I18n::Message::PythonGetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSetPixel, I18n::Message::PythonSetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColor, I18n::Message::PythonColor),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillRect, I18n::Message::PythonFillRect)
 };
 
 const ToolboxMessageTree RandomModuleChildren[] = {
@@ -216,6 +217,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExp, I18n::Message::PythonExp),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExpm1, I18n::Message::PythonExpm1),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFabs, I18n::Message::PythonFabs),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillRect, I18n::Message::PythonFillRect),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFloat, I18n::Message::PythonFloat),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFloor, I18n::Message::PythonFloor),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandForward, I18n::Message::PythonTurtleForward),
@@ -328,9 +330,12 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;
   }
-  if (event.hasText() && strlen(event.text()) == 1) {
-    scrollToLetter(event.text()[0]);
-    return true;
+  if (event.hasText() && strlen(event.text()) == 1 ) {
+    char c = event.text()[0];
+    if (UTF8Helper::CodePointIsLetter(c)) {
+      scrollToLetter(c);
+      return true;
+    }
   }
   return false;
 }
@@ -356,9 +361,10 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   const char * editedText = I18n::translate(node->insertedText());
+  // strippedEditedText array needs to be in the same scope as editedText
+  char strippedEditedText[k_maxMessageSize];
   if (node->stripInsertedText()) {
     int strippedEditedTextMaxLength = strlen(editedText)+1;
-    char strippedEditedText[k_maxMessageSize];
     assert(strippedEditedTextMaxLength <= k_maxMessageSize);
     Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText, strippedEditedTextMaxLength, true);
     editedText = strippedEditedText;
@@ -387,24 +393,24 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
 }
 
 void PythonToolbox::scrollToLetter(char letter) {
+  assert(UTF8Helper::CodePointIsLetter(letter));
+  /* We look for a child MessageTree that starts with the wanted letter. If we
+   * do not find one, we scroll to the first child MessageTree that starts with
+   * a letter higher than the wanted letter. */
   char lowerLetter = tolower(letter);
-  // We look for a child MessageTree that starts with the wanted letter.
+  int index = -1;
   for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
-    char currentFirstLetterLowered = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
-    if (currentFirstLetterLowered == lowerLetter) {
-      scrollToAndSelectChild(i);
-      return;
+    char l = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
+    if (l == lowerLetter) {
+      index = i;
+      break;
+    }
+    if (index < 0 && l >= lowerLetter && UTF8Helper::CodePointIsLowerCaseLetter(l)) {
+      index = i;
     }
   }
-  // We did not find a child MessageTree that starts with the wanted letter.
-  // We scroll to the first child MessageTree that starts with a letter higher
-  // than the wanted letter.
-  for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
-    char currentFirstLetterLowered = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
-    if (currentFirstLetterLowered >= lowerLetter && currentFirstLetterLowered <= 'z') {
-      scrollToAndSelectChild(i);
-      return;
-    }
+  if (index >= 0) {
+    scrollToAndSelectChild(index);
   }
 }
 

@@ -3,13 +3,12 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <ion/charset.h>
 #include <escher/metric.h>
 #include <assert.h>
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
    if (cursor->position() == LayoutCursor::Position::Left
@@ -134,16 +133,16 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   // Add a multiplication if omitted.
-  if (idxInParent > 0 && p->isHorizontal() && p->childAtIndex(idxInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
-    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
+  if (idxInParent > 0 && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
   bool addParenthesis = false;
-  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->isHorizontal() && p->childAtIndex(idxInParent + 1)->isVerticalOffset()) {
+  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout) {
     addParenthesis = true;
     // Add parenthesis
-    buffer[numberOfChar++] = '(';
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
@@ -153,13 +152,13 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   if (addParenthesis) {
     // Add parenthesis
-    buffer[numberOfChar++] = ')';
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
   // Add a multiplication if omitted.
-  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->isHorizontal() && p->childAtIndex(idxInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
-    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
+  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
@@ -167,7 +166,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return numberOfChar;
 }
 
-LayoutNode * FractionLayoutNode::layoutToPointWhenInserting() {
+LayoutNode * FractionLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
   if (numeratorLayout()->isEmpty()){
     return numeratorLayout();
   }
@@ -185,7 +184,7 @@ void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
 }
 
 KDSize FractionLayoutNode::computeSize() {
-  KDCoordinate width = max(numeratorLayout()->layoutSize().width(), denominatorLayout()->layoutSize().width())
+  KDCoordinate width = maxCoordinate(numeratorLayout()->layoutSize().width(), denominatorLayout()->layoutSize().width())
     + 2*Metric::FractionAndConjugateHorizontalOverflow+2*Metric::FractionAndConjugateHorizontalMargin;
   KDCoordinate height = numeratorLayout()->layoutSize().height()
     + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin

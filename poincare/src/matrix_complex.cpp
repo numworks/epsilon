@@ -137,7 +137,7 @@ MatrixComplex<T> MatrixComplex<T>::Undefined() {
 }
 
 template<typename T>
-MatrixComplex<T> MatrixComplex<T>::createIdentity(int dim) {
+MatrixComplex<T> MatrixComplex<T>::CreateIdentity(int dim) {
   MatrixComplex<T> result = MatrixComplex<T>::Builder();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {

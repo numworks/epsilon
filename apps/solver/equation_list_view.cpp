@@ -1,31 +1,32 @@
 #include "equation_list_view.h"
+#include "list_controller.h"
 
 namespace Solver {
 
 /* EquationListView */
 
-EquationListView::EquationListView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource) :
-  Responder(parentResponder),
+EquationListView::EquationListView(ListController * listController) :
+  Responder(listController),
   View(),
   m_braceStyle(BraceStyle::None),
-  m_listView(this, dataSource, selectionDataSource),
+  m_listView(this, listController, listController, listController),
   m_braceView(),
   m_scrollBraceView(&m_braceView, this)
 {
   m_listView.setMargins(0);
   m_listView.setVerticalCellOverlap(0);
   m_listView.setDecoratorType(ScrollView::Decorator::Type::None);
-  selectionDataSource->setScrollViewDelegate(this);
+  listController->setScrollViewDelegate(this);
   m_scrollBraceView.setMargins(k_margin, k_margin, k_margin, k_margin);
   m_scrollBraceView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_scrollBraceView.setBackgroundColor(KDColorWhite);
 }
 
 void EquationListView::setBraceStyle(BraceStyle style) {
-  if (m_braceStyle != style) {
-    m_braceStyle = style;
-    layoutSubviews();
-  }
+  /* Even if the brace style does not change, we want to relayout in case the
+   * size of the braced object has changed. */
+  m_braceStyle = style;
+  layoutSubviews();
 }
 
 void EquationListView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {

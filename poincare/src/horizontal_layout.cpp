@@ -164,6 +164,21 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
+LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
+  assert(correspondingExpression != nullptr);
+  if (correspondingExpression->numberOfChildren() > 0) {
+    Layout layoutToPointTo = Layout(this).recursivelyMatches(
+      [](Poincare::Layout layout) {
+        return layout.type() == LayoutNode::Type::LeftParenthesisLayout || layout.isEmpty();
+      }
+    );
+    if (!layoutToPointTo.isUninitialized()) {
+      return layoutToPointTo.node();
+    }
+  }
+  return this;
+}
+
 int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 0) {
     if (bufferSize == 0) {
@@ -309,7 +324,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   /* If the new child is also an horizontal layout, steal the children of the
    * new layout then destroy it. */
   bool oldWasAncestorOfNewLayout = newChild->hasAncestor(oldChild, false);
-  if (newChild->isHorizontal()) {
+  if (newChild->type() == LayoutNode::Type::HorizontalLayout) {
     int indexForInsertion = indexOfChild(oldChild);
     if (cursor != nullptr) {
       /* If the old layout is not an ancestor of the new layout, or if the
@@ -354,7 +369,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
 // HorizontalLayout
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
-  if (l.isHorizontal()) {
+  if (l.type() == LayoutNode::Type::HorizontalLayout) {
     mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
   } else {
     addChildAtIndex(l, index, numberOfChildren(), cursor, removeEmptyChildren);

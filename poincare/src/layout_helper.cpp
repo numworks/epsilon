@@ -1,9 +1,10 @@
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -34,7 +35,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
   if (numberOfChildren > 0) {
     args.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
     for (int i = 1; i < numberOfChildren; i++) {
-      args.addChildAtIndex(CharLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
+      args.addChildAtIndex(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
       args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
   }
@@ -56,15 +57,42 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
 HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
+  UTF8Decoder decoder(buffer);
+  const char * currentPointer = buffer;
+  CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
+  assert(!codePoint.isCombining());
+  int layoutIndex = 0;
+  int bufferIndex = 0;
+  while (codePoint != UCodePointNull && bufferIndex < bufferLen) {
+    resultLayout.addChildAtIndex(CodePointLayout::Builder(codePoint, font), layoutIndex, layoutIndex, nullptr);
+    layoutIndex++;
+    bufferIndex+= nextPointer - currentPointer;
+    currentPointer = nextPointer;
+    codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
+    while (codePoint.isCombining()) {
+      bufferIndex+= nextPointer - currentPointer;
+      currentPointer = nextPointer;
+      codePoint = decoder.nextCodePoint();
+      nextPointer = decoder.stringPosition();
+    }
+  }
+  return resultLayout;
+}
+
+HorizontalLayout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font) {
+  assert(bufferLen > 0);
+  HorizontalLayout resultLayout = HorizontalLayout::Builder();
   for (int i = 0; i < bufferLen; i++) {
-    resultLayout.addChildAtIndex(CharLayout::Builder(buffer[i], font), i, i, nullptr);
+    resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i], font), i, i, nullptr);
   }
   return resultLayout;
 }
 
 Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   HorizontalLayout resultLayout = String("log", 3);
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Type::Subscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);
   return resultLayout;

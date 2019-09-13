@@ -49,12 +49,12 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
-Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   return CommonLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   return Logarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
@@ -223,7 +223,7 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
     replaceWithInPlace(result);
     return result;
   }
-  bool infiniteArg = c.recursivelyMatchesInfinity(context);
+  bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, context);
   // log(x,x)->1 with x != inf and log(inf,inf) = undef
   if (c.isIdenticalTo(b)) {
     Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(1).convert<Expression>();
@@ -241,7 +241,7 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
     const Rational r = static_cast<Rational &>(c);
     // log(0, x) = -inf if x > 1 && x != inf || inf x < 1 || undef if x < 0
     if (r.isZero()) {
-      bool infiniteBase = b.recursivelyMatchesInfinity(context);
+      bool infiniteBase = b.recursivelyMatches(Expression::IsInfinity, context);
       // Special case: log(0,inf) -> undef
       if (infiniteBase) {
         Expression result = Undefined::Builder();
@@ -341,7 +341,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
 
 Expression Logarithm::shallowBeautify() {
   assert(numberOfChildren() == 2);
-  Constant e = Constant::Builder(Ion::Charset::Exponential);
+  Constant e = Constant::Builder(UCodePointScriptSmallE);
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);

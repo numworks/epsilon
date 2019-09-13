@@ -15,7 +15,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "unicode_for_symbol.h"
+#include "code_points.h"
 #include "../../ion/src/external/lz4/lz4hc.h"
 
 
@@ -36,20 +36,9 @@ typedef struct {
 } image_t;
 
 #ifdef GENERATE_PNG
+#define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
 void writeImageToPNGFile(image_t * image, char * filename);
-#endif
-
-#define CHARACTER_RANGE_START 0x20
-#define CHARACTER_RANGE_END 0x7E
-#define CHARACTER_COUNT (CHARACTER_RANGE_END-CHARACTER_RANGE_START+1)
-#define GLYPH_COUNT (CHARACTER_COUNT + NUMBER_OF_SYMBOLS)
-
-#define GRID_WIDTH 19
-#define GRID_HEIGHT 8
-
-#if (GRID_WIDTH*GRID_HEIGHT < GLYPH_COUNT)
-#error Grid too small. Consider increasing GRID_WIDTH or GRID_HEIGHT
 #endif
 
 void drawGlyphInImage(FT_Bitmap * glyphBitmap, image_t * image, int x, int y);
@@ -60,9 +49,9 @@ int main(int argc, char * argv[]) {
   FT_Face face;
   image_t bitmap_image;
 
-  int expectedNumberOfArguments = 6;
+  int expectedNumberOfArguments = 8;
 #ifdef GENERATE_PNG
-  expectedNumberOfArguments = 7;
+  expectedNumberOfArguments = 9;
 #endif
   if (argc != expectedNumberOfArguments) {
 #ifdef GENERATE_PNG
@@ -73,6 +62,8 @@ int main(int argc, char * argv[]) {
     fprintf(stderr, "  font_file: Path of the font file to load\n");
     fprintf(stderr, "  glyph_width: Width of bitmap glyphs, in pixels\n");
     fprintf(stderr, "  glyph_height: Height of bitmap glyphs, in pixels\n");
+    fprintf(stderr, "  packed_glyph_width: Minimal glyph width in pixels. Pass 0 if unsure.\n");
+    fprintf(stderr, "  packed_glyph_height: Minimal glyph height in pixels. Pass 0 if unsure.\n");
     fprintf(stderr, "  font_name: name of the loaded font\n");
     fprintf(stderr, "  output_cpp: Name of the generated C source file\n");
 #ifdef GENERATE_PNG
@@ -84,10 +75,12 @@ int main(int argc, char * argv[]) {
   char * font_file = argv[1];
   int requested_glyph_width = atoi(argv[2]);
   int requested_glyph_height = atoi(argv[3]);
-  char * font_name = argv[4];
-  char * output_cpp = argv[5];
+  int packed_glyph_width = atoi(argv[4]);
+  int packed_glyph_height = atoi(argv[5]);
+  char * font_name = argv[6];
+  char * output_cpp = argv[7];
 #ifdef GENERATE_PNG
-  char * output_png = argv[6];
+  char * output_png = argv[8];
 #endif
 
   ENSURE(!FT_Init_FreeType(&library), "Initializing library");
@@ -105,8 +98,9 @@ int main(int argc, char * argv[]) {
   int maxWidth = 0;
   int maxAboveBaseline = 0;
   int maxBelowBaseline = 0;
-  for (unsigned char character = CHARACTER_RANGE_START; character <= CHARACTER_RANGE_END; character++) {
-    ENSURE(!FT_Load_Char(face, character, FT_LOAD_RENDER), "Loading character 0x%02x", character);
+  for (int i=0; i < NumberOfCodePoints; i++) {
+    wchar_t codePoint = CodePoints[i];
+    ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%02x", codePoint);
     int aboveBaseline = face->glyph->bitmap_top;
     int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
     int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
@@ -119,32 +113,28 @@ int main(int argc, char * argv[]) {
     if (belowBaseline > maxBelowBaseline) {
       maxBelowBaseline = belowBaseline;
     }
-  }
-  for (int charIndex = 0; charIndex < NUMBER_OF_SYMBOLS; charIndex++) {
-    wchar_t wideChar = codePointForSymbol[charIndex];
-    ENSURE(!FT_Load_Char(face, wideChar, FT_LOAD_RENDER), "Loading character 0x%02x", wideChar);
-    int aboveBaseline = face->glyph->bitmap_top;
-    int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
-    int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
-    if (width > maxWidth) {
-      maxWidth = width;
-    }
-    if (aboveBaseline > maxAboveBaseline) {
-      maxAboveBaseline = aboveBaseline;
-    }
-    if (belowBaseline > maxBelowBaseline) {
-      maxBelowBaseline = belowBaseline;
-    }
+    // printf("Codepoint %04x : %dx%d\n", codePoint, width, aboveBaseline+belowBaseline);
   }
 
   int glyph_width = maxWidth-1;
+  if (packed_glyph_width != 0) {
+    ENSURE(glyph_width == packed_glyph_width, "Expecting a packed glyph width of %d but got %d instead", packed_glyph_width, glyph_width);
+  } else {
+    printf("Computed packed_glyph_width = %d\n", glyph_width);
+  }
   int glyph_height = maxAboveBaseline+maxBelowBaseline;
-  //printf("Actual glyph size = %dx%d\n", glyph_width, glyph_height);
+  if (packed_glyph_height != 0) {
+    ENSURE(glyph_height == packed_glyph_height, "Expecting a packed glyph height of %d but got %d instead", packed_glyph_height, glyph_height);
+  } else {
+    printf("Computed packed_glyph_height = %d\n", glyph_height);
+  }
 
   int grid_size = 1;
+  int grid_width = 20;
+  int grid_height = ((NumberOfCodePoints-1)/grid_width)+1;
 
-  bitmap_image.width = GRID_WIDTH*glyph_width+(GRID_WIDTH-1)*grid_size;
-  bitmap_image.height = GRID_HEIGHT*glyph_height+(GRID_HEIGHT-1)*grid_size;
+  bitmap_image.width = grid_width*glyph_width+(grid_width-1)*grid_size;
+  bitmap_image.height = grid_height*glyph_height+(grid_height-1)*grid_size;
   bitmap_image.pixels = malloc(sizeof(pixel_t)*bitmap_image.width*bitmap_image.height);
   ENSURE(bitmap_image.pixels != NULL, "Allocating bitmap image of size %dx%d at %ld bytes per pixel", bitmap_image.width, bitmap_image.height, sizeof(pixel_t));
 
@@ -159,30 +149,23 @@ int main(int argc, char * argv[]) {
     }
   }
 
-  // We're doing the ASCII table, so characters from 0 to 255 inclusive
-  for (unsigned char character = CHARACTER_RANGE_START; character <= CHARACTER_RANGE_END; character++) {
-    int x = (character-CHARACTER_RANGE_START)%(GRID_WIDTH);
-    int y = (character-CHARACTER_RANGE_START)/(GRID_WIDTH);
+  for (int i=0; i<NumberOfCodePoints; i++) {
+    wchar_t codePoint = CodePoints[i];
+    int x = i%grid_width;
+    int y = i/grid_width;
     // FT_LOAD_RENDER: Render the glyph upon load
-    ENSURE(!FT_Load_Char(face, character, FT_LOAD_RENDER), "Loading character 0x%02x", character);
+    ENSURE(!FT_Load_Char(face, codePoint, FT_LOAD_RENDER), "Loading character 0x%08x", codePoint);
     //printf("Advances = %dx%d\n", face->glyph->bitmap_left, face->glyph->bitmap_top);
+    while (face->glyph->bitmap_left < 0) {
+      // This is a workaround for combining glyphs.
+      // For some reason, FreeType does a fun hack and yields a negative bitmap_left
+      // This way, the glyph automagically combines with the previous one. That's neat,
+      // but we don't want to do that.
+      face->glyph->bitmap_left += glyph_width;
+    }
     drawGlyphInImage(&face->glyph->bitmap,
         &bitmap_image,
-        x*(glyph_width+grid_size) + face->glyph->bitmap_left,
-        y*(glyph_height+grid_size) + maxAboveBaseline - face->glyph->bitmap_top
-    );
-  }
-  // We are now using unicode to access non-ASCII characters
-  for (int charIndex = 0; charIndex < NUMBER_OF_SYMBOLS; charIndex++) {
-    wchar_t wideChar = codePointForSymbol[charIndex];
-    int x = (charIndex+1+CHARACTER_RANGE_END-CHARACTER_RANGE_START)%(GRID_WIDTH);
-    int y = (charIndex+1+CHARACTER_RANGE_END-CHARACTER_RANGE_START)/(GRID_WIDTH);
-    // FT_LOAD_RENDER: Render the glyph upon load
-    ENSURE(!FT_Load_Char(face, wideChar, FT_LOAD_RENDER), "Loading character 0x%02x", wideChar);
-    //printf("Advances = %dx%d\n", face->glyph->bitmap_left, face->glyph->bitmap_top);
-    drawGlyphInImage(&face->glyph->bitmap,
-        &bitmap_image,
-        x*(glyph_width+grid_size) + face->glyph->bitmap_left,
+        x*(glyph_width+grid_size)  + face->glyph->bitmap_left,
         y*(glyph_height+grid_size) + maxAboveBaseline - face->glyph->bitmap_top
     );
   }
@@ -195,22 +178,46 @@ int main(int argc, char * argv[]) {
 
   fprintf(sourceFile, "/* This file is auto-generated by the rasterizer */\n\n");
   fprintf(sourceFile, "#include <kandinsky/font.h>\n\n");
+
+  // Step 1 - Build the GlyphIndex <-> UnicodeCodePoint correspondance table
+
+  int previousIndex = -1;
+  uint32_t previousCodePoint = 0;
+  int numberOfPairs = 0;
+
+  fprintf(sourceFile, "static constexpr KDFont::CodePointIndexPair table[] = {\n");
+  for (int i=0; i<NumberOfCodePoints; i++) {
+    int currentCodePoint = CodePoints[i];
+    if (currentCodePoint != (previousCodePoint + (i-previousIndex))) {
+      fprintf(sourceFile, "  KDFont::CodePointIndexPair(0x%x, %d),\n", currentCodePoint, i);
+      previousCodePoint = currentCodePoint;
+      previousIndex = i;
+      numberOfPairs++;
+    }
+  }
+  fprintf(sourceFile, "};\n\n");
+
+  fprintf(sourceFile, "static constexpr size_t tableLength = %d;\n\n", numberOfPairs);
+
+  // Step 2 - Build Glyph data
+
   fprintf(sourceFile, "static constexpr KDCoordinate glyphWidth = %d;\n\n", glyph_width);
   fprintf(sourceFile, "static constexpr KDCoordinate glyphHeight = %d;\n\n", glyph_height);
 
   int greyscaleBitsPerPixel = 4;
 
   int sizeOfUncompressedGlyphBuffer = glyph_width * glyph_height * greyscaleBitsPerPixel/8;
+  ENSURE(8*sizeOfUncompressedGlyphBuffer == glyph_width * glyph_height * greyscaleBitsPerPixel, "Error: the glyph size (%dx%d@%dbpp) cannot fit in an integral number of bytes", glyph_width, glyph_height, greyscaleBitsPerPixel);
   uint8_t * uncompressedGlyphBuffer = (uint8_t *)malloc(sizeOfUncompressedGlyphBuffer);
 
-  uint16_t glyphDataOffset[GLYPH_COUNT+1];
-  int maxGlyphDataSize = GLYPH_COUNT* sizeOfUncompressedGlyphBuffer;
+  uint16_t glyphDataOffset[NumberOfCodePoints+1];
+  int maxGlyphDataSize = NumberOfCodePoints* sizeOfUncompressedGlyphBuffer;
   uint8_t * glyphData = (uint8_t *)malloc(maxGlyphDataSize);
   uint16_t lastOffset = 0;
 
-  for (int character = 0; character < GLYPH_COUNT; character++) {
-    int characterX = (character%GRID_WIDTH * (glyph_width+grid_size));
-    int characterY = (character/GRID_WIDTH * (glyph_height+grid_size));
+  for (int character = 0; character < NumberOfCodePoints; character++) {
+    int characterX = (character%grid_width * (glyph_width+grid_size));
+    int characterY = (character/grid_width * (glyph_height+grid_size));
     uint8_t accumulator = 0;
     int uncompressedGlyphBufferIndex = 0;
     int numberOfValuesAccumulated = 0;
@@ -227,8 +234,8 @@ int main(int argc, char * argv[]) {
         }
       }
     }
-    ENSURE(accumulator == 0, "Discarded accumulator data");
-    ENSURE(numberOfValuesAccumulated == 0, "Discarded accumulator data");
+    ENSURE(accumulator == 0, "Discarded accumulator data (accumulator = %d)", accumulator);
+    ENSURE(numberOfValuesAccumulated == 0, "Discarded accumulator data (numberOfValuesAccumulated = %d)", numberOfValuesAccumulated);
     ENSURE(uncompressedGlyphBufferIndex == sizeOfUncompressedGlyphBuffer, "Error filling uncompressed buffer, only %d out of %d", uncompressedGlyphBufferIndex, sizeOfUncompressedGlyphBuffer);
 
     int sizeOfCompressedGlyphBuffer = LZ4_compress_HC(
@@ -244,16 +251,16 @@ int main(int argc, char * argv[]) {
     glyphDataOffset[character] = lastOffset;
     lastOffset += sizeOfCompressedGlyphBuffer;
   }
-  glyphDataOffset[GLYPH_COUNT] = lastOffset;
+  glyphDataOffset[NumberOfCodePoints] = lastOffset;
 
-  fprintf(sourceFile, "static constexpr uint16_t glyphDataOffset[%d] = {", GLYPH_COUNT+1);
-  prettyPrintArray(sourceFile, 80, 2, glyphDataOffset, GLYPH_COUNT+1);
+  fprintf(sourceFile, "static constexpr uint16_t glyphDataOffset[%d] = {", NumberOfCodePoints+1);
+  prettyPrintArray(sourceFile, 80, 2, glyphDataOffset, NumberOfCodePoints+1);
   fprintf(sourceFile, "};\n\n");
 
   size_t finalDataSize = lastOffset;
-  size_t initialDataSize = GLYPH_COUNT * glyph_width * glyph_height;
+  size_t initialDataSize = NumberOfCodePoints * glyph_width * glyph_height;
 
-  fprintf(sourceFile, "/* Rasterized  = %5zu bytes (%d glyphs x %d pixels)\n", initialDataSize, GLYPH_COUNT, glyph_width*glyph_height);
+  fprintf(sourceFile, "/* Rasterized  = %5zu bytes (%d glyphs x %d pixels)\n", initialDataSize, NumberOfCodePoints, glyph_width*glyph_height);
   fprintf(sourceFile, " * Downsampled = %5lu bytes (1/%d of rasterized)\n", initialDataSize*greyscaleBitsPerPixel/8, 8/greyscaleBitsPerPixel);
   fprintf(sourceFile, " * Compressed  = %5zu bytes (%.2f%% of rasterized) */\n", finalDataSize, 100.0*finalDataSize/initialDataSize);
 
@@ -264,7 +271,7 @@ int main(int argc, char * argv[]) {
   free(glyphData);
   free(uncompressedGlyphBuffer);
 
-  fprintf(sourceFile, "const KDFont KDFont::private%s(glyphWidth, glyphHeight, glyphDataOffset, glyphData);\n", font_name);
+  fprintf(sourceFile, "const KDFont KDFont::private%s(tableLength, table, glyphWidth, glyphHeight, glyphDataOffset, glyphData);\n", font_name);
 
   fclose(sourceFile);
 

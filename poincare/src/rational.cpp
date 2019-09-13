@@ -1,16 +1,16 @@
 #include <poincare/rational.h>
+#include <poincare/arithmetic.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/fraction_layout.h>
+#include <poincare/infinity.h>
+#include <poincare/opposite.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>
 }
-#include <poincare/arithmetic.h>
-#include <poincare/opposite.h>
-#include <poincare/infinity.h>
-#include <poincare/fraction_layout.h>
-#include <poincare/char_layout.h>
-
 namespace Poincare {
 
 /* Rational Node */
@@ -78,7 +78,10 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   if (numberOfChar >= bufferSize-1) {
     return numberOfChar;
   }
-  buffer[numberOfChar++] = '/';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '/');
+  if (numberOfChar >= bufferSize-1) {
+    return numberOfChar;
+  }
   numberOfChar += denominator().serialize(buffer+numberOfChar, bufferSize-numberOfChar);
   return numberOfChar;
 }
@@ -93,11 +96,11 @@ Expression RationalNode::setSign(Sign s, Context * context, Preferences::Complex
 // Layout
 
 Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout numeratorLayout = signedNumerator().createLayout();
+  Layout numeratorLayout = signedNumerator().createLayout();
   if (denominator().isOne()) {
     return numeratorLayout;
   }
-  HorizontalLayout denominatorLayout = denominator().createLayout();
+  Layout denominatorLayout = denominator().createLayout();
   return FractionLayout::Builder(numeratorLayout, denominatorLayout);
 }
 
@@ -134,7 +137,7 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 // Simplification
 
-Expression RationalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression RationalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Rational(this).shallowReduce();
 }
 

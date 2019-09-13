@@ -1,7 +1,7 @@
 #include "calculation_controller.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <assert.h>
@@ -11,7 +11,7 @@ using namespace Shared;
 
 namespace Regression {
 
-static inline int max(int x, int y) { return (x>y ? x : y); }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder),
@@ -25,7 +25,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell(),
   m_store(store)
 {
-  m_r2Layout = HorizontalLayout::Builder(CharLayout::Builder('r', KDFont::SmallFont), VerticalOffsetLayout::Builder(CharLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript));
+  m_r2Layout = HorizontalLayout::Builder(CodePointLayout::Builder('r', KDFont::SmallFont), VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript));
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
@@ -65,7 +65,10 @@ void CalculationController::didBecomeFirstResponder() {
   TabTableController::didBecomeFirstResponder();
 }
 
-void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
   /* To prevent selecting cell with no content (top left corner of the table),
    * as soon as the selected cell is the top left corner, we either reselect
    * the previous cell or select the tab controller depending on from which cell
@@ -354,7 +357,7 @@ int CalculationController::maxNumberOfCoefficients() const {
   int numberOfDefinedSeries = m_store->numberOfNonEmptySeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     int currentNumberOfCoefs = m_store->modelForSeries(m_store->indexOfKthNonEmptySeries(i))->numberOfCoefficients();
-    maxNumberCoefficients = max(maxNumberCoefficients, currentNumberOfCoefs);
+    maxNumberCoefficients = maxInt(maxNumberCoefficients, currentNumberOfCoefs);
   }
   return maxNumberCoefficients;
 }

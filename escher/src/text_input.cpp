@@ -3,18 +3,14 @@
 
 /* TextInput::ContentView */
 
-TextInput::ContentView::ContentView(const KDFont * font) :
-  View(),
-  m_cursorView(),
-  m_font(font),
-  m_cursorIndex(0)
-{
-}
+static inline const char * minCharPointer(const char * x, const char * y) { return x < y ? x : y; }
+static inline const char * maxCharPointer(const char * x, const char * y) { return x > y ? x : y; }
 
-void TextInput::ContentView::setCursorLocation(int location) {
-  assert(location >= 0);
-  int adjustedLocation = location > (signed int)editedTextLength() ? (signed int)editedTextLength() : location;
-  m_cursorIndex = adjustedLocation;
+void TextInput::ContentView::setCursorLocation(const char * location) {
+  assert(location != nullptr);
+  assert(location >= editedText());
+  const char * adjustedLocation = minCharPointer(location, editedText() + editedTextLength());
+  m_cursorLocation = adjustedLocation;
   layoutSubviews();
 }
 
@@ -24,70 +20,67 @@ void TextInput::ContentView::setFont(const KDFont * font) {
 }
 
 KDRect TextInput::ContentView::cursorRect() {
-  return characterFrameAtIndex(m_cursorIndex);
-}
-
-int TextInput::ContentView::numberOfSubviews() const {
-  return 1;
-}
-
-View * TextInput::ContentView::subviewAtIndex(int index) {
-  return &m_cursorView;
+  return glyphFrameAtPosition(editedText(), m_cursorLocation);
 }
 
 void TextInput::ContentView::layoutSubviews() {
   m_cursorView.setFrame(cursorRect());
 }
 
-KDRect TextInput::ContentView::dirtyRectFromCursorPosition(size_t index, bool lineBreak) const {
-  KDRect charRect = characterFrameAtIndex(index);
-  KDRect dirtyRect = KDRect(charRect.x(), charRect.y(), bounds().width() - charRect.x(), charRect.height());
+void TextInput::ContentView::reloadRectFromPosition(const char * position, bool lineBreak) {
+  markRectAsDirty(dirtyRectFromPosition(position, lineBreak));
+}
+
+KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
+  KDRect glyphRect = glyphFrameAtPosition(text(), position);
+  KDRect dirtyRect = KDRect(
+      glyphRect.x(),
+      glyphRect.y(),
+      bounds().width() - glyphRect.x(),
+      glyphRect.height());
   if (lineBreak) {
-      dirtyRect = dirtyRect.unionedWith(KDRect(0, charRect.bottom()+1, bounds().width(), bounds().height()-charRect.bottom()-1));
+    dirtyRect = dirtyRect.unionedWith(
+        KDRect(0,
+          glyphRect.bottom() + 1,
+          bounds().width(),
+          bounds().height() - glyphRect.bottom() - 1));
   }
   return dirtyRect;
 }
 
-void TextInput::ContentView::reloadRectFromCursorPosition(size_t index, bool lineBreak) {
-  markRectAsDirty(dirtyRectFromCursorPosition(index, lineBreak));
-}
-
 /* TextInput */
 
-TextInput::TextInput(Responder * parentResponder, View * contentView) :
-  ScrollableView(parentResponder, contentView, this)
-{
-}
-
-bool TextInput::removeChar() {
-  contentView()->removeChar();
+bool TextInput::removePreviousGlyph() {
+  contentView()->removePreviousGlyph();
   scrollToCursor();
   return true;
 }
 
 void TextInput::scrollToCursor() {
-  /* Technically, we do not need to overscroll in text input. However,
-   * logically, we should layout the scroll view before calling
-   * scrollToContentRect in case the size of the scroll view has changed and
-   * then call scrollToContentRect which call another layout of the scroll view
-   * if the offset has evolved. In order to avoid requiring two layouts, we
-   * allow overscrolling in scrollToContentRect and the last layout of the
-   * scroll view corrects the size of the scroll view only once. */
+  /* Technically, we do not need to overscroll in text input. However, we should
+   * layout the scroll view before calling scrollToContentRect (in case the size
+   * of the scroll view has changed) and then call scrollToContentRect which
+   * calls another layout of the scroll view if the offset has evolved.
+   *
+   * In order to avoid requiring two layouts, we allow overscrolling in
+   * scrollToContentRect, and the last layout of the scroll view corrects the
+   * size of the scroll view only once. */
   scrollToContentRect(contentView()->cursorRect(), true);
 }
 
-bool TextInput::setCursorLocation(int location) {
-  int adjustedLocation = location < 0 ? 0 : location;
+bool TextInput::setCursorLocation(const char * location) {
+  assert(location != nullptr);
+  const char * adjustedLocation = maxCharPointer(location, text());
   willSetCursorLocation(&adjustedLocation);
   contentView()->setCursorLocation(adjustedLocation);
   scrollToCursor();
   return true;
 }
 
-bool TextInput::insertTextAtLocation(const char * text, int location) {
+bool TextInput::insertTextAtLocation(const char * text, const char * location) {
   if (contentView()->insertTextAtLocation(text, location)) {
     /* We layout the scrollable view before scrolling to cursor because the
-     *  content size might have changed. */
+     * content size might have changed. */
     layoutSubviews();
     scrollToCursor();
     return true;
@@ -101,6 +94,23 @@ bool TextInput::removeEndOfLine() {
     return true;
   }
   return false;
+}
+
+bool TextInput::moveCursorLeft() {
+  if (cursorLocation() <= text()) {
+    assert(cursorLocation() == text());
+    return false;
+  }
+  UTF8Decoder decoder(text(), cursorLocation());
+  return setCursorLocation(decoder.previousGlyphPosition());
+}
+
+bool TextInput::moveCursorRight() {
+  if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
+    return false;
+  }
+  UTF8Decoder decoder(cursorLocation());
+  return setCursorLocation(decoder.nextGlyphPosition());
 }
 
 bool TextInput::privateRemoveEndOfLine() {

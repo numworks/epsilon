@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
 
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
-Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return DivisionQuotient(this).shallowReduce();
 }
 

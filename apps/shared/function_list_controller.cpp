@@ -1,41 +1,52 @@
 #include "function_list_controller.h"
-#include <assert.h>
+#include "function_app.h"
+#include "function_expression_cell.h"
 
 namespace Shared {
 
-FunctionListController::FunctionListController(Responder * parentResponder, FunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
+FunctionListController::FunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   ExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),
-  m_functionStore(functionStore),
   m_selectableTableView(this, this, this, this),
   m_emptyCell(),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
-    FunctionListController * list = (FunctionListController *)context;
-    TabViewController * tabController = list->tabController();
-    tabController->setActiveTab(1);
-    return true;
-  }, this), KDFont::SmallFont, Palette::PurpleBright),
+      FunctionListController * list = (FunctionListController *)context;
+      TabViewController * tabController = list->tabController();
+      tabController->setActiveTab(1);
+      return true;
+    }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
-    FunctionListController * list = (FunctionListController *)context;
-    TabViewController * tabController = list->tabController();
-    tabController->setActiveTab(2);
-    return true;
-  }, this), KDFont::SmallFont, Palette::PurpleBright)
+      FunctionListController * list = (FunctionListController *)context;
+      TabViewController * tabController = list->tabController();
+      tabController->setActiveTab(2);
+      return true;
+    }, this), KDFont::SmallFont, Palette::PurpleBright),
+  m_titlesColumnWidth(k_minTitleColumnWidth)
 {
+  /* m_memoizedCellBaseline is not initialized by the call to
+   * resetMemoizationForIndex in ExpressionModelListController's
+   * constructor, because it is a virtual method in a constructor. */
+  for (int i = 0; i < k_memoizedCellsCount; i++) {
+    m_memoizedCellBaseline[i] = -1;
+  }
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
 }
 
-int FunctionListController::numberOfColumns() {
-  return 2;
-};
+/* TableViewDataSource */
+
+void FunctionListController::viewWillAppear() {
+  computeTitlesColumnWidth();
+}
 
 KDCoordinate FunctionListController::columnWidth(int i) {
   switch (i) {
     case 0:
-      return k_functionNameWidth;
+      return m_titlesColumnWidth;
     case 1:
-      return selectableTableView()->bounds().width() - k_functionNameWidth;
+      return selectableTableView()->bounds().width()-m_titlesColumnWidth;
     default:
       assert(false);
       return 0;
@@ -47,7 +58,7 @@ KDCoordinate FunctionListController::cumulatedWidthFromIndex(int i) {
     case 0:
       return 0;
     case 1:
-      return k_functionNameWidth;
+      return m_titlesColumnWidth;
     case 2:
       return selectableTableView()->bounds().width();
     default:
@@ -57,7 +68,7 @@ KDCoordinate FunctionListController::cumulatedWidthFromIndex(int i) {
 }
 
 int FunctionListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= k_functionNameWidth) {
+  if (offsetX <= m_titlesColumnWidth) {
     return 0;
   } else {
     if (offsetX <= selectableTableView()->bounds().width())
@@ -77,7 +88,7 @@ int FunctionListController::typeAtLocation(int i, int j) {
 
 HighlightCell * FunctionListController::reusableCell(int index, int type) {
   assert(index >= 0);
-  assert(index < maxNumberOfRows());
+  assert(index < maxNumberOfDisplayableRows());
   switch (type) {
     case 0:
       return titleCells(index);
@@ -86,7 +97,7 @@ HighlightCell * FunctionListController::reusableCell(int index, int type) {
     case 2:
       return &m_emptyCell;
     case 3:
-      return &m_addNewModel;
+      return &(m_addNewModel);
     default:
       assert(false);
       return nullptr;
@@ -97,7 +108,7 @@ int FunctionListController::reusableCellCount(int type) {
   if (type > 1) {
     return 1;
   }
-  return maxNumberOfRows();
+  return maxNumberOfDisplayableRows();
 }
 
 void FunctionListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -114,6 +125,8 @@ void FunctionListController::willDisplayCellAtLocation(HighlightCell * cell, int
   myCell->reloadCell();
 }
 
+/* ButtonRowDelegate */
+
 int FunctionListController::numberOfButtons(ButtonRowController::Position position) const {
   if (position == ButtonRowController::Position::Bottom) {
     return 2;
@@ -128,6 +141,8 @@ Button * FunctionListController::buttonAtIndex(int index, ButtonRowController::P
   const Button * buttons[2] = {&m_plotButton, &m_valuesButton};
   return (Button *)buttons[index];
 }
+
+/* Responder */
 
 void FunctionListController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
@@ -171,12 +186,12 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedColumn() == 0);
-    configureFunction(m_functionStore->modelAtIndex(modelIndexForRow(selectedRow())));
+    configureFunction(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    Shared::Function * function = m_functionStore->modelAtIndex(modelIndexForRow(selectedRow()));
-    if (removeModelRow(function)) {
+    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+    if (removeModelRow(record)) {
       int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
       selectCellAtLocation(selectedColumn(), newSelectedRow);
       selectableTableView()->reloadData();
@@ -197,24 +212,118 @@ void FunctionListController::willExitResponderChain(Responder * nextFirstRespond
   }
 }
 
-void FunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+/* SelectableTableViewDelegate */
+
+void FunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  // Update memoization of cell heights
+  ExpressionModelListController::tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
+  // Do not select the cell left of the "addEmptyFunction" cell
   if (isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
     t->selectCellAtLocation(1, numberOfRows()-1);
   }
 }
 
-StackViewController * FunctionListController::stackController() const{
-  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+/* ExpressionModelListController */
+
+StackViewController * FunctionListController::stackController() const {
+  return static_cast<StackViewController *>(parentResponder()->parentResponder()->parentResponder());
 }
 
-void FunctionListController::configureFunction(Shared::Function * function) {
+void FunctionListController::configureFunction(Ion::Storage::Record record) {
   StackViewController * stack = stackController();
-  parameterController()->setFunction(function);
+  parameterController()->setRecord(record);
   stack->push(parameterController());
 }
 
-TabViewController * FunctionListController::tabController() const{
-  return (TabViewController *)(parentResponder()->parentResponder()->parentResponder()->parentResponder());
+void FunctionListController::computeTitlesColumnWidth(bool forceMax) {
+  if (forceMax) {
+    m_titlesColumnWidth = nameWidth(Function::k_maxNameWithArgumentSize - 1)+k_functionTitleSumOfMargins;
+    return;
+  }
+  KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
+  m_titlesColumnWidth = maxInt(maxTitleWidth, k_minTitleColumnWidth);
+}
+
+TabViewController * FunctionListController::tabController() const {
+  return static_cast<TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
+}
+
+FunctionStore * FunctionListController::modelStore() {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  return myApp->functionStore();
+}
+
+InputViewController * FunctionListController::inputController() {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  return myApp->inputViewController();
+}
+
+KDCoordinate FunctionListController::maxFunctionNameWidth() {
+  int maxNameLength = 0;
+  int numberOfModels = modelStore()->numberOfModels();
+  for (int i = 0; i < numberOfModels; i++) {
+    Ion::Storage::Record record = modelStore()->recordAtIndex(i);
+    const char * functionName = record.fullName();
+    const char * dotPosition = strchr(functionName, Ion::Storage::k_dotChar);
+    assert(dotPosition != nullptr);
+    maxNameLength = maxInt(maxNameLength, dotPosition-functionName);
+  }
+  return nameWidth(maxNameLength + Function::k_parenthesedArgumentLength);
+}
+
+void FunctionListController::didChangeModelsList() {
+  ExpressionModelListController::didChangeModelsList();
+  computeTitlesColumnWidth();
+}
+
+KDCoordinate FunctionListController::baseline(int j) {
+  if (j < 0) {
+    return -1;
+  }
+  int currentSelectedRow = selectedRow();
+  constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
+  if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
+    int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
+    if (m_memoizedCellBaseline[memoizedIndex] < 0) {
+      m_memoizedCellBaseline[memoizedIndex] = privateBaseline(j);
+    }
+    return m_memoizedCellBaseline[memoizedIndex];
+  }
+  return privateBaseline(j);
+}
+
+void FunctionListController::resetMemoizationForIndex(int index) {
+  assert(index >= 0 && index < k_memoizedCellsCount);
+  m_memoizedCellBaseline[index] = -1;
+  ExpressionModelListController::resetMemoizationForIndex(index);
+}
+
+void FunctionListController::shiftMemoization(bool newCellIsUnder) {
+  if (newCellIsUnder) {
+    for (int i = 0; i < k_memoizedCellsCount - 1; i++) {
+      m_memoizedCellBaseline[i] = m_memoizedCellBaseline[i+1];
+    }
+  } else {
+    for (int i = k_memoizedCellsCount - 1; i > 0; i--) {
+      m_memoizedCellBaseline[i] = m_memoizedCellBaseline[i-1];
+    }
+  }
+  ExpressionModelListController::shiftMemoization(newCellIsUnder);
+}
+
+KDCoordinate FunctionListController::nameWidth(int nameLength) const {
+  assert(nameLength >= 0);
+  return nameLength * const_cast<FunctionListController *>(this)->titleCells(0)->font()->glyphSize().width();
+}
+
+KDCoordinate FunctionListController::privateBaseline(int j) const {
+  assert(j >= 0 && j < const_cast<FunctionListController *>(this)->numberOfExpressionRows());
+  FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
+  Poincare::Layout layout = cell->layout();
+  if (layout.isUninitialized()) {
+    return -1; // Baseline < 0 triggers default behaviour (centered alignment)
+  }
+  return 0.5*(const_cast<FunctionListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
 }
 
 }

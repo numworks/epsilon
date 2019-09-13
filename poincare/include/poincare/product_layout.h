@@ -9,6 +9,10 @@ namespace Poincare {
 class ProductLayoutNode final : public SequenceLayoutNode {
 public:
   using SequenceLayoutNode::SequenceLayoutNode;
+
+  // Layout
+  Type type() const override { return Type::ProductLayout; }
+
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(ProductLayoutNode); }
 #if POINCARE_TREE_LOG

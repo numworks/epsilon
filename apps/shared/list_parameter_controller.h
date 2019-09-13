@@ -2,38 +2,47 @@
 #define SHARED_LIST_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "function.h"
 #include "function_store.h"
 #include <apps/i18n.h>
 
 namespace Shared {
 
-class ListParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class ListParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
+  ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
 
-  View * view() override;
+  View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
-  virtual void setFunction(Function * function);
+  void setRecord(Ion::Storage::Record record);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  int numberOfRows() override;
-  KDCoordinate cellHeight() override;
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int numberOfRows() override { return totalNumberOfCells(); }
+
+  // ListViewDataSource
+  KDCoordinate rowHeight(int j) override { return Metric::ParameterCellHeight; }
+  KDCoordinate cumulatedHeightFromIndex(int j) override;
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override { return 1; }
+  int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
-  bool handleEnterOnRow(int rowIndex);
+  virtual bool handleEnterOnRow(int rowIndex);
+  virtual int totalNumberOfCells() const {
+#if FUNCTION_COLOR_CHOICE
+    return 3;
+#else
+    return 2;
+#endif
+  }
+  FunctionStore * functionStore();
+  ExpiringPointer<Function> function();
   SelectableTableView m_selectableTableView;
-  FunctionStore * m_functionStore;
-  Function * m_function;
+  Ion::Storage::Record m_record;
 private:
 #if FUNCTION_COLOR_CHOICE
-  constexpr static int k_totalNumberOfCell = 3;
   MessageTableCellWithChevron m_colorCell;
-#else
-  constexpr static int k_totalNumberOfCell = 2;
 #endif
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;

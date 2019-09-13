@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-SimpleInteractiveCurveViewController::SimpleInteractiveCurveViewController(Responder * parentResponder,InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor) :
+SimpleInteractiveCurveViewController::SimpleInteractiveCurveViewController(Responder * parentResponder, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   m_cursor(cursor)
 {
@@ -29,6 +29,18 @@ bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event)
   return false;
 }
 
+bool SimpleInteractiveCurveViewController::textFieldDidAbortEditing(TextField * textField) {
+  reloadBannerView();
+  return true;
+}
+
+bool SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
+    return handleEnter();
+  }
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+}
+
 bool SimpleInteractiveCurveViewController::handleZoom(Ion::Events::Event event) {
   float ratio = event == Ion::Events::Plus ? 2.0f/3.0f : 3.0f/2.0f;
   interactiveCurveViewRange()->zoom(ratio, m_cursor->x(), m_cursor->y());
@@ -39,6 +51,10 @@ bool SimpleInteractiveCurveViewController::handleZoom(Ion::Events::Event event) 
 bool SimpleInteractiveCurveViewController::handleLeftRightEvent(Ion::Events::Event event) {
   int direction = event == Ion::Events::Left ? -1 : 1;
   if (moveCursorHorizontally(direction)) {
+    interactiveCurveViewRange()->panToMakePointVisible(
+      m_cursor->x(), m_cursor->y(),
+      cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio
+    );
     reloadBannerView();
     curveView()->reload();
     return true;

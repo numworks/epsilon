@@ -6,6 +6,8 @@
 #include <poincare/symbol.h>
 #include <poincare/expression.h>
 #include <poincare/helpers.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <string.h>
 
 namespace Poincare {
@@ -46,18 +48,12 @@ T SymbolAbstract::Builder(const char * name, int length) {
 }
 
 size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t len) {
-  const char * cur = src;
-  const char * end = src+len-1;
-  while (*cur != '.' && cur < end) {
-    *dst++ = *cur++;
-  }
-  *dst = 0;
-  return cur-src;
+  return UTF8Helper::CopyUntilCodePoint(dst, len, src, '.');
 }
 
 bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test, Context & context) {
   Expression e = SymbolAbstract::Expand(symbol, context, false);
-  return !e.isUninitialized() && test(e, context, false);
+  return !e.isUninitialized() && e.recursivelyMatches(test, context, false);
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & context, bool clone) {
@@ -69,7 +65,8 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);
   if (!e.isUninitialized() && isFunction) {
-    e = e.replaceSymbolWithExpression(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), symbol.childAtIndex(0));
+    // TODO: when SequenceFunction is created, we want to specify which unknown variable to replace (UnknownX or UnknownN)
+    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), symbol.childAtIndex(0));
   }
   return e;
 }
@@ -77,7 +74,7 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
 bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context) {
   Expression e = SymbolAbstract::Expand(symbol, context, false);
   if (e.isUninitialized()) {
-    return true;
+    return false;
   }
   return e.isReal(context);
 }

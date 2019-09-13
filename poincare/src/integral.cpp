@@ -1,8 +1,6 @@
 #include <poincare/integral.h>
-
 #include <poincare/complex.h>
 #include <poincare/integral_layout.h>
-#include <poincare/parametered_expression_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -29,10 +27,6 @@ int IntegralNode::polynomialDegree(Context & context, const char * symbolName) c
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Expression IntegralNode::replaceUnknown(const Symbol & symbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Integral(this), symbol);
-}
-
 Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return IntegralLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
@@ -45,7 +39,7 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name());
 }
 
-Expression IntegralNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression IntegralNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Integral(this).shallowReduce();
 }
 

@@ -1,7 +1,7 @@
 #include "logistic_model.h"
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -12,26 +12,28 @@ namespace Regression {
 
 Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout exponentLayoutChildren[] = {
-      CharLayout::Builder('-', KDFont::SmallFont),
-      CharLayout::Builder('b', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont)
+    constexpr int exponentSize = 4;
+    Layout exponentLayoutChildren[exponentSize] = {
+      CodePointLayout::Builder('-', k_layoutFont),
+      CodePointLayout::Builder('b', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont)
     };
-    Layout layoutChildren[] = {
-      CharLayout::Builder('1', KDFont::SmallFont),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('e', KDFont::SmallFont),
+    constexpr int denominatorSize = 6;
+    Layout layoutChildren[denominatorSize] = {
+      CodePointLayout::Builder('1', k_layoutFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('a', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('e', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          HorizontalLayout::Builder(exponentLayoutChildren, 4),
-          VerticalOffsetLayoutNode::Type::Superscript
+          HorizontalLayout::Builder(exponentLayoutChildren, exponentSize),
+          VerticalOffsetLayoutNode::Position::Superscript
         )
     };
     m_layout = FractionLayout::Builder(
-       CharLayout::Builder('c', KDFont::SmallFont),
-       HorizontalLayout::Builder(layoutChildren, 6)
+       CodePointLayout::Builder('c', k_layoutFont),
+       HorizontalLayout::Builder(layoutChildren, denominatorSize)
       );
   }
   return m_layout;

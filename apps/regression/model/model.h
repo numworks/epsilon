@@ -41,13 +41,14 @@ public:
 protected:
   // Fit
   virtual bool dataSuitableForFit(Store * store, int series) const;
+  constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   Poincare::Layout m_layout;
 private:
   // Model attributes
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
   // Levenberg-Marquardt
-  static constexpr double k_maxIterations = 100;
+  static constexpr double k_maxIterations = 300;
   static constexpr double k_maxMatrixInversionFixIterations = 10;
   static constexpr double k_initialLambda = 0.001;
   static constexpr double k_lambdaFactor = 10;

@@ -7,6 +7,9 @@
 
 namespace Calculation {
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 /* HistoryViewCellDataSource */
 
 HistoryViewCellDataSource::HistoryViewCellDataSource() :
@@ -16,7 +19,9 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
   m_selectedSubviewType = subviewType;
   if (cell) {
     cell->setHighlighted(cell->isHighlighted());
+    cell->cellDidSelectSubview(subviewType);
   }
+  historyViewCellDidChangeSelection();
 }
 
 /* HistoryViewCell */
@@ -24,9 +29,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculation(),
-  m_inputLayout(),
-  m_leftOutputLayout(),
-  m_rightOutputLayout(),
+  m_calculationExpanded(false),
   m_inputView(this),
   m_scrollableOutputView(this)
 {
@@ -55,27 +58,46 @@ void HistoryViewCell::setHighlighted(bool highlight) {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
     }
   }
-  reloadScroll();
 }
 
 Poincare::Layout HistoryViewCell::layout() const {
   assert(m_dataSource);
   if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
-    return m_inputLayout;
+    return m_inputView.layout();
   } else {
     return m_scrollableOutputView.layout();
   }
 }
 
-void HistoryViewCell::reloadCell() {
-  m_scrollableOutputView.evenOddCell()->reloadCell();
-  layoutSubviews();
-  reloadScroll();
-}
-
 void HistoryViewCell::reloadScroll() {
   m_inputView.reloadScroll();
   m_scrollableOutputView.reloadScroll();
+}
+
+void HistoryViewCell::reloadOutputSelection() {
+  App * calculationApp = (App *)app();
+  Calculation::DisplayOutput display = m_calculation.displayOutput(calculationApp->localContext());
+  /* Select the right output according to the calculation display output. This
+   * will reload the scroll to display the selected output. */
+  if (display == Calculation::DisplayOutput::ExactAndApproximate) {
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+  } else {
+    assert(display == Calculation::DisplayOutput::ApproximateOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle) || display == Calculation::DisplayOutput::ExactOnly);
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
+  }
+}
+
+void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
+  // Init output selection
+  if (type == HistoryViewCellDataSource::SubviewType::Output) {
+    reloadOutputSelection();
+  }
+  /* The selected subview has changed. The displayed outputs might have changed.
+   * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
+   * display 1.2+2 --> 16/5 = 3.2. */
+  setCalculation(&m_calculation, type == HistoryViewCellDataSource::SubviewType::Output);
+  // Reload scroll when switching from one subview to another
+  reloadScroll();
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
@@ -99,46 +121,49 @@ void HistoryViewCell::layoutSubviews() {
   m_inputView.setFrame(KDRect(
     0,
     0,
-    min(maxFrameWidth, inputSize.width()),
+    minCoordinate(maxFrameWidth, inputSize.width()),
     inputSize.height()
   ));
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
   m_scrollableOutputView.setFrame(KDRect(
-    max(0, maxFrameWidth - outputSize.width()),
+    maxCoordinate(0, maxFrameWidth - outputSize.width()),
     inputSize.height(),
-    min(maxFrameWidth, outputSize.width()),
-    bounds().height() - inputSize.height()
+    minCoordinate(maxFrameWidth, outputSize.width()),
+    outputSize.height()
   ));
 }
 
-void HistoryViewCell::setCalculation(Calculation * calculation) {
-  if (*calculation == m_calculation) {
+void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
+  if (m_calculationExpanded == expanded && *calculation == m_calculation) {
     return;
   }
+  // Memoization
   m_calculation = *calculation;
-  m_inputLayout = calculation->createInputLayout();
-  m_inputView.setLayout(m_inputLayout);
+  m_calculationExpanded = expanded;
   App * calculationApp = (App *)app();
+  Calculation::DisplayOutput display = calculation->displayOutput(calculationApp->localContext());
+  m_inputView.setLayout(calculation->createInputLayout());
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
-  if (!m_leftOutputLayout.isUninitialized()) {
-    m_leftOutputLayout = Poincare::Layout();
-  }
-  if (!m_rightOutputLayout.isUninitialized()) {
-    m_rightOutputLayout = Poincare::Layout();
-  }
-  if (calculation->shouldOnlyDisplayExactOutput()) {
-    m_rightOutputLayout = calculation->createExactOutputLayout();
+  Poincare::Layout leftOutputLayout = Poincare::Layout();
+  Poincare::Layout rightOutputLayout;
+  if (display == Calculation::DisplayOutput::ExactOnly) {
+    rightOutputLayout = calculation->createExactOutputLayout();
   } else {
-    m_rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
-    if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
-      m_leftOutputLayout = calculation->createExactOutputLayout();
+    rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
+    if (display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && expanded)) {
+      leftOutputLayout = calculation->createExactOutputLayout();
     }
   }
-  m_scrollableOutputView.setLayouts(m_rightOutputLayout, m_leftOutputLayout);
+  m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
+
+  /* The displayed input and outputs have changed. We need to re-layout the cell
+   * and re-initialize the scroll. */
+  layoutSubviews();
+  reloadScroll();
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {
@@ -155,11 +180,10 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Down && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) ||
     (event == Ion::Events::Up && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Output)) {
     HistoryViewCellDataSource::SubviewType otherSubviewType = m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input ? HistoryViewCellDataSource::SubviewType::Output : HistoryViewCellDataSource::SubviewType::Input;
+    m_dataSource->setSelectedSubviewType(otherSubviewType, this);
     CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
     tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
-    HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
-    m_dataSource->setSelectedSubviewType(otherSubviewType, selectedCell);
-    app()->setFirstResponder(selectedCell);
+    app()->setFirstResponder(this);
     return true;
   }
   return false;

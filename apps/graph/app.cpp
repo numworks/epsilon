@@ -21,9 +21,9 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
-  Shared::StorageFunctionApp::Snapshot::Snapshot(),
+  Shared::FunctionApp::Snapshot::Snapshot(),
   m_functionStore(),
-  m_graphRange(&m_cursor)
+  m_graphRange()
 {
 }
 
@@ -31,22 +31,12 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(container, this);
 }
 
-void App::Snapshot::reset() {
-  StorageFunctionApp::Snapshot::reset();
-  *(modelVersion()) = 0;
-  *(rangeVersion()) = 0;
-}
-
-void App::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
-  m_functionStore.storageDidChangeForRecord(record);
-}
-
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;
 }
 
-StorageCartesianFunctionStore * App::Snapshot::functionStore() {
+CartesianFunctionStore * App::Snapshot::functionStore() {
   return &m_functionStore;
 }
 
@@ -60,7 +50,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  StorageFunctionApp(container, snapshot, &m_inputViewController),
+  FunctionApp(container, snapshot, &m_inputViewController),
   m_listController(&m_listFooter, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),

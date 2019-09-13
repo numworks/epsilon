@@ -14,6 +14,9 @@ public:
 
   using LayoutNode::LayoutNode;
 
+  // Layout
+  Type type() const override { return Type::IntegralLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -21,8 +24,8 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  LayoutNode * layoutToPointWhenInserting() override { return lowerBoundLayout(); }
-  char XNTChar() const override { return 'x'; }
+  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override { return lowerBoundLayout(); }
+  CodePoint XNTCodePoint() const override { return 'x'; }
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralLayoutNode); }

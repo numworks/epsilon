@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
@@ -14,6 +14,8 @@ using namespace Poincare;
 using namespace Shared;
 
 namespace Solver {
+
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
   m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
@@ -75,9 +77,9 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout(),
   m_contentView(this)
 {
-  m_delta2Layout = HorizontalLayout::Builder(VerticalOffsetLayout::Builder(CharLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
-  char deltaB[] = {Ion::Charset::CapitalDelta, '=', 'b'};
-  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDFont::SmallFont), 0, false);
+  m_delta2Layout = HorizontalLayout::Builder(VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
+  const char * deltaB = "Δ=b";
+  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, strlen(deltaB), KDFont::SmallFont), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }
@@ -201,7 +203,6 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   }
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
-  evenOddCell->reloadCell();
 }
 
 KDCoordinate SolutionsController::columnWidth(int i) {
@@ -219,7 +220,7 @@ KDCoordinate SolutionsController::rowHeight(int j) {
   Poincare::Layout approximateLayout = m_equationStore->exactSolutionLayoutAtIndex(j, false);
   KDCoordinate exactLayoutHeight = exactLayout.layoutSize().height();
   KDCoordinate approximateLayoutHeight = approximateLayout.layoutSize().height();
-  KDCoordinate layoutHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
+  KDCoordinate layoutHeight = maxCoordinate(exactLayout.baseline(), approximateLayout.baseline()) + maxCoordinate(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
   return layoutHeight + 2 * Metric::CommonSmallMargin;
 }
 

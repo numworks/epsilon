@@ -222,7 +222,7 @@ TreeHandle TreeHandle::BuildWithGhostChildren(TreeNode * node) {
     GhostNode * ghost = new (pool->alloc(sizeof(GhostNode))) GhostNode();
     ghost->rename(pool->generateIdentifier(), false);
     ghost->retain();
-    assert((char *)ghost == (char *)node->next() + i*sizeof(GhostNode));
+    assert((char *)ghost == (char *)node->next() + i*Helpers::AlignedSize(sizeof(GhostNode), ByteAlignment));
   }
   node->rename(pool->generateIdentifier(), false);
   return TreeHandle(node);
@@ -310,6 +310,7 @@ template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(TreeHandle*, size_t)
 template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(TreeHandle*, size_t);
 template MatrixComplex<float> TreeHandle::NAryBuilder<MatrixComplex<float>, MatrixComplexNode<float> >(TreeHandle*, size_t);
 template MatrixDimension TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>(TreeHandle*, size_t);
+template MatrixIdentity TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIdentityNode>(TreeHandle*, size_t);
 template MatrixInverse TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(TreeHandle*, size_t);
 template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(TreeHandle*, size_t);
 template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(TreeHandle*, size_t);

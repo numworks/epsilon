@@ -42,7 +42,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
   Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   /* Evaluation */
@@ -73,7 +73,7 @@ private:
   static inline int NumberOfNonNumeralFactors(const Expression & e);
   static inline const Expression FirstNonNumeralFactor(const Expression & e);
 
-  static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2);
+  static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2, Context & context);
   Expression factorizeOnCommonDenominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }

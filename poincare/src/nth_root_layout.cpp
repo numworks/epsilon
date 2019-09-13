@@ -3,12 +3,11 @@
 #include <poincare/square_root.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <ion/charset.h>
 #include <assert.h>
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode::k_leftRadixWidth] = {
   {0x00, 0xFF, 0xFF, 0xFF, 0xFF},
@@ -169,12 +168,12 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
 
-  buffer[numberOfChar++] = Ion::Charset::Root;
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSquareRoot);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
 
-  buffer[numberOfChar++] = '(';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -182,7 +181,7 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   numberOfChar += (const_cast<NthRootLayoutNode *>(this))->radicandLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  buffer[numberOfChar++] = ')';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }
@@ -199,7 +198,7 @@ KDSize NthRootLayoutNode::computeSize() {
 
 KDCoordinate NthRootLayoutNode::computeBaseline() {
   if (indexLayout() != nullptr) {
-    return max(
+    return maxCoordinate(
         radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
         indexLayout()->layoutSize().height() + k_indexHeight);
   } else {
@@ -226,7 +225,7 @@ KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
 KDSize NthRootLayoutNode::adjustedIndexSize() {
   return indexLayout() == nullptr ?
     KDSize(k_leftRadixWidth, 0) :
-    KDSize(max(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
+    KDSize(maxCoordinate(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
 }
 
 void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
@@ -268,6 +267,12 @@ void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
                          k_radixLineThickness,
                          k_rightRadixHeight + k_radixLineThickness), expressionColor);
   }
+}
+
+bool NthRootLayoutNode::protectedIsIdenticalTo(Layout l) {
+  assert(l.type() == Type::NthRootLayout);
+  NthRootLayout & nrl = static_cast<NthRootLayout &>(l);
+  return hasUpperLeftIndex() == nrl.node()->hasUpperLeftIndex() && LayoutNode::protectedIsIdenticalTo(l);
 }
 
 NthRootLayout NthRootLayout::Builder(Layout child) {

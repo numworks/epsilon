@@ -1,13 +1,15 @@
 #ifndef POINCARE_SEQUENCE_H
 #define POINCARE_SEQUENCE_H
 
-#include <poincare/expression.h>
+#include <poincare/parametered_expression.h>
 #include <poincare/symbol.h>
 #include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
-class SequenceNode : public ExpressionNode {
+// Sequences are Product and Sum
+
+class SequenceNode : public ParameteredExpressionNode {
 public:
   int numberOfChildren() const override { return 4; }
 private:

@@ -16,16 +16,16 @@ QUIZ_CASE(poincare_parenthesis_layout_size) {
   LeftParenthesisLayout leftPar = LeftParenthesisLayout::Builder();
   RightParenthesisLayout rightPar = RightParenthesisLayout::Builder();
   layout.addChildAtIndex(leftPar, 0, 0, nullptr);
-  layout.addChildAtIndex(CharLayout::Builder('2'), 1, 1, nullptr);
-  layout.addChildAtIndex(CharLayout::Builder('+'), 2, 2, nullptr);
+  layout.addChildAtIndex(CodePointLayout::Builder('2'), 1, 1, nullptr);
+  layout.addChildAtIndex(CodePointLayout::Builder('+'), 2, 2, nullptr);
   layout.addChildAtIndex(LeftParenthesisLayout::Builder(), 3, 3, nullptr);
   layout.addChildAtIndex(FractionLayout::Builder(
-        CharLayout::Builder('3'),
-        CharLayout::Builder('4')),
+        CodePointLayout::Builder('3'),
+        CodePointLayout::Builder('4')),
       4, 4, nullptr);
   layout.addChildAtIndex(RightParenthesisLayout::Builder(), 4, 4, nullptr);
-  layout.addChildAtIndex(CharLayout::Builder('6'), 5, 5, nullptr);
+  layout.addChildAtIndex(CodePointLayout::Builder('6'), 5, 5, nullptr);
   layout.addChildAtIndex(rightPar, 7, 7, nullptr);
-  layout.addChildAtIndex(CharLayout::Builder('1'), 8, 8, nullptr);
+  layout.addChildAtIndex(CodePointLayout::Builder('1'), 8, 8, nullptr);
   quiz_assert(leftPar.layoutSize().height() == rightPar.layoutSize().height());
 }

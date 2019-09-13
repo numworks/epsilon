@@ -1,5 +1,4 @@
 #include <escher/layout_field.h>
-#include <apps/i18n.h>
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/expression.h>
@@ -8,6 +7,8 @@
 #include <string.h>
 
 using namespace Poincare;
+
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
@@ -26,8 +27,9 @@ void LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::clearLayout() {
   HorizontalLayout h = HorizontalLayout::Builder();
-  m_expressionView.setLayout(h);
-  m_cursor.setLayout(h);
+  if (m_expressionView.setLayout(h)) {
+    m_cursor.setLayout(h);
+  }
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -68,12 +70,12 @@ void LayoutField::ContentView::layoutCursorSubview() {
   m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
 }
 
-char LayoutField::XNTChar(char defaultXNTChar) {
-  char xnt = m_contentView.cursor()->layoutReference().XNTChar();
-  if (xnt != Ion::Charset::Empty) {
+CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
+  CodePoint xnt = m_contentView.cursor()->layoutReference().XNTCodePoint();
+  if (xnt != UCodePointNull) {
     return xnt;
   }
-  return defaultXNTChar;
+  return defaultXNTCodePoint;
 }
 
 void LayoutField::reload(KDSize previousSize) {
@@ -88,6 +90,10 @@ void LayoutField::reload(KDSize previousSize) {
 }
 
 bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+  /* The text here can be:
+   * - the result of a key pressed, such as "," or "cos(•)"
+   * - the text added after a toolbox selection
+   * - the result of a copy-paste. */
   if (text[0] == 0) {
     // The text is empty
     return true;
@@ -97,7 +103,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,
      * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
-     * and these events may add at most 6 layouts (e.g *10^•). */
+     * and these events may add at most 6 layouts (e.g *10^). */
     return true;
   }
 
@@ -119,31 +125,18 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else {
     Expression resultExpression = Expression::Parse(text);
     if (resultExpression.isUninitialized()) {
+      // The text is not parsable (for instance, ",") and is added char by char.
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
       m_contentView.cursor()->insertText(text);
       reload(previousLayoutSize);
-    } else {
-      Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-      if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
-        return true;
-      }
-      // Find the pointed layout.
-      Layout pointedLayout;
-      if (!forceCursorRightOfText) {
-        if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
-          /* Special case: if the text is "random()", the cursor should not be set
-           * inside the parentheses. */
-          pointedLayout = resultLayout;
-        } else if (resultLayout.isHorizontal()) {
-          pointedLayout = resultLayout.recursivelyMatches(
-              [](Poincare::Layout layout) {
-              return layout.isLeftParenthesis() || layout.isEmpty();});
-        }
-      }
-      /* Insert the layout. If pointedLayout is uninitialized, the cursor will
-       * be on the right of the inserted layout. */
-      insertLayoutAtCursor(resultLayout, pointedLayout, forceCursorRightOfText);
+      return true;
     }
+    // The text is parsable, we create its layout an insert it.
+    Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+    if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+      return true;
+    }
+    insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText);
   }
   return true;
 }
@@ -276,48 +269,90 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(rect, true);
   // Show the rect area around its baseline
   KDCoordinate underBaseline = rect.height() - baseline;
-  KDCoordinate minAroundBaseline = min(baseline, underBaseline);
-  minAroundBaseline = min(minAroundBaseline, bounds().height() / 2);
+  KDCoordinate minAroundBaseline = minCoordinate(baseline, underBaseline);
+  minAroundBaseline = minCoordinate(minAroundBaseline, bounds().height() / 2);
   KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline, rect.width(), 2 * minAroundBaseline);
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layoutR, Layout pointedLayoutR, bool forceCursorRightOfLayout) {
+void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout) {
   if (layoutR.isUninitialized()) {
     return;
   }
 
   KDSize previousSize = minimalSizeForOptimalDisplay();
+  Poincare::LayoutCursor * cursor = m_contentView.cursor();
 
   // Handle empty layouts
-  m_contentView.cursor()->showEmptyLayoutIfNeeded();
+  cursor->showEmptyLayoutIfNeeded();
 
-  bool layoutWillBeMerged = layoutR.isHorizontal();
-  Layout lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
+  bool layoutWillBeMerged = layoutR.type() == LayoutNode::Type::HorizontalLayout;
+  Layout lastMergedLayoutChild = (layoutWillBeMerged && layoutR.numberOfChildren() > 0) ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
 
-  // Add the layout
-  m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);
-
-  // Move the cursor if needed
-  if(!forceCursorRightOfLayout) {
-    if (!pointedLayoutR.isUninitialized() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
-      // Make sure the layout was inserted (its parent is not uninitialized)
-      m_contentView.cursor()->setLayout(pointedLayoutR);
-      m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
-    } else if (!layoutWillBeMerged) {
-      m_contentView.cursor()->setLayout(layoutR.layoutToPointWhenInserting());
-      m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
+  // If the layout will be merged, find now where the cursor will point
+  assert(!correspondingExpression.isUninitialized());
+  Layout cursorMergedLayout = Layout();
+  if (layoutWillBeMerged) {
+    if (forceCursorRightOfLayout) {
+      cursorMergedLayout = lastMergedLayoutChild;
+    } else {
+      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
+      if (cursorMergedLayout == layoutR) {
+        /* LayoutR will not be inserted in the layout, so point to its last
+         * child instead. It is visually equivalent. */
+        cursorMergedLayout = lastMergedLayoutChild;
+      }
     }
+  }
+
+  // Add the layout. This puts the cursor at the right of the added layout
+  cursor->addLayoutAndMoveCursor(layoutR);
+
+  /* Move the cursor if needed.
+   *
+   * If forceCursorRightOfLayout is true and the layout has been merged, there
+   * is no need to move the cursor because it already points to the right of the
+   * added layouts.
+   *
+   * If the layout to point to has been merged, only its children have been
+   * inserted in the layout. We already computed where the cursor should point,
+   * because we cannot compute this now that the children are merged in between
+   * another layout's children.
+   *
+   * For other cases, move the cursor to the layout indicated by
+   * layoutToPointWhenInserting. This pointed layout cannot be computed before
+   * adding layoutR, because addLayoutAndMoveCursor might have changed layoutR's
+   * children.
+   * For instance, if we add an absolute value with an empty child left of a 0,
+   * the empty child is deleted and the 0 is collapsed into the absolute value.
+   * Sketch of the situation, ' being the cursor:
+   *  Initial layout:   '0
+   *  "abs(x)" pressed in the toolbox => |•| is added, • being an empty layout
+   *  Final layout: |0'|
+   *
+   * Fortunately, merged layouts' children are not modified by the merge, so it
+   * is ok to compute their pointed layout before adding them.
+   * */
+
+  if (!forceCursorRightOfLayout) {
+    if (!layoutWillBeMerged) {
+      assert(cursorMergedLayout.isUninitialized());
+      assert(!correspondingExpression.isUninitialized());
+      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
+    }
+    assert(!cursorMergedLayout.isUninitialized());
+    m_contentView.cursor()->setLayout(cursorMergedLayout);
+    m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   } else if (!layoutWillBeMerged) {
     m_contentView.cursor()->setLayout(layoutR);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
 
   // Handle matrices
-  m_contentView.cursor()->layoutReference().addGreySquaresToAllMatrixAncestors();
+  cursor->layoutReference().addGreySquaresToAllMatrixAncestors();
 
   // Handle empty layouts
-  m_contentView.cursor()->hideEmptyLayoutIfNeeded();
+  cursor->hideEmptyLayoutIfNeeded();
 
   // Reload
   reload(previousSize);

@@ -7,6 +7,16 @@
 
 namespace Poincare {
 
+bool LayoutNode::isIdenticalTo(Layout l) {
+  if (l.isUninitialized() || type() != l.type()) {
+    return false;
+  }
+  if (identifier() == l.identifier()) {
+    return true;
+  }
+  return protectedIsIdenticalTo(l);
+}
+
 // Rendering
 
 void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
@@ -100,6 +110,11 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   // WARNING: Do no use "this" afterwards
 }
 
+LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
+  assert(correspondingExpression != nullptr);
+  return numberOfChildren() > 0 ? childAtIndex(0) : this;
+}
+
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   if (!force) {
     Layout(this).replaceChildWithEmpty(Layout(l), cursor);
@@ -126,7 +141,20 @@ bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
   return isCollapsable(&numberOfOpenParentheses, false);
 }
 
-// Private
+// Protected and private
+
+bool LayoutNode::protectedIsIdenticalTo(Layout l) {
+  if (numberOfChildren() != l.numberOfChildren()) {
+    return false;
+  }
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Layout child = childAtIndex(i);
+    if (!childAtIndex(i)->isIdenticalTo(l.childAtIndex(i))) {
+      return false;
+    }
+  }
+  return true;
+}
 
 void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   if (!equivalentPositionVisited) {
@@ -215,7 +243,7 @@ bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   bool changedSquares = false;
   Layout currentAncestor = Layout(parent());
   while (!currentAncestor.isUninitialized()) {
-    if (currentAncestor.isMatrix()) {
+    if (currentAncestor.type() == Type::MatrixLayout) {
       if (add) {
         MatrixLayout(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();
       } else {

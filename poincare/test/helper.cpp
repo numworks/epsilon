@@ -41,47 +41,9 @@ bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression g
   return identical;
 }
 
-void translate_in_special_chars(char * expression) {
-  for (char *c = expression; *c; c++) {
-    switch (*c) {
-      case 'E': *c = Ion::Charset::Exponent; break;
-      case 'X': *c = Ion::Charset::Exponential; break;
-      case 'I': *c = Ion::Charset::IComplex; break;
-      case 'R': *c = Ion::Charset::Root; break;
-      case 'P': *c = Ion::Charset::SmallPi; break;
-      case '*': *c = Ion::Charset::MultiplicationSign; break;
-      case '>': *c = Ion::Charset::Sto; break;
-      case '?': *c = Poincare::Symbol::SpecialSymbols::UnknownX; break;
-      case '$': *c = Ion::Charset::LeftSuperscript; break;
-      case '#': *c = Ion::Charset::RightSuperscript; break;
-    }
-  }
-}
-
-void translate_in_ASCII_chars(char * expression) {
-  for (char *c = expression; *c; c++) {
-    switch (*c) {
-      case Ion::Charset::Exponent: *c = 'E'; break;
-      case Ion::Charset::Exponential: *c = 'X'; break;
-      case Ion::Charset::IComplex: *c = 'I'; break;
-      case Ion::Charset::Root: *c = 'R'; break;
-      case Ion::Charset::SmallPi: *c = 'P'; break;
-      case Ion::Charset::MultiplicationSign: *c = '*'; break;
-      case Ion::Charset::MiddleDot: *c = '*'; break;
-      case Ion::Charset::Sto: *c = '>'; break;
-      case Poincare::Symbol::SpecialSymbols::UnknownX: *c = '?'; break;
-      case Ion::Charset::LeftSuperscript: *c = '$'; break;
-      case Ion::Charset::RightSuperscript: *c = '#'; break;
-    }
-  }
-}
-
 Expression parse_expression(const char * expression, bool canBeUnparsable) {
   quiz_print(expression);
-  char buffer[500];
-  strlcpy(buffer, expression, sizeof(buffer));
-  translate_in_special_chars(buffer);
-  Expression result = Expression::Parse(buffer);
+  Expression result = Expression::Parse(expression);
   if (!canBeUnparsable) {
     quiz_assert(!result.isUninitialized());
   }
@@ -138,7 +100,6 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   Expression m = process(e, globalContext, target, complexFormat, angleUnit);
   char buffer[500];
   m.serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
-  translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- serialize to: " << buffer << " ----"  << endl;
   cout << "----- compared to: " << result << " ----\n"  << endl;
@@ -214,7 +175,6 @@ void assert_parsed_expression_serialize_to(Expression expression, const char * s
 #endif
   char buffer[500];
   expression.serialize(buffer, sizeof(buffer), mode, numberOfSignifiantDigits);
-  translate_in_ASCII_chars(buffer);
   quiz_assert(strcmp(buffer, serializedExpression) == 0);
 }
 
@@ -233,11 +193,15 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
   quiz_assert(strcmp(expressionLayout, buffer) == 0);
 }
 
+void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout) {
+  Layout l = expression.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  quiz_assert(l.isIdenticalTo(layout));
+}
+
 void assert_expression_layout_serialize_to(Poincare::Layout layout, const char * serialization) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   layout.serializeForParsing(buffer, bufferSize);
-  translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << serialization << "----"  << endl;
   cout << "---- serialized to: " << buffer << " ----"  << endl;

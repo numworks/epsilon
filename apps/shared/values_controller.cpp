@@ -1,5 +1,5 @@
 #include "values_controller.h"
-#include "text_field_delegate_app.h"
+#include "function_app.h"
 #include "../constant.h"
 #include "../apps_container.h"
 #include "poincare_helpers.h"
@@ -24,7 +24,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
     return true;
-  }, this), KDFont::SmallFont)
+  }, this), k_font)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setTopMargin(k_topMargin);
@@ -32,13 +32,31 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView.setBottomMargin(k_bottomMargin);
   m_selectableTableView.setLeftMargin(k_leftMargin);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_abscissaTitleCell.setMessageFont(KDFont::SmallFont);
+  m_abscissaTitleCell.setMessageFont(k_font);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i].setParentResponder(&m_selectableTableView);
     m_abscissaCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_abscissaCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
-    m_abscissaCells[i].editableTextCell()->textField()->setFont(KDFont::SmallFont);
+    m_abscissaCells[i].editableTextCell()->textField()->setFont(k_font);
   }
+}
+
+bool ValuesController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  int row = selectedRow();
+  int nbOfRows = numberOfRows();
+  bool didFinishEditing = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
+  if (didFinishEditing) {
+    if (nbOfRows != numberOfRows()) {
+      // Reload the whole table, if a value is appended.
+      selectableTableView()->reloadData();
+    } else {
+      // Reload the row, if an existing value is edited.
+      for (int i = 0; i < numberOfColumns(); i++) {
+        selectableTableView()->reloadCellAtLocation(i, row);
+      }
+    }
+  }
+  return didFinishEditing;
 }
 
 const char * ValuesController::title() {
@@ -252,9 +270,9 @@ void ValuesController::viewDidDisappear() {
   EditableCellTableViewController::viewDidDisappear();
 }
 
-Function * ValuesController::functionAtColumn(int i) {
+Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   assert(i > 0);
-  return functionStore()->activeFunctionAtIndex(i-1);
+  return functionStore()->activeRecordAtIndex(i-1);
 }
 
 Responder * ValuesController::tabController() const {
@@ -279,7 +297,7 @@ void ValuesController::configureFunction() {
     return;
   }
 #endif
-  functionParameterController()->setFunction(functionAtColumn(selectedColumn()));
+  functionParameterController()->setRecord(recordAtColumn(selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());
 }
@@ -309,13 +327,18 @@ int ValuesController::maxNumberOfElements() const {
 }
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  Function * function = functionAtColumn(columnIndex);
+  ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
 }
 
 void ValuesController::updateNumberOfColumns() {
-    m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
+  m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
+}
+
+FunctionStore * ValuesController::functionStore() const {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  return myApp->functionStore();
 }
 
 }

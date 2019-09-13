@@ -10,8 +10,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 uint32_t InteractiveCurveViewRange::rangeChecksum() {
   float data[5] = {m_xMin, m_xMax, m_yMin, m_yMax, m_yAuto ? 1.0f : 0.0f};
@@ -208,16 +208,10 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   }
 }
 
-bool InteractiveCurveViewRange::isCursorVisible(float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation) {
-  float xRange = m_xMax - m_xMin;
-  float yRange = m_yMax - m_yMin;
-  return m_cursor->x() >= m_xMin + leftMarginRation*xRange && m_cursor->x() <= m_xMax - rightMarginRatio*xRange && m_cursor->y() >= m_yMin + bottomMarginRation*yRange && m_cursor->y() <= m_yMax - topMarginRatio*yRange;
-}
-
 float InteractiveCurveViewRange::clipped(float x, bool isMax) {
   float maxF = isMax ? k_upperMaxFloat : k_lowerMaxFloat;
   float minF = isMax ? -k_lowerMaxFloat : -k_upperMaxFloat;
-  return max(minF, min(x, maxF));
+  return maxFloat(minF, minFloat(x, maxF));
 }
 
 void InteractiveCurveViewRange::notifyRangeChange() {

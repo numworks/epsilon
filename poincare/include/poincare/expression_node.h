@@ -93,6 +93,7 @@ public:
     Matrix,
     ConfidenceInterval,
     MatrixDimension,
+    MatrixIdentity,
     MatrixInverse,
     MatrixTranspose,
     PredictionInterval,
@@ -114,8 +115,10 @@ public:
   };
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
+  virtual bool isRandom() const { return false; }
+  virtual bool isParameteredExpression() const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  /*!*/ virtual Expression replaceUnknown(const Symbol & symbol);
+  /*!*/ virtual Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
   /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
   virtual int polynomialDegree(Context & context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
@@ -160,8 +163,8 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation);
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation);
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

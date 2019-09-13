@@ -13,31 +13,31 @@ class ListController;
 
 class ListParameterController : public Shared::ListParameterController, public SelectableTableViewDelegate, public Shared::ParameterTextFieldDelegate {
 public:
-  ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list, SequenceStore * sequenceStore);
+  ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(Shared::Function * function) override;
-  int numberOfRows() override;
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
+
+  // ListViewDataSource
+  HighlightCell * reusableCell(int index, int type) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
 #if FUNCTION_COLOR_CHOICE
   constexpr static int k_totalNumberOfCell = 5;
 #else
   constexpr static int k_totalNumberOfCell = 4;
 #endif
-  bool hasInitialRankRow();
+  int totalNumberOfCells() const override;
+  Sequence * sequence() { return static_cast<Sequence *>(function().pointer()); }
+  bool hasInitialRankRow() const;
   MessageTableCellWithChevronAndExpression m_typeCell;
   MessageTableCellWithEditableText m_initialRankCell;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   TypeParameterController m_typeParameterController;
-  Sequence * m_sequence;
 };
 
 }

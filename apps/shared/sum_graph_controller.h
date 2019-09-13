@@ -3,25 +3,22 @@
 
 #include <escher.h>
 #include "function_graph_view.h"
-#include "interactive_curve_view_range.h"
 #include "vertical_cursor_view.h"
-#include "curve_view_cursor.h"
 #include "simple_interactive_curve_view_controller.h"
 #include "function.h"
 #include "text_field_delegate.h"
+#include "expiring_pointer.h"
 
 namespace Shared {
 
-class SumGraphController : public SimpleInteractiveCurveViewController, public TextFieldDelegate {
+class SumGraphController : public SimpleInteractiveCurveViewController {
 public:
-  SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, char sumSymbol);
+  SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(Function * function);
+  void setRecord(Ion::Storage::Record record);
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   virtual bool moveCursorHorizontallyToPosition(double position);
   enum class Step {
@@ -32,23 +29,22 @@ protected:
   Step m_step;
   double m_startSum;
   double m_endSum;
-  Function * m_function;
+  Ion::Storage::Record m_record;
   InteractiveCurveViewRange * m_graphRange;
 private:
-  constexpr static float k_cursorTopMarginRatio = 0.06f;   // (cursorHeight/2)/graphViewHeight
-  constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
-  virtual I18n::Message legendMessageAtStep(Step step) = 0;
-  virtual double cursorNextStep(double position, int direction) = 0;
-  virtual Poincare::Layout createFunctionLayout(const char * functionName) = 0;
+  float cursorTopMarginRatio() override { return 0.06f; }
+  float cursorBottomMarginRatio() override { return 0.28f; }
+  bool handleLeftRightEvent(Ion::Events::Event event) override;
+  bool handleEnter() override;
+  void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
-  TextFieldDelegateApp * textFieldDelegateApp() override {
-    return static_cast<TextFieldDelegateApp *>(app());
-  }
-  bool handleEnter() override;
+  virtual I18n::Message legendMessageAtStep(Step step) = 0;
+  virtual double cursorNextStep(double position, int direction) = 0;
+  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;
   class LegendView : public View {
   public:
-    LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, char sumSymbol);
+    LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
     LegendView& operator=(const LegendView& other) = delete;
@@ -58,12 +54,15 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setLegendMessage(I18n::Message message, Step step);
     void setEditableZone(double d);
-    void setSumSymbol(Step step, double start = NAN, double end = NAN, double result = NAN, Poincare::Layout sequenceName = Poincare::Layout());
+    void setSumSymbol(Step step, double start, double end, double result, Poincare::Layout functionLayout);
   private:
     constexpr static KDCoordinate k_legendHeight = 35;
+    constexpr static const KDFont * k_font = KDFont::SmallFont;
+    static KDCoordinate editableZoneWidth() { return 12*k_font->glyphSize().width(); }
+    static KDCoordinate editableZoneHeight() { return k_font->glyphSize().height(); }
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return 3; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
     void layoutSubviews(Step step);
@@ -72,7 +71,7 @@ private:
     MessageTextView m_legend;
     TextField m_editableZone;
     char m_draftText[TextField::maxBufferSize()];
-    char m_sumSymbol;
+    CodePoint m_sumSymbol;
   };
   FunctionGraphView * m_graphView;
   LegendView m_legendView;

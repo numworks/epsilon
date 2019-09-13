@@ -17,7 +17,6 @@ public:
 
 protected:
   int indentationBeforeCursor() const;
-  bool insertTextWithIndentation(const char * textBuffer, int location);
 
   class Text {
   public:
@@ -30,17 +29,18 @@ protected:
       m_buffer = buffer;
       m_bufferSize = bufferSize;
     }
-    const char * text() const { return const_cast<const char *>(m_buffer); }
+    const char * text() const { return m_buffer; }
 
     class Line {
     public:
       Line(const char * text);
       const char * text() const { return m_text; }
-      size_t length() const { return m_length; }
+      size_t charLength() const { return m_charLength; }
+      KDCoordinate glyphWidth(const KDFont * const font) const;
       bool contains(const char * c) const;
     private:
       const char * m_text;
-      size_t m_length;
+      size_t m_charLength;
     };
 
     class LineIterator {
@@ -54,6 +54,9 @@ protected:
     };
 
     class Position {
+    /* column and line correspond to the visual column and line. The glyph at
+     * the kth column is not the the glyph of kth code point, because of
+     * combining code points that do not fave a personnal glyph. */
     public:
       Position(int column, int line) : m_column(column), m_line(line) {}
       int column() const { return m_column; }
@@ -66,14 +69,16 @@ protected:
     LineIterator begin() const { return LineIterator(m_buffer); };
     LineIterator end() const { return LineIterator(nullptr); };
 
-    Position span() const;
+    KDSize span(const KDFont * const font) const;
 
-    Position positionAtIndex(size_t index) const;
-    size_t indexAtPosition(Position p);
+    Position positionAtPointer(const char * pointer) const;
+    const char * pointerAtPosition(Position p);
 
-    void insertChar(char c, size_t index);
-    char removeChar(size_t index);
-    size_t removeRemainingLine(size_t index, int direction);
+    void insertText(const char * s, int textLength, char * location);
+    void insertSpacesAtLocation(int numberOfSpaces, char * location);
+
+    CodePoint removePreviousGlyph(char * * position);
+    size_t removeRemainingLine(const char * position, int direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
       return m_buffer[index];
@@ -95,6 +100,7 @@ protected:
       TextInput::ContentView(font),
       m_text(nullptr, 0)
     {
+      m_cursorLocation = m_text.text();
     }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor) const;
@@ -103,20 +109,22 @@ protected:
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
     const char * text() const override { return m_text.text(); }
+    const char * editedText() const override { return m_text.text(); }
     size_t editedTextLength() const override { return m_text.textLength(); }
     const Text * getText() const { return &m_text; }
-    bool insertTextAtLocation(const char * text, int location) override;
+    bool insertTextAtLocation(const char * text, const char * location) override;
     void moveCursorGeo(int deltaX, int deltaY);
-    bool removeChar() override;
+    bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
   protected:
-    KDRect characterFrameAtIndex(size_t index) const override;
+    KDRect glyphFrameAtPosition(const char * text, const char * position) const override;
     Text m_text;
   };
 
   ContentView * contentView() { return static_cast<ContentView *>(TextInput::contentView()); }
 private:
+  static constexpr int k_indentationSpaces = 2;
   TextAreaDelegate * m_delegate;
 };
 

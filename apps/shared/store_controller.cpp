@@ -7,8 +7,8 @@
 
 using namespace Poincare;
 
-static inline int min(int x, int y) { return (x<y ? x : y); }
-static inline int max(int x, int y) { return (x>y ? x : y); }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 namespace Shared {
 
@@ -95,25 +95,13 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     }
     return true;
   }
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
-    return false;
+  bool didFinishEditing = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
+  if (didFinishEditing) {
+    // FIXME Find out if redrawing errors can be suppressed without always reloading all the data
+    // See Shared::ValuesController::textFieldDidFinishEditing
+    selectableTableView()->reloadData();
   }
-  if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
-  // FIXME Find out if redrawing errors can be suppressed without always reloading all the data
-  selectableTableView()->reloadData();
-  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
-  } else {
-    selectableTableView()->handleEvent(event);
-  }
-  return true;
+  return didFinishEditing;
 }
 
 bool StoreController::textFieldDidAbortEditing(TextField * textField) {
@@ -255,7 +243,7 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 int StoreController::numberOfElements() {
   int result = 0;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    result = max(result, m_store->numberOfPairsOfSeries(i));
+    result = maxInt(result, m_store->numberOfPairsOfSeries(i));
   }
   return result;
 }
@@ -284,7 +272,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     if (numberOfValuesToCompute == -1) {
       numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
     } else {
-      numberOfValuesToCompute = min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+      numberOfValuesToCompute = minInt(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
     }
     index++;
   }

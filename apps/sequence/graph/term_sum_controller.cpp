@@ -1,7 +1,6 @@
 #include "term_sum_controller.h"
 #include "../../shared/text_field_delegate.h"
-#include "../app.h"
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -18,7 +17,7 @@ using namespace Poincare;
 namespace Sequence {
 
 TermSumController::TermSumController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
-  SumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, Ion::Charset::CapitalSigma)
+  SumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, UCodePointNArySummation)
 {
 }
 
@@ -49,14 +48,9 @@ double TermSumController::cursorNextStep(double x, int direction) {
   return std::round(m_cursor->x()+delta);
 }
 
-Layout TermSumController::createFunctionLayout(const char * functionName) {
-  return HorizontalLayout::Builder(
-      CharLayout::Builder(functionName[0], KDFont::SmallFont),
-        VerticalOffsetLayout::Builder(
-          CharLayout::Builder('n', KDFont::SmallFont),
-          VerticalOffsetLayoutNode::Type::Subscript
-        )
-      );
+Layout TermSumController::createFunctionLayout(Shared::ExpiringPointer<Shared::Function> function) {
+  Sequence * sequence = static_cast<Sequence *>(function.pointer());
+  return sequence->nameLayout();
 }
 
 }

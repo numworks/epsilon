@@ -15,6 +15,9 @@ class MatrixLayoutNode final : public GridLayoutNode {
 public:
   using GridLayoutNode::GridLayoutNode;
 
+  // Layout
+  Type type() const override { return Type::MatrixLayout; }
+
   // MatrixLayoutNode
   void addGreySquares();
   void removeGreySquares();
@@ -23,7 +26,6 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void willAddSiblingToEmptyChildAtIndex(int childIndex) override;
-  bool isMatrix() const override { return true; }
 
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

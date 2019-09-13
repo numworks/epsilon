@@ -4,7 +4,7 @@ src += $(addprefix poincare/src/,\
   binomial_coefficient_layout.cpp \
   bracket_layout.cpp \
   bracket_pair_layout.cpp \
-  char_layout.cpp \
+  code_point_layout.cpp\
   condensed_sum_layout.cpp \
   conjugate_layout.cpp \
   empty_layout.cpp \
@@ -86,6 +86,7 @@ src += $(addprefix poincare/src/,\
   matrix.cpp \
   matrix_complex.cpp \
   matrix_dimension.cpp \
+  matrix_identity.cpp \
   matrix_inverse.cpp \
   matrix_trace.cpp \
   matrix_transpose.cpp \
@@ -95,7 +96,7 @@ src += $(addprefix poincare/src/,\
   nth_root.cpp \
   number.cpp \
   opposite.cpp \
-  parametered_expression_helper.cpp \
+  parametered_expression.cpp \
   parenthesis.cpp \
   permute_coefficient.cpp \
   power.cpp \
@@ -157,6 +158,7 @@ tests += $(addprefix poincare/test/,\
   infinity.cpp\
   integer.cpp\
   layouts.cpp\
+  layout_cursor.cpp\
   logarithm.cpp\
   matrix.cpp\
   multiplication.cpp\
@@ -167,6 +169,7 @@ tests += $(addprefix poincare/test/,\
   power.cpp\
   properties.cpp\
   rational.cpp\
+  random.cpp\
   simplify.cpp\
   store.cpp\
   subtraction.cpp\

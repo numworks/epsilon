@@ -23,6 +23,8 @@ using namespace Shared;
 
 namespace Probability {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Law * law, Calculation * calculation) :
   m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView),
@@ -202,16 +204,16 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField, boo
 
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
-       || (event == Ion::Events::Right && textField->cursorLocation() == textField->draftTextLength() && selectedColumn() < m_calculation->numberOfParameters())
-       || (event == Ion::Events::Left && textField->cursorLocation() == 0);
+       || (event == Ion::Events::Right
+           && textField->cursorLocation() == textField->text() + textField->draftTextLength()
+           && selectedColumn() < m_calculation->numberOfParameters())
+       || (event == Ion::Events::Left
+           && textField->cursorLocation() == textField->text());
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  App * probaApp = (App *)app();
-  Context * globalContext = probaApp->container()->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   if (m_calculation->type() != Calculation::Type::FiniteIntegral && selectedColumn() == 2) {
@@ -273,26 +275,29 @@ TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_law->numberOfParameter(); index++) {
-    if (currentChar >= k_maxNumberOfTitleCharacters) {
+    if (currentChar >= k_titleBufferSize) {
       break;
     }
-    m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
-    strlcpy(m_titleBuffer+currentChar, " = ", k_maxNumberOfTitleCharacters - currentChar);
-    currentChar += 3;
-    if (currentChar >= k_maxNumberOfTitleCharacters) {
+    /* strlcpy returns the size of src, not the size copied, but it is not a
+     * problem here. */
+    currentChar += strlcpy(m_titleBuffer+currentChar, I18n::translate(m_law->parameterNameAtIndex(index)), k_titleBufferSize - currentChar);
+    if (currentChar >= k_titleBufferSize) {
       break;
     }
-    const size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
+    currentChar += strlcpy(m_titleBuffer+currentChar, " = ", k_titleBufferSize - currentChar);
+    if (currentChar >= k_titleBufferSize) {
+      break;
+    }
+    constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
     char buffer[bufferSize];
-    PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    strlcpy(m_titleBuffer+currentChar, buffer, k_maxNumberOfTitleCharacters - currentChar);
-    currentChar += strlen(buffer);
-    if (currentChar >= k_maxNumberOfTitleCharacters) {
+    PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, bufferSize, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    currentChar += strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
+    if (currentChar >= k_titleBufferSize) {
       break;
     }
-    m_titleBuffer[currentChar++] = ' ';
+    currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_titleBufferSize - currentChar);
   }
-  m_titleBuffer[currentChar-1] = 0;
+  m_titleBuffer[minInt(currentChar, k_titleBufferSize) - 1] = 0;
 }
 
 }

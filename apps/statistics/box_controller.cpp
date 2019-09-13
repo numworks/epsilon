@@ -43,22 +43,25 @@ void BoxController::reloadBannerView() {
   // Set series name
   char seriesChar = '0' + selectedSeriesIndex() + 1;
   char bufferName[] = {' ', 'V', seriesChar, '/', 'N', seriesChar, 0};
-  m_view.editableBannerView()->setLegendAtIndex(bufferName, 0);
-
+  m_view.bannerView()->seriesName()->setText(bufferName);
 
   // Set calculation name
   I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
-  m_view.editableBannerView()->setMessageAtIndex(calculationName[selectedQuantile], 1);
+  m_view.bannerView()->calculationName()->setMessage(calculationName[selectedQuantile]);
 
   // Set calculation result
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits) + 1];
+  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
+  constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits) + 1;
+  char buffer[bufferSize];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeriesIndex());
-  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize - 1, Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ' ';
   buffer[numberOfChar] = 0;
-  m_view.editableBannerView()->setLegendAtIndex(buffer, 2);
+  m_view.bannerView()->calculationValue()->setText(buffer);
+
+  m_view.bannerView()->reload();
 }
 
 }

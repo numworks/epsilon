@@ -1,5 +1,5 @@
 #include <poincare/layout_cursor.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -9,12 +9,14 @@
 #include <poincare/nth_root_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
-#include <ion/charset.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <stdio.h>
 
 namespace Poincare {
 
 /* Getters and setters */
+
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 KDCoordinate LayoutCursor::cursorHeight() {
   KDCoordinate height = layoutHeight();
@@ -33,7 +35,7 @@ KDCoordinate LayoutCursor::baseline() {
   if (m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.baseline();
   } else if (m_layout.hasSibling(equivalentLayout)) {
-    return max(layoutBaseline, equivalentLayout.baseline());
+    return maxCoordinate(layoutBaseline, equivalentLayout.baseline());
   }
   return layoutBaseline;
 }
@@ -75,8 +77,8 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CharLayout::Builder(Ion::Charset::Exponential),
-      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
+      CodePointLayout::Builder(UCodePointScriptSmallE),
+      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }
@@ -101,25 +103,25 @@ void LayoutCursor::addEmptySquareRootLayout() {
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CharLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CharLayout::Builder(Ion::Charset::MiddleDot),
-      CharLayout::Builder('1'),
-      CharLayout::Builder('0'),
+      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
         emptyLayout,
-        VerticalOffsetLayoutNode::Type::Superscript));
+        VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }
@@ -132,44 +134,54 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
   Layout(newChild.node()).collapseSiblings(this);
 }
 
-void LayoutCursor::addXNTCharLayout() {
-  m_layout.addSibling(this, CharLayout::Builder(m_layout.XNTChar()), true);
+void LayoutCursor::addXNTCodePointLayout() {
+  m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTCodePoint()), true);
 }
 
 void LayoutCursor::insertText(const char * text) {
-  int textLength = strlen(text);
-  if (textLength <= 0) {
-    return;
-  }
   Layout newChild;
   Layout pointedChild;
-  for (int i = 0; i < textLength; i++) {
-    if (text[i] == Ion::Charset::Empty) {
+  UTF8Decoder decoder(text);
+  CodePoint codePoint = decoder.nextCodePoint();
+  if (codePoint == UCodePointNull) {
+    return;
+  }
+  assert(!codePoint.isCombining());
+  while (codePoint != UCodePointNull) {
+    if (codePoint == UCodePointEmpty) {
+      codePoint = decoder.nextCodePoint();
+      assert(!codePoint.isCombining());
       continue;
     }
-    if (text[i] == Ion::Charset::MultiplicationSign) {
-      newChild = CharLayout::Builder(Ion::Charset::MiddleDot);
-    } else if (text[i] == '(') {
+    if (codePoint == UCodePointMultiplicationSign) {
+      newChild = CodePointLayout::Builder(UCodePointMiddleDot);
+    } else if (codePoint == '(') {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
-    } else if (text[i] == ')') {
+    } else if (codePoint == ')') {
       newChild = RightParenthesisLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */
 #if 0
-    else if (text[i] == '[') {
+    else if (codePoint == '[') {
       newChild = LeftSquareBracketLayout();
-    } else if (text[i] == ']') {
+    } else if (codePoint == ']') {
       newChild = RightSquareBracketLayout();
     }
 #endif
     else {
-      newChild = CharLayout::Builder(text[i]);
+      newChild = CodePointLayout::Builder(codePoint);
     }
     m_layout.addSibling(this, newChild, true);
+
+    // Get the next code point
+    codePoint = decoder.nextCodePoint();
+    while (codePoint.isCombining()) {
+      codePoint = decoder.nextCodePoint();
+    }
   }
   if (!pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
@@ -178,7 +190,7 @@ void LayoutCursor::insertText(const char * text) {
 }
 
 void LayoutCursor::addLayoutAndMoveCursor(Layout l) {
-  bool layoutWillBeMerged = l.isHorizontal();
+  bool layoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
   m_layout.addSibling(this, l, true);
   if (!layoutWillBeMerged) {
     l.collapseSiblings(this);
@@ -187,7 +199,7 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l) {
 
 void LayoutCursor::clearLayout() {
   Layout rootLayoutR = m_layout.root();
-  assert(rootLayoutR.isHorizontal());
+  assert(rootLayoutR.type() == LayoutNode::Type::HorizontalLayout);
   rootLayoutR.removeChildrenInPlace(rootLayoutR.numberOfChildren());
   m_layout = rootLayoutR;
 }
@@ -204,8 +216,8 @@ KDCoordinate LayoutCursor::layoutHeight() {
     KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize().height();
     KDCoordinate pointedLayoutBaseline = m_layout.baseline();
     KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline();
-    return max(pointedLayoutBaseline, equivalentLayoutBaseline)
-      + max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
+    return maxCoordinate(pointedLayoutBaseline, equivalentLayoutBaseline)
+      + maxCoordinate(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
   return pointedLayoutHeight;
 }
@@ -227,10 +239,10 @@ bool LayoutCursor::baseForNewPowerLayout() {
    * be the base of a new power layout: the base layout should be anything but
    * an horizontal layout with no child. */
   if (m_position == Position::Right) {
-    return !(m_layout.isHorizontal() && m_layout.numberOfChildren() == 0);
+    return !(m_layout.type() == LayoutNode::Type::HorizontalLayout && m_layout.numberOfChildren() == 0);
   } else {
     assert(m_position == Position::Left);
-    if (m_layout.isHorizontal()) {
+    if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
       return false;
     }
     if (m_layout.isEmpty()) {
@@ -242,7 +254,7 @@ bool LayoutCursor::baseForNewPowerLayout() {
     }
     LayoutCursor equivalentLayoutCursor = m_layout.equivalentCursor(this);
     if (equivalentLayoutCursor.layoutReference().isUninitialized()
-        || (equivalentLayoutCursor.layoutReference().isHorizontal()
+        || (equivalentLayoutCursor.layoutReference().type() == LayoutNode::Type::HorizontalLayout
           && equivalentLayoutCursor.position() == Position::Left))
     {
       return false;
@@ -273,7 +285,7 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   /* Change the visibility of the neighbouring empty layout: it might be either
    * an EmptyLayout or an HorizontalLayout with one child only, and this child
    * is an EmptyLayout. */
-  if (adjacentEmptyLayout.isHorizontal()) {
+  if (adjacentEmptyLayout.type() == LayoutNode::Type::HorizontalLayout) {
     static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.childAtIndex(0).node())->setVisible(show);
   } else {
     static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.node())->setVisible(show);

@@ -19,7 +19,7 @@ int ArcCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.name());
 }
 
-Expression ArcCosineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ArcCosineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return ArcCosine(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
@@ -39,7 +39,7 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
      * this cut. We followed the convention chosen by the lib c++ of llvm on
      * ]-inf+0i, -1+0i[ (warning: acos takes the other side of the cut values on
      * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
-     * acos(-x) = Pi - acos(x) and tan(arccos(x)) = sqrt(1-x^2)/x. */
+     * acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x. */
     if (c.imag() == 0 && c.real() > 1) {
       result.imag(-result.imag()); // other side of the cut
     }

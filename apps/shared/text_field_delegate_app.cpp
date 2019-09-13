@@ -1,4 +1,5 @@
 #include "text_field_delegate_app.h"
+#include <ion/unicode/utf8_decoder.h>
 #include <apps/apps_container.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
@@ -14,7 +15,7 @@ Context * TextFieldDelegateApp::localContext() {
 }
 
 char TextFieldDelegateApp::XNT() {
-  return 'X';
+  return 'x';
 }
 
 bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
@@ -40,6 +41,15 @@ bool TextFieldDelegateApp::isAcceptableText(const char * text) {
   return isAcceptableExpression(exp);
 }
 
+bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) {
+  value = PoincareHelpers::ApproximateToScalar<double>(text, *localContext());
+  bool isUndefined = std::isnan(value) || std::isinf(value);
+  if (isUndefined) {
+    displayWarning(I18n::Message::UndefinedValue);
+  }
+  return isUndefined;
+}
+
 /* Protected */
 
 TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
@@ -53,8 +63,13 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     if (!field->isEditing()) {
       field->setEditing(true);
     }
-    const char xnt[2] = {field->XNTChar(XNT()), 0};
-    return field->handleEventWithText(xnt);
+    /* TODO decode here to encode again in handleEventWithText? */
+    constexpr int bufferSize = CodePoint::MaxCodePointCharLength+1;
+    char buffer[bufferSize];
+    size_t length = UTF8Decoder::CodePointToChars(field->XNTCodePoint(XNT()), buffer, bufferSize);
+    assert(length < bufferSize - 1);
+    buffer[length] = 0;
+    return field->handleEventWithText(buffer);
   }
   return false;
 }

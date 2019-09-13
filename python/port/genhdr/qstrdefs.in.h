@@ -21,6 +21,7 @@ QCFG(BYTES_IN_HASH, (2))
 Q(kandinsky)
 Q(color)
 Q(draw_string)
+Q(fill_rect)
 Q(get_pixel)
 Q(set_pixel)
 

@@ -1,6 +1,7 @@
 #include "histogram_controller.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
+#include "../shared/text_helpers.h"
 #include "app.h"
 #include <cmath>
 #include <assert.h>
@@ -11,8 +12,8 @@ using namespace Shared;
 
 namespace Statistics {
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex, int * selectedSeriesIndex) :
   MultipleDataViewController(parentResponder, store, selectedBarIndex, selectedSeriesIndex),
@@ -94,7 +95,7 @@ void HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
     return;
   }
-  const size_t bufferSize = k_maxNumberOfCharacters+ PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2;
+  const size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2;
   char buffer[bufferSize];
   int numberOfChar = 0;
 
@@ -107,24 +108,21 @@ void HistogramController::reloadBannerView() {
   // Add lower bound
   if (selectedSeriesIndex() >= 0) {
     double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
 
-  buffer[numberOfChar++] = ';';
+  numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
-  buffer[numberOfChar++] = '[';
+  numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Padding
-  for (int i = numberOfChar; i < k_maxIntervalLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
-  }
-  buffer[k_maxIntervalLegendLength] = 0;
-  m_view.editableBannerView()->setLegendAtIndex(buffer, 1);
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxIntervalLegendLength);
+  m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
   numberOfChar = 0;
@@ -135,14 +133,11 @@ void HistogramController::reloadBannerView() {
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
-  }
-  buffer[k_maxLegendLength] = 0;
-  m_view.editableBannerView()->setLegendAtIndex(buffer, 3);
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
   numberOfChar = 0;
@@ -152,14 +147,13 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
-  }
-  buffer[k_maxLegendLength] = 0;
-  m_view.editableBannerView()->setLegendAtIndex(buffer, 5);
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  m_view.bannerView()->frequencyView()->setText(buffer);
+
+  m_view.bannerView()->reload();
 }
 
 bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
@@ -191,7 +185,7 @@ void HistogramController::initRangeParameters() {
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
-      maxValue = max(maxValue, m_store->maxValue(i));
+      maxValue = maxFloat(maxValue, m_store->maxValue(i));
     }
   }
   float barWidth = m_store->barWidth();
@@ -244,8 +238,8 @@ void HistogramController::initBarParameters() {
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
-      minValue = min(minValue, m_store->minValue(i));
-      maxValue = max(maxValue, m_store->maxValue(i));
+      minValue = minFloat(minValue, m_store->minValue(i));
+      maxValue = maxFloat(maxValue, m_store->maxValue(i));
     }
   }
   maxValue = minValue >= maxValue ? minValue + std::pow(10.0f, std::floor(std::log10(std::fabs(minValue)))-1.0f) : maxValue;

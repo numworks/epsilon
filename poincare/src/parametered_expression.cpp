@@ -15,7 +15,7 @@ Expression ParameteredExpression::replaceUnknown(const Symbol & symbolToReplace,
   Symbol& parameterChild = static_cast<Symbol &>(c);
   if (strcmp(parameterChild.name(), symbolToReplace.name()) != 0) {
     // If the unknown is not the parameter, replace normally
-    return defaultReplaceUnknown(symbolToReplace, unknownSymbol);
+    return defaultReplaceSymbolWithExpression(symbolToReplace, unknownSymbol);
   }
 
   /* If the unknown is the parameter, replace the unknown in all children except

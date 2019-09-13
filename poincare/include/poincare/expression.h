@@ -190,7 +190,6 @@ public:
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
   Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
-  Expression defaultReplaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
 
   /* Complex */
   static bool EncounteredComplex();
@@ -327,6 +326,7 @@ protected:
 
   /* Properties */
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
+  Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   bool hasReplaceableSymbols(Context * context) const;
   Expression shallowReplaceReplaceableSymbols(Context * context) { return node()->shallowReplaceReplaceableSymbols(context); }
   Expression defaultReplaceReplaceableSymbols(Context * context);
@@ -381,7 +381,6 @@ private:
   template<typename U> Evaluation<U> approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   /* Properties */
-  Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   int defaultGetPolynomialCoefficients(Context * context, const char * symbol, Expression expression[]) const;
 
   /* Builder */

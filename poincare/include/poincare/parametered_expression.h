@@ -13,7 +13,7 @@ class ParameteredExpressionNode : public ExpressionNode {
 public:
   // Expression
   bool isParameteredExpression() const override { return true; }
-  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
 };
 
 class ParameteredExpression : public Expression {
@@ -33,7 +33,7 @@ public:
    * unknowns: for instance, we want to change f(x)=diff(cos(x),x,x) into
    * f(X)=diff(cos(x),x,X), X being an unknown. ReplaceUnknownInExpression does
    * that. */
-  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
 protected:
   ParameteredExpression(const ParameteredExpressionNode * node) : Expression(node) {}
 };

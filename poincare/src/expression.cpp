@@ -422,14 +422,6 @@ Expression Expression::replaceUnknown(const Symbol & symbol, const Symbol & unkn
   return node()->replaceUnknown(symbol, unknownSymbol);
 }
 
-Expression Expression::defaultReplaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    childAtIndex(i).replaceUnknown(symbol, unknownSymbol);
-  }
-  return *this;
-}
-
 /* Complex */
 
 bool Expression::EncounteredComplex() {

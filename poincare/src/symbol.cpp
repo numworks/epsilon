@@ -210,8 +210,6 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
 }
 
 Expression Symbol::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  assert(!symbol.isUninitialized());
-  assert(symbol.type() == ExpressionNode::Type::Symbol);
   assert(unknownSymbol.type() == ExpressionNode::Type::Symbol);
   return replaceSymbolWithExpression(symbol, unknownSymbol);
 }

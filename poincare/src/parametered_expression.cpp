@@ -10,9 +10,6 @@ Expression ParameteredExpressionNode::replaceUnknown(const Symbol & symbol, cons
 }
 
 Expression ParameteredExpression::replaceUnknown(const Symbol & symbolToReplace, const Symbol & unknownSymbol) {
-  assert(!symbolToReplace.isUninitialized());
-  assert(symbolToReplace.type() == ExpressionNode::Type::Symbol);
-
   Expression c = childAtIndex(ParameterChildIndex());
   assert(c.type() == ExpressionNode::Type::Symbol);
   Symbol& parameterChild = static_cast<Symbol &>(c);

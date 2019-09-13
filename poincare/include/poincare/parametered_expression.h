@@ -38,9 +38,6 @@ protected:
   ParameteredExpression(const ParameteredExpressionNode * node) : Expression(node) {}
 };
 
-static_assert(ParameteredExpression::ParameteredChildIndex() == 0, "ParameteredExpression::replaceUnknown might not be valid");
-static_assert(ParameteredExpression::ParameterChildIndex() == 1, "ParameteredExpression::replaceUnknown might not be valid");
-
 }
 
 #endif

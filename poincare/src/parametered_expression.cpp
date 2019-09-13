@@ -24,8 +24,8 @@ Expression ParameteredExpression::replaceUnknown(const Symbol & symbolToReplace,
   /* If the unknown is the parameter, replace the unknown in all children except
    * in the parameter and the parametered children */
   int childrenCount = numberOfChildren();
-  assert(ParameteredChildIndex() == 0);
-  assert(ParameterChildIndex() == 1);
+  static_assert(ParameteredChildIndex() == 0 && ParameterChildIndex() == 1,
+      "ParameteredExpression::replaceUnknown might not be valid");
   for (int i = 2; i < childrenCount; i++) {
     childAtIndex(i).replaceUnknown(symbolToReplace, unknownSymbol);
   }

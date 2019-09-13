@@ -391,7 +391,8 @@ Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression) {
-  for (int i = 0; i < numberOfChildren(); i++) {
+  const int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
     childAtIndex(i).replaceSymbolWithExpression(symbol, expression);
   }
   return *this;

@@ -4,6 +4,11 @@
 #include <cmath>
 #include <float.h>
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#include <stdint.h>
+#endif
+
 namespace Shared {
 
 /* This class is used in a DataBuffer of a Storage::Record. See comment in

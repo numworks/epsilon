@@ -59,10 +59,15 @@ void init() {
     | SDL_WINDOW_RESIZABLE
 #endif
   );
+  assert(sWindow);
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
   sRenderer = SDL_CreateRenderer(sWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  if (!sRenderer) {
+    sRenderer = SDL_CreateRenderer(sWindow, -1, 0);
+    assert(sRenderer);
+  }
 
   Display::init(sRenderer);
 

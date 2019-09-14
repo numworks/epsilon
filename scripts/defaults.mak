@@ -1,5 +1,6 @@
 HOSTCC = gcc
 HOSTCXX = g++
+OBJCOPY = objcopy
 PYTHON = python
 
 # Language-specific flags

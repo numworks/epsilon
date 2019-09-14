@@ -72,7 +72,7 @@ include scripts/struct_layout/Makefile
 include scripts/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-objs = $(call object_for,$(src))
+objs += $(call object_for,$(src))
 .SECONDARY: $(objs)
 
 # Load source-based dependencies

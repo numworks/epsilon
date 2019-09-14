@@ -30,7 +30,7 @@ const char * RegressionController::title() {
 
 void RegressionController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool RegressionController::handleEvent(Ion::Events::Event event) {

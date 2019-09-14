@@ -24,6 +24,7 @@
 
 class AppsContainer : public Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {
 public:
+  static AppsContainer * sharedAppsContainer();
   AppsContainer();
   static bool poincareCircuitBreaker();
   virtual int numberOfApps() = 0;
@@ -35,7 +36,7 @@ public:
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
-  void suspend(bool checkIfPowerKeyReleased = false);
+  void suspend(bool checkIfOnOffKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   bool switchTo(App::Snapshot * snapshot) override;
   void run() override;

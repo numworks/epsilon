@@ -41,6 +41,14 @@ void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
   quiz_assert(identical);
 }
 
+void assert_layout_is_not_parsed(Layout l) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  l.serializeForParsing(buffer, bufferSize);
+  Expression e = parse_expression(buffer, true);
+  quiz_assert(e.isUninitialized());
+}
+
 QUIZ_CASE(poincare_create_all_layouts) {
   EmptyLayout e0 = EmptyLayout::Builder();
   AbsoluteValueLayout e1 = AbsoluteValueLayout::Builder(e0);
@@ -148,6 +156,25 @@ QUIZ_CASE(poincare_parse_layouts) {
         Rational::Builder(3),
         Rational::Builder(4)));
   assert_parsed_layout_is(l, e);
+
+  // 2^(3+4)!
+  l = HorizontalLayout::Builder(
+      CodePointLayout::Builder('2'),
+      VerticalOffsetLayout::Builder(
+        HorizontalLayout::Builder(
+          CodePointLayout::Builder('3'),
+          CodePointLayout::Builder('+'),
+          CodePointLayout::Builder('4')),
+        VerticalOffsetLayoutNode::Position::Superscript),
+      CodePointLayout::Builder('!'));
+  e = Factorial::Builder(
+      Power::Builder(
+        Rational::Builder(2),
+        Addition::Builder(
+          Rational::Builder(3),
+          Rational::Builder(4))));
+  assert_parsed_layout_is(l, e);
+
 
   // log_3(2)
   HorizontalLayout l1 = HorizontalLayout::Builder();
@@ -305,4 +332,109 @@ QUIZ_CASE(poincare_layouts_comparison) {
   Layout e13 = ProductLayout::Builder(CodePointLayout::Builder('a'), EmptyLayout::Builder(), NthRootLayout::Builder(CodePointLayout::Builder('a')), CodePointLayout::Builder('b'));
   quiz_assert(e11.isIdenticalTo(e12));
   quiz_assert(!e11.isIdenticalTo(e13));
+}
+
+QUIZ_CASE(poincare_unparsable_layouts) {
+  {
+    /*  (1
+     *  ---
+     *   2)
+     * */
+    Layout l = FractionLayout::Builder(
+        HorizontalLayout::Builder(
+          LeftParenthesisLayout::Builder(),
+          CodePointLayout::Builder('1')),
+        HorizontalLayout::Builder(
+          CodePointLayout::Builder('2'),
+          RightParenthesisLayout::Builder()));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    //  (  √2)
+    Layout l = HorizontalLayout::Builder(
+        LeftParenthesisLayout::Builder(),
+        NthRootLayout::Builder(
+          HorizontalLayout::Builder(
+            CodePointLayout::Builder('2'),
+            RightParenthesisLayout::Builder())));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    /*   2)+(1
+     *    ∑     (5)
+     *   n=1
+     */
+    constexpr int childrenCount = 5;
+    Layout children[childrenCount] = {
+      CodePointLayout::Builder('2'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder('+'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('1')};
+
+    Layout l = SumLayout::Builder(
+        CodePointLayout::Builder('5'),
+        CodePointLayout::Builder('n'),
+        CodePointLayout::Builder('1'),
+        HorizontalLayout::Builder(children, childrenCount));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    /*   2)+(1
+     *    π    (5)
+     *   n=1
+     */
+    constexpr int childrenCount = 5;
+    Layout children[childrenCount] = {
+      CodePointLayout::Builder('2'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder('+'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('1')};
+
+    Layout l = ProductLayout::Builder(
+        CodePointLayout::Builder('5'),
+        CodePointLayout::Builder('n'),
+        CodePointLayout::Builder('1'),
+        HorizontalLayout::Builder(children, childrenCount));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    /*   2)+(1
+     *    ∫    (5)dx
+     *    1
+     */
+    constexpr int childrenCount = 5;
+    Layout children[childrenCount] = {
+      CodePointLayout::Builder('2'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder('+'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('1')};
+
+    Layout l = ProductLayout::Builder(
+        CodePointLayout::Builder('5'),
+        CodePointLayout::Builder('x'),
+        CodePointLayout::Builder('1'),
+        HorizontalLayout::Builder(children, childrenCount));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    // |3)+(1|
+    constexpr int childrenCount = 5;
+    Layout children[childrenCount] = {
+      CodePointLayout::Builder('3'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder('+'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('1')};
+
+    Layout l = AbsoluteValueLayout::Builder(HorizontalLayout::Builder(children, childrenCount));
+    assert_layout_is_not_parsed(l);
+  }
 }

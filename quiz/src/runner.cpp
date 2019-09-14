@@ -17,7 +17,7 @@ void quiz_print(const char * message) {
   int line_height = font->glyphSize().height();
   ctx->drawString(message, KDPoint(0, line_y), font);
   line_y += line_height;
-  if (line_y > Ion::Display::Height) {
+  if (line_y + line_height > Ion::Display::Height) {
     line_y = 0;
     // Clear screen maybe?
   }

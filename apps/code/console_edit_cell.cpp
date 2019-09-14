@@ -35,11 +35,11 @@ void ConsoleEditCell::layoutSubviews() {
 }
 
 void ConsoleEditCell::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
 }
 
-void ConsoleEditCell::setEditing(bool isEditing,  bool reinitDraftBuffer) {
-  m_textField.setEditing(isEditing, reinitDraftBuffer);
+void ConsoleEditCell::setEditing(bool isEditing) {
+  m_textField.setEditing(isEditing);
 }
 
 void ConsoleEditCell::setText(const char * text) {

@@ -48,7 +48,7 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
 }
 
 static bool shouldRepeatKey(Ion::Keyboard::Key k) {
-  return k <= Ion::Keyboard::Key::A4 || k == Ion::Keyboard::Key::A6;
+  return k <= Ion::Keyboard::Key::Right || k == Ion::Keyboard::Key::Back;
 }
 
 void FltkKbd::initButtons(int x, int y, int w, int h) {

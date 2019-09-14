@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/src/device/display.h>
+#include <ion/src/device/shared/drivers/display.h>
 #include <poincare/integer.h>
 
 namespace Ion {
@@ -12,12 +12,12 @@ namespace Command {
 void Display(const char * input) {
 
   if (strcmp(input, sON) == 0) {
-    Ion::Display::Device::init();
+    Ion::Device::Display::init();
     reply(sOK);
     return;
   }
   if (strcmp(input, sOFF) == 0) {
-    Ion::Display::Device::shutdown();
+    Ion::Device::Display::shutdown();
     reply(sOK);
     return;
   }
@@ -30,38 +30,7 @@ void Display(const char * input) {
 
   KDColor c = KDColor::RGB24(hexNumber(input));
 
-  constexpr int stampHeight = 10;
-  constexpr int stampWidth = 10;
-  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
-  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
-  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
-
-  KDColor stamp[stampWidth*stampHeight];
-  for (int i=0;i<stampWidth*stampHeight; i++) {
-    stamp[i] = c;
-  }
-
-  for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
-    for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
-      Ion::Display::pushRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
-    }
-  }
-
-  int numberOfInvalidPixels = 0;
-
-  for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
-    for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
-      for (int i=0;i<stampWidth*stampHeight; i++) {
-        stamp[i] = KDColorBlack;
-      }
-      Ion::Display::pullRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
-      for (int i=0;i<stampWidth*stampHeight; i++) {
-        if (stamp[i] != c) {
-          numberOfInvalidPixels++;
-        }
-      }
-    }
-  }
+  int numberOfInvalidPixels = Ion::Display::displayUniformTilingSize10(c);
 
   char response[16] = {'D', 'E', 'L', 'T', 'A', '='};
   Poincare::Integer(numberOfInvalidPixels).serialize(response+6, sizeof(response)-6);

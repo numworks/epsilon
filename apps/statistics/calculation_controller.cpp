@@ -1,5 +1,5 @@
 #include "calculation_controller.h"
-#include "../apps_container.h"
+#include <apps/i18n.h>
 #include "../shared/poincare_helpers.h"
 #include <assert.h>
 
@@ -167,7 +167,7 @@ const char * CalculationController::title() {
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   return false;

@@ -70,8 +70,8 @@ uint32_t Storage::Record::checksum() {
   uint32_t crc32Results[2];
   crc32Results[0] = m_fullNameCRC32;
   Data data = value();
-  crc32Results[1] = Ion::crc32PaddedString((const char *)data.buffer, data.size);
-  return Ion::crc32(crc32Results, 2);
+  crc32Results[1] = Ion::crc32Byte((const uint8_t *)data.buffer, data.size);
+  return Ion::crc32Word(crc32Results, 2);
 }
 
 Storage::Record::Record(const char * basename, int basenameLength, const char * extension, int extensionLength) {
@@ -80,9 +80,9 @@ Storage::Record::Record(const char * basename, int basenameLength, const char * 
 
   // We compute the CRC32 of the CRC32s of the basename and the extension
   uint32_t crc32Results[2];
-  crc32Results[0] = Ion::crc32PaddedString(basename, basenameLength);
-  crc32Results[1] = Ion::crc32PaddedString(extension, extensionLength);
-  m_fullNameCRC32 = Ion::crc32(crc32Results, 2);
+  crc32Results[0] = Ion::crc32Byte((const uint8_t *)basename, basenameLength);
+  crc32Results[1] = Ion::crc32Byte((const uint8_t *)extension, extensionLength);
+  m_fullNameCRC32 = Ion::crc32Word(crc32Results, 2);
 }
 
 // STORAGE
@@ -113,7 +113,7 @@ size_t Storage::availableSize() {
 }
 
 uint32_t Storage::checksum() {
-  return Ion::crc32PaddedString(m_buffer, endBuffer()-m_buffer);
+  return Ion::crc32Byte((const uint8_t *) m_buffer, endBuffer()-m_buffer);
 }
 
 void Storage::notifyChangeToDelegate(const Record record) const {

@@ -6,6 +6,11 @@ endif
 
 SFLAGS += -Iion/include -DKD_CONFIG_H=1
 
+ifndef ION_KEYBOARD_LAYOUT
+  $(error platform.mak should define ION_KEYBOARD_LAYOUT)
+endif
+SFLAGS += -Iion/include/ion/keyboard/$(ION_KEYBOARD_LAYOUT)
+
 include ion/src/$(PLATFORM)/Makefile
 include ion/src/shared/tools/Makefile
 
@@ -17,9 +22,10 @@ initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
 src += $(addprefix ion/src/shared/, \
-  crc32_padded.cpp \
+  crc32_eat_byte.cpp \
   decompress.cpp \
   events.cpp \
+  led.cpp \
   platform_info.cpp \
   storage.cpp \
   unicode/utf8_decoder.cpp\
@@ -36,6 +42,10 @@ tests += $(addprefix ion/test/,\
   utf8_decoder.cpp\
   utf8_helper.cpp\
 )
+
+TEST_EXT_FLASH_REPROGRAM ?= 0
+SFLAGS += -DTEST_EXT_FLASH_REPROGRAM=$(TEST_EXT_FLASH_REPROGRAM)
+external_flash_tests += ion/test/external_flash.cpp
 
 ifdef ION_STORAGE_LOG
 SFLAGS += -DION_STORAGE_LOG=1

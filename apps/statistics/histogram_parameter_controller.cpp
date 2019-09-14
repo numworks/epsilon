@@ -43,7 +43,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
   if (parameterIndex == 0) {
     // The bar width cannot be negative
     if (f <= 0.0f) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
 
@@ -52,7 +52,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
       if (m_store->firstDrawnBarAbscissa() <= m_store->maxValue(i)+f) {
         break;
       } else if (i == DoublePairStore::k_numberOfSeries - 1) {
-        app()->displayWarning(I18n::Message::ForbiddenValue);
+        Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
         return false;
       }
     }
@@ -67,7 +67,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
       }
     }
     if (maxNewNumberOfBars > Store::k_maxNumberOfBars) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
 
@@ -84,7 +84,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
       }
     }
     if (maxNewNumberOfBars > Store::k_maxNumberOfBars) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
     // There should be at least one value in the drawn bin
@@ -92,7 +92,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
       if (f <= m_store->maxValue(i)+m_store->barWidth()) {
         break;
       } else if (i == DoublePairStore::k_numberOfSeries - 1) {
-        app()->displayWarning(I18n::Message::ForbiddenValue);
+        Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
         return false;
       }
     }

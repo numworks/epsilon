@@ -2,6 +2,7 @@
 #include <apps/i18n.h>
 #include "../apps_container.h"
 #include <assert.h>
+#include <escher/app.h>
 
 namespace HardwareTest {
 
@@ -34,13 +35,11 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
 PopUpController::ContentView::ContentView(Responder * parentResponder) :
   Responder(parentResponder),
   m_cancelButton(this, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
-    PopUpController::ContentView * view = (PopUpController::ContentView *)context;
-    view->app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }, this), KDFont::SmallFont),
   m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {
-    PopUpController::ContentView * view = (PopUpController::ContentView *)context;
-    AppsContainer * appsContainer = (AppsContainer *)view->app()->container();
+    AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
     bool switched = appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
@@ -62,9 +61,9 @@ void PopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
   m_okButton.setHighlighted(selectedButton == 1);
   if (selectedButton == 0) {
-    app()->setFirstResponder(&m_cancelButton);
+    Container::activeApp()->setFirstResponder(&m_cancelButton);
   } else {
-    app()->setFirstResponder(&m_okButton);
+    Container::activeApp()->setFirstResponder(&m_okButton);
   }
 }
 

@@ -1,5 +1,6 @@
 TOOLCHAIN ?= host-gcc
 USE_LIBA ?= 0
+ION_KEYBOARD_LAYOUT = layout_B2
 EXE = bin
 EPSILON_ONBOARDING_APP = 0
 

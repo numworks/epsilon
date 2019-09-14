@@ -30,6 +30,17 @@ bool isHex(char c) {
   return hexChar(c) >= 0;
 }
 
+uint32_t numberBase10(const char * s, int maxLength) {
+  uint32_t result = 0;
+  int index = 0;
+  while ((maxLength < 0 || index < maxLength) && s[index] != NULL) {
+    result = result * 10 + hexChar(s[index]);
+    index++;
+  }
+  return result;
+}
+
+
 uint32_t hexNumber(const char * s, int maxLength) {
   uint32_t result = 0;
   int index = 0;

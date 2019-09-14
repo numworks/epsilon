@@ -20,7 +20,7 @@ static bool checkBufferSize(char * buffer, int bufferSize, int * result) {
   return false;
 }
 
-static int serializeChild(
+int SerializationHelper::SerializeChild(
     const TreeNode * childNode,
     const TreeNode * parentNode,
     char * buffer,
@@ -39,7 +39,7 @@ static int serializeChild(
   // Write the child with parentheses if needed
   bool addParentheses = parentNode->childNeedsParenthesis(childNode);
   if (addParentheses) {
-    numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -50,7 +50,7 @@ static int serializeChild(
     return bufferSize-1;
   }
   if (addParentheses) {
-    numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
   }
   if (numberOfChar >= bufferSize-1) {
     assert(buffer[bufferSize - 1] == 0);
@@ -60,7 +60,8 @@ static int serializeChild(
   return numberOfChar;
 }
 
-int SerializationHelper::Infix(
+int InfixPrefix(
+    bool prefix,
     const TreeNode * node,
     char * buffer,
     int bufferSize,
@@ -77,37 +78,78 @@ int SerializationHelper::Infix(
     }
   }
 
-  // Get some information on the node
   int numberOfChar = 0;
-  int numberOfChildren = node->numberOfChildren();
-  assert(numberOfChildren > 0);
 
-  // Write the first child, with parentheses if needed
-  numberOfChar+= serializeChild(node->childAtIndex(firstChildIndex), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
-  if (numberOfChar >= bufferSize-1) {
-    assert(buffer[bufferSize - 1] == 0);
-    return bufferSize-1;
-  }
-  // For all remaining children:
-  int lastIndex = lastChildIndex < 0 ? numberOfChildren - 1 : lastChildIndex;
-  for (int i = firstChildIndex + 1; i < lastIndex+1; i++) {
-    // Write the operator
-    numberOfChar += strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
+  /* For Prefix, we use system parentheses so that, for instance, |3)+(1| is not
+   * parsable after serialization.*/
+
+  if (prefix) {
+    // Prefix: Copy the operator name
+    numberOfChar = strlcpy(buffer, operatorName, bufferSize);
     if (numberOfChar >= bufferSize-1) {
       assert(buffer[bufferSize - 1] == 0);
       return bufferSize-1;
     }
-    // Write the child, with parentheses if needed
-    numberOfChar+= serializeChild(node->childAtIndex(i), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
+    // Add the opening parenthesis
+    numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
     if (numberOfChar >= bufferSize-1) {
-      assert(buffer[bufferSize - 1] == 0);
       return bufferSize-1;
     }
   }
 
-  // Null-terminate the buffer
+  int childrenCount = node->numberOfChildren();
+  assert(prefix || childrenCount > 0);
+
+  if (childrenCount > 0) {
+    int lastIndex = lastChildIndex < 0 ? childrenCount - 1 : lastChildIndex;
+    assert(firstChildIndex <= lastIndex);
+
+    // Write the children, separated with commas or the operator
+    for (int i = firstChildIndex; i <= lastIndex; i++) {
+      if (i != firstChildIndex) {
+        // Write the operator or the comma
+        numberOfChar += prefix ?
+          UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar) :
+          strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
+        if (numberOfChar >= bufferSize-1) {
+          assert(buffer[bufferSize - 1] == 0);
+          return bufferSize-1;
+        }
+      }
+      // Write the child, with or without parentheses if needed
+      numberOfChar+= prefix ?
+        node->childAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits) :
+        SerializationHelper::SerializeChild(node->childAtIndex(i), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
+      if (numberOfChar >= bufferSize-1) {
+        assert(buffer[bufferSize - 1] == 0);
+        return bufferSize-1;
+      }
+    }
+  }
+
+  if (prefix) {
+    // Add the closing parenthesis
+    numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+    if (numberOfChar >= bufferSize-1) {
+      return bufferSize-1;
+    }
+  }
+
   buffer[numberOfChar] = 0;
   return numberOfChar;
+}
+
+int SerializationHelper::Infix(
+    const TreeNode * node,
+    char * buffer,
+    int bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfDigits,
+    const char * operatorName,
+    int firstChildIndex,
+    int lastChildIndex)
+{
+  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, firstChildIndex, lastChildIndex);
 }
 
 int SerializationHelper::Prefix(
@@ -117,63 +159,9 @@ int SerializationHelper::Prefix(
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits,
     const char * operatorName,
-    bool writeFirstChild)
+    int lastChildIndex)
 {
-  {
-    int result = 0;
-    if (checkBufferSize(buffer, bufferSize, &result)) {
-      return result;
-    }
-  }
-
-  // Copy the operator name
-  int numberOfChar = strlcpy(buffer, operatorName, bufferSize);
-  if (numberOfChar >= bufferSize-1) {
-    assert(buffer[bufferSize - 1] == 0);
-    return bufferSize-1;
-  }
-
-  // Add the opening parenthese
-  numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
-  if (numberOfChar >= bufferSize-1) {
-    return bufferSize-1;
-  }
-
-  int childrenCount = node->numberOfChildren();
-  if (childrenCount > 0) {
-    if (!writeFirstChild) {
-      assert(childrenCount > 1);
-    }
-    int firstChildIndex = writeFirstChild ? 0 : 1;
-
-    // Write the first child
-    numberOfChar += node->childAtIndex(firstChildIndex)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
-    if (numberOfChar >= bufferSize-1) {
-      assert(buffer[bufferSize - 1] == 0);
-      return bufferSize-1;
-    }
-
-    // Write the remaining children, separated with commas
-    for (int i = firstChildIndex + 1; i < childrenCount; i++) {
-      numberOfChar += UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar);
-      if (numberOfChar >= bufferSize-1) {
-        return bufferSize-1;
-      }
-      numberOfChar += node->childAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
-      if (numberOfChar >= bufferSize-1) {
-        assert(buffer[bufferSize - 1] == 0);
-        return bufferSize-1;
-      }
-    }
-  }
-
-  // Add the closing parenthese
-  numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
-  if (numberOfChar >= bufferSize-1) {
-    return bufferSize-1;
-  }
-  buffer[numberOfChar] = 0;
-  return numberOfChar;
+  return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, 0, lastChildIndex);
 }
 
 int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoint c) {
@@ -183,7 +171,7 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
       return result;
     }
   }
-  size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
+  int size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
   if (size <= bufferSize - 1) {
     buffer[size] = 0;
   } else {

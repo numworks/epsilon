@@ -13,5 +13,10 @@ void writeChar(char c) {
   fflush(stdout);
 }
 
+bool transmissionDone() {
+  // Always true because we flush after each writeChar
+  return true;
+}
+
 }
 }

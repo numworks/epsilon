@@ -1,7 +1,7 @@
 #include "command.h"
 #include <ion.h>
 #include <poincare/print_float.h>
-#include <ion/src/device/led.h>
+#include <ion/src/device/shared/drivers/led.h>
 
 namespace Ion {
 namespace Device {

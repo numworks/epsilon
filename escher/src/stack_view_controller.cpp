@@ -2,7 +2,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <escher/stack_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/metric.h>
 
 StackViewController::ControllerView::ControllerView() :
@@ -137,12 +137,12 @@ void StackViewController::setupActiveViewController() {
   m_view.setContentView(vc->view());
   vc->viewWillAppear();
   vc->setParentResponder(this);
-  app()->setFirstResponder(vc);
+  Container::activeApp()->setFirstResponder(vc);
 }
 
 void StackViewController::didBecomeFirstResponder() {
   ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
-  app()->setFirstResponder(vc);
+  Container::activeApp()->setFirstResponder(vc);
 }
 
 bool StackViewController::handleEvent(Ion::Events::Event event) {

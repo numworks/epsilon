@@ -10,6 +10,7 @@ extern "C" {
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
+#include <layout_events.h>
 
 #include "display/fltklcd.h"
 #include "keyboard/fltkkbd.h"
@@ -69,9 +70,6 @@ void Ion::Display::pushRectUniform(KDRect r, KDColor c) {
 
 void Ion::Display::pullRect(KDRect r, KDColor * pixels) {
   sFrameBuffer->pullRect(r, pixels);
-}
-
-void Ion::Display::waitForVBlank() {
 }
 
 Ion::Keyboard::State Ion::Keyboard::scan() {

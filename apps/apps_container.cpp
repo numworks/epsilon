@@ -1,4 +1,5 @@
 #include "apps_container.h"
+#include "apps_container_storage.h"
 #include "global_preferences.h"
 #include <ion.h>
 #include <poincare/init.h>
@@ -52,6 +53,11 @@ static KDColor sPromptColors[] = {
 
 #endif
 
+AppsContainer * AppsContainer::sharedAppsContainer() {
+  static AppsContainerStorage appsContainerStorage;
+  return &appsContainerStorage;
+}
+
 AppsContainer::AppsContainer() :
   Container(),
   m_window(),
@@ -64,8 +70,8 @@ AppsContainer::AppsContainer() :
 #elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
   m_promptController(sPromptMessages, sPromptColors, 6),
 #endif
-  m_batteryTimer(BatteryTimer(this)),
-  m_suspendTimer(SuspendTimer(this)),
+  m_batteryTimer(),
+  m_suspendTimer(),
   m_backlightDimmingTimer(),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
@@ -91,7 +97,7 @@ AppsContainer::AppsContainer() :
 
 bool AppsContainer::poincareCircuitBreaker() {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  return state.keyDown(Ion::Keyboard::Key::A6);
+  return state.keyDown(Ion::Keyboard::Key::Back);
 }
 
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
@@ -128,15 +134,15 @@ VariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
-void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
+void AppsContainer::suspend(bool checkIfOnOffKeyReleased) {
   resetShiftAlphaStatus();
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
 #ifdef EPSILON_BOOT_PROMPT
-  if (activeApp()->snapshot()!= onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
-    activeApp()->displayModalViewController(&m_promptController, 0.f, 0.f);
+  if (s_activeApp->snapshot()!= onBoardingAppSnapshot() && s_activeApp->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
+    s_activeApp->displayModalViewController(&m_promptController, 0.f, 0.f);
   }
 #endif
-  Ion::Power::suspend(checkIfPowerKeyReleased);
+  Ion::Power::suspend(checkIfOnOffKeyReleased);
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
@@ -149,9 +155,12 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = updateAlphaLock();
   bool didProcessEvent = false;
 
+  if (event == Ion::Events::USBEnumeration || event == Ion::Events::USBPlug || event == Ion::Events::BatteryCharging) {
+    Ion::LED::updateColorWithPlugAndCharge();
+  }
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
-      App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
+      App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
       /* Just after a software update, the battery timer does not have time to
        * fire before the calculator enters DFU mode. As the DFU mode blocks the
        * event loop, we update the battery state "manually" here.
@@ -160,6 +169,8 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       updateBatteryState();
       if (switchTo(usbConnectedAppSnapshot())) {
         Ion::USB::DFU();
+        // Update LED when exiting DFU mode
+        Ion::LED::updateColorWithPlugAndCharge();
         bool switched = switchTo(activeSnapshot);
         assert(switched);
         (void) switched; // Silence compilation warning about unused variable.
@@ -201,10 +212,12 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 }
 
 bool AppsContainer::processEvent(Ion::Events::Event event) {
+  // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         displayExamModePopUp(false);
+        window()->redraw();
       } else {
         Ion::USB::enable();
       }
@@ -226,7 +239,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
 }
 
 bool AppsContainer::switchTo(App::Snapshot * snapshot) {
-  if (activeApp() && snapshot != activeApp()->snapshot()) {
+  if (s_activeApp && snapshot != s_activeApp->snapshot()) {
     resetShiftAlphaStatus();
   }
   if (snapshot == hardwareTestAppSnapshot() || snapshot == onBoardingAppSnapshot()) {
@@ -264,11 +277,11 @@ void AppsContainer::run() {
     (void) switched; // Silence compilation warning about unused variable.
   } else {
     // Exception
-    if (activeApp() != nullptr) {
+    if (s_activeApp != nullptr) {
       /* The app models can reference layouts or expressions that have been
        * destroyed from the pool. To avoid using them before packing the app
        * (in App::willBecomeInactive for instance), we tidy them early on. */
-      activeApp()->snapshot()->tidy();
+      s_activeApp->snapshot()->tidy();
       /* When an app encoutered an exception due to a full pool, the next time
        * the user enters the app, the same exception could happen again which
        * would prevent from reopening the app. To avoid being stuck outside the
@@ -276,13 +289,13 @@ void AppsContainer::run() {
        * exception. For instance, the calculation app can encounter an
        * exception when displaying too many huge layouts, if we don't clean the
        * history here, we will be stuck outside the calculation app. */
-      activeApp()->snapshot()->reset();
+      s_activeApp->snapshot()->reset();
     }
     bool switched = switchTo(appSnapshotAtIndex(0));
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
     Poincare::Tidy();
-    activeApp()->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
+    s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
   }
   Container::run();
   switchTo(nullptr);
@@ -308,7 +321,7 @@ void AppsContainer::reloadTitleBarView() {
 
 void AppsContainer::displayExamModePopUp(bool activate) {
   m_examPopUpController.setActivatingExamMode(activate);
-  activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+  s_activeApp->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
 }
 
 void AppsContainer::shutdownDueToLowBattery() {
@@ -322,6 +335,12 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     Ion::Backlight::setBrightness(0);
+    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Deactivate) {
+      /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
+       * low battery event happened during the Power-On Self-Test, a LED might
+       * have stayed lit up. */
+      Ion::LED::setColor(KDColorBlack);
+    }
     m_emptyBatteryWindow.redraw(true);
     Ion::Timing::msleep(3000);
     Ion::Power::suspend();
@@ -355,14 +374,14 @@ void AppsContainer::examDeactivatingPopUpIsDismissed() {
 }
 
 void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record) {
-  if (activeApp()) {
-    activeApp()->snapshot()->storageDidChangeForRecord(record);
+  if (s_activeApp) {
+    s_activeApp->snapshot()->storageDidChangeForRecord(record);
   }
 }
 
 void AppsContainer::storageIsFull() {
-  if (activeApp()) {
-    activeApp()->displayWarning(I18n::Message::StorageMemoryFull1, I18n::Message::StorageMemoryFull2, true);
+  if (s_activeApp) {
+    s_activeApp->displayWarning(I18n::Message::StorageMemoryFull1, I18n::Message::StorageMemoryFull2, true);
   }
 }
 

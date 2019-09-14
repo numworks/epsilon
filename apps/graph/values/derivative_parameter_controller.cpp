@@ -31,7 +31,7 @@ View * DerivativeParameterController::view() {
 
 void DerivativeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
@@ -82,8 +82,7 @@ KDCoordinate DerivativeParameterController::cellHeight() {
 }
 
 CartesianFunctionStore * DerivativeParameterController::functionStore() {
-  App * a = static_cast<App *>(app());
-  return a->functionStore();
+  return App::app()->functionStore();
 }
 
 }

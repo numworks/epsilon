@@ -103,6 +103,7 @@ src += $(addprefix poincare/src/,\
   prediction_interval.cpp \
   preferences.cpp \
   print_float.cpp \
+  print_int.cpp \
   product.cpp \
   randint.cpp \
   random.cpp \
@@ -167,6 +168,7 @@ tests += $(addprefix poincare/test/,\
   parentheses_layout.cpp\
   parser.cpp\
   power.cpp\
+  print_int.cpp\
   properties.cpp\
   rational.cpp\
   random.cpp\

@@ -15,8 +15,8 @@ QUIZ_CASE(ion_events_from_keyboard) {
   }
 
   // Test some fallbacks
-  quiz_assert(Event(Key::I5, false, false) == EXE);
-  quiz_assert(Event(Key::I5, true, false) == EXE);
-  quiz_assert(Event(Key::I5, false, true) == EXE);
-  quiz_assert(Event(Key::I5, true, true) == EXE);
+  quiz_assert(Event(Key::EXE, false, false) == EXE);
+  quiz_assert(Event(Key::EXE, true, false) == EXE);
+  quiz_assert(Event(Key::EXE, false, true) == EXE);
+  quiz_assert(Event(Key::EXE, true, true) == EXE);
 }

@@ -17,7 +17,7 @@ uint32_t InteractiveCurveViewRange::rangeChecksum() {
   float data[5] = {m_xMin, m_xMax, m_yMin, m_yMax, m_yAuto ? 1.0f : 0.0f};
   size_t dataLengthInBytes = 5*sizeof(float);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
+  return Ion::crc32Word((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }
 
 void InteractiveCurveViewRange::setYAuto(bool yAuto) {

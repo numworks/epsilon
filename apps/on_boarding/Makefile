@@ -4,6 +4,7 @@ app_src += $(addprefix apps/on_boarding/,\
   logo_controller.cpp \
   logo_view.cpp \
   pop_up_controller.cpp \
+  power_on_self_test.cpp \
 )
 
 i18n_files += $(addprefix apps/on_boarding/,\

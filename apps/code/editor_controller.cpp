@@ -39,7 +39,7 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
 }
 
 void EditorController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_editorView);
+  Container::activeApp()->setFirstResponder(&m_editorView);
 }
 
 void EditorController::viewWillAppear() {
@@ -58,7 +58,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     saveScript();
     return false;
   }
-  if (static_cast<App *>(textArea->app())->textInputDidReceiveEvent(textArea, event)) {
+  if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
   if (event == Ion::Events::EXE) {
@@ -109,13 +109,9 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 }
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = static_cast<App *>(app())->variableBoxController();
+  VariableBoxController * varBox = App::app()->variableBoxController();
   varBox->loadFunctionsAndVariables();
   return varBox;
-}
-
-InputEventHandlerDelegateApp * EditorController::inputEventHandlerDelegateApp() {
-  return static_cast<App *>(app());
 }
 
 StackViewController * EditorController::stackController() {

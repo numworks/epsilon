@@ -1,6 +1,20 @@
-#include "apps_container_storage.h"
+#include "apps_container.h"
 #include "global_preferences.h"
 #include <poincare/init.h>
+
+#define DUMMY_MAIN 0
+#if DUMMY_MAIN
+
+void ion_main(int argc, char * argv[]) {
+  while (1) {
+    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorRed);
+    Ion::Timing::msleep(100);
+    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorBlue);
+    Ion::Timing::msleep(100);
+  }
+}
+
+#else
 
 void ion_main(int argc, char * argv[]) {
   // Initialize Poincare::TreePool::sharedPool
@@ -32,8 +46,8 @@ void ion_main(int argc, char * argv[]) {
      * $ ./epsilon.elf --code-script hello_world.py:print("hello") --code-lock-on-console
      */
     const char * appNames[] = {"home", EPSILON_APPS_NAMES};
-    for (int j = 0; j < AppsContainerStorage::sharedContainer()->numberOfApps(); j++) {
-      App::Snapshot * snapshot = AppsContainerStorage::sharedContainer()->appSnapshotAtIndex(j);
+    for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfApps(); j++) {
+      App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
       int cmp = strcmp(argv[i]+2, appNames[j]);
       if (cmp == '-') {
         snapshot->setOpt(argv[i]+2+strlen(appNames[j])+1, argv[i+1]);
@@ -42,5 +56,7 @@ void ion_main(int argc, char * argv[]) {
     }
   }
 #endif
-  AppsContainerStorage::sharedContainer()->run();
+  AppsContainer::sharedAppsContainer()->run();
 }
+
+#endif

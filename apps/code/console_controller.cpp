@@ -57,7 +57,7 @@ bool ConsoleController::loadPythonEnvironment() {
   /* We load functions and variables names in the variable box before running
    * any other python code to avoid failling to load functions and variables
    * due to memory exhaustion. */
-  static_cast<App *>(app())->variableBoxController()->loadFunctionsAndVariables();
+  App::app()->variableBoxController()->loadFunctionsAndVariables();
   return true;
 }
 
@@ -90,8 +90,13 @@ void ConsoleController::terminateInputLoop() {
 }
 
 const char * ConsoleController::inputText(const char * prompt) {
-  AppsContainer * a = (AppsContainer *)(app()->container());
+  AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
   m_inputRunLoopActive = true;
+
+  // Hide the sandbox if it is displayed
+  if (sandboxIsDisplayed()) {
+    hideSandbox();
+  }
 
   const char * promptText = prompt;
   char * s = const_cast<char *>(prompt);
@@ -119,10 +124,10 @@ const char * ConsoleController::inputText(const char * prompt) {
   // Reload the history
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  a->redrawWindow();
+  appsContainer->redrawWindow();
 
   // Launch a new input loop
-  a->runWhile([](void * a){
+  appsContainer->runWhile([](void * a){
       ConsoleController * c = static_cast<ConsoleController *>(a);
       return c->inputRunLoopActive();
   }, this);
@@ -153,7 +158,7 @@ void ConsoleController::viewWillAppear() {
 }
 
 void ConsoleController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_editCell);
+  Container::activeApp()->setFirstResponder(&m_editCell);
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
@@ -162,7 +167,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
       const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();
       m_editCell.setEditing(true);
       m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-      app()->setFirstResponder(&m_editCell);
+      Container::activeApp()->setFirstResponder(&m_editCell);
       return m_editCell.insertText(text);
     }
   } else if (event == Ion::Events::Clear) {
@@ -290,7 +295,7 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
       return true;
     }
   }
-  return static_cast<App *>(textField->app())->textInputDidReceiveEvent(textField, event);
+  return App::app()->textInputDidReceiveEvent(textField, event);
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

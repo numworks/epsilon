@@ -8,7 +8,6 @@ src += $(addprefix ion/src/simulator/keyboard/, fltkkbd.cpp)
 
 src += $(addprefix ion/src/shared/, \
   crc32.cpp \
-  crc32_padded.cpp \
   console_line.cpp \
   console_stdio.cpp \
   events_modifier.cpp \
@@ -17,6 +16,7 @@ src += $(addprefix ion/src/shared/, \
   timing.cpp \
   dummy/backlight.cpp \
   dummy/battery.cpp \
+  dummy/display.cpp \
   dummy/fcc_id.cpp \
   dummy/led.cpp \
   dummy/serial_number.cpp \

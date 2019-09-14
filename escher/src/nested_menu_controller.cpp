@@ -1,4 +1,5 @@
 #include <escher/nested_menu_controller.h>
+#include <escher/container.h>
 #include <escher/metric.h>
 #include <assert.h>
 #include <string.h>
@@ -78,7 +79,7 @@ View * NestedMenuController::ListController::view() {
 void NestedMenuController::ListController::didBecomeFirstResponder() {
   m_selectableTableView->reloadData();
   m_selectableTableView->selectCellAtLocation(0, m_firstSelectedRow);
-  app()->setFirstResponder(m_selectableTableView);
+  Container::activeApp()->setFirstResponder(m_selectableTableView);
 }
 
 void NestedMenuController::ListController::setFirstSelectedRow(int firstSelectedRow) {
@@ -102,7 +103,7 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
 }
 
 void NestedMenuController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_listController);
+  Container::activeApp()->setFirstResponder(&m_listController);
 }
 
 void NestedMenuController::viewWillAppear() {
@@ -154,7 +155,7 @@ bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIn
 bool NestedMenuController::selectSubMenu(int selectedRow) {
   m_stack.push(selectedRow, m_selectableTableView.contentOffset().y());
   m_listController.setFirstSelectedRow(0);
-  app()->setFirstResponder(&m_listController);
+  Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
 
@@ -164,6 +165,6 @@ bool NestedMenuController::returnToPreviousMenu() {
   m_listController.setFirstSelectedRow(state.selectedRow());
   KDPoint scroll = m_selectableTableView.contentOffset();
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));
-  app()->setFirstResponder(&m_listController);
+  Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }

@@ -46,7 +46,7 @@ void KeyboardView::drawKey(int keyIndex, KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(x, y, k_bigSquareSize, k_bigSquareSize), color);
   }
   /* the key is a "home" or "power" */
-  if ((uint8_t)key >= 6 && (uint8_t)key < 8) {
+  if ((uint8_t)key >= 6 && (uint8_t)key <= 8) {
     KDCoordinate x = 3*k_margin + 3*k_smallSquareSize;
     KDCoordinate y = (uint8_t)key == 6 ? k_margin : 2*k_margin + k_bigRectHeight;
     ctx->fillRect(KDRect(x, y, k_bigRectWidth, k_bigRectHeight), color);

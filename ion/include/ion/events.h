@@ -59,165 +59,169 @@ void updateModifiersFromEvent(Event e);
 
 // Plain
 
-constexpr Event Left  = Event::PlainKey(Keyboard::Key::A1);
-constexpr Event Up    = Event::PlainKey(Keyboard::Key::A2);
-constexpr Event Down  = Event::PlainKey(Keyboard::Key::A3);
-constexpr Event Right = Event::PlainKey(Keyboard::Key::A4);
-constexpr Event OK    = Event::PlainKey(Keyboard::Key::A5);
-constexpr Event Back  = Event::PlainKey(Keyboard::Key::A6);
+constexpr Event Left  = Event::PlainKey(Keyboard::Key::Left);
+constexpr Event Up    = Event::PlainKey(Keyboard::Key::Up);
+constexpr Event Down  = Event::PlainKey(Keyboard::Key::Down);
+constexpr Event Right = Event::PlainKey(Keyboard::Key::Right);
+constexpr Event OK    = Event::PlainKey(Keyboard::Key::OK);
+constexpr Event Back  = Event::PlainKey(Keyboard::Key::Back);
 
-constexpr Event Home  = Event::PlainKey(Keyboard::Key::B1);
-constexpr Event OnOff = Event::PlainKey(Keyboard::Key::B2);
+constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
+constexpr Event OnOff = Event::PlainKey(Keyboard::Key::OnOff);
 
-constexpr Event Shift = Event::PlainKey(Keyboard::Key::C1);
-constexpr Event Alpha = Event::PlainKey(Keyboard::Key::C2);
-constexpr Event XNT   = Event::PlainKey(Keyboard::Key::C3);
-constexpr Event Var   = Event::PlainKey(Keyboard::Key::C4);
-constexpr Event Toolbox = Event::PlainKey(Keyboard::Key::C5);
-constexpr Event Backspace = Event::PlainKey(Keyboard::Key::C6);
+constexpr Event Shift = Event::PlainKey(Keyboard::Key::Shift);
+constexpr Event Alpha = Event::PlainKey(Keyboard::Key::Alpha);
+constexpr Event XNT   = Event::PlainKey(Keyboard::Key::XNT);
+constexpr Event Var   = Event::PlainKey(Keyboard::Key::Var);
+constexpr Event Toolbox = Event::PlainKey(Keyboard::Key::Toolbox);
+constexpr Event Backspace = Event::PlainKey(Keyboard::Key::Backspace);
 
-constexpr Event Exp = Event::PlainKey(Keyboard::Key::D1);
-constexpr Event Ln = Event::PlainKey(Keyboard::Key::D2);
-constexpr Event Log = Event::PlainKey(Keyboard::Key::D3);
-constexpr Event Imaginary = Event::PlainKey(Keyboard::Key::D4);
-constexpr Event Comma = Event::PlainKey(Keyboard::Key::D5);
-constexpr Event Power = Event::PlainKey(Keyboard::Key::D6);
+constexpr Event Exp = Event::PlainKey(Keyboard::Key::Exp);
+constexpr Event Ln = Event::PlainKey(Keyboard::Key::Ln);
+constexpr Event Log = Event::PlainKey(Keyboard::Key::Log);
+constexpr Event Imaginary = Event::PlainKey(Keyboard::Key::Imaginary);
+constexpr Event Comma = Event::PlainKey(Keyboard::Key::Comma);
+constexpr Event Power = Event::PlainKey(Keyboard::Key::Power);
 
-constexpr Event Sine = Event::PlainKey(Keyboard::Key::E1);
-constexpr Event Cosine = Event::PlainKey(Keyboard::Key::E2);
-constexpr Event Tangent = Event::PlainKey(Keyboard::Key::E3);
-constexpr Event Pi = Event::PlainKey(Keyboard::Key::E4);
-constexpr Event Sqrt = Event::PlainKey(Keyboard::Key::E5);
-constexpr Event Square = Event::PlainKey(Keyboard::Key::E6);
+constexpr Event Sine = Event::PlainKey(Keyboard::Key::Sine);
+constexpr Event Cosine = Event::PlainKey(Keyboard::Key::Cosine);
+constexpr Event Tangent = Event::PlainKey(Keyboard::Key::Tangent);
+constexpr Event Pi = Event::PlainKey(Keyboard::Key::Pi);
+constexpr Event Sqrt = Event::PlainKey(Keyboard::Key::Sqrt);
+constexpr Event Square = Event::PlainKey(Keyboard::Key::Square);
 
-constexpr Event Seven = Event::PlainKey(Keyboard::Key::F1);
-constexpr Event Eight = Event::PlainKey(Keyboard::Key::F2);
-constexpr Event Nine = Event::PlainKey(Keyboard::Key::F3);
-constexpr Event LeftParenthesis = Event::PlainKey(Keyboard::Key::F4);
-constexpr Event RightParenthesis = Event::PlainKey(Keyboard::Key::F5);
+constexpr Event Seven = Event::PlainKey(Keyboard::Key::Seven);
+constexpr Event Eight = Event::PlainKey(Keyboard::Key::Eight);
+constexpr Event Nine = Event::PlainKey(Keyboard::Key::Nine);
+constexpr Event LeftParenthesis = Event::PlainKey(Keyboard::Key::LeftParenthesis);
+constexpr Event RightParenthesis = Event::PlainKey(Keyboard::Key::RightParenthesis);
 
-constexpr Event Four = Event::PlainKey(Keyboard::Key::G1);
-constexpr Event Five = Event::PlainKey(Keyboard::Key::G2);
-constexpr Event Six = Event::PlainKey(Keyboard::Key::G3);
-constexpr Event Multiplication = Event::PlainKey(Keyboard::Key::G4);
-constexpr Event Division = Event::PlainKey(Keyboard::Key::G5);
+constexpr Event Four = Event::PlainKey(Keyboard::Key::Four);
+constexpr Event Five = Event::PlainKey(Keyboard::Key::Five);
+constexpr Event Six = Event::PlainKey(Keyboard::Key::Six);
+constexpr Event Multiplication = Event::PlainKey(Keyboard::Key::Multiplication);
+constexpr Event Division = Event::PlainKey(Keyboard::Key::Division);
 
-constexpr Event One  = Event::PlainKey(Keyboard::Key::H1);
-constexpr Event Two = Event::PlainKey(Keyboard::Key::H2);
-constexpr Event Three = Event::PlainKey(Keyboard::Key::H3);
-constexpr Event Plus = Event::PlainKey(Keyboard::Key::H4);
-constexpr Event Minus = Event::PlainKey(Keyboard::Key::H5);
+constexpr Event One  = Event::PlainKey(Keyboard::Key::One);
+constexpr Event Two = Event::PlainKey(Keyboard::Key::Two);
+constexpr Event Three = Event::PlainKey(Keyboard::Key::Three);
+constexpr Event Plus = Event::PlainKey(Keyboard::Key::Plus);
+constexpr Event Minus = Event::PlainKey(Keyboard::Key::Minus);
 
-constexpr Event Zero = Event::PlainKey(Keyboard::Key::I1);
-constexpr Event Dot = Event::PlainKey(Keyboard::Key::I2);
-constexpr Event EE = Event::PlainKey(Keyboard::Key::I3);
-constexpr Event Ans = Event::PlainKey(Keyboard::Key::I4);
-constexpr Event EXE = Event::PlainKey(Keyboard::Key::I5);
+constexpr Event Zero = Event::PlainKey(Keyboard::Key::Zero);
+constexpr Event Dot = Event::PlainKey(Keyboard::Key::Dot);
+constexpr Event EE = Event::PlainKey(Keyboard::Key::EE);
+constexpr Event Ans = Event::PlainKey(Keyboard::Key::Ans);
+constexpr Event EXE = Event::PlainKey(Keyboard::Key::EXE);
 
 // Shift
 
-constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::A1);
-constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::A4);
+constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::Left);
+constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
 
-constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::C2);
-constexpr Event Cut = Event::ShiftKey(Keyboard::Key::C3);
-constexpr Event Copy = Event::ShiftKey(Keyboard::Key::C4);
-constexpr Event Paste = Event::ShiftKey(Keyboard::Key::C5);
-constexpr Event Clear = Event::ShiftKey(Keyboard::Key::C6);
+constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::Alpha);
+constexpr Event Cut = Event::ShiftKey(Keyboard::Key::XNT);
+constexpr Event Copy = Event::ShiftKey(Keyboard::Key::Var);
+constexpr Event Paste = Event::ShiftKey(Keyboard::Key::Toolbox);
+constexpr Event Clear = Event::ShiftKey(Keyboard::Key::Backspace);
 
-constexpr Event LeftBracket = Event::ShiftKey(Keyboard::Key::D1);
-constexpr Event RightBracket = Event::ShiftKey(Keyboard::Key::D2);
-constexpr Event LeftBrace = Event::ShiftKey(Keyboard::Key::D3);
-constexpr Event RightBrace = Event::ShiftKey(Keyboard::Key::D4);
-constexpr Event Underscore = Event::ShiftKey(Keyboard::Key::D5);
-constexpr Event Sto = Event::ShiftKey(Keyboard::Key::D6);
+constexpr Event LeftBracket = Event::ShiftKey(Keyboard::Key::Exp);
+constexpr Event RightBracket = Event::ShiftKey(Keyboard::Key::Ln);
+constexpr Event LeftBrace = Event::ShiftKey(Keyboard::Key::Log);
+constexpr Event RightBrace = Event::ShiftKey(Keyboard::Key::Imaginary);
+constexpr Event Underscore = Event::ShiftKey(Keyboard::Key::Comma);
+constexpr Event Sto = Event::ShiftKey(Keyboard::Key::Power);
 
-constexpr Event Arcsine = Event::ShiftKey(Keyboard::Key::E1);
-constexpr Event Arccosine = Event::ShiftKey(Keyboard::Key::E2);
-constexpr Event Arctangent = Event::ShiftKey(Keyboard::Key::E3);
-constexpr Event Equal = Event::ShiftKey(Keyboard::Key::E4);
-constexpr Event Lower = Event::ShiftKey(Keyboard::Key::E5);
-constexpr Event Greater = Event::ShiftKey(Keyboard::Key::E6);
+constexpr Event Arcsine = Event::ShiftKey(Keyboard::Key::Sine);
+constexpr Event Arccosine = Event::ShiftKey(Keyboard::Key::Cosine);
+constexpr Event Arctangent = Event::ShiftKey(Keyboard::Key::Tangent);
+constexpr Event Equal = Event::ShiftKey(Keyboard::Key::Pi);
+constexpr Event Lower = Event::ShiftKey(Keyboard::Key::Sqrt);
+constexpr Event Greater = Event::ShiftKey(Keyboard::Key::Square);
 
 // Alpha
 
-constexpr Event Colon = Event::AlphaKey(Keyboard::Key::C3);
-constexpr Event SemiColon = Event::AlphaKey(Keyboard::Key::C4);
-constexpr Event DoubleQuotes = Event::AlphaKey(Keyboard::Key::C5);
+constexpr Event Colon = Event::AlphaKey(Keyboard::Key::XNT);
+constexpr Event SemiColon = Event::AlphaKey(Keyboard::Key::Var);
+constexpr Event DoubleQuotes = Event::AlphaKey(Keyboard::Key::Toolbox);
+constexpr Event Percent = Event::AlphaKey(Keyboard::Key::Backspace);
 
-constexpr Event LowerA = Event::AlphaKey(Keyboard::Key::D1);
-constexpr Event LowerB = Event::AlphaKey(Keyboard::Key::D2);
-constexpr Event LowerC = Event::AlphaKey(Keyboard::Key::D3);
-constexpr Event LowerD = Event::AlphaKey(Keyboard::Key::D4);
-constexpr Event LowerE = Event::AlphaKey(Keyboard::Key::D5);
-constexpr Event LowerF = Event::AlphaKey(Keyboard::Key::D6);
+constexpr Event LowerA = Event::AlphaKey(Keyboard::Key::Exp);
+constexpr Event LowerB = Event::AlphaKey(Keyboard::Key::Ln);
+constexpr Event LowerC = Event::AlphaKey(Keyboard::Key::Log);
+constexpr Event LowerD = Event::AlphaKey(Keyboard::Key::Imaginary);
+constexpr Event LowerE = Event::AlphaKey(Keyboard::Key::Comma);
+constexpr Event LowerF = Event::AlphaKey(Keyboard::Key::Power);
 
-constexpr Event LowerG = Event::AlphaKey(Keyboard::Key::E1);
-constexpr Event LowerH = Event::AlphaKey(Keyboard::Key::E2);
-constexpr Event LowerI = Event::AlphaKey(Keyboard::Key::E3);
-constexpr Event LowerJ = Event::AlphaKey(Keyboard::Key::E4);
-constexpr Event LowerK = Event::AlphaKey(Keyboard::Key::E5);
-constexpr Event LowerL = Event::AlphaKey(Keyboard::Key::E6);
+constexpr Event LowerG = Event::AlphaKey(Keyboard::Key::Sine);
+constexpr Event LowerH = Event::AlphaKey(Keyboard::Key::Cosine);
+constexpr Event LowerI = Event::AlphaKey(Keyboard::Key::Tangent);
+constexpr Event LowerJ = Event::AlphaKey(Keyboard::Key::Pi);
+constexpr Event LowerK = Event::AlphaKey(Keyboard::Key::Sqrt);
+constexpr Event LowerL = Event::AlphaKey(Keyboard::Key::Square);
 
-constexpr Event LowerM = Event::AlphaKey(Keyboard::Key::F1);
-constexpr Event LowerN = Event::AlphaKey(Keyboard::Key::F2);
-constexpr Event LowerO = Event::AlphaKey(Keyboard::Key::F3);
-constexpr Event LowerP = Event::AlphaKey(Keyboard::Key::F4);
-constexpr Event LowerQ = Event::AlphaKey(Keyboard::Key::F5);
+constexpr Event LowerM = Event::AlphaKey(Keyboard::Key::Seven);
+constexpr Event LowerN = Event::AlphaKey(Keyboard::Key::Eight);
+constexpr Event LowerO = Event::AlphaKey(Keyboard::Key::Nine);
+constexpr Event LowerP = Event::AlphaKey(Keyboard::Key::LeftParenthesis);
+constexpr Event LowerQ = Event::AlphaKey(Keyboard::Key::RightParenthesis);
 
-constexpr Event LowerR = Event::AlphaKey(Keyboard::Key::G1);
-constexpr Event LowerS = Event::AlphaKey(Keyboard::Key::G2);
-constexpr Event LowerT = Event::AlphaKey(Keyboard::Key::G3);
-constexpr Event LowerU = Event::AlphaKey(Keyboard::Key::G4);
-constexpr Event LowerV = Event::AlphaKey(Keyboard::Key::G5);
+constexpr Event LowerR = Event::AlphaKey(Keyboard::Key::Four);
+constexpr Event LowerS = Event::AlphaKey(Keyboard::Key::Five);
+constexpr Event LowerT = Event::AlphaKey(Keyboard::Key::Six);
+constexpr Event LowerU = Event::AlphaKey(Keyboard::Key::Multiplication);
+constexpr Event LowerV = Event::AlphaKey(Keyboard::Key::Division);
 
-constexpr Event LowerW = Event::AlphaKey(Keyboard::Key::H1);
-constexpr Event LowerX = Event::AlphaKey(Keyboard::Key::H2);
-constexpr Event LowerY = Event::AlphaKey(Keyboard::Key::H3);
-constexpr Event LowerZ = Event::AlphaKey(Keyboard::Key::H4);
-constexpr Event Space = Event::AlphaKey(Keyboard::Key::H5);
+constexpr Event LowerW = Event::AlphaKey(Keyboard::Key::One);
+constexpr Event LowerX = Event::AlphaKey(Keyboard::Key::Two);
+constexpr Event LowerY = Event::AlphaKey(Keyboard::Key::Three);
+constexpr Event LowerZ = Event::AlphaKey(Keyboard::Key::Plus);
+constexpr Event Space = Event::AlphaKey(Keyboard::Key::Minus);
 
-constexpr Event Question = Event::AlphaKey(Keyboard::Key::I1);
-constexpr Event Exclamation = Event::AlphaKey(Keyboard::Key::I2);
+constexpr Event Question = Event::AlphaKey(Keyboard::Key::Zero);
+constexpr Event Exclamation = Event::AlphaKey(Keyboard::Key::Dot);
 
 // Shift + Alpha
 
-constexpr Event UpperA = Event::ShiftAlphaKey(Keyboard::Key::D1);
-constexpr Event UpperB = Event::ShiftAlphaKey(Keyboard::Key::D2);
-constexpr Event UpperC = Event::ShiftAlphaKey(Keyboard::Key::D3);
-constexpr Event UpperD = Event::ShiftAlphaKey(Keyboard::Key::D4);
-constexpr Event UpperE = Event::ShiftAlphaKey(Keyboard::Key::D5);
-constexpr Event UpperF = Event::ShiftAlphaKey(Keyboard::Key::D6);
+constexpr Event UpperA = Event::ShiftAlphaKey(Keyboard::Key::Exp);
+constexpr Event UpperB = Event::ShiftAlphaKey(Keyboard::Key::Ln);
+constexpr Event UpperC = Event::ShiftAlphaKey(Keyboard::Key::Log);
+constexpr Event UpperD = Event::ShiftAlphaKey(Keyboard::Key::Imaginary);
+constexpr Event UpperE = Event::ShiftAlphaKey(Keyboard::Key::Comma);
+constexpr Event UpperF = Event::ShiftAlphaKey(Keyboard::Key::Power);
 
-constexpr Event UpperG = Event::ShiftAlphaKey(Keyboard::Key::E1);
-constexpr Event UpperH = Event::ShiftAlphaKey(Keyboard::Key::E2);
-constexpr Event UpperI = Event::ShiftAlphaKey(Keyboard::Key::E3);
-constexpr Event UpperJ = Event::ShiftAlphaKey(Keyboard::Key::E4);
-constexpr Event UpperK = Event::ShiftAlphaKey(Keyboard::Key::E5);
-constexpr Event UpperL = Event::ShiftAlphaKey(Keyboard::Key::E6);
+constexpr Event UpperG = Event::ShiftAlphaKey(Keyboard::Key::Sine);
+constexpr Event UpperH = Event::ShiftAlphaKey(Keyboard::Key::Cosine);
+constexpr Event UpperI = Event::ShiftAlphaKey(Keyboard::Key::Tangent);
+constexpr Event UpperJ = Event::ShiftAlphaKey(Keyboard::Key::Pi);
+constexpr Event UpperK = Event::ShiftAlphaKey(Keyboard::Key::Sqrt);
+constexpr Event UpperL = Event::ShiftAlphaKey(Keyboard::Key::Square);
 
-constexpr Event UpperM = Event::ShiftAlphaKey(Keyboard::Key::F1);
-constexpr Event UpperN = Event::ShiftAlphaKey(Keyboard::Key::F2);
-constexpr Event UpperO = Event::ShiftAlphaKey(Keyboard::Key::F3);
-constexpr Event UpperP = Event::ShiftAlphaKey(Keyboard::Key::F4);
-constexpr Event UpperQ = Event::ShiftAlphaKey(Keyboard::Key::F5);
+constexpr Event UpperM = Event::ShiftAlphaKey(Keyboard::Key::Seven);
+constexpr Event UpperN = Event::ShiftAlphaKey(Keyboard::Key::Eight);
+constexpr Event UpperO = Event::ShiftAlphaKey(Keyboard::Key::Nine);
+constexpr Event UpperP = Event::ShiftAlphaKey(Keyboard::Key::LeftParenthesis);
+constexpr Event UpperQ = Event::ShiftAlphaKey(Keyboard::Key::RightParenthesis);
 
-constexpr Event UpperR = Event::ShiftAlphaKey(Keyboard::Key::G1);
-constexpr Event UpperS = Event::ShiftAlphaKey(Keyboard::Key::G2);
-constexpr Event UpperT = Event::ShiftAlphaKey(Keyboard::Key::G3);
-constexpr Event UpperU = Event::ShiftAlphaKey(Keyboard::Key::G4);
-constexpr Event UpperV = Event::ShiftAlphaKey(Keyboard::Key::G5);
+constexpr Event UpperR = Event::ShiftAlphaKey(Keyboard::Key::Four);
+constexpr Event UpperS = Event::ShiftAlphaKey(Keyboard::Key::Five);
+constexpr Event UpperT = Event::ShiftAlphaKey(Keyboard::Key::Six);
+constexpr Event UpperU = Event::ShiftAlphaKey(Keyboard::Key::Multiplication);
+constexpr Event UpperV = Event::ShiftAlphaKey(Keyboard::Key::Division);
 
-constexpr Event UpperW = Event::ShiftAlphaKey(Keyboard::Key::H1);
-constexpr Event UpperX = Event::ShiftAlphaKey(Keyboard::Key::H2);
-constexpr Event UpperY = Event::ShiftAlphaKey(Keyboard::Key::H3);
-constexpr Event UpperZ = Event::ShiftAlphaKey(Keyboard::Key::H4);
+constexpr Event UpperW = Event::ShiftAlphaKey(Keyboard::Key::One);
+constexpr Event UpperX = Event::ShiftAlphaKey(Keyboard::Key::Two);
+constexpr Event UpperY = Event::ShiftAlphaKey(Keyboard::Key::Three);
+constexpr Event UpperZ = Event::ShiftAlphaKey(Keyboard::Key::Plus);
+
+// Special
 
 constexpr Event None = Event::Special(0);
 constexpr Event Termination = Event::Special(1);
 constexpr Event TimerFire = Event::Special(2);
 constexpr Event USBEnumeration = Event::Special(3);
 constexpr Event USBPlug = Event::Special(4);
+constexpr Event BatteryCharging = Event::Special(5);
 
 }
 }

@@ -1,4 +1,5 @@
 #include "battery_test_controller.h"
+#include <apps/shared/post_and_hardware_tests.h>
 #include "../constant.h"
 #include "app.h"
 extern "C" {
@@ -33,8 +34,9 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void BatteryTestController::viewWillAppear() {
-  const char * text = Ion::Battery::level() !=  Ion::Battery::Charge::FULL ? k_batteryNeedChargingText : k_batteryOKText;
-  KDColor color = Ion::Battery::level() !=  Ion::Battery::Charge::FULL ? KDColorRed : KDColorGreen;
+  bool batteryOK = Shared::POSTAndHardwareTests::BatteryOK();
+  const char * text = batteryOK ? k_batteryOKText : k_batteryNeedChargingText;
+  KDColor color = batteryOK ? KDColorGreen : KDColorRed;
   m_view.setColor(color);
   m_view.batteryStateTextView()->setText(text);
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());

@@ -29,19 +29,13 @@ void App::Snapshot::reset() {
 void App::Snapshot::tidy() {
 }
 
-App::App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage) :
+App::App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage) :
   Responder(nullptr),
-  m_magic(Magic),
   m_modalViewController(this, rootViewController),
-  m_container(container),
   m_firstResponder(nullptr),
   m_snapshot(snapshot),
   m_warningController(this, warningMessage)
 {
-}
-
-App::Snapshot * App::snapshot() {
-  return m_snapshot;
 }
 
 bool App::processEvent(Ion::Events::Event event) {
@@ -101,13 +95,8 @@ void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMes
   displayModalViewController(&m_warningController, 0.5f, 0.5f);
 }
 
-const Container * App::container() const {
-  return m_container;
-}
-
 void App::didBecomeActive(Window * window) {
   View * view = m_modalViewController.view();
-  assert(m_modalViewController.app() == this);
   m_modalViewController.initView();
   window->setContentView(view);
   m_modalViewController.viewWillAppear();

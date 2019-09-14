@@ -3,7 +3,6 @@
 
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/alternate_empty_view_delegate.h>
-#include <escher/app.h>
 #include <escher/bank_view_controller.h>
 #include <escher/buffer_text_view.h>
 #include <escher/button.h>

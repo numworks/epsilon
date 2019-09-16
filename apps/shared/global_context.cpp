@@ -14,26 +14,10 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }
 
-Poincare::Expression GlobalContext::ExpressionFromSymbolRecord(Ion::Storage::Record record) {
-  assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension)));
-  // An expression record value is the expression itself
-  Ion::Storage::Record::Data d = record.value();
-  return Expression::ExpressionFromAddress(d.buffer, d.size);
-}
-Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::Record record) {
-  if (!Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
-    return Expression();
-  }
-  /* An function record value has metadata before the expression. To get the
-   * expression, use the function record handle. */
-  ContinuousFunction f = ContinuousFunction(record);
-  return f.expressionClone();
-}
-
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
   if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
-    return PoincareHelpers::CreateLayout(ExpressionFromSymbolRecord(record));
+    return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
   } else {
     assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension)));
     return ContinuousFunction(record).layout();
@@ -84,8 +68,18 @@ const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r
   if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return Expression();
   }
-  // Look up the file system for symbol
-  return ExpressionFromSymbolRecord(r);
+  // An expression record value is the expression itself
+  Ion::Storage::Record::Data d = r.value();
+  return Expression::ExpressionFromAddress(d.buffer, d.size);
+}
+
+const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & symbol, Ion::Storage::Record r) {
+  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
+    return Expression();
+  }
+  /* An function record value has metadata before the expression. To get the
+   * expression, use the function record handle. */
+  return ContinuousFunction(r).expressionClone();
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

@@ -144,35 +144,4 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * did
   return e;
 }
 
-// TODO: should we avoid replacing unknown X in-place but use a context instead?
-#if 0
-VariableContext Function::unknownXContext(Context & parentContext) const {
-  Symbol unknownXSymbol = Symbol::Builder(UCodePointUnknownX);
-  Expression child = childAtIndex(0);
-  const char x[] = {UCodePointUnknownX, 0}; // UGLY, use decoder
-  /* COMMENT */
-  if (child.type() == ExpressionNode::Type::Symbol && static_cast<Symbol &>(child).isSystemSymbol()) {
-    return parentContext;
-  }
-
-  VariableContext xContext = VariableContext(x, &parentContext);
-
-  /* If the parentContext already has an expression for UnknownX, we have to
-   * replace in childAtIndex(0) any occurence of UnknownX by its value in
-   * parentContext. That way, we handle: evaluatin f(x-1) with x = 2 & f:x->x^2 */
-  Expression unknownXValue = parentContext.expressionForSymbolAbstract(unknownXSymbol, true);
-  if (!unknownXValue.isUninitialized()) {
-    xContext = static_cast<VariableContext &>(parentContext); // copy the parentContext
-    child.replaceSymbolWithExpression(unknownXSymbol, unknownXValue);
-  }
-  /* We here assert that child contains no occurrence of UnknownX to avoid
-   * creating an infinite loop (for instance: unknownXSymbol = unknownXSymbol+2). */
-  assert(!child.recursivelyMatches([](const Expression e, Context * context, bool replaceSymbol) {
-        return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol &>(e).isSystemSymbol();
-      }, parentContext, false));
-  xContext.setExpressionForSymbolAbstract(child, unknownXSymbol, xContext);
-  return xContext;
-}
-#endif
-
 }

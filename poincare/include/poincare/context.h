@@ -9,7 +9,7 @@ class SymbolAbstract;
 class Context {
 public:
   virtual const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) = 0;
-  virtual void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol, Context * context) = 0;
+  virtual void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) = 0;
 };
 
 }

@@ -80,7 +80,7 @@ Expression Store::storeValueForSymbol(Context * context, Preferences::ComplexFor
     finalValue = childAtIndex(0);
   }
   assert(!finalValue.isUninitialized());
-  context->setExpressionForSymbolAbstract(finalValue, symbol(), context);
+  context->setExpressionForSymbolAbstract(finalValue, symbol());
   Expression storedExpression = context->expressionForSymbolAbstract(symbol(), true);
 
   if (storedExpression.isUninitialized()) {

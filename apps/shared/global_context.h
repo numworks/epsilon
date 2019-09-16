@@ -32,10 +32,7 @@ public:
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone) override;
-  void setExpressionForSymbolAbstract(
-      const Poincare::Expression & expression,
-      const Poincare::SymbolAbstract & symbol,
-      Poincare::Context * context) override;
+  void setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
 
 private:
   // Expression getters

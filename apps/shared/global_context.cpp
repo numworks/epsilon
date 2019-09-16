@@ -80,14 +80,13 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
 
 const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    return ExpressionForActualSymbol(symbol, r);
+    return ExpressionForActualSymbol(r);
   }
   assert(symbol.type() == ExpressionNode::Type::Function);
   return ExpressionForFunction(symbol, r);
 }
 
-const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract & symbol, Ion::Storage::Record r) {
-  assert(symbol.type() == ExpressionNode::Type::Symbol);
+const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
   if (r.isNull() || !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return Expression();
   }

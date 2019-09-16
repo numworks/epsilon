@@ -28,8 +28,8 @@ const Expression CacheContext<T>::expressionForSymbolAbstract(const SymbolAbstra
 }
 
 template<typename T>
-void CacheContext<T>::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
-  m_parentContext->setExpressionForSymbolAbstract(expression, symbol, context);
+void CacheContext<T>::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
+  m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
 }
 
 template<typename T>

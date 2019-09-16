@@ -58,8 +58,6 @@ public:
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace);
-private:
-  //VariableContext unknownXContext(Context & parentContext) const;
 };
 
 }

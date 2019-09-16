@@ -101,10 +101,6 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
   if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
-    // Replace the unknown in the new expression by the function's child
-    Symbol xSymbol = Symbol::Builder(UCodePointUnknownX);
-    Expression xValue = childAtIndex(0);
-    value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {
       value = Parenthesis::Builder(value);
@@ -143,7 +139,6 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * did
   {
     return replaceWithUndefinedInPlace();
   }
-  e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), childAtIndex(0));
   replaceWithInPlace(e);
   *didReplace = true;
   return e;

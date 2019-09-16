@@ -67,30 +67,12 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
 }
 
 Expression Store::storeValueForSymbol(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Expression finalValue;
-  if (symbol().type() == ExpressionNode::Type::Function) {
-    // In tata + 2 ->f(tata), replace tata with xUnknown symbol
-    assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
-    Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol::Builder(UCodePointUnknownX);
-    finalValue = childAtIndex(0).replaceSymbolWithExpression(static_cast<Symbol &>(userDefinedUnknown), xUnknown);
-  } else {
-    assert(symbol().type() == ExpressionNode::Type::Symbol);
-    finalValue = childAtIndex(0);
-  }
-  assert(!finalValue.isUninitialized());
-  context->setExpressionForSymbolAbstract(finalValue, symbol());
-  Expression storedExpression = context->expressionForSymbolAbstract(symbol(), true);
+  assert(!value().isUninitialized());
+  context->setExpressionForSymbolAbstract(value(), symbol());
+  Expression storedExpression = context->expressionForSymbolAbstract(symbol(), false);
 
   if (storedExpression.isUninitialized()) {
     return Undefined::Builder();
-  }
-  if (symbol().type() == ExpressionNode::Type::Function) {
-    // Replace the xUnknown symbol with the variable initially used
-    assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
-    Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol::Builder(UCodePointUnknownX);
-    storedExpression = storedExpression.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
   }
   return storedExpression;
 }

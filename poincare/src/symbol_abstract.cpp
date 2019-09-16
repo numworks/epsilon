@@ -64,9 +64,6 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);
-  if (!e.isUninitialized() && isFunction) {
-    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), symbol.childAtIndex(0));
-  }
   return e;
 }
 

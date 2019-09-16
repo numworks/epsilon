@@ -52,6 +52,9 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
     SetExpressionForActualSymbol(finalExpression, symbol, record);
   } else {
     assert(symbol.type() == ExpressionNode::Type::Function);
+    Expression child = symbol.childAtIndex(0);
+    assert(child.type() == ExpressionNode::Type::Symbol);
+    finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<Symbol&>(child), Symbol::Builder(UCodePointUnknownX));
     SetExpressionForFunction(finalExpression, symbol, record);
   }
 }
@@ -79,7 +82,11 @@ const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & sym
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
-  return ContinuousFunction(r).expressionClone();
+  Expression e = ContinuousFunction(r).expressionClone();
+  if (!e.isUninitialized()) {
+    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), symbol.childAtIndex(0));
+  }
+  return e;
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

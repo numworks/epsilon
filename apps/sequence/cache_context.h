@@ -13,7 +13,7 @@ class CacheContext : public Poincare::Context {
 public:
   CacheContext(Poincare::Context * parentContext);
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone) override;
-  void setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Poincare::Context * context) override;
+  void setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
   int nameIndexForSymbol(const Poincare::Symbol & symbol);

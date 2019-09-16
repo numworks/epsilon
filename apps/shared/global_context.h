@@ -37,7 +37,7 @@ public:
 private:
   // Expression getters
   static const Poincare::Expression ExpressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
-  static const Poincare::Expression ExpressionForActualSymbol(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
+  static const Poincare::Expression ExpressionForActualSymbol(Ion::Storage::Record r);
   static const Poincare::Expression ExpressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r) {
     assert(symbol.type() == Poincare::ExpressionNode::Type::Function);
     return ExpressionFromFunctionRecord(r);

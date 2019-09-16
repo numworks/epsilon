@@ -19,10 +19,6 @@ public:
   // Storage information
   static bool SymbolAbstractNameIsFree(const char * baseName);
 
-  // Expression from record
-  static Poincare::Expression ExpressionFromSymbolRecord(Ion::Storage::Record record);
-  static Poincare::Expression ExpressionFromFunctionRecord(Ion::Storage::Record record);
-
   static const Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
 
   // Destroy records
@@ -38,10 +34,7 @@ private:
   // Expression getters
   static const Poincare::Expression ExpressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
   static const Poincare::Expression ExpressionForActualSymbol(Ion::Storage::Record r);
-  static const Poincare::Expression ExpressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r) {
-    assert(symbol.type() == Poincare::ExpressionNode::Type::Function);
-    return ExpressionFromFunctionRecord(r);
-  }
+  static const Poincare::Expression ExpressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
   // Expression setters
   static Ion::Storage::Record::ErrorStatus SetExpressionForActualSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
   static Ion::Storage::Record::ErrorStatus SetExpressionForFunction(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);

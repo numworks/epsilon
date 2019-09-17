@@ -57,7 +57,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   // Prepare the buffer for the new calculation
   int minSize = Calculation::MinimalSize();
   assert(k_bufferSize > minSize);
-  while (remainingBufferSize() < minSize) {
+  while (remainingBufferSize() < minSize || m_numberOfCalculations > k_maxNumberOfCalculations) {
     deleteLastCalculation();
   }
   char * newCalculationsLocation = slideCalculationsToEndOfBuffer();

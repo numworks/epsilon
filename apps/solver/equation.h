@@ -19,8 +19,8 @@ private:
   public:
     Poincare::Expression standardForm(const Ion::Storage::Record * record, Poincare::Context * context) const;
     void tidy() const override;
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     mutable Poincare::Expression m_standardForm;
   };

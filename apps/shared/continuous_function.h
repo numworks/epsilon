@@ -106,9 +106,8 @@ private:
     //char m_expression[0];
   };
   class Model : public ExpressionModel {
-  public:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }

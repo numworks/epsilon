@@ -67,11 +67,11 @@ int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char 
 }
 
 float SymbolNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  return isUnknown(UCodePointUnknownX) ? NAN : 0.0f;
+  return isUnknown() ? NAN : 0.0f;
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  assert(!isUnknown(UCodePointUnknownX));
+  assert(!isUnknown());
   // TODO return Parse(m_name).createLayout() ?
   // Special case for the symbol names: u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
   const char * sequenceIndex[] = {"n", "n+1"};
@@ -126,8 +126,8 @@ Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::C
   return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-bool SymbolNode::isUnknown(CodePoint unknownSymbol) const {
-  bool result = UTF8Helper::CodePointIs(m_name, unknownSymbol);
+bool SymbolNode::isUnknown() const {
+  bool result = UTF8Helper::CodePointIs(m_name, UCodePointUnknownX);
   if (result) {
     assert(m_name[1] == 0);
   }

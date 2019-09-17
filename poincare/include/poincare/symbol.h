@@ -40,7 +40,7 @@ public:
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
-  bool isUnknown(CodePoint unknownSymbol) const;
+  bool isUnknown() const;
 private:
   char m_name[0]; // MUST be the last member variable
 
@@ -61,7 +61,7 @@ public:
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
 
   // Symbol properties
-  bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX); }
+  bool isSystemSymbol() const { return node()->isUnknown(); }
   const char * name() const { return node()->name(); }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);

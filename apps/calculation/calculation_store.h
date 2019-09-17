@@ -34,6 +34,7 @@ public:
   Poincare::Expression ansExpression(Poincare::Context * context);
   void tidy();
 private:
+  static constexpr int k_maxNumberOfCalculations = 25;
   static constexpr int k_bufferSize = 10 * 3 * Constant::MaxSerializedExpressionSize;
 
   class CalculationIterator {

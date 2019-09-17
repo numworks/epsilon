@@ -57,7 +57,7 @@ info:
 	@echo "epsilon"
 	@echo "epsilon.on-boarding"
 	@echo "epsilon.on-boarding.update"
-	@echo "epsilon.on-boarding.update.beta"
+	@echo "epsilon.on-boarding.beta"
 	@echo "test"
 	@echo "PHONY:"
 	@echo "  clean"

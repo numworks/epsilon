@@ -130,6 +130,8 @@ port_src += $(addprefix python/port/,\
   port.c \
   builtins.c \
   helpers.c \
+  mod/ion/modion.cpp \
+  mod/ion/modion_table.cpp \
   mod/kandinsky/modkandinsky.cpp \
   mod/kandinsky/modkandinsky_table.c \
   mod/time/modtime.c \

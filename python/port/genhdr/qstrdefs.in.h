@@ -15,6 +15,10 @@
 QCFG(BYTES_IN_LEN, (1))
 QCFG(BYTES_IN_HASH, (2))
 
+// Ion QSTR
+Q(ion)
+Q(keydown)
+
 // Kandinsky QSTRs
 Q(kandinsky)
 Q(color)

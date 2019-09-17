@@ -121,18 +121,16 @@ private:
   };
 
   class DefinitionModel : public SequenceModel {
-  public:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     void buildName(Sequence * sequence) override;
   };
 
   class InitialConditionModel : public SequenceModel {
-  public:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
     void updateMetaData(const Ion::Storage::Record * record, size_t newSize) override;
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     void buildName(Sequence * sequence) override;
     virtual int conditionIndex() const = 0;

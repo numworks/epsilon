@@ -23,7 +23,6 @@ public:
 
   // Property
   bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
-  virtual void * expressionAddress(const Ion::Storage::Record * record) const = 0;
 
   virtual void tidy() const;
 protected:
@@ -33,6 +32,7 @@ protected:
   mutable Poincare::Layout m_layout;
 private:
   virtual void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
+  virtual void * expressionAddress(const Ion::Storage::Record * record) const = 0;
   virtual size_t expressionSize(const Ion::Storage::Record * record) const = 0;
   mutable int m_circular;
 };

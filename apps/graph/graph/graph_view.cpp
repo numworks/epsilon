@@ -1,7 +1,5 @@
 #include "graph_view.h"
-#include <poincare/serialization_helper.h>
 #include <assert.h>
-#include <cmath>
 
 using namespace Shared;
 
@@ -79,22 +77,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
         CartesianFunction * f = (CartesianFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;
-        if (f->isCircularlyDefined(c)) {
-          return Poincare::Coordinate2D<float>(NAN, NAN);
-        }
-        constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-        char unknownX[bufferSize];
-        Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-        Poincare::VariableContext variableContext(unknownX, c);
-        variableContext.setApproximationForVariable(t);
-        Poincare::Expression e = f->expressionReduced(c);
-        assert(e.type() == Poincare::ExpressionNode::Type::Matrix
-            && static_cast<Poincare::Matrix&>(e).numberOfRows() == 2
-            && static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);
-        Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-        Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, c);
-        return Poincare::Coordinate2D<float>(e.childAtIndex(0).approximateToScalar<float>(&variableContext, complexFormat, preferences->angleUnit()), e.childAtIndex(1).approximateToScalar<float>(&variableContext, complexFormat, preferences->angleUnit()));
-        }, f.operator->(), context(), false, f->color());
+        return f->evaluateXYAtParameter(t, c);
+      }, f.operator->(), context(), false, f->color());
   }
 }
 

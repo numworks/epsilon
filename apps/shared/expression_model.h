@@ -21,9 +21,6 @@ public:
   Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
 
-  // Property
-  bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
-
   virtual void tidy() const;
 protected:
   // Setters helper
@@ -34,6 +31,7 @@ private:
   virtual void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
   virtual void * expressionAddress(const Ion::Storage::Record * record) const = 0;
   virtual size_t expressionSize(const Ion::Storage::Record * record) const = 0;
+  bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
   mutable int m_circular;
 };
 

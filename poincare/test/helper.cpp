@@ -47,7 +47,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
-  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
+  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, expression);
 }
 
 Poincare::Expression parse_expression(const char * expression, bool addParentheses) {

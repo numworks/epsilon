@@ -473,9 +473,6 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("tan(2)", "3.4920769491748ᴇ-2", Degree);
   assert_expression_approximates_to<double>("tan(2)", "3.1426266043351ᴇ-2", Gradian);
   // Tangent-style
-  assert_expression_approximates_to<float>("tan(π/2)", Undefined::Name(), Radian);
-  assert_expression_approximates_to<double>("tan(3×π/2)", Undefined::Name(), Radian);
-  assert_expression_approximates_to<double>("tan(100)", Undefined::Name(), Gradian);
   assert_expression_approximates_to<float>("tan(3×π)", "0", Radian);
   assert_expression_approximates_to<float>("tan(-540)", "0", Degree);
   assert_expression_approximates_to<float>("tan(-600)", "0", Gradian);
@@ -873,8 +870,8 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("3+𝐢", "3.16227766017×ℯ^\u00120.321750554397×𝐢\u0013", Radian, Polar,12);
   assert_expression_approximates_to<float>("3-𝐢", "3.162278×ℯ^\u0012-0.3217506×𝐢\u0013", Radian, Polar);
   assert_expression_approximates_to<double>("3-𝐢-3", "ℯ^\u0012-1.57079632679×𝐢\u0013", Radian, Polar,12);
-  assert_expression_approximates_to<float>("2ℯ^(𝐢)", "2×ℯ^𝐢", Radian, Polar, 5);
-  assert_expression_approximates_to<double>("2ℯ^(-𝐢)", "2×ℯ^\u0012-𝐢\u0013", Radian, Polar, 5);
+  assert_expression_approximates_to<float>("2ℯ^(𝐢)", "2×ℯ^𝐢", Radian, Polar, 4);
+  assert_expression_approximates_to<double>("2ℯ^(-𝐢)", "2×ℯ^\u0012-𝐢\u0013", Radian, Polar, 9);
 
   assert_expression_approximates_to<float>("𝐢", "ℯ^\u00121.570796×𝐢\u0013", Radian, Polar);
   assert_expression_approximates_to<double>("√(-1)", "ℯ^\u00121.5707963267949×𝐢\u0013", Radian, Polar);

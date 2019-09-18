@@ -5,7 +5,8 @@ extensions += .dfu .hex .bin
 
 $(eval $(call rule_for, \
   DFUSE, %.dfu, %.$$(EXE), \
-  $$(PYTHON) build/device/elf2dfu.py $$< $$@ \
+  $$(PYTHON) build/device/elf2dfu.py $$< $$@, \
+  with_local_version \
 ))
 
 $(eval $(call rule_for, \

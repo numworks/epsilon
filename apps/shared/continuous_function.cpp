@@ -283,11 +283,11 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincar
   char unknown[bufferSize];
   Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknownX);
   PlotType type = plotType();
-  if (type == PlotType::Cartesian || type == PlotType::Polar) {
-    return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknown, t, context));
-  }
-  assert(type == PlotType::Parametric);
   Expression e = expressionReduced(context);
+  if (type != PlotType::Parametric) {
+    assert(type == PlotType::Cartesian || type == PlotType::Polar);
+    return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e, unknown, t, context));
+  }
   assert(e.type() == ExpressionNode::Type::Matrix);
   assert(static_cast<Poincare::Matrix&>(e).numberOfRows() == 2);
   assert(static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);

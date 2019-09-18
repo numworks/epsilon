@@ -276,7 +276,7 @@ ContinuousFunction::RecordDataBuffer * ContinuousFunction::recordData() const {
 
 template<typename T>
 Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincare::Context * context) const {
-  if (isCircularlyDefined(context) || t < tMin() || t > tMax()) {
+  if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(plotType() == PlotType::Cartesian ? t : NAN, NAN);
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;

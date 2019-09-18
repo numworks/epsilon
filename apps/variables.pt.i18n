@@ -1,6 +1,6 @@
 Variables = "Variáveis"
 Expressions = "Expressões"
-Functions = "Funçães"
+Functions = "Funções"
 EmptyExpressionBox0 = "Nenhuma variável definida."
 EmptyFunctionBox0 = "Nenhuma função definida."
 EmptyExpressionBox1 = "Para definir uma, digite :"

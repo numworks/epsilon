@@ -5,7 +5,8 @@
 #include <regs/regs.h>
 #include <ion.h>
 
-extern void * InitialisationVector;
+typedef void(*ISR)(void);
+extern ISR InitialisationVector[];
 
 // Public Ion methods
 

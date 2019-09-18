@@ -4,7 +4,7 @@
 #include <drivers/cache.h>
 #include "../drivers/timing.h"
 
-extern char _stack_end;
+extern const void * _stack_end;
 extern char _dfu_bootloader_flash_start;
 extern char _dfu_bootloader_flash_end;
 

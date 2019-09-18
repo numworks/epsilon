@@ -11,4 +11,4 @@ endif
 
 BUILD_DIR := $(BUILD_DIR)/$(MODEL)
 
-include scripts/platform.sdl.$(MODEL).mak
+include build/platform.sdl.$(MODEL).mak

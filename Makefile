@@ -1,4 +1,4 @@
-include scripts/config.mak
+include build/config.mak
 
 # Disable default Make rules
 .SUFFIXES:
@@ -131,8 +131,8 @@ include python/Makefile
 include escher/Makefile
 # Executable Makefiles
 include apps/Makefile
-include scripts/struct_layout/Makefile
-include scripts/scenario/Makefile
+include build/struct_layout/Makefile
+include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
 all_src = app_src escher_src ion_src kandinsky_src liba_src libaxx_src poincare_src python_src ion_device_dfu_relocated_src ion_device_dfu_xip epsilon_src runner_src flasher_src bench_src tests_src
@@ -162,7 +162,7 @@ $(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_fo
 
 # Load platform-specific targets
 # We include them before the standard ones to give them precedence.
--include scripts/targets.$(PLATFORM).mak
+-include build/targets.$(PLATFORM).mak
 
 $(foreach extension,$(extensions),$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(extension)))))
 

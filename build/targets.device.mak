@@ -1,11 +1,11 @@
-include scripts/targets.device.$(MODEL).mak
+include build/targets.device.$(MODEL).mak
 
 executables += flasher.light flasher.verbose bench.ram bench.flash
 extensions += .dfu .hex .bin
 
 $(BUILD_DIR)/%.dfu: $(BUILD_DIR)/%.$(EXE)
 	@echo "DFUSE   $@"
-	$(Q) $(PYTHON) scripts/device/elf2dfu.py $< $@
+	$(Q) $(PYTHON) build/device/elf2dfu.py $< $@
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.$(EXE)
 	@echo "OBJCOPY $@"
@@ -30,7 +30,7 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.$(EXE)
 
 .PHONY: %_run
 %_run: $(BUILD_DIR)/%.$(EXE)
-	$(GDB) -x scripts/$(PLATFORM)/gdb_script.gdb $<
+	$(GDB) -x build/$(PLATFORM)/gdb_script.gdb $<
 
 $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 	@echo "LDMAP   $@"
@@ -39,12 +39,12 @@ $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 .PHONY: %_memory_map
 %_memory_map: $(BUILD_DIR)/%.map
 	@echo "========== MEMORY MAP ========="
-	$(Q) awk -f scripts/device/memory_map.awk < $<
+	$(Q) awk -f build/device/memory_map.awk < $<
 	@echo "==============================="
 
 .PHONY: openocd
 openocd:
-	openocd -f scripts/$(PLATFORM)/openocd.$(MODEL).cfg
+	openocd -f build/$(PLATFORM)/openocd.$(MODEL).cfg
 
 # The flasher target is defined here because otherwise $(%_src) has not been
 # fully filled

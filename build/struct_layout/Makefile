@@ -1,4 +1,4 @@
-products += apps/main.ast scripts/struct_layout/data.json
+products += apps/main.ast build/struct_layout/data.json
 
 .PHONY: apps_container_struct_layout
 OPEN = open
@@ -11,10 +11,10 @@ ifeq ($(CXX),clang++)
 
 %.ast.json: %.ast
 	@echo "JSON    $@"
-	@cat $< | ruby scripts/struct_layout/ast_to_json.rb AppsContainer > $@
+	@cat $< | ruby build/struct_layout/ast_to_json.rb AppsContainer > $@
 
 apps_container_struct_layout: apps/main.ast.json
-	$(OPEN) scripts/struct_layout/visualization.html
+	$(OPEN) build/struct_layout/visualization.html
 
 else
 

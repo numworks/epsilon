@@ -40,4 +40,4 @@ ifeq ($(DEBUG),1)
 else
   MODE = release
 endif
-BUILD_DIR = build/$(MODE)/$(PLATFORM)
+BUILD_DIR = output/$(PLATFORM)/$(MODE)

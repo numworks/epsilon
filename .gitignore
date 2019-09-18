@@ -1,3 +1,3 @@
-build
-scripts/device/elf2dfu.pyc
-scripts/device/**/*.pyc
+output
+build/device/elf2dfu.pyc
+build/device/**/*.pyc

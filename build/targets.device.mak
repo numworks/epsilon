@@ -3,23 +3,25 @@ include build/targets.device.$(MODEL).mak
 executables += flasher.light flasher.verbose bench.ram bench.flash
 extensions += .dfu .hex .bin
 
-$(BUILD_DIR)/%.dfu: $(BUILD_DIR)/%.$(EXE)
-	@echo "DFUSE   $@"
-	$(Q) $(PYTHON) build/device/elf2dfu.py $< $@
+$(eval $(call rule_for, \
+  DFUSE, %.dfu, %.$$(EXE), \
+  $$(PYTHON) build/device/elf2dfu.py $$< $$@ \
+))
 
-$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.$(EXE)
-	@echo "OBJCOPY $@"
-	$(Q) $(OBJCOPY) -O ihex $< $@
+$(eval $(call rule_for, \
+  OBJCOPY, %.hex, %.$$(EXE), \
+  $$(OBJCOPY) -O ihex $$< $$@ \
+))
 
-$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.$(EXE)
-	@echo "OBJCOPY $@"
-	$(Q) $(OBJCOPY) -O binary $< $@
 # We pad the device binary files because there was a bug in an older version of
 # the dfu code, and it did not upload properly a binary of length non-multiple
 # of 32 bits.
 #TODO: We over-pad here, pad with the the needed amount of bytes only.
-	@echo "Padding $@"
-	$(Q) printf "\xFF\xFF\xFF\xFF" >> $@
+$(eval $(call rule_for, \
+  OBJCOPY, %.bin, %.$$(EXE), \
+  $$(OBJCOPY) -O ihex $$< $$@ && printf "\xFF\xFF\xFF\xFF" >> $$@, \
+  with_local_version \
+))
 
 .PHONY: %_size
 %_size: $(BUILD_DIR)/%.$(EXE)

@@ -488,6 +488,10 @@ QUIZ_CASE(poincare_simplication_trigonometry_functions) {
   // -- tan
   assert_parsed_expression_simplify_to("tan(0)", "0");
   assert_parsed_expression_simplify_to("tan(π)", "0");
+  assert_parsed_expression_simplify_to("tan(3×π/2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("tan(π/2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("tan(90)", Undefined::Name(), User, Degree);
+  assert_parsed_expression_simplify_to("tan(100)", Undefined::Name(), User, Gradian);
   assert_parsed_expression_simplify_to("tan(π×35/29)", "tan(\u00126×π\u0013/29)");
   assert_parsed_expression_simplify_to("tan(-π×35/29)", "-tan(\u00126×π\u0013/29)");
   assert_parsed_expression_simplify_to("tan(π×340000)", "0");

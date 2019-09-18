@@ -527,10 +527,6 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     Coordinate2D<float> xy = xyEvaluation(t, model, context);
     x = xy.x1();
     y = xy.x2();
-    if (std::isnan(previousT)) {
-      // Happens at the first iteration only.
-      continue;
-    }
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
@@ -590,19 +586,26 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
 }
 
 void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const {
-  const bool areCoordinatesValid = !(
+  const bool isFirstDot = std::isnan(t);
+  const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
-      std::isnan(y) || std::isinf(y) ||
+      std::isnan(y) || std::isinf(y));
+  const bool isRightDotValid = !(
       std::isnan(u) || std::isinf(u) ||
       std::isnan(v) || std::isinf(v));
   float pxf = floatToPixel(Axis::Horizontal, x);
   float pyf = floatToPixel(Axis::Vertical, y);
   float puf = floatToPixel(Axis::Horizontal, u);
   float pvf = floatToPixel(Axis::Vertical, v);
-  if (areCoordinatesValid) {
+  if (!isRightDotValid && !isLeftDotValid) {
+    return;
+  }
+  if (isRightDotValid) {
     const float deltaX = pxf - puf;
     const float deltaY = pyf - pvf;
-    if (deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
+    if (isFirstDot // First dot has to be stamped
+       || (!isLeftDotValid && maxNumberOfRecursion == 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
+       || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
       // the dots are already joined
       stampAtLocation(ctx, rect, puf, pvf, color);
       return;
@@ -613,7 +616,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter x
   Coordinate2D<float> cxy = xyEvaluation(ct, model, context);
   float cx = cxy.x1();
   float cy = cxy.x2();
-  if ((drawStraightLinesEarly || maxNumberOfRecursion == 0) && areCoordinatesValid &&
+  if ((drawStraightLinesEarly || maxNumberOfRecursion == 0) && isRightDotValid && isLeftDotValid &&
       ((x <= cx && cx <= u) || (u <= cx && cx <= x)) && ((y <= cy && cy <= v) || (v <= cy && cy <= y))) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */

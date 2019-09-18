@@ -293,6 +293,7 @@ template Floor TreeHandle::FixedArityBuilder<Floor, FloorNode>(TreeHandle*, size
 template FloorLayout TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(TreeHandle*, size_t);
 template FracPart TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(TreeHandle*, size_t);
 template FractionLayout TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(TreeHandle*, size_t);
+template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(TreeHandle*, size_t);
 template GreatCommonDivisor TreeHandle::FixedArityBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(TreeHandle*, size_t);
 template HorizontalLayout TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(TreeHandle*, size_t);
 template HyperbolicArcCosine TreeHandle::FixedArityBuilder<HyperbolicArcCosine, HyperbolicArcCosineNode>(TreeHandle*, size_t);

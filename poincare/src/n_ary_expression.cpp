@@ -7,18 +7,17 @@ extern "C" {
 
 namespace Poincare {
 
-bool NAryExpressionNode::childNeedsUserParentheses(const Expression & child) const {
+bool NAryExpressionNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
   /* Expressions like "-2" require parentheses in Addition/Multiplication except
    * when they are the first operand. */
-  if (((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
-        || child.type() == Type::Opposite)
-        /* We use "hasAncestor" instead of "==" because child might not be the
-         * direct child of the addition/multiplication [e.g. +(conj(-2), 3)] */
-       && !child.node()->hasAncestor(childAtIndex(0), true)) {
+  if (childIndex != 0
+    && ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
+      || child.type() == Type::Opposite))
+  {
     return true;
   }
   if (child.type() == Type::Conjugate) {
-    return childNeedsUserParentheses(child.childAtIndex(0));
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
   return false;
 }

@@ -26,7 +26,7 @@ public:
   Type type() const override { return Type::Opposite; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   Sign sign(Context * context) const override;
-  bool childNeedsUserParentheses(const Expression & child) const override;
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {

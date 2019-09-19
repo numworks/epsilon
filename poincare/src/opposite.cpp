@@ -33,12 +33,13 @@ ExpressionNode::Sign OppositeNode::sign(Context * context) const {
 
 /* Layout */
 
-bool OppositeNode::childNeedsUserParentheses(const Expression & child) const {
+bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  assert(childIndex == 0);
   if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;
   }
   if (child.type() == Type::Conjugate) {
-    return childNeedsUserParentheses(child.childAtIndex(0));
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), 0);
   }
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};
   return child.isOfType(types, 3);

@@ -38,9 +38,9 @@ public:
 
   // Simplification
   LayoutShape leftLayoutShape() const override {
-    /* When beautifying an Multiplication of Addition, Parentheses will be added
-     * around Addition. leftLayoutShape being called after beautifying, we
-     * should not call it on an Addition. */
+    /* When beautifying a Multiplication of Additions, Parentheses are added
+     * around Additions. As leftLayoutShape is called after beautifying, we
+     * should never call it on an Addition. */
     assert(false);
     return NAryExpressionNode::leftLayoutShape();
   }

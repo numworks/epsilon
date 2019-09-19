@@ -250,7 +250,7 @@ void Expression::shallowAddMissingParenthesis() {
   }
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression child = childAtIndex(0);
-    if (node()->childNeedsUserParentheses(child)) {
+    if (node()->childAtIndexNeedsUserParentheses(child, i)) {
       replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
     }
   }
@@ -259,7 +259,7 @@ void Expression::shallowAddMissingParenthesis() {
 Expression Expression::addMissingParentheses() {
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression child = childAtIndex(i).addMissingParentheses();
-    if (node()->childNeedsUserParentheses(child)) {
+    if (node()->childAtIndexNeedsUserParentheses(child, i)) {
       child = Parenthesis::Builder(child);
     }
     replaceChildAtIndexInPlace(i, child);
@@ -748,7 +748,7 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
     Expression child = e.childAtIndex(i);
     child = child.deepBeautify(reductionContext);
     // We add missing Parentheses after beautifying the parent and child
-    if (e.node()->childNeedsUserParentheses(child)) {
+    if (e.node()->childAtIndexNeedsUserParentheses(child, i)) {
       e.replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
     }
   }

@@ -145,7 +145,7 @@ public:
   virtual bool isNumber() const { return false; }
   virtual bool isRandom() const { return false; }
   virtual bool isParameteredExpression() const { return false; }
-  /* childNeedsUserParentheses check if parentheses are required by mathematical rules:
+  /* childNeedsUserParentheses checks if parentheses are required by mathematical rules:
    * +(2,-1) --> 2+(-1)
    * *(+(2,1),3) --> (2+1)*3
    */

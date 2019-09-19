@@ -13,28 +13,32 @@ We recommend using the [Msys2](https://www.msys2.org/) environment to install mo
 
 ```
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-fltk git make python
-export PATH=/mingw64/bin:$PATH
+echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
 ```
 
-Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
+Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2.
 
 ### macOS
 
 We recommend using [Homebrew](https://brew.sh) to install all dependencies. Once you have installed Homebrew, install all the dependencies with the following command:
 
 ```
-brew install armmbed/formulae/arm-none-eabi-gcc fltk freetype dfu-util libpng pkg-config
+brew install armmbed/formulae/arm-none-eabi-gcc fltk freetype libpng pkg-config python
 ```
 
 ### Debian or Ubuntu
 
-Installing the required tools is just a command away:
+Most of the required tools are available as apt packages:
 
 ```
-apt-get install build-essential dfu-util gcc-arm-none-eabi git libfltk1.3-dev libfreetype6-dev libpng12-dev
+apt-get install build-essential git libfltk1.3-dev libfreetype6-dev libpng-dev pkg-config
 ```
 
-Note that you may want to use the latest version of [GCC distributed by ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) instead of the one provided by your distribution. In that case you can skip the `gcc-arm-none-eabi` package.
+You'll also need to install the latest version of  and make it available in your $PATH:
+
+1. Download the [GCC toolchain distributed by ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). You should obtain a `gcc-arm-none-eabi-x-linux.tar.bz2` file.
+2. Decompress that file with `tar xvfj gcc-arm-none-eabi-*-linux.tar.bz2`
+3. Add the resulting folder to your $PATH. If you use bash, ``echo "export PATH=\$PATH:`find $(pwd)/gcc-arm-none-eabi-*-update/bin -type d`" >> ~/.bashrc`` should do what you need (you'll need to restart your terminal afterwards).
 
 ## Retrieve the source code
 

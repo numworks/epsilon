@@ -21,7 +21,7 @@ public:
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 
   // Properties
-  bool childNeedsUserParentheses(const Expression & child) const override;
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Comparison
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);

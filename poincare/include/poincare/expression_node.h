@@ -145,11 +145,11 @@ public:
   virtual bool isNumber() const { return false; }
   virtual bool isRandom() const { return false; }
   virtual bool isParameteredExpression() const { return false; }
-  /* childNeedsUserParentheses checks if parentheses are required by mathematical rules:
+  /* childAtIndexNeedsUserParentheses checks if parentheses are required by mathematical rules:
    * +(2,-1) --> 2+(-1)
    * *(+(2,1),3) --> (2+1)*3
    */
-  virtual bool childNeedsUserParentheses(const Expression & child) const { return false; }
+  virtual bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
   /*!*/ virtual Expression setSign(Sign s, ReductionContext reductionContext);

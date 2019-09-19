@@ -200,7 +200,7 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
   if (symbol.type() == ExpressionNode::Type::Symbol && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     Expression p = parent();
-    if (!p.isUninitialized() && p.node()->childNeedsUserParentheses(value)) {
+    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {
       value = Parenthesis::Builder(value);
     }
     replaceWithInPlace(value);

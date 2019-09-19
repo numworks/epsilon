@@ -50,8 +50,8 @@ int MultiplicationNode::getPolynomialCoefficients(Context * context, const char 
   return Multiplication(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-bool MultiplicationNode::childNeedsUserParentheses(const Expression & child) const {
-  if (NAryExpressionNode::childNeedsUserParentheses(child)) {
+bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  if (NAryExpressionNode::childAtIndexNeedsUserParentheses(child, childIndex)) {
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Addition};

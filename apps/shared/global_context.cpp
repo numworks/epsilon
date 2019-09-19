@@ -15,18 +15,12 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
 }
 
 Poincare::Expression GlobalContext::ExpressionFromSymbolRecord(Ion::Storage::Record record) {
-  if (record.isNull() || record.value().size == 0) {
-    return Expression();
-  }
   assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension)));
   // An expression record value is the expression itself
   Ion::Storage::Record::Data d = record.value();
   return Expression::ExpressionFromAddress(d.buffer, d.size);
 }
 Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::Record record) {
-  if (record.isNull() || record.value().size == 0) {
-    return Expression();
-  }
   if (!Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     return Expression();
   }
@@ -87,7 +81,7 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 }
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
-  if (r.isNull() || !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
+  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return Expression();
   }
   // Look up the file system for symbol

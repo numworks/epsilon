@@ -12,6 +12,7 @@ public:
     Cosine = 0,
     Sine = 1,
   };
+  static double PiInAngleUnit(Preferences::AngleUnit angleUnit);
   static float characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit);
   static bool isDirectTrigonometryFunction(const Expression & e);
   static bool isInverseTrigonometryFunction(const Expression & e);

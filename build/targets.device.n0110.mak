@@ -12,6 +12,7 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 	@echo "        using an USB cable and press at the same time the 6 key and the RESET"
 	@echo "        button on the back of your device."
 	$(Q) until $(PYTHON) build/device/dfu.py -l | grep -E "0483:a291|0483:df11" > /dev/null 2>&1; do sleep 2;done
-	$(Q) $(PYTHON) build/device/dfu.py -u $(word 2,$^) | sleep 2
+	$(Q) $(PYTHON) build/device/dfu.py -u $(word 2,$^)
+	$(Q) sleep 2
 	$(Q) $(PYTHON) build/device/dfu.py -u $(word 1,$^)
 

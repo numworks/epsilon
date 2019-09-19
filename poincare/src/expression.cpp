@@ -94,7 +94,8 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, bool
   if (replaceSymbols && (t == ExpressionNode::Type::Symbol || t == ExpressionNode::Type::Function)) {
     return SymbolAbstract::matches(convert<const SymbolAbstract>(), test, context);
   }
-  for (int i = 0; i < this->numberOfChildren(); i++) {
+  const int childrenCount = this->numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
     if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols)) {
       return true;
     }
@@ -140,7 +141,8 @@ bool Expression::deepIsMatrix(Context * context) const {
     return childAtIndex(0).deepIsMatrix(context);
   }
   // By default, an expression is a matrix of any of its children is one (eg, Cosine, Decimal...)
-  for (int i = 0; i < numberOfChildren(); i++) {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
     if (childAtIndex(i).deepIsMatrix(context)) {
       return true;
     }
@@ -184,7 +186,8 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
       index++;
     }
   }
-  for (int i = 0; i < e.numberOfChildren(); i++) {
+  const int childrenCount = e.numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
     if (containsVariables(e.childAtIndex(i), variables, maxVariableSize)) {
       return true;
     }
@@ -248,7 +251,8 @@ void Expression::shallowAddMissingParenthesis() {
   if (isUninitialized()) {
     return;
   }
-  for (int i = 0; i < numberOfChildren(); i++) {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
     Expression child = childAtIndex(0);
     if (node()->childAtIndexNeedsUserParentheses(child, i)) {
       replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
@@ -257,7 +261,8 @@ void Expression::shallowAddMissingParenthesis() {
 }
 
 Expression Expression::addMissingParentheses() {
-  for (int i = 0; i < numberOfChildren(); i++) {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
     Expression child = childAtIndex(i).addMissingParentheses();
     if (node()->childAtIndexNeedsUserParentheses(child, i)) {
       child = Parenthesis::Builder(child);
@@ -275,14 +280,17 @@ void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext redu
 
 Expression Expression::defaultShallowReduce() {
   Expression result;
-  for (int i = 0; i < numberOfChildren(); i++) {
-    // The reduction is shortcutted if one child is unreal or undefined:
-    // - the result is unreal is at least one child is unreal
-    // - the result is undefined is at least one child is undefined but no child is unreal
-    if (childAtIndex(i).type() == ExpressionNode::Type::Unreal) {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    /* The reduction is shortcut if one child is unreal or undefined:
+     * - the result is unreal if at least one child is unreal
+     * - the result is undefined if at least one child is undefined but no child
+     *   is unreal */
+    ExpressionNode::Type childIType = childAtIndex(i).type();
+    if (childIType == ExpressionNode::Type::Unreal) {
       result = Unreal::Builder();
       break;
-    } else if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
+    } else if (childIType == ExpressionNode::Type::Undefined) {
       result = Undefined::Builder();
     }
   }
@@ -323,8 +331,9 @@ Expression Expression::replaceWithUndefinedInPlace() {
 }
 
 void Expression::defaultSetChildrenInPlace(Expression other) {
-  assert(numberOfChildren() == other.numberOfChildren());
-  for (int i = 0; i < numberOfChildren(); i++) {
+  const int childrenCount = numberOfChildren();
+  assert(childrenCount == other.numberOfChildren());
+  for (int i = 0; i < childrenCount; i++) {
     replaceChildAtIndexInPlace(i, other.childAtIndex(i));
   }
 }
@@ -411,8 +420,8 @@ Expression Expression::replaceUnknown(const Symbol & symbol, const Symbol & unkn
 }
 
 Expression Expression::defaultReplaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  int nbChildren = numberOfChildren();
-  for (int i = 0; i < nbChildren; i++) {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
     childAtIndex(i).replaceUnknown(symbol, unknownSymbol);
   }
   return *this;

@@ -20,7 +20,7 @@ $(eval $(call rule_for, \
 #TODO: We over-pad here, pad with the the needed amount of bytes only.
 $(eval $(call rule_for, \
   OBJCOPY, %.bin, %.$$(EXE), \
-  $$(OBJCOPY) -O ihex $$< $$@ && printf "\xFF\xFF\xFF\xFF" >> $$@, \
+  $$(OBJCOPY) -O binary $$< $$@ && printf "\xFF\xFF\xFF\xFF" >> $$@, \
   with_local_version \
 ))
 

@@ -190,10 +190,22 @@ $(eval $(call rule_for, \
   $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
 ))
 
+ifeq ($(OS),Windows_NT)
+# Work around command-line length limit
+# On Msys2 the max command line is 32 000 characters. Our standard LD command
+# can be longer than that because we have quite a lot of object files. To work
+# around this issue, we write the object list in a "target.objs" file, and tell
+# the linker to read its arguments from this file.
+$(eval $(call rule_for, \
+  LD, %.$$(EXE), , \
+  echo $$^ > $$@.objs && $$(LD) @$$@.objs $$(LDFLAGS) -o $$@ && rm $$@.objs \
+))
+else
 $(eval $(call rule_for, \
   LD, %.$$(EXE), , \
   $$(LD) $$^ $$(LDFLAGS) -o $$@ \
 ))
+endif
 
 .PHONY: workshop_python_emulator
 workshop_python_emulator:

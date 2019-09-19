@@ -13,7 +13,7 @@ import argparse
 
 def loadable_sections(elf_file, address_prefix = ""):
   objdump_section_headers_pattern = re.compile("^\s+\d+\s+(\.[\w\.]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+("+address_prefix+"[0-9a-f]+)\s+([0-9a-f]+).*LOAD", flags=re.MULTILINE)
-  objdump_output = subprocess.check_output(["arm-none-eabi-objdump", "-h", "-w", elf_file])
+  objdump_output = subprocess.check_output(["arm-none-eabi-objdump", "-h", "-w", elf_file]).decode('utf-8')
   sections = []
   for (name, size, vma, lma, offset) in re.findall(objdump_section_headers_pattern, objdump_output):
     int_size = int(size,16)
@@ -75,7 +75,7 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
     # version (< 1.8.0) of the dfu code, and it did not upload properly a binary
     # of length non-multiple of 32 bits.
     # open(bin_file(b), "a").write("\xFF\xFF\xFF\xFF")
-    targets.append({'address': address, 'name': name, 'data': open(bin_file(b)).read()})
+    targets.append({'address': address, 'name': name, 'data': open(bin_file(b), "rb").read()})
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
   for b in blocks:
     subprocess.call(["rm", bin_file(b)])

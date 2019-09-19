@@ -253,7 +253,7 @@ void Expression::shallowAddMissingParenthesis() {
   }
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
-    Expression child = childAtIndex(0);
+    Expression child = childAtIndex(i);
     if (node()->childAtIndexNeedsUserParentheses(child, i)) {
       replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
     }

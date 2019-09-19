@@ -19,8 +19,8 @@ Expression NormalDistributionFunction::shallowReduce(Context * context, bool * s
     }
   }
 
-  Expression mu = childAtIndex(1);
-  Expression var = childAtIndex(2);
+  Expression mu = childAtIndex(muIndex());
+  Expression var = childAtIndex(varIndex());
 
   // Check mu and var
   bool muAndVarOK = false;

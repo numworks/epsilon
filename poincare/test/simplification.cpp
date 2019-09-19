@@ -1082,4 +1082,7 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(3/4,2,random())", "invnorm(3/4,2,random())"); // random can be 0
   assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(0.5,2,-1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("normcdf(2,0,1)", "normcdf(2,0,1)");
+  assert_parsed_expression_simplify_to("normcdf2(1,2,0,1)", "normcdf2(1,2,0,1)");
+  assert_parsed_expression_simplify_to("normpdf(2,0,1)", "normpdf(2,0,1)");
 }

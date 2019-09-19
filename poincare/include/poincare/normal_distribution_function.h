@@ -8,6 +8,9 @@ namespace Poincare {
 // NormalDistributionFunctions are NormCDF, NormCDF2, InvNorm and NormPDF
 
 class NormalDistributionFunctionNode : public ExpressionNode {
+public:
+  virtual int muIndex() const { return 1; }
+  virtual int varIndex() const { return 2; }
 private:
   // Simplication
   Expression shallowReduce(ReductionContext reductionContext) override;
@@ -19,6 +22,10 @@ class NormalDistributionFunction : public Expression {
 public:
   NormalDistributionFunction(const NormalDistributionFunctionNode * n) : Expression(n) {}
   Expression shallowReduce(Context * context, bool * stopReduction = nullptr);
+private:
+  int muIndex() const { return node()->muIndex(); }
+  int varIndex() const { return node()->varIndex(); }
+  NormalDistributionFunctionNode * node() const { return static_cast<NormalDistributionFunctionNode *>(Expression::node()); }
 };
 
 }

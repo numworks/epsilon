@@ -24,7 +24,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     App * myApp = App::app();
     assert(!m_record.isNull());
     Shared::ExpiringPointer<Shared::CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
-    function->setPlotType(plotType);
+    function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit());
     StackViewController * stack = stackController();
     stack->pop();
     stack->pop();

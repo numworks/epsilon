@@ -8,6 +8,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/trigonometry.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <apps/i18n.h>
@@ -119,7 +120,7 @@ CartesianFunction::PlotType CartesianFunction::plotType() const {
   return recordData()->plotType();
 }
 
-void CartesianFunction::setPlotType(PlotType newPlotType) {
+void CartesianFunction::setPlotType(PlotType newPlotType, Poincare::Preferences::AngleUnit angleUnit) {
   PlotType currentPlotType = plotType();
   if (newPlotType == currentPlotType) {
     return;
@@ -132,7 +133,7 @@ void CartesianFunction::setPlotType(PlotType newPlotType) {
 
   // Recompute the definition domain
   double tMin = newPlotType == PlotType::Cartesian ? -INFINITY : 0.0;
-  double tMax = newPlotType == PlotType::Cartesian ? INFINITY : 2.0*M_PI;
+  double tMax = newPlotType == PlotType::Cartesian ? INFINITY : 2.0*Trigonometry::PiInAngleUnit(angleUnit);
   setTMin(tMin);
   setTMax(tMax);
 

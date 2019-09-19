@@ -23,7 +23,7 @@ public:
   // Properties
   Type type() const override { return Type::Subtraction; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  bool childNeedsUserParentheses(const Expression & child) const override;
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }

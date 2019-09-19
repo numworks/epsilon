@@ -24,17 +24,12 @@ namespace Poincare {
 /* The values must be in the order defined in poincare/preferences:
  * Degrees / Radians / Gradians */
 
-static constexpr double s_pi[] = {
-  180.0,
-  M_PI,
-  200.0
-};
-
 static constexpr int s_piDivisor[] {
   180,
   1,
   200
 };
+
 
 static Expression piExpression(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Radian) {
@@ -45,6 +40,17 @@ static Expression piExpression(Preferences::AngleUnit angleUnit) {
   }
   assert(angleUnit == Preferences::AngleUnit::Gradian);
   return static_cast<Expression>(Rational::Builder(200));
+}
+
+double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    return 180.0;
+  }
+  if (angleUnit == Preferences::AngleUnit::Radian) {
+    return M_PI;
+  }
+  assert(angleUnit == Preferences::AngleUnit::Gradian);
+  return 200.0;
 }
 
 float Trigonometry::characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit) {
@@ -69,7 +75,7 @@ float Trigonometry::characteristicXRange(const Expression & e, Context * context
    * derivative of child(0) for any x value. */
   Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol::Builder(x, 1), Float<float>::Builder(1.0f));
   float a = derivative.node()->approximate(float(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
-  float pi = s_pi[(int)angleUnit];
+  float pi = PiInAngleUnit(angleUnit);
   return 2.0f*pi/std::fabs(a);
 }
 
@@ -300,7 +306,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
   }
 
   const Preferences::AngleUnit angleUnit = reductionContext.angleUnit();
-  float pi = s_pi[(int)angleUnit];
+  float pi = PiInAngleUnit(angleUnit);
 
   // Step 1. Look for an expression of type "acos(cos(x))", return x
   if (AreInverseFunctions(e.childAtIndex(0), e)) {
@@ -392,24 +398,17 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
 
 template <typename T>
 std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  if (angleUnit == Preferences::AngleUnit::Degree) {
-    return c * std::complex<T>(M_PI/s_pi[(int)Preferences::AngleUnit::Degree]);
-  } else if (angleUnit == Preferences::AngleUnit::Gradian) {
-    return c * std::complex<T>(M_PI/s_pi[(int)Preferences::AngleUnit::Gradian]);
+  if (angleUnit != Preferences::AngleUnit::Radian) {
+    return c * std::complex<T>(M_PI/Trigonometry::PiInAngleUnit(angleUnit));
   }
-  assert(angleUnit == Preferences::AngleUnit::Radian);
   return c;
 }
 
 template <typename T>
 std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  if (angleUnit == Preferences::AngleUnit::Degree) {
-    return c * std::complex<T>(s_pi[(int)Preferences::AngleUnit::Degree]/M_PI);
+  if (angleUnit != Preferences::AngleUnit::Radian) {
+    return c * std::complex<T>(Trigonometry::PiInAngleUnit(angleUnit)/M_PI);
   }
-  else if (angleUnit == Preferences::AngleUnit::Gradian) {
-    return c * std::complex<T>(s_pi[(int)Preferences::AngleUnit::Gradian]/M_PI);
-  }
-  assert(angleUnit == Preferences::AngleUnit::Radian);
   return c;
 }
 

@@ -36,7 +36,20 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context * c
   }
   T a = aInput.toScalar();
   T b = bInput.toScalar();
-  if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b || std::isinf(a) || std::isinf(b)) {
+  /* randint is undefined if:
+   * - one of the bounds is NAN or INF
+   * - the last bound is lesser than the first one
+   * - one of the input cannot be represented by an integer
+   *   (here we don't test a != std::round(a) because we want the inputs to
+   *   hold all digits so to be representable as an int)
+   * - the range between bounds is too large to be covered by all double between
+   *   0 and 1 - we can't map the integers of the range with all representable
+   *   double numbers from 0 to 1.
+   *  */
+  if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b)
+      || a > b
+      || a != (int)a || b != (int)b
+      || (Expression::Epsilon<T>()*(b+1.0-a) > 1.0)) {
     return Complex<T>::Undefined();
   }
   T result = std::floor(Random::random<T>()*(b+1.0-a)+a);

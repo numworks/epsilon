@@ -1,7 +1,8 @@
 #include "../shared/platform.h"
+
 #include <winnls.h>
 
-const char * IonSDLPlatformGetLanguageCode() {
+char * IonSDLPlatformGetLanguageCode() {
   /* Per documentation, the maximum number of characters allowed for the
    * language string is nine, including a terminating null character. */
   static char buffer[9] = {0};

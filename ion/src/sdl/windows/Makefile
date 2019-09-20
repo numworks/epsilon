@@ -1,5 +1,6 @@
 ion_src += $(addprefix ion/src/sdl/windows/, \
   images.cpp \
+  language.cpp \
   resources.rc \
 )
 ion_src += $(addprefix ion/src/sdl/shared/, \

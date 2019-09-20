@@ -63,10 +63,6 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, Mo
   Ion::Storage::Record record;
   do {
     record = recordAtIndex(index++);
-    if (record.isNull()) {
-      assert(false);
-      break;
-    }
     if (test(privateModelForRecord(record), context)) {
       if (i == count) {
         break;

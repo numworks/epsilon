@@ -103,6 +103,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
   if (m_currentPage == Page::Expression) {
+    static_assert(Shared::Function::k_maxNameWithArgumentSize > Poincare::SymbolAbstract::k_maxNameSize, "Forgot argument's size?");
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else {
     assert(m_currentPage == Page::Function);

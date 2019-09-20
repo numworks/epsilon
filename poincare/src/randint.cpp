@@ -35,7 +35,6 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context * c
   T b = bInput.toScalar();
   if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b || std::isinf(a) || std::isinf(b)) {
     return Complex<T>::Undefined();
-
   }
   T result = std::floor(Random::random<T>()*(b+1.0-a)+a);
   return Complex<T>::Builder(result);
@@ -51,10 +50,14 @@ Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionCont
     return e;
   }
   float eval = approximateToScalar<float>(reductionContext.context() , reductionContext.complexFormat() , reductionContext.angleUnit() );
-  Expression result;
   if (std::isnan(eval)) {
-    result = Undefined::Builder();
-  } else if (std::isinf(eval)) {
+    /* The result might be NAN because we are reducing a function's expression
+     * which depends on x. We thus do not want to replace too early with
+     * undefined. */
+    return *this;
+  }
+  Expression result;
+  if (std::isinf(eval)) {
     result = Infinity::Builder(eval < 0);
   } else {
     result = Rational::Builder(Integer((int)eval));

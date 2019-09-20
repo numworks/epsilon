@@ -1,3 +1,5 @@
+#include "../shared/platform.h"
+
 #include <SDL.h>
 #include <windows.h>
 #include <olectl.h>
@@ -32,7 +34,7 @@ HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
   return hr;
 }
 
-extern "C" SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSDLPlatformLoadImage(SDL_Renderer * renderer, const char * identifier) {
   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
   ULONG_PTR gdiplusToken;
   Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);

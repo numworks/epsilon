@@ -64,18 +64,10 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       continue;
     }
 
-    // Polar
-    if (type == Shared::ContinuousFunction::PlotType::Polar) {
-      drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
-          ContinuousFunction * f = (ContinuousFunction *)model;
-          Poincare::Context * c = (Poincare::Context *)context;
-          return f->evaluateXYAtParameter(t, c);
-        }, f.operator->(), context(), false, f->color());
-      continue;
-    }
-
-    // Parametric
-    assert(type == Shared::ContinuousFunction::PlotType::Parametric);
+    // Polar or parametric
+    assert(
+        type == Shared::ContinuousFunction::PlotType::Polar ||
+        type == Shared::ContinuousFunction::PlotType::Parametric);
     drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
         ContinuousFunction * f = (ContinuousFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;

@@ -844,8 +844,8 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
     Division d = Division::Builder(Rational::Builder(1), p);
-    p.shallowReduce(reductionContext);
     replaceWithInPlace(d);
+    p.shallowReduce(reductionContext);
     return d.shallowBeautify(reductionContext);
   }
   // Step 2: Turn a^(1/n) into root(a, n)

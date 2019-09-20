@@ -337,6 +337,8 @@ QUIZ_CASE(poincare_simplification_randint) {
   assert_parsed_expression_simplify_to("randint(1, inf)", "undef");
   assert_parsed_expression_simplify_to("randint(-inf, 3)", "undef");
   assert_parsed_expression_simplify_to("randint(4, 3)", "undef");
+  assert_parsed_expression_simplify_to("randint(2, 23345678909876545678)", "undef");
+  assert_parsed_expression_simplify_to("randint(123456789876543, 123456789876543+10)", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_function) {

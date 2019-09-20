@@ -38,12 +38,10 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
   quiz_assert(test);
 }
 
-typedef Expression (*ProcessExpression)(Expression, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-
-void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ProcessExpression process, int numberOfSignifiantDigits) {
+void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, false);
-  Expression m = process(e, &globalContext, target, complexFormat, angleUnit);
+  Expression m = process(e, &globalContext, target, complexFormat, angleUnit, symbolicComputation);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
@@ -64,13 +62,13 @@ void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, 
   quiz_assert_print_if_failure(!(e.isUninitialized()), expression);
 }
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
-  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, bool symbolicComputation) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, symbolicComputation, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
       Expression copy = e.clone();
       if (target == ExpressionNode::ReductionTarget::User) {
-        copy.simplifyAndApproximate(&copy, nullptr, context, complexFormat, angleUnit);
+        copy.simplifyAndApproximate(&copy, nullptr, context, complexFormat, angleUnit, symbolicComputation);
       } else {
-        copy = copy.simplify(context, complexFormat, angleUnit);
+        copy = copy.simplify(context, complexFormat, angleUnit, symbolicComputation);
       }
       if (copy.isUninitialized()) {
         return e;
@@ -83,7 +81,7 @@ template<typename T>
 void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, ExpressionNode::ReductionTarget::System, complexFormat, angleUnit, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert_parsed_expression_process_to(expression, approximation, ExpressionNode::ReductionTarget::System, complexFormat, angleUnit, false, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
       return e.approximate<T>(context, complexFormat, angleUnit);
     }, numberOfDigits);
 }

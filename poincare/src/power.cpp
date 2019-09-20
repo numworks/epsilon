@@ -630,23 +630,30 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    */
   if (baseType == ExpressionNode::Type::Power) {
     Power powerBase = static_cast<Power &>(base);
-    // Check if a > 0 or c is Integer
-    if (powerBase.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive // a > 0
-        || (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger())) // c integr
-    {
-      /* If the complexFormat is real, we check that the inner power is defined
-       * before applying the rule (a^b)^c -> a^(b*c). Otherwise, we return
-       * 'unreal'. */
-      if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-        Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
-        if (approximation.type() == ExpressionNode::Type::Unreal) {
-          replaceWithInPlace(approximation);
-          return approximation;
-        }
+
+    bool applyRule = powerBase.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive // a > 0
+                     || (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger()); // c integer
+    /* If the complexFormat is real, we check that the inner power is defined
+     * before applying the rule (a^b)^c -> a^(b*c). Otherwise, we return
+     * 'unreal' or we do nothing. */
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      if (approximation.type() == ExpressionNode::Type::Unreal) {
+        // The inner power is unreal, return "unreal"
+        replaceWithInPlace(approximation);
+        return approximation;
+      } else if (approximation.type() == ExpressionNode::Type::Undefined) {
+        /* The inner power is undefined, it can be 'x^(1/2)' for instance. We
+         * don't want to simplify this as it could be unreal with x = -2 but
+         * also real with x = 2. */
+        applyRule = false;
       }
+    }
+    if (applyRule) {
       return simplifyPowerPower(reductionContext);
     }
   }
+
   // Step 11: (a*b*c*...)^r ?
   if (!letPowerAtRoot && baseType == ExpressionNode::Type::Multiplication) {
     Multiplication multiplicationBase = static_cast<Multiplication &>(base);

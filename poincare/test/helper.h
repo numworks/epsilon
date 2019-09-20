@@ -20,9 +20,9 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode = Poincare::Pref
 void quiz_assert_print_if_failure(bool test, const char * information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
-typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit);
+typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, bool symbolicComputation);
 
-void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, bool symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
 
 // Parsing
 
@@ -32,7 +32,7 @@ Poincare::Expression parse_expression(const char * expression, bool addParenthes
 
 void assert_simplify(const char * expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian);
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = User, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian);
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = User, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, bool symbolicComputation = true);
 
 // Approximation
 

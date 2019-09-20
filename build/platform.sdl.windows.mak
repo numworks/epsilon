@@ -1,2 +1,2 @@
-TOOLCHAIN ?= windows
+TOOLCHAIN = windows
 EXE = exe

@@ -290,21 +290,12 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
   int rowIndex = rowAtChildIndex(index);
   int columnIndex = columnAtChildIndex(index);
-  bool rowIsEmpty = isRowEmpty(rowIndex);
   bool columnIsEmpty = isColumnEmpty(columnIndex);
   int newIndex = index;
   if (columnIsEmpty && m_numberOfColumns > 2) {
     // If the column is now empty, delete it
     deleteColumnAtIndex(columnIndex);
     newIndex -= rowIndex;
-  }
-  if (!rowIsEmpty && !columnIsEmpty) {
-    LayoutNode * newChild = childAtIndex(newIndex);
-    if (newChild->isEmpty()
-        && (childIsRightOfGrid(index)|| childIsBottomOfGrid(index)))
-    {
-      static_cast<EmptyLayoutNode *>(newChild)->setColor(EmptyLayoutNode::Color::Grey);
-    }
   }
   if (cursor) {
     assert(newIndex >= 0 && newIndex < m_numberOfColumns*m_numberOfRows);

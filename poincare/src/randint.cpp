@@ -49,21 +49,16 @@ Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionCont
   if (e.isUndefined()) {
     return e;
   }
-  float eval = approximateToScalar<float>(reductionContext.context() , reductionContext.complexFormat() , reductionContext.angleUnit() );
+  double eval = approximateToScalar<double>(reductionContext.context() , reductionContext.complexFormat() , reductionContext.angleUnit() );
   if (std::isnan(eval)) {
     /* The result might be NAN because we are reducing a function's expression
      * which depends on x. We thus do not want to replace too early with
      * undefined. */
     return *this;
   }
-  Expression result;
-  if (std::isinf(eval)) {
-    result = Infinity::Builder(eval < 0);
-  } else {
-    result = Rational::Builder(Integer((int)eval));
-  }
+  Expression result = Number::DecimalNumber(eval);
   replaceWithInPlace(result);
-  return result;
+  return result.shallowReduce(reductionContext);
 }
 
 }

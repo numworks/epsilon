@@ -5,7 +5,9 @@ include build/config.mak
 
 object_for = $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
 
-default: $(BUILD_DIR)/epsilon.$(EXE)
+# Define the default recipe
+
+default:
 
 # Define a standard rule helper
 # If passed a last parameter value of with_local_version, we also define an
@@ -163,6 +165,10 @@ $(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_fo
 # Load platform-specific targets
 # We include them before the standard ones to give them precedence.
 -include build/targets.$(PLATFORM).mak
+
+# Fill in the default recipe
+DEFAULT ?= $(BUILD_DIR)/epsilon.$(EXE)
+default: $(DEFAULT)
 
 $(foreach extension,$(extensions),$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(extension)))))
 

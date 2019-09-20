@@ -92,6 +92,26 @@ void MatrixLayoutNode::willAddSiblingToEmptyChildAtIndex(int childIndex) {
   }
 }
 
+void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
+  // Deleting the left empty layout of an empty row deletes the row
+  assert(cursor != nullptr);
+  LayoutNode * pointedChild = cursor->layoutNode();
+  if (pointedChild->isEmpty()) {
+    int indexOfPointedLayout = indexOfChild(pointedChild);
+    if (columnAtChildIndex(indexOfPointedLayout) == 0) {
+      int rowIndex = rowAtChildIndex(indexOfPointedLayout);
+      if (isRowEmpty(rowIndex) && m_numberOfRows > 2) {
+        deleteRowAtIndex(rowIndex);
+        assert(indexOfPointedLayout >= 0 && indexOfPointedLayout < m_numberOfColumns*m_numberOfRows);
+        cursor->setLayoutNode(childAtIndex(indexOfPointedLayout));
+        cursor->setPosition(LayoutCursor::Position::Right);
+        return;
+      }
+    }
+  }
+  GridLayoutNode::deleteBeforeCursor(cursor);
+}
+
 // SerializableNode
 
 int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -273,10 +293,8 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   bool rowIsEmpty = isRowEmpty(rowIndex);
   bool columnIsEmpty = isColumnEmpty(columnIndex);
   int newIndex = index;
-  if (rowIsEmpty && m_numberOfRows > 2) {
-    deleteRowAtIndex(rowIndex);
-  }
   if (columnIsEmpty && m_numberOfColumns > 2) {
+    // If the column is now empty, delete it
     deleteColumnAtIndex(columnIndex);
     newIndex -= rowIndex;
   }

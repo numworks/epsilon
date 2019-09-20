@@ -26,6 +26,7 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void willAddSiblingToEmptyChildAtIndex(int childIndex) override;
+  void deleteBeforeCursor(LayoutCursor * cursor) override;
 
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

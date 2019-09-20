@@ -24,7 +24,8 @@ void GraphView::reload() {
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
-  for (int i = 0; i < functionStore->numberOfActiveFunctions(); i++) {
+  const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
+  for (int i = 0; i < activeFunctionsCount ; i++) {
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);;
     Shared::ContinuousFunction::PlotType type = f->plotType();

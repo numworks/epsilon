@@ -205,6 +205,10 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return numberOfChar;
 }
 
+CodePoint IntegralLayoutNode::XNTCodePoint(int childIndex) const {
+  return (childIndex == k_integrandLayoutIndex || childIndex == k_differentialLayoutIndex) ? CodePoint('x') : UCodePointNull;
+}
+
 KDSize IntegralLayoutNode::computeSize() {
   KDSize dSize = k_font->stringSize("d");
   KDSize integrandSize = integrandLayout()->layoutSize();

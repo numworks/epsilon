@@ -6,6 +6,7 @@
 namespace Poincare {
 
 class RandintNode /*final*/ : public ExpressionNode  {
+  friend class Randint;
 public:
 
   // TreeNode
@@ -33,7 +34,7 @@ private:
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>(context, complexFormat, angleUnit);
   }
-  template <typename T> Evaluation<T> templateApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template <typename T> Evaluation<T> templateApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * inputIsUndefined = nullptr) const;
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };

@@ -25,7 +25,7 @@ public:
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override { return lowerBoundLayout(); }
-  CodePoint XNTCodePoint() const override { return 'x'; }
+  CodePoint XNTCodePoint(int childIndex = -1) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralLayoutNode); }
@@ -42,6 +42,8 @@ protected:
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
+  constexpr static int k_integrandLayoutIndex = 0;
+  constexpr static int k_differentialLayoutIndex = 1;
   constexpr static const KDFont * k_font = KDFont::LargeFont;
   constexpr static KDCoordinate k_boundHeightMargin = 8;
   constexpr static KDCoordinate k_boundWidthMargin = 5;
@@ -50,8 +52,8 @@ private:
   constexpr static KDCoordinate k_integrandHeigthMargin = 2;
   constexpr static KDCoordinate k_lineThickness = 1;
   // int(f(x), x, a, b)
-  LayoutNode * integrandLayout() { return childAtIndex(0); } // f(x)
-  LayoutNode * differentialLayout() { return childAtIndex(1); } // dx
+  LayoutNode * integrandLayout() { return childAtIndex(k_integrandLayoutIndex); } // f(x)
+  LayoutNode * differentialLayout() { return childAtIndex(k_differentialLayoutIndex); } // dx
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); } // a
   LayoutNode * upperBoundLayout() { return childAtIndex(3); } // b
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

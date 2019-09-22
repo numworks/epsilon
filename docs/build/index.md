@@ -62,10 +62,22 @@ make PLATFORM=simulator
 
 You can also update your NumWorks calculator easily. Note that you'll need to press the Reset button and that all data on your calculator will be lost.
 
+If you got the hardware calculator some time ago, chances are you have a 'N0100' model. If you already compiled/flashed epsilon in 11.x.x branches or lower without telling your model, this should be what you have. The default model changed since, and you should do:
+
+```
+make clean
+make MODEL=n0100
+make MODEL=n0100 epsilon_flash
+```
+
+If your calculator is more recent, you probably have the 'N0110' model. You should use:
+
 ```
 make clean
 make
 make epsilon_flash
 ```
+
+Trying to flash the wrong version on your calculator will probably not work, resulting in a stuck calculator (with a black screen). You can recover from that by flashing the correct version: you can plug your calculator and follow the instructions (press the RESET button and maybe 6 at the same time) even if the flash failed, because the DFU mode is never broken.
 
 Congratulations, you're running your very own version of Epsilon!

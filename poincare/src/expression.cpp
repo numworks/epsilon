@@ -391,8 +391,11 @@ Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression) {
+  /* In this case, replacing a symbol does not alter the number of children,
+   * since no other operation (e.g. reduction) is applied. */
   const int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
+    assert(nbChildren == numberOfChildren());
     childAtIndex(i).replaceSymbolWithExpression(symbol, expression);
   }
   return *this;

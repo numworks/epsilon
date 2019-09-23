@@ -100,7 +100,7 @@ void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     int indexOfPointedLayout = indexOfChild(pointedChild);
     if (columnAtChildIndex(indexOfPointedLayout) == 0) {
       int rowIndex = rowAtChildIndex(indexOfPointedLayout);
-      if (isRowEmpty(rowIndex) && m_numberOfRows > 2) {
+      if (rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex) && m_numberOfRows > 2) {
         deleteRowAtIndex(rowIndex);
         assert(indexOfPointedLayout >= 0 && indexOfPointedLayout < m_numberOfColumns*m_numberOfRows);
         cursor->setLayoutNode(childAtIndex(indexOfPointedLayout));

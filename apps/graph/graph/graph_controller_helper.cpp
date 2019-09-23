@@ -19,6 +19,14 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   double t = tCursorPosition;
   double tMin = function->tMin();
   double tMax = function->tMax();
+  int functionsCount = -1;
+  if (((direction > 0 && std::abs(t-tMax) < DBL_EPSILON)
+        || (direction < 0 && std::abs(t-tMin) < DBL_EPSILON))
+      && !App::app()->functionStore()->displaysNonCartesianFunctions(&functionsCount))
+  {
+    jumpToLeftRightCurve(t, direction, functionsCount, record);
+    return true;
+  }
   double dir = (direction > 0 ? 1.0 : -1.0);
   ContinuousFunction::PlotType type = function->plotType();
   if (type == ContinuousFunction::PlotType::Cartesian) {

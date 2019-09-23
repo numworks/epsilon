@@ -7,7 +7,6 @@
 #include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
 #include "../shared/hideable_even_odd_cell.h"
-#include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/tab_table_controller.h"
 #include "../shared/separator_even_odd_buffer_text_cell.h"
 #include "../shared/store_cell.h"
@@ -76,7 +75,7 @@ private:
   int maxNumberOfCoefficients() const;
   Poincare::Layout m_r2Layout;
   SelectableTableView m_selectableTableView;
-  Shared::MarginEvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
+  EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCell m_r2TitleCell;
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator m_doubleCalculationCells[k_numberOfDoubleCalculationCells];

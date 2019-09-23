@@ -146,10 +146,10 @@ bool GraphController::moveCursorHorizontally(int direction) {
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record);
 }
 
-int GraphController::closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
+int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
   int nbOfActiveFunctions = functionStore()-> numberOfActiveFunctions();
   if (functionStore()->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Cartesian) == nbOfActiveFunctions) {
-    return FunctionGraphController::closestCurveIndexVertically(goingUp, currentSelectedCurve, context);
+    return FunctionGraphController::nextCurveIndexVertically(goingUp, currentSelectedCurve, context);
   }
   int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? -1 : 1);
   return nextActiveFunctionIndex >= nbOfActiveFunctions ? -1 : nextActiveFunctionIndex;

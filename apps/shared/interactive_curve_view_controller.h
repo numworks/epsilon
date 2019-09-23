@@ -42,7 +42,7 @@ protected:
   bool isCursorVisible();
 
   // Closest vertical curve helper
-  virtual int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
+  int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
   virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const = 0;
   virtual int selectedCurveIndex() const = 0;
   virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const = 0;

@@ -153,7 +153,7 @@ void FunctionGraphController::initCursorParameters() {
 bool FunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  int nextActiveFunctionIndex = closestCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context);
+  int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context);
   if (nextActiveFunctionIndex < 0) {
     return false;
   }

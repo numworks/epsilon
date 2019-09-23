@@ -29,6 +29,9 @@ protected:
   virtual FunctionStore * functionStore() const;
 
   // Closest vertical curve helper
+  virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
+    return closestCurveIndexVertically(goingUp, currentSelectedCurve, context);
+  }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   int selectedCurveIndex() const override { return *m_indexFunctionSelectedByCursor; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const override;

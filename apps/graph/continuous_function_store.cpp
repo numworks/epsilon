@@ -9,6 +9,14 @@ using namespace Shared;
 
 namespace Graph {
 
+bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
+  int nbOfActiveFunctions = numberOfActiveFunctions();
+  if (nbActiveFunctions != nullptr) {
+    *nbActiveFunctions = nbOfActiveFunctions;
+  }
+  return numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Cartesian) != nbOfActiveFunctions;
+}
+
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   Ion::Storage::Record::ErrorStatus error;
   ContinuousFunction newModel = ContinuousFunction::NewModel(&error);

@@ -41,6 +41,9 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   for (int i = 0; i < k_numberOfCalculationCells;i++) {
     m_calculationCells[i].setTextColor(Palette::GreyDark);
   }
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    m_titleCells[i].setMessageFont(KDFont::SmallFont);
+  }
   m_hideableCell.setHide(true);
 }
 
@@ -139,7 +142,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       myCell->setLayout(m_r2Layout);
       return;
     }
-    MarginEvenOddMessageTextCell * myCell = (MarginEvenOddMessageTextCell *)cell;
+    EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
     myCell->setAlignment(1.0f, 0.5f);
     if (j <= k_regressionCellIndex) {
       I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};

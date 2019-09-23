@@ -53,6 +53,23 @@ char intervalBracket(double value, bool opening) {
   return std::isinf(value) == opening ? ']' : '[';
 }
 
+void writeInterval(char * buffer, int bufferSize, double min, double max, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
+  int numberOfChar = 0;
+  assert(bufferSize-1 > numberOfChar);
+  buffer[numberOfChar++] = intervalBracket(min, true);
+  int sizeRequiredForFloat = PrintFloat::bufferSizeForFloatsWithPrecision(numberOfSignificantDigits);
+  assert(sizeRequiredForFloat < bufferSize - numberOfChar);
+  numberOfChar += PrintFloat::ConvertFloatToText<double>(min, buffer+numberOfChar, sizeRequiredForFloat, numberOfSignificantDigits, mode);
+  assert(bufferSize > numberOfChar);
+  numberOfChar += strlcpy(buffer+numberOfChar, ",", bufferSize-numberOfChar);
+  assert(sizeRequiredForFloat < bufferSize - numberOfChar);
+  numberOfChar += PrintFloat::ConvertFloatToText<double>(max, buffer+numberOfChar, sizeRequiredForFloat, numberOfSignificantDigits, mode);
+  assert(bufferSize-1 > numberOfChar);
+  buffer[numberOfChar++] = intervalBracket(max, false);
+  assert(bufferSize > numberOfChar);
+  strlcpy(buffer+numberOfChar, " ", bufferSize-numberOfChar);
+}
+
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if ((cell == &m_typeCell || cell == &m_functionDomain) && !m_record.isNull()) {
@@ -70,17 +87,11 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       double max = function->tMax();
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
-      int numberOfChar = 0;
-      assert(bufferSize-1 > numberOfChar);
-      buffer[numberOfChar++] = intervalBracket(min, true);
-      numberOfChar += PoincareHelpers::ConvertFloatToText<double>(min, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::VeryShortNumberOfSignificantDigits);
-      assert(bufferSize > numberOfChar);
-      numberOfChar += strlcpy(buffer+numberOfChar, ",", bufferSize-numberOfChar);
-      numberOfChar += PoincareHelpers::ConvertFloatToText<double>(max, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::VeryShortNumberOfSignificantDigits);
-      assert(bufferSize-1 > numberOfChar);
-      buffer[numberOfChar++] = intervalBracket(max, false);
-      assert(bufferSize > numberOfChar);
-      numberOfChar += strlcpy(buffer+numberOfChar, " ", bufferSize-numberOfChar);
+      writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
+      int numberOfAvailableChar = (m_functionDomain.bounds().width() - m_functionDomain.labelView()->bounds().width() - m_functionDomain.accessoryView()->bounds().width() - TableCell::k_labelMargin - TableCell::k_accessoryMargin)/KDFont::SmallFont->glyphSize().width();
+      if (UTF8Helper::StringGlyphLength(buffer) > numberOfAvailableChar) {
+        writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits-1, Preferences::PrintFloatMode::Scientific);
+      }
       m_functionDomain.setAccessoryText(buffer);
     }
   }

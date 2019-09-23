@@ -49,6 +49,10 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+char intervalBracket(double value, bool opening) {
+  return std::isinf(value) == opening ? ']' : '[';
+}
+
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if ((cell == &m_typeCell || cell == &m_functionDomain) && !m_record.isNull()) {
@@ -62,11 +66,16 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     } else {
       assert(cell == &m_functionDomain);
       m_functionDomain.setMessage(I18n::Message::FunctionDomain);
+      double min = function->tMin();
+      double max = function->tMax();
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
-      int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(function->tMin(), buffer, bufferSize, Preferences::VeryShortNumberOfSignificantDigits);
-      numberOfChar += strlcpy(buffer+numberOfChar, "..", bufferSize-numberOfChar);
-      numberOfChar += PoincareHelpers::ConvertFloatToText<double>(function->tMax(), buffer+numberOfChar, bufferSize-numberOfChar, Preferences::VeryShortNumberOfSignificantDigits);
+      int numberOfChar = 0;
+      buffer[numberOfChar++] = intervalBracket(min, true);
+      numberOfChar += PoincareHelpers::ConvertFloatToText<double>(min, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::VeryShortNumberOfSignificantDigits);
+      numberOfChar += strlcpy(buffer+numberOfChar, ",", bufferSize-numberOfChar);
+      numberOfChar += PoincareHelpers::ConvertFloatToText<double>(max, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::VeryShortNumberOfSignificantDigits);
+      buffer[numberOfChar++] = intervalBracket(max, false);
       numberOfChar += strlcpy(buffer+numberOfChar, " ", bufferSize-numberOfChar);
       m_functionDomain.setAccessoryText(buffer);
     }

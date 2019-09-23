@@ -1,7 +1,7 @@
 #include "intersection_graph_controller.h"
+#include <ion/unicode/utf8_decoder.h>
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
-#include <poincare/serialization_helper.h>
 
 using namespace Shared;
 
@@ -22,17 +22,15 @@ void IntersectionGraphController::reloadBannerView() {
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
-  const char * legend = "=";
-  // 'f(x)=g(x)=', keep 2 chars for '='
+  // 'f(x)=g(x)≈'
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(m_record);
-  int numberOfChar = f->nameWithArgument(buffer, bufferSize-2);
+  int numberOfChar = f->nameWithArgument(buffer, bufferSize - UTF8Decoder::CharSizeOfCodePoint('=') - UTF8Decoder::CharSizeOfCodePoint(UCodePointAlmostEqualTo));
   assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
-  // keep 1 char for '=';
+  numberOfChar += strlcpy(buffer+numberOfChar, "=", bufferSize-numberOfChar);
   ExpiringPointer<ContinuousFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
-  numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize-numberOfChar-1);
+  numberOfChar += g->nameWithArgument(buffer + numberOfChar, bufferSize - numberOfChar - UTF8Decoder::CharSizeOfCodePoint(UCodePointAlmostEqualTo));
   assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
+  numberOfChar += UTF8Decoder::CodePointToChars(UCodePointAlmostEqualTo, buffer+numberOfChar, bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Poincare::Preferences::MediumNumberOfSignificantDigits);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);

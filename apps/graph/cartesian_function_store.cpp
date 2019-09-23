@@ -9,6 +9,14 @@ using namespace Shared;
 
 namespace Graph {
 
+bool CartesianFunctionStore::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
+  int nbOfActiveFunctions = numberOfActiveFunctions();
+  if (nbActiveFunctions != nullptr) {
+    *nbActiveFunctions = nbOfActiveFunctions;
+  }
+  return numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Cartesian) != nbOfActiveFunctions;
+}
+
 int CartesianFunctionStore::numberOfActiveFunctionsOfType(CartesianFunction::PlotType plotType) const {
   int count = 0;
   for (int i = 0; i < numberOfActiveFunctions(); i++) {

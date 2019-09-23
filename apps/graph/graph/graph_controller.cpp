@@ -34,6 +34,10 @@ void GraphController::viewWillAppear() {
   selectFunctionWithCursor(indexFunctionSelectedByCursor());
 }
 
+bool GraphController::defautRangeIsNormalized() const {
+  return functionStore()->displaysNonCartesianFunctions();
+}
+
 void GraphController::interestingFunctionRange(ExpiringPointer<CartesianFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   const int balancedBound = std::floor((tMax-tMin)/2/step);
@@ -58,7 +62,7 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
   float resultyMax = -FLT_MAX;
   assert(functionStore()->numberOfActiveFunctions() > 0);
   int functionsCount = 0;
-  if (displaysNonCartesianFunctions(&functionsCount)) {
+  if (functionStore()->displaysNonCartesianFunctions(&functionsCount)) {
     for (int i = 0; i < functionsCount; i++) {
       ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
       if (f->plotType() == CartesianFunction::PlotType::Cartesian) {
@@ -149,7 +153,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
 
 int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
   int nbOfActiveFunctions = 0;
-  if (!displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
+  if (!functionStore()->displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(goingUp, currentSelectedCurve, context);
   }
   int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? -1 : 1);
@@ -164,16 +168,8 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
   return function->tMin();
 }
 
-bool GraphController::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
-  int nbOfActiveFunctions = functionStore()->numberOfActiveFunctions();
-  if (nbActiveFunctions != nullptr) {
-    *nbActiveFunctions = nbOfActiveFunctions;
-  }
-  return functionStore()->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Cartesian) != nbOfActiveFunctions;
-}
-
 bool GraphController::shouldSetDefaultOnModelChange() const {
-  return displaysNonCartesianFunctions();
+  return functionStore()->displaysNonCartesianFunctions();
 }
 
 }

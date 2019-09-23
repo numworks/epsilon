@@ -10,6 +10,7 @@ namespace Graph {
 
 class CartesianFunctionStore : public Shared::FunctionStore {
 public:
+  bool displaysNonCartesianFunctions(int * nbActiveFunctions = nullptr) const;
   Shared::ExpiringPointer<Shared::CartesianFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::CartesianFunction>(static_cast<Shared::CartesianFunction *>(privateModelForRecord(record))); }
   int numberOfActiveFunctionsOfType(Shared::CartesianFunction::PlotType plotType) const;
   Ion::Storage::Record activeRecordOfTypeAtIndex(Shared::CartesianFunction::PlotType plotType, int index) const;

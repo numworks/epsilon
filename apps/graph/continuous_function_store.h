@@ -8,6 +8,7 @@ namespace Graph {
 
 class ContinuousFunctionStore : public Shared::FunctionStore {
 public:
+  bool displaysNonCartesianFunctions(int * nbActiveFunctions = nullptr) const;
   int numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType plotType) const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveOfType, &plotType);
   }

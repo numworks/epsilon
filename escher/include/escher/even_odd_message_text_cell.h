@@ -14,6 +14,7 @@ public:
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setMessageFont(const KDFont * font) { m_messageTextView.setFont(font); }
 protected:
+  constexpr static KDCoordinate k_horizontalMargin = 2;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

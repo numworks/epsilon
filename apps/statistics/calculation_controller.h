@@ -7,7 +7,6 @@
 #include "store.h"
 #include "calculation_selectable_table_view.h"
 #include "../shared/hideable_even_odd_cell.h"
-#include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/separator_even_odd_buffer_text_cell.h"
 #include "../shared/store_title_cell.h"
 #include "../shared/tab_table_controller.h"
@@ -64,7 +63,7 @@ private:
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   CalculationSelectableTableView m_selectableTableView;
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
-  Shared::MarginEvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
+  EvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell m_hideableCell;
   Store * m_store;

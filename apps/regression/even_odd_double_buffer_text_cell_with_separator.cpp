@@ -100,7 +100,7 @@ void EvenOddDoubleBufferTextCellWithSeparator::layoutSubviews() {
   KDCoordinate width = bounds().width() - Metric::TableSeparatorThickness;
   KDCoordinate height = bounds().height();
   m_firstBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness, 0, width/2, height));
-  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, 0, width/2, height));
+  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, 0, width - width/2, height));
 }
 
 bool EvenOddDoubleBufferTextCellWithSeparator::handleEvent(Ion::Events::Event event) {

@@ -12,6 +12,8 @@ namespace Shared {
 
 static inline float minFloat(float x, float y) { return x < y ? x : y; }
 static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+static inline double minDouble(double x, double y) { return x < y ? x : y; }
+static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
@@ -157,8 +159,15 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   if (nextActiveFunctionIndex < 0) {
     return false;
   }
-  Poincare::Coordinate2D<double> cursorPosition = xyValues(nextActiveFunctionIndex, m_cursor->t(), context);
-  m_cursor->moveTo(m_cursor->t(), cursorPosition.x1(), cursorPosition.x2());
+  // Clip the current t to the domain of the next function
+  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
+  double clippedT = m_cursor->t();
+  if (!std::isnan(f->tMin())) {
+    assert(!std::isnan(f->tMax()));
+    clippedT = minDouble(f->tMax(), maxDouble(f->tMin(), clippedT));
+  }
+  Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context);
+  m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
   selectFunctionWithCursor(nextActiveFunctionIndex);
   return true;
 }

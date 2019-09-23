@@ -18,7 +18,7 @@ void ColumnTitleCell::layoutSubviews() {
   KDCoordinate width = bounds().width() - Metric::TableSeparatorThickness;
   KDCoordinate height = bounds().height();
   m_firstBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness, k_colorIndicatorThickness, width/2, height - k_colorIndicatorThickness));
-  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, k_colorIndicatorThickness, width/2, height - k_colorIndicatorThickness));
+  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, k_colorIndicatorThickness, width - width/2, height - k_colorIndicatorThickness));
 }
 
 }

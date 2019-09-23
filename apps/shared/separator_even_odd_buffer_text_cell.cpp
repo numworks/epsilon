@@ -13,7 +13,7 @@ void SeparatorEvenOddBufferTextCell::drawRect(KDContext * ctx, KDRect rect) cons
 
 void SeparatorEvenOddBufferTextCell::layoutSubviews() {
   KDRect boundsThis = bounds();
-  m_bufferTextView.setFrame(KDRect(boundsThis.left() + Metric::TableSeparatorThickness, boundsThis.top(), boundsThis.width() - Metric::TableSeparatorThickness - k_rightMargin, boundsThis.height()));
+  m_bufferTextView.setFrame(KDRect(boundsThis.left() + Metric::TableSeparatorThickness + k_horizontalMargin, boundsThis.top(), boundsThis.width() - Metric::TableSeparatorThickness - 2*k_horizontalMargin, boundsThis.height()));
 }
 
 }

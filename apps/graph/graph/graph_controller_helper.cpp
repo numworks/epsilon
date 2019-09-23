@@ -1,6 +1,7 @@
 #include "graph_controller_helper.h"
 #include "../../shared/function_banner_delegate.h"
 #include "../app.h"
+#include <ion/unicode/utf8_decoder.h>
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
 
@@ -34,9 +35,8 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   char buffer[bufferSize];
   const char * space = " ";
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);
-  const char * legend = "=";
   assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
+  numberOfChar += UTF8Decoder::CodePointToChars(UCodePointAlmostEqualTo, buffer+numberOfChar, bufferSize-numberOfChar);
   double y = function->approximateDerivative(cursor->x(), App::app()->localContext());
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Preferences::ShortNumberOfSignificantDigits);
   assert(numberOfChar <= bufferSize);

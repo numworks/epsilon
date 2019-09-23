@@ -1,6 +1,7 @@
 #include "tangent_graph_controller.h"
 #include "../app.h"
 #include "../../apps_container.h"
+#include <ion/unicode/utf8_decoder.h>
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
 
@@ -72,15 +73,15 @@ void TangentGraphController::reloadBannerView() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
 
   constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
-  const char * legend = "a=";
-  int legendLength = strlcpy(buffer, legend, bufferSize);
+  int legendLength = strlcpy(buffer, "a", bufferSize);
+  legendLength += UTF8Decoder::CodePointToChars(UCodePointAlmostEqualTo, buffer+legendLength, bufferSize-legendLength);
   ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), context);
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
   m_bannerView->aView()->setText(buffer);
 
-  legend = "b=";
-  legendLength = strlcpy(buffer, legend, bufferSize);
+  legendLength = strlcpy(buffer, "b", bufferSize);
+  legendLength += UTF8Decoder::CodePointToChars(UCodePointAlmostEqualTo, buffer+legendLength, bufferSize-legendLength);
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   assert(function->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
   y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), myApp->localContext()).x2();

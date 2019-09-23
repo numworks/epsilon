@@ -71,11 +71,15 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
       int numberOfChar = 0;
+      assert(bufferSize-1 > numberOfChar);
       buffer[numberOfChar++] = intervalBracket(min, true);
       numberOfChar += PoincareHelpers::ConvertFloatToText<double>(min, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::VeryShortNumberOfSignificantDigits);
+      assert(bufferSize > numberOfChar);
       numberOfChar += strlcpy(buffer+numberOfChar, ",", bufferSize-numberOfChar);
       numberOfChar += PoincareHelpers::ConvertFloatToText<double>(max, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::VeryShortNumberOfSignificantDigits);
+      assert(bufferSize-1 > numberOfChar);
       buffer[numberOfChar++] = intervalBracket(max, false);
+      assert(bufferSize > numberOfChar);
       numberOfChar += strlcpy(buffer+numberOfChar, " ", bufferSize-numberOfChar);
       m_functionDomain.setAccessoryText(buffer);
     }

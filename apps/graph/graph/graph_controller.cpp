@@ -57,8 +57,8 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
   float resultyMin = FLT_MAX;
   float resultyMax = -FLT_MAX;
   assert(functionStore()->numberOfActiveFunctions() > 0);
-  if (displaysNonCartesianFunctions()) {
-    const int functionsCount = functionStore()->numberOfActiveFunctions();
+  int functionsCount = 0;
+  if (displaysNonCartesianFunctions(&functionsCount)) {
     for (int i = 0; i < functionsCount; i++) {
       ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
       if (f->plotType() == CartesianFunction::PlotType::Cartesian) {
@@ -85,7 +85,7 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
    * the values of a function. Otherwise some relevant extremal values may be
    * missed. */
   const float step = const_cast<GraphController *>(this)->curveView()->pixelWidth() / 2;
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+  for (int i = 0; i < functionsCount; i++) {
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     if (f->plotType() != CartesianFunction::PlotType::Cartesian) {
       continue;
@@ -113,7 +113,8 @@ float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   CartesianFunctionStore * store = functionStore();
-  for (int i = 0; i < store->numberOfActiveFunctions(); i++) {
+  int nbActiveFunctions = store->numberOfActiveFunctions();
+  for (int i = 0; i < nbActiveFunctions; i++) {
     ExpiringPointer<CartesianFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
@@ -147,8 +148,8 @@ bool GraphController::moveCursorHorizontally(int direction) {
 }
 
 int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {
-  int nbOfActiveFunctions = functionStore()-> numberOfActiveFunctions();
-  if (functionStore()->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Cartesian) == nbOfActiveFunctions) {
+  int nbOfActiveFunctions = 0;
+  if (!displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(goingUp, currentSelectedCurve, context);
   }
   int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? -1 : 1);
@@ -163,10 +164,12 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
   return function->tMin();
 }
 
-bool GraphController::displaysNonCartesianFunctions() const {
-  CartesianFunctionStore * store = functionStore();
-  return store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Polar) > 0
-    || store->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Parametric) > 0;
+bool GraphController::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
+  int nbOfActiveFunctions = functionStore()->numberOfActiveFunctions();
+  if (nbActiveFunctions != nullptr) {
+    *nbActiveFunctions = nbOfActiveFunctions;
+  }
+  return functionStore()->numberOfActiveFunctionsOfType(CartesianFunction::PlotType::Cartesian) != nbOfActiveFunctions;
 }
 
 bool GraphController::shouldSetDefaultOnModelChange() const {

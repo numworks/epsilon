@@ -16,6 +16,7 @@ protected:
   virtual BannerView * bannerView() = 0;
 private:
   static constexpr double k_definitionDomainDivisor = 96.0;
+  virtual void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) {}
 };
 
 }

@@ -8,6 +8,8 @@ namespace Graph {
 
 static inline float minFloat(float x, float y) { return x < y ? x : y; }
 static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+static inline double minDouble(double x, double y) { return x < y ? x : y; }
+static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
 GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
@@ -170,6 +172,52 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
 
 bool GraphController::shouldSetDefaultOnModelChange() const {
   return functionStore()->displaysNonCartesianFunctions();
+}
+
+void GraphController::jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) {
+  if (functionsCount == 1) {
+    return;
+  }
+  int nextCurveIndex = -1;
+  double xDelta = DBL_MAX;
+  for (int i = 0; i < functionsCount; i++) {
+    Ion::Storage::Record currentRecord = functionStore()->activeRecordAtIndex(i);
+    if (currentRecord == record) {
+      continue;
+    }
+    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(currentRecord);
+    assert(f->plotType() == ContinuousFunction::PlotType::Cartesian);
+    // Select the closest horizontal curve
+    double currentTMin = f->tMin();
+    double currentTMax = f->tMax();
+    assert(!std::isnan(currentTMin));
+    assert(!std::isnan(currentTMax));
+    if ((direction > 0 && currentTMax > t)
+        ||(direction < 0 && currentTMin < t))
+    {
+      double currentXDelta = direction > 0 ?
+        (t >= currentTMin ? 0.0 : currentTMin - t) :
+        (t <= currentTMax ? 0.0 : t - currentTMax);
+      assert(currentXDelta >= 0.0);
+      if (currentXDelta < xDelta) {
+        nextCurveIndex = i;
+        xDelta = currentXDelta;
+      }
+    }
+  }
+  if (nextCurveIndex < 0) {
+    return;
+  }
+  Ion::Storage::Record currentRecord = functionStore()->activeRecordAtIndex(nextCurveIndex);
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(currentRecord);
+
+  double nextTMin = f->tMin();
+  double nextTMax = f->tMax();
+  double nextT = maxDouble(nextTMin, minDouble(nextTMax, t));
+  Coordinate2D<double> xy = f->evaluateXYAtParameter(nextT, App::app()->localContext());
+  m_cursor->moveTo(nextT, xy.x1(), xy.x2());
+  selectFunctionWithCursor(nextCurveIndex);
+  return;
 }
 
 }

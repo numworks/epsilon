@@ -37,6 +37,7 @@ private:
   bool defautRangeIsNormalized() const override;
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
   bool shouldSetDefaultOnModelChange() const override;
+  void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
 
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;

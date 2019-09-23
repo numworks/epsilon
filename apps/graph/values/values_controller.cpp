@@ -138,6 +138,9 @@ I18n::Message ValuesController::emptyMessage() {
 }
 
 void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
   const int i = selectedColumn();
   const int j = selectedRow();
   const int numberOfElementsInCol = numberOfElementsInColumn(i);

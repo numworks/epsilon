@@ -5,6 +5,8 @@
 
 namespace Shared {
 
+#define GRAPH_CURSOR_SPEEDUP 1
+
 class RoundCursorView : public CursorView {
 public:
   RoundCursorView(KDColor color = KDColorBlack) : m_color(color), m_underneathPixelBufferLoaded(false) {}
@@ -13,6 +15,9 @@ public:
   void setColor(KDColor color);
   void setCursorFrame(KDRect frame) override;
 private:
+#ifdef GRAPH_CURSOR_SPEEDUP
+  bool eraseCursorIfPossible();
+#endif
   constexpr static int k_cursorSize = 10;
   mutable KDColor m_underneathPixelBuffer[k_cursorSize*k_cursorSize];
   KDColor m_color;

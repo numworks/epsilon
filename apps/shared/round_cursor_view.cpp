@@ -31,10 +31,9 @@ KDSize RoundCursorView::minimalSizeForOptimalDisplay() const {
 
 void RoundCursorView::setColor(KDColor color) {
   m_color = color;
+  eraseCursorIfPossible();
   markRectAsDirty(bounds());
 }
-
-#define GRAPH_CURSOR_SPEEDUP 1
 
 void RoundCursorView::setCursorFrame(KDRect f) {
 #if GRAPH_CURSOR_SPEEDUP
@@ -43,16 +42,9 @@ void RoundCursorView::setCursorFrame(KDRect f) {
   if (m_frame == f) {
     return;
   }
-  const KDRect previousRelativeFrame = m_frame;
   /* We want to avoid drawing the curve just because the cursor has been
    * repositioned, as it is very slow for non cartesian curves.*/
-  if (m_underneathPixelBufferLoaded && !previousRelativeFrame.isEmpty()) {
-    const KDRect previousFrame = absoluteVisibleFrame();
-    // Erase the cursor
-    KDContext * ctx = KDIonContext::sharedContext();
-    ctx->setOrigin(previousFrame.origin());
-    ctx->setClippingRect(previousFrame);
-    ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, s_cursorWorkingBuffer);
+  if (eraseCursorIfPossible()) {
     // Set the frame
     m_frame = f;
     markRectAsDirty(bounds());
@@ -61,5 +53,24 @@ void RoundCursorView::setCursorFrame(KDRect f) {
 #endif
   CursorView::setCursorFrame(f);
 }
+
+#ifdef GRAPH_CURSOR_SPEEDUP
+bool RoundCursorView::eraseCursorIfPossible() {
+  if (!m_underneathPixelBufferLoaded) {
+    return false;
+  }
+  const KDRect currentFrame = absoluteVisibleFrame();
+  if (currentFrame.isEmpty()) {
+    return false;
+  }
+  // Erase the cursor
+  KDContext * ctx = KDIonContext::sharedContext();
+  ctx->setOrigin(currentFrame.origin());
+  ctx->setClippingRect(currentFrame);
+  ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, s_cursorWorkingBuffer);
+  // TODO Restore the context to previous values?
+  return true;
+}
+#endif
 
 }

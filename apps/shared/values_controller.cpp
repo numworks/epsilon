@@ -136,30 +136,6 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 }
 
-KDCoordinate ValuesController::columnWidth(int i) {
-  switch (i) {
-    case 0:
-      return k_abscissaCellWidth;
-    default:
-      return k_ordinateCellWidth;
-  }
-}
-
-KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
-  if (i == 0) {
-    return 0;
-  } else {
-    return k_abscissaCellWidth + (i-1)*k_ordinateCellWidth;
-  }
-}
-
-int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= k_abscissaCellWidth) {
-    return 0;
-  }
-  return (offsetX - k_abscissaCellWidth)/k_ordinateCellWidth+1;
-}
-
 HighlightCell * ValuesController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   switch (type) {

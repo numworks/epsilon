@@ -17,7 +17,7 @@ ion_src += $(addprefix ion/src/shared/, \
   dummy/usb.cpp \
 )
 
-ion_src += $(addprefix ion/src/sdl/shared/, \
+ion_src += $(addprefix ion/src/simulator/shared/, \
   display.cpp \
   events_keyboard_platform.cpp \
   keyboard.cpp \
@@ -25,5 +25,5 @@ ion_src += $(addprefix ion/src/sdl/shared/, \
   layout.cpp \
 )
 
-include ion/src/sdl/$(TARGET)/Makefile
-include ion/src/sdl/external/Makefile
+include ion/src/simulator/$(TARGET)/Makefile
+include ion/src/simulator/external/Makefile

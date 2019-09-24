@@ -1,5 +1,0 @@
-TOOLCHAIN = emscripten
-USE_LIBA = 0
-ION_KEYBOARD_LAYOUT = layout_B2
-EXE = js
-EPSILON_GETOPT = 1

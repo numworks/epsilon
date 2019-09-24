@@ -1,6 +1,6 @@
 SDL_SFLAGS += -DGL_GLEXT_PROTOTYPES
 
-sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
+sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/android/SDL_androidaudio.c \
   audio/openslES/SDL_openslES.c \
   core/android/SDL_android.c \
@@ -28,7 +28,7 @@ sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
   video/android/SDL_androidwindow.c \
 )
 
-sdl_src += ion/src/sdl/external/sdl/src/hidapi/android/hid.c
+sdl_src += ion/src/simulator/external/sdl/src/hidapi/android/hid.c
 
 # Build the android native library cpufeatures
 SDL_SFLAGS += -I$(NDK_PATH)/sources/android/cpufeatures

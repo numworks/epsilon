@@ -27,12 +27,14 @@ public:
     m_largeBuffer{0},
     m_largeBufferLength(0),
     m_writeAddress(0),
-    m_bInterfaceAlternateSetting(bInterfaceAlternateSetting)
+    m_bInterfaceAlternateSetting(bInterfaceAlternateSetting),
+    m_isErasingAndWriting(false)
   {
   }
   uint32_t addressPointer() const { return m_addressPointer; }
   void wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
   void wholeDataSentCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
+  bool isErasingAndWriting() const { return m_isErasingAndWriting; }
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
@@ -151,6 +153,12 @@ private:
   bool dfuAbort(uint16_t * transferBufferLength);
   // Leave DFU
   void leaveDFUAndReset();
+  /* Erase and Write state. After starting the erase of flash memory, the user
+   * can no longer leave DFU mode by pressing the Back key of the keyboard. This
+   * way, we prevent the user from interrupting a software download. After every
+   * software download, the calculator resets, which unlocks the "exit on
+   * pressing back". */
+  void willErase() { m_isErasingAndWriting = true; }
 
   Device * m_device;
   Status m_status;
@@ -162,6 +170,7 @@ private:
   uint16_t m_largeBufferLength;
   uint32_t m_writeAddress;
   uint8_t m_bInterfaceAlternateSetting;
+  bool m_isErasingAndWriting;
 };
 
 }

@@ -70,7 +70,7 @@ bool CalculationGraphController::handleEnter() {
   return true;
 }
 
-bool CalculationGraphController::moveCursorHorizontally(int direction) {
+bool CalculationGraphController::moveCursorHorizontally(int direction, bool fast) {
   Coordinate2D<double> newPointOfInterest = computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction);
   if (std::isnan(newPointOfInterest.x1())) {
     return false;

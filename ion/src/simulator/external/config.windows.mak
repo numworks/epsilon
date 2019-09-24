@@ -1,7 +1,7 @@
-SDL_SFLAGS += -Iion/src/sdl/external/sdl/src/video/khronos
+SDL_SFLAGS += -Iion/src/simulator/external/sdl/src/video/khronos
 SDL_SFLAGS += -DHAVE_LIBC
 
-sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
+sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/directsound/SDL_directsound.c \
   audio/disk/SDL_diskaudio.c \
   audio/wasapi/SDL_wasapi.c \

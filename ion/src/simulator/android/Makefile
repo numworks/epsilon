@@ -1,10 +1,10 @@
-ion_src += $(addprefix ion/src/sdl/android/src/cpp/, \
+ion_src += $(addprefix ion/src/simulator/android/src/cpp/, \
   images.cpp \
   language.cpp \
   telemetry.cpp \
 )
 
-$(call object_for,ion/src/sdl/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
+$(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
 
 LDFLAGS += -ljnigraphics -llog
 
@@ -12,15 +12,15 @@ LDFLAGS += -ljnigraphics -llog
 # Some android resources needs to be filtered through ImageMagick. Others are
 # simply copied over.
 
-$(BUILD_DIR)/app/res/mipmap/ic_launcher.png: ion/src/sdl/assets/logo.svg | $$(@D)/.
+$(BUILD_DIR)/app/res/mipmap/ic_launcher.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background "#FFB734" $< $@
 
-$(BUILD_DIR)/app/res/mipmap-v26/ic_launcher_foreground.png: ion/src/sdl/assets/logo.svg | $$(@D)/.
+$(BUILD_DIR)/app/res/mipmap-v26/ic_launcher_foreground.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background none $< -resize 512x512 -gravity center -background none -extent 1024x1024 $@
 
-$(BUILD_DIR)/app/res/%: ion/src/sdl/android/src/res/% $$(@D)/.
+$(BUILD_DIR)/app/res/%: ion/src/simulator/android/src/res/% $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 
@@ -44,13 +44,13 @@ ifndef NDK_ABI
 NDK_ABIS = armeabi-v7a arm64-v8a x86 x86_64
 
 epsilon_apk_deps = $(patsubst %,$(BUILD_DIR)/app/libs/%/libepsilon.so,$(NDK_ABIS))
-epsilon_apk_deps += $(subst ion/src/sdl/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/sdl/android/src/res/*/*))
+epsilon_apk_deps += $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
 epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
 
 .PHONY: gradle_%
 gradle_%: $(epsilon_apk_deps)
-	@echo "GRADLE ion/src/sdl/android/build.gradle"
-	$(Q) ANDROID_HOME=/usr/local/android EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) gradle -b ion/src/sdl/android/build.gradle $*
+	@echo "GRADLE ion/src/simulator/android/build.gradle"
+	$(Q) ANDROID_HOME=/usr/local/android EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) gradle -b ion/src/simulator/android/build.gradle $*
 
 DEFAULT = epsilon.apk
 

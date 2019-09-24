@@ -1,0 +1,2 @@
+TOOLCHAIN = emscripten
+EXE = js

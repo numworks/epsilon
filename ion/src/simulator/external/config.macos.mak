@@ -1,10 +1,10 @@
 # This file is built manually by mimic-ing SDL's Xcode project
 
 SDL_SFLAGS += -fasm-blocks -fstrict-aliasing
-SDL_SFLAGS += -Iion/src/sdl/external/sdl/src/video/khronos
-SDL_SFLAGS += -Iion/src/sdl/external/sdl/src/hidapi/hidapi
+SDL_SFLAGS += -Iion/src/simulator/external/sdl/src/video/khronos
+SDL_SFLAGS += -Iion/src/simulator/external/sdl/src/hidapi/hidapi
 
-sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
+sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/coreaudio/SDL_coreaudio.m \
   audio/disk/SDL_diskaudio.c \
   file/cocoa/SDL_rwopsbundlesupport.m \

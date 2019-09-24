@@ -1,6 +1,6 @@
-SFLAGS += -Iion/src/sdl/external/sdl/include
+SFLAGS += -Iion/src/simulator/external/sdl/include
 
-sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
+sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   SDL.c \
   SDL_assert.c \
   SDL_dataqueue.c \
@@ -99,7 +99,7 @@ endif
 # Ignore warnings from external sources
 SDL_SFLAGS += -w
 
-include ion/src/sdl/external/config.$(TARGET).mak
+include ion/src/simulator/external/config.$(TARGET).mak
 
 $(call object_for,$(sdl_src)): SFLAGS += $(SDL_SFLAGS)
 

@@ -23,7 +23,12 @@ SFLAGS += -Wall
 SFLAGS += -MD -MP
 
 # Building directory
-BUILD_DIR = output/$(PLATFORM)
+ifeq ($(DEBUG),1)
+  BUILD_TYPE = debug
+else
+  BUILD_TYPE = release
+endif
+BUILD_DIR = output/$(BUILD_TYPE)/$(PLATFORM)
 
 # Define "Q" as an arobase by default to silence-out every command run by make.
 # If V=1 is supplied on the make command line, undefine Q so that every command

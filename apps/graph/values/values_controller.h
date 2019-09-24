@@ -42,6 +42,8 @@ private:
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
+  /* The paramater i should be the column index and plotTypeAtColumn changes it
+   * to be the relative column index within the sub table. */
   Shared::ContinuousFunction::PlotType plotTypeAtColumn(int * i) const;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;

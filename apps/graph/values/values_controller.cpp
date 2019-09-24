@@ -265,6 +265,7 @@ void ValuesController::updateNumberOfColumns() const {
   }
   m_numberOfColumns = 0;
   for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
+    // Count abscissa column if the sub table does exist
     m_numberOfColumnsForType[plotTypeIndex] += (m_numberOfColumnsForType[plotTypeIndex] > 0);
     m_numberOfColumns += m_numberOfColumnsForType[plotTypeIndex];
   }

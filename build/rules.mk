@@ -7,19 +7,19 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   CC, %.o, %.c, \
-  $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@, \
+  $$(CC) $$(CFLAGS) $$(SFLAGS) -c $$< -o $$@, \
   with_local_version \
 ))
 
 $(eval $(call rule_for, \
   CXX, %.o, %.cpp, \
-  $$(CXX) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@, \
+  $$(CXX) $$(CXXFLAGS) $$(SFLAGS) -c $$< -o $$@, \
   with_local_version \
 ))
 
 $(eval $(call rule_for, \
   OCC, %.o, %.m, \
-  $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
+  $$(CC) $$(CFLAGS) $$(SFLAGS) -c $$< -o $$@ \
 ))
 
 ifeq ($(OS),Windows_NT)

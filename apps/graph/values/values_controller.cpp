@@ -42,6 +42,22 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView.setDelegate(this);
 }
 
+KDCoordinate ValuesController::columnWidth(int i) {
+  ContinuousFunction::PlotType plotType = plotTypeAtColumn(&i);
+  if (i > 0 && plotType == ContinuousFunction::PlotType::Parametric) {
+    return 2*k_cellWidth;
+  }
+  return k_cellWidth;
+}
+
+KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
+  return TableViewDataSource::cumulatedWidthFromIndex(i);
+}
+
+int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
+  return TableViewDataSource::indexFromCumulatedWidth(offsetX);
+}
+
 Shared::Hideable * ValuesController::hideableCellFromType(HighlightCell * cell, int type) {
   if (type == k_notEditableValueCellType) {
     Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);

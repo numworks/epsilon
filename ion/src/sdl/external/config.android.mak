@@ -33,8 +33,8 @@ sdl_src += ion/src/sdl/external/sdl/src/hidapi/android/hid.c
 # Build the android native library cpufeatures
 SDL_SFLAGS += -I$(NDK_PATH)/sources/android/cpufeatures
 $(BUILD_DIR)/app/android/cpu-features.c: $$(@D)/.
-	@echo "COPY    $@"
-	$(V) cp $(NDK_PATH)/sources/android/cpufeatures/cpu-features.c $@
+	$(call rule_label,COPY)
+	$(Q) cp $(NDK_PATH)/sources/android/cpufeatures/cpu-features.c $@
 sdl_src += $(BUILD_DIR)/app/android/cpu-features.c
 
 LDFLAGS += -lGLESv1_CM

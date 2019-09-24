@@ -1,6 +1,7 @@
 #include "values_controller.h"
 #include <assert.h>
 #include <cmath>
+#include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
 namespace Sequence {
@@ -63,10 +64,10 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
 
-double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  Shared::ExpiringPointer<Shared::Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
-  Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  return xy.x2();
+void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) {
+  Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  Poincare::Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
+  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, bufferSize, Poincare::Preferences::LargeNumberOfSignificantDigits);
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {

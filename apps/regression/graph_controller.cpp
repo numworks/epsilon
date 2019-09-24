@@ -232,7 +232,7 @@ void GraphController::reloadBannerView() {
   m_bannerView.reload();
 }
 
-bool GraphController::moveCursorHorizontally(int direction) {
+bool GraphController::moveCursorHorizontally(int direction, bool fast) {
   if (*m_selectedDotIndex >= 0) {
     int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {

@@ -81,7 +81,7 @@ bool GraphController::handleEnter() {
   return FunctionGraphController::handleEnter();
 }
 
-bool GraphController::moveCursorHorizontally(int direction) {
+bool GraphController::moveCursorHorizontally(int direction, bool fast) {
   double xCursorPosition = std::round(m_cursor->x());
   if (direction < 0 && xCursorPosition <= 0) {
     return false;

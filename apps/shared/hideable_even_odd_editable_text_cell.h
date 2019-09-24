@@ -15,6 +15,7 @@ public:
   {}
   KDColor backgroundColor() const override;
   void setHide(bool hide) override;
+  void reinit() override { editableTextCell()->textField()->setText(""); }
 };
 
 }

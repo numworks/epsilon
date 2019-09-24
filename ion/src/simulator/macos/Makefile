@@ -1,8 +1,8 @@
-ion_src += $(addprefix ion/src/sdl/macos/, \
+ion_src += $(addprefix ion/src/simulator/macos/, \
   images.m \
 )
 
-ion_src += $(addprefix ion/src/sdl/shared/, \
+ion_src += $(addprefix ion/src/simulator/shared/, \
   apple/language.m \
   telemetry_dummy.cpp \
 )
@@ -15,9 +15,9 @@ SIMULATOR_APP_RESOURCE_PATH = Contents/Resources/
 SIMULATOR_APP_PLIST_PATH = Contents/
 SIMULATOR_ICONSET = $(BUILD_DIR)/app/assets/app.iconset
 
-include ion/src/sdl/shared/apple/Makefile
+include ion/src/simulator/shared/apple/Makefile
 
-$(call simulator_app_plist,Info.plist): ion/src/sdl/macos/Info.plist
+$(call simulator_app_plist,Info.plist): ion/src/simulator/macos/Info.plist
 	$(call rule_label,PLUTIL)
 	$(Q) cp $< $@
 	$(Q) plutil -insert "LSMinimumSystemVersion" -string "$(MACOS_MIN_VERSION)" $@

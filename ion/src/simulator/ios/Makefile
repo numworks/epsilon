@@ -1,31 +1,31 @@
-ion_src += $(addprefix ion/src/sdl/ios/, \
+ion_src += $(addprefix ion/src/simulator/ios/, \
   images.m \
 )
 
-ion_src += $(addprefix ion/src/sdl/shared/, \
+ion_src += $(addprefix ion/src/simulator/shared/, \
   apple/language.m \
 )
 
-$(call object_for,ion/src/sdl/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
+$(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
 
 GOOGLE_ANALYTICS = 1
 ifeq ($(GOOGLE_ANALYTICS),1)
 # Display a nice error if the Google Analytics SDK is not installed
-$(call object_for,ion/src/sdl/ios/telemetry.m): ion/src/sdl/ios/GoogleAnalyticsServices/GoogleAnalytics/Library/GAI.h
-ion/src/sdl/ios/GoogleAnalyticsServices/GoogleAnalytics/Library/GAI.h:
-	$(error GoogleAnalyticsServices needs to be installed in ion/src/sdl/ios/GoogleAnalyticsServices)
+$(call object_for,ion/src/simulator/ios/telemetry.m): ion/src/simulator/ios/GoogleAnalyticsServices/GoogleAnalytics/Library/GAI.h
+ion/src/simulator/ios/GoogleAnalyticsServices/GoogleAnalytics/Library/GAI.h:
+	$(error GoogleAnalyticsServices needs to be installed in ion/src/simulator/ios/GoogleAnalyticsServices)
 
-ion_src += ion/src/sdl/ios/telemetry.m
-$(call object_for,ion/src/sdl/ios/telemetry.m): SFLAGS += -Iion/src/sdl/ios/GoogleAnalyticsServices/GoogleAnalytics/Library
+ion_src += ion/src/simulator/ios/telemetry.m
+$(call object_for,ion/src/simulator/ios/telemetry.m): SFLAGS += -Iion/src/simulator/ios/GoogleAnalyticsServices/GoogleAnalytics/Library
 
 LDFLAGS += -lGoogleAnalyticsServices
 LDFLAGS += -lsqlite3
 LDFLAGS += -lz
 LDFLAGS += -framework SystemConfiguration
 LDFLAGS += -framework CoreData
-LDFLAGS += -Lion/src/sdl/ios/GoogleAnalyticsServices
+LDFLAGS += -Lion/src/simulator/ios/GoogleAnalyticsServices
 else
-ion_src += ion/src/sdl/shared/telemetry_dummy.cpp
+ion_src += ion/src/simulator/shared/telemetry_dummy.cpp
 endif
 
 # App resources
@@ -35,9 +35,9 @@ SIMULATOR_ICON_SIZES = 20x20 29x29 40x40 40x40 40x40 58x58 58x58 60x60 76x76 \
 SIMULATOR_ASSETS_PATH = $(BUILD_DIR)/app/assets/Assets.xcassets
 SIMULATOR_ICONSET = $(SIMULATOR_ASSETS_PATH)/AppIcon.appiconset
 
-include ion/src/sdl/shared/apple/Makefile
+include ion/src/simulator/shared/apple/Makefile
 
-$(call simulator_app_plist,Info.plist): ion/src/sdl/ios/Info.plist $(call simulator_app_resource,Assets.car)
+$(call simulator_app_plist,Info.plist): ion/src/simulator/ios/Info.plist $(call simulator_app_resource,Assets.car)
 	$(call rule_label,PLUTIL)
 	$(Q) cp $< $@
 	$(Q) plutil -insert "BuildMachineOSBuild" -string "$(IOS_BUILD_MACHINE_OS_BUILD)" $@
@@ -56,7 +56,7 @@ $(call simulator_app_plist,Info.plist): ion/src/sdl/ios/Info.plist $(call simula
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 
-$(call simulator_app_resource,launch.storyboardc): ion/src/sdl/ios/launch.storyboard | $$(@D)/.
+$(call simulator_app_resource,launch.storyboardc): ion/src/simulator/ios/launch.storyboard | $$(@D)/.
 	$(call rule_label,IBTOOL)
 	$(Q) $(IBTOOL) --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --compile $@ $^
 
@@ -73,7 +73,7 @@ $(BUILD_DIR)/app/entitlements.plist: $(call simulator_app_resource,embedded.mobi
 	$(call rule_label,SCMS)
 	$(Q) security cms -D -i $(IOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
 
-$(SIMULATOR_ICONSET)/Contents.json: ion/src/sdl/ios/icon_assets.json $(SIMULATOR_ICONS) | $$(@D)/.
+$(SIMULATOR_ICONSET)/Contents.json: ion/src/simulator/ios/icon_assets.json $(SIMULATOR_ICONS) | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 

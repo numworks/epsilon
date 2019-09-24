@@ -22,7 +22,7 @@ $(call simulator_app_binary,Epsilon): $(patsubst %,$(BUILD_DIR)/%/epsilon.bin,$(
 
 # Background image
 
-$(call simulator_app_resource,background.jpg): ion/src/sdl/assets/background.jpg | $$(@D)/.
+$(call simulator_app_resource,background.jpg): ion/src/simulator/assets/background.jpg | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
 
@@ -38,7 +38,7 @@ endif
 
 SIMULATOR_ICONS = $(addprefix $(SIMULATOR_ICONSET)/,$(addsuffix .png,$(addprefix icon_, $(SIMULATOR_ICON_SIZES))))
 
-$(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/sdl/assets/logo.svg | $$(@D)/.
+$(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background "#FFB734" -resize $* $< $@
 

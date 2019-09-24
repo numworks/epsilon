@@ -3,12 +3,9 @@ ION_KEYBOARD_LAYOUT = layout_B2
 EPSILON_GETOPT = 1
 
 SFLAGS += -fPIE
-EXE = elf
 
-ifndef MODEL
-  $(error MODEL should be defined)
-endif
+TARGET ?= $(HOST)
 
-BUILD_DIR := $(BUILD_DIR)/$(MODEL)
+BUILD_DIR := $(BUILD_DIR)/$(TARGET)
 
-include build/platform.sdl.$(MODEL).mak
+include build/platform.sdl.$(TARGET).mak

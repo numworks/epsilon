@@ -1,4 +1,4 @@
-TOOLCHAIN ?= android
+TOOLCHAIN = android
 EXE = so
 
 ifdef NDK_ABI

@@ -27,6 +27,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     jumpToLeftRightCurve(t, direction, functionsCount, record);
     return true;
   }
+  function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
   double dir = (direction > 0 ? 1.0 : -1.0);
   ContinuousFunction::PlotType type = function->plotType();
   if (type == ContinuousFunction::PlotType::Cartesian) {

@@ -1,5 +1,6 @@
 #include "values_controller.h"
 #include <assert.h>
+#include "../../shared/poincare_helpers.h"
 #include "../../constant.h"
 #include "../app.h"
 
@@ -95,28 +96,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     bool isDerivative = false;
     Ion::Storage::Record record = recordAtColumn(i, &isDerivative);
     Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-    if (function->plotType() == ContinuousFunction::PlotType::Parametric) {
-      bool isX = false;
-      if (i+1 < numberOfColumns() && typeAtLocation(i+1,j) == k_functionTitleCellType) {
-        isX = recordAtColumn(i+1) == record;
-        function = functionStore()->modelForRecord(record); // To pass Expiring pointer assertions
-      }
-      if (isX) {
-        // This is the parametric function x column title
-        function->name(bufferName, bufferNameSize);
-        myFunctionCell->setHorizontalAlignment(1.0f);
-      } else {
-        // This is the parametric function y column title
-        myFunctionCell->setHorizontalAlignment(0.0f);
-        strlcpy(bufferName, "(t)", bufferNameSize);
-      }
+    myFunctionCell->setHorizontalAlignment(0.5f);
+    if (isDerivative) {
+      function->derivativeNameWithArgument(bufferName, bufferNameSize);
     } else {
-      myFunctionCell->setHorizontalAlignment(0.5f);
-      if (isDerivative) {
-        function->derivativeNameWithArgument(bufferName, bufferNameSize);
-      } else {
-        function->nameWithArgument(bufferName, bufferNameSize);
-      }
+      function->nameWithArgument(bufferName, bufferNameSize);
     }
     myFunctionCell->setText(bufferName);
     myFunctionCell->setColor(function->color());
@@ -175,8 +159,7 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   ContinuousFunction::PlotType plotType = f->plotType();
   return 1 +
-    (plotType == ContinuousFunction::PlotType::Cartesian && f->displayDerivative()) +
-    (plotType == ContinuousFunction::PlotType::Parametric);
+    (plotType == ContinuousFunction::PlotType::Cartesian && f->displayDerivative());
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
@@ -228,23 +211,37 @@ ViewController * ValuesController::functionParameterController() {
   return &m_functionParameterController;
 }
 
-double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
+void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) {
   bool isDerivative = false;
+  double evaluationX = NAN;
+  double evaluationY = NAN;
   Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
   Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
+  bool isParametric = function->plotType() == ContinuousFunction::PlotType::Parametric;
   if (isDerivative) {
-    return function->approximateDerivative(abscissa, context);
+    evaluationY = function->approximateDerivative(abscissa, context);
+  } else {
+    Poincare::Coordinate2D<double> eval = function->evaluate2DAtParameter(abscissa, context);
+    evaluationY = eval.x2();
+    if (isParametric) {
+      evaluationX = eval.x1();
+    }
   }
-  Poincare::Coordinate2D<double> eval = function->evaluate2DAtParameter(abscissa, context);
-  if (function->plotType() != ContinuousFunction::PlotType::Parametric
-      || (columnIndex == numberOfColumns() - 1
-        || !((typeAtLocation(columnIndex+1, 0) == k_functionTitleCellType)
-          && recordAtColumn(columnIndex+1) == record)))
-  {
-    return eval.x2();
+  int numberOfChar = 0;
+  if (isParametric) {
+    assert(numberOfChar < bufferSize-1);
+    buffer[numberOfChar++] = '(';
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+    assert(numberOfChar < bufferSize-1);
+    buffer[numberOfChar++] = ';';
   }
-  return eval.x1();
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+  if (isParametric) {
+    assert(numberOfChar+1 < bufferSize-1);
+    buffer[numberOfChar++] = ')';
+    buffer[numberOfChar] = 0;
+  }
 }
 
 void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {

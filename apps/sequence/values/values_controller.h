@@ -22,7 +22,7 @@ public:
 private:
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
-  double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;
+  void printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   int maxNumberOfCells() override { return k_maxNumberOfCells; }

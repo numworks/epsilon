@@ -41,6 +41,16 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView.setDelegate(this);
 }
 
+Shared::Hideable * ValuesController::hideableCellFromType(HighlightCell * cell, int type) {
+  if (type == k_notEditableValueCellType) {
+    Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
+    return static_cast<Shared::Hideable *>(myCell);
+  }
+  assert(type == k_editableValueCellType);
+  Shared::StoreCell * myCell = static_cast<Shared::StoreCell *>(cell);
+  return static_cast<Shared::Hideable *>(myCell);
+}
+
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle hidden cells
   int typeAtLoc = typeAtLocation(i,j);
@@ -51,38 +61,27 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
 
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > numberOfElementsInCol + 1) {
-    if (typeAtLoc == k_notEditableValueCellType) {
-      Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
-      myCell->setHide(true);
-      myCell->setText("");
-    } else if (typeAtLoc == k_editableValueCellType) {
-      StoreCell * myCell = static_cast<StoreCell *>(cell);
-      myCell->editableTextCell()->textField()->setText("");
-      myCell->setHide(true);
+    if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
+      Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
+      hideableCell->setHide(true);
+      hideableCell->reinit();
     }
     return;
   } else {
-    if (typeAtLoc == k_notEditableValueCellType) {
-      Shared::Hideable * myCell = static_cast<Shared::Hideable *>(static_cast<Shared::HideableEvenOddBufferTextCell *>(cell));
-      myCell->setHide(false);
-    } else if (typeAtLoc == k_editableValueCellType) {
-      StoreCell * myCell = static_cast<StoreCell *>(cell);
-      myCell->setHide(false);
+    if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
+      hideableCellFromType(cell, typeAtLoc)->setHide(false);
     }
   }
   if (j == numberOfElementsInCol+1) {
     static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
-    if (typeAtLoc == k_notEditableValueCellType) {
-      Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
-      myCell->setText("");
-    } else if (typeAtLoc == k_editableValueCellType) {
-      StoreCell * myCell = static_cast<StoreCell *>(cell);
-      myCell->editableTextCell()->textField()->setText("");
+    if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
+      hideableCellFromType(cell, typeAtLoc)->reinit();
     }
     return;
   }
 
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
+
   if (typeAtLoc == k_abscissaTitleCellType) {
     AbscissaTitleCell * myTitleCell = (AbscissaTitleCell *)cell;
     myTitleCell->setMessage(valuesParameterMessageAtColumn(i));

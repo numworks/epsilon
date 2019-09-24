@@ -5,6 +5,7 @@ namespace Ion {
 namespace Events {
 
 static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
+static bool sLongRepetition = false;
 
 ShiftAlphaStatus shiftAlphaStatus() {
   return sShiftAlphaStatus;
@@ -16,7 +17,14 @@ bool isShiftActive() {
 
 bool isAlphaActive() {
   return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
-;
+}
+
+void setLongRepetition(bool longRepetition) {
+ sLongRepetition = longRepetition;
+}
+
+bool isLongRepetition() {
+ return sLongRepetition;
 }
 
 void setShiftAlphaStatus(ShiftAlphaStatus s) {

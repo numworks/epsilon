@@ -2,7 +2,7 @@
 
 SDL_SFLAGS += -fasm-blocks -fstrict-aliasing -fobjc-arc
 
-sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
+sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/coreaudio/SDL_coreaudio.m \
   file/cocoa/SDL_rwopsbundlesupport.m \
   filesystem/cocoa/SDL_sysfilesystem.m \

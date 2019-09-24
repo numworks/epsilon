@@ -85,8 +85,19 @@ void TitleBarView::refreshPreferences() {
   char buffer[bufferSize];
   int numberOfChar = 0;
   Preferences * preferences = Preferences::sharedPreferences();
-  if (preferences->displayMode() == Preferences::PrintFloatMode::Scientific) {
-    numberOfChar += strlcpy(buffer, I18n::translate(I18n::Message::Sci), bufferSize);
+  {
+    // Display Sci/ or Eng/ if the print float mode is not decimal
+    const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
+    if (printFloatMode != Preferences::PrintFloatMode::Decimal) {
+      // Check that there is no new print float mode, otherwise add its message
+      assert(printFloatMode == Preferences::PrintFloatMode::Scientific
+          || printFloatMode == Preferences::PrintFloatMode::Engineering);
+      I18n::Message printMessage = printFloatMode == Preferences::PrintFloatMode::Scientific ? I18n::Message::Sci : I18n::Message::Eng;
+      numberOfChar += strlcpy(buffer, I18n::translate(printMessage), bufferSize);
+      assert(numberOfChar < bufferSize-1);
+      assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
+      buffer[numberOfChar++] = '/';
+    }
   }
   assert(numberOfChar <= bufferSize);
   if (preferences->angleUnit() == Preferences::AngleUnit::Radian) {

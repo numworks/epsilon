@@ -1,5 +1,6 @@
 #include "python_text_area.h"
 #include "app.h"
+#include <ion/unicode/utf8_helper.h>
 
 extern "C" {
 #include "py/nlr.h"
@@ -39,40 +40,15 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   return KDColorBlack;
 }
 
-static inline size_t TokenLength(mp_lexer_t * lex) {
-  if (lex->tok_kind == MP_TOKEN_STRING) {
-    return lex->vstr.len + 2;
+static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
+  /* The lexer stores the beginning of the current token and of the next token,
+   * so we just use that. */
+  if (lex->line > 1) {
+    /* The next token is on the next line, so we cannot just make the difference
+     * of the columns. */
+    return UTF8Helper::CodePointSearch(tokenPosition, '\n') - tokenPosition;
   }
-  if (lex->vstr.len > 0) {
-    return lex->vstr.len;
-  }
-  switch (lex->tok_kind) {
-    case MP_TOKEN_OP_DBL_STAR:
-    case MP_TOKEN_OP_DBL_SLASH:
-    case MP_TOKEN_OP_DBL_LESS:
-    case MP_TOKEN_OP_DBL_MORE:
-    case MP_TOKEN_OP_LESS_EQUAL:
-    case MP_TOKEN_OP_MORE_EQUAL:
-    case MP_TOKEN_OP_DBL_EQUAL:
-    case MP_TOKEN_OP_NOT_EQUAL:
-    case MP_TOKEN_DEL_PLUS_EQUAL:
-    case MP_TOKEN_DEL_MINUS_EQUAL:
-    case MP_TOKEN_DEL_STAR_EQUAL:
-    case MP_TOKEN_DEL_SLASH_EQUAL:
-    case MP_TOKEN_DEL_PERCENT_EQUAL:
-    case MP_TOKEN_DEL_AMPERSAND_EQUAL:
-    case MP_TOKEN_DEL_PIPE_EQUAL:
-    case MP_TOKEN_DEL_CARET_EQUAL:
-    case MP_TOKEN_DEL_MINUS_MORE:
-      return 2;
-    case MP_TOKEN_DEL_DBL_SLASH_EQUAL:
-    case MP_TOKEN_DEL_DBL_MORE_EQUAL:
-    case MP_TOKEN_DEL_DBL_LESS_EQUAL:
-    case MP_TOKEN_DEL_DBL_STAR_EQUAL:
-      return 3;
-    default:
-      return 1;
-  }
+  return lex->column - lex->tok_column;
 }
 
 void PythonTextArea::ContentView::loadSyntaxHighlighter() {
@@ -133,7 +109,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END) {
 
       tokenFrom = firstNonSpace + lex->tok_column - 1;
-      tokenLength = TokenLength(lex);
+      tokenLength = TokenLength(lex, tokenFrom);
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
         UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),

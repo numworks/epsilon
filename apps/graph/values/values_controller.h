@@ -20,6 +20,9 @@ public:
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override {
     return const_cast<Button *>(&m_setIntervalButton);
   }
+  KDCoordinate columnWidth(int i) override;
+  KDCoordinate cumulatedWidthFromIndex(int i) override;
+  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   int typeAtLocation(int i, int j) override;
   I18n::Message emptyMessage() override;
@@ -31,6 +34,7 @@ public:
   }
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
+  static constexpr KDCoordinate k_cellWidth = 100;
   constexpr static int k_maxNumberOfFunctions = 5;
   constexpr static int k_maxNumberOfAbscissaCells = Shared::CartesianFunction::k_numberOfPlotTypes * k_maxNumberOfRows;
   constexpr static int k_maxNumberOfCells = k_maxNumberOfFunctions * k_maxNumberOfRows;

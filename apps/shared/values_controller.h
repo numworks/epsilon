@@ -24,9 +24,6 @@ public:
   virtual IntervalParameterController * intervalParameterController() = 0;
   int numberOfButtons(ButtonRowController::Position) const override;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  KDCoordinate columnWidth(int i) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
@@ -34,8 +31,6 @@ public:
   Responder * defaultController() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  static constexpr KDCoordinate k_abscissaCellWidth = 108;
-  static constexpr KDCoordinate k_ordinateCellWidth = 108;
 
 protected:
   static constexpr int k_abscissaTitleCellType = 0;

@@ -96,7 +96,10 @@ else
 SDL_SFLAGS += -DSDL_ASSERT_LEVEL=0
 endif
 
-include ion/src/sdl/external/config.$(MODEL).mak
+# Ignore warnings from external sources
+SDL_SFLAGS += -w
+
+include ion/src/sdl/external/config.$(TARGET).mak
 
 $(call object_for,$(sdl_src)): SFLAGS += $(SDL_SFLAGS)
 

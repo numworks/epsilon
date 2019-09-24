@@ -12,6 +12,7 @@ ESCHER_LOG_EVENTS_BINARY ?= 0
 
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak
+
 ifndef USE_LIBA
   $(error platform.mak should define USE_LIBA)
 endif
@@ -23,3 +24,11 @@ include build/toolchain.$(TOOLCHAIN).mak
 SFLAGS += -DDEBUG=$(DEBUG)
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)
 SFLAGS += -DESCHER_LOG_EVENTS_BINARY=$(ESCHER_LOG_EVENTS_BINARY)
+
+# Build type (Debug or Release)
+ifeq ($(DEBUG),1)
+  BUILD_TYPE = debug
+else
+  BUILD_TYPE = release
+endif
+BUILD_DIR := $(BUILD_DIR)/$(BUILD_TYPE)

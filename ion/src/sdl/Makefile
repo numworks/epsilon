@@ -25,5 +25,5 @@ ion_src += $(addprefix ion/src/sdl/shared/, \
   layout.cpp \
 )
 
-include ion/src/sdl/$(MODEL)/Makefile
+include ion/src/sdl/$(TARGET)/Makefile
 include ion/src/sdl/external/Makefile

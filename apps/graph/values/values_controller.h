@@ -47,8 +47,8 @@ private:
   Shared::ContinuousFunction::PlotType plotTypeAtColumn(int * i) const;
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
-  double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;
   Shared::Hideable * hideableCellFromType(HighlightCell * cell, int type);
+  void printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) override;
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;

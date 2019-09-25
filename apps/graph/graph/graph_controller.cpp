@@ -120,14 +120,32 @@ float GraphController::interestingXHalfRange() const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   CartesianFunctionStore * store = functionStore();
   int nbActiveFunctions = store->numberOfActiveFunctions();
+  double tMin = INFINITY;
+  double tMax = -INFINITY;
   for (int i = 0; i < nbActiveFunctions; i++) {
     ExpiringPointer<CartesianFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
     }
+    // Compute the combined range of the functions
+    assert(f->plotType() == CartesianFunction::PlotType::Cartesian); // So that tMin tMax represents xMin xMax
+    tMin = minDouble(tMin, f->tMin());
+    tMax = maxDouble(tMax, f->tMax());
   }
-  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : InteractiveCurveViewRangeDelegate::interestingXHalfRange());
+  constexpr float rangeMultiplicator = 1.6f;
+  if (characteristicRange > 0.0f ) {
+    return rangeMultiplicator * characteristicRange;
+  }
+  float defaultXHalfRange = InteractiveCurveViewRangeDelegate::interestingXHalfRange();
+  assert(tMin <= tMax);
+  if (tMin >= -defaultXHalfRange && tMax <= defaultXHalfRange) {
+    /* If the combined Range of the functions is smaller than the default range,
+     * use it. */
+    float f = rangeMultiplicator * (float)maxDouble(std::fabs(tMin), std::fabs(tMax));
+    return (std::isnan(f) || std::isinf(f)) ? defaultXHalfRange : f;
+  }
+  return defaultXHalfRange;
 }
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {

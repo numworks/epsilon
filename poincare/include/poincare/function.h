@@ -38,7 +38,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowReplaceReplaceableSymbols(Context * context) override;
+  Expression shallowReplaceReplaceableSymbols(Context * context, bool * didReplace) override;
   LayoutShape leftLayoutShape() const override { return strlen(m_name) > 1 ? LayoutShape::MoreLetters : LayoutShape::OneLetter; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
@@ -57,7 +57,7 @@ public:
   // Simplification
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowReplaceReplaceableSymbols(Context * context);
+  Expression shallowReplaceReplaceableSymbols(Context * context, bool * didReplace);
 private:
   //VariableContext unknownXContext(Context & parentContext) const;
 };

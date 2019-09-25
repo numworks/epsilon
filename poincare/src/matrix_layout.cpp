@@ -122,12 +122,36 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   if (bufferSize == 1) {
     return 0;
   }
+
+  // Write the opening bracket
   int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '[');
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-  int maxRowIndex = hasGreySquares() ? m_numberOfRows - 1 : m_numberOfRows;
+  /* Do not serialize the outmost lines if they are empty: compute the first and
+   * last lines to serialize. */
+  int minRowIndex = 0;
+  bool matrixIsEmpty = true;
+  for (int i = 0; i < m_numberOfRows; i++) {
+    if (!isRowEmpty(i)) {
+      minRowIndex = i;
+      matrixIsEmpty = false;
+      break;
+    }
+  }
+  assert(m_numberOfRows > 0);
+  int maxRowIndex = m_numberOfRows - 1;
+  if (!matrixIsEmpty) {
+    for (int i = m_numberOfRows - 1; i >= 0; i--) {
+      if (!isRowEmpty(i)) {
+        maxRowIndex = i;
+        break;
+      }
+    }
+  }
+
+  // Serialize the vectors
   int maxColumnIndex = hasGreySquares() ? m_numberOfColumns - 2 :  m_numberOfColumns - 1;
-  for (int i = 0; i < maxRowIndex; i++) {
+  for (int i = minRowIndex; i <= maxRowIndex; i++) {
     numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '[');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
@@ -137,6 +161,8 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
     numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ']');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
+
+  // Write the final closing bracket
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ']');
   return minInt(numberOfChar, bufferSize-1);
 }

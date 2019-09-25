@@ -3,6 +3,7 @@
 
 #include <escher/even_odd_cell.h>
 #include <escher/buffer_text_view.h>
+#include <escher/metric.h>
 
 class EvenOddBufferTextCell : public EvenOddCell {
 public:
@@ -22,7 +23,7 @@ public:
   void setText(const char * textContent);
   void setTextColor(KDColor textColor);
 protected:
-  static constexpr KDCoordinate k_horizontalMargin = 2;
+  static constexpr KDCoordinate k_horizontalMargin = Metric::CellMargin;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

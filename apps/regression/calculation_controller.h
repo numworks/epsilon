@@ -67,7 +67,6 @@ private:
   static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(150, k_minCalculationCellWidth); // Should hold aX^3+bX^2+cX+d
   static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(195, k_minCalculationCellWidth ); // Should hold ? aX^4+bX^3+c*X^2+dX+e
   static constexpr KDCoordinate k_margin = 8;
-  static constexpr KDCoordinate k_r2CellMargin = 2;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }

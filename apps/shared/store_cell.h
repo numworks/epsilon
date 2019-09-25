@@ -15,7 +15,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews() override;
 private:
-  static constexpr KDCoordinate k_rightMargin = 2;
+  static constexpr KDCoordinate k_rightMargin = Metric::CellMargin;
   void didSetSeparator() override;
 };
 

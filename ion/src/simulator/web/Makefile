@@ -7,6 +7,10 @@ SFLAGS += -DUSING_GENERATED_CONFIG_H
 # which is added later on in the SDL Makefile
 SFLAGS += -Iion/src/simulator/web/include
 
+# Only render the screen, not the whole calculator which will be drawn in HTML
+$(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_SCREEN_ONLY=1
+
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  language_dummy.cpp \
   telemetry_dummy.cpp \
 )

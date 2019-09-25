@@ -1,7 +1,7 @@
 # Compare
 
-executables += libepsilon_first libepsilon_second
-extensions += .o
+HANDY_TARGETS += libepsilon_first libepsilon_second
+HANDY_TARGETS_EXTENSIONS += o
 
 $(eval $(call rules_for_targets,compare,))
 

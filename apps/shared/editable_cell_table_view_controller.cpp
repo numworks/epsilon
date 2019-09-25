@@ -78,14 +78,15 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
     assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits)];
+    const int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+    char buffer[bufferSize];
     // Special case 1: last row
     if (j == numberOfElementsInColumn(i) + 1) {
       /* Display an empty line only if there is enough space for a new element in
        * data */
       buffer[0] = 0;
     } else {
-      PrintFloat::ConvertFloatToText<double>(dataAtLocation(i, j), buffer, cellBufferSize(i), Preferences::LargeNumberOfSignificantDigits, floatDisplayMode);
+      PrintFloat::ConvertFloatToText<double>(dataAtLocation(i, j), buffer, bufferSize, Preferences::LargeNumberOfSignificantDigits, floatDisplayMode);
     }
     myEditableValueCell->editableTextCell()->textField()->setText(buffer);
   }

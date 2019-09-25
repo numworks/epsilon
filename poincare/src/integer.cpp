@@ -166,7 +166,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
     return 0;
   }
   if (isOverflow()) {
-    return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
   }
 
   Integer base(10);
@@ -185,7 +185,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
         d.quotient.isZero())) {
     char c = char_from_digit(d.remainder.isZero() ? 0 : d.remainder.digit(0));
     if (length >= bufferSize-1) {
-      return PrintFloat::ConvertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
+      return PrintFloat::ConvertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
     }
     length += SerializationHelper::CodePoint(buffer + length, bufferSize - length, c);
     d = udiv(d.quotient, base);

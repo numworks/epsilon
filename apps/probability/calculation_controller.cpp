@@ -180,9 +180,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       return;
     }
     constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-    constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
-    PrintFloat::ConvertFloatToText<double>(m_calculation->parameterAtIndex(i-1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+    // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using scientific mode
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(m_calculation->parameterAtIndex(i-1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     field->setText(buffer);
   }
 }
@@ -283,9 +284,9 @@ void CalculationController::updateTitle() {
       break;
     }
     constexpr int precision = Preferences::ShortNumberOfSignificantDigits;
-    constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
-    PrintFloat::ConvertFloatToText<double>(m_distribution->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(m_distribution->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     currentChar += strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;

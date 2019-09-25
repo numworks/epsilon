@@ -20,7 +20,7 @@ public:
 protected:
   View * subviewAtIndex(int index) override;
 private:
-  constexpr static KDCoordinate k_abscissaBufferSize = Poincare::PrintFloat::k_maxFloatBufferSize;
+  constexpr static KDCoordinate k_abscissaBufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   BufferTextView m_abscissaSymbol;
   TextField m_abscissaValue;

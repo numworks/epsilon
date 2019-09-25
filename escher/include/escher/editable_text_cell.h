@@ -32,7 +32,7 @@ public:
 private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   TextField m_textField;
-  char m_textBody[Poincare::PrintFloat::k_maxFloatBufferSize];
+  char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;

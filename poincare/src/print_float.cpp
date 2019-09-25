@@ -100,7 +100,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char * buffer, int bufferLength, Lon
    * in first position. When called by ConvertFloatToText, the buffer length is
    * always > 0 as we asserted a minimal number of available chars. */
   assert(bufferLength > 0 && decimalMarkerPosition != 0);
-  constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferSize;
+  constexpr int tempBufferSize = PrintFloat::k_maxFloatCharSize;
   char tempBuffer[tempBufferSize];
   int intLength = i.serialize(tempBuffer, tempBufferSize);
   int firstDigitChar = UTF8Helper::CodePointIs(tempBuffer, '-') ? 1 : 0;
@@ -128,30 +128,30 @@ void PrintFloat::PrintLongWithDecimalMarker(char * buffer, int bufferLength, Lon
 }
 
 template <class T>
-int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
+PrintFloat::TextLengths PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize, int glyphLength,
     int numberOfSignificantDigits, Preferences::PrintFloatMode mode)
 {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
 
-  /* Truncate the buffer if needed.
+  /* Assert that the glyphLength is capped.
    * Example: 1+1.234E-30+... in decimal mode, because we do not want the fill
    * the buffer with the decimal version of 1.234E-30. */
-  int truncatedBufferSize = minInt(PrintFloat::k_maxFloatBufferSize, bufferSize);
+  assert(glyphLength < k_maxFloatGlyphLength);
 
-  int numberOfZerosRemoved = 0;
-  int requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
+  TextLengths requiredLengths = ConvertFloatToTextPrivate(f, buffer, bufferSize, glyphLength, numberOfSignificantDigits, mode);
   /* If the required buffer size overflows the buffer size, we force the display
    * mode to scientific. */
-  if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= truncatedBufferSize) {
-    requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
+  if (mode == Preferences::PrintFloatMode::Decimal && (requiredLengths.CharLength > bufferSize - 1 || requiredLengths.GlyphLength > glyphLength)) {
+    requiredLengths = ConvertFloatToTextPrivate(f, buffer, bufferSize, glyphLength, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific);
   }
 
-  if (requiredLength >= truncatedBufferSize) {
+  if (requiredLengths.CharLength > bufferSize - 1 || requiredLengths.GlyphLength > glyphLength) {
     buffer[0] = 0;
-    return 0;
+    /* We still return the required sizes even if we could not write the float
+     * in the buffer in order to indicate that we overflew the buffer. */
   }
-  return requiredLength;
+  return requiredLengths;
 }
 
 int PrintFloat::EngineeringExponentFromBase10Exponent(int exponent) {
@@ -163,37 +163,43 @@ int PrintFloat::EngineeringExponentFromBase10Exponent(int exponent) {
 }
 
 template <class T>
-int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros) {
+PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int glyphLength, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
+  assert(glyphLength > 0 && glyphLength < k_maxFloatGlyphLength);
+  int availableCharLength = minInt(bufferSize-1, glyphLength);
+  TextLengths exceptionResult = {.CharLength = bufferSize, .GlyphLength = glyphLength+1};
   //TODO: accelerate for f between 0 and 10 ?
   if (std::isinf(f)) {
     // Infinity
     bool writeMinusSign = f < 0;
     assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
-    int requiredLength = (writeMinusSign ? 1 : 0) + Infinity::NameSize() - 1;
-    if (requiredLength > bufferSize - 1) {
+    int requiredCharLength = (writeMinusSign ? 1 : 0) + Infinity::NameSize() - 1;
+    TextLengths requiredTextLengths = {.CharLength = requiredCharLength, .GlyphLength = requiredCharLength};
+    if (requiredCharLength > availableCharLength) {
       // We will not be able to print
-      return requiredLength;
+      return requiredTextLengths;
     }
     // Write inf or -inf
     int currentChar = 0;
     if (f < 0) {
-      currentChar+= SerializationHelper::CodePoint(buffer, bufferSize, '-');
+      currentChar += SerializationHelper::CodePoint(buffer, bufferSize, '-');
     }
     assert(bufferSize - currentChar > 0);
     strlcpy(buffer+currentChar, Infinity::Name(), bufferSize-currentChar);
-    return requiredLength;
+    return requiredTextLengths;
   }
 
   if (std::isnan(f)) {
     // Nan
-    constexpr int requiredLength = Undefined::NameSize() - 1;
-    if (requiredLength - 1 > bufferSize - 1) {
+    constexpr int requiredCharLength = Undefined::NameSize() - 1;
+    constexpr TextLengths requiredTextLengths = {.CharLength = requiredCharLength, .GlyphLength = requiredCharLength};
+    if (requiredCharLength > availableCharLength) {
       // We will not be able to print
-      return requiredLength;
+      return requiredTextLengths;
     }
-    return strlcpy(buffer, Undefined::Name(), bufferSize);
+    strlcpy(buffer, Undefined::Name(), bufferSize);
+    return requiredTextLengths;
   }
 
   int exponentInBase10 = IEEE754<T>::exponentBase10(f);
@@ -227,7 +233,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
      * displaying 12345 with 2 significant digis in Decimal mode for instance.
      * This exception is caught by ConvertFloatToText and forces the mode to
      * Scientific */
-    return bufferSize + 1;
+    return exceptionResult;
   }
 
   // Correct the number of digits in mantissa after rounding
@@ -275,9 +281,6 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
         assert(mantissa < 1000);
         Long::MultiplySmallLongByTen(dividend);
       }
-      if (numberOfRemovedZeros != nullptr) {
-        *numberOfRemovedZeros = -numberOfZeroesToAdd;
-      }
     }
   }
   if (removeZeroes) {
@@ -298,12 +301,9 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
       Long::DivisionByTen(dividend, &quotient, &digit);
       numberOfZerosRemoved++;
     }
-    if (numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
+    if (numberOfCharsForMantissaWithoutSign > availableCharLength) {
       // Escape now if the true number of needed digits is not required
-      return bufferSize + 1;
-    }
-    if (numberOfRemovedZeros != nullptr) {
-      *numberOfRemovedZeros = numberOfZerosRemoved;
+      return exceptionResult;
     }
   }
 
@@ -317,9 +317,9 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
   }
-  if (numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
+  if (numberOfCharsForMantissaWithoutSign > availableCharLength) {
     // Escape now if the true number of needed digits is not required
-    return bufferSize + 1;
+    return exceptionResult;
   }
 
   /* Find the position of the decimal marker position */
@@ -340,9 +340,9 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   /* Part III: Sign */
 
   int numberOfCharsForMantissaWithSign = numberOfCharsForMantissaWithoutSign + (f >= 0 ? 0 : 1);
-  if (numberOfCharsForMantissaWithSign > bufferSize - 1) {
+  if (numberOfCharsForMantissaWithSign > availableCharLength) {
     // Exception 2: we will overflow the buffer
-    return bufferSize + 1;
+    return exceptionResult;
   }
 
   /* Part IV: Exponent */
@@ -360,15 +360,20 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   // Print mantissa
   bool doNotWriteExponent = (mode == Preferences::PrintFloatMode::Decimal) || (exponent == 0);
-  int neededNumberOfChars = numberOfCharsForMantissaWithSign + (doNotWriteExponent ? 0 : UTF8Decoder::CharSizeOfCodePoint(UCodePointLatinLetterSmallCapitalE) + numberOfCharExponent);
-  if (neededNumberOfChars > bufferSize - 1) {
+  int neededNumberOfChars = numberOfCharsForMantissaWithSign;
+  int neededNumberOfGlyphs = numberOfCharsForMantissaWithSign;
+  if (!doNotWriteExponent) {
+    neededNumberOfChars += UTF8Decoder::CharSizeOfCodePoint(UCodePointLatinLetterSmallCapitalE) + numberOfCharExponent;
+    neededNumberOfGlyphs += 1 + numberOfCharExponent;
+  }
+  if (neededNumberOfChars > bufferSize - 1 || neededNumberOfGlyphs > glyphLength) {
     // Exception 3: We are about to overflow the buffer.
-    return neededNumberOfChars;
+    return exceptionResult;
   }
   PrintLongWithDecimalMarker(buffer, numberOfCharsForMantissaWithSign, dividend, decimalMarkerPosition);
   if (doNotWriteExponent) {
     buffer[numberOfCharsForMantissaWithSign] = 0;
-    return numberOfCharsForMantissaWithSign;
+    return {.CharLength = numberOfCharsForMantissaWithSign, .GlyphLength = numberOfCharsForMantissaWithSign};
   }
   // Print exponent
   assert(numberOfCharsForMantissaWithSign < bufferSize);
@@ -378,10 +383,10 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   PrintLongWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, dividend, -1);
   buffer[currentNumberOfChar + numberOfCharExponent] = 0;
   assert(neededNumberOfChars == currentNumberOfChar + numberOfCharExponent);
-  return currentNumberOfChar + numberOfCharExponent;
+  return {.CharLength = currentNumberOfChar + numberOfCharExponent, .GlyphLength = numberOfCharsForMantissaWithSign + 1 + numberOfCharExponent};
 }
 
-template int PrintFloat::ConvertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode);
-template int PrintFloat::ConvertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode);
+template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<float>(float, char*, int, int, int, Preferences::Preferences::PrintFloatMode);
+template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<double>(double, char*, int, int, int, Preferences::Preferences::PrintFloatMode);
 
 }

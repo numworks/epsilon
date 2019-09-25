@@ -1,6 +1,7 @@
 #include "battery_test_controller.h"
 #include <apps/shared/post_and_hardware_tests.h>
 #include "app.h"
+#include <apps/shared/poincare_helpers.h>
 extern "C" {
 #include <assert.h>
 }
@@ -8,6 +9,7 @@ extern "C" {
 #include <poincare/preferences.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace HardwareTest {
 
@@ -43,12 +45,12 @@ void BatteryTestController::viewWillAppear() {
 
 void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryCharging) {
   constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr int sizeForPrecision = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  constexpr int sizeForPrecision = PrintFloat::charSizeForFloatsWithPrecision(precision);
   constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferLevel[bufferLevelSize];
   const char * legend = "Battery level: ";
   int legendLength = strlcpy(bufferLevel, legend, bufferLevelSize);
-  PrintFloat::ConvertFloatToText<float>(batteryLevel, bufferLevel+legendLength, sizeForPrecision, precision, Preferences::PrintFloatMode::Decimal);
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(batteryLevel, bufferLevel+legendLength, sizeForPrecision, precision, Preferences::PrintFloatMode::Decimal);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
   constexpr size_t bufferChargingSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;

@@ -121,9 +121,9 @@ void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell * cell, 
     return;
   }
   constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
-  PrintFloat::ConvertFloatToText<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
   myCell->setAccessoryText(buffer);
 }
 

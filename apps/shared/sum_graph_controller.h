@@ -56,7 +56,7 @@ private:
     void setEditableZone(double d);
     void setSumSymbol(Step step, double start, double end, double result, Poincare::Layout functionLayout);
   private:
-    constexpr static KDCoordinate k_editableZoneBufferSize = Poincare::PrintFloat::k_maxFloatBufferSize;
+    constexpr static KDCoordinate k_editableZoneBufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static const KDFont * k_font = KDFont::SmallFont;
     static KDCoordinate editableZoneWidth() { return 12*k_font->glyphSize().width(); }

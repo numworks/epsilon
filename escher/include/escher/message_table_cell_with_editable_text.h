@@ -30,7 +30,7 @@ public:
 private:
   void layoutSubviews() override;
   TextField m_textField;
-  char m_textBody[Poincare::PrintFloat::k_maxFloatBufferSize];
+  char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };
 
 #endif

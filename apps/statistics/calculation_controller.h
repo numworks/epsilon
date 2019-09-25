@@ -55,7 +55,7 @@ private:
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 175;
   // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
-  static constexpr KDCoordinate k_calculationCellWidth = 7*(Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits));
+  static constexpr KDCoordinate k_calculationCellWidth = 7*(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits));
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
 

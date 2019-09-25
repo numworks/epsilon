@@ -51,12 +51,12 @@ void BoxController::reloadBannerView() {
   // Set calculation result
   assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
   constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-  constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision) + 1;
+  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision) + 1;
   char buffer[bufferSize];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeriesIndex());
-  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize - 1, precision);
+  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
   buffer[numberOfChar++] = ' ';
   assert(numberOfChar <= bufferSize - 1);
   buffer[numberOfChar] = 0;

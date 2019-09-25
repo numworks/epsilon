@@ -63,7 +63,7 @@ private:
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
-  static constexpr KDCoordinate k_minCalculationCellWidth = 7*2*(Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)); //Calculation width should at least be able to hold to numbers with LargeNumberOfSignificantDigits.
+  static constexpr KDCoordinate k_minCalculationCellWidth = 7*2*(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)); //Calculation width should at least be able to hold to numbers with LargeNumberOfSignificantDigits.
   static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(150, k_minCalculationCellWidth); // Should hold aX^3+bX^2+cX+d
   static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(195, k_minCalculationCellWidth ); // Should hold ? aX^4+bX^3+c*X^2+dX+e
   static constexpr KDCoordinate k_margin = 8;

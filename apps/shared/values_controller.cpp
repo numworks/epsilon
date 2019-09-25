@@ -124,7 +124,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
   // The cell is not a title cell and not editable
   if (typeAtLocation(i,j) == k_notEditableValueCellType) {
-    constexpr int bufferSize = 2*PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits)+3;
+    constexpr int bufferSize = 2*PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits)+3;
     char buffer[bufferSize]; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
     // Special case: last row
     if (j == numberOfElementsInColumn(i) + 1) {

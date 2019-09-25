@@ -189,7 +189,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
       constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
-      constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+      constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
       char bufferValue[bufferSize];
       PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, bufferSize, precision);
       valueCell->setText(bufferValue);

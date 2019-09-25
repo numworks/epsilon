@@ -67,10 +67,10 @@ a.action svg {
     display: block; }
   .calculator .screen {
     position: absolute;
-    top: 10.3%;
-    left: 24.25%;
-    width: 52.1%;
-    height: 23.2%;
+    top: 8.5%;
+    left: 16.25%;
+    width: 67.5%;
+    height: 26.3%;
     border: 0 none; }
   .calculator .actions {
     position: absolute;
@@ -86,10 +86,10 @@ a.action svg {
   }
   .calculator .keyboard {
     position: absolute;
-    top: 37%;
-    left: 19%;
-    width: 63%;
-    bottom: 14%; }
+    top: 38.5%;
+    left: 10%;
+    width: 81%;
+    bottom: 5%; }
     .calculator .keyboard span {
       cursor: pointer;
       border-radius: 40%;
@@ -269,10 +269,10 @@ var spans = document.querySelectorAll(".calculator .keyboard span");
 for (var i=0; i< spans.length; i++) {
   var span = spans[i];
   span.addEventListener("mousedown", function(e) {
-    Module._IonEventsEmscriptenKeyDown(this.getAttribute("data-key"));
+    Module._IonSimulatorKeyboardKeyDown(this.getAttribute("data-key"));
   });
   span.addEventListener("mouseup", function(e) {
-    Module._IonEventsEmscriptenKeyUp(this.getAttribute("data-key"));
+    Module._IonSimulatorKeyboardKeyUp(this.getAttribute("data-key"));
   });
 }
 

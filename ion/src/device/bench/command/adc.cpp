@@ -16,8 +16,9 @@ void ADC(const char * input) {
   float result = Ion::Battery::voltage();
   constexpr int precision = 8;
   constexpr int bufferSize = Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  constexpr int glyphLength = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(precision);
   char responseBuffer[bufferSize+4] = {'A', 'D', 'C', '='}; // ADC=
-  Poincare::PrintFloat::ConvertFloatToText<float>(result, responseBuffer+4, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
+  Poincare::PrintFloat::ConvertFloatToText<float>(result, responseBuffer+4, bufferSize, glyphLength, precision, Poincare::Preferences::PrintFloatMode::Decimal);
   reply(responseBuffer);
 }
 

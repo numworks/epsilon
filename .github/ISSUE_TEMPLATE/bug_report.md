@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: LavaOS is not working like it should? Let us know!
+about: Omega is not working like it should? Let us know!
 labels: 'bug'
 
 ---
@@ -8,4 +8,4 @@ labels: 'bug'
 
 
 #### Environment
- - LavaOS Version: { go to settings > about > LavaOS Version and type version here}
+ - Omega Version: { go to settings > about > Omega Version and type version here}

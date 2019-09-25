@@ -36,8 +36,8 @@ int ExpressionNode::getPolynomialCoefficients(Context * context, const char * sy
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-Expression ExpressionNode::shallowReplaceReplaceableSymbols(Context * context) {
-  return Expression(this).defaultReplaceReplaceableSymbols(context);
+Expression ExpressionNode::shallowReplaceReplaceableSymbols(Context * context, bool * didReplace) {
+  return Expression(this).defaultReplaceReplaceableSymbols(context, didReplace);
 }
 
 int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {

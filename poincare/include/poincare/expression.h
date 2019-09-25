@@ -326,9 +326,8 @@ protected:
   /* Properties */
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
-  bool hasReplaceableSymbols(Context * context) const;
-  Expression shallowReplaceReplaceableSymbols(Context * context) { return node()->shallowReplaceReplaceableSymbols(context); }
-  Expression defaultReplaceReplaceableSymbols(Context * context);
+  Expression shallowReplaceReplaceableSymbols(Context * context, bool * didReplace) { return node()->shallowReplaceReplaceableSymbols(context, didReplace); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace);
 
   /* Simplification */
   void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);

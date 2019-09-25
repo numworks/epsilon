@@ -30,14 +30,6 @@ $(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
 	$(Q) $(4)
 endef
 
-# Define rules for targets
-# Those can be built directly with make executable.extension as a shortcut.
-
-define rules_for_targets
-.PHONY: $(1)$(2)
-$(1)$(2): $$(BUILD_DIR)/$(1)$(2)
-endef
-
 .PHONY: info
 info:
 	@echo "========= Building Flags ========="
@@ -147,30 +139,12 @@ all_objs = $(call object_for,$(all_src))
 # but allows correct yet optimal incremental builds.
 -include $(all_objs:.o=.d)
 
-executables = epsilon epsilon.on-boarding epsilon.on-boarding.update epsilon.on-boarding.beta test
-
-extensions = .$(EXE)
-
-#define platform generic targets
-all_epsilon_common_src = $(ion_src) $(liba_src) $(kandinsky_src) $(epsilon_src) $(app_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(ion_device_dfu_relocated_src)
-all_epsilon_default_src = $(all_epsilon_common_src) $(apps_launch_default_src) $(apps_prompt_none_src)
-
-$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(all_epsilon_default_src))
-$(BUILD_DIR)/epsilon.on-boarding.$(EXE): $(call object_for,$(all_epsilon_common_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src))
-$(BUILD_DIR)/epsilon.on-boarding.update.$(EXE): $(call object_for,$(all_epsilon_common_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src))
-$(BUILD_DIR)/epsilon.on-boarding.beta.$(EXE): $(call object_for,$(all_epsilon_common_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src))
-
-$(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_for,$(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(ion_device_dfu_relocated_src) $(tests_src) $(runner_src) $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_solver_test_src))
-
-# Load platform-specific targets
-# We include them before the standard ones to give them precedence.
--include build/targets.$(PLATFORM).mak
+# Define main and shortcut targets
+include build/targets.mak
 
 # Fill in the default recipe
 DEFAULT ?= $(BUILD_DIR)/epsilon.$(EXE)
 default: $(DEFAULT)
-
-$(foreach extension,$(extensions),$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(extension)))))
 
 # Load standard build rules
 include build/rules.mk

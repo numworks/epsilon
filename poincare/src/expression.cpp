@@ -342,7 +342,7 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
 Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).shallowReplaceReplaceableSymbols(context, didReplace);
+    childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace);
   }
   return *this;
 }
@@ -670,7 +670,7 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context)
       break;
     }
     didReplace = false;
-    e = e.shallowReplaceReplaceableSymbols(context, &didReplace);
+    e = e.deepReplaceReplaceableSymbols(context, &didReplace);
   } while (didReplace);
   if (unlock) {
     sSymbolReplacementsCountLock = false;

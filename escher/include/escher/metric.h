@@ -5,6 +5,7 @@
 
 class Metric {
 public:
+  constexpr static KDCoordinate CellMargin = 2;
   constexpr static KDCoordinate CommonLeftMargin = 20;
   constexpr static KDCoordinate CommonRightMargin = 20;
   constexpr static KDCoordinate CommonTopMargin = 15;

@@ -68,8 +68,8 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
   float range = windowRange/(1+k_displayLeftMarginRatio+k_displayRightMarginRatio);
   if (xMin() + k_displayLeftMarginRatio*range > startSelectedBar) {
     m_xRange.setMin(startSelectedBar - k_displayLeftMarginRatio*range);
-    // Call MemoizedCurveViewRange::protectedSetXMin to update the grid unit
-    MemoizedCurveViewRange::protectedSetXMin(xMin() + windowRange);
+    // Call MemoizedCurveViewRange::protectedSetXMax to update the grid unit
+    MemoizedCurveViewRange::protectedSetXMax(xMin() + windowRange);
     return true;
   }
   float endSelectedBar = endOfBarAtIndex(series, index);

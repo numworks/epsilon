@@ -4,15 +4,15 @@
 #import <GAIDictionaryBuilder.h>
 #import <GAIFields.h>
 
-void IonSDLPlatformTelemetryInit() {
+void IonSimulatorTelemetryInit() {
   [[GAI sharedInstance] trackerWithTrackingId:@"UA-93775823-3"];
 }
 
-void IonSDLPlatformTelemetryEvent(const char * eventName) {
+void IonSimulatorTelemetryEvent(const char * eventName) {
   id<GAITracker> tracker = [GAI sharedInstance].defaultTracker;
   [tracker set:kGAIScreenName value:[NSString stringWithUTF8String:eventName]];
   [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
-void IonSDLPlatformTelemetryDeinit() {
+void IonSimulatorTelemetryDeinit() {
 }

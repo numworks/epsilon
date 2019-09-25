@@ -2,7 +2,7 @@
 #include <jni.h>
 #include <SDL.h>
 
-void IonSDLPlatformTelemetryInit() {
+void IonSimulatorTelemetryInit() {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
@@ -12,7 +12,7 @@ void IonSDLPlatformTelemetryInit() {
   env->CallVoidMethod(activity, j_methodId);
 }
 
-void IonSDLPlatformTelemetryEvent(const char * eventName) {
+void IonSimulatorTelemetryEvent(const char * eventName) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
@@ -24,5 +24,5 @@ void IonSDLPlatformTelemetryEvent(const char * eventName) {
   env->CallVoidMethod(activity, j_methodId, j_eventName);
 }
 
-void IonSDLPlatformTelemetryDeinit() {
+void IonSimulatorTelemetryDeinit() {
 }

@@ -3,7 +3,7 @@
 #include <jni.h>
 #include <android/bitmap.h>
 
-SDL_Texture * IonSDLPlatformLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 

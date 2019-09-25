@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <UIKit/UIKit.h>
 
-SDL_Texture * IonSDLPlatformLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   CGImageRef cgImage = [[UIImage imageNamed:[NSString stringWithUTF8String:identifier]] CGImage];
   if (cgImage == NULL) {
     return NULL;

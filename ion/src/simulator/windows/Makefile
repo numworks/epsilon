@@ -4,7 +4,7 @@ ion_src += $(addprefix ion/src/simulator/windows/, \
   resources.rc \
 )
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  telemetry_dummy.cpp \
+  dummy/telemetry.cpp \
 )
 
 LDFLAGS += -lgdiplus

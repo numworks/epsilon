@@ -1,8 +1,23 @@
 #include "main.h"
+#include "platform.h"
 #include "layout.h"
 
 #include <ion/keyboard.h>
 #include <SDL.h>
+
+#if EPSILON_SDL_SCREEN_ONLY
+static Ion::Keyboard::State sKeyboardState;
+
+void IonSimulatorKeyboardKeyDown(int keyNumber) {
+  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
+  sKeyboardState.setKey(key);
+}
+
+void IonSimulatorKeyboardKeyUp(int keyNumber) {
+  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
+  sKeyboardState.clearKey(key);
+}
+#endif
 
 namespace Ion {
 namespace Keyboard {
@@ -11,9 +26,16 @@ State scan() {
   // We need to tell SDL to get new state from the host OS
   SDL_PumpEvents();
 
+  // Notify callbacks in case we need to do something
+  IonSimulatorCallbackDidScanKeyboard();
+
   // Grab this opportunity to refresh the display if needed
   SDL::Main::refresh();
 
+#if EPSILON_SDL_SCREEN_ONLY
+  // In this case, keyboard states will be sent over another channel
+  return sKeyboardState;
+#else
   // Start with a "clean" state
   State state;
 
@@ -25,24 +47,8 @@ State scan() {
     state.setKey(k);
   }
 
-#if 0
-  // SDL exposes the first finger as a mouse!
-  // Register a key for each finger, if any
-  int numberOfTouchDevices = SDL_GetNumTouchDevices();
-  for (int i=0; i<numberOfTouchDevices; i++) {
-    SDL_TouchID touchDevice = SDL_GetTouchDevice(touchDevice);
-    int numberOfFingers = SDL_GetNumTouchFingers(i);
-    for (int j=0; j<numberOfFingers; j++) {
-      SDL_Finger * finger = SDL_GetTouchFinger(touchDevice, j);
-      // Todo: Convert the finger's coordinate into pixel coordinates
-      //SDL_Point p =
-      //Key k= SDL::Layout::keyAt(&p);
-      //state.setKey(k);
-    }
-  }
-#endif
-
   return state;
+#endif
 }
 
 }

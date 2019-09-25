@@ -113,4 +113,4 @@ endif
 EMFLAGS += -s WASM=0 -s MODULARIZE=1 -s 'EXPORT_NAME="Epsilon"'
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenKeyDown", "_IonEventsEmscriptenKeyUp", "_IonEventsEmscriptenPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'

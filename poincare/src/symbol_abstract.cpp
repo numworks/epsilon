@@ -57,10 +57,7 @@ bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test,
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone) {
-  bool isFunction = symbol.type() == ExpressionNode::Type::Function;
-  /* Always clone the expression for Function because we are going to alter e
-   * by replacing all UnknownX in it. */
-  Expression e = context->expressionForSymbolAbstract(symbol, clone || isFunction);
+  Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);

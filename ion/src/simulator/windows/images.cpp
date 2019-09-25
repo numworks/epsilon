@@ -34,7 +34,7 @@ HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
   return hr;
 }
 
-SDL_Texture * IonSDLPlatformLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
   ULONG_PTR gdiplusToken;
   Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);

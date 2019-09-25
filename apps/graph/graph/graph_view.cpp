@@ -29,6 +29,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);;
     Shared::ContinuousFunction::PlotType type = f->plotType();
+    Poincare::Expression e = f->expressionReduced(context());
+    if (e.isUndefined() || (
+        type == Shared::ContinuousFunction::PlotType::Parametric &&
+        e.childAtIndex(0).isUndefined() &&
+        e.childAtIndex(1).isUndefined())) {
+      continue;
+    }
     float tmin = f->tMin();
     float tmax = f->tMax();
     /* The step is a fraction of tmax-tmin. We will evaluate the function at

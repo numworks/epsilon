@@ -149,22 +149,10 @@ default: $(DEFAULT)
 # Load standard build rules
 include build/rules.mk
 
-.PHONY: workshop_python_emulator
-workshop_python_emulator:
-	make  PLATFORM=emscripten clean_for_apps_selection
-	make -j8 PLATFORM=emscripten EPSILON_APPS=code
-	make PLATFORM=emscripten clean_for_apps_selection
-
 .PHONY: clean
 clean:
 	@echo "CLEAN"
 	$(Q) rm -rf $(BUILD_DIR)
-
-.PHONY: clean_for_apps_selection
-clean_for_apps_selection:
-	@echo "CLEAN BEFORE CHANGING EPSILON_APPS"
-	$(Q) rm -f $(BUILD_DIR)/apps/apps_container_storage.o
-	$(Q) rm -f $(BUILD_DIR)/apps/i18n.*
 
 .PHONY: cowsay_%
 cowsay_%:

@@ -137,7 +137,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToText(T f, char * buffer, int b
   /* Assert that the glyphLength is capped.
    * Example: 1+1.234E-30+... in decimal mode, because we do not want the fill
    * the buffer with the decimal version of 1.234E-30. */
-  assert(glyphLength < k_maxFloatGlyphLength);
+  assert(glyphLength <= k_maxFloatGlyphLength);
 
   TextLengths requiredLengths = ConvertFloatToTextPrivate(f, buffer, bufferSize, glyphLength, numberOfSignificantDigits, mode);
   /* If the required buffer size overflows the buffer size, we force the display
@@ -166,7 +166,7 @@ template <class T>
 PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int glyphLength, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
-  assert(glyphLength > 0 && glyphLength < k_maxFloatGlyphLength);
+  assert(glyphLength > 0 && glyphLength <= k_maxFloatGlyphLength);
   int availableCharLength = minInt(bufferSize-1, glyphLength);
   TextLengths exceptionResult = {.CharLength = bufferSize, .GlyphLength = glyphLength+1};
   //TODO: accelerate for f between 0 and 10 ?

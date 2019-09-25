@@ -103,8 +103,8 @@ Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::shallowReplaceReplaceableSymbols(Context * context) {
-  return Symbol(this).shallowReplaceReplaceableSymbols(context);
+Expression SymbolNode::shallowReplaceReplaceableSymbols(Context * context, bool * didReplace) {
+  return Symbol(this).shallowReplaceReplaceableSymbols(context, didReplace);
 }
 
 ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
@@ -224,7 +224,7 @@ int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::shallowReplaceReplaceableSymbols(Context * context) {
+Expression Symbol::shallowReplaceReplaceableSymbols(Context * context, bool * didReplace) {
   if (isSystemSymbol()) {
     return *this;
   }
@@ -243,6 +243,7 @@ Expression Symbol::shallowReplaceReplaceableSymbols(Context * context) {
     return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(e);
+  *didReplace = true;
   return e;
 }
 

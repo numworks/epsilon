@@ -2,6 +2,7 @@
 #include "main.h"
 #include <ion/display.h>
 #include <SDL.h>
+#include <string.h>
 
 /* Drawing on an SDL texture
  * In SDL2, drawing bitmap data happens through textures, whose data lives in

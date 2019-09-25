@@ -1,7 +1,9 @@
 #include "main.h"
 #include "display.h"
 #include "platform.h"
+#if !EPSILON_SDL_SCREEN_ONLY
 #include "layout.h"
+#endif
 
 #include <ion.h>
 #include <ion/timing.h>
@@ -38,8 +40,13 @@ namespace Main {
 
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;
+#if !EPSILON_SDL_SCREEN_ONLY
 static SDL_Texture * sBackgroundTexture = nullptr;
+#endif
 static bool sNeedsRefresh = false;
+#if EPSILON_SDL_SCREEN_ONLY
+static SDL_Rect sScreenRect;
+#endif
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -51,12 +58,20 @@ void init() {
     "Epsilon",
     SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED,
-    290, 555,
+#if EPSILON_SDL_SCREEN_ONLY
+    // When rendering the screen only, make a non-resizeable window that whose
+    // size matches the screen's
+    Ion::Display::Width,
+    Ion::Display::Height,
+    0 // Default flags: no high-dpi, not resizeable.
+#else
+    290, 555, // Otherwise use a default size that matches the whole calculator
     SDL_WINDOW_ALLOW_HIGHDPI
 #if EPSILON_SDL_FULLSCREEN
     | SDL_WINDOW_FULLSCREEN
 #else
     | SDL_WINDOW_RESIZABLE
+#endif
 #endif
   );
 
@@ -66,7 +81,9 @@ void init() {
 
   Display::init(sRenderer);
 
+#if !EPSILON_SDL_SCREEN_ONLY
   sBackgroundTexture = IonSDLPlatformLoadImage(sRenderer, "background.jpg");
+#endif
 
   relayout();
 }
@@ -77,12 +94,19 @@ void relayout() {
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
   SDL_RenderSetLogicalSize(sRenderer, windowWidth, windowHeight);
 
+#if EPSILON_SDL_SCREEN_ONLY
+  sScreenRect.x = 0;
+  sScreenRect.y = 0;
+  sScreenRect.w = windowWidth;
+  sScreenRect.h = windowHeight;
+#else
   Layout::recompute(windowWidth, windowHeight);
   SDL_Rect backgroundRect;
   Layout::getBackgroundRect(&backgroundRect);
 
   SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   SDL_RenderPresent(sRenderer);
+#endif
 
   setNeedsRefresh();
 }
@@ -95,6 +119,9 @@ void refresh() {
   if (!sNeedsRefresh) {
     return;
   }
+#if EPSILON_SDL_SCREEN_ONLY
+  Display::draw(sRenderer, &sScreenRect);
+#else
   SDL_Rect screenRect;
   Layout::getScreenRect(&screenRect);
   SDL_Rect backgroundRect;
@@ -104,6 +131,7 @@ void refresh() {
   SDL_RenderClear(sRenderer);
   SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   Display::draw(sRenderer, &screenRect);
+#endif
   SDL_RenderPresent(sRenderer);
 }
 

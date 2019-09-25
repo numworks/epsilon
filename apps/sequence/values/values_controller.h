@@ -15,16 +15,12 @@ public:
     return const_cast<Button *>(&m_setIntervalButton);
   }
   KDCoordinate columnWidth(int i) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;
   IntervalParameterController * intervalParameterController() override {
     return &m_intervalParameterController;
   }
 private:
-  static constexpr KDCoordinate k_abscissaCellWidth = 100;
-  static constexpr KDCoordinate k_ordinateCellWidth = 100;
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   void printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) override;

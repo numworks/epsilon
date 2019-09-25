@@ -125,7 +125,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
 }
 
 Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace) {
-  Expression e = context->expressionForSymbolAbstract(*this, true);
+  Expression e = context->expressionForSymbolAbstract(*this, false);
   if (e.isUninitialized()) {
     return *this;
   }

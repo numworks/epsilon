@@ -67,7 +67,7 @@ void TangentGraphController::reloadBannerView() {
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters + PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   Poincare::Context * context = textFieldDelegateApp()->localContext();
 
@@ -76,7 +76,7 @@ void TangentGraphController::reloadBannerView() {
   int legendLength = strlcpy(buffer, legend, bufferSize);
   ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), context);
-  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
+  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, bufferSize - legendLength, precision);
   m_bannerView->aView()->setText(buffer);
 
   legend = "b=";
@@ -84,7 +84,7 @@ void TangentGraphController::reloadBannerView() {
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   assert(function->plotType() == Shared::CartesianFunction::PlotType::Cartesian);
   y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), myApp->localContext()).x2();
-  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(precision), precision);
+  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, bufferSize - legendLength, precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

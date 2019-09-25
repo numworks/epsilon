@@ -78,7 +78,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
     assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
-    const int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+    const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
     char buffer[bufferSize];
     // Special case 1: last row
     if (j == numberOfElementsInColumn(i) + 1) {
@@ -86,7 +86,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
        * data */
       buffer[0] = 0;
     } else {
-      PrintFloat::ConvertFloatToText<double>(dataAtLocation(i, j), buffer, bufferSize, Preferences::LargeNumberOfSignificantDigits, floatDisplayMode);
+      PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(dataAtLocation(i, j), buffer, bufferSize, Preferences::LargeNumberOfSignificantDigits, floatDisplayMode);
     }
     myEditableValueCell->editableTextCell()->textField()->setText(buffer);
   }

@@ -73,9 +73,7 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
 void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) {
   Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  const int floatBufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
-  assert(floatBufferSize <= bufferSize);
-  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, floatBufferSize, Preferences::LargeNumberOfSignificantDigits);
+  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, bufferSize, Preferences::LargeNumberOfSignificantDigits);
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {

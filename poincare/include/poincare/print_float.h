@@ -13,11 +13,22 @@ public:
   constexpr static int k_numberOfStoredSignificantDigits = 14;
   // ᴇ and ℯ are 3 bytes long
   constexpr static int k_specialECodePointByteLength = 3;
-  /* We here define the buffer size to write the longest float possible.
+  /* We here define the glyph length and the buffer size to write the longest
+   * float possible.
    * At maximum, the number has 15 significant digits so, in the worst case it
-   * has the form -1.99999999999999ᴇ-308 (2+15+3+1+3 char) (the auto mode is
+   * has the form -1.99999999999999ᴇ-308 (2+15+3+1+3 char) (the decimal mode is
    * always shorter. */
-  constexpr static int k_maxFloatBufferSize = 2+k_numberOfStoredSignificantDigits+k_specialECodePointByteLength+1+3+1;
+  constexpr static int k_maxFloatGlyphLength = 2 // '-' and '.'
+    + k_numberOfStoredSignificantDigits // mantissa
+    + 1  // ᴇ
+    + 1  // exponant '-'
+    + 3; // exponant
+  constexpr static int k_maxFloatCharSize = 2 // '-' and '.'
+    + k_numberOfStoredSignificantDigits // mantissa
+    + k_specialECodePointByteLength // ᴇ
+    + 1  // exponant '-'
+    + 3  // exponant
+    + 1; // null-terminated
 
   constexpr static int glyphLengthForFloatWithPrecision(int numberOfSignificantDigits) {
     // The worst case is -1.234ᴇ-328
@@ -27,23 +38,28 @@ public:
       + 1  // '-'
       + 3; // exponant
   }
-  constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
+  constexpr static int charSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The worst case is -1.234ᴇ-328
     return 2 // '-' and '.'
       + numberOfSignificantDigits // mantissa
       + k_specialECodePointByteLength // ᴇ
-      + 1  // '-'
+      + 1  // exponant '-'
       + 3  // exponant
-      + 1; // null-terminated buffer
+      + 1; // null-terminated
   }
 
+  struct TextLengths
+  {
+    int CharLength;
+    int GlyphLength;
+  };
   /* If the buffer size is too small to display the right number of significant
    * digits, the function forces the scientific mode. If the buffer is still too
    * small, the text representing the float is empty.
    * ConvertFloatToText returns the number of characters that have been written
    * in buffer (excluding the last \0 character). */
   template <class T>
-  static int ConvertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode);
+  static TextLengths ConvertFloatToText(T d, char * buffer, int bufferSize, int availableGlyphLength, int numberOfSignificantDigits, Preferences::PrintFloatMode mode);
 
   // Engineering notation
   static int EngineeringExponentFromBase10Exponent(int exponent);
@@ -59,7 +75,7 @@ public:
 
 private:
   template <class T>
-  static int ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros);
+  static TextLengths ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int availableGlyphLength, int numberOfSignificantDigits, Preferences::PrintFloatMode mode);
 
   class Long final {
   public:

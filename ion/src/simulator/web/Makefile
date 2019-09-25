@@ -1,22 +1,12 @@
-ion_src += $(addprefix ion/src/emscripten/, \
-  display.cpp \
-  events_keyboard.cpp \
-  main.cpp \
-)
+# The following lines allow us to use our own SDL_config.h
 
-ion_src += $(addprefix ion/src/shared/, \
-  crc32.cpp \
-  events.cpp \
-  events_modifier.cpp \
-  power.cpp \
-  random.cpp \
-  timing.cpp \
-  dummy/backlight.cpp \
-  dummy/battery.cpp \
-  dummy/display.cpp \
-  dummy/fcc_id.cpp \
-  dummy/led.cpp \
-  dummy/serial_number.cpp \
-  dummy/stack.cpp \
-  dummy/usb.cpp \
+# First, make sure an error is raised if we ever use the standard SDL_config.h
+SFLAGS += -DUSING_GENERATED_CONFIG_H
+# Then use our very own include dir if either SDL.h or SDL_config.h are included
+# Note that this one will appear before ion/src/simulator/external/sdl/include
+# which is added later on in the SDL Makefile
+SFLAGS += -Iion/src/simulator/web/include
+
+ion_src += $(addprefix ion/src/simulator/shared/, \
+  telemetry_dummy.cpp \
 )

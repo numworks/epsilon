@@ -1,7 +1,7 @@
 include build/targets.device.$(MODEL).mak
 
-executables += flasher.light flasher.verbose bench.ram bench.flash
-extensions += .dfu .hex .bin
+HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash
+HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 $(eval $(call rule_for, \
   DFUSE, %.dfu, %.$$(EXE), \

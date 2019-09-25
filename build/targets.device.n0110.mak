@@ -1,4 +1,4 @@
-executables += test.external_flash.write test.external_flash.read
+HANDY_TARGETS += test.external_flash.write test.external_flash.read
 
 $(BUILD_DIR)/test.external_flash.%.$(EXE): LDSCRIPT = ion/test/device/n0110/external_flash_tests.ld
 test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(kandinsky_src) $(poincare_src) $(ion_device_dfu_relogated_src) $(runner_src)

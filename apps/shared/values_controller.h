@@ -33,6 +33,7 @@ public:
   void viewDidDisappear() override;
 
 protected:
+  static constexpr KDCoordinate k_cellWidth = (Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)) * 7 + 2*Metric::CellMargin; // KDFont::SmallFont->glyphSize().width() = 7
   static constexpr int k_abscissaTitleCellType = 0;
   static constexpr int k_functionTitleCellType = 1;
   static constexpr int k_editableValueCellType = 2;

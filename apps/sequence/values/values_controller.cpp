@@ -4,6 +4,8 @@
 #include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
+using namespace Poincare;
+
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
@@ -32,27 +34,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
 }
 
 KDCoordinate ValuesController::columnWidth(int i) {
-  switch (i) {
-    case 0:
-      return k_abscissaCellWidth;
-    default:
-      return k_ordinateCellWidth;
-  }
-}
-
-KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
-  if (i == 0) {
-    return 0;
-  } else {
-    return k_abscissaCellWidth + (i-1)*k_ordinateCellWidth;
-  }
-}
-
-int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= k_abscissaCellWidth) {
-    return 0;
-  }
-  return (offsetX - k_abscissaCellWidth)/k_ordinateCellWidth+1;
+  return k_cellWidth;
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -90,8 +72,10 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
 
 void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) {
   Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
-  Poincare::Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, bufferSize, Poincare::Preferences::LargeNumberOfSignificantDigits);
+  Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
+  const int floatBufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+  assert(floatBufferSize <= bufferSize);
+  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, floatBufferSize, Preferences::LargeNumberOfSignificantDigits);
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {

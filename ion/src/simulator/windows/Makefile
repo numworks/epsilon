@@ -3,7 +3,9 @@ ion_src += $(addprefix ion/src/simulator/windows/, \
   language.cpp \
   resources.rc \
 )
+
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  dummy/callback.cpp \
   dummy/telemetry.cpp \
 )
 

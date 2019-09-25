@@ -4,7 +4,8 @@ ion_src += $(addprefix ion/src/simulator/android/src/cpp/, \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  language_dummy.cpp \
+  dummy/callback.cpp \
+  dummy/language.cpp \
 )
 
 $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1

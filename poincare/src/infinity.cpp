@@ -24,7 +24,7 @@ int InfinityNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   if (bufferSize == 0) {
     return -1;
   }
-  return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
+  return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits, floatDisplayMode).CharLength;
 }
 
 template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {

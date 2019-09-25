@@ -179,7 +179,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0);
     double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1);
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)cell;
-    constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(numberSignificantDigits);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation1, buffer, bufferSize, numberSignificantDigits);
     myCell->setFirstText(buffer);
@@ -198,7 +198,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     assert(j != k_regressionCellIndex);
     CalculPointer calculationMethods[] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum};
     double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);
-    constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(numberSignificantDigits);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
     bufferCell->setText(buffer);
@@ -230,7 +230,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       if (modelType == Model::Type::Linear) {
         CalculPointer calculationMethods[2] = {&Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
         double calculation = (m_store->*calculationMethods[j - k_regressionCellIndex - maxNumberCoefficients - 1])(seriesNumber);
-        constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(numberSignificantDigits);
+        constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
         char buffer[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
         bufferCell->setText(buffer);
@@ -246,7 +246,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
         bufferCell->setText(I18n::translate(I18n::Message::Dash));
         return;
       } else {
-        constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(numberSignificantDigits);
+        constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
         char buffer[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(coefficients[j - k_regressionCellIndex - 1], buffer, bufferSize, numberSignificantDigits);
         bufferCell->setText(buffer);

@@ -19,7 +19,7 @@ const char * IntersectionGraphController::title() {
 
 void IntersectionGraphController::reloadBannerView() {
   CalculationGraphController::reloadBannerView();
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
   // 'f(x)=g(x)≈'

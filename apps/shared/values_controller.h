@@ -34,8 +34,8 @@ public:
   Responder * defaultController() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  static constexpr KDCoordinate k_abscissaCellWidth = 100;
-  static constexpr KDCoordinate k_ordinateCellWidth = 100;
+  static constexpr KDCoordinate k_abscissaCellWidth = 108;
+  static constexpr KDCoordinate k_ordinateCellWidth = 108;
 
 protected:
   static constexpr int k_abscissaTitleCellType = 0;

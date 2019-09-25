@@ -339,20 +339,10 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-bool Expression::hasReplaceableSymbols(Context * context) const {
-  return recursivelyMatches([](const Expression e, Context * context) {
-      return (e.type() == ExpressionNode::Type::Symbol
-          && !static_cast<const Symbol &>(e).isSystemSymbol()
-          && !context->expressionForSymbolAbstract(static_cast<const Symbol &>(e), false).isUninitialized())
-      || (e.type() == ExpressionNode::Type::Function
-           && !context->expressionForSymbolAbstract(static_cast<const Function &>(e), false).isUninitialized());
-      }, context, false);
-}
-
-Expression Expression::defaultReplaceReplaceableSymbols(Context * context) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).shallowReplaceReplaceableSymbols(context);
+    childAtIndex(i).shallowReplaceReplaceableSymbols(context, didReplace);
   }
   return *this;
 }
@@ -672,14 +662,16 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context)
     sSymbolReplacementsCountLock = true;
     unlock = true;
   }
-  while (e.hasReplaceableSymbols(context)) {
+  bool didReplace;
+  do {
     replacementCount++;
     if (replacementCount > k_maxSymbolReplacementsCount) {
       e = Expression();
       break;
     }
-    e = e.shallowReplaceReplaceableSymbols(context);
-  }
+    didReplace = false;
+    e = e.shallowReplaceReplaceableSymbols(context, &didReplace);
+  } while (didReplace);
   if (unlock) {
     sSymbolReplacementsCountLock = false;
   }

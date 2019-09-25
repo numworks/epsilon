@@ -4,6 +4,7 @@ ion_src += $(addprefix ion/src/simulator/macos/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   apple/language.m \
+  dummy/callback.cpp \
   dummy/telemetry.cpp \
 )
 

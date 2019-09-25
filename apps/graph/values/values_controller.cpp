@@ -44,8 +44,11 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
 
 KDCoordinate ValuesController::columnWidth(int i) {
   CartesianFunction::PlotType plotType = plotTypeAtColumn(&i);
+  if (i == 0) {
+    return k_abscissaCellWidth;
+  }
   if (i > 0 && plotType == CartesianFunction::PlotType::Parametric) {
-    return 2*k_cellWidth;
+    return k_parametricCellWidth;
   }
   return k_cellWidth;
 }
@@ -245,14 +248,17 @@ void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int co
     }
   }
   int numberOfChar = 0;
+  const int floatBufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   if (isParametric) {
     assert(numberOfChar < bufferSize-1);
     buffer[numberOfChar++] = '(';
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+    assert(floatBufferSize <= bufferSize-numberOfChar);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, floatBufferSize, Preferences::LargeNumberOfSignificantDigits);
     assert(numberOfChar < bufferSize-1);
     buffer[numberOfChar++] = ';';
   }
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, bufferSize-numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+  assert(floatBufferSize <= bufferSize-numberOfChar);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, floatBufferSize, Preferences::LargeNumberOfSignificantDigits);
   if (isParametric) {
     assert(numberOfChar+1 < bufferSize-1);
     buffer[numberOfChar++] = ')';

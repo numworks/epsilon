@@ -18,18 +18,18 @@ void Ion::Timing::msleep(uint32_t ms) {
 int main(int argc, char * argv[]) {
   std::vector<char *> arguments(argv, argv + argc);
 
-  char * language = IonSDLPlatformGetLanguageCode();
+  char * language = IonSimulatorGetLanguageCode();
   if (language != nullptr) {
     arguments.push_back("--language");
     arguments.push_back(language);
   }
 
-  IonSDLPlatformTelemetryInit();
+  IonSimulatorTelemetryInit();
   Ion::SDL::Main::init();
-  IonSDLPlatformTelemetryEvent("Calculator");
+  IonSimulatorTelemetryEvent("Calculator");
   ion_main(arguments.size(), &arguments[0]);
   Ion::SDL::Main::quit();
-  IonSDLPlatformTelemetryDeinit();
+  IonSimulatorTelemetryDeinit();
 
   return 0;
 }
@@ -82,7 +82,7 @@ void init() {
   Display::init(sRenderer);
 
 #if !EPSILON_SDL_SCREEN_ONLY
-  sBackgroundTexture = IonSDLPlatformLoadImage(sRenderer, "background.jpg");
+  sBackgroundTexture = IonSimulatorLoadImage(sRenderer, "background.jpg");
 #endif
 
   relayout();
@@ -133,6 +133,8 @@ void refresh() {
   Display::draw(sRenderer, &screenRect);
 #endif
   SDL_RenderPresent(sRenderer);
+
+  IonSimulatorCallbackDidRefresh();
 }
 
 void quit() {

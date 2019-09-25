@@ -2,7 +2,7 @@
 
 #include <Foundation/Foundation.h>
 
-char * IonSDLPlatformGetLanguageCode() {
+char * IonSimulatorGetLanguageCode() {
   static char buffer[4] = {0};
   if (buffer[0] == 0) {
     NSString * preferredLanguage = [[NSLocale preferredLanguages] firstObject];

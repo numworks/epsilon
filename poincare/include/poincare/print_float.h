@@ -19,9 +19,22 @@ public:
    * always shorter. */
   constexpr static int k_maxFloatBufferSize = 2+k_numberOfStoredSignificantDigits+k_specialECodePointByteLength+1+3+1;
 
+  constexpr static int glyphLengthForFloatWithPrecision(int numberOfSignificantDigits) {
+    // The worst case is -1.234ᴇ-328
+    return 2 // '-' and '.'
+      + numberOfSignificantDigits // mantissa
+      + 1  // glyph ᴇ
+      + 1  // '-'
+      + 3; // exponant
+  }
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The worst case is -1.234ᴇ-328
-    return 2+numberOfSignificantDigits+k_specialECodePointByteLength+1+3+1;
+    return 2 // '-' and '.'
+      + numberOfSignificantDigits // mantissa
+      + k_specialECodePointByteLength // ᴇ
+      + 1  // '-'
+      + 3  // exponant
+      + 1; // null-terminated buffer
   }
 
   /* If the buffer size is too small to display the right number of significant

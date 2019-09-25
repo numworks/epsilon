@@ -20,8 +20,12 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxis(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   if (m_distribution->type() == Distribution::Type::Normal) {
-    // Special case for the normal distribution, which has always the same curve
-    drawStandardNormal(ctx, rect, lowerBound, upperBound);
+    /* Special case for the normal distribution, which has always the same curve
+     * We indicate the pixels from and to which we color under the curve, not
+     * the float values, as we change the curve parameters. */
+    float pixelColorLowerBound = std::round(floatToPixel(Axis::Horizontal, lowerBound));
+    float pixelColorUpperBound = std::round(floatToPixel(Axis::Horizontal, upperBound));
+    drawStandardNormal(ctx, rect, pixelColorLowerBound, pixelColorUpperBound);
     return;
   }
   if (m_distribution->isContinuous()) {
@@ -47,7 +51,7 @@ Poincare::Coordinate2D<float> DistributionCurveView::EvaluateXYAtAbscissa(float 
   return Poincare::Coordinate2D<float>(abscissa, EvaluateAtAbscissa(abscissa, model, context));
 }
 
-void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const {
+void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBoundPixel, float colorUpperBoundPixel) const {
   // Save the previous curve view range
   DistributionCurveView * constCastedThis = const_cast<DistributionCurveView *>(this);
   CurveViewRange * previousRange = curveViewRange();
@@ -55,7 +59,7 @@ void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, flo
   // Draw a centered reduced normal curve
   NormalDistribution n;
   constCastedThis->setCurveViewRange(&n);
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, colorLowerBound, colorUpperBound);
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, pixelToFloat(Axis::Horizontal, colorLowerBoundPixel), pixelToFloat(Axis::Horizontal, colorUpperBoundPixel));
 
   // Put back the previous curve view range
   constCastedThis->setCurveViewRange(previousRange);

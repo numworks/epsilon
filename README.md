@@ -1,4 +1,4 @@
-<h1 align="center">LavaOS 1 x Epsilon 11.2.0</h1>
+<h1 align="center">Omega x Epsilon 11.2.0</h1>
 
 LavaOS is an extension to the Numworks Epsilon project, which will bring many features to the calculator. LavaOS is for people who want to add features to the calculator, but can not because it has been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator. But, it's fun so we add it on LavaOS! In short, LavaOS is a kind of Jailbreak.
 
@@ -17,13 +17,14 @@ https://github.com/quentinguidee/LavaOS/wiki/Complete-changelog
 
 Everything is translated from French to English/Portuguese/Spanish/German with Google Translate; so, everything is translated, but you could come across translation errors. If so, please open an issue on GitHub, I will correct it :smiley:!
 
-## LavaOS License
+## Omega License
 
-LavaOS is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 
 ---
 
-<p align="center"><img src="https://www.numworks.com/resources/engineering/software/epsilon.svg" alt="NumWorks Epsilon logo" height="70" ></p>
+<!--<p align="center"><img src="https://www.numworks.com/resources/engineering/software/epsilon.svg" alt="NumWorks Epsilon logo" height="70" ></p>-->
+<h1 align="center">Epsilon 11.2.0</h1>
 
 [![Build Status](https://api.travis-ci.org/numworks/epsilon.svg?branch=master)](https://travis-ci.org/numworks/epsilon)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/numworks/epsilon?branch=master&svg=true)](https://ci.appveyor.com/project/Ecco/epsilon-n2hn8/branch/master)

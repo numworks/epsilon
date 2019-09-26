@@ -65,14 +65,16 @@ ifdef IOS_PROVISIONNING_PROFILE
 $(call simulator_app_resource,embedded.mobileprovision): $(IOS_PROVISIONNING_PROFILE) | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
-else
-$(call simulator_app_resource,embedded.mobileprovision):
-	$(error Please define IOS_PROVISIONNING_PROFILE to point to the .mobileprovision file you want to use)
-endif
 
 $(BUILD_DIR)/app/entitlements.plist: $(call simulator_app_resource,embedded.mobileprovision)
 	$(call rule_label,SCMS)
 	$(Q) security cms -D -i $(IOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
+
+SIMULATOR_APP_DEPS += $(BUILD_DIR)/app/entitlements.plist
+else
+$(call simulator_app_resource,embedded.mobileprovision):
+	$(warning Building without a provisionning profile. Please define IOS_PROVISIONNING_PROFILE to point to the .mobileprovision file you want to use.)
+endif
 
 $(SIMULATOR_ICONSET)/Contents.json: ion/src/simulator/ios/icon_assets.json $(SIMULATOR_ICONS) | $$(@D)/.
 	$(call rule_label,COPY)
@@ -87,9 +89,11 @@ SIMULATOR_APP_DEPS += $(call simulator_app_resource,\
   launch.storyboardc \
 )
 
-$(BUILD_DIR)/app/epsilon.ipa: $(SIMULATOR_APP_DEPS) $(BUILD_DIR)/app/entitlements.plist
+$(BUILD_DIR)/app/epsilon.ipa: $(SIMULATOR_APP_DEPS)
+ifdef IOS_PROVISIONNING_PROFILE
 	$(call rule_label,SIGN)
 	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "iPhone Distribution: NumWorks" $(BUILD_DIR)/app/Payload/Epsilon.app
+endif
 	$(call rule_label,ZIP)
 	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload
 

@@ -1,5 +1,4 @@
 #include "intersection_graph_controller.h"
-#include <ion/unicode/utf8_decoder.h>
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
 
@@ -22,15 +21,17 @@ void IntersectionGraphController::reloadBannerView() {
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
-  // 'f(x)=g(x)≈'
+  const char * legend = "=";
+  // 'f(x)=g(x)=', keep 2 chars for '='
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(m_record);
-  int numberOfChar = f->nameWithArgument(buffer, bufferSize - UTF8Decoder::CharSizeOfCodePoint('=') - UTF8Decoder::CharSizeOfCodePoint(UCodePointAlmostEqualTo));
+  int numberOfChar = f->nameWithArgument(buffer, bufferSize-2);
   assert(numberOfChar <= bufferSize);
-  numberOfChar += strlcpy(buffer+numberOfChar, "=", bufferSize-numberOfChar);
+  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
+  // keep 1 char for '=';
   ExpiringPointer<ContinuousFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
-  numberOfChar += g->nameWithArgument(buffer + numberOfChar, bufferSize - numberOfChar - UTF8Decoder::CharSizeOfCodePoint(UCodePointAlmostEqualTo));
+  numberOfChar += g->nameWithArgument(buffer+numberOfChar, bufferSize-numberOfChar-1);
   assert(numberOfChar <= bufferSize);
-  numberOfChar += UTF8Decoder::CodePointToChars(UCodePointAlmostEqualTo, buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Poincare::Preferences::MediumNumberOfSignificantDigits);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);

@@ -11,6 +11,7 @@ namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
+  m_selectableTableView(this),
   m_functionTitleCells{},
   m_floatCells{},
   m_abscissaTitleCells{},
@@ -38,7 +39,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     m_functionTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
     m_functionTitleCells[i].setFont(KDFont::SmallFont);
   }
-  setupAbscissaCellsAndTitleCells(inputEventHandlerDelegate);
+  setupSelectableTableViewAndCells(inputEventHandlerDelegate);
   m_selectableTableView.setDelegate(this);
 }
 
@@ -284,6 +285,44 @@ void ValuesController::updateNumberOfColumns() const {
     m_numberOfColumnsForType[plotTypeIndex] += (m_numberOfColumnsForType[plotTypeIndex] > 0);
     m_numberOfColumns += m_numberOfColumnsForType[plotTypeIndex];
   }
+}
+
+int writeMatrixBrakets(char * buffer, const int bufferSize, int type) {
+  /* Write the double brackets required in matrix notation.
+   * - type == 1: "[["
+   * - type == 0: "]["
+   * - type == -1: "]]"
+   */
+  int currentChar = 0;
+  assert(currentChar < bufferSize-1);
+  buffer[currentChar++] = type < 0 ? '[' : ']';
+  assert(currentChar < bufferSize-1);
+  buffer[currentChar++] = type <= 0 ? '[' : ']';
+  return currentChar;
+}
+
+bool ValuesController::ValuesSelectableTableView::handleEvent(Ion::Events::Event event) {
+  bool handledEvent = SelectableTableView::handleEvent(event);
+  if (handledEvent && (event == Ion::Events::Copy || event == Ion::Events::Cut)) {
+    const char * text = Clipboard::sharedClipboard()->storedText();
+    if (text[0] == '(') {
+      constexpr int bufferSize = 2*PrintFloat::k_maxFloatCharSize + 6; // "[[a][b]]" gives 6 characters in addition to the 2 floats
+      char buffer[bufferSize];
+      int currentChar = 0;
+      currentChar += writeMatrixBrakets(buffer + currentChar, bufferSize - currentChar, -1);
+      assert(currentChar < bufferSize-1);
+      size_t semiColonPosition = UTF8Helper::CopyUntilCodePoint(buffer+currentChar, TextField::maxBufferSize() - currentChar, text+1, ';');
+      currentChar += semiColonPosition;
+      currentChar += writeMatrixBrakets(buffer + currentChar, bufferSize - currentChar, 0);
+      assert(currentChar < bufferSize-1);
+      currentChar += UTF8Helper::CopyUntilCodePoint(buffer+currentChar, TextField::maxBufferSize() - currentChar, text+1+semiColonPosition+1, ')');
+      currentChar += writeMatrixBrakets(buffer + currentChar, bufferSize - currentChar, 1);
+      assert(currentChar < bufferSize-1);
+      buffer[currentChar] = 0;
+      Clipboard::sharedClipboard()->store(buffer);
+    }
+  }
+  return handledEvent;
 }
 
 }

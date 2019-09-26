@@ -41,17 +41,15 @@ protected:
   constexpr static int k_maxNumberOfRows = 10;
 
   static constexpr const KDFont * k_font = KDFont::SmallFont;
-  void setupAbscissaCellsAndTitleCells(InputEventHandlerDelegate * inputEventHandlerDelegate);
+  void setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate);
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   virtual void updateNumberOfColumns() const;
   virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
   int numberOfElementsInColumn(int columnIndex) const override;
-  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   mutable int m_numberOfColumns;
   mutable bool m_numberOfColumnsNeedUpdate;
-  SelectableTableView m_selectableTableView;
 private:
   virtual void setStartEndMessages(Shared::IntervalParameterController * controller, int column) = 0;
   Responder * tabController() const override;

@@ -165,9 +165,9 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
     Expression e = expressionClone();
     // Change y(t) to [t y(t)]
     Matrix newExpr = Matrix::Builder();
-    newExpr.addChildAtIndexInPlace(Symbol::Builder(UCodePointUnknownX), 0, 0);
+    newExpr.addChildAtIndexInPlace(Symbol::Builder(UCodePointUnknown), 0, 0);
     // if y(t) was not uninitialized, insert [t 2t] to set an example
-    e = e.isUninitialized() ? Multiplication::Builder(Rational::Builder(2), Symbol::Builder(UCodePointUnknownX)) : e;
+    e = e.isUninitialized() ? Multiplication::Builder(Rational::Builder(2), Symbol::Builder(UCodePointUnknown)) : e;
     newExpr.addChildAtIndexInPlace(e, newExpr.numberOfChildren(), newExpr.numberOfChildren());
     newExpr.setDimensions(2, 1);
     setExpressionContent(newExpr);
@@ -237,7 +237,7 @@ double ContinuousFunction::approximateDerivative(double x, Poincare::Context * c
   if (x < tMin() || x > tMax()) {
     return NAN;
   }
-  Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
+  Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
@@ -281,7 +281,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Poincar
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknown[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknownX);
+  Poincare::SerializationHelper::CodePoint(unknown, bufferSize, UCodePointUnknown);
   PlotType type = plotType();
   Expression e = expressionReduced(context);
   if (type != PlotType::Parametric) {
@@ -312,7 +312,7 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
   double domainMin = maxDouble(tMin(), eDomainMin);
   double domainMax = minDouble(tMax(), eDomainMax);
   if (step > 0.0f) {
@@ -329,7 +329,7 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
   assert(plotType() == PlotType::Cartesian);
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
   if (step > 0.0f) {
     start = maxDouble(start, tMin());
     max = minDouble(max, tMax());
@@ -344,7 +344,7 @@ Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double e
   assert(plotType() == PlotType::Cartesian);
   start = maxDouble(start, tMin());
   end = minDouble(end, tMax());
-  return Poincare::Integral::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
+  return Poincare::Integral::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknown), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */

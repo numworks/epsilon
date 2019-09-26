@@ -54,7 +54,7 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
     assert(symbol.type() == ExpressionNode::Type::Function);
     Expression child = symbol.childAtIndex(0);
     assert(child.type() == ExpressionNode::Type::Symbol);
-    finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<Symbol&>(child), Symbol::Builder(UCodePointUnknownX));
+    finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<Symbol&>(child), Symbol::Builder(UCodePointUnknown));
     SetExpressionForFunction(finalExpression, symbol, record);
   }
 }
@@ -84,7 +84,7 @@ const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & sym
    * expression, use the function record handle. */
   Expression e = ContinuousFunction(r).expressionClone();
   if (!e.isUninitialized()) {
-    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), symbol.childAtIndex(0));
+    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), symbol.childAtIndex(0));
   }
   return e;
 }

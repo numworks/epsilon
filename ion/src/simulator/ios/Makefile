@@ -4,6 +4,7 @@ ion_src += $(addprefix ion/src/simulator/ios/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   apple/language.m \
+  dummy/callback.cpp \
 )
 
 $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1

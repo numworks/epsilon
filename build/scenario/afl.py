@@ -4,7 +4,8 @@ import subprocess
 NUMBER_OF_FUZZERS=8
 
 def afl_command(name):
-  return ["afl-fuzz", "-t", "10000", "-i", "scenari", "-o", "afl_out", "-M", "epsilon-fuzz-" + name, "./epsilon.bin"]
+  master_option = "-M" if name.startswith("master") else "-S"
+  return ["afl-fuzz", "-t", "10000", "-i", "scenari", "-o", "afl_out", master_option, "epsilon-fuzz-" + name, "./epsilon.bin"]
 
 def run_afl(commands, name):
   # Launch the fuzzer

@@ -127,7 +127,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::C
 }
 
 bool SymbolNode::isUnknown() const {
-  bool result = UTF8Helper::CodePointIs(m_name, UCodePointUnknownX);
+  bool result = UTF8Helper::CodePointIs(m_name, UCodePointUnknown);
   if (result) {
     assert(m_name[1] == 0);
   }

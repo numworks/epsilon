@@ -58,7 +58,7 @@ float Trigonometry::characteristicXRange(const Expression & e, Context * context
 
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char x[bufferSize];
-  SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknownX);
+  SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknown);
 
   int d = e.childAtIndex(0).polynomialDegree(context, x);
   if (d < 0 || d > 1) {

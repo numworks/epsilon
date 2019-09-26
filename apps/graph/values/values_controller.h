@@ -63,7 +63,20 @@ private:
   int abscissaTitleCellsCount() const override { return Shared::ContinuousFunction::k_numberOfPlotTypes; }
   EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   ViewController * functionParameterController() override;
+  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
+  /* For parametric function, we display the evaluation with the form "(1;2)".
+   * This form is not parsable so when we store it into the clipboard, we want
+   * to turn it into a parsable matrix "[[1][2]]". To do so, we use a child
+   * class of SelectableTableView to override the behaviour of the responder
+   *  when encountering a cut/copy events. */
+  class ValuesSelectableTableView : public SelectableTableView {
+  public:
+    ValuesSelectableTableView(ValuesController * vc) : SelectableTableView(vc, vc, vc) {}
+    bool handleEvent(Ion::Events::Event event) override;
+  };
+
+  ValuesSelectableTableView m_selectableTableView;
   mutable int m_numberOfColumnsForType[Shared::ContinuousFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];

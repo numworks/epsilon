@@ -12,19 +12,19 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   ButtonRowDelegate(header, nullptr),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
-  m_selectableTableView(this),
   m_abscissaParameterController(this)
 {
-  m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
 }
 
-void ValuesController::setupAbscissaCellsAndTitleCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
+void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
+  selectableTableView()->setVerticalCellOverlap(0);
+  selectableTableView()->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  selectableTableView()->setBackgroundColor(Palette::WallScreenDark);
+
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {
     EvenOddEditableTextCell * c = abscissaCells(i);
-    c->setParentResponder(&m_selectableTableView);
+    c->setParentResponder(selectableTableView());
     c->editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     c->editableTextCell()->textField()->setFont(k_font);
   }

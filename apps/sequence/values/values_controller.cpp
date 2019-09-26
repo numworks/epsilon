@@ -10,6 +10,7 @@ namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
+  m_selectableTableView(this),
   m_sequenceTitleCells{},
   m_floatCells{},
   m_abscissaTitleCell(),
@@ -30,7 +31,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
     m_sequenceTitleCells[i].setOrientation(Shared::FunctionTitleCell::Orientation::HorizontalIndicator);
   }
-  setupAbscissaCellsAndTitleCells(inputEventHandlerDelegate);
+  setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 
 KDCoordinate ValuesController::columnWidth(int i) {

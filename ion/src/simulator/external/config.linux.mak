@@ -5,7 +5,6 @@ SDL_SFLAGS += -DHAVE_LIBC
 
 sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/dummy/SDL_dummyaudio.c \
-  audio/disk/SDL_diskaudio.c \
   core/linux/SDL_threadprio.c \
   core/unix/SDL_poll.c \
   file/SDL_rwops.c \
@@ -13,6 +12,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   haptic/dummy/SDL_syshaptic.c \
   joystick/linux/SDL_sysjoystick.c \
   loadso/dlopen/SDL_sysloadso.c \
+  power/linux/SDL_syspower.c \
   render/opengl/SDL_render_gl.c \
   render/opengl/SDL_shaders_gl.c \
   thread/pthread/SDL_syscond.c \

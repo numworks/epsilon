@@ -27,7 +27,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
 
   numberOfChar = function->nameWithArgument(buffer, bufferSize);
   assert(numberOfChar <= bufferSize);
-  numberOfChar += UTF8Decoder::CodePointToChars(UCodePointAlmostEqualTo, buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += strlcpy(buffer+numberOfChar, "=", bufferSize-numberOfChar);
   numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, precision, context);
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);

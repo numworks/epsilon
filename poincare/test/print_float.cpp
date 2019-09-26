@@ -13,7 +13,7 @@
 using namespace Poincare;
 
 template<typename T>
-void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int significantDigits = 7, int bufferSize = PrintFloat::k_maxFloatBufferSize) {
+void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int significantDigits = 7, int bufferSize = PrintFloat::k_maxFloatCharSize) {
   constexpr int tagSize = 8;
   unsigned char tag = 'O';
   char taggedBuffer[250+2*tagSize];
@@ -21,7 +21,7 @@ void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMod
   memset(taggedBuffer, tag, taggedAreaSize);
   char * buffer = taggedBuffer + tagSize;
 
-  PrintFloat::ConvertFloatToText<T>(a, buffer, bufferSize, glyphLengthForFloatWithPrecision(significantDigits), significantDigits, mode);
+  PrintFloat::ConvertFloatToText<T>(a, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, significantDigits, mode);
 
   for (int i = 0; i < tagSize; i++) {
     quiz_assert_print_if_failure(taggedBuffer[i] == tag, result);

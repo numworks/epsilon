@@ -129,7 +129,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
 
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownN[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknownX);
+  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
 
   CacheContext<T> ctx = CacheContext<T>(sqctx);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...

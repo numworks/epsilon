@@ -4,8 +4,8 @@
 #include <jpeglib.h>
 #include <assert.h>
 
-extern const unsigned char ion_simulator_background_start;
-extern const unsigned char ion_simulator_background_end;
+extern unsigned char ion_simulator_background_start;
+extern unsigned char ion_simulator_background_end;
 
 SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   struct jpeg_decompress_struct info;
@@ -14,7 +14,7 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
 
   jpeg_create_decompress(&info);
 
-  const unsigned char * jpegStart = &ion_simulator_background_start;
+  unsigned char * jpegStart = &ion_simulator_background_start;
   unsigned long jpegSize = &ion_simulator_background_end-&ion_simulator_background_start;
   jpeg_mem_src(&info, jpegStart, jpegSize);
 

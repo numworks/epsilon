@@ -33,6 +33,7 @@ private:
 
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::ValuesController::functionStore()); }
   ViewController * functionParameterController() override;
+  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   int abscissaCellsCount() const override { return k_maxNumberOfRows; }
   EvenOddEditableTextCell * abscissaCells(int j) override {
     assert (j >= 0 && j < k_maxNumberOfRows);
@@ -51,6 +52,7 @@ private:
     assert(j >= 0 && j < k_maxNumberOfCells);
     return &m_floatCells[j];
   }
+  SelectableTableView m_selectableTableView;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfSequences];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   EvenOddMessageTextCell m_abscissaTitleCell;

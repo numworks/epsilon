@@ -41,6 +41,26 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poinca
 }
 
 Expression ExpressionModel::expressionReduced(const Storage::Record * record, Poincare::Context * context) const {
+  /* TODO
+   * By calling isCircularlyDefined and then Simplify, the expression tree is
+   * browsed twice. Note that Simplify does ALMOST the job of
+   * isCircularlyDefined, since Simplify reduces the expression, replaces the
+   * symbols it encounters (see SymbolAbstract::Expand). isCircularlyDefined
+   * should probably be removed. The difficulty relies in the ambiguous
+   * conventions about the values returned or set when a symbol has no proper
+   * expression: for example,
+   *  - GlobalContext::expressionForSymbolAbstract returns an uninitialized
+   *    expression,
+   *  - so do Expression::ExpressionWithoutSymbols and SymbolAbstract::Expand,
+   *  - Expression::deepReplaceReplaceableSymbols leaves unchanged the symbols,
+   *    whose expression is uninitialized, but returns Undefined if the
+   *    expression for a symbol contains the symbol itself,
+   *  - Symbol::shallowReduce and Function::shallowReduce return Undefined or
+   *    the expression unaltered according to symbolic-computation setting,
+   *  - expressionReduced returns Undefined if the expression
+   *    isCircularlyDefined but leaves the expression unchanged if Simplify
+   *    returns an uninitialized expression...
+   */
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
     if (isCircularlyDefined(record, context)) {
@@ -61,6 +81,13 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
   assert(record->fullName() != nullptr);
   /* A new Expression has to be created at each call (because it might be tempered with after calling) */
   return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  /* TODO
+   * The substitution of UCodePointUnknown back and forth is done in the
+   * methods text, setContent (through BuildExpressionFromText), layout and
+   * also in GlobalContext::expressionForSymbolAbstract and
+   * GlobalContext::setExpressionForSymbolAbstract. When getting the
+   * expression, the substitutions may probably be gathered here.
+   */
 }
 
 Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol) const {

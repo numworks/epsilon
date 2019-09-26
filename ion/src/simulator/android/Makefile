@@ -24,7 +24,7 @@ $(BUILD_DIR)/app/res/mipmap-v26/ic_launcher_foreground.png: ion/src/simulator/as
 	$(call rule_label,CONVERT)
 	$(Q) convert -background none $< -resize 512x512 -gravity center -background none -extent 1024x1024 $@
 
-$(BUILD_DIR)/app/res/%: ion/src/simulator/android/src/res/% $$(@D)/.
+$(BUILD_DIR)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 

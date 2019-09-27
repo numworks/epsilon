@@ -59,7 +59,13 @@ gradle_%: $(epsilon_apk_deps)
 DEFAULT = epsilon.apk
 
 .PHONY: epsilon.apk
+ifdef ANDROID_SIGNING_STORE_FILE
+epsilon.apk: gradle_assembleCodesigned
+else
 epsilon.apk: gradle_assembleRelease
+	$(warning Building without code signing. Define ANDROID_SIGNING_STORE_FILE, ANDROID_SIGNING_STORE_PASSWORD, ANDROID_SIGNING_KEY_ALIAS and  ANDROID_SIGNING_KEY_PASSWORD for a signed build.)
+endif
+
 
 .PHONY: epsilon_run
 epsilon_run: gradle_installDebug

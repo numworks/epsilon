@@ -1,4 +1,5 @@
-NDK_PATH ?= /usr/local/android/ndk-bundle
+ANDROID_HOME ?= /usr/local/android
+NDK_PATH ?= $(ANDROID_HOME)/ndk-bundle
 
 ifeq ($(HOST),macos)
 NDK_HOST_TAG ?= darwin-x86_64

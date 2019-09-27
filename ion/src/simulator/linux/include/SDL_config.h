@@ -124,7 +124,6 @@
 #define HAVE_GETAUXVAL 1
 #define HAVE_POLL 1
 #define HAVE__EXIT 1
-#define HAVE_IMMINTRIN_H 1
 
 /* Enable audio output drivers */
 #define SDL_AUDIO_DRIVER_DUMMY 1

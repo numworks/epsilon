@@ -14,6 +14,9 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);
   void setCursorFrame(KDRect frame) override;
+#ifdef GRAPH_CURSOR_SPEEDUP
+  void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
+#endif
 private:
 #ifdef GRAPH_CURSOR_SPEEDUP
   bool eraseCursorIfPossible();

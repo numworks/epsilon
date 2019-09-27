@@ -31,14 +31,19 @@ brew install armmbed/formulae/arm-none-eabi-gcc fltk freetype libpng pkg-config 
 Most of the required tools are available as apt packages:
 
 ```
-apt-get install build-essential git libfltk1.3-dev libfreetype6-dev libpng-dev pkg-config
+apt-get install build-essential git libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config
 ```
 
-You'll also need to install the latest version of  and make it available in your $PATH:
+You'll also need to install the latest version of GCC and make it available in your $PATH:
 
 1. Download the [GCC toolchain distributed by ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). You should obtain a `gcc-arm-none-eabi-x-linux.tar.bz2` file.
 2. Decompress that file with `tar xvfj gcc-arm-none-eabi-*-linux.tar.bz2`
 3. Add the resulting folder to your $PATH. If you use bash, ``echo "export PATH=\$PATH:`find $(pwd)/gcc-arm-none-eabi-*-update/bin -type d`" >> ~/.bashrc`` should do what you need (you'll need to restart your terminal afterwards).
+
+Alternatively, on Debian 10 and later you can directly install a sufficiently modern cross-toolchain:
+```
+apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
+```
 
 ## Retrieve the source code
 

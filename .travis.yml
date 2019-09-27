@@ -1,4 +1,4 @@
-language: cpp
+language: minimal
 
 env:
   global:
@@ -7,20 +7,50 @@ env:
 addons:
   apt:
     sources:
-    - sourceline: 'ppa:team-gcc-arm-embedded/ppa'
+      - sourceline: 'ppa:team-gcc-arm-embedded/ppa'
     packages:
-    - gcc-arm-embedded
-    - libfltk1.3-dev
+      - build-essential
+      - gcc-arm-embedded
+      - imagemagick
+      - libfreetype6-dev
+      - libjpeg-dev
+      - libpng-dev
+      - pkg-config
+
+  homebrew:
+    packages:
+      - numworks-sdk
+    taps: numworks/tap
+    update: true
 
 matrix:
   include:
-    - env: PLATFORM=device EXT=elf
-    - env: PLATFORM=simulator EXT=elf
-    - env: PLATFORM=simulator EXT=elf TOOLCHAIN=host-clang
-    - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1
+    - os: linux
+      env: PLATFORM=device
+    - os: linux
+      env: PLATFORM=simulator
+      apt:
+        packages:
+          - libx11-dev
+          - libxext-dev
+    - language: android
+      env: PLATFORM=simulator TARGET=android
+      android:
+        components:
+          - tools
+          - platform-tools
+          - extra-google-m2repository
+          - extra-android-m2repository
+      install:
+        - echo y | sdkmanager "ndk-bundle"
+    - os: linux
+      env: PLATFORM=blackbox QUIZ_USE_CONSOLE=1
+    - os: osx
+      env: PLATFORM=simulator
+    - os: osx
+      env: PLATFORM=simulator TARGET=ios GOOGLE_ANALYTICS=0
 
-os: linux
 script:
 - set -e
-- make clean && make epsilon.$EXT test.$EXT
-- if [ "$PLATFORM" = "blackbox" ]; then output/blackbox/release/test.$EXT; PLATFORM=blackbox make integration_tests; fi
+- make
+- if [ "$PLATFORM" = "blackbox" ]; then make test.bin; output/release/blackbox/test.bin; PLATFORM=blackbox make integration_tests; fi

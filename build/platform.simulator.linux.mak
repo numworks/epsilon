@@ -1,2 +1,2 @@
 TOOLCHAIN = host-gcc
-EXE = bin
+EXE = elf

@@ -55,6 +55,7 @@ private:
   // InteractiveCurveViewRangeDelegate
   Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 
+  void setRoundCrossCursorView(bool round);
   Shared::CursorView m_crossCursorView;
   Shared::RoundCursorView m_roundCursorView;
   BannerView m_bannerView;

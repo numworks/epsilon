@@ -82,16 +82,16 @@ void GraphController::viewWillAppear() {
   /* Since *m_selectedDotIndex is altered by initCursorParameters(),
    * the following must absolutely come at the end. */
   if (*m_selectedDotIndex >= 0) {
-    m_view.setCursorView(static_cast<Shared::CursorView *>(&m_crossCursorView));
+    setRoundCrossCursorView(false);
   } else {
-    m_view.setCursorView(static_cast<Shared::CursorView *>(&m_roundCursorView));
+    setRoundCrossCursorView(true);
     m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
   }
 }
 
 void GraphController::selectRegressionCurve() {
   *m_selectedDotIndex = -1;
-  m_view.setCursorView(&m_roundCursorView);
+  setRoundCrossCursorView(true);
   m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
@@ -334,7 +334,7 @@ bool GraphController::moveCursorVertically(int direction) {
 
   if (validDot) {
     // Select the dot
-    m_view.setCursorView(&m_crossCursorView);
+    setRoundCrossCursorView(false);
     *m_selectedSeriesIndex = closestDotSeries;
     *m_selectedDotIndex = dotSelected;
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
@@ -402,6 +402,17 @@ InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Interact
   range.min = minY;
   range.max = maxY;
   return range;
+}
+
+void GraphController::setRoundCrossCursorView(bool round) {
+  CursorView * nextCursorView = round ? static_cast<Shared::CursorView *>(&m_roundCursorView) : static_cast<Shared::CursorView *>(&m_crossCursorView);
+  if (m_view.cursorView() == nextCursorView) {
+    return;
+  }
+#ifdef GRAPH_CURSOR_SPEEDUP
+  m_roundCursorView.resetMemoization();
+#endif
+  m_view.setCursorView(nextCursorView);
 }
 
 }

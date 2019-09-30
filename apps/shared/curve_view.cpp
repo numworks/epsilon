@@ -752,6 +752,7 @@ KDRect CurveView::cursorFrame() {
 KDRect CurveView::bannerFrame() {
   KDRect bannerFrame = KDRectZero;
   if (bannerIsVisible()) {
+    assert(bounds().width() == Ion::Display::Width); // Else the bannerHeight will not be properly computed
     KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
     bannerFrame = KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight);
   }

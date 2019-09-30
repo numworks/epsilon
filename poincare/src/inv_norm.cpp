@@ -33,10 +33,10 @@ Evaluation<T> InvNormNode::templatedApproximate(Context * context, Preferences::
 
   T a = aEvaluation.toScalar();
   T mu = muEvaluation.toScalar();
-  T var = varEvaluation.toScalar();
+  T sigma = std::sqrt(varEvaluation.toScalar());
 
   // CumulativeDistributiveInverseForProbability handles bad mu and var values
-  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveInverseForProbability<T>(a, mu, var));
+  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveInverseForProbability<T>(a, mu, sigma));
 }
 
 Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

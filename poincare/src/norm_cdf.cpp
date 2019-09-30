@@ -31,10 +31,10 @@ Evaluation<T> NormCDFNode::templatedApproximate(Context * context, Preferences::
 
   const T a = aEvaluation.toScalar();
   const T mu = muEvaluation.toScalar();
-  const T var = varEvaluation.toScalar();
+  const T sigma = std::sqrt(varEvaluation.toScalar());
 
   // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
-  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, var));
+  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
 }
 
 }

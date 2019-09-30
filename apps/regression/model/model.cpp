@@ -33,14 +33,18 @@ double Model::levelSet(double * modelCoefficients, double xMin, double step, dou
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   if (dataSuitableForFit(store, series)) {
-    for (int i = 0; i < numberOfCoefficients(); i++) {
-      modelCoefficients[i] = k_initialCoefficientValue;
-    }
+    initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false, store, series);
     fitLevenbergMarquardt(store, series, modelCoefficients, context);
   } else {
-    for (int i = 0; i < numberOfCoefficients(); i++) {
-      modelCoefficients[i] = NAN;
-    }
+    initCoefficientsForFit(modelCoefficients, NAN, true);
+  }
+}
+
+void Model::initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store, int series) const {
+  assert(defaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series)));
+  int nbCoef = numberOfCoefficients();
+  for (int i = 0; i < nbCoef; i++) {
+    modelCoefficients[i] = defaultValue;
   }
 }
 

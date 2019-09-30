@@ -48,10 +48,6 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   m_cacheBuffer[0] = 0;
 }
 
-View * EditExpressionController::view() {
-  return &m_contentView;
-}
-
 void EditExpressionController::insertTextBody(const char * text) {
   ((ContentView *)view())->expressionField()->handleEventWithText(text, false, true);
 }

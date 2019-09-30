@@ -39,6 +39,7 @@ public:
   virtual int bannerLinesCount() const { return 2; }
 protected:
   // Fit
+  virtual void initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store = nullptr, int series = -1) const;
   virtual bool dataSuitableForFit(Store * store, int series) const;
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   Poincare::Layout m_layout;

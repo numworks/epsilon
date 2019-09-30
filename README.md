@@ -11,9 +11,9 @@ You can try Epsilon straight from your browser in the [online simulator](https:/
 
 We highly recommend you start by reading the [online documentation](https://www.numworks.com/resources/engineering/software/) for this project. You'll learn about:
 
-* Installing the [SDK](https://www.numworks.com/resources/engineering/software/sdk/)
-* The [design decisions](https://www.numworks.com/resources/engineering/software/embedded/) that were made
-* The overall [software architecture](https://www.numworks.com/resources/engineering/software/architecture/) of the firmware
+* Installing the [SDK](https://www.numworks.com/resources/engineering/software/build/#install-the-sdk)
+* The overall [software architecture](https://www.numworks.com/resources/engineering/software/#discover-epsilons-architecture) of the firmware
+* Our [coding guidelines](https://www.numworks.com/resources/engineering/software/#read-our-coding-guidelines)
 
 ## Contributing
 

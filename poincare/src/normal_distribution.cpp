@@ -8,38 +8,38 @@
 namespace Poincare {
 
 template<typename T>
-T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T var) {
-  if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(mu, var)){
+T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T sigma) {
+  if (std::isnan(x) || std::isinf(x) || !MuAndSigmaAreOK(mu, sigma)){
     return NAN;
   }
-  const float xMinusMuOverVar = (x - mu)/var;
-  return ((T)1.0)/(std::fabs(var) * std::sqrt(((T)2.0) * M_PI)) * std::exp(-((T)0.5) * xMinusMuOverVar * xMinusMuOverVar);
+  const float xMinusMuOverVar = (x - mu)/sigma;
+  return ((T)1.0)/(std::fabs(sigma) * std::sqrt(((T)2.0) * M_PI)) * std::exp(-((T)0.5) * xMinusMuOverVar * xMinusMuOverVar);
 }
 
 template<typename T>
-T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T var) {
-  if (!ParametersAreOK(mu, var)) {
+T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T sigma) {
+  if (!MuAndSigmaAreOK(mu, sigma)) {
     return NAN;
   }
-  return StandardNormalCumulativeDistributiveFunctionAtAbscissa<T>((x-mu)/std::fabs(var));
+  return StandardNormalCumulativeDistributiveFunctionAtAbscissa<T>((x-mu)/std::fabs(sigma));
 }
 
 template<typename T>
-T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability, T mu, T var) {
-  if (!ParametersAreOK(mu, var)) {
+T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability, T mu, T sigma) {
+  if (!MuAndSigmaAreOK(mu, sigma)) {
     return NAN;
   }
-  return StandardNormalCumulativeDistributiveInverseForProbability(probability) * std::fabs(var) + mu;
+  return StandardNormalCumulativeDistributiveInverseForProbability(probability) * std::fabs(sigma) + mu;
 }
 
 template<typename T>
-bool NormalDistribution::ParametersAreOK(T mu, T var) {
-  return !std::isnan(mu) && !std::isnan(var)
-    && !std::isinf(mu) && !std::isinf(var)
-    && var > (T)0.0;
+bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
+  return !std::isnan(mu) && !std::isnan(sigma)
+    && !std::isinf(mu) && !std::isinf(sigma)
+    && sigma > (T)0.0;
 }
 
-bool NormalDistribution::ExpressionParametersAreOK(bool * result, const Expression & mu, const Expression & var, Context * context) {
+bool NormalDistribution::ExpressionMuAndVarAreOK(bool * result, const Expression & mu, const Expression & var, Context * context) {
   assert(result != nullptr);
   if (mu.deepIsMatrix(context) || var.deepIsMatrix(context)) {
     *result = false;
@@ -51,7 +51,7 @@ bool NormalDistribution::ExpressionParametersAreOK(bool * result, const Expressi
     return true;
   }
   if (!mu.isReal(context) || !var.isReal(context)) {
-    // We cannot check that mu and variance are real
+    // We cannot check that mu and var are real
     return false;
   }
 
@@ -61,14 +61,14 @@ bool NormalDistribution::ExpressionParametersAreOK(bool * result, const Expressi
       *result = false;
       return true;
     }
-    // We cannot check that the variance is positive
+    // We cannot check that var is positive
     if (s != ExpressionNode::Sign::Positive) {
       return false;
     }
   }
 
   if (var.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that the variance is not null
+    // We cannot check that var is not null
     return false;
   }
 
@@ -122,7 +122,7 @@ template float NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<floa
 template double NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double, double);
 template float NormalDistribution::CumulativeDistributiveInverseForProbability<float>(float, float, float);
 template double NormalDistribution::CumulativeDistributiveInverseForProbability<double>(double, double, double);
-template bool NormalDistribution::ParametersAreOK(float mu, float var);
-template bool NormalDistribution::ParametersAreOK(double mu, double var);
+template bool NormalDistribution::MuAndSigmaAreOK(float mu, float sigma);
+template bool NormalDistribution::MuAndSigmaAreOK(double mu, double sigma);
 
 }

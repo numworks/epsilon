@@ -31,10 +31,10 @@ Evaluation<T> NormPDFNode::templatedApproximate(Context * context, Preferences::
 
   T x = xEvaluation.toScalar();
   T mu = muEvaluation.toScalar();
-  T var = varEvaluation.toScalar();
+  T sigma = std::sqrt(varEvaluation.toScalar());
 
   // EvaluateAtAbscissa handles bad mu and var values
-  return Complex<T>::Builder(NormalDistribution::EvaluateAtAbscissa(x, mu, var));
+  return Complex<T>::Builder(NormalDistribution::EvaluateAtAbscissa(x, mu, sigma));
 }
 
 }

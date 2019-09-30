@@ -8,13 +8,13 @@ namespace Poincare {
 
 class NormalDistribution final {
 public:
-  template<typename T> static T EvaluateAtAbscissa(T x, T mu, T var);
-  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T var);
-  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T mu, T var);
-  template<typename T> static bool ParametersAreOK(T mu, T var);
-  /* ExpressionParametersAreOK returns true if the expression could be verified.
+  template<typename T> static T EvaluateAtAbscissa(T x, T mu, T sigma);
+  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T sigma);
+  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T mu, T sigma);
+  template<typename T> static bool MuAndSigmaAreOK(T mu, T sigma);
+  /* ExpressionMuAndVarAreOK returns true if the expression could be verified.
    * The result of the verification is *result. */
-  static bool ExpressionParametersAreOK(bool * result, const Expression & mu, const Expression & var, Context * context);
+  static bool ExpressionMuAndVarAreOK(bool * result, const Expression & mu, const Expression & sigma, Context * context);
 private:
   /* For the standard normal distribution, P(X < y) > 0.9999995 for y >= 4.892 so the
    * value displayed is 1. But this is dependent on the fact that we display

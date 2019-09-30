@@ -16,7 +16,7 @@ class HistoryController;
 class EditExpressionController : public ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore);
-  View * view() override;
+  View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   void viewDidDisappear() override;
   void insertTextBody(const char * text);

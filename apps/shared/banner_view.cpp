@@ -17,7 +17,11 @@ void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, HeightGivenNumberOfLines(numberOfLines()));
+  return KDSize(Ion::Display::Width, minimalHeightForOptimalDisplayGivenWidth(Ion::Display::Width));
+}
+
+KDCoordinate BannerView::minimalHeightForOptimalDisplayGivenWidth(KDCoordinate width) const {
+  return HeightGivenNumberOfLines(numberOfLinesGivenWidth(width));
 }
 
 void BannerView::layoutSubviews() {
@@ -61,9 +65,9 @@ void BannerView::layoutSubviews() {
   }
 }
 
-int BannerView::numberOfLines() const {
+int BannerView::numberOfLinesGivenWidth(KDCoordinate width) const {
   int lineNumber = 1;
-  const KDCoordinate lineWidth = m_frame.width();
+  const KDCoordinate lineWidth = width;
   KDCoordinate remainingWidth = lineWidth;
   for (int i = 0; i < numberOfSubviews(); i++) {
     KDCoordinate subviewWidth = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i)->minimalSizeForOptimalDisplay().width();

@@ -33,15 +33,15 @@ Evaluation<T> NormCDF2Node::templatedApproximate(Context * context, Preferences:
   T a = aEvaluation.toScalar();
   T b = bEvaluation.toScalar();
   T mu = muEvaluation.toScalar();
-  T var = varEvaluation.toScalar();
+  T sigma = std::sqrt(varEvaluation.toScalar());
 
-  if (std::isnan(a) || std::isnan(b) || !NormalDistribution::ParametersAreOK(mu,var)) {
+  if (std::isnan(a) || std::isnan(b) || !NormalDistribution::MuAndSigmaAreOK(mu,sigma)) {
     return Complex<T>::Undefined();
   }
   if (b <= a) {
     return Complex<T>::Builder((T)0.0);
   }
-  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, var) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, var));
+  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, sigma) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
 }
 
 }

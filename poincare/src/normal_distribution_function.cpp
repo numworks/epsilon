@@ -1,5 +1,6 @@
 #include <poincare/normal_distribution_function.h>
 #include <poincare/normal_distribution.h>
+#include <poincare/square_root.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -19,12 +20,13 @@ Expression NormalDistributionFunction::shallowReduce(Context * context, bool * s
     }
   }
 
-  Expression mu = childAtIndex(muIndex());
-  Expression var = childAtIndex(varIndex());
-
   // Check mu and var
   bool muAndVarOK = false;
-  bool couldCheckMuAndVar = NormalDistribution::ExpressionParametersAreOK(&muAndVarOK, mu, var, context);
+  bool couldCheckMuAndVar = NormalDistribution::ExpressionMuAndVarAreOK(
+      &muAndVarOK,
+      childAtIndex(muIndex()),
+      childAtIndex(varIndex()),
+      context);
   if (!couldCheckMuAndVar) {
     return *this;
   }

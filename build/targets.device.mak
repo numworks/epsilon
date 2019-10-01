@@ -49,17 +49,17 @@ openocd:
 # fully filled
 $(BUILD_DIR)/flasher.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/flasher
 $(BUILD_DIR)/flasher.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
-flasher_objs = $(call object_for,$(ion_src) $(liba_src) $(kandinsky_src) $(flasher_src) $(ion_device_dfu_xip_src))
-$(BUILD_DIR)/flasher.light.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_light.o $(flasher_objs)
-$(BUILD_DIR)/flasher.verbose.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_verbose.o $(flasher_objs)
+flasher_base_src = $(ion_xip_src) $(liba_src) $(kandinsky_src)
+$(BUILD_DIR)/flasher.light.$(EXE): $(call object_for,$(flasher_base_src) $(ion_target_device_flasher_light_src))
+$(BUILD_DIR)/flasher.verbose.$(EXE): $(call object_for,$(flasher_base_src) $(ion_target_device_flasher_verbose_src))
 
 #TODO Do not build all apps... Put elsewhere?
 $(BUILD_DIR)/bench.ram.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
 $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
-bench_objs = $(call object_for,$(ion_src) $(liba_src) $(kandinsky_src) $(ion_device_dfu_xip_src) $(poincare_src) $(libaxx_src) $(bench_src) $(app_shared_src))
-$(BUILD_DIR)/bench.ram.$(EXE): $(bench_objs)
-$(BUILD_DIR)/bench.flash.$(EXE): $(bench_objs)
+bench_src = $(ion_xip_src) $(liba_src) $(kandinsky_src) $(poincare_src) $(libaxx_src) $(app_shared_src) $(ion_target_device_bench_src)
+$(BUILD_DIR)/bench.ram.$(EXE): $(call object_for,$(bench_src))
+$(BUILD_DIR)/bench.flash.$(EXE): $(call object_for,$(bench_src))
 
 .PHONY: %.two_binaries
 %.two_binaries: %.elf

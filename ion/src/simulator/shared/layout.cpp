@@ -1,7 +1,7 @@
 #include "layout.h"
 
 namespace Ion {
-namespace SDL {
+namespace Simulator {
 namespace Layout {
 
 static constexpr int backgroundWidth = 1160;

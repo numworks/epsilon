@@ -185,7 +185,7 @@ Event getPlatformEvent() {
     // The while is important: it'll do a fast-pass over all useless SDL events
     if (event.type == SDL_WINDOWEVENT) {
       if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-        Ion::SDL::Main::relayout();
+        Ion::Simulator::Main::relayout();
       }
     }
     if (event.type == SDL_QUIT) {

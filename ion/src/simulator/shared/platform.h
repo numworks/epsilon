@@ -1,5 +1,5 @@
-#ifndef ION_SDL_PLATFORM_H
-#define ION_SDL_PLATFORM_H
+#ifndef ION_SIMULATOR_PLATFORM_H
+#define ION_SIMULATOR_PLATFORM_H
 
 #include <SDL.h>
 

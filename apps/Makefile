@@ -20,7 +20,9 @@ app_src += $(addprefix apps/,\
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
   global_preferences.cpp \
+  i18n.py \
   lock_view.cpp \
+  main.cpp \
   math_toolbox.cpp \
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
@@ -83,18 +85,14 @@ $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
-# Handle epsilon-only sources
-# Other executables may want to do their own i18n and main. That's the case for
-# the test runner. Let's add those files to a specific epsilon-only src. When
-# building apps/i18n.o, the extension doesn't really matter since it'll be
-# processed by the object_for function.
-
-epsilon_src += $(addprefix apps/, \
-  main.cpp \
-  i18n.py \
-)
-
 all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_container_prompt_update) $(apps_prompt_beta_src) $(tests_src)
 
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
+
+apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_solver_test_src)
+
+apps_default_src = $(app_src) $(apps_launch_default_src) $(apps_prompt_none_src);
+apps_onboarding_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src);
+apps_onboarding_update_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src);
+apps_onboarding_beta_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src);

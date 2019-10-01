@@ -186,6 +186,12 @@ SECTIONS {
     . = ALIGN(8);
     _stack_start = .;
   } >SRAM
+
+  /DISCARD/ : {
+    /* exidx and extab are needed for unwinding, which we don't use */
+    *(.ARM.exidx*)
+    *(.ARM.extab*)
+  }
 }
 
 NOCROSSREFS_TO(.text.external .text.internal);

@@ -158,8 +158,4 @@ bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
   return false;
 }
 
-void EditExpressionController::viewDidDisappear() {
-  m_historyController->viewDidDisappear();
-}
-
 }

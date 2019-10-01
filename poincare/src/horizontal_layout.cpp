@@ -1,6 +1,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/nth_root_layout.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -180,14 +181,56 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
 }
 
 int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (numberOfChildren() == 0) {
-    if (bufferSize == 0) {
-      return -1;
-    }
+  if (bufferSize == 0) {
+    return -1;
+  }
+  int childrenCount = numberOfChildren();
+  if (childrenCount == 0 || bufferSize == 1) {
     buffer[0] = 0;
     return 0;
   }
-  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
+
+  int numberOfChar = 0;
+  // Write the children, adding multiplication signs if needed
+  LayoutNode * currentChild = childAtIndex(0);
+  LayoutNode * nextChild = nullptr;
+  for (int i = 0; i < childrenCount; i++) {
+    // Write the child
+    numberOfChar+= currentChild->serialize(buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    if (i != childrenCount - 1) {
+      nextChild = childAtIndex(i+1);
+      // Write the multiplication sign if needed
+      LayoutNode::Type nextChildType = nextChild->type();
+      if ((nextChildType == LayoutNode::Type::AbsoluteValueLayout
+            || nextChildType == LayoutNode::Type::BinomialCoefficientLayout
+            || nextChildType == LayoutNode::Type::CeilingLayout
+            || nextChildType == LayoutNode::Type::ConjugateLayout
+            || nextChildType == LayoutNode::Type::CeilingLayout
+            || nextChildType == LayoutNode::Type::FloorLayout
+            || nextChildType == LayoutNode::Type::IntegralLayout
+            || (nextChildType == LayoutNode::Type::NthRootLayout
+              && !static_cast<NthRootLayoutNode *>(nextChild)->isSquareRoot())
+            || nextChildType == LayoutNode::Type::ProductLayout
+            || nextChildType == LayoutNode::Type::SumLayout)
+          && currentChild->canBeOmittedMultiplicationLeftFactor())
+      {
+        assert(nextChildType != LayoutNode::Type::HorizontalLayout);
+        numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, '*');
+        if (numberOfChar >= bufferSize-1) {
+          assert(buffer[bufferSize - 1] == 0);
+          return bufferSize - 1;
+        }
+      }
+    }
+    currentChild = nextChild;
+  }
+  if (numberOfChar >= bufferSize-1) {
+    assert(buffer[bufferSize - 1] == 0);
+    return bufferSize - 1;
+  }
+
+  assert(buffer[numberOfChar] == 0);
+  return numberOfChar;
 }
 
 bool HorizontalLayoutNode::hasText() const {

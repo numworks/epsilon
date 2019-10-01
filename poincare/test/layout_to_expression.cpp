@@ -492,4 +492,31 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
         VerticalOffsetLayoutNode::Position::Superscript));
   e = Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE), Rational::Builder(3)));
   assert_parsed_layout_is(l, e);
+
+  // x|2|
+  l = HorizontalLayout::Builder(
+      CodePointLayout::Builder('x'),
+      AbsoluteValueLayout::Builder(
+        CodePointLayout::Builder('2')));
+  e = Multiplication::Builder(
+      Symbol::Builder('x'),
+      AbsoluteValue::Builder(Rational::Builder(2)));
+  assert_parsed_layout_is(l, e);
+
+  // x int(7, x, 4, 5)
+  l = HorizontalLayout::Builder(
+      CodePointLayout::Builder('x'),
+      IntegralLayout::Builder(
+        CodePointLayout::Builder('7'),
+        CodePointLayout::Builder('x'),
+        CodePointLayout::Builder('4'),
+        CodePointLayout::Builder('5')));
+  e = Multiplication::Builder(
+      Symbol::Builder('x'),
+      Integral::Builder(
+        Rational::Builder(7),
+        Symbol::Builder('x'),
+        Rational::Builder(4),
+        Rational::Builder(5)));
+  assert_parsed_layout_is(l, e);
 }

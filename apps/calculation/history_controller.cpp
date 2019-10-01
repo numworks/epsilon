@@ -20,6 +20,13 @@ HistoryController::HistoryController(Responder * parentResponder, CalculationSto
 
 void HistoryController::reload() {
   m_selectableTableView.reloadData();
+  /* TODO
+   * Replace the following by selectCellAtLocation in order to avoid laying out
+   * the table view twice.
+   */
+  if (numberOfRows() > 0) {
+    m_selectableTableView.scrollToCell(0, numberOfRows()-1);
+  }
 }
 
 void HistoryController::didBecomeFirstResponder() {

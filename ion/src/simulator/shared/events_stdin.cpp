@@ -3,9 +3,9 @@
 #include "framebuffer.h"
 #include "events.h"
 
-#include <assert.h>
 #include <ion/events.h>
 #include <string.h>
+#include <stdio.h>
 
 void IonSimulatorEventsPushEvent(int eventNumber) {
 }

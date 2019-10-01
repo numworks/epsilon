@@ -1,11 +1,11 @@
-#ifndef ION_SDL_DISPLAY_H
-#define ION_SDL_DISPLAY_H
+#ifndef ION_SIMULATOR_DISPLAY_H
+#define ION_SIMULATOR_DISPLAY_H
 
 #include <kandinsky.h>
 #include <SDL.h>
 
 namespace Ion {
-namespace SDL {
+namespace Simulator {
 namespace Display {
 
 void init(SDL_Renderer * renderer);

@@ -18,6 +18,12 @@ HistoryController::HistoryController(Responder * parentResponder, CalculationSto
   }
 }
 
+void HistoryController::viewWillAppear() {
+  int rowsCount = numberOfRows();
+  int lastRow = (rowsCount > 0) * (rowsCount - 1);
+  selectCellAtLocation(0, lastRow);
+}
+
 void HistoryController::reload() {
   m_selectableTableView.reloadData();
   /* TODO
@@ -166,10 +172,6 @@ KDCoordinate HistoryController::rowHeight(int j) {
 
 int HistoryController::typeAtLocation(int i, int j) {
   return 0;
-}
-
-void HistoryController::scrollToCell(int i, int j) {
-  m_selectableTableView.scrollToCell(i, j);
 }
 
 HistoryViewCell * HistoryController::historyViewCellDidChangeSelection() {

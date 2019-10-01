@@ -14,6 +14,7 @@ class HistoryController : public ViewController, public ListViewDataSource, publ
 public:
   HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
   View * view() override { return &m_selectableTableView; }
+  void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -25,7 +26,6 @@ public:
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
-  void scrollToCell(int i, int j);
 private:
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);

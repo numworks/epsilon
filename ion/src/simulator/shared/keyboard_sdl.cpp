@@ -30,7 +30,7 @@ State scan() {
   IonSimulatorCallbackDidScanKeyboard();
 
   // Grab this opportunity to refresh the display if needed
-  SDL::Main::refresh();
+  Simulator::Main::refresh();
 
 #if EPSILON_SDL_SCREEN_ONLY
   // In this case, keyboard states will be sent over another channel
@@ -43,7 +43,7 @@ State scan() {
   SDL_Point p;
   Uint32 mouseState = SDL_GetMouseState(&p.x, &p.y);
   if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-    Key k = SDL::Layout::keyAt(&p);
+    Key k = Simulator::Layout::keyAt(&p);
     state.setKey(k);
   }
 

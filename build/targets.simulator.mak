@@ -1,14 +1,12 @@
-$(BUILD_DIR)/epsilon.packed.js: LDFLAGS += --memory-init-file 0
-$(BUILD_DIR)/epsilon.packed.js: $(call object_for,$(all_epsilon_default_src))
+# Headless targets
+epsilon_headless_src = $(base_src) $(ion_headless_src) $(apps_default_src)
+$(BUILD_DIR)/epsilon.headless.$(EXE): $(call object_for,$(epsilon_headless_src))
+$(BUILD_DIR)/epsilon.headless.$(EXE): LDFLAGS += `libpng-config --ldflags`
 
-.PHONY: workshop_python_emulator
-workshop_python_emulator:
-	make PLATFORM=simulator TARGET=web clean_for_apps_selection
-	make PLATFORM=simulator TARGET=web EPSILON_APPS=code
-	make PLATFORM=simulator TARGET=web clean_for_apps_selection
+test_runner_headless_src = $(test_base_src) $(ion_headless_src)
+$(BUILD_DIR)/test.headless.$(EXE): $(call object_for,$(test_runner_headless_src))
+$(BUILD_DIR)/test.headless.$(EXE): LDFLAGS += `libpng-config --ldflags`
 
-.PHONY: clean_for_apps_selection
-clean_for_apps_selection:
-	@echo "CLEAN BEFORE CHANGING EPSILON_APPS"
-	$(Q) rm -f $(BUILD_DIR)/apps/apps_container_storage.o
-	$(Q) rm -f $(BUILD_DIR)/apps/i18n.*
+HANDY_TARGETS += epsilon.headless test.headless
+
+-include build/targets.simulator.$(TARGET).mak

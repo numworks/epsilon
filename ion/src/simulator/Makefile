@@ -34,8 +34,6 @@ ion_simulator_headless_src += $(addprefix ion/src/simulator/shared/, \
   main_headless.cpp \
 )
 
-$(call object_for,ion/src/simulator/shared/framebuffer_png.cpp): SFLAGS += `libpng-config --cflags`
-
 ion_console_stdio_src = ion/src/simulator/shared/console_stdio.cpp
 
 include ion/src/simulator/$(TARGET)/Makefile

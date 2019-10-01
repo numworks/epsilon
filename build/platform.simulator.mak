@@ -8,4 +8,13 @@ TARGET ?= $(HOST)
 
 BUILD_DIR := $(BUILD_DIR)/$(TARGET)
 
+EPSILON_SIMULATOR_HAS_LIBPNG ?= 1
+
 include build/platform.simulator.$(TARGET).mak
+
+SFLAGS += -DEPSILON_SIMULATOR_HAS_LIBPNG=$(EPSILON_SIMULATOR_HAS_LIBPNG)
+
+ifeq ($(EPSILON_SIMULATOR_HAS_LIBPNG),1)
+SFLAGS += `libpng-config --cflags`
+LDFLAGS += `libpng-config --ldflags`
+endif

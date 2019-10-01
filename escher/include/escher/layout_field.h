@@ -68,10 +68,6 @@ private:
     /* View */
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
-    enum class Position {
-      Top,
-      Bottom
-    };
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

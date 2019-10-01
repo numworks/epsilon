@@ -20,11 +20,11 @@ endif
 
 ifeq ($(LTO),1)
 # Use link-time optimization if LTO=1
-SFLAGS += -flto -Wl,--gc-sections
-else
-# Otherwise, just get rid of unused symbols
-LDFLAGS += -Wl,--gc-sections
+SFLAGS += -flto
 endif
+
+# Get rid of unused symbols. This is also useful even if LTO=1.
+LDFLAGS += -Wl,--gc-sections
 
 LDFLAGS += $(SFLAGS) -lgcc -Wl,-T,$(LDSCRIPT)
 

@@ -31,7 +31,7 @@ brew install armmbed/formulae/arm-none-eabi-gcc fltk freetype libpng pkg-config 
 Most of the required tools are available as apt packages:
 
 ```
-apt-get install build-essential git libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config
+apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config
 ```
 
 You'll also need to install the latest version of GCC and make it available in your $PATH:

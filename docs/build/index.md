@@ -23,7 +23,7 @@ Last but not least, download and install the latest [GCC toolchain from ARM](htt
 We recommend using [Homebrew](https://brew.sh) to install all dependencies. Once you have installed Homebrew, install all the dependencies with the following command:
 
 ```
-brew install armmbed/formulae/arm-none-eabi-gcc fltk freetype libpng pkg-config python
+brew install numworks/tap/epsilon-sdk
 ```
 
 ### Debian or Ubuntu

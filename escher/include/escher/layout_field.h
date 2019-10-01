@@ -66,7 +66,6 @@ private:
     KDRect cursorRect() { return m_cursorView.frame(); }
     Poincare::LayoutCursor * cursor() { return &m_cursor; }
     const ExpressionView * expressionView() const { return &m_expressionView; }
-    ExpressionView * editableExpressionView() { return &m_expressionView; }
     void clearLayout();
     /* View */
     KDSize minimalSizeForOptimalDisplay() const override;

@@ -8,8 +8,10 @@
 #include <ion/timing.h>
 #include <ion/events.h>
 #include <stdlib.h>
+#ifndef __WIN32__
 #include <signal.h>
 #include <sys/resource.h>
+#endif
 
 constexpr int kHeapSize = 131072;
 constexpr int kStackSize = 32768;
@@ -34,12 +36,14 @@ int main(int argc, char * argv[]) {
     }
   }
 
+#ifndef __WIN32__
   // Handle signals
   signal(SIGABRT, Ion::Simulator::Events::dumpEventCount);
 
   // Limit stack usage
   struct rlimit stackLimits = {kStackSize, kStackSize};
   setrlimit(RLIMIT_STACK, &stackLimits);
+#endif
 
   ion_main(argc, argv);
   return 0;

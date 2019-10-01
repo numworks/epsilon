@@ -19,6 +19,8 @@ public:
     m_hasIndex(hasIndex)
   {}
 
+  bool isSquareRoot() const;
+
   // Layout
   Type type() const override { return Type::NthRootLayout; }
 

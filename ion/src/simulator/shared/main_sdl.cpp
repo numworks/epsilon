@@ -25,17 +25,17 @@ int main(int argc, char * argv[]) {
   }
 
   IonSimulatorTelemetryInit();
-  Ion::SDL::Main::init();
+  Ion::Simulator::Main::init();
   IonSimulatorTelemetryEvent("Calculator");
   ion_main(arguments.size(), &arguments[0]);
-  Ion::SDL::Main::quit();
+  Ion::Simulator::Main::quit();
   IonSimulatorTelemetryDeinit();
 
   return 0;
 }
 
 namespace Ion {
-namespace SDL {
+namespace Simulator {
 namespace Main {
 
 static SDL_Window * sWindow = nullptr;

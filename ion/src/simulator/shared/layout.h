@@ -1,11 +1,11 @@
-#ifndef ION_SDL_LAYOUT_H
-#define ION_SDL_LAYOUT_H
+#ifndef ION_SIMULATOR_LAYOUT_H
+#define ION_SIMULATOR_LAYOUT_H
 
 #include <ion/keyboard.h>
 #include <SDL.h>
 
 namespace Ion {
-namespace SDL {
+namespace Simulator {
 namespace Layout {
 
 void recompute(int width, int height);

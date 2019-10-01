@@ -1,8 +1,5 @@
 SFLAGS += -Iquiz/include
 
-QUIZ_USE_CONSOLE ?= 0
-$(call object_for,quiz/src/runner.cpp): SFLAGS += -DQUIZ_USE_CONSOLE=$(QUIZ_USE_CONSOLE)
-
 define rule_for_quiz_symbols
 $$(BUILD_DIR)/quiz/src/$(subst _src,,$(1))_symbols.c: $$($(1)) | $$$$(@D)/.
 	@ echo "AWK     $$@"
@@ -19,7 +16,7 @@ runner_src += $(addprefix quiz/src/, \
   runner.cpp \
 )
 
-runner_src += $(symbols_file)
+runner_src += $(BUILD_DIR)/quiz/src/tests_symbols.c
 
 $(call object_for,$(runner_src)): SFLAGS += -Iquiz/src
 $(BUILD_DIR)/quiz/src/%_symbols.o: SFLAGS += -Iquiz/src

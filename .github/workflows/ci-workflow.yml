@@ -45,7 +45,7 @@ jobs:
           name: epsilon-simulator-windows.exe
           path: output/release/simulator/windows/epsilon.exe
       - run: msys2do make -j2 PLATFORM=simulator test.headless.exe
-      - run: output/release/simulator/windows/test.headless.exe
+      - run: output\release\simulator\windows\test.headless.exe
   build-simulator-web:
     runs-on: ubuntu-latest
     steps:

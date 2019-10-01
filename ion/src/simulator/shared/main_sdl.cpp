@@ -5,6 +5,7 @@
 #include "layout.h"
 #endif
 
+#include <assert.h>
 #include <ion.h>
 #include <ion/timing.h>
 #include <ion/events.h>

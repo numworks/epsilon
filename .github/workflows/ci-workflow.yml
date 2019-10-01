@@ -1,0 +1,94 @@
+name: Continuous integration
+on: [push]
+
+jobs:
+  build-simulator-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: make -j2 PLATFORM=simulator TARGET=android
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-simulator-android.apk
+          path: output/release/simulator/android/app/outputs/apk/release/android-release-unsigned.apk
+  build-device-n0100:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install binutils-arm-none-eabi build-essential gcc-arm-none-eabi imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - uses: actions/checkout@v1
+      - run: make -j2 MODEL=n0100 epsilon.dfu
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-device-n0100.dfu
+          path: output/release/device/n0100/epsilon.dfu
+      - run: make -j2 MODEL=n0100 test.elf
+  build-device-n0110:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install binutils-arm-none-eabi build-essential gcc-arm-none-eabi imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - uses: actions/checkout@v1
+      - run: make -j2 epsilon.dfu
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-device-n0110.dfu
+          path: output/release/device/n0110/epsilon.dfu
+      - run: make -j2 test.elf
+  build-simulator-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: numworks/setup-msys2@v1
+      - uses: actions/checkout@v1
+      - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng
+      - run: msys2do make -j2 PLATFORM=simulator
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-simulator-windows.exe
+          path: output/release/simulator/windows/epsilon.exe
+      - run: msys2do make -j2 PLATFORM=simulator test.headless.exe
+      - run: output/release/simulator/windows/test.headless.exe
+  build-simulator-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: numworks/setup-emscripten@v1
+      - uses: actions/checkout@v1
+      - run: source $EMSDK/emsdk_env.sh && make -j2 PLATFORM=simulator TARGET=web
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-simulator-web.zip
+          path: output/release/simulator/web/simulator.zip
+      - run: source $EMSDK/emsdk_env.sh && make -j2 PLATFORM=simulator TARGET=web test.headless.js
+      - run: node output/release/simulator/web/test.headless.js
+  build-simulator-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - uses: actions/checkout@v1
+      - run: make -j2 PLATFORM=simulator
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-simulator-linux.bin
+          path: output/release/simulator/linux/epsilon.bin
+      - run: make -j2 PLATFORM=simulator test.headless.bin
+      - run: output/release/simulator/linux/test.headless.bin
+  build-simulator-macos:
+    runs-on: macOS-latest
+    steps:
+      - run: brew install numworks/tap/numworks-sdk
+      - uses: actions/checkout@v1
+      - run: make -j2 PLATFORM=simulator
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-simulator-macos.zip
+          path: output/release/simulator/macos/app/Payload
+      - run: make -j2 PLATFORM=simulator ARCH=x86_64 test.headless.bin
+      - run: output/release/simulator/macos/x86_64/test.headless.bin
+  build-simulator-ios:
+    runs-on: macOS-latest
+    steps:
+      - run: brew install numworks/tap/numworks-sdk
+      - uses: actions/checkout@v1
+      - run: make -j2 PLATFORM=simulator TARGET=ios GOOGLE_ANALYTICS=0
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-simulator-ios.ipa
+          path: output/release/simulator/ios/app/epsilon.ipa

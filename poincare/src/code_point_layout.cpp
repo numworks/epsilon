@@ -84,7 +84,7 @@ bool CodePointLayoutNode::canBeOmittedMultiplicationLeftFactor() const {
   if (isMultiplicationCodePoint()) {
     return false;
   }
-  return LayoutNode::canBeOmittedMultiplicationRightFactor();
+  return LayoutNode::canBeOmittedMultiplicationLeftFactor();
 }
 
 bool CodePointLayoutNode::canBeOmittedMultiplicationRightFactor() const {

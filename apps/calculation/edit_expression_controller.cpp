@@ -111,9 +111,6 @@ void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutFi
 void EditExpressionController::reloadView() {
   m_contentView.reload();
   m_historyController->reload();
-  if (m_historyController->numberOfRows() > 0) {
-    m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  }
 }
 
 bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
@@ -126,7 +123,6 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     }
     m_calculationStore->push(m_cacheBuffer, myApp->localContext());
     m_historyController->reload();
-    m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
     return true;
   }
   if (event == Ion::Events::Up) {
@@ -150,7 +146,6 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   }
   m_calculationStore->push(m_cacheBuffer, textFieldDelegateApp()->localContext());
   m_historyController->reload();
-  m_contentView.mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
   m_contentView.expressionField()->setEditing(true, true);
   return true;
 }

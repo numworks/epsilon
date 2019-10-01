@@ -10,7 +10,6 @@
 #include "calculation_store.h"
 
 namespace Calculation {
-class HistoryController;
 
 /* TODO: implement a split view */
 class EditExpressionController : public ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {

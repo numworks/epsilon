@@ -8,7 +8,7 @@ TARGET ?= $(HOST)
 
 BUILD_DIR := $(BUILD_DIR)/$(TARGET)
 
-EPSILON_SIMULATOR_HAS_LIBPNG ?= 1
+EPSILON_SIMULATOR_HAS_LIBPNG ?= 0
 
 include build/platform.simulator.$(TARGET).mak
 

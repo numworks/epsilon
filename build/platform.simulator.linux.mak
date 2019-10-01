@@ -1,2 +1,4 @@
 TOOLCHAIN = host-gcc
 EXE = bin
+
+EPSILON_SIMULATOR_HAS_LIBPNG = 1

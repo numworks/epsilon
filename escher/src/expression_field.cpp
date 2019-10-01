@@ -113,9 +113,9 @@ bool ExpressionField::handleEventWithText(const char * text, bool indentation, b
 
 KDCoordinate ExpressionField::inputViewHeight() const {
   return k_separatorThickness
-    + (editionIsInTextField() ? k_textFieldHeight :
+    + (editionIsInTextField() ? k_minimalHeight :
         minCoordinate(maximalHeight(),
-          maxCoordinate(k_textFieldHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
+          maxCoordinate(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
 KDCoordinate ExpressionField::maximalHeight() const {

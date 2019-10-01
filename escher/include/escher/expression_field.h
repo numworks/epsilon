@@ -39,7 +39,7 @@ public:
 
 private:
   static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
-  static constexpr KDCoordinate k_textFieldHeight = 37;
+  static constexpr KDCoordinate k_minimalHeight = 37;
   static constexpr KDCoordinate k_horizontalMargin = 5;
   static constexpr KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;

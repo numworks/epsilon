@@ -102,7 +102,7 @@ include build/struct_layout/Makefile
 include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-all_src = $(app_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(ion_device_dfu_relocated_src) $(ion_device_dfu_xip) $(epsilon_src) $(runner_src) $(flasher_src) $(bench_src) $(tests_src)
+all_src = $(apps_all_src) $(escher_src) $(ion_all_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(epsilon_src) $(runner_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(ion_target_device_bench_src) $(tests_src)
 all_objs = $(call object_for,$(all_src))
 .SECONDARY: $(all_objs)
 

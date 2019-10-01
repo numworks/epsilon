@@ -92,7 +92,12 @@ $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.gene
 
 apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_solver_test_src)
 
-apps_default_src = $(app_src) $(apps_launch_default_src) $(apps_prompt_none_src);
-apps_onboarding_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src);
-apps_onboarding_update_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src);
-apps_onboarding_beta_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src);
+# Configure variants
+apps_all_src = $(app_src)
+apps_all_src += $(apps_launch_default_src) $(apps_launch_on_boarding_src
+apps_all_src += $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src)
+
+apps_default_src = $(app_src) $(apps_launch_default_src) $(apps_prompt_none_src)
+apps_onboarding_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
+apps_onboarding_update_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
+apps_onboarding_beta_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)

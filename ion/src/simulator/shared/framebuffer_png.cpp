@@ -1,3 +1,5 @@
+#if EPSILON_SIMULATOR_HAS_LIBPNG
+
 #include "framebuffer.h"
 #include <ion/display.h>
 #include <stdlib.h>
@@ -51,3 +53,5 @@ void Ion::Simulator::Framebuffer::writeToFile(const char * filename) {
   png_destroy_write_struct(&png, (png_infopp)NULL);
   fclose(file);
 }
+
+#endif

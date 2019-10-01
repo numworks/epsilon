@@ -27,6 +27,7 @@ Event getPlatformEvent() {
     }
     event = Ion::Events::Event(c);
   }
+#if EPSILON_SIMULATOR_HAS_LIBPNG
   if (sEventCount++ > sLogAfterNumberOfEvents && sLogAfterNumberOfEvents >= 0) {
     char filename[32];
     sprintf(filename, "event%d.png", sEventCount);
@@ -35,6 +36,7 @@ Event getPlatformEvent() {
     printf("Event %d is %s\n", sEventCount, event.name());
 #endif
   }
+#endif
   return event;
 }
 

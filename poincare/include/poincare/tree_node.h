@@ -98,7 +98,7 @@ public:
    *   4
    *
    * */
-  virtual bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const { return false; };
+  virtual bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const { return false; }
 
   template <typename T>
   class Iterator {

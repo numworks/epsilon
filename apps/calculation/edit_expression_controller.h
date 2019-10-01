@@ -39,11 +39,10 @@ private:
     void reload();
     TableView * mainView() { return m_mainView; }
     ExpressionField * expressionField() { return &m_expressionField; }
-    /* View */
+  private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
-  private:
     TableView * m_mainView;
     ExpressionField m_expressionField;
   };

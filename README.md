@@ -1,7 +1,6 @@
 <img src="docs/epsilon.svg?sanitize=true" alt="NumWorks Epsilon logo" height="70" >
 
-[![Build Status](https://api.travis-ci.org/numworks/epsilon.svg?branch=master)](https://travis-ci.org/numworks/epsilon)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/numworks/epsilon?branch=master&svg=true)](https://ci.appveyor.com/project/Ecco/epsilon-n2hn8/branch/master)
+[![Build Status](https://github.com/numworks/epsilon/workflows/Continuous%20integration/badge.svg)](https://github.com/numworks/epsilon/actions?workflow=Continuous+integration)
 
 Epsilon is a high-performance graphing calculator operating system. It includes eight apps that cover the high school mathematics curriculum.
 
@@ -9,11 +8,7 @@ You can try Epsilon straight from your browser in the [online simulator](https:/
 
 ## Diving in
 
-We highly recommend you start by reading the [online documentation](https://www.numworks.com/resources/engineering/software/) for this project. You'll learn about:
-
-* Installing the [SDK](https://www.numworks.com/resources/engineering/software/sdk/)
-* The [design decisions](https://www.numworks.com/resources/engineering/software/embedded/) that were made
-* The overall [software architecture](https://www.numworks.com/resources/engineering/software/architecture/) of the firmware
+We highly recommend you start by reading the [online documentation](https://www.numworks.com/resources/engineering/software/) for this project. You'll learn how to install the [SDK](https://www.numworks.com/resources/engineering/software/build/) and about the overall architecture of the Epsilon.
 
 ## Contributing
 

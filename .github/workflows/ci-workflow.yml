@@ -73,7 +73,7 @@ jobs:
   build-simulator-macos:
     runs-on: macOS-latest
     steps:
-      - run: brew install numworks/tap/numworks-sdk
+      - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v1
       - run: make -j2 PLATFORM=simulator
       - uses: actions/upload-artifact@master
@@ -85,7 +85,7 @@ jobs:
   build-simulator-ios:
     runs-on: macOS-latest
     steps:
-      - run: brew install numworks/tap/numworks-sdk
+      - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v1
       - run: make -j2 PLATFORM=simulator TARGET=ios GOOGLE_ANALYTICS=0
       - uses: actions/upload-artifact@master

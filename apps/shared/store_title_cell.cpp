@@ -10,8 +10,8 @@ void StoreTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(r, m_separatorLeft ? HideableEvenOddEditableTextCell::hideColor() : backgroundColor());
 }
 
-void StoreTitleCell::layoutSubviews() {
-  bufferTextView()->setFrame(rectWithoutSeparator(bufferTextViewFrame()));
+void StoreTitleCell::layoutSubviews(bool force) {
+  bufferTextView()->setFrame(rectWithoutSeparator(bufferTextViewFrame()), force);
 }
 
 void StoreTitleCell::didSetSeparator() {

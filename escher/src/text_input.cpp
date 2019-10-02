@@ -25,8 +25,8 @@ KDRect TextInput::ContentView::cursorRect() {
   return glyphFrameAtPosition(editedText(), m_cursorLocation);
 }
 
-void TextInput::ContentView::layoutSubviews() {
-  m_cursorView.setFrame(cursorRect());
+void TextInput::ContentView::layoutSubviews(bool force) {
+  m_cursorView.setFrame(cursorRect(), force);
 }
 
 void TextInput::ContentView::reloadRectFromPosition(const char * position, bool lineBreak) {

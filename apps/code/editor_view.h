@@ -26,7 +26,7 @@ public:
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 
   class GutterView : public View {
   public:

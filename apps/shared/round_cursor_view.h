@@ -13,7 +13,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);
-  void setCursorFrame(KDRect frame) override;
+  void setCursorFrame(KDRect frame, bool force) override;
 #ifdef GRAPH_CURSOR_SPEEDUP
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
 #endif

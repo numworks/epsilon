@@ -27,8 +27,8 @@ View * MessageTableCellWithEditableTextWithSeparator::subviewAtIndex(int index) 
   return &m_cell;
 }
 
-void MessageTableCellWithEditableTextWithSeparator::layoutSubviews() {
-  m_cell.setFrame(KDRect(0, k_margin, bounds().width(), bounds().height()-k_margin));
+void MessageTableCellWithEditableTextWithSeparator::layoutSubviews(bool force) {
+  m_cell.setFrame(KDRect(0, k_margin, bounds().width(), bounds().height()-k_margin), force);
 }
 
 }

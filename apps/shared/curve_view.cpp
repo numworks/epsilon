@@ -722,15 +722,15 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
 }
 
-void CurveView::layoutSubviews() {
+void CurveView::layoutSubviews(bool force) {
   if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
-    m_cursorView->setCursorFrame(cursorFrame());
+    m_cursorView->setCursorFrame(cursorFrame(), force);
   }
   if (m_bannerView != nullptr) {
-    m_bannerView->setFrame(bannerFrame());
+    m_bannerView->setFrame(bannerFrame(), force);
   }
   if (m_okView != nullptr) {
-    m_okView->setFrame(okFrame());
+    m_okView->setFrame(okFrame(), force);
   }
 }
 

@@ -34,7 +34,7 @@ protected:
     virtual bool removeEndOfLine() = 0;
     KDRect cursorRect();
   protected:
-    virtual void layoutSubviews() override;
+    virtual void layoutSubviews(bool force = false) override;
     void reloadRectFromPosition(const char * position, bool lineBreak = false);
     virtual KDRect glyphFrameAtPosition(const char * buffer, const char * position) const = 0;
     TextCursorView m_cursorView;

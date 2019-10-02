@@ -28,7 +28,7 @@ public:
   void setAccessoryText(const char * text);
   void setTextColor(KDColor color) override;
 private:
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };

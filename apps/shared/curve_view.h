@@ -94,7 +94,7 @@ private:
    * function shifts the stamp (by blending adjacent pixel colors) to draw with
    * anti alising. */
   void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   KDRect cursorFrame();
   KDRect bannerFrame();
   KDRect okFrame();

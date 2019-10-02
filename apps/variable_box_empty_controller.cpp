@@ -42,20 +42,20 @@ View * VariableBoxEmptyController::VariableBoxEmptyView::subviewAtIndex(int inde
   return &m_messages[index-1];
 }
 
-void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews() {
+void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDCoordinate textHeight = k_font->glyphSize().height();
   KDCoordinate layoutHeight = m_layoutExample.minimalSizeForOptimalDisplay().height();
   KDCoordinate margin = (height - k_numberOfMessages*textHeight-layoutHeight)/2;
-  m_layoutExample.setFrame(KDRect(0, margin+k_layoutRowIndex*textHeight, width, layoutHeight));
+  m_layoutExample.setFrame(KDRect(0, margin+k_layoutRowIndex*textHeight, width, layoutHeight), force);
   KDCoordinate currentHeight = 0;
   for (uint8_t i = 0; i < k_numberOfMessages; i++) {
     if (i == k_layoutRowIndex) {
       currentHeight += layoutHeight;
     }
     KDCoordinate h = i == 0 || i == k_numberOfMessages - 1 ? textHeight+margin : textHeight;
-    m_messages[i].setFrame(KDRect(0, currentHeight, width, h));
+    m_messages[i].setFrame(KDRect(0, currentHeight, width, h), force);
     currentHeight += h;
   }
 }

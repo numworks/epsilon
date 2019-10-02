@@ -21,7 +21,7 @@ private:
     constexpr static int k_maxNumberOfCharacters = 20;
     void setColor(KDColor color) override;
   private:
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     constexpr static int k_margin = 4;

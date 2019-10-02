@@ -20,7 +20,7 @@ public:
 protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
 private:
   constexpr static KDCoordinate k_accessoryBottomMargin = 3;

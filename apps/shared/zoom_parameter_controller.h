@@ -23,7 +23,7 @@ private:
   public:
     constexpr static KDCoordinate k_legendHeight = 30;
     ContentView(CurveView * curveView);
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     CurveView * curveView();
   private:
     class LegendView : public View {
@@ -34,7 +34,7 @@ private:
       constexpr static int k_numberOfLegends = 3;
       constexpr static int k_numberOfTokens = 6;
       constexpr static KDCoordinate k_tokenWidth = 10;
-      void layoutSubviews() override;
+      void layoutSubviews(bool force = false) override;
       int numberOfSubviews() const override;
       View * subviewAtIndex(int index) override;
       MessageTextView m_legends[k_numberOfLegends];

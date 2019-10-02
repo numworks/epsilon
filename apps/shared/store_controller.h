@@ -64,7 +64,7 @@ protected:
     static constexpr KDCoordinate k_formulaInputHeight = 31;
     int numberOfSubviews() const override { return 1 + m_displayFormulaInputView; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     KDRect formulaFrame() const;
     StoreSelectableTableView m_dataView;
     BufferTextViewWithTextField m_formulaInputView;

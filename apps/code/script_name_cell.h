@@ -48,7 +48,7 @@ private:
     assert(index == 0);
     return &m_textField;
   }
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 
   Shared::TextFieldWithExtension m_textField;
   char m_textBody[TextField::maxBufferSize()];

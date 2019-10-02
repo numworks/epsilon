@@ -77,16 +77,16 @@ View * ConsoleLineCell::subviewAtIndex(int index) {
   return &m_scrollableView;
 }
 
-void ConsoleLineCell::layoutSubviews() {
+void ConsoleLineCell::layoutSubviews(bool force) {
   if (m_line.isCommand()) {
     KDSize promptSize = ConsoleController::k_font->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
-    m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()));
-    m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()));
+    m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()), force);
+    m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()), force);
     return;
   }
   assert(m_line.isResult());
-  m_promptView.setFrame(KDRectZero);
-  m_scrollableView.setFrame(bounds());
+  m_promptView.setFrame(KDRectZero, force);
+  m_scrollableView.setFrame(bounds(), force);
 }
 
 void ConsoleLineCell::didBecomeFirstResponder() {

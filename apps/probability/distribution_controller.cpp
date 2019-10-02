@@ -47,10 +47,10 @@ View * DistributionController::ContentView::subviewAtIndex(int index) {
   return m_selectableTableView;
 }
 
-void DistributionController::ContentView::layoutSubviews() {
+void DistributionController::ContentView::layoutSubviews(bool force) {
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
-  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight));
+  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight), force);
 }
 
 static I18n::Message sMessages[] = {

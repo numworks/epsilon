@@ -37,7 +37,7 @@ private:
     constexpr static KDCoordinate k_paragraphHeight = 20;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     HighContrastButton m_cancelButton;
     HighContrastButton m_okButton;
     MessageTextView m_warningTextView;

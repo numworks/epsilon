@@ -20,7 +20,7 @@ void Code128BView::setData(const char * data) {
   markRectAsDirty(bounds());
 }
 
-void Code128BView::layoutSubviews() {
+void Code128BView::layoutSubviews(bool force) {
   updateModuleWidth();
 }
 

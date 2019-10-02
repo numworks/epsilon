@@ -52,11 +52,11 @@ View * SequenceTitleCell::subviewAtIndex(int index) {
   return &m_titleTextView;
 }
 
-void SequenceTitleCell::layoutSubviews() {
+void SequenceTitleCell::layoutSubviews(bool force) {
   if (m_orientation == Orientation::VerticalIndicator) {
     m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, verticalAlignment());
   }
-  m_titleTextView.setFrame(subviewFrame());
+  m_titleTextView.setFrame(subviewFrame(), force);
 }
 
 float SequenceTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {

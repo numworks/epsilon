@@ -34,17 +34,17 @@ void EditorView::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_textArea);
 }
 
-void EditorView::layoutSubviews() {
+void EditorView::layoutSubviews(bool force) {
   m_gutterView.setOffset(0);
   KDCoordinate gutterWidth = m_gutterView.minimalSizeForOptimalDisplay().width();
-  m_gutterView.setFrame(KDRect(0, 0, gutterWidth, bounds().height()));
+  m_gutterView.setFrame(KDRect(0, 0, gutterWidth, bounds().height()), force);
 
   m_textArea.setFrame(KDRect(
-    gutterWidth,
-    0,
-    bounds().width()-gutterWidth,
-    bounds().height()
-  ));
+        gutterWidth,
+        0,
+        bounds().width()-gutterWidth,
+        bounds().height()),
+      force);
 }
 
 /* EditorView::GutterView */

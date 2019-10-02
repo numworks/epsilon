@@ -23,7 +23,7 @@ public:
 protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   ExpressionView m_expressionView;
   KDCoordinate m_leftMargin;
   KDCoordinate m_rightMargin;

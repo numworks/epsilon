@@ -25,7 +25,7 @@ protected:
   const char * className() const override;
 #endif
   TableViewDataSource * dataSource();
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   class ContentView : public View {
   public:
     ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap);
@@ -42,7 +42,7 @@ protected:
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
     KDRect cellFrame(int i, int j) const;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;

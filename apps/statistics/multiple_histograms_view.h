@@ -19,7 +19,7 @@ public:
   HistogramBannerView * bannerView() override { return &m_bannerView; }
   HistogramView * dataViewAtIndex(int index) override;
 private:
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   void changeDataViewSelection(int index, bool select) override;
   HistogramView m_histogramView1;
   HistogramView m_histogramView2;

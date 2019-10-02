@@ -88,11 +88,11 @@ View * EvenOddDoubleBufferTextCellWithSeparator::subviewAtIndex(int index) {
   return &m_secondBufferTextView;
 }
 
-void EvenOddDoubleBufferTextCellWithSeparator::layoutSubviews() {
+void EvenOddDoubleBufferTextCellWithSeparator::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width() - Metric::TableSeparatorThickness;
   KDCoordinate height = bounds().height();
-  m_firstBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness, 0, width/2, height));
-  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, 0, width - width/2, height));
+  m_firstBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness, 0, width/2, height), force);
+  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, 0, width - width/2, height), force);
 }
 
 bool EvenOddDoubleBufferTextCellWithSeparator::handleEvent(Ion::Events::Event event) {

@@ -120,22 +120,21 @@ View * HistoryViewCell::subviewAtIndex(int index) {
   return views[index];
 }
 
-void HistoryViewCell::layoutSubviews() {
+void HistoryViewCell::layoutSubviews(bool force) {
   KDCoordinate maxFrameWidth = bounds().width();
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   m_inputView.setFrame(KDRect(
-    0,
-    0,
+    0, 0,
     minCoordinate(maxFrameWidth, inputSize.width()),
-    inputSize.height()
-  ));
+    inputSize.height()),
+  force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
   m_scrollableOutputView.setFrame(KDRect(
     maxCoordinate(0, maxFrameWidth - outputSize.width()),
     inputSize.height(),
     minCoordinate(maxFrameWidth, outputSize.width()),
-    outputSize.height()
-  ));
+    outputSize.height()),
+  force);
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {

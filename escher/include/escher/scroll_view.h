@@ -6,6 +6,13 @@
 #include <escher/scroll_view_indicator.h>
 
 class ScrollView : public View {
+
+/* TODO: Should we add a reload method that forces the relayouting of the
+ * subviews? Or should ScrollView::setFrame always force the layouting of the
+ * subviews ? Because the scroll view frame might not change but its content
+ * might need to be relayouted.
+ * cf TableView, InputViewController, EditExpressionController. */
+
 public:
   ScrollView(View * contentView, ScrollViewDataSource * dataSource);
   ScrollView(ScrollView&& other);

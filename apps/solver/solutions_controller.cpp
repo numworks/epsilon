@@ -59,14 +59,14 @@ View * SolutionsController::ContentView::subviewAtIndex(int index) {
   return &m_selectableTableView;
 }
 
-void SolutionsController::ContentView::layoutSubviews() {
+void SolutionsController::ContentView::layoutSubviews(bool force) {
   if (m_displayWarningMoreSolutions) {
     KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-    m_warningMessageView0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight));
-    m_warningMessageView1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight));
-    m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin));
+    m_warningMessageView0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight), force);
+    m_warningMessageView1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight), force);
+    m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin), force);
   } else {
-    m_selectableTableView.setFrame(bounds());
+    m_selectableTableView.setFrame(bounds(), force);
   }
 }
 

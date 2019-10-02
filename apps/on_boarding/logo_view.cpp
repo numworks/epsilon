@@ -23,8 +23,8 @@ View * LogoView::subviewAtIndex(int index) {
   return &m_logoView;
 }
 
-void LogoView::layoutSubviews() {
-  m_logoView.setFrame(KDRect((Ion::Display::Width - ImageStore::LogoIcon->width())/2, (Ion::Display::Height - ImageStore::LogoIcon->height())/2, ImageStore::LogoIcon->width(), ImageStore::LogoIcon->height()));
+void LogoView::layoutSubviews(bool force) {
+  m_logoView.setFrame(KDRect((Ion::Display::Width - ImageStore::LogoIcon->width())/2, (Ion::Display::Height - ImageStore::LogoIcon->height())/2, ImageStore::LogoIcon->width(), ImageStore::LogoIcon->height()), force);
 }
 
 }

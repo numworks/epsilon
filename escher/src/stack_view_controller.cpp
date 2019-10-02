@@ -36,20 +36,20 @@ void StackViewController::ControllerView::popStack() {
   m_numberOfStacks--;
 }
 
-void StackViewController::ControllerView::layoutSubviews() {
+void StackViewController::ControllerView::layoutSubviews(bool force) {
   KDCoordinate width = m_frame.width();
   if (m_displayStackHeaders) {
     for (int i=0; i<m_numberOfStacks; i++) {
-      m_stackViews[i].setFrame(KDRect(0, Metric::StackTitleHeight*i, width, Metric::StackTitleHeight + 1));
+      m_stackViews[i].setFrame(KDRect(0, Metric::StackTitleHeight*i, width, Metric::StackTitleHeight + 1), force);
     }
   }
   if (m_contentView) {
     KDCoordinate separatorHeight = m_numberOfStacks > 0 ? 1 : 0;
-    KDRect contentViewFrame = KDRect( 0,
+    KDRect contentViewFrame = KDRect(0,
         m_displayStackHeaders * (m_numberOfStacks * Metric::StackTitleHeight + separatorHeight),
         width,
         m_frame.height() - m_displayStackHeaders * m_numberOfStacks * Metric::StackTitleHeight);
-    m_contentView->setFrame(contentViewFrame);
+    m_contentView->setFrame(contentViewFrame, force);
   }
 }
 

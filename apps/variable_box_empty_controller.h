@@ -28,7 +28,7 @@ private:
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     constexpr static int k_layoutRowIndex = 2;
     MessageTextView m_messages[k_numberOfMessages];
     ExpressionView m_layoutExample;

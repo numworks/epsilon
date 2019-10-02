@@ -66,7 +66,7 @@ View * TabView::subviewAtIndex(int index) {
   return &m_cells[index];
 }
 
-void TabView::layoutSubviews() {
+void TabView::layoutSubviews(bool force) {
   KDCoordinate emptyWidth = bounds().width();
   for (int i=0; i<m_numberOfTabs; i++) {
     emptyWidth -= m_cells[i].minimalSizeForOptimalDisplay().width();
@@ -82,7 +82,7 @@ void TabView::layoutSubviews() {
         widthUsed, 0,
         tabWidth, m_frame.height() - k_activeTabHeight
         );
-    m_cells[i].setFrame(cellFrame);
+    m_cells[i].setFrame(cellFrame, force);
     widthUsed += tabWidth;
   }
 }

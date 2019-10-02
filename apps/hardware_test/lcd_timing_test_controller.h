@@ -25,7 +25,7 @@ private:
   private:
     constexpr static const char * k_lcdTimingPassTest = "LCD TIMING: OK";
     constexpr static const char * k_lcdTimingFailTest = "LCD TIMING: FAIL";
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override {
       assert(index >= 0 && index < 2);

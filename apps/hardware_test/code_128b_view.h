@@ -10,7 +10,7 @@ public:
   Code128BView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setData(const char * data);
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 private:
   static constexpr KDCoordinate k_outlineThickness = 1;
   static constexpr KDCoordinate k_charPatternWidth = 11;

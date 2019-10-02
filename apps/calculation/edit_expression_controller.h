@@ -42,7 +42,7 @@ private:
   private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     TableView * m_mainView;
     ExpressionField m_expressionField;
   };

@@ -20,7 +20,7 @@ private:
     void setLabels(I18n::Message message1, I18n::Message message2);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
     constexpr static KDCoordinate k_topAndBottomMargin = 20;

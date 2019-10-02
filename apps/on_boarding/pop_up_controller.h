@@ -20,7 +20,7 @@ private:
   protected:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
   private:
     constexpr static KDCoordinate k_bottomMargin = 13;
     constexpr static KDCoordinate k_okMargin = 10;

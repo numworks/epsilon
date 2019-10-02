@@ -29,12 +29,13 @@ void ScriptNameCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_textField);
 }
 
-void ScriptNameCell::layoutSubviews() {
+void ScriptNameCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
   m_textField.setFrame(KDRect(cellBounds.x() + k_leftMargin,
         cellBounds.y(),
         cellBounds.width() - k_leftMargin,
-        cellBounds.height()));
+        cellBounds.height()),
+      force);
 }
 
 }

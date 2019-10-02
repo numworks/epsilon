@@ -23,7 +23,7 @@ public:
   }
   constexpr static KDCoordinate k_margin = 10;
   constexpr static KDCoordinate k_braceTotalWidth = 30;//2*k_margin+BraceView::k_braceWidth;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

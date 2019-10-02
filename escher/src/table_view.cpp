@@ -33,7 +33,7 @@ const char * TableView::className() const {
 }
 #endif
 
-void TableView::layoutSubviews() {
+void TableView::layoutSubviews(bool force) {
   /* On the one hand, ScrollView::layoutSubviews()
    * calls setFrame(...) over m_contentView,
    * which typically calls layoutSubviews() over m_contentView.
@@ -49,8 +49,8 @@ void TableView::layoutSubviews() {
    * FIXME:
    * Finally, this solution is not optimal at all since
    * layoutSubviews is called twice over m_contentView. */
-  m_contentView.layoutSubviews();
-  ScrollView::layoutSubviews();
+  m_contentView.layoutSubviews(force);
+  ScrollView::layoutSubviews(force);
 }
 
 void TableView::reloadCellAtLocation(int i, int j) {
@@ -166,7 +166,7 @@ View * TableView::ContentView::subviewAtIndex(int index) {
   return m_dataSource->reusableCell(typeIndex, type);
 }
 
-void TableView::ContentView::layoutSubviews() {
+void TableView::ContentView::layoutSubviews(bool force) {
   /* The number of subviews might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
@@ -174,7 +174,7 @@ void TableView::ContentView::layoutSubviews() {
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
     m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
-    cell->setFrame(cellFrame(i,j));
+    cell->setFrame(cellFrame(i,j), force);
   }
 }
 

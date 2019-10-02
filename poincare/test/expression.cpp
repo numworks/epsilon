@@ -48,8 +48,9 @@ QUIZ_CASE(poincare_expression_decimal_constructor) {
   assert_pool_size(initialPoolSize+4);
 
   assert_equal(Decimal::Builder("25", 3), Decimal::Builder("25", 3));
-  assert_equal(Decimal::Builder("1000", -3), Decimal::Builder("1", -3));
-  assert_equal(Decimal::Builder("1000", 3), Decimal::Builder("1", 3));
+  assert_equal(Decimal::Builder("25", 3), Decimal::Builder(25, 3));
+  assert_not_equal(Decimal::Builder("1000", -3), Decimal::Builder("1", -3));
+  assert_not_equal(Decimal::Builder("1000", 3), Decimal::Builder("1", 3));
   assert_not_equal(Decimal::Builder(123,234), Decimal::Builder(42, 108));
   assert_not_equal(Decimal::Builder(12,2), Decimal::Builder(123, 2));
   assert_not_equal(Decimal::Builder(1234,2), Decimal::Builder(1234,3));

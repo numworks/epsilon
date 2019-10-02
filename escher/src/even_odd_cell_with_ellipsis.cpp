@@ -5,6 +5,6 @@ EvenOddCellWithEllipsis::EvenOddCellWithEllipsis() :
 {
 }
 
-void EvenOddCellWithEllipsis::layoutSubviews() {
-  m_ellipsisView.setFrame(bounds());
+void EvenOddCellWithEllipsis::layoutSubviews(bool force) {
+  m_ellipsisView.setFrame(bounds(), force);
 }

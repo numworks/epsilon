@@ -49,12 +49,12 @@ View * ButtonRowController::ContentView::subviewAtIndex(int index) {
   }
 }
 
-void ButtonRowController::ContentView::layoutSubviews() {
+void ButtonRowController::ContentView::layoutSubviews(bool force) {
   /* Position the main view */
   if (numberOfButtons() == 0) {
     KDCoordinate margin = m_position == Position::Top ? 1 : 0;
     KDRect mainViewFrame(0, margin, bounds().width(), bounds().height()-margin);
-    m_mainViewController->view()->setFrame(mainViewFrame);
+    m_mainViewController->view()->setFrame(mainViewFrame, force);
     return;
   }
   KDCoordinate rowHeight;
@@ -65,7 +65,7 @@ void ButtonRowController::ContentView::layoutSubviews() {
   }
   KDCoordinate frameOrigin = m_position == Position::Top ? rowHeight+1 : 0;
   KDRect mainViewFrame(0, frameOrigin, bounds().width(), bounds().height() - rowHeight - 1);
-    m_mainViewController->view()->setFrame(mainViewFrame);
+    m_mainViewController->view()->setFrame(mainViewFrame, force);
 
   /* Position buttons */
   int nbOfButtons = numberOfButtons();
@@ -88,7 +88,7 @@ void ButtonRowController::ContentView::layoutSubviews() {
     Button * button = buttonAtIndex(i);
     KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
     KDRect buttonFrame(currentXOrigin, yOrigin, buttonWidth, buttonHeight);
-    button->setFrame(buttonFrame);
+    button->setFrame(buttonFrame, force);
     currentXOrigin += buttonWidth + widthMargin;
   }
 }

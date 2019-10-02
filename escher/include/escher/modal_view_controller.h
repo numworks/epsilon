@@ -28,7 +28,7 @@ private:
     void setMainView(View * regularView);
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     void presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment,
       KDCoordinate topMargin, KDCoordinate leftMargin,  KDCoordinate bottomMargin, KDCoordinate rightMargin);
     void dismissModalView();

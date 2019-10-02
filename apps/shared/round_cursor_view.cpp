@@ -35,11 +35,11 @@ void RoundCursorView::setColor(KDColor color) {
   markRectAsDirty(bounds());
 }
 
-void RoundCursorView::setCursorFrame(KDRect f) {
+void RoundCursorView::setCursorFrame(KDRect f, bool force) {
 #if GRAPH_CURSOR_SPEEDUP
   /* TODO This is quite dirty (we are out of the dirty tracking and we assume
    * the cursor is the upmost view) but it works well. */
-  if (m_frame == f) {
+  if (m_frame == f && !force) {
     return;
   }
   /* We want to avoid drawing the curve just because the cursor has been
@@ -51,7 +51,7 @@ void RoundCursorView::setCursorFrame(KDRect f) {
     return;
   }
 #endif
-  CursorView::setCursorFrame(f);
+  CursorView::setCursorFrame(f, force);
 }
 
 #ifdef GRAPH_CURSOR_SPEEDUP

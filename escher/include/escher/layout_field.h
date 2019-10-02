@@ -60,7 +60,7 @@ private:
     bool setEditing(bool isEditing); // returns True if LayoutField should reload
     void setBackgroundColor(KDColor c) { m_expressionView.setBackgroundColor(c); }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
-    void cursorPositionChanged() { layoutCursorSubview(); }
+    void cursorPositionChanged() { layoutCursorSubview(false); }
     KDRect cursorRect() { return m_cursorView.frame(); }
     Poincare::LayoutCursor * cursor() { return &m_cursor; }
     const ExpressionView * expressionView() const { return &m_expressionView; }
@@ -70,8 +70,8 @@ private:
   private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
-    void layoutCursorSubview();
+    void layoutSubviews(bool force = false) override;
+    void layoutCursorSubview(bool force);
     Poincare::LayoutCursor m_cursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;

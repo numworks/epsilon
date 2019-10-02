@@ -27,7 +27,7 @@ private:
   constexpr static KDCoordinate k_activeTabHeight = 5;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 
   constexpr static uint8_t k_maxNumberOfTabs = 4;
   TabViewCell m_cells[k_maxNumberOfTabs];

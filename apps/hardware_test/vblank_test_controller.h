@@ -22,7 +22,7 @@ private:
     BufferTextView * vBlankStateTextView() { return &m_vBlankStateView; }
     void setColor(KDColor color) override;
   private:
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 1; }
     View * subviewAtIndex(int index) override {
       assert(index == 0);

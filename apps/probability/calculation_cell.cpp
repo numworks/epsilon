@@ -67,10 +67,10 @@ View * CalculationCell::subviewAtIndex(int index) {
   return &m_calculation;
 }
 
-void CalculationCell::layoutSubviews() {
+void CalculationCell::layoutSubviews(bool force) {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-  m_text.setFrame(KDRect(k_margin, 0, textSize.width(), bounds().height()));
-  m_calculation.setFrame(KDRect(2*k_margin+textSize.width()+ResponderImageCell::k_outline, ResponderImageCell::k_outline, calculationCellWidth(), ImageCell::k_height));
+  m_text.setFrame(KDRect(k_margin, 0, textSize.width(), bounds().height()), force);
+  m_calculation.setFrame(KDRect(2*k_margin+textSize.width()+ResponderImageCell::k_outline, ResponderImageCell::k_outline, calculationCellWidth(), ImageCell::k_height), force);
 }
 
 KDCoordinate CalculationCell::calculationCellWidth() const {

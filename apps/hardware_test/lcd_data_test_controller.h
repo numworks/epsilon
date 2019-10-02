@@ -24,7 +24,7 @@ private:
   private:
     constexpr static const char * k_lcdDataPassTest = "LCD DATA: OK";
     constexpr static const char * k_lcdDataFailTest = "LCD DATA: FAIL";
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override {
       assert(index >= 0 && index < 2);

@@ -54,7 +54,7 @@ public:
   }
 
   void setSize(KDSize size);
-  void setFrame(KDRect frame);
+  void setFrame(KDRect frame, bool force);
   KDPoint pointFromPointInView(View * view, KDPoint point);
 
   KDRect bounds() const;

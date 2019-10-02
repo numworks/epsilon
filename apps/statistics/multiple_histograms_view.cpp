@@ -31,7 +31,7 @@ int MultipleHistogramsView::seriesOfSubviewAtIndex(int index) {
   return static_cast<HistogramView *>(subviewAtIndex(index))->series();
 }
 
-void MultipleHistogramsView::layoutSubviews() {
+void MultipleHistogramsView::layoutSubviews(bool force) {
   MultipleDataView::layoutSubviews();
   int numberHistogramSubviews = m_store->numberOfNonEmptySeries();
   assert(numberHistogramSubviews > 0);

@@ -32,11 +32,11 @@ View * IntervalController::ContentView::subviewAtIndex(int index) {
   return m_selectableTableView;
 }
 
-void IntervalController::ContentView::layoutSubviews() {
+void IntervalController::ContentView::layoutSubviews(bool force) {
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-  m_instructions0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight));
-  m_instructions1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight));
-  m_selectableTableView->setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin));
+  m_instructions0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight), force);
+  m_instructions1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin), force);
 }
 
 /* IntervalController Controller */

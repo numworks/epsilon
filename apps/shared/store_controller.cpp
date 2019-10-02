@@ -44,10 +44,10 @@ View * StoreController::ContentView::subviewAtIndex(int index) {
   return views[index];
 }
 
-void StoreController::ContentView::layoutSubviews() {
+void StoreController::ContentView::layoutSubviews(bool force) {
   KDRect dataViewFrame(0, 0, bounds().width(), bounds().height() - (m_displayFormulaInputView ? k_formulaInputHeight : 0));
-  m_dataView.setFrame(dataViewFrame);
-  m_formulaInputView.setFrame(formulaFrame());
+  m_dataView.setFrame(dataViewFrame, force);
+  m_formulaInputView.setFrame(formulaFrame(), force);
 }
 
 KDRect StoreController::ContentView::formulaFrame() const {

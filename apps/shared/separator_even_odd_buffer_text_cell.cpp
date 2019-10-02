@@ -11,9 +11,14 @@ void SeparatorEvenOddBufferTextCell::drawRect(KDContext * ctx, KDRect rect) cons
   ctx->fillRect(separatorRect, Shared::HideableEvenOddEditableTextCell::hideColor());
 }
 
-void SeparatorEvenOddBufferTextCell::layoutSubviews() {
+void SeparatorEvenOddBufferTextCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
-  m_bufferTextView.setFrame(KDRect(boundsThis.left() + Metric::TableSeparatorThickness + k_horizontalMargin, boundsThis.top(), boundsThis.width() - Metric::TableSeparatorThickness - 2*k_horizontalMargin, boundsThis.height()));
+  KDRect frame = KDRect(
+  	boundsThis.left() + Metric::TableSeparatorThickness + k_horizontalMargin,
+  	boundsThis.top(),
+  	boundsThis.width() - Metric::TableSeparatorThickness - 2*k_horizontalMargin,
+  	boundsThis.height());
+  m_bufferTextView.setFrame(frame, force);
 }
 
 }

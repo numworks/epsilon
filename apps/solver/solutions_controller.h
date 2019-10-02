@@ -47,7 +47,7 @@ private:
     constexpr static KDCoordinate k_topMargin = 50;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     MessageTextView m_warningMessageView0;
     MessageTextView m_warningMessageView1;
     SelectableTableView m_selectableTableView;

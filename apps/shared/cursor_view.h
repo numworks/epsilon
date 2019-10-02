@@ -7,7 +7,7 @@ namespace Shared {
 
 class CursorView : public View {
 public:
-  virtual void setCursorFrame(KDRect frame) { View::setFrame(frame); }
+  virtual void setCursorFrame(KDRect frame, bool force) { View::setFrame(frame, force); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:

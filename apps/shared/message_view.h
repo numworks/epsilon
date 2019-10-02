@@ -10,7 +10,7 @@ public:
 protected:
   int numberOfSubviews() const override { return m_numberOfMessages; }
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 private:
   constexpr static KDCoordinate k_titleMargin = 40;
   constexpr static KDCoordinate k_paragraphHeight = 90;

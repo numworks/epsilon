@@ -10,7 +10,7 @@ public:
   FunctionExpressionCell() : EvenOddExpressionCell() {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
 };

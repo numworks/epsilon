@@ -52,9 +52,9 @@ void TextFieldFunctionTitleCell::setHorizontalAlignment(float alignment) {
   m_textField.setAlignment(alignment, verticalAlignment());
 }
 
-void TextFieldFunctionTitleCell::layoutSubviews() {
+void TextFieldFunctionTitleCell::layoutSubviews(bool force) {
   KDRect frame = subviewFrame();
-  m_textField.setFrame(frame);
+  m_textField.setFrame(frame, force);
   KDCoordinate maxTextFieldX = frame.width() - m_textField.minimalSizeForOptimalDisplay().width();
   float horizontalAlignment = maxFloat(
       0.0f,

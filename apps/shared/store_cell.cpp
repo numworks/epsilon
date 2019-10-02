@@ -10,9 +10,9 @@ void StoreCell::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-void StoreCell::layoutSubviews() {
+void StoreCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
-  editableTextCell()->setFrame(rectWithoutSeparator(KDRect(boundsThis.left(), boundsThis.top(), boundsThis.width() - k_rightMargin, boundsThis.height())));
+  editableTextCell()->setFrame(rectWithoutSeparator(KDRect(boundsThis.left(), boundsThis.top(), boundsThis.width() - k_rightMargin, boundsThis.height())), force);
 }
 
 void StoreCell::didSetSeparator() {

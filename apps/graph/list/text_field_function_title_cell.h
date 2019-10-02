@@ -34,7 +34,7 @@ public:
     assert(index == 0);
     return &m_textField;
   }
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 
   // Responder
   void didBecomeFirstResponder() override;

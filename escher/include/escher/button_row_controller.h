@@ -45,7 +45,7 @@ private:
     void reload();
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool setSelectedButton(int selectedButton);
     int selectedButton() const { return m_selectedButton; }

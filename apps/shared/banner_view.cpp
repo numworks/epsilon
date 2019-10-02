@@ -24,7 +24,7 @@ KDCoordinate BannerView::minimalHeightForOptimalDisplayGivenWidth(KDCoordinate w
   return HeightGivenNumberOfLines(numberOfLinesGivenWidth(width));
 }
 
-void BannerView::layoutSubviews() {
+void BannerView::layoutSubviews(bool force) {
   if (m_frame.isEmpty()) {
     /* If the frame has not been set yet, there is no point in layouting the
      * subviews.
@@ -52,7 +52,7 @@ void BannerView::layoutSubviews() {
         subviewPreviousLine = subviewAtIndex(j);
         KDCoordinate width = subviewPreviousLine->minimalSizeForOptimalDisplay().width() + remainingWidth/nbOfSubviewsOnLine + (j == i-1) * roundingError;
         KDCoordinate height = subviewPreviousLine->minimalSizeForOptimalDisplay().height();
-        subviewPreviousLine->setFrame(KDRect(x, y, width, height));
+        subviewPreviousLine->setFrame(KDRect(x, y, width, height), force);
         x += width;
       }
       // Next line

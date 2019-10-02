@@ -53,14 +53,14 @@ View * LayoutField::ContentView::subviewAtIndex(int index) {
   return m_views[index];
 }
 
-void LayoutField::ContentView::layoutSubviews() {
-  m_expressionView.setFrame(bounds());
-  layoutCursorSubview();
+void LayoutField::ContentView::layoutSubviews(bool force) {
+  m_expressionView.setFrame(bounds(), force);
+  layoutCursorSubview(force);
 }
 
-void LayoutField::ContentView::layoutCursorSubview() {
+void LayoutField::ContentView::layoutCursorSubview(bool force) {
   if (!m_isEditing) {
-    m_cursorView.setFrame(KDRectZero);
+    m_cursorView.setFrame(KDRectZero, force);
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
@@ -77,7 +77,7 @@ void LayoutField::ContentView::layoutCursorSubview() {
     cursorX += pointedLayoutR.layoutSize().width();
   }
   KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline() - m_cursor.baseline());
-  m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
+  m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()), force);
 }
 
 void LayoutField::setEditing(bool isEditing) {

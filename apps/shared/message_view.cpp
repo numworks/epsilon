@@ -23,15 +23,15 @@ View * MessageView::subviewAtIndex(int index) {
   return &(m_messageTextViews[index]);
 }
 
-void MessageView::layoutSubviews() {
+void MessageView::layoutSubviews(bool force) {
   if (m_numberOfMessages == 0) {
     return;
   }
   KDCoordinate width = bounds().width();
   KDCoordinate titleHeight = m_messageTextViews[0].minimalSizeForOptimalDisplay().height();
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-  m_messageTextViews[0].setFrame(KDRect(0, k_titleMargin, width, titleHeight));
+  m_messageTextViews[0].setFrame(KDRect(0, k_titleMargin, width, titleHeight), force);
   for (uint8_t i = 1; i < m_numberOfMessages; i++) {
-    m_messageTextViews[i].setFrame(KDRect(0, k_paragraphHeight + (i-1) * textHeight, width, textHeight));
+    m_messageTextViews[i].setFrame(KDRect(0, k_paragraphHeight + (i-1) * textHeight, width, textHeight), force);
   }
 }

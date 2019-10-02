@@ -65,6 +65,6 @@ View * EvenOddExpressionCell::subviewAtIndex(int index) {
   return &m_expressionView;
 }
 
-void EvenOddExpressionCell::layoutSubviews() {
-  m_expressionView.setFrame(KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin, bounds().height()));
+void EvenOddExpressionCell::layoutSubviews(bool force) {
+  m_expressionView.setFrame(KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin, bounds().height()), force);
 }

@@ -47,8 +47,8 @@ void EquationListView::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_listView);
 }
 
-void EquationListView::layoutSubviews() {
-  m_listView.setFrame(KDRect(0, 0, bounds().width(), bounds().height()));
+void EquationListView::layoutSubviews(bool force) {
+  m_listView.setFrame(KDRect(0, 0, bounds().width(), bounds().height()), force);
   if (m_braceStyle != BraceStyle::None) {
     KDCoordinate braceWidth = m_braceView.minimalSizeForOptimalDisplay().width();
     KDCoordinate braceHeight = m_listView.minimalSizeForOptimalDisplay().height()-2*k_margin;
@@ -56,9 +56,9 @@ void EquationListView::layoutSubviews() {
     m_braceView.setSize(KDSize(braceWidth, braceHeight));
     KDCoordinate scrollBraceHeight = m_listView.minimalSizeForOptimalDisplay().height()-offset().y();
     scrollBraceHeight = m_braceStyle == BraceStyle::OneRowShort ? scrollBraceHeight - Metric::StoreRowHeight : scrollBraceHeight;
-    m_scrollBraceView.setFrame(KDRect(0, 0, k_braceTotalWidth, scrollBraceHeight));
+    m_scrollBraceView.setFrame(KDRect(0, 0, k_braceTotalWidth, scrollBraceHeight), force);
   } else {
-    m_scrollBraceView.setFrame(KDRectZero);
+    m_scrollBraceView.setFrame(KDRectZero, force);
   }
 }
 

@@ -26,7 +26,7 @@ public:
   }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:

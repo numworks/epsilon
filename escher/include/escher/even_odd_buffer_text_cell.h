@@ -26,7 +26,7 @@ protected:
   static constexpr KDCoordinate k_horizontalMargin = Metric::CellMargin;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   BufferTextView m_bufferTextView;
 };
 

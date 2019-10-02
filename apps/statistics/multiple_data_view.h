@@ -32,14 +32,14 @@ public:
   int numberOfSubviews() const override;
 protected:
   virtual Shared::BannerView * bannerView() = 0;
-  void layoutSubviews() override;
-  virtual void layoutDataSubviews();
+  void layoutSubviews(bool force = false) override;
+  virtual void layoutDataSubviews(bool force);
   View * subviewAtIndex(int index) override;
   virtual void changeDataViewSelection(int index, bool select);
   KDRect bannerFrame() const;
   Store * m_store;
 private:
-  void layoutBanner();
+  void layoutBanner(bool force);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   bool m_displayBanner;
 };

@@ -43,7 +43,7 @@ public:
   void setCalculation(Calculation * calculation, bool expanded = false);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableExactApproximateExpressionsView * outputView();

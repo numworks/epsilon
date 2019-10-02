@@ -19,7 +19,7 @@ private:
   static constexpr KDCoordinate LineSpacing = 2;
   int numberOfSubviews() const override = 0;
   View * subviewAtIndex(int index) override = 0;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   int numberOfLinesGivenWidth(KDCoordinate width) const;
 };
 

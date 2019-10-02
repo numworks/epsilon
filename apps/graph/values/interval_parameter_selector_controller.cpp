@@ -20,7 +20,7 @@ void IntervalParameterSelectorController::viewDidDisappear() {
   /* Deselect the table properly because it needs to be relayouted the next time
    * it appears: the number of rows might change according to the plot type. */
   m_selectableTableView.deselectTable(false);
-  m_selectableTableView.setFrame(KDRectZero);
+  m_selectableTableView.setFrame(KDRectZero, false);
 }
 
 void IntervalParameterSelectorController::didBecomeFirstResponder() {

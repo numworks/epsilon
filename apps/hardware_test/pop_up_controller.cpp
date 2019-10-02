@@ -100,17 +100,17 @@ View * PopUpController::ContentView::subviewAtIndex(int index) {
   }
 }
 
-void PopUpController::ContentView::layoutSubviews() {
+void PopUpController::ContentView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-  m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight));
-  m_messageTextView1.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+textHeight, width, textHeight));
-  m_messageTextView2.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+2*textHeight, width, textHeight));
-  m_messageTextView3.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+3*textHeight, width, textHeight));
-  m_messageTextView4.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+4*textHeight, width, textHeight));
-  m_cancelButton.setFrame(KDRect(k_buttonMargin, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight));
-  m_okButton.setFrame(KDRect(2*k_buttonMargin+(width-3*k_buttonMargin)/2, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight));
+  m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight), force);
+  m_messageTextView1.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+textHeight, width, textHeight), force);
+  m_messageTextView2.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+2*textHeight, width, textHeight), force);
+  m_messageTextView3.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+3*textHeight, width, textHeight), force);
+  m_messageTextView4.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+4*textHeight, width, textHeight), force);
+  m_cancelButton.setFrame(KDRect(k_buttonMargin, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight), force);
+  m_okButton.setFrame(KDRect(2*k_buttonMargin+(width-3*k_buttonMargin)/2, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight), force);
 }
 
 }

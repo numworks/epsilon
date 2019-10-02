@@ -18,9 +18,9 @@ void FunctionExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
 
 }
 
-void FunctionExpressionCell::layoutSubviews() {
+void FunctionExpressionCell::layoutSubviews(bool force) {
   KDRect expressionFrame(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin, bounds().height()-k_separatorThickness);
-  m_expressionView.setFrame(expressionFrame);
+  m_expressionView.setFrame(expressionFrame, force);
 }
 
 }

@@ -14,7 +14,7 @@ public:
   }
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 private:
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   KDColor m_functionColor;

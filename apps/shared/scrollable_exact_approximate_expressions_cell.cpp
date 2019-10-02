@@ -43,8 +43,8 @@ View * ScrollableExactApproximateExpressionsCell::subviewAtIndex(int index) {
   return &m_view;
 }
 
-void ScrollableExactApproximateExpressionsCell::layoutSubviews() {
-  m_view.setFrame(bounds());
+void ScrollableExactApproximateExpressionsCell::layoutSubviews(bool force) {
+  m_view.setFrame(bounds(), force);
 }
 
 }

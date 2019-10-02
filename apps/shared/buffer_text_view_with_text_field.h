@@ -20,7 +20,7 @@ private:
   constexpr static KDCoordinate k_borderWidth = 1;
   int numberOfSubviews() const override { return 2; }
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   KDRect textFieldFrame() const;
   BufferTextView m_bufferTextView;
   TextField m_textField;

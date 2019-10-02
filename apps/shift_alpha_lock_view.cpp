@@ -65,10 +65,10 @@ View * ShiftAlphaLockView::subviewAtIndex(int index) {
   return &m_lockView;
 }
 
-void ShiftAlphaLockView::layoutSubviews() {
+void ShiftAlphaLockView::layoutSubviews(bool force) {
   KDSize modifierSize = KDFont::SmallFont->stringSize(I18n::translate(I18n::Message::Alpha));
-  m_shiftAlphaView.setFrame(KDRect(bounds().width() - modifierSize.width(), (bounds().height()- modifierSize.height())/2, modifierSize));
+  m_shiftAlphaView.setFrame(KDRect(bounds().width() - modifierSize.width(), (bounds().height()- modifierSize.height())/2, modifierSize), force);
 
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();
-  m_lockView.setFrame(KDRect(bounds().width() - modifierSize.width() - lockSize.width() - k_lockRightMargin, (bounds().height()- lockSize.height())/2, lockSize));
+  m_lockView.setFrame(KDRect(bounds().width() - modifierSize.width() - lockSize.width() - k_lockRightMargin, (bounds().height()- lockSize.height())/2, lockSize), force);
 }

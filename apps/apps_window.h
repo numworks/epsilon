@@ -17,7 +17,7 @@ public:
   void hideTitleBarView(bool hide);
 private:
   int numberOfSubviews() const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   View * subviewAtIndex(int index) override;
   TitleBarView m_titleBarView;
   bool m_hideTitleBarView;

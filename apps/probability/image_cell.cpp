@@ -35,8 +35,8 @@ View * ImageCell::subviewAtIndex(int index) {
   return &m_iconView;
 }
 
-void ImageCell::layoutSubviews() {
-  m_iconView.setFrame(bounds());
+void ImageCell::layoutSubviews(bool force) {
+  m_iconView.setFrame(bounds(), force);
 }
 
 }

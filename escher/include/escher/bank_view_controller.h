@@ -31,8 +31,8 @@ private:
       assert(index == 0);
       return m_subview;
     }
-    void layoutSubviews() override {
-      m_subview->setFrame(bounds());
+    void layoutSubviews(bool force = false) override {
+      m_subview->setFrame(bounds(), force);
     }
     View * m_subview;
   };

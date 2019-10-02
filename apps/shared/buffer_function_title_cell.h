@@ -20,7 +20,7 @@ public:
   }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 protected:
   KDRect bufferTextViewFrame() const;
   EvenOddBufferTextCell * bufferTextView() { return &m_bufferTextView; }

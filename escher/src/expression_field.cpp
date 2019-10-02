@@ -62,15 +62,15 @@ View * ExpressionField::subviewAtIndex(int index) {
   return &m_layoutField;
 }
 
-void ExpressionField::layoutSubviews() {
+void ExpressionField::layoutSubviews(bool force) {
   KDRect inputViewFrame(0, k_separatorThickness, bounds().width(), bounds().height() - k_separatorThickness);
   if (editionIsInTextField()) {
-    m_textField.setFrame(inputViewFrame);
-    m_layoutField.setFrame(KDRectZero);
+    m_textField.setFrame(inputViewFrame, force);
+    m_layoutField.setFrame(KDRectZero, force);
     return;
   }
-  m_layoutField.setFrame(inputViewFrame);
-  m_textField.setFrame(KDRectZero);
+  m_layoutField.setFrame(inputViewFrame, force);
+  m_textField.setFrame(KDRectZero, force);
 }
 
 void ExpressionField::reload() {

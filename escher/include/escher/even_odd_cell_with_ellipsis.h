@@ -14,7 +14,7 @@ private:
     assert(index==0);
     return &m_ellipsisView;
   }
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   EllipsisView m_ellipsisView;
 };
 

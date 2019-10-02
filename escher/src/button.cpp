@@ -24,8 +24,8 @@ View * Button::subviewAtIndex(int index) {
   return &m_messageTextView;
 }
 
-void Button::layoutSubviews() {
-  m_messageTextView.setFrame(bounds());
+void Button::layoutSubviews(bool force) {
+  m_messageTextView.setFrame(bounds(), force);
 }
 
 bool Button::handleEvent(Ion::Events::Event event) {

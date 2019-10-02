@@ -94,11 +94,11 @@ View * ScrollableExactApproximateExpressionsView::ContentCell::subviewAtIndex(in
   return views[index];
 }
 
-void ScrollableExactApproximateExpressionsView::ContentCell::layoutSubviews() {
+void ScrollableExactApproximateExpressionsView::ContentCell::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDSize rightExpressionSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
   if (numberOfSubviews() == 1) {
-    m_rightExpressionView.setFrame(KDRect(0, 0, rightExpressionSize.width(), height));
+    m_rightExpressionView.setFrame(KDRect(0, 0, rightExpressionSize.width(), height), force);
     return;
   }
   KDCoordinate leftBaseline = m_leftExpressionView.layout().baseline();
@@ -106,9 +106,9 @@ void ScrollableExactApproximateExpressionsView::ContentCell::layoutSubviews() {
   KDCoordinate baseline = maxCoordinate(leftBaseline, rightBaseline);
   KDSize leftExpressionSize = m_leftExpressionView.minimalSizeForOptimalDisplay();
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
-  m_leftExpressionView.setFrame(KDRect(0, baseline-leftBaseline, leftExpressionSize));
-  m_rightExpressionView.setFrame(KDRect(2*Metric::CommonLargeMargin+leftExpressionSize.width()+approximateSignSize.width(), baseline-rightBaseline, rightExpressionSize));
-  m_approximateSign.setFrame(KDRect(Metric::CommonLargeMargin+leftExpressionSize.width(), baseline-approximateSignSize.height()/2, approximateSignSize));
+  m_leftExpressionView.setFrame(KDRect(0, baseline-leftBaseline, leftExpressionSize), force);
+  m_rightExpressionView.setFrame(KDRect(2*Metric::CommonLargeMargin+leftExpressionSize.width()+approximateSignSize.width(), baseline-rightBaseline, rightExpressionSize), force);
+  m_approximateSign.setFrame(KDRect(Metric::CommonLargeMargin+leftExpressionSize.width(), baseline-approximateSignSize.height()/2, approximateSignSize), force);
 }
 
 ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressionsView(Responder * parentResponder) :

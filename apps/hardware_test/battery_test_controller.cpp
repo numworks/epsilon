@@ -94,11 +94,11 @@ void BatteryTestController::ContentView::setColor(KDColor color) {
   m_batteryChargingView.setBackgroundColor(color);
 }
 
-void BatteryTestController::ContentView::layoutSubviews() {
-  m_batteryStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height/2));
+void BatteryTestController::ContentView::layoutSubviews(bool force) {
+  m_batteryStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height/2), force);
   KDSize textSize = KDFont::SmallFont->glyphSize();
-  m_batteryLevelView.setFrame(KDRect(0, Ion::Display::Height-2*textSize.height(), Ion::Display::Width, textSize.height()));
-  m_batteryChargingView.setFrame(KDRect(0, Ion::Display::Height-textSize.height(), Ion::Display::Width, textSize.height()));
+  m_batteryLevelView.setFrame(KDRect(0, Ion::Display::Height-2*textSize.height(), Ion::Display::Width, textSize.height()), force);
+  m_batteryChargingView.setFrame(KDRect(0, Ion::Display::Height-textSize.height(), Ion::Display::Width, textSize.height()), force);
 }
 
 int BatteryTestController::ContentView::numberOfSubviews() const {

@@ -30,7 +30,7 @@ View * PopUpController::MessageViewWithSkip::subviewAtIndex(int index) {
   return nullptr;
 }
 
-void PopUpController::MessageViewWithSkip::layoutSubviews() {
+void PopUpController::MessageViewWithSkip::layoutSubviews(bool force) {
   // Layout the main message
   MessageView::layoutSubviews();
   // Layout the "skip (OK)"
@@ -38,8 +38,8 @@ void PopUpController::MessageViewWithSkip::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   KDSize okSize = m_okView.minimalSizeForOptimalDisplay();
-  m_skipView.setFrame(KDRect(0, height-k_bottomMargin-textHeight, width-okSize.width()-k_okMargin-k_skipMargin, textHeight));
-  m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize));
+  m_skipView.setFrame(KDRect(0, height-k_bottomMargin-textHeight, width-okSize.width()-k_okMargin-k_skipMargin, textHeight), force);
+  m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize), force);
 }
 
 PopUpController::PopUpController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :

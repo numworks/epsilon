@@ -65,8 +65,8 @@ private:
     constexpr static KDCoordinate k_sigmaHeight = 18;
     int numberOfSubviews() const override { return 3; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
-    void layoutSubviews(Step step);
+    void layoutSubviews(bool force = false) override;
+    void layoutSubviews(Step step, bool force);
     ExpressionView m_sum;
     Poincare::Layout m_sumLayout;
     MessageTextView m_legend;

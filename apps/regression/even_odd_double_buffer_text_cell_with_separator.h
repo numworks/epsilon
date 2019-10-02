@@ -25,7 +25,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   bool m_firstTextSelected;

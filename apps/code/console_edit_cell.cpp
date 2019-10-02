@@ -27,10 +27,10 @@ View * ConsoleEditCell::subviewAtIndex(int index) {
   }
 }
 
-void ConsoleEditCell::layoutSubviews() {
+void ConsoleEditCell::layoutSubviews(bool force) {
   KDSize promptSize = m_promptView.minimalSizeForOptimalDisplay();
-  m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()));
-  m_textField.setFrame(KDRect(KDPoint(promptSize.width(), KDCoordinate(0)), bounds().width() - promptSize.width(), bounds().height()));
+  m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()), force);
+  m_textField.setFrame(KDRect(KDPoint(promptSize.width(), KDCoordinate(0)), bounds().width() - promptSize.width(), bounds().height()), force);
 }
 
 void ConsoleEditCell::didBecomeFirstResponder() {

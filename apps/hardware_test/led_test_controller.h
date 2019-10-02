@@ -18,7 +18,7 @@ private:
     ContentView();
     SolidColorView * LEDColorIndicatorView();
   private:
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     SolidColorView m_ledColorIndicatorView;

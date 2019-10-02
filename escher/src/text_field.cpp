@@ -209,12 +209,12 @@ void TextField::ContentView::didModifyTextBuffer() {
   layoutSubviews();
 }
 
-void TextField::ContentView::layoutSubviews() {
+void TextField::ContentView::layoutSubviews(bool force) {
   if (!m_isEditing) {
-    m_cursorView.setFrame(KDRectZero);
+    m_cursorView.setFrame(KDRectZero, force);
     return;
   }
-  TextInput::ContentView::layoutSubviews();
+  TextInput::ContentView::layoutSubviews(force);
 }
 
 KDRect TextField::ContentView::glyphFrameAtPosition(const char * buffer, const char * position) const {

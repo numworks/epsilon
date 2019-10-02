@@ -98,6 +98,13 @@ void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutFi
   if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
     m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
     reloadView();
+  } else {
+    /* The input view is already at maximal size so we do not need to relayout
+     * the view underneath, but the view inside the input view might still need
+     * to be relayouted.
+     * We force the relayout because the frame stays the same but we need to
+     * propagate a relayout to the content of the field scroll view. */
+    m_contentView.expressionField()->layoutSubviews(true);
   }
 }
 

@@ -34,23 +34,8 @@ const char * TableView::className() const {
 #endif
 
 void TableView::layoutSubviews(bool force) {
-  /* On the one hand, ScrollView::layoutSubviews()
-   * calls setFrame(...) over m_contentView,
-   * which typically calls layoutSubviews() over m_contentView.
-   * However, if the frame happens to be unchanged,
-   * setFrame(...) does not call layoutSubviews.
-   * On the other hand, calling only m_contentView.layoutSubviews()
-   * does not relayout ScrollView when the offset
-   * or the content's size changes.
-   * For those reasons, we call both of them explicitly.
-   * Besides, one must call layoutSubviews() over
-   * m_contentView first, in order to reload the table's data,
-   * otherwise the table's size might be miscomputed...
-   * FIXME:
-   * Finally, this solution is not optimal at all since
-   * layoutSubviews is called twice over m_contentView. */
-  m_contentView.layoutSubviews(force);
-  ScrollView::layoutSubviews(force);
+  // We force the layoutSubviews in case the frame did not change.
+  ScrollView::layoutSubviews(true);
 }
 
 void TableView::reloadCellAtLocation(int i, int j) {

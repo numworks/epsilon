@@ -81,9 +81,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool asce
   } else {
     assert(m_exponent == other->m_exponent);
     assert(exponent() == other->exponent());
-    double approx0 = templatedApproximate<double>();
-    double approx1 = other->templatedApproximate<double>();
-    return (approx0 == approx1 ? 0 : (approx0 < approx1 ? -1 : 1));
+    unsignedComparison = Integer::NaturalOrder(unsignedMantissa(), other->unsignedMantissa());
   }
   return ((int)Number(this).sign())*unsignedComparison;
 }

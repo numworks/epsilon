@@ -1,6 +1,7 @@
 #ifndef ION_BATTERY_H
 #define ION_BATTERY_H
 
+#include <stdint.h>
 /*
  *
  * RAIN = External input impedance should be <= to
@@ -16,11 +17,11 @@ namespace Battery {
 
 bool isCharging();
 
-enum class Charge {
-  EMPTY,
-  LOW,
-  SOMEWHERE_INBETWEEN,
-  FULL
+enum class Charge : uint8_t {
+  EMPTY = 0,
+  LOW = 1,
+  SOMEWHERE_INBETWEEN = 2,
+  FULL = 3
 };
 Charge level();
 

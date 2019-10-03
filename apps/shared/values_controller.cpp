@@ -2,16 +2,21 @@
 #include "function_app.h"
 #include <poincare/preferences.h>
 #include <assert.h>
+#include <limits.h>
 
 using namespace Poincare;
 
 namespace Shared {
+
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
+  m_firstMemoizedColumn(INT_MAX),
+  m_firstMemoizedRow(INT_MAX),
   m_abscissaParameterController(this)
 {
 }
@@ -124,16 +129,12 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
   // The cell is not a title cell and not editable
   if (typeAtLocation(i,j) == k_notEditableValueCellType) {
-    constexpr int bufferSize = 2*PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits)+3;
-    char buffer[bufferSize]; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
     // Special case: last row
     if (j == numberOfElementsInColumn(i) + 1) {
-      buffer[0] = 0;
+      static_cast<EvenOddBufferTextCell *>(cell)->setText("");
     } else {
-      double x = intervalAtColumn(i)->element(j-1);
-      printEvaluationOfAbscissaAtColumn(x, i, buffer, bufferSize);
+      static_cast<EvenOddBufferTextCell *>(cell)->setText(memoizedBufferForCell(i, j));
     }
-    static_cast<EvenOddBufferTextCell *>(cell)->setText(buffer);
   }
 }
 
@@ -188,6 +189,7 @@ Responder * ValuesController::defaultController() {
 void ValuesController::viewWillAppear() {
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
+  resetMemoization();
 }
 
 void ValuesController::viewDidDisappear() {
@@ -231,6 +233,66 @@ void ValuesController::updateNumberOfColumns() const {
 
 FunctionStore * ValuesController::functionStore() const {
   return FunctionApp::app()->functionStore();
+}
+
+// Function evaluation memoization
+
+void ValuesController::resetMemoization() {
+  m_firstMemoizedColumn = INT_MAX;
+  m_firstMemoizedRow = INT_MAX;
+}
+
+void ValuesController::moveMemoizedBuffer(int destinationI, int destinationJ, int sourceI, int sourceJ) {
+  strlcpy(memoizedBufferAtIndex(destinationJ*numberOfMemoizedColumn() + destinationI), memoizedBufferAtIndex(sourceJ*numberOfMemoizedColumn() + sourceI), k_valuesCellBufferSize);
+}
+
+char * ValuesController::memoizedBufferForCell(int i, int j) {
+  // Conversion of coordinates from absolute table to values table
+  int valuesI = valuesColumnForAbsoluteColumn(i);
+  int valuesJ = valuesRowForAbsoluteRow(j);
+  int nbOfMemoizedColumns = numberOfMemoizedColumn();
+  /* Compute the required offset to apply to the memoized table in order to
+   * display cell (i,j) */
+  int offsetI = 0;
+  int offsetJ = 0;
+  if (valuesI < m_firstMemoizedColumn) {
+    offsetI = valuesI - m_firstMemoizedColumn;
+  } else if (valuesI >= m_firstMemoizedColumn + nbOfMemoizedColumns) {
+    offsetI = valuesI - nbOfMemoizedColumns - m_firstMemoizedColumn + 1;
+  }
+  if (valuesJ < m_firstMemoizedRow) {
+    offsetJ = valuesJ - m_firstMemoizedRow;
+  } else if (valuesJ >= m_firstMemoizedRow + k_maxNumberOfRows) {
+    offsetJ = valuesJ - k_maxNumberOfRows - m_firstMemoizedRow + 1;
+  }
+
+  // Apply the offset
+  if (offsetI != 0 || offsetJ != 0) {
+    m_firstMemoizedColumn = m_firstMemoizedColumn + offsetI;
+    m_firstMemoizedRow = m_firstMemoizedRow + offsetJ;
+    // Translate already memoized cells
+    int maxI = numberOfValuesColumns();
+    for (int ii = offsetI > 0 ? 0 : minInt(nbOfMemoizedColumns, maxI)-1;  offsetI > 0 ? ii < minInt(-offsetI + nbOfMemoizedColumns, maxI) : ii >= -offsetI; ii += offsetI > 0 ? 1 : -1) {
+      int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn));
+      for (int jj = offsetJ > 0 ? 0 : minInt(k_maxNumberOfRows, maxJ)-1; offsetJ > 0 ? jj < minInt(-offsetJ+k_maxNumberOfRows, maxJ) : jj >= -offsetJ; jj += offsetJ > 0 ? 1 : -1) {
+        moveMemoizedBuffer(ii, jj, ii+offsetI, jj+offsetJ);
+      }
+    }
+    // Compute the buffer of the new cells of the memoized table
+    for (int ii = 0; ii < minInt(nbOfMemoizedColumns, maxI); ii++) {
+      int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn));
+      for (int jj = 0; jj < minInt(k_maxNumberOfRows, maxJ); jj++) {
+        // Escape if already filled
+        if (ii >= -offsetI && ii < -offsetI + nbOfMemoizedColumns && jj >= -offsetJ && jj < -offsetJ + k_maxNumberOfRows) {
+          continue;
+        }
+        fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + ii),
+            absoluteRowForValuesRow(m_firstMemoizedRow + jj),
+            jj * numberOfMemoizedColumn() + ii);
+      }
+    }
+  }
+  return memoizedBufferAtIndex((valuesJ-m_firstMemoizedRow)*numberOfMemoizedColumn() + (valuesI-m_firstMemoizedColumn));
 }
 
 }

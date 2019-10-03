@@ -231,11 +231,28 @@ ViewController * ValuesController::functionParameterController() {
   return &m_functionParameterController;
 }
 
-void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) {
+int ValuesController::valuesColumnForAbsoluteColumn(int column) {
+  return column - numberOfAbscissaColumnsBeforeColumn(column);
+}
+
+int ValuesController::absoluteColumnForValuesColumn(int column) {
+  int abscissaColumns = 0;
+  int valuesColumns = 0;
+  int plotTypeIndex = 0;
+  do {
+    abscissaColumns++;
+    assert(plotTypeIndex < Shared::ContinuousFunction::k_numberOfPlotTypes);
+    valuesColumns += m_numberOfValuesColumnsForType[plotTypeIndex++];
+  } while (valuesColumns <= column);
+  return column + abscissaColumns;
+}
+
+void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
+  double abscissa = intervalAtColumn(column)->element(row-1);
   bool isDerivative = false;
   double evaluationX = NAN;
   double evaluationY = NAN;
-  Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
+  Ion::Storage::Record record = recordAtColumn(column, &isDerivative);
   Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   bool isParametric = function->plotType() == ContinuousFunction::PlotType::Parametric;
@@ -248,17 +265,18 @@ void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int co
       evaluationX = eval.x1();
     }
   }
+  char * buffer = memoizedBufferAtIndex(index);
   int numberOfChar = 0;
   if (isParametric) {
-    assert(numberOfChar < bufferSize-1);
+    assert(numberOfChar < k_valuesCellBufferSize-1);
     buffer[numberOfChar++] = '(';
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
-    assert(numberOfChar < bufferSize-1);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+    assert(numberOfChar < k_valuesCellBufferSize-1);
     buffer[numberOfChar++] = ';';
   }
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
   if (isParametric) {
-    assert(numberOfChar+1 < bufferSize-1);
+    assert(numberOfChar+1 < k_valuesCellBufferSize-1);
     buffer[numberOfChar++] = ')';
     buffer[numberOfChar] = 0;
   }
@@ -288,6 +306,19 @@ void ValuesController::updateNumberOfColumns() const {
 
 int ValuesController::numberOfColumnsForPlotType(int plotTypeIndex) const {
   return m_numberOfValuesColumnsForType[plotTypeIndex] + (m_numberOfValuesColumnsForType[plotTypeIndex] > 0); // Count abscissa column if there is one
+}
+
+int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) {
+  int result = 0;
+  int plotType = column < 0 ?  Shared::ContinuousFunction::k_numberOfPlotTypes : (int)plotTypeAtColumn(&column) + 1;
+  for (int plotTypeIndex = 0; plotTypeIndex < plotType; plotTypeIndex++) {
+    result += (m_numberOfValuesColumnsForType[plotTypeIndex] > 0);
+  }
+  return result;
+}
+
+int ValuesController::numberOfValuesColumns() {
+  return m_numberOfColumns - numberOfAbscissaColumnsBeforeColumn(-1);
 }
 
 int writeMatrixBrakets(char * buffer, const int bufferSize, int type) {

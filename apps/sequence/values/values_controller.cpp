@@ -71,10 +71,12 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
 
-void ValuesController::printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) {
-  Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
+  char * buffer = memoizedBufferAtIndex(index);
+  double abscissa = intervalAtColumn(column)->element(row-1);
+  Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
   Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, bufferSize, Preferences::LargeNumberOfSignificantDigits);
+  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::LargeNumberOfSignificantDigits);
 }
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {

@@ -10,6 +10,8 @@ namespace Shared {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
+// Constructor and helpers
+
 ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
@@ -40,17 +42,24 @@ void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegat
   }
 }
 
+// View Controller
+
 const char * ValuesController::title() {
   return I18n::translate(I18n::Message::ValuesTab);
 }
 
-int ValuesController::numberOfColumns() const {
-  if (m_numberOfColumnsNeedUpdate) {
-    updateNumberOfColumns();
-    m_numberOfColumnsNeedUpdate = false;
-  }
-  return m_numberOfColumns;
+void ValuesController::viewWillAppear() {
+  EditableCellTableViewController::viewWillAppear();
+  header()->setSelectedButton(-1);
+  resetMemoization();
 }
+
+void ValuesController::viewDidDisappear() {
+  m_numberOfColumnsNeedUpdate = true;
+  EditableCellTableViewController::viewDidDisappear();
+}
+
+// Responder
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
@@ -118,11 +127,14 @@ void ValuesController::willExitResponderChain(Responder * nextFirstResponder) {
   }
 }
 
-int ValuesController::numberOfButtons(ButtonRowController::Position) const {
-  if (isEmpty()) {
-    return 0;
+// TableViewDataSource
+
+int ValuesController::numberOfColumns() const {
+  if (m_numberOfColumnsNeedUpdate) {
+    updateNumberOfColumns();
+    m_numberOfColumnsNeedUpdate = false;
   }
-  return 1;
+  return m_numberOfColumns;
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -175,6 +187,17 @@ int ValuesController::typeAtLocation(int i, int j) {
   return (i > 0) + 2 * (j > 0);
 }
 
+// ButtonRowDelegate
+
+int ValuesController::numberOfButtons(ButtonRowController::Position) const {
+  if (isEmpty()) {
+    return 0;
+  }
+  return 1;
+}
+
+// AlternateEmptyViewDelegate
+
 bool ValuesController::isEmpty() const {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return true;
@@ -186,37 +209,15 @@ Responder * ValuesController::defaultController() {
   return tabController();
 }
 
-void ValuesController::viewWillAppear() {
-  EditableCellTableViewController::viewWillAppear();
-  header()->setSelectedButton(-1);
-  resetMemoization();
-}
-
-void ValuesController::viewDidDisappear() {
-  m_numberOfColumnsNeedUpdate = true;
-  EditableCellTableViewController::viewDidDisappear();
-}
-
-Ion::Storage::Record ValuesController::recordAtColumn(int i) {
-  assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  return functionStore()->activeRecordAtIndex(i-1);
-}
-
-Responder * ValuesController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
-}
-
-StackViewController * ValuesController::stackController() const {
-  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
-}
-
-bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
-  return typeAtLocation(columnIndex, rowIndex) == k_editableValueCellType;
-}
+// EditableCellTableViewController
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   intervalAtColumn(columnIndex)->setElement(rowIndex-1, floatBody);
   return true;
+}
+
+bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
+  return typeAtLocation(columnIndex, rowIndex) == k_editableValueCellType;
 }
 
 double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
@@ -226,6 +227,25 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
 int ValuesController::numberOfElementsInColumn(int columnIndex) const {
   return const_cast<ValuesController *>(this)->intervalAtColumn(columnIndex)->numberOfElements();
 }
+
+// Parent controller getters
+
+Responder * ValuesController::tabController() const {
+  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+}
+
+StackViewController * ValuesController::stackController() const {
+  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+}
+
+// Model getters
+
+Ion::Storage::Record ValuesController::recordAtColumn(int i) {
+  assert(typeAtLocation(i, 0) == k_functionTitleCellType);
+  return functionStore()->activeRecordAtIndex(i-1);
+}
+
+// Number of columns memoization
 
 void ValuesController::updateNumberOfColumns() const {
   m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();

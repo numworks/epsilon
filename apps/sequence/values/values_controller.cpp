@@ -34,6 +34,8 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 
+// TableViewDataSource
+
 KDCoordinate ValuesController::columnWidth(int i) {
   return k_cellWidth;
 }
@@ -53,6 +55,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 }
 
+// AlternateEmptyViewDelegate
 I18n::Message ValuesController::emptyMessage() {
   if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoSequence;
@@ -60,9 +63,16 @@ I18n::Message ValuesController::emptyMessage() {
   return I18n::Message::NoActivatedSequence;
 }
 
+// ValuesController
 void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
   m_intervalParameterController.setStartEndMessages(I18n::Message::NStart, I18n::Message::NEnd);
 }
+
+I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
+  return I18n::Message::NColumn;
+}
+
+// EditableCellViewController
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   if (floatBody < 0) {
@@ -70,6 +80,14 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
   }
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
+
+// Model getters
+
+Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
+  return App::app()->interval();
+}
+
+// Function evaluation memoization
 
 void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   char * buffer = memoizedBufferAtIndex(index);
@@ -79,13 +97,7 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::LargeNumberOfSignificantDigits);
 }
 
-Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
-  return App::app()->interval();
-}
-
-I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return I18n::Message::NColumn;
-}
+// Parameters controllers getter
 
 ViewController * ValuesController::functionParameterController() {
 #if COPY_COLUMN

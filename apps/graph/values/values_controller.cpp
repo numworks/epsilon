@@ -9,6 +9,8 @@ using namespace Poincare;
 
 namespace Graph {
 
+// Constructors
+
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
@@ -43,6 +45,8 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_selectableTableView.setDelegate(this);
 }
 
+// TableViewDataSource
+
 KDCoordinate ValuesController::columnWidth(int i) {
   ContinuousFunction::PlotType plotType = plotTypeAtColumn(&i);
   if (i == 0) {
@@ -60,16 +64,6 @@ KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
 
 int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   return TableViewDataSource::indexFromCumulatedWidth(offsetX);
-}
-
-Shared::Hideable * ValuesController::hideableCellFromType(HighlightCell * cell, int type) {
-  if (type == k_notEditableValueCellType) {
-    Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
-    return static_cast<Shared::Hideable *>(myCell);
-  }
-  assert(type == k_editableValueCellType);
-  Shared::StoreCell * myCell = static_cast<Shared::StoreCell *>(cell);
-  return static_cast<Shared::Hideable *>(myCell);
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -133,12 +127,7 @@ int ValuesController::typeAtLocation(int i, int j) {
   return Shared::ValuesController::typeAtLocation(i, j);
 }
 
-I18n::Message ValuesController::emptyMessage() {
-  if (functionStore()->numberOfDefinedModels() == 0) {
-    return I18n::Message::NoFunction;
-  }
-  return I18n::Message::NoActivatedFunction;
-}
+// SelectableTableViewDelegate
 
 void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
@@ -151,6 +140,43 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
     selectCellAtLocation(i, 1 + numberOfElementsInCol);
   }
 }
+
+// AlternateEmptyViewDelegate
+
+I18n::Message ValuesController::emptyMessage() {
+  if (functionStore()->numberOfDefinedModels() == 0) {
+    return I18n::Message::NoFunction;
+  }
+  return I18n::Message::NoActivatedFunction;
+}
+
+// Values controller
+
+void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
+  int c = column+1;
+  m_intervalParameterSelectorController.setStartEndMessages(controller, plotTypeAtColumn(&c));
+}
+
+// Number of columns memoization
+
+void ValuesController::updateNumberOfColumns() const {
+  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
+    m_numberOfValuesColumnsForType[plotTypeIndex] = 0;
+  }
+  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
+    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+    int plotTypeIndex = static_cast<int>(f->plotType());
+    m_numberOfValuesColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
+  }
+  m_numberOfColumns = 0;
+  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
+    // Count abscissa column if the sub table does exist
+    m_numberOfColumns += numberOfColumnsForPlotType(plotTypeIndex);
+  }
+}
+
+// Model getters
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   bool isDerivative = false;
@@ -175,6 +201,12 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
   return nullptr;
 }
 
+Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
+  return App::app()->intervalForType(plotTypeAtColumn(&columnIndex));
+}
+
+// Number of columns
+
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   ContinuousFunction::PlotType plotType = f->plotType();
@@ -182,12 +214,21 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
     (plotType == ContinuousFunction::PlotType::Cartesian && f->displayDerivative());
 }
 
-Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
-  return App::app()->intervalForType(plotTypeAtColumn(&columnIndex));
+int ValuesController::numberOfColumnsForPlotType(int plotTypeIndex) const {
+  return m_numberOfValuesColumnsForType[plotTypeIndex] + (m_numberOfValuesColumnsForType[plotTypeIndex] > 0); // Count abscissa column if there is one
 }
 
-I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return ContinuousFunction::ParameterMessageForPlotType(plotTypeAtColumn(&columnIndex));
+int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) {
+  int result = 0;
+  int plotType = column < 0 ?  Shared::ContinuousFunction::k_numberOfPlotTypes : (int)plotTypeAtColumn(&column) + 1;
+  for (int plotTypeIndex = 0; plotTypeIndex < plotType; plotTypeIndex++) {
+    result += (m_numberOfValuesColumnsForType[plotTypeIndex] > 0);
+  }
+  return result;
+}
+
+int ValuesController::numberOfValuesColumns() {
+  return m_numberOfColumns - numberOfAbscissaColumnsBeforeColumn(-1);
 }
 
 ContinuousFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
@@ -199,37 +240,7 @@ ContinuousFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
   return static_cast<ContinuousFunction::PlotType>(plotTypeIndex);
 }
 
-int ValuesController::maxNumberOfCells() {
-  return k_maxNumberOfCells;
-}
-
-int ValuesController::maxNumberOfFunctions() {
-  return k_maxNumberOfFunctions;
-}
-
-Shared::BufferFunctionTitleCell * ValuesController::functionTitleCells(int j) {
-  assert(j >= 0 && j < k_maxNumberOfFunctions);
-  return &m_functionTitleCells[j];
-}
-
-EvenOddBufferTextCell * ValuesController::floatCells(int j) {
-  assert(j >= 0 && j < k_maxNumberOfCells);
-  return &m_floatCells[j];
-}
-
-ViewController * ValuesController::functionParameterController() {
-  bool isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (functionStore()->modelForRecord(record)->plotType() != ContinuousFunction::PlotType::Cartesian) {
-    return nullptr;
-  }
-  if (isDerivative) {
-    m_derivativeParameterController.setRecord(record);
-    return &m_derivativeParameterController;
-  }
-  m_functionParameterController.setRecord(record);
-  return &m_functionParameterController;
-}
+// Function evaluation memoization
 
 int ValuesController::valuesColumnForAbsoluteColumn(int column) {
   return column - numberOfAbscissaColumnsBeforeColumn(column);
@@ -282,44 +293,50 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   }
 }
 
-void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
-  int c = column+1;
-  m_intervalParameterSelectorController.setStartEndMessages(controller, plotTypeAtColumn(&c));
+// Parameter controllers
+
+ViewController * ValuesController::functionParameterController() {
+  bool isDerivative = false;
+  Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
+  if (functionStore()->modelForRecord(record)->plotType() != ContinuousFunction::PlotType::Cartesian) {
+    return nullptr;
+  }
+  if (isDerivative) {
+    m_derivativeParameterController.setRecord(record);
+    return &m_derivativeParameterController;
+  }
+  m_functionParameterController.setRecord(record);
+  return &m_functionParameterController;
 }
 
-void ValuesController::updateNumberOfColumns() const {
-  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
-    m_numberOfValuesColumnsForType[plotTypeIndex] = 0;
-  }
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
-    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
-    int plotTypeIndex = static_cast<int>(f->plotType());
-    m_numberOfValuesColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
-  }
-  m_numberOfColumns = 0;
-  for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
-    // Count abscissa column if the sub table does exist
-    m_numberOfColumns += numberOfColumnsForPlotType(plotTypeIndex);
-  }
+I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
+  return ContinuousFunction::ParameterMessageForPlotType(plotTypeAtColumn(&columnIndex));
 }
 
-int ValuesController::numberOfColumnsForPlotType(int plotTypeIndex) const {
-  return m_numberOfValuesColumnsForType[plotTypeIndex] + (m_numberOfValuesColumnsForType[plotTypeIndex] > 0); // Count abscissa column if there is one
-}
+// Cells & View
 
-int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) {
-  int result = 0;
-  int plotType = column < 0 ?  Shared::ContinuousFunction::k_numberOfPlotTypes : (int)plotTypeAtColumn(&column) + 1;
-  for (int plotTypeIndex = 0; plotTypeIndex < plotType; plotTypeIndex++) {
-    result += (m_numberOfValuesColumnsForType[plotTypeIndex] > 0);
+Shared::Hideable * ValuesController::hideableCellFromType(HighlightCell * cell, int type) {
+  if (type == k_notEditableValueCellType) {
+    Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
+    return static_cast<Shared::Hideable *>(myCell);
   }
-  return result;
+  assert(type == k_editableValueCellType);
+  Shared::StoreCell * myCell = static_cast<Shared::StoreCell *>(cell);
+  return static_cast<Shared::Hideable *>(myCell);
 }
 
-int ValuesController::numberOfValuesColumns() {
-  return m_numberOfColumns - numberOfAbscissaColumnsBeforeColumn(-1);
+Shared::BufferFunctionTitleCell * ValuesController::functionTitleCells(int j) {
+  assert(j >= 0 && j < k_maxNumberOfFunctions);
+  return &m_functionTitleCells[j];
 }
+
+EvenOddBufferTextCell * ValuesController::floatCells(int j) {
+  assert(j >= 0 && j < k_maxNumberOfCells);
+  return &m_floatCells[j];
+}
+
+
+/* ValuesController::ValuesSelectableTableView */
 
 int writeMatrixBrakets(char * buffer, const int bufferSize, int type) {
   /* Write the double brackets required in matrix notation.

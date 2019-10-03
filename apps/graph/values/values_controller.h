@@ -72,10 +72,12 @@ private:
   Shared::ContinuousFunction::PlotType plotTypeAtColumn(int * i) const;
 
   // Function evaluation memoization
+  static constexpr int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
   char * memoizedBufferAtIndex(int i) override {
     assert(i >= 0 && i < k_maxNumberOfCells);
     return m_memoizedBuffer[i];
   }
+  int valuesCellBufferSize() const override { return k_valuesCellBufferSize; }
   int numberOfMemoizedColumn() override { return k_maxNumberOfFunctions; }
   /* The conversion of column coordinates from the absolute table to the table
    * on only values cell depends on the number of abscissa columns which depends

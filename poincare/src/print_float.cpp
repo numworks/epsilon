@@ -348,7 +348,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
   /* Part IV: Exponent */
 
   int exponent = mode == Preferences::PrintFloatMode::Engineering ? exponentForEngineeringNotation : exponentInBase10;
-  int numberOfCharExponent = exponent != 0 ? std::log10(std::fabs((T)exponent)) + 1 : 0;
+  int numberOfCharExponent = exponent != 0 ? IEEE754<T>::exponentBase10((T)exponent) + 1 : 0;
   if (exponent < 0) {
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;

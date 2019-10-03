@@ -1,4 +1,5 @@
 #include <poincare/derivative.h>
+#include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 
@@ -64,7 +65,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preference
   if (std::fabs(error) < min) {
     return Complex<T>::Builder(result);
   }
-  error = std::pow((T)10, std::floor(std::log10(std::fabs(error)))+2);
+  error = std::pow((T)10, IEEE754<T>::exponentBase10(error)+2);
   return Complex<T>::Builder(std::round(result/error)*error);
 }
 

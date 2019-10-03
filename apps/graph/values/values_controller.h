@@ -46,7 +46,7 @@ public:
 private:
   static constexpr KDCoordinate k_abscissaCellWidth = k_cellWidth + Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3) * 7 + 2*Metric::CellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)" and KDFont::SmallFont->glyphSize().width() = 7
-  static constexpr int k_maxNumberOfFunctions = 5;
+  static constexpr int k_maxNumberOfFunctions = 4;
   static constexpr int k_maxNumberOfAbscissaCells = Shared::ContinuousFunction::k_numberOfPlotTypes * k_maxNumberOfRows;
   static constexpr int k_maxNumberOfCells = k_maxNumberOfFunctions * k_maxNumberOfRows;
 

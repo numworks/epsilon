@@ -16,21 +16,31 @@ namespace Shared {
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
   ValuesController(Responder * parentResponder, ButtonRowController * header);
+  // View controller
   const char * title() override;
-  int numberOfColumns() const override;
+  void viewWillAppear() override;
+  void viewDidDisappear() override;
+
+  // Responder
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
-  virtual IntervalParameterController * intervalParameterController() = 0;
-  int numberOfButtons(ButtonRowController::Position) const override;
+
+  // TableViewDataSource
+  int numberOfColumns() const override;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+
+  // ButtonRowDelegate
+  int numberOfButtons(ButtonRowController::Position) const override;
+
+  // AlternateEmptyViewDelegate
   bool isEmpty() const override;
   Responder * defaultController() override;
-  void viewWillAppear() override;
-  void viewDidDisappear() override;
+
+  virtual IntervalParameterController * intervalParameterController() = 0;
 
 protected:
   static constexpr KDCoordinate k_cellWidth = (Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)) * 7 + 2*Metric::CellMargin; // KDFont::SmallFont->glyphSize().width() = 7
@@ -38,16 +48,26 @@ protected:
   static constexpr int k_functionTitleCellType = 1;
   static constexpr int k_editableValueCellType = 2;
   static constexpr int k_notEditableValueCellType = 3;
-  constexpr static int k_maxNumberOfRows = 10;
-
+  static constexpr int k_maxNumberOfRows = 10;
   static constexpr const KDFont * k_font = KDFont::SmallFont;
-  void setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate);
-  StackViewController * stackController() const;
+
+  // EditableCellTableViewController
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
-  virtual void updateNumberOfColumns() const;
+  int numberOfElementsInColumn(int columnIndex) const override;
+
+  // Constructor helper
+  void setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate);
+
+  // Parent controller getters
+  StackViewController * stackController() const;
+  Responder * tabController() const override;
+
+  // Model getters
   virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
-  int numberOfElementsInColumn(int columnIndex) const override;
+
+  // Number of columns memoization
+  virtual void updateNumberOfColumns() const;
   mutable int m_numberOfColumns;
   mutable bool m_numberOfColumnsNeedUpdate;
 
@@ -66,11 +86,16 @@ protected:
   virtual char * memoizedBufferAtIndex(int i) = 0;
   virtual int numberOfMemoizedColumn() = 0;
 private:
+  // Specialization depending on the abscissa names (x, n, t...)
   virtual void setStartEndMessages(Shared::IntervalParameterController * controller, int column) = 0;
-  Responder * tabController() const override;
+
+  // EditableCellTableViewController
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   virtual int numberOfValuesColumns() { return functionStore()->numberOfActiveFunctions(); }
+  int maxNumberOfElements() const override {
+    return Interval::k_maxNumberOfElements;
+  };
 
   /* Function evaluation memoization
    * The following 4 methods convert coordinate from the absolute table to the
@@ -93,9 +118,6 @@ private:
 
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
   virtual I18n::Message valuesParameterMessageAtColumn(int columnIndex) const = 0;
-  int maxNumberOfElements() const override {
-    return Interval::k_maxNumberOfElements;
-  };
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
@@ -105,6 +127,7 @@ private:
   virtual int abscissaTitleCellsCount() const = 0;
   virtual EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
   virtual ViewController * functionParameterController() = 0;
+
   ValuesParameterController m_abscissaParameterController;
 };
 

@@ -45,6 +45,9 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
+#ifdef GRAPH_CURSOR_SPEEDUP
+  m_roundCursorView.resetMemoization();
+#endif
   /* At this point, some series might have been removed from the model. We need
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */

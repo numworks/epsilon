@@ -50,12 +50,47 @@ protected:
   int numberOfElementsInColumn(int columnIndex) const override;
   mutable int m_numberOfColumns;
   mutable bool m_numberOfColumnsNeedUpdate;
+
+  /* Function evaluation memoization
+   * We memoize value cell buffers in order to increase scrolling speed. However,
+   * abscissa cells are not memoized (their computation does not require any
+   * expression evaluation and is therefore not significantly long).
+   * In the following, we refer to 3 different tables:
+   * - the absolute table - the complete displayed table
+   * - the table of values cells only (the absolute table from which we pruned
+   *   the titles and the abscissa columns)
+   * - the memoized table (which is a subset of the table of values cells)
+   */
+  static constexpr int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
+  void resetMemoization();
+  virtual char * memoizedBufferAtIndex(int i) = 0;
+  virtual int numberOfMemoizedColumn() = 0;
 private:
   virtual void setStartEndMessages(Shared::IntervalParameterController * controller, int column) = 0;
   Responder * tabController() const override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  virtual void printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) = 0;
+  virtual int numberOfValuesColumns() { return functionStore()->numberOfActiveFunctions(); }
+
+  /* Function evaluation memoization
+   * The following 4 methods convert coordinate from the absolute table to the
+   * table of values cell only and vice-versa. */
+  virtual int valuesColumnForAbsoluteColumn(int column) { return column - 1; } // Subtract the abscissa column
+  int valuesRowForAbsoluteRow(int row) { return row - 1; } // Subtract the title row
+  virtual int absoluteColumnForValuesColumn(int column) { return column + 1; } // Add the abscissa column
+  int absoluteRowForValuesRow(int row) { return row + 1; } // Add the title row
+  // Coordinates of memoizedBufferForCell refer to the absolute table
+  char * memoizedBufferForCell(int i, int j);
+  // Coordinates of moveMemoizedBuffer refer to the memoized table
+  void moveMemoizedBuffer(int destinationI, int destinationJ, int sourceI, int sourceJ);
+  // Coordinates of fillMemoizedBuffer refer to the absolute table but the index
+  // refers to the memoized table
+  virtual void fillMemoizedBuffer(int i, int j, int index) = 0;
+  /* m_firstMemoizedColumn and m_firstMemoizedRow are coordinates of the table
+   * of values cells.*/
+  mutable int m_firstMemoizedColumn;
+  mutable int m_firstMemoizedRow;
+
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
   virtual I18n::Message valuesParameterMessageAtColumn(int columnIndex) const = 0;
   int maxNumberOfElements() const override {

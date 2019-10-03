@@ -1,6 +1,7 @@
 #include "range_1D.h"
 #include <assert.h>
 #include <ion.h>
+#include <poincare/ieee754.h>
 
 namespace Shared {
 
@@ -36,7 +37,7 @@ void Range1D::setMax(float max, float lowerMaxFloat, float upperMaxFloat) {
 }
 
 float Range1D::defaultRangeLengthFor(float position) {
-  return std::pow(10.0f, std::floor(std::log10(std::fabs(position)))-1.0f);
+  return std::pow(10.0f, Poincare::IEEE754<float>::exponentBase10(position)-1.0f);
 }
 
 float Range1D::clipped(float x, bool isMax, float lowerMaxFloat, float upperMaxFloat) {

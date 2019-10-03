@@ -23,11 +23,19 @@ public:
 private:
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
-  void printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   int maxNumberOfCells() override { return k_maxNumberOfCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfSequences; }
+
+  // Function evaluation memoization
+  char * memoizedBufferAtIndex(int i) override {
+    assert(i >= 0 && i < k_maxNumberOfCells);
+    return m_memoizedBuffer[i];
+  }
+  int numberOfMemoizedColumn() override { return k_maxNumberOfSequences; }
+  void fillMemoizedBuffer(int i, int j, int index) override;
+
   constexpr static int k_maxNumberOfSequences = 3;
   constexpr static int k_maxNumberOfCells = k_maxNumberOfSequences * k_maxNumberOfRows;
 
@@ -62,6 +70,7 @@ private:
 #endif
   IntervalParameterController m_intervalParameterController;
   Button m_setIntervalButton;
+  mutable char m_memoizedBuffer[k_maxNumberOfCells][k_valuesCellBufferSize];
 };
 
 }

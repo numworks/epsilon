@@ -41,6 +41,19 @@ private:
   constexpr static int k_maxNumberOfAbscissaCells = Shared::ContinuousFunction::k_numberOfPlotTypes * k_maxNumberOfRows;
   constexpr static int k_maxNumberOfCells = k_maxNumberOfFunctions * k_maxNumberOfRows;
 
+  // Function evaluation memoization
+  char * memoizedBufferAtIndex(int i) override {
+    assert(i >= 0 && i < k_maxNumberOfCells);
+    return m_memoizedBuffer[i];
+  }
+  int numberOfMemoizedColumn() override { return k_maxNumberOfFunctions; }
+  /* The conversion of column coordinates from the absolute table to the table
+   * on only values cell depends on the number of abscissa columns which depends
+   * on the number of different plot types in the table. */
+  int valuesColumnForAbsoluteColumn(int column) override;
+  int absoluteColumnForValuesColumn(int column) override;
+  void fillMemoizedBuffer(int i, int j, int index) override;
+
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   void updateNumberOfColumns() const override;
   Ion::Storage::Record recordAtColumn(int i) override;
@@ -54,7 +67,6 @@ private:
   int maxNumberOfCells() override;
   int maxNumberOfFunctions() override;
   Shared::Hideable * hideableCellFromType(HighlightCell * cell, int type);
-  void printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) override;
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;
@@ -65,6 +77,8 @@ private:
   ViewController * functionParameterController() override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   int numberOfColumnsForPlotType(int plotTypeIndex) const;
+  int numberOfAbscissaColumnsBeforeColumn(int column);
+  int numberOfValuesColumns() override;
 
   /* For parametric function, we display the evaluation with the form "(1;2)".
    * This form is not parsable so when we store it into the clipboard, we want
@@ -88,6 +102,8 @@ private:
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
+  // TODO specialize buffer size as well
+  mutable char m_memoizedBuffer[k_maxNumberOfCells][k_valuesCellBufferSize];
 };
 
 }

@@ -192,8 +192,8 @@ I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) 
 
 ContinuousFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
   int plotTypeIndex = 0;
-  while (plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes && *i >= m_numberOfColumnsForType[plotTypeIndex]) {
-    *i -= m_numberOfColumnsForType[plotTypeIndex++];
+  while (plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes && *i >= numberOfColumnsForPlotType(plotTypeIndex)) {
+    *i -= numberOfColumnsForPlotType(plotTypeIndex++);
   }
   assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
   return static_cast<ContinuousFunction::PlotType>(plotTypeIndex);
@@ -271,20 +271,23 @@ void ValuesController::setStartEndMessages(Shared::IntervalParameterController *
 
 void ValuesController::updateNumberOfColumns() const {
   for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
-    m_numberOfColumnsForType[plotTypeIndex] = 0;
+    m_numberOfValuesColumnsForType[plotTypeIndex] = 0;
   }
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
     int plotTypeIndex = static_cast<int>(f->plotType());
-    m_numberOfColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
+    m_numberOfValuesColumnsForType[plotTypeIndex] += numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = 0;
   for (int plotTypeIndex = 0; plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes; plotTypeIndex++) {
     // Count abscissa column if the sub table does exist
-    m_numberOfColumnsForType[plotTypeIndex] += (m_numberOfColumnsForType[plotTypeIndex] > 0);
-    m_numberOfColumns += m_numberOfColumnsForType[plotTypeIndex];
+    m_numberOfColumns += numberOfColumnsForPlotType(plotTypeIndex);
   }
+}
+
+int ValuesController::numberOfColumnsForPlotType(int plotTypeIndex) const {
+  return m_numberOfValuesColumnsForType[plotTypeIndex] + (m_numberOfValuesColumnsForType[plotTypeIndex] > 0); // Count abscissa column if there is one
 }
 
 int writeMatrixBrakets(char * buffer, const int bufferSize, int type) {

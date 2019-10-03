@@ -224,6 +224,23 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
   return intervalAtColumn(columnIndex)->element(rowIndex-1);
 }
 
+void ValuesController::didChangeRow(int row) {
+  /* Update the row memoization if it exists */
+  // Conversion of coordinates from absolute table to values table
+  int valuesRow = valuesRowForAbsoluteRow(row);
+  if (m_firstMemoizedRow > valuesRow || valuesRow >= m_firstMemoizedRow + k_maxNumberOfRows) {
+    // The changed row is out of the memoized table
+    return;
+  }
+
+  int memoizedRow = valuesRow - m_firstMemoizedRow;
+  int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
+  int nbOfMemoizedColumns = numberOfMemoizedColumn();
+  for (int i = 0; i < minInt(nbOfMemoizedColumns, maxI); i++) {
+    fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + i), row, nbOfMemoizedColumns*memoizedRow+i);
+  }
+}
+
 int ValuesController::numberOfElementsInColumn(int columnIndex) const {
   return const_cast<ValuesController *>(this)->intervalAtColumn(columnIndex)->numberOfElements();
 }

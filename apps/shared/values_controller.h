@@ -91,6 +91,7 @@ private:
   // EditableCellTableViewController
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
+  void didChangeRow(int row) override;
   virtual int numberOfValuesColumns() { return functionStore()->numberOfActiveFunctions(); }
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;

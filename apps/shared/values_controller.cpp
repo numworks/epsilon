@@ -263,7 +263,7 @@ void ValuesController::resetMemoization() {
 }
 
 void ValuesController::moveMemoizedBuffer(int destinationI, int destinationJ, int sourceI, int sourceJ) {
-  strlcpy(memoizedBufferAtIndex(destinationJ*numberOfMemoizedColumn() + destinationI), memoizedBufferAtIndex(sourceJ*numberOfMemoizedColumn() + sourceI), k_valuesCellBufferSize);
+  strlcpy(memoizedBufferAtIndex(destinationJ*numberOfMemoizedColumn() + destinationI), memoizedBufferAtIndex(sourceJ*numberOfMemoizedColumn() + sourceI), valuesCellBufferSize());
 }
 
 char * ValuesController::memoizedBufferForCell(int i, int j) {

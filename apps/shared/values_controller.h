@@ -81,7 +81,6 @@ protected:
    *   the titles and the abscissa columns)
    * - the memoized table (which is a subset of the table of values cells)
    */
-  static constexpr int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
   void resetMemoization();
   virtual char * memoizedBufferAtIndex(int i) = 0;
   virtual int numberOfMemoizedColumn() = 0;
@@ -106,6 +105,7 @@ private:
   int absoluteRowForValuesRow(int row) { return row + 1; } // Add the title row
   // Coordinates of memoizedBufferForCell refer to the absolute table
   char * memoizedBufferForCell(int i, int j);
+  virtual int valuesCellBufferSize() const = 0;
   // Coordinates of moveMemoizedBuffer refer to the memoized table
   void moveMemoizedBuffer(int destinationI, int destinationJ, int sourceI, int sourceJ);
   // Coordinates of fillMemoizedBuffer refer to the absolute table but the index

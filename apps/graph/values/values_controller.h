@@ -64,6 +64,7 @@ private:
   EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   ViewController * functionParameterController() override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+  int numberOfColumnsForPlotType(int plotTypeIndex) const;
 
   /* For parametric function, we display the evaluation with the form "(1;2)".
    * This form is not parsable so when we store it into the clipboard, we want
@@ -77,7 +78,7 @@ private:
   };
 
   ValuesSelectableTableView m_selectableTableView;
-  mutable int m_numberOfColumnsForType[Shared::ContinuousFunction::k_numberOfPlotTypes];
+  mutable int m_numberOfValuesColumnsForType[Shared::ContinuousFunction::k_numberOfPlotTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   AbscissaTitleCell m_abscissaTitleCells[Shared::ContinuousFunction::k_numberOfPlotTypes];

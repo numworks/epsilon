@@ -44,6 +44,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   } else {
     selectableTableView()->handleEvent(event);
   }
+  didChangeRow(previousRow);
   if (previousNumberOfElementsInColumn != numberOfElementsInColumn(column)) {
     // Reload the whole table, if a value was appended.
     selectableTableView()->reloadData();

@@ -7,8 +7,7 @@ namespace Settings {
 
 class CellWithSeparator : public HighlightCell {
 public:
-  CellWithSeparator(bool separatorBelow) :
-    m_separatorBelow(separatorBelow) {}
+  CellWithSeparator() {}
   void setHighlighted(bool highlight) override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void reloadCell() override { cell()->reloadCell(); }
@@ -19,7 +18,6 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   virtual HighlightCell * cell() = 0;
-  bool m_separatorBelow;
 };
 
 }

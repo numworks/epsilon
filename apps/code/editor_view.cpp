@@ -1,4 +1,5 @@
 #include "editor_view.h"
+#include <apps/global_preferences.h>
 #include <poincare/integer.h>
 #include <escher/app.h>
 
@@ -6,13 +7,11 @@ namespace Code {
 
 /* EditorView */
 
-static constexpr const KDFont * editorFont = KDFont::LargeFont;
-
 EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder, pythonDelegate, editorFont),
-  m_gutterView(editorFont)
+  m_textArea(parentResponder, pythonDelegate, GlobalPreferences::sharedGlobalPreferences()->font()),
+  m_gutterView(GlobalPreferences::sharedGlobalPreferences()->font())
 {
   m_textArea.setScrollViewDelegate(this);
 }

@@ -228,7 +228,7 @@ void ValuesController::didChangeRow(int row) {
   /* Update the row memoization if it exists */
   // Conversion of coordinates from absolute table to values table
   int valuesRow = valuesRowForAbsoluteRow(row);
-  if (m_firstMemoizedRow > valuesRow || valuesRow >= m_firstMemoizedRow + k_maxNumberOfRows) {
+  if (m_firstMemoizedRow > valuesRow || valuesRow >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
     // The changed row is out of the memoized table
     return;
   }
@@ -300,8 +300,8 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
   }
   if (valuesJ < m_firstMemoizedRow) {
     offsetJ = valuesJ - m_firstMemoizedRow;
-  } else if (valuesJ >= m_firstMemoizedRow + k_maxNumberOfRows) {
-    offsetJ = valuesJ - k_maxNumberOfRows - m_firstMemoizedRow + 1;
+  } else if (valuesJ >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
+    offsetJ = valuesJ - k_maxNumberOfDisplayableRows - m_firstMemoizedRow + 1;
   }
 
   // Apply the offset
@@ -312,16 +312,16 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
     int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
     for (int ii = offsetI > 0 ? 0 : minInt(nbOfMemoizedColumns, maxI)-1;  offsetI > 0 ? ii < minInt(-offsetI + nbOfMemoizedColumns, maxI) : ii >= -offsetI; ii += offsetI > 0 ? 1 : -1) {
       int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn)) - m_firstMemoizedRow;
-      for (int jj = offsetJ > 0 ? 0 : minInt(k_maxNumberOfRows, maxJ)-1; offsetJ > 0 ? jj < minInt(-offsetJ+k_maxNumberOfRows, maxJ) : jj >= -offsetJ; jj += offsetJ > 0 ? 1 : -1) {
+      for (int jj = offsetJ > 0 ? 0 : minInt(k_maxNumberOfDisplayableRows, maxJ)-1; offsetJ > 0 ? jj < minInt(-offsetJ+k_maxNumberOfDisplayableRows, maxJ) : jj >= -offsetJ; jj += offsetJ > 0 ? 1 : -1) {
         moveMemoizedBuffer(ii, jj, ii+offsetI, jj+offsetJ);
       }
     }
     // Compute the buffer of the new cells of the memoized table
     for (int ii = 0; ii < minInt(nbOfMemoizedColumns, maxI); ii++) {
       int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn)) - m_firstMemoizedRow;
-      for (int jj = 0; jj < minInt(k_maxNumberOfRows, maxJ); jj++) {
+      for (int jj = 0; jj < minInt(k_maxNumberOfDisplayableRows, maxJ); jj++) {
         // Escape if already filled
-        if (ii >= -offsetI && ii < -offsetI + nbOfMemoizedColumns && jj >= -offsetJ && jj < -offsetJ + k_maxNumberOfRows) {
+        if (ii >= -offsetI && ii < -offsetI + nbOfMemoizedColumns && jj >= -offsetJ && jj < -offsetJ + k_maxNumberOfDisplayableRows) {
           continue;
         }
         fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + ii),

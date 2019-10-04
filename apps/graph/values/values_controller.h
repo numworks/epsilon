@@ -46,14 +46,14 @@ public:
 private:
   static constexpr KDCoordinate k_abscissaCellWidth = k_cellWidth + Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3) * 7 + 2*Metric::CellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)" and KDFont::SmallFont->glyphSize().width() = 7
-  static constexpr int k_maxNumberOfFunctions = 4;
-  static constexpr int k_maxNumberOfAbscissaCells = Shared::ContinuousFunction::k_numberOfPlotTypes * k_maxNumberOfRows;
-  static constexpr int k_maxNumberOfCells = k_maxNumberOfFunctions * k_maxNumberOfRows;
+  static constexpr int k_maxNumberOfDisplayableFunctions = 4;
+  static constexpr int k_maxNumberOfDisplayableAbscissaCells = Shared::ContinuousFunction::k_numberOfPlotTypes * k_maxNumberOfDisplayableRows;
+  static constexpr int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
 
   // Values controller
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
-  int maxNumberOfCells() override { return k_maxNumberOfCells; }
-  int maxNumberOfFunctions() override { return k_maxNumberOfFunctions; }
+  int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
+  int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableFunctions; }
 
   // Number of columns memoization
   void updateNumberOfColumns() const override;
@@ -74,11 +74,11 @@ private:
   // Function evaluation memoization
   static constexpr int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
   char * memoizedBufferAtIndex(int i) override {
-    assert(i >= 0 && i < k_maxNumberOfCells);
+    assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
     return m_memoizedBuffer[i];
   }
   int valuesCellBufferSize() const override { return k_valuesCellBufferSize; }
-  int numberOfMemoizedColumn() override { return k_maxNumberOfFunctions; }
+  int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableFunctions; }
   /* The conversion of column coordinates from the absolute table to the table
    * on only values cell depends on the number of abscissa columns which depends
    * on the number of different plot types in the table. */
@@ -96,8 +96,8 @@ private:
   Shared::Hideable * hideableCellFromType(HighlightCell * cell, int type);
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;
-  int abscissaCellsCount() const override { return k_maxNumberOfAbscissaCells; }
-  EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfAbscissaCells); return &m_abscissaCells[j]; }
+  int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }
+  EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells); return &m_abscissaCells[j]; }
   int abscissaTitleCellsCount() const override { return Shared::ContinuousFunction::k_numberOfPlotTypes; }
   EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
@@ -116,17 +116,17 @@ private:
 
   ValuesSelectableTableView m_selectableTableView;
   mutable int m_numberOfValuesColumnsForType[Shared::ContinuousFunction::k_numberOfPlotTypes];
-  Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
-  Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
+  Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
+  Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
   AbscissaTitleCell m_abscissaTitleCells[Shared::ContinuousFunction::k_numberOfPlotTypes];
-  Shared::StoreCell m_abscissaCells[k_maxNumberOfAbscissaCells];
+  Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;
   Button m_setIntervalButton;
   // TODO specialize buffer size as well
-  mutable char m_memoizedBuffer[k_maxNumberOfCells][k_valuesCellBufferSize];
+  mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
 };
 
 }

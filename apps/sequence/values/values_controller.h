@@ -29,14 +29,14 @@ public:
     return &m_intervalParameterController;
   }
 private:
-  constexpr static int k_maxNumberOfSequences = 3;
-  constexpr static int k_maxNumberOfCells = k_maxNumberOfSequences * k_maxNumberOfRows;
+  constexpr static int k_maxNumberOfDisplayableSequences = 3;
+  constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableSequences * k_maxNumberOfDisplayableRows;
 
   // ValuesController
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
-  int maxNumberOfCells() override { return k_maxNumberOfCells; }
-  int maxNumberOfFunctions() override { return k_maxNumberOfSequences; }
+  int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
+  int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableSequences; }
 
   // EditableCellViewController
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
@@ -48,11 +48,11 @@ private:
   // Function evaluation memoization
   static constexpr int k_valuesCellBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits);
   char * memoizedBufferAtIndex(int i) override {
-    assert(i >= 0 && i < k_maxNumberOfCells);
+    assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
     return m_memoizedBuffer[i];
   }
   int valuesCellBufferSize() const override{ return k_valuesCellBufferSize; }
-  int numberOfMemoizedColumn() override { return k_maxNumberOfSequences; }
+  int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableSequences; }
   void fillMemoizedBuffer(int i, int j, int index) override;
 
 
@@ -61,9 +61,9 @@ private:
 
   // Cells & view
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-  int abscissaCellsCount() const override { return k_maxNumberOfRows; }
+  int abscissaCellsCount() const override { return k_maxNumberOfDisplayableRows; }
   EvenOddEditableTextCell * abscissaCells(int j) override {
-    assert (j >= 0 && j < k_maxNumberOfRows);
+    assert (j >= 0 && j < k_maxNumberOfDisplayableRows);
     return &m_abscissaCells[j];
   }
   int abscissaTitleCellsCount() const override { return 1; }
@@ -72,25 +72,25 @@ private:
     return &m_abscissaTitleCell;
   }
   SequenceTitleCell * functionTitleCells(int j) override {
-    assert(j >= 0 && j < k_maxNumberOfSequences);
+    assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
     return &m_sequenceTitleCells[j];
   }
   EvenOddBufferTextCell * floatCells(int j) override {
-    assert(j >= 0 && j < k_maxNumberOfCells);
+    assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
     return &m_floatCells[j];
   }
 
   SelectableTableView m_selectableTableView;
-  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfSequences];
-  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
+  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
+  EvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
   EvenOddMessageTextCell m_abscissaTitleCell;
-  EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfRows];
+  EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];
 #if COPY_COLUMN
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif
   IntervalParameterController m_intervalParameterController;
   Button m_setIntervalButton;
-  mutable char m_memoizedBuffer[k_maxNumberOfCells][k_valuesCellBufferSize];
+  mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
 };
 
 }

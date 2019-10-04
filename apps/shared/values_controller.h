@@ -49,7 +49,7 @@ protected:
   static constexpr int k_functionTitleCellType = 1;
   static constexpr int k_editableValueCellType = 2;
   static constexpr int k_notEditableValueCellType = 3;
-  static constexpr int k_maxNumberOfRows = 10;
+  static constexpr int k_maxNumberOfDisplayableRows = 10;
   static constexpr const KDFont * k_font = KDFont::SmallFont;
 
   // EditableCellTableViewController

@@ -21,19 +21,23 @@ public:
   void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }
   int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
+  const KDFont * font() const { return m_font; }
+  void setFont(const KDFont * font) { m_font = font; }
   constexpr static int NumberOfBrightnessStates = 5;
 private:
   GlobalPreferences() :
     m_language(I18n::Language::EN),
     m_examMode(ExamMode::Unknown),
     m_showPopUp(true),
-    m_brightnessLevel(Ion::Backlight::MaxBrightness) {}
+    m_brightnessLevel(Ion::Backlight::MaxBrightness),
+    m_font(KDFont::LargeFont) {}
   I18n::Language m_language;
   static_assert((int8_t)GlobalPreferences::ExamMode::Off == 0, "GlobalPreferences::isInExamMode() is not right");
   static_assert((int8_t)GlobalPreferences::ExamMode::Unknown < 0, "GlobalPreferences::isInExamMode() is not right");
   mutable ExamMode m_examMode;
   bool m_showPopUp;
   int m_brightnessLevel;
+  const KDFont * m_font;
 };
 
 #endif

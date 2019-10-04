@@ -169,6 +169,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     case k_indexOfComplexFormatCell:
       childIndex = (int)preferences->complexFormat();
       break;
+    case k_indexOfFontCell:
+      childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
+      break;
   }
   I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
   myTextCell->setSubtitle(message);

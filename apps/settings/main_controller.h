@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "settings_message_tree.h"
+#include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
@@ -47,7 +48,7 @@ private:
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
   constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
-  MessageTableCellWithGauge m_brightnessCell;
+  MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
   SelectableTableView m_selectableTableView;
   PreferencesController m_preferencesController;

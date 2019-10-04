@@ -2,7 +2,7 @@
 #define SETTINGS_DISPLAY_MODE_CONTROLLER_H
 
 #include "preferences_controller.h"
-#include "message_table_cell_with_editable_text_with_separator.h"
+#include "../message_table_cell_with_editable_text_with_separator.h"
 #include "../../shared/parameter_text_field_delegate.h"
 
 namespace Settings {

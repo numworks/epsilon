@@ -90,15 +90,25 @@ int MainController::numberOfRows() const {
 };
 
 KDCoordinate MainController::rowHeight(int j) {
+  if (j == k_indexOfBrightnessCell) {
+    return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
+  }
   return Metric::ParameterCellHeight;
 }
 
 KDCoordinate MainController::cumulatedHeightFromIndex(int j) {
-  return j*rowHeight(0);
+  KDCoordinate height = j * rowHeight(0);
+  if (j > k_indexOfBrightnessCell) {
+    height += CellWithSeparator::k_margin;
+  }
+  return height;
 }
 
 int MainController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return offsetY/rowHeight(0);
+  if (offsetY < rowHeight(0)*k_indexOfBrightnessCell + CellWithSeparator::k_margin) {
+    return offsetY/rowHeight(0);
+  }
+  return (offsetY - CellWithSeparator::k_margin)/rowHeight(0);
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {
@@ -135,14 +145,16 @@ int MainController::typeAtLocation(int i, int j) {
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
-  MessageTableCell * myCell = (MessageTableCell *)cell;
-  myCell->setMessage(model()->children(index)->label());
+  I18n::Message title = model()->children(index)->label();
   if (index == k_indexOfBrightnessCell) {
-    MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
+    MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
+    myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
+  MessageTableCell * myCell = (MessageTableCell *)cell;
+  myCell->setMessage(title);
   if (index == k_indexOfLanguageCell) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);

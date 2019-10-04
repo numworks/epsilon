@@ -8,9 +8,7 @@ void CellWithSeparator::setHighlighted(bool highlight) {
 }
 
 void CellWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
-  //ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyBright);
-  KDCoordinate height = bounds().height();
-  ctx->fillRect(KDRect(0, m_separatorBelow ? height - k_margin : Metric::CellSeparatorThickness, bounds().width(), k_margin), Palette::WallScreen);
+  ctx->fillRect(KDRect(0, Metric::CellSeparatorThickness, bounds().width(), k_margin), Palette::WallScreen);
 }
 
 int CellWithSeparator::numberOfSubviews() const {
@@ -23,8 +21,7 @@ View * CellWithSeparator::subviewAtIndex(int index) {
 }
 
 void CellWithSeparator::layoutSubviews(bool force) {
-  KDRect frame = KDRect(0, m_separatorBelow ? 0 : k_margin, bounds().width(), bounds().height()-k_margin);
-  cell()->setFrame(frame, force);
+  cell()->setFrame(KDRect(0, k_margin, bounds().width(), bounds().height()-k_margin), force);
 }
 
 }

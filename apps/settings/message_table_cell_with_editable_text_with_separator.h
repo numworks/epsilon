@@ -8,7 +8,7 @@ namespace Settings {
 class MessageTableCellWithEditableTextWithSeparator : public CellWithSeparator {
 public:
   MessageTableCellWithEditableTextWithSeparator(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0) :
-    CellWithSeparator(false),
+    CellWithSeparator(),
     m_cell(parentResponder, inputEventHandlerDelegate, textFieldDelegate, message) {}
   const char * text() const override { return m_cell.text(); }
   Poincare::Layout layout() const override{ return m_cell.layout(); }

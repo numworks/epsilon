@@ -16,8 +16,6 @@ class App;
 
 class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
-  static constexpr const KDFont * k_font = KDFont::LargeFont;
-
   ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT
       , bool m_lockOnConsole

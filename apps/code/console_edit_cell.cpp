@@ -2,6 +2,7 @@
 #include "console_controller.h"
 #include <escher/app.h>
 #include <apps/i18n.h>
+#include <apps/global_preferences.h>
 #include <assert.h>
 
 namespace Code {
@@ -9,8 +10,8 @@ namespace Code {
 ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(ConsoleController::k_font, nullptr, 0, 0.5),
-  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, ConsoleController::k_font)
+  m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(), nullptr, 0, 0.5),
+  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, GlobalPreferences::sharedGlobalPreferences()->font())
 {
 }
 

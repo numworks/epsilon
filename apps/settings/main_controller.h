@@ -32,7 +32,8 @@ private:
   constexpr static int k_indexOfEditionModeCell = k_indexOfDisplayModeCell + 1;
   constexpr static int k_indexOfComplexFormatCell = k_indexOfEditionModeCell + 1;
   constexpr static int k_indexOfBrightnessCell = k_indexOfComplexFormatCell + 1;
-  constexpr static int k_indexOfLanguageCell = k_indexOfBrightnessCell + 1;
+  constexpr static int k_indexOfFontCell = k_indexOfBrightnessCell + 1;
+  constexpr static int k_indexOfLanguageCell = k_indexOfFontCell + 1;
   constexpr static int k_indexOfExamModeCell = k_indexOfLanguageCell + 1;
   /* Pop-up cell and About cell are located at the same index because pop-up
    * cell is optional. We must always correct k_indexOfAboutCell with

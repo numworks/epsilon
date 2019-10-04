@@ -259,7 +259,7 @@ int ValuesController::absoluteColumnForValuesColumn(int column) {
 }
 
 void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
-  double abscissa = intervalAtColumn(column)->element(row-1);
+  double abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
   bool isDerivative = false;
   double evaluationX = NAN;
   double evaluationY = NAN;

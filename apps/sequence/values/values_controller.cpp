@@ -91,7 +91,7 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
 
 void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   char * buffer = memoizedBufferAtIndex(index);
-  double abscissa = intervalAtColumn(column)->element(row-1);
+  double abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
   Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
   Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
   Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::LargeNumberOfSignificantDigits);

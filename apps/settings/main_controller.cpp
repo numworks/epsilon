@@ -66,13 +66,13 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
     int rowIndex = selectedRow();
-    if (rowIndex == 1) {
+    if (rowIndex == k_indexOfDisplayModeCell) {
       subController = &m_displayModeController;
-    } else if (rowIndex == 4 || rowIndex == 5) {
+    } else if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
       assert(false);
-    } else if (rowIndex == 6) {
+    } else if (rowIndex == k_indexOfExamModeCell) {
       subController = &m_examModeController;
-    } else if (rowIndex == 7 + hasPrompt()) {
+    } else if (rowIndex == k_indexOfAboutCell + hasPrompt()) {
       subController = &m_aboutController;
     } else {
       subController = &m_preferencesController;
@@ -123,10 +123,10 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 4) {
+  if (j == k_indexOfBrightnessCell) {
     return 1;
   }
-  if (hasPrompt() && j == 7) {
+  if (hasPrompt() && j == k_indexOfPopUpCell) {
     return 2;
   }
   return 0;
@@ -137,18 +137,18 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(model()->children(index)->label());
-  if (index == 4) {
+  if (index == k_indexOfBrightnessCell) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  if (index == 5) {
+  if (index == k_indexOfLanguageCell) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-  if (hasPrompt() && index == 7) {
+  if (hasPrompt() && index == k_indexOfPopUpCell) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -157,16 +157,16 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
   switch (index) {
-    case 0:
+    case k_indexOfAngleUnitCell:
       childIndex = (int)preferences->angleUnit();
       break;
-    case 1:
+    case k_indexOfDisplayModeCell:
       childIndex = (int)preferences->displayMode();
       break;
-    case 2:
+    case k_indexOfEditionModeCell:
       childIndex = (int)preferences->editionMode();
       break;
-    case 3:
+    case k_indexOfComplexFormatCell:
       childIndex = (int)preferences->complexFormat();
       break;
   }

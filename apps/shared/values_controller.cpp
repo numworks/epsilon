@@ -226,6 +226,8 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
 
 void ValuesController::didChangeRow(int row) {
   /* Update the row memoization if it exists */
+  // the first row is never reloaded as it corresponds to title row
+  assert(row > 0);
   // Conversion of coordinates from absolute table to values table
   int valuesRow = valuesRowForAbsoluteRow(row);
   if (m_firstMemoizedRow > valuesRow || valuesRow >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
@@ -237,7 +239,10 @@ void ValuesController::didChangeRow(int row) {
   int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
   int nbOfMemoizedColumns = numberOfMemoizedColumn();
   for (int i = 0; i < minInt(nbOfMemoizedColumns, maxI); i++) {
-    fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + i), row, nbOfMemoizedColumns*memoizedRow+i);
+    // Fill only visible cells
+    if (valuesRow < numberOfElementsInColumn(i)) {
+      fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + i), row, nbOfMemoizedColumns*memoizedRow+i);
+    }
   }
 }
 

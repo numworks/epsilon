@@ -207,6 +207,10 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
 
 // Number of columns
 
+int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
+  return numberOfColumnsForPlotType((int)plotTypeAtColumn(&column));
+}
+
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   ContinuousFunction::PlotType plotType = f->plotType();

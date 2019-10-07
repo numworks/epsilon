@@ -41,8 +41,6 @@ Expression DerivativeNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T>
 Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
-  static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
   T evaluationArgument = evaluationArgumentInput.toScalar();
   T functionValue = approximateWithArgument(evaluationArgument, context, complexFormat, angleUnit);
@@ -51,20 +49,35 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preference
     return Complex<T>::Undefined();
   }
 
-  T error, result;
+  T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
+  T result;
   T h = k_minInitialRate;
+  static T tenEpsilon = sizeof(T) == sizeof(double) ? 10.0*DBL_EPSILON : 10.0f*FLT_EPSILON;
   do {
-    result = riddersApproximation(context, complexFormat, angleUnit, evaluationArgument, h, &error);
+    T currentError;
+    T currentResult = riddersApproximation(context, complexFormat, angleUnit, evaluationArgument, h, &currentError);
     h /= 10.0;
-  } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= epsilon);
+    if (std::isnan(currentError) || currentError > error) {
+      continue;
+    }
+    error = currentError;
+    result = currentResult;
+  } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= tenEpsilon);
 
-  // If the error is too big regarding the value, do not return the answer.
-  if (std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) {
+  /* If the error is too big regarding the value, do not return the answer.
+   * If the result is close to 0, we relax this constraint because the error
+   * will tend to be bigger compared to the result. */
+  if (std::isnan(error)
+      || (std::fabs(result) < k_maxErrorRateOnApproximation && std::fabs(error) > std::fabs(result))
+      || (std::fabs(result) >= k_maxErrorRateOnApproximation && std::fabs(error/result) > k_maxErrorRateOnApproximation))
+  {
     return Complex<T>::Undefined();
   }
+  static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   if (std::fabs(error) < min) {
     return Complex<T>::Builder(result);
   }
+  // Round the result according to the error
   error = std::pow((T)10, IEEE754<T>::exponentBase10(error)+2);
   return Complex<T>::Builder(std::round(result/error)*error);
 }
@@ -82,7 +95,7 @@ template<typename T>
 T DerivativeNode::growthRateAroundAbscissa(T x, T h, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   T expressionPlus = approximateWithArgument(x+h, context, complexFormat, angleUnit);
   T expressionMinus = approximateWithArgument(x-h, context, complexFormat, angleUnit);
-  return (expressionPlus - expressionMinus)/(2*h);
+  return (expressionPlus - expressionMinus)/(h+h);
 }
 
 template<typename T>
@@ -120,7 +133,9 @@ T DerivativeNode::riddersApproximation(Context * context, Preferences::ComplexFo
     for (int j = 1; j < 10; j++) {
       a[j][i] = (a[j-1][i]*fac-a[j-1][i-1])/(fac-1);
       fac = k_rateStepSize*k_rateStepSize*fac;
-      errt = std::fabs(a[j][i]-a[j-1][i]) > std::fabs(a[j][i]-a[j-1][i-1]) ? std::fabs(a[j][i]-a[j-1][i]) : std::fabs(a[j][i]-a[j-1][i-1]);
+      T err1 = std::fabs(a[j][i]-a[j-1][i]);
+      T err2 = std::fabs(a[j][i]-a[j-1][i-1]);
+      errt = err1 > err2 ? err1 : err2;
       // Update error and answer if error decreases
       if (errt < *error) {
         *error = errt;
@@ -129,7 +144,7 @@ T DerivativeNode::riddersApproximation(Context * context, Preferences::ComplexFo
     }
     /* If higher extrapolation order significantly increases the error, return
      * early */
-    if (std::fabs(a[i][i]-a[i-1][i-1]) > 2*(*error)) {
+    if (std::fabs(a[i][i]-a[i-1][i-1]) > (*error) + (*error)) {
       break;
     }
   }

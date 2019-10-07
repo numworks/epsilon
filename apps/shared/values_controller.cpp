@@ -9,6 +9,7 @@ using namespace Poincare;
 namespace Shared {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline int absInt(int x) { return x < 0 ? -x : x; }
 
 // Constructor and helpers
 
@@ -284,11 +285,6 @@ void ValuesController::resetMemoization() {
   m_firstMemoizedRow = INT_MAX;
 }
 
-void ValuesController::moveMemoizedBuffer(int destinationI, int destinationJ, int sourceI, int sourceJ) {
-  int nbOfMemoizedColumns = numberOfMemoizedColumn();
-  strlcpy(memoizedBufferAtIndex(destinationJ*nbOfMemoizedColumns + destinationI), memoizedBufferAtIndex(sourceJ*nbOfMemoizedColumns + sourceI), valuesCellBufferSize());
-}
-
 char * ValuesController::memoizedBufferForCell(int i, int j) {
   // Conversion of coordinates from absolute table to values table
   int valuesI = valuesColumnForAbsoluteColumn(i);
@@ -308,20 +304,22 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
   } else if (valuesJ >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
     offsetJ = valuesJ - k_maxNumberOfDisplayableRows - m_firstMemoizedRow + 1;
   }
+  int offset = -offsetJ*nbOfMemoizedColumns-offsetI;
 
   // Apply the offset
-  if (offsetI != 0 || offsetJ != 0) {
+  if (offset != 0) {
     m_firstMemoizedColumn = m_firstMemoizedColumn + offsetI;
     m_firstMemoizedRow = m_firstMemoizedRow + offsetJ;
-    // Translate already memoized cells
-    int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
-    for (int ii = offsetI > 0 ? 0 : minInt(nbOfMemoizedColumns, maxI)-1;  offsetI > 0 ? ii < minInt(-offsetI + nbOfMemoizedColumns, maxI) : ii >= -offsetI; ii += offsetI > 0 ? 1 : -1) {
-      int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn)) - m_firstMemoizedRow;
-      for (int jj = offsetJ > 0 ? 0 : minInt(k_maxNumberOfDisplayableRows, maxJ)-1; offsetJ > 0 ? jj < minInt(-offsetJ+k_maxNumberOfDisplayableRows, maxJ) : jj >= -offsetJ; jj += offsetJ > 0 ? 1 : -1) {
-        moveMemoizedBuffer(ii, jj, ii+offsetI, jj+offsetJ);
-      }
+    // Shift already memoized cells
+    int numberOfMemoizedCell = k_maxNumberOfDisplayableRows*numberOfMemoizedColumn();
+    size_t moveLength = (numberOfMemoizedCell - absInt(offset))*valuesCellBufferSize()*sizeof(char);
+    if (offset > 0 && offset < numberOfMemoizedCell) {
+      memmove(memoizedBufferAtIndex(offset), memoizedBufferAtIndex(0), moveLength);
+    } else if (offset < 0 && offset > -numberOfMemoizedCell) {
+      memmove(memoizedBufferAtIndex(0), memoizedBufferAtIndex(-offset), moveLength);
     }
     // Compute the buffer of the new cells of the memoized table
+    int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
     for (int ii = 0; ii < minInt(nbOfMemoizedColumns, maxI); ii++) {
       int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn)) - m_firstMemoizedRow;
       for (int jj = 0; jj < minInt(k_maxNumberOfDisplayableRows, maxJ); jj++) {

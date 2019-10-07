@@ -25,7 +25,7 @@ protected:
   static constexpr KDCoordinate k_margin = Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
 private:
-  virtual void didChangeRow(int row) {}
+  virtual void didChangeCell(int column, int row) {}
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;

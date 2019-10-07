@@ -82,9 +82,9 @@ binpack:
 	make -j8 $(BUILD_DIR)/bench.ram.bin
 	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin build/binpack
 	make clean
-	make -j8 $(BUILD_DIR)/epsilon.on-boarding.update.two_binaries
-	cp $(BUILD_DIR)/epsilon.on-boarding.update.internal.bin $(BUILD_DIR)/epsilon.on-boarding.update.external.bin build/binpack
+	make -j8 $(BUILD_DIR)/epsilon.onboarding.update.two_binaries
+	cp $(BUILD_DIR)/epsilon.onboarding.update.internal.bin $(BUILD_DIR)/epsilon.onboarding.update.external.bin build/binpack
 	make clean
-	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.on-boarding.internal.bin epsilon.on-boarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.onboarding.internal.bin epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd build && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
 	rm -rf build/binpack

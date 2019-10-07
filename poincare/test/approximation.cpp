@@ -258,6 +258,9 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("diff(2×TO^2, TO, 7)", "28");
   assert_expression_approximates_to<double>("diff(2×TO^2, TO, 7)", "28");
 
+  //assert_expression_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0"); // FIXME error too big
+  assert_expression_approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
+
   assert_expression_approximates_to<float>("floor(2.3)", "2");
   assert_expression_approximates_to<double>("floor(2.3)", "2");
 

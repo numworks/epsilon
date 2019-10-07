@@ -108,8 +108,6 @@ private:
   // Coordinates of memoizedBufferForCell refer to the absolute table
   char * memoizedBufferForCell(int i, int j);
   virtual int valuesCellBufferSize() const = 0;
-  // Coordinates of moveMemoizedBuffer refer to the memoized table
-  void moveMemoizedBuffer(int destinationI, int destinationJ, int sourceI, int sourceJ);
   // Coordinates of fillMemoizedBuffer refer to the absolute table but the index
   // refers to the memoized table
   virtual void fillMemoizedBuffer(int i, int j, int index) = 0;

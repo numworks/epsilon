@@ -92,7 +92,7 @@ private:
   // EditableCellTableViewController
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  void didChangeRow(int row) override;
+  void didChangeCell(int column, int row) override;
   virtual int numberOfValuesColumns() { return functionStore()->numberOfActiveFunctions(); }
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;
@@ -113,6 +113,7 @@ private:
   virtual void fillMemoizedBuffer(int i, int j, int index) = 0;
   /* m_firstMemoizedColumn and m_firstMemoizedRow are coordinates of the table
    * of values cells.*/
+  virtual int numberOfColumnsForAbscissaColumn(int column) { assert(column == 0); return numberOfColumns(); }
   mutable int m_firstMemoizedColumn;
   mutable int m_firstMemoizedRow;
 

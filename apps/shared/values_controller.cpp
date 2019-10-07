@@ -225,7 +225,7 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
   return intervalAtColumn(columnIndex)->element(rowIndex-1);
 }
 
-void ValuesController::didChangeRow(int row) {
+void ValuesController::didChangeCell(int column, int row) {
   /* Update the row memoization if it exists */
   // the first row is never reloaded as it corresponds to title row
   assert(row > 0);
@@ -236,14 +236,12 @@ void ValuesController::didChangeRow(int row) {
     return;
   }
 
+  // Update the memoization of rows linked to the changed cell
   int memoizedRow = valuesRow - m_firstMemoizedRow;
-  int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
   int nbOfMemoizedColumns = numberOfMemoizedColumn();
-  for (int i = 0; i < minInt(nbOfMemoizedColumns, maxI); i++) {
-    // Fill only visible cells
-    if (valuesRow < numberOfElementsInColumn(i)) {
-      fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + i), row, nbOfMemoizedColumns*memoizedRow+i);
-    }
+  for (int i = column+1; i < column+numberOfColumnsForAbscissaColumn(column); i++) {
+    int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
+    fillMemoizedBuffer(i, row, nbOfMemoizedColumns*memoizedRow+memoizedI);
   }
 }
 

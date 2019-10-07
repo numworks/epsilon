@@ -65,6 +65,7 @@ private:
   Shared::Interval * intervalAtColumn(int columnIndex) override;
 
   // Number of columns
+  int numberOfColumnsForAbscissaColumn(int column) override;
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForPlotType(int plotTypeIndex) const;
   int numberOfAbscissaColumnsBeforeColumn(int column);

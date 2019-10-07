@@ -40,11 +40,11 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
    * data is reloaded, which means that the right cell is selected but the data
    * may be incorrect. The data is reloaded afterwards. */
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
+    selectableTableView()->selectCellAtLocation(column, selectedRow()+1);
   } else {
     selectableTableView()->handleEvent(event);
   }
-  didChangeRow(previousRow);
+  didChangeCell(column, previousRow);
   if (previousNumberOfElementsInColumn != numberOfElementsInColumn(column)) {
     // Reload the whole table, if a value was appended.
     selectableTableView()->reloadData();

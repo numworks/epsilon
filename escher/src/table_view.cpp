@@ -125,7 +125,7 @@ int TableView::ContentView::typeIndexFromSubviewIndex(int index, int type) const
 HighlightCell * TableView::ContentView::cellAtLocation(int x, int y) {
   int relativeX = x-columnsScrollingOffset();
   int relativeY = y-rowsScrollingOffset();
-  if (relativeY >= numberOfDisplayableRows() || relativeX >= numberOfDisplayableColumns()) {
+  if (relativeY < 0 || relativeY >= numberOfDisplayableRows() || relativeX < 0 || relativeX >= numberOfDisplayableColumns()) {
     return nullptr;
   }
   int type = m_dataSource->typeAtLocation(x, y);

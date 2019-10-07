@@ -20,7 +20,7 @@ $(BUILD_DIR)/test.$(EXE): $(call object_for,$(test_runner_src))
 # Those can be built easily by simply invoking "make target.ext". The named file
 # will be built in $(BUILD_DIR).
 
-HANDY_TARGETS = epsilon epsilon.on-boarding epsilon.on-boarding.update epsilon.on-boarding.beta test
+HANDY_TARGETS = epsilon epsilon.onboarding epsilon.onboarding.update epsilon.onboarding.beta test
 HANDY_TARGETS_EXTENSIONS = $(EXE)
 
 define handy_target_rule

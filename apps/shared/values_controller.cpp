@@ -50,9 +50,10 @@ const char * ValuesController::title() {
 }
 
 void ValuesController::viewWillAppear() {
+  // Reset memoization before any call to willDisplayCellAtLocation
+  resetMemoization();
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
-  resetMemoization();
 }
 
 void ValuesController::viewDidDisappear() {

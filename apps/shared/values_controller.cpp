@@ -85,7 +85,13 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace && selectedRow() > 0 &&
       selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
-    intervalAtColumn(selectedColumn())->deleteElementAtIndex(selectedRow()-1);
+    int row = selectedRow();
+    int column = selectedColumn();
+    intervalAtColumn(column)->deleteElementAtIndex(row-1);
+    // Reload memoization
+    for (int i = row; i < numberOfElementsInColumn(column)+1; i++) {
+      didChangeCell(column, i);
+    }
     selectableTableView()->reloadData();
     return true;
   }

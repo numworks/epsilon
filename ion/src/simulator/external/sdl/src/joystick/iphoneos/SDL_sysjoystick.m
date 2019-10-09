@@ -48,6 +48,29 @@
 
 static id connectObserver = nil;
 static id disconnectObserver = nil;
+
+#include <Availability.h>
+#include <objc/message.h>
+
+/* remove compilation warnings for strict builds by defining these selectors, even though
+ * they are only ever used indirectly through objc_msgSend
+ */
+@interface GCExtendedGamepad (SDL)
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED < 121000) || (__APPLETV_OS_VERSION_MAX_ALLOWED < 121000) || (__MAC_OS_VERSION_MAX_ALLOWED < 1401000)
+@property (nonatomic, readonly, nullable) GCControllerButtonInput *leftThumbstickButton;
+@property (nonatomic, readonly, nullable) GCControllerButtonInput *rightThumbstickButton;
+#endif
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED < 130000) || (__APPLETV_OS_VERSION_MAX_ALLOWED < 130000) || (__MAC_OS_VERSION_MAX_ALLOWED < 1500000)
+@property (nonatomic, readonly) GCControllerButtonInput *buttonMenu;
+@property (nonatomic, readonly, nullable) GCControllerButtonInput *buttonOptions;
+#endif
+@end
+@interface GCMicroGamepad (SDL)
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED < 130000) || (__APPLETV_OS_VERSION_MAX_ALLOWED < 130000) || (__MAC_OS_VERSION_MAX_ALLOWED < 1500000)
+@property (nonatomic, readonly) GCControllerButtonInput *buttonMenu;
+#endif
+@end
+
 #endif /* SDL_JOYSTICK_MFI */
 
 #if !TARGET_OS_TV
@@ -82,10 +105,11 @@ IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCController *controlle
 {
 #ifdef SDL_JOYSTICK_MFI
     const Uint16 VENDOR_APPLE = 0x05AC;
+    const Uint16 VENDOR_MICROSOFT = 0x045e;
+    const Uint16 VENDOR_SONY = 0x054C;
     Uint16 *guid16 = (Uint16 *)device->guid.data;
     Uint16 vendor = 0;
     Uint16 product = 0;
-    Uint16 version = 0;
     Uint8 subtype = 0;
 
     const char *name = NULL;
@@ -104,28 +128,104 @@ IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCController *controlle
     device->name = SDL_strdup(name);
 
     if (controller.extendedGamepad) {
-        vendor = VENDOR_APPLE;
-        product = 1;
-        subtype = 1;
+        GCExtendedGamepad *gamepad = controller.extendedGamepad;
+        int nbuttons = 0;
+
+        /* These buttons are part of the original MFi spec */
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_A);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_B);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_X);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_Y);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+        nbuttons += 6;
+
+        /* These buttons are available on some newer controllers */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+        if ([gamepad respondsToSelector:@selector(leftThumbstickButton)] && gamepad.leftThumbstickButton) {
+            device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_LEFTSTICK);
+            ++nbuttons;
+        }
+        if ([gamepad respondsToSelector:@selector(rightThumbstickButton)] && gamepad.rightThumbstickButton) {
+            device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+            ++nbuttons;
+        }
+        if ([gamepad respondsToSelector:@selector(buttonOptions)] && gamepad.buttonOptions) {
+            device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_BACK);
+            ++nbuttons;
+        }
+        if ([gamepad respondsToSelector:@selector(buttonMenu)] && gamepad.buttonMenu) {
+            device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_START);
+            ++nbuttons;
+        } else {
+            device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_START);
+            ++nbuttons;
+            device->uses_pause_handler = SDL_TRUE;
+        }
+#pragma clang diagnostic pop
+
+        if ([controller.vendorName containsString: @"Xbox"]) {
+            vendor = VENDOR_MICROSOFT;
+            product = 0x02E0; /* Assume Xbox One S BLE Controller unless/until GCController flows VID/PID */
+        } else if ([controller.vendorName containsString: @"DUALSHOCK"]) {
+            vendor = VENDOR_SONY;
+            product = 0x09CC; /* Assume DS4 Slim unless/until GCController flows VID/PID */
+        } else {
+            vendor = VENDOR_APPLE;
+            product = 1;
+            subtype = 1;
+        }
+
         device->naxes = 6; /* 2 thumbsticks and 2 triggers */
         device->nhats = 1; /* d-pad */
-        device->nbuttons = 7; /* ABXY, shoulder buttons, pause button */
+        device->nbuttons = nbuttons;
+
     } else if (controller.gamepad) {
+        int nbuttons = 0;
+
+        /* These buttons are part of the original MFi spec */
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_A);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_B);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_X);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_Y);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_START);
+        nbuttons += 7;
+        device->uses_pause_handler = SDL_TRUE;
+
         vendor = VENDOR_APPLE;
         product = 2;
         subtype = 2;
         device->naxes = 0; /* no traditional analog inputs */
         device->nhats = 1; /* d-pad */
-        device->nbuttons = 7; /* ABXY, shoulder buttons, pause button */
+        device->nbuttons = nbuttons;
     }
 #if TARGET_OS_TV
     else if (controller.microGamepad) {
+        GCMicroGamepad *gamepad = controller.microGamepad;
+        int nbuttons = 0;
+
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_A);
+        device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_B); /* Button X on microGamepad */
+        nbuttons += 2;
+
+        if ([gamepad respondsToSelector:@selector(buttonMenu)] && gamepad.buttonMenu) {
+            device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_START);
+            ++nbuttons;
+        } else {
+            device->button_mask |= (1 << SDL_CONTROLLER_BUTTON_START);
+            ++nbuttons;
+            device->uses_pause_handler = SDL_TRUE;
+        }
+
         vendor = VENDOR_APPLE;
         product = 3;
         subtype = 3;
         device->naxes = 2; /* treat the touch surface as two axes */
         device->nhats = 0; /* apparently the touch surface-as-dpad is buggy */
-        device->nbuttons = 3; /* AX, pause button */
+        device->nbuttons = nbuttons;
 
         controller.microGamepad.allowsRotation = SDL_GetHintBoolean(SDL_HINT_APPLE_TV_REMOTE_ALLOW_ROTATION, SDL_FALSE);
     }
@@ -139,12 +239,14 @@ IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCController *controlle
     *guid16++ = 0;
     *guid16++ = SDL_SwapLE16(product);
     *guid16++ = 0;
-    *guid16++ = SDL_SwapLE16(version);
-    *guid16++ = 0;
 
-    /* Note that this is an MFI controller and what subtype it is */
-    device->guid.data[14] = 'm';
-    device->guid.data[15] = subtype;
+    *guid16++ = SDL_SwapLE16(device->button_mask);
+
+    if (subtype != 0) {
+        /* Note that this is an MFI controller and what subtype it is */
+        device->guid.data[14] = 'm';
+        device->guid.data[15] = subtype;
+    }
 
     /* This will be set when the first button press of the controller is
      * detected. */
@@ -361,7 +463,8 @@ IOS_JoystickGetDeviceName(int device_index)
 static int
 IOS_JoystickGetDevicePlayerIndex(int device_index)
 {
-    return -1;
+    SDL_JoystickDeviceItem *device = GetDeviceForIndex(device_index);
+    return device ? (int)device->controller.playerIndex : -1;
 }
 
 static SDL_JoystickGUID
@@ -415,12 +518,14 @@ IOS_JoystickOpen(SDL_Joystick * joystick, int device_index)
 #endif /* !TARGET_OS_TV */
         } else {
 #ifdef SDL_JOYSTICK_MFI
-            GCController *controller = device->controller;
-            controller.controllerPausedHandler = ^(GCController *c) {
-                if (joystick->hwdata) {
-                    ++joystick->hwdata->num_pause_presses;
-                }
-            };
+            if (device->uses_pause_handler) {
+                GCController *controller = device->controller;
+                controller.controllerPausedHandler = ^(GCController *c) {
+                    if (joystick->hwdata) {
+                        ++joystick->hwdata->num_pause_presses;
+                    }
+                };
+            }
 #endif /* SDL_JOYSTICK_MFI */
         }
     }
@@ -510,6 +615,7 @@ IOS_MFIJoystickUpdate(SDL_Joystick * joystick)
         Uint8 hatstate = SDL_HAT_CENTERED;
         int i;
         int updateplayerindex = 0;
+        int pause_button_index = 0;
 
         if (controller.extendedGamepad) {
             GCExtendedGamepad *gamepad = controller.extendedGamepad;
@@ -525,13 +631,39 @@ IOS_MFIJoystickUpdate(SDL_Joystick * joystick)
             };
 
             /* Button order matches the XInput Windows mappings. */
-            Uint8 buttons[] = {
-                gamepad.buttonA.isPressed, gamepad.buttonB.isPressed,
-                gamepad.buttonX.isPressed, gamepad.buttonY.isPressed,
-                gamepad.leftShoulder.isPressed,
-                gamepad.rightShoulder.isPressed,
-                joystick->delayed_guide_button,
-            };
+            Uint8 buttons[joystick->nbuttons];
+            int button_count = 0;
+
+            /* These buttons are part of the original MFi spec */
+            buttons[button_count++] = gamepad.buttonA.isPressed;
+            buttons[button_count++] = gamepad.buttonB.isPressed;
+            buttons[button_count++] = gamepad.buttonX.isPressed;
+            buttons[button_count++] = gamepad.buttonY.isPressed;
+            buttons[button_count++] = gamepad.leftShoulder.isPressed;
+            buttons[button_count++] = gamepad.rightShoulder.isPressed;
+
+            /* These buttons are available on some newer controllers */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+            if (joystick->hwdata->button_mask & (1 << SDL_CONTROLLER_BUTTON_LEFTSTICK)) {
+                buttons[button_count++] = gamepad.leftThumbstickButton.isPressed;
+            }
+            if (joystick->hwdata->button_mask & (1 << SDL_CONTROLLER_BUTTON_RIGHTSTICK)) {
+                buttons[button_count++] = gamepad.rightThumbstickButton.isPressed;
+            }
+            if (joystick->hwdata->button_mask & (1 << SDL_CONTROLLER_BUTTON_BACK)) {
+                buttons[button_count++] = gamepad.buttonOptions.isPressed;
+            }
+            /* This must be the last button, so we can optionally handle it with pause_button_index below */
+            if (joystick->hwdata->button_mask & (1 << SDL_CONTROLLER_BUTTON_START)) {
+                if (joystick->hwdata->uses_pause_handler) {
+                    pause_button_index = button_count;
+                    buttons[button_count++] = joystick->delayed_guide_button;
+                } else {
+                    buttons[button_count++] = gamepad.buttonMenu.isPressed;
+                }
+            }
+#pragma clang diagnostic pop
 
             hatstate = IOS_MFIJoystickHatStateForDPad(gamepad.dpad);
 
@@ -545,7 +677,7 @@ IOS_MFIJoystickUpdate(SDL_Joystick * joystick)
                 SDL_PrivateJoystickAxis(joystick, i, axes[i]);
             }
 
-            for (i = 0; i < SDL_arraysize(buttons); i++) {
+            for (i = 0; i < button_count; i++) {
                 updateplayerindex |= (joystick->buttons[i] != buttons[i]);
                 SDL_PrivateJoystickButton(joystick, i, buttons[i]);
             }
@@ -553,17 +685,20 @@ IOS_MFIJoystickUpdate(SDL_Joystick * joystick)
             GCGamepad *gamepad = controller.gamepad;
 
             /* Button order matches the XInput Windows mappings. */
-            Uint8 buttons[] = {
-                gamepad.buttonA.isPressed, gamepad.buttonB.isPressed,
-                gamepad.buttonX.isPressed, gamepad.buttonY.isPressed,
-                gamepad.leftShoulder.isPressed,
-                gamepad.rightShoulder.isPressed,
-                joystick->delayed_guide_button,
-            };
+            Uint8 buttons[joystick->nbuttons];
+            int button_count = 0;
+            buttons[button_count++] = gamepad.buttonA.isPressed;
+            buttons[button_count++] = gamepad.buttonB.isPressed;
+            buttons[button_count++] = gamepad.buttonX.isPressed;
+            buttons[button_count++] = gamepad.buttonY.isPressed;
+            buttons[button_count++] = gamepad.leftShoulder.isPressed;
+            buttons[button_count++] = gamepad.rightShoulder.isPressed;
+            pause_button_index = button_count;
+            buttons[button_count++] = joystick->delayed_guide_button;
 
             hatstate = IOS_MFIJoystickHatStateForDPad(gamepad.dpad);
 
-            for (i = 0; i < SDL_arraysize(buttons); i++) {
+            for (i = 0; i < button_count; i++) {
                 updateplayerindex |= (joystick->buttons[i] != buttons[i]);
                 SDL_PrivateJoystickButton(joystick, i, buttons[i]);
             }
@@ -582,13 +717,24 @@ IOS_MFIJoystickUpdate(SDL_Joystick * joystick)
                 SDL_PrivateJoystickAxis(joystick, i, axes[i]);
             }
 
-            Uint8 buttons[] = {
-                gamepad.buttonA.isPressed,
-                gamepad.buttonX.isPressed,
-                joystick->delayed_guide_button,
-            };
+            Uint8 buttons[joystick->nbuttons];
+            int button_count = 0;
+            buttons[button_count++] = gamepad.buttonA.isPressed;
+            buttons[button_count++] = gamepad.buttonX.isPressed;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+            /* This must be the last button, so we can optionally handle it with pause_button_index below */
+            if (joystick->hwdata->button_mask & (1 << SDL_CONTROLLER_BUTTON_START)) {
+                if (joystick->hwdata->uses_pause_handler) {
+                    pause_button_index = button_count;
+                    buttons[button_count++] = joystick->delayed_guide_button;
+                } else {
+                    buttons[button_count++] = gamepad.buttonMenu.isPressed;
+                }
+            }
+#pragma clang diagnostic pop
 
-            for (i = 0; i < SDL_arraysize(buttons); i++) {
+            for (i = 0; i < button_count; i++) {
                 updateplayerindex |= (joystick->buttons[i] != buttons[i]);
                 SDL_PrivateJoystickButton(joystick, i, buttons[i]);
             }
@@ -600,13 +746,14 @@ IOS_MFIJoystickUpdate(SDL_Joystick * joystick)
             SDL_PrivateJoystickHat(joystick, 0, hatstate);
         }
 
-        for (i = 0; i < joystick->hwdata->num_pause_presses; i++) {
-            const Uint8 pausebutton = joystick->nbuttons - 1; /* The pause button is always last. */
-            SDL_PrivateJoystickButton(joystick, pausebutton, SDL_PRESSED);
-            SDL_PrivateJoystickButton(joystick, pausebutton, SDL_RELEASED);
-            updateplayerindex = YES;
+        if (joystick->hwdata->uses_pause_handler) {
+            for (i = 0; i < joystick->hwdata->num_pause_presses; i++) {
+                SDL_PrivateJoystickButton(joystick, pause_button_index, SDL_PRESSED);
+                SDL_PrivateJoystickButton(joystick, pause_button_index, SDL_RELEASED);
+                updateplayerindex = YES;
+            }
+            joystick->hwdata->num_pause_presses = 0;
         }
-        joystick->hwdata->num_pause_presses = 0;
 
         if (updateplayerindex && controller.playerIndex == -1) {
             BOOL usedPlayerIndexSlots[4] = {NO, NO, NO, NO};

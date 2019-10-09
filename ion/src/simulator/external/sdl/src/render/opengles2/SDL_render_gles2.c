@@ -529,8 +529,10 @@ GLES2_CacheProgram(GLES2_RenderData *data, GLES2_ShaderCacheEntry *vertex,
         }
         data->glDeleteProgram(data->program_cache.tail->id);
         data->program_cache.tail = data->program_cache.tail->prev;
-        SDL_free(data->program_cache.tail->next);
-        data->program_cache.tail->next = NULL;
+        if (data->program_cache.tail != NULL) {
+            SDL_free(data->program_cache.tail->next);
+            data->program_cache.tail->next = NULL;
+        }
         --data->program_cache.count;
     }
     return entry;
@@ -766,7 +768,7 @@ static int
 GLES2_QueueDrawPoints(SDL_Renderer * renderer, SDL_RenderCommand *cmd, const SDL_FPoint * points, int count)
 {
     GLfloat *verts = (GLfloat *) SDL_AllocateRenderVertices(renderer, count * 2 * sizeof (GLfloat), 0, &cmd->data.draw.first);
-    size_t i;
+    int i;
 
     if (!verts) {
         return -1;
@@ -785,7 +787,7 @@ static int
 GLES2_QueueFillRects(SDL_Renderer * renderer, SDL_RenderCommand *cmd, const SDL_FRect * rects, int count)
 {
     GLfloat *verts = (GLfloat *) SDL_AllocateRenderVertices(renderer, count * 8 * sizeof (GLfloat), 0, &cmd->data.draw.first);
-    size_t i;
+    int i;
 
     if (!verts) {
         return -1;
@@ -1275,9 +1277,9 @@ GLES2_RunCommandQueue(SDL_Renderer * renderer, SDL_RenderCommand *cmd, void *ver
                     data->drawstate.clear_color = color;
                 }
 
-                if (data->drawstate.cliprect_enabled) {
+                if (data->drawstate.cliprect_enabled || data->drawstate.cliprect_enabled_dirty) {
                     data->glDisable(GL_SCISSOR_TEST);
-                    data->drawstate.cliprect_enabled_dirty = SDL_TRUE;
+                    data->drawstate.cliprect_enabled_dirty = data->drawstate.cliprect_enabled;
                 }
 
                 data->glClear(GL_COLOR_BUFFER_BIT);
@@ -1747,6 +1749,8 @@ GLES2_SetRenderTarget(SDL_Renderer * renderer, SDL_Texture * texture)
     GLES2_RenderData *data = (GLES2_RenderData *) renderer->driverdata;
     GLES2_TextureData *texturedata = NULL;
     GLenum status;
+
+    data->drawstate.viewport_dirty = SDL_TRUE;
 
     if (texture == NULL) {
         data->glBindFramebuffer(GL_FRAMEBUFFER, data->window_framebuffer);

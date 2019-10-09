@@ -323,6 +323,7 @@ SDL_JoystickOpen(int device_index)
     joystick->instance_id = instance_id;
     joystick->attached = SDL_TRUE;
     joystick->player_index = -1;
+    joystick->epowerlevel = SDL_JOYSTICK_POWER_UNKNOWN;
 
     if (driver->Open(joystick, device_index) < 0) {
         SDL_free(joystick);
@@ -360,7 +361,6 @@ SDL_JoystickOpen(int device_index)
         SDL_UnlockJoysticks();
         return NULL;
     }
-    joystick->epowerlevel = SDL_JOYSTICK_POWER_UNKNOWN;
 
     /* If this joystick is known to have all zero centered axes, skip the auto-centering code */
     if (SDL_JoystickAxesCenteredAtZero(joystick)) {
@@ -699,9 +699,12 @@ SDL_JoystickQuit(void)
     int i;
 
     /* Make sure we're not getting called in the middle of updating joysticks */
-    SDL_assert(!SDL_updating_joystick);
-
     SDL_LockJoysticks();
+    while (SDL_updating_joystick) {
+        SDL_UnlockJoysticks();
+        SDL_Delay(1);
+        SDL_LockJoysticks();
+    }
 
     /* Stop the event polling */
     while (SDL_joysticks) {
@@ -724,8 +727,9 @@ SDL_JoystickQuit(void)
                         SDL_JoystickAllowBackgroundEventsChanged, NULL);
 
     if (SDL_joystick_lock) {
-        SDL_DestroyMutex(SDL_joystick_lock);
+        SDL_mutex *mutex = SDL_joystick_lock;
         SDL_joystick_lock = NULL;
+        SDL_DestroyMutex(mutex);
     }
 
     SDL_GameControllerQuitMappings();
@@ -1035,7 +1039,10 @@ SDL_JoystickUpdate(void)
 
     for (joystick = SDL_joysticks; joystick; joystick = joystick->next) {
         if (joystick->attached) {
-            joystick->driver->Update(joystick);
+            /* This should always be true, but seeing a crash in the wild...? */
+            if (joystick->driver) {
+                joystick->driver->Update(joystick);
+            }
 
             if (joystick->delayed_guide_button) {
                 SDL_GameControllerHandleDelayedGuideButton(joystick);
@@ -1159,13 +1166,17 @@ SDL_IsJoystickPS4(Uint16 vendor, Uint16 product)
 SDL_bool
 SDL_IsJoystickNintendoSwitchPro(Uint16 vendor, Uint16 product)
 {
-    return (GuessControllerType(vendor, product) == k_eControllerType_SwitchProController);
+    EControllerType eType = GuessControllerType(vendor, product);
+    return (eType == k_eControllerType_SwitchProController ||
+            eType == k_eControllerType_SwitchInputOnlyController);
 }
 
 SDL_bool
 SDL_IsJoystickSteamController(Uint16 vendor, Uint16 product)
 {
-    return BIsSteamController(GuessControllerType(vendor, product));
+    EControllerType eType = GuessControllerType(vendor, product);
+    return (eType == k_eControllerType_SteamController ||
+            eType == k_eControllerType_SteamControllerV2);
 }
 
 SDL_bool

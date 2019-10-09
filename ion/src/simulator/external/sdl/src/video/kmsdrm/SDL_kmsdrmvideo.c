@@ -101,7 +101,8 @@ static int get_dricount(void)
     folder = opendir(KMSDRM_DRI_PATH);
     if (folder) {
         while ((res = readdir(folder))) {
-            if (res->d_type == DT_CHR) {
+            int len = SDL_strlen(res->d_name);
+            if (len > 4 && SDL_strncmp(res->d_name, "card", 4) == 0) {
                 devcount++;
             }
         }
@@ -250,12 +251,12 @@ KMSDRM_FBDestroyCallback(struct gbm_bo *bo, void *data)
 {
     KMSDRM_FBInfo *fb_info = (KMSDRM_FBInfo *)data;
 
-    if (fb_info && fb_info->drm_fd > 0 && fb_info->fb_id != 0) {
+    if (fb_info && fb_info->drm_fd >= 0 && fb_info->fb_id != 0) {
         KMSDRM_drmModeRmFB(fb_info->drm_fd, fb_info->fb_id);
         SDL_LogDebug(SDL_LOG_CATEGORY_VIDEO, "Delete DRM FB %u", fb_info->fb_id);
     }
 
-    free(fb_info);
+    SDL_free(fb_info);
 }
 
 KMSDRM_FBInfo *
@@ -287,7 +288,7 @@ KMSDRM_FBFromBO(_THIS, struct gbm_bo *bo)
 
     ret = KMSDRM_drmModeAddFB(vdata->drm_fd, w, h, 24, 32, stride, handle, &fb_info->fb_id);
     if (ret < 0) {
-       free(fb_info);
+       SDL_free(fb_info);
        return NULL;
     }
     SDL_LogDebug(SDL_LOG_CATEGORY_VIDEO, "New DRM FB (%u): %ux%u, stride %u from BO %p", fb_info->fb_id, w, h, stride, (void *)bo);
@@ -511,6 +512,8 @@ KMSDRM_VideoInit(_THIS)
 
     KMSDRM_InitMouse(_this);
 
+    return ret;
+
 cleanup:
     if (encoder != NULL)
         KMSDRM_drmModeFreeEncoder(encoder);
@@ -550,7 +553,7 @@ KMSDRM_VideoQuit(_THIS)
     }
 
     if(vdata->saved_crtc != NULL) {
-        if(vdata->drm_fd > 0 && vdata->saved_conn_id > 0) {
+        if(vdata->drm_fd >= 0 && vdata->saved_conn_id > 0) {
             /* Restore saved CRTC settings */
             drmModeCrtc *crtc = vdata->saved_crtc;
             if(KMSDRM_drmModeSetCrtc(vdata->drm_fd, crtc->crtc_id, crtc->buffer_id,

@@ -26,6 +26,7 @@
 
 #include "SDL_video.h"
 #include "SDL_mouse.h"
+#include "SDL_hints.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_pixels_c.h"
 #include "../../events/SDL_events_c.h"
@@ -93,6 +94,7 @@ Android_CreateDevice(int devindex)
 {
     SDL_VideoDevice *device;
     SDL_VideoData *data;
+    SDL_bool block_on_pause;
 
     /* Initialize all variables that we clean on shutdown */
     device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
@@ -113,13 +115,19 @@ Android_CreateDevice(int devindex)
     /* Set the function pointers */
     device->VideoInit = Android_VideoInit;
     device->VideoQuit = Android_VideoQuit;
-    device->PumpEvents = Android_PumpEvents;
+    block_on_pause = SDL_GetHintBoolean(SDL_HINT_ANDROID_BLOCK_ON_PAUSE, SDL_TRUE);
+    if (block_on_pause) {
+        device->PumpEvents = Android_PumpEvents_Blocking;
+    } else {
+        device->PumpEvents = Android_PumpEvents_NonBlocking;
+    }
 
     device->GetDisplayDPI = Android_GetDisplayDPI;
 
     device->CreateSDLWindow = Android_CreateWindow;
     device->SetWindowTitle = Android_SetWindowTitle;
     device->SetWindowFullscreen = Android_SetWindowFullscreen;
+    device->MinimizeWindow = Android_MinimizeWindow;
     device->DestroyWindow = Android_DestroyWindow;
     device->GetWindowWMInfo = Android_GetWindowWMInfo;
 
@@ -172,8 +180,10 @@ VideoBootStrap Android_bootstrap = {
 int
 Android_VideoInit(_THIS)
 {
-    SDL_VideoData   *videodata = (SDL_VideoData *)_this->driverdata;
-    SDL_DisplayMode  mode;
+    SDL_VideoData *videodata = (SDL_VideoData *)_this->driverdata;
+    int display_index;
+    SDL_VideoDisplay *display;
+    SDL_DisplayMode mode;
 
     videodata->isPaused  = SDL_FALSE;
     videodata->isPausing = SDL_FALSE;
@@ -184,9 +194,12 @@ Android_VideoInit(_THIS)
     mode.refresh_rate    = Android_ScreenRate;
     mode.driverdata      = NULL;
 
-    if (SDL_AddBasicVideoDisplay(&mode) < 0) {
+    display_index = SDL_AddBasicVideoDisplay(&mode);
+    if (display_index < 0) {
         return -1;
     }
+    display = SDL_GetDisplay(display_index);
+    display->orientation = Android_JNI_GetDisplayOrientation();    
 
     SDL_AddDisplayMode(&_this->displays[0], &mode);
 

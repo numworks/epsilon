@@ -178,7 +178,7 @@ GL_ClearErrors(SDL_Renderer *renderer)
             data->errors = 0;
             data->error_messages = NULL;
         }
-    } else {
+    } else if (data->glGetError != NULL) {
         while (data->glGetError() != GL_NO_ERROR) {
             continue;
         }
@@ -234,18 +234,19 @@ GL_LoadFunctions(GL_RenderData * data)
 #ifdef __SDL_NOGETPROCADDR__
 #define SDL_PROC(ret,func,params) data->func=func;
 #else
+    int retval = 0;
 #define SDL_PROC(ret,func,params) \
     do { \
         data->func = SDL_GL_GetProcAddress(#func); \
         if ( ! data->func ) { \
-            return SDL_SetError("Couldn't load GL function %s: %s", #func, SDL_GetError()); \
+            retval = SDL_SetError("Couldn't load GL function %s: %s", #func, SDL_GetError()); \
         } \
     } while ( 0 );
 #endif /* __SDL_NOGETPROCADDR__ */
 
 #include "SDL_glfuncs.h"
 #undef SDL_PROC
-    return 0;
+    return retval;
 }
 
 static int
@@ -405,8 +406,15 @@ convert_format(GL_RenderData *renderdata, Uint32 pixel_format,
 {
     switch (pixel_format) {
     case SDL_PIXELFORMAT_ARGB8888:
+    case SDL_PIXELFORMAT_RGB888:
         *internalFormat = GL_RGBA8;
         *format = GL_BGRA;
+        *type = GL_UNSIGNED_INT_8_8_8_8_REV;
+        break;
+    case SDL_PIXELFORMAT_ABGR8888:
+    case SDL_PIXELFORMAT_BGR888:
+        *internalFormat = GL_RGBA8;
+        *format = GL_RGBA;
         *type = GL_UNSIGNED_INT_8_8_8_8_REV;
         break;
     case SDL_PIXELFORMAT_YV12:
@@ -773,6 +781,8 @@ GL_SetRenderTarget(SDL_Renderer * renderer, SDL_Texture * texture)
         return SDL_SetError("Render targets not supported by OpenGL");
     }
 
+    data->drawstate.viewport_dirty = SDL_TRUE;
+
     if (texture == NULL) {
         data->glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         return 0;
@@ -803,7 +813,7 @@ static int
 GL_QueueDrawPoints(SDL_Renderer * renderer, SDL_RenderCommand *cmd, const SDL_FPoint * points, int count)
 {
     GLfloat *verts = (GLfloat *) SDL_AllocateRenderVertices(renderer, count * 2 * sizeof (GLfloat), 0, &cmd->data.draw.first);
-    size_t i;
+    int i;
 
     if (!verts) {
         return -1;
@@ -822,7 +832,7 @@ static int
 GL_QueueFillRects(SDL_Renderer * renderer, SDL_RenderCommand *cmd, const SDL_FRect * rects, int count)
 {
     GLfloat *verts = (GLfloat *) SDL_AllocateRenderVertices(renderer, count * 4 * sizeof (GLfloat), 0, &cmd->data.draw.first);
-    size_t i;
+    int i;
 
     if (!verts) {
         return -1;
@@ -1017,7 +1027,13 @@ SetCopyState(GL_RenderData *data, const SDL_RenderCommand *cmd)
 {
     SDL_Texture *texture = cmd->data.draw.texture;
     const GL_TextureData *texturedata = (GL_TextureData *) texture->driverdata;
-    GL_Shader shader = SHADER_RGB;
+    GL_Shader shader;
+
+    if (texture->format == SDL_PIXELFORMAT_ABGR8888 || texture->format == SDL_PIXELFORMAT_ARGB8888) {
+        shader = SHADER_RGBA;
+    } else {
+        shader = SHADER_RGB;
+    }
 
     if (data->shaders) {
         if (texturedata->yuv || texturedata->nv12) {
@@ -1150,9 +1166,9 @@ GL_RunCommandQueue(SDL_Renderer * renderer, SDL_RenderCommand *cmd, void *vertic
                     data->drawstate.clear_color = color;
                 }
 
-                if (data->drawstate.cliprect_enabled) {
+                if (data->drawstate.cliprect_enabled || data->drawstate.cliprect_enabled_dirty) {
                     data->glDisable(GL_SCISSOR_TEST);
-                    data->drawstate.cliprect_enabled_dirty = SDL_TRUE;
+                    data->drawstate.cliprect_enabled_dirty = data->drawstate.cliprect_enabled;
                 }
 
                 data->glClear(GL_COLOR_BUFFER_BIT);
@@ -1525,7 +1541,7 @@ GL_CreateRenderer(SDL_Window * window, Uint32 flags)
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &profile_mask);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
-    
+
     window_flags = SDL_GetWindowFlags(window);
     if (!(window_flags & SDL_WINDOW_OPENGL) ||
         profile_mask == SDL_GL_CONTEXT_PROFILE_ES || major != RENDERER_CONTEXT_MAJOR || minor != RENDERER_CONTEXT_MINOR) {
@@ -1731,8 +1747,13 @@ SDL_RenderDriver GL_RenderDriver = {
     {
      "opengl",
      (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE),
-     1,
-     {SDL_PIXELFORMAT_ARGB8888},
+     4,
+     {
+         SDL_PIXELFORMAT_ARGB8888,
+         SDL_PIXELFORMAT_ABGR8888,
+         SDL_PIXELFORMAT_RGB888,
+         SDL_PIXELFORMAT_BGR888
+     },
      0,
      0}
 };

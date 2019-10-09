@@ -71,7 +71,6 @@ typedef struct SDL_AudioDriverImpl
     void (*BeginLoopIteration)(_THIS);  /* Called by audio thread at top of loop */
     void (*WaitDevice) (_THIS);
     void (*PlayDevice) (_THIS);
-    int (*GetPendingBytes) (_THIS);
     Uint8 *(*GetDeviceBuf) (_THIS);
     int (*CaptureFromDevice) (_THIS, void *buffer, int buflen);
     void (*FlushCapture) (_THIS);
@@ -204,8 +203,8 @@ extern AudioBootStrap COREAUDIO_bootstrap;
 extern AudioBootStrap DISKAUDIO_bootstrap;
 extern AudioBootStrap DUMMYAUDIO_bootstrap;
 extern AudioBootStrap FUSIONSOUND_bootstrap;
-extern AudioBootStrap ANDROIDAUDIO_bootstrap;
 extern AudioBootStrap openslES_bootstrap;
+extern AudioBootStrap ANDROIDAUDIO_bootstrap;
 extern AudioBootStrap PSPAUDIO_bootstrap;
 extern AudioBootStrap EMSCRIPTENAUDIO_bootstrap;
 

@@ -22,9 +22,6 @@
 
 #if SDL_VIDEO_DRIVER_ANDROID
 
-/* We're going to do this by default */
-#define SDL_ANDROID_BLOCK_ON_PAUSE  1
-
 #include "SDL_androidevents.h"
 #include "SDL_events.h"
 #include "SDL_androidkeyboard.h"
@@ -49,14 +46,12 @@ static void openslES_ResumeDevices(void) {}
 static void openslES_PauseDevices(void) {}
 #endif
 
-#if SDL_ANDROID_BLOCK_ON_PAUSE
 /* Number of 'type' events in the event queue */
 static int
 SDL_NumberOfEvents(Uint32 type)
 {
     return SDL_PeepEvents(NULL, 0, SDL_PEEKEVENT, type, type);
 }
-#endif /* SDL_ANDROID_BLOCK_ON_PAUSE */
 
 static void
 android_egl_context_restore(SDL_Window *window)
@@ -89,15 +84,13 @@ android_egl_context_backup(SDL_Window *window)
 
 /*
  * Android_ResumeSem and Android_PauseSem are signaled from Java_org_libsdl_app_SDLActivity_nativePause and Java_org_libsdl_app_SDLActivity_nativeResume
- * When the pause semaphore is signaled, if SDL_ANDROID_BLOCK_ON_PAUSE is defined the event loop will block until the resume signal is emitted.
+ * When the pause semaphore is signaled, if Android_PumpEvents_Blocking is used, the event loop will block until the resume signal is emitted.
  *
  * No polling necessary
  */
 
-#if SDL_ANDROID_BLOCK_ON_PAUSE
-
 void
-Android_PumpEvents(_THIS)
+Android_PumpEvents_Blocking(_THIS)
 {
     SDL_VideoData *videodata = (SDL_VideoData *)_this->driverdata;
 
@@ -137,8 +130,7 @@ Android_PumpEvents(_THIS)
              * has reached the app */
             if (SDL_NumberOfEvents(SDL_APP_DIDENTERBACKGROUND) > SDL_SemValue(Android_PauseSem)) {
                 videodata->isPausing = 1;
-            }
-            else {
+            } else {
                 videodata->isPausing = 0;
                 videodata->isPaused = 1;
             }
@@ -146,14 +138,27 @@ Android_PumpEvents(_THIS)
     }
 }
 
-#else
-
 void
-Android_PumpEvents(_THIS)
+Android_PumpEvents_NonBlocking(_THIS)
 {
     SDL_VideoData *videodata = (SDL_VideoData *)_this->driverdata;
+    static int backup_context = 0;
 
     if (videodata->isPaused) {
+
+        if (backup_context) {
+
+            SDL_LockMutex(Android_ActivityMutex);
+            android_egl_context_backup(Android_Window);
+            SDL_UnlockMutex(Android_ActivityMutex);
+
+            ANDROIDAUDIO_PauseDevices();
+            openslES_PauseDevices();
+
+            backup_context = 0;
+        }
+
+
         if (SDL_SemTryWait(Android_ResumeSem) == 0) {
 
             videodata->isPaused = 0;
@@ -174,21 +179,20 @@ Android_PumpEvents(_THIS)
             }
         }
     } else {
-        if (SDL_SemTryWait(Android_PauseSem) == 0) {
-
-            SDL_LockMutex(Android_ActivityMutex);
-            android_egl_context_backup(Android_Window);
-            SDL_UnlockMutex(Android_ActivityMutex);
-
-            ANDROIDAUDIO_PauseDevices();
-            openslES_PauseDevices();
-
-            videodata->isPaused = 1;
+        if (videodata->isPausing || SDL_SemTryWait(Android_PauseSem) == 0) {
+            /* We've been signaled to pause (potentially several times), but before we block ourselves,
+             * we need to make sure that the very last event (of the first pause sequence, if several)
+             * has reached the app */
+            if (SDL_NumberOfEvents(SDL_APP_DIDENTERBACKGROUND) > SDL_SemValue(Android_PauseSem)) {
+                videodata->isPausing = 1;
+            } else {
+                videodata->isPausing = 0;
+                videodata->isPaused = 1;
+                backup_context = 1;
+            }
         }
     }
 }
-
-#endif /* SDL_ANDROID_BLOCK_ON_PAUSE */
 
 #endif /* SDL_VIDEO_DRIVER_ANDROID */
 

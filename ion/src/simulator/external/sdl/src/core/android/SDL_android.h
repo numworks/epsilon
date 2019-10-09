@@ -33,11 +33,14 @@ extern "C" {
 
 #include "SDL_audio.h"
 #include "SDL_rect.h"
+#include "SDL_video.h"
 
 /* Interface from the SDL library into the Android Java activity */
 extern void Android_JNI_SetActivityTitle(const char *title);
 extern void Android_JNI_SetWindowStyle(SDL_bool fullscreen);
 extern void Android_JNI_SetOrientation(int w, int h, int resizable, const char *hint);
+extern void Android_JNI_MinizeWindow(void);
+extern SDL_bool Android_JNI_ShouldMinimizeOnFocusLoss(void);
 
 extern SDL_bool Android_JNI_GetAccelerometerValues(float values[3]);
 extern void Android_JNI_ShowTextInput(SDL_Rect *inputRect);
@@ -46,6 +49,7 @@ extern SDL_bool Android_JNI_IsScreenKeyboardShown(void);
 extern ANativeWindow* Android_JNI_GetNativeWindow(void);
 extern void Android_JNI_SetSurfaceViewFormat(int format);
 
+extern SDL_DisplayOrientation Android_JNI_GetDisplayOrientation(void);
 extern int Android_JNI_GetDisplayDPI(float *ddpi, float *xdpi, float *ydpi);
 
 /* Audio support */
@@ -58,8 +62,8 @@ extern void Android_JNI_CloseAudioDevice(const int iscapture);
 extern void Android_JNI_AudioSetThreadPriority(int iscapture, int device_id);
 
 /* Detecting device type */
-extern SDL_bool Android_IsDeXMode();
-extern SDL_bool Android_IsChromebook();
+extern SDL_bool Android_IsDeXMode(void);
+extern SDL_bool Android_IsChromebook(void);
 
 #include "SDL_rwops.h"
 
@@ -94,7 +98,6 @@ void Android_JNI_SuspendScreenSaver(SDL_bool suspend);
 
 /* Touch support */
 void Android_JNI_InitTouch(void);
-void Android_JNI_SetSeparateMouseAndTouch(SDL_bool new_value);
 
 /* Threads */
 #include <jni.h>
@@ -121,10 +124,16 @@ SDL_bool Android_JNI_SupportsRelativeMouse(void);
 SDL_bool Android_JNI_SetRelativeMouseEnabled(SDL_bool enabled);
 
 
+int SDL_GetAndroidSDKVersion(void);
+
 SDL_bool SDL_IsAndroidTablet(void);
 SDL_bool SDL_IsAndroidTV(void);
 SDL_bool SDL_IsChromebook(void);
 SDL_bool SDL_IsDeXMode(void);
+
+void Android_ActivityMutex_Lock(void);
+void Android_ActivityMutex_Unlock(void);
+void Android_ActivityMutex_Lock_Running(void);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

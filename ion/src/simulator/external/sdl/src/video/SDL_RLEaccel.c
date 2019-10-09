@@ -89,7 +89,6 @@
 #include "SDL_sysvideo.h"
 #include "SDL_blit.h"
 #include "SDL_RLEaccel_c.h"
-#include "../cpuinfo/SDL_simd.h"
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -296,10 +295,10 @@
     } while(0)
 
 #define ALPHA_BLIT16_565_50(to, from, length, bpp, alpha)       \
-    ALPHA_BLIT16_50(to, from, length, bpp, alpha, 0xf7de)
+    ALPHA_BLIT16_50(to, from, length, bpp, alpha, 0xf7deU)
 
 #define ALPHA_BLIT16_555_50(to, from, length, bpp, alpha)       \
-    ALPHA_BLIT16_50(to, from, length, bpp, alpha, 0xfbde)
+    ALPHA_BLIT16_50(to, from, length, bpp, alpha, 0xfbdeU)
 
 #define CHOOSE_BLIT(blitter, alpha, fmt)                        \
     do {                                                        \

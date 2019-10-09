@@ -8,6 +8,7 @@ namespace Device {
 namespace Timing {
 
 void init();
+void setSysTickFrequency(int frequencyInMHz);
 void shutdown();
 
 extern volatile uint64_t MillisElapsed;

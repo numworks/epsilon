@@ -29,6 +29,9 @@
 #include "SDL_sysrender.h"
 #include "software/SDL_render_sw_c.h"
 
+#if defined(__ANDROID__)
+#  include "../core/android/SDL_android.h"
+#endif
 
 #define SDL_WINDOWRENDERDATA    "_SDL_WindowRenderData"
 
@@ -199,8 +202,6 @@ DebugLogRenderCommands(const SDL_RenderCommand *cmd)
 static int
 FlushRenderCommands(SDL_Renderer *renderer)
 {
-    SDL_AllocVertGap *prevgap = &renderer->vertex_data_gaps;
-    SDL_AllocVertGap *gap = prevgap;
     int retval;
 
     SDL_assert((renderer->render_commands == NULL) == (renderer->render_commands_tail == NULL));
@@ -213,14 +214,6 @@ FlushRenderCommands(SDL_Renderer *renderer)
     DebugLogRenderCommands(renderer->render_commands);
 
     retval = renderer->RunCommandQueue(renderer, renderer->render_commands, renderer->vertex_data, renderer->vertex_data_used);
-
-    while (gap) {
-        prevgap = gap;
-        gap = gap->next;
-    }
-    prevgap->next = renderer->vertex_data_gaps_pool;
-    renderer->vertex_data_gaps_pool = renderer->vertex_data_gaps.next;
-    renderer->vertex_data_gaps.next = NULL;
 
     /* Move the whole render command queue to the unused pool so we can reuse them next time. */
     if (renderer->render_commands_tail != NULL) {
@@ -260,79 +253,23 @@ SDL_RenderFlush(SDL_Renderer * renderer)
     return FlushRenderCommands(renderer);
 }
 
-static SDL_AllocVertGap *
-AllocateVertexGap(SDL_Renderer *renderer)
-{
-    SDL_AllocVertGap *retval = renderer->vertex_data_gaps_pool;
-    if (retval) {
-        renderer->vertex_data_gaps_pool = retval->next;
-        retval->next = NULL;
-    } else {
-        retval = (SDL_AllocVertGap *) SDL_malloc(sizeof (SDL_AllocVertGap));
-        if (!retval) {
-            SDL_OutOfMemory();
-        }
-    }
-    return retval;
-}
-
-
 void *
 SDL_AllocateRenderVertices(SDL_Renderer *renderer, const size_t numbytes, const size_t alignment, size_t *offset)
 {
     const size_t needed = renderer->vertex_data_used + numbytes + alignment;
-    size_t aligner, aligned;
-    void *retval;
+    size_t current_offset = renderer->vertex_data_used;
 
-    SDL_AllocVertGap *prevgap = &renderer->vertex_data_gaps;
-    SDL_AllocVertGap *gap = prevgap->next;
-    while (gap) {
-        const size_t gapoffset = gap->offset;
-        aligner = (alignment && ((gap->offset % alignment) != 0)) ? (alignment - (gap->offset % alignment)) : 0;
-        aligned = gapoffset + aligner;
+    size_t aligner = (alignment && ((current_offset & (alignment - 1)) != 0)) ? (alignment - (current_offset & (alignment - 1))) : 0;
+    size_t aligned = current_offset + aligner;
 
-        /* Can we use this gap? */
-        if ((aligner < gap->len) && ((gap->len - aligner) >= numbytes)) {
-            /* we either finished this gap off, trimmed the left, trimmed the right, or split it into two gaps. */
-            if (gap->len == numbytes) {  /* finished it off, remove it */
-                SDL_assert(aligned == gapoffset);
-                prevgap->next = gap->next;
-                gap->next = renderer->vertex_data_gaps_pool;
-                renderer->vertex_data_gaps_pool = gap;
-            } else if (aligned == gapoffset) {  /* trimmed the left */
-                gap->offset += numbytes;
-                gap->len -= numbytes;
-            } else if (((aligned - gapoffset) + numbytes) == gap->len) {  /* trimmed the right */
-                gap->len -= numbytes;
-            } else {  /* split into two gaps */
-                SDL_AllocVertGap *newgap = AllocateVertexGap(renderer);
-                if (!newgap) {
-                    return NULL;
-                }
-                newgap->offset = aligned + numbytes;
-                newgap->len = gap->len - (aligner + numbytes);
-                newgap->next = gap->next;
-                // gap->offset doesn't change.
-                gap->len = aligner;
-                gap->next = newgap;
-            }
-
-            if (offset) {
-                *offset = aligned;
-            }
-            return ((Uint8 *) renderer->vertex_data) + aligned;
-        }
-
-        /* Try the next gap */
-        prevgap = gap;
-        gap = gap->next;
-    }
-
-    /* no gaps with enough space; get a new piece of the vertex buffer */
-    while (needed > renderer->vertex_data_allocation) {
+    if (renderer->vertex_data_allocation < needed) {
         const size_t current_allocation = renderer->vertex_data ? renderer->vertex_data_allocation : 1024;
-        const size_t newsize = current_allocation * 2;
-        void *ptr = SDL_realloc(renderer->vertex_data, newsize);
+        size_t newsize = current_allocation * 2;
+        void *ptr;
+        while (newsize < needed) {
+            newsize *= 2;
+        }
+        ptr = SDL_realloc(renderer->vertex_data, newsize);
         if (ptr == NULL) {
             SDL_OutOfMemory();
             return NULL;
@@ -341,27 +278,13 @@ SDL_AllocateRenderVertices(SDL_Renderer *renderer, const size_t numbytes, const 
         renderer->vertex_data_allocation = newsize;
     }
 
-    aligner = (alignment && ((renderer->vertex_data_used % alignment) != 0)) ? (alignment - (renderer->vertex_data_used % alignment)) : 0;
-    aligned = renderer->vertex_data_used + aligner;
-
-    retval = ((Uint8 *) renderer->vertex_data) + aligned;
     if (offset) {
         *offset = aligned;
     }
 
-    if (aligner) {  /* made a new gap... */
-        SDL_AllocVertGap *newgap = AllocateVertexGap(renderer);
-        if (newgap) {  /* just let it slide as lost space if malloc fails. */
-            newgap->offset = renderer->vertex_data_used;
-            newgap->len = aligner;
-            newgap->next = NULL;
-            prevgap->next = newgap;
-        }
-    }
-
     renderer->vertex_data_used += aligner + numbytes;
 
-    return retval;
+    return ((Uint8 *) renderer->vertex_data) + aligned;
 }
 
 static SDL_RenderCommand *
@@ -487,14 +410,14 @@ QueueCmdClear(SDL_Renderer *renderer)
 static int
 PrepQueueCmdDraw(SDL_Renderer *renderer, const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
 {
-    int retval = 0;
-    if (retval == 0) {
-        retval = QueueCmdSetDrawColor(renderer, r, g, b, a);
-    }
-    if (retval == 0) {
+    int retval = QueueCmdSetDrawColor(renderer, r, g, b, a);
+
+    /* Set the viewport and clip rect directly before draws, so the backends
+     * don't have to worry about that state not being valid at draw time. */
+    if (retval == 0 && !renderer->viewport_queued) {
         retval = QueueCmdSetViewport(renderer);
     }
-    if (retval == 0) {
+    if (retval == 0 && !renderer->cliprect_queued) {
         retval = QueueCmdSetClipRect(renderer);
     }
     return retval;
@@ -837,14 +760,18 @@ SDL_CreateRenderer(SDL_Window * window, int index, Uint32 flags)
     SDL_bool batching = SDL_TRUE;
     const char *hint;
 
+#if defined(__ANDROID__)
+    Android_ActivityMutex_Lock_Running();
+#endif
+
     if (!window) {
         SDL_SetError("Invalid window");
-        return NULL;
+        goto error;
     }
 
     if (SDL_GetRenderer(window)) {
         SDL_SetError("Renderer already associated with window");
-        return NULL;
+        goto error;
     }
 
     if (SDL_GetHint(SDL_HINT_RENDER_VSYNC)) {
@@ -888,67 +815,81 @@ SDL_CreateRenderer(SDL_Window * window, int index, Uint32 flags)
         }
         if (index == n) {
             SDL_SetError("Couldn't find matching render driver");
-            return NULL;
+            goto error;
         }
     } else {
         if (index >= SDL_GetNumRenderDrivers()) {
             SDL_SetError("index must be -1 or in the range of 0 - %d",
                          SDL_GetNumRenderDrivers() - 1);
-            return NULL;
+            goto error;
         }
         /* Create a new renderer instance */
         renderer = render_drivers[index]->CreateRenderer(window, flags);
         batching = SDL_FALSE;
     }
 
-    if (renderer) {
-        VerifyDrawQueueFunctions(renderer);
-
-        /* let app/user override batching decisions. */
-        if (renderer->always_batch) {
-            batching = SDL_TRUE;
-        } else if (SDL_GetHint(SDL_HINT_RENDER_BATCHING)) {
-            batching = SDL_GetHintBoolean(SDL_HINT_RENDER_BATCHING, SDL_TRUE);
-        }
-
-        renderer->batching = batching;
-        renderer->magic = &renderer_magic;
-        renderer->window = window;
-        renderer->target_mutex = SDL_CreateMutex();
-        renderer->scale.x = 1.0f;
-        renderer->scale.y = 1.0f;
-        renderer->dpi_scale.x = 1.0f;
-        renderer->dpi_scale.y = 1.0f;
-
-        /* new textures start at zero, so we start at 1 so first render doesn't flush by accident. */
-        renderer->render_command_generation = 1;
-
-        if (window && renderer->GetOutputSize) {
-            int window_w, window_h;
-            int output_w, output_h;
-            if (renderer->GetOutputSize(renderer, &output_w, &output_h) == 0) {
-                SDL_GetWindowSize(renderer->window, &window_w, &window_h);
-                renderer->dpi_scale.x = (float)window_w / output_w;
-                renderer->dpi_scale.y = (float)window_h / output_h;
-            }
-        }
-
-        if (SDL_GetWindowFlags(window) & (SDL_WINDOW_HIDDEN|SDL_WINDOW_MINIMIZED)) {
-            renderer->hidden = SDL_TRUE;
-        } else {
-            renderer->hidden = SDL_FALSE;
-        }
-
-        SDL_SetWindowData(window, SDL_WINDOWRENDERDATA, renderer);
-
-        SDL_RenderSetViewport(renderer, NULL);
-
-        SDL_AddEventWatch(SDL_RendererEventWatch, renderer);
-
-        SDL_LogInfo(SDL_LOG_CATEGORY_RENDER,
-                    "Created renderer: %s", renderer->info.name);
+    if (!renderer) {
+        goto error;
     }
+
+    VerifyDrawQueueFunctions(renderer);
+
+    /* let app/user override batching decisions. */
+    if (renderer->always_batch) {
+        batching = SDL_TRUE;
+    } else if (SDL_GetHint(SDL_HINT_RENDER_BATCHING)) {
+        batching = SDL_GetHintBoolean(SDL_HINT_RENDER_BATCHING, SDL_TRUE);
+    }
+
+    renderer->batching = batching;
+    renderer->magic = &renderer_magic;
+    renderer->window = window;
+    renderer->target_mutex = SDL_CreateMutex();
+    renderer->scale.x = 1.0f;
+    renderer->scale.y = 1.0f;
+    renderer->dpi_scale.x = 1.0f;
+    renderer->dpi_scale.y = 1.0f;
+
+    /* new textures start at zero, so we start at 1 so first render doesn't flush by accident. */
+    renderer->render_command_generation = 1;
+
+    if (window && renderer->GetOutputSize) {
+        int window_w, window_h;
+        int output_w, output_h;
+        if (renderer->GetOutputSize(renderer, &output_w, &output_h) == 0) {
+            SDL_GetWindowSize(renderer->window, &window_w, &window_h);
+            renderer->dpi_scale.x = (float)window_w / output_w;
+            renderer->dpi_scale.y = (float)window_h / output_h;
+        }
+    }
+
+    if (SDL_GetWindowFlags(window) & (SDL_WINDOW_HIDDEN|SDL_WINDOW_MINIMIZED)) {
+        renderer->hidden = SDL_TRUE;
+    } else {
+        renderer->hidden = SDL_FALSE;
+    }
+
+    SDL_SetWindowData(window, SDL_WINDOWRENDERDATA, renderer);
+
+    SDL_RenderSetViewport(renderer, NULL);
+
+    SDL_AddEventWatch(SDL_RendererEventWatch, renderer);
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER,
+                "Created renderer: %s", renderer->info.name);
+
+#if defined(__ANDROID__)
+    Android_ActivityMutex_Unlock();
+#endif
     return renderer;
+
+error:
+
+#if defined(__ANDROID__)
+    Android_ActivityMutex_Unlock();
+#endif
+    return NULL;
+
 #else
     SDL_SetError("SDL not built with rendering support");
     return NULL;
@@ -1188,8 +1129,8 @@ SDL_CreateTextureFromSurface(SDL_Renderer * renderer, SDL_Surface * surface)
     const SDL_PixelFormat *fmt;
     SDL_bool needAlpha;
     SDL_bool direct_update;
-    Uint32 i;
-    Uint32 format;
+    int i;
+    Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
     SDL_Texture *texture;
 
     CHECK_RENDERER_MAGIC(renderer, NULL);
@@ -1218,12 +1159,43 @@ SDL_CreateTextureFromSurface(SDL_Renderer * renderer, SDL_Surface * surface)
         }
     }
 
-    format = renderer->info.texture_formats[0];
-    for (i = 0; i < renderer->info.num_texture_formats; ++i) {
-        if (!SDL_ISPIXELFORMAT_FOURCC(renderer->info.texture_formats[i]) &&
-            SDL_ISPIXELFORMAT_ALPHA(renderer->info.texture_formats[i]) == needAlpha) {
-            format = renderer->info.texture_formats[i];
-            break;
+    /* Try to have the best pixel format for the texture */
+    /* No alpha, but a colorkey => promote to alpha */
+    if (!fmt->Amask && SDL_HasColorKey(surface)) {
+        if (fmt->format == SDL_PIXELFORMAT_RGB888) {
+            for (i = 0; i < (int)renderer->info.num_texture_formats; ++i) {
+                if (renderer->info.texture_formats[i] == SDL_PIXELFORMAT_ARGB8888) {
+                    format = SDL_PIXELFORMAT_ARGB8888;
+                    break;
+                }
+            }
+        } else if (fmt->format == SDL_PIXELFORMAT_BGR888) {
+            for (i = 0; i < (int)renderer->info.num_texture_formats; ++i) {
+                if (renderer->info.texture_formats[i] == SDL_PIXELFORMAT_ABGR8888) {
+                    format = SDL_PIXELFORMAT_ABGR8888;
+                    break;
+                }
+            }
+        }
+    } else {
+        /* Exact match would be fine */
+        for (i = 0; i < (int)renderer->info.num_texture_formats; ++i) {
+            if (renderer->info.texture_formats[i] == fmt->format) {
+                format = fmt->format;
+                break;
+            }
+        }
+    }
+
+    /* Fallback, choose a valid pixel format */
+    if (format == SDL_PIXELFORMAT_UNKNOWN) {
+        format = renderer->info.texture_formats[0];
+        for (i = 0; i < (int)renderer->info.num_texture_formats; ++i) {
+            if (!SDL_ISPIXELFORMAT_FOURCC(renderer->info.texture_formats[i]) &&
+                    SDL_ISPIXELFORMAT_ALPHA(renderer->info.texture_formats[i]) == needAlpha) {
+                format = renderer->info.texture_formats[i];
+                break;
+            }
         }
     }
 
@@ -1708,6 +1680,42 @@ SDL_LockTexture(SDL_Texture * texture, const SDL_Rect * rect,
     }
 }
 
+int
+SDL_LockTextureToSurface(SDL_Texture *texture, const SDL_Rect *rect,
+                         SDL_Surface **surface)
+{
+    SDL_Rect real_rect;
+    void *pixels = NULL;
+    int pitch, ret;
+
+    if (texture == NULL || surface == NULL) {
+        return -1;
+    }
+
+    real_rect.x = 0;
+    real_rect.y = 0;
+    real_rect.w = texture->w;
+    real_rect.h = texture->h;
+
+    if (rect) {
+        SDL_IntersectRect(rect, &real_rect, &real_rect);
+    }
+
+    ret = SDL_LockTexture(texture, &real_rect, &pixels, &pitch);
+    if (ret < 0) {
+        return ret;
+    }
+
+    texture->locked_surface = SDL_CreateRGBSurfaceWithFormatFrom(pixels, real_rect.w, real_rect.h, 0, pitch, texture->format);
+    if (texture->locked_surface == NULL) {
+        SDL_UnlockTexture(texture);
+        return -1;
+    }
+
+    *surface = texture->locked_surface;
+    return 0;
+}
+
 static void
 SDL_UnlockTextureYUV(SDL_Texture * texture)
 {
@@ -1766,6 +1774,9 @@ SDL_UnlockTexture(SDL_Texture * texture)
         SDL_Renderer *renderer = texture->renderer;
         renderer->UnlockTexture(renderer, texture);
     }
+
+    SDL_FreeSurface(texture->locked_surface);
+    texture->locked_surface = NULL;
 }
 
 SDL_bool
@@ -3118,6 +3129,10 @@ SDL_DestroyTexture(SDL_Texture * texture)
     SDL_free(texture->pixels);
 
     renderer->DestroyTexture(renderer, texture);
+
+    SDL_FreeSurface(texture->locked_surface);
+    texture->locked_surface = NULL;
+
     SDL_free(texture);
 }
 
@@ -3125,8 +3140,6 @@ void
 SDL_DestroyRenderer(SDL_Renderer * renderer)
 {
     SDL_RenderCommand *cmd;
-    SDL_AllocVertGap *gap;
-    SDL_AllocVertGap *nextgap;
 
     CHECK_RENDERER_MAGIC(renderer, );
 
@@ -3150,16 +3163,6 @@ SDL_DestroyRenderer(SDL_Renderer * renderer)
     }
 
     SDL_free(renderer->vertex_data);
-
-    for (gap = renderer->vertex_data_gaps.next; gap; gap = nextgap) {
-        nextgap = gap->next;
-        SDL_free(gap);
-    }
-
-    for (gap = renderer->vertex_data_gaps_pool; gap; gap = nextgap) {
-        nextgap = gap->next;
-        SDL_free(gap);
-    }
 
     /* Free existing textures for this renderer */
     while (renderer->textures) {

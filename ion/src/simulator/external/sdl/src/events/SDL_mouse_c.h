@@ -93,6 +93,8 @@ typedef struct
     Uint32 double_click_time;
     int double_click_radius;
     SDL_bool touch_mouse_events;
+    SDL_bool mouse_touch_events;
+    SDL_bool was_touch_mouse_events; /* Was a touch-mouse event pending? */
 
     /* Data for double-click tracking */
     int num_clickstates;

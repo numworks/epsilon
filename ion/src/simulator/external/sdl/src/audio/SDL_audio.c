@@ -89,11 +89,11 @@ static const AudioBootStrap *const bootstrap[] = {
 #if SDL_AUDIO_DRIVER_FUSIONSOUND
     &FUSIONSOUND_bootstrap,
 #endif
-#if SDL_AUDIO_DRIVER_ANDROID
-    &ANDROIDAUDIO_bootstrap,
-#endif
 #if SDL_AUDIO_DRIVER_OPENSLES
     &openslES_bootstrap,
+#endif
+#if SDL_AUDIO_DRIVER_ANDROID
+    &ANDROIDAUDIO_bootstrap,
 #endif
 #if SDL_AUDIO_DRIVER_PSP
     &PSPAUDIO_bootstrap,
@@ -248,12 +248,6 @@ SDL_AudioPlayDevice_Default(_THIS)
 {                               /* no-op. */
 }
 
-static int
-SDL_AudioGetPendingBytes_Default(_THIS)
-{
-    return 0;
-}
-
 static Uint8 *
 SDL_AudioGetDeviceBuf_Default(_THIS)
 {
@@ -361,7 +355,6 @@ finish_audio_entry_points_init(void)
     FILL_STUB(BeginLoopIteration);
     FILL_STUB(WaitDevice);
     FILL_STUB(PlayDevice);
-    FILL_STUB(GetPendingBytes);
     FILL_STUB(GetDeviceBuf);
     FILL_STUB(CaptureFromDevice);
     FILL_STUB(FlushCapture);
@@ -654,11 +647,9 @@ SDL_GetQueuedAudioSize(SDL_AudioDeviceID devid)
     }
 
     /* Nothing to do unless we're set up for queueing. */
-    if (device->callbackspec.callback == SDL_BufferQueueDrainCallback) {
-        current_audio.impl.LockDevice(device);
-        retval = ((Uint32) SDL_CountDataQueue(device->buffer_queue)) + current_audio.impl.GetPendingBytes(device);
-        current_audio.impl.UnlockDevice(device);
-    } else if (device->callbackspec.callback == SDL_BufferQueueFillCallback) {
+    if (device->callbackspec.callback == SDL_BufferQueueDrainCallback ||
+        device->callbackspec.callback == SDL_BufferQueueFillCallback)
+    {
         current_audio.impl.LockDevice(device);
         retval = (Uint32) SDL_CountDataQueue(device->buffer_queue);
         current_audio.impl.UnlockDevice(device);
@@ -896,8 +887,6 @@ SDL_CaptureAudio(void *devicep)
         }
     }
 
-    current_audio.impl.PrepareToClose(device);
-
     current_audio.impl.FlushCapture(device);
 
     current_audio.impl.ThreadDeinit(device);
@@ -959,7 +948,7 @@ SDL_AudioInit(const char *driver_name)
     }
 
     SDL_zero(current_audio);
-    SDL_zero(open_devices);
+    SDL_zeroa(open_devices);
 
     /* Select the proper audio driver */
     if (driver_name == NULL) {
@@ -1619,7 +1608,7 @@ SDL_AudioQuit(void)
     SDL_DestroyMutex(current_audio.detectionLock);
 
     SDL_zero(current_audio);
-    SDL_zero(open_devices);
+    SDL_zeroa(open_devices);
 
 #ifdef HAVE_LIBSAMPLERATE_H
     UnloadLibSampleRate();
@@ -1680,8 +1669,15 @@ SDL_CalculateAudioSpec(SDL_AudioSpec * spec)
 {
     switch (spec->format) {
     case AUDIO_U8:
+
+    // !!! FIXME: 0x80 isn't perfect for U16, but we can't fit 0x8000 in a
+    // !!! FIXME:  byte for memset() use. This is actually 0.1953 percent off
+    //  from silence. Maybe just don't use U16.
+    case AUDIO_U16LSB:
+    case AUDIO_U16MSB:
         spec->silence = 0x80;
         break;
+
     default:
         spec->silence = 0x00;
         break;

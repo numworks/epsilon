@@ -129,7 +129,7 @@ touch_update(SDL_TouchID id, float x, float y)
 }
 
 static void
-touch_del(SDL_TouchID id, float* x, float* y)
+touch_del(SDL_TouchID id, float* x, float* y, struct wl_surface **surface)
 {
     struct SDL_WaylandTouchPoint* tp = touch_points.head;
 
@@ -137,6 +137,7 @@ touch_del(SDL_TouchID id, float* x, float* y)
         if (tp->id == id) {
             *x = tp->x;
             *y = tp->y;
+            *surface = tp->surface;
 
             if (tp->prev) {
                 tp->prev->next = tp->next;
@@ -177,15 +178,23 @@ void
 Wayland_PumpEvents(_THIS)
 {
     SDL_VideoData *d = _this->driverdata;
+    int err;
 
     WAYLAND_wl_display_flush(d->display);
 
     if (SDL_IOReady(WAYLAND_wl_display_get_fd(d->display), SDL_FALSE, 0)) {
-        WAYLAND_wl_display_dispatch(d->display);
+        err = WAYLAND_wl_display_dispatch(d->display);
+    } else {
+        err = WAYLAND_wl_display_dispatch_pending(d->display);
     }
-    else
-    {
-        WAYLAND_wl_display_dispatch_pending(d->display);
+    if (err == -1 && !d->display_disconnected) {
+        /* Something has failed with the Wayland connection -- for example,
+         * the compositor may have shut down and closed its end of the socket,
+         * or there is a library-specific error. No recovery is possible. */
+        d->display_disconnected = 1;
+        /* Only send a single quit message, as application shutdown might call
+         * SDL_PumpEvents */
+        SDL_SendQuit();
     }
 }
 
@@ -407,30 +416,25 @@ touch_handler_down(void *data, struct wl_touch *touch, unsigned int serial,
 
     touch_add(id, x, y, surface);
 
-    if (!window_data->finger_touching) {
-        window_data->finger_touching = SDL_TRUE;
-        window_data->first_finger = id;
-        SDL_SendMouseMotion(window_data->sdlwindow, SDL_TOUCH_MOUSEID, 0, (int) dblx, (int) dbly);
-        SDL_SendMouseButton(window_data->sdlwindow, SDL_TOUCH_MOUSEID, SDL_PRESSED, SDL_BUTTON_LEFT);
-    }
-
-    SDL_SendTouch(1, (SDL_FingerID)id, SDL_TRUE, x, y, 1.0f);
+    SDL_SendTouch(1, (SDL_FingerID)id, window_data->sdlwindow, SDL_TRUE, x, y, 1.0f);
 }
 
 static void
 touch_handler_up(void *data, struct wl_touch *touch, unsigned int serial,
                  unsigned int timestamp, int id)
 {
-    SDL_WindowData *window_data = (SDL_WindowData *)wl_surface_get_user_data(touch_surface(id));
     float x = 0, y = 0;
+    struct wl_surface *surface = NULL;
+    SDL_Window *window = NULL;
 
-    if ((window_data->finger_touching) && (window_data->first_finger == id)) {
-        SDL_SendMouseButton(window_data->sdlwindow, SDL_TOUCH_MOUSEID, SDL_RELEASED, SDL_BUTTON_LEFT);
-        window_data->finger_touching = SDL_FALSE;
+    touch_del(id, &x, &y, &surface);
+
+    if (surface) {
+        SDL_WindowData *window_data = (SDL_WindowData *)wl_surface_get_user_data(surface);
+        window = window_data->sdlwindow;
     }
 
-    touch_del(id, &x, &y);
-    SDL_SendTouch(1, (SDL_FingerID)id, SDL_FALSE, x, y, 0.0f);
+    SDL_SendTouch(1, (SDL_FingerID)id, window, SDL_FALSE, x, y, 0.0f);
 }
 
 static void
@@ -443,12 +447,8 @@ touch_handler_motion(void *data, struct wl_touch *touch, unsigned int timestamp,
     const float x = dblx / window_data->sdlwindow->w;
     const float y = dbly / window_data->sdlwindow->h;
 
-    if ((window_data->finger_touching) && (window_data->first_finger == id)) {
-        SDL_SendMouseMotion(window_data->sdlwindow, SDL_TOUCH_MOUSEID, 0, (int) dblx, (int) dbly);
-    }
-
     touch_update(id, x, y);
-    SDL_SendTouchMotion(1, (SDL_FingerID)id, x, y, 1.0f);
+    SDL_SendTouchMotion(1, (SDL_FingerID)id, window_data->sdlwindow, x, y, 1.0f);
 }
 
 static void

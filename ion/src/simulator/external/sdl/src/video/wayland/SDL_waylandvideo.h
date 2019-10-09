@@ -48,6 +48,7 @@ struct qt_windowmanager;
 
 typedef struct {
     struct wl_display *display;
+    int display_disconnected;
     struct wl_registry *registry;
     struct wl_compositor *compositor;
     struct wl_shm *shm;
@@ -81,6 +82,11 @@ typedef struct {
 
     int relative_mouse_mode;
 } SDL_VideoData;
+
+typedef struct {
+    struct wl_output *output;
+    float scale_factor;
+} SDL_WaylandOutputData;
 
 #endif /* SDL_waylandvideo_h_ */
 

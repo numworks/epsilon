@@ -26,6 +26,7 @@
 #include "SDL_messagebox.h"
 #include "SDL_shape.h"
 #include "SDL_thread.h"
+#include "SDL_metal.h"
 
 #include "SDL_vulkan_internal.h"
 
@@ -276,6 +277,13 @@ struct SDL_VideoDevice
 
     /* * * */
     /*
+     * Metal support
+     */
+    SDL_MetalView (*Metal_CreateView) (_THIS, SDL_Window * window);
+    void (*Metal_DestroyView) (_THIS, SDL_MetalView view);
+
+    /* * * */
+    /*
      * Event manager functions
      */
     void (*PumpEvents) (_THIS);
@@ -421,6 +429,7 @@ extern VideoBootStrap NACL_bootstrap;
 extern VideoBootStrap VIVANTE_bootstrap;
 extern VideoBootStrap Emscripten_bootstrap;
 extern VideoBootStrap QNX_bootstrap;
+extern VideoBootStrap OFFSCREEN_bootstrap;
 
 extern SDL_VideoDevice *SDL_GetVideoDevice(void);
 extern int SDL_AddBasicVideoDisplay(const SDL_DisplayMode * desktop_mode);

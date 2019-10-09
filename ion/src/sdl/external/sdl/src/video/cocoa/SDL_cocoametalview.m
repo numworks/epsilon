@@ -27,7 +27,7 @@
 
 #import "SDL_cocoametalview.h"
 
-#if SDL_VIDEO_DRIVER_COCOA && (SDL_VIDEO_VULKAN || SDL_VIDEO_RENDER_METAL)
+#if SDL_VIDEO_DRIVER_COCOA && (SDL_VIDEO_VULKAN || SDL_VIDEO_METAL)
 
 #include "SDL_assert.h"
 
@@ -77,8 +77,8 @@
 - (void)updateDrawableSize
 {
     CAMetalLayer *metalLayer = (CAMetalLayer *)self.layer;
-    CGSize size = self.bounds.size;
-    CGSize backingSize = size;
+    NSSize size = self.bounds.size;
+    NSSize backingSize = size;
 
     if (self.highDPI) {
         /* Note: NSHighResolutionCapable must be set to true in the app's
@@ -88,7 +88,7 @@
     }
 
     metalLayer.contentsScale = backingSize.height / size.height;
-    metalLayer.drawableSize = backingSize;
+    metalLayer.drawableSize = NSSizeToCGSize(backingSize);
 }
 
 /* Set the size of the metal drawables when the view is resized. */
@@ -100,28 +100,44 @@
 
 @end
 
-SDL_cocoametalview*
-Cocoa_Mtl_AddMetalView(SDL_Window* window)
-{
+SDL_MetalView
+Cocoa_Metal_CreateView(_THIS, SDL_Window * window)
+{ @autoreleasepool {
     SDL_WindowData* data = (__bridge SDL_WindowData *)window->driverdata;
     NSView *view = data->nswindow.contentView;
     BOOL highDPI = (window->flags & SDL_WINDOW_ALLOW_HIGHDPI) != 0;
-    SDL_cocoametalview *metalview;
+    SDL_cocoametalview *newview;
+    SDL_MetalView metalview;
 
-    metalview = [[SDL_cocoametalview alloc] initWithFrame:view.frame highDPI:highDPI];
-    [view addSubview:metalview];
+    newview = [[SDL_cocoametalview alloc] initWithFrame:view.frame highDPI:highDPI];
+    if (newview == nil) {
+        return NULL;
+    }
+
+    [view addSubview:newview];
+
+    metalview = (SDL_MetalView)CFBridgingRetain(newview);
+    [newview release];
+
     return metalview;
-}
+}}
 
 void
-Cocoa_Mtl_GetDrawableSize(SDL_Window * window, int * w, int * h)
-{
+Cocoa_Metal_DestroyView(_THIS, SDL_MetalView view)
+{ @autoreleasepool {
+    SDL_cocoametalview *metalview = CFBridgingRelease(view);
+    [metalview removeFromSuperview];
+}}
+
+void
+Cocoa_Metal_GetDrawableSize(SDL_Window * window, int * w, int * h)
+{ @autoreleasepool {
     SDL_WindowData *data = (__bridge SDL_WindowData *)window->driverdata;
     NSView *view = data->nswindow.contentView;
     SDL_cocoametalview* metalview = [view viewWithTag:METALVIEW_TAG];
     if (metalview) {
         CAMetalLayer *layer = (CAMetalLayer*)metalview.layer;
-        assert(layer != NULL);
+        SDL_assert(layer != NULL);
         if (w) {
             *w = layer.drawableSize.width;
         }
@@ -131,8 +147,8 @@ Cocoa_Mtl_GetDrawableSize(SDL_Window * window, int * w, int * h)
     } else {
         SDL_GetWindowSize(window, w, h);
     }
-}
+}}
 
-#endif /* SDL_VIDEO_DRIVER_COCOA && (SDL_VIDEO_VULKAN || SDL_VIDEO_RENDER_METAL) */
+#endif /* SDL_VIDEO_DRIVER_COCOA && (SDL_VIDEO_VULKAN || SDL_VIDEO_METAL) */
 
 /* vi: set ts=4 sw=4 expandtab: */

@@ -27,6 +27,15 @@
 
 #include "SDL_assert.h"
 
+/* General optimized routines that write char by char */
+#define HAVE_FAST_WRITE_INT8 1
+
+/* On some CPU, it's slower than combining and write a word */
+#if defined(__MIPS__) 
+#  undef  HAVE_FAST_WRITE_INT8
+#  define HAVE_FAST_WRITE_INT8 0
+#endif
+
 /* Functions to blit from N-bit surfaces to other surfaces */
 
 #if SDL_ALTIVEC_BLITTERS
@@ -155,6 +164,34 @@ calc_swizzle32(const SDL_PixelFormat * srcfmt, const SDL_PixelFormat * dstfmt)
     vswiz = vec_add(plus, (vector unsigned char) vec_splat(srcvec, 0));
     return (vswiz);
 }
+
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+/* reorder bytes for PowerPC little endian */
+static vector unsigned char reorder_ppc64le_vec(vector unsigned char vpermute)
+{
+    /* The result vector of calc_swizzle32 reorder bytes using vec_perm.
+       The LE transformation for vec_perm has an implicit assumption
+       that the permutation is being used to reorder vector elements,
+       not to reorder bytes within those elements.  
+       Unfortunatly the result order is not the expected one for powerpc
+       little endian when the two first vector parameters of vec_perm are
+       not of type 'vector char'. This is because the numbering from the
+       left for BE, and numbering from the right for LE, produces a
+       different interpretation of what the odd and even lanes are.
+       Refer to fedora bug 1392465
+     */
+
+    const vector unsigned char ppc64le_reorder = VECUINT8_LITERAL(
+                                      0x01, 0x00, 0x03, 0x02,
+                                      0x05, 0x04, 0x07, 0x06,
+                                      0x09, 0x08, 0x0B, 0x0A,
+                                      0x0D, 0x0C, 0x0F, 0x0E );
+
+    vector unsigned char vswiz_ppc64le;
+    vswiz_ppc64le = vec_perm(vpermute, vpermute, ppc64le_reorder);
+    return(vswiz_ppc64le);
+}
+#endif
 
 static void Blit_RGB888_RGB565(SDL_BlitInfo * info);
 static void
@@ -649,6 +686,10 @@ Blit32to32KeyAltivec(SDL_BlitInfo * info)
                 /* vsel is set for items that match the key */
                 vsel = (vector unsigned char) vec_and(vs, vrgbmask);
                 vsel = (vector unsigned char) vec_cmpeq(vs, vckey);
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+                /* reorder bytes for PowerPC little endian */
+                vpermute = reorder_ppc64le_vec(vpermute);
+#endif
                 /* permute the src vec to the dest format */
                 vs = vec_perm(vs, valpha, vpermute);
                 /* load the destination vec */
@@ -728,6 +769,10 @@ ConvertAltivec32to32_noprefetch(SDL_BlitInfo * info)
             src += 4;
             width -= 4;
             vbits = vec_perm(vbits, voverflow, valigner);       /* src is ready. */
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+            /* reorder bytes for PowerPC little endian */
+            vpermute = reorder_ppc64le_vec(vpermute);
+#endif
             vbits = vec_perm(vbits, vzero, vpermute);   /* swizzle it. */
             vec_st(vbits, 0, dst);      /* store it back out. */
             dst += 4;
@@ -819,6 +864,10 @@ ConvertAltivec32to32_prefetch(SDL_BlitInfo * info)
             src += 4;
             width -= 4;
             vbits = vec_perm(vbits, voverflow, valigner);       /* src is ready. */
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+            /* reorder bytes for PowerPC little endian */
+            vpermute = reorder_ppc64le_vec(vpermute);
+#endif
             vbits = vec_perm(vbits, vzero, vpermute);   /* swizzle it. */
             vec_st(vbits, 0, dst);      /* store it back out. */
             dst += 4;
@@ -2246,6 +2295,7 @@ BlitNtoN(SDL_BlitInfo * info)
     int dstbpp = dstfmt->BytesPerPixel;
     unsigned alpha = dstfmt->Amask ? info->a : 0;
 
+#if HAVE_FAST_WRITE_INT8
     /* Blit with permutation: 4->4 */
     if (srcbpp == 4 && dstbpp == 4 &&
         srcfmt->format != SDL_PIXELFORMAT_ARGB2101010 &&
@@ -2273,6 +2323,7 @@ BlitNtoN(SDL_BlitInfo * info)
         }
         return;
     }
+#endif
 
     /* Blit with permutation: 4->3 */
     if (srcbpp == 4 && dstbpp == 3 &&
@@ -2299,6 +2350,7 @@ BlitNtoN(SDL_BlitInfo * info)
         return;
     }
 
+#if HAVE_FAST_WRITE_INT8
     /* Blit with permutation: 3->4 */
     if (srcbpp == 3 && dstbpp == 4 &&
         dstfmt->format != SDL_PIXELFORMAT_ARGB2101010) {
@@ -2325,6 +2377,7 @@ BlitNtoN(SDL_BlitInfo * info)
         }
         return;
     }
+#endif
 
     while (height--) {
         /* *INDENT-OFF* */
@@ -2361,6 +2414,7 @@ BlitNtoNCopyAlpha(SDL_BlitInfo * info)
     int dstbpp = dstfmt->BytesPerPixel;
     int c;
 
+#if HAVE_FAST_WRITE_INT8
     /* Blit with permutation: 4->4 */
     if (srcbpp == 4 && dstbpp == 4 &&
         srcfmt->format != SDL_PIXELFORMAT_ARGB2101010 &&
@@ -2387,6 +2441,7 @@ BlitNtoNCopyAlpha(SDL_BlitInfo * info)
         }
         return;
     }
+#endif
 
     while (height--) {
         for (c = width; c; --c) {
@@ -2568,6 +2623,7 @@ BlitNtoNKey(SDL_BlitInfo * info)
         }
     }
 
+#if HAVE_FAST_WRITE_INT8
     /* Blit with permutation: 4->4 */
     if (srcbpp == 4 && dstbpp == 4 &&
         srcfmt->format != SDL_PIXELFORMAT_ARGB2101010 &&
@@ -2599,6 +2655,7 @@ BlitNtoNKey(SDL_BlitInfo * info)
         }
         return;
     }
+#endif
 
     /* BPP 3, same rgb triplet */
     if ((sfmt == SDL_PIXELFORMAT_RGB24 && dfmt == SDL_PIXELFORMAT_RGB24) ||
@@ -2704,6 +2761,7 @@ BlitNtoNKey(SDL_BlitInfo * info)
         return;
     }
 
+#if HAVE_FAST_WRITE_INT8
     /* Blit with permutation: 3->4 */
     if (srcbpp == 3 && dstbpp == 4 &&
         dstfmt->format != SDL_PIXELFORMAT_ARGB2101010) {
@@ -2746,6 +2804,7 @@ BlitNtoNKey(SDL_BlitInfo * info)
         }
         return;
     }
+#endif
 
     while (height--) {
         /* *INDENT-OFF* */
@@ -2823,6 +2882,7 @@ BlitNtoNKeyCopyAlpha(SDL_BlitInfo * info)
         return;
     }
 
+#if HAVE_FAST_WRITE_INT8
     /* Blit with permutation: 4->4 */
     if (srcbpp == 4 && dstbpp == 4 &&
         srcfmt->format != SDL_PIXELFORMAT_ARGB2101010 &&
@@ -2852,6 +2912,7 @@ BlitNtoNKeyCopyAlpha(SDL_BlitInfo * info)
         }
         return;
     }
+#endif
 
     while (height--) {
         /* *INDENT-OFF* */
@@ -2964,7 +3025,7 @@ Blit_3or4_to_3or4__same_rgb(SDL_BlitInfo * info)
             /* *INDENT-OFF* */
             DUFFS_LOOP(
             {
-                Uint32  *dst32 = (Uint32*)dst;
+                Uint32 *dst32 = (Uint32*)dst;
                 Uint8 s0 = src[i0];
                 Uint8 s1 = src[i1];
                 Uint8 s2 = src[i2];
@@ -3157,14 +3218,30 @@ static const struct blit_table normal_blit_2[] = {
 static const struct blit_table normal_blit_3[] = {
     /* 3->4 with same rgb triplet */
     {0x000000FF, 0x0000FF00, 0x00FF0000, 4, 0x000000FF, 0x0000FF00, 0x00FF0000,
-     0, Blit_3or4_to_3or4__same_rgb, NO_ALPHA | SET_ALPHA},
+     0, Blit_3or4_to_3or4__same_rgb,
+#if HAVE_FAST_WRITE_INT8
+        NO_ALPHA |
+#endif
+        SET_ALPHA},
     {0x00FF0000, 0x0000FF00, 0x000000FF, 4, 0x00FF0000, 0x0000FF00, 0x000000FF,
-     0, Blit_3or4_to_3or4__same_rgb, NO_ALPHA | SET_ALPHA},
+     0, Blit_3or4_to_3or4__same_rgb,
+#if HAVE_FAST_WRITE_INT8
+        NO_ALPHA |
+#endif
+        SET_ALPHA},
     /* 3->4 with inversed rgb triplet */
     {0x000000FF, 0x0000FF00, 0x00FF0000, 4, 0x00FF0000, 0x0000FF00, 0x000000FF,
-     0, Blit_3or4_to_3or4__inversed_rgb, NO_ALPHA | SET_ALPHA},
+     0, Blit_3or4_to_3or4__inversed_rgb,
+#if HAVE_FAST_WRITE_INT8
+        NO_ALPHA |
+#endif
+        SET_ALPHA},
     {0x00FF0000, 0x0000FF00, 0x000000FF, 4, 0x000000FF, 0x0000FF00, 0x00FF0000,
-     0, Blit_3or4_to_3or4__inversed_rgb, NO_ALPHA | SET_ALPHA},
+     0, Blit_3or4_to_3or4__inversed_rgb,
+#if HAVE_FAST_WRITE_INT8
+        NO_ALPHA |
+#endif
+        SET_ALPHA},
     /* 3->3 to switch RGB 24 <-> BGR 24 */
     {0x000000FF, 0x0000FF00, 0x00FF0000, 3, 0x00FF0000, 0x0000FF00, 0x000000FF,
      0, Blit_3or4_to_3or4__inversed_rgb, NO_ALPHA },
@@ -3198,9 +3275,17 @@ static const struct blit_table normal_blit_4[] = {
      0, Blit_3or4_to_3or4__inversed_rgb, NO_ALPHA | SET_ALPHA},
     /* 4->4 with inversed rgb triplet, and COPY_ALPHA to switch ABGR8888 <-> ARGB8888 */
     {0x000000FF, 0x0000FF00, 0x00FF0000, 4, 0x00FF0000, 0x0000FF00, 0x000000FF,
-     0, Blit_3or4_to_3or4__inversed_rgb, NO_ALPHA | SET_ALPHA | COPY_ALPHA},
+     0, Blit_3or4_to_3or4__inversed_rgb,
+#if HAVE_FAST_WRITE_INT8
+        NO_ALPHA |
+#endif
+        SET_ALPHA | COPY_ALPHA},
     {0x00FF0000, 0x0000FF00, 0x000000FF, 4, 0x000000FF, 0x0000FF00, 0x00FF0000,
-     0, Blit_3or4_to_3or4__inversed_rgb, NO_ALPHA | SET_ALPHA | COPY_ALPHA},
+     0, Blit_3or4_to_3or4__inversed_rgb,
+#if HAVE_FAST_WRITE_INT8
+        NO_ALPHA |
+#endif
+        SET_ALPHA | COPY_ALPHA},
     /* RGB 888 and RGB 565 */
     {0x00FF0000, 0x0000FF00, 0x000000FF, 2, 0x0000F800, 0x000007E0, 0x0000001F,
      0, Blit_RGB888_RGB565, NO_ALPHA},

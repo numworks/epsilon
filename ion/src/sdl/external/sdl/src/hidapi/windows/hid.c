@@ -17,7 +17,7 @@
  files located at the root of the source distribution.
  These files may also be found in the public source
  code repository located at:
-        http://github.com/signal11/hidapi .
+        https://github.com/libusb/hidapi .
 ********************************************************/
 #include "../../SDL_internal.h"
 
@@ -296,6 +296,23 @@ int HID_API_EXPORT hid_exit(void)
 	return 0;
 }
 
+int hid_blacklist(unsigned short vendor_id, unsigned short product_id)
+{
+	// Corsair Gaming keyboard - Causes deadlock when asking for device details
+	if ( vendor_id == 0x1B1C && product_id == 0x1B3D )
+	{
+		return 1;
+	}
+
+	// SPEEDLINK COMPETITION PRO - turns into an Android controller when enumerated
+	if ( vendor_id == 0x0738 && product_id == 0x2217 )
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
 struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned short vendor_id, unsigned short product_id)
 {
 	BOOL res;
@@ -309,7 +326,6 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 	SP_DEVICE_INTERFACE_DETAIL_DATA_A *device_interface_detail_data = NULL;
 	HDEVINFO device_info_set = INVALID_HANDLE_VALUE;
 	int device_index = 0;
-	int i;
 
 	if (hid_init() < 0)
 		return NULL;
@@ -373,12 +389,16 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 
 		/* Make sure this device is of Setup Class "HIDClass" and has a
 		   driver bound to it. */
-		for (i = 0; ; i++) {
+		/* In the main HIDAPI tree this is a loop which will erroneously open 
+			devices that aren't HID class. Please preserve this delta if we ever
+			update to take new changes */
+		{
 			char driver_name[256];
 
 			/* Populate devinfo_data. This function will return failure
 			   when there are no more interfaces left. */
-			res = SetupDiEnumDeviceInfo(device_info_set, i, &devinfo_data);
+			res = SetupDiEnumDeviceInfo(device_info_set, device_index, &devinfo_data);
+
 			if (!res)
 				goto cont;
 
@@ -391,8 +411,12 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 				/* See if there's a driver bound. */
 				res = SetupDiGetDeviceRegistryPropertyA(device_info_set, &devinfo_data,
 				           SPDRP_DRIVER, NULL, (PBYTE)driver_name, sizeof(driver_name), NULL);
-				if (res)
-					break;
+				if (!res)
+					goto cont;
+			}
+			else
+			{
+				goto cont;
 			}
 		}
 
@@ -417,7 +441,8 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 		/* Check the VID/PID to see if we should add this
 		   device to the enumeration list. */
 		if ((vendor_id == 0x0 || attrib.VendorID == vendor_id) &&
-		    (product_id == 0x0 || attrib.ProductID == product_id)) {
+		    (product_id == 0x0 || attrib.ProductID == product_id) &&
+			!hid_blacklist(attrib.VendorID, attrib.ProductID)) {
 
 			#define WSTR_LEN 512
 			const char *str;

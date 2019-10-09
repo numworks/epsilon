@@ -585,7 +585,7 @@ SDL_RWFromFile(const char *file, const char *mode)
         if (fp == NULL) {
             SDL_SetError("Couldn't open %s", file);
         } else {
-            rwops = SDL_RWFromFP(fp, 1);
+            rwops = SDL_RWFromFP(fp, SDL_TRUE);
         }
     }
 #else
@@ -750,6 +750,48 @@ done:
         SDL_RWclose(src);
     }
     return data;
+}
+
+void *
+SDL_LoadFile(const char *file, size_t *datasize)
+{
+   return SDL_LoadFile_RW(SDL_RWFromFile(file, "rb"), datasize, 1);
+}
+
+Sint64
+SDL_RWsize(SDL_RWops *context)
+{
+    return context->size(context);
+}
+
+Sint64
+SDL_RWseek(SDL_RWops *context, Sint64 offset, int whence)
+{
+    return context->seek(context, offset, whence);
+}
+
+Sint64
+SDL_RWtell(SDL_RWops *context)
+{
+    return context->seek(context, 0, RW_SEEK_CUR);
+}
+
+size_t
+SDL_RWread(SDL_RWops *context, void *ptr, size_t size, size_t maxnum)
+{
+    return context->read(context, ptr, size, maxnum);
+}
+
+size_t
+SDL_RWwrite(SDL_RWops *context, const void *ptr, size_t size, size_t num)
+{
+    return context->write(context, ptr, size, num);
+}
+
+int
+SDL_RWclose(SDL_RWops *context)
+{
+    return context->close(context);
 }
 
 /* Functions for dynamically reading and writing endian-specific values */

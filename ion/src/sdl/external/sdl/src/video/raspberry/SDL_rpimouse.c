@@ -128,23 +128,21 @@ RPI_ShowCursor(SDL_Cursor * cursor)
         return -1;
     }
     
-    if (cursor == global_cursor) {
-        return 0;
-    }
-
-    if (global_cursor != NULL) {
-        curdata = (RPI_CursorData *) global_cursor->driverdata;
-        if (curdata && curdata->element > DISPMANX_NO_HANDLE) {
-            update = vc_dispmanx_update_start(0);
-            SDL_assert(update);
-            ret = vc_dispmanx_element_remove(update, curdata->element);
-            SDL_assert(ret == DISPMANX_SUCCESS);
-            ret = vc_dispmanx_update_submit_sync(update);
-            SDL_assert(ret == DISPMANX_SUCCESS);
-            curdata->element = DISPMANX_NO_HANDLE;
+    if (cursor != global_cursor) {
+        if (global_cursor != NULL) {
+            curdata = (RPI_CursorData *) global_cursor->driverdata;
+            if (curdata && curdata->element > DISPMANX_NO_HANDLE) {
+                update = vc_dispmanx_update_start(0);
+                SDL_assert(update);
+                ret = vc_dispmanx_element_remove(update, curdata->element);
+                SDL_assert(ret == DISPMANX_SUCCESS);
+                ret = vc_dispmanx_update_submit_sync(update);
+                SDL_assert(ret == DISPMANX_SUCCESS);
+                curdata->element = DISPMANX_NO_HANDLE;
+            }
         }
+        global_cursor = cursor;
     }
-    global_cursor = cursor;
 
     if (cursor == NULL) {
         return 0;
@@ -228,6 +226,9 @@ RPI_FreeCursor(SDL_Cursor * cursor)
             SDL_free(cursor->driverdata);
         }
         SDL_free(cursor);
+        if (cursor == global_cursor) {
+            global_cursor = NULL;
+        }
     }
 }
 

@@ -38,6 +38,7 @@
 #include "SDL_uikitopengles.h"
 #include "SDL_uikitclipboard.h"
 #include "SDL_uikitvulkan.h"
+#include "SDL_uikitmetalview.h"
 
 #define UIKITVID_DRIVER_NAME "uikit"
 
@@ -133,6 +134,11 @@ UIKit_CreateDevice(int devindex)
         device->Vulkan_GetDrawableSize = UIKit_Vulkan_GetDrawableSize;
 #endif
 
+#if SDL_VIDEO_METAL
+        device->Metal_CreateView = UIKit_Metal_CreateView;
+        device->Metal_DestroyView = UIKit_Metal_DestroyView;
+#endif
+
         device->gl_config.accelerated = 1;
 
         return device;
@@ -186,7 +192,15 @@ UIKit_IsSystemVersionAtLeast(double version)
 CGRect
 UIKit_ComputeViewFrame(SDL_Window *window, UIScreen *screen)
 {
+    SDL_WindowData *data = (__bridge SDL_WindowData *) window->driverdata;
     CGRect frame = screen.bounds;
+
+    /* Use the UIWindow bounds instead of the UIScreen bounds, when possible.
+     * The uiwindow bounds may be smaller than the screen bounds when Split View
+     * is used on an iPad. */
+    if (data != nil && data.uiwindow != nil) {
+        frame = data.uiwindow.bounds;
+    }
 
 #if !TARGET_OS_TV && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0)
     BOOL hasiOS7 = UIKit_IsSystemVersionAtLeast(7.0);
@@ -208,9 +222,12 @@ UIKit_ComputeViewFrame(SDL_Window *window, UIScreen *screen)
      * https://forums.developer.apple.com/thread/65337 */
     if (UIKit_IsSystemVersionAtLeast(8.0)) {
         UIInterfaceOrientation orient = [UIApplication sharedApplication].statusBarOrientation;
-        BOOL isLandscape = UIInterfaceOrientationIsLandscape(orient);
+        BOOL landscape = UIInterfaceOrientationIsLandscape(orient);
+        BOOL fullscreen = CGRectEqualToRect(screen.bounds, frame);
 
-        if (isLandscape != (frame.size.width > frame.size.height)) {
+        /* The orientation flip doesn't make sense when the window is smaller
+         * than the screen (iPad Split View, for example). */
+        if (fullscreen && (landscape != (frame.size.width > frame.size.height))) {
             float height = frame.size.width;
             frame.size.width = frame.size.height;
             frame.size.height = height;
@@ -221,17 +238,44 @@ UIKit_ComputeViewFrame(SDL_Window *window, UIScreen *screen)
     return frame;
 }
 
+void
+UIKit_ForceUpdateHomeIndicator()
+{
+#if !TARGET_OS_TV
+    /* Force the main SDL window to re-evaluate home indicator state */
+    SDL_Window *focus = SDL_GetFocusWindow();
+    if (focus) {
+        SDL_WindowData *data = (__bridge SDL_WindowData *) focus->driverdata;
+        if (data != nil) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+            if ([data.viewcontroller respondsToSelector:@selector(setNeedsUpdateOfHomeIndicatorAutoHidden)]) {
+                [data.viewcontroller performSelectorOnMainThread:@selector(setNeedsUpdateOfHomeIndicatorAutoHidden) withObject:nil waitUntilDone:NO];
+                [data.viewcontroller performSelectorOnMainThread:@selector(setNeedsUpdateOfScreenEdgesDeferringSystemGestures) withObject:nil waitUntilDone:NO];
+            }
+#pragma clang diagnostic pop
+        }
+    }
+#endif /* !TARGET_OS_TV */
+}
+
 /*
  * iOS log support.
  *
  * This doesn't really have aything to do with the interfaces of the SDL video
  *  subsystem, but we need to stuff this into an Objective-C source code file.
+ *
+ * NOTE: This is copypasted from src/video/cocoa/SDL_cocoavideo.m! Thus, if
+ *  Cocoa is supported, we use that one instead. Be sure both versions remain
+ *  identical!
  */
 
+#if !defined(SDL_VIDEO_DRIVER_COCOA)
 void SDL_NSLog(const char *text)
 {
     NSLog(@"%s", text);
 }
+#endif /* SDL_VIDEO_DRIVER_COCOA */
 
 /*
  * iOS Tablet detection

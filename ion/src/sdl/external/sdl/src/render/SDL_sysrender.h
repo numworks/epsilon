@@ -60,6 +60,7 @@ struct SDL_Texture
     void *pixels;
     int pitch;
     SDL_Rect locked_rect;
+    SDL_Surface *locked_surface;  /**< Locked region exposed as a SDL surface */
 
     Uint32 last_command_generation; /* last command queue generation this texture was in. */
 
@@ -109,13 +110,6 @@ typedef struct SDL_RenderCommand
     } data;
     struct SDL_RenderCommand *next;
 } SDL_RenderCommand;
-
-typedef struct SDL_AllocVertGap
-{
-    size_t offset;
-    size_t len;
-    struct SDL_AllocVertGap *next;
-} SDL_AllocVertGap;
 
 
 /* Define the SDL renderer structure */
@@ -226,8 +220,6 @@ struct SDL_Renderer
     void *vertex_data;
     size_t vertex_data_used;
     size_t vertex_data_allocation;
-    SDL_AllocVertGap vertex_data_gaps;
-    SDL_AllocVertGap *vertex_data_gaps_pool;
 
     void *driverdata;
 };

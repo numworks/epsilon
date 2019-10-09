@@ -47,11 +47,15 @@ extern int SDL_SendAppEvent(SDL_EventType eventType);
 extern int SDL_SendSysWMEvent(SDL_SysWMmsg * message);
 extern int SDL_SendKeymapChangedEvent(void);
 
-extern int SDL_QuitInit(void);
 extern int SDL_SendQuit(void);
-extern void SDL_QuitQuit(void);
 
-extern void SDL_SendPendingQuit(void);
+extern int SDL_EventsInit(void);
+extern void SDL_EventsQuit(void);
+
+extern void SDL_SendPendingSignalEvents(void);
+
+extern int SDL_QuitInit(void);
+extern void SDL_QuitQuit(void);
 
 #endif /* SDL_events_c_h_ */
 

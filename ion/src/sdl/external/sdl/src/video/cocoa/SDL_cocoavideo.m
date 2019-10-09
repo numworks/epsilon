@@ -27,6 +27,7 @@
 #include "SDL_cocoavideo.h"
 #include "SDL_cocoashape.h"
 #include "SDL_cocoavulkan.h"
+#include "SDL_cocoametalview.h"
 #include "SDL_assert.h"
 
 /* Initialization/Query functions */
@@ -142,6 +143,11 @@ Cocoa_CreateDevice(int devindex)
     device->Vulkan_GetDrawableSize = Cocoa_Vulkan_GetDrawableSize;
 #endif
 
+#if SDL_VIDEO_METAL
+    device->Metal_CreateView = Cocoa_Metal_CreateView;
+    device->Metal_DestroyView = Cocoa_Metal_DestroyView;
+#endif
+
     device->StartTextInput = Cocoa_StartTextInput;
     device->StopTextInput = Cocoa_StopTextInput;
     device->SetTextInputRect = Cocoa_SetTextInputRect;
@@ -168,7 +174,9 @@ Cocoa_VideoInit(_THIS)
 
     Cocoa_InitModes(_this);
     Cocoa_InitKeyboard(_this);
-    Cocoa_InitMouse(_this);
+    if (Cocoa_InitMouse(_this) < 0) {
+        return -1;
+    }
 
     data->allow_spaces = ((floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_6) && SDL_GetHintBoolean(SDL_HINT_VIDEO_MAC_FULLSCREEN_SPACES, SDL_TRUE));
 
@@ -250,6 +258,9 @@ Cocoa_CreateImage(SDL_Surface * surface)
  *
  * This doesn't really have aything to do with the interfaces of the SDL video
  *  subsystem, but we need to stuff this into an Objective-C source code file.
+ *
+ * NOTE: This is copypasted in src/video/uikit/SDL_uikitvideo.m! Be sure both
+ *  versions remain identical!
  */
 
 void SDL_NSLog(const char *text)

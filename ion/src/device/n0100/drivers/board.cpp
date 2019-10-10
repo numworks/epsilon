@@ -5,7 +5,8 @@
 #include <ion.h>
 #include <ion/src/device/bench/bench.h>
 
-extern void * InitialisationVector;
+typedef void(*ISR)(void);
+extern ISR InitialisationVector[];
 
 // Public Ion methods
 

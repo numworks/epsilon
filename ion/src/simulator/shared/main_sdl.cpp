@@ -17,7 +17,7 @@ void Ion::Timing::msleep(uint32_t ms) {
 }
 
 int main(int argc, char * argv[]) {
-  std::vector<char *> arguments(argv, argv + argc);
+  std::vector<const char *> arguments(argv, argv + argc);
 
   char * language = IonSimulatorGetLanguageCode();
   if (language != nullptr) {

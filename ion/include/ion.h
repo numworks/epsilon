@@ -23,7 +23,7 @@
  * Don't worry though, once all its initialization will be performed, ION will
  * jump to your code at ion_main, which you have to implement yourself. */
 
-void ion_main(int argc, char * argv[]);
+void ion_main(int argc, const char * const argv[]);
 
 namespace Ion {
 

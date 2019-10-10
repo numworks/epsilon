@@ -5,7 +5,7 @@
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
-void ion_main(int argc, char * argv[]) {
+void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
   Ion::Backlight::init();
   while (1) {
@@ -18,7 +18,7 @@ void ion_main(int argc, char * argv[]) {
 
 #else
 
-void ion_main(int argc, char * argv[]) {
+void ion_main(int argc, const char * const argv[]) {
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
 

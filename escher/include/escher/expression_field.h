@@ -21,7 +21,6 @@ public:
    * use text() there... TODO: change text() for fillTextInBuffer?*/
   const char * text();
   void setText(const char * text);
-  void reload();
   bool editionIsInTextField() const;
   bool isEmpty() const;
   bool heightIsMaximal() const;

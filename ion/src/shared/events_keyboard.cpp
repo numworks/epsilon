@@ -61,7 +61,7 @@ Event getEvent(int * timeout) {
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-      Event event(key, isShiftActive(), isAlphaActive());
+      Event event(key, isShiftActive() || state.keyDown(Keyboard::Key::Shift), isAlphaActive() || state.keyDown(Keyboard::Key::Alpha));
       updateModifiersFromEvent(event);
       sLastEvent = event;
       sLastKeyboardState = state;

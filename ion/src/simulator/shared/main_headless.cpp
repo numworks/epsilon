@@ -20,7 +20,6 @@ char heap[kHeapSize];
 extern "C" {
   char * _heap_start = (char *)heap;
   char * _heap_end = _heap_start+kHeapSize;
-  int main(int argc, char * argv[]);
 }
 
 void Ion::Timing::msleep(uint32_t ms) {

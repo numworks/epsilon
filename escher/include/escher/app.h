@@ -38,7 +38,7 @@ public:
     virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
     virtual Descriptor * descriptor() = 0;
 #if EPSILON_GETOPT
-    virtual void setOpt(const char * name, char * value) {}
+    virtual void setOpt(const char * name, const char * value) {}
 #endif
     /* tidy clean all dynamically-allocated data */
     virtual void tidy();

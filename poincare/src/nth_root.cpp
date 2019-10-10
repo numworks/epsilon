@@ -11,6 +11,7 @@
 #include <poincare/serialization_helper.h>
 #include <assert.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -60,7 +61,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context * context, Preferences::
     }
     result = PowerNode::compute(basec, std::complex<T>(1.0)/(indexc), complexFormat);
   }
-  return result;
+  return std::move(result);
 }
 
 

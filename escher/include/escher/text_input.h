@@ -20,6 +20,8 @@ protected:
   public:
     ContentView(const KDFont * font) :
       View(),
+      m_selectionStart(nullptr),
+      m_selectionEnd(nullptr),
       m_cursorView(),
       m_font(font),
       m_cursorLocation(nullptr)
@@ -33,14 +35,21 @@ protected:
     virtual bool removePreviousGlyph() = 0;
     virtual bool removeEndOfLine() = 0;
     KDRect cursorRect();
+    const char * selectionStart() const { return m_selectionStart; }
+    const char * selectionEnd() const { return m_selectionEnd; }
+    void addSelection(const char * left, const char * right);
+    bool resetSelection(); // returns true if the selection was indeed reset
+    bool currentSelectionIsEmpty() const;
+    const char * m_selectionStart;
+    const char * m_selectionEnd;
   protected:
     virtual void layoutSubviews(bool force = false) override;
     void reloadRectFromPosition(const char * position, bool lineBreak = false);
     virtual KDRect glyphFrameAtPosition(const char * buffer, const char * position) const = 0;
+    virtual KDRect dirtyRectFromPosition(const char * position, bool lineBreak) const;
     TextCursorView m_cursorView;
     const KDFont * m_font;
     const char * m_cursorLocation;
-    virtual KDRect dirtyRectFromPosition(const char * position, bool lineBreak) const;
   private:
     int numberOfSubviews() const override { return 1; }
     View * subviewAtIndex(int index) override {
@@ -62,6 +71,7 @@ protected:
   virtual const ContentView * nonEditableContentView() const = 0;
   bool moveCursorLeft();
   bool moveCursorRight();
+  bool selectLeftRight(bool left);
 private:
   virtual void willSetCursorLocation(const char * * location) {}
   virtual bool privateRemoveEndOfLine();

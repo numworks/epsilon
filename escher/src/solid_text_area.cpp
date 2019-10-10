@@ -6,7 +6,7 @@ void SolidTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
 }
 
-void SolidTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const {
+void SolidTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const {
   drawStringAt(
     ctx,
     line,
@@ -14,6 +14,8 @@ void SolidTextArea::ContentView::drawLine(KDContext * ctx, int line, const char 
     text + fromColumn,
     minInt(length - fromColumn, toColumn - fromColumn),
     m_textColor,
-    m_backgroundColor
-  );
+    m_backgroundColor,
+    selectionStart,
+    selectionEnd,
+    m_backgroundHighlightColor);
 }

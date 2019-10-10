@@ -18,6 +18,7 @@ constexpr KDColor KeywordColor = KDColor::RGB24(0xFF000C);
 constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
+constexpr KDColor HighlightColor = KDColorRed; //TODO LEA
 
 static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
 
@@ -71,7 +72,7 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 #define LOG_DRAW(...)
 #endif
 
-void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t byteLength, int fromColumn, int toColumn) const {
+void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t byteLength, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const {
   LOG_DRAW("Drawing \"%.*s\"\n", byteLength, text);
 
   if (!m_pythonDelegate->isPythonUser(this)) {
@@ -84,7 +85,10 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       lineStart,
       minPointer(text + byteLength, lineEnd) - lineStart,
       StringColor,
-      BackgroundColor
+      BackgroundColor,
+      selectionStart,
+      selectionEnd,
+      HighlightColor
     );
     return;
   }
@@ -116,7 +120,10 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
         tokenFrom,
         tokenLength,
         TokenColor(lex->tok_kind),
-        BackgroundColor
+        BackgroundColor,
+        selectionStart,
+        selectionEnd,
+        HighlightColor
       );
 
       mp_lexer_to_next(lex);
@@ -131,7 +138,11 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
           tokenFrom,
           text + byteLength - tokenFrom,
           CommentColor,
-          BackgroundColor);
+          BackgroundColor,
+          selectionStart,
+          selectionEnd,
+          HighlightColor
+          );
     }
 
     mp_lexer_free(lex);

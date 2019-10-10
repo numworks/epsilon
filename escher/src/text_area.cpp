@@ -8,7 +8,9 @@
 #include <assert.h>
 #include <limits.h>
 
+static inline const char * maxPointer(const char * x, const char * y) { return x > y ? x : y; }
 static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
+static inline size_t minSizeT(size_t x, size_t y) { return x < y ? x : y; }
 
 /* TextArea */
 
@@ -96,32 +98,67 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
     return true;
-  } else if (handleBoxEvent(event)) {
+  }
+  if (handleBoxEvent(event)) {
     return true;
-  } else if (event == Ion::Events::Left) {
+  }
+  if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
+    if (event == Ion::Events::ShiftLeft) {
+      selectLeftRight(true);
+    } else if (event == Ion::Events::ShiftRight) {
+      selectLeftRight(false);
+    }
+    scrollToCursor(); //TODO LEA remove?
+    return true;
+  }
+
+  if (event == Ion::Events::Left) {
+    if (contentView()->resetSelection()) {
+      return true;
+    }
     return TextInput::moveCursorLeft();
-  } else if (event == Ion::Events::Right) {
+  }
+  if (event == Ion::Events::Right) {
+    if (contentView()->resetSelection()) {
+      return true;
+    }
     return TextInput::moveCursorRight();
-  } else if (event == Ion::Events::Up) {
+  }
+  if (event == Ion::Events::Backspace) {
+    contentView()->resetSelection();
+    return removePreviousGlyph();
+  }
+  if (event.hasText()) {
+    contentView()->resetSelection();
+    return handleEventWithText(event.text());
+  }
+  if (event == Ion::Events::EXE) {
+    contentView()->resetSelection();
+    return handleEventWithText("\n");
+  }
+  if (event == Ion::Events::Copy) {
+    if (contentView()->currentSelectionIsEmpty()) {
+      return false;
+    }
+    const char * start = contentView()->selectionStart();
+    Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
+    return true;
+  }
+  if (event == Ion::Events::Paste) {
+    //TODO LEA
+    return handleEventWithText(Clipboard::sharedClipboard()->storedText());
+  }
+  if (event == Ion::Events::Up) {
+    contentView()->resetSelection();
     contentView()->moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {
+    contentView()->resetSelection();
     contentView()->moveCursorGeo(0, 1);
-  } else if (event == Ion::Events::ShiftLeft) {
-    contentView()->moveCursorGeo(-INT_MAX/2, 0);
-  } else if (event == Ion::Events::ShiftRight) {
-    contentView()->moveCursorGeo(INT_MAX/2, 0);
-  } else if (event == Ion::Events::Backspace) {
-    return removePreviousGlyph();
-  } else if (event.hasText()) {
-    return handleEventWithText(event.text());
-  } else if (event == Ion::Events::EXE) {
-    return handleEventWithText("\n");
   } else if (event == Ion::Events::Clear) {
+    //TODO LEA
     if (!contentView()->removeEndOfLine()) {
       contentView()->removeStartOfLine();
     }
-  } else if (event == Ion::Events::Paste) {
-    return handleEventWithText(Clipboard::sharedClipboard()->storedText());
   } else {
     return false;
   }
@@ -141,11 +178,11 @@ int TextArea::indentationBeforeCursor() const {
    * another code point, until reaching the beginning of the line. */
   UTF8Helper::PerformAtCodePoints(const_cast<TextArea *>(this)->contentView()->text(), ' ',
       [](int codePointOffset, void * indentationSize, int context1, int context2){
-        int * castedSize = (int *) indentationSize;
-        *castedSize = *castedSize + 1;
+      int * castedSize = (int *) indentationSize;
+      *castedSize = *castedSize + 1;
       },
       [](int codePointOffset, void * indentationSize, int context1, int context2){
-        *((int *) indentationSize) = 0;
+      *((int *) indentationSize) = 0;
       },
       &indentationSize, 0, -1, '\n', false, cursorLocation());
   return indentationSize;
@@ -341,22 +378,46 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   for (Text::Line line : m_text) {
     KDCoordinate width = line.glyphWidth(m_font);
     if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)width) {
-      drawLine(ctx, y, line.text(), line.charLength(), topLeft.column(), bottomRight.column());
+      drawLine(ctx, y, line.text(), line.charLength(), topLeft.column(), bottomRight.column(), m_selectionStart, m_selectionEnd);
     }
     y++;
   }
 }
 
-void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor) const {
+void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor) const {
   KDSize glyphSize = m_font->glyphSize();
-  ctx->drawString(
+
+  bool drawSelection = selectionStart != nullptr && selectionEnd > text && selectionStart < text + length;
+  KDPoint nextPoint = ctx->drawString(
     text,
     KDPoint(column*glyphSize.width(), line*glyphSize.height()),
     m_font,
     textColor,
     backgroundColor,
-    length
+    drawSelection ? (selectionStart >= text ? minSizeT(length, selectionStart - text) : 0) : length
   );
+  if (!drawSelection) {
+    return;
+  }
+  const char * highlightedDrawStart = maxPointer(selectionStart, text);
+  size_t highlightedDrawLength = minSizeT(selectionEnd - highlightedDrawStart, length - (highlightedDrawStart - text));
+
+  nextPoint = ctx->drawString(
+    highlightedDrawStart,
+    nextPoint,
+    m_font,
+    textColor,
+    backgroundHighlightColor,
+    highlightedDrawLength);
+
+  const char * notHighlightedDrawStart = highlightedDrawStart + highlightedDrawLength;
+  ctx->drawString(
+    notHighlightedDrawStart,
+    nextPoint,
+    m_font,
+    textColor,
+    backgroundColor,
+    length - (notHighlightedDrawStart - text));
 }
 
 KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {

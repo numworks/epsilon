@@ -41,6 +41,7 @@ protected:
     void addSelection(const char * left, const char * right);
     bool resetSelection(); // returns true if the selection was indeed reset
     bool currentSelectionIsEmpty() const;
+    virtual void deleteSelectedText() {} //TODO LEA
     const char * m_selectionStart;
     const char * m_selectionEnd;
   protected:

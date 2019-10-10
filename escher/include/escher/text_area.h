@@ -80,6 +80,7 @@ protected:
     void insertSpacesAtLocation(int numberOfSpaces, char * location);
 
     CodePoint removePreviousGlyph(char * * position);
+    size_t removeText(const char * start, const char * end);
     size_t removeRemainingLine(const char * position, int direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
@@ -119,6 +120,7 @@ protected:
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
+    void deleteSelectedText() override;
   protected:
     KDRect glyphFrameAtPosition(const char * text, const char * position) const override;
     Text m_text;

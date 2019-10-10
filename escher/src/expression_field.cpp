@@ -73,11 +73,6 @@ void ExpressionField::layoutSubviews(bool force) {
   m_textField.setFrame(KDRectZero, force);
 }
 
-void ExpressionField::reload() {
-  layoutSubviews();
-  markRectAsDirty(bounds());
-}
-
 void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the separator
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyMiddle);

@@ -18,14 +18,16 @@ protected:
     ContentView(const KDFont * font, KDColor textColor, KDColor backgroundColor) :
       TextArea::ContentView(font),
       m_textColor(textColor),
-      m_backgroundColor(backgroundColor)
+      m_backgroundColor(backgroundColor),
+      m_backgroundHighlightColor(KDColorRed) //TODO LEA
     {
     }
     void clearRect(KDContext * ctx, KDRect rect) const override;
-    void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const override;
+    void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const override;
   private:
     KDColor m_textColor;
     KDColor m_backgroundColor;
+    KDColor m_backgroundHighlightColor;
   };
 
 private:

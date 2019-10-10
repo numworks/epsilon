@@ -100,7 +100,7 @@ bool ExpressionField::isEmpty() const {
 }
 
 bool ExpressionField::heightIsMaximal() const {
-  return inputViewHeight() == k_separatorThickness + maximalHeight();
+  return inputViewHeight() == k_separatorThickness + k_maximalHeight;
 }
 
 bool ExpressionField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
@@ -114,10 +114,6 @@ bool ExpressionField::handleEventWithText(const char * text, bool indentation, b
 KDCoordinate ExpressionField::inputViewHeight() const {
   return k_separatorThickness
     + (editionIsInTextField() ? k_minimalHeight :
-        minCoordinate(maximalHeight(),
+        minCoordinate(k_maximalHeight,
           maxCoordinate(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
-}
-
-KDCoordinate ExpressionField::maximalHeight() const {
-  return 0.6*Ion::Display::Height;
 }

@@ -28,7 +28,7 @@ public:
     ScriptStore * scriptStore();
 #if EPSILON_GETOPT
     bool lockOnConsole() const;
-    void setOpt(const char * name, char * value) override;
+    void setOpt(const char * name, const char * value) override;
 #endif
   private:
 #if EPSILON_GETOPT

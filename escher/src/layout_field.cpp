@@ -48,7 +48,7 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
 }
 
 View * LayoutField::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
+  assert(0 <= index && index < numberOfSubviews());
   View * m_views[] = {&m_expressionView, &m_cursorView};
   return m_views[index];
 }

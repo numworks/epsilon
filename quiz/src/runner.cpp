@@ -26,7 +26,7 @@ static inline void ion_main_inner() {
   quiz_print("ALL TESTS FINISHED");
 }
 
-void ion_main(int argc, char * argv[]) {
+void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
   Ion::Backlight::init();
   // Initialize Poincare::TreePool::sharedPool

@@ -103,14 +103,13 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    if (event == Ion::Events::ShiftLeft) {
-      selectLeftRight(true);
-    } else if (event == Ion::Events::ShiftRight) {
-      selectLeftRight(false);
-    }
+    selectLeftRight(event == Ion::Events::ShiftLeft);
     return true;
   }
-
+  if (event == Ion::Events::ShiftUp ||event == Ion::Events::ShiftDown) {
+    selectUpDown(event == Ion::Events::ShiftUp);
+    return true;
+  }
   if (event == Ion::Events::Left) {
     if (contentView()->resetSelection()) {
       return true;
@@ -525,4 +524,11 @@ KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char
 void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
   Text::Position p = m_text.positionAtPointer(cursorLocation());
   setCursorLocation(m_text.pointerAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY)));
+}
+
+void TextArea::selectUpDown(bool up) {
+  const char * currentCursorLocation = contentView()->cursorLocation();
+  contentView()->moveCursorGeo(0, up ? -1 : 1);
+  const char * newCursorLocation = contentView()->cursorLocation();
+  contentView()->addSelection(up ? newCursorLocation : currentCursorLocation, up ? currentCursorLocation : newCursorLocation);
 }

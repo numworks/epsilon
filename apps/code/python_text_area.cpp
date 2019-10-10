@@ -99,6 +99,21 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
    * starting with a whitespace. So we're discarding leading whitespaces
    * beforehand. */
   const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
+  if (firstNonSpace != text) {
+    // Color the discarded leading whitespaces
+    const char * spacesStart = UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
+    drawStringAt(
+        ctx,
+        line,
+        fromColumn,
+        spacesStart,
+        minPointer(text + byteLength, firstNonSpace) - spacesStart,
+        StringColor,
+        BackgroundColor,
+        selectionStart,
+        selectionEnd,
+        HighlightColor);
+  }
   if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
     return;
   }
@@ -110,10 +125,25 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
     const char * tokenFrom = firstNonSpace;
     size_t tokenLength = 0;
+    const char * tokenEnd = firstNonSpace;
     while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END) {
-
       tokenFrom = firstNonSpace + lex->tok_column - 1;
+      if (tokenFrom != tokenEnd) {
+        // We passed over white spaces, we need to color them
+        drawStringAt(
+            ctx,
+            line,
+            UTF8Helper::GlyphOffsetAtCodePoint(text, tokenEnd),
+            tokenEnd,
+            minPointer(text + byteLength, tokenFrom) - tokenEnd,
+            StringColor,
+            BackgroundColor,
+            selectionStart,
+            selectionEnd,
+            HighlightColor);
+      }
       tokenLength = TokenLength(lex, tokenFrom);
+      tokenEnd = tokenFrom + tokenLength;
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
         UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
@@ -123,13 +153,14 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
         BackgroundColor,
         selectionStart,
         selectionEnd,
-        HighlightColor
-      );
+        HighlightColor);
 
       mp_lexer_to_next(lex);
       LOG_DRAW("Pop token %d\n", lex->tok_kind);
     }
+
     tokenFrom += tokenLength;
+
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
       drawStringAt(ctx, line,
@@ -140,8 +171,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
           BackgroundColor,
           selectionStart,
           selectionEnd,
-          HighlightColor
-          );
+          HighlightColor);
     }
 
     mp_lexer_free(lex);

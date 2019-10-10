@@ -42,8 +42,7 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   ViewController(parentResponder),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
-  m_contentView(this, (TableView *)m_historyController->view(), inputEventHandlerDelegate, this, this),
-  m_inputViewHeightIsMaximal(false)
+  m_contentView(this, (TableView *)m_historyController->view(), inputEventHandlerDelegate, this, this)
 {
   m_cacheBuffer[0] = 0;
 }
@@ -90,11 +89,9 @@ bool EditExpressionController::layoutFieldDidAbortEditing(::LayoutField * layout
 }
 
 void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutField) {
-  /* Reload the view only if the ExpressionField height actually changes, i.e.
-   * not if the height is already maximal and stays maximal. */
-  bool newInputViewHeightIsMaximal = m_contentView.expressionField()->heightIsMaximal();
-  if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
-    m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
+  if (m_contentView.expressionField()->inputViewHeightDidChange()) {
+    /* Reload the whole view only if the ExpressionField's height did actually
+     * change. */
     reloadView();
   } else {
     /* The input view is already at maximal size so we do not need to relayout

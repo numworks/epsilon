@@ -53,7 +53,6 @@ private:
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
   ContentView m_contentView;
-  bool m_inputViewHeightIsMaximal;
 };
 
 }

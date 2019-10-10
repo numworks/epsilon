@@ -15,6 +15,7 @@ public:
   const char * cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
   bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
+  void resetSelection() { contentView()->resetSelection(); }
 protected:
   class ContentView : public View {
   public:

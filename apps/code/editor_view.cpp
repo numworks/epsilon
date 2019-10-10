@@ -16,6 +16,10 @@ EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   m_textArea.setScrollViewDelegate(this);
 }
 
+void EditorView::resetSelection() {
+  m_textArea.resetSelection();
+}
+
 void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
   m_gutterView.setOffset(scrollViewDataSource->offset().y());
 }

@@ -63,6 +63,7 @@ void EditorController::viewWillAppear() {
 }
 
 void EditorController::viewDidDisappear() {
+  m_editorView.resetSelection();
   m_menuController->scriptContentEditionDidFinish();
 }
 

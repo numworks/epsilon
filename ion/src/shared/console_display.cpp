@@ -6,7 +6,7 @@ namespace Ion {
 namespace Console {
 
 char readChar() {
-  return NULL;
+  return '\0';
 }
 
 static KDPoint cursor = KDPointZero;

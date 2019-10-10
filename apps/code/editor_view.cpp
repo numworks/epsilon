@@ -20,13 +20,12 @@ void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewData
   m_gutterView.setOffset(scrollViewDataSource->offset().y());
 }
 
-int EditorView::numberOfSubviews() const {
-  return 2;
-}
-
 View * EditorView::subviewAtIndex(int index) {
-  View * subviews[] = {&m_textArea, &m_gutterView};
-  return subviews[index];
+  if (index == 0) {
+    return &m_textArea;
+  }
+  assert(index == 1);
+  return &m_gutterView;
 }
 
 void EditorView::didBecomeFirstResponder() {
@@ -47,13 +46,6 @@ void EditorView::layoutSubviews(bool force) {
 }
 
 /* EditorView::GutterView */
-
-EditorView::GutterView::GutterView(const KDFont * font) :
-  View(),
-  m_font(font),
-  m_offset(0)
-{
-}
 
 void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor textColor = KDColor::RGB24(0x919EA4);

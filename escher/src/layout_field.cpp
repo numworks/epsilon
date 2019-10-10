@@ -101,8 +101,6 @@ void LayoutField::reload(KDSize previousSize) {
   if (m_delegate && previousSize.height() != newSize.height()) {
     m_delegate->layoutFieldDidChangeSize(this);
   }
-  m_contentView.cursorPositionChanged();
-  scrollToCursor();
   markRectAsDirty(bounds());
 }
 
@@ -180,12 +178,11 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     return false;
   }
   shouldRecomputeLayout = didHideLayouts || shouldRecomputeLayout;
-  if (!shouldRecomputeLayout) {
-    m_contentView.cursorPositionChanged();
-    scrollToCursor();
-  } else {
+  if (shouldRecomputeLayout) {
     reload(previousSize);
   }
+  m_contentView.cursorPositionChanged();
+  scrollToCursor();
   return true;
 }
 

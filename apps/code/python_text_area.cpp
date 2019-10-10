@@ -94,18 +94,17 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     return;
   }
 
+  /* We're using the MicroPython lexer to do syntax highlighting on a per-line
+   * basis. This can work, however the MicroPython lexer won't accept a line
+   * starting with a whitespace. So we're discarding leading whitespaces
+   * beforehand. */
+  const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
+  if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
+    return;
+  }
+
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    /* We're using the MicroPython lexer to do syntax highlighting on a per-line
-     * basis. This can work, however the MicroPython lexer won't accept a line
-     * starting with a whitespace. So we're discarding leading whitespaces
-     * beforehand. */
-    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
-    if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
-      nlr_pop();
-      return;
-    }
-
     mp_lexer_t * lex = mp_lexer_new_from_str_len(0, firstNonSpace, byteLength - (firstNonSpace - text), 0);
     LOG_DRAW("Pop token %d\n", lex->tok_kind);
 

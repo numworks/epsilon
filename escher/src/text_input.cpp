@@ -47,7 +47,7 @@ void TextInput::ContentView::addSelection(const char * left, const char * right)
   reloadRectFromPosition(left, true); //TODO LEA
 }
 
-void TextInput::ContentView::resetSelection() {
+bool TextInput::ContentView::resetSelection() {
   const char * previousStart = m_selectionStart;
   if (previousStart == nullptr) {
     return false;

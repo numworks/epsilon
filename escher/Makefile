@@ -60,7 +60,6 @@ escher_src += $(addprefix escher/src/,\
   simple_list_view_data_source.cpp \
   simple_table_view_data_source.cpp \
   solid_color_view.cpp \
-  solid_text_area.cpp \
   stack_view.cpp \
   stack_view_controller.cpp \
   switch_view.cpp \

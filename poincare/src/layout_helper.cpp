@@ -6,6 +6,7 @@
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
+#include <utility>
 
 namespace Poincare {
 
@@ -24,7 +25,7 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
         result.numberOfChildren(),
         true);
   }
-  return result;
+  return std::move(result);
 }
 
 Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
@@ -44,7 +45,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
   }
   // Add the parenthesed arguments.
   result.addOrMergeChildAtIndex(Parentheses(args, false), result.numberOfChildren(), true);
-  return result;
+  return std::move(result);
 }
 
 Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
@@ -54,7 +55,7 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
     result.addOrMergeChildAtIndex(cloneLayout ? layout.clone() : layout, 1, true);
   }
   result.addChildAtIndex(RightParenthesisLayout::Builder(), result.numberOfChildren(), result.numberOfChildren(), nullptr);
-  return result;
+  return std::move(result);
 }
 
 Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
@@ -99,7 +100,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);
-  return resultLayout;
+  return std::move(resultLayout);
 }
 
 }

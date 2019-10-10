@@ -41,7 +41,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   }
 
   // Delete the selected text if needed
-  if (!contentView()->currentSelectionIsEmpty()) {
+  if (!contentView()->selectionIsEmpty()) {
     contentView()->deleteSelectedText();
     contentView()->resetSelection();
   }
@@ -130,7 +130,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return TextInput::moveCursorRight();
   }
   if (event == Ion::Events::Backspace) {
-    if (contentView()->currentSelectionIsEmpty()) {
+    if (contentView()->selectionIsEmpty()) {
       return removePreviousGlyph();
     }
     contentView()->deleteSelectedText();
@@ -143,7 +143,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return handleEventWithText("\n");
   }
   if (event == Ion::Events::Copy) {
-    if (contentView()->currentSelectionIsEmpty()) {
+    if (contentView()->selectionIsEmpty()) {
       return false;
     }
     const char * start = contentView()->selectionStart();
@@ -160,7 +160,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->resetSelection();
     contentView()->moveCursorGeo(0, 1);
   } else if (event == Ion::Events::Clear) {
-    if (!contentView()->currentSelectionIsEmpty()) {
+    if (!contentView()->selectionIsEmpty()) {
       contentView()->deleteSelectedText();
       return true;
     }
@@ -512,7 +512,7 @@ bool TextArea::ContentView::removeStartOfLine() {
 }
 
 void TextArea::ContentView::deleteSelectedText() {
-  assert(!currentSelectionIsEmpty());
+  assert(!selectionIsEmpty());
   m_text.removeText(m_selectionStart, m_selectionEnd);
 }
 

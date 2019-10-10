@@ -23,7 +23,7 @@ public:
   void setText(const char * text);
   bool editionIsInTextField() const;
   bool isEmpty() const;
-  bool heightIsMaximal() const;
+  bool inputViewHeightDidChange();
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
 
   /* View */
@@ -35,6 +35,7 @@ public:
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 
 private:
   static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
@@ -44,6 +45,7 @@ private:
   static constexpr KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
+  KDCoordinate m_inputViewMemoizedHeight;
   TextField m_textField;
   LayoutField m_layoutField;
 };

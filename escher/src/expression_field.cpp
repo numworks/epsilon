@@ -8,6 +8,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
+  m_inputViewMemoizedHeight(0),
   m_textField(parentResponder, nullptr, k_textFieldBufferSize, k_textFieldBufferSize, inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
   m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
 {
@@ -82,6 +83,10 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
   return editionIsInTextField() ? m_textField.handleEvent(event) : m_layoutField.handleEvent(event);
 }
 
+void ExpressionField::didBecomeFirstResponder() {
+  m_inputViewMemoizedHeight = inputViewHeight();
+}
+
 KDSize ExpressionField::minimalSizeForOptimalDisplay() const {
   return KDSize(0, inputViewHeight());
 }
@@ -94,8 +99,11 @@ bool ExpressionField::isEmpty() const {
   return editionIsInTextField() ? (m_textField.draftTextLength() == 0) : !m_layoutField.hasText();
 }
 
-bool ExpressionField::heightIsMaximal() const {
-  return inputViewHeight() == k_separatorThickness + k_maximalHeight;
+bool ExpressionField::inputViewHeightDidChange() {
+  KDCoordinate newHeight = inputViewHeight();
+  bool didChange = m_inputViewMemoizedHeight != newHeight;
+  m_inputViewMemoizedHeight = newHeight;
+  return didChange;
 }
 
 bool ExpressionField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {

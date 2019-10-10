@@ -24,13 +24,13 @@ public:
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
 private:
-  int numberOfSubviews() const override;
+  int numberOfSubviews() const override { return 2; }
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   class GutterView : public View {
   public:
-    GutterView(const KDFont * font);
+    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0) {}
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setOffset(KDCoordinate offset);
     KDSize minimalSizeForOptimalDisplay() const override;

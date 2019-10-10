@@ -4,10 +4,10 @@
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
-
 #include <ion.h>
 #include <assert.h>
 #include <math.h>
+#include <utility>
 
 namespace Poincare {
 
@@ -24,7 +24,7 @@ Expression SignFunctionNode::setSign(Sign s, ReductionContext reductionContext) 
   SignFunction sign(this);
   Rational r = Rational::Builder(s == ExpressionNode::Sign::Positive ? 1 : -1);
   sign.replaceWithInPlace(r);
-  return r;
+  return std::move(r);
 }
 
 Layout SignFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -87,7 +87,7 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
         Multiplication m = Multiplication::Builder(Rational::Builder(-1));
         replaceWithInPlace(m);
         m.addChildAtIndexInPlace(sign, 1, 1); // sign does not need to be shallowReduced because -x = NAN --> x = NAN
-        return m; // m does not need to be shallowReduced, -1*sign cannot be reduced
+        return std::move(m); // m does not need to be shallowReduced, -1*sign cannot be reduced
       }
     } else if (c.real() < 0) {
       resultSign = Rational::Builder(-1);
@@ -96,7 +96,7 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
     }
   }
   replaceWithInPlace(resultSign);
-  return resultSign;
+  return std::move(resultSign);
 }
 
 }

@@ -11,6 +11,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -80,7 +81,7 @@ Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionCon
   Rational r = static_cast<Rational &>(c);
   if (r.isZero()) {
     replaceWithInPlace(r);
-    return r;
+    return std::move(r);
   }
   Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   if (numeratorDecomp.numberOfChildren() == 0) {

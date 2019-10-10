@@ -1,17 +1,16 @@
 #include <poincare/store.h>
 #include <poincare/code_point_layout.h>
-#include <poincare/context.h>
 #include <poincare/complex.h>
+#include <poincare/context.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <ion.h>
-extern "C" {
 #include <assert.h>
-#include <stdlib.h>
 #include <math.h>
-}
+#include <stdlib.h>
+#include <utility>
 
 namespace Poincare {
 
@@ -31,7 +30,7 @@ Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(CodePointLayout::Builder(UCodePointRightwardsArrow), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
-  return result;
+  return std::move(result);
 }
 
 template<typename T>

@@ -19,6 +19,8 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 
 Event sLastEvent = Events::None;
 Keyboard::State sLastKeyboardState;
+bool sLastEventShift;
+bool sLastEventAlpha;
 bool sEventIsRepeating = 0;
 int sEventRepetitionCount = 0;
 constexpr int delayBeforeRepeat = 200;
@@ -26,7 +28,15 @@ constexpr int delayBetweenRepeat = 50;
 constexpr int numberOfRepetitionsBeforeLongRepetition = 20;
 
 static bool canRepeatEvent(Event e) {
-  return (e == Events::Left || e == Events::Up || e == Events::Down || e == Events::Right || e == Events::Backspace);
+  return e == Events::Left
+    || e == Events::Up
+    || e == Events::Down
+    || e == Events::Right
+    || e == Events::Backspace
+    || e == Events::ShiftLeft
+    || e == Events::ShiftRight
+    || e == Events::ShiftUp
+    || e == Events::ShiftDown;
 }
 
 Event getPlatformEvent();
@@ -61,7 +71,11 @@ Event getEvent(int * timeout) {
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-      Event event(key, isShiftActive() || state.keyDown(Keyboard::Key::Shift), isAlphaActive() || state.keyDown(Keyboard::Key::Alpha));
+      bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
+      bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
+      Event event(key, shift, alpha);
+      sLastEventShift = shift;
+      sLastEventAlpha = alpha;
       updateModifiersFromEvent(event);
       sLastEvent = event;
       sLastKeyboardState = state;
@@ -77,11 +91,14 @@ Event getEvent(int * timeout) {
 
     // At this point, we know that keysSeenTransitionningFromUpToDown has *always* been zero
     // In other words, no new key has been pressed
-    if (canRepeatEvent(sLastEvent) && (state == sLastKeyboardState)) {
+    if (canRepeatEvent(sLastEvent)
+        && state == sLastKeyboardState
+        && sLastEventShift == state.keyDown(Keyboard::Key::Shift)
+        && sLastEventAlpha == state.keyDown(Keyboard::Key::Alpha))
+    {
       int delay = (sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat);
       if (time >= delay) {
         sEventIsRepeating = true;
-        sLastKeyboardState = state;
         if (sEventRepetitionCount < numberOfRepetitionsBeforeLongRepetition) {
           sEventRepetitionCount++;
           if (sEventRepetitionCount == numberOfRepetitionsBeforeLongRepetition) {

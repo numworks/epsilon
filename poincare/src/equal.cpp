@@ -18,6 +18,8 @@ extern "C" {
 #include <math.h>
 #include <limits.h>
 }
+#include <utility>
+
 namespace Poincare {
 
 Expression EqualNode::shallowReduce(ReductionContext reductionContext) {
@@ -29,7 +31,7 @@ Layout EqualNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(CodePointLayout::Builder('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
-  return result;
+  return std::move(result);
 }
 
 int EqualNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

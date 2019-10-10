@@ -5,10 +5,10 @@
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -71,7 +71,7 @@ Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
   result.addChildAtIndex(CodePointLayout::Builder('!'), childrenCount, childrenCount, nullptr);
-  return result;
+  return std::move(result);
 }
 
 int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -106,7 +106,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
     Rational fact = Rational::Builder(Integer::Factorial(r.unsignedIntegerNumerator()));
     assert(!fact.numeratorOrDenominatorIsInfinity()); // because fact < k_maxOperandValue!
     replaceWithInPlace(fact);
-    return fact;
+    return std::move(fact);
   }
   if (c.type() == ExpressionNode::Type::Constant) {
     // e! = undef, i! = undef, pi! = undef

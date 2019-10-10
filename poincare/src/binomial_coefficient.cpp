@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -109,7 +110,7 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
   // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89
   assert(!result.numeratorOrDenominatorIsInfinity());
   replaceWithInPlace(result);
-  return result;
+  return std::move(result);
 }
 
 template double BinomialCoefficientNode::compute(double k, double n);

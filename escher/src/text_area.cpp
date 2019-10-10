@@ -108,7 +108,6 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     } else if (event == Ion::Events::ShiftRight) {
       selectLeftRight(false);
     }
-    scrollToCursor(); //TODO LEA remove?
     return true;
   }
 

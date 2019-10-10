@@ -26,7 +26,7 @@ KDRect TextInput::ContentView::cursorRect() {
 }
 
 void TextInput::ContentView::addSelection(const char * left, const char * right) {
-  bool emptySelection = currentSelectionIsEmpty();
+  bool emptySelection = selectionIsEmpty();
   if (emptySelection) {
     m_selectionStart = left;
     m_selectionEnd = right;
@@ -58,7 +58,7 @@ bool TextInput::ContentView::resetSelection() {
   return true;
 }
 
-bool TextInput::ContentView::currentSelectionIsEmpty() const {
+bool TextInput::ContentView::selectionIsEmpty() const {
   assert(m_selectionStart != nullptr || m_selectionEnd == nullptr);
   assert(m_selectionEnd != nullptr || m_selectionStart == nullptr);
   return m_selectionStart == nullptr;

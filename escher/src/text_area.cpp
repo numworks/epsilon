@@ -39,6 +39,13 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   if (*text == 0) {
     return false;
   }
+
+  // Delete the selected text if needed
+  if (!contentView()->currentSelectionIsEmpty()) {
+    contentView()->deleteSelectedText();
+    contentView()->resetSelection();
+  }
+
   /* Compute the indentation. If the text cannot be inserted with the
    * indentation, stop here. */
   int spacesCount = 0;
@@ -123,15 +130,16 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return TextInput::moveCursorRight();
   }
   if (event == Ion::Events::Backspace) {
-    contentView()->resetSelection();
-    return removePreviousGlyph();
+    if (contentView()->currentSelectionIsEmpty()) {
+      return removePreviousGlyph();
+    }
+    contentView()->deleteSelectedText();
+    return true;
   }
   if (event.hasText()) {
-    contentView()->resetSelection();
     return handleEventWithText(event.text());
   }
   if (event == Ion::Events::EXE) {
-    contentView()->resetSelection();
     return handleEventWithText("\n");
   }
   if (event == Ion::Events::Copy) {
@@ -143,7 +151,6 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Paste) {
-    //TODO LEA
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
   }
   if (event == Ion::Events::Up) {
@@ -153,7 +160,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->resetSelection();
     contentView()->moveCursorGeo(0, 1);
   } else if (event == Ion::Events::Clear) {
-    //TODO LEA
+    if (!contentView()->currentSelectionIsEmpty()) {
+      contentView()->deleteSelectedText();
+      return true;
+    }
     if (!contentView()->removeEndOfLine()) {
       contentView()->removeStartOfLine();
     }
@@ -258,6 +268,30 @@ CodePoint TextArea::Text::removePreviousGlyph(char * * position) {
   return removedCodePoint;
 }
 
+size_t TextArea::Text::removeText(const char * start, const char * end) {
+  assert(start <= end);
+  assert(start >= m_buffer && end <= m_buffer + m_bufferSize);
+
+  char * dst = const_cast<char* >(start);
+  char * src = const_cast<char* >(end);
+  size_t delta = src - dst;
+
+  if (delta == 0) {
+    return 0;
+  }
+
+  for (size_t index = src - m_buffer; index < m_bufferSize; index++) {
+    *dst = *src;
+    if (*src == 0) {
+      return delta;
+    }
+    dst++;
+    src++;
+  }
+  assert(false);
+  return 0;
+}
+
 size_t TextArea::Text::removeRemainingLine(const char * location, int direction) {
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location <= m_buffer + m_bufferSize);
@@ -283,24 +317,7 @@ size_t TextArea::Text::removeRemainingLine(const char * location, int direction)
     }
   }
 
-  char * dst = const_cast<char* >(direction > 0 ? location : codePointPosition);
-  char * src = const_cast<char* >(direction > 0 ? codePointPosition : location);
-  assert(src >= dst);
-
-  size_t delta = src - dst;
-  if (delta == 0) {
-    return 0;
-  }
-  for (size_t index = src - m_buffer; index < m_bufferSize; index++) {
-    *dst = *src;
-    if (*src == 0) {
-      return delta;
-    }
-    dst++;
-    src++;
-  }
-  assert(false);
-  return 0;
+  return removeText(direction > 0 ? location : codePointPosition, direction > 0 ? codePointPosition : location);
 }
 
 /* TextArea::Text::Line */
@@ -492,6 +509,11 @@ bool TextArea::ContentView::removeStartOfLine() {
     return true;
   }
   return false;
+}
+
+void TextArea::ContentView::deleteSelectedText() {
+  assert(!currentSelectionIsEmpty());
+  m_text.removeText(m_selectionStart, m_selectionEnd);
 }
 
 KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char * position) const {

@@ -1,6 +1,7 @@
 #ifndef ESCHER_SOLID_TEXT_AREA_H
 #define ESCHER_SOLID_TEXT_AREA_H
 
+#include <escher/palette.h>
 #include <escher/text_area.h>
 
 /* SolidTextArea is a text area that draws text in a single solid color over a
@@ -15,11 +16,11 @@ public:
 protected:
   class ContentView : public TextArea::ContentView {
   public:
-    ContentView(const KDFont * font, KDColor textColor, KDColor backgroundColor) :
+    ContentView(const KDFont * font, KDColor textColor, KDColor backgroundColor, KDColor backgroundHighlightColor = Palette::Select) :
       TextArea::ContentView(font),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor),
-      m_backgroundHighlightColor(KDColorRed) //TODO LEA
+      m_backgroundHighlightColor(backgroundHighlightColor)
     {
     }
     void clearRect(KDContext * ctx, KDRect rect) const override;

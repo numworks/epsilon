@@ -25,6 +25,45 @@ KDRect TextInput::ContentView::cursorRect() {
   return glyphFrameAtPosition(editedText(), m_cursorLocation);
 }
 
+void TextInput::ContentView::addSelection(const char * left, const char * right) {
+  bool emptySelection = currentSelectionIsEmpty();
+  if (emptySelection) {
+    m_selectionStart = left;
+    m_selectionEnd = right;
+  } else if (left == m_selectionEnd) {
+    m_selectionEnd = right;
+  } else if (right == m_selectionStart) {
+    m_selectionStart = left;
+  } else if (right == m_selectionEnd) {
+    m_selectionEnd = left;
+  } else {
+    assert(left == m_selectionStart);
+    m_selectionStart = right;
+  }
+  if (m_selectionStart == m_selectionEnd) {
+    m_selectionStart = nullptr;
+    m_selectionEnd = nullptr;
+  }
+  reloadRectFromPosition(left, true); //TODO LEA
+}
+
+void TextInput::ContentView::resetSelection() {
+  const char * previousStart = m_selectionStart;
+  if (previousStart == nullptr) {
+    return false;
+  }
+  m_selectionStart = nullptr;
+  m_selectionEnd = nullptr;
+  reloadRectFromPosition(previousStart); //TODO LEA many lines?
+  return true;
+}
+
+bool TextInput::ContentView::currentSelectionIsEmpty() const {
+  assert(m_selectionStart != nullptr || m_selectionEnd == nullptr);
+  assert(m_selectionEnd != nullptr || m_selectionStart == nullptr);
+  return m_selectionStart == nullptr;
+}
+
 void TextInput::ContentView::layoutSubviews(bool force) {
   m_cursorView.setFrame(cursorRect(), force);
 }
@@ -113,6 +152,20 @@ bool TextInput::moveCursorRight() {
   }
   UTF8Decoder decoder(cursorLocation());
   return setCursorLocation(decoder.nextGlyphPosition());
+}
+
+bool TextInput::selectLeftRight(bool left) {
+  const char * cursorLoc = cursorLocation();
+  if ((left && cursorLoc <= text())
+     || (!left && UTF8Helper::CodePointIs(cursorLoc, UCodePointNull)))
+  {
+    assert(!left || cursorLoc == text());
+    return false;
+  }
+  UTF8Decoder decoder(text(), cursorLoc);
+  const char * nextCursorLocation = left ? decoder.previousGlyphPosition() : decoder.nextGlyphPosition();
+  contentView()->addSelection(left ? nextCursorLocation : cursorLoc, left ? cursorLoc : nextCursorLocation); //TODO LEA adjusted location?
+  return setCursorLocation(nextCursorLocation);
 }
 
 bool TextInput::privateRemoveEndOfLine() {

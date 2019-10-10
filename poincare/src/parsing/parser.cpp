@@ -1,5 +1,6 @@
 #include "parser.h"
 #include <ion/unicode/utf8_decoder.h>
+#include <utility>
 
 namespace Poincare {
 
@@ -563,7 +564,7 @@ Expression Parser::parseCommaSeparatedList() {
     commaSeparatedList.addChildAtIndexInPlace(item, length, length);
     length++;
   } while (popTokenIfType(Token::Comma));
-  return commaSeparatedList;
+  return std::move(commaSeparatedList);
 }
 
 void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType) {

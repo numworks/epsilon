@@ -2,12 +2,12 @@
 #include <poincare/conjugate_layout.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/multiplication.h>
+#include <poincare/opposite.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-
-#include <poincare/opposite.h>
 #include <assert.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -53,7 +53,7 @@ Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionCo
     complexChild.replaceChildAtIndexInPlace(1, m);
     m.shallowReduce(reductionContext);
     replaceWithInPlace(complexChild);
-    return complexChild;
+    return std::move(complexChild);
   }
   if (c.type() == ExpressionNode::Type::Rational) {
     replaceWithInPlace(c);

@@ -12,9 +12,10 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>
-#include <cmath>
 #include <ion.h>
 #include <assert.h>
+#include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -281,7 +282,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     Opposite o = Opposite::Builder();
     noNegativeNumeral.replaceWithInPlace(o);
     o.replaceChildAtIndexInPlace(0, noNegativeNumeral);
-    return o;
+    return std::move(o);
   }
 
   /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)

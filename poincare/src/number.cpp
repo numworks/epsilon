@@ -1,16 +1,16 @@
 #include <poincare/number.h>
 #include <poincare/decimal.h>
+#include <poincare/float.h>
+#include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/rational.h>
-#include <poincare/float.h>
 #include <poincare/undefined.h>
-#include <poincare/infinity.h>
-
 extern "C" {
 #include <stdlib.h>
 #include <assert.h>
 }
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -89,7 +89,7 @@ Number Number::BinaryOperation(const Number & i, const Number & j, RationalBinar
     // Rational + Rational
     Rational a = rationalOp(static_cast<const Rational&>(i), static_cast<const Rational&>(j));
     if (!a.numeratorOrDenominatorIsInfinity()) {
-      return a;
+      return std::move(a);
     }
   }
   /* At least one of the operands is Undefined/Infinity/Float, or the Rational

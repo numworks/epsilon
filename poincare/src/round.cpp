@@ -1,11 +1,12 @@
 #include <poincare/round.h>
-#include <poincare/undefined.h>
-#include <poincare/rational.h>
-#include <poincare/power.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/undefined.h>
 #include <assert.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -76,7 +77,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return *this;
     }
     replaceWithInPlace(result);
-    return result;
+    return std::move(result);
   }
   return *this;
 }

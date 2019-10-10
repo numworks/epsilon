@@ -6,6 +6,7 @@
 #include <cmath>
 #include <assert.h>
 #include <float.h>
+#include <utility>
 
 namespace Poincare {
 
@@ -49,7 +50,7 @@ Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat 
     i++;
   }
   matrix.setDimensions(numberOfRows(), numberOfColumns());
-  return matrix;
+  return std::move(matrix);
 }
 
 template<typename T>

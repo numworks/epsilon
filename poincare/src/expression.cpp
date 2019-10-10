@@ -10,6 +10,7 @@
 #include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <float.h>
+#include <utility>
 
 #include "parsing/parser.h"
 
@@ -373,7 +374,7 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::Redu
       // Otherwise, we make it positive
       m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, reductionContext);
     }
-    return m;
+    return std::move(m);
   }
   return Expression();
 }

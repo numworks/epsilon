@@ -6,6 +6,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -29,7 +30,7 @@ template<typename T>
 Evaluation<T> MatrixTraceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Complex<T> result = Complex<T>::Builder(input.trace());
-  return result;
+  return std::move(result);
 }
 
 

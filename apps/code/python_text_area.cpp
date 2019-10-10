@@ -1,12 +1,13 @@
 #include "python_text_area.h"
 #include "app.h"
+#include <escher/palette.h>
 #include <ion/unicode/utf8_helper.h>
+#include <python/port/port.h>
 
 extern "C" {
 #include "py/nlr.h"
 #include "py/lexer.h"
 }
-#include <python/port/port.h>
 #include <stdlib.h>
 
 namespace Code {
@@ -18,7 +19,7 @@ constexpr KDColor KeywordColor = KDColor::RGB24(0xFF000C);
 constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
-constexpr KDColor HighlightColor = KDColorRed; //TODO LEA
+constexpr KDColor HighlightColor = Palette::Select;
 
 static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
 
@@ -129,7 +130,6 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       mp_lexer_to_next(lex);
       LOG_DRAW("Pop token %d\n", lex->tok_kind);
     }
-
     tokenFrom += tokenLength;
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);

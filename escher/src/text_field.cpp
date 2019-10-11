@@ -47,7 +47,21 @@ void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
     backgroundColor = KDColorWhite;
   }
   ctx->fillRect(bounds(), backgroundColor);
-  ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor);
+  if (selectionIsEmpty()) {
+    ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor);
+  } else {
+    int selectionOffset = m_selectionStart - s_draftTextBuffer;
+    const char * textToDraw = text();
+    // Draw the non selected text on the left of the selection
+    ctx->drawString(textToDraw, glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor, selectionOffset);
+    int selectionLength = m_selectionEnd - m_selectionStart;
+    textToDraw += selectionOffset;
+    // Draw the selected text
+    ctx->drawString(text() + selectionOffset, glyphFrameAtPosition(text(), textToDraw).origin(), m_font, m_textColor, Palette::Select, selectionLength);
+    textToDraw += selectionLength;
+    // Draw the non selected text on the right of the selection
+    ctx->drawString(text() + selectionOffset + selectionLength, glyphFrameAtPosition(text(), textToDraw).origin(), m_font, m_textColor, backgroundColor);
+  }
 }
 
 const char * TextField::ContentView::text() const {
@@ -86,6 +100,7 @@ void TextField::ContentView::setEditing(bool isEditing) {
   if (m_isEditing == isEditing) {
     return;
   }
+  resetSelection();
   m_isEditing = isEditing;
   m_currentDraftTextLength = strlen(s_draftTextBuffer);
   if (m_cursorLocation < s_draftTextBuffer
@@ -209,6 +224,18 @@ void TextField::ContentView::didModifyTextBuffer() {
   layoutSubviews();
 }
 
+size_t TextField::ContentView::deleteSelectedText() {
+  assert(!selectionIsEmpty());
+  assert(m_isEditing);
+  size_t removedLength = m_selectionEnd - m_selectionStart;
+  strlcpy(const_cast<char *>(m_selectionStart), m_selectionEnd, m_draftTextBufferSize - (m_selectionStart - s_draftTextBuffer));
+  /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd
+   * are invalid */
+  m_selectionStart = nullptr;
+  m_selectionEnd = nullptr;
+  return removedLength;
+}
+
 void TextField::ContentView::layoutSubviews(bool force) {
   if (!m_isEditing) {
     m_cursorView.setFrame(KDRectZero, force);
@@ -298,6 +325,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     if (m_delegate->textFieldDidFinishEditing(this, m_contentView.editedText(), event)) {
       // Clean draft text for next use
       reinitDraftTextBuffer();
+      resetSelection();
       /* We allow overscroll to avoid calling layoutSubviews twice because the
        * content might have changed. */
       reloadScroll(true);
@@ -317,29 +345,34 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
-    return removePreviousGlyph();
+    if (m_contentView.selectionIsEmpty()) {
+      return removePreviousGlyph();
+    }
+    deleteSelectedText();
+    return true;
   }
   if (event == Ion::Events::Back && isEditing()) {
     reinitDraftTextBuffer();
+    resetSelection();
     setEditing(false);
     m_delegate->textFieldDidAbortEditing(this);
     reloadScroll(true);
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
-    if (!removeEndOfLine()) {
+    if (!m_contentView.selectionIsEmpty()) {
+      deleteSelectedText();
+    } else if (!removeEndOfLine()) {
       removeWholeText();
     }
     return true;
   }
-  if (event == Ion::Events::Copy && !isEditing()) {
-    Clipboard::sharedClipboard()->store(text());
-    return true;
-  }
-  if (event == Ion::Events::Cut && !isEditing()) {
-    Clipboard::sharedClipboard()->store(text());
-    reinitDraftTextBuffer();
-    setEditing(true);
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+    storeInClipboard();
+    if (event == Ion::Events::Cut) {
+      reinitDraftTextBuffer();
+      setEditing(true);
+    }
     return true;
   }
   return false;
@@ -404,6 +437,8 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   bool didHandleEvent = false;
   if (privateHandleMoveEvent(event)) {
     didHandleEvent = true;
+  } else if (privateHandleSelectEvent(event)) {
+    didHandleEvent = true;
   } else if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
   } else if (event.hasText()) {
@@ -434,17 +469,28 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
     return false;
   }
   const char * draftBuffer = m_contentView.editedText();
-  if (event == Ion::Events::Left && cursorLocation() > draftBuffer) {
-    return TextInput::moveCursorLeft();
+  if (event == Ion::Events::Left || event == Ion::Events::Right) {
+    if (!m_contentView.selectionIsEmpty()) {
+      resetSelection();
+      return true;
+    }
+    if (event == Ion::Events::Left && cursorLocation() > draftBuffer) {
+      return TextInput::moveCursorLeft();
+    }
+    if (event == Ion::Events::Right && cursorLocation() < draftBuffer + draftTextLength()) {
+      return TextInput::moveCursorRight();
+    }
   }
-  if (event == Ion::Events::Right && cursorLocation() < draftBuffer + draftTextLength()) {
-    return TextInput::moveCursorRight();
+  return false;
+}
+
+bool TextField::privateHandleSelectEvent(Ion::Events::Event event) {
+  if (!isEditing()) {
+    return false;
   }
-  if (event == Ion::Events::ShiftLeft) {
-    return setCursorLocation(draftBuffer);
-  }
-  if (event == Ion::Events::ShiftRight) {
-    return setCursorLocation(draftBuffer + draftTextLength());
+  if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
+    selectLeftRight(event == Ion::Events::ShiftLeft);
+    return true;
   }
   return false;
 }
@@ -458,6 +504,11 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   }
 
   assert(isEditing());
+
+  // Delete the selected text if needed
+  if (!contentView()->selectionIsEmpty()) {
+    deleteSelectedText();
+  }
 
   if (eventText[0] == 0) {
     /* For instance, the event might be EXE on a non-editing text field to start
@@ -494,4 +545,13 @@ void TextField::removeWholeText() {
   reinitDraftTextBuffer();
   setEditing(true);
   reloadScroll();
+}
+
+void TextField::storeInClipboard() const {
+  if (!isEditing()) {
+    Clipboard::sharedClipboard()->store(text());
+  } else if (!m_contentView.selectionIsEmpty()) {
+    const char * start = m_contentView.selectionStart();
+    Clipboard::sharedClipboard()->store(start, m_contentView.selectionEnd() - start);
+  }
 }

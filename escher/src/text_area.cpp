@@ -42,11 +42,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 
   // Delete the selected text if needed
   if (!contentView()->selectionIsEmpty()) {
-    size_t removedLength = contentView()->deleteSelectedText();
-    if (contentView()->selectionEnd() == cursorLocation()) {
-      setCursorLocation(cursorLocation() - removedLength);
-    }
-    contentView()->resetSelection();
+    deleteSelectedText();
   }
 
   /* Compute the indentation. If the text cannot be inserted with the
@@ -132,13 +128,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     }
     return TextInput::moveCursorRight();
   }
-  if (event == Ion::Events::Backspace) {
-    if (contentView()->selectionIsEmpty()) {
-      return removePreviousGlyph();
-    }
-    contentView()->deleteSelectedText();
-    return true;
-  }
+
   if (event.hasText()) {
     return handleEventWithText(event.text());
   }
@@ -156,7 +146,18 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
   }
-  if (event == Ion::Events::Up) {
+
+  // The following events need a scrollToCursor and return true
+  if (event == Ion::Events::Backspace) {
+    if (contentView()->selectionIsEmpty()) {
+      if (!removePreviousGlyph()) {
+        return false;
+      }
+    } else {
+      deleteSelectedText();
+      return true;
+    }
+  } else if (event == Ion::Events::Up) {
     contentView()->resetSelection();
     contentView()->moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {
@@ -164,10 +165,9 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->moveCursorGeo(0, 1);
   } else if (event == Ion::Events::Clear) {
     if (!contentView()->selectionIsEmpty()) {
-      contentView()->deleteSelectedText();
+      deleteSelectedText();
       return true;
-    }
-    if (!contentView()->removeEndOfLine()) {
+    } else if (!contentView()->removeEndOfLine()) {
       contentView()->removeStartOfLine();
     }
   } else {
@@ -517,7 +517,12 @@ bool TextArea::ContentView::removeStartOfLine() {
 
 size_t TextArea::ContentView::deleteSelectedText() {
   assert(!selectionIsEmpty());
-  return m_text.removeText(m_selectionStart, m_selectionEnd);
+  size_t removedLength = m_text.removeText(m_selectionStart, m_selectionEnd);
+  /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd
+   * are invalid */
+  m_selectionStart = nullptr;
+  m_selectionEnd = nullptr;
+  return removedLength;
 }
 
 KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char * position) const {

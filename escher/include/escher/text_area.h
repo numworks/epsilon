@@ -120,7 +120,7 @@ protected:
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
-    void deleteSelectedText() override;
+    size_t deleteSelectedText() override;
   protected:
     KDRect glyphFrameAtPosition(const char * text, const char * position) const override;
     Text m_text;

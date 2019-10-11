@@ -26,11 +26,6 @@ KDRect TextInput::ContentView::cursorRect() {
 }
 
 void TextInput::ContentView::addSelection(const char * left, const char * right) {
-  if ((left == m_selectionStart && right <= m_selectionEnd)
-      || (right == m_selectionEnd && left >= m_selectionStart))
-  {
-    return;
-  }
   bool emptySelection = selectionIsEmpty();
   if (emptySelection) {
     m_selectionStart = left;
@@ -40,10 +35,20 @@ void TextInput::ContentView::addSelection(const char * left, const char * right)
   } else if (right == m_selectionStart) {
     m_selectionStart = left;
   } else if (right == m_selectionEnd) {
-    m_selectionEnd = left;
+    if (left >= m_selectionStart) {
+     m_selectionEnd = left;
+    } else {
+      m_selectionEnd = m_selectionStart;
+      m_selectionStart = left;
+    }
   } else {
     assert(left == m_selectionStart);
-    m_selectionStart = right;
+    if (right <= m_selectionEnd) {
+      m_selectionStart = right;
+    } else {
+      m_selectionStart = m_selectionEnd;
+      m_selectionEnd = right;
+    }
   }
   reloadRectFromAndToPositions(left, right);
   if (m_selectionStart == m_selectionEnd) {

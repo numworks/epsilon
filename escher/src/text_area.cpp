@@ -549,9 +549,9 @@ void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
 }
 
 void TextArea::selectUpDown(bool up) {
-  const char * currentCursorLocation = contentView()->cursorLocation();
+  const char * previousCursorLocation = contentView()->cursorLocation();
   contentView()->moveCursorGeo(0, up ? -1 : 1);
   const char * newCursorLocation = contentView()->cursorLocation();
-  contentView()->addSelection(up ? newCursorLocation : currentCursorLocation, up ? currentCursorLocation : newCursorLocation);
+  contentView()->addSelection(up ? newCursorLocation : previousCursorLocation, up ? previousCursorLocation : newCursorLocation);
   scrollToCursor();
 }

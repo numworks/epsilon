@@ -179,13 +179,13 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   }
 }
 
-KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
+KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position, bool includeFollowingLines) const {
   /* Mark the whole line as dirty.
    * TextArea has a very conservative approach and only dirties the surroundings
    * of the current character. That works for plain text, but when doing syntax
    * highlighting, you may want to redraw the surroundings as well. For example,
    * if editing "def foo" into "df foo", you'll want to redraw "df". */
-  KDRect baseDirtyRect = TextArea::ContentView::dirtyRectFromPosition(position, lineBreak);
+  KDRect baseDirtyRect = TextArea::ContentView::dirtyRectFromPosition(position, includeFollowingLines);
   return KDRect(
     bounds().x(),
     baseDirtyRect.y(),

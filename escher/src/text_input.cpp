@@ -84,6 +84,9 @@ void TextInput::ContentView::reloadRectFromPosition(const char * position, bool 
 }
 
 void TextInput::ContentView::reloadRectFromAndToPositions(const char * start, const char * end) {
+  if (start == end) {
+    return;
+  }
   KDRect startFrame = glyphFrameAtPosition(text(), start);
   KDRect endFrame = glyphFrameAtPosition(text(), end);
   bool onSameLine = startFrame.y() == endFrame.y();
@@ -130,6 +133,17 @@ void TextInput::scrollToCursor() {
    * scrollToContentRect, and the last layout of the scroll view corrects the
    * size of the scroll view only once. */
   scrollToContentRect(contentView()->cursorRect(), true);
+}
+
+void TextInput::deleteSelectedText() {
+  assert(!contentView()->selectionIsEmpty());
+  const char * previousSelectionStart = contentView()->selectionStart();
+  const char * previousSelectionEnd = contentView()->selectionEnd();
+  size_t removedLength = contentView()->deleteSelectedText();
+  if (previousSelectionEnd == contentView()->cursorLocation()) {
+    setCursorLocation(contentView()->cursorLocation() - removedLength);
+  }
+  contentView()->reloadRectFromPosition(previousSelectionStart, true);
 }
 
 bool TextInput::setCursorLocation(const char * location) {

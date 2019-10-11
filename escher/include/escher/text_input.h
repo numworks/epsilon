@@ -16,6 +16,7 @@ public:
   bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
   void resetSelection() { contentView()->resetSelection(); }
+  void deleteSelectedText();
 protected:
   class ContentView : public View {
   public:
@@ -41,12 +42,12 @@ protected:
     void addSelection(const char * left, const char * right);
     bool resetSelection(); // returns true if the selection was indeed reset
     bool selectionIsEmpty() const;
-    virtual size_t deleteSelectedText() {return 0;} //TODO LEA
+    virtual size_t deleteSelectedText() { return 0;} //TODO LEA
+    void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);
     const char * m_selectionStart;
     const char * m_selectionEnd;
   protected:
     virtual void layoutSubviews(bool force = false) override;
-    void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);
     void reloadRectFromAndToPositions(const char * start, const char * end);
     virtual KDRect glyphFrameAtPosition(const char * buffer, const char * position) const = 0;
     virtual KDRect dirtyRectFromPosition(const char * position, bool includeFollowingLines) const;

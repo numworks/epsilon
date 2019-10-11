@@ -26,6 +26,11 @@ KDRect TextInput::ContentView::cursorRect() {
 }
 
 void TextInput::ContentView::addSelection(const char * left, const char * right) {
+  if ((left == m_selectionStart && right <= m_selectionEnd)
+      || (right == m_selectionEnd && left >= m_selectionStart))
+  {
+    return;
+  }
   bool emptySelection = selectionIsEmpty();
   if (emptySelection) {
     m_selectionStart = left;
@@ -40,11 +45,11 @@ void TextInput::ContentView::addSelection(const char * left, const char * right)
     assert(left == m_selectionStart);
     m_selectionStart = right;
   }
+  reloadRectFromAndToPositions(left, right);
   if (m_selectionStart == m_selectionEnd) {
     m_selectionStart = nullptr;
     m_selectionEnd = nullptr;
   }
-  reloadRectFromPosition(left, true); //TODO LEA
 }
 
 bool TextInput::ContentView::resetSelection() {
@@ -52,9 +57,10 @@ bool TextInput::ContentView::resetSelection() {
   if (previousStart == nullptr) {
     return false;
   }
+  const char * previousEnd = m_selectionEnd;
   m_selectionStart = nullptr;
   m_selectionEnd = nullptr;
-  reloadRectFromPosition(previousStart); //TODO LEA many lines?
+  reloadRectFromAndToPositions(previousStart, previousEnd);
   return true;
 }
 
@@ -68,24 +74,36 @@ void TextInput::ContentView::layoutSubviews(bool force) {
   m_cursorView.setFrame(cursorRect(), force);
 }
 
-void TextInput::ContentView::reloadRectFromPosition(const char * position, bool lineBreak) {
-  markRectAsDirty(dirtyRectFromPosition(position, lineBreak));
+void TextInput::ContentView::reloadRectFromPosition(const char * position, bool includeFollowingLines) {
+  markRectAsDirty(dirtyRectFromPosition(position, includeFollowingLines));
 }
 
-KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
+void TextInput::ContentView::reloadRectFromAndToPositions(const char * start, const char * end) {
+  KDRect startFrame = glyphFrameAtPosition(text(), start);
+  KDRect endFrame = glyphFrameAtPosition(text(), end);
+  bool onSameLine = startFrame.y() == endFrame.y();
+  markRectAsDirty(KDRect(
+        onSameLine ? startFrame.x() : 0,
+        startFrame.y(),
+        onSameLine ? endFrame.right() - startFrame.left() : bounds().width(),
+        endFrame.bottom() - startFrame.top() + 1));
+}
+
+KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool includeFollowingLines) const {
   KDRect glyphRect = glyphFrameAtPosition(text(), position);
-  KDRect dirtyRect = KDRect(
-      glyphRect.x(),
-      glyphRect.y(),
-      bounds().width() - glyphRect.x(),
-      glyphRect.height());
-  if (lineBreak) {
-    dirtyRect = dirtyRect.unionedWith(
-        KDRect(0,
-          glyphRect.bottom() + 1,
-          bounds().width(),
-          bounds().height() - glyphRect.bottom() - 1));
+  if (!includeFollowingLines) {
+    KDRect dirtyRect = KDRect(
+        glyphRect.x(),
+        glyphRect.y(),
+        bounds().width() - glyphRect.x(),
+        glyphRect.height());
+    return dirtyRect;
   }
+  KDRect dirtyRect = KDRect(
+      0,
+      glyphRect.y(),
+      bounds().width(),
+      bounds().height() - glyphRect.y());
   return dirtyRect;
 }
 

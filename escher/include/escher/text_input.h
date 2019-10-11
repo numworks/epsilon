@@ -46,9 +46,10 @@ protected:
     const char * m_selectionEnd;
   protected:
     virtual void layoutSubviews(bool force = false) override;
-    void reloadRectFromPosition(const char * position, bool lineBreak = false);
+    void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);
+    void reloadRectFromAndToPositions(const char * start, const char * end);
     virtual KDRect glyphFrameAtPosition(const char * buffer, const char * position) const = 0;
-    virtual KDRect dirtyRectFromPosition(const char * position, bool lineBreak) const;
+    virtual KDRect dirtyRectFromPosition(const char * position, bool includeFollowingLines) const;
     TextCursorView m_cursorView;
     const KDFont * m_font;
     const char * m_cursorLocation;

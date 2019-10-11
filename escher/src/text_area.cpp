@@ -42,7 +42,10 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 
   // Delete the selected text if needed
   if (!contentView()->selectionIsEmpty()) {
-    contentView()->deleteSelectedText();
+    size_t removedLength = contentView()->deleteSelectedText();
+    if (contentView()->selectionEnd() == cursorLocation()) {
+      setCursorLocation(cursorLocation() - removedLength);
+    }
     contentView()->resetSelection();
   }
 
@@ -283,6 +286,7 @@ size_t TextArea::Text::removeText(const char * start, const char * end) {
   for (size_t index = src - m_buffer; index < m_bufferSize; index++) {
     *dst = *src;
     if (*src == 0) {
+      assert(delta > 0);
       return delta;
     }
     dst++;
@@ -511,9 +515,9 @@ bool TextArea::ContentView::removeStartOfLine() {
   return false;
 }
 
-void TextArea::ContentView::deleteSelectedText() {
+size_t TextArea::ContentView::deleteSelectedText() {
   assert(!selectionIsEmpty());
-  m_text.removeText(m_selectionStart, m_selectionEnd);
+  return m_text.removeText(m_selectionStart, m_selectionEnd);
 }
 
 KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char * position) const {

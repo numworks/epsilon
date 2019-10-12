@@ -12,6 +12,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override { return nullptr; }
+  ComplexModel * m_complex;
 };
 
 }

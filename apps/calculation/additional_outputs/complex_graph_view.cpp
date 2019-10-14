@@ -12,8 +12,8 @@ ComplexGraphView::ComplexGraphView(ComplexModel * complexModel) :
 
 void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
-  float real = m_complex->x();
-  float imag = m_complex->y();
+  float real = m_complex->real();
+  float imag = m_complex->imag();
   /* Draw the partial ellipse indicating the angle theta
    * - the ellipse parameters are a = real/2 and b = imag/2,
    * - the ellipse equation is x^2/a^2 + y^2/b^2 = 1, so we draw the curve of
@@ -23,14 +23,14 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
    *   be on the slope y = x*imag/real which gives xStart = real/(2*sqrt(2)). */
   drawCurve(ctx, rect, real/(2.0f*std::sqrt(2.0f)), real/2.0f, real/100.0f, [](float t, void * model, void * context) {
       ComplexModel * complexModel = (ComplexModel *)model;
-      float real = complexModel->x();
-      float imag = complexModel->y();
+      float real = complexModel->real();
+      float imag = complexModel->imag();
       return Poincare::Coordinate2D<float>(t, (imag/real)*std::sqrt(real*real/4.0f - t*t));
     }, m_complex, nullptr, false, Palette::GreyMiddle);
   // Draw the seqgement from the origin to the dot (real, imag) of equation y = x*imag/real
   drawCartesianCurve(ctx, rect, 0, real, [](float t, void * model, void * context) {
         ComplexModel * complexModel = (ComplexModel *)model;
-        return Poincare::Coordinate2D<float>(t, t*complexModel->y()/complexModel->x());
+        return Poincare::Coordinate2D<float>(t, t*complexModel->imag()/complexModel->real());
       }, m_complex, nullptr, Palette::GreyMiddle);
   drawAxes(ctx, rect);
   drawDot(ctx, rect, real, imag, KDColorBlack);

@@ -39,7 +39,7 @@ Last but not least, each app makes heavy use of both Escher and Poincare to disp
 
 ## Read our coding guidelines
 
-We're listing here all the topics you should be familiar with before being able to efficiently contribute to the project. Those are not hard requirements, but we believe it would be more efficient if you got familiar with the following concepts.</p>
+We're listing here all the topics you should be familiar with before being able to efficiently contribute to the project. Those are not hard requirements, but we believe it would be more efficient if you got familiar with the following concepts.
 
 ### Using C++
 
@@ -51,7 +51,7 @@ The choice of a programming language is a controversial topic. Not all of them c
 - It easily allows Object-Oriented Programming, which is a convenient abstraction.
 
 
-Of course knowing a tool means knowing its limits. C++ isn't exempt of defaults:</p>
+Of course knowing a tool means knowing its limits. C++ isn't exempt of defaults:
 - It *is* a complicated language. The C++ 11 specification is 1300 pages long.
 - It allows for a lot of abstractions, which is a double-edged sword. It can allow for some very tricky code, and it's very easy to have complex operations being run without noticing.
 

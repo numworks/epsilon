@@ -58,10 +58,10 @@ void TextInput::ContentView::addSelection(const char * left, const char * right)
 }
 
 bool TextInput::ContentView::resetSelection() {
-  const char * previousStart = m_selectionStart;
-  if (previousStart == nullptr) {
+  if (selectionIsEmpty()) {
     return false;
   }
+  const char * previousStart = m_selectionStart;
   const char * previousEnd = m_selectionEnd;
   m_selectionStart = nullptr;
   m_selectionEnd = nullptr;

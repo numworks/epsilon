@@ -16,8 +16,8 @@ public:
   float yMax() const override;
 
   void setComplex(std::complex<float> c) { m_complex = c; }
-  float x() const { return m_complex.real(); }
-  float y() const { return m_complex.imag(); }
+  float real() const { return m_complex.real(); }
+  float imag() const { return m_complex.imag(); }
 
 private:
   std::complex<float> m_complex;

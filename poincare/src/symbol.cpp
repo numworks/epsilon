@@ -151,11 +151,9 @@ bool Symbol::isRegressionSymbol(const char * c) {
 }
 
 Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression parentExpression = parent();
   {
     Expression current = *this;
-    Expression p = parentExpression;
-
+    Expression p = parent();
     while (!p.isUninitialized()) {
       if (p.isParameteredExpression()) {
         int index = p.indexOfChild(current);
@@ -185,9 +183,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
     }
     result = Undefined::Builder();
   }
-  if (!parentExpression.isUninitialized()) {
-    parentExpression.replaceChildInPlace(*this, result);
-  }
+  replaceWithInPlace(result);
   // The stored expression is as entered by the user, so we need to call reduce
   return result.deepReduce(reductionContext);
 }

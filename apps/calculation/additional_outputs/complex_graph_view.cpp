@@ -1,6 +1,7 @@
 #include "complex_graph_view.h"
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Calculation {
 
@@ -38,6 +39,15 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabel(ctx, rect, Axis::Vertical, imag);
   drawAxisLabel(ctx, rect, Axis::Horizontal, "Re", real > 0.0f);
   drawAxisLabel(ctx, rect, Axis::Vertical, "Im", imag > 0.0f);
+  char buffer[k_labelBufferMaxSize];
+  PrintFloat::ConvertFloatToText<float>(
+      std::arg(*m_complex),
+      buffer,
+      k_labelBufferMaxSize,
+      k_labelBufferMaxGlyphLength,
+      Poincare::Preferences::ShortNumberOfSignificantDigits,
+      Preferences::PrintFloatMode::Decimal);
+  ctx->drawString(buffer, KDPoint(floatToPixel(Axis::Horizontal, std::fabs(real)/2.0f)+KDFont::SmallFont->glyphSize().width(), floatToPixel(Axis::Vertical, 0.0f)-KDFont::SmallFont->glyphSize().height()), KDFont::SmallFont);
 }
 
 }

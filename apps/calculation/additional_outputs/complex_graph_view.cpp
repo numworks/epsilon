@@ -12,14 +12,32 @@ ComplexGraphView::ComplexGraphView(ComplexModel * complexModel) :
 
 void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
+  float real = m_complex->x();
+  float imag = m_complex->y();
+  /* Draw the partial ellipse indicating the angle theta
+   * - the ellipse parameters are a = real/2 and b = imag/2,
+   * - the ellipse equation is x^2/a^2 + y^2/b^2 = 1, so we draw the curve of
+   *   equation y = imag/real*(real*real/4-x*x)
+   * - we draw the ellipse from the dot (xStart, yStart) chosen so that
+   *   yStart = 0 which gives xStart = real/2 to the dot (xEnd, yEnd) chosen to
+   *   be on the slope y = x*imag/real which gives xStart = real/(2*sqrt(2)). */
+  drawCurve(ctx, rect, real/(2.0f*std::sqrt(2.0f)), real/2.0f, real/100.0f, [](float t, void * model, void * context) {
+      ComplexModel * complexModel = (ComplexModel *)model;
+      float real = complexModel->x();
+      float imag = complexModel->y();
+      return Poincare::Coordinate2D<float>(t, (imag/real)*std::sqrt(real*real/4.0f - t*t));
+    }, m_complex, nullptr, false, Palette::GreyMiddle);
+  // Draw the seqgement from the origin to the dot (real, imag) of equation y = x*imag/real
+  drawCartesianCurve(ctx, rect, 0, real, [](float t, void * model, void * context) {
+        ComplexModel * complexModel = (ComplexModel *)model;
+        return Poincare::Coordinate2D<float>(t, t*complexModel->y()/complexModel->x());
+      }, m_complex, nullptr, Palette::GreyMiddle);
   drawAxes(ctx, rect);
-  drawDot(ctx, rect, m_complex->x(), m_complex->y(), KDColorBlack);
-  drawLabel(ctx, rect, Axis::Horizontal, m_complex->x());
-  drawLabel(ctx, rect, Axis::Vertical, m_complex->y());
-  drawAxisLabel(ctx, rect, Axis::Horizontal, "Re", m_complex->x() > 0.0f);
-  drawAxisLabel(ctx, rect, Axis::Vertical, "Im", m_complex->y() > 0.0f);
-
-
+  drawDot(ctx, rect, real, imag, KDColorBlack);
+  drawLabel(ctx, rect, Axis::Horizontal, real);
+  drawLabel(ctx, rect, Axis::Vertical, imag);
+  drawAxisLabel(ctx, rect, Axis::Horizontal, "Re", real > 0.0f);
+  drawAxisLabel(ctx, rect, Axis::Vertical, "Im", imag > 0.0f);
 }
 
 }

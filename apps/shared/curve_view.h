@@ -78,6 +78,13 @@ protected:
   CurveViewCursor * m_curveViewCursor;
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
+  void drawGraduation(KDContext * ctx, KDRect rect, Axis axis, float grad) const;
+  enum class FloatingPosition : uint8_t {
+    None,
+    Min,
+    Max
+  };
+  void privateDrawLabelOnly(KDContext * ctx, KDRect rect, Axis axis, float grad, char * label, float verticalCoordinate, float horizontalCoordinate, FloatingPosition floatingLabels = FloatingPosition::None, bool shiftOrigin = false,  KDCoordinate viewHeight = 0, KDColor backgroundColor = KDColorWhite) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */

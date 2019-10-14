@@ -2,26 +2,26 @@
 
 namespace Calculation {
 
-ComplexModel::ComplexModel() :
+ComplexModel::ComplexModel(std::complex<float> c) :
   Shared::CurveViewRange(),
-  m_complex(2.3f, 4.1f)
+  std::complex<float>(c)
 {
 }
 
 float ComplexModel::xMin() const {
-  return -1.2f*std::fabs(m_complex.real());
+  return -1.2f*std::fabs(real());
 }
 
 float ComplexModel::xMax() const {
-  return 1.2f*std::fabs(m_complex.real());
+  return 1.2f*std::fabs(real());
 }
 
 float ComplexModel::yMin() const {
-  return -1.2f*std::fabs(m_complex.imag());
+  return -1.2f*std::fabs(imag());
 }
 
 float ComplexModel::yMax() const {
-  return 1.2f*std::fabs(m_complex.imag());
+  return 1.2f*std::fabs(imag());
 }
 
 }

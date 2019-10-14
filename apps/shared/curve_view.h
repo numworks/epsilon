@@ -72,6 +72,7 @@ protected:
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const;
+  void drawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad) const;
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;

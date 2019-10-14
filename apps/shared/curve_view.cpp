@@ -230,6 +230,49 @@ void CurveView::simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Horizontal, true);
 }
 
+//TODO: factorize
+void CurveView::drawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad) const {
+  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
+  float axisCoordinate = std::round(floatToPixel(otherAxis, 0.0f));
+  KDCoordinate labelPosition = std::round(floatToPixel(axis, grad));
+  KDRect graduation = axis == Axis::Horizontal ?
+    KDRect(
+        labelPosition,
+        axisCoordinate -(k_labelGraduationLength-2)/2,
+        1,
+        k_labelGraduationLength) :
+    KDRect(
+        axisCoordinate-(k_labelGraduationLength-2)/2,
+        labelPosition,
+        k_labelGraduationLength,
+        1);
+  ctx->fillRect(graduation, KDColorBlack);
+
+  char labelBuffer[k_labelBufferMaxSize];
+  PrintFloat::ConvertFloatToText<float>(
+        grad,
+        labelBuffer,
+        k_labelBufferMaxSize,
+        k_labelBufferMaxGlyphLength,
+        k_numberSignificantDigits,
+        Preferences::PrintFloatMode::Decimal);
+
+  float xPosition = 0.0f;
+  float yPosition = 0.0f;
+  KDSize textSize = k_font->stringSize(labelBuffer);
+  if (axis == Axis::Horizontal) {
+    xPosition = labelPosition - textSize.width()/2;
+    yPosition = axisCoordinate + k_labelMargin;
+  } else {
+    yPosition = labelPosition - textSize.height()/2;
+    xPosition = axisCoordinate - k_labelMargin - textSize.width();
+  }
+  KDPoint origin = KDPoint(xPosition, yPosition);
+  if (rect.intersects(KDRect(origin, textSize))) {
+    ctx->drawString(labelBuffer, origin, k_font, KDColorBlack, KDColorWhite);
+  }
+}
+
 void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
   int numberLabels = numberOfLabels(axis);
   if (numberLabels <= 1) {

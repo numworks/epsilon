@@ -213,4 +213,25 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   }
 }
 
+Calculation::AdditionalOutput Calculation::additionalOuput(Context * context) {
+  ExpressionNode::Type type = exactOutput().type();
+  if (type == ExpressionNode::Type::Rational) {
+    return AdditionalOutput::BaseRepresentation;
+  }
+  Preferences * preferences = Preferences::sharedPreferences();
+  Evaluation<float> e = approximateOutput(context).approximateToEvaluation<float>(context, preferences->complexFormat(), preferences->angleUnit());
+  if (e.type() == EvaluationNode<float>::Type::MatrixComplex) {
+    return AdditionalOutput::None;
+  }
+  Complex<float> ec = static_cast<Complex<float> &>(e);
+  // return AdditionalOutput::Matrix
+  if ((type == ExpressionNode::Type::Cosine || type == ExpressionNode::Type::Sine) && ec.imag() == 0.0f) {
+    return AdditionalOutput::TrigonometryCircle;
+  }
+  if (ec.imag() != 0.0f) {
+    return AdditionalOutput::ComplexPlan;
+  }
+  return AdditionalOutput::None;
+}
+
 }

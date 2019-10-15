@@ -14,12 +14,12 @@ const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree ledColorChildren[4] = {SettingsMessageTree(I18n::Message::ColorWhite), SettingsMessageTree(I18n::Message::ColorGreen), SettingsMessageTree(I18n::Message::ColorBlue), SettingsMessageTree(I18n::Message::ColorYellow)};
 const SettingsMessageTree aboutChildren[4] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
-const SettingsMessageTree contributorsChildren[2] = {SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons)};
+const SettingsMessageTree contributorsChildren[3] = {SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons), SettingsMessageTree(I18n::Message::JoachimLeFournis)};
 
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree menu[11] =
+const SettingsMessageTree menu[12] =
 #else
-const SettingsMessageTree menu[10] =
+const SettingsMessageTree menu[11] =
 #endif
   {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
     SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
@@ -35,7 +35,7 @@ const SettingsMessageTree menu[10] =
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif
   SettingsMessageTree(I18n::Message::About, aboutChildren, 4),
-  SettingsMessageTree(I18n::Message::Contributors, contributorsChildren, 2)};
+  SettingsMessageTree(I18n::Message::Contributors, contributorsChildren, 3)};
 #ifdef EPSILON_BOOT_PROMPT
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 11);
 #else

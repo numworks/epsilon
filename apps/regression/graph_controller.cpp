@@ -244,7 +244,7 @@ bool GraphController::moveCursorHorizontally(int direction, bool fast) {
       x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
       y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
     } else {
-      return false
+      return false;
     }
     *m_selectedDotIndex = dotSelected;
   } else {

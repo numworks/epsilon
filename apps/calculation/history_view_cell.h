@@ -52,8 +52,10 @@ private:
   void reloadScroll();
   void reloadOutputSelection();
   bool displayLeftLayout() const;
+  bool displayBurger() const;
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
+  Calculation::AdditionalOutput m_calculationAdditionalOutput;
   bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;

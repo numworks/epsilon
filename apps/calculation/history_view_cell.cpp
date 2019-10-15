@@ -29,6 +29,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType) 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
+  m_calculationAdditionalOutput(Calculation::AdditionalOutput::None),
   m_calculationExpanded(false),
   m_inputView(this),
   m_scrollableOutputView(this)
@@ -99,6 +100,7 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
    * display 1.2+2 --> 16/5 = 3.2. */
   m_calculationExpanded = (type == HistoryViewCellDataSource::SubviewType::Output);
   m_scrollableOutputView.setDisplayLeftLayout(displayLeftLayout());
+  m_scrollableOutputView.setDisplayBurger(displayBurger());
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -152,6 +154,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   m_calculationCRC32 = newCalculationCRC;
   m_calculationExpanded = expanded;
   m_calculationDisplayOutput = calculation->displayOutput(context);
+  m_calculationAdditionalOutput = calculation->additionalOuput(context);
   m_inputView.setLayout(calculation->createInputLayout());
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
@@ -161,6 +164,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
     calculation->createApproximateOutputLayout(context);
   m_scrollableOutputView.setDisplayLeftLayout(displayLeftLayout()); // Must be before the setLayouts fo the reload
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
+  m_scrollableOutputView.setDisplayBurger(displayBurger());
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
 
@@ -196,6 +200,10 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
 bool HistoryViewCell::displayLeftLayout() const {
   return (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate)
     || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && m_calculationExpanded);
+}
+
+bool HistoryViewCell::displayBurger() const {
+  return m_calculationAdditionalOutput != Calculation::AdditionalOutput::None && m_calculationExpanded;
 }
 
 }

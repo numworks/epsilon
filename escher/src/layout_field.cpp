@@ -12,8 +12,10 @@ static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
-  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite, &m_selectionStart, &m_selectionEnd),
   m_cursorView(),
+  m_selectionStart(),
+  m_selectionEnd(),
   m_isEditing(false)
 {
   clearLayout();
@@ -45,6 +47,51 @@ void LayoutField::ContentView::clearLayout() {
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
   return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth, evSize.height());
+}
+
+void LayoutField::ContentView::addSelection(Layout left, Layout right) {
+  bool emptySelection = selectionIsEmpty();
+  if (emptySelection) {
+    m_selectionStart = left;
+    m_selectionEnd = right;
+  } else if (left == m_selectionEnd) {
+    m_selectionEnd = right;
+  } else if (right == m_selectionStart) {
+    m_selectionStart = left;
+  } else if (reinterpret_cast<char *>(left.node()) >= reinterpret_cast<char *>(m_selectionEnd.node())) {
+     m_selectionEnd = right;
+  } else {
+    assert(reinterpret_cast<char *>(right.node()) < reinterpret_cast<char *>(m_selectionStart.node()));
+    m_selectionStart = left;
+  }
+  //reloadRectFromAndToPositions(left, right);
+  /*if (m_selectionStart == m_selectionEnd) {
+    m_selectionStart = Layout();
+    m_selectionEnd = Layout();
+  } TODO LEA*/
+}
+
+bool LayoutField::ContentView::resetSelection() {
+  Layout previousStart = m_selectionStart;
+  if (selectionIsEmpty()) {
+    return false;
+  }
+  Layout previousEnd = m_selectionEnd;
+  m_selectionStart = Layout();
+  m_selectionEnd = Layout();
+  //TODO LEA reloadRectFromAndToPositions(previousStart, previousEnd);
+  return true;
+}
+
+bool LayoutField::ContentView::selectionIsEmpty() const {
+  assert(!m_selectionStart.isUninitialized() || m_selectionEnd.isUninitialized());
+  assert(!m_selectionEnd.isUninitialized() || m_selectionStart.isUninitialized());
+  return m_selectionStart.isUninitialized();
+}
+
+size_t LayoutField::ContentView::deleteSelection() {
+  //TODO LEA
+  return 1;
 }
 
 View * LayoutField::ContentView::subviewAtIndex(int index) {
@@ -167,6 +214,9 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     }
     shouldRecomputeLayout = shouldRecomputeLayout || moveEventChangedLayout;
     didHandleEvent = true;
+  } else if (privateHandleSelectionEvent(event, &shouldRecomputeLayout)) {
+    didHandleEvent = true;
+    shouldRecomputeLayout = true; //TODO LEA
   } else if (privateHandleEvent(event)) {
     shouldRecomputeLayout = true;
     didHandleEvent = true;
@@ -184,6 +234,10 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   m_contentView.cursorPositionChanged();
   scrollToCursor();
   return true;
+}
+
+void LayoutField::deleteSelection() {
+  //TODO LEA
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
@@ -255,20 +309,30 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Up, shouldRecomputeLayout);
   } else if (event == Ion::Events::Down) {
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
-  } else if (event == Ion::Events::ShiftLeft) {
-    *shouldRecomputeLayout = true;
-    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
-      *shouldRecomputeLayout = true;
-    }
-    result.setLayout(layout());
-    result.setPosition(LayoutCursor::Position::Left);
-  } else if (event == Ion::Events::ShiftRight) {
-    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
-      *shouldRecomputeLayout = true;
-    }
-    result.setLayout(layout());
-    result.setPosition(LayoutCursor::Position::Right);
   }
+  if (result.isDefined()) {
+    m_contentView.setCursor(result);
+    return true;
+  }
+  return false;
+}
+
+bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
+  LayoutCursor result;
+  if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
+    Layout addedSelectionLeft;
+    Layout addedSelectionRight;
+    result = m_contentView.cursor()->selectAtDirection(event == Ion::Events::ShiftLeft ? LayoutCursor::MoveDirection::Left : LayoutCursor::MoveDirection::Right, shouldRecomputeLayout, &addedSelectionLeft, &addedSelectionRight);
+    if (!addedSelectionLeft.isUninitialized() && !addedSelectionRight.isUninitialized()) { //TODO LEA assert?
+      m_contentView.addSelection(addedSelectionLeft, addedSelectionRight);
+    } else {
+      return false;
+    }
+  }/* else if (event == Ion::Events::ShiftUp) {
+    //TODO LEA result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Up, shouldRecomputeLayout);
+  } else if (event == Ion::Events::ShiftDown) {
+    //TODO LEA result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
+  }*/
   if (result.isDefined()) {
     m_contentView.setCursor(result);
     return true;

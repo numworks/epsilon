@@ -30,8 +30,8 @@ public:
   bool isIdenticalTo(Layout l) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l); }
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {
-    return node()->draw(ctx, p, expressionColor, backgroundColor);
+  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed /*TODO LEA*/) {
+    return node()->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
     return node()->render(ctx, p, expressionColor, backgroundColor);

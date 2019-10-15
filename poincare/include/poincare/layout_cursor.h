@@ -27,7 +27,7 @@ class LayoutCursor final {
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
-  enum class MoveDirection {
+  enum class MoveDirection { //TODO LEA rename direction?
     Left,
     Right,
     Up,
@@ -98,6 +98,14 @@ public:
   LayoutCursor cursorAtDirection(MoveDirection direction, bool * shouldRecomputeLayout) {
     LayoutCursor result = clone();
     result.move(direction, shouldRecomputeLayout);
+    return result;
+  }
+
+  /* Select */
+  void select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selectionLeft, Layout * selectionRight);
+  LayoutCursor selectAtDirection(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selectionLeft, Layout * selectionRight) {
+    LayoutCursor result = clone();
+    result.select(direction, shouldRecomputeLayout, selectionLeft, selectionRight);
     return result;
   }
 

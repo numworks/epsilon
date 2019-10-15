@@ -19,11 +19,21 @@ bool LayoutNode::isIdenticalTo(Layout l) {
 
 // Rendering
 
-void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  for (LayoutNode * l : children()) {
-    l->draw(ctx, p, expressionColor, backgroundColor);
+void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  bool isSelected = selectionStart != nullptr && selectionEnd != nullptr
+    && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
+    && reinterpret_cast<char *>(this) >= reinterpret_cast<char *>(selectionStart->node())
+    && reinterpret_cast<char *>(this) <= reinterpret_cast<char *>(selectionEnd->node());
+  if (!isSelected) {
+    for (LayoutNode * l : children()) {
+      l->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+    }
+  } else {
+    for (LayoutNode * l : children()) {
+      l->draw(ctx, p, expressionColor, selectionColor);
+    }
   }
-  render(ctx, absoluteOrigin().translatedBy(p), expressionColor, backgroundColor);
+  render(ctx, absoluteOrigin().translatedBy(p), expressionColor, isSelected ? selectionColor : backgroundColor);
 }
 
 KDPoint LayoutNode::origin() {

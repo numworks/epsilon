@@ -43,12 +43,17 @@ public:
     return m_delegate->layoutFieldShouldFinishEditing(this, event);
   }
 
+  // Selection
+  void resetSelection() { m_contentView.resetSelection(); }
+  void deleteSelection();
+
 private:
   constexpr static int k_maxNumberOfLayouts = 220;
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
   void reload(KDSize previousSize);
   virtual bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
+  bool privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false);
@@ -65,8 +70,16 @@ private:
     Poincare::LayoutCursor * cursor() { return &m_cursor; }
     const ExpressionView * expressionView() const { return &m_expressionView; }
     void clearLayout();
-    /* View */
+    // View
     KDSize minimalSizeForOptimalDisplay() const override;
+    // Selection
+    Poincare::Layout * selectionStart() { return &m_selectionStart; }
+    Poincare::Layout * selectionEnd() { return &m_selectionEnd; }
+    void addSelection(Poincare::Layout left, Poincare::Layout right);
+    bool resetSelection(); // returns true if the selection was indeed reset
+    bool selectionIsEmpty() const;
+    size_t deleteSelection();
+
   private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
@@ -75,6 +88,8 @@ private:
     Poincare::LayoutCursor m_cursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;
+    Poincare::Layout m_selectionStart;
+    Poincare::Layout m_selectionEnd;
     bool m_isEditing;
   };
   ContentView m_contentView;

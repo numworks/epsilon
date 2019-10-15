@@ -5,6 +5,7 @@
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/bank_view_controller.h>
 #include <escher/buffer_text_view.h>
+#include <escher/burger_menu_view.h>
 #include <escher/button.h>
 #include <escher/button_row_controller.h>
 #include <escher/chevron_view.h>

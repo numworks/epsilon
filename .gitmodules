@@ -1,0 +1,3 @@
+[submodule "apps/rpn"]
+	path = apps/rpn
+	url = https://github.com/Omega-Numworks/Omega-RPN.git

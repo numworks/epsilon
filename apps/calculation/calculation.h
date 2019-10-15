@@ -33,6 +33,14 @@ public:
     ExactAndApproximateToggle
   };
 
+  enum class AdditionalOutput : uint8_t {
+    None,
+    ComplexPlan,
+    TrigonometryCircle,
+    BaseRepresentation
+    //Matrix
+  };
+
   /* It is not really the minimal size, but it clears enough space for most
    * calculations instead of clearing less space, then fail to serialize, clear
    * more space, fail to serialize, clear more space, etc., until reaching
@@ -67,10 +75,16 @@ public:
   Poincare::Layout createExactOutputLayout();
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context);
 
+  // Memoization of height
   KDCoordinate height(Poincare::Context * context, bool expanded = false);
+
+  // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);
   bool shouldOnlyDisplayExactOutput();
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
+
+  // Additional outputs
+  AdditionalOutput additionalOuput(Poincare::Context * context);
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   /* Buffers holding text expressions have to be longer than the text written

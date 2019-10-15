@@ -358,10 +358,11 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
     }
     assert(!cursorMergedLayout.isUninitialized());
     m_contentView.cursor()->setLayout(cursorMergedLayout);
+    m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   } else if (!layoutWillBeMerged) {
     m_contentView.cursor()->setLayout(layoutR);
+    m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
-  m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
 
   // Handle matrices
   cursor->layoutReference().addGreySquaresToAllMatrixAncestors();

@@ -53,7 +53,7 @@ SECTIONS {
    * flash. This way we can assert that there are no cross references from the
    * internal flash to the external flash. */
   .text.internal_to_external : {
-    *(.text._ZL22jump_to_external_flashv)
+    *(.text._ZL22jump_to_external_flashv*)
   } >INTERNAL_FLASH
 
   /* Use boot routine and required dependencies */

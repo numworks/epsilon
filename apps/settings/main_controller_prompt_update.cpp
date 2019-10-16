@@ -2,10 +2,6 @@
 #include <apps/i18n.h>
 
 namespace Settings {
-#include "main_controller.h"
-#include <apps/i18n.h>
-
-namespace Settings {
 
 constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18n::Message::Degrees), SettingsMessageTree(I18n::Message::Radian), SettingsMessageTree(I18n::Message::Gradians)};
 constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};

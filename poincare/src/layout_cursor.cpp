@@ -75,6 +75,7 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 /* Select */
 
 bool IsBefore(Layout& l1, Layout& l2) {
+  //TODO LEA
   return reinterpret_cast<char *>(l1.node()) <= reinterpret_cast<char *>(l2.node());
 }
 
@@ -82,67 +83,72 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
   assert(!m_layout.isUninitialized());
   Layout previousPointedLayout = m_layout;
   Layout previousPointedLayoutParent = m_layout.parent();
-  if (direction == MoveDirection::Right) {
-    LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
-    Layout equivalentLayout = equivalentCursor.layoutReference();
-    if (m_position == Position::Left) {
-      if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
-        assert(equivalentCursor.position() == Position::Left);
-        *selectionLeft = equivalentLayout;
-      } else {
-        *selectionLeft = m_layout;
-      }
+
+  Position ingoingPosition = direction == MoveDirection::Right ? Position::Left : Position::Right;
+  Position outgoingPosition = direction == MoveDirection::Right ? Position::Right : Position::Left;
+  Layout * ingoingLayout = direction == MoveDirection::Right ? selectionLeft : selectionRight;
+  Layout * outgoingLayout = direction == MoveDirection::Right ? selectionRight : selectionLeft;
+
+  LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
+  Layout equivalentLayout = equivalentCursor.layoutReference();
+
+  if (m_position == ingoingPosition) {
+    if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
+      assert(equivalentCursor.position() == ingoingPosition);
+      *ingoingLayout = equivalentLayout;
     } else {
-      assert(m_position == Position::Right);
-      if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == Position::Left) {
-        *selectionLeft = equivalentLayout;
-      } else {
-        Layout notHorizontalParentLayout = m_layout.parent();
-        while(!notHorizontalParentLayout.isUninitialized() && notHorizontalParentLayout.type() == LayoutNode::Type::HorizontalLayout) {
-          notHorizontalParentLayout = notHorizontalParentLayout.parent();
-        }
-        if (!notHorizontalParentLayout.isUninitialized()) {
-          *selectionLeft = notHorizontalParentLayout;
-          *selectionRight = notHorizontalParentLayout;
-          m_layout = notHorizontalParentLayout;
-          m_position = Position::Right;
-        }
-        return;
-      }
+      *ingoingLayout = m_layout;
     }
-    move(direction, shouldRecomputeLayout);
-    if (m_layout.parent() != previousPointedLayoutParent) {
-      int previousIndex = previousPointedLayoutParent.indexOfChild(previousPointedLayout);
-      int nextIndex = previousIndex + 1;
-      assert(previousPointedLayoutParent.numberOfChildren() >= nextIndex + 1);
-      Layout previousParentCurrentChild = previousPointedLayoutParent.childAtIndex(nextIndex);
-      *selectionRight = previousParentCurrentChild;
-      m_layout = previousParentCurrentChild;
-      m_position = Position::Right;
+  } else {
+    assert(m_position == outgoingPosition);
+    if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
+      *ingoingLayout = equivalentLayout;
+    } else {
+      Layout notHorizontalParentLayout = m_layout.parent();
+      while(!notHorizontalParentLayout.isUninitialized() && notHorizontalParentLayout.type() == LayoutNode::Type::HorizontalLayout) {
+        notHorizontalParentLayout = notHorizontalParentLayout.parent();
+      }
+      if (!notHorizontalParentLayout.isUninitialized()) {
+        *ingoingLayout = notHorizontalParentLayout;
+        *outgoingLayout = notHorizontalParentLayout;
+        m_layout = notHorizontalParentLayout;
+        m_position = outgoingPosition;
+      }
       return;
     }
-    equivalentCursor = m_layout.equivalentCursor(this);
-    equivalentLayout = equivalentCursor.layoutReference();
-    if (m_position == Position::Right) {
-      if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
-        assert(equivalentCursor.position() == Position::Right);
-        *selectionRight = equivalentLayout;
-      } else {
-        *selectionRight = m_layout;
-      }
+  }
+  move(direction, shouldRecomputeLayout);
+  if (m_layout.parent() != previousPointedLayoutParent) {
+    int previousIndex = previousPointedLayoutParent.indexOfChild(previousPointedLayout);
+    int nextIndex = previousIndex + ((direction == MoveDirection::Right) ? 1 : -1);
+    assert(nextIndex >= 0 && previousPointedLayoutParent.numberOfChildren() >= nextIndex + 1);
+    Layout previousParentCurrentChild = previousPointedLayoutParent.childAtIndex(nextIndex);
+    *outgoingLayout = previousParentCurrentChild;
+    m_layout = previousParentCurrentChild;
+    m_position = outgoingPosition;
+    return;
+  }
+  equivalentCursor = m_layout.equivalentCursor(this);
+  equivalentLayout = equivalentCursor.layoutReference();
+  if (m_position == outgoingPosition) {
+    if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
+      assert(equivalentCursor.position() == outgoingPosition);
+      *outgoingLayout = equivalentLayout;
     } else {
-      assert(m_position == Position::Left);
-      if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == Position::Right) {
-        *selectionRight = equivalentLayout;
-      } else {
-        // TODO LEA
-        assert(false);
-        return;
-      }
+      *outgoingLayout = m_layout;
     }
-    if (isDefined()) {
-
+  } else {
+    assert(m_position == ingoingPosition);
+    if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == outgoingPosition) {
+      *outgoingLayout = equivalentLayout;
+    } else {
+      // TODO LEA
+      assert(false);
+      return;
     }
+  }
+  if (isDefined()) {
+    // TODO LEA
   }
 }
 

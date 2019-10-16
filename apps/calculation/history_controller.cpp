@@ -53,20 +53,30 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.selectedCell();
     SubviewType subviewType = selectedSubviewType();
-    EditExpressionController * editController = (EditExpressionController *)parentResponder();
-    m_selectableTableView.deselectTable();
-    Container::activeApp()->setFirstResponder(editController);
     Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
+    EditExpressionController * editController = (EditExpressionController *)parentResponder();
     if (subviewType == SubviewType::Input) {
+      m_selectableTableView.deselectTable();
+      Container::activeApp()->setFirstResponder(editController);
       editController->insertTextBody(calculation->inputText());
     } else {
       ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
-      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Right
-          && !calculation->shouldOnlyDisplayExactOutput())
-      {
-        editController->insertTextBody(calculation->approximateOutputText());
+      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Burger) {
+        std::complex<float> c;
+        if (calculation->additionalOuput(App::app()->localContext(), &c) == Calculation::AdditionalOutput::ComplexPlan) {
+          m_complexController.complexModel()->setComplex(c);
+          Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, Metric::PopUpTopMargin, Metric::PopUpRightMargin);
+        }
       } else {
-        editController->insertTextBody(calculation->exactOutputText());
+        m_selectableTableView.deselectTable();
+        Container::activeApp()->setFirstResponder(editController);
+        if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Right
+            && !calculation->shouldOnlyDisplayExactOutput())
+        {
+          editController->insertTextBody(calculation->approximateOutputText());
+        } else {
+          editController->insertTextBody(calculation->exactOutputText());
+        }
       }
     }
     return true;

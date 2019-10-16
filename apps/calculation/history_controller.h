@@ -5,6 +5,7 @@
 #include "history_view_cell.h"
 #include "calculation_store.h"
 #include "selectable_table_view.h"
+#include "additional_outputs/complex_graph_controller.h"
 
 namespace Calculation {
 
@@ -35,6 +36,7 @@ private:
   CalculationSelectableTableView m_selectableTableView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore * m_calculationStore;
+  ComplexGraphController m_complexController;
 };
 
 }

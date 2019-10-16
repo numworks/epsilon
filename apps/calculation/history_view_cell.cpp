@@ -165,7 +165,6 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   Poincare::Layout leftOutputLayout = calculation->createExactOutputLayout();
   Poincare::Layout rightOutputLayout = (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout :
     calculation->createApproximateOutputLayout(context);
-  m_scrollableOutputView.setDisplayLeftLayout(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate); // Must be before the setLayouts fo the reload
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);

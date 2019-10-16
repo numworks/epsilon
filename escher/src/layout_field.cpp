@@ -49,20 +49,97 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth, evSize.height());
 }
 
+bool IsBefore(Layout& l1, Layout& l2, bool strict) {
+  //TODO LEA
+  char * node1 = reinterpret_cast<char *>(l1.node());
+  char * node2 = reinterpret_cast<char *>(l2.node());
+  return strict ? (node1 < node2) : (node1 <= node2);
+}
+
 void LayoutField::ContentView::addSelection(Layout left, Layout right) {
-  bool emptySelection = selectionIsEmpty();
-  if (emptySelection) {
+  if (selectionIsEmpty()) {
+    /*
+     *  ----------  -> +++ is the previous previous selection
+     *     (   )    -> added selection
+     *  ---+++++--  -> next selection
+     * */
     m_selectionStart = left;
     m_selectionEnd = right;
-  } else if (left == m_selectionEnd) {
+  }
+#if 0
+  else if (left == m_selectionEnd) {
+    /*
+     *  +++-------  -> +++ is the previous previous selection
+     *     (   )    -> added selection
+     *  ++++++++--  -> next selection
+     * */
     m_selectionEnd = right;
   } else if (right == m_selectionStart) {
+    /*
+     *  -------+++  -> +++ is the previous previous selection
+     *     (   )    -> added selection
+     *  ---+++++++  -> next selection
+     * */
     m_selectionStart = left;
-  } else if (reinterpret_cast<char *>(left.node()) >= reinterpret_cast<char *>(m_selectionEnd.node())) {
+  }
+#endif
+   else if (IsBefore(m_selectionEnd, left, false) && !left.hasAncestor(m_selectionEnd, true)) {
+    /*
+     *  +++-------  -> +++ is the previous previous selection
+     *       (   )  -> added selection
+     *  ++++++++++  -> next selection
+     * */
      m_selectionEnd = right;
-  } else {
-    assert(reinterpret_cast<char *>(right.node()) < reinterpret_cast<char *>(m_selectionStart.node()));
+  } else if (IsBefore(right, m_selectionStart, true)) {
+    /*
+     *  -------+++  -> +++ is the previous previous selection
+     *  (   )       -> added selection
+     *  ++++++++++  -> next selection
+     * */
     m_selectionStart = left;
+  } else if (m_selectionEnd == right) {
+    /*
+     *  ++++++++++  -> +++ is the previous previous selection
+     *       (   )  -> added selection
+     *  +++++-----  -> next selection
+     * */
+     LayoutCursor c1 = LayoutCursor(left, LayoutCursor::Position::Left);
+     if (c1.layoutReference() == m_selectionStart) {
+       m_selectionStart = Layout();
+       m_selectionEnd = Layout();
+     } else {
+       LayoutCursor c2 = left.equivalentCursor(&c1);
+       Layout c2Layout = c2.layoutReference();
+       if (c2.position() == LayoutCursor::Position::Right) {
+         assert(IsBefore(m_selectionStart, c2Layout, false));
+         m_selectionEnd = c2Layout;
+       } else {
+        //TODO LEA
+        assert(false);
+       }
+     }
+  } else {
+    assert(m_selectionStart == left);
+    /*
+     *  ++++++++++  -> +++ is the previous previous selection
+     *  (   )       -> added selection
+     *  -----+++++  -> next selection
+     * */
+     LayoutCursor c1 = LayoutCursor(right, LayoutCursor::Position::Right);
+     if (c1.layoutReference() == m_selectionEnd) {
+       m_selectionStart = Layout();
+       m_selectionEnd = Layout();
+     } else {
+       LayoutCursor c2 = right.equivalentCursor(&c1);
+       Layout c2Layout = c2.layoutReference();
+       if (c2.position() == LayoutCursor::Position::Left) {
+         assert(IsBefore(c2Layout, m_selectionEnd, false));
+         m_selectionStart = c2Layout;
+       } else {
+        //TODO LEA
+        assert(false);
+       }
+     }
   }
   //reloadRectFromAndToPositions(left, right);
   /*if (m_selectionStart == m_selectionEnd) {

@@ -8,20 +8,28 @@ ComplexModel::ComplexModel(std::complex<float> c) :
 {
 }
 
+float rangeBound(float value, bool max) {
+  if (std::isnan(value) || std::isinf(value)) {
+    return max ? 1.0f : -1.0f;
+  }
+  float factor = max ? 1.2f : -1.2f;
+  return factor*std::fabs(value);
+}
+
 float ComplexModel::xMin() const {
-  return -1.2f*std::fabs(real());
+  return rangeBound(real(), false);
 }
 
 float ComplexModel::xMax() const {
-  return 1.2f*std::fabs(real());
+  return rangeBound(real(), true);
 }
 
 float ComplexModel::yMin() const {
-  return -1.2f*std::fabs(imag());
+  return rangeBound(imag(), false);
 }
 
 float ComplexModel::yMax() const {
-  return 1.2f*std::fabs(imag());
+  return rangeBound(imag(), true);
 }
 
 }

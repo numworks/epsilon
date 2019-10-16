@@ -2,7 +2,7 @@
 #include "display.h"
 #include <ion.h>
 
-void ion_main(int argc, char * argv[]) {
+void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
   Ion::Backlight::init();
   // Initialize Flasher display

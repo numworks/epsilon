@@ -37,8 +37,8 @@ public:
     None,
     ComplexPlan,
     TrigonometryCircle,
-    BaseRepresentation
-    //Matrix
+    BaseRepresentation,
+    Matrix
   };
 
   /* It is not really the minimal size, but it clears enough space for most
@@ -84,7 +84,7 @@ public:
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 
   // Additional outputs
-  AdditionalOutput additionalOuput(Poincare::Context * context, std::complex<float> * c = nullptr);
+  AdditionalOutput additionalOuput(Poincare::Context * context);
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   /* Buffers holding text expressions have to be longer than the text written

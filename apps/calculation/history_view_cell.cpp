@@ -35,7 +35,6 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
   m_calculationAdditionalOutput(Calculation::AdditionalOutput::None),
-  m_calculationExpanded(false),
   m_inputView(this),
   m_scrollableOutputView(this)
 {
@@ -95,17 +94,17 @@ void HistoryViewCell::reloadOutputSelection() {
 }
 
 void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
+  bool outputSelected = type == HistoryViewCellDataSource::SubviewType::Output;
   // Init output selection
-  if (type == HistoryViewCellDataSource::SubviewType::Output) {
+  if (outputSelected) {
     reloadOutputSelection();
   }
 
   /* The selected subview has changed. The displayed outputs might have changed.
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
    * display 1.2+2 --> 16/5 = 3.2. */
-  m_calculationExpanded = (type == HistoryViewCellDataSource::SubviewType::Output);
-  m_scrollableOutputView.setDisplayLeftLayout(displayLeftLayout());
-  m_scrollableOutputView.setDisplayBurger(displayBurger());
+  m_scrollableOutputView.setDisplayLeftLayout(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && outputSelected));
+  m_scrollableOutputView.setDisplayBurger(outputSelected && m_calculationAdditionalOutput != Calculation::AdditionalOutput::None);
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -144,9 +143,9 @@ void HistoryViewCell::layoutSubviews(bool force) {
   force);
 }
 
-void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
+void HistoryViewCell::setCalculation(Calculation * calculation) {
   uint32_t newCalculationCRC = Ion::crc32Byte((const uint8_t *)calculation, ((char *)calculation->next()) - ((char *) calculation));
-  if (m_calculationExpanded == expanded && newCalculationCRC == m_calculationCRC32) {
+  if (newCalculationCRC == m_calculationCRC32) {
     return;
   }
   Poincare::Context * context = App::app()->localContext();
@@ -157,7 +156,6 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
-  m_calculationExpanded = expanded;
   m_calculationDisplayOutput = calculation->displayOutput(context);
   m_calculationAdditionalOutput = calculation->additionalOuput(context);
   m_inputView.setLayout(calculation->createInputLayout());
@@ -199,15 +197,6 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
-}
-
-bool HistoryViewCell::displayLeftLayout() const {
-  return (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate)
-    || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && m_calculationExpanded);
-}
-
-bool HistoryViewCell::displayBurger() const {
-  return m_calculationAdditionalOutput != Calculation::AdditionalOutput::None && m_calculationExpanded;
 }
 
 }

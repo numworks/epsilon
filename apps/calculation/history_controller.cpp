@@ -26,6 +26,8 @@ void HistoryController::reload() {
    */
   if (numberOfRows() > 0) {
     m_selectableTableView.scrollToCell(0, numberOfRows()-1);
+    // Force to reload last added cell (hide the burger and exact output if necessary)
+    tableViewDidChangeSelection(&m_selectableTableView, 0, numberOfRows()-1);
   }
 }
 
@@ -134,6 +136,8 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   } else if (selectedRow() < previousSelectedCellY) {
     setSelectedSubviewType(SubviewType::Output, previousSelectedCellX, previousSelectedCellY);
   } else if (selectedRow() > previousSelectedCellY) {
+    setSelectedSubviewType(SubviewType::Input, previousSelectedCellX, previousSelectedCellY);
+  } else if (selectedRow() == -1) {
     setSelectedSubviewType(SubviewType::Input, previousSelectedCellX, previousSelectedCellY);
   }
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());

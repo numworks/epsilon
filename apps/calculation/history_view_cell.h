@@ -40,7 +40,7 @@ public:
   }
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override;
-  void setCalculation(Calculation * calculation, bool expanded = false);
+  void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
@@ -51,12 +51,9 @@ private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection();
-  bool displayLeftLayout() const;
-  bool displayBurger() const;
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalOutput m_calculationAdditionalOutput;
-  bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;

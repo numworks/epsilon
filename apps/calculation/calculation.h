@@ -84,7 +84,7 @@ public:
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 
   // Additional outputs
-  AdditionalOutput additionalOuput(Poincare::Context * context);
+  AdditionalOutput additionalOuput(Poincare::Context * context, std::complex<float> * c = nullptr);
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   /* Buffers holding text expressions have to be longer than the text written

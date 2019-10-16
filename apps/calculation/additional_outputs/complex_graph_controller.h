@@ -13,6 +13,7 @@ public:
   View * view() override {
     return &m_graphView;
   }
+  ComplexModel * complexModel() { return &m_complex; }
 private:
   ComplexModel m_complex;
   ComplexGraphView m_graphView;

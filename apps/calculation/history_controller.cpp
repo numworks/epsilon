@@ -130,11 +130,11 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
     return;
   }
   if (previousSelectedCellY == -1) {
-    setSelectedSubviewType(SubviewType::Output);
+    setSelectedSubviewType(SubviewType::Output, previousSelectedCellX, previousSelectedCellY);
   } else if (selectedRow() < previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Output);
+    setSelectedSubviewType(SubviewType::Output, previousSelectedCellX, previousSelectedCellY);
   } else if (selectedRow() > previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Input);
+    setSelectedSubviewType(SubviewType::Input, previousSelectedCellX, previousSelectedCellY);
   }
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   if (selectedCell == nullptr) {
@@ -182,12 +182,13 @@ void HistoryController::scrollToCell(int i, int j) {
   m_selectableTableView.scrollToCell(i, j);
 }
 
-HistoryViewCell * HistoryController::historyViewCellDidChangeSelection() {
+void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY) {
   /* Update the whole table as the height of the selected cell row might have
    * changed. */
   m_selectableTableView.reloadData();
-  // Return the selected cell if one
-  return static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
+  // Fill the selected cell and the previous selected cell because cells repartition might have changed
+  *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
+  *previousCell = static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(previousSelectedCellX, previousSelectedCellY));
 }
 
 }

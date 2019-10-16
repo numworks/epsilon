@@ -15,12 +15,17 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 HistoryViewCellDataSource::HistoryViewCellDataSource() :
   m_selectedSubviewType(SubviewType::Output) {}
 
-void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType) {
+void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, int previousSelectedCellX, int previousSelectedCellY) {
   m_selectedSubviewType = subviewType;
-  HistoryViewCell * cell = historyViewCellDidChangeSelection();
-  if (cell) {
-    cell->setHighlighted(cell->isHighlighted());
-    cell->cellDidSelectSubview(subviewType);
+  HistoryViewCell * selectedCell = nullptr;
+  HistoryViewCell * previouslySelectedCell = nullptr;
+  historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell, previousSelectedCellX, previousSelectedCellY);
+  if (selectedCell) {
+    selectedCell->setHighlighted(selectedCell->isHighlighted());
+    selectedCell->cellDidSelectSubview(subviewType);
+  }
+  if (previouslySelectedCell) {
+    previouslySelectedCell->cellDidSelectSubview(SubviewType::Input);
   }
 }
 
@@ -162,9 +167,8 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   Poincare::Layout leftOutputLayout = calculation->createExactOutputLayout();
   Poincare::Layout rightOutputLayout = (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout :
     calculation->createApproximateOutputLayout(context);
-  m_scrollableOutputView.setDisplayLeftLayout(displayLeftLayout()); // Must be before the setLayouts fo the reload
+  m_scrollableOutputView.setDisplayLeftLayout(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate); // Must be before the setLayouts fo the reload
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
-  m_scrollableOutputView.setDisplayBurger(displayBurger());
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
 

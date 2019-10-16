@@ -8,7 +8,7 @@ namespace Calculation {
 
 class ComplexModel : public Shared::CurveViewRange, public std::complex<float> {
 public:
-  ComplexModel(std::complex<float> c = std::complex<float>(2.3f, 4.1f));
+  ComplexModel(std::complex<float> c = std::complex<float>(NAN, NAN));
   // CurveViewRange
   float xMin() const override;
   float xMax() const override;

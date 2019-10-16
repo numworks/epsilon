@@ -18,8 +18,7 @@ void CalculationSelectableTableView::scrollToCell(int i, int j) {
   } else {
     setTopMargin(0);
   }
-  // Force to relayout
-  ScrollView::layoutSubviews(true);
+  ScrollView::layoutSubviews();
   if (m_contentView.bounds().height() - contentOffset().y() < bounds().height()) {
     KDCoordinate contentOffsetX = contentOffset().x();
     KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(dataSource()->numberOfRows()) - maxContentHeightDisplayableWithoutScrolling();

@@ -169,13 +169,8 @@ ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressions
 }
 
 void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout rightLayout, Poincare::Layout leftLayout) {
-  bool updateRightLayout = m_contentCell.rightExpressionView()->setLayout(rightLayout);
-  bool updateLeftLayout = m_contentCell.leftExpressionView()->setLayout(leftLayout);
-  if (updateRightLayout || updateLeftLayout) {
-    m_contentCell.reloadTextColor();
-    m_contentCell.layoutSubviews();
-    reloadScroll();
-  }
+  m_contentCell.rightExpressionView()->setLayout(rightLayout);
+  m_contentCell.leftExpressionView()->setLayout(leftLayout);
 }
 
 void ScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Message equalSignMessage) {

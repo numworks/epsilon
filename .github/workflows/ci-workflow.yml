@@ -17,6 +17,12 @@ jobs:
       - run: sudo apt-get install binutils-arm-none-eabi build-essential gcc-arm-none-eabi imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: actions/checkout@v1
       - run: make -j2 MODEL=n0100 epsilon.dfu
+      - run: make -j2 MODEL=n0100 epsilon.onboarding.dfu
+      - run: make -j2 MODEL=n0100 epsilon.onboarding.update.dfu
+      - run: make -j2 MODEL=n0100 flasher.light.dfu
+      - run: make -j2 MODEL=n0100 flasher.verbose.dfu
+      - run: make -j2 MODEL=n0100 bench.ram.dfu
+      - run: make -j2 MODEL=n0100 bench.flash.dfu
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-device-n0100.dfu
@@ -28,6 +34,12 @@ jobs:
       - run: sudo apt-get install binutils-arm-none-eabi build-essential gcc-arm-none-eabi imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - uses: actions/checkout@v1
       - run: make -j2 epsilon.dfu
+      - run: make -j2 epsilon.onboarding.dfu
+      - run: make -j2 epsilon.onboarding.update.dfu
+      - run: make -j2 flasher.light.dfu
+      - run: make -j2 flasher.verbose.dfu
+      - run: make -j2 bench.ram.dfu
+      - run: make -j2 bench.flash.dfu
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-device-n0110.dfu

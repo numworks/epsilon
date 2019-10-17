@@ -99,12 +99,11 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
     result = Unreal::Builder();
   } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {
     result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
+  } else {
+    return *this;
   }
-  if (!result.isUninitialized()) {
-    replaceWithInPlace(result);
-    return result;
-  }
-  return *this;
+  replaceWithInPlace(result);
+  return result;
 }
 
 template Evaluation<float> ConstantNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

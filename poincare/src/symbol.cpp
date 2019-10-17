@@ -93,9 +93,6 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
 }
 
 int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
   return minInt(bufferSize - 1, strlcpy(buffer, m_name, bufferSize));
 }
 

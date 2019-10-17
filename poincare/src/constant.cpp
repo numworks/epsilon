@@ -65,9 +65,6 @@ Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
   return minInt(strlcpy(buffer, m_name, bufferSize), bufferSize - 1);
 }
 

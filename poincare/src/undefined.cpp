@@ -25,9 +25,6 @@ Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
 }
 
 int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
   return minInt(strlcpy(buffer, Undefined::Name(), bufferSize), bufferSize - 1);
 }
 

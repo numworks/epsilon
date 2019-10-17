@@ -46,7 +46,7 @@ public:
   }
 #endif
 
-protected:
+private:
   virtual size_t nodeSize() const = 0;
 };
 

@@ -48,6 +48,9 @@ public:
 
 private:
   virtual size_t nodeSize() const = 0;
+
+  // Layout
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 };
 
 /* WARNING: symbol abstract cannot have any virtual methods. Otherwise,

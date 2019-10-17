@@ -49,7 +49,6 @@ private:
 
 class Symbol final : public SymbolAbstract {
   friend class Expression;
-  friend class Store;
   friend class SymbolNode;
 public:
   static constexpr int k_ansLength = 3;

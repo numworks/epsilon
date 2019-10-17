@@ -16,8 +16,6 @@
 
 namespace Poincare {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
-
 constexpr char Symbol::k_ans[];
 
 SymbolNode::SymbolNode(const char * newName, int length) : SymbolAbstractNode() {
@@ -90,10 +88,6 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
     }
   }
   return LayoutHelper::String(m_name, strlen(m_name));
-}
-
-int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return minInt(bufferSize - 1, strlcpy(buffer, m_name, bufferSize));
 }
 
 Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {

@@ -24,7 +24,6 @@ namespace Poincare {
  * */
 
 class SymbolAbstractNode : public ExpressionNode {
-  friend class Store;
 public:
   virtual const char * name() const = 0;
   size_t size() const override;

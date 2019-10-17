@@ -21,8 +21,6 @@ jobs:
       - run: make -j2 MODEL=n0100 epsilon.onboarding.update.dfu
       - run: make -j2 MODEL=n0100 flasher.light.dfu
       - run: make -j2 MODEL=n0100 flasher.verbose.dfu
-      - run: make -j2 MODEL=n0100 bench.ram.dfu
-      - run: make -j2 MODEL=n0100 bench.flash.dfu
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-device-n0100.dfu

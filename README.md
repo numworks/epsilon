@@ -2,7 +2,7 @@
 
 [![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge)](https://gitlab.com/joachim2lefournis/Omega/pipelines)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?logo=creative%20commons&style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![GitHub issues](https://img.shields.io/github/issues/quentinguidee/Polytech-LaTeX-Template.svg?logo=git&style=for-the-badge)](https://github.com/quentinguidee/Polytech-LaTeX-Template/issues)
+[![GitHub issues](https://img.shields.io/github/issues/Omega-Numworks/Omega.svg?logo=git&style=for-the-badge)](https://github.com/Omega-Numworks/Omega/issues)
 
 Omega is an extension to the Numworks Epsilon project, which will bring many features to the calculator. Omega is for people who want to add features to the calculator, but can not because it has been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator. But, it's fun so we add it on Omega! In short, Omega is a kind of Jailbreak.
 

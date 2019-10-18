@@ -167,7 +167,9 @@ int CurveView::numberOfLabels(Axis axis) const {
   float labelStep = 2.0f * gridUnit(axis);
   float minLabel = std::ceil(min(axis)/labelStep);
   float maxLabel = std::floor(max(axis)/labelStep);
-  return maxLabel - minLabel + 1;
+  int numberOfLabels = maxLabel - minLabel + 1;
+  assert(numberOfLabels <= (axis == Axis::Horizontal ? k_maxNumberOfXLabels : k_maxNumberOfYLabels));
+  return numberOfLabels;
 }
 
 void CurveView::computeLabels(Axis axis) {

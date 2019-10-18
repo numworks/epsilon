@@ -128,7 +128,7 @@ float GraphController::interestingXHalfRange() const {
   for (int i = 0; i < nbActiveFunctions; i++) {
     ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
-    if (!std::isnan(fRange)) {
+    if (!std::isnan(fRange) && !std::isinf(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
     }
     // Compute the combined range of the functions

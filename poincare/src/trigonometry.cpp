@@ -74,9 +74,9 @@ float Trigonometry::characteristicXRange(const Expression & e, Context * context
   /* To compute a, the slope of the expression child(0), we compute the
    * derivative of child(0) for any x value. */
   Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol::Builder(x, 1), Float<float>::Builder(1.0f));
-  float a = derivative.node()->approximate(float(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
-  float pi = PiInAngleUnit(angleUnit);
-  return 2.0f*pi/std::fabs(a);
+  double a = derivative.node()->approximate(double(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
+  double pi = PiInAngleUnit(angleUnit);
+  return std::fabs(a) < Expression::Epsilon<double>() ? NAN : 2.0*pi/std::fabs(a);
 }
 
 bool Trigonometry::isDirectTrigonometryFunction(const Expression & e) {

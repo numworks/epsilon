@@ -1,7 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for an improvement of Omega
-labels: 'enhancement'
+title: ''
+labels: Triage
+assignees: ''
 
 ---
 

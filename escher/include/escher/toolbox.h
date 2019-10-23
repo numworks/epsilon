@@ -18,13 +18,13 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;
+  virtual const ToolboxMessageTree * rootModel() const = 0;
 
 protected:
   constexpr static int k_maxMessageSize = 100;
   bool selectSubMenu(int selectedRow) override;
   bool returnToPreviousMenu() override;
   virtual int maxNumberOfDisplayedRows() = 0;
-  virtual const ToolboxMessageTree * rootModel() const = 0;
   virtual MessageTableCellWithMessage * leafCellAtIndex(int index) override = 0;
   virtual MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
   mutable ToolboxMessageTree * m_messageTreeModel;

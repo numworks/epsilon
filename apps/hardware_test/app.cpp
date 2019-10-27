@@ -1,14 +1,9 @@
 #include "app.h"
-#include "../apps_container.h"
-
-extern "C" {
-#include <assert.h>
-}
 
 namespace HardwareTest {
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -16,31 +11,39 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_wizardViewController),
+App::App(Snapshot * snapshot) :
+  ::App(snapshot, &m_wizardViewController),
   m_wizardViewController(&m_modalViewController)
 {
 }
 
 App::WizardViewController::WizardViewController(Responder * parentResponder) :
   BankViewController(parentResponder),
-  m_keyboardController(this),
-  m_screenTestController(this),
-  m_ledTestController(this),
   m_batteryTestController(this),
-  m_serialNumberController(this)
+  m_lcdTimingTestController(this),
+  m_colorsLCDTestController(this),
+  m_deadPixelsTestController(this),
+  m_keyboardController(this),
+  m_lcdDataTestController(this),
+  m_ledTestController(this),
+  m_serialNumberController(this),
+  m_vBlankTestController(this)
 {
 }
 
 int App::WizardViewController::numberOfChildren() {
-  return 5;
+  return 9;
 }
 
 ViewController * App::WizardViewController::childAtIndex(int i) {
   ViewController * children[] = {
-    &m_keyboardController,
-    &m_screenTestController,
+    &m_vBlankTestController,
+    &m_lcdTimingTestController,
+    &m_colorsLCDTestController,
+    &m_lcdDataTestController,
+    &m_deadPixelsTestController,
     &m_ledTestController,
+    &m_keyboardController,
     &m_batteryTestController,
     &m_serialNumberController
   };

@@ -15,8 +15,7 @@ PreimageParameterController::PreimageParameterController(
     parentResponder,
     inputEventHandlerDelegate,
     graphRange,
-    cursor,
-    I18n::Message::Y
+    cursor
   ),
   m_preimageGraphController(preimageGraphController)
 {
@@ -27,6 +26,7 @@ const char * PreimageParameterController::title() {
 }
 
 void PreimageParameterController::viewWillAppear() {
+  setParameterName(I18n::Message::Y);
   m_preimageGraphController->setImage(m_cursor->y());
   Shared::GoToParameterController::viewWillAppear();
 }

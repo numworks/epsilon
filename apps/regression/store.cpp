@@ -1,6 +1,5 @@
 #include "store.h"
 #include "linear_model_helper.h"
-#include "apps/apps_container.h"
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <float.h>
@@ -60,7 +59,7 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
     for (int i = 0; i <= numberOfPoints; i++) {
       double currentX = i < numberOfPoints ? m_data[series][0][i] : meanOfColumn(series, 0);
       double currentY = i < numberOfPoints ? m_data[series][1][i] : meanOfColumn(series, 1);
-      if (m_xMin <= currentX && currentX <= m_xMax // The next dot is within the window abscissa bounds
+      if (xMin() <= currentX && currentX <= xMax() // The next dot is within the window abscissa bounds
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
           && ((currentY > y && direction > 0) // The next dot is above/under y
             || (currentY < y && direction < 0)
@@ -141,6 +140,7 @@ int Store::nextDot(int series, int direction, int dot) {
 /* Window */
 
 void Store::setDefault() {
+  m_yAuto = true;
   float minX = FLT_MAX;
   float maxX = -FLT_MAX;
   for (int series = 0; series < k_numberOfSeries; series++) {
@@ -152,7 +152,6 @@ void Store::setDefault() {
   float range = maxX - minX;
   setXMin(minX - k_displayHorizontalMarginRatio*range);
   setXMax(maxX + k_displayHorizontalMarginRatio*range);
-  setYAuto(true);
 }
 
 /* Series */

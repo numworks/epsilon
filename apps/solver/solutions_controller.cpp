@@ -1,12 +1,12 @@
 #include "solutions_controller.h"
 #include "app.h"
-#include "../constant.h"
 #include "../shared/poincare_helpers.h"
 #include <assert.h>
 #include <limits.h>
 #include <poincare/layout_helper.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/preferences.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -105,11 +105,10 @@ View * SolutionsController::view() {
 
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
-  App * solverApp = static_cast<App *>(app());
   bool requireWarning = false;
   if (m_equationStore->type() == EquationStore::Type::Monovariable) {
     m_contentView.setWarningMessages(I18n::Message::OnlyFirstSolutionsDisplayed0, I18n::Message::OnlyFirstSolutionsDisplayed1);
-    requireWarning = m_equationStore->haveMoreApproximationSolutions(solverApp->localContext());
+    requireWarning = m_equationStore->haveMoreApproximationSolutions(App::app()->localContext());
   } else if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && m_equationStore->numberOfSolutions() == 1) {
     assert(Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real);
     m_contentView.setWarningMessages(I18n::Message::PolynomeHasNoRealSolution0, I18n::Message::PolynomeHasNoRealSolution1);
@@ -150,11 +149,11 @@ Responder * SolutionsController::defaultController() {
 
 /* TableViewDataSource */
 
-int SolutionsController::numberOfRows() {
+int SolutionsController::numberOfRows() const {
   return m_equationStore->numberOfSolutions();
 }
 
-int SolutionsController::numberOfColumns() {
+int SolutionsController::numberOfColumns() const {
   return 2;
 }
 
@@ -189,8 +188,10 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
     // Value of the variable or discriminant
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
-      char bufferValue[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-      PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+      constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+      constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+      char bufferValue[bufferSize];
+      PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, bufferSize, precision);
       valueCell->setText(bufferValue);
     } else {
       Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);
@@ -285,7 +286,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
 }
 
 void SolutionsController::didBecomeFirstResponder() {
-  app()->setFirstResponder(m_contentView.selectableTableView());
+  Container::activeApp()->setFirstResponder(m_contentView.selectableTableView());
 }
 
 }

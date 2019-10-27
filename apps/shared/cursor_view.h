@@ -5,8 +5,9 @@
 
 namespace Shared {
 
-class CursorView : public TransparentView {
+class CursorView : public View {
 public:
+  virtual void setCursorFrame(KDRect frame) { View::setFrame(frame); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:

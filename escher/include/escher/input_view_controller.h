@@ -16,8 +16,14 @@
 class InputViewController : public ModalViewController, InputEventHandlerDelegate, TextFieldDelegate, LayoutFieldDelegate {
 public:
   InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
-  void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
-  const char * textBody();
+  const char * textBody() {
+    return m_expressionFieldController.expressionField()->text();
+  }
+  void setTextBody(const char * text) {
+    m_expressionFieldController.expressionField()->setText(text);
+  }
+  void edit(Responder * caller, Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction);
+  bool isEditing();
   void abortEditionAndDismiss();
 
   /* TextFieldDelegate */
@@ -48,8 +54,6 @@ private:
     View * view() override { return &m_expressionField; }
     ExpressionField * expressionField() { return &m_expressionField; }
   private:
-    static constexpr int k_bufferLength = TextField::maxBufferSize();
-    char m_textBuffer[k_bufferLength];
     ExpressionField m_expressionField;
   };
   bool inputViewDidFinishEditing();

@@ -1,7 +1,7 @@
 #include <poincare/imaginary_part.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -20,11 +20,11 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
-Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ImaginaryPart(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression ImaginaryPartNode::shallowReduce(ReductionContext reductionContext) {
+  return ImaginaryPart(this).shallowReduce(reductionContext);
 }
 
-Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -32,12 +32,10 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexF
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixFirstChild(reductionContext);
   }
-#endif
-  if (c.isReal(context)) {
+  if (c.isReal(reductionContext.context())) {
     Expression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;
@@ -46,7 +44,7 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexF
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Expression i = complexChild.imag();
     replaceWithInPlace(i);
-    return i.shallowReduce(context, complexFormat, angleUnit, target);
+    return i.shallowReduce(reductionContext);
   }
   return *this;
 }

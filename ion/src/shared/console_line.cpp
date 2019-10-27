@@ -5,6 +5,7 @@ namespace Console {
 
 char readChar();
 void writeChar(char c);
+bool transmissionDone();
 
 void writeLine(const char * line) {
   while (*line != 0) {
@@ -12,6 +13,8 @@ void writeLine(const char * line) {
   }
   writeChar('\r');
   writeChar('\n');
+  while (!transmissionDone()) {
+  }
 }
 
 void readLine(char * line, int maxLineLength) {

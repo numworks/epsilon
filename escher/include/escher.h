@@ -3,7 +3,6 @@
 
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/alternate_empty_view_delegate.h>
-#include <escher/app.h>
 #include <escher/bank_view_controller.h>
 #include <escher/buffer_text_view.h>
 #include <escher/button.h>
@@ -40,6 +39,7 @@
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_buffer.h>
 #include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_chevron_and_expression.h>
 #include <escher/message_table_cell_with_editable_text.h>

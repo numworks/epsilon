@@ -24,12 +24,13 @@ public:
   enum class Type {
     AngleInDegrees = 0,
     AngleInRadians = 1,
-    Cosine = 2,
-    Sine = 3,
-    Tangent = 4
+    AngleInGradians = 2,
+    Cosine = 3,
+    Sine = 4,
+    Tangent = 5
   };
   static const TrigonometryCheatTable * Table();
-  Expression simplify(const Expression e, ExpressionNode::Type type, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const;
+  Expression simplify(const Expression e, ExpressionNode::Type type, ExpressionNode::ReductionContext reductionContext) const;
 
 private:
 
@@ -42,7 +43,7 @@ private:
     public:
       constexpr Pair(const char * expression, float value = NAN) :
         m_expression(expression), m_value(value) {}
-      Expression reducedExpression(bool assertNotUninitialized, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const;
+      Expression reducedExpression(bool assertNotUninitialized, ExpressionNode::ReductionContext reductionContext) const;
       float value() const { return m_value; }
     private:
       const char * m_expression;
@@ -50,18 +51,18 @@ private:
     };
     // END OF PAIR CLASS
 
-    constexpr Row(Pair angleInRadians, Pair angleInDegrees, Pair sine, Pair cosine, Pair tangent) :
-      m_pairs{angleInRadians, angleInDegrees, sine, cosine, tangent} {}
+    constexpr Row(Pair angleInRadians, Pair angleInGradians, Pair angleInDegrees, Pair sine, Pair cosine, Pair tangent) :
+      m_pairs{angleInRadians, angleInGradians, angleInDegrees, sine, cosine, tangent} {}
     float floatForType(Type t) const {
       assert(((int) t) >= 0 && ((int) t) < k_numberOfPairs);
       return m_pairs[(int)t].value();
     }
-    Expression expressionForType(Type t, bool assertNotUninitialized, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const {
+    Expression expressionForType(Type t, bool assertNotUninitialized, ExpressionNode::ReductionContext reductionContext) const {
       assert(((int) t) >= 0 && ((int) t) < k_numberOfPairs);
-      return m_pairs[(int)t].reducedExpression(assertNotUninitialized, context, complexFormat, angleUnit, target);
+      return m_pairs[(int)t].reducedExpression(assertNotUninitialized, reductionContext);
     }
   private:
-    constexpr static int k_numberOfPairs = 5;
+    constexpr static int k_numberOfPairs = 6;
     const Pair m_pairs[k_numberOfPairs];
   };
   // END OF ROW CLASS
@@ -71,9 +72,9 @@ private:
     assert(i >= 0 && i < k_numberOfEntries);
     return m_rows[i].floatForType(t);
   }
-  Expression expressionForTypeAtIndex(Type t, int i, bool assertNotUninitialized, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const {
+  Expression expressionForTypeAtIndex(Type t, int i, bool assertNotUninitialized, ExpressionNode::ReductionContext reductionContext) const {
     assert(i >= 0 && i < k_numberOfEntries);
-    return m_rows[i].expressionForType(t, assertNotUninitialized, context, complexFormat, angleUnit, target);
+    return m_rows[i].expressionForType(t, assertNotUninitialized, reductionContext);
   }
   const Row * m_rows;
 };

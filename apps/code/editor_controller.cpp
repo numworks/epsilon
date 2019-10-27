@@ -39,7 +39,7 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
 }
 
 void EditorController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_editorView);
+  Container::activeApp()->setFirstResponder(&m_editorView);
 }
 
 void EditorController::viewWillAppear() {
@@ -58,7 +58,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     saveScript();
     return false;
   }
-  if (static_cast<App *>(textArea->app())->textInputDidReceiveEvent(textArea, event)) {
+  if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
   if (event == Ion::Events::EXE) {
@@ -82,8 +82,8 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
       cursorIsPrecededOnTheLineBySpacesOnly = true;
     }
     numberOfSpaces = numberOfSpaces / UTF8Decoder::CharSizeOfCodePoint(' ');
-    if (cursorIsPrecededOnTheLineBySpacesOnly && numberOfSpaces >= k_indentationSpacesNumber) {
-      for (int i = 0; i < k_indentationSpacesNumber; i++) {
+    if (cursorIsPrecededOnTheLineBySpacesOnly && numberOfSpaces >= TextArea::k_indentationSpaces) {
+      for (int i = 0; i < TextArea::k_indentationSpaces; i++) {
         textArea->removePreviousGlyph();
       }
       return true;
@@ -96,11 +96,11 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     assert(firstNonSpace >= text);
     if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
       assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-      char indentationBuffer[k_indentationSpacesNumber+1];
-      for (int i = 0; i < k_indentationSpacesNumber; i++) {
+      char indentationBuffer[TextArea::k_indentationSpaces+1];
+      for (int i = 0; i < TextArea::k_indentationSpaces; i++) {
         indentationBuffer[i] = ' ';
       }
-      indentationBuffer[k_indentationSpacesNumber] = 0;
+      indentationBuffer[TextArea::k_indentationSpaces] = 0;
       textArea->handleEventWithText(indentationBuffer);
       return true;
     }
@@ -109,13 +109,9 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 }
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = static_cast<App *>(app())->variableBoxController();
+  VariableBoxController * varBox = App::app()->variableBoxController();
   varBox->loadFunctionsAndVariables();
   return varBox;
-}
-
-InputEventHandlerDelegateApp * EditorController::inputEventHandlerDelegateApp() {
-  return static_cast<App *>(app());
 }
 
 StackViewController * EditorController::stackController() {

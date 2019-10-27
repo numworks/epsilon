@@ -44,17 +44,13 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
   private:
-    static constexpr int k_bufferLength = TextField::maxBufferSize();
     TableView * m_mainView;
-    char m_textBody[k_bufferLength];
     ExpressionField m_expressionField;
   };
   void reloadView();
   bool inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation);
   bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   static constexpr int k_cacheBufferSize = Constant::MaxSerializedExpressionSize;
   char m_cacheBuffer[k_cacheBufferSize];
   HistoryController * m_historyController;

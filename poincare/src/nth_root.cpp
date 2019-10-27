@@ -11,6 +11,7 @@
 #include <poincare/serialization_helper.h>
 #include <assert.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -28,12 +29,12 @@ int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name());
 }
 
-Expression NthRootNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return NthRoot(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression NthRootNode::shallowReduce(ReductionContext reductionContext) {
+  return NthRoot(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> NthRootNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> base = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> index = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   Complex<T> result = Complex<T>::Undefined();
@@ -60,27 +61,25 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::C
     }
     result = PowerNode::compute(basec, std::complex<T>(1.0)/(indexc), complexFormat);
   }
-  return result;
+  return std::move(result);
 }
 
 
-Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode:Type::Matrix) {
-    return Undefined::Builder();
+  if (childAtIndex(0).deepIsMatrix(reductionContext.context()) || childAtIndex(1).deepIsMatrix(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
   }
-#endif
   Expression invIndex = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Power p = Power::Builder(childAtIndex(0), invIndex);
-  invIndex.shallowReduce(context, complexFormat, angleUnit, target);
+  invIndex.shallowReduce(reductionContext);
   replaceWithInPlace(p);
-  return p.shallowReduce(context, complexFormat, angleUnit, target);
+  return p.shallowReduce(reductionContext);
 }
 
 }

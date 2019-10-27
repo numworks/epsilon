@@ -1,27 +1,13 @@
 apps += Regression::App
 app_headers += apps/regression/app.h
 
-app_src += $(addprefix apps/regression/,\
-  app.cpp \
-  banner_view.cpp \
-  calculation_controller.cpp \
-  column_title_cell.cpp \
-  even_odd_buffer_text_cell_with_margin.cpp \
-  even_odd_double_buffer_text_cell_with_separator.cpp \
-  go_to_parameter_controller.cpp \
-  graph_controller.cpp \
-  graph_options_controller.cpp \
-  graph_view.cpp \
-  initialisation_parameter_controller.cpp \
+app_regression_test_src += $(addprefix apps/regression/,\
   linear_model_helper.cpp \
   regression_context.cpp \
-  regression_controller.cpp \
   store.cpp \
-  store_controller.cpp \
-  store_parameter_controller.cpp \
 )
 
-app_src += $(addprefix apps/regression/model/,\
+app_regression_test_src += $(addprefix apps/regression/model/,\
   cubic_model.cpp \
   exponential_model.cpp \
   linear_model.cpp \
@@ -34,6 +20,25 @@ app_src += $(addprefix apps/regression/model/,\
   trigonometric_model.cpp \
 )
 
+app_regression_src = $(addprefix apps/regression/,\
+  app.cpp \
+  banner_view.cpp \
+  calculation_controller.cpp \
+  column_title_cell.cpp \
+  even_odd_double_buffer_text_cell_with_separator.cpp \
+  graph_controller.cpp \
+  graph_options_controller.cpp \
+  graph_view.cpp \
+  go_to_parameter_controller.cpp \
+  initialisation_parameter_controller.cpp \
+  regression_controller.cpp \
+  store_controller.cpp \
+  store_parameter_controller.cpp \
+)
+
+app_regression_src += $(app_regression_test_src)
+app_src += $(app_regression_src)
+
 i18n_files += $(addprefix apps/regression/,\
   base.de.i18n\
   base.en.i18n\
@@ -43,7 +48,7 @@ i18n_files += $(addprefix apps/regression/,\
   base.universal.i18n\
 )
 
-tests += $(addprefix apps/regression/test/,\
+tests_src += $(addprefix apps/regression/test/,\
   model.cpp\
 )
 

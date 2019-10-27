@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "list_parameter_controller.h"
 #include "text_field_function_title_cell.h"
-#include "../cartesian_function_store.h"
+#include "../continuous_function_store.h"
 #include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
@@ -13,7 +13,7 @@ namespace Graph {
 
 class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate {
 public:
-  ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer);
+  ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, InputEventHandlerDelegate * inputEventHandlerDelegate);
   const char * title() override;
   void renameSelectedFunction();
   // TextFieldDelegate
@@ -29,10 +29,8 @@ private:
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override {
-    return static_cast<Shared::TextFieldDelegateApp *>(app());
-  }
-  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::Function> function, TextField * textField);
+  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::ContinuousFunction> function, TextField * textField);
+  ContinuousFunctionStore * modelStore() override;
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;

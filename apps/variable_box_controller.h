@@ -4,7 +4,6 @@
 #define MATRIX_VARIABLES 1
 
 #include <escher.h>
-#include "shared/global_context.h"
 #include "variable_box_empty_controller.h"
 #include <apps/i18n.h>
 
@@ -20,7 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   //ListViewDataSource
-  int numberOfRows() override;
+  int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;

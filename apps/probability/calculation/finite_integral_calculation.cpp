@@ -1,5 +1,5 @@
 #include "finite_integral_calculation.h"
-#include "../law/normal_law.h"
+#include "../distribution/normal_distribution.h"
 #include <assert.h>
 #include <ion.h>
 #include <cmath>
@@ -15,17 +15,10 @@ FiniteIntegralCalculation::FiniteIntegralCalculation() :
   compute(0);
 }
 
-int FiniteIntegralCalculation::numberOfEditableParameters() {
-  if (m_law->type() == Law::Type::Normal) {
-    return 3;
-  }
-  return 2;
-}
-
 I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
-    return I18n::Message::RightIntegralFirstLegend;
+    return I18n::Message::FiniteIntegralFirstLegend;
   }
   if (index == 1) {
     return I18n::Message::FiniteIntegralLegend;
@@ -60,16 +53,16 @@ double FiniteIntegralCalculation::parameterAtIndex(int index) {
 }
 
 void FiniteIntegralCalculation::compute(int indexKnownElement) {
-  if (m_law == nullptr) {
+  if (m_distribution == nullptr) {
     return;
   }
   if (indexKnownElement == 2) {
-    assert(m_law->type() == Law::Type::Normal);
+    assert(m_distribution->type() == Distribution::Type::Normal);
     double p = (1.0+m_result)/2.0;
-    m_upperBound = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
-    m_lowerBound = 2.0*m_law->parameterValueAtIndex(0)-m_upperBound;
+    m_upperBound = ((NormalDistribution *)m_distribution)->cumulativeDistributiveInverseForProbability(&p);
+    m_lowerBound = 2.0*m_distribution->parameterValueAtIndex(0)-m_upperBound;
   }
-  m_result = m_law->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
+  m_result = m_distribution->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
 }
 
 }

@@ -36,5 +36,6 @@ View * EvenOddMessageTextCell::subviewAtIndex(int index) {
 }
 
 void EvenOddMessageTextCell::layoutSubviews() {
-  m_messageTextView.setFrame(bounds());
+  KDRect boundsThis = bounds();
+  m_messageTextView.setFrame(KDRect(k_horizontalMargin, 0, boundsThis.width() - 2*k_horizontalMargin, boundsThis.height()));
 }

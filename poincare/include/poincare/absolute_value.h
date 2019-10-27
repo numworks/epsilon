@@ -21,19 +21,16 @@ public:
   // Properties
   Type type() const override { return Type::AbsoluteValue; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-
-  // Complex
-  bool isReal(Context & context) const override { return true; }
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
     return Complex<T>::Builder(std::abs(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, computeOnComplex<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
   }
 
@@ -42,7 +39,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 };
 
 class AbsoluteValue final : public Expression {
@@ -53,9 +51,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilderOneChild<AbsoluteValue>);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

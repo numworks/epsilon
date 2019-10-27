@@ -1,8 +1,8 @@
 #include "histogram_controller.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "app.h"
+#include <poincare/preferences.h>
 #include <cmath>
 #include <assert.h>
 #include <float.h>
@@ -95,8 +95,9 @@ void HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
     return;
   }
-  const size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2;
-  char buffer[bufferSize];
+  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize] = "";
   int numberOfChar = 0;
 
   // Add Interval Data
@@ -108,7 +109,7 @@ void HistogramController::reloadBannerView() {
   // Add lower bound
   if (selectedSeriesIndex() >= 0) {
     double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
 
   numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
@@ -116,7 +117,7 @@ void HistogramController::reloadBannerView() {
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
   numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
@@ -133,7 +134,7 @@ void HistogramController::reloadBannerView() {
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, precision);
   }
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
@@ -147,7 +148,7 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, precision);
   }
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
@@ -179,25 +180,34 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   return false;
 }
 
-void HistogramController::initRangeParameters() {
-  assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
-  float minValue = m_store->firstDrawnBarAbscissa();
+void HistogramController::preinitXRangeParameters() {
+  /* Compute m_store's min and max values, hold them temporarily in the
+   * CurveViewRange, for later use by initRangeParameters and
+   * initBarParameters. Indeed, initRangeParameters will anyway alter the
+   * CurveViewRange. The CurveViewRange setter methods take care of the case
+   * where minValue >= maxValue. Moreover they compute the xGridUnit, which is
+   * used by initBarParameters. */
+  float minValue = FLT_MAX;
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
+      minValue = minFloat(minValue, m_store->minValue(i));
       maxValue = maxFloat(maxValue, m_store->maxValue(i));
     }
   }
+  m_store->setXMin(minValue);
+  m_store->setXMax(maxValue);
+}
+
+void HistogramController::initRangeParameters() {
+  assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
   float barWidth = m_store->barWidth();
-  float xMin = minValue;
-  float xMax = maxValue + barWidth;
+  preinitXRangeParameters();
+  float xMin = m_store->firstDrawnBarAbscissa();
+  float xMax = m_store->xMax() + barWidth;
   /* if a bar is represented by less than one pixel, we cap xMax */
   if ((xMax - xMin)/barWidth > k_maxNumberOfBarsPerWindow) {
     xMax = xMin + k_maxNumberOfBarsPerWindow*barWidth;
-  }
-  /* Edge case */
-  if (xMin >= xMax) {
-    xMax = xMin + 10.0f*barWidth;
   }
   m_store->setXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin));
   m_store->setXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin));
@@ -234,17 +244,9 @@ void HistogramController::initYRangeParameters(int series) {
 
 void HistogramController::initBarParameters() {
   assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
-  float minValue = FLT_MAX;
-  float maxValue = -FLT_MAX;
-  for (int i = 0; i < Store::k_numberOfSeries; i ++) {
-    if (!m_store->seriesIsEmpty(i)) {
-      minValue = minFloat(minValue, m_store->minValue(i));
-      maxValue = maxFloat(maxValue, m_store->maxValue(i));
-    }
-  }
-  maxValue = minValue >= maxValue ? minValue + std::pow(10.0f, std::floor(std::log10(std::fabs(minValue)))-1.0f) : maxValue;
-  m_store->setFirstDrawnBarAbscissa(minValue);
-  float barWidth = m_store->computeGridUnit(CurveViewRange::Axis::X, maxValue - minValue);
+  preinitXRangeParameters();
+  m_store->setFirstDrawnBarAbscissa(m_store->xMin());
+  float barWidth = m_store->xGridUnit();
   if (barWidth <= 0.0f) {
     barWidth = 1.0f;
   }

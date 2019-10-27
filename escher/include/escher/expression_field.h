@@ -3,13 +3,14 @@
 
 #include <escher/layout_field.h>
 #include <escher/layout_field_delegate.h>
+#include <escher/metric.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 #include <poincare/layout.h>
 
 class ExpressionField : public Responder, public View {
 public:
-  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;
@@ -37,16 +38,15 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
+  static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
   static constexpr KDCoordinate k_textFieldHeight = 37;
   static constexpr KDCoordinate k_horizontalMargin = 5;
   static constexpr KDCoordinate k_verticalMargin = 5;
-  constexpr static int k_separatorThickness = 1;
+  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
   KDCoordinate maximalHeight() const;
   TextField m_textField;
   LayoutField m_layoutField;
-  char *  m_textBuffer;
-  int m_textBufferLength;
 };
 
 #endif

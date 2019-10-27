@@ -2,15 +2,14 @@
 #define REGRESSION_CALCULATION_CONTROLLER_H
 
 #include <escher.h>
+#include <poincare/preferences.h>
 #include "store.h"
 #include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
 #include "../shared/hideable_even_odd_cell.h"
-#include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/tab_table_controller.h"
 #include "../shared/separator_even_odd_buffer_text_cell.h"
 #include "../shared/store_cell.h"
-#include "../constant.h"
 
 namespace Regression {
 
@@ -37,8 +36,8 @@ public:
   Responder * defaultController() override;
 
   // TableViewDataSource
-  int numberOfRows() override;
-  int numberOfColumns() override;
+  int numberOfRows() const override;
+  int numberOfColumns() const override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
@@ -64,11 +63,10 @@ private:
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   // TODO: change 7 for KDFont::SmallFont->glyphSize().width()
-  static constexpr KDCoordinate k_minCalculationCellWidth = 7*2*(Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)); //Calculation width should at least be able to hold to numbers with LargeNumberOfSignificantDigits.
+  static constexpr KDCoordinate k_minCalculationCellWidth = 7*2*(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)); //Calculation width should at least be able to hold to numbers with LargeNumberOfSignificantDigits.
   static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(150, k_minCalculationCellWidth); // Should hold aX^3+bX^2+cX+d
   static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(195, k_minCalculationCellWidth ); // Should hold ? aX^4+bX^3+c*X^2+dX+e
   static constexpr KDCoordinate k_margin = 8;
-  static constexpr KDCoordinate k_r2CellMargin = 2;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
@@ -76,7 +74,7 @@ private:
   int maxNumberOfCoefficients() const;
   Poincare::Layout m_r2Layout;
   SelectableTableView m_selectableTableView;
-  Shared::MarginEvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
+  EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCell m_r2TitleCell;
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator m_doubleCalculationCells[k_numberOfDoubleCalculationCells];

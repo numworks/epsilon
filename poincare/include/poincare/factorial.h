@@ -21,25 +21,25 @@ public:
   // Properties
   Type type() const override { return Type::Factorial; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-
-  // Complex
-  bool isReal(Context & context) const override { return true; }
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
 private:
   // Layout
-  bool childNeedsParenthesis(const TreeNode * child) const override;
+  bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
   }
 
@@ -54,8 +54,7 @@ public:
   Factorial(const FactorialNode * n) : Expression(n) {}
   static Factorial Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factorial, FactorialNode>(&child, 1); }
 
-  Expression shallowReduce();
-  Expression shallowBeautify();
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 private:
   constexpr static int k_maxOperandValue = 100;
 };

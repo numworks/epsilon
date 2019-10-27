@@ -14,7 +14,7 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_expliciteCell(I18n::Message::Explicit, cellLayout),
+  m_explicitCell(I18n::Message::Explicit, cellLayout),
   m_singleRecurrenceCell(I18n::Message::SingleRecurrence, cellLayout),
   m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
   m_layouts{},
@@ -49,7 +49,7 @@ void TypeParameterController::viewDidDisappear() {
 
 void TypeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
@@ -60,7 +60,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         m_listController->selectPreviousNewSequenceCell();
         sequence()->setType(sequenceType);
         // Invalidate sequence context cache when changing sequence type
-        static_cast<App *>(app())->localContext()->resetCache();
+        App::app()->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
         if (sequenceType == Sequence::Type::Explicit) {
           sequence()->setInitialRank(0);
@@ -81,7 +81,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
     Sequence * newSequence = sequenceStore()->modelForRecord(record);
     newSequence->setType((Sequence::Type)selectedRow());
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(0, Ion::Events::OK);
     return true;
   }
@@ -92,18 +92,18 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int TypeParameterController::numberOfRows() {
+int TypeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
 HighlightCell * TypeParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_expliciteCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
+  HighlightCell * cells[] = {&m_explicitCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
   return cells[index];
 }
 
-int TypeParameterController::reusableCellCount() {
+int TypeParameterController::reusableCellCount() const {
   return k_totalNumberOfCell;
 }
 
@@ -135,8 +135,7 @@ void TypeParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 SequenceStore * TypeParameterController::sequenceStore() {
-  App * a = static_cast<App *>(app());
-  return a->functionStore();
+  return App::app()->functionStore();
 }
 
 StackViewController * TypeParameterController::stackController() const {

@@ -21,12 +21,12 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.name());
 }
 
-Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return GreatCommonDivisor(this).shallowReduce();
+Expression GreatCommonDivisorNode::shallowReduce(ReductionContext reductionContext) {
+  return GreatCommonDivisor(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
-Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f1 = f1Input.toScalar();
@@ -50,7 +50,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
 }
 
 
-Expression GreatCommonDivisor::shallowReduce() {
+Expression GreatCommonDivisor::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -59,25 +59,19 @@ Expression GreatCommonDivisor::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined::Builder();
+  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
+    return replaceWithUndefinedInPlace();
   }
-#endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
-    if (!r0.integerDenominator().isOne()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+    if (!r0.isInteger()) {
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.integerDenominator().isOne()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+    if (!r1.isInteger()) {
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {

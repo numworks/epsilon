@@ -42,7 +42,7 @@ public:
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
 
   // ListViewDataSource
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

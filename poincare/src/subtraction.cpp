@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-int SubtractionNode::polynomialDegree(Context & context, const char * symbolName) const {
+int SubtractionNode::polynomialDegree(Context * context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * e : children()) {
     int d = e->polynomialDegree(context, symbolName);
@@ -23,15 +23,19 @@ int SubtractionNode::polynomialDegree(Context & context, const char * symbolName
 
 // Private
 
-bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (child == childAtIndex(0)) {
+bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  if (childIndex == 0) {
+    // First operand of a subtraction never requires parentheses
     return false;
   }
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;
   }
+  if (child.type() == Type::Conjugate) {
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
+  }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
+  return child.isOfType(types, 3);
 }
 
 Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -42,30 +46,20 @@ int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::Print
     return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "-");
 }
 
-template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
-  MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c, complexFormat);
-  MatrixComplex<T> result = MatrixComplex<T>::Builder();
-  for (int i = 0; i < opposite.numberOfChildren(); i++) {
-    result.addChildAtIndexInPlace(OppositeNode::compute(opposite.complexAtIndex(i), complexFormat), i, i);
-  }
-  result.setDimensions(opposite.numberOfRows(), opposite.numberOfColumns());
-  return result;
+Expression SubtractionNode::shallowReduce(ReductionContext reductionContext) {
+  return Subtraction(this).shallowReduce(reductionContext);
 }
 
-Expression SubtractionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Subtraction(this).shallowReduce(context, complexFormat, angleUnit, target);
-}
-
-Expression Subtraction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
   Expression m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
   Addition a = Addition::Builder(childAtIndex(0), m);
-  m = m.shallowReduce(context, complexFormat, angleUnit, target);
+  m = m.shallowReduce(reductionContext);
   replaceWithInPlace(a);
-  return a.shallowReduce(context, complexFormat, angleUnit, target);
+  return a.shallowReduce(reductionContext);
 }
 
 }

@@ -12,6 +12,8 @@ using namespace Poincare;
 
 namespace Settings {
 
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
 PreferencesController::PreferencesController(Responder * parentResponder) :
   GenericSubController(parentResponder)
 {
@@ -22,7 +24,7 @@ PreferencesController::PreferencesController(Responder * parentResponder) :
 
 void PreferencesController::didBecomeFirstResponder() {
   selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool PreferencesController::handleEvent(Ion::Events::Event event) {
@@ -30,8 +32,7 @@ bool PreferencesController::handleEvent(Ion::Events::Event event) {
     /* Generic behaviour of preference menu*/
     assert(m_messageTreeModel->label() != I18n::Message::DisplayMode || selectedRow() != numberOfRows()-1); // In that case, events OK and EXE are handled by the cell
     setPreferenceWithValueIndex(m_messageTreeModel->label(), selectedRow());
-    AppsContainer * myContainer = (AppsContainer * )app()->container();
-    myContainer->refreshPreferences();
+    AppsContainer::sharedAppsContainer()->refreshPreferences();
     StackViewController * stack = stackController();
     stack->pop();
     return true;
@@ -52,7 +53,7 @@ int PreferencesController::reusableCellCount(int type) {
 Layout PreferencesController::layoutForPreferences(I18n::Message message) {
   switch (message) {
     // Angle Unit
-    case I18n::Message::Degres:
+    case I18n::Message::Degrees:
     {
       const char * degEx = "90°";
       return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
@@ -61,13 +62,22 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return FractionLayout::Builder(
           CodePointLayout::Builder(UCodePointGreekSmallLetterPi, k_layoutFont),
           CodePointLayout::Builder('2', k_layoutFont));
-
+    case I18n::Message::Gradians:
+    {
+      const char * degEx = "100 gon";
+      return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
+    }
     // Display Mode format
     case I18n::Message::Decimal:
-      return LayoutHelper::String("12.34", 5, k_layoutFont);
+      return LayoutHelper::String("0.1234", 6, k_layoutFont);
     case I18n::Message::Scientific:
     {
-      const char * text = "1.234ᴇ1";
+      const char * text = "1.234ᴇ-1";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::Engineering:
+    {
+      const char * text = "123.4ᴇ-3";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
 
@@ -143,7 +153,14 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
-    preferences->setDisplayMode((Preferences::PrintFloatMode)valueIndex);
+    Preferences::PrintFloatMode mode = (Preferences::PrintFloatMode)valueIndex;
+    preferences->setDisplayMode(mode);
+    if (mode == Preferences::PrintFloatMode::Engineering) {
+      /* In Engineering mode, the number of significant digits cannot be lower
+       * than 3, because we need to be able to display 100 for instance. */
+      // TODO: Add warning about signifiant digits change ?
+      preferences->setNumberOfSignificantDigits(maxInt(preferences->numberOfSignificantDigits(), 3));
+    }
   } else if (message == I18n::Message::EditionMode) {
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {

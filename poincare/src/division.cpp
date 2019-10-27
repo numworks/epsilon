@@ -14,36 +14,36 @@
 
 namespace Poincare {
 
-int DivisionNode::polynomialDegree(Context & context, const char * symbolName) const {
+int DivisionNode::polynomialDegree(Context * context, const char * symbolName) const {
   if (childAtIndex(1)->polynomialDegree(context, symbolName) != 0) {
     return -1;
   }
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-bool DivisionNode::childNeedsParenthesis(const TreeNode * child) const {
+Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  const ExpressionNode * numerator = childAtIndex(0);
+  const ExpressionNode * denominator = childAtIndex(1);
+  return FractionLayout::Builder(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+bool DivisionNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
   return static_cast<const ExpressionNode *>(child)->isOfType(types, 5);
 }
 
-Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  const ExpressionNode * numerator = childAtIndex(0)->type() == Type::Parenthesis ? childAtIndex(0)->childAtIndex(0) : childAtIndex(0);
-  const ExpressionNode * denominator = childAtIndex(1)->type() == Type::Parenthesis ? childAtIndex(1)->childAtIndex(0) : childAtIndex(1);
-  return FractionLayout::Builder(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
-}
-
 int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
 }
 
-Expression DivisionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Division(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression DivisionNode::shallowReduce(ReductionContext reductionContext) {
+  return Division(this).shallowReduce(reductionContext);
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
@@ -70,18 +70,20 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 // Division
 
-Expression Division::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
+  /* For matrices: we decided that A/B is computed as A = A/B * B so A/B = AB^-1
+   * (it could have been A = B * A/B so A/B = B^-1*A). */
   Expression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Multiplication m = Multiplication::Builder(childAtIndex(0), p);
-  p.shallowReduce(context, complexFormat, angleUnit, target); // Imagine Division::Builder(2,1). p would be 1^(-1) which can be simplified
+  p.shallowReduce(reductionContext); // For instance: Division::Builder(2,1). p would be 1^(-1) which can be simplified
   replaceWithInPlace(m);
-  return m.shallowReduce(context, complexFormat, angleUnit, target);
+  return m.shallowReduce(reductionContext);
 }
 
 }

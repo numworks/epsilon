@@ -29,12 +29,11 @@ App::Snapshot::Snapshot() :
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 void App::Snapshot::reset() {
   m_store.deleteAllPairs();
-  m_store.setDefault();
   m_modelVersion = 0;
   m_rangeVersion = 0;
   setActiveTab(0);
@@ -50,8 +49,8 @@ void App::Snapshot::tidy() {
   m_store.tidy();
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  TextFieldDelegateApp(container, snapshot, &m_tabViewController),
+App::App(Snapshot * snapshot) :
+  TextFieldDelegateApp(snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),

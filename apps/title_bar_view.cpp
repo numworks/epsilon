@@ -85,15 +85,29 @@ void TitleBarView::refreshPreferences() {
   char buffer[bufferSize];
   int numberOfChar = 0;
   Preferences * preferences = Preferences::sharedPreferences();
-  if (preferences->displayMode() == Preferences::PrintFloatMode::Scientific) {
-    numberOfChar += strlcpy(buffer, I18n::translate(I18n::Message::Sci), bufferSize);
+  {
+    // Display Sci/ or Eng/ if the print float mode is not decimal
+    const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
+    if (printFloatMode != Preferences::PrintFloatMode::Decimal) {
+      // Check that there is no new print float mode, otherwise add its message
+      assert(printFloatMode == Preferences::PrintFloatMode::Scientific
+          || printFloatMode == Preferences::PrintFloatMode::Engineering);
+      I18n::Message printMessage = printFloatMode == Preferences::PrintFloatMode::Scientific ? I18n::Message::Sci : I18n::Message::Eng;
+      numberOfChar += strlcpy(buffer, I18n::translate(printMessage), bufferSize);
+      assert(numberOfChar < bufferSize-1);
+      assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
+      buffer[numberOfChar++] = '/';
+    }
   }
-  if (preferences->angleUnit() == Preferences::AngleUnit::Radian) {
-    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), bufferSize - numberOfChar);
-  } else {
-    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Deg), bufferSize - numberOfChar);
+  assert(numberOfChar <= bufferSize);
+  {
+    // Display the angle unit
+    const Preferences::AngleUnit angleUnit = preferences->angleUnit();
+    I18n::Message angleMessage = angleUnit == Preferences::AngleUnit::Degree ?
+        I18n::Message::Deg :
+        (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
+    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(angleMessage), bufferSize - numberOfChar);
   }
-  buffer[numberOfChar] = 0;
   m_preferenceView.setText(buffer);
   // Layout the exam mode icon if needed
   layoutSubviews();

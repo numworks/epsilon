@@ -42,7 +42,7 @@ void IntervalController::ContentView::layoutSubviews() {
 /* IntervalController Controller */
 
 IntervalController::IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore) :
-  FloatParameterController(parentResponder),
+  FloatParameterController<double>(parentResponder),
   m_contentView(&m_selectableTableView),
   m_intervalCell{},
   m_equationStore(equationStore)
@@ -52,7 +52,6 @@ IntervalController::IntervalController(Responder * parentResponder, InputEventHa
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_intervalCell[i].setParentResponder(&m_selectableTableView);
     m_intervalCell[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_intervalCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 
@@ -60,7 +59,7 @@ const char * IntervalController::title() {
   return I18n::translate(I18n::Message::SearchInverval);
 }
 
-int IntervalController::numberOfRows() {
+int IntervalController::numberOfRows() const {
   return k_maxNumberOfCells+1;
 }
 
@@ -103,9 +102,8 @@ bool IntervalController::textFieldDidFinishEditing(TextField * textField, const 
 
 void IntervalController::buttonAction() {
   StackViewController * stack = stackController();
-  App * solverApp = static_cast<App *>(app());
-  m_equationStore->approximateSolve(solverApp->localContext());
-  stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::SubTab, Palette::SubTab);
+  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext());
+  stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 
 }

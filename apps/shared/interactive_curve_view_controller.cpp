@@ -1,5 +1,4 @@
 #include "interactive_curve_view_controller.h"
-#include "text_field_delegate_app.h"
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -36,7 +35,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
 {
 }
 
-float InteractiveCurveViewController::addMargin(float x, float range, bool isMin) {
+float InteractiveCurveViewController::addMargin(float x, float range, bool isVertical, bool isMin) {
   /* We are adding margins. Let's name:
    *   - The current range: rangeBefore
    *   - The next range: rangeAfter
@@ -61,8 +60,8 @@ float InteractiveCurveViewController::addMargin(float x, float range, bool isMin
    * topRatioBefore = topRatioAfter, we would create too small margins and the
    * controller might need to pan right after a Y auto calibration. */
 
-  float topMarginRatio = cursorTopMarginRatio();
-  float bottomMarginRatio = cursorBottomMarginRatio();
+  float topMarginRatio = isVertical ? cursorTopMarginRatio() : k_cursorRightMarginRatio;
+  float bottomMarginRatio = isVertical ? cursorBottomMarginRatio() : k_cursorLeftMarginRatio;
   assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
   float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
   float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
@@ -79,14 +78,14 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down) {
       header()->setSelectedButton(-1);
       curveView()->selectMainView(true);
-      app()->setFirstResponder(this);
+      Container::activeApp()->setFirstResponder(this);
       reloadBannerView();
       curveView()->reload();
       return true;
     }
     if (event == Ion::Events::Up) {
       header()->setSelectedButton(-1);
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
       return true;
     }
     return false;
@@ -145,7 +144,7 @@ Responder * InteractiveCurveViewController::defaultController() {
 void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newModelVersion = modelVersion();
   if (*m_modelVersion != newModelVersion) {
-    if (*m_modelVersion == 0 || numberOfCurves() == 1) {
+    if (*m_modelVersion == 0 || numberOfCurves() == 1 || shouldSetDefaultOnModelChange()) {
       interactiveCurveViewRange()->setDefault();
     }
     *m_modelVersion = newModelVersion;
@@ -187,8 +186,8 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
-  m_cursor->moveTo(floatBody, y);
+  Coordinate2D<double> xy = xyValues(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
   curveView()->reload();
@@ -231,7 +230,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
       continue;
     }
-    double newY = yValue(i, x, context);
+    double newY = xyValues(i, x, context).x2();
     if (!suitableYValue(newY)) {
       continue;
     }
@@ -277,7 +276,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
 }
 
 float InteractiveCurveViewController::cursorBottomMarginRatio() {
-  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
+  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/(k_viewHeight-1);
 }
 
 float InteractiveCurveViewController::estimatedBannerHeight() const {

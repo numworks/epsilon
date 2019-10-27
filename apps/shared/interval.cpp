@@ -4,12 +4,9 @@
 namespace Shared {
 
 Interval::Interval() :
-  m_numberOfElements(0),
-  m_start(0),
-  m_end(0),
-  m_step(0),
-  m_needCompute(false)
+  m_numberOfElements(0)
 {
+  reset();
 }
 
 int Interval::numberOfElements() {
@@ -18,29 +15,18 @@ int Interval::numberOfElements() {
 }
 
 void Interval::deleteElementAtIndex(int index) {
-  m_numberOfElements--;
-  for (int k = index; k < m_numberOfElements; k++) {
+  assert(!m_needCompute);
+  assert(m_numberOfElements > 0);
+  for (int k = index; k < m_numberOfElements-1; k++) {
     m_intervalBuffer[k] = m_intervalBuffer[k+1];
   }
-  m_intervalBuffer[m_numberOfElements] = 0.0f;
+  m_numberOfElements--;
 }
 
 double Interval::element(int i) {
   assert(i >= 0 && i < numberOfElements());
   computeElements();
   return m_intervalBuffer[i];
-}
-
-double Interval::start() {
-  return m_start;
-}
-
-double Interval::end() {
-  return m_end;
-}
-
-double Interval::step() {
-  return m_step;
 }
 
 void Interval::setStart(double f) {
@@ -67,11 +53,25 @@ void Interval::setElement(int i, double f) {
   }
 }
 
+void Interval::reset() {
+  m_start = 0.0;
+  m_end = 10.0;
+  m_step = 1.0;
+  m_needCompute = true;
+}
+
+void Interval::clear() {
+  m_start = 1.0;
+  m_end = 0.0;
+  m_step = 1.0;
+  m_needCompute = true;
+}
+
 void Interval::computeElements() {
   if (!m_needCompute) {
     return;
   }
-  if ( m_start > m_end) {
+  if (m_start > m_end) {
     m_numberOfElements = 0;
   } else {
     m_numberOfElements = m_step > 0 ? 1 + (m_end - m_start)/m_step : k_maxNumberOfElements;

@@ -14,7 +14,6 @@ public:
   GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void setXPrediction(bool xPrediction);
   const char * title() override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;

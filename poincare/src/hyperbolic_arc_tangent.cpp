@@ -30,7 +30,6 @@ Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, P
   return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
 
-
 template Complex<float> Poincare::HyperbolicArcTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicArcTangentNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 

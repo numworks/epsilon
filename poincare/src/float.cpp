@@ -4,7 +4,7 @@
 namespace Poincare {
 
 template<typename T>
-Expression FloatNode<T>::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression FloatNode<T>::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   Sign currentSign = m_value < 0 ? Sign::Negative : Sign::Positive;
   Expression thisExpr = Number(this);
@@ -31,13 +31,13 @@ int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 template<typename T>
 int FloatNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return PrintFloat::convertFloatToText(m_value, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
+  return PrintFloat::ConvertFloatToText(m_value, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits, floatDisplayMode).CharLength;
 }
 
 template<typename T>
 Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  char buffer[PrintFloat::k_maxFloatBufferLength];
-  int numberOfChars = serialize(buffer, PrintFloat::k_maxFloatBufferLength, floatDisplayMode, numberOfSignificantDigits);
+  char buffer[PrintFloat::k_maxFloatCharSize];
+  int numberOfChars = serialize(buffer, PrintFloat::k_maxFloatCharSize, floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);
 }
 

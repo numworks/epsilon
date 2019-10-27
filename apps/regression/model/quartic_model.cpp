@@ -56,43 +56,6 @@ Layout QuarticModel::layout() {
   return m_layout;
 }
 
-Expression QuarticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
-  double e = modelCoefficients[4];
-  Expression addChildren[] = {
-    // a*x^4
-    Multiplication::Builder(
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(4.0))),
-    // b*x^3
-    Multiplication::Builder(
-      Number::DecimalNumber(b),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(3.0))),
-    // c*x^2
-    Multiplication::Builder(
-      Number::DecimalNumber(c),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(2.0))),
-    // d*x
-    Multiplication::Builder(
-      Number::DecimalNumber(d),
-      Symbol::Builder('x')),
-    // e
-    Number::DecimalNumber(e)
-  };
-  Expression result = Addition::Builder(addChildren, 5);
-  PoincareHelpers::Simplify(&result, *context);
-  return result;
-}
-
 double QuarticModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -125,6 +88,42 @@ double QuarticModel::partialDerivate(double * modelCoefficients, int derivateCoe
   }
   assert(false);
   return 0.0;
+}
+
+Expression QuarticModel::expression(double * modelCoefficients) {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  double e = modelCoefficients[4];
+  Expression addChildren[] = {
+    // a*x^4
+    Multiplication::Builder(
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Symbol::Builder('x'),
+        Decimal::Builder(4.0))),
+    // b*x^3
+    Multiplication::Builder(
+      Number::DecimalNumber(b),
+      Power::Builder(
+        Symbol::Builder('x'),
+        Decimal::Builder(3.0))),
+    // c*x^2
+    Multiplication::Builder(
+      Number::DecimalNumber(c),
+      Power::Builder(
+        Symbol::Builder('x'),
+        Decimal::Builder(2.0))),
+    // d*x
+    Multiplication::Builder(
+      Number::DecimalNumber(d),
+      Symbol::Builder('x')),
+    // e
+    Number::DecimalNumber(e)
+  };
+  Expression result = Addition::Builder(addChildren, 5);
+  return result;
 }
 
 }

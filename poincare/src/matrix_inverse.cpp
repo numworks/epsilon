@@ -14,8 +14,8 @@ constexpr Expression::FunctionHelper MatrixInverse::s_functionHelper;
 
 int MatrixInverseNode::numberOfChildren() const { return MatrixInverse::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return MatrixInverse(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression MatrixInverseNode::shallowReduce(ReductionContext reductionContext) {
+  return MatrixInverse(this).shallowReduce(reductionContext);
 }
 
 Layout MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -26,9 +26,8 @@ int MatrixInverseNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixInverse::s_functionHelper.name());
 }
 
-// TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixInverseNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> inverse;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
@@ -43,7 +42,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
 }
 
 
-Expression MatrixInverse::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression MatrixInverse::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -51,28 +50,22 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::ComplexF
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
-  if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return Power::Builder(c, Rational::Builder(-1).shallowReduce(context, complexFormat, angleUnit, target);
-  }
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix mat = static_cast<Matrix&>(c);
-    if (mat.numberOfRows() != mat.numberOfColumns()) {
-      return Undefined::Builder();
+    /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
+     * done here and not in power. */
+    bool couldComputeInverse = false;
+    Expression result = static_cast<Matrix&>(c).createInverse(reductionContext, &couldComputeInverse);
+    if (couldComputeInverse) {
+      replaceWithInPlace(result);
+      return result.shallowReduce(reductionContext);
     }
+    // The matrix could not be inverted exactly
+    // TODO Poincare error?
+    return *this;
   }
-  return *this;
-#endif
-#else
-  if (c.type() != ExpressionNode::Type::Matrix) {
-    Expression result = Power::Builder(c, Rational::Builder(-1));
-    replaceWithInPlace(result);
-    result = result.shallowReduce(context, complexFormat, angleUnit, target);
-    return result;
-  }
-  return *this;
-#endif
+  Expression result = Power::Builder(c, Rational::Builder(-1));
+  replaceWithInPlace(result);
+  return result.shallowReduce(reductionContext);
 }
 
 }

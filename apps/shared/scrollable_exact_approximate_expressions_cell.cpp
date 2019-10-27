@@ -32,7 +32,7 @@ void ScrollableExactApproximateExpressionsCell::reloadScroll() {
 
 void ScrollableExactApproximateExpressionsCell::didBecomeFirstResponder() {
   m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
-  app()->setFirstResponder(&m_view);
+  Container::activeApp()->setFirstResponder(&m_view);
 }
 
 int ScrollableExactApproximateExpressionsCell::numberOfSubviews() const {

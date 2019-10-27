@@ -36,8 +36,7 @@ bool EvenOddDoubleBufferTextCellWithSeparator::firstTextSelected() {
 
 void EvenOddDoubleBufferTextCellWithSeparator::selectFirstText(bool selectFirstText) {
   m_firstTextSelected = selectFirstText;
-  m_firstBufferTextView.setHighlighted(selectFirstText);
-  m_secondBufferTextView.setHighlighted(!selectFirstText);
+  setHighlighted(isHighlighted());
 }
 
 void EvenOddDoubleBufferTextCellWithSeparator::reloadCell() {
@@ -46,16 +45,9 @@ void EvenOddDoubleBufferTextCellWithSeparator::reloadCell() {
 }
 
 void EvenOddDoubleBufferTextCellWithSeparator::setHighlighted(bool highlight) {
-  m_firstBufferTextView.setHighlighted(false);
-  m_secondBufferTextView.setHighlighted(false);
   HighlightCell::setHighlighted(highlight);
-  if (isHighlighted()) {
-    if (m_firstTextSelected) {
-      m_firstBufferTextView.setHighlighted(true);
-    } else {
-      m_secondBufferTextView.setHighlighted(true);
-    }
-  }
+  m_firstBufferTextView.setHighlighted(highlight && m_firstTextSelected);
+  m_secondBufferTextView.setHighlighted(highlight && !m_firstTextSelected);
 }
 
 void EvenOddDoubleBufferTextCellWithSeparator::setEven(bool even) {
@@ -100,7 +92,7 @@ void EvenOddDoubleBufferTextCellWithSeparator::layoutSubviews() {
   KDCoordinate width = bounds().width() - Metric::TableSeparatorThickness;
   KDCoordinate height = bounds().height();
   m_firstBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness, 0, width/2, height));
-  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, 0, width/2, height));
+  m_secondBufferTextView.setFrame(KDRect(Metric::TableSeparatorThickness + width/2, 0, width - width/2, height));
 }
 
 bool EvenOddDoubleBufferTextCellWithSeparator::handleEvent(Ion::Events::Event event) {

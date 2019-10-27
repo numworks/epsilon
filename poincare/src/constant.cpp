@@ -14,6 +14,8 @@
 
 namespace Poincare {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNode() {
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }
@@ -25,7 +27,7 @@ ExpressionNode::Sign ConstantNode::sign(Context * context) const {
   return Sign::Unknown;
 }
 
-bool ConstantNode::isReal(Context & context) const {
+bool ConstantNode::isReal() const {
   return !isIComplex();
 }
 
@@ -66,11 +68,11 @@ int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   if (bufferSize == 0) {
     return -1;
   }
-  return strlcpy(buffer, m_name, bufferSize);
+  return minInt(strlcpy(buffer, m_name, bufferSize), bufferSize - 1);
 }
 
 template<typename T>
-Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ConstantNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (isIComplex()) {
     return Complex<T>::Builder(0.0, 1.0);
   }
@@ -81,8 +83,8 @@ Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::
   return Complex<T>::Builder(M_E);
 }
 
-Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Constant(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression ConstantNode::shallowReduce(ReductionContext reductionContext) {
+  return Constant(this).shallowReduce(reductionContext);
 }
 
 bool ConstantNode::isConstantCodePoint(CodePoint c) const {
@@ -99,12 +101,12 @@ Constant Constant::Builder(CodePoint c) {
   return SymbolAbstract::Builder<Constant, ConstantNode>(buffer, codePointSize);
 }
 
-Expression Constant::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression result;
   bool isI = isIComplex();
-  if (complexFormat == Preferences::ComplexFormat::Real && isI) {
+  if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && isI) {
     result = Unreal::Builder();
-  } else if (target == ExpressionNode::ReductionTarget::User && isI) {
+  } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {
     result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
   }
   if (!result.isUninitialized()) {
@@ -114,6 +116,6 @@ Expression Constant::shallowReduce(Context & context, Preferences::ComplexFormat
   return *this;
 }
 
-template Evaluation<float> ConstantNode::templatedApproximate<float>(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> ConstantNode::templatedApproximate<double>(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> ConstantNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> ConstantNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 }

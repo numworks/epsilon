@@ -19,7 +19,7 @@ public:
   int numberOfButtons(ButtonRowController::Position position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   /* ListViewDataSource */
-  int numberOfRows() override { return numberOfExpressionRows(); }
+  int numberOfRows() const override { return numberOfExpressionRows(); }
   KDCoordinate rowHeight(int j) override{ return ExpressionModelListController::memoizedRowHeight(j); }
   KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
   int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
@@ -38,8 +38,6 @@ public:
   /* ViewController */
   View * view() override { return &m_equationListView; }
   /* Text/Layout Field Delegate */
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
@@ -53,13 +51,12 @@ private:
   void addEmptyModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
-  Shared::ExpressionModelStore * modelStore() override { return m_equationStore; }
+  EquationStore * modelStore() override;
   StackViewController * stackController() const;
   InputViewController * inputController() override;
   // ListViewDataSource
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override { return ListViewDataSource::cumulatedHeightFromIndex(j); }
   int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
-  EquationStore * m_equationStore;
   EquationListView m_equationListView;
   EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Button m_resolveButton;

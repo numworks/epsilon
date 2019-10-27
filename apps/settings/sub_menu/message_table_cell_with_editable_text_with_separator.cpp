@@ -2,9 +2,9 @@
 
 namespace Settings {
 
-MessageTableCellWithEditableTextWithSeparator::MessageTableCellWithEditableTextWithSeparator(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message) :
+MessageTableCellWithEditableTextWithSeparator::MessageTableCellWithEditableTextWithSeparator(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, I18n::Message message) :
   HighlightCell(),
-  m_cell(parentResponder, inputEventHandlerDelegate, textFieldDelegate, draftTextBuffer, message)
+  m_cell(parentResponder, inputEventHandlerDelegate, textFieldDelegate, message)
 {
 }
 

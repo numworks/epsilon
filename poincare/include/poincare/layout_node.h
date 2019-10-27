@@ -126,9 +126,9 @@ public:
    * is clearer with different names. */
   virtual bool isEmpty() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
-  virtual CodePoint XNTCodePoint() const {
+  virtual CodePoint XNTCodePoint(int childIndex = -1) const {
     LayoutNode * p = parent();
-    return p == nullptr ? UCodePointNull : p->XNTCodePoint();
+    return p == nullptr ? UCodePointNull : p->XNTCodePoint(p->indexOfChild(this));
   }
 
   virtual bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) { return true; }

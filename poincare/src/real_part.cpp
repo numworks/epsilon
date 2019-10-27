@@ -2,7 +2,7 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <assert.h>
 #include <cmath>
 
@@ -20,12 +20,11 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
-Expression RealPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return RealPart(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression RealPartNode::shallowReduce(ReductionContext reductionContext) {
+  return RealPart(this).shallowReduce(reductionContext);
 }
 
-
-Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -33,12 +32,10 @@ Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixFirstChild(reductionContext);
   }
-#endif
-  if (c.isReal(context)) {
+  if (c.isReal(reductionContext.context())) {
     replaceWithInPlace(c);
     return c;
   }
@@ -46,7 +43,7 @@ Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Expression r = complexChild.real();
     replaceWithInPlace(r);
-    return r.shallowReduce(context, complexFormat, angleUnit, target);
+    return r.shallowReduce(reductionContext);
   }
   return *this;
 }

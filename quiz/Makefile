@@ -1,13 +1,14 @@
 SFLAGS += -Iquiz/include
 
-QUIZ_USE_CONSOLE ?= 0
-$(call object_for,quiz/src/runner.cpp): SFLAGS += -DQUIZ_USE_CONSOLE=$(QUIZ_USE_CONSOLE)
+define rule_for_quiz_symbols
+$$(BUILD_DIR)/quiz/src/$(subst _src,,$(1))_symbols.c: $$($(1)) | $$$$(@D)/.
+	@ echo "AWK     $$@"
+	$$(Q) awk -f quiz/src/symbols.awk $$($(1)) > $$@
+endef
 
-symbols_file = $(BUILD_DIR)/quiz/src/symbols.c
-
-$(symbols_file): $(tests)
-	@echo "AWK     $@"
-	$(Q) awk -f quiz/src/symbols.awk $(tests) > $@
+$(eval $(call rule_for_quiz_symbols,tests_src))
+$(eval $(call rule_for_quiz_symbols,test_ion_external_flash_write_src))
+$(eval $(call rule_for_quiz_symbols,test_ion_external_flash_read_src))
 
 runner_src += $(addprefix quiz/src/, \
   assertions.cpp \
@@ -15,9 +16,7 @@ runner_src += $(addprefix quiz/src/, \
   runner.cpp \
 )
 
-runner_src += $(symbols_file)
+runner_src += $(BUILD_DIR)/quiz/src/tests_symbols.c
 
-runner_objs = $(call object_for,$(runner_src))
-$(runner_objs): SFLAGS += -Iquiz/src
-
-$(BUILD_DIR)/test.$(EXE): $(runner_objs) $(call object_for,$(tests))
+$(call object_for,$(runner_src)): SFLAGS += -Iquiz/src
+$(BUILD_DIR)/quiz/src/%_symbols.o: SFLAGS += -Iquiz/src

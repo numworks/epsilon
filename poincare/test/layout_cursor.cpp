@@ -61,8 +61,7 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
   // int(•, x, •, •)
   l = IntegralLayout::Builder(
       EmptyLayout::Builder(),
-      HorizontalLayout::Builder(
-        CodePointLayout::Builder('x')),
+      CodePointLayout::Builder('x'),
       EmptyLayout::Builder(),
       EmptyLayout::Builder());
   e = Integral::Builder(
@@ -71,4 +70,39 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
       EmptyExpression::Builder(),
       EmptyExpression::Builder());
   assert_inserted_layout_points_to(l, &e, l.childAtIndex(2));
+}
+
+QUIZ_CASE(poincare_layout_cursor_delete) {
+
+  /*  12
+   * --- -> "BackSpace" -> 12|34
+   * |34
+   * */
+  HorizontalLayout layout1 = HorizontalLayout::Builder(
+      FractionLayout::Builder(
+        LayoutHelper::String("12", 2),
+        LayoutHelper::String("34", 2)
+      )
+    );
+  LayoutCursor cursor1(layout1.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left);
+  cursor1.performBackspace();
+  assert_layout_serialize_to(layout1, "1234");
+  quiz_assert(cursor1.isEquivalentTo(LayoutCursor(layout1.childAtIndex(1), LayoutCursor::Position::Right)));
+
+  /*      ø
+   * 1 + --- -> "BackSpace" -> 1+|3
+   *     |3
+   * */
+  HorizontalLayout layout2 = HorizontalLayout::Builder(
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('+'),
+      FractionLayout::Builder(
+        EmptyLayout::Builder(),
+        CodePointLayout::Builder('3')
+      )
+    );
+  LayoutCursor cursor2(layout2.childAtIndex(2).childAtIndex(1), LayoutCursor::Position::Left);
+  cursor2.performBackspace();
+  assert_layout_serialize_to(layout2, "1+3");
+  quiz_assert(cursor2.isEquivalentTo(LayoutCursor(layout2.childAtIndex(1), LayoutCursor::Position::Right)));
 }

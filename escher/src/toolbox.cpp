@@ -13,7 +13,7 @@ void Toolbox::viewWillAppear() {
   NestedMenuController::viewWillAppear();
 }
 
-int Toolbox::numberOfRows() {
+int Toolbox::numberOfRows() const {
   if (m_messageTreeModel == nullptr) {
     m_messageTreeModel = (ToolboxMessageTree *)rootModel();
   }

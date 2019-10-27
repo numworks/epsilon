@@ -1,7 +1,11 @@
 apps += Statistics::App
 app_headers += apps/statistics/app.h
 
-app_src += $(addprefix apps/statistics/,\
+app_statistics_test_src = $(addprefix apps/statistics/,\
+  store.cpp \
+)
+
+app_statistics_src = $(addprefix apps/statistics/,\
   app.cpp \
   box_axis_view.cpp \
   box_banner_view.cpp \
@@ -19,9 +23,11 @@ app_src += $(addprefix apps/statistics/,\
   multiple_data_view_controller.cpp \
   multiple_histograms_view.cpp \
   statistics_context.cpp \
-  store.cpp \
   store_controller.cpp \
 )
+
+app_statistics_src += $(app_statistics_test_src)
+app_src += $(app_statistics_src)
 
 i18n_files += $(addprefix apps/statistics/,\
   base.de.i18n\
@@ -31,7 +37,7 @@ i18n_files += $(addprefix apps/statistics/,\
   base.pt.i18n\
 )
 
-tests += $(addprefix apps/statistics/test/,\
+tests_src += $(addprefix apps/statistics/test/,\
   store.cpp\
 )
 

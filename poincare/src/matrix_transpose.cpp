@@ -12,8 +12,8 @@ constexpr Expression::FunctionHelper MatrixTranspose::s_functionHelper;
 
 int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return MatrixTranspose(this).shallowReduce();
+Expression MatrixTransposeNode::shallowReduce(ReductionContext reductionContext) {
+  return MatrixTranspose(this).shallowReduce(reductionContext.context());
 }
 
 Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -25,7 +25,7 @@ int MatrixTransposeNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 template<typename T>
-Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixTransposeNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> transpose;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
@@ -38,7 +38,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
 }
 
 
-Expression MatrixTranspose::shallowReduce() {
+Expression MatrixTranspose::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -46,22 +46,16 @@ Expression MatrixTranspose::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix transpose = static_cast<Matrix&>(c).createTranspose();
-    return transpose;
+    Expression result = static_cast<Matrix&>(c).createTranspose();
+    replaceWithInPlace(result);
+    return result;
   }
-  if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return c;
+  if (c.deepIsMatrix(context)) {
+    return *this;
   }
-  return *this;
-#else
-  if (c.type() != ExpressionNode::Type::Matrix) {
-    replaceWithInPlace(c);
-    return c;
-  }
-  return *this;
-#endif
+  replaceWithInPlace(c);
+  return c;
 }
 
 }

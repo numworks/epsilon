@@ -1,7 +1,7 @@
 #include <poincare/frac_part.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/rational.h>
 #include <cmath>
 
@@ -19,8 +19,8 @@ int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
-Expression FracPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return FracPart(this).shallowReduce();
+Expression FracPartNode::shallowReduce(ReductionContext reductionContext) {
+  return FracPart(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -32,7 +32,7 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 }
 
 
-Expression FracPart::shallowReduce() {
+Expression FracPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -40,11 +40,9 @@ Expression FracPart::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixFirstChild(reductionContext);
   }
-#endif
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
   }

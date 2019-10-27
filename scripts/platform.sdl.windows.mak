@@ -1,2 +1,0 @@
-TOOLCHAIN ?= windows
-EXE = exe

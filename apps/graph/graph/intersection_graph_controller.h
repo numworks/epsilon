@@ -2,7 +2,6 @@
 #define GRAPH_INTERSECTION_GRAPH_CONTROLLER_H
 
 #include "calculation_graph_controller.h"
-#include "../cartesian_function_store.h"
 
 namespace Graph {
 
@@ -12,7 +11,7 @@ public:
   const char * title() override;
 private:
   void reloadBannerView() override;
-  Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
+  Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
   Ion::Storage::Record m_intersectedRecord;
 };
 

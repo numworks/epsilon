@@ -21,7 +21,7 @@ const char * ListParameterController::title() {
 }
 
 void ListParameterController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void ListParameterController::viewWillAppear() {
@@ -112,8 +112,7 @@ ExpiringPointer<Function> ListParameterController::function() {
 }
 
 FunctionStore * ListParameterController::functionStore() {
-  FunctionApp * a = static_cast<FunctionApp *>(app());
-  return a->functionStore();
+  return FunctionApp::app()->functionStore();
 }
 
 

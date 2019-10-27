@@ -1,6 +1,5 @@
 #include "function.h"
 #include "poincare_helpers.h"
-#include <poincare/serialization_helper.h>
 #include "poincare/src/parsing/parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -11,8 +10,6 @@
 using namespace Poincare;
 
 namespace Shared {
-
-constexpr char Function::k_parenthesedArgument[];
 
 bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
   assert(baseName[0] != 0);
@@ -64,36 +61,32 @@ void Function::setActive(bool active) {
   recordData()->setActive(active);
 }
 
-int Function::nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg) {
-  assert(UTF8Decoder::CharSizeOfCodePoint(arg) == 1);
-  const char * functionName = fullName();
-  size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
-  int result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
-  int bufferRemainingSize = bufferSize - (baseNameLength+1);
-  if (bufferRemainingSize > 0) {
-    UTF8Decoder::CodePointToChars(arg, buffer+baseNameLength+1, bufferRemainingSize);
-  }
+int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
+}
+
+int Function::name(char * buffer, size_t bufferSize) {
+  return SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
+}
+
+int Function::nameWithArgument(char * buffer, size_t bufferSize) {
+  int funcNameSize = name(buffer, bufferSize);
+  assert(funcNameSize > 0);
+  size_t result = funcNameSize;
+  assert(result <= bufferSize);
+  buffer[result++] = '(';
+  assert(result <= bufferSize);
+  assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
+  result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
+  assert(result <= bufferSize);
+  result += strlcpy(buffer+result, ")", bufferSize-result);
   return result;
 }
 
-template<typename T>
-T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const {
-  if (isCircularlyDefined(context)) {
-    return NAN;
-  }
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknownX[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, unknownSymbol);
-  return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, *context);
-}
-
-Function::FunctionRecordDataBuffer * Function::recordData() const {
+Function::RecordDataBuffer * Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<FunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 }
-
-template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*, CodePoint) const;
-template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*, CodePoint) const;

@@ -34,6 +34,10 @@ View * TableCell::subviewAtIndex(int index) {
   return subAccessoryView();
 }
 
+/*TODO: uniformize where margins are added. Sometimes the subview has included
+ * margins (like ExpressionView), sometimes the subview has no margins (like
+ * MessageView) which prevents us to handle margins only here. */
+
 void TableCell::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();

@@ -1,13 +1,14 @@
 #include <poincare/square_root.h>
-#include <poincare/power.h>
 #include <poincare/addition.h>
-#include <poincare/subtraction.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
-#include <poincare/nth_root_layout.h>
 #include <poincare/division.h>
+#include <poincare/layout_helper.h>
+#include <poincare/nth_root_layout.h>
+#include <poincare/power.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/sign_function.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
+
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -38,26 +39,24 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>::Builder(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
-Expression SquareRootNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return SquareRoot(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression SquareRootNode::shallowReduce(ReductionContext reductionContext) {
+  return SquareRoot(this).shallowReduce(reductionContext);
 }
 
-
-Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  Expression c = childAtIndex(0);
+  if (c.deepIsMatrix(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
   }
-#endif
-  Power p = Power::Builder(childAtIndex(0), Rational::Builder(1, 2));
+  Power p = Power::Builder(c, Rational::Builder(1, 2));
   replaceWithInPlace(p);
-  return p.shallowReduce(context, complexFormat, angleUnit, target);
+  return p.shallowReduce(reductionContext);
 }
 
 }

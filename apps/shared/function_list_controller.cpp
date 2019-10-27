@@ -154,7 +154,7 @@ void FunctionListController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), numberOfRows()-1);
   }
   footer()->setSelectedButton(-1);
-  app()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
 bool FunctionListController::handleEvent(Ion::Events::Event event) {
@@ -162,12 +162,12 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(1, numberOfRows()-1);
-      app()->setFirstResponder(selectableTableView());
+      Container::activeApp()->setFirstResponder(selectableTableView());
       return true;
     }
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   if (event == Ion::Events::Down) {
@@ -237,7 +237,7 @@ void FunctionListController::configureFunction(Ion::Storage::Record record) {
 
 void FunctionListController::computeTitlesColumnWidth(bool forceMax) {
   if (forceMax) {
-    m_titlesColumnWidth = nameWidth(Function::k_maxNameWithArgumentSize - 1)+k_functionTitleSumOfMargins;
+    m_titlesColumnWidth = nameWidth(Poincare::SymbolAbstract::k_maxNameSize + Function::k_parenthesedArgumentCodePointLength - 1)+k_functionTitleSumOfMargins;
     return;
   }
   KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
@@ -248,14 +248,8 @@ TabViewController * FunctionListController::tabController() const {
   return static_cast<TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
-FunctionStore * FunctionListController::modelStore() {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->functionStore();
-}
-
 InputViewController * FunctionListController::inputController() {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->inputViewController();
+  return FunctionApp::app()->inputViewController();
 }
 
 KDCoordinate FunctionListController::maxFunctionNameWidth() {
@@ -268,7 +262,7 @@ KDCoordinate FunctionListController::maxFunctionNameWidth() {
     assert(dotPosition != nullptr);
     maxNameLength = maxInt(maxNameLength, dotPosition-functionName);
   }
-  return nameWidth(maxNameLength + Function::k_parenthesedArgumentLength);
+  return nameWidth(maxNameLength + Function::k_parenthesedArgumentCodePointLength);
 }
 
 void FunctionListController::didChangeModelsList() {

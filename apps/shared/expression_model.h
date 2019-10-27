@@ -12,14 +12,14 @@ public:
   ExpressionModel();
 
   // Getters
-  void text(const Ion::Storage::Record * record, char * buffer, size_t bufferSize) const;
+  void text(const Ion::Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol = 0) const;
   Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
   Poincare::Expression expressionClone(const Ion::Storage::Record * record) const;
-  Poincare::Layout layout(const Ion::Storage::Record * record) const;
+  Poincare::Layout layout(const Ion::Storage::Record * record, CodePoint symbol = 0) const;
 
   // Setters
-  virtual Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol = 0, CodePoint unknownSymbol = 0);
-  Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, Poincare::Expression & e);
+  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol = 0);
+  Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
 
   // Property
   bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
@@ -28,11 +28,11 @@ public:
   virtual void tidy() const;
 protected:
   // Setters helper
-  static Poincare::Expression BuildExpressionFromText(const char * c, char symbol = 0, char unknownSymbol = 0);
+  static Poincare::Expression BuildExpressionFromText(const char * c, CodePoint symbol = 0);
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
 private:
-  virtual void updateNewDataWithExpression(Ion::Storage::Record * record, Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
+  virtual void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
   virtual size_t expressionSize(const Ion::Storage::Record * record) const = 0;
   mutable int m_circular;
 };

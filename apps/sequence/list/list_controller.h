@@ -19,7 +19,7 @@ class ListController : public Shared::FunctionListController, public Shared::Inp
 public:
   ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
-  int numberOfExpressionRows() override;
+  int numberOfExpressionRows() const override;
   KDCoordinate expressionRowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
@@ -28,9 +28,6 @@ public:
 private:
   static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
   bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
-  Shared::InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() override;
   ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
@@ -38,13 +35,12 @@ private:
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   int modelIndexForRow(int j) override;
-  bool isAddEmptyRow(int j) override;
   int sequenceDefinitionForRow(int j);
   void addEmptyModel() override;
   void reinitSelectedExpression(Shared::ExpiringPointer<Shared::ExpressionModelHandle> model) override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;
-  SequenceStore * modelStore() override { return static_cast<SequenceStore *>(Shared::FunctionListController::modelStore()); }
+  SequenceStore * modelStore() override;
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];

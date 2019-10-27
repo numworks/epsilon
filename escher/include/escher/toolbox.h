@@ -14,7 +14,7 @@ public:
   void viewWillAppear() override;
 
   //ListViewDataSource
-  int numberOfRows() override;
+  int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;
@@ -24,10 +24,10 @@ protected:
   bool selectSubMenu(int selectedRow) override;
   bool returnToPreviousMenu() override;
   virtual int maxNumberOfDisplayedRows() = 0;
-  virtual const ToolboxMessageTree * rootModel() = 0;
+  virtual const ToolboxMessageTree * rootModel() const = 0;
   virtual MessageTableCellWithMessage * leafCellAtIndex(int index) override = 0;
   virtual MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
-  ToolboxMessageTree * m_messageTreeModel;
+  mutable ToolboxMessageTree * m_messageTreeModel;
   /* m_messageTreeModel points at the messageTree of the tree (describing the
    * whole model) where we are located. It enables to know which rows are leaves
    * and which are subtrees. */

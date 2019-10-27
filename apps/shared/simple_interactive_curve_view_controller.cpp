@@ -29,11 +29,6 @@ bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event)
   return false;
 }
 
-bool SimpleInteractiveCurveViewController::textFieldDidAbortEditing(TextField * textField) {
-  reloadBannerView();
-  return true;
-}
-
 bool SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
     return handleEnter();

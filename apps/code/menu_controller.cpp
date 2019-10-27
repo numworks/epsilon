@@ -36,7 +36,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
 }
 
 ConsoleController * MenuController::consoleController() {
-  return static_cast<App *>(app())->consoleController();
+  return App::app()->consoleController();
 }
 
 StackViewController * MenuController::stackViewController() {
@@ -49,7 +49,7 @@ void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
   if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {
     TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
     if (tf->isEditing()) {
-      tf->setEditing(false, false);
+      tf->setEditing(false);
       privateTextFieldDidAbortEditing(tf, false);
     }
   }
@@ -61,14 +61,14 @@ void MenuController::didBecomeFirstResponder() {
   }
   if (footer()->selectedButton() == 0) {
     assert(m_selectableTableView.selectedRow() < 0);
-    app()->setFirstResponder(&m_consoleButton);
+    Container::activeApp()->setFirstResponder(&m_consoleButton);
     return;
   }
   if (m_selectableTableView.selectedRow() < 0) {
     m_selectableTableView.selectCellAtLocation(0,0);
   }
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts() + 1);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
   if (consoleController()->locked()) {
     consoleController()->setAutoImport(true);
@@ -92,7 +92,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     if (footer()->selectedButton() == 0) {
       footer()->setSelectedButton(-1);
       m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
-      app()->setFirstResponder(&m_selectableTableView);
+      Container::activeApp()->setFirstResponder(&m_selectableTableView);
       return true;
     }
   }
@@ -121,13 +121,16 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
 void MenuController::renameSelectedScript() {
   assert(m_selectableTableView.selectedRow() >= 0);
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   m_selectableTableView.selectCellAtLocation(0, (m_selectableTableView.selectedRow()));
   ScriptNameCell * myCell = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
-  app()->setFirstResponder(myCell);
+  Container::activeApp()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
-  myCell->textField()->setEditing(true, false);
-  myCell->textField()->setCursorLocation(myCell->textField()->text() + strlen(myCell->textField()->text()));
+  TextField * tf = myCell->textField();
+  const char * previousText = tf->text();
+  tf->setEditing(true);
+  tf->setText(previousText);
+  tf->setCursorLocation(tf->text() + strlen(previousText));
 }
 
 void MenuController::deleteScript(Script script) {
@@ -153,7 +156,7 @@ void MenuController::scriptContentEditionDidFinish() {
   reloadConsole();
 }
 
-int MenuController::numberOfRows() {
+int MenuController::numberOfRows() const {
   return m_scriptStore->numberOfScripts() + m_shouldDisplayAddScriptRow;
 }
 
@@ -312,9 +315,9 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     // The user entered an empty name. Use a numbered default script name.
     bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
     int defaultNameLength = strlen(numberedDefaultName);
-    assert(defaultNameLength < bufferSize);
     assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberedDefaultName[defaultNameLength++] = '.';
+    assert(defaultNameLength < bufferSize);
     strlcpy(numberedDefaultName + defaultNameLength, ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
     /* If there are already scripts named script1.py, script2.py,... until
      * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried
@@ -337,16 +340,16 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     }
     m_selectableTableView.selectedCell()->setHighlighted(true);
     reloadConsole();
-    app()->setFirstResponder(&m_selectableTableView);
-    static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+    Container::activeApp()->setFirstResponder(&m_selectableTableView);
+    AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else if (error == Script::ErrorStatus::NameTaken) {
-    app()->displayWarning(I18n::Message::NameTaken);
+    Container::activeApp()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Script::ErrorStatus::NonCompliantName) {
-    app()->displayWarning(I18n::Message::AllowedCharactersaz09, I18n::Message::NameCannotStartWithNumber);
+    Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersaz09, I18n::Message::NameCannotStartWithNumber);
   } else {
     assert(error == Script::ErrorStatus::NotEnoughSpaceAvailable);
-    app()->displayWarning(I18n::Message::NameTooLong);
+    Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
   }
   return false;
 }
@@ -420,9 +423,9 @@ bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool
   textField->setText(scriptName);
   if (menuControllerStaysInResponderChain) {
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-    app()->setFirstResponder(&m_selectableTableView);
+    Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
 }
 

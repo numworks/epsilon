@@ -12,10 +12,10 @@
 
 namespace Probability {
 
-CalculationTypeController::CalculationTypeController(Responder * parentResponder, Law * law, Calculation * calculation, CalculationController * calculationController) :
+CalculationTypeController::CalculationTypeController(Responder * parentResponder, Distribution * distribution, Calculation * calculation, CalculationController * calculationController) :
   ViewController(parentResponder),
   m_selectableTableView(this),
-  m_law(law),
+  m_distribution(distribution),
   m_calculation(calculation),
   m_calculationController(calculationController)
 {
@@ -39,28 +39,28 @@ void CalculationTypeController::viewDidDisappear() {
 }
 
 void CalculationTypeController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CalculationTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_calculationController->setCalculationAccordingToIndex(selectedRow());
     m_calculationController->reload();
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }
   if (event == Ion::Events::Back || event == Ion::Events::Right) {
     if (event == Ion::Events::Right) {
       m_calculationController->selectCellAtLocation(1,0);
     }
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }
   return false;
 }
 
-int CalculationTypeController::numberOfRows() {
-  if (m_law->isContinuous()) {
+int CalculationTypeController::numberOfRows() const {
+  if (m_distribution->isContinuous()) {
     return k_numberOfImages-1;
   }
   return k_numberOfImages;
@@ -80,7 +80,7 @@ HighlightCell * CalculationTypeController::reusableCell(int index) {
   return &m_imageCells[index];
 }
 
-int CalculationTypeController::reusableCellCount() {
+int CalculationTypeController::reusableCellCount() const {
   return k_numberOfImages;
 }
 

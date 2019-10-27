@@ -16,19 +16,16 @@ public:
   }
 #endif
 
-  // Complex
-  bool isReal(Context & context) const override { return false; }
-
   // Properties
   Type type() const override { return Type::Undefined; }
-  int polynomialDegree(Context & context, const char * symbolName) const override;
-  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<double>();
   }
 
@@ -37,6 +34,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 protected:
   template<typename T> Evaluation<T> templatedApproximate() const;
+  // Simplification
+  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
 };
 
 class Undefined final : public Number {
@@ -46,7 +45,7 @@ public:
   static const char * Name() {
     return "undef";
   }
-  static int NameSize() {
+  static constexpr int NameSize() {
     return 6;
   }
 };

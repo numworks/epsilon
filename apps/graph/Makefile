@@ -1,9 +1,9 @@
 apps += Graph::App
 app_headers += apps/graph/app.h
 
-app_src += $(addprefix apps/graph/,\
+app_graph_src = $(addprefix apps/graph/,\
   app.cpp \
-  cartesian_function_store.cpp \
+  continuous_function_store.cpp \
   graph/banner_view.cpp \
   graph/calculation_graph_controller.cpp \
   graph/calculation_parameter_controller.cpp \
@@ -18,13 +18,20 @@ app_src += $(addprefix apps/graph/,\
   graph/intersection_graph_controller.cpp \
   graph/root_graph_controller.cpp \
   graph/tangent_graph_controller.cpp \
+  list/domain_parameter_controller.cpp \
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
   list/text_field_function_title_cell.cpp \
+  list/type_helper.cpp \
+  list/type_parameter_controller.cpp \
+  values/abscissa_title_cell.cpp \
   values/derivative_parameter_controller.cpp \
   values/function_parameter_controller.cpp \
+  values/interval_parameter_selector_controller.cpp \
   values/values_controller.cpp \
 )
+
+app_src += $(app_graph_src)
 
 i18n_files += $(addprefix apps/graph/,\
   base.de.i18n\

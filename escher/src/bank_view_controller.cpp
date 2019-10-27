@@ -1,5 +1,5 @@
 #include <escher/bank_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 
 BankViewController::BankViewController(Responder * parentViewController) :
   ViewController(parentViewController),
@@ -14,14 +14,14 @@ void BankViewController::setActiveIndex(int i) {
   }
   ViewController * upcomingVC = childAtIndex(i);
   upcomingVC->viewWillAppear();
-  app()->setFirstResponder(upcomingVC);
+  Container::activeApp()->setFirstResponder(upcomingVC);
   childAtIndex(m_activeIndex)->viewDidDisappear();
   m_activeIndex = i;
   m_view.setSubview(upcomingVC->view());
 }
 
 void BankViewController::didEnterResponderChain(Responder * previousResponder) {
-  app()->setFirstResponder(activeViewController());
+  Container::activeApp()->setFirstResponder(activeViewController());
 }
 
 void BankViewController::initView() {

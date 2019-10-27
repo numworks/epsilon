@@ -1,6 +1,6 @@
 SFLAGS += -Iescher/include
 
-src += $(addprefix escher/src/,\
+escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
   app.cpp \
   bank_view_controller.cpp \
@@ -35,6 +35,7 @@ src += $(addprefix escher/src/,\
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
   message_table_cell_with_chevron.cpp \
+  message_table_cell_with_chevron_and_buffer.cpp \
   message_table_cell_with_chevron_and_message.cpp \
   message_table_cell_with_chevron_and_expression.cpp \
   message_table_cell_with_editable_text.cpp \
@@ -55,7 +56,6 @@ src += $(addprefix escher/src/,\
   scroll_view_indicator.cpp \
   scrollable_view.cpp \
   selectable_table_view.cpp \
-  selectable_table_view_data_source.cpp \
   selectable_table_view_delegate.cpp \
   simple_list_view_data_source.cpp \
   simple_table_view_data_source.cpp \
@@ -114,5 +114,5 @@ $(eval $(call rule_for, \
 define depends_on_image
 $(call object_for,$(1)): $(call object_for,$(2))
 $(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
-src += $(2)
+escher_src += $(2)
 endef

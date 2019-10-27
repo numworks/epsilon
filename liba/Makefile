@@ -1,6 +1,6 @@
 SFLAGS += -Iliba/include
 
-src += $(addprefix liba/src/, \
+liba_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \
   assert.c \
@@ -24,7 +24,7 @@ src += $(addprefix liba/src/, \
   external/sqlite/mem5.c \
 )
 
-src += $(addprefix liba/src/external/openbsd/, \
+liba_src += $(addprefix liba/src/external/openbsd/, \
   b_exp__D.c \
   b_log__D.c \
   b_tgamma.c \
@@ -78,7 +78,7 @@ src += $(addprefix liba/src/external/openbsd/, \
   w_lgammaf.c \
 )
 
-src += $(addprefix liba/src/external/openbsd/, \
+liba_src += $(addprefix liba/src/external/openbsd/, \
   e_acos.c \
   e_acosh.c \
   e_asin.c \
@@ -121,7 +121,7 @@ $(call object_for,liba/src/external/sqlite/mem5.c): CFLAGS += -w
 $(call object_for,liba/src/external/openbsd/%.c): SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
 $(call object_for,liba/src/external/openbsd/%.c): CFLAGS += -w
 
-tests += $(addprefix liba/test/, \
+tests_src += $(addprefix liba/test/, \
   aeabi.c \
   double.c \
   ieee754.c \
@@ -135,6 +135,6 @@ tests += $(addprefix liba/test/, \
 
 # The use of aeabi-rt could be made conditional to an AEABI target.
 # In practice we're always using liba on such a target.
-src += $(addprefix liba/src/aeabi-rt/, \
+liba_src += $(addprefix liba/src/aeabi-rt/, \
   atexit.c \
 )

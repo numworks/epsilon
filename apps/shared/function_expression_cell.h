@@ -12,7 +12,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews() override;
 private:
-  constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
 };
 
 }

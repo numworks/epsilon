@@ -24,24 +24,26 @@ public:
 
   // Properties
   Type type() const override { return Type::Opposite; }
-  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
   Sign sign(Context * context) const override;
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, compute<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, compute<double>);
   }
 
   // Layout
-  bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::OneLetter; };
+  LayoutShape rightLayoutShape() const override { return childAtIndex(0)->rightLayoutShape(); }
 };
 
 class Opposite final : public Expression {
@@ -50,7 +52,7 @@ public:
   static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
   static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(&child, 1); }
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

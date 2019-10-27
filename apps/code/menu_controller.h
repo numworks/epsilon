@@ -31,8 +31,8 @@ public:
   void viewWillAppear() override;
 
   /* TableViewDataSource */
-  int numberOfRows() override;
-  int numberOfColumns() override { return 2; }
+  int numberOfRows() const override;
+  int numberOfColumns() const override { return 2; }
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override { return Metric::StoreRowHeight; }

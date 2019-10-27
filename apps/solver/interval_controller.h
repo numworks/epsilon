@@ -7,12 +7,12 @@
 
 namespace Solver {
 
-class IntervalController : public Shared::FloatParameterController {
+class IntervalController : public Shared::FloatParameterController<double> {
 public:
   IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore);
   const char * title() override;
   View * view() override { return &m_contentView; }
-  int numberOfRows() override;
+  int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
@@ -36,7 +36,6 @@ private:
   };
   ContentView m_contentView;
   constexpr static int k_maxNumberOfCells = 2;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_intervalCell[k_maxNumberOfCells];
   EquationStore * m_equationStore;
 };

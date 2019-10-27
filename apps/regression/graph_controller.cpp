@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "../apps_container.h"
+#include <poincare/preferences.h>
 #include <cmath>
 
 using namespace Poincare;
@@ -18,7 +19,7 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_crossCursorView(),
   m_roundCursorView(),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(store, m_cursor, &m_bannerView, &m_crossCursorView, this),
+  m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
   m_initialisationParameterController(this, m_store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
@@ -44,6 +45,9 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
+#ifdef GRAPH_CURSOR_SPEEDUP
+  m_roundCursorView.resetMemoization();
+#endif
   /* At this point, some series might have been removed from the model. We need
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */
@@ -81,44 +85,47 @@ void GraphController::viewWillAppear() {
   /* Since *m_selectedDotIndex is altered by initCursorParameters(),
    * the following must absolutely come at the end. */
   if (*m_selectedDotIndex >= 0) {
-    m_view.setCursorView(static_cast<View *>(&m_crossCursorView));
+    setRoundCrossCursorView(false);
   } else {
-    m_view.setCursorView(static_cast<View *>(&m_roundCursorView));
+    setRoundCrossCursorView(true);
     m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
   }
 }
 
 void GraphController::selectRegressionCurve() {
   *m_selectedDotIndex = -1;
-  m_view.setCursorView(&m_roundCursorView);
+  setRoundCrossCursorView(true);
   m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
 // Private
 
 Poincare::Context * GraphController::globalContext() {
-  return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
   // Set point equals: "P(...) ="
-  constexpr size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   int numberOfChar = 0;
   const char * legend = " P(";
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     legend = I18n::translate(I18n::Message::MeanDot);
+    assert(numberOfChar <= bufferSize);
     numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else if (*m_selectedDotIndex < 0) {
     legend = I18n::translate(I18n::Message::Reg);
+    assert(numberOfChar <= bufferSize);
     numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else {
-    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    numberOfChar += PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Preferences::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
   legend = ")  ";
+  assert(numberOfChar <= bufferSize);
   strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   m_bannerView.dotNameView()->setText(buffer);
 
@@ -133,7 +140,7 @@ void GraphController::reloadBannerView() {
   }
   m_bannerView.abscissaSymbol()->setText(legend);
 
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, Constant::MediumNumberOfSignificantDigits);
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, Preferences::MediumNumberOfSignificantDigits);
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.abscissaValue()->setText(buffer);
@@ -148,7 +155,7 @@ void GraphController::reloadBannerView() {
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::MediumNumberOfSignificantDigits);
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.ordinateView()->setText(buffer);
@@ -189,7 +196,7 @@ void GraphController::reloadBannerView() {
     char leg[] = {' ', coefficientName, '=', 0};
     legend = leg;
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
@@ -200,7 +207,7 @@ void GraphController::reloadBannerView() {
     legend = " r=";
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(2)->setText(buffer);
 
     // Set "r2=..."
@@ -208,7 +215,7 @@ void GraphController::reloadBannerView() {
     legend = " r2=";
     double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(3)->setText(buffer);
 
     // Clean the last subview
@@ -230,12 +237,16 @@ bool GraphController::moveCursorHorizontally(int direction) {
     int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
-      m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+      double x = m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex);
+      double y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
+      m_cursor->moveTo(x, x, y);
       return true;
     }
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
-      m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
+      double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+      double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+      m_cursor->moveTo(x, x, y);
       return true;
     }
     return false;
@@ -243,7 +254,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
     m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   double y = yValue(*m_selectedSeriesIndex, x, globalContext());
-  m_cursor->moveTo(x, y);
+  m_cursor->moveTo(x, x, y);
   return true;
 }
 
@@ -264,7 +275,7 @@ bool GraphController::handleEnter() {
 void GraphController::initCursorParameters() {
   double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
-  m_cursor->moveTo(x, y);
+  m_cursor->moveTo(x, x, y);
   if (m_store->yAuto()) {
     m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   }
@@ -278,7 +289,7 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // Find the closest regression
   int selectedRegressionIndex = *m_selectedDotIndex == -1 ? *m_selectedSeriesIndex : -1;
-  int closestRegressionSeries = InteractiveCurveViewController::closestCurveIndexVertically(direction > 0, selectedRegressionIndex, context);
+  int closestRegressionSeries = closestCurveIndexVertically(direction > 0, selectedRegressionIndex, context);
 
   // Find the closest dot
   int closestDotSeries = -1;
@@ -320,21 +331,25 @@ bool GraphController::moveCursorVertically(int direction) {
     // Select the regression
     *m_selectedSeriesIndex = closestRegressionSeries;
     selectRegressionCurve();
-    m_cursor->moveTo(x, yValue(*m_selectedSeriesIndex, x, context));
+    m_cursor->moveTo(x, x, yValue(*m_selectedSeriesIndex, x, context));
     return true;
   }
 
   if (validDot) {
     // Select the dot
-    m_view.setCursorView(&m_crossCursorView);
+    setRoundCrossCursorView(false);
     *m_selectedSeriesIndex = closestDotSeries;
     *m_selectedDotIndex = dotSelected;
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       // Select the mean dot
-      m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
+      double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+      double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+      m_cursor->moveTo(x, x, y);
     } else {
       // Select a data point dot
-      m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+      double x = m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex);
+      double y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
+      m_cursor->moveTo(x, x, y);
     }
     return true;
   }
@@ -353,6 +368,10 @@ uint32_t GraphController::rangeVersion() {
 
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
   return newIndex != currentIndex && !m_store->seriesIsEmpty(newIndex);
+}
+
+Coordinate2D<double> GraphController::xyValues(int curveIndex, double x, Poincare::Context * context) const {
+  return Coordinate2D<double>(x, yValue(curveIndex, x, context));
 }
 
 double GraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {
@@ -386,6 +405,17 @@ InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Interact
   range.min = minY;
   range.max = maxY;
   return range;
+}
+
+void GraphController::setRoundCrossCursorView(bool round) {
+  CursorView * nextCursorView = round ? static_cast<Shared::CursorView *>(&m_roundCursorView) : static_cast<Shared::CursorView *>(&m_crossCursorView);
+  if (m_view.cursorView() == nextCursorView) {
+    return;
+  }
+#ifdef GRAPH_CURSOR_SPEEDUP
+  m_roundCursorView.resetMemoization();
+#endif
+  m_view.setCursorView(nextCursorView);
 }
 
 }

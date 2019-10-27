@@ -9,10 +9,9 @@ namespace Sequence {
 class GraphView : public Shared::FunctionGraphView {
 public:
   GraphView(SequenceStore * sequenceStore, Shared::InteractiveCurveViewRange * graphRange,
-    Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
+    Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  float samplingRatio() const override;
   SequenceStore * m_sequenceStore;
 };
 

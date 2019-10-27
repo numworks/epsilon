@@ -11,11 +11,7 @@ using namespace Poincare;
 namespace Shared {
 
 Context * TextFieldDelegateApp::localContext() {
-  return container()->globalContext();
-}
-
-char TextFieldDelegateApp::XNT() {
-  return 'x';
+  return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
 bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
@@ -25,7 +21,6 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, I
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (!isAcceptableText(textField->text())) {
-      textField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }
@@ -38,12 +33,19 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
 
 bool TextFieldDelegateApp::isAcceptableText(const char * text) {
   Expression exp = Expression::Parse(text);
-  return isAcceptableExpression(exp);
+  bool isAcceptable = isAcceptableExpression(exp);
+  if (!isAcceptable) {
+    displayWarning(I18n::Message::SyntaxError);
+  }
+  return isAcceptable;
 }
 
-bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) {
-  value = PoincareHelpers::ApproximateToScalar<double>(text, *localContext());
-  bool isUndefined = std::isnan(value) || std::isinf(value);
+template<typename T>
+bool TextFieldDelegateApp::hasUndefinedValue(const char * text, T & value, bool enablePlusInfinity, bool enableMinusInfinity) {
+  value = PoincareHelpers::ApproximateToScalar<T>(text, localContext());
+  bool isUndefined = std::isnan(value)
+    || (!enablePlusInfinity && value > 0 && std::isinf(value))
+    || (!enableMinusInfinity && value < 0 && std::isinf(value));
   if (isUndefined) {
     displayWarning(I18n::Message::UndefinedValue);
   }
@@ -52,8 +54,8 @@ bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) 
 
 /* Protected */
 
-TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  InputEventHandlerDelegateApp(container, snapshot, rootViewController),
+TextFieldDelegateApp::TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
+  InputEventHandlerDelegateApp(snapshot, rootViewController),
   TextFieldDelegate()
 {
 }
@@ -66,7 +68,11 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     /* TODO decode here to encode again in handleEventWithText? */
     constexpr int bufferSize = CodePoint::MaxCodePointCharLength+1;
     char buffer[bufferSize];
-    size_t length = UTF8Decoder::CodePointToChars(field->XNTCodePoint(XNT()), buffer, bufferSize);
+    CodePoint xnt = XNT();
+    if (XNTCanBeOverriden()) {
+      xnt = field->XNTCodePoint(xnt);
+    }
+    size_t length = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
     assert(length < bufferSize - 1);
     buffer[length] = 0;
     return field->handleEventWithText(buffer);
@@ -82,7 +88,7 @@ bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   if (exp.isUninitialized()) {
     return false;
   }
-  if (!storeExpressionAllowed() && exp.type() == ExpressionNode::Type::Store) {
+  if (exp.type() == ExpressionNode::Type::Store) {
     return false;
   }
   return true;
@@ -115,5 +121,8 @@ bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression
   }
   return true;
 }
+
+template bool TextFieldDelegateApp::hasUndefinedValue(const char *, float &, bool, bool);
+template bool TextFieldDelegateApp::hasUndefinedValue(const char *, double &, bool, bool);
 
 }

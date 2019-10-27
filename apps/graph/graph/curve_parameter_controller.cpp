@@ -1,5 +1,6 @@
 #include "curve_parameter_controller.h"
 #include "graph_controller.h"
+#include "../app.h"
 #include <apps/i18n.h>
 #include <assert.h>
 
@@ -9,7 +10,7 @@ namespace Graph {
 
 CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
   FunctionCurveParameterController(),
-  m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor, I18n::Message::X),
+  m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
   m_derivativeCell(I18n::Message::DerivateNumber),
@@ -29,8 +30,15 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (selectedRow() == 0 || selectedRow() == 1))) {
-    switch (selectedRow()) {
+  int index;
+  if (shouldDisplayCalculationAndDerivative()) {
+    index = selectedRow();
+  } else {
+    assert(selectedRow() == 0);
+    index = 1;
+  }
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (index == 0 || index == 1))) {
+    switch (index) {
       case 0:
       {
         m_calculationParameterController.setRecord(m_record);
@@ -47,25 +55,42 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
         return true;
       }
       default:
+        assert(false);
         return false;
     }
   }
   return false;
 }
 
-int CurveParameterController::numberOfRows() {
-  return k_totalNumberOfCells;
+int CurveParameterController::numberOfRows() const {
+  return reusableCellCount();
 };
 
 HighlightCell * CurveParameterController::reusableCell(int index) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCells);
+  assert(0 <= index && index < reusableCellCount());
   HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
-  return cells[index];
+  return cells[cellIndex(index)];
 }
 
-int CurveParameterController::reusableCellCount() {
-  return k_totalNumberOfCells;
+int CurveParameterController::reusableCellCount() const {
+  return 1 + (shouldDisplayCalculationAndDerivative() ? 2 : 0);
+}
+
+void CurveParameterController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+}
+
+bool CurveParameterController::shouldDisplayCalculationAndDerivative() const {
+  Shared::ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
+  return f->plotType() == ContinuousFunction::PlotType::Cartesian;
+}
+
+int CurveParameterController::cellIndex(int visibleCellIndex) const {
+  if (shouldDisplayCalculationAndDerivative()) {
+   return visibleCellIndex;
+  }
+  assert(visibleCellIndex == 0);
+  return 1;
 }
 
 FunctionGoToParameterController * CurveParameterController::goToParameterController() {

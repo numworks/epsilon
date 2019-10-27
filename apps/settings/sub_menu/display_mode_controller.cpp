@@ -2,6 +2,7 @@
 #include "../../shared/poincare_helpers.h"
 #include <assert.h>
 #include <cmath>
+#include "../app.h"
 
 #include <poincare/integer.h>
 
@@ -12,7 +13,7 @@ namespace Settings {
 
 DisplayModeController::DisplayModeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   PreferencesController(parentResponder),
-  m_editableCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer)
+  m_editableCell(&m_selectableTableView, inputEventHandlerDelegate, this)
 {
   m_editableCell.messageTableCellWithEditableText()->setMessage(I18n::Message::SignificantFigures);
   m_editableCell.messageTableCellWithEditableText()->setMessageFont(KDFont::LargeFont);
@@ -83,6 +84,9 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
   if (floatBody < 1) {
    floatBody = 1;
   }
+  if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Engineering && floatBody < 3) {
+    floatBody = 3;
+  }
   if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
     floatBody = PrintFloat::k_numberOfStoredSignificantDigits;
   }
@@ -92,10 +96,6 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
     m_selectableTableView.handleEvent(event);
   }
   return true;
-}
-
-Shared::TextFieldDelegateApp * DisplayModeController::textFieldDelegateApp() {
-  return (Shared::TextFieldDelegateApp *)app();
 }
 
 }

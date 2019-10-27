@@ -10,7 +10,6 @@ namespace Solver {
 ListController::ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer) :
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
-  m_equationStore(equationStore),
   m_equationListView(this),
   m_expressionCells{},
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
@@ -43,10 +42,7 @@ Button * ListController::buttonAtIndex(int index, ButtonRowController::Position 
 }
 
 int ListController::typeAtLocation(int i, int j) {
-  if (j == m_equationStore->numberOfModels()) {
-    return 1;
-  }
-  return 0;
+  return isAddEmptyRow(j);
 }
 
 HighlightCell * ListController::reusableCell(int index, int type) {
@@ -71,7 +67,7 @@ int ListController::reusableCellCount(int type) {
 }
 
 void ListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index != m_equationStore->numberOfModels()) {
+  if (!isAddEmptyRow(index)) {
     willDisplayExpressionCellAtIndex(cell, index);
   }
   cell->setHighlighted(index == selectedRow());
@@ -81,7 +77,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up && selectedRow() == -1) {
     footer()->setSelectedButton(-1);
     selectableTableView()->selectCellAtLocation(0, numberOfRows()-1);
-    app()->setFirstResponder(selectableTableView());
+    Container::activeApp()->setFirstResponder(selectableTableView());
     return true;
   }
   if (event == Ion::Events::Down) {
@@ -105,7 +101,7 @@ void ListController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), numberOfRows()-1);
   }
   footer()->setSelectedButton(-1);
-  app()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
 void ListController::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -132,7 +128,7 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
       textField->handleEvent(Ion::Events::ShiftRight);
       textField->handleEventWithText("=0");
       if (!textRepresentsAnEquality(textField->text())) {
-        app()->displayWarning(I18n::Message::RequireEquation);
+        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }
     }
@@ -149,7 +145,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
       layoutField->handleEvent(Ion::Events::ShiftRight);
       layoutField->handleEventWithText("=0");
       if (!layoutRepresentsAnEquality(layoutField->layout())) {
-        app()->displayWarning(I18n::Message::RequireEquation);
+        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }
     }
@@ -171,47 +167,45 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poin
 }
 
 void ListController::resolveEquations() {
-  if (m_equationStore->numberOfDefinedModels() == 0) {
-    app()->displayWarning(I18n::Message::EnterEquation);
+  if (modelStore()->numberOfDefinedModels() == 0) {
+    Container::activeApp()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  EquationStore::Error e = m_equationStore->exactSolve(static_cast<App *>(app())->localContext());
+  EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext());
   switch (e) {
     case EquationStore::Error::EquationUndefined:
-      app()->displayWarning(I18n::Message::UndefinedEquation);
+      Container::activeApp()->displayWarning(I18n::Message::UndefinedEquation);
       return;
     case EquationStore::Error::EquationUnreal:
-      app()->displayWarning(I18n::Message::UnrealEquation);
+      Container::activeApp()->displayWarning(I18n::Message::UnrealEquation);
       return;
     case EquationStore::Error::TooManyVariables:
-      app()->displayWarning(I18n::Message::TooManyVariables);
+      Container::activeApp()->displayWarning(I18n::Message::TooManyVariables);
       return;
     case EquationStore::Error::NonLinearSystem:
-      app()->displayWarning(I18n::Message::NonLinearSystem);
+      Container::activeApp()->displayWarning(I18n::Message::NonLinearSystem);
       return;
     case EquationStore::Error::RequireApproximateSolution:
     {
       StackViewController * stack = stackController();
-      App * solverApp = static_cast<App *>(app());
-      stack->push(solverApp->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
       return;
     }
     default:
     {
       assert(e == EquationStore::Error::NoError);
       StackViewController * stack = stackController();
-      App * solverApp = static_cast<App *>(app());
-      stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     }
  }
 }
 
 void ListController::reloadButtonMessage() {
-  footer()->setMessageOfButtonAtIndex(m_equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, 0);
+  footer()->setMessageOfButtonAtIndex(modelStore()->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, 0);
 }
 
 void ListController::addEmptyModel() {
-  app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
+  Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {
@@ -222,20 +216,16 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 }
 
 void ListController::reloadBrace() {
-  EquationListView::BraceStyle braceStyle = m_equationStore->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (m_equationStore->numberOfModels() == m_equationStore->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
+  EquationListView::BraceStyle braceStyle = modelStore()->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
   m_equationListView.setBraceStyle(braceStyle);
+}
+
+EquationStore * ListController::modelStore() {
+  return App::app()->equationStore();
 }
 
 SelectableTableView * ListController::selectableTableView() {
   return m_equationListView.selectableTableView();
-}
-
-Shared::TextFieldDelegateApp * ListController::textFieldDelegateApp() {
-  return static_cast<App *>(app());
-}
-
-Shared::ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
-  return static_cast<App *>(app());
 }
 
 StackViewController * ListController::stackController() const {
@@ -243,7 +233,7 @@ StackViewController * ListController::stackController() const {
 }
 
 InputViewController * ListController::inputController() {
-  return static_cast<App *>(app())->inputViewController();
+  return App::app()->inputViewController();
 }
 
 }

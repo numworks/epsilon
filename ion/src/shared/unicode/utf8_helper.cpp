@@ -55,13 +55,27 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   return currentPointer;
 }
 
+bool HasCodePoint(const char * s, CodePoint c) {
+  assert(c != 0);
+  return *CodePointSearch(s, c) != 0;
+}
+
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition) {
-  // TODO LEA: optimize for one byte long c?
-  if (goingLeft) {
-    assert(initialPosition != nullptr);
-    if (initialPosition == s) {
-      return s;
+  if (goingLeft && initialPosition == s) {
+    return s;
+  }
+  assert(goingLeft || initialPosition == nullptr);
+  assert(!goingLeft || initialPosition != nullptr);
+  if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
+    /* The code points are one char long, so they are equal to their char
+     * translations. We can do a classic char search. */
+    const char * codePointPointer = goingLeft ? initialPosition - 1 : s;
+    while ((goingLeft ?codePointPointer > s : *codePointPointer != 0) && *codePointPointer == c) {
+      codePointPointer += goingLeft ? -1 : 1;
     }
+    return codePointPointer;
+  }
+  if (goingLeft) {
     UTF8Decoder decoder(s, initialPosition);
     CodePoint codePoint = decoder.previousCodePoint();
     const char * codePointPointer = decoder.stringPosition();
@@ -71,7 +85,6 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
     }
     return codePointPointer;
   }
-  assert(!goingLeft && initialPosition == nullptr);
   UTF8Decoder decoder(s);
   const char * codePointPointer = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
@@ -82,7 +95,7 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
   return codePointPointer;
 }
 
-void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, const char * * pointerToUpdate) {
+void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c) {
   if (dstSize <= 0) {
     return;
   }
@@ -92,6 +105,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
   const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
   size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
+  (void)codePointCharSize; // Silence compilation warning about unused variable.
 
   // Remove CodePoint c
   while (codePoint != UCodePointNull && bufferIndex < dstSize) {
@@ -99,9 +113,6 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
       int copySize = minInt(nextPointer - currentPointer, dstSize - bufferIndex);
       memcpy(dst + bufferIndex, currentPointer, copySize);
       bufferIndex+= copySize;
-    } else if (pointerToUpdate != nullptr && currentPointer < *pointerToUpdate) {
-      assert(*pointerToUpdate - src >= codePointCharSize);
-      *pointerToUpdate = *pointerToUpdate - codePointCharSize;
     }
     currentPointer = nextPointer;
     codePoint = decoder.nextCodePoint();
@@ -114,16 +125,18 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
   UTF8Decoder decoder(buffer);
   const char * currentPointer = buffer;
   CodePoint codePoint = decoder.nextCodePoint();
+  const char * initialPointerToUpdate =  *pointerToUpdate;
   const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
-  size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
+  int codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
+  (void)codePointCharSize; // Silence compilation warning about unused variable.
 
   while (codePoint != UCodePointNull && (stoppingPosition == nullptr || currentPointer < stoppingPosition)) {
     if (codePoint != c) {
       int copySize = nextPointer - currentPointer;
       memmove(buffer + bufferIndex, currentPointer, copySize);
       bufferIndex+= copySize;
-    } else if (pointerToUpdate != nullptr && currentPointer < *pointerToUpdate) {
+    } else if (pointerToUpdate != nullptr && currentPointer < initialPointerToUpdate) {
       assert(*pointerToUpdate - buffer >= codePointCharSize);
       *pointerToUpdate = *pointerToUpdate - codePointCharSize;
     }
@@ -136,7 +149,7 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
   } else {
     assert(stoppingPosition != nullptr);
     // Find the null-terminating code point
-    const char * nullTermination = CodePointSearch(currentPointer, UCodePointNull);
+    const char * nullTermination = currentPointer + strlen(currentPointer);
     /* Copy what remains of the buffer after the stopping position for code
      * point removal */
     memmove(buffer + bufferIndex, stoppingPosition, nullTermination - stoppingPosition + 1);

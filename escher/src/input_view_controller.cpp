@@ -1,17 +1,16 @@
 #include <escher/input_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/palette.h>
 #include <assert.h>
 
 InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
-  m_expressionField(this, m_textBuffer, k_bufferLength, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(this, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {
-  m_textBuffer[0] = 0;
 }
 
 void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_expressionField);
+  Container::activeApp()->setFirstResponder(&m_expressionField);
 }
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
@@ -26,18 +25,15 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
 {
 }
 
-const char * InputViewController::textBody() {
-  return m_expressionFieldController.expressionField()->text();
-}
-
-void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction) {
+void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
   displayModalViewController(&m_expressionFieldController, 1.0f, 1.0f);
-  if (initialText != nullptr) {
-    m_expressionFieldController.expressionField()->setText(initialText);
-  }
   m_expressionFieldController.expressionField()->handleEvent(event);
+}
+
+bool InputViewController::isEditing() {
+  return m_expressionFieldController.expressionField()->isEditing();
 }
 
 void InputViewController::abortEditionAndDismiss() {

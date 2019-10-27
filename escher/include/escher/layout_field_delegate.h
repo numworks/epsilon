@@ -1,8 +1,8 @@
 #ifndef ESCHER_LAYOUT_FIELD_DELEGATE_H
 #define ESCHER_LAYOUT_FIELD_DELEGATE_H
 
-#include <escher/toolbox.h>
 #include <ion/events.h>
+#include <poincare/layout.h>
 
 class LayoutField;
 

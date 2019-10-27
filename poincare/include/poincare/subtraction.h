@@ -22,31 +22,36 @@ public:
 
   // Properties
   Type type() const override { return Type::Subtraction; }
-  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<float>(this, context, complexFormat, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<double>(this, context, complexFormat, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 
   /* Layout */
-  bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
 
 private:
+  /* Simplification */
+  LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); };
+  LayoutShape rightLayoutShape() const override { return childAtIndex(1)->rightLayoutShape(); }
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
+    return MatrixComplex<T>::Undefined();
   }
-  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
+  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
+    return MatrixComplex<T>::Undefined();
+  }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, complexFormat, compute<T>);
   }
@@ -59,7 +64,7 @@ public:
   static Subtraction Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
 };
 

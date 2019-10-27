@@ -25,7 +25,7 @@ uint32_t Store::barChecksum() const {
   double data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
   size_t dataLengthInBytes = 2*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
+  return Ion::crc32Word((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }
 
 /* Histogram bars */
@@ -64,17 +64,18 @@ double Store::numberOfBars(int series) const {
 
 bool Store::scrollToSelectedBarIndex(int series, int index) {
   float startSelectedBar = startOfBarAtIndex(series, index);
-  float windowRange = m_xMax - m_xMin;
+  float windowRange = xMax() - xMin();
   float range = windowRange/(1+k_displayLeftMarginRatio+k_displayRightMarginRatio);
-  if (m_xMin + k_displayLeftMarginRatio*range > startSelectedBar) {
-    m_xMin = startSelectedBar - k_displayLeftMarginRatio*range;
-    m_xMax = m_xMin + windowRange;
+  if (xMin() + k_displayLeftMarginRatio*range > startSelectedBar) {
+    m_xRange.setMin(startSelectedBar - k_displayLeftMarginRatio*range);
+    // Call MemoizedCurveViewRange::protectedSetXMax to update the grid unit
+    MemoizedCurveViewRange::protectedSetXMax(xMin() + windowRange);
     return true;
   }
   float endSelectedBar = endOfBarAtIndex(series, index);
-  if (endSelectedBar > m_xMax - k_displayRightMarginRatio*range) {
-    m_xMax = endSelectedBar + k_displayRightMarginRatio*range;
-    m_xMin = m_xMax - windowRange;
+  if (endSelectedBar > xMax() - k_displayRightMarginRatio*range) {
+    m_xRange.setMax(endSelectedBar + k_displayRightMarginRatio*range);
+    MemoizedCurveViewRange::protectedSetXMin(xMax() - windowRange);
     return true;
   }
   return false;

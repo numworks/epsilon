@@ -7,8 +7,7 @@ BufferTextViewWithTextField::BufferTextViewWithTextField(Responder * parentRespo
   View(),
   Responder(parentResponder),
   m_bufferTextView(font, 0.0f, 0.5f),
-  m_textField(this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, inputEventHandlerDelegate, delegate, false, font, 0.0f, 0.5f),
-  m_textFieldBuffer{}
+  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, font, 0.0f, 0.5f)
 {
 }
 
@@ -40,8 +39,8 @@ void BufferTextViewWithTextField::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void BufferTextViewWithTextField::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
-  m_textField.setEditing(true, false);
+  Container::activeApp()->setFirstResponder(&m_textField);
+  m_textField.setEditing(true);
   markRectAsDirty(bounds());
 }
 

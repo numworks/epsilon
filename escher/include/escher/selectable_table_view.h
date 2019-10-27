@@ -2,7 +2,6 @@
 #define ESCHER_SELECTABLE_TABLE_VIEW_H
 
 #include <escher/table_view.h>
-#include <escher/app.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/table_view_data_source.h>

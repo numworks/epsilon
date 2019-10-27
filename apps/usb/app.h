@@ -20,7 +20,7 @@ public:
   };
   bool processEvent(Ion::Events::Event) override;
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   USBConnectedController m_usbConnectedController;
 };
 

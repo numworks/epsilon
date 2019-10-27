@@ -16,6 +16,17 @@ using namespace Shared;
 
 namespace Regression {
 
+static double toRadians(Poincare::Preferences::AngleUnit angleUnit) {
+  switch (Poincare::Preferences::sharedPreferences()->angleUnit()) {
+    case Poincare::Preferences::AngleUnit::Degree:
+      return M_PI/180.0;
+    case Poincare::Preferences::AngleUnit::Gradian:
+      return M_PI/200.0;
+    default:
+      return 1;
+  }
+}
+
 Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
     const char * s = "a·sin(b·X+c)+d";
@@ -24,33 +35,12 @@ Layout TrigonometricModel::layout() {
   return m_layout;
 }
 
-Expression TrigonometricModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
-  // a*sin(bx+c)+d
-  Expression result =
-    Addition::Builder(
-      Multiplication::Builder(
-        Number::DecimalNumber(a),
-        Sine::Builder(
-          Addition::Builder(
-            Multiplication::Builder(
-              Number::DecimalNumber(b),
-              Symbol::Builder('x')),
-            Number::DecimalNumber(c)))),
-      Number::DecimalNumber(d));
-  PoincareHelpers::Simplify(&result, *context);
-  return result;
-}
-
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Preferences::AngleUnit::Radian ? x : x * M_PI/180.0;
+  double radianX = x * toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
   return a*sin(b*radianX+c)+d;
 }
 
@@ -58,7 +48,7 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Preferences::AngleUnit::Radian ? x : x * M_PI/180.0;
+  double radianX = x * toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
   if (derivateCoefficientIndex == 0) {
     // Derivate: sin(b*x+c)
     return sin(b*radianX+c);
@@ -77,6 +67,26 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   }
   assert(false);
   return 0.0;
+}
+
+Expression TrigonometricModel::expression(double * modelCoefficients) {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  // a*sin(bx+c)+d
+  Expression result =
+    Addition::Builder(
+      Multiplication::Builder(
+        Number::DecimalNumber(a),
+        Sine::Builder(
+          Addition::Builder(
+            Multiplication::Builder(
+              Number::DecimalNumber(b),
+              Symbol::Builder('x')),
+            Number::DecimalNumber(c)))),
+      Number::DecimalNumber(d));
+  return result;
 }
 
 }

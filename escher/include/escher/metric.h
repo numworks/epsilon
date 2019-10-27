@@ -5,6 +5,7 @@
 
 class Metric {
 public:
+  constexpr static KDCoordinate CellMargin = 2;
   constexpr static KDCoordinate CommonLeftMargin = 20;
   constexpr static KDCoordinate CommonRightMargin = 20;
   constexpr static KDCoordinate CommonTopMargin = 15;
@@ -30,7 +31,8 @@ public:
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisHeight = 18;
-  constexpr static KDCoordinate TableSeparatorThickness = 2;
+  constexpr static KDCoordinate CellSeparatorThickness = 1;
+  constexpr static KDCoordinate TableSeparatorThickness = 5;
   constexpr static KDCoordinate ExpressionViewHorizontalMargin = 5;
 };
 

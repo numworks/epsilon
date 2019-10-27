@@ -6,6 +6,7 @@
 #include "ok_view.h"
 #include "range_parameter_controller.h"
 #include "zoom_parameter_controller.h"
+#include <poincare/coordinate_2D.h>
 
 namespace Shared {
 
@@ -44,7 +45,7 @@ protected:
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
   virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const = 0;
   virtual int selectedCurveIndex() const = 0;
-  virtual double yValue(int curveIndex, double x, Poincare::Context * context) const = 0;
+  virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
 
@@ -61,8 +62,9 @@ private:
   virtual int estimatedBannerNumberOfLines() const { return 1; }
 
   // InteractiveCurveViewRangeDelegate
-  float addMargin(float x, float range, bool isMin) override;
+  float addMargin(float x, float range, bool isVertical, bool isMin) override;
 
+  virtual bool shouldSetDefaultOnModelChange() const { return false; }
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;

@@ -1,6 +1,7 @@
 #include "calculation_controller.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
+#include <poincare/preferences.h>
+#include <apps/i18n.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -26,6 +27,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
     m_calculationTitleCells[i].setAlignment(1.0f, 0.5f);
+    m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
   }
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].setTextColor(Palette::GreyDark);
@@ -49,7 +51,7 @@ Responder * CalculationController::defaultController() {
 
 // TableViewDataSource
 
-int CalculationController::numberOfColumns() {
+int CalculationController::numberOfColumns() const {
   return 1 + m_store->numberOfNonEmptySeries();
 }
 
@@ -86,7 +88,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       I18n::Message::Sum,
       I18n::Message::SquareSum,
       I18n::Message::SampleStandardDeviationS};
-    MarginEvenOddMessageTextCell * calcTitleCell = static_cast<MarginEvenOddMessageTextCell *>(cell);
+    EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
     calcTitleCell->setMessage(titles[j-1]);
     return;
   }
@@ -97,8 +99,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   int seriesIndex = m_store->indexOfKthNonEmptySeries(i-1);
   double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
   EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize];
+  PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
   calculationCell->setText(buffer);
 }
 
@@ -167,7 +171,7 @@ const char * CalculationController::title() {
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   return false;

@@ -5,41 +5,49 @@
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
 // Property
 
-Expression FactorialNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression FactorialNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == Sign::Positive);
   return Factorial(this);
 }
 
+bool FactorialNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
+    return true;
+  }
+  if (child.type() == Type::Conjugate) {
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
+  }
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Addition};
+  return child.isOfType(types, 4);
+}
+
 // Layout
 
-bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
+bool FactorialNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
+  /*  2
+   * --- ! ---> [2/3]!
+   *  3
+   */
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
-    return true;
-  }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::Power};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
+  Type types[] = {Type::Division, Type::Power};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 2);
 }
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Factorial(this).shallowReduce();
-}
-
-Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Factorial(this).shallowBeautify();
+Expression FactorialNode::shallowReduce(ReductionContext reductionContext) {
+  return Factorial(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -63,51 +71,34 @@ Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
   result.addChildAtIndex(CodePointLayout::Builder('!'), childrenCount, childrenCount, nullptr);
-  return result;
+  return std::move(result);
 }
 
 int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-  if (childNeedsParenthesis(childAtIndex(0))) {
-    numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, '(');
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (childNeedsParenthesis(childAtIndex(0))) {
-    numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, ')');
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  if (numberOfChar >= bufferSize-1) {
+  int numberOfChar = SerializationHelper::SerializeChild(childAtIndex(0), this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  if ((numberOfChar < 0) || (numberOfChar >= bufferSize-1)) {
     return numberOfChar;
   }
-  numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, '!');
-  buffer[numberOfChar] = 0;
+  numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '!');
   return numberOfChar;
 }
 
 
-Expression Factorial::shallowReduce() {
+Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
   }
-#endif
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    Rational r = childAtIndex(0).convert<Rational>();
-    if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = c.convert<Rational>();
+    if (!r.isInteger() || r.sign() == ExpressionNode::Sign::Negative) {
+      return replaceWithUndefinedInPlace();
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {
       return *this;
@@ -115,26 +106,11 @@ Expression Factorial::shallowReduce() {
     Rational fact = Rational::Builder(Integer::Factorial(r.unsignedIntegerNumerator()));
     assert(!fact.numeratorOrDenominatorIsInfinity()); // because fact < k_maxOperandValue!
     replaceWithInPlace(fact);
-    return fact;
+    return std::move(fact);
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Constant) {
+  if (c.type() == ExpressionNode::Type::Constant) {
     // e! = undef, i! = undef, pi! = undef
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
-  }
-  return *this;
-}
-
-Expression Factorial::shallowBeautify() {
-  // +(a,b)! ->(+(a,b))!
-  if (childAtIndex(0).type() == ExpressionNode::Type::Addition
-      || childAtIndex(0).type() == ExpressionNode::Type::Multiplication
-      || childAtIndex(0).type() == ExpressionNode::Type::Power)
-  {
-    Expression result = Factorial::Builder(Parenthesis::Builder(childAtIndex(0)));
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }

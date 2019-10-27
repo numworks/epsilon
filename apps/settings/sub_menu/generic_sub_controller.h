@@ -13,7 +13,7 @@ public:
   View * view() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

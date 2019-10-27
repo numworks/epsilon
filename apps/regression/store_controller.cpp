@@ -19,7 +19,7 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
 }
 
 StoreContext * StoreController::storeContext() {
-  m_regressionContext.setParentContext(const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  m_regressionContext.setParentContext(AppsContainer::sharedAppsContainer()->globalContext());
   return &m_regressionContext;
 }
 
@@ -36,12 +36,12 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   ::StoreController::willDisplayCellAtLocation(cell, i, j);
-  if (cellAtLocationIsEditable(i, j)) {
+  if (typeAtLocation(i, j) != k_titleCellType) {
     return;
   }
   Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
   bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
-  mytitleCell->setSeparatorLeft(isValuesColumn);
+  mytitleCell->setSeparatorLeft(isValuesColumn && i > 0);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
   mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GreyDark : Store::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GreyDark with graph/list_controller and statistics/store_controller
   char name[] = {isValuesColumn ? 'X' : 'Y', static_cast<char>('1' + seriesIndex), 0};

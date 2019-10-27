@@ -17,7 +17,7 @@ public:
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
   /* ListViewDataSource */
-  int numberOfRows() override;
+  int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;

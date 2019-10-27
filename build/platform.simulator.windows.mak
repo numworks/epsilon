@@ -1,0 +1,2 @@
+TOOLCHAIN = windows
+EXE = exe

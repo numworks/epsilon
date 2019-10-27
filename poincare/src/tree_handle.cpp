@@ -266,8 +266,10 @@ template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(TreeHandle*, s
 template ArcCosine TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(TreeHandle*, size_t);
 template ArcSine TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(TreeHandle*, size_t);
 template ArcTangent TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(TreeHandle*, size_t);
+template BinomCDF TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>(TreeHandle*, size_t);
 template BinomialCoefficient TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>(TreeHandle*, size_t);
 template BinomialCoefficientLayout TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(TreeHandle*, size_t);
+template BinomPDF TreeHandle::FixedArityBuilder<BinomPDF, BinomPDFNode>(TreeHandle*, size_t);
 template Ceiling TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>(TreeHandle*, size_t);
 template CeilingLayout TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>(TreeHandle*, size_t);
 template CommonLogarithm TreeHandle::FixedArityBuilder<CommonLogarithm, LogarithmNode<1> >(TreeHandle*, size_t);
@@ -291,6 +293,7 @@ template Floor TreeHandle::FixedArityBuilder<Floor, FloorNode>(TreeHandle*, size
 template FloorLayout TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(TreeHandle*, size_t);
 template FracPart TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(TreeHandle*, size_t);
 template FractionLayout TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(TreeHandle*, size_t);
+template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(TreeHandle*, size_t);
 template GreatCommonDivisor TreeHandle::FixedArityBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(TreeHandle*, size_t);
 template HorizontalLayout TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(TreeHandle*, size_t);
 template HyperbolicArcCosine TreeHandle::FixedArityBuilder<HyperbolicArcCosine, HyperbolicArcCosineNode>(TreeHandle*, size_t);
@@ -302,6 +305,8 @@ template HyperbolicTangent TreeHandle::FixedArityBuilder<HyperbolicTangent, Hype
 template ImaginaryPart TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>(TreeHandle*, size_t);
 template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(TreeHandle*, size_t);
 template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(TreeHandle*, size_t);
+template InvBinom TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(TreeHandle*, size_t);
+template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(TreeHandle*, size_t);
 template LeastCommonMultiple TreeHandle::FixedArityBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(TreeHandle*, size_t);
 template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(TreeHandle*, size_t);
 template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(TreeHandle*, size_t);
@@ -316,6 +321,9 @@ template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>
 template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(TreeHandle*, size_t);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(TreeHandle*, size_t);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(TreeHandle*, size_t);
+template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(TreeHandle*, size_t);
+template NormCDF2 TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>(TreeHandle*, size_t);
+template NormPDF TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(TreeHandle*, size_t);
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(TreeHandle*, size_t);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(TreeHandle*, size_t);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(TreeHandle*, size_t);

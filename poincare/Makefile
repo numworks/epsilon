@@ -1,6 +1,6 @@
 SFLAGS += -Ipoincare/include
 
-src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/,\
   binomial_coefficient_layout.cpp \
   bracket_layout.cpp \
   bracket_pair_layout.cpp \
@@ -28,13 +28,17 @@ src += $(addprefix poincare/src/,\
   vertical_offset_layout.cpp \
 )
 
-src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/,\
   init.cpp \
+  binomial_distribution.cpp \
+  erf_inv.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
+  normal_distribution.cpp \
+  regularized_incomplete_beta_function.cpp \
 )
 
-src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/,\
   absolute_value.cpp \
   addition.cpp \
   approximation_helper.cpp \
@@ -42,7 +46,10 @@ src += $(addprefix poincare/src/,\
   arc_sine.cpp \
   arc_tangent.cpp \
   arithmetic.cpp \
+  binom_cdf.cpp \
   binomial_coefficient.cpp \
+  binomial_distribution_function.cpp \
+  binom_pdf.cpp \
   ceiling.cpp \
   complex.cpp \
   complex_argument.cpp \
@@ -80,6 +87,8 @@ src += $(addprefix poincare/src/,\
   infinity.cpp \
   integer.cpp \
   integral.cpp \
+  inv_binom.cpp \
+  inv_norm.cpp \
   layout_helper.cpp \
   least_common_multiple.cpp \
   logarithm.cpp \
@@ -91,8 +100,12 @@ src += $(addprefix poincare/src/,\
   matrix_trace.cpp \
   matrix_transpose.cpp \
   multiplication.cpp \
-  n_ary_expression_node.cpp \
+  n_ary_expression.cpp \
   naperian_logarithm.cpp \
+  norm_cdf.cpp \
+  norm_cdf2.cpp \
+  norm_pdf.cpp \
+  normal_distribution_function.cpp \
   nth_root.cpp \
   number.cpp \
   opposite.cpp \
@@ -103,6 +116,7 @@ src += $(addprefix poincare/src/,\
   prediction_interval.cpp \
   preferences.cpp \
   print_float.cpp \
+  print_int.cpp \
   product.cpp \
   randint.cpp \
   random.cpp \
@@ -112,8 +126,8 @@ src += $(addprefix poincare/src/,\
   sequence.cpp \
   serialization_helper.cpp \
   sign_function.cpp \
-  simplification_helper.cpp \
   sine.cpp \
+  solver.cpp \
   square_root.cpp \
   store.cpp \
   subtraction.cpp \
@@ -131,64 +145,39 @@ src += $(addprefix poincare/src/,\
   variable_context.cpp \
 )
 
-src += $(addprefix poincare/src/parsing/,\
+poincare_src += $(addprefix poincare/src/parsing/,\
   parser.cpp \
   tokenizer.cpp \
 )
 
-tests += $(addprefix poincare/test/,\
+tests_src += $(addprefix poincare/test/,\
   tree/tree_handle.cpp\
   tree/helpers.cpp\
-  addition.cpp\
+  approximation.cpp\
   arithmetic.cpp\
-  binomial_coefficient_layout.cpp\
-  complex.cpp\
-  complex_to_expression.cpp\
-  convert_expression_to_text.cpp\
-  decimal.cpp\
-  division.cpp\
+  context.cpp\
+  erf_inv.cpp \
   expression.cpp\
   expression_order.cpp\
-  factorial.cpp\
-  float.cpp\
-  fraction_layout.cpp\
-  function.cpp\
+  expression_properties.cpp\
+  expression_serialization.cpp\
+  expression_to_layout.cpp\
+  function_solver.cpp\
   helper.cpp\
   helpers.cpp\
-  infinity.cpp\
+  ieee754.cpp\
   integer.cpp\
-  layouts.cpp\
+  layout.cpp\
   layout_cursor.cpp\
-  logarithm.cpp\
-  matrix.cpp\
-  multiplication.cpp\
-  nth_root_layout.cpp\
-  number.cpp\
-  parentheses_layout.cpp\
-  parser.cpp\
-  power.cpp\
-  properties.cpp\
+  layout_serialization.cpp\
+  layout_to_expression.cpp\
+  parsing.cpp\
+  print_float.cpp\
+  print_int.cpp\
   rational.cpp\
-  random.cpp\
-  simplify.cpp\
-  store.cpp\
-  subtraction.cpp\
-  symbol.cpp\
-  trigo.cpp\
-  user_variable.cpp\
-  vertical_offset_layout.cpp\
+  regularized_incomplete_beta_function.cpp \
+  simplification.cpp\
 )
-
-test_objs += $(addprefix poincare/test/, tree/helpers.o)
-test_objs += $(addprefix apps/shared/, global_context.o)
-
-#  simplify_utils.cpp\
-
-ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
-tests += poincare/src/expression_debug.o
-src += poincare/src/expression_debug.cpp
-SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
-endif
 
 ifdef POINCARE_TREE_LOG
 SFLAGS += -DPOINCARE_TREE_LOG=1

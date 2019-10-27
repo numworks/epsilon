@@ -1,6 +1,7 @@
 #include "battery_test_controller.h"
-#include "../constant.h"
+#include <apps/shared/post_and_hardware_tests.h>
 #include "app.h"
+#include <apps/shared/poincare_helpers.h>
 extern "C" {
 #include <assert.h>
 }
@@ -8,6 +9,7 @@ extern "C" {
 #include <poincare/preferences.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace HardwareTest {
 
@@ -33,22 +35,25 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void BatteryTestController::viewWillAppear() {
-  const char * text = Ion::Battery::level() !=  Ion::Battery::Charge::FULL ? k_batteryNeedChargingText : k_batteryOKText;
-  KDColor color = Ion::Battery::level() !=  Ion::Battery::Charge::FULL ? KDColorRed : KDColorGreen;
+  bool batteryOK = Shared::POSTAndHardwareTests::BatteryOK();
+  const char * text = batteryOK ? k_batteryOKText : k_batteryNeedChargingText;
+  KDColor color = batteryOK ? KDColorGreen : KDColorRed;
   m_view.setColor(color);
   m_view.batteryStateTextView()->setText(text);
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());
 }
 
 void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryCharging) {
-  constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr int sizeForPrecision = PrintFloat::charSizeForFloatsWithPrecision(precision);
+  constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferLevel[bufferLevelSize];
   const char * legend = "Battery level: ";
   int legendLength = strlcpy(bufferLevel, legend, bufferLevelSize);
-  PrintFloat::convertFloatToText<float>(batteryLevel, bufferLevel+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(batteryLevel, bufferLevel+legendLength, sizeForPrecision, precision, Preferences::PrintFloatMode::Decimal);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
-  constexpr size_t bufferChargingSize = ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferChargingSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferCharging[bufferChargingSize];
   int numberOfChars = 0;
   legend = "Battery charging: ";

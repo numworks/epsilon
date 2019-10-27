@@ -27,7 +27,7 @@ protected:
     class State {
     public:
       State(int selectedRow = -1, KDCoordinate verticalScroll = 0);
-      bool isNull();
+      bool isNull() const;
       int selectedRow() { return m_selectedRow; }
       KDCoordinate verticalScroll() { return m_verticalScroll; }
     private:
@@ -37,7 +37,7 @@ protected:
     void push(int selectedRow, KDCoordinate verticalScroll);
     State * stateAtIndex(int index);
     State pop();
-    int depth();
+    int depth() const;
     void resetStack();
   private:
     constexpr static int k_maxModelTreeDepth = 3;
@@ -59,7 +59,7 @@ protected:
 
   static constexpr int LeafCellType = 0;
   static constexpr int NodeCellType = 1;
-  int stackDepth();
+  int stackDepth() const;
   bool handleEventForRow(Ion::Events::Event event, int selectedRow);
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();

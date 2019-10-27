@@ -3,7 +3,7 @@
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -14,16 +14,11 @@ FunctionNode::FunctionNode(const char * newName, int length) : SymbolAbstractNod
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }
 
-bool FunctionNode::isReal(Context & context) const {
-  Function f(this);
-  return SymbolAbstract::isReal(f, context);
-}
-
 Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Function(this).replaceSymbolWithExpression(symbol, expression);
 }
 
-int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
+int FunctionNode::polynomialDegree(Context * context, const char * symbolName) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
@@ -32,7 +27,7 @@ int FunctionNode::polynomialDegree(Context & context, const char * symbolName) c
   return e.polynomialDegree(context, symbolName);
 }
 
-int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
+int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
@@ -41,7 +36,7 @@ int FunctionNode::getPolynomialCoefficients(Context & context, const char * symb
   return e.getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
@@ -50,7 +45,7 @@ int FunctionNode::getVariables(Context & context, isVariableTest isVariable, cha
   return e.getVariables(context, isVariable, variables, maxSizeVariable);
 }
 
-float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float FunctionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f,context, true);
   if (e.isUninitialized()) {
@@ -67,24 +62,24 @@ int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression FunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Function(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation); // This uses Symbol::shallowReduce
+Expression FunctionNode::shallowReduce(ReductionContext reductionContext) {
+  return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
 }
 
-Expression FunctionNode::shallowReplaceReplaceableSymbols(Context & context) {
+Expression FunctionNode::shallowReplaceReplaceableSymbols(Context * context) {
   return Function(this).shallowReplaceReplaceableSymbols(context);
 }
 
-Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return templatedApproximate<float>(context, complexFormat, angleUnit);
 }
 
-Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return templatedApproximate<double>(context, complexFormat, angleUnit);
 }
 
 template<typename T>
-Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> FunctionNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
@@ -101,16 +96,6 @@ Function Function::Builder(const char * name, size_t length, Expression child) {
   return f;
 }
 
-Expression Function::UntypedBuilder(const char * name, size_t length, Expression child, Context * context) {
-  /* Create an expression only if it is not in the context or defined as a
-   * function */
-  Function f = Function::Builder(name, length, child);
-  if (SymbolAbstract::ValidInContext(f, context)) {
-    return f;
-  }
-  return Expression();
-}
-
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   // Replace the symbol in the child
   childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
@@ -121,7 +106,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
     Expression xValue = childAtIndex(0);
     value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
-    if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
+    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {
       value = Parenthesis::Builder(value);
     }
     replaceWithInPlace(value);
@@ -130,25 +115,33 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Function::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Function f(*this);
-  Expression e = SymbolAbstract::Expand(f, context, true);
+  Expression e = SymbolAbstract::Expand(f, reductionContext.context(), true);
   if (!e.isUninitialized()) {
     replaceWithInPlace(e);
-    return e.deepReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+    return e.deepReduce(reductionContext);
   }
-  if (!symbolicComputation) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+  if (!reductionContext.symbolicComputation()) {
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }
 
-Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
-  Expression e = context.expressionForSymbol(*this, true);
+Expression Function::shallowReplaceReplaceableSymbols(Context * context) {
+  Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     return *this;
+  }
+  // If the function contains itself, return undefined
+  if (e.hasExpression([](Expression e, const void * context) {
+          if (e.type() != ExpressionNode::Type::Function) {
+            return false;
+          }
+          return strcmp(static_cast<Function&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
+        }, reinterpret_cast<const void *>(name())))
+  {
+    return replaceWithUndefinedInPlace();
   }
   e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), childAtIndex(0));
   replaceWithInPlace(e);
@@ -171,17 +164,17 @@ VariableContext Function::unknownXContext(Context & parentContext) const {
   /* If the parentContext already has an expression for UnknownX, we have to
    * replace in childAtIndex(0) any occurence of UnknownX by its value in
    * parentContext. That way, we handle: evaluatin f(x-1) with x = 2 & f:x->x^2 */
-  Expression unknownXValue = parentContext.expressionForSymbol(unknownXSymbol, true);
+  Expression unknownXValue = parentContext.expressionForSymbolAbstract(unknownXSymbol, true);
   if (!unknownXValue.isUninitialized()) {
     xContext = static_cast<VariableContext &>(parentContext); // copy the parentContext
     child.replaceSymbolWithExpression(unknownXSymbol, unknownXValue);
   }
   /* We here assert that child contains no occurrence of UnknownX to avoid
    * creating an infinite loop (for instance: unknownXSymbol = unknownXSymbol+2). */
-  assert(!child.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbol) {
+  assert(!child.recursivelyMatches([](const Expression e, Context * context, bool replaceSymbol) {
         return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol &>(e).isSystemSymbol();
       }, parentContext, false));
-  xContext.setExpressionForSymbol(child, unknownXSymbol, xContext);
+  xContext.setExpressionForSymbolAbstract(child, unknownXSymbol, xContext);
   return xContext;
 }
 #endif

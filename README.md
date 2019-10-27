@@ -1,4 +1,4 @@
-<h1 align="center">Omega x Epsilon 11.2.0</h1>
+<h1 align="center">Omega x Epsilon 12.0.0</h1>
 
 [![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge)](https://gitlab.com/joachim2lefournis/Omega/pipelines)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?logo=creative%20commons&style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)

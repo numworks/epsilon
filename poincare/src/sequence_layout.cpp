@@ -148,6 +148,9 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
+CodePoint SequenceLayoutNode::XNTCodePoint(int childIndex) const {
+  return (childIndex == k_argumentLayoutIndex || childIndex == k_variableLayoutIndex) ? CodePoint('n') : UCodePointNull;
+}
 
 // Protected
 
@@ -212,24 +215,32 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   int numberOfChar = strlcpy(buffer, operatorName, bufferSize);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  // Write the opening parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
+  /* Add system parentheses to avoid serializing:
+   *   2)+(1           2),1
+   *    ∑     (5)  or   π    (5)
+   *   n=1             n=1+binomial(3
+   */
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    LayoutNode * argLayouts[] = {const_cast<SequenceLayoutNode *>(this)->argumentLayout(), const_cast<SequenceLayoutNode *>(this)->variableLayout(), const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(), const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
+  LayoutNode * argLayouts[] = {const_cast<SequenceLayoutNode *>(this)->argumentLayout(), const_cast<SequenceLayoutNode *>(this)->variableLayout(), const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(), const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
   for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
     if (i != 0) {
       // Write the comma
       numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ',');
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
+    // Write the child with system parentheses
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     numberOfChar += argLayouts[i]->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
 
-  // Write the closing parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
-  buffer[numberOfChar] = 0;
+  // Write the closing system parenthesis
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
   return numberOfChar;
 }
 

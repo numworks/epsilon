@@ -1,7 +1,6 @@
 #include "list_parameter_controller.h"
 #include "list_controller.h"
 #include "../app.h"
-#include "../../apps_container.h"
 #include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;
@@ -12,11 +11,10 @@ namespace Sequence {
 ListParameterController::ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * listController) :
   Shared::ListParameterController(listController, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
   m_typeCell(I18n::Message::SequenceType),
-  m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer, I18n::Message::FirstTermIndex),
+  m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, I18n::Message::FirstTermIndex),
   m_typeParameterController(this, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)
 {
-  static_cast<ExpressionView *>(m_typeCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
 
 const char * ListParameterController::title() {
@@ -57,7 +55,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 #else
     if (selectedRowIndex == 2+hasAdditionalRow) {
 #endif
-      static_cast<App *>(app())->localContext()->resetCache();
+      App::app()->localContext()->resetCache();
       return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }
   }
@@ -78,12 +76,12 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   }
   int index = std::round(floatBody);
   if (index < 0  || floatBody >= maxFirstIndex) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   sequence()->setInitialRank(index);
   // Invalidate sequence context cache when changing sequence type
-  static_cast<App *>(app())->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   m_selectableTableView.reloadCellAtLocation(0, selectedRow());
   m_selectableTableView.handleEvent(event);
   return true;
@@ -105,7 +103,7 @@ void ListParameterController::tableViewDidChangeSelection(SelectableTableView * 
     if (myCell) {
       myCell->setEditing(false);
     }
-    app()->setFirstResponder(&m_selectableTableView);
+    Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
 #if FUNCTION_COLOR_CHOICE
   if (t->selectedRow() == 2) {
@@ -113,7 +111,7 @@ void ListParameterController::tableViewDidChangeSelection(SelectableTableView * 
   if (t->selectedRow() == 1) {
 #endif
     MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
+    Container::activeApp()->setFirstResponder(myNewCell);
   }
 }
 
@@ -147,10 +145,6 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     Poincare::Integer(sequence()->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
     myCell->setAccessoryText(buffer);
   }
-}
-
-TextFieldDelegateApp * ListParameterController::textFieldDelegateApp() {
-  return (TextFieldDelegateApp *)app();
 }
 
 int ListParameterController::totalNumberOfCells() const {

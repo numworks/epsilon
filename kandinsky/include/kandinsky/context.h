@@ -17,6 +17,8 @@ public:
 
   // Text
   KDPoint drawString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
+  // Check that a string is drawn.
+  int checkDrawnString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
@@ -33,6 +35,7 @@ protected:
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
 private:
   KDRect absoluteFillRect(KDRect rect);
+  KDPoint pushOrPullString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength, bool push, int * result = nullptr);
   KDPoint m_origin;
   KDRect m_clippingRect;
 };

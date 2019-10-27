@@ -21,8 +21,7 @@ ExpressionModelHandle * ExpressionModelStore::privateModelForRecord(Ion::Storage
       return memoizedModelAtIndex(i);
     }
   }
-  setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
-  ExpressionModelHandle * result = memoizedModelAtIndex(m_oldestMemoizedIndex);
+  ExpressionModelHandle * result = setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
   m_oldestMemoizedIndex = (m_oldestMemoizedIndex+1) % maxNumberOfMemoizedModels();
   return result;
 }
@@ -41,38 +40,37 @@ void ExpressionModelStore::tidy() {
   resetMemoizedModelsExceptRecord();
 }
 
-int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
-  int result = 0;
-  int i = 0;
-  ExpressionModelHandle * m = privateModelForRecord(recordAtIndex(i++));
-  while (!m->isNull()) {
-    if (test(m)) {
-      result++;
+int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test, void * context) const {
+  int count = 0;
+  int index = 0;
+  Ion::Storage::Record record;
+  do {
+    record = recordAtIndex(index++);
+    if (record.isNull()) {
+      break;
     }
-    m = privateModelForRecord(recordAtIndex(i++));
-  }
-  return result;
+    if (test(privateModelForRecord(record), context)) {
+      count++;
+    }
+  } while (true);
+  return count;
 }
 
-Ion::Storage::Record ExpressionModelStore::recordStatifyingTestAtIndex(int i, ModelTest test) const {
-  assert(i >= 0 && i < numberOfDefinedModels());
+Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test, void * context) const {
+  assert(0 <= i && i < numberOfModelsSatisfyingTest(test, context));
+  int count = 0;
   int index = 0;
-  int currentModelIndex = 0;
-  Ion::Storage::Record r = recordAtIndex(currentModelIndex++);
-  ExpressionModelHandle * m = privateModelForRecord(r);
-  while (!m->isNull()) {
-    assert(currentModelIndex <= numberOfModels());
-    if (test(m)) {
-      if (i == index) {
-        return r;
+  Ion::Storage::Record record;
+  do {
+    record = recordAtIndex(index++);
+    if (test(privateModelForRecord(record), context)) {
+      if (i == count) {
+        break;
       }
-      index++;
+      count++;
     }
-    r = recordAtIndex(currentModelIndex++);
-    m = privateModelForRecord(r);
-  }
-  assert(false);
-  return Ion::Storage::Record();
+  } while (true);
+  return record;
 }
 
 void ExpressionModelStore::resetMemoizedModelsExceptRecord(const Ion::Storage::Record record) const {

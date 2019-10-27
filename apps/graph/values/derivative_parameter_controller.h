@@ -2,7 +2,7 @@
 #define GRAPH_DERIVATIVE_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "../cartesian_function_store.h"
+#include "../continuous_function_store.h"
 
 namespace Graph {
 
@@ -17,15 +17,15 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const  override;
   void setRecord(Ion::Storage::Record record) {
     m_record = record;
   }
 private:
-  CartesianFunctionStore * functionStore();
+  ContinuousFunctionStore * functionStore();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else

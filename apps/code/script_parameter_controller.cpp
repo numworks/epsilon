@@ -45,7 +45,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
         m_script.toggleImportationStatus();
         m_selectableTableView.reloadData();
         m_menuController->reloadConsole();
-        app()->setFirstResponder(&m_selectableTableView);
+        Container::activeApp()->setFirstResponder(&m_selectableTableView);
         return true;
       case 3:
         dismissScriptParameterController();
@@ -67,7 +67,7 @@ void ScriptParameterController::viewWillAppear() {
 
 void ScriptParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 HighlightCell * ScriptParameterController::reusableCell(int index) {

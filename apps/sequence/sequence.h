@@ -26,7 +26,8 @@ public:
   Sequence(Ion::Storage::Record record = Record()) :
     Function(record),
     m_nameLayout() {}
-  static char Symbol() { return 'n'; }
+  I18n::Message parameterMessageName() const override;
+  CodePoint symbol() const override { return 'n'; }
   void tidy() override;
   // MetaData getters
   Type type() const;
@@ -36,7 +37,6 @@ public:
   void setInitialRank(int rank);
   // Definition
   Poincare::Layout definitionName() { return m_definition.name(this); }
-  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableModel()->setContent(this, c, Symbol(), UCodePointUnknownN); }
   // First initial condition
   Poincare::Layout firstInitialConditionName() { return m_firstInitialCondition.name(this); }
   void firstInitialConditionText(char * buffer, size_t bufferSize) const { return m_firstInitialCondition.text(this, buffer, bufferSize); }
@@ -58,29 +58,26 @@ public:
   bool isDefined() override;
   bool isEmpty() override;
   // Approximation
-  float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context));
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context) const override {
+    return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
-  double evaluateAtAbscissa(double x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context));
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double x, Poincare::Context * context) const override {
+    return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
   template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx) const;
-  // Integral
-  double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
 
+  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
-  constexpr static double k_maxNumberOfTermsInSum = 100000.0;
 
-  /* SequenceRecordDataBuffer is the layout of the data buffer of Record
+  /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in
-   * Shared::Function::FunctionRecordDataBuffer about packing. */
-#pragma pack(push,1)
-  class SequenceRecordDataBuffer : public FunctionRecordDataBuffer {
+   * Shared::Function::RecordDataBuffer about packing. */
+  class RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
-    SequenceRecordDataBuffer(KDColor color) :
-      FunctionRecordDataBuffer(color),
+    RecordDataBuffer(KDColor color) :
+      Shared::Function::RecordDataBuffer(color),
       m_type(Type::Explicit),
       m_initialRank(0),
       m_initialConditionSizes{0,0}
@@ -102,11 +99,11 @@ private:
     Type m_type;
     uint8_t m_initialRank;
 #if __EMSCRIPTEN__
-    // See comment about emscripten alignement in Shared::Function::FunctionRecordDataBuffer
+    // See comment about emscripten alignement in Shared::Function::RecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_short m_initialConditionSizes[2];
+    emscripten_align1_short m_initialConditionSizes[2] __attribute__((packed));
 #else
-    uint16_t m_initialConditionSizes[2];
+    uint16_t m_initialConditionSizes[2] __attribute__((packed));
 #endif
   };
 #pragma pack(pop)
@@ -120,7 +117,7 @@ private:
     virtual void buildName(Sequence * sequence) = 0;
     Poincare::Layout m_name;
   private:
-    void updateNewDataWithExpression(Ion::Storage::Record * record, Poincare::Expression & newExpression, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) override;
+    void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) override;
     virtual void updateMetaData(const Ion::Storage::Record * record, size_t newSize) {}
   };
 
@@ -153,9 +150,9 @@ private:
   };
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
-  size_t metaDataSize() const override { return sizeof(SequenceRecordDataBuffer); }
+  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_definition; }
-  SequenceRecordDataBuffer * recordData() const;
+  RecordDataBuffer * recordData() const;
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;
   SecondInitialConditionModel m_secondInitialCondition;

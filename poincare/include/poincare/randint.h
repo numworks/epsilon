@@ -6,6 +6,7 @@
 namespace Poincare {
 
 class RandintNode /*final*/ : public ExpressionNode  {
+  friend class Randint;
 public:
 
   // TreeNode
@@ -20,8 +21,6 @@ public:
   // Properties
   Type type() const override { return Type::Randint; }
 
-  // Complex
-  bool isReal(Context & context) const override { return true; }
   bool isRandom() const override { return true; }
 
 private:
@@ -29,15 +28,17 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>(context, complexFormat, angleUnit);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>(context, complexFormat, angleUnit);
   }
-  template <typename T> Evaluation<T> templateApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template <typename T> Evaluation<T> templateApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * inputIsUndefined = nullptr) const;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 };
 
 class Randint final : public Expression {
@@ -47,7 +48,7 @@ public:
   static Randint Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Randint, RandintNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilderTwoChildren<Randint>);
 private:
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

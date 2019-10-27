@@ -8,7 +8,7 @@ TabTableController::TabTableController(Responder * parentResponder) :
 }
 
 void TabTableController::didBecomeFirstResponder() {
-  app()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
 void TabTableController::viewWillAppear() {
@@ -20,10 +20,6 @@ void TabTableController::willExitResponderChain(Responder * nextFirstResponder) 
     selectableTableView()->deselectTable();
     selectableTableView()->scrollToCell(0,0);
   }
-}
-
-SelectableTableView * TabTableController::selectableTableView() {
-  return static_cast<SelectableTableView *>(view());
 }
 
 }

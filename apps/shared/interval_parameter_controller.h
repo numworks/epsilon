@@ -4,16 +4,20 @@
 #include <escher.h>
 #include "interval.h"
 #include "float_parameter_controller.h"
+#include <assert.h>
 
 namespace Shared {
 
-class IntervalParameterController : public Shared::FloatParameterController {
+class IntervalParameterController : public Shared::FloatParameterController<double> {
 public:
-  IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval);
-  Interval * interval();
+  IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  Interval * interval() { assert(m_interval); return m_interval; }
+  void setInterval(Interval * interval) { m_interval = interval; }
   const char * title() override;
+  void setTitle(I18n::Message title) { m_title = title; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
+  void setStartEndMessages(I18n::Message startMessage, I18n::Message endMessage);
 protected:
   constexpr static int k_totalNumberOfCell = 3;
   bool setParameterAtIndex(int parameterIndex, double f) override;
@@ -24,8 +28,10 @@ private:
   int reusableParameterCellCount(int type) override;
   double parameterAtIndex(int index) override;
   void buttonAction() override;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
+  I18n::Message m_title;
+  I18n::Message m_startMessage;
+  I18n::Message m_endMessage;
 };
 
 }

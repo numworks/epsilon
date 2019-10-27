@@ -12,17 +12,15 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 
   void setTopMargin(KDCoordinate m) { m_topMargin = m; }
-  KDCoordinate topMargin() const { return m_topMargin; }
   void setRightMargin(KDCoordinate m) { m_rightMargin = m; }
-  KDCoordinate rightMargin() const { return m_rightMargin; }
   void setBottomMargin(KDCoordinate m) { m_bottomMargin = m; }
-  KDCoordinate bottomMargin() const { return m_bottomMargin; }
   void setLeftMargin(KDCoordinate m) { m_leftMargin = m; }
+  KDCoordinate topMargin() const { return m_topMargin; }
+  KDCoordinate rightMargin() const { return m_rightMargin; }
+  KDCoordinate bottomMargin() const { return m_bottomMargin; }
   KDCoordinate leftMargin() const { return m_leftMargin; }
 
-  void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) {
-    setTopMargin(top); setRightMargin(right); setBottomMargin(bottom); setLeftMargin(left);
-  }
+  void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left);
   void setMargins(KDCoordinate m) { setMargins(m, m, m, m); }
 
   class Decorator {
@@ -37,16 +35,16 @@ public:
     virtual ~Decorator() = default;
     virtual int numberOfIndicators() const { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
-    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) { return frame; }
+    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
   };
 
   class BarDecorator : public Decorator {
   public:
-    BarDecorator();
+    BarDecorator() : m_verticalBar(), m_horizontalBar() {}
     int numberOfIndicators() const override { return 2; }
     View * indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) override;
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
   private:
@@ -57,10 +55,15 @@ public:
 
   class ArrowDecorator : public Decorator {
   public:
-    ArrowDecorator();
+    ArrowDecorator() :
+      m_topArrow(ScrollViewArrow::Side::Top),
+      m_rightArrow(ScrollViewArrow::Side::Right),
+      m_bottomArrow(ScrollViewArrow::Side::Bottom),
+      m_leftArrow(ScrollViewArrow::Side::Left)
+    {}
     int numberOfIndicators() const override { return 4; }
     View * indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) override;
     void setBackgroundColor(KDColor c) override;
   private:
     ScrollViewArrow m_topArrow;

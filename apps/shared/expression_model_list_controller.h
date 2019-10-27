@@ -15,7 +15,8 @@ protected:
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   // TableViewDataSource
-  virtual int numberOfExpressionRows();
+  virtual int numberOfExpressionRows() const;
+  bool isAddEmptyRow(int j);
   KDCoordinate memoizedRowHeight(int j);
   KDCoordinate memoizedCumulatedHeightFromIndex(int j);
   int memoizedIndexFromCumulatedHeight(KDCoordinate offsetY);
@@ -27,11 +28,9 @@ protected:
   virtual void didChangeModelsList() { resetMemoization(); }
   virtual void reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model);
   virtual void editExpression(Ion::Events::Event event);
-  void replaceUnknownSymbolWithReadableSymbol(char * initialText);
   virtual bool editSelectedRecordWithText(const char * text);
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) { return j; }
-  virtual bool isAddEmptyRow(int j);
   // ViewController
   virtual SelectableTableView * selectableTableView() = 0;
   virtual ExpressionModelStore * modelStore() = 0;

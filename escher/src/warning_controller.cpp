@@ -1,5 +1,5 @@
 #include <escher/warning_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
@@ -83,6 +83,6 @@ bool WarningController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBPlug || event == Ion::Events::USBEnumeration) {
     return false;
   }
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }

@@ -2,6 +2,7 @@
 #define SHARED_SUM_GRAPH_CONTROLLER_H
 
 #include <escher.h>
+#include <poincare/print_float.h>
 #include "function_graph_view.h"
 #include "vertical_cursor_view.h"
 #include "simple_interactive_curve_view_controller.h"
@@ -28,7 +29,6 @@ protected:
   };
   Step m_step;
   double m_startSum;
-  double m_endSum;
   Ion::Storage::Record m_record;
   InteractiveCurveViewRange * m_graphRange;
 private:
@@ -56,6 +56,7 @@ private:
     void setEditableZone(double d);
     void setSumSymbol(Step step, double start, double end, double result, Poincare::Layout functionLayout);
   private:
+    constexpr static KDCoordinate k_editableZoneBufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static const KDFont * k_font = KDFont::SmallFont;
     static KDCoordinate editableZoneWidth() { return 12*k_font->glyphSize().width(); }
@@ -70,7 +71,7 @@ private:
     Poincare::Layout m_sumLayout;
     MessageTextView m_legend;
     TextField m_editableZone;
-    char m_draftText[TextField::maxBufferSize()];
+    char m_textBuffer[k_editableZoneBufferSize];
     CodePoint m_sumSymbol;
   };
   FunctionGraphView * m_graphView;

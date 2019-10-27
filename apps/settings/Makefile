@@ -1,7 +1,7 @@
 apps += Settings::App
 app_headers += apps/settings/app.h
 
-app_src += $(addprefix apps/settings/,\
+app_settings_src = $(addprefix apps/settings/,\
   app.cpp \
   main_controller.cpp \
   settings_message_tree.cpp \
@@ -14,6 +14,12 @@ app_src += $(addprefix apps/settings/,\
   sub_menu/preferences_controller.cpp \
 	sub_menu/contributors_controller.cpp \
 )
+
+app_src += $(app_settings_src)
+
+apps_prompt_none_src += apps/settings/main_controller_prompt_none.cpp
+apps_prompt_beta_src += apps/settings/main_controller_prompt_beta.cpp
+apps_prompt_update_src += apps/settings/main_controller_prompt_update.cpp
 
 i18n_files += $(addprefix apps/settings/,\
   base.de.i18n\

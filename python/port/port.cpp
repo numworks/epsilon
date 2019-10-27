@@ -38,7 +38,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
     mp_parse_tree_t pt = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
     mp_obj_t module_fun = mp_compile(&pt, lex->source_name, MP_EMIT_OPT_NONE, true);
-    mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::A6);
+    mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::Back);
     mp_call_function_0(module_fun);
     mp_hal_set_interrupt_char(-1); // Disable interrupt
     nlr_pop();

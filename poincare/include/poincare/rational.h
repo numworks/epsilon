@@ -16,6 +16,7 @@ public:
   Integer denominator() const;
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) { m_negative = negative; }
+  bool isInteger() const { return denominator().isOne(); }
 
   // TreeNode
   size_t size() const override;
@@ -37,25 +38,26 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
   template<typename T> T templatedApproximate() const;
 
   // Basic test
   bool isZero() const { return unsignedNumerator().isZero(); }
-  bool isOne() const { return signedNumerator().isOne() && denominator().isOne(); }
-  bool isMinusOne() const { return signedNumerator().isMinusOne() && denominator().isOne(); }
+  bool isOne() const { return signedNumerator().isOne() && isInteger(); }
+  bool isMinusOne() const { return signedNumerator().isMinusOne() && isInteger(); }
   bool isHalf() const { return signedNumerator().isOne() && denominator().isTwo(); }
   bool isMinusHalf() const { return signedNumerator().isMinusOne() && denominator().isTwo(); }
-  bool isTen() const { return signedNumerator().isTen() && denominator().isOne(); }
+  bool isTen() const { return signedNumerator().isTen() && isInteger(); }
 
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { assert(!m_negative); return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction; };
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
+  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
   uint8_t m_numberOfDigitsNumerator;
   uint8_t m_numberOfDigitsDenominator;
@@ -92,6 +94,7 @@ public:
   bool isMinusHalf() const { return node()->isMinusHalf(); }
   bool isTen() const { return node()->isTen(); }
   bool numeratorOrDenominatorIsInfinity() const;
+  bool isInteger() const { return node()->isInteger(); }
 
   // Arithmetic
   /* Warning: when using this function, always assert that the result does not
@@ -112,7 +115,7 @@ private:
 
   /* Simplification */
   Expression shallowBeautify();
-  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Expression denominator() const;
   Expression setSign(ExpressionNode::Sign s);
 };
 

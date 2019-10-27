@@ -18,10 +18,10 @@ public:
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_totalNumberOfCells = 4;

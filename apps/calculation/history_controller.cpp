@@ -1,6 +1,5 @@
 #include "history_controller.h"
 #include "app.h"
-#include "../apps_container.h"
 #include <assert.h>
 
 using namespace Shared;
@@ -25,7 +24,7 @@ void HistoryController::reload() {
 
 void HistoryController::didBecomeFirstResponder() {
   selectCellAtLocation(0, numberOfRows()-1);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void HistoryController::willExitResponderChain(Responder * nextFirstResponder) {
@@ -37,7 +36,7 @@ void HistoryController::willExitResponderChain(Responder * nextFirstResponder) {
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     m_selectableTableView.deselectTable();
-    app()->setFirstResponder(parentResponder());
+    Container::activeApp()->setFirstResponder(parentResponder());
     return true;
   }
   if (event == Ion::Events::Up) {
@@ -49,8 +48,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     SubviewType subviewType = selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_selectableTableView.deselectTable();
-    app()->setFirstResponder(editController);
-    Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
+    Container::activeApp()->setFirstResponder(editController);
+    Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
     if (subviewType == SubviewType::Input) {
       editController->insertTextBody(calculation->inputText());
     } else {
@@ -70,10 +69,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     SubviewType subviewType = selectedSubviewType();
     m_selectableTableView.deselectTable();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
-    m_calculationStore->deleteCalculationAtIndex(focusRow);
+    m_calculationStore->deleteCalculationAtIndex(storeIndex(focusRow));
     reload();
     if (numberOfRows()== 0) {
-      app()->setFirstResponder(editController);
+      Container::activeApp()->setFirstResponder(editController);
       return true;
     }
     if (focusRow > 0) {
@@ -93,16 +92,20 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.deselectTable();
     m_calculationStore->deleteAll();
     reload();
-    app()->setFirstResponder(parentResponder());
+    Container::activeApp()->setFirstResponder(parentResponder());
     return true;
   }
   if (event == Ion::Events::Back) {
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_selectableTableView.deselectTable();
-    app()->setFirstResponder(editController);
+    Container::activeApp()->setFirstResponder(editController);
     return true;
   }
   return false;
+}
+
+Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(int i) {
+  return m_calculationStore->calculationAtIndex(storeIndex(i));
 }
 
 void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -121,10 +124,10 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   if (selectedCell == nullptr) {
     return;
   }
-  app()->setFirstResponder(selectedCell);
+  Container::activeApp()->setFirstResponder(selectedCell);
 }
 
-int HistoryController::numberOfRows() {
+int HistoryController::numberOfRows() const {
   return m_calculationStore->numberOfCalculations();
 };
 
@@ -142,7 +145,7 @@ int HistoryController::reusableCellCount(int type) {
 
 void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
-  myCell->setCalculation(m_calculationStore->calculationAtIndex(index), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
+  myCell->setCalculation(calculationAtIndex(index).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
   myCell->setHighlighted(myCell->isHighlighted());
 }
@@ -151,9 +154,8 @@ KDCoordinate HistoryController::rowHeight(int j) {
   if (j >= m_calculationStore->numberOfCalculations()) {
     return 0;
   }
-  Calculation * calculation = m_calculationStore->calculationAtIndex(j);
-  App * calculationApp = (App *)app();
-  return calculation->height(calculationApp->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
+  Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
+  return calculation->height(App::app()->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

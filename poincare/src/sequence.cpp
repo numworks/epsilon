@@ -19,8 +19,12 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   );
 }
 
+Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
+  return Sequence(this).shallowReduce(reductionContext.context());
+}
+
 template<typename T>
-Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
   T start = aInput.toScalar();
@@ -28,14 +32,14 @@ Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return Complex<T>::Undefined();
   }
-  VariableContext nContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
+  VariableContext nContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), context);
   Evaluation<T> result = Complex<T>::Builder((T)emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
     if (Expression::ShouldStopProcessing()) {
       return Complex<T>::Undefined();
     }
     nContext.setApproximationForVariable<T>((T)i);
-    result = evaluateWithNextTerm(T(), result, childAtIndex(0)->approximate(T(), nContext, complexFormat, angleUnit), complexFormat);
+    result = evaluateWithNextTerm(T(), result, childAtIndex(0)->approximate(T(), &nContext, complexFormat, angleUnit), complexFormat);
     if (result.isUndefined()) {
       return Complex<T>::Undefined();
     }
@@ -43,7 +47,21 @@ Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::
   return result;
 }
 
-template Evaluation<float> SequenceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> SequenceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+Expression Sequence::shallowReduce(Context * context) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  assert(!childAtIndex(1).deepIsMatrix(context));
+  if (childAtIndex(2).deepIsMatrix(context) || childAtIndex(3).deepIsMatrix(context)) {
+    return replaceWithUndefinedInPlace();
+  }
+  return *this;
+}
+
+template Evaluation<float> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

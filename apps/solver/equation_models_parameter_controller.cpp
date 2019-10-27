@@ -1,9 +1,9 @@
 #include "equation_models_parameter_controller.h"
 #include "list_controller.h"
-#include "../constant.h"
-#include <assert.h>
 #include <poincare/layout_helper.h>
+#include <poincare/preferences.h>
 #include <apps/i18n.h>
+#include <assert.h>
 
 using namespace Poincare;
 
@@ -23,7 +23,7 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression e = Expression::Parse(k_models[i+1]);
-    m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Constant::ShortNumberOfSignificantDigits);
+    m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits);
     m_modelCells[i].setLayout(m_layouts[i]);
   }
 }
@@ -42,7 +42,7 @@ void EquationModelsParameterController::viewWillAppear() {
 }
 
 void EquationModelsParameterController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
@@ -53,14 +53,14 @@ bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     m_listController->editSelectedRecordWithText(k_models[selectedRow()]);
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(Ion::Events::OK);
     return true;
   }
   return false;
 }
 
-int EquationModelsParameterController::numberOfRows() {
+int EquationModelsParameterController::numberOfRows() const {
   return k_numberOfExpressionCells+1;
 };
 

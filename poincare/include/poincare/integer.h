@@ -24,7 +24,7 @@ static_assert(sizeof(native_int_t) == sizeof(native_uint_t), "native_int_t type 
 static_assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t), "double_native_uint_t should be twice the size of native_uint_t");
 static_assert(sizeof(double_native_int_t) == 2*sizeof(native_int_t), "double_native_int_t type has not the right size compared to native_int_t");
 
-/* All algorithm should be improved with:
+/* All algorithms should be improved with:
  * Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann */
 
 struct IntegerDivision;

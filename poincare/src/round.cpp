@@ -1,11 +1,12 @@
 #include <poincare/round.h>
-#include <poincare/undefined.h>
-#include <poincare/rational.h>
-#include <poincare/power.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/undefined.h>
 #include <assert.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -21,12 +22,12 @@ int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.name());
 }
 
-Expression RoundNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Round(this).shallowReduce();
+Expression RoundNode::shallowReduce(ReductionContext reductionContext) {
+  return Round(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> RoundNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f1 = f1Input.toScalar();
@@ -38,28 +39,26 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Com
   return Complex<T>::Builder(std::round(f1*err)/err);
 }
 
-
-Expression Round::shallowReduce() {
+Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
-    return Undefined::Builder();
+  if (childAtIndex(1).deepIsMatrix(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
   }
-#endif
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
+  }
   /* We reduce only round(Rational, Rational). We do not reduce
    * round(Float, Float) which is equivalent to what is done in approximate. */
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     Rational r1 = childAtIndex(0).convert<Rational>();
     Rational r2 = childAtIndex(1).convert<Rational>();
-    if (!r2.integerDenominator().isOne()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+    if (!r2.isInteger()) {
+      return replaceWithUndefinedInPlace();
     }
     const Rational ten = Rational::Builder(10);
     if (Power::RationalExponentShouldNotBeReduced(ten, r2)) {
@@ -78,7 +77,7 @@ Expression Round::shallowReduce() {
       return *this;
     }
     replaceWithInPlace(result);
-    return result;
+    return std::move(result);
   }
   return *this;
 }

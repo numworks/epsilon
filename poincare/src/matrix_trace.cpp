@@ -6,6 +6,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -13,8 +14,8 @@ constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
 
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return MatrixTrace(this).shallowReduce();
+Expression MatrixTraceNode::shallowReduce(ReductionContext reductionContext) {
+  return MatrixTrace(this).shallowReduce(reductionContext);
 }
 
 Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -26,14 +27,14 @@ int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixTraceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Complex<T> result = Complex<T>::Builder(input.trace());
-  return result;
+  return std::move(result);
 }
 
 
-Expression MatrixTrace::shallowReduce() {
+Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -41,32 +42,24 @@ Expression MatrixTrace::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix m = static_cast<Matrix&>(c);
-    if (m.numberOfRows() != m.numberOfColumns()) {
-      return Undefined::Builder();
+    Matrix matrixChild0 = static_cast<Matrix&>(c);
+    if (matrixChild0.numberOfRows() != matrixChild0.numberOfColumns()) {
+      return replaceWithUndefinedInPlace();
     }
-    int n = m.numberOfRows();
+    int n = matrixChild0.numberOfRows();
     Addition a = Addition::Builder();
     for (int i = 0; i < n; i++) {
-      a.addChildAtIndexInPlace(m.childAtIndex(i+n*i), i, a.numberOfChildren());
+      a.addChildAtIndexInPlace(matrixChild0.matrixChild(i,i), i, i); // No need to clone
     }
-    return a.shallowReduce(context, complexFormat, angleUnit);
+    replaceWithInPlace(a);
+    return a.shallowReduce(reductionContext);
   }
-  if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return c;
+  if (c.deepIsMatrix(reductionContext.context())) {
+    return *this;
   }
-  return *this;
-#endif
-#else
-  if (c.type() != ExpressionNode::Type::Matrix) {
-    replaceWithInPlace(c);
-    return c;
-  }
-  return *this;
-#endif
+  replaceWithInPlace(c);
+  return c;
 }
 
 }

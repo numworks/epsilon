@@ -1,7 +1,11 @@
 #include <poincare/determinant.h>
+#include <poincare/addition.h>
 #include <poincare/matrix.h>
+#include <poincare/multiplication.h>
 #include <poincare/layout_helper.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/subtraction.h>
 extern "C" {
 #include <assert.h>
 }
@@ -21,19 +25,17 @@ int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Determinant::s_functionHelper.name());
 }
 
-// TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Evaluation<T> DeterminantNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> DeterminantNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   return Complex<T>::Builder(input.determinant());
 }
 
-Expression DeterminantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Determinant(this).shallowReduce(context);
+Expression DeterminantNode::shallowReduce(ReductionContext reductionContext) {
+  return Determinant(this).shallowReduce(reductionContext);
 }
 
-
-Expression Determinant::shallowReduce(Context & context) {
+Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -41,18 +43,20 @@ Expression Determinant::shallowReduce(Context & context) {
     }
   }
   Expression c0 = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
-  if (!op.recursivelyMatches(Expression::IsMatrix)) {
-    return replaceWith(op, true);
-  }
-  return this;
-#endif
-#endif
   // det(A) = A if A is not a matrix
-  if (!c0.recursivelyMatches(Expression::IsMatrix, context, true)) {
+  if (!c0.deepIsMatrix(reductionContext.context())) {
     replaceWithInPlace(c0);
     return c0;
+  }
+  if (c0.type() == ExpressionNode::Type::Matrix) {
+    Matrix m0 = static_cast<Matrix &>(c0);
+    bool couldComputeDeterminant = true;
+    Expression result = m0.determinant(reductionContext, &couldComputeDeterminant, true);
+    if (couldComputeDeterminant) {
+      assert(!result.isUninitialized());
+      replaceWithInPlace(result);
+      return result.shallowReduce(reductionContext);
+    }
   }
   return *this;
 }

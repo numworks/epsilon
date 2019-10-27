@@ -24,10 +24,27 @@ const ToolboxMessageTree complexChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate)
 };
 
-const ToolboxMessageTree probabilityChildren[] = {
+const ToolboxMessageTree combinatoricsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination),
   ToolboxMessageTree::Leaf(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation)
 };
+
+const ToolboxMessageTree normalDistributionChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::NormCDFCommandWithArg, I18n::Message::NormCDF),
+  ToolboxMessageTree::Leaf(I18n::Message::NormCDF2CommandWithArg, I18n::Message::NormCDF2),
+  ToolboxMessageTree::Leaf(I18n::Message::InvNormCommandWithArg, I18n::Message::InvNorm),
+  ToolboxMessageTree::Leaf(I18n::Message::NormPDFCommandWithArg, I18n::Message::NormPDF)
+};
+
+const ToolboxMessageTree binomialDistributionChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::BinomialPDFCommandWithArg, I18n::Message::BinomialPDF),
+  ToolboxMessageTree::Leaf(I18n::Message::BinomialCDFCommandWithArg, I18n::Message::BinomialCDF),
+  ToolboxMessageTree::Leaf(I18n::Message::InvBinomialCommandWithArg, I18n::Message::InvBinomial),
+};
+
+const ToolboxMessageTree probabilityChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::NormalDistribution, normalDistributionChildren),
+  ToolboxMessageTree::Node(I18n::Message::BinomialDistribution, binomialDistributionChildren)};
 
 const ToolboxMessageTree arithmeticChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor),
@@ -37,7 +54,6 @@ const ToolboxMessageTree arithmeticChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient)
 };
 
-#if MATRICES_ARE_DEFINED
 const ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, false, I18n::Message::MatrixCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IndentityCommandWithArg, I18n::Message::Identity),
@@ -47,7 +63,6 @@ const ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::TraceCommandWithArg, I18n::Message::Trace),
   ToolboxMessageTree::Leaf(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension)
 };
-#endif
 
 #if LIST_ARE_DEFINED
 const ToolboxMessageTree listsChildren[] = {
@@ -341,11 +356,10 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
   ToolboxMessageTree::Node(I18n::Message::Calculation, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
+  ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
   ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
-#if MATRICES_ARE_DEFINED
   ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
-#endif
 #if LIST_ARE_DEFINED
   ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
 #endif
@@ -376,11 +390,11 @@ bool MathToolbox::selectLeaf(int selectedRow) {
     text = textToInsert;
   }
   sender()->handleEventWithText(text);
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 
-const ToolboxMessageTree * MathToolbox::rootModel() {
+const ToolboxMessageTree * MathToolbox::rootModel() const {
   return &toolboxModel;
 }
 

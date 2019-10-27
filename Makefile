@@ -1,11 +1,13 @@
-include scripts/config.mak
+include build/config.mak
 
 # Disable default Make rules
 .SUFFIXES:
 
 object_for = $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
 
-default: $(BUILD_DIR)/epsilon.$(EXE)
+# Define the default recipe
+
+default:
 
 # Define a standard rule helper
 # If passed a last parameter value of with_local_version, we also define an
@@ -18,23 +20,51 @@ define rule_label
 endef
 
 define rule_for
-$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
-	$(Q) $(4)
 ifeq ($(strip $(5)),with_local_version)
 $(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(addprefix $$(BUILD_DIR)/,$(strip $(3)))
 	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
 	$(Q) $(4)
 endif
+$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
+	$(Q) $(4)
 endef
 
 .PHONY: info
 info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
-	@echo "EPSILON_ONBOARDING_APP = $(EPSILON_ONBOARDING_APP)"
-	@echo "EPSILON_BOOT_PROMPT = $(EPSILON_BOOT_PROMPT)"
 	@echo "EPSILON_APPS = $(EPSILON_APPS)"
 	@echo "EPSILON_I18N = $(EPSILON_I18N)"
+	@echo "PLATFORM" = $(PLATFORM)
+	@echo "DEBUG" = $(DEBUG)
+	@echo "EPSILON_GETOPT" = $(EPSILON_GETOPT)
+	@echo "ESCHER_LOG_EVENTS_BINARY" = $(ESCHER_LOG_EVENTS_BINARY)
+	@echo "QUIZ_USE_CONSOLE" = $(QUIZ_USE_CONSOLE)
+	@echo "ION_STORAGE_LOG" = $(ION_STORAGE_LOG)
+	@echo "POINCARE_TREE_LOG" = $(POINCARE_TREE_LOG)
+	@echo "POINCARE_TESTS_PRINT_EXPRESSIONS" = $(POINCARE_TESTS_PRINT_EXPRESSIONS)
+
+.PHONY: help
+help:
+	@echo "Device targets"
+	@echo "  make epsilon_flash"
+	@echo "  make epsilon.dfu"
+	@echo "  make epsilon.onboarding.dfu"
+	@echo "  make epsilon.onboarding.update.dfu"
+	@echo "  make epsilon.onboarding.beta.dfu"
+	@echo "  make flasher.light.bin"
+	@echo "  make flasher.verbose.dfu"
+	@echo "  make bench.ram.bin"
+	@echo "  make bench.flash.bin"
+	@echo "  make binpack"
+	@echo ""
+	@echo "Simulator targets"
+	@echo "  make PLATFORM=simulator"
+	@echo "  make PLATFORM=simulator TARGET=android"
+	@echo "  make PLATFORM=simulator TARGET=ios"
+	@echo "  make PLATFORM=simulator TARGET=macos"
+	@echo "  make PLATFORM=simulator TARGET=web"
+	@echo "  make PLATFORM=simulator TARGET=windows"
 
 # Since we're building out-of-tree, we need to make sure the output directories
 # are created, otherwise the receipes will fail (e.g. gcc will fail to create
@@ -50,9 +80,9 @@ $(BUILD_DIR)%/.:
 # To make objects dependent on their directory, we need a second expansion
 .SECONDEXPANSION:
 
-# Each sub-Makefile can either add sources to the $(src) variable or define a
-# new executable target. The $(src) variable lists the sources that will be
-# built and linked to every executable being generated.
+# Each sub-Makefile can either add sources to $(%_src) variables or define a
+# new executable target. The $(%_src) variables list the sources that can be
+# built and linked to executables being generated.
 
 ifeq ($(USE_LIBA),0)
 include liba/Makefile.bridge
@@ -68,65 +98,29 @@ include python/Makefile
 include escher/Makefile
 # Executable Makefiles
 include apps/Makefile
-include scripts/struct_layout/Makefile
-include scripts/scenario/Makefile
+include build/struct_layout/Makefile
+include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-objs = $(call object_for,$(src))
-.SECONDARY: $(objs)
+all_src = $(apps_all_src) $(escher_src) $(ion_all_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(epsilon_src) $(runner_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(ion_target_device_bench_src) $(tests_src)
+all_objs = $(call object_for,$(all_src))
+.SECONDARY: $(all_objs)
 
 # Load source-based dependencies
 # Compilers can generate Makefiles that states the dependencies of a given
 # objet to other source and headers. This serve no purpose for a clean build,
 # but allows correct yet optimal incremental builds.
--include $(objs:.o=.d)
+-include $(all_objs:.o=.d)
 
-# Load platform-specific targets
-# We include them before the standard ones to give them precedence.
--include scripts/targets.$(PLATFORM).mak
+# Define main and shortcut targets
+include build/targets.mak
 
-# Define rules for executables
-# Those can be built directly with make executable.exe as a shortcut. They also
-# depends on $(objs)
+# Fill in the default recipe
+DEFAULT ?= $(BUILD_DIR)/epsilon.$(EXE)
+default: $(DEFAULT)
 
-executables = epsilon test flasher
-
-define rules_for_executable
-$$(BUILD_DIR)/$(1).$$(EXE): $$(objs)
-.PHONY: $(1).$$(EXE)
-$(1).$$(EXE): $$(BUILD_DIR)/$(1).$$(EXE)
-endef
-
-$(foreach executable,$(executables),$(eval $(call rules_for_executable,$(executable))))
-
-# Define standard compilation rules
-
-$(eval $(call rule_for, \
-  AS, %.o, %.s, \
-  $$(CC) $$(SFLAGS) -c $$< -o $$@ \
-))
-
-$(eval $(call rule_for, \
-  CC, %.o, %.c, \
-  $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@, \
-  with_local_version \
-))
-
-$(eval $(call rule_for, \
-  CXX, %.o, %.cpp, \
-  $$(CXX) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@, \
-  with_local_version \
-))
-
-$(eval $(call rule_for, \
-  OCC, %.o, %.m, \
-  $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
-))
-
-$(eval $(call rule_for, \
-  LD, %.$$(EXE), , \
-  $$(LD) $$^ $$(LDFLAGS) -o $$@ \
-))
+# Load standard build rules
+include build/rules.mk
 
 .PHONY: clean
 clean:

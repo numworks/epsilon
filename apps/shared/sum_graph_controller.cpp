@@ -1,9 +1,9 @@
 #include "sum_graph_controller.h"
 #include "function_app.h"
-#include "../apps_container.h"
 #include <poincare/empty_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/preferences.h>
 #include "poincare_helpers.h"
 
 #include <assert.h>
@@ -17,8 +17,6 @@ namespace Shared {
 SumGraphController::SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_step(Step::FirstParameter),
-  m_startSum(NAN),
-  m_endSum(NAN),
   m_record(),
   m_graphRange(range),
   m_graphView(graphView),
@@ -37,22 +35,19 @@ void SumGraphController::viewWillAppear() {
   m_graphView->setAreaHighlight(NAN, NAN);
   m_graphView->reload();
 
-  m_startSum = m_cursor->x();
-  m_endSum = NAN;
   m_step = Step::FirstParameter;
   reloadBannerView();
 }
 
-
 void SumGraphController::didEnterResponderChain(Responder * previousFirstResponder) {
-  app()->setFirstResponder(m_legendView.textField());
+  Container::activeApp()->setFirstResponder(m_legendView.textField());
 }
 
 bool SumGraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && m_step != Step::FirstParameter) {
     m_step = (Step)((int)m_step-1);
     if (m_step == Step::SecondParameter) {
-      app()->setFirstResponder(m_legendView.textField());
+      Container::activeApp()->setFirstResponder(m_legendView.textField());
       m_graphView->setAreaHighlightColor(false);
       m_graphView->setCursorView(&m_cursorView);
     }
@@ -67,17 +62,19 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  if (std::isnan(x)) {
+    return true;
+  }
+  FunctionApp * myApp = FunctionApp::app();
   assert(!m_record.isNull());
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
-  double y = function->evaluateAtAbscissa(x, myApp->localContext());
-  m_cursor->moveTo(x, y);
-  if (m_step == Step::FirstParameter) {
-    m_startSum = m_cursor->x();
-  }
+
+  /* TODO We would like to assert that the function is not a parametered
+   * function, so we can indeed evaluate the function for parameter x. */
+  double y = function->evaluateXYAtParameter(x, myApp->localContext()).x2();
+  m_cursor->moveTo(x, x, y);
   if (m_step == Step::SecondParameter) {
-    m_endSum = m_cursor->x();
-    m_graphView->setAreaHighlight(m_startSum, m_endSum);
+    m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
   }
   m_legendView.setEditableZone(m_cursor->x());
   m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
@@ -96,7 +93,7 @@ bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const 
     return false;
   }
   if ((m_step == Step::SecondParameter && floatBody < m_startSum) || !moveCursorHorizontallyToPosition(floatBody)) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   return handleEnter();
@@ -121,12 +118,12 @@ bool SumGraphController::handleEnter() {
     stack->pop();
   } else {
     if (m_step == Step::FirstParameter) {
+      m_startSum = m_cursor->x();
       m_graphView->setAreaHighlight(m_startSum, m_startSum);
-      m_endSum = m_startSum;
     } else {
       m_graphView->setAreaHighlightColor(true);
       m_graphView->setCursorView(nullptr);
-      app()->setFirstResponder(this);
+      Container::activeApp()->setFirstResponder(this);
     }
     m_step = (Step)((int)m_step+1);
     reloadBannerView();
@@ -136,20 +133,23 @@ bool SumGraphController::handleEnter() {
 
 void SumGraphController::reloadBannerView() {
   m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
+  double endSum = NAN;
   double result;
   Poincare::Layout functionLayout;
   if (m_step == Step::Result) {
-    FunctionApp * myApp = static_cast<FunctionApp *>(app());
+    endSum = m_cursor->x();
+    FunctionApp * myApp = FunctionApp::app();
     assert(!m_record.isNull());
     ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
-    result = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
+    Poincare::Context * context = myApp->localContext();
+    Poincare::Expression sum = function->sumBetweenBounds(m_startSum, endSum, context);
+    result = PoincareHelpers::ApproximateToScalar<double>(sum, context);
     functionLayout = createFunctionLayout(function);
   } else {
     m_legendView.setEditableZone(m_cursor->x());
     result = NAN;
-    functionLayout = Poincare::Layout();
   }
-  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, result, functionLayout);
+  m_legendView.setSumSymbol(m_step, m_startSum, endSum, result, functionLayout);
 }
 
 /* Legend View */
@@ -158,10 +158,10 @@ SumGraphController::LegendView::LegendView(SumGraphController * controller, Inpu
   m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumLayout(),
   m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, false, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumSymbol(sumSymbol)
 {
-  m_draftText[0] = 0;
+  m_textBuffer[0] = 0;
 }
 
 void SumGraphController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -178,9 +178,11 @@ void SumGraphController::LegendView::setLegendMessage(I18n::Message message, Ste
 }
 
 void SumGraphController::LegendView::setEditableZone(double d) {
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-  PrintFloat::convertFloatToText<double>(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
- m_editableZone.setText(buffer);
+  constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
+  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+  char buffer[bufferSize];
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(d, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+  m_editableZone.setText(buffer);
 }
 
 void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, Layout functionLayout) {
@@ -190,24 +192,29 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   if (step == Step::FirstParameter) {
     m_sumLayout = LayoutHelper::CodePointString(sigma, sigmaLength);
   } else if (step == Step::SecondParameter) {
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
+    char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(start, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     m_sumLayout = CondensedSumLayout::Builder(
         LayoutHelper::CodePointString(sigma, sigmaLength),
         LayoutHelper::String(buffer, strlen(buffer), k_font),
         EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
   } else {
-    char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int sizeForPrecision = PrintFloat::charSizeForFloatsWithPrecision(precision);
+    constexpr int bufferSize = 2 + sizeForPrecision;
+    char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(start, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     Layout start = LayoutHelper::String(buffer, strlen(buffer), k_font);
-    PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(end, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     Layout end = LayoutHelper::String(buffer, strlen(buffer), k_font);
     m_sumLayout = CondensedSumLayout::Builder(
         LayoutHelper::CodePointString(sigma, sigmaLength),
         start,
         end);
     strlcpy(buffer, "= ", 3);
-    PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, bufferSize-2, precision);
     m_sumLayout = HorizontalLayout::Builder(
         m_sumLayout,
         functionLayout,

@@ -30,10 +30,10 @@ private:
   template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const;
 };
 
-class Sum final : public ParameteredExpression {
+class Sum final : public Sequence {
 friend class SumNode;
 public:
-  Sum(const SumNode * n) : ParameteredExpression(n) {}
+  Sum(const SumNode * n) : Sequence(n) {}
   static Sum Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Sum, SumNode>(ArrayBuilder<TreeHandle>(child0, child1, child2, child3).array(), 4); }
   static Expression UntypedBuilder(Expression children);
 

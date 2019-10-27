@@ -2,6 +2,7 @@
 #include "global_context.h"
 #include "poincare_helpers.h"
 #include <poincare/horizontal_layout.h>
+#include <poincare/undefined.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -20,18 +21,21 @@ ExpressionModel::ExpressionModel() :
 {
 }
 
-void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize) const {
+void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol) const {
   Expression e = expressionClone(record);
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
   } else {
+    if (symbol != 0 && !e.isUninitialized()) {
+      e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), Symbol::Builder(symbol));
+    }
     e.serialize(buffer, bufferSize);
   }
 }
 
 bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poincare::Context * context) const {
   if (m_circular == -1) {
-    m_circular = Expression::ExpressionWithoutSymbols(expressionClone(record), *context).isUninitialized();
+    m_circular = Expression::ExpressionWithoutSymbols(expressionClone(record), context).isUninitialized();
   }
   return m_circular;
 }
@@ -39,11 +43,15 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poinca
 Expression ExpressionModel::expressionReduced(const Storage::Record * record, Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
-    m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
-    PoincareHelpers::Simplify(&m_expression, *context);
-    // simplify might return an uninitialized Expression if interrupted
-    if (m_expression.isUninitialized()) {
+    if (isCircularlyDefined(record, context)) {
+      m_expression = Undefined::Builder();
+    } else {
       m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+      PoincareHelpers::Simplify(&m_expression, context);
+      // simplify might return an uninitialized Expression if interrupted
+      if (m_expression.isUninitialized()) {
+        m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+      }
     }
   }
   return m_expression;
@@ -55,9 +63,13 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
   return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
 }
 
-Layout ExpressionModel::layout(const Storage::Record * record) const {
+Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol) const {
   if (m_layout.isUninitialized()) {
-    m_layout = PoincareHelpers::CreateLayout(expressionClone(record));
+    Expression clone = expressionClone(record);
+    if (!clone.isUninitialized() && symbol != 0) {
+      clone = clone.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), Symbol::Builder(symbol));
+    }
+    m_layout = PoincareHelpers::CreateLayout(clone);
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout::Builder();
     }
@@ -65,12 +77,12 @@ Layout ExpressionModel::layout(const Storage::Record * record) const {
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol, CodePoint unknownSymbol) {
-  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol, unknownSymbol);
+Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol) {
+  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol);
   return setExpressionContent(record, e);
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Storage::Record * record, Expression & newExpression) {
+Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Storage::Record * record, const Expression & newExpression) {
   assert(record->fullName() != nullptr);
   // Prepare the new data to be stored
   Ion::Storage::Record::Data newData = record->value();
@@ -103,7 +115,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   return error;
 }
 
-void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record, Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
+void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
   if (!expressionToStore.isUninitialized()) {
     memmove(expressionAddress, expressionToStore.addressInPool(), expressionToStoreSize);
   }
@@ -115,14 +127,14 @@ void ExpressionModel::tidy() const {
   m_circular = 0;
 }
 
-Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, char symbol, char unknownSymbol) {
+Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol) {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c);
     if (!expressionToStore.isUninitialized() && symbol != 0) {
-      expressionToStore = expressionToStore.replaceUnknown(Symbol::Builder(symbol), Symbol::Builder(unknownSymbol));
+      expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknownX));
     }
   }
   return expressionToStore;

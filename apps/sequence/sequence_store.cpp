@@ -32,14 +32,29 @@ Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   assert(name);
   // Choose the corresponding color
   KDColor color = Palette::DataColor[nameIndex];
-  Sequence::SequenceRecordDataBuffer data(color);
+  Sequence::RecordDataBuffer data(color);
   // m_sequences
   return Ion::Storage::sharedStorage()->createRecordWithExtension(name, modelExtension(), &data, sizeof(data));
 }
 
-void SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+int SequenceStore::sequenceIndexForName(char name) {
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
+    if (k_sequenceNames[i][0] == name) {
+      return i;
+    }
+  }
+  assert(false);
+  return 0;
+}
+
+Shared::ExpressionModelHandle * SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
-  m_sequences[cacheIndex] = Sequence(record);
+  int index = cacheIndex;
+  if (!record.isNull()) {
+    index = SequenceStore::sequenceIndexForName(record.fullName()[0]);
+  }
+  m_sequences[index] = Sequence(record);
+  return &m_sequences[index];
 }
 
 Shared::ExpressionModelHandle * SequenceStore::memoizedModelAtIndex(int cacheIndex) const {

@@ -1,9 +1,9 @@
 #include <poincare/floor.h>
-#include <poincare/constant.h>
+#include <poincare/decimal.h>
 #include <poincare/floor_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/symbol.h>
 #include <ion.h>
 #include <assert.h>
@@ -31,12 +31,11 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Com
   return Complex<T>::Builder(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Floor(this).shallowReduce();
+Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
+  return Floor(this).shallowReduce(reductionContext);
 }
 
-
-Expression Floor::shallowReduce() {
+Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -44,35 +43,18 @@ Expression Floor::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixFirstChild(reductionContext);
   }
-#endif
-  if (c.type() == ExpressionNode::Type::Constant) {
-    Constant s = static_cast<Constant &>(c);
-    Expression result;
-    if (s.isPi()) {
-      result = Rational::Builder(3);
-    }
-    if (s.isExponential()) {
-      result = Rational::Builder(2);
-    }
-    if (!result.isUninitialized()) {
-      replaceWithInPlace(result);
-      return result;
-    }
-    return *this;
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = static_cast<Rational &>(c);
+    IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+    assert(!div.quotient.isOverflow());
+    Expression result = Rational::Builder(div.quotient);
+    replaceWithInPlace(result);
+    return result;
   }
-  if (c.type() != ExpressionNode::Type::Rational) {
-    return *this;
-  }
-  Rational r = static_cast<Rational &>(c);
-  IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.quotient.isOverflow());
-  Expression result = Rational::Builder(div.quotient);
-  replaceWithInPlace(result);
-  return result;
+  return shallowReduceUsingApproximation(reductionContext);
 }
 
 }

@@ -8,7 +8,7 @@ class ListViewDataSource : public TableViewDataSource {
 public:
   virtual KDCoordinate cellWidth();
   KDCoordinate columnWidth(int i) override;
-  int numberOfColumns() override;
+  int numberOfColumns() const override;
   void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;

@@ -10,7 +10,7 @@ static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::Function::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 1.0f, 0.5f)
+  m_textField(Shared::Function::k_parenthesedThetaArgumentByteLength, this, m_textFieldBuffer, k_textFieldBufferSize, k_textFieldBufferSize, nullptr, listController, font, 1.0f, 0.5f)
 {
 }
 
@@ -24,10 +24,13 @@ Responder * TextFieldFunctionTitleCell::responder() {
 }
 
 void TextFieldFunctionTitleCell::setEditing(bool editing) {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
   const char * previousText = m_textField.text();
-  m_textField.setEditing(true, false);
+  int extensionLength = UTF8Helper::HasCodePoint(previousText, UCodePointGreekSmallLetterTheta) ? Shared::Function::k_parenthesedThetaArgumentByteLength : Shared::Function::k_parenthesedXNTArgumentByteLength;
+  m_textField.setExtensionLength(extensionLength);
+  m_textField.setEditing(true);
   m_textField.setText(previousText);
+  m_textField.setDraftTextBufferSize(Poincare::SymbolAbstract::k_maxNameSize+extensionLength);
 }
 
 bool TextFieldFunctionTitleCell::isEditing() const {
@@ -42,10 +45,6 @@ void TextFieldFunctionTitleCell::setEven(bool even) {
 void TextFieldFunctionTitleCell::setColor(KDColor color) {
   FunctionTitleCell::setColor(color);
   m_textField.setTextColor(color);
-}
-
-void TextFieldFunctionTitleCell::setText(const char * title) {
-  m_textField.setText(title);
 }
 
 void TextFieldFunctionTitleCell::setHorizontalAlignment(float alignment) {
@@ -67,7 +66,7 @@ void TextFieldFunctionTitleCell::layoutSubviews() {
 
 void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
   if (isEditing()) {
-    app()->setFirstResponder(&m_textField);
+    Container::activeApp()->setFirstResponder(&m_textField);
   }
 }
 

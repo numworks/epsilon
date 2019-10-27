@@ -24,13 +24,10 @@ public:
   // Properties
   Type type() const override { return Type::Function; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
-  int polynomialDegree(Context & context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
-  int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
-  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
-
-  // Complex
-  bool isReal(Context & context) const override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
+  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
+  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
 private:
   char m_name[0]; // MUST be the last member variable
@@ -40,12 +37,15 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
-  Expression shallowReplaceReplaceableSymbols(Context & context) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReplaceReplaceableSymbols(Context * context) override;
+  LayoutShape leftLayoutShape() const override { return strlen(m_name) > 1 ? LayoutShape::MoreLetters : LayoutShape::OneLetter; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class Function : public SymbolAbstract {
@@ -53,12 +53,11 @@ friend class FunctionNode;
 public:
   Function(const FunctionNode * n) : SymbolAbstract(n) {}
   static Function Builder(const char * name, size_t length, Expression child = Expression());
-  static Expression UntypedBuilder(const char * name, size_t length, Expression child, Context * context);
 
   // Simplification
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
-  Expression shallowReplaceReplaceableSymbols(Context & context);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReplaceReplaceableSymbols(Context * context);
 private:
   //VariableContext unknownXContext(Context & parentContext) const;
 };

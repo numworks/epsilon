@@ -30,10 +30,10 @@ private:
   template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const;
 };
 
-class Product final : public ParameteredExpression {
+class Product final : public Sequence {
 friend class ProductNode;
 public:
-  Product(const ProductNode * n) : ParameteredExpression(n) {}
+  Product(const ProductNode * n) : Sequence(n) {}
   static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>(ArrayBuilder<TreeHandle>(child0, child1, child2, child3).array(), 4); }
   static Expression UntypedBuilder(Expression children);
 

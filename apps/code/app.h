@@ -28,7 +28,7 @@ public:
     ScriptStore * scriptStore();
 #if EPSILON_GETOPT
     bool lockOnConsole() const;
-    void setOpt(const char * name, char * value) override;
+    void setOpt(const char * name, const char * value) override;
 #endif
   private:
 #if EPSILON_GETOPT
@@ -36,6 +36,9 @@ public:
 #endif
     ScriptStore m_scriptStore;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   ~App();
   bool prepareForExit() override {
     if (m_consoleController.inputRunLoopActive()) {
@@ -75,7 +78,7 @@ private:
   char m_pythonHeap[k_pythonHeapSize];
   const void * m_pythonUser;
 
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   ConsoleController m_consoleController;
   ButtonRowController m_listFooter;
   MenuController m_menuController;

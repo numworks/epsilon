@@ -128,6 +128,7 @@ private:
   void destroyRecord(const Record record);
 
   /* Getters on address in buffer */
+  char * pointerOfRecord(const Record record) const;
   record_size_t sizeOfRecordStarting(char * start) const;
   const char * fullNameOfRecordStarting(char * start) const;
   const void * valueOfRecordStarting(char * start) const;
@@ -168,6 +169,8 @@ private:
   char m_buffer[k_storageSize];
   uint32_t m_magicFooter;
   StorageDelegate * m_delegate;
+  mutable Record m_lastRecordRetrieved;
+  mutable char * m_lastRecordRetrievedPointer;
 };
 
 /* Some apps memoize records and need to be notified when a record might have

@@ -6,8 +6,9 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
-#include <cmath>
 #include <assert.h>
+#include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -25,12 +26,12 @@ int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
-Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ConfidenceInterval(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression ConfidenceIntervalNode::shallowReduce(ReductionContext reductionContext) {
+  return ConfidenceInterval(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f = static_cast<Complex<T> &>(fInput).toScalar();
@@ -52,8 +53,7 @@ int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Prefe
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
 }
 
-
-Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -62,25 +62,19 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined::Builder();
+  if (c0.deepIsMatrix(reductionContext.context()) || c1.deepIsMatrix(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
   }
-#endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+    if (!r1.isInteger() || r1.signedIntegerNumerator().isNegative()) {
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -95,8 +89,8 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   matrix.addChildAtIndexInPlace(Addition::Builder(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.deepReduceChildren(context, complexFormat, angleUnit, target);
-  return matrix;
+  matrix.deepReduceChildren(reductionContext);
+  return std::move(matrix);
 }
 
 

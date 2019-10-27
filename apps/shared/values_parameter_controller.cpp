@@ -1,18 +1,17 @@
 #include "values_parameter_controller.h"
+#include "function_app.h"
 #include <assert.h>
 
 namespace Shared {
 
-ValuesParameterController::ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title) :
+ValuesParameterController::ValuesParameterController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_pageTitle(title),
   m_deleteColumn(I18n::Message::Default),
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::Default),
 #endif
   m_setInterval(I18n::Message::Default),
-  m_selectableTableView(this, this, this),
-  m_intervalParameterController(intervalParameterController)
+  m_selectableTableView(this, this, this)
 {
 }
 
@@ -38,7 +37,7 @@ void ValuesParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
@@ -47,13 +46,12 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 #else
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
 #endif
+    IntervalParameterController * intervalParameterController = FunctionApp::app()->valuesController()->intervalParameterController();
     switch (selectedRow()) {
       case 0:
       {
-        Interval * interval = m_intervalParameterController->interval();
-        interval->setEnd(0.0);
-        interval->setStep(1.0);
-        interval->setStart(1.0);
+        Interval * interval = intervalParameterController->interval();
+        interval->clear();
         StackViewController * stack = ((StackViewController *)parentResponder());
         stack->pop();
         return true;
@@ -68,7 +66,8 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 #endif
       {
         StackViewController * stack = ((StackViewController *)parentResponder());
-        stack->push(m_intervalParameterController);
+        intervalParameterController->setTitle(I18n::Message::IntervalSet);
+        stack->push(intervalParameterController);
         return true;
       }
       default:
@@ -79,7 +78,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int ValuesParameterController::numberOfRows() {
+int ValuesParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
@@ -90,7 +89,7 @@ HighlightCell * ValuesParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int ValuesParameterController::reusableCellCount() {
+int ValuesParameterController::reusableCellCount() const {
   return k_totalNumberOfCell;
 }
 

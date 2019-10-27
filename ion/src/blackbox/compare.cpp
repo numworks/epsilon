@@ -13,7 +13,7 @@
  *
  * To compare the versions on a given scenario:
  *      make -j8 PLATFORM=blackbox compare
- *      ./compare < path/to/scenario
+ *      ./build/release/blackbox/compare < path/to/scenario
  * To fuzz over scenarios that are in a folder named "tests":
  *      make -j8 PLATFORM=blackbox TOOLCHAIN=afl compare_fuzz
  */

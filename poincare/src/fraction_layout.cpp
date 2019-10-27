@@ -123,46 +123,24 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  if (bufferSize == 1) { return 0;}
 
-  int idxInParent = -1;
-  LayoutNode * p = parent();
-  if (p != nullptr) {
-    idxInParent = p->indexOfChild(this);
-  }
+  /* Add System parenthesis to detect omitted multiplication:
+   *   2
+   *  --- i --> [2/3]i instead of 2/3i
+   *   3
+   */
 
-  // Add a multiplication if omitted.
-  if (idxInParent > 0 && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
-    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-  }
-
-  bool addParenthesis = false;
-  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout) {
-    addParenthesis = true;
-    // Add parenthesis
-    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-  }
+  // Add system parenthesis
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, UCodePointLeftSystemParenthesis);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the content of the fraction
   numberOfChar += SerializationHelper::Infix(this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, "/");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  if (addParenthesis) {
-    // Add parenthesis
-    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-  }
-
-  // Add a multiplication if omitted.
-  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
-    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-  }
-
-  buffer[numberOfChar] = 0;
+  // Add system parenthesis
+  numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
   return numberOfChar;
 }
 

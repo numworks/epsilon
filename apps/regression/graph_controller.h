@@ -46,7 +46,8 @@ private:
   uint32_t rangeVersion() override;
   int selectedCurveIndex() const override { return *m_selectedSeriesIndex; }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
-  double yValue(int curveIndex, double x, Poincare::Context * context) const override;
+  Poincare::Coordinate2D<double> xyValues(int curveIndex, double x, Poincare::Context * context) const override;
+  double yValue(int curveIndex, double x, Poincare::Context * context) const;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
   int estimatedBannerNumberOfLines() const override;
@@ -54,6 +55,7 @@ private:
   // InteractiveCurveViewRangeDelegate
   Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 
+  void setRoundCrossCursorView(bool round);
   Shared::CursorView m_crossCursorView;
   Shared::RoundCursorView m_roundCursorView;
   BannerView m_bannerView;

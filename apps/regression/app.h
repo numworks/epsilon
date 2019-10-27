@@ -40,9 +40,12 @@ public:
     uint32_t m_rangeVersion;
     int m_selectedSeriesIndex;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   RegressionController * regressionController() { return &m_regressionController; }
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   ButtonRowController m_calculationHeader;

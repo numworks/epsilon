@@ -1,6 +1,5 @@
 #include "command.h"
-#include <ion.h>
-#include <ion/src/device/display.h>
+#include <apps/shared/post_and_hardware_tests.h>
 
 namespace Ion {
 namespace Device {
@@ -12,12 +11,7 @@ void VBlank(const char * input) {
     reply(sSyntaxError);
     return;
   }
-
-  for (int i=0; i<6; i++) {
-    Ion::Display::waitForVBlank();
-  }
-
-  reply(sOK);
+  reply(Shared::POSTAndHardwareTests::VBlankOK() ? sOK : sKO);
 }
 
 }

@@ -18,7 +18,7 @@ public:
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
@@ -28,25 +28,21 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
+  static const SettingsMessageTree * model();
   StackViewController * stackController() const;
-#ifdef EPSILON_BOOT_PROMPT
-  constexpr static int k_totalNumberOfCell = 11;
-  MessageTableCellWithSwitch m_popUpCell;
-#else
-  constexpr static int k_totalNumberOfCell = 10;
-#endif
+  I18n::Message promptMessage() const;
+  bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
   constexpr static int k_numberOfSimpleChevronCells = 9;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
+  MessageTableCellWithSwitch m_popUpCell;
   SelectableTableView m_selectableTableView;
-  MessageTree * m_messageTreeModel;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
   LanguageController m_languageController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
   ContributorsController m_contributorsController;
-
 };
 
 }

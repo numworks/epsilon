@@ -81,7 +81,7 @@ private:
   const char * modelExtension() const override { return Ion::Storage::eqExtension; }
   /* We don't really use model memoization as the number of Equation is limited
    * and we keep enough Equations to store them all. */
-  void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
 
   Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);

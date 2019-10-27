@@ -58,7 +58,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
       multipleDataView()->selectDataView(*m_selectedSeriesIndex);
       highlightSelection();
     } else {
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
     }
     reloadBannerView();
     return true;

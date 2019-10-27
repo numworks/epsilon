@@ -19,11 +19,12 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
   if (max < min) {
     range = 0.0f;
   }
-  if (interactiveCurveViewRange->yMin() == addMargin(min, range, true) && interactiveCurveViewRange->yMax() == addMargin(max, range, false)) {
+  if (interactiveCurveViewRange->yMin() == addMargin(min, range, true, true) && interactiveCurveViewRange->yMax() == addMargin(max, range, true, false)) {
     return false;
   }
   if (min == max) {
-    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, max) : 1.0f;
+    // Add same margin on top of / below the curve, to center it on the screen
+    float step = max != 0.0f ? 2.0f * Range1D::defaultRangeLengthFor(max) : 1.0f;
     min = min - step;
     max = max + step;
   }
@@ -31,21 +32,9 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
     min = -1.0f;
     max = 1.0f;
   }
-  if (min == FLT_MAX) {
-    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, std::fabs(max)) : 1.0f;
-    min = max-step;
-  }
-  if (max == -FLT_MAX) {
-    float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, std::fabs(min)) : 1.0f;
-    max = min+step;
-  }
   range = max - min;
-  if (range < InteractiveCurveViewRange::k_minFloat) {
-    max += InteractiveCurveViewRange::k_minFloat;
-    min -= InteractiveCurveViewRange::k_minFloat;
-  }
-  interactiveCurveViewRange->setYMin(addMargin(min, range, true));
-  interactiveCurveViewRange->setYMax(addMargin(max, range, false));
+  interactiveCurveViewRange->setYMin(addMargin(min, range, true, true));
+  interactiveCurveViewRange->setYMax(addMargin(max, range, true, false));
   if (std::isinf(interactiveCurveViewRange->xMin())) {
     interactiveCurveViewRange->setYMin(-FLT_MAX);
   }

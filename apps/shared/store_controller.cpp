@@ -8,7 +8,6 @@
 using namespace Poincare;
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 namespace Shared {
 
@@ -36,7 +35,7 @@ void StoreController::ContentView::displayFormulaInput(bool display) {
 }
 
 void StoreController::ContentView::didBecomeFirstResponder() {
-  app()->setFirstResponder(m_displayFormulaInputView ? static_cast<Responder *>(&m_formulaInputView) : static_cast<Responder *>(&m_dataView));
+  Container::activeApp()->setFirstResponder(m_displayFormulaInputView ? static_cast<Responder *>(&m_formulaInputView) : static_cast<Responder *>(&m_dataView));
 }
 
 View * StoreController::ContentView::subviewAtIndex(int index) {
@@ -65,7 +64,6 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i].setParentResponder(m_contentView.dataView());
     m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_editableCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 
@@ -86,35 +84,29 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     // Handle formula input
     Expression expression = Expression::Parse(textField->text());
     if (expression.isUninitialized()) {
-      app()->displayWarning(I18n::Message::SyntaxError);
+      Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }
     m_contentView.displayFormulaInput(false);
     if (fillColumnWithFormula(expression)) {
-      app()->setFirstResponder(&m_contentView);
+      Container::activeApp()->setFirstResponder(&m_contentView);
     }
     return true;
   }
-  bool didFinishEditing = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
-  if (didFinishEditing) {
-    // FIXME Find out if redrawing errors can be suppressed without always reloading all the data
-    // See Shared::ValuesController::textFieldDidFinishEditing
-    selectableTableView()->reloadData();
-  }
-  return didFinishEditing;
+  return EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
 }
 
 bool StoreController::textFieldDidAbortEditing(TextField * textField) {
   if (textField == m_contentView.formulaInputView()->textField()) {
     m_contentView.displayFormulaInput(false);
-    app()->setFirstResponder(&m_contentView);
+    Container::activeApp()->setFirstResponder(&m_contentView);
     return true;
   }
   return EditableCellTableViewController::textFieldDidAbortEditing(textField);
 }
 
 
-int StoreController::numberOfColumns() {
+int StoreController::numberOfColumns() const {
   return DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_numberOfSeries;
 }
 
@@ -155,26 +147,22 @@ int StoreController::typeAtLocation(int i, int j) {
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle the separator
-  if (cellAtLocationIsEditable(i, j)) {
-    bool shouldHaveLeftSeparator = i % DoublePairStore::k_numberOfColumnsPerSeries == 0;
+  if (typeAtLocation(i, j) == k_editableCellType) {
+    bool shouldHaveLeftSeparator = i > 0 && ( i % DoublePairStore::k_numberOfColumnsPerSeries == 0);
     static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
-  // Handle empty cells
-  if (j > 0 && j > m_store->numberOfPairsOfSeries(seriesAtColumn(i)) && j < numberOfRows()) {
+  // Handle hidden cells
+  const int numberOfElementsInCol = numberOfElementsInColumn(i);
+  if (j > numberOfElementsInCol + 1) {
     StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
-    if (cellShouldBeTransparent(i,j)) {
-      myCell->setHide(true);
-    } else {
-      myCell->setEven(j%2 == 0);
-      myCell->setHide(false);
-    }
+    myCell->setHide(true);
     return;
   }
-  if (cellAtLocationIsEditable(i, j)) {
+  if (typeAtLocation(i, j) == k_editableCellType) {
     static_cast<StoreCell *>(cell)->setHide(false);
   }
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::PrintFloatMode::Decimal);
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }
 
 const char * StoreController::title() {
@@ -185,7 +173,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
@@ -198,7 +186,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    if (selectedRow() == 0 || selectedRow() > m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries)) {
+    if (selectedRow() == 0 || selectedRow() > numberOfElementsInColumn(selectedColumn())) {
       return false;
     }
     m_store->deletePairOfSeriesAtIndex(series, selectedRow()-1);
@@ -213,22 +201,15 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
-  app()->setFirstResponder(&m_contentView);
+  Container::activeApp()->setFirstResponder(&m_contentView);
 }
 
 Responder * StoreController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }
 
-SelectableTableView * StoreController::selectableTableView() {
-  return m_contentView.dataView();
-}
-
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
-  if (rowIndex > 0) {
-    return true;
-  }
-  return false;
+  return typeAtLocation(columnIndex, rowIndex) == k_editableCellType;
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
@@ -240,16 +221,8 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
   return m_store->get(seriesAtColumn(columnIndex), columnIndex%DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
-int StoreController::numberOfElements() {
-  int result = 0;
-  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    result = maxInt(result, m_store->numberOfPairsOfSeries(i));
-  }
-  return result;
-}
-
-int StoreController::maxNumberOfElements() const {
-  return DoublePairStore::k_maxNumberOfPairs;
+int StoreController::numberOfElementsInColumn(int columnIndex) const {
+  return m_store->numberOfPairsOfSeries(seriesAtColumn(columnIndex));
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
@@ -258,8 +231,8 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
+  AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
+  int nbOfVariables = formula.getVariables(appsContainer->globalContext(), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
   (void) nbOfVariables; // Remove compilation warning of nused variable
   assert(nbOfVariables >= 0);
   int numberOfValuesToCompute = -1;
@@ -277,7 +250,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     index++;
   }
   if (numberOfValuesToCompute == -1) {
-    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries);
+    numberOfValuesToCompute = numberOfElementsInColumn(selectedColumn());
   }
 
   StoreContext * store = storeContext();
@@ -287,9 +260,9 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     // Set the context
     store->setSeriesPairIndex(j);
     // Compute the new value using the formula
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, *store);
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
     if (std::isnan(evaluation) || std::isinf(evaluation)) {
-      app()->displayWarning(I18n::Message::DataNotSuitable);
+      Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
       return false;
     }
   }
@@ -297,16 +270,11 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   // Fill in the table with the formula values
   for (int j = 0; j < numberOfValuesToCompute; j++) {
     store->setSeriesPairIndex(j);
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, *store);
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
     setDataAtLocation(evaluation, currentColumn, j + 1);
   }
   selectableTableView()->reloadData();
   return true;
-}
-
-bool StoreController::cellShouldBeTransparent(int i, int j) {
-  int seriesIndex = i/DoublePairStore::k_numberOfColumnsPerSeries;
-  return j > 1 + m_store->numberOfPairsOfSeries(seriesIndex);
 }
 
 }

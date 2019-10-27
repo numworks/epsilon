@@ -22,7 +22,7 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
 }
 
 StoreContext * StoreController::storeContext() {
-  m_statisticsContext.setParentContext(const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  m_statisticsContext.setParentContext(AppsContainer::sharedAppsContainer()->globalContext());
   return &m_statisticsContext;
 }
 
@@ -39,12 +39,12 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::StoreController::willDisplayCellAtLocation(cell, i, j);
-  if (cellAtLocationIsEditable(i, j)) {
+  if (typeAtLocation(i, j) != k_titleCellType) {
     return;
   }
   Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
   bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
-  mytitleCell->setSeparatorLeft(isValuesColumn);
+  mytitleCell->setSeparatorLeft(i > 0 && isValuesColumn);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
   assert(seriesIndex >= 0 && seriesIndex < DoublePairStore::k_numberOfSeries);
   if (isValuesColumn) {

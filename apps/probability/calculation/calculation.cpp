@@ -4,13 +4,9 @@
 
 namespace Probability {
 
-void Calculation::setLaw(Law * law) {
-  m_law = law;
+void Calculation::setDistribution(Distribution * distribution) {
+  m_distribution = distribution;
   compute(0);
-}
-
-int Calculation::numberOfEditableParameters() {
-  return numberOfParameters();
 }
 
 double Calculation::lowerBound() {

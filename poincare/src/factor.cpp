@@ -11,6 +11,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -26,47 +27,15 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
-Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Factor(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression FactorNode::shallowReduce(ReductionContext reductionContext) {
+  return Factor(this).shallowReduce(reductionContext.context());
 }
 
-
-Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  Expression c = childAtIndex(0);
-  if (c.type() != ExpressionNode::Type::Rational) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
-  }
-  Rational r = static_cast<Rational &>(c);
-  if (r.isZero()) {
-    replaceWithInPlace(r);
-    return r;
-  }
-  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, complexFormat, angleUnit);
-  if (numeratorDecomp.numberOfChildren() == 0) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
-  }
-  Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
-  if (!r.integerDenominator().isOne()) {
-    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, complexFormat, angleUnit);
-    if (denominatorDecomp.numberOfChildren() == 0) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
-    }
-    result = Division::Builder(result, denominatorDecomp.squashUnaryHierarchyInPlace());
-  }
-  if (r.sign() == ExpressionNode::Sign::Negative) {
-    result = Opposite::Builder(result);
-  }
-  replaceWithInPlace(result);
-  return result;
+Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
+  return Factor(this).shallowBeautify(reductionContext);
 }
 
-Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
@@ -89,6 +58,48 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }
   return m;
+}
+
+Expression Factor::shallowReduce(Context * context) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  if (childAtIndex(0).deepIsMatrix(context)) {
+    return replaceWithUndefinedInPlace();
+  }
+  return *this;
+}
+
+Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+  Expression c = childAtIndex(0);
+  if (c.type() != ExpressionNode::Type::Rational) {
+    return replaceWithUndefinedInPlace();
+  }
+  Rational r = static_cast<Rational &>(c);
+  if (r.isZero()) {
+    replaceWithInPlace(r);
+    return std::move(r);
+  }
+  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  if (numeratorDecomp.numberOfChildren() == 0) {
+    return replaceWithUndefinedInPlace();
+  }
+  Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
+  if (!r.isInteger()) {
+    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    if (denominatorDecomp.numberOfChildren() == 0) {
+      return replaceWithUndefinedInPlace();
+    }
+    result = Division::Builder(result, denominatorDecomp.squashUnaryHierarchyInPlace());
+  }
+  if (r.sign() == ExpressionNode::Sign::Negative) {
+    result = Opposite::Builder(result);
+  }
+  replaceWithInPlace(result);
+  return result;
 }
 
 }

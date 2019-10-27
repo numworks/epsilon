@@ -1,11 +1,11 @@
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/palette.h>
-#include <escher/app.h>
+#include <escher/container.h>
 
-MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message) :
+MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, I18n::Message message) :
   Responder(parentResponder),
   MessageTableCell(message),
-  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), inputEventHandlerDelegate, textFieldDelegate, true, KDFont::LargeFont, 1.0f, 0.5f)
+  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::maxBufferSize(), inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 1.0f, 0.5f)
 {
   m_textBody[0] = '\0';
 }
@@ -19,7 +19,7 @@ const char * MessageTableCellWithEditableText::editedText() const {
 }
 
 void MessageTableCellWithEditableText::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
 }
 
 bool MessageTableCellWithEditableText::isEditing() {

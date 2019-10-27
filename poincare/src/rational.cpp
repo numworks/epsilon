@@ -5,12 +5,12 @@
 #include <poincare/infinity.h>
 #include <poincare/opposite.h>
 #include <poincare/serialization_helper.h>
-extern "C" {
-#include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 #include <math.h>
-}
+#include <utility>
+#include <stdlib.h>
+#include <string.h>
+
 namespace Poincare {
 
 /* Rational Node */
@@ -72,10 +72,10 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   }
   buffer[bufferSize-1] = 0;
   int numberOfChar = signedNumerator().serialize(buffer, bufferSize);
-  if (denominator().isOne()) {
+  if (numberOfChar >= bufferSize-1) {
     return numberOfChar;
   }
-  if (numberOfChar >= bufferSize-1) {
+  if (isInteger()) {
     return numberOfChar;
   }
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '/');
@@ -88,7 +88,7 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Expression subclassing
 
-Expression RationalNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression RationalNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return Rational(this).setSign(s);
 }
@@ -97,7 +97,7 @@ Expression RationalNode::setSign(Sign s, Context * context, Preferences::Complex
 
 Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   Layout numeratorLayout = signedNumerator().createLayout();
-  if (denominator().isOne()) {
+  if (isInteger()) {
     return numeratorLayout;
   }
   Layout denominatorLayout = denominator().createLayout();
@@ -137,16 +137,16 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 // Simplification
 
-Expression RationalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression RationalNode::shallowReduce(ReductionContext reductionContext) {
   return Rational(this).shallowReduce();
 }
 
-Expression RationalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression RationalNode::shallowBeautify(ReductionContext reductionContext) {
   return Rational(this).shallowBeautify();
 }
 
-Expression RationalNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return Rational(this).denominator(context, complexFormat, angleUnit);
+Expression RationalNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return Rational(this).denominator();
 }
 
 /* Rational  */
@@ -259,12 +259,12 @@ Expression Rational::shallowBeautify() {
     Opposite o = Opposite::Builder();
     replaceWithInPlace(o);
     o.replaceChildAtIndexInPlace(0, abs);
-    return o;
+    return std::move(o);
   }
   return *this;
 }
 
-Expression Rational::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Rational::denominator() const {
   Integer d = integerDenominator();
   if (d.isOne()) {
     return Expression();

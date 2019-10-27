@@ -1,10 +1,9 @@
 #include "parameter_text_field_delegate.h"
-
-using namespace Poincare;
+#include <escher/text_field.h>
 
 namespace Shared {
 
-bool ParameterTextFieldDelegate::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+bool ParameterTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && !textField->isEditing()) {
     textField->setEditing(true);
     return true;

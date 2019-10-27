@@ -1,4 +1,5 @@
 #include <escher/selectable_table_view.h>
+#include <escher/container.h>
 #include <escher/clipboard.h>
 #include <escher/metric.h>
 #include <assert.h>
@@ -103,11 +104,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   if (cell) {
     // Update first responder
     if ((i != previousX || j != previousY) && setFirstResponder) {
-      if (cell->responder()) {
-        app()->setFirstResponder(cell->responder());
-      } else {
-        app()->setFirstResponder(this);
-      }
+      Container::activeApp()->setFirstResponder(cell->responder() ? cell->responder() : this);
     }
   }
 

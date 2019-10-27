@@ -6,6 +6,7 @@ constexpr uint16_t patterns[] = {0x6CC, 0x66C, 0x666, 0x498, 0x48C, 0x44C, 0x4C8
 
 constexpr uint16_t startPattern = 0x690;
 constexpr uint16_t stopPattern = 0x18EB;
+constexpr KDColor Code128BView::k_borderColor;
 
 Code128BView::Code128BView() :
   View(),
@@ -93,7 +94,20 @@ void Code128BView::drawRect(KDContext * ctx, KDRect rect) const {
   drawPatternAt(ctx, stopPattern, &x, 13);
   drawQuietZoneAt(ctx, &x);
 
-  ctx->drawString(m_data, KDPointZero);
+  ctx->drawString(m_data, KDPoint(k_stringOffset, k_stringOffset));
+
+  // Draw a red border to test the screen centered position
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_outlineThickness), k_borderColor);
+  ctx->fillRect(KDRect(bounds().width() - k_outlineThickness, 0, k_outlineThickness, bounds().height()), k_borderColor);
+  ctx->fillRect(KDRect(0, bounds().height() - k_outlineThickness, bounds().width(), k_outlineThickness), k_borderColor);
+  ctx->fillRect(KDRect(0, 0, k_outlineThickness, bounds().height()), k_borderColor);
+
+  KDColor enhanceColor = KDColorBlack;
+  ctx->fillRect(KDRect(k_outlineThickness, k_outlineThickness, bounds().width() - 2 * k_outlineThickness, 2 * k_outlineThickness), enhanceColor);
+  ctx->fillRect(KDRect(bounds().width() - 3*k_outlineThickness, k_outlineThickness, 2 * k_outlineThickness, bounds().height() - 2 * k_outlineThickness), enhanceColor);
+  ctx->fillRect(KDRect(k_outlineThickness, bounds().height() - 3 * k_outlineThickness, bounds().width()- 2 * k_outlineThickness, 2 * k_outlineThickness), enhanceColor);
+  ctx->fillRect(KDRect(k_outlineThickness, k_outlineThickness, 2 * k_outlineThickness, bounds().height()- 2 * k_outlineThickness), enhanceColor);
+
 }
 
 }

@@ -10,7 +10,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_changeRegressionCell(I18n::Message::Regression),
   m_lastSelectionIsRegression(false)
 {
-  static_cast<ExpressionView *>(m_changeRegressionCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
 
 void StoreParameterController::viewWillAppear() {
@@ -20,7 +19,7 @@ void StoreParameterController::viewWillAppear() {
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && selectedRow() == numberOfRows() - 1) {
-    RegressionController * regressionController = static_cast<Regression::App *>(app())->regressionController();
+    RegressionController * regressionController = App::app()->regressionController();
     regressionController->setSeries(m_series);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->push(regressionController);
@@ -37,7 +36,7 @@ void StoreParameterController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   m_lastSelectionIsRegression = false;
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {

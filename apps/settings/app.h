@@ -20,7 +20,7 @@ public:
     Descriptor * descriptor() override;
   };
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   MainController m_mainController;
   StackViewController m_stackViewController;
 };

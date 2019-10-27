@@ -52,6 +52,7 @@ private:
   void parseEmpty(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMatrix(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseBang(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parsePlus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMinus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -59,6 +60,7 @@ private:
   void parseSlash(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseStore(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -74,6 +76,7 @@ private:
   void parseSpecialIdentifier(Expression & leftHandSide);
   void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
   void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
+  void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 
   // Data members
   Status m_status;
@@ -96,7 +99,9 @@ private:
     &HyperbolicArcSine::s_functionHelper,
     &ArcTangent::s_functionHelper,
     &HyperbolicArcTangent::s_functionHelper,
+    &BinomCDF::s_functionHelper,
     &BinomialCoefficient::s_functionHelper,
+    &BinomPDF::s_functionHelper,
     &Ceiling::s_functionHelper,
     &ConfidenceInterval::s_functionHelper,
     &Conjugate::s_functionHelper,
@@ -112,11 +117,16 @@ private:
     &MatrixIdentity::s_functionHelper,
     &ImaginaryPart::s_functionHelper,
     &Integral::s_functionHelper,
+    &InvBinom::s_functionHelper,
     &MatrixInverse::s_functionHelper,
+    &InvNorm::s_functionHelper,
     &LeastCommonMultiple::s_functionHelper,
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
+    &NormCDF::s_functionHelper,
+    &NormCDF2::s_functionHelper,
+    &NormPDF::s_functionHelper,
     &PermuteCoefficient::s_functionHelper,
     &SimplePredictionInterval::s_functionHelper,
     &PredictionInterval::s_functionHelper,

@@ -16,7 +16,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   // ListViewDataSource
-  int numberOfRows() override { return Shared::StoreParameterController::numberOfRows() + 1; }
+  int numberOfRows() const override { return Shared::StoreParameterController::numberOfRows() + 1; }
   KDCoordinate rowHeight(int j) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

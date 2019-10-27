@@ -453,6 +453,15 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
   }
 }
 
+Layout HorizontalLayout::squashUnaryHierarchyInPlace() {
+  if (numberOfChildren() == 1) {
+    Layout child = childAtIndex(0);
+    replaceWithInPlace(child);
+    return child;
+  }
+  return *this;
+}
+
 void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
   int childrenCount = currentNumberOfChildren == nullptr ? numberOfChildren() : *currentNumberOfChildren;
   assert(*index >= 0 && *index <= childrenCount);

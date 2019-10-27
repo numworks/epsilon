@@ -370,11 +370,11 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
     editedText = strippedEditedText;
   }
   sender()->handleEventWithText(editedText, true);
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 
-const ToolboxMessageTree * PythonToolbox::rootModel() {
+const ToolboxMessageTree * PythonToolbox::rootModel() const {
   return &toolboxModel;
 }
 

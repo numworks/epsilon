@@ -8,7 +8,7 @@ KDCoordinate ListViewDataSource::columnWidth(int i) {
   return cellWidth();
 }
 
-int ListViewDataSource::numberOfColumns() {
+int ListViewDataSource::numberOfColumns() const {
   return 1;
 }
 

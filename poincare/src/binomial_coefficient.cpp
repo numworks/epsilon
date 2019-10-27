@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -14,8 +15,8 @@ constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
 
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
-Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return BinomialCoefficient(this).shallowReduce();
+Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionContext) {
+  return BinomialCoefficient(this).shallowReduce(reductionContext.context());
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -29,7 +30,7 @@ int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 template<typename T>
-Complex<T> BinomialCoefficientNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Complex<T> BinomialCoefficientNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T n = nInput.toScalar();
@@ -54,7 +55,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 }
 
 
-Expression BinomialCoefficient::shallowReduce() {
+Expression BinomialCoefficient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -63,25 +64,21 @@ Expression BinomialCoefficient::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined::Builder();
+
+  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
+    return replaceWithUndefinedInPlace();
   }
-#endif
+
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
-    if (!r0.integerDenominator().isOne() || r0.isNegative()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+    if (!r0.isInteger() || r0.isNegative()) {
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.integerDenominator().isOne() || r1.isNegative()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+    if (!r1.isInteger() || r1.isNegative()) {
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -93,9 +90,7 @@ Expression BinomialCoefficient::shallowReduce() {
   Integer n = r0.signedIntegerNumerator();
   Integer k = r1.signedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   /* If n is too big, we do not reduce in order to avoid too long computation.
    * The binomial coefficient will be approximatively evaluated later. */
@@ -115,7 +110,7 @@ Expression BinomialCoefficient::shallowReduce() {
   // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89
   assert(!result.numeratorOrDenominatorIsInfinity());
   replaceWithInPlace(result);
-  return result;
+  return std::move(result);
 }
 
 template double BinomialCoefficientNode::compute(double k, double n);

@@ -9,6 +9,7 @@
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/function_app.h"
+#include "../shared/interval.h"
 
 namespace Sequence {
 
@@ -28,19 +29,33 @@ public:
     Descriptor * descriptor() override;
     SequenceStore * functionStore() override { return &m_sequenceStore; }
     CurveViewRange * graphRange() { return &m_graphRange; }
+    Shared::Interval * interval() { return &m_interval; }
   private:
     void tidy() override;
     SequenceStore m_sequenceStore;
     CurveViewRange m_graphRange;
+    Shared::Interval m_interval;
   };
-  InputViewController * inputViewController() override;
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
+  Snapshot * snapshot() const {
+    return static_cast<Snapshot *>(::App::snapshot());
+  }
   // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
-  char XNT() override;
+  CodePoint XNT() override { return 'n'; }
   SequenceContext * localContext() override;
-  SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::FunctionApp::functionStore()); }
+  SequenceStore * functionStore() override { return snapshot()->functionStore(); }
+  Shared::Interval * interval() { return snapshot()->interval(); }
+  ValuesController * valuesController() override {
+    return &m_valuesController;
+  }
+  InputViewController * inputViewController() override {
+    return &m_inputViewController;
+  }
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   SequenceContext m_sequenceContext;
   ListController m_listController;
   ButtonRowController m_listFooter;

@@ -11,9 +11,12 @@ class App;
 
 class GraphControllerHelper {
 protected:
-  bool privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, App * app);
-  void reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record, App * app);
+  bool privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record);
+  void reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record);
   virtual BannerView * bannerView() = 0;
+private:
+  static constexpr double k_definitionDomainDivisor = 96.0;
+  virtual void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) {}
 };
 
 }

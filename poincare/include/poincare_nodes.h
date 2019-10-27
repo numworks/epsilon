@@ -1,14 +1,14 @@
 #ifndef POINCARE_NODES_H
 #define POINCARE_NODES_H
 
-#define MATRICES_ARE_DEFINED 1
-
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
+#include <poincare/binom_cdf.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/binom_pdf.h>
 #include <poincare/complex_argument.h>
 #include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
@@ -42,6 +42,8 @@
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/integral.h>
+#include <poincare/inv_binom.h>
+#include <poincare/inv_norm.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
@@ -53,6 +55,9 @@
 #include <poincare/matrix_transpose.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
+#include <poincare/norm_cdf.h>
+#include <poincare/norm_cdf2.h>
+#include <poincare/norm_pdf.h>
 #include <poincare/nth_root.h>
 #include <poincare/number.h>
 #include <poincare/opposite.h>

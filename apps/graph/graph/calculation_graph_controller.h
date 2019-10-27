@@ -5,7 +5,7 @@
 #include "banner_view.h"
 #include "../../shared/simple_interactive_curve_view_controller.h"
 #include "../../shared/function_banner_delegate.h"
-#include "../cartesian_function_store.h"
+#include "../continuous_function_store.h"
 
 namespace Graph {
 
@@ -20,9 +20,9 @@ protected:
   float cursorBottomMarginRatio() override { return 0.15f; }
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
-  Poincare::Expression::Coordinate2D computeNewPointOfInteresetFromAbscissa(double start, int direction);
-  CartesianFunctionStore * functionStore() const;
-  virtual Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
+  Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
+  ContinuousFunctionStore * functionStore() const;
+  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;

@@ -7,18 +7,24 @@
 
 namespace Shared {
 
-/* FunctionStore storse functions and gives them a color. */
+// FunctionStore stores functions and gives them a color.
 
 class FunctionStore : public ExpressionModelStore {
 public:
   FunctionStore() : ExpressionModelStore() {}
   uint32_t storeChecksum();
-  // An active function must be defined to be counted
-  int numberOfActiveFunctions() const { return numberOfModelsSatisfyingTest([](ExpressionModelHandle * m) { return m->isDefined() && static_cast<Function *>(m)->isActive(); }); }
-  Ion::Storage::Record activeRecordAtIndex(int i) const { return recordStatifyingTestAtIndex(i, [](ExpressionModelHandle * m) { return m->isDefined() && static_cast<Function *>(m)->isActive(); }); }
-
+  int numberOfActiveFunctions() const {
+    return numberOfModelsSatisfyingTest(&isFunctionActive, nullptr);
+  }
+  Ion::Storage::Record activeRecordAtIndex(int i) const {
+    return recordSatisfyingTestAtIndex(i, &isFunctionActive, nullptr);
+  }
   ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<Function>(static_cast<Function *>(privateModelForRecord(record))); }
-
+protected:
+  static bool isFunctionActive(ExpressionModelHandle * model, void * context) {
+    // An active function must be defined
+    return isModelDefined(model, context) && static_cast<Function *>(model)->isActive();
+  }
 };
 
 }

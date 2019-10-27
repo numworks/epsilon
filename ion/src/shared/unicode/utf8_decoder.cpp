@@ -105,7 +105,7 @@ size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferSi
     return 0;
   }
   size_t i = 0;
-  int charCount = CharSizeOfCodePoint(c);
+  size_t charCount = CharSizeOfCodePoint(c);
   if (charCount == 1) {
     buffer[i++] = c;
   } else if (charCount == 2) {

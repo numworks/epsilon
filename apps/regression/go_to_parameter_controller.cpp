@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Regression {
 
 GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
-  Shared::GoToParameterController(parentResponder, inputEventHandlerDelegate, store, cursor, I18n::Message::X),
+  Shared::GoToParameterController(parentResponder, inputEventHandlerDelegate, store, cursor),
   m_store(store),
   m_xPrediction(true),
   m_graphController(graphController)
@@ -20,6 +20,7 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
 
 void GoToParameterController::setXPrediction(bool xPrediction) {
   m_xPrediction = xPrediction;
+  setParameterName(xPrediction ? I18n::Message::X : I18n::Message::Y);
 }
 
 const char * GoToParameterController::title() {
@@ -40,7 +41,7 @@ double GoToParameterController::parameterAtIndex(int index) {
 bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   int series = m_graphController->selectedSeriesIndex();
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
   double unknown = m_xPrediction ?
     m_store->yValueForXValue(series, f, globContext) :
     m_store->xValueForYValue(series, f, globContext);
@@ -52,43 +53,30 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
       if (std::fabs(unknown - f) < DBL_EPSILON) {
         // If the computed value is NaN and the current abscissa is solution
         m_graphController->selectRegressionCurve();
-        m_cursor->moveTo(x, unknown);
+        m_cursor->moveTo(x, x, unknown);
         return true;
       }
     }
     // Value not reached
-    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
+    Container::activeApp()->displayWarning(I18n::Message::ValueNotReachedByRegression);
     return false;
   }
   m_graphController->selectRegressionCurve();
   if (m_xPrediction) {
-    m_cursor->moveTo(f, unknown);
+    m_cursor->moveTo(f, f, unknown);
   } else {
     double yFromX = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), unknown);
     /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
      * because of computation precision. y2 migth thus be invalid. */
     if (std::isnan(yFromX) || std::isinf(yFromX)) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_cursor->moveTo(unknown, yFromX);
+    m_cursor->moveTo(unknown, unknown, yFromX);
   }
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   return true;
-}
-
-void GoToParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows()-1) {
-    return;
-  }
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
-  if (m_xPrediction) {
-    myCell->setMessage(I18n::Message::X);
-  } else {
-    myCell->setMessage(I18n::Message::Y);
-  }
-  FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
 }

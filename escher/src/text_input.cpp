@@ -1,4 +1,6 @@
 #include <escher/text_input.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
 
 /* TextInput::ContentView */

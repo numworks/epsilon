@@ -5,13 +5,11 @@
 static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
-ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, inputEventHandlerDelegate, textFieldDelegate, false, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
-  m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate),
-  m_textBuffer(textBuffer),
-  m_textBufferLength(textBufferLength)
+  m_textField(parentResponder, nullptr, k_textFieldBufferSize, k_textFieldBufferSize, inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
 {
   // Initialize text field
   m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
@@ -23,7 +21,10 @@ ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer,
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
   if (editionIsInTextField()) {
-    m_textField.setEditing(isEditing, reinitDraftBuffer);
+    if (reinitDraftBuffer) {
+      m_textField.reinitDraftTextBuffer();
+    }
+    m_textField.setEditing(isEditing);
   } else {
     if (reinitDraftBuffer) {
       m_layoutField.clearLayout();
@@ -38,13 +39,14 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    m_layoutField.layout().serializeParsedExpression(m_textBuffer, m_textBufferLength);
+    m_layoutField.layout().serializeParsedExpression(m_textField.draftTextBuffer(), k_textFieldBufferSize);
   }
-  return m_textBuffer;
+  return m_textField.draftTextBuffer();
 }
 
 void ExpressionField::setText(const char * text) {
   if (editionIsInTextField()) {
+    m_textField.reinitDraftTextBuffer();
     m_textField.setText(text);
   } else {
     m_layoutField.clearLayout();

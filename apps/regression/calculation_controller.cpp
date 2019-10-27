@@ -3,6 +3,7 @@
 #include "../shared/poincare_helpers.h"
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare/preferences.h>
 
 #include <assert.h>
 
@@ -40,6 +41,9 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   for (int i = 0; i < k_numberOfCalculationCells;i++) {
     m_calculationCells[i].setTextColor(Palette::GreyDark);
   }
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    m_titleCells[i].setMessageFont(KDFont::SmallFont);
+  }
   m_hideableCell.setHide(true);
 }
 
@@ -50,7 +54,7 @@ const char * CalculationController::title() {
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   return false;
@@ -78,7 +82,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
     if (previousSelectedCellX == 0 && previousSelectedCellY == 1) {
       selectableTableView()->deselectTable();
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
     } else {
       t->selectCellAtLocation(0, 1);
     }
@@ -113,11 +117,11 @@ Responder * CalculationController::defaultController() {
   return tabController();
 }
 
-int CalculationController::numberOfRows() {
+int CalculationController::numberOfRows() const {
   return 1 + k_totalNumberOfDoubleBufferRows + 4 + maxNumberOfCoefficients() + hasLinearRegression() * 2;
 }
 
-int CalculationController::numberOfColumns() {
+int CalculationController::numberOfColumns() const {
   return 1 + m_store->numberOfNonEmptySeries();
 }
 
@@ -138,7 +142,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       myCell->setLayout(m_r2Layout);
       return;
     }
-    MarginEvenOddMessageTextCell * myCell = (MarginEvenOddMessageTextCell *)cell;
+    EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
     myCell->setAlignment(1.0f, 0.5f);
     if (j <= k_regressionCellIndex) {
       I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};
@@ -169,15 +173,17 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 
   // Calculation cell
+  const int numberSignificantDigits = Preferences::LargeNumberOfSignificantDigits;
   if (i > 0 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
     double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0);
     double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1);
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)cell;
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    PoincareHelpers::ConvertFloatToText<double>(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
+    char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToText<double>(calculation1, buffer, bufferSize, numberSignificantDigits);
     myCell->setFirstText(buffer);
-    PoincareHelpers::ConvertFloatToText<double>(calculation2, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PoincareHelpers::ConvertFloatToText<double>(calculation2, buffer, bufferSize, numberSignificantDigits);
     myCell->setSecondText(buffer);
     return;
   }
@@ -192,8 +198,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     assert(j != k_regressionCellIndex);
     CalculPointer calculationMethods[] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum};
     double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
+    char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
     bufferCell->setText(buffer);
     return;
   }
@@ -203,7 +210,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     Model::Type modelType = m_store->seriesRegressionType(seriesNumber);
 
     // Put dashes if regression is not defined
-    Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+    Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
     double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
     bool coefficientsAreDefined = true;
     int numberOfCoefs = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
@@ -223,8 +230,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       if (modelType == Model::Type::Linear) {
         CalculPointer calculationMethods[2] = {&Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
         double calculation = (m_store->*calculationMethods[j - k_regressionCellIndex - maxNumberCoefficients - 1])(seriesNumber);
-        char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-        PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+        constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
+        char buffer[bufferSize];
+        PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
         bufferCell->setText(buffer);
         return;
       } else {
@@ -238,8 +246,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
         bufferCell->setText(I18n::translate(I18n::Message::Dash));
         return;
       } else {
-        char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-        PoincareHelpers::ConvertFloatToText<double>(coefficients[j - k_regressionCellIndex - 1], buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+        constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
+        char buffer[bufferSize];
+        PoincareHelpers::ConvertFloatToText<double>(coefficients[j - k_regressionCellIndex - 1], buffer, bufferSize, numberSignificantDigits);
         bufferCell->setText(buffer);
         return;
       }

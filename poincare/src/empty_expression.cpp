@@ -13,7 +13,7 @@ Layout EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDispla
   return EmptyLayout::Builder();
 }
 
-template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return Complex<T>::Undefined();
 }
 

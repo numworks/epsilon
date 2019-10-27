@@ -8,20 +8,20 @@
 
 namespace Shared {
 
-class GoToParameterController : public FloatParameterController {
+class GoToParameterController : public FloatParameterController<double> {
 public:
-  GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
-  int numberOfRows() override;
+  GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
+  int numberOfRows() const override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
+  void setParameterName(I18n::Message message) { m_parameterCell.setMessage(message); }
   CurveViewCursor * m_cursor;
   InteractiveCurveViewRange * m_graphRange;
 private:
   void buttonAction() override;
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText m_abscisseCell;
+  MessageTableCellWithEditableText m_parameterCell;
 };
 
 }

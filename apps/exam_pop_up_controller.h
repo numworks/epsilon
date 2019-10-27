@@ -26,7 +26,7 @@ private:
   public:
     ContentView(Responder * parentResponder);
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void setSelectedButton(int selectedButton, App * app);
+    void setSelectedButton(int selectedButton);
     int selectedButton();
     void setMessages(bool activingExamMode);
   private:

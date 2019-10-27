@@ -4,8 +4,6 @@
 
 namespace OnBoarding {
 
-#ifdef EPSILON_BOOT_PROMPT
-
 PopUpController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
   MessageView(messages, colors, numberOfMessages),
   m_skipView(KDFont::SmallFont, I18n::Message::Skip, 1.0f, 0.5f),
@@ -52,8 +50,8 @@ PopUpController::PopUpController(I18n::Message * messages, KDColor * colors, uin
 
 bool PopUpController::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) {
-    app()->dismissModalViewController();
-    AppsContainer * appsContainer = (AppsContainer *)app()->container();
+    Container::activeApp()->dismissModalViewController();
+    AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
       bool switched = appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
       assert(switched);
@@ -63,7 +61,5 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
-
-#endif
 
 }

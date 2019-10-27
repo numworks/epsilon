@@ -13,6 +13,9 @@ namespace Poincare {
  */
 
 namespace SerializationHelper {
+
+  void ReplaceSystemParenthesesByUserParentheses(char * buffer);
+
   // SerializableReference to text
   int Infix(
       const TreeNode * node,
@@ -24,6 +27,13 @@ namespace SerializationHelper {
       int firstChildIndex = 0,
       int lastChildIndex = -1);
 
+  /* needsSystemParentheses add System parentheses wrapping the layout children.
+   * It is used when serializing layouts to avoid creating a parsable string
+   * from a misformed layout. For instance, we don't want to parse:
+   * |2)(3|, so we serialize it in "abs({2)(3})" where {} are System parentheses
+   * instead of "abs(2)(3)".
+   *
+   * /!\ A layout that calls Prefix should put true to needsSystemParentheses */
   int Prefix(
       const TreeNode * node,
       char * buffer,
@@ -31,7 +41,16 @@ namespace SerializationHelper {
       Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
-      bool writeFirstChild = true);
+      bool needsSystemParentheses = false,
+      int lastChildIndex = -1);
+
+  int SerializeChild(
+    const TreeNode * childNode,
+    const TreeNode * parentNode,
+    char * buffer,
+    int bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfDigits);
 
   // Write one code point in a buffer and a null-terminating char
   int CodePoint(char * buffer, int bufferSize, CodePoint c);

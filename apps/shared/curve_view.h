@@ -1,12 +1,13 @@
 #ifndef SHARED_CURVE_VIEW_H
 #define SHARED_CURVE_VIEW_H
 
-#include <escher.h>
-#include <cmath>
+#include "banner_view.h"
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
-#include "banner_view.h"
-#include <apps/constant.h>
+#include "cursor_view.h"
+#include <poincare/preferences.h>
+#include <poincare/coordinate_2D.h>
+#include <cmath>
 
 namespace Shared {
 
@@ -15,7 +16,8 @@ public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
   static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
-  typedef float (*EvaluateModelWithParameter)(float t, void * model, void * context);
+  typedef Poincare::Coordinate2D<float> (*EvaluateXYForParameter)(float t, void * model, void * context);
+  typedef float (*EvaluateYForX)(float x, void * model, void * context);
   enum class Axis {
     Horizontal = 0,
     Vertical = 1
@@ -23,32 +25,33 @@ public:
   CurveView(CurveViewRange * curveViewRange = nullptr,
       CurveViewCursor * curveViewCursor = nullptr,
       BannerView * bannerView = nullptr,
-      View * cursorView = nullptr,
+      CursorView * cursorView = nullptr,
       View * okView = nullptr,
       bool displayBanner = true);
   virtual void reload();
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
-  View * cursorView() { return m_cursorView; }
-  void setCursorView(View * cursorView);
+  CursorView * cursorView() { return m_cursorView; }
+  void setCursorView(Shared::CursorView * cursorView);
   View * bannerView() { return m_bannerView; }
   void setBannerView(View * bannerView);
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
-  float resolution() const;
+  const float pixelWidth() const;
+  const float pixelHeight() const;
 protected:
-  CurveViewRange * curveViewRange() { return m_curveViewRange; }
+  CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
-  virtual float samplingRatio() const;
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDCoordinate k_okVerticalMargin = 23;
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_numberSignificantDigits = 6;
-  constexpr static int k_bigNumberSignificantDigits = Constant::LargeNumberOfSignificantDigits;
-  constexpr static int k_labelBufferMaxSize = 1 + k_bigNumberSignificantDigits + 3 + 3 + 1; // '-' + significant digits + '.' + "E-" + 3 digits + null-terminating char
+  constexpr static int k_bigNumberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
+  constexpr static int k_labelBufferMaxSize = 1 + k_bigNumberSignificantDigits + 1 + Poincare::PrintFloat::k_specialECodePointByteLength + 1 + 3 + 1; // '-' + significant digits + '.' + "E" + '-' + 3 digits + null-terminating char
+  constexpr static int k_labelBufferMaxGlyphLength = 1 + k_bigNumberSignificantDigits + 3 + 3; // '-' + significant digits + ".E-" + 3 digits
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;
@@ -63,8 +66,9 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
-  void drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
+  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const;
@@ -79,12 +83,11 @@ private:
   float min(Axis axis) const;
   float max(Axis axis) const;
   float gridUnit(Axis axis) const;
-  KDCoordinate pixelLength(Axis axis) const;
   virtual char * label(Axis axis, int index) const = 0;
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const;
+  void jointDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const;
   /* Join two dots with a straight line. */
   void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the
@@ -103,7 +106,7 @@ private:
   float labelValueAtIndex(Axis axis, int i) const;
   bool bannerIsVisible() const;
   CurveViewRange * m_curveViewRange;
-  View * m_cursorView;
+  CursorView * m_cursorView;
   View * m_okView;
   bool m_forceOkDisplay;
   bool m_mainViewSelected;

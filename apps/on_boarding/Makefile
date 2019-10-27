@@ -1,10 +1,13 @@
-app_src += $(addprefix apps/on_boarding/,\
+app_on_boarding_src = $(addprefix apps/on_boarding/,\
   app.cpp \
   language_controller.cpp \
   logo_controller.cpp \
   logo_view.cpp \
   pop_up_controller.cpp \
+  power_on_self_test.cpp \
 )
+
+app_src += $(app_on_boarding_src)
 
 i18n_files += $(addprefix apps/on_boarding/,\
   base.de.i18n\

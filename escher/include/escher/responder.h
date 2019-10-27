@@ -1,9 +1,7 @@
 #ifndef ESCHER_RESPONDER_H
 #define ESCHER_RESPONDER_H
 
-#include <ion.h>
-
-class App;
+#include <ion/events.h>
 
 class Responder {
 public:
@@ -16,7 +14,6 @@ public:
   Responder * parentResponder() const;
   Responder * commonAncestorWith(Responder * responder);
   void setParentResponder(Responder * responder);
-  App * app() const;
 private:
   Responder * m_parentResponder;
 };

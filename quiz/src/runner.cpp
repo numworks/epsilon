@@ -8,20 +8,7 @@
 #include <poincare/exception_checkpoint.h>
 
 void quiz_print(const char * message) {
-#if QUIZ_USE_CONSOLE
   Ion::Console::writeLine(message);
-#else
-  static int line_y = 0;
-  KDContext * ctx = KDIonContext::sharedContext();
-  const KDFont * font = KDFont::LargeFont;
-  int line_height = font->glyphSize().height();
-  ctx->drawString(message, KDPoint(0, line_y), font);
-  line_y += line_height;
-  if (line_y > Ion::Display::Height) {
-    line_y = 0;
-    // Clear screen maybe?
-  }
-#endif
 }
 
 static inline void ion_main_inner() {
@@ -37,14 +24,11 @@ static inline void ion_main_inner() {
     i++;
   }
   quiz_print("ALL TESTS FINISHED");
-#if !QUIZ_USE_CONSOLE
-  while (1) {
-    Ion::Timing::msleep(1000);
-  }
-#endif
 }
 
-void ion_main(int argc, char * argv[]) {
+void ion_main(int argc, const char * const argv[]) {
+  // Initialize the backlight
+  Ion::Backlight::init();
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
 
@@ -57,10 +41,5 @@ void ion_main(int argc, char * argv[]) {
     Poincare::TreePool::sharedPool()->log();
 #endif
     quiz_assert(false);
-#if !QUIZ_USE_CONSOLE
-    while (1) {
-      Ion::Timing::msleep(1000);
-    }
-#endif
   }
 }

@@ -13,13 +13,18 @@ public:
   };
   virtual uint32_t rangeChecksum();
 
-  virtual float xMin() = 0;
-  virtual float xMax() = 0;
-  virtual float yMin() = 0;
-  virtual float yMax() = 0;
-  virtual float xGridUnit() = 0;
-  virtual float yGridUnit();
-  float computeGridUnit(Axis axis, float range);
+  virtual float xMin() const = 0;
+  virtual float xMax() const = 0;
+  virtual float yMin() const = 0;
+  virtual float yMax() const = 0;
+  const float xCenter() const { return (xMin() + xMax()) / 2; }
+  const float yCenter() const { return (yMin() + yMax()) / 2; }
+  virtual float xGridUnit() const {
+    return computeGridUnit(k_minNumberOfXGridUnits, k_maxNumberOfXGridUnits, xMax() - xMin());
+  }
+  virtual float yGridUnit() const {
+    return computeGridUnit(k_minNumberOfYGridUnits, k_maxNumberOfYGridUnits, yMax() - yMin());
+  }
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
 private:
@@ -31,6 +36,7 @@ private:
   constexpr static float k_smallGridUnitMantissa = 1.0f;
   constexpr static float k_mediumGridUnitMantissa = 2.0f;
   constexpr static float k_largeGridUnitMantissa = 5.0f;
+  float computeGridUnit(float minNumberOfUnits, float maxNumberOfUnits, float range) const;
 };
 
 }

@@ -9,25 +9,24 @@ namespace Shared {
 
 class ValuesFunctionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ValuesFunctionParameterController(char symbol) :
+  ValuesFunctionParameterController() :
     ViewController(nullptr),
     m_copyColumn(I18n::Message::CopyColumnInList),
     m_selectableTableView(this, this, this),
-    m_record(),
-    m_symbol(symbol)
+    m_record()
   {}
 
   View * view() override { return &m_selectableTableView; }
   const char * title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  virtual int numberOfRows() override { return 1; }
+  virtual int numberOfRows() const override { return 1; }
   KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
   virtual HighlightCell * reusableCell(int index) override {
     assert(index == 0);
     return &m_copyColumn;
   }
-  virtual int reusableCellCount() override { return 1; }
+  virtual int reusableCellCount() const override { return 1; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   MessageTableCellWithChevron m_copyColumn;
@@ -35,7 +34,6 @@ protected:
   Ion::Storage::Record m_record;
 private:
   char m_pageTitle[Function::k_maxNameWithArgumentSize];
-  char m_symbol;
 };
 
 }

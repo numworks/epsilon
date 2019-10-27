@@ -30,8 +30,7 @@ public:
   virtual Poincare::Layout layout() = 0;
   // Reinitialize m_layout to empty the pool
   void tidy();
-  // simplifiedExpression is overrided only by Models that override levelSet
-  virtual Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context) { return Poincare::Expression(); }
+  Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);
   virtual I18n::Message formulaMessage() const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context);
@@ -45,6 +44,7 @@ protected:
   Poincare::Layout m_layout;
 private:
   // Model attributes
+  virtual Poincare::Expression expression(double * modelCoefficients) { return Poincare::Expression(); } // expression is overrided only by Models that do not override levelSet
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
   // Levenberg-Marquardt

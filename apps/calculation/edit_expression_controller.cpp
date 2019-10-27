@@ -1,6 +1,5 @@
 #include "edit_expression_controller.h"
 #include "app.h"
-#include "../apps_container.h"
 #include <ion/display.h>
 #include <poincare/preferences.h>
 #include <assert.h>
@@ -13,9 +12,8 @@ namespace Calculation {
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_expressionField(parentResponder, m_textBody, k_bufferLength, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(parentResponder, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {
-  m_textBody[0] = 0;
 }
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
@@ -62,7 +60,7 @@ void EditExpressionController::didBecomeFirstResponder() {
   int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
   m_historyController->scrollToCell(0, lastRow);
   ((ContentView *)view())->expressionField()->setEditing(true, false);
-  app()->setFirstResponder(((ContentView *)view())->expressionField());
+  Container::activeApp()->setFirstResponder(((ContentView *)view())->expressionField());
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
@@ -109,14 +107,6 @@ void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutFi
   }
 }
 
-TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
-  return (App *)app();
-}
-
-ExpressionFieldDelegateApp * EditExpressionController::expressionFieldDelegateApp() {
-  return (App *)app();
-}
-
 void EditExpressionController::reloadView() {
   ((ContentView *)view())->reload();
   m_historyController->reload();
@@ -127,14 +117,13 @@ void EditExpressionController::reloadView() {
 
 bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
   if (shouldDuplicateLastCalculation && m_cacheBuffer[0] != 0) {
-    App * calculationApp = (App *)app();
-    /* The input text store in m_cacheBuffer might have beed correct the first
+    /* The input text store in m_cacheBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
-    if (!calculationApp->isAcceptableText(m_cacheBuffer)) {
-      calculationApp->displayWarning(I18n::Message::SyntaxError);
+    Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
+    if (!myApp->isAcceptableText(m_cacheBuffer)) {
       return true;
     }
-    m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
+    m_calculationStore->push(m_cacheBuffer, myApp->localContext());
     m_historyController->reload();
     ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
     return true;
@@ -143,7 +132,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     if (m_calculationStore->numberOfCalculations() > 0) {
       m_cacheBuffer[0] = 0;
       ((ContentView *)view())->expressionField()->setEditing(false, false);
-      app()->setFirstResponder(m_historyController);
+      Container::activeApp()->setFirstResponder(m_historyController);
     }
     return true;
   }
@@ -152,14 +141,13 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
 
 
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {
-  App * calculationApp = (App *)app();
   if (layoutR.isUninitialized()) {
     assert(text);
     strlcpy(m_cacheBuffer, text, k_cacheBufferSize);
   } else {
     layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize);
   }
-  m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
+  m_calculationStore->push(m_cacheBuffer, textFieldDelegateApp()->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
   ((ContentView *)view())->expressionField()->setEditing(true, true);

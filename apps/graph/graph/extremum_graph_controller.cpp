@@ -1,7 +1,7 @@
 #include "extremum_graph_controller.h"
-#include "../app.h"
+#include "../../shared/poincare_helpers.h"
+#include <poincare/serialization_helper.h>
 
-using namespace Shared;
 using namespace Poincare;
 
 namespace Graph {
@@ -15,7 +15,7 @@ const char * MinimumGraphController::title() {
   return I18n::translate(I18n::Message::Minimum);
 }
 
-Expression::Coordinate2D MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Coordinate2D<double> MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   return functionStore()->modelForRecord(m_record)->nextMinimumFrom(start, step, max, context);
 }
 
@@ -28,7 +28,7 @@ const char * MaximumGraphController::title() {
   return I18n::translate(I18n::Message::Maximum);
 }
 
-Expression::Coordinate2D MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
+Coordinate2D<double> MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
   return functionStore()->modelForRecord(m_record)->nextMaximumFrom(start, step, max, context);
 }
 

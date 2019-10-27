@@ -7,7 +7,7 @@ namespace Probability {
 
 class CalculationCell : public HighlightCell {
 public:
-  CalculationCell(Responder * parentResponder = nullptr, char * draftTextBuffer = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr);
+  CalculationCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr);
   Responder * responder() override;
   void setResponder(bool shouldbeResponder);
   void setHighlighted(bool highlight) override;

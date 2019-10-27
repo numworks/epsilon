@@ -1,16 +1,15 @@
 #include <poincare/prediction_interval.h>
-#include <poincare/matrix.h>
 #include <poincare/addition.h>
-#include <poincare/multiplication.h>
-#include <poincare/power.h>
-#include <poincare/undefined.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/matrix.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
-extern "C" {
+#include <poincare/undefined.h>
 #include <assert.h>
-}
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
@@ -27,12 +26,12 @@ int PredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 
-Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return PredictionInterval(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression PredictionIntervalNode::shallowReduce(ReductionContext reductionContext) {
+  return PredictionInterval(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> PredictionIntervalNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> pInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T p = static_cast<Complex<T> &>(pInput).toScalar();
@@ -47,7 +46,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
 }
 
 
-Expression PredictionInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -56,25 +55,19 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Com
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined::Builder();
+  if (c0.deepIsMatrix(reductionContext.context()) || c1.deepIsMatrix(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
   }
-#endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
-    if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+    if (!r1.isInteger() || r1.sign() == ExpressionNode::Sign::Negative) {
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -82,10 +75,8 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Com
   }
   Rational r0 = static_cast<Rational &>(c0);
   Rational r1 = static_cast<Rational &>(c1);
-  if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative || r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+  if (!r1.isInteger() || r1.sign() == ExpressionNode::Sign::Negative || r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
+    return replaceWithUndefinedInPlace();
   }
   /* [r0-1.96*sqrt(r0*(1-r0)/r1), r0+1.96*sqrt(r0*(1-r0)/r1)]*/
   // Compute numerator = r0*(1-r0)
@@ -103,8 +94,8 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Com
   matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.deepReduceChildren(context, complexFormat, angleUnit, target);
-  return matrix;
+  matrix.deepReduceChildren(reductionContext);
+  return std::move(matrix);
 }
 
 }

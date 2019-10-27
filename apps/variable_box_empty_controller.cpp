@@ -1,6 +1,5 @@
 #include "variable_box_empty_controller.h"
 #include <poincare/layout_helper.h>
-#include "graph/cartesian_function_store.h"
 #include <apps/i18n.h>
 #include <assert.h>
 

@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <cmath>
 
 namespace Poincare {
@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper Sine::s_functionHelper;
 
 int SineNode::numberOfChildren() const { return Sine::s_functionHelper.numberOfChildren(); }
 
-float SineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float SineNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Sine(this), context, angleUnit);
 }
 
@@ -30,25 +30,19 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
 }
 
-Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Sine(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression SineNode::shallowReduce(ReductionContext reductionContext) {
+  return Sine(this).shallowReduce(reductionContext);
 }
 
 
-Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  Expression op = childAtIndex(0);
-  if (op.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
-  }
-#endif
-  return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
+  return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
 }

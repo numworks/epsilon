@@ -23,7 +23,7 @@ public:
   void setBaseline(KDCoordinate baseline);
   virtual const KDFont * font() const = 0;
 protected:
-  constexpr static KDCoordinate k_separatorThickness = 1;
+  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   KDRect subviewFrame() const;
   float verticalAlignment() const;

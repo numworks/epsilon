@@ -3,7 +3,7 @@
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/sine.h>
 #include <poincare/trigonometry.h>
 #include <cmath>
@@ -14,7 +14,7 @@ constexpr Expression::FunctionHelper Tangent::s_functionHelper;
 
 int TangentNode::numberOfChildren() const { return Tangent::s_functionHelper.numberOfChildren(); }
 
-float TangentNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float TangentNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }
 
@@ -33,33 +33,28 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
-Expression TangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Tangent(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression TangentNode::shallowReduce(ReductionContext reductionContext) {
+  return Tangent(this).shallowReduce(reductionContext);
 }
 
 
-Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  Expression op = childAtIndex(0);
-  if (op.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
-  }
-#endif
-  Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
+
+  Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
     Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
     Division d = Division::Builder(s, c);
-    s.shallowReduce(context, complexFormat, angleUnit, target);
-    c.shallowReduce(context, complexFormat, angleUnit, target);
+    s.shallowReduce(reductionContext);
+    c.shallowReduce(reductionContext);
     newExpression.replaceWithInPlace(d);
-    return d.shallowReduce(context, complexFormat, angleUnit, target);
+    return d.shallowReduce(reductionContext);
   }
   return newExpression;
 }

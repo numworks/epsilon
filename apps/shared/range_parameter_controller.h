@@ -7,11 +7,11 @@
 
 namespace Shared {
 
-class RangeParameterController : public FloatParameterController {
+class RangeParameterController : public FloatParameterController<float> {
 public:
   RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange);
   const char * title() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
@@ -32,13 +32,12 @@ private:
   };
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  double parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, double f) override;
+  float parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, float f) override;
   constexpr static int k_numberOfEditableTextCell = 2;
   constexpr static int k_numberOfConvertibleTextCell = 2;
   constexpr static int k_numberOfTextCell = k_numberOfEditableTextCell+k_numberOfConvertibleTextCell;
   InteractiveCurveViewRange * m_interactiveRange;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_xRangeCells[k_numberOfEditableTextCell];
   MessageTableCellWithConvertibleEditableText m_yRangeCells[k_numberOfConvertibleTextCell];
   MessageTableCellWithSwitch m_yAutoCell;

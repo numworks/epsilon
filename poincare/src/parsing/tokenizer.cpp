@@ -138,14 +138,17 @@ Token Tokenizer::popToken() {
   if (c == UCodePointMultiplicationSign || c == UCodePointMiddleDot) {
     return Token(Token::Times);
   }
+  if (c == UCodePointLeftSystemParenthesis) {
+    return Token(Token::LeftSystemParenthesis);
+  }
+  if (c == UCodePointRightSystemParenthesis) {
+    return Token(Token::RightSystemParenthesis);
+  }
   if (c == '^') {
+    if (canPopCodePoint(UCodePointLeftSystemParenthesis)) {
+      return Token(Token::CaretWithParenthesis);
+    }
     return Token(Token::Caret);
-  }
-  if (c == UCodePointLeftSuperscript) {
-    return Token(Token::LeftSuperscript);
-  }
-  if (c == UCodePointRightSuperscript) {
-    return Token(Token::RightSuperscript);
   }
   if (c == '!') {
     return Token(Token::Bang);
@@ -173,12 +176,11 @@ Token Tokenizer::popToken() {
     result.setCodePoint(c);
     return result;
   }
-  if (c == UCodePointSquareRoot) {
+  if (c == UCodePointSquareRoot
+      || c == UCodePointGreekSmallLetterTheta)
+  {
     Token result(Token::Identifier);
-    // TODO compute size manually?
-    constexpr int squareRootCharLength = 3;
-    assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSquareRoot) == squareRootCharLength);
-    result.setString(start, squareRootCharLength);
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;
   }
   if (c == UCodePointEmpty) {

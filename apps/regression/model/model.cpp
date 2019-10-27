@@ -15,11 +15,19 @@ void Model::tidy() {
   m_layout = Layout();
 }
 
+Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
+  Expression e = expression(modelCoefficients);
+  if (!e.isUninitialized()) {
+    PoincareHelpers::Simplify(&e, context);
+  }
+  return e;
+}
+
 double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
   Expression yExpression = Number::DecimalNumber(y);
-  PoincareHelpers::Simplify(&yExpression, *context);
+  PoincareHelpers::Simplify(&yExpression, context);
   Expression modelExpression = simplifiedExpression(modelCoefficients, context);
-  double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, step, xMax, *context, yExpression).abscissa;
+  double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, step, xMax, context, yExpression).x1();
   return result;
 }
 

@@ -20,22 +20,22 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
-  m_law{},
+  m_distribution{},
   m_calculation{},
-  m_activePage(Page::Law)
+  m_activePage(Page::Distribution)
 {
-  new(m_law) BinomialLaw();
+  new(m_distribution) BinomialDistribution();
   new(m_calculation) LeftIntegralCalculation();
-  calculation()->setLaw(law());
+  calculation()->setDistribution(distribution());
 }
 
 App::Snapshot::~Snapshot() {
-  law()->~Law();
+  distribution()->~Distribution();
   calculation()->~Calculation();
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -44,15 +44,15 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 void App::Snapshot::reset() {
-  law()->~Law();
-  new(m_law) BinomialLaw();
+  distribution()->~Distribution();
+  new(m_distribution) BinomialDistribution();
   calculation()->~Calculation();
   new(m_calculation) LeftIntegralCalculation();
-  m_activePage = Page::Law;
+  m_activePage = Page::Distribution;
 }
 
-Law * App::Snapshot::law() {
-  return (Law *)m_law;
+Distribution * App::Snapshot::distribution() {
+  return (Distribution *)m_distribution;
 }
 
 Calculation * App::Snapshot::calculation() {
@@ -67,12 +67,12 @@ App::Snapshot::Page App::Snapshot::activePage() {
   return m_activePage;
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  TextFieldDelegateApp(container, snapshot, &m_stackViewController),
-  m_calculationController(&m_stackViewController, this, snapshot->law(), snapshot->calculation()),
-  m_parametersController(&m_stackViewController, this, snapshot->law(), &m_calculationController),
-  m_lawController(&m_stackViewController, snapshot->law(), &m_parametersController),
-  m_stackViewController(&m_modalViewController, &m_lawController)
+App::App(Snapshot * snapshot) :
+  TextFieldDelegateApp(snapshot, &m_stackViewController),
+  m_calculationController(&m_stackViewController, this, snapshot->distribution(), snapshot->calculation()),
+  m_parametersController(&m_stackViewController, this, snapshot->distribution(), &m_calculationController),
+  m_distributionController(&m_stackViewController, snapshot->distribution(), &m_parametersController),
+  m_stackViewController(&m_modalViewController, &m_distributionController)
 {
     switch (snapshot->activePage()) {
     case Snapshot::Page::Parameters:

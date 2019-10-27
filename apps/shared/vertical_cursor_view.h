@@ -2,12 +2,12 @@
 #define SHARED_VERTICAL_CURSOR_VIEW_H
 
 #include <escher.h>
+#include "cursor_view.h"
 
 namespace Shared {
 
-class VerticalCursorView : public View {
+class VerticalCursorView : public CursorView {
 public:
-  using View::View;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 };

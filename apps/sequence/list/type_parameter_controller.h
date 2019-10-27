@@ -20,10 +20,10 @@ public:
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   void setRecord(Ion::Storage::Record record);
 private:
@@ -34,7 +34,7 @@ private:
   }
   SequenceStore * sequenceStore();
   constexpr static int k_totalNumberOfCell = 3;
-  ExpressionTableCellWithPointer m_expliciteCell;
+  ExpressionTableCellWithPointer m_explicitCell;
   ExpressionTableCellWithPointer m_singleRecurrenceCell;
   ExpressionTableCellWithPointer m_doubleRecurenceCell;
   Poincare::Layout m_layouts[k_totalNumberOfCell];

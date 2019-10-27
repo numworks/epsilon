@@ -2,7 +2,6 @@
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../cartesian_function_store.h"
 #include "preimage_parameter_controller.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
@@ -21,8 +20,9 @@ public:
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -30,6 +30,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
+  bool shouldDisplayIntersection() const;
   MessageTableCellWithChevron m_preimageCell;
   constexpr static int k_totalNumberOfReusableCells = 6;
   MessageTableCell m_cells[k_totalNumberOfReusableCells];

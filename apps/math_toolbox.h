@@ -1,7 +1,6 @@
 #ifndef APPS_MATH_TOOLBOX_H
 #define APPS_MATH_TOOLBOX_H
 
-#define MATRICES_ARE_DEFINED 1
 #include <escher.h>
 #include <apps/i18n.h>
 
@@ -10,7 +9,7 @@ public:
   MathToolbox();
 protected:
   bool selectLeaf(int selectedRow) override;
-  const ToolboxMessageTree * rootModel() override;
+  const ToolboxMessageTree * rootModel() const override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;

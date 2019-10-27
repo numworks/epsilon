@@ -17,7 +17,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -25,8 +25,8 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  Shared::TextFieldDelegateApp(container, snapshot, &m_stackViewController),
+App::App(Snapshot * snapshot) :
+  Shared::TextFieldDelegateApp(snapshot, &m_stackViewController),
   m_mainController(&m_stackViewController, this),
   m_stackViewController(&m_modalViewController, &m_mainController)
 {

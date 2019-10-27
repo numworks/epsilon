@@ -1,86 +1,74 @@
 #include "values_controller.h"
 #include "function_app.h"
-#include "../constant.h"
-#include "../apps_container.h"
-#include "poincare_helpers.h"
+#include <poincare/preferences.h>
 #include <assert.h>
+#include <limits.h>
 
 using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline int absInt(int x) { return x < 0 ? -x : x; }
+
+// Constructor and helpers
+
+ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_interval(interval),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
-  m_selectableTableView(this),
-  m_abscissaTitleCell(),
-  m_abscissaCells{},
-  m_abscissaParameterController(this, intervalParameterController, parameterTitle),
-  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
-    ValuesController * valuesController = (ValuesController *) context;
-    StackViewController * stack = ((StackViewController *)valuesController->stackController());
-    stack->push(valuesController->intervalParameterController());
-    return true;
-  }, this), k_font)
+  m_firstMemoizedColumn(INT_MAX),
+  m_firstMemoizedRow(INT_MAX),
+  m_abscissaParameterController(this)
 {
-  m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setTopMargin(k_topMargin);
-  m_selectableTableView.setRightMargin(k_rightMargin);
-  m_selectableTableView.setBottomMargin(k_bottomMargin);
-  m_selectableTableView.setLeftMargin(k_leftMargin);
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_abscissaTitleCell.setMessageFont(k_font);
-  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
-    m_abscissaCells[i].setParentResponder(&m_selectableTableView);
-    m_abscissaCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_abscissaCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
-    m_abscissaCells[i].editableTextCell()->textField()->setFont(k_font);
+}
+
+void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
+  selectableTableView()->setVerticalCellOverlap(0);
+  selectableTableView()->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  selectableTableView()->setBackgroundColor(Palette::WallScreenDark);
+
+  int numberOfAbscissaCells = abscissaCellsCount();
+  for (int i = 0; i < numberOfAbscissaCells; i++) {
+    EvenOddEditableTextCell * c = abscissaCells(i);
+    c->setParentResponder(selectableTableView());
+    c->editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
+    c->editableTextCell()->textField()->setFont(k_font);
+  }
+  int numberOfAbscissaTitleCells = abscissaTitleCellsCount();
+  for (int i = 0; i < numberOfAbscissaTitleCells; i++) {
+    EvenOddMessageTextCell * c = abscissaTitleCells(i);
+    c->setMessageFont(k_font);
   }
 }
 
-bool ValuesController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  int row = selectedRow();
-  int nbOfRows = numberOfRows();
-  bool didFinishEditing = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
-  if (didFinishEditing) {
-    if (nbOfRows != numberOfRows()) {
-      // Reload the whole table, if a value is appended.
-      selectableTableView()->reloadData();
-    } else {
-      // Reload the row, if an existing value is edited.
-      for (int i = 0; i < numberOfColumns(); i++) {
-        selectableTableView()->reloadCellAtLocation(i, row);
-      }
-    }
-  }
-  return didFinishEditing;
-}
+// View Controller
 
 const char * ValuesController::title() {
   return I18n::translate(I18n::Message::ValuesTab);
 }
 
-int ValuesController::numberOfColumns() {
-  if (m_numberOfColumnsNeedUpdate) {
-    updateNumberOfColumns();
-    m_numberOfColumnsNeedUpdate = false;
-  }
-  return m_numberOfColumns;
+void ValuesController::viewWillAppear() {
+  // Reset memoization before any call to willDisplayCellAtLocation
+  resetMemoization();
+  EditableCellTableViewController::viewWillAppear();
+  header()->setSelectedButton(-1);
 }
 
-Interval * ValuesController::interval() {
-  return m_interval;
+void ValuesController::viewDidDisappear() {
+  m_numberOfColumnsNeedUpdate = true;
+  EditableCellTableViewController::viewDidDisappear();
 }
+
+// Responder
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(0,0);
-      app()->setFirstResponder(selectableTableView());
+      Container::activeApp()->setFirstResponder(selectableTableView());
       return true;
     }
     return false;
@@ -89,7 +77,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
       return true;
     }
     selectableTableView()->deselectTable();
@@ -97,27 +85,34 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && selectedRow() > 0 &&
-      (selectedRow() < numberOfRows()-1 || m_interval->numberOfElements() == Interval::k_maxNumberOfElements)) {
-    m_interval->deleteElementAtIndex(selectedRow()-1);
+      selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
+    int row = selectedRow();
+    int column = selectedColumn();
+    intervalAtColumn(column)->deleteElementAtIndex(row-1);
+    // Reload memoization
+    for (int i = row; i < numberOfElementsInColumn(column)+1; i++) {
+      didChangeCell(column, i);
+    }
     selectableTableView()->reloadData();
     return true;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (selectedRow() == -1) {
-      return header()->handleEvent(event);
-    }
-    if (selectedRow() == 0) {
-      if (selectedColumn() == 0) {
-        configureAbscissa();
-        return true;
-      }
-      configureFunction();
-      return true;
-    }
-    return false;
-  }
   if (selectedRow() == -1) {
     return header()->handleEvent(event);
+  }
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
+    ViewController * parameterController = nullptr;
+    if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
+      m_abscissaParameterController.setPageTitle(valuesParameterMessageAtColumn(selectedColumn()));
+      intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
+      setStartEndMessages(intervalParameterController(), selectedColumn());
+      parameterController = &m_abscissaParameterController;
+    } else {
+      parameterController = functionParameterController();
+    }
+    if (parameterController) {
+      stackController()->push(parameterController);
+    }
+    return true;
   }
   return false;
 }
@@ -140,79 +135,39 @@ void ValuesController::willExitResponderChain(Responder * nextFirstResponder) {
   }
 }
 
-int ValuesController::numberOfButtons(ButtonRowController::Position) const {
-  if (isEmpty()) {
-    return 0;
-  }
-  return 1;
-}
+// TableViewDataSource
 
-Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  return (Button *)&m_setIntervalButton;
+int ValuesController::numberOfColumns() const {
+  if (m_numberOfColumnsNeedUpdate) {
+    updateNumberOfColumns();
+    m_numberOfColumnsNeedUpdate = false;
+  }
+  return m_numberOfColumns;
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
-  if (cellAtLocationIsEditable(i, j)) {
-    return;
-  }
   // The cell is not a title cell and not editable
-  if (j > 0 && i > 0) {
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  if (typeAtLocation(i,j) == k_notEditableValueCellType) {
     // Special case: last row
-    if (j == numberOfRows() - 1) {
-      int numberOfIntervalElements = m_interval->numberOfElements();
-      if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
-        buffer[0] = 0;
-        EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-        myValueCell->setText(buffer);
-        return;
-      }
+    if (j == numberOfElementsInColumn(i) + 1) {
+      static_cast<EvenOddBufferTextCell *>(cell)->setText("");
+    } else {
+      static_cast<EvenOddBufferTextCell *>(cell)->setText(memoizedBufferForCell(i, j));
     }
-    // The cell is a value cell
-    EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-    double x = m_interval->element(j-1);
-    PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  myValueCell->setText(buffer);
   }
-}
-
-KDCoordinate ValuesController::columnWidth(int i) {
-  switch (i) {
-    case 0:
-      return k_abscissaCellWidth;
-    default:
-      return k_ordinateCellWidth;
-  }
-}
-
-KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
-  if (i == 0) {
-    return 0;
-  } else {
-    return k_abscissaCellWidth + (i-1)*k_ordinateCellWidth;
-  }
-}
-
-int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= k_abscissaCellWidth) {
-    return 0;
-  }
-  return (offsetX - k_abscissaCellWidth)/k_ordinateCellWidth+1;
 }
 
 HighlightCell * ValuesController::reusableCell(int index, int type) {
-  assert(index >= 0);
+  assert(0 <= index && index < reusableCellCount(type));
   switch (type) {
-    case 0:
-      assert(index == 0);
-      return &m_abscissaTitleCell;
-    case 1:
+    case k_abscissaTitleCellType:
+      return abscissaTitleCells(index);
+    case k_functionTitleCellType:
       return functionTitleCells(index);
-    case 2:
-      assert(index < k_maxNumberOfAbscissaCells);
-      return &m_abscissaCells[index];
-    case 3:
+    case k_editableValueCellType:
+      return abscissaCells(index);
+    case k_notEditableValueCellType:
       return floatCells(index);
     default:
       assert(false);
@@ -222,13 +177,13 @@ HighlightCell * ValuesController::reusableCell(int index, int type) {
 
 int ValuesController::reusableCellCount(int type) {
   switch (type) {
-    case 0:
-      return 1;
-    case 1:
+    case k_abscissaTitleCellType:
+      return abscissaTitleCellsCount();
+    case k_functionTitleCellType:
       return maxNumberOfFunctions();
-    case 2:
-      return k_maxNumberOfAbscissaCells;
-    case 3:
+    case k_editableValueCellType:
+      return abscissaCellsCount();
+    case k_notEditableValueCellType:
       return maxNumberOfCells();
     default:
       assert(false);
@@ -237,17 +192,19 @@ int ValuesController::reusableCellCount(int type) {
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
-  if (j == 0) {
-    if (i == 0) {
-      return 0;
-    }
-    return 1;
-  }
-  if (i == 0) {
-    return 2;
-  }
-  return 3;
+  return (i > 0) + 2 * (j > 0);
 }
+
+// ButtonRowDelegate
+
+int ValuesController::numberOfButtons(ButtonRowController::Position) const {
+  if (isEmpty()) {
+    return 0;
+  }
+  return 1;
+}
+
+// AlternateEmptyViewDelegate
 
 bool ValuesController::isEmpty() const {
   if (functionStore()->numberOfActiveFunctions() == 0) {
@@ -260,20 +217,46 @@ Responder * ValuesController::defaultController() {
   return tabController();
 }
 
-void ValuesController::viewWillAppear() {
-  EditableCellTableViewController::viewWillAppear();
-  header()->setSelectedButton(-1);
+// EditableCellTableViewController
+
+bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
+  intervalAtColumn(columnIndex)->setElement(rowIndex-1, floatBody);
+  return true;
 }
 
-void ValuesController::viewDidDisappear() {
-  m_numberOfColumnsNeedUpdate = true;
-  EditableCellTableViewController::viewDidDisappear();
+bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
+  return typeAtLocation(columnIndex, rowIndex) == k_editableValueCellType;
 }
 
-Ion::Storage::Record ValuesController::recordAtColumn(int i) {
-  assert(i > 0);
-  return functionStore()->activeRecordAtIndex(i-1);
+double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
+  return intervalAtColumn(columnIndex)->element(rowIndex-1);
 }
+
+void ValuesController::didChangeCell(int column, int row) {
+  /* Update the row memoization if it exists */
+  // the first row is never reloaded as it corresponds to title row
+  assert(row > 0);
+  // Conversion of coordinates from absolute table to values table
+  int valuesRow = valuesRowForAbsoluteRow(row);
+  if (m_firstMemoizedRow > valuesRow || valuesRow >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
+    // The changed row is out of the memoized table
+    return;
+  }
+
+  // Update the memoization of rows linked to the changed cell
+  int memoizedRow = valuesRow - m_firstMemoizedRow;
+  int nbOfMemoizedColumns = numberOfMemoizedColumn();
+  for (int i = column+1; i < column+numberOfColumnsForAbscissaColumn(column); i++) {
+    int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
+    fillMemoizedBuffer(i, row, nbOfMemoizedColumns*memoizedRow+memoizedI);
+  }
+}
+
+int ValuesController::numberOfElementsInColumn(int columnIndex) const {
+  return const_cast<ValuesController *>(this)->intervalAtColumn(columnIndex)->numberOfElements();
+}
+
+// Parent controller getters
 
 Responder * ValuesController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
@@ -283,63 +266,79 @@ StackViewController * ValuesController::stackController() const {
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-void ValuesController::configureAbscissa() {
-  StackViewController * stack = stackController();
-  stack->push(&m_abscissaParameterController);
+// Model getters
+
+Ion::Storage::Record ValuesController::recordAtColumn(int i) {
+  assert(typeAtLocation(i, 0) == k_functionTitleCellType);
+  return functionStore()->activeRecordAtIndex(i-1);
 }
 
-void ValuesController::configureFunction() {
-#if COPY_COLUMN
-#else
-  /* Temporary: the sequence value controller does not have a function parameter
-   * controller yet but it shoult come soon. */
-  if (functionParameterController() == nullptr) {
-    return;
-  }
-#endif
-  functionParameterController()->setRecord(recordAtColumn(selectedColumn()));
-  StackViewController * stack = stackController();
-  stack->push(functionParameterController());
-}
+// Number of columns memoization
 
-bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
-  if (rowIndex > 0 && columnIndex == 0) {
-    return true;
-  }
-  return false;
-}
-
-bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_interval->setElement(rowIndex-1, floatBody);
-  return true;
-}
-
-double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_interval->element(rowIndex-1);
-}
-
-int ValuesController::numberOfElements() {
-  return m_interval->numberOfElements();
-}
-
-int ValuesController::maxNumberOfElements() const {
-  return Interval::k_maxNumberOfElements;
-}
-
-double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return function->evaluateAtAbscissa(abscissa, myApp->localContext());
-}
-
-void ValuesController::updateNumberOfColumns() {
+void ValuesController::updateNumberOfColumns() const {
   m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
 }
 
 FunctionStore * ValuesController::functionStore() const {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->functionStore();
+  return FunctionApp::app()->functionStore();
+}
+
+// Function evaluation memoization
+
+void ValuesController::resetMemoization() {
+  m_firstMemoizedColumn = INT_MAX;
+  m_firstMemoizedRow = INT_MAX;
+}
+
+char * ValuesController::memoizedBufferForCell(int i, int j) {
+  // Conversion of coordinates from absolute table to values table
+  int valuesI = valuesColumnForAbsoluteColumn(i);
+  int valuesJ = valuesRowForAbsoluteRow(j);
+  int nbOfMemoizedColumns = numberOfMemoizedColumn();
+  /* Compute the required offset to apply to the memoized table in order to
+   * display cell (i,j) */
+  int offsetI = 0;
+  int offsetJ = 0;
+  if (valuesI < m_firstMemoizedColumn) {
+    offsetI = valuesI - m_firstMemoizedColumn;
+  } else if (valuesI >= m_firstMemoizedColumn + nbOfMemoizedColumns) {
+    offsetI = valuesI - nbOfMemoizedColumns - m_firstMemoizedColumn + 1;
+  }
+  if (valuesJ < m_firstMemoizedRow) {
+    offsetJ = valuesJ - m_firstMemoizedRow;
+  } else if (valuesJ >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
+    offsetJ = valuesJ - k_maxNumberOfDisplayableRows - m_firstMemoizedRow + 1;
+  }
+  int offset = -offsetJ*nbOfMemoizedColumns-offsetI;
+
+  // Apply the offset
+  if (offset != 0) {
+    m_firstMemoizedColumn = m_firstMemoizedColumn + offsetI;
+    m_firstMemoizedRow = m_firstMemoizedRow + offsetJ;
+    // Shift already memoized cells
+    int numberOfMemoizedCell = k_maxNumberOfDisplayableRows*numberOfMemoizedColumn();
+    size_t moveLength = (numberOfMemoizedCell - absInt(offset))*valuesCellBufferSize()*sizeof(char);
+    if (offset > 0 && offset < numberOfMemoizedCell) {
+      memmove(memoizedBufferAtIndex(offset), memoizedBufferAtIndex(0), moveLength);
+    } else if (offset < 0 && offset > -numberOfMemoizedCell) {
+      memmove(memoizedBufferAtIndex(0), memoizedBufferAtIndex(-offset), moveLength);
+    }
+    // Compute the buffer of the new cells of the memoized table
+    int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
+    for (int ii = 0; ii < minInt(nbOfMemoizedColumns, maxI); ii++) {
+      int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn)) - m_firstMemoizedRow;
+      for (int jj = 0; jj < minInt(k_maxNumberOfDisplayableRows, maxJ); jj++) {
+        // Escape if already filled
+        if (ii >= -offsetI && ii < -offsetI + nbOfMemoizedColumns && jj >= -offsetJ && jj < -offsetJ + k_maxNumberOfDisplayableRows) {
+          continue;
+        }
+        fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + ii),
+            absoluteRowForValuesRow(m_firstMemoizedRow + jj),
+            jj * nbOfMemoizedColumns + ii);
+      }
+    }
+  }
+  return memoizedBufferAtIndex((valuesJ-m_firstMemoizedRow)*nbOfMemoizedColumns + (valuesI-m_firstMemoizedColumn));
 }
 
 }
-

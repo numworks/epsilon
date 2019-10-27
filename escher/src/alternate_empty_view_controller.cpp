@@ -1,5 +1,5 @@
 #include <escher/alternate_empty_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <assert.h>
 
 /* ContentView */
@@ -67,7 +67,7 @@ bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
 
 void AlternateEmptyViewController::didBecomeFirstResponder() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
-    app()->setFirstResponder(m_contentView.mainViewController());
+    Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
   }
 }
 

@@ -1,2 +1,4 @@
 Apps = "Aplicaciones"
 AppsCapital = "APLICACIONES"
+ForbidenAppInExamMode1 = ""
+ForbidenAppInExamMode2 = ""

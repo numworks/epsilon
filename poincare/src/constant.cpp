@@ -63,7 +63,7 @@ Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 template<typename T>
-Evaluation<T> ConstantNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ConstantNode::templatedApproximate() const {
   if (isIComplex()) {
     return Complex<T>::Builder(0.0, 1.0);
   }
@@ -106,6 +106,4 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result;
 }
 
-template Evaluation<float> ConstantNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> ConstantNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 }

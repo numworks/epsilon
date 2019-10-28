@@ -1,6 +1,7 @@
 #include "controller.h"
 #include "app.h"
 #include "../apps_container.h"
+#include "../global_preferences.h"
 extern "C" {
 #include <assert.h>
 }
@@ -57,9 +58,15 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    bool switched = container->switchTo(container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1));
-    assert(switched);
-    (void) switched; // Silence compilation warning about unused variable.
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1);
+    // TODO: check that we are in Dutch exam mode
+    if (GlobalPreferences::sharedGlobalPreferences()->examMode() && selectedSnapshot->descriptor()->name() == I18n::Message::CodeApp) {
+      App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
+    } else {
+      bool switched = container->switchTo(selectedSnapshot);
+      assert(switched);
+      (void) switched; // Silence compilation warning about unused variable.
+    }
     return true;
   }
 

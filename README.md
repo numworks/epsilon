@@ -10,12 +10,41 @@ If Numworks goes through here and finds a feature they want to implement by defa
 
 ## Some new features
 - Symbolic calculation
-- White, green, blue or yellow LED in exam mode
-- More Brightness steps (16 instead of 5)
+- RPN app
 - All molar masses (chemistry)
+- More Brightness steps (16 instead of 5)
+- White, green, blue or yellow LED in exam mode
 
-The complete changelog can be found here:
-https://github.com/quentinguidee/Omega/wiki/Complete-changelog
+The complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog)
+
+## Installation
+
+First of all, follow **step 1** [here](https://www.numworks.com/resources/engineering/software/build/). Then:
+
+* For **n0100**:
+```
+git clone --recursive https://github.com/Omega-Numworks/Omega.git
+cd Omega
+make MODEL=n0100 clean
+make MODEL=n0100
+make MODEL=n0100 app_flash
+make MODEL=n0100 epsilon_flash
+```
+
+<!-- Alternatively, you can use [Omega Installer](https://github.com/Omega-Numworks/installer) `BETA` -->
+
+* For **n0110**:
+```
+git clone --recursive https://github.com/Omega-Numworks/Omega.git
+cd Omega
+make MODEL=n0110 clean
+make MODEL=n0110
+make MODEL=n0110 app_flash
+make MODEL=n0110 epsilon_flash
+```
+
+## Contribute
+
 
 ## Translations
 
@@ -30,7 +59,10 @@ Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/lice
 <!--<p align="center"><img src="https://www.numworks.com/resources/engineering/software/epsilon.svg" alt="NumWorks Epsilon logo" height="70" ></p>-->
 <h1 align="center">Epsilon 12.0.0</h1>
 
-[![Build Status](https://github.com/numworks/epsilon/workflows/Continuous%20integration/badge.svg)](https://github.com/numworks/epsilon/actions?workflow=Continuous+integration)
+<!-- [![Build Status](https://github.com/numworks/epsilon/workflows/Continuous%20integration/badge.svg)](https://github.com/numworks/epsilon/actions?workflow=Continuous+integration) -->
+
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?logo=creative%20commons&style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![GitHub issues](https://img.shields.io/github/issues/numworks/epsilon.svg?logo=git&style=for-the-badge)](https://github.com/numworks/epsilon/issues)
 
 Epsilon is a high-performance graphing calculator operating system. It includes eight apps that cover the high school mathematics curriculum.
 

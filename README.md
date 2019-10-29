@@ -42,8 +42,7 @@ make MODEL=n0110 app_flash
 make MODEL=n0110 epsilon_flash
 ```
 
-## Contribute
-
+<!-- ## Contribute -->
 
 ## Translations
 

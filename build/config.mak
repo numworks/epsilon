@@ -4,9 +4,9 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 12.0.0
-EPSILON_CUSTOM_VERSION ?= 1.9.1-0
+EPSILON_CUSTOM_VERSION ?= 1.10.0-0
 # Valid values are "none", "update", "beta"
-EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
+EPSILON_APPS ?= calculation rpn graph code statistics probability solver sequence regression settings
 EPSILON_I18N ?= en fr es de pt
 EPSILON_GETOPT ?= 0
 ESCHER_LOG_EVENTS_BINARY ?= 0

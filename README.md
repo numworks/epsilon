@@ -7,8 +7,6 @@
 
 Omega is an extension to the Numworks Epsilon project, which will bring many features to the calculator. Omega is for people who want to add features to the calculator, but can not because it has been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator. But, it's fun so we add it on Omega! In short, Omega is a kind of Jailbreak.
 
-If Numworks goes through here and finds a feature they want to implement by default, no problem!
-
 ## Some new features
 - Symbolic calculation
 - RPN app

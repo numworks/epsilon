@@ -1,8 +1,5 @@
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega.png" /></p>
 
-[![Gitlab pipeline status](https://img.shields.io/badge/Epsilon-12.0.0-yellow?style=for-the-badge&logo=github)](https://github.com/numworks/epsilon)
-[![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge)](https://gitlab.com/joachim2lefournis/Omega/pipelines)
-
 <p align="center">
   <a href="https://github.com/numworks/epsilon"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/Epsilon-12.0.0-yellow?style=for-the-badge&logo=github" /></a>
   <a href="https://gitlab.com/joachim2lefournis/Omega/pipelines"><img alt="Pipeline" src="https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge" /></a>
@@ -11,6 +8,7 @@
   <a href="https://github.com/Omega-Numworks/Omega/issues"><img alt="Issues" src="https://img.shields.io/github/issues/Omega-Numworks/Omega.svg?logo=git&style=for-the-badge" /></a>
 </p>
 
+## About
 
 Omega is an extension to the Numworks Epsilon project, which will bring many features to the calculator. Omega is for people who want to add features to the calculator, but can not because it has been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator. But, it's fun so we add it on Omega! In short, Omega is a kind of Jailbreak.
 

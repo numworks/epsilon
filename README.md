@@ -1,5 +1,6 @@
 <h1 align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega.png" /></h1>
 
+[![Gitlab pipeline status](https://img.shields.io/badge/Epsilon-12.0.0-yellow?style=for-the-badge&logo=github)](https://github.com/numworks/epsilon)
 [![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge)](https://gitlab.com/joachim2lefournis/Omega/pipelines)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?logo=creative%20commons&style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![GitHub issues](https://img.shields.io/github/issues/Omega-Numworks/Omega.svg?logo=git&style=for-the-badge)](https://github.com/Omega-Numworks/Omega/issues)

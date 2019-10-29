@@ -10,7 +10,7 @@ constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessage
 constexpr SettingsMessageTree s_modelExamChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 constexpr SettingsMessageTree s_modelAboutChildren[4] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 constexpr SettingsMessageTree s_ledColorChildren[4] = {SettingsMessageTree(I18n::Message::ColorWhite), SettingsMessageTree(I18n::Message::ColorGreen), SettingsMessageTree(I18n::Message::ColorBlue), SettingsMessageTree(I18n::Message::ColorYellow)};
-constexpr SettingsMessageTree s_contributorsChildren[3] = {SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons), SettingsMessageTree(I18n::Message::JoachimLeFournis)};
+constexpr SettingsMessageTree s_contributorsChildren[4] = {SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons), SettingsMessageTree(I18n::Message::JoachimLeFournis), SettingsMessageTree(I18n::Message::JeanBaptisteBoric)};
 
 constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren, 3),
@@ -23,7 +23,7 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::BetaPopUp),
     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 4),
     SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren, 4),
-    SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 3)};
+    SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 4)};
 
 constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 11);
 

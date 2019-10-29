@@ -57,7 +57,7 @@ private:
   constexpr static uint32_t Magic = 0xDEC00DF0;
   uint32_t m_header;
   const char m_version[8];
-  const char m_customVersion[8];
+  const char m_customVersion[16];
   const char m_patchLevel[8];
   void * m_storageAddress;
   size_t m_storageSize;

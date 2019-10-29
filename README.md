@@ -1,11 +1,11 @@
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega.png" /></p>
 
 <p align="center">
-  <a href="https://github.com/numworks/epsilon"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/Epsilon-12.0.0-yellow?style=for-the-badge&logo=github" /></a>
-  <a href="https://gitlab.com/joachim2lefournis/Omega/pipelines"><img alt="Pipeline" src="https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge" /></a>
-  </br>
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?logo=creative%20commons&style=for-the-badge" /></a>
   <a href="https://github.com/Omega-Numworks/Omega/issues"><img alt="Issues" src="https://img.shields.io/github/issues/Omega-Numworks/Omega.svg?logo=git&style=for-the-badge" /></a>
+  </br>
+  <a href="https://github.com/numworks/epsilon"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/Epsilon-12.0.0-yellow?style=for-the-badge&logo=github" /></a>
+  <a href="https://gitlab.com/joachim2lefournis/Omega/pipelines"><img alt="Pipeline" src="https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge" /></a>
 </p>
 
 ## About
@@ -63,8 +63,11 @@ Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/lice
 
 <!-- [![Build Status](https://github.com/numworks/epsilon/workflows/Continuous%20integration/badge.svg)](https://github.com/numworks/epsilon/actions?workflow=Continuous+integration) -->
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?logo=creative%20commons&style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![GitHub issues](https://img.shields.io/github/issues/numworks/epsilon.svg?logo=git&style=for-the-badge)](https://github.com/numworks/epsilon/issues)
+<p align="center">
+  <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?logo=creative%20commons&style=for-the-badge" /></a>
+  <a href="https://github.com/numworks/epsilon/issues"><img alt="Issues" src="https://img.shields.io/github/issues/numworks/epsilon.svg?logo=git&style=for-the-badge" /></a>
+</p>
+
 
 Epsilon is a high-performance graphing calculator operating system. It includes eight apps that cover the high school mathematics curriculum.
 

@@ -25,15 +25,16 @@ bool Parser::IsReservedName(const char * name, size_t nameLength) {
 // Private
 
 const Expression::FunctionHelper * const * Parser::GetReservedFunction(const char * name, size_t nameLength) {
-  const Expression::FunctionHelper * const * reservedFunction = &s_reservedFunctions[0];
-  assert(reservedFunction < s_reservedFunctionsUpperBound);
-  int nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
-  while (reservedFunction < s_reservedFunctionsUpperBound && nameDifference > 0) {
+  const Expression::FunctionHelper * const * reservedFunction = s_reservedFunctions;
+  while (reservedFunction < s_reservedFunctionsUpperBound) {
+    int nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
+    if (nameDifference == 0) {
+      return reservedFunction;
+    }
+    if (nameDifference < 0) {
+      break;
+    }
     reservedFunction++;
-    nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
-  }
-  if (reservedFunction < s_reservedFunctionsUpperBound && nameDifference == 0) {
-    return reservedFunction;
   }
   return nullptr;
 }

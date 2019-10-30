@@ -70,9 +70,7 @@ private:
   Expression parseVector();
   Expression parseFunctionParameters();
   Expression parseCommaSeparatedList();
-  bool currentTokenIsReservedFunction(const Expression::FunctionHelper * const * * functionHelper) const;
   void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
-  bool currentTokenIsSpecialIdentifier() const;
   void parseSpecialIdentifier(Expression & leftHandSide);
   void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
   void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
@@ -149,7 +147,7 @@ private:
     &SquareRoot::s_functionHelper
   };
   static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
-  /* The method currentTokenIsReservedFunction passes through the successive
+  /* The method GetReservedFunction passes through the successive
    * entries of the above array in order to determine whether m_currentToken
    * corresponds to an entry. As a helper, the static constexpr
    * s_reservedFunctionsUpperBound marks the end of the array. */

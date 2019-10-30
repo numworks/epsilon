@@ -274,8 +274,7 @@ void Parser::parseStore(Expression & leftHandSide, Token::Type stoppingType) {
   }
   // At this point, m_currentToken is Token::Store.
   popToken();
-  const Expression::FunctionHelper * const * functionHelper;
-  if (!m_currentToken.is(Token::Identifier) || currentTokenIsReservedFunction(&functionHelper) || currentTokenIsSpecialIdentifier()) {
+  if (!m_currentToken.is(Token::Identifier) || IsReservedName(m_currentToken.text(), m_currentToken.length())) {
     m_status = Status::Error; // The right-hand side of Token::Store must be symbol or function that is not reserved.
     return;
   }
@@ -325,15 +324,6 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
     leftHandSide = Factorial::Builder(leftHandSide);
   }
   isThereImplicitMultiplication();
-}
-
-bool Parser::currentTokenIsReservedFunction(const Expression::FunctionHelper * const * * functionHelper) const {
-  *functionHelper = GetReservedFunction(m_currentToken.text(), m_currentToken.length());
-  return *functionHelper != nullptr;
-}
-
-bool Parser::currentTokenIsSpecialIdentifier() const {
-  return IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length());
 }
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {
@@ -469,13 +459,10 @@ void Parser::parseIdentifier(Expression & leftHandSide, Token::Type stoppingType
     m_status = Status::Error; //FIXME
     return;
   }
-  const Expression::FunctionHelper * const * functionHelper;
-    /* If m_currentToken corresponds to a reserved function, the method
-     * currentTokenIsReservedFunction will make functionHelper point to an
-     * element of s_reservedFunctions. */
-  if (currentTokenIsReservedFunction(&functionHelper)) {
+  const Expression::FunctionHelper * const * functionHelper = GetReservedFunction(m_currentToken.text(), m_currentToken.length());
+  if (functionHelper != nullptr) {
     parseReservedFunction(leftHandSide, functionHelper);
-  } else if (currentTokenIsSpecialIdentifier()) {
+  } else if (IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length())) {
     parseSpecialIdentifier(leftHandSide);
   } else {
     parseCustomIdentifier(leftHandSide, m_currentToken.text(), m_currentToken.length());

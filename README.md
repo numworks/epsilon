@@ -10,14 +10,14 @@
 
 ## About
 
-Omega is an extension to the Numworks Epsilon project, which will bring many features to the calculator. Omega is for people who want to add features to the calculator, but can not because it has been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator. But, it's fun so we add it on Omega! In short, Omega is a kind of Jailbreak.
+Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for people who want to add features to the calculator, but cannot because they have been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator, but it's fun, so we would add it into Omega! In short, Omega is a kind of Jailbreak on Epsilon.
 
 ## Some new features
-- Symbolic calculation
-- RPN app
-- All molar masses (chemistry)
-- More Brightness steps (16 instead of 5)
-- White, green, blue or yellow LED in exam mode
+- Adding symbolic calculation back into the calculator
+- An app for RPN
+- All of the molar masses for the elements (chemistry)
+- More steps for brightness (16 instead of 5)
+- Different colors for the LED in exam mode
 
 The complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog)
 

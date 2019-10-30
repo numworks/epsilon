@@ -18,13 +18,13 @@ Expression Parser::parse() {
 }
 
 bool Parser::IsReservedName(const char * name, size_t nameLength) {
-  return IsReservedFunctionName(name, nameLength)
+  return GetReservedFunction(name, nameLength) != nullptr
     || IsSpecialIdentifierName(name, nameLength);
 }
 
 // Private
 
-bool Parser::IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper) {
+const Expression::FunctionHelper * const * Parser::GetReservedFunction(const char * name, size_t nameLength) {
   const Expression::FunctionHelper * const * reservedFunction = &s_reservedFunctions[0];
   assert(reservedFunction < s_reservedFunctionsUpperBound);
   int nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
@@ -32,10 +32,10 @@ bool Parser::IsReservedFunctionName(const char * name, size_t nameLength, const 
     reservedFunction++;
     nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
   }
-  if (functionHelper != nullptr) {
-    *functionHelper = reservedFunction;
+  if (reservedFunction < s_reservedFunctionsUpperBound && nameDifference == 0) {
+    return reservedFunction;
   }
-  return (reservedFunction < s_reservedFunctionsUpperBound && nameDifference == 0);
+  return nullptr;
 }
 
 bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
@@ -327,7 +327,8 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
 }
 
 bool Parser::currentTokenIsReservedFunction(const Expression::FunctionHelper * const * * functionHelper) const {
-  return IsReservedFunctionName(m_currentToken.text(), m_currentToken.length(), functionHelper);
+  *functionHelper = GetReservedFunction(m_currentToken.text(), m_currentToken.length());
+  return *functionHelper != nullptr;
 }
 
 bool Parser::currentTokenIsSpecialIdentifier() const {

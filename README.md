@@ -18,6 +18,7 @@ Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator
 - All of the molar masses for the elements (chemistry)
 - More steps for brightness (16 instead of 5)
 - Different colors for the LED in exam mode
+- 32 KB Python heap instead of 16 KB
 
 The complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog)
 

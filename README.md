@@ -48,6 +48,8 @@ make MODEL=n0110 app_flash
 make MODEL=n0110 epsilon_flash
 ```
 
+Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
+
 <!-- ## Contribute -->
 
 ## Related repositories

@@ -53,7 +53,7 @@ make MODEL=n0110 epsilon_flash
 ## Related repositories
 
 * [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer)
-* [Omega Online Installer](https://github.com/Omega-Numworks/Online-Installer)
+* [Omega WEB Installer](https://github.com/Omega-Numworks/Omega-WEB-Installer)
 * [Omega RPN](https://github.com/Omega-Numworks/Omega-RPN)
 
 ## Omega License

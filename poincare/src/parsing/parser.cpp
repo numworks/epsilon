@@ -17,8 +17,8 @@ Expression Parser::parse() {
   return Expression();
 }
 
-bool Parser::IsReservedName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper) {
-  return IsReservedFunctionName(name, nameLength, functionHelper)
+bool Parser::IsReservedName(const char * name, size_t nameLength) {
+  return IsReservedFunctionName(name, nameLength)
     || IsSpecialIdentifierName(name, nameLength);
 }
 

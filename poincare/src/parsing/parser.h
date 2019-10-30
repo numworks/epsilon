@@ -33,7 +33,7 @@ public:
   static bool IsReservedName(const char * name, size_t nameLength);
 
 private:
-  static bool IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper = nullptr);
+  static const Expression::FunctionHelper * const * GetReservedFunction(const char * name, size_t nameLength);
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
 
   Expression parseUntil(Token::Type stoppingType);

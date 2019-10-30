@@ -30,7 +30,7 @@ public:
   Expression parse();
   Status getStatus() const { return m_status; }
 
-  static bool IsReservedName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper = nullptr);
+  static bool IsReservedName(const char * name, size_t nameLength);
 
 private:
   static bool IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper = nullptr);

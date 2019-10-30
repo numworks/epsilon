@@ -49,9 +49,11 @@ make MODEL=n0110 epsilon_flash
 
 <!-- ## Contribute -->
 
-## Translations
+## Related repositories
 
-Everything is translated from French to English/Portuguese/Spanish/German with Google Translate; so, everything is translated, but you could come across translation errors. If so, please open an issue on GitHub, I will correct it :smiley:!
+* [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer)
+* [Omega Online Installer](https://github.com/Omega-Numworks/Online-Installer)
+* [Omega RPN](https://github.com/Omega-Numworks/Omega-RPN)
 
 ## Omega License
 

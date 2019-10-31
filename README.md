@@ -54,8 +54,8 @@ Important: Don't forget the `--recursive` tag, because Omega relies on submodule
 
 ## Related repositories
 
-* [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer)
-* [Omega WEB Installer](https://github.com/Omega-Numworks/Omega-WEB-Installer)
+* [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer) `BETA`
+* [Omega WEB Installer](https://github.com/Omega-Numworks/Omega-WEB-Installer) `BETA`
 * [Omega RPN](https://github.com/Omega-Numworks/Omega-RPN)
 
 ## Omega License

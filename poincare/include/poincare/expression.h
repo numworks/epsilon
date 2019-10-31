@@ -99,6 +99,7 @@ class Expression : public TreeHandle {
   friend class Tangent;
   friend class Trigonometry;
   friend class TrigonometryCheatTable;
+  friend class Unit;
 
   friend class AdditionNode;
   friend class DerivativeNode;

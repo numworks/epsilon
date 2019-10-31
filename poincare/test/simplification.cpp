@@ -108,7 +108,6 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("1+2", "3");
   assert_parsed_expression_simplify_to("1+2+3+4+5+6+7", "28");
   assert_parsed_expression_simplify_to("(0+0)", "0");
-  assert_parsed_expression_simplify_to("2+A", "A+2");
   assert_parsed_expression_simplify_to("1+2+3+4+5+A+6+7", "A+28");
   assert_parsed_expression_simplify_to("1+A+2+B+3", "A+B+6");
   assert_parsed_expression_simplify_to("-2+6", "4");
@@ -142,7 +141,6 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("3×A^4×B^x×B^2×(A^2+2)×2×1.2", "\u001236×A^6×B^\u0012x+2\u0013+72×A^4×B^\u0012x+2\u0013\u0013/5");
   assert_parsed_expression_simplify_to("A×(B+C)×(D+3)", "3×A×B+3×A×C+A×B×D+A×C×D");
   assert_parsed_expression_simplify_to("A/B", "A/B");
-  assert_parsed_expression_simplify_to("(A×B)^2", "A^2×B^2");
   assert_parsed_expression_simplify_to("(1/2)×A/B", "A/\u00122×B\u0013");
   assert_parsed_expression_simplify_to("1+2+3+4+5+6", "21");
   assert_parsed_expression_simplify_to("1-2+3-4+5-6", "-3");
@@ -168,7 +166,6 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("A^3×B×A^(-3)", "B");
   assert_parsed_expression_simplify_to("A^3×A^(-3)", "1");
   assert_parsed_expression_simplify_to("2^π×(1/2)^π", "1");
-  assert_parsed_expression_simplify_to("A^3×A^(-3)", "1");
   assert_parsed_expression_simplify_to("(x+1)×(x+2)", "x^2+3×x+2");
   assert_parsed_expression_simplify_to("(x+1)×(x-1)", "x^2-1");
   assert_parsed_expression_simplify_to("11π/(22π+11π)", "1/3");

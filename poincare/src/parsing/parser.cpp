@@ -18,8 +18,12 @@ Expression Parser::parse(Context * context) {
 }
 
 bool Parser::IsReservedName(const char * name, size_t nameLength) {
+  const Unit::Dimension * unitDimension = nullptr;
+  const Unit::Representative * unitRepresentative = nullptr;
+  const Unit::Prefix * unitPrefix = nullptr;
   return GetReservedFunction(name, nameLength) != nullptr
-    || IsSpecialIdentifierName(name, nameLength);
+    || IsSpecialIdentifierName(name, nameLength)
+    || Unit::CanParse(name, nameLength, &unitDimension, &unitRepresentative, &unitPrefix);
 }
 
 // Private
@@ -478,10 +482,17 @@ void Parser::parseIdentifier(Context * context, Expression & leftHandSide, Token
     return;
   }
   const Expression::FunctionHelper * const * functionHelper = GetReservedFunction(m_currentToken.text(), m_currentToken.length());
+  const Unit::Dimension * unitDimension = nullptr;
+  const Unit::Representative * unitRepresentative = nullptr;
+  const Unit::Prefix * unitPrefix = nullptr;
   if (functionHelper != nullptr) {
     parseReservedFunction(context, leftHandSide, functionHelper);
   } else if (IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length())) {
     parseSpecialIdentifier(context, leftHandSide);
+  } else if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
+        &unitDimension, &unitRepresentative, &unitPrefix))
+  {
+    leftHandSide = Unit::Builder(unitDimension, unitRepresentative, unitPrefix);
   } else {
     parseCustomIdentifier(context, leftHandSide, m_currentToken.text(), m_currentToken.length(), false);
   }

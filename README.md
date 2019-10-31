@@ -16,12 +16,12 @@ Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator
 ## Some new features
 - Adding symbolic calculation back into the calculator
 - An app for RPN
-- All of the molar masses for the elements (chemistry)
+- A periodic table app + all of the molar masses for the elements in the toolbox
 - More steps for brightness (16 instead of 5)
 - Different colors for the LED in exam mode
 - 32 KB Python heap instead of 16 KB
 
-The complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog)
+The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Features), and the complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog).
 
 ## Installation
 
@@ -56,6 +56,7 @@ Also, you can change the number of processes that run in parallel during the bui
 * [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer) `BETA`
 * [Omega WEB Installer](https://github.com/Omega-Numworks/Omega-WEB-Installer) `BETA`
 * [Omega RPN](https://github.com/Omega-Numworks/Omega-RPN)
+* [Omega Atom](https://github.com/Omega-Numworks/Omega-Atom)
 
 ## Omega License
 

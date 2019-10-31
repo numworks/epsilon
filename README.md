@@ -1,3 +1,4 @@
+
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega.png" /></p>
 
 <p align="center">
@@ -31,8 +32,7 @@ First of all, follow **step 1** [here](https://www.numworks.com/resources/engine
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 make MODEL=n0100 clean
-make MODEL=n0100
-make MODEL=n0100 app_flash
+make MODEL=n0100 -j4
 make MODEL=n0100 epsilon_flash
 ```
 
@@ -42,14 +42,13 @@ make MODEL=n0100 epsilon_flash
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
-make MODEL=n0110 clean
-make MODEL=n0110
-make MODEL=n0110 app_flash
-make MODEL=n0110 epsilon_flash
+make clean
+make -j4
+make epsilon_flash
 ```
 
 Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
-
+Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
 <!-- ## Contribute -->
 
 ## Related repositories
@@ -91,3 +90,4 @@ We welcome contributions. For smaller changes just open a pull request straight 
 ## License
 
 NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode). NumWorks is a registered trademark.
+

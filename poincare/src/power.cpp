@@ -895,15 +895,15 @@ Expression Power::denominator(ExpressionNode::ReductionContext reductionContext)
   Expression pow = clone();
   // If the power is of form x^(-y), denominator should be x^y
   Expression positiveIndex = pow.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(reductionContext);
-  if (!positiveIndex.isUninitialized()) {
-    // if y was -1, pow is now x^1, denominator is then only x
-    // we cannot shallowReduce the pow as it is not attached to its parent yet
-    if (positiveIndex.isRationalOne()) {
-      return pow.childAtIndex(0);
-    }
-    return pow;
+  if (positiveIndex.isUninitialized()) {
+    return Expression();
   }
-  return Expression();
+  // we cannot shallowReduce pow as it is not attached to its parent yet
+  // if y was -1, pow is now x^1, denominator is then only x
+  if (positiveIndex.isRationalOne()) {
+    return pow.childAtIndex(0);
+  }
+  return pow;
 }
 
 Expression Power::simplifyPowerPower(ExpressionNode::ReductionContext reductionContext) {

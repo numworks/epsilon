@@ -892,6 +892,9 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
 
 // Simplification
 Expression Power::denominator(ExpressionNode::ReductionContext reductionContext) const {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
+    return Expression();
+  }
   Expression pow = clone();
   // If the power is of form x^(-y), denominator should be x^y
   Expression positiveIndex = pow.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(reductionContext);

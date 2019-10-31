@@ -346,8 +346,31 @@ const ToolboxMessageTree chemistry[] = {
   ToolboxMessageTree::Node(I18n::Message::MolarMassesByAlpha, chemistryMolarMassesByAlpha)
 };
 
-const ToolboxMessageTree physics[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::NumberElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
+const ToolboxMessageTree UnitOfMesurement[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfLightTag, I18n::Message::SpeedOfLight, false, I18n::Message::SpeedOfLight),
+  ToolboxMessageTree::Leaf(I18n::Message::YearLightTag, I18n::Message::YearLight, false, I18n::Message::YearLight)
+};
+
+const ToolboxMessageTree Thermodynamics[] =  {
+  ToolboxMessageTree::Leaf(I18n::Message::BoltzmannTag,I18n::Message::Boltzmann, false, I18n::Message::Boltzmann),
+  ToolboxMessageTree::Leaf(I18n::Message::AvogadroTag, I18n::Message::Avogadro, false, I18n::Message::Avogadro),
+  ToolboxMessageTree::Leaf(I18n::Message::GasTag,I18n::Message::Gas, false, I18n::Message::Gas),
+  ToolboxMessageTree::Leaf(I18n::Message::ElectronMassTag, I18n::Message::ElectronMass, false, I18n::Message::ElectronMass),
+  ToolboxMessageTree::Leaf(I18n::Message::ProtonMassTag, I18n::Message::ProtonMass, false, I18n::Message::ProtonMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NeutronMassTag, I18n::Message::NeutronMass, false, I18n::Message::NeutronMass),
+};
+
+const ToolboxMessageTree Electromagnetism[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::CoulombTag, I18n::Message::Coulomb, false, I18n::Message::Coulomb),
+  ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permittivityTag, I18n::Message::Vacuum_permittivity, false, I18n::Message::Vacuum_permittivity),
+  ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permeabilityTag, I18n::Message::Vacuum_permeability, false, I18n::Message::Vacuum_permeability),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckTag, I18n::Message::Planck, false, I18n::Message::Planck)
+};
+
+const ToolboxMessageTree Physics[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitOfMesurement, UnitOfMesurement),
+  ToolboxMessageTree::Node(I18n::Message::Thermodynamics, Thermodynamics),
+  ToolboxMessageTree::Node(I18n::Message::Electromagnetism, Electromagnetism)
 };
 
 const ToolboxMessageTree menu[] = {
@@ -366,7 +389,9 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
   ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
   ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren),
-  ToolboxMessageTree::Node(I18n::Message::Chemistry, chemistry)};
+  ToolboxMessageTree::Node(I18n::Message::Chemistry, chemistry),
+  ToolboxMessageTree::Node(I18n::Message::Physics, Physics)
+  };
 
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 

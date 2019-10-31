@@ -172,8 +172,16 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     case 3:
       childIndex = (int)preferences->complexFormat();
       break;
-    case 7:
-      childIndex = (int)preferences->colorOfLED();
+      //after prompt
+    case 8:
+      if (!hasPrompt()) {
+        childIndex = (int)preferences->colorOfLED();
+      }
+      break;
+    case 9:
+      if (hasPrompt()) {
+        childIndex = (int)preferences->colorOfLED();
+      }
       break;
   }
   I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;

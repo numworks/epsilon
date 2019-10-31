@@ -103,6 +103,7 @@ public:
     MatrixTranspose,
     PredictionInterval,
     Matrix,
+    Unit,
     EmptyExpression
    };
 

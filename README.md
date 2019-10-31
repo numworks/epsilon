@@ -10,14 +10,15 @@
 
 ## About
 
-Omega is an extension to the Numworks Epsilon project, which will bring many features to the calculator. Omega is for people who want to add features to the calculator, but can not because it has been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator. But, it's fun so we add it on Omega! In short, Omega is a kind of Jailbreak.
+Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for people who want to add features to the calculator, but cannot because they have been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator, but it's fun, so we would add it into Omega! In short, Omega is a kind of Jailbreak on Epsilon.
 
 ## Some new features
-- Symbolic calculation
-- RPN app
-- All molar masses (chemistry)
-- More Brightness steps (16 instead of 5)
-- White, green, blue or yellow LED in exam mode
+- Adding symbolic calculation back into the calculator
+- An app for RPN
+- All of the molar masses for the elements (chemistry)
+- More steps for brightness (16 instead of 5)
+- Different colors for the LED in exam mode
+- 32 KB Python heap instead of 16 KB
 
 The complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog)
 
@@ -47,11 +48,15 @@ make MODEL=n0110 app_flash
 make MODEL=n0110 epsilon_flash
 ```
 
+Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
+
 <!-- ## Contribute -->
 
-## Translations
+## Related repositories
 
-Everything is translated from French to English/Portuguese/Spanish/German with Google Translate; so, everything is translated, but you could come across translation errors. If so, please open an issue on GitHub, I will correct it :smiley:!
+* [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer)
+* [Omega WEB Installer](https://github.com/Omega-Numworks/Omega-WEB-Installer)
+* [Omega RPN](https://github.com/Omega-Numworks/Omega-RPN)
 
 ## Omega License
 

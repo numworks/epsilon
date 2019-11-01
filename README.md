@@ -6,7 +6,7 @@
   <a href="https://github.com/Omega-Numworks/Omega/issues"><img alt="Issues" src="https://img.shields.io/github/issues/Omega-Numworks/Omega.svg?logo=git&style=for-the-badge" /></a>
   </br>
   <a href="https://github.com/numworks/epsilon"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/Epsilon-12.0.0-yellow?style=for-the-badge&logo=github" /></a>
-  <!--<a href="https://gitlab.com/joachim2lefournis/Omega/pipelines"><img alt="Pipeline" src="https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/lavaos?logo=gitlab&style=for-the-badge" /></a>-->
+  <!--<a href="https://gitlab.com/joachim2lefournis/Omega/pipelines"><img alt="Pipeline" src="https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/omega-master?logo=gitlab&style=for-the-badge" /></a>-->
 </p>
 
 ## About

@@ -1,6 +1,7 @@
 #include "controller.h"
 #include "app.h"
 #include "../apps_container.h"
+#include "../global_preferences.h"
 extern "C" {
 #include <assert.h>
 }
@@ -85,6 +86,13 @@ void Controller::didBecomeFirstResponder() {
 }
 
 void Controller::viewWillAppear() {
+  KDIonContext::sharedContext()->zoomInhibit = true;
+  KDIonContext::sharedContext()->updatePostProcessingEffects();
+}
+
+void Controller::viewDidDisappear() {
+  KDIonContext::sharedContext()->zoomInhibit = false;
+  KDIonContext::sharedContext()->updatePostProcessingEffects();
 }
 
 View * Controller::view() {

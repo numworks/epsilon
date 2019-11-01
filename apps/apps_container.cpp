@@ -146,6 +146,36 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
     }
   } else {
+    if (KDIonContext::sharedContext()->zoomEnabled) {
+      bool changedZoom = true;
+
+      if (event == Ion::Events::ShiftOne) {
+        KDIonContext::sharedContext()->zoomPosition = 0;
+      } else if (event == Ion::Events::ShiftTwo) {
+        KDIonContext::sharedContext()->zoomPosition = 1;
+      } else if (event == Ion::Events::ShiftThree) {
+        KDIonContext::sharedContext()->zoomPosition = 2;
+      } else if (event == Ion::Events::ShiftFour) {
+        KDIonContext::sharedContext()->zoomPosition = 3;
+      } else if (event == Ion::Events::ShiftFive) {
+        KDIonContext::sharedContext()->zoomPosition = 4;
+      } else if (event == Ion::Events::ShiftSix) {
+        KDIonContext::sharedContext()->zoomPosition = 5;
+      } else if (event == Ion::Events::ShiftSeven) {
+        KDIonContext::sharedContext()->zoomPosition = 6;
+      } else if (event == Ion::Events::ShiftEight) {
+        KDIonContext::sharedContext()->zoomPosition = 7;
+      } else if (event == Ion::Events::ShiftNine) {
+        KDIonContext::sharedContext()->zoomPosition = 8;
+      } else {
+        changedZoom = false;
+      }
+      if (changedZoom) {
+        KDIonContext::sharedContext()->updatePostProcessingEffects();
+        redrawWindow(true);
+        return true;
+      }
+    }
     didProcessEvent = Container::dispatchEvent(event);
   }
 
@@ -312,8 +342,8 @@ OnBoarding::PopUpController * AppsContainer::promptController() {
   return &m_promptController;
 }
 
-void AppsContainer::redrawWindow() {
-  m_window.redraw();
+void AppsContainer::redrawWindow(bool force) {
+  m_window.redraw(force);
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {

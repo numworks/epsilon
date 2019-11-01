@@ -6,6 +6,7 @@ app_settings_src = $(addprefix apps/settings/,\
   main_controller.cpp \
   settings_message_tree.cpp \
   sub_menu/about_controller.cpp \
+  sub_menu/accessibility_controller.cpp \
   sub_menu/display_mode_controller.cpp \
   sub_menu/exam_mode_controller.cpp \
   sub_menu/generic_sub_controller.cpp \

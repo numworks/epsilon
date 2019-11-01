@@ -106,7 +106,6 @@ private:
     uint16_t m_initialConditionSizes[2] __attribute__((packed));
 #endif
   };
-#pragma pack(pop)
 
   class SequenceModel : public Shared::ExpressionModel {
   public:

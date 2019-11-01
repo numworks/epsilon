@@ -14,7 +14,7 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_totalNumberOfCell = 4;
+  constexpr static int k_totalNumberOfCell = 5;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
 };
 

@@ -82,7 +82,6 @@ protected:
 #endif
     bool m_active;
   };
-#pragma pack(pop)
 private:
   RecordDataBuffer * recordData() const;
 };

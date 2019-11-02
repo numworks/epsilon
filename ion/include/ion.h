@@ -28,6 +28,7 @@ void ion_main(int argc, const char * const argv[]);
 namespace Ion {
 
 const char * serialNumber();
+const char * username();
 const char * softwareVersion();
 const char * customSoftwareVersion();
 const char * patchLevel();

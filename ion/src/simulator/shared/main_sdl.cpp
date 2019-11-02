@@ -14,6 +14,7 @@
 
 static bool argument_screen_only = false;
 static bool argument_fullscreen = false;
+static bool argument_unresizable = false;
 
 void Ion::Timing::msleep(uint32_t ms) {
   SDL_Delay(ms);
@@ -24,6 +25,7 @@ void print_help(char * program_name) {
   printf("Options:\n");
   printf("  -f, --fullscreen          Starts the emulator in fullscreen\n");
   printf("  -s, --screen-only         Disable the keyboard.\n");
+  printf("  -u, --unresizable         Disable resizing the window.\n");
   printf("  -h, --help                Show this help menu.\n");
 }
 
@@ -38,6 +40,8 @@ int main(int argc, char * argv[]) {
       argument_screen_only = true;
     } else if(strcmp(argv[i], "-f")==0 || strcmp(argv[i], "--fullscreen")==0) {
       argument_fullscreen = true;
+    } else if(strcmp(argv[i], "-u")==0 || strcmp(argv[i], "--unresizable")==0) {
+      argument_unresizable = true;
     }
   }
 
@@ -78,7 +82,7 @@ void init() {
     return;
   }
 
-  uint32_t sdl_window_args = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE;
+  uint32_t sdl_window_args = SDL_WINDOW_ALLOW_HIGHDPI | (argument_unresizable ? 0 : SDL_WINDOW_RESIZABLE);
 
   if (argument_fullscreen) {
     sdl_window_args = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN;

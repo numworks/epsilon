@@ -21,7 +21,7 @@ Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator
 - Different colors for the LED in exam mode
 - 32 KB Python heap instead of 16 KB
 
-The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Features), and the complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog).
+The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Main-features), and the complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog).
 
 ## Installation
 

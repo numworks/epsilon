@@ -1,23 +1,54 @@
 #include "main.h"
 #include "display.h"
 #include "platform.h"
-#if !EPSILON_SDL_SCREEN_ONLY
 #include "layout.h"
-#endif
 
 #include <assert.h>
+#include <string.h>
 #include <ion.h>
+#include <stdio.h>
 #include <ion/timing.h>
 #include <ion/events.h>
 #include <SDL.h>
 #include <vector>
 
+static bool argument_screen_only = false;
+static bool argument_fullscreen = false;
+static bool argument_unresizable = false;
+
 void Ion::Timing::msleep(uint32_t ms) {
   SDL_Delay(ms);
 }
 
+void print_help(char * program_name) {
+  printf("Usage: %s [options]\n", program_name);
+  printf("Options:\n");
+  printf("  -f, --fullscreen          Starts the emulator in fullscreen\n");
+  printf("  -s, --screen-only         Disable the keyboard.\n");
+  printf("  -u, --unresizable         Disable resizing the window.\n");
+  printf("  -h, --help                Show this help menu.\n");
+}
+
 int main(int argc, char * argv[]) {
   std::vector<const char *> arguments(argv, argv + argc);
+
+  for(int i = 1; i < argc; i++) {
+    if(strcmp(argv[i], "-h")==0 || strcmp(argv[i], "--help")==0) {
+      print_help(argv[0]);
+      return 0;
+    } else if(strcmp(argv[i], "-s")==0 || strcmp(argv[i], "--screen-only")==0) {
+      argument_screen_only = true;
+    } else if(strcmp(argv[i], "-f")==0 || strcmp(argv[i], "--fullscreen")==0) {
+      argument_fullscreen = true;
+    } else if(strcmp(argv[i], "-u")==0 || strcmp(argv[i], "--unresizable")==0) {
+      argument_unresizable = true;
+    }
+  }
+
+#if EPSILON_SDL_SCREEN_ONLY
+  // Still allow the use of EPSILON_SDL_SCREEN_ONLY.
+  argument_screen_only = true;
+#endif
 
   char * language = IonSimulatorGetLanguageCode();
   if (language != nullptr) {
@@ -41,13 +72,9 @@ namespace Main {
 
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;
-#if !EPSILON_SDL_SCREEN_ONLY
 static SDL_Texture * sBackgroundTexture = nullptr;
-#endif
 static bool sNeedsRefresh = false;
-#if EPSILON_SDL_SCREEN_ONLY
 static SDL_Rect sScreenRect;
-#endif
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -55,26 +82,33 @@ void init() {
     return;
   }
 
-  sWindow = SDL_CreateWindow(
-    "Epsilon",
-    SDL_WINDOWPOS_CENTERED,
-    SDL_WINDOWPOS_CENTERED,
+  uint32_t sdl_window_args = SDL_WINDOW_ALLOW_HIGHDPI | (argument_unresizable ? 0 : SDL_WINDOW_RESIZABLE);
+
+  if (argument_fullscreen) {
+    sdl_window_args = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN;
+  }
+
+  if (argument_screen_only) {
+    sWindow = SDL_CreateWindow(
+      "Epsilon",
+      SDL_WINDOWPOS_CENTERED,
+      SDL_WINDOWPOS_CENTERED,
+      Ion::Display::Width, Ion::Display::Height,
 #if EPSILON_SDL_SCREEN_ONLY
-    // When rendering the screen only, make a non-resizeable window that whose
-    // size matches the screen's
-    Ion::Display::Width,
-    Ion::Display::Height,
-    0 // Default flags: no high-dpi, not resizeable.
+      0
 #else
-    290, 555, // Otherwise use a default size that matches the whole calculator
-    SDL_WINDOW_ALLOW_HIGHDPI
-#if EPSILON_SDL_FULLSCREEN
-    | SDL_WINDOW_FULLSCREEN
-#else
-    | SDL_WINDOW_RESIZABLE
+      sdl_window_args
 #endif
-#endif
-  );
+    );
+  } else {
+    sWindow = SDL_CreateWindow(
+      "Epsilon",
+      SDL_WINDOWPOS_CENTERED,
+      SDL_WINDOWPOS_CENTERED,
+      290, 555,
+      sdl_window_args
+    );
+  }
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
@@ -88,9 +122,9 @@ void init() {
 
   Display::init(sRenderer);
 
-#if !EPSILON_SDL_SCREEN_ONLY
-  sBackgroundTexture = IonSimulatorLoadImage(sRenderer, "background.jpg");
-#endif
+  if (!argument_screen_only) {
+    sBackgroundTexture = IonSimulatorLoadImage(sRenderer, "background.jpg");
+  }
 
   relayout();
 }
@@ -101,19 +135,27 @@ void relayout() {
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
   SDL_RenderSetLogicalSize(sRenderer, windowWidth, windowHeight);
 
-#if EPSILON_SDL_SCREEN_ONLY
-  sScreenRect.x = 0;
-  sScreenRect.y = 0;
-  sScreenRect.w = windowWidth;
-  sScreenRect.h = windowHeight;
-#else
-  Layout::recompute(windowWidth, windowHeight);
-  SDL_Rect backgroundRect;
-  Layout::getBackgroundRect(&backgroundRect);
+  if (argument_screen_only) {
+    // Keep original aspect ration in screen_only mode.
+    float scale = (float)(Ion::Display::Width) / (float)(Ion::Display::Height);
+    if ((float)(windowHeight) * scale > float(windowWidth)) {
+      sScreenRect.w = windowWidth;
+      sScreenRect.h = (int)((float)(windowWidth) / scale);
+    } else {
+      sScreenRect.w = (int)((float)(windowHeight) * scale);
+      sScreenRect.h = windowHeight;
+    }
 
-  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
-  SDL_RenderPresent(sRenderer);
-#endif
+    sScreenRect.x = (windowWidth - sScreenRect.w) / 2;
+    sScreenRect.y = (windowHeight - sScreenRect.h) / 2;
+  } else {
+    Layout::recompute(windowWidth, windowHeight);
+    SDL_Rect backgroundRect;
+    Layout::getBackgroundRect(&backgroundRect);
+
+    SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
+    SDL_RenderPresent(sRenderer);
+  }
 
   setNeedsRefresh();
 }
@@ -126,19 +168,21 @@ void refresh() {
   if (!sNeedsRefresh) {
     return;
   }
-#if EPSILON_SDL_SCREEN_ONLY
-  Display::draw(sRenderer, &sScreenRect);
-#else
-  SDL_Rect screenRect;
-  Layout::getScreenRect(&screenRect);
-  SDL_Rect backgroundRect;
-  Layout::getBackgroundRect(&backgroundRect);
 
-  SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
-  SDL_RenderClear(sRenderer);
-  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
-  Display::draw(sRenderer, &screenRect);
-#endif
+  if (argument_screen_only) {
+    Display::draw(sRenderer, &sScreenRect);
+  } else {
+    SDL_Rect screenRect;
+    Layout::getScreenRect(&screenRect);
+    SDL_Rect backgroundRect;
+    Layout::getBackgroundRect(&backgroundRect);
+
+    SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
+    SDL_RenderClear(sRenderer);
+    SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
+    Display::draw(sRenderer, &screenRect);
+  }
+
   SDL_RenderPresent(sRenderer);
 
   IonSimulatorCallbackDidRefresh();

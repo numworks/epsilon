@@ -17,14 +17,10 @@ void IonSimulatorTelemetryInit();
 void IonSimulatorTelemetryEvent(const char * eventName);
 void IonSimulatorTelemetryDeinit();
 
-#if EPSILON_SDL_SCREEN_ONLY
-
 void IonSimulatorKeyboardKeyDown(int keyNumber);
 void IonSimulatorKeyboardKeyUp(int keyNumber);
 
 void IonSimulatorEventsPushEvent(int eventNumber);
-
-#endif
 
 void IonSimulatorCallbackDidRefresh();
 void IonSimulatorCallbackDidScanKeyboard();

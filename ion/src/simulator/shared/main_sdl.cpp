@@ -132,10 +132,18 @@ void relayout() {
   SDL_RenderSetLogicalSize(sRenderer, windowWidth, windowHeight);
 
   if (argument_screen_only) {
-    sScreenRect.x = 0;
-    sScreenRect.y = 0;
-    sScreenRect.w = windowWidth;
-    sScreenRect.h = windowHeight;
+    // Keep original aspect ration in screen_only mode.
+    float scale = (float)(Ion::Display::Width) / (float)(Ion::Display::Height);
+    if ((float)(windowHeight) * scale > float(windowWidth)) {
+      sScreenRect.w = windowWidth;
+      sScreenRect.h = (int)((float)(windowWidth) / scale);
+    } else {
+      sScreenRect.w = (int)((float)(windowHeight) * scale);
+      sScreenRect.h = windowHeight;
+    }
+
+    sScreenRect.x = (windowWidth - sScreenRect.w) / 2;
+    sScreenRect.y = (windowHeight - sScreenRect.h) / 2;
   } else {
     Layout::recompute(windowWidth, windowHeight);
     SDL_Rect backgroundRect;

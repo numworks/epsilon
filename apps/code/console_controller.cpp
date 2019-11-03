@@ -267,7 +267,9 @@ void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int
       }
     }
     ConsoleLineCell * selectedCell = (ConsoleLineCell *)(t->selectedCell());
-    selectedCell->reloadCell();
+    if (selectedCell) {
+      selectedCell->reloadCell();
+    }
   }
 }
 

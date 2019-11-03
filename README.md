@@ -32,7 +32,7 @@ First of all, follow **step 1** [here](https://www.numworks.com/resources/engine
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 make MODEL=n0100 clean
-make MODEL=n0100 USERNAME={Your name, max 15 characters} -j4
+make MODEL=n0100 USERNAME={Your name, max 15 characters; for spaces, type "\ "} -j4
 make MODEL=n0100 epsilon_flash
 ```
 
@@ -43,7 +43,7 @@ make MODEL=n0100 epsilon_flash
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 make clean
-make USERNAME={Your name, max 15 characters} -j4
+make USERNAME={Your name, max 15 characters; for spaces, type "\ "} -j4
 make epsilon_flash
 ```
 

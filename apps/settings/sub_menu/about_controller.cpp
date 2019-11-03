@@ -22,7 +22,11 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+#ifdef USERNAME
     if (selectedRow() == 1) {
+#else
+    if (selectedRow() == 0) {
+#endif
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
       if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
         myCell->setAccessoryText(Ion::softwareVersion());
@@ -31,7 +35,11 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       myCell->setAccessoryText(Ion::patchLevel());
       return true;
     }
+#ifdef USERNAME
     if (selectedRow() == 2) {
+#else
+    if (selectedRow() == 1) {
+#endif
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
       if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
         myCell->setAccessoryText("Public"); //Change for public/dev
@@ -60,13 +68,19 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
   static const char * messages[] = {
+#ifdef USERNAME
     Ion::username(),
+#endif
     Ion::softwareVersion(),
     Ion::customSoftwareVersion(),
     Ion::serialNumber(),
     Ion::fccId()
   };
+#ifdef USERNAME
   assert(index >= 0 && index < 5);
+#else
+  assert(index >= 0 && index < 4);
+#endif
   myCell->setAccessoryText(messages[index]);
 }
 

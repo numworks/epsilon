@@ -60,13 +60,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: numworks/setup-emscripten@v1
+        with:
+          sdk: latest-fastcomp
       - uses: actions/checkout@v1
-      - run: source $EMSDK/emsdk_env.sh && make -j2 PLATFORM=simulator TARGET=web
+      - run: make -j2 PLATFORM=simulator TARGET=web
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-simulator-web.zip
           path: output/release/simulator/web/simulator.zip
-      - run: source $EMSDK/emsdk_env.sh && make -j2 PLATFORM=simulator TARGET=web test.headless.js
+      - run: make -j2 PLATFORM=simulator TARGET=web test.headless.js
       - run: node output/release/simulator/web/test.headless.js
   build-simulator-linux:
     runs-on: ubuntu-latest

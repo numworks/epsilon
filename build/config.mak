@@ -4,7 +4,7 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 12.0.0
-EPSILON_CUSTOM_VERSION ?= 1.13.5-0
+EPSILON_CUSTOM_VERSION ?= 1.13.6-0
 # USERNAME ?= N/A
 # Valid values are "none", "update", "beta"
 EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings
@@ -25,7 +25,7 @@ include build/toolchain.$(TOOLCHAIN).mak
 
 SFLAGS += -DDEBUG=$(DEBUG)
 ifdef USERNAME
-  SFLAGS += -DUSERNAME=$(USERNAME)
+  SFLAGS += -DUSERNAME="$(USERNAME)"
 endif
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)
 SFLAGS += -DESCHER_LOG_EVENTS_BINARY=$(ESCHER_LOG_EVENTS_BINARY)

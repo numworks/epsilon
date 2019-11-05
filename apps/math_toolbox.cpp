@@ -364,13 +364,20 @@ const ToolboxMessageTree Electromagnetism[] = {
   ToolboxMessageTree::Leaf(I18n::Message::CoulombTag, I18n::Message::Coulomb, false, I18n::Message::Coulomb),
   ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permittivityTag, I18n::Message::Vacuum_permittivity, false, I18n::Message::Vacuum_permittivity),
   ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permeabilityTag, I18n::Message::Vacuum_permeability, false, I18n::Message::Vacuum_permeability),
-  ToolboxMessageTree::Leaf(I18n::Message::PlanckTag, I18n::Message::Planck, false, I18n::Message::Planck)
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckTag, I18n::Message::Planck, false, I18n::Message::Planck),
+  ToolboxMessageTree::Leaf(I18n::Message::ElementalChargeTag, I18n::Message::ElementalCharge, false, I18n::Message::ElementalCharge)
+};
+
+const ToolboxMessageTree Gravitation[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::GAccelerationTag, I18n::Message::GAcceleration, false, I18n::Message::GAcceleration),
+  ToolboxMessageTree::Leaf(I18n::Message::GConstantTag, I18n::Message::GConstant, false, I18n::Message::GConstant)
 };
 
 const ToolboxMessageTree Physics[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitOfMesurement, UnitOfMesurement),
   ToolboxMessageTree::Node(I18n::Message::Thermodynamics, Thermodynamics),
-  ToolboxMessageTree::Node(I18n::Message::Electromagnetism, Electromagnetism)
+  ToolboxMessageTree::Node(I18n::Message::Electromagnetism, Electromagnetism),
+  ToolboxMessageTree::Node(I18n::Message::Gravitation, Gravitation)
 };
 
 const ToolboxMessageTree menu[] = {

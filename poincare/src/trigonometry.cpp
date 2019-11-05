@@ -198,12 +198,12 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
 
     // reduce x^2
     res.childAtIndex(0).childAtIndex(1).shallowReduce(reductionContext);
-    // reduce 1+*x^2
+    // reduce 1+x^2
     res.childAtIndex(0).shallowReduce(reductionContext);
     if (e.type() == ExpressionNode::Type::Sine) {
       res = Multiplication::Builder(x, res);
       // reduce (1+x^2)^(-1/2)
-      res.childAtIndex(0).shallowReduce(reductionContext);
+      res.childAtIndex(1).shallowReduce(reductionContext);
     }
     e.replaceWithInPlace(res);
     // reduce (1+x^2)^(-1/2) or x*(1+x^2)^(-1/2)

@@ -127,14 +127,11 @@ Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionCont
     a = imag();
   }
   if (!a.isUninitialized()) {
-    ExpressionNode::Sign s = a.sign(reductionContext.context());
-    if (s == ExpressionNode::Sign::Positive) {
-      // Case 1: the expression is positive real
-      return a;
-    } else if (s == ExpressionNode::Sign::Negative) {
-      // Case 2: the argument is negative real
-      return a.setSign(ExpressionNode::Sign::Positive, reductionContext);
-    }
+    // norm = sign(a) * a
+    Expression signa = SignFunction::Builder(a.clone());
+    Expression norm = Multiplication::Builder(a, signa);
+    signa.shallowReduce(reductionContext);
+    return norm;
   }
   Expression n2 = squareNorm(reductionContext);
   Expression n =  SquareRoot::Builder(n2);

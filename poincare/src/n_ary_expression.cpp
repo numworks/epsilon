@@ -25,7 +25,7 @@ bool NAryExpressionNode::childAtIndexNeedsUserParentheses(const Expression & chi
 
 void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {
   Expression reference(this);
-  for (int i = reference.numberOfChildren()-1; i > 0; i--) {
+  for (int i = 1; i < reference.numberOfChildren(); i++) {
     bool isSorted = true;
     for (int j = 0; j < reference.numberOfChildren()-1; j++) {
       /* Warning: Matrix operations are not always commutative (ie,

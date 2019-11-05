@@ -604,6 +604,9 @@ QUIZ_CASE(poincare_simplication_trigonometry_functions) {
   // tan(asin)
   assert_parsed_expression_simplify_to("tan(asin(x))", "x/√(-x^2+1)", User, Degree);
   assert_parsed_expression_simplify_to("tan(asin(-x))", "-x/√(-x^2+1)", User, Degree);
+
+  // Mix
+  assert_parsed_expression_simplify_to("sin(atan(3/4))", "3/5", User, Degree);
 }
 
 QUIZ_CASE(poincare_simplication_hyperbolic_trigonometry_functions) {

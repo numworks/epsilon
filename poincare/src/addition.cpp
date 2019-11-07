@@ -94,7 +94,8 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionC
    * 1+R(2) --> R(2)+1 */
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext.context(), true);
 
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
     // Try to make the child i positive if any negative numeral factor is found
     Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(reductionContext);
     if (subtractant.isUninitialized())
@@ -113,6 +114,7 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionC
       /* CAUTION: we removed a child. So we need to decrement i to make sure
        * the next iteration is actually on the next child. */
       i--;
+      nbChildren--;
       Subtraction s = Subtraction::Builder(leftSibling, subtractant);
       /* We stole subtractant from this which replaced it by a ghost. We thus
        * need to put the subtraction at the previous index of subtractant, which

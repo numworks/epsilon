@@ -737,7 +737,7 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
 
 Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression e = shallowBeautify(reductionContext);
-  int nbChildren = e.numberOfChildren();
+  const int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     Expression child = e.childAtIndex(i);
     child = child.deepBeautify(reductionContext);

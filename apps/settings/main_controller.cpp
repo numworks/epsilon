@@ -17,8 +17,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_languageController(this, 13),
   m_accessibilityController(this),
   m_examModeController(this),
-  m_aboutController(this),
-  m_contributorsController(this)
+  m_aboutController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -67,7 +66,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-    if (model()->children(selectedRow())->label() == rowIndex == 1) {
+    if (model()->children(selectedRow())->label() == I18n::Message::DisplayMode) {
       subController = &m_displayModeController;
     } else if (model()->children(selectedRow())->label() == I18n::Message::Brightness || model()->children(selectedRow())->label() == I18n::Message::Language) {
       assert(false);
@@ -126,10 +125,10 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 4) {
+  if (model()->children(j)->label() == I18n::Message::Brightness) {
     return 1;
   }
-  if (hasPrompt() && j == 7) {
+  if (model()->children(j)->label() == I18n::Message::UpdatePopUp || model()->children(j)->label() == I18n::Message::BetaPopUp) {
     return 2;
   }
   return 0;
@@ -139,21 +138,22 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
-  myCell->setMessage(model()->children(index)->label());
+  I18n::Message thisLabel = model()->children(index)->label();
+  myCell->setMessage(thisLabel);
 
   //switch to irregular cell types
-  if (model()->children(index)->label() == I18n::Message::Brightness) {
+  if (thisLabel == I18n::Message::Brightness) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  if (model()->children(index)->label() == I18n::Message::Language) {
+  if (thisLabel == I18n::Message::Language) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-  if (hasPrompt() && (model()->children(index)->label() == I18n::Message::UpdatePopUp || model()->children(index)->label() == I18n::Message::BetaPopUp)) {
+  if (hasPrompt() && (thisLabel == I18n::Message::UpdatePopUp || thisLabel == I18n::Message::BetaPopUp)) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -163,7 +163,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   //add text for preferences
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
-  switch (model()->children(index)->label()) {
+  switch (thisLabel) {
     case I18n::Message::AngleUnit:
       childIndex = (int)preferences->angleUnit();
       break;
@@ -175,6 +175,8 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       break;
     case I18n::Message::ComplexFormat:
       childIndex = (int)preferences->complexFormat();
+      break;
+    default:
       break;
   }
   I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;

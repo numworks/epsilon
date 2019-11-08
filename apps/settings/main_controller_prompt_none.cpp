@@ -28,11 +28,11 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren, 3),
     SettingsMessageTree(I18n::Message::Brightness),
     SettingsMessageTree(I18n::Message::Language),
-    SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren, 1),
+    SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren, 2),
 #ifdef USERNAME
-    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 5),
+    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 6),
 #else
-    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 4),
+    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 5),
 #endif
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren, 6)};
 

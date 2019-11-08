@@ -2,6 +2,7 @@
 #define SETTINGS_EXAM_MODE_CONTROLLER_H
 
 #include "generic_sub_controller.h"
+#include "preferences_controller.h"
 
 namespace Settings {
 
@@ -14,7 +15,9 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  MessageTableCell m_cell;
+  constexpr static int k_totalNumberOfCell = 2;
+  MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
+  PreferencesController m_preferencesController;
 };
 
 }

@@ -36,4 +36,27 @@ public:
   constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight, YellowLight};
 };
 
+#define ATOM_APP_USE_PALETTE
+class AtomPalette {
+public:
+  constexpr static KDColor Unknown = KDColor::RGB24(0xeeeeee);
+  constexpr static KDColor AlkaliMetal = KDColor::RGB24(0xffaa00);
+  constexpr static KDColor AlkaliEarthMetal = KDColor::RGB24(0xf6f200);
+  constexpr static KDColor Lanthanide = KDColor::RGB24(0xffaa8b);
+  constexpr static KDColor Actinide = KDColor::RGB24(0xdeaacd);
+  constexpr static KDColor TransitionMetal = KDColor::RGB24(0xde999c);
+  constexpr static KDColor PostTransitionMetal = KDColor::RGB24(0x9cbaac);
+  constexpr static KDColor Metalloid = KDColor::RGB24(0x52ce8b);
+  constexpr static KDColor Halogen = KDColor::RGB24(0x00debd);
+  constexpr static KDColor ReactiveNonmetal = KDColor::RGB24(0x00ee00);
+  constexpr static KDColor NobleGas = KDColor::RGB24(0x8baaff);
+  
+  constexpr static KDColor TableLines = KDColor::RGB24(0x323532);
+  
+  constexpr static KDColor AtomColor[] = {
+    Unknown, AlkaliMetal, AlkaliEarthMetal, Lanthanide, Actinide, TransitionMetal,
+    PostTransitionMetal, Metalloid, Halogen, ReactiveNonmetal, NobleGas
+  };
+};
+
 #endif

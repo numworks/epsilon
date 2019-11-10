@@ -3,6 +3,7 @@
 
 #include "generic_sub_controller.h"
 #include "../../hardware_test/pop_up_controller.h"
+#include "contributors_controller.h"
 
 namespace Settings {
 
@@ -13,12 +14,15 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  int typeAtLocation(int i, int j) override;
 private:
 #ifdef USERNAME
-  constexpr static int k_totalNumberOfCell = 5;
+  constexpr static int k_totalNumberOfCell = 6;
 #else
-  constexpr static int k_totalNumberOfCell = 4;
+  constexpr static int k_totalNumberOfCell = 5;
 #endif
+  ContributorsController m_contributorsController;
+  MessageTableCellWithChevronAndMessage m_contributorsCell;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   HardwareTest::PopUpController m_hardwareTestPopUpController;
 };

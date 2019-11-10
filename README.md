@@ -47,6 +47,28 @@ make USERNAME="{Your name, max 15 characters}" -j4
 make epsilon_flash
 ```
 
+* Building the **web simulator** (works under linux):
+
+First, install emsdk :
+```
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest-fastcomp
+./emsdk activate latest-fastcomp
+source emsdk_env.sh
+```
+
+Then, compile Omega :
+```
+git clone --recursive https://github.com/Omega-Numworks/Omega.git
+cd Omega
+make clean
+make PLATFORM=simulator TARGET=web USERNAME="{Your name, max 15 characters}" -j4
+```
+
+The simulator is now in `output/release/simulator/web/simulator.zip`
+
+
 Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
 Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
 <!-- ## Contribute -->

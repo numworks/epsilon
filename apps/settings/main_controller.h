@@ -9,7 +9,6 @@
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
 #include "sub_menu/preferences_controller.h"
-#include "sub_menu/contributors_controller.h"
 
 namespace Settings {
 
@@ -28,12 +27,12 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
-private:
   static const SettingsMessageTree * model();
+private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 9;
+  constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
@@ -44,7 +43,6 @@ private:
   AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
-  ContributorsController m_contributorsController;
 };
 
 }

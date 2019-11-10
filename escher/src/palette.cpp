@@ -29,3 +29,17 @@ constexpr KDColor Palette::Brown;
 constexpr KDColor Palette::Purple;
 constexpr KDColor Palette::DataColor[];
 constexpr KDColor Palette::DataColorLight[];
+
+constexpr KDColor AtomPalette::Unknown;
+constexpr KDColor AtomPalette::AlkaliMetal;
+constexpr KDColor AtomPalette::AlkaliEarthMetal;
+constexpr KDColor AtomPalette::Lanthanide;
+constexpr KDColor AtomPalette::Actinide;
+constexpr KDColor AtomPalette::TransitionMetal;
+constexpr KDColor AtomPalette::PostTransitionMetal;
+constexpr KDColor AtomPalette::Metalloid;
+constexpr KDColor AtomPalette::Halogen;
+constexpr KDColor AtomPalette::ReactiveNonmetal;
+constexpr KDColor AtomPalette::NobleGas;
+constexpr KDColor AtomPalette::TableLines;
+constexpr KDColor AtomPalette::AtomColor[];

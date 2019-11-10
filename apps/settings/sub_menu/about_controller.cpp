@@ -20,35 +20,39 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   I18n::Message childLabel = m_messageTreeModel->children(selectedRow())->label();
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_messageTreeModel->label() == I18n::Message::About) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && selectedRow() == numberOfRows() - 1) {
     Container::activeApp()->displayModalViewController(&m_hardwareTestPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (selectedRow() == 0 + hasUsername()) {
-      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-      if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
-        myCell->setAccessoryText(Ion::softwareVersion());
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    if (event == Ion::Events::Right) {
+      if (childLabel == I18n::Message::Contributors) {
+        GenericSubController * subController = &m_contributorsController;
+        subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+        StackViewController * stack = stackController();
+        stack->push(subController);
         return true;
       }
-      myCell->setAccessoryText(Ion::patchLevel());
-      return true;
     }
-    if (selectedRow() == 1 + hasUsername()) {
-      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-      if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
-        myCell->setAccessoryText("Public"); //Change for public/dev
+    else {
+      if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::SoftwareVersion) {
+        MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+        if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
+          myCell->setAccessoryText(Ion::softwareVersion());
+          return true;
+        }
+        myCell->setAccessoryText(Ion::patchLevel());
         return true;
       }
-      myCell->setAccessoryText(Ion::customSoftwareVersion());
-      return true;
-    }
-    if (childLabel == I18n::Message::Contributors) {
-      GenericSubController * subController = &m_contributorsController;
-      subController->setMessageTreeModel(MainController::model()->children(aboutIndex)->children(selectedRow()));
-      StackViewController * stack = stackController();
-      stack->push(subController);
-      return true;
+      if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::CustomSoftwareVersion) {
+        MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+        if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
+          myCell->setAccessoryText("Public"); //Change for public/dev
+          return true;
+        }
+        myCell->setAccessoryText(Ion::customSoftwareVersion());
+        return true;
+      }
     }
     return false;
   }
@@ -68,19 +72,24 @@ int AboutController::reusableCellCount(int type) {
 
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  if (MainController)
-  MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-  static const char * messages[] = {
-#ifdef USERNAME
-    Ion::username(),
-#endif
-    Ion::softwareVersion(),
-    Ion::customSoftwareVersion(),
-    Ion::serialNumber(),
-    Ion::fccId()
-  };
   assert(index >= 0 && index < k_totalNumberOfCell);
-  myCell->setAccessoryText(messages[index]);
+  if (m_messageTreeModel->children(index)->label() == I18n::Message::Contributors) {
+    MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
+    myTextCell->setSubtitle(I18n::Message::Default);
+  }
+  else {
+    MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+    static const char * messages[] = {
+#ifdef USERNAME
+      Ion::username(),
+#endif
+      Ion::softwareVersion(),
+      Ion::customSoftwareVersion(),
+      Ion::serialNumber(),
+      Ion::fccId()
+    };
+    myCell->setAccessoryText(messages[index]);
+  }
 }
 
 }

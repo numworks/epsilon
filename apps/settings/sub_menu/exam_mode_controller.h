@@ -14,9 +14,10 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  int typeAtLocation(int i, int j) override;
 private:
-  constexpr static int k_totalNumberOfCell = 2;
-  MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
+  MessageTableCell m_examModeCell;
+  MessageTableCellWithChevronAndMessage m_ledCell;
   PreferencesController m_preferencesController;
 };
 

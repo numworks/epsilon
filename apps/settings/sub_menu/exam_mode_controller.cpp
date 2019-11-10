@@ -5,7 +5,6 @@
 #include <cmath>
 #include <poincare/preferences.h>
 #include <apps/i18n.h>
-#include <apps/settings/main_controller.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -14,11 +13,10 @@ namespace Settings {
 
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
-  m_preferencesController(this)
+  m_preferencesController(this),
+  m_examModeCell(I18n::Message::Default, KDFont::LargeFont),
+  m_ledCell(KDFont::LargeFont, KDFont::SmallFont)
 {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-  }
 }
 
 void ExamModeController::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -47,13 +45,23 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
 }
 
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
-  assert(type == 0);
-  assert(index >= 0 && index < k_totalNumberOfCell);
-  return &m_cells[index];
+  assert(index == 0);
+  if (type == 0) {
+    return &m_ledCell;
+  }
+  return &m_examModeCell;
 }
 
 int ExamModeController::reusableCellCount(int type) {
-  return k_totalNumberOfCell;
+  switch (type) {
+    case 0:
+      return 1;
+    case 1:
+      return 1;
+    default:
+      assert(false);
+      return 0;
+  }
 }
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -67,8 +75,20 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
   }
   if (thisLabel == I18n::Message::LEDColor) {
     MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
-    I18n::Message message = m_messageTreeModel->children(ledIndex)->children((int)preferences->colorOfLED())->label();
+    I18n::Message message = (I18n::Message) m_messageTreeModel->children(index)->children((int)preferences->colorOfLED())->label();
     myTextCell->setSubtitle(message);
+  }
+}
+
+int ExamModeController::typeAtLocation(int i, int j) {
+  switch (j) {
+    case 0:
+      return 0;
+    case 1:
+      return 1;
+    default:
+      assert(false);
+      return 0;
   }
 }
 

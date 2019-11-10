@@ -7,7 +7,8 @@ namespace Settings {
 
 AboutController::AboutController(Responder * parentResponder) :
   GenericSubController(parentResponder),
-  m_contributorsController(this)
+  m_contributorsController(this),
+  m_contributorsCell(KDFont::LargeFont, KDFont::SmallFont)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -25,16 +26,14 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    if (event == Ion::Events::Right) {
-      if (childLabel == I18n::Message::Contributors) {
-        GenericSubController * subController = &m_contributorsController;
-        subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
-        StackViewController * stack = stackController();
-        stack->push(subController);
-        return true;
-      }
+    if (childLabel == I18n::Message::Contributors) {
+      GenericSubController * subController = &m_contributorsController;
+      subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+      StackViewController * stack = stackController();
+      stack->push(subController);
+      return true;
     }
-    else {
+    if (!(event == Ion::Events::Right)) {
       if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::SoftwareVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
@@ -60,14 +59,31 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
 }
 
 HighlightCell * AboutController::reusableCell(int index, int type) {
-  assert(type == 0);
-  assert(index >= 0 && index < k_totalNumberOfCell);
-  return &m_cells[index];
+  assert(index >= 0);
+  if (type == 0) {
+    assert(index < k_totalNumberOfCell-1);
+    return &m_cells[index];
+  }
+  assert(index == 0);
+  if (type == 1) {
+    return &m_contributorsCell;
+  }
+}
+
+int AboutController::typeAtLocation(int i, int j) {
+  return (j == numberOfRows() - 1 ? 1 : 0);
 }
 
 int AboutController::reusableCellCount(int type) {
-  assert(type == 0);
-  return k_totalNumberOfCell;
+  switch (type) {
+    case 0:
+      return k_totalNumberOfCell-1;
+    case 1:
+      return 1;
+    default:
+      assert(false);
+      return 0;
+  }
 }
 
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {

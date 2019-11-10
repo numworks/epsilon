@@ -18,7 +18,8 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_accessibilityController(this),
   m_examModeController(this),
   m_aboutController(this),
-  m_contributorsController(this)
+  m_contributorsController(this),
+  m_symbolController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -80,6 +81,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_accessibilityController;
     } else if (rowIndex == 10 + hasPrompt()) {
       subController = &m_contributorsController;
+    } else if (rowIndex == 11 + hasPrompt()){
+      subController = &m_symbolController;
     } else {
       subController = &m_preferencesController;
     }

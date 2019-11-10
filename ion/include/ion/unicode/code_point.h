@@ -31,6 +31,7 @@ static constexpr CodePoint UCodePointRightSystemParenthesis   = 0x13; // Used fo
 
 static constexpr CodePoint UCodePointMiddleDot                = 0xb7;    // ·
 static constexpr CodePoint UCodePointMultiplicationSign       = 0xd7;    // ×
+static constexpr CodePoint UCodePointStar                     = 0x2a;    // *
 static constexpr CodePoint UCodePointGreekSmallLetterTheta    = 0x3b8;   // θ
 static constexpr CodePoint UCodePointGreekSmallLetterPi       = 0x3c0;   // π
 static constexpr CodePoint UCodePointLatinLetterSmallCapitalE = 0x1d07;  // ᴇ

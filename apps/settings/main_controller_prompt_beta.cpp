@@ -16,6 +16,7 @@ constexpr SettingsMessageTree s_modelAboutChildren[4] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_ledColorChildren[4] = {SettingsMessageTree(I18n::Message::ColorWhite), SettingsMessageTree(I18n::Message::ColorGreen), SettingsMessageTree(I18n::Message::ColorBlue), SettingsMessageTree(I18n::Message::ColorYellow)};
 constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
 constexpr SettingsMessageTree s_contributorsChildren[5] = {SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons), SettingsMessageTree(I18n::Message::JoachimLeFournis), SettingsMessageTree(I18n::Message::JeanBaptisteBoric), SettingsMessageTree(I18n::Message::MaximeFriess)};
+constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
 
 constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren, 3),
@@ -33,9 +34,10 @@ constexpr SettingsMessageTree s_modelMenu[] =
 #endif
     SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren, 4),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren, 6),
-    SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 5)};
+    SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 5),
+    SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren, 4)};
 
-constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 12);
+constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 13);
 
 I18n::Message MainController::promptMessage() const {
   return I18n::Message::BetaPopUp;

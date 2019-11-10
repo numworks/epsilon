@@ -14,6 +14,7 @@ app_settings_src = $(addprefix apps/settings/,\
   sub_menu/message_table_cell_with_editable_text_with_separator.cpp \
   sub_menu/preferences_controller.cpp \
 	sub_menu/contributors_controller.cpp \
+  sub_menu/symbol_controller.cpp \
 )
 
 app_src += $(app_settings_src)

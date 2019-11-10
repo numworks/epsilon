@@ -8,6 +8,8 @@ SAFE_HEAP_STORE \
 _IonEventsEmscriptenKeyDown \
 _IonEventsEmscriptenKeyUp \
 _IonEventsEmscriptenPushEvent \
+_IonSimulatorCallbackDidScanKeyboard \
+__Z8ion_mainiPKPKc \
 __Z8ion_mainiPPc \
 __ZN10Invocation7performEPv \
 __ZN11MicroPython20ExecutionEnvironment7runCodeEPKc \
@@ -108,7 +110,10 @@ EMFLAGS += --profiling-funcs
 EMFLAGS += -s ASSERTIONS=1
 EMFLAGS += -s SAFE_HEAP=1
 EMFLAGS += -s STACK_OVERFLOW_CHECK=1
+EMFLAGS += -s DEMANGLE_SUPPORT=1
 endif
+
+# EMFLAGS += -s ERROR_ON_UNDEFINED_SYMBOLS=0
 
 # Configure EMFLAGS
 EMFLAGS += -s WASM=0
@@ -120,4 +125,4 @@ EMSCRIPTEN_INIT_FILE ?= 0
 LDFLAGS += --memory-init-file $(EMSCRIPTEN_INIT_FILE)
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString", "Pointer_stringify"]'

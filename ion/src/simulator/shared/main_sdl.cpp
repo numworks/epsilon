@@ -122,9 +122,12 @@ void init() {
 
   Display::init(sRenderer);
 
+  // No need to load background in web simulator.
+  #ifndef __EMSCRIPTEN__
   if (!argument_screen_only) {
     sBackgroundTexture = IonSimulatorLoadImage(sRenderer, "background.jpg");
   }
+  #endif
 
   relayout();
 }

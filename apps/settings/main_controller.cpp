@@ -17,13 +17,8 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_languageController(this, 13),
   m_accessibilityController(this),
   m_examModeController(this),
-<<<<<<< HEAD
   m_aboutController(this),
-  m_contributorsController(this),
   m_symbolController(this)
-=======
-  m_aboutController(this)
->>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -82,13 +77,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_aboutController;
     } else if (model()->children(selectedRow())->label() == I18n::Message::Accessibility) {
       subController = &m_accessibilityController;
-<<<<<<< HEAD
-    } else if (rowIndex == 10 + hasPrompt()) {
-      subController = &m_contributorsController;
-    } else if (rowIndex == 11 + hasPrompt()){
+    } else if (model()->children(selectedRow())->label() == I18n::Message::SymbolMultiplication){
       subController = &m_symbolController;
-=======
->>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
     } else {
       subController = &m_preferencesController;
     }

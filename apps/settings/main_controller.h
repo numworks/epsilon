@@ -9,11 +9,7 @@
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
 #include "sub_menu/preferences_controller.h"
-<<<<<<< HEAD
-#include "sub_menu/contributors_controller.h"
 #include "sub_menu/symbol_controller.h"
-=======
->>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
 
 namespace Settings {
 
@@ -48,11 +44,7 @@ private:
   AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
-<<<<<<< HEAD
-  ContributorsController m_contributorsController;
   SymbolController m_symbolController;
-=======
->>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
 };
 
 }

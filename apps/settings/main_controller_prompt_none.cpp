@@ -20,11 +20,7 @@ constexpr SettingsMessageTree s_modelAboutChildren[6] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_modelAboutChildren[5] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 5)};
 #endif
 constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
-<<<<<<< HEAD
-constexpr SettingsMessageTree s_contributorsChildren[5] = {SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons), SettingsMessageTree(I18n::Message::JoachimLeFournis), SettingsMessageTree(I18n::Message::JeanBaptisteBoric), SettingsMessageTree(I18n::Message::MaximeFriess)};
 constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
-=======
->>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
 
 constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren, 3),
@@ -39,18 +35,10 @@ constexpr SettingsMessageTree s_modelMenu[] =
 #else
     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 5),
 #endif
-<<<<<<< HEAD
-    SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren, 4),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren, 6),
-    SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 5),
     SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren, 4)};
 
-constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 12);
-=======
-    SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren, 6)};
-
-constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 9);
->>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
+constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 10);
 
 I18n::Message MainController::promptMessage() const {
   return I18n::Message::Default;

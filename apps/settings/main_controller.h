@@ -9,8 +9,11 @@
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
 #include "sub_menu/preferences_controller.h"
+<<<<<<< HEAD
 #include "sub_menu/contributors_controller.h"
 #include "sub_menu/symbol_controller.h"
+=======
+>>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
 
 namespace Settings {
 
@@ -29,12 +32,12 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
-private:
   static const SettingsMessageTree * model();
+private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 9;
+  constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
@@ -45,8 +48,11 @@ private:
   AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
+<<<<<<< HEAD
   ContributorsController m_contributorsController;
   SymbolController m_symbolController;
+=======
+>>>>>>> 875276e017e7c07d03458029a1b7a8f16747ac11
 };
 
 }

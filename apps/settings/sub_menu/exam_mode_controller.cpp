@@ -25,7 +25,7 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   I18n::Message childLabel = m_messageTreeModel->children(selectedRow())->label();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         return false;

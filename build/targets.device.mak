@@ -71,20 +71,11 @@ $(BUILD_DIR)/bench.flash.$(EXE): $(call object_for,$(bench_src))
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).internal.bin
 
 .PHONY: binpack
-binpack:
-	rm -rf build/binpack
-	mkdir -p build/binpack
-	make clean
-	make -j8 $(BUILD_DIR)/flasher.light.bin
-	cp $(BUILD_DIR)/flasher.light.bin build/binpack
-	make clean
-	make -j8 $(BUILD_DIR)/bench.flash.bin
-	make -j8 $(BUILD_DIR)/bench.ram.bin
-	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin build/binpack
-	make clean
-	make -j8 $(BUILD_DIR)/epsilon.onboarding.update.two_binaries
-	cp $(BUILD_DIR)/epsilon.onboarding.update.internal.bin $(BUILD_DIR)/epsilon.onboarding.update.external.bin build/binpack
-	make clean
-	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.onboarding.internal.bin epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
-	cd build && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
-	rm -rf build/binpack
+binpack: $(BUILD_DIR)/flasher.light.bin $(BUILD_DIR)/epsilon.onboarding.two_binaries
+	rm -rf $(BUILD_DIR)/binpack
+	mkdir -p $(BUILD_DIR)/binpack
+	cp $(BUILD_DIR)/flasher.light.bin $(BUILD_DIR)/binpack
+	cp $(BUILD_DIR)/epsilon.onboarding.internal.bin $(BUILD_DIR)/epsilon.onboarding.external.bin $(BUILD_DIR)/binpack
+	cd $(BUILD_DIR) && for binary in flasher.light.bin epsilon.onboarding.internal.bin epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cd $(BUILD_DIR) && tar cvfz binpack-$(MODEL)-`git rev-parse HEAD | head -c 7`.tgz binpack/*
+

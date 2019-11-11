@@ -1,4 +1,5 @@
 
+
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega.png" /></p>
 
 <p align="center">
@@ -27,7 +28,7 @@ The main new features are listed [here](https://github.com/Omega-Numworks/Omega/
 
 First of all, follow **step 1** [here](https://www.numworks.com/resources/engineering/software/build/). Then:
 
-* For **n0100**:
+### For **n0100**:
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
@@ -38,7 +39,7 @@ make MODEL=n0100 epsilon_flash
 
 <!-- Alternatively, you can use [Omega Installer](https://github.com/Omega-Numworks/installer) `BETA` -->
 
-* For **n0110**:
+### For **n0110**:
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
@@ -47,7 +48,19 @@ make USERNAME="{Your name, max 15 characters}" -j4
 make epsilon_flash
 ```
 
-* Building the **web simulator** (works under linux):
+### Building **bin files**:
+
+These can be used to distribute omega [so that it can be flashed by anyone](https://ti-planet.github.io/webdfu_numworks/).
+```
+git clone --recursive https://github.com/Omega-Numworks/Omega.git
+cd Omega
+make clean
+make MODEL=n0100 USERNAME="" -j8
+make MODEL=n0100 USERNAME="" binpack -j8
+make USERNAME="" -j8
+make USERNAME="" binpack -j8
+```
+### Building the **web simulator** (works under linux):
 
 First, install emsdk :
 ```

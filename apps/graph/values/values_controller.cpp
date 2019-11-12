@@ -255,9 +255,10 @@ int ValuesController::absoluteColumnForValuesColumn(int column) {
   int valuesColumns = 0;
   int plotTypeIndex = 0;
   do {
-    abscissaColumns++;
     assert(plotTypeIndex < Shared::ContinuousFunction::k_numberOfPlotTypes);
-    valuesColumns += m_numberOfValuesColumnsForType[plotTypeIndex++];
+    const int numberOfValuesColumnsForType = m_numberOfValuesColumnsForType[plotTypeIndex++];
+    valuesColumns += numberOfValuesColumnsForType;
+    abscissaColumns += (numberOfValuesColumnsForType > 0);
   } while (valuesColumns <= column);
   return column + abscissaColumns;
 }

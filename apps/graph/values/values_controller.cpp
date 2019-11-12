@@ -237,10 +237,10 @@ int ValuesController::numberOfValuesColumns() {
 
 ContinuousFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
   int plotTypeIndex = 0;
-  while (plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes && *i >= numberOfColumnsForPlotType(plotTypeIndex)) {
+  while (*i >= numberOfColumnsForPlotType(plotTypeIndex)) {
     *i -= numberOfColumnsForPlotType(plotTypeIndex++);
+    assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
   }
-  assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
   return static_cast<ContinuousFunction::PlotType>(plotTypeIndex);
 }
 

@@ -237,14 +237,13 @@ void ValuesController::didChangeCell(int column, int row) {
   // the first row is never reloaded as it corresponds to title row
   assert(row > 0);
   // Conversion of coordinates from absolute table to values table
-  int valuesRow = valuesRowForAbsoluteRow(row);
-  if (m_firstMemoizedRow > valuesRow || valuesRow >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
+  int memoizedRow = valuesRowForAbsoluteRow(row) - m_firstMemoizedRow;
+  if (0 > memoizedRow || memoizedRow >= k_maxNumberOfDisplayableRows) {
     // The changed row is out of the memoized table
     return;
   }
 
   // Update the memoization of rows linked to the changed cell
-  int memoizedRow = valuesRow - m_firstMemoizedRow;
   int nbOfMemoizedColumns = numberOfMemoizedColumn();
   for (int i = column+1; i < column+numberOfColumnsForAbscissaColumn(column); i++) {
     int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;

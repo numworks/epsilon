@@ -291,10 +291,10 @@ void ValuesController::resetMemoization() {
 }
 
 char * ValuesController::memoizedBufferForCell(int i, int j) {
+  const int nbOfMemoizedColumns = numberOfMemoizedColumn();
   // Conversion of coordinates from absolute table to values table
   int valuesI = valuesColumnForAbsoluteColumn(i);
   int valuesJ = valuesRowForAbsoluteRow(j);
-  int nbOfMemoizedColumns = numberOfMemoizedColumn();
   /* Compute the required offset to apply to the memoized table in order to
    * display cell (i,j) */
   int offsetI = 0;
@@ -316,7 +316,7 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
     m_firstMemoizedColumn = m_firstMemoizedColumn + offsetI;
     m_firstMemoizedRow = m_firstMemoizedRow + offsetJ;
     // Shift already memoized cells
-    int numberOfMemoizedCell = k_maxNumberOfDisplayableRows*numberOfMemoizedColumn();
+    const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * nbOfMemoizedColumns;
     size_t moveLength = (numberOfMemoizedCell - absInt(offset))*valuesCellBufferSize()*sizeof(char);
     if (offset > 0 && offset < numberOfMemoizedCell) {
       memmove(memoizedBufferAtIndex(offset), memoizedBufferAtIndex(0), moveLength);

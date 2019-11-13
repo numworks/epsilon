@@ -4,6 +4,8 @@
 #include "events.h"
 
 #include <ion/events.h>
+#include <layout_events.h>
+
 #include <string.h>
 #include <stdio.h>
 

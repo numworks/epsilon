@@ -5,8 +5,10 @@
 #include <cmath>
 #include "../sequence_store.h"
 #include "../sequence_context.h"
+#include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Sequence {
 
@@ -45,6 +47,19 @@ void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequenc
       }
     }
   }
+  store.removeAll();
+}
+
+void check_sum_of_sequence_between_bounds(double result, double start, double end, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
+  Shared::GlobalContext globalContext;
+  SequenceStore store;
+  SequenceContext sequenceContext(&globalContext, &store);
+
+  Sequence * seq = addSequence(&store, type, definition, condition1, condition2);
+
+  double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, &sequenceContext), &globalContext);
+  quiz_assert(std::fabs(sum - result) < 0.00000001);
+
   store.removeAll();
 }
 
@@ -321,6 +336,12 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[2] = nullptr;
   conditions2[2] = nullptr;
   check_sequences_defined_by(results28, types, definitions, conditions1, conditions2);
+}
+
+QUIZ_CASE(sequence_sum_evaluation) {
+  check_sum_of_sequence_between_bounds(33.0, 3.0, 8.0, Sequence::Type::Explicit, "n", nullptr, nullptr);
+  check_sum_of_sequence_between_bounds(70.0, 2.0, 8.0, Sequence::Type::SingleRecurrence, "u(n)+2", "0", nullptr);
+  check_sum_of_sequence_between_bounds(92.0, 2.0, 7.0, Sequence::Type::DoubleRecurrence, "u(n)+u(n+1)+2", "0", "0");
 }
 
 }

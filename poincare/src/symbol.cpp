@@ -107,6 +107,15 @@ Expression SymbolNode::shallowReplaceReplaceableSymbols(Context * context) {
   return Symbol(this).shallowReplaceReplaceableSymbols(context);
 }
 
+ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
+  UTF8Decoder decoder(m_name);
+  decoder.nextCodePoint();
+  if (decoder.nextCodePoint() == UCodePointNull) {  // nextCodePoint asserts that the first character is non-null
+    return LayoutShape::OneLetter;
+  }
+  return LayoutShape::MoreLetters;
+}
+
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Symbol s(this);

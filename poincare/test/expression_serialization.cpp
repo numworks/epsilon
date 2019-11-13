@@ -81,6 +81,7 @@ QUIZ_CASE(poincare_serialization_decimal) {
   assert_expression_serialize_to(d10, "1.235ᴇ-1", ScientificMode, 4);
   assert_expression_serialize_to(d10, "123.5ᴇ-3", EngineeringMode, 4);
 
+  assert_expression_serialize_to(Decimal::Builder(0.25), "250ᴇ-3", EngineeringMode);
   assert_expression_serialize_to(Decimal::Builder(-1.23456789E30), "-1.23456789ᴇ30", ScientificMode, 14);
   assert_expression_serialize_to(Decimal::Builder(1.23456789E30), "1.23456789ᴇ30", ScientificMode, 14);
   assert_expression_serialize_to(Decimal::Builder(-1.23456789E-30), "-1.23456789ᴇ-30", ScientificMode, 14);

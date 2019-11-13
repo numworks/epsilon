@@ -625,18 +625,22 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    *                     --> tan(2)+tan(2)*[tan(2)^1/2]^(-1)/tan(2)
    *                     --> tan(2)^(3/2)+tan(2)^(3/2)*[tan(2)^1/2]^(-1)/tan(2)^3/2
    *                     --> ...
-   * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is an
-   * integer.
+   * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is -1.
    */
   if (baseType == ExpressionNode::Type::Power) {
     Power powerBase = static_cast<Power &>(base);
 
+    bool cInteger = indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger();
     bool applyRule = powerBase.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive // a > 0
-                     || (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger()); // c integer
+                     || cInteger; // c integer
+    bool cMinusOne = cInteger && static_cast<Rational &>(index).isMinusOne();
     /* If the complexFormat is real, we check that the inner power is defined
      * before applying the rule (a^b)^c -> a^(b*c). Otherwise, we return
-     * 'unreal' or we do nothing. */
-    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+     * 'unreal' or we do nothing.
+     * We escape this additional check if c = -1 for two reasons:
+     * - (a^b)^(-1) has to be reduced to avoid infinite loop discussed above;
+     * - if a^b is unreal, a^(-b) also. */
+    if (!cMinusOne && reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
       if (approximation.type() == ExpressionNode::Type::Unreal) {
         // The inner power is unreal, return "unreal"

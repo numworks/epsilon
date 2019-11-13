@@ -14,7 +14,11 @@
 #endif
 
 constexpr int kHeapSize = 131072;
+#if DEBUG
+constexpr int kStackSize = 32768*2; // In DEBUG mode, we increase the stack to be able to pass the tests
+#else
 constexpr int kStackSize = 32768;
+#endif
 
 char heap[kHeapSize];
 extern "C" {

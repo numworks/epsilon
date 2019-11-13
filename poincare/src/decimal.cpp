@@ -24,7 +24,7 @@ void removeZeroAtTheEnd(Integer * i, int minimalNumbersOfDigits = 1) {
   Integer minimum = Integer((int64_t)std::pow(10.0, minimalNumbersOfDigits-1));
   Integer minusMinimum = Integer(-(int64_t)std::pow(10.0, minimalNumbersOfDigits-1));
   IntegerDivision d = Integer::Division(*i, base);
-  while (d.remainder.isZero() && (Integer::NaturalOrder(*i, minimum) > 0 || Integer::NaturalOrder(*i, minusMinimum) < 0)) {
+  while (d.remainder.isZero() && (Integer::NaturalOrder(d.quotient, minimum) >= 0 || Integer::NaturalOrder(d.quotient, minusMinimum) <= 0)) {
     *i = d.quotient;
     d = Integer::Division(*i, base);
   }

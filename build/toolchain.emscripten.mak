@@ -8,7 +8,8 @@ SAFE_HEAP_STORE \
 _IonEventsEmscriptenKeyDown \
 _IonEventsEmscriptenKeyUp \
 _IonEventsEmscriptenPushEvent \
-__Z8ion_mainiPPc \
+_IonSimulatorCallbackDidScanKeyboard \
+__Z8ion_mainiPKPKc \
 __ZN10Invocation7performEPv \
 __ZN11MicroPython20ExecutionEnvironment7runCodeEPKc \
 __ZN13AppsContainer13dispatchEventEN3Ion6Events5EventE \

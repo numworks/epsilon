@@ -129,7 +129,7 @@ void ExpressionNode::setChildrenInPlace(Expression other) {
   Expression(this).defaultSetChildrenInPlace(other);
 }
 
-Expression ExpressionNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::denominator(ReductionContext reductionContext) const {
   return Expression();
 }
 

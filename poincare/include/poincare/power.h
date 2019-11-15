@@ -52,7 +52,7 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::RightOfPower; }
   int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
-  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  Expression denominator(ReductionContext reductionContext) const override;
   // Evaluation
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
@@ -82,7 +82,7 @@ private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Simplification
-  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
 
   Expression simplifyPowerPower(ExpressionNode::ReductionContext reductionContext);
   Expression simplifyPowerMultiplication(ExpressionNode::ReductionContext reductionContext);

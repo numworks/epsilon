@@ -342,7 +342,7 @@ protected:
    * Warning: this must be called on reduced expressions
    */
   Expression makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext);
-  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, complexFormat, angleUnit); }
+  Expression denominator(ExpressionNode::ReductionContext reductionContext) const { return node()->denominator(reductionContext); }
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);

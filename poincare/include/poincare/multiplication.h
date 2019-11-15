@@ -47,7 +47,7 @@ private:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
-  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  Expression denominator(ExpressionNode::ReductionContext reductionContext) const override;
 
   // Approximation
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
@@ -82,7 +82,7 @@ public:
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
-  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);
   }
@@ -94,8 +94,8 @@ private:
   void mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext);
   void factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext);
   Expression distributeOnOperandAtIndex(int index, ExpressionNode::ReductionContext reductionContext);
-  void addMissingFactors(Expression factor, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  void factorizeSineAndCosine(int i, int j, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  void addMissingFactors(Expression factor, ExpressionNode::ReductionContext reductionContext);
+  void factorizeSineAndCosine(int i, int j, ExpressionNode::ReductionContext reductionContext);
   static bool HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalBase(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2);
@@ -104,7 +104,7 @@ private:
   static const Expression CreateExponent(Expression e);
   /* Warning: mergeNegativePower doesnot always return  a multiplication:
    *      *(b^-1,c^-1) -> (bc)^-1 */
-  Expression mergeNegativePower(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression mergeNegativePower(ExpressionNode::ReductionContext reductionContext);
   static inline const Expression Base(const Expression e);
 };
 

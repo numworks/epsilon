@@ -145,7 +145,7 @@ Expression RationalNode::shallowBeautify(ReductionContext reductionContext) {
   return Rational(this).shallowBeautify();
 }
 
-Expression RationalNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression RationalNode::denominator(ReductionContext reductionContext) const {
   return Rational(this).denominator();
 }
 

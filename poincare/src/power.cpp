@@ -211,8 +211,8 @@ int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascend
   return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), ascending, canBeInterrupted);
 }
 
-Expression PowerNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return Power(this).denominator(context, complexFormat, angleUnit);
+Expression PowerNode::denominator(ReductionContext reductionContext) const {
+  return Power(this).denominator(reductionContext);
 }
 
 // Evaluation
@@ -849,7 +849,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
 Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   // Step 1: X^-y -> 1/(X->shallowBeautify)^y
-  Expression p = denominator(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  Expression p = denominator(reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
     Division d = Division::Builder(Rational::Builder(1), p);
@@ -891,11 +891,11 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
 // Private
 
 // Simplification
-Expression Power::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Power::denominator(ExpressionNode::ReductionContext reductionContext) const {
   // Clone the power
   Expression clone = Power::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
   // If the power is of form x^(-y), denominator should be x^y
-  Expression positiveIndex = clone.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User));
+  Expression positiveIndex = clone.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(reductionContext);
   if (!positiveIndex.isUninitialized()) {
     // if y was -1, clone is now x^1, denominator is then only x
     // we cannot shallowReduce the clone as it is not attached to its parent yet

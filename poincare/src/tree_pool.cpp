@@ -11,7 +11,7 @@
 
 namespace Poincare {
 
-TreePool * TreePool::SharedStaticPool;
+TreePool * TreePool::SharedStaticPool = nullptr;
 
 void TreePool::freeIdentifier(int identifier) {
   if (identifier >= 0 && identifier < MaxNumberOfNodes) {

@@ -62,10 +62,10 @@ inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Contex
   return Poincare::Expression::ParseAndSimplify(text, context, complexFormat, preferences->angleUnit(), symbolicComputation);
 }
 
-inline void Simplify(Poincare::Expression * e, Poincare::Context * context, bool symbolicComputation = true) {
+inline void Simplify(Poincare::Expression * e, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, bool symbolicComputation = true) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), *e, context);
-  *e = e->simplify(context, complexFormat, preferences->angleUnit(), symbolicComputation);
+  *e = e->simplify(context, complexFormat, preferences->angleUnit(), target, symbolicComputation);
 }
 
 inline void ParseAndSimplifyAndApproximate(const char * text, Poincare::Expression * simplifiedExpression, Poincare::Expression * approximateExpression, Poincare::Context * context, bool symbolicComputation = true) {

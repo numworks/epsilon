@@ -18,14 +18,14 @@ void Model::tidy() {
 Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   Expression e = expression(modelCoefficients);
   if (!e.isUninitialized()) {
-    PoincareHelpers::Simplify(&e, context);
+    PoincareHelpers::Simplify(&e, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   }
   return e;
 }
 
 double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
   Expression yExpression = Number::DecimalNumber(y);
-  PoincareHelpers::Simplify(&yExpression, context);
+  PoincareHelpers::Simplify(&yExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   Expression modelExpression = simplifiedExpression(modelCoefficients, context);
   double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, step, xMax, context, yExpression).x1();
   return result;

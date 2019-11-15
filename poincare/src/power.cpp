@@ -743,8 +743,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* Step 13: (a0+a1+...am)^n with n integer
-   *              -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome) */
+   *              -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
+   * We apply this rule only when the target is the User. Indeed, developing
+   * the multinome is likely to increase the numbers of operations and to
+   * lead to precision loss. */
   if (!letPowerAtRoot
+      && reductionContext.target() == ExpressionNode::ReductionTarget::User
       && indexType == ExpressionNode::Type::Rational
       && !static_cast<Rational &>(index).signedIntegerNumerator().isZero()
       && static_cast<Rational &>(index).isInteger()

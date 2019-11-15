@@ -196,7 +196,7 @@ public:
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowBeautify(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ virtual Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions. It depends on the "layout syle" of the on the right of the left expression */
   enum class LayoutShape {
     Decimal,

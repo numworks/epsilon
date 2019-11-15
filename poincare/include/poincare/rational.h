@@ -57,7 +57,7 @@ private:
   Expression shallowBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction; };
   Expression setSign(Sign s, ReductionContext reductionContext) override;
-  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  Expression denominator(ReductionContext reductionContext) const override;
   bool m_negative;
   uint8_t m_numberOfDigitsNumerator;
   uint8_t m_numberOfDigitsDenominator;

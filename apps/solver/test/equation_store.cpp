@@ -128,6 +128,11 @@ QUIZ_CASE(equation_solve) {
   const char * solutions11[] = {"\u0012\u0012√\u0012π^\u00122\u0013-2π+8√\u00125\u0013+9\u0013-π+1\u0013/\u00124\u0013\u0013", "\u0012\u0012-√\u0012π^\u00122\u0013-2π+8√\u00125\u0013+9\u0013-π+1\u0013/\u00124\u0013\u0013", "π^\u00122\u0013-2π+8√\u00125\u0013+9"}; // (√(π^2-2π+8√(5)+9)-π+1)/4, (-√(π^2-2π+8×√(5)+9)-π+1)/4, π^2-2π+8√(5)+9
   assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions11, 3);
 
+  // (x-3)^2
+  const char * equations21[] = {"(x-3)^2=0", 0};
+  const char * solutions21[] = {"3", "0"};
+  assert_equation_system_exact_solve_to(equations21, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions21, 2);
+
   // TODO
   // x^3 - 4x^2 + 6x - 24 = 0
   //const char * equations10[] = {"2×x^2-4×x+4=3", 0};
@@ -205,6 +210,11 @@ QUIZ_CASE(equation_solve_complex_format) {
   const char * equations4[] = {"x+√(-1)×√(-1)=0", 0};
   assert_equation_system_exact_solve_to(equations4,  EquationStore::Error::EquationUnreal, EquationStore::Type::LinearSystem, (const char **)variablesx, nullptr, 0);
 
+  // root(-8,3)*x+3 = 0 --> 3/2 in R
+  const char * equations5[] = {"root(-8,3)*x+3=0", 0};
+  const char * solutions5[] = {"\u0012\u00123\u0013/\u00122\u0013\u0013"};
+  assert_equation_system_exact_solve_to(equations5,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions5, 1);
+
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   // x+𝐢 = 0 --> x = -𝐢
   assert_equation_system_exact_solve_to(equations0,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0, 1);
@@ -224,6 +234,9 @@ QUIZ_CASE(equation_solve_complex_format) {
   const char * solutions4[] = {"1"};
   assert_equation_system_exact_solve_to(equations4,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions4, 1);
 
+  const char * solutions5Cartesain[] = {"-\u0012\u00123\u0013/\u00124\u0013\u0013+\u0012\u00123√\u00123\u0013\u0013/\u00124\u0013\u0013𝐢"}; //-3/4+(3√3/4)*𝐢
+  assert_equation_system_exact_solve_to(equations5,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions5Cartesain, 1);
+
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
   // x+𝐢 = 0 --> x = e^(-π/2×i)
   const char * solutions0Polar[] = {"ℯ^\u0012-\u0012\u0012π\u0013/\u00122\u0013\u0013𝐢\u0013"}; // ℯ^(-(π/2)𝐢)
@@ -239,6 +252,9 @@ QUIZ_CASE(equation_solve_complex_format) {
   // x^2-√(-1)=0
   const char * solutions3Polar[] = {"ℯ^\u0012-\u0012\u00123π\u0013/\u00124\u0013\u0013𝐢\u0013", "ℯ^\u0012\u0012\u0012π\u0013/\u00124\u0013\u0013𝐢\u0013", "4ℯ^\u0012\u0012\u0012π\u0013/\u00122\u0013\u0013𝐢\u0013"}; // ℯ^(-(3×π/4)𝐢)", "ℯ^((π/4)𝐢)", "4ℯ^((π/2)𝐢)
   assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3Polar, 3);
+
+  const char * solutions5Polar[] = {"\u0012\u00123\u0013/\u00122\u0013\u0013ℯ^\u0012\u0012\u00122π\u0013/\u00123\u0013\u0013𝐢\u0013"}; //3/2ℯ^\u0012\u00122π\u0012/3\u0013𝐢"};
+  assert_equation_system_exact_solve_to(equations5,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions5Polar, 1);
 
 }
 

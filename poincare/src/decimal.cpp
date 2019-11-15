@@ -16,15 +16,41 @@ namespace Poincare {
 
 static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
-void removeZeroAtTheEnd(Integer * i, int minimalNumbersOfDigits = 1) {
+void removeZeroAtTheEnd(Integer * i, int minimalNumbersOfDigits = -1) {
+  /* Remove the zeroes at the end of an integer, respecting the minimum number
+   * of digits asked for.
+   *
+   * For instance :
+   *
+   * i = 1000
+   * removeZeroAtTheEnd(&i, 2)
+   * assert(i==10)
+   *
+   * i = 1000
+   * removeZeroAtTheEnd(&i, -1)
+   * assert(i==1)
+   */
+
   if (i->isZero()) {
     return;
   }
+
+  /* If we check the number of digits, we want *i to stay outside of the
+   * interval ]-10^numberDigits; 10^numberDigits[. */
+  const bool shouldCheckMinimalNumberOfDigits = minimalNumbersOfDigits > 0;
+  Integer minimum = shouldCheckMinimalNumberOfDigits ?
+    Integer((int64_t)std::pow(10.0, minimalNumbersOfDigits-1)) :
+    Integer::Overflow(false);
+  Integer minusMinimum = shouldCheckMinimalNumberOfDigits ?
+    Integer(-(int64_t)std::pow(10.0, minimalNumbersOfDigits-1)) :
+    Integer::Overflow(false);
+
   Integer base = Integer(10);
-  Integer minimum = Integer((int64_t)std::pow(10.0, minimalNumbersOfDigits-1));
-  Integer minusMinimum = Integer(-(int64_t)std::pow(10.0, minimalNumbersOfDigits-1));
   IntegerDivision d = Integer::Division(*i, base);
-  while (d.remainder.isZero() && (Integer::NaturalOrder(*i, minimum) > 0 || Integer::NaturalOrder(*i, minusMinimum) < 0)) {
+  while (d.remainder.isZero()) {
+    if (shouldCheckMinimalNumberOfDigits && (Integer::NaturalOrder(d.quotient, minimum) < 0 && Integer::NaturalOrder(d.quotient, minusMinimum) > 0)) {
+      break;
+    }
     *i = d.quotient;
     d = Integer::Division(*i, base);
   }
@@ -136,7 +162,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     }
   }
   int exponentForEngineeringNotation = 0;
-  int minimalNumberOfMantissaDigits = 1;
+  int minimalNumberOfMantissaDigits = -1;
   bool removeZeroes = true;
   if (mode == Preferences::PrintFloatMode::Engineering) {
     exponentForEngineeringNotation = PrintFloat::EngineeringExponentFromBase10Exponent(exponent);

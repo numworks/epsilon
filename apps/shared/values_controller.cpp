@@ -237,14 +237,13 @@ void ValuesController::didChangeCell(int column, int row) {
   // the first row is never reloaded as it corresponds to title row
   assert(row > 0);
   // Conversion of coordinates from absolute table to values table
-  int valuesRow = valuesRowForAbsoluteRow(row);
-  if (m_firstMemoizedRow > valuesRow || valuesRow >= m_firstMemoizedRow + k_maxNumberOfDisplayableRows) {
+  int memoizedRow = valuesRowForAbsoluteRow(row) - m_firstMemoizedRow;
+  if (0 > memoizedRow || memoizedRow >= k_maxNumberOfDisplayableRows) {
     // The changed row is out of the memoized table
     return;
   }
 
   // Update the memoization of rows linked to the changed cell
-  int memoizedRow = valuesRow - m_firstMemoizedRow;
   int nbOfMemoizedColumns = numberOfMemoizedColumn();
   for (int i = column+1; i < column+numberOfColumnsForAbscissaColumn(column); i++) {
     int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
@@ -291,10 +290,10 @@ void ValuesController::resetMemoization() {
 }
 
 char * ValuesController::memoizedBufferForCell(int i, int j) {
+  const int nbOfMemoizedColumns = numberOfMemoizedColumn();
   // Conversion of coordinates from absolute table to values table
   int valuesI = valuesColumnForAbsoluteColumn(i);
   int valuesJ = valuesRowForAbsoluteRow(j);
-  int nbOfMemoizedColumns = numberOfMemoizedColumn();
   /* Compute the required offset to apply to the memoized table in order to
    * display cell (i,j) */
   int offsetI = 0;
@@ -316,7 +315,7 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
     m_firstMemoizedColumn = m_firstMemoizedColumn + offsetI;
     m_firstMemoizedRow = m_firstMemoizedRow + offsetJ;
     // Shift already memoized cells
-    int numberOfMemoizedCell = k_maxNumberOfDisplayableRows*numberOfMemoizedColumn();
+    const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * nbOfMemoizedColumns;
     size_t moveLength = (numberOfMemoizedCell - absInt(offset))*valuesCellBufferSize()*sizeof(char);
     if (offset > 0 && offset < numberOfMemoizedCell) {
       memmove(memoizedBufferAtIndex(offset), memoizedBufferAtIndex(0), moveLength);

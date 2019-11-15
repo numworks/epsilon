@@ -10,7 +10,6 @@ _IonEventsEmscriptenKeyUp \
 _IonEventsEmscriptenPushEvent \
 _IonSimulatorCallbackDidScanKeyboard \
 __Z8ion_mainiPKPKc \
-__Z8ion_mainiPPc \
 __ZN10Invocation7performEPv \
 __ZN11MicroPython20ExecutionEnvironment7runCodeEPKc \
 __ZN13AppsContainer13dispatchEventEN3Ion6Events5EventE \

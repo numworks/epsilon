@@ -237,10 +237,10 @@ int ValuesController::numberOfValuesColumns() {
 
 ContinuousFunction::PlotType ValuesController::plotTypeAtColumn(int * i) const {
   int plotTypeIndex = 0;
-  while (plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes && *i >= numberOfColumnsForPlotType(plotTypeIndex)) {
+  while (*i >= numberOfColumnsForPlotType(plotTypeIndex)) {
     *i -= numberOfColumnsForPlotType(plotTypeIndex++);
+    assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
   }
-  assert(plotTypeIndex < ContinuousFunction::k_numberOfPlotTypes);
   return static_cast<ContinuousFunction::PlotType>(plotTypeIndex);
 }
 
@@ -255,9 +255,10 @@ int ValuesController::absoluteColumnForValuesColumn(int column) {
   int valuesColumns = 0;
   int plotTypeIndex = 0;
   do {
-    abscissaColumns++;
     assert(plotTypeIndex < Shared::ContinuousFunction::k_numberOfPlotTypes);
-    valuesColumns += m_numberOfValuesColumnsForType[plotTypeIndex++];
+    const int numberOfValuesColumnsForType = m_numberOfValuesColumnsForType[plotTypeIndex++];
+    valuesColumns += numberOfValuesColumnsForType;
+    abscissaColumns += (numberOfValuesColumnsForType > 0);
   } while (valuesColumns <= column);
   return column + abscissaColumns;
 }

@@ -5,7 +5,8 @@ const char * MaxIntegerString(); // (2^32)^k_maxNumberOfDigits-1
 const char * OverflowedIntegerString(); // (2^32)^k_maxNumberOfDigits
 const char * BigOverflowedIntegerString(); // OverflowedIntegerString with a 2 on first digit
 
-constexpr Poincare::ExpressionNode::ReductionTarget System = Poincare::ExpressionNode::ReductionTarget::System;
+constexpr Poincare::ExpressionNode::ReductionTarget SystemForApproximation = Poincare::ExpressionNode::ReductionTarget::SystemForApproximation;
+constexpr Poincare::ExpressionNode::ReductionTarget SystemForAnalysis = Poincare::ExpressionNode::ReductionTarget::SystemForAnalysis;
 constexpr Poincare::ExpressionNode::ReductionTarget User = Poincare::ExpressionNode::ReductionTarget::User;
 constexpr Poincare::Preferences::AngleUnit Degree = Poincare::Preferences::AngleUnit::Degree;
 constexpr Poincare::Preferences::AngleUnit Radian = Poincare::Preferences::AngleUnit::Radian;
@@ -30,7 +31,7 @@ Poincare::Expression parse_expression(const char * expression, bool addParenthes
 
 // Simplification
 
-void assert_simplify(const char * expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian);
+void assert_simplify(const char * expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ExpressionNode::ReductionTarget target = User);
 
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = User, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, bool symbolicComputation = true);
 

@@ -115,7 +115,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 
 int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace) {
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
-  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
+  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForApproximation);
   m = m.rowCanonize(systemReductionContext, nullptr);
   int rank = m.numberOfRows();
   int i = rank-1;

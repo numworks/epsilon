@@ -276,7 +276,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), coefficients[0].clone(), coefficients[2].clone()));
-  delta = delta.simplify(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+  delta = delta.simplify(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), ExpressionNode::ReductionTarget::SystemForApproximation);
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined::Builder();
   }

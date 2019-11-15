@@ -131,11 +131,11 @@ port_src += $(addprefix python/port/,\
   builtins.c \
   helpers.c \
   mod/kandinsky/modkandinsky.cpp \
-  mod/kandinsky/modkandinsky_table.cpp \
+  mod/kandinsky/modkandinsky_table.c \
   mod/time/modtime.c \
   mod/time/modtime_table.c \
   mod/turtle/modturtle.cpp \
-  mod/turtle/modturtle_table.cpp \
+  mod/turtle/modturtle_table.c \
   mod/turtle/turtle.cpp \
   mphalport.c \
 )

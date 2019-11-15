@@ -47,7 +47,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
       m_expression = Undefined::Builder();
     } else {
       m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
-      PoincareHelpers::Simplify(&m_expression, context);
+      PoincareHelpers::Simplify(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
       // simplify might return an uninitialized Expression if interrupted
       if (m_expression.isUninitialized()) {
         m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));

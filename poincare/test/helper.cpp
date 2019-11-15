@@ -54,11 +54,11 @@ Poincare::Expression parse_expression(const char * expression, bool addParenthes
   return result;
 }
 
-void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
+void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, false);
   quiz_assert_print_if_failure(!e.isUninitialized(), expression);
-  e = e.simplify(&globalContext, complexFormat, angleUnit);
+  e = e.simplify(&globalContext, complexFormat, angleUnit, target);
   quiz_assert_print_if_failure(!(e.isUninitialized()), expression);
 }
 
@@ -68,7 +68,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
       if (target == ExpressionNode::ReductionTarget::User) {
         copy.simplifyAndApproximate(&copy, nullptr, context, complexFormat, angleUnit, symbolicComputation);
       } else {
-        copy = copy.simplify(context, complexFormat, angleUnit, symbolicComputation);
+        copy = copy.simplify(context, complexFormat, angleUnit, target, symbolicComputation);
       }
       if (copy.isUninitialized()) {
         return e;
@@ -81,7 +81,7 @@ template<typename T>
 void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, ExpressionNode::ReductionTarget::System, complexFormat, angleUnit, false, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
+  assert_parsed_expression_process_to(expression, approximation, ExpressionNode::ReductionTarget::SystemForApproximation, complexFormat, angleUnit, false, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
       return e.approximate<T>(context, complexFormat, angleUnit);
     }, numberOfDigits);
 }

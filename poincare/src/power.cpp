@@ -744,11 +744,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   /* Step 13: (a0+a1+...am)^n with n integer
    *              -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
-   * We apply this rule only when the target is the User. Indeed, developing
-   * the multinome is likely to increase the numbers of operations and to
-   * lead to precision loss. */
+   * We don't apply this rule when the target is the SystemForApproximation.
+   * Indeed, developing the multinome is likely to increase the numbers of
+   * operations and lead to precision loss. */
   if (!letPowerAtRoot
-      && reductionContext.target() == ExpressionNode::ReductionTarget::User
+      && reductionContext.target() != ExpressionNode::ReductionTarget::SystemForApproximation
       && indexType == ExpressionNode::Type::Rational
       && !static_cast<Rational &>(index).signedIntegerNumerator().isZero()
       && static_cast<Rational &>(index).isInteger()
@@ -871,12 +871,12 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
     return result;
   }
 
-  /* Optional Step 3: if the ReductionTarget is the System, turn a^(p/q) into
-   * (root(a, q))^p
+  /* Optional Step 3: if the ReductionTarget is the SystemForApproximation,
+   * turn a^(p/q) into (root(a, q))^p
    * Indeed, root(a, q) can have a real root which is not the principale angle
    * but that we want to return in real complex format. This special case is
    * handled in NthRoot approximation but not in Power approximation. */
-  if (reductionContext.target()  == ExpressionNode::ReductionTarget::System && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
+  if (reductionContext.target() != ExpressionNode::ReductionTarget::User && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     Integer p = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
     Integer q = childAtIndex(1).convert<Rational>().integerDenominator();
     Expression nthRoot = q.isOne() ? childAtIndex(0) : NthRoot::Builder(childAtIndex(0), Rational::Builder(q));

@@ -311,7 +311,7 @@ QUIZ_CASE(poincare_preperties_get_variables) {
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, false);
-  e = e.reduce(&globalContext, complexFormat, angleUnit);
+  e = e.reduce(&globalContext, complexFormat, angleUnit, SystemForAnalysis);
   Expression coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
   int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, &globalContext, complexFormat, Radian);
   for (int i = 0; i <= d; i++) {

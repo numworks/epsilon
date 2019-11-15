@@ -354,7 +354,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   Multiplication commonDenominator = Multiplication::Builder();
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression childI = childAtIndex(i);
-    Expression currentDenominator = childI.denominator(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    Expression currentDenominator = childI.denominator(reductionContext);
     if (!currentDenominator.isUninitialized()) {
       if (currentDenominator.recursivelyMatches(Expression::IsRandom, reductionContext.context(), true)) {
         // Remove "random" factors
@@ -364,7 +364,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
         continue;
       }
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
-      commonDenominator.addMissingFactors(currentDenominator, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      commonDenominator.addMissingFactors(currentDenominator, reductionContext);
     }
   }
   if (commonDenominator.numberOfChildren() == 0) {

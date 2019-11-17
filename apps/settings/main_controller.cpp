@@ -12,8 +12,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
-  m_preferencesController(this),
-  m_displayModeController(this, inputEventHandlerDelegate),
+  m_mathOptionsController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
   m_accessibilityController(this),
   m_examModeController(this),
@@ -66,9 +65,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-    if (model()->children(selectedRow())->label() == I18n::Message::DisplayMode) {
-      subController = &m_displayModeController;
-    } else if (model()->children(selectedRow())->label() == I18n::Message::Brightness || model()->children(selectedRow())->label() == I18n::Message::Language) {
+    if (model()->children(selectedRow())->label() == I18n::Message::Brightness || model()->children(selectedRow())->label() == I18n::Message::Language) {
       assert(false);
     } else if (model()->children(selectedRow())->label() == I18n::Message::ExamMode) {
       subController = &m_examModeController;
@@ -76,8 +73,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_aboutController;
     } else if (model()->children(selectedRow())->label() == I18n::Message::Accessibility) {
       subController = &m_accessibilityController;
-    } else {
-      subController = &m_preferencesController;
+    } else if (model()->children(selectedRow())->label() == I18n::Message::MathOptions) {
+      subController = &m_mathOptionsController;
     }
     subController->setMessageTreeModel(model()->children(selectedRow()));
     StackViewController * stack = stackController();
@@ -136,7 +133,6 @@ int MainController::typeAtLocation(int i, int j) {
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
   I18n::Message thisLabel = model()->children(index)->label();
   myCell->setMessage(thisLabel);
@@ -159,28 +155,6 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
-
-  //add text for preferences
-  MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
-  int childIndex = -1;
-  switch (thisLabel) {
-    case I18n::Message::AngleUnit:
-      childIndex = (int)preferences->angleUnit();
-      break;
-    case I18n::Message::DisplayMode:
-      childIndex = (int)preferences->displayMode();
-      break;
-    case I18n::Message::EditionMode:
-      childIndex = (int)preferences->editionMode();
-      break;
-    case I18n::Message::ComplexFormat:
-      childIndex = (int)preferences->complexFormat();
-      break;
-    default:
-      break;
-  }
-  I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
-  myTextCell->setSubtitle(message);
 }
 
 void MainController::viewWillAppear() {

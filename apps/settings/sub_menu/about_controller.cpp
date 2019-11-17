@@ -65,9 +65,7 @@ HighlightCell * AboutController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-  if (type == 1) {
-    return &m_contributorsCell;
-  }
+  return &m_contributorsCell;
 }
 
 int AboutController::typeAtLocation(int i, int j) {

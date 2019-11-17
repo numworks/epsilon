@@ -18,30 +18,26 @@ SymbolController::SymbolController(Responder * parentResponder) :
 bool SymbolController::handleEvent(Ion::Events::Event event) {
   Preferences * preferences = Preferences::sharedPreferences();
   Poincare::Preferences::SymbolMultiplication symbolofMultiplication = preferences->symbolofMultiplication();
-  bool autoSymbol = (int)preferences->autoSymbol(); 
   if (event == Ion::Events::OK || event == Ion::Events::EXE){
     switch(selectedRow()){
       case 0:
         {
           symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Cross;
-          autoSymbol = false;
           break;
         }
       case 1:
         {
           symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::MiddleDot;
-          autoSymbol = false;
           break;
         }
       case 2:
         {
           symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Star;
-          autoSymbol = false;
           break;
         }
       case 3:
         {
-          autoSymbol = !autoSymbol;
+          symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Auto;
           break;
         }
       default:
@@ -50,7 +46,6 @@ bool SymbolController::handleEvent(Ion::Events::Event event) {
         }
     }
     preferences->setSymbolMultiplication(symbolofMultiplication);
-    autoSymbol ? preferences->SetAutoSymbol(Poincare::Preferences::AutoSymbol::True) : preferences->SetAutoSymbol(Poincare::Preferences::AutoSymbol::False);
     m_selectableTableView.reloadData();
     return true;
   } else {
@@ -82,13 +77,10 @@ void SymbolController::willDisplayCellForIndex(HighlightCell * cell, int index) 
 
   Preferences * preferences = Preferences::sharedPreferences();
   Poincare::Preferences::SymbolMultiplication symbolofMultiplication = preferences->symbolofMultiplication();
-  bool autoSymbol = (int)preferences->autoSymbol(); 
 
   if (index == 0) {
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    if(autoSymbol == true){
-      mySwitch->setState(false);
-    } else if(symbolofMultiplication == Poincare::Preferences::SymbolMultiplication::Cross){
+    if(symbolofMultiplication == Poincare::Preferences::SymbolMultiplication::Cross){
       mySwitch->setState(true);
     } else {
       mySwitch->setState(false);
@@ -96,9 +88,7 @@ void SymbolController::willDisplayCellForIndex(HighlightCell * cell, int index) 
   }
   else if (index == 1) {
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    if(autoSymbol == true){
-      mySwitch->setState(false);
-    } else if(symbolofMultiplication == Poincare::Preferences::SymbolMultiplication::MiddleDot){
+    if(symbolofMultiplication == Poincare::Preferences::SymbolMultiplication::MiddleDot){
       mySwitch->setState(true);
     } else {
       mySwitch->setState(false);
@@ -106,9 +96,7 @@ void SymbolController::willDisplayCellForIndex(HighlightCell * cell, int index) 
   }
   else if (index == 2) {
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    if(autoSymbol == true){
-      mySwitch->setState(false);
-    } else if (symbolofMultiplication == Poincare::Preferences::SymbolMultiplication::Star){
+    if (symbolofMultiplication == Poincare::Preferences::SymbolMultiplication::Star){
       mySwitch->setState(true);
     } else {
       mySwitch->setState(false);
@@ -116,7 +104,7 @@ void SymbolController::willDisplayCellForIndex(HighlightCell * cell, int index) 
   }
   else if (index == 3){
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    if(autoSymbol == true){
+    if(symbolofMultiplication == Poincare::Preferences::SymbolMultiplication::Auto){
       mySwitch->setState(true);
     } else {
       mySwitch->setState(false);

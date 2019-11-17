@@ -45,11 +45,8 @@ public:
   enum class SymbolMultiplication {
     Cross = 0,
     MiddleDot = 1,
-    Star = 2
-  };
-  enum class AutoSymbol{
-    False = 0,
-    True = 1
+    Star = 2,
+    Auto = 3
   };
   Preferences();
   static Preferences * sharedPreferences();
@@ -67,8 +64,6 @@ public:
   void setColorOfLED(LEDColor color) { m_colorOfLED = color; }
   SymbolMultiplication symbolofMultiplication() const {return m_symbolMultiplication;}
   void setSymbolMultiplication(SymbolMultiplication symbolofMultiplication) {m_symbolMultiplication = symbolofMultiplication;}
-  AutoSymbol autoSymbol() const {return m_autoSymbol;}
-  void SetAutoSymbol(AutoSymbol autoSymbol) {m_autoSymbol = autoSymbol;}
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
@@ -76,8 +71,7 @@ private:
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
   LEDColor m_colorOfLED;
-  SymbolMultiplication m_symbolMultiplication;
-  AutoSymbol m_autoSymbol;
+  SymbolMultiplication m_symbolMultiplication; 
 };
 
 }

@@ -166,7 +166,7 @@ CodePoint MultiplicationNode::operatorSymbol() const {
    * × --> 2
    * * --> 3 */
   int sign = -1;
-  if(preferences->autoSymbol() == Poincare::Preferences::AutoSymbol::True){
+  if(preferences->symbolofMultiplication() == Poincare::Preferences::SymbolMultiplication::Auto){
       for (int i = 0; i < numberOfChildren() - 1; i++) {
       /* The operator symbol must be the same for all operands of the multiplication.
       * If one operator has to be '×', they will all be '×'. Idem for '·'. */

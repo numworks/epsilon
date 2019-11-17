@@ -49,6 +49,7 @@ bool SymbolController::handleEvent(Ion::Events::Event event) {
     preferences->setSymbolMultiplication(symbolofMultiplication);
     autoSymbol ? preferences->SetAutoSymbol(Poincare::Preferences::AutoSymbol::True) : preferences->SetAutoSymbol(Poincare::Preferences::AutoSymbol::False);
     m_selectableTableView.reloadData();
+    return true;
   } else {
     return GenericSubController::handleEvent(event);
   }
@@ -87,7 +88,6 @@ void SymbolController::willDisplayCellForIndex(HighlightCell * cell, int index) 
     } else {
       mySwitch->setState(false);
     }
-    //mySwitch->setState(KDIonContext::sharedContext()->invertEnabled);
   }
   else if (index == 1) {
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
@@ -96,7 +96,6 @@ void SymbolController::willDisplayCellForIndex(HighlightCell * cell, int index) 
     } else {
       mySwitch->setState(false);
     }
-    //mySwitch->setState(KDIonContext::sharedContext()->zoomEnabled);
   }
   else if (index == 2) {
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
@@ -105,7 +104,6 @@ void SymbolController::willDisplayCellForIndex(HighlightCell * cell, int index) 
     } else {
       mySwitch->setState(false);
     }
-    //mySwitch->setState(KDIonContext::sharedContext()->gammaEnabled);
   }
   else if (index == 3){
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();

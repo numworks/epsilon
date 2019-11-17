@@ -77,8 +77,8 @@ source emsdk_env.sh
 Then, compile Omega :
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
-git checkout omega-master
 cd Omega
+git checkout omega-master
 make clean
 make PLATFORM=simulator TARGET=web USERNAME="{Your name, max 15 characters}" -j4
 ```

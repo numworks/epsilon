@@ -24,16 +24,19 @@ bool SymbolController::handleEvent(Ion::Events::Event event) {
       case 0:
         {
           symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Cross;
+          autoSymbol = false;
           break;
         }
       case 1:
         {
           symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::MiddleDot;
+          autoSymbol = false;
           break;
         }
       case 2:
         {
           symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Star;
+          autoSymbol = false;
           break;
         }
       case 3:

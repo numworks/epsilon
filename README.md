@@ -32,6 +32,7 @@ First of all, follow **step 1** [here](https://www.numworks.com/resources/engine
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
+git checkout omega-master
 make MODEL=n0100 clean
 make MODEL=n0100 USERNAME="{Your name, max 15 characters}" -j4
 make MODEL=n0100 epsilon_flash
@@ -43,6 +44,7 @@ make MODEL=n0100 epsilon_flash
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
+git checkout omega-master
 make clean
 make USERNAME="{Your name, max 15 characters}" -j4
 make epsilon_flash
@@ -54,6 +56,7 @@ These can be used to distribute omega [so that it can be flashed by anyone](http
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
+git checkout omega-master
 make clean
 make MODEL=n0100 USERNAME="" -j8
 make MODEL=n0100 USERNAME="" binpack -j8
@@ -74,6 +77,7 @@ source emsdk_env.sh
 Then, compile Omega :
 ```
 git clone --recursive https://github.com/Omega-Numworks/Omega.git
+git checkout omega-master
 cd Omega
 make clean
 make PLATFORM=simulator TARGET=web USERNAME="{Your name, max 15 characters}" -j4
@@ -84,7 +88,6 @@ The simulator is now in `output/release/simulator/web/simulator.zip`
 
 Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
 Also, you can change the number of processes that run in parallel during the build by changing the value of the `-j` flag.
-<!-- ## Contribute -->
 
 ## Related repositories
 

@@ -5,10 +5,9 @@
 #include "settings_message_tree.h"
 #include "sub_menu/about_controller.h"
 #include "sub_menu/accessibility_controller.h"
-#include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
-#include "sub_menu/preferences_controller.h"
+#include "sub_menu/math_options_controller.h"
 
 namespace Settings {
 
@@ -32,13 +31,12 @@ private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 7;
+  constexpr static int k_numberOfSimpleChevronCells = 5;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
   SelectableTableView m_selectableTableView;
-  PreferencesController m_preferencesController;
-  DisplayModeController m_displayModeController;
+  MathOptionsController m_mathOptionsController;
   LanguageController m_languageController;
   AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;

@@ -12,7 +12,7 @@
 
 ## About
 
-Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for people who want to add features to the calculator, but cannot because they have been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator, but it's fun, so we would add it into Omega! In short, Omega is a kind of Jailbreak on Epsilon.
+Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for people who want to add features to the calculator, but cannot because they have been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator, but it's fun, so we would add it into Omega!
 
 ## Some new features
 - Adding symbolic calculation back into the calculator

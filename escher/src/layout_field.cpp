@@ -139,6 +139,8 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     m_contentView.cursor()->addEmptyTenPowerLayout();
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
     m_contentView.cursor()->addEmptyMatrixLayout();
+  } else if((strcmp(text, Ion::Events::Multiplication.text())) == 0){
+    m_contentView.cursor()->addMultiplicationPointLayout();
   } else {
     Expression resultExpression = Expression::Parse(text);
     if (resultExpression.isUninitialized()) {

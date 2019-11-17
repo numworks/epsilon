@@ -11,9 +11,10 @@ constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
 constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
 
 //sub-menus
-constexpr SettingsMessageTree s_modelMathOptionsChildren[4] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren, 3), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren, 4), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren, 2), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren, 3)};
+constexpr SettingsMessageTree s_modelMathOptionsChildren[5] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren, 3), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren, 4), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren, 2), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren, 3), SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren, 4)};
 constexpr SettingsMessageTree s_modelExamChildren[2] = {SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren, 4), SettingsMessageTree(I18n::Message::ActivateExamMode)};
 constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
 #ifdef USERNAME
@@ -23,7 +24,7 @@ constexpr SettingsMessageTree s_modelAboutChildren[5] = {SettingsMessageTree(I18
 #endif
 
 constexpr SettingsMessageTree s_modelMenu[] =
-  {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren, 4),
+  {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren, 5),
     SettingsMessageTree(I18n::Message::Brightness),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren, 2),

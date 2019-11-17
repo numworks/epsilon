@@ -110,6 +110,7 @@ public:
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();
   void addXNTCodePointLayout();
+  void addMultiplicationPointLayout();
   void insertText(const char * text);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }

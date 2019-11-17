@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <cmath>
 #include <utility>
+#include <poincare/preferences.h>
 
 namespace Poincare {
 
@@ -159,20 +160,38 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
 }
 
 CodePoint MultiplicationNode::operatorSymbol() const {
+  Preferences * preferences = Preferences::sharedPreferences();
   /* ø --> 0
    * · --> 1
-   * × --> 2 */
+   * × --> 2
+   * * --> 3 */
   int sign = -1;
-  for (int i = 0; i < numberOfChildren() - 1; i++) {
-    /* The operator symbol must be the same for all operands of the multiplication.
-     * If one operator has to be '×', they will all be '×'. Idem for '·'. */
-    sign = maxInt(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
+  if(preferences->symbolofMultiplication() == Poincare::Preferences::SymbolMultiplication::Auto){
+      for (int i = 0; i < numberOfChildren() - 1; i++) {
+      /* The operator symbol must be the same for all operands of the multiplication.
+      * If one operator has to be '×', they will all be '×'. Idem for '·'. */
+      sign = maxInt(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
+    }
+  } else {
+    switch(preferences->symbolofMultiplication()){
+      case Poincare::Preferences::SymbolMultiplication::MiddleDot :
+        sign = 1; // · --> · (1)
+        break;
+      case Poincare::Preferences::SymbolMultiplication::Star :
+        sign = 3; // * --> * (3)
+        break;
+      default:
+        sign = 2; // × --> × (2)
+        break;
+    }
   }
   switch (sign) {
     case 0:
       return UCodePointNull;
     case 1:
       return UCodePointMiddleDot;
+    case 3:
+      return UCodePointStar;
     default:
       return UCodePointMultiplicationSign;
   }

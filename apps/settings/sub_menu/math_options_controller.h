@@ -4,6 +4,7 @@
 #include "generic_sub_controller.h"
 #include <escher.h>
 #include "display_mode_controller.h"
+#include "symbol_controller.h"
 #include "preferences_controller.h"
 
 namespace Settings {
@@ -16,10 +17,11 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_totalNumberOfCell = 4;
+  constexpr static int k_totalNumberOfCell = 5;
   MessageTableCellWithChevronAndMessage m_cells[k_totalNumberOfCell];
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
+  SymbolController m_symbolController;
 };
 
 }

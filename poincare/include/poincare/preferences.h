@@ -42,6 +42,12 @@ public:
     Blue = 2,
     Yellow = 3
   };
+  enum class SymbolMultiplication {
+    Cross = 0,
+    MiddleDot = 1,
+    Star = 2,
+    Auto = 3
+  };
   Preferences();
   static Preferences * sharedPreferences();
   AngleUnit angleUnit() const { return m_angleUnit; }
@@ -56,6 +62,8 @@ public:
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
   LEDColor colorOfLED() const { return m_colorOfLED; }
   void setColorOfLED(LEDColor color) { m_colorOfLED = color; }
+  SymbolMultiplication symbolofMultiplication() const {return m_symbolMultiplication;}
+  void setSymbolMultiplication(SymbolMultiplication symbolofMultiplication) {m_symbolMultiplication = symbolofMultiplication;}
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
@@ -63,6 +71,7 @@ private:
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
   LEDColor m_colorOfLED;
+  SymbolMultiplication m_symbolMultiplication; 
 };
 
 }

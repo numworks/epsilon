@@ -50,6 +50,7 @@ bool SymbolController::handleEvent(Ion::Events::Event event) {
     autoSymbol ? preferences->SetAutoSymbol(Poincare::Preferences::AutoSymbol::True) : preferences->SetAutoSymbol(Poincare::Preferences::AutoSymbol::False);
     m_selectableTableView.reloadData();
     return true;
+    return true;
   } else {
     return GenericSubController::handleEvent(event);
   }

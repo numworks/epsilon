@@ -290,13 +290,6 @@ document.getElementById("action-fullscreen").addEventListener("click", function(
 document.getElementById("action-screenshot").addEventListener("click", function(e) {
   screenshot();
 });
-
-window.addEventListener("keydown", function(e) {
-  // space and arrow keys
-  if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-    e.preventDefault();
-  }
-}, false);
     </script>
     <script async src="https://www.numworks.com/simulator/update.js"></script>
   </body>

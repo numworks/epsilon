@@ -196,7 +196,9 @@ Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Contex
   if (end-start > ExpressionNode::k_maxNumberOfSteps || start + 1.0 == start) {
     return Float<double>::Builder(NAN);
   }
-  for (double i = std::round(start); i <= std::round(end); i = i + 1.0) {
+  start = std::round(start);
+  end = std::round(end);
+  for (double i = start; i <= end; i = i + 1.0) {
     /* When |start| >> 1.0, start + 1.0 = start. In that case, quit the
      * infinite loop. */
     if (i == i-1.0 || i == i+1.0) {

@@ -12,6 +12,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>
+#include <poincare/unit.h>
 #include <ion.h>
 #include <assert.h>
 #include <cmath>
@@ -276,9 +277,65 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   return privateShallowReduce(reductionContext, true, true);
 }
 
+static void BaseUnitProductMetrics(const Expression units, size_t & supportSize, Integer & norm) {
+  assert(supportSize == 0 && norm.isZero());
+  // Make sure the provided Expression is a Multiplication
+  Expression u = units;
+  if (u.type() == ExpressionNode::Type::Unit || u.type() == ExpressionNode::Type::Power) {
+    u = Multiplication::Builder(u.clone());
+  }
+  const int numberOfChildren = u.numberOfChildren();
+  for (int i = 0; i < numberOfChildren; i++) {
+    Expression factor = u.childAtIndex(i);
+
+    // Get the unit's exponent
+    Integer exponent(1);
+    if (factor.type() == ExpressionNode::Type::Power) {
+      Expression exp = factor.childAtIndex(1);
+      assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
+      exponent = static_cast<Rational &>(exp).unsignedIntegerNumerator();
+      factor = factor.childAtIndex(0);
+    }
+
+    // The leading factors may not be of Unit type
+    if (factor.type() != ExpressionNode::Type::Unit) {
+      continue;
+    }
+
+    // Compute the metrics
+    if (!exponent.isZero()) {
+      supportSize++;
+      norm = Integer::Addition(norm, exponent);
+    }
+  }
+}
+
+static bool CanSimplifyUnitProduct(
+    const Expression units, const Expression entryUnit,
+    ExpressionNode::ReductionContext reductionContext,
+    Expression & bestUnit, Expression & bestRemainder, size_t & bestRemainderSupportSize, Integer & bestRemainderNorm) {
+  /* This function tries to simplify a Unit product by applying a given
+   * operation. If the result of the operation is simpler, 'bestUnit' and
+   * 'bestRemainder' are updated accordingly. */
+  Expression simplified = Division::Builder(units.clone(), entryUnit.clone()).deepReduce(reductionContext);
+  size_t simplifiedSupportSize = 0;
+  Integer simplifiedNorm(0);
+  BaseUnitProductMetrics(simplified, simplifiedSupportSize, simplifiedNorm);
+  bool isSimpler = simplifiedSupportSize < bestRemainderSupportSize ||
+    (simplifiedSupportSize == bestRemainderSupportSize && simplifiedNorm.isLowerThan(bestRemainderNorm));
+  if (isSimpler) {
+    bestUnit = entryUnit;
+    bestRemainder = simplified;
+    bestRemainderSupportSize = simplifiedSupportSize;
+    bestRemainderNorm = simplifiedNorm;
+  }
+  return isSimpler;
+}
+
 Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
+   * - Recognize derived units in the product of units
    * - Creating a Division if there's either a term with a power of -1 (a.b^(-1)
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
@@ -295,7 +352,54 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   Expression numer, denom, units;
   splitIntoNormalForm(numer, denom, units, reductionContext);
 
-  // Step 2: Create a Division if relevant
+  /* Step 2: Recognize derived units
+   * The reason why 'units' is handled before 'numer' and 'denom' is that this
+   * step is likely to alter the latter Expressions.
+   */
+  if (!units.isUninitialized()) {
+    /* In the following:
+     * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
+     * - If an entry is found, simplify 'units' and add the corresponding unit or its inverse in 'unitsAccu'.
+     * - Repeat those steps until no more simplification is possible.
+     */
+    Multiplication unitsAccu = Multiplication::Builder();
+    size_t unitsSupportSize = 0;
+    Integer unitsNorm(0);
+    BaseUnitProductMetrics(units, unitsSupportSize, unitsNorm);
+    while (unitsSupportSize > 1) {
+      Expression bestUnit;
+      Expression bestRemainder;
+      size_t bestRemainderSupportSize = unitsSupportSize - 1;
+      Integer bestRemainderNorm = Integer::Subtraction(unitsNorm, Integer(1));
+      for (const Unit::Dimension * dim = Unit::DimensionTable + 7; dim < Unit::DimensionTableUpperBound; dim++) {
+        Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
+        CanSimplifyUnitProduct(
+            units, entryUnit,
+            reductionContext,
+            bestUnit, bestRemainder, bestRemainderSupportSize, bestRemainderNorm
+            )
+        ||
+        CanSimplifyUnitProduct(
+            units, Power::Builder(entryUnit, Rational::Builder(-1)),
+            reductionContext,
+            bestUnit, bestRemainder, bestRemainderSupportSize, bestRemainderNorm
+            );
+      }
+      if (bestUnit.isUninitialized()) {
+        break;
+      }
+      const int position = unitsAccu.numberOfChildren();
+      unitsAccu.addChildAtIndexInPlace(bestUnit, position, position);
+      units = bestRemainder;
+      unitsSupportSize = bestRemainderSupportSize;
+      unitsNorm = bestRemainderNorm;
+    }
+    if (unitsAccu.numberOfChildren() > 0) {
+      units = Multiplication::Builder(unitsAccu, units).shallowReduce(reductionContext);
+    }
+  }
+
+  // Step 3: Create a Division if relevant
   Expression result;
   if (!numer.isUninitialized()) {
     result = numer;

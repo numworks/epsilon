@@ -246,6 +246,31 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
   return !isMultivariablePolynomial;
 }
 
+Expression::AdditionalInformationType Expression::additionalInformationType(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  ExpressionNode::Type t = type();
+  if (t == ExpressionNode::Type::Rational) {
+    if (convert<Rational>().isInteger()) {
+      return AdditionalInformationType::Integer;
+    }
+    return AdditionalInformationType::Rational;
+  }
+  if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {
+    float r = childAtIndex(0).approximateToScalar<float>(context, complexFormat, angleUnit);
+    if (!std::isnan(r)) {
+      return AdditionalInformationType::Trigonometry;
+    }
+  }
+  // TODO: return AdditionalInformationType::Unit
+  if (complexFormat != Preferences::ComplexFormat::Real) {
+    Expression imag = ImaginaryPart::Builder(*this);
+    float i = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
+    if (i != 0.0f) {
+      return AdditionalInformationType::Complex;
+    }
+  }
+  return AdditionalInformationType::None;
+}
+
 // Private
 
 void Expression::shallowAddMissingParenthesis() {

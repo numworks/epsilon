@@ -119,7 +119,6 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
       /* If there is an equivalent layout positionned on the ingoing position,
        * select it. */
       *ingoingLayout = equivalentLayout;
-      m_position = ingoingPosition;
     } else {
       // Else, find the first non horizontal ancestor and select it.
       Layout notHorizontalAncestor = m_layout.parent();
@@ -138,12 +137,38 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
     }
   }
 
+  // Step 2 - Move the cursor
+
   move(direction, shouldRecomputeLayout);
-  if (m_layout.parent() != previousPointedLayoutParent) {
+
+  // Step 3 - Figure out the selection
+
+  Layout currentParent = m_layout.parent();
+  if (currentParent != previousPointedLayoutParent) {
+    /* The cursor hasn't the same parent as before: we might need to overselect.
+     * For instance, 123
+     *               ---   ** is the selection, if we select right again,
+     *               4**|  we want to select the whole fraction
+     *
+     *               ***   Whole fraction selected, if we select left, we want
+     * Or :          ---|  to deselect the whole fraction
+     *               ***
+     */
+    assert(!currentParent.isUninitialized()); //TODO LEA ?
+    assert(!previousPointedLayoutParent.isUninitialized()); //TODO LEA ?
+
+    Layout ancestorLayout = previousPointedLayoutParent.hasAncestor(currentParent, false) ? currentParent :
+      (currentParent.hasAncestor(previousPointedLayoutParent, false) ? previousPointedLayoutParent : Layout());
+    assert(ancestorLayout != currentParent);
+    assert(!ancestorLayout.isUninitialized());
+    Layout childParentLayout = (ancestorLayout == previousPointedLayoutParent) ? currentParent : (ancestorLayout == currentParent ? previousPointedLayoutParent : Layout());
+    assert(childParentLayout == currentParent);
+
+    assert(previousPointedLayoutParent.type() == LayoutNode::Type::HorizontalLayout);
     int previousIndex = previousPointedLayoutParent.indexOfChild(previousPointedLayout);
     int nextIndex = previousIndex + ((direction == MoveDirection::Right) ? 1 : -1);
     if (!(nextIndex >= 0 && previousPointedLayoutParent.numberOfChildren() >= nextIndex + 1)) {
-      m_layout = previousPointedLayout;
+      m_layout = childParentLayout;
     } else {
       Layout previousParentCurrentChild = previousPointedLayoutParent.childAtIndex(nextIndex);
       m_layout = previousParentCurrentChild;
@@ -154,9 +179,12 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
   }
 
 
+  // Find the equivalent cursor position
   equivalentCursor = m_layout.equivalentCursor(this);
   equivalentLayout = equivalentCursor.layoutReference();
   if (m_position == outgoingPosition) {
+    /* The current position is already the outgoing position, we put the curor
+     * on the innermost outgoing position. */
     if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
       assert(equivalentCursor.position() == outgoingPosition);
       *outgoingLayout = equivalentLayout;
@@ -164,8 +192,12 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
       *outgoingLayout = m_layout;
     }
   } else {
+    /* The cursor is on the ingoing position, for instance right of a layout
+     * when we want to select towards the right. */
     assert(m_position == ingoingPosition);
     if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == outgoingPosition) {
+      /* If there is an equivalent layout positionned on the ingoing position,
+       * select it. */
       *outgoingLayout = equivalentLayout;
     } else {
       // TODO LEA

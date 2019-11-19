@@ -21,7 +21,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   I18n::Message childLabel = m_messageTreeModel->children(selectedRow())->label();
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && selectedRow() == numberOfRows() - 1) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && childLabel == I18n::Message::FccId) {
     Container::activeApp()->displayModalViewController(&m_hardwareTestPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
     return true;
   }
@@ -34,7 +34,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (!(event == Ion::Events::Right)) {
-      if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::SoftwareVersion) {
+      if (childLabel == I18n::Message::SoftwareVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::patchLevel()) == 0) {
           myCell->setAccessoryText(Ion::softwareVersion());
@@ -43,7 +43,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
         myCell->setAccessoryText(Ion::patchLevel());
         return true;
       }
-      if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::CustomSoftwareVersion) {
+      if (childLabel == I18n::Message::CustomSoftwareVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
           myCell->setAccessoryText("Public"); //Change for public/dev

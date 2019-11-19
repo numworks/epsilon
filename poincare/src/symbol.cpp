@@ -175,8 +175,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
     }
   }
 
-  Symbol s = *this;
-  Expression result = SymbolAbstract::Expand(s, reductionContext.context(), true);
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation()) {
       return *this;

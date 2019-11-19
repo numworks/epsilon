@@ -112,16 +112,16 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Function f(*this);
-  Expression e = SymbolAbstract::Expand(f, reductionContext.context(), true);
-  if (!e.isUninitialized()) {
-    replaceWithInPlace(e);
-    return e.deepReduce(reductionContext);
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
+  if (result.isUninitialized()) {
+    if (reductionContext.symbolicComputation()) {
+      return *this;
+    }
+    result = Undefined::Builder();
   }
-  if (!reductionContext.symbolicComputation()) {
-    return replaceWithUndefinedInPlace();
-  }
-  return *this;
+  replaceWithInPlace(result);
+  // The stored expression is as entered by the user, so we need to call reduce
+  return result.deepReduce(reductionContext);
 }
 
 Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace) {

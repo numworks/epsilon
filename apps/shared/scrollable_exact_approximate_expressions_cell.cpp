@@ -12,7 +12,7 @@ ScrollableExactApproximateExpressionsCell::ScrollableExactApproximateExpressions
 
 void ScrollableExactApproximateExpressionsCell::setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout) {
   m_view.setLayouts(approximateLayout, exactLayout);
-  m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+  m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Center);
 }
 
 void ScrollableExactApproximateExpressionsCell::setHighlighted(bool highlight) {
@@ -31,7 +31,7 @@ void ScrollableExactApproximateExpressionsCell::reloadScroll() {
 }
 
 void ScrollableExactApproximateExpressionsCell::didBecomeFirstResponder() {
-  m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+  m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Center);
   Container::activeApp()->setFirstResponder(&m_view);
 }
 

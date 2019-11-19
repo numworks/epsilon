@@ -47,13 +47,14 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableExactApproximateExpressionsView * outputView();
+  Poincare::Expression::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection();
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
-  Calculation::AdditionalOutput m_calculationAdditionalOutput;
+  Poincare::Expression::AdditionalInformationType m_calculationAdditionInformation;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;

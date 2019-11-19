@@ -34,7 +34,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
-  m_calculationAdditionalOutput(Calculation::AdditionalOutput::None),
+  m_calculationAdditionInformation(Poincare::Expression::AdditionalInformationType::None),
   m_inputView(this),
   m_scrollableOutputView(this)
 {
@@ -104,7 +104,7 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
    * display 1.2+2 --> 16/5 = 3.2. */
   m_scrollableOutputView.setDisplayLeftLayout(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && outputSelected));
-  m_scrollableOutputView.setDisplayBurger(outputSelected && m_calculationAdditionalOutput != Calculation::AdditionalOutput::None);
+  m_scrollableOutputView.setDisplayBurger(outputSelected && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -157,7 +157,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
   m_calculationDisplayOutput = calculation->displayOutput(context);
-  m_calculationAdditionalOutput = calculation->additionalOuput(context);
+  m_calculationAdditionInformation = calculation->additionalInformationType(context);
   m_inputView.setLayout(calculation->createInputLayout());
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted

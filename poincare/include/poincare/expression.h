@@ -190,6 +190,16 @@ public:
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
+  enum class AdditionalInformationType {
+    None = 0,
+    Integer,
+    Rational,
+    Trigonometry,
+    Unit,
+    Complex
+  };
+  AdditionalInformationType additionalInformationType(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
   /* Complex */
   static bool EncounteredComplex();
   static void SetEncounteredComplex(bool encounterComplex);

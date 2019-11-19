@@ -5,6 +5,7 @@
 #include <escher.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
+#include "../shared/poincare_helpers.h"
 
 namespace Calculation {
 
@@ -31,14 +32,6 @@ public:
     ApproximateOnly,
     ExactAndApproximate,
     ExactAndApproximateToggle
-  };
-
-  enum class AdditionalOutput : uint8_t {
-    None,
-    ComplexPlan,
-    TrigonometryCircle,
-    BaseRepresentation,
-    Matrix
   };
 
   /* It is not really the minimal size, but it clears enough space for most
@@ -83,8 +76,8 @@ public:
   bool shouldOnlyDisplayExactOutput();
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 
-  // Additional outputs
-  AdditionalOutput additionalOuput(Poincare::Context * context);
+  // Additional Information
+  Poincare::Expression::AdditionalInformationType additionalInformationType(Poincare::Context * context);
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   /* Buffers holding text expressions have to be longer than the text written

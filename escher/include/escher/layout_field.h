@@ -75,7 +75,7 @@ private:
     // Selection
     Poincare::Layout * selectionStart() { return &m_selectionStart; }
     Poincare::Layout * selectionEnd() { return &m_selectionEnd; }
-    void addSelection(Poincare::Layout left, Poincare::Layout right);
+    void addSelection(Poincare::Layout addedLayout);
     bool resetSelection(); // returns true if the selection was indeed reset
     bool selectionIsEmpty() const;
     size_t deleteSelection();

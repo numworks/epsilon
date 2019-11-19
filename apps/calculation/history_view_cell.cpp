@@ -84,7 +84,7 @@ void HistoryViewCell::reloadOutputSelection() {
   /* Select the right output according to the calculation display output. This
    * will reload the scroll to display the selected output. */
   if (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate) {
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Center);
   } else {
     assert((m_calculationDisplayOutput == Calculation::DisplayOutput::ApproximateOnly)
         || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle)
@@ -103,8 +103,8 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
   /* The selected subview has changed. The displayed outputs might have changed.
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
    * display 1.2+2 --> 16/5 = 3.2. */
-  m_scrollableOutputView.setDisplayLeftLayout(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && outputSelected));
-  m_scrollableOutputView.setDisplayBurger(outputSelected && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
+  m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && outputSelected));
+  m_scrollableOutputView.setDisplayLeft(outputSelected && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */

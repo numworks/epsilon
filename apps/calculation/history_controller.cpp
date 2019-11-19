@@ -64,7 +64,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       editController->insertTextBody(calculation->inputText());
     } else {
       ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
-      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Burger) {
+      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Left) {
         Expression::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
         /* TODO
          * Controller * c = additionalInformationType ? graphController : listController?

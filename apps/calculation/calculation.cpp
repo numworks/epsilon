@@ -213,32 +213,10 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   }
 }
 
-Calculation::AdditionalOutput Calculation::additionalOuput(Context * context) {
-  Expression exact = exactOutput();
-  Expression approx = approximateOutput(context);
-  ExpressionNode::Type type = exact.type();
-  if (type == ExpressionNode::Type::Rational) {
-    return AdditionalOutput::BaseRepresentation;
-  }
+Poincare::Expression::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
   Preferences * preferences = Preferences::sharedPreferences();
-  Expression imag = ImaginaryPart::Builder(approx);
-  float i = ApproximateToScalar<float>(imag, context);
-  if (i != 0.0f) {
-    return AdditionalOutput::ComplexPlan;
-  }
-  if (type == ExpressionNode::Type::Cosine || type == ExpressionNode::Type::Sine) {
-    float r = ApproximateToScalar<float>(exact.childAtIndex(0), context);
-    if (!std::isnan(r)) {
-      return AdditionalOutput::TrigonometryCircle;
-    }
-  }
-  if (approx.type() == ExpressionNode::Type::Matrix) {
-    Matrix m = static_cast<Matrix &>(approx);
-    if (m.numberOfRows() == m.numberOfColumns() && m.numberOfRows() <= 3) {
-      return AdditionalOutput::Matrix;
-    }
-  }
-  return AdditionalOutput::None;
+  Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
+  return exactOutput().additionalInformationType(context, complexFormat, preferences->angleUnit());
 }
 
 }

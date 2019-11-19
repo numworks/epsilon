@@ -5,34 +5,34 @@
 
 namespace Shared {
 
-class ScrollableExactApproximateExpressionsView : public ScrollableView, public ScrollViewDataSource {
+class AbstractScrollableExactApproximateExpressionsView : public ScrollableView, public ScrollViewDataSource {
 public:
   enum class SubviewPosition : uint8_t {
-    Burger = 0,
-    Left = 1,
+    Left = 0,
+    Center = 1,
     Right = 2
   };
-  ScrollableExactApproximateExpressionsView(Responder * parentResponder);
+  AbstractScrollableExactApproximateExpressionsView(Responder * parentResponder, View * contentCell);
   ::EvenOddCell * evenOddCell() {
-    return &m_contentCell;
+    return contentCell();
   }
   void setLayouts(Poincare::Layout rightlayout, Poincare::Layout leftLayout);
   void setEqualMessage(I18n::Message equalSignMessage);
   SubviewPosition selectedSubviewPosition() {
-    return m_contentCell.selectedSubviewPosition();
+    return contentCell()->selectedSubviewPosition();
   }
   void setSelectedSubviewPosition(SubviewPosition subviewPosition) {
-    m_contentCell.setSelectedSubviewPosition(subviewPosition);
+    contentCell()->setSelectedSubviewPosition(subviewPosition);
   }
-  void setDisplayLeftLayout(bool display) { m_contentCell.setDisplayLeftExpression(display); }
-  void setDisplayBurger(bool display) { m_contentCell.setDisplayBurger(display); }
+  void setDisplayCenter(bool display) { contentCell()->setDisplayCenter(display); }
+  void setDisplayLeft(bool display) { contentCell()->setDisplayLeft(display); }
   void reloadScroll();
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Poincare::Layout layout() const {
-    return m_contentCell.layout();
+    return constContentCell()->layout();
   }
-private:
+protected:
   class ContentCell : public ::EvenOddCell {
   public:
     ContentCell();
@@ -44,8 +44,8 @@ private:
     ExpressionView * rightExpressionView() {
       return &m_rightExpressionView;
     }
-    ExpressionView * leftExpressionView() {
-      return &m_leftExpressionView;
+    ExpressionView * centeredExpressionView() {
+      return &m_centeredExpressionView;
     }
     MessageTextView * approximateSign() {
       return &m_approximateSign;
@@ -54,27 +54,50 @@ private:
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
-    bool displayLeftExpression() const { return m_displayLeftExpression; }
-    void setDisplayLeftExpression(bool display);
-    bool displayBurger() const { return m_displayBurger; }
-    void setDisplayBurger(bool display) { m_displayBurger = display; }
+    bool displayCenter() const { return m_displayCenter; }
+    void setDisplayCenter(bool display);
+    bool displayLeft() const { return m_displayLeft; }
+    void setDisplayLeft(bool display) { m_displayLeft = display; }
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     Poincare::Layout layout() const override;
 
+    virtual View * leftView() const = 0;
+  private:
+    virtual void setLeftViewBackgroundColor(KDColor color) = 0;
+    virtual KDCoordinate leftBaseline() const = 0;
+
+    View * subviewAtIndex(int index) override;
+    ExpressionView m_rightExpressionView;
+    MessageTextView m_approximateSign;
+    ExpressionView m_centeredExpressionView;
+    SubviewPosition m_selectedSubviewPosition;
+    bool m_displayCenter;
+    bool m_displayLeft;
+  };
+  virtual ContentCell *  contentCell() = 0;
+  virtual const ContentCell *  constContentCell() const = 0;
+};
+
+
+class ScrollableExactApproximateExpressionsView : public AbstractScrollableExactApproximateExpressionsView {
+public:
+  ScrollableExactApproximateExpressionsView(Responder * parentResponder) : AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell) {}
+
+private:
+  class ContentCell : public AbstractScrollableExactApproximateExpressionsView::ContentCell {
+  public:
+    View * leftView() const override { return ContentCell::burgerMenuView(); }
+  private:
     /* We keep only one instance of BurgerMenuView to avoid wasting space when
      * we know that only one ScrollableExactApproximateExpressionsView display
      * the burger view at a time. */
     static BurgerMenuView * burgerMenuView();
-  private:
-    View * subviewAtIndex(int index) override;
-    ExpressionView m_rightExpressionView;
-    MessageTextView m_approximateSign;
-    ExpressionView m_leftExpressionView;
-    SubviewPosition m_selectedSubviewPosition;
-    bool m_displayLeftExpression;
-    bool m_displayBurger;
+    void setLeftViewBackgroundColor(KDColor color) override { burgerMenuView()->setBackgroundColor(color); }
+    KDCoordinate leftBaseline() const override { return burgerMenuView()->minimalSizeForOptimalDisplay().height()/2; }
   };
+  ContentCell *  contentCell() override { return &m_contentCell; };
+  const ContentCell *  constContentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
 };
 

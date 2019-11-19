@@ -79,15 +79,13 @@ bool IsBefore(Layout& l1, Layout& l2) {
   return reinterpret_cast<char *>(l1.node()) <= reinterpret_cast<char *>(l2.node());
 }
 
-void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selectionLeft, Layout * selectionRight) {
+void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
   assert(!m_layout.isUninitialized());
 
   // Compute ingoing / outgoing positions
 
   Position ingoingPosition = direction == MoveDirection::Right ? Position::Left : Position::Right;
   Position outgoingPosition = direction == MoveDirection::Right ? Position::Right : Position::Left;
-  Layout * ingoingLayout = direction == MoveDirection::Right ? selectionLeft : selectionRight;
-  Layout * outgoingLayout = direction == MoveDirection::Right ? selectionRight : selectionLeft;
 
   // Find the layout to select
 
@@ -103,11 +101,11 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
        * instance, in the layout   |1234    , the cursor should be left of the 1,
        * not left of the horizontal layout. */
       assert(equivalentCursor.position() == ingoingPosition);
-      *ingoingLayout = equivalentLayout;
+      *selection = equivalentLayout;
     } else {
       /* If there is no adequate equivalent position, just set the ingoing
        * layout on the current layout. */
-      *ingoingLayout = m_layout;
+      *selection = m_layout;
     }
   } else {
     assert(currentLayoutIsEmpty || m_position == outgoingPosition);
@@ -116,7 +114,7 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
     if (!currentLayoutIsEmpty && !equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
       /* If there is an equivalent layout positionned on the ingoing position,
        * select it. */
-      *ingoingLayout = equivalentLayout;
+      *selection = equivalentLayout;
     } else {
       // Else, find the first non horizontal ancestor and select it.
       Layout notHorizontalAncestor = m_layout.parent();
@@ -126,18 +124,12 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
         notHorizontalAncestor = notHorizontalAncestor.parent();
       }
       if (!notHorizontalAncestor.isUninitialized()) {
-        *ingoingLayout = notHorizontalAncestor;
-        *outgoingLayout = notHorizontalAncestor;
-        m_layout = notHorizontalAncestor;
-        m_position = outgoingPosition;
+        *selection = notHorizontalAncestor;
       }
-      return;
     }
   }
-  *outgoingLayout = *ingoingLayout;
-  m_layout = *ingoingLayout;
+  m_layout = *selection;
   m_position = outgoingPosition;
-  return;
 }
 
 /* Layout modification */

@@ -56,15 +56,15 @@ bool IsBefore(Layout& l1, Layout& l2, bool strict) {
   return strict ? (node1 < node2) : (node1 <= node2);
 }
 
-void LayoutField::ContentView::addSelection(Layout left, Layout right) {
+void LayoutField::ContentView::addSelection(Layout addedLayout) {
   if (selectionIsEmpty()) {
     /*
      *  ----------  -> +++ is the previous previous selection
      *     (   )    -> added selection
      *  ---+++++--  -> next selection
      * */
-    m_selectionStart = left;
-    m_selectionEnd = right;
+    m_selectionStart = addedLayout;
+    m_selectionEnd = addedLayout;
   }
 #if 0
   else if (left == m_selectionEnd) {
@@ -83,32 +83,35 @@ void LayoutField::ContentView::addSelection(Layout left, Layout right) {
     m_selectionStart = left;
   }
 #endif
-   else if (IsBefore(m_selectionEnd, left, false) && !left.hasAncestor(m_selectionEnd, true)) {
+   else if (IsBefore(m_selectionEnd, addedLayout, false) && !addedLayout.hasAncestor(m_selectionEnd, true)) {
     /*
      *  +++-------  -> +++ is the previous previous selection
      *       (   )  -> added selection
      *  ++++++++++  -> next selection
      * */
-     m_selectionEnd = right;
-  } else if (IsBefore(right, m_selectionStart, true)) {
+     m_selectionEnd = addedLayout;
+  } else if (IsBefore(addedLayout, m_selectionStart, true)) {
     /*
      *  -------+++  -> +++ is the previous previous selection
      *  (   )       -> added selection
      *  ++++++++++  -> next selection
      * */
-    m_selectionStart = left;
-  } else if (m_selectionEnd == right) {
+    if (m_selectionStart.hasAncestor(addedLayout, true)) {
+      m_selectionEnd = addedLayout;
+    }
+    m_selectionStart = addedLayout;
+  } else if (m_selectionEnd == addedLayout) {
     /*
      *  ++++++++++  -> +++ is the previous previous selection
      *       (   )  -> added selection
      *  +++++-----  -> next selection
      * */
-     LayoutCursor c1 = LayoutCursor(left, LayoutCursor::Position::Left);
+     LayoutCursor c1 = LayoutCursor(addedLayout, LayoutCursor::Position::Left);
      if (c1.layoutReference() == m_selectionStart) {
        m_selectionStart = Layout();
        m_selectionEnd = Layout();
      } else {
-       LayoutCursor c2 = left.equivalentCursor(&c1);
+       LayoutCursor c2 = addedLayout.equivalentCursor(&c1);
        Layout c2Layout = c2.layoutReference();
        if (c2.position() == LayoutCursor::Position::Right) {
          assert(IsBefore(m_selectionStart, c2Layout, false));
@@ -119,18 +122,18 @@ void LayoutField::ContentView::addSelection(Layout left, Layout right) {
        }
      }
   } else {
-    assert(m_selectionStart == left);
+    assert(m_selectionStart == addedLayout);
     /*
      *  ++++++++++  -> +++ is the previous previous selection
      *  (   )       -> added selection
      *  -----+++++  -> next selection
      * */
-     LayoutCursor c1 = LayoutCursor(right, LayoutCursor::Position::Right);
+     LayoutCursor c1 = LayoutCursor(addedLayout, LayoutCursor::Position::Right);
      if (c1.layoutReference() == m_selectionEnd) {
        m_selectionStart = Layout();
        m_selectionEnd = Layout();
      } else {
-       LayoutCursor c2 = right.equivalentCursor(&c1);
+       LayoutCursor c2 = addedLayout.equivalentCursor(&c1);
        Layout c2Layout = c2.layoutReference();
        if (c2.position() == LayoutCursor::Position::Left) {
          assert(IsBefore(c2Layout, m_selectionEnd, false));
@@ -412,11 +415,10 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
 bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
   LayoutCursor result;
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    Layout addedSelectionLeft;
-    Layout addedSelectionRight;
-    result = m_contentView.cursor()->selectAtDirection(event == Ion::Events::ShiftLeft ? LayoutCursor::MoveDirection::Left : LayoutCursor::MoveDirection::Right, shouldRecomputeLayout, &addedSelectionLeft, &addedSelectionRight);
-    if (!addedSelectionLeft.isUninitialized() && !addedSelectionRight.isUninitialized()) { //TODO LEA assert?
-      m_contentView.addSelection(addedSelectionLeft, addedSelectionRight);
+    Layout addedSelection;
+    result = m_contentView.cursor()->selectAtDirection(event == Ion::Events::ShiftLeft ? LayoutCursor::MoveDirection::Left : LayoutCursor::MoveDirection::Right, shouldRecomputeLayout, &addedSelection);
+    if (!addedSelection.isUninitialized()) { //TODO LEA assert?
+      m_contentView.addSelection(addedSelection);
     } else {
       return false;
     }

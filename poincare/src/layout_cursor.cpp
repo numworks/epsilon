@@ -92,32 +92,52 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
   LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
   Layout equivalentLayout = equivalentCursor.layoutReference();
 
-  if (m_position == ingoingPosition) {
+  // Step 1 - Find the ingoing layout
+
+  bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
+
+  if (!currentLayoutIsEmpty && m_position == ingoingPosition) {
+    /* The current cursor is positionned on the ingoing position, for instance
+     * left a layout if we want to select towards the right. */
     if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
+      /* Put the cursor on the inner most equivalent ingoing position : for
+       * instance, in the layout   |1234    , the cursor should be left of the 1,
+       * not left of the horizontal layout. */
       assert(equivalentCursor.position() == ingoingPosition);
       *ingoingLayout = equivalentLayout;
       previousPointedLayoutParent = m_layout;
     } else {
+      /* If there is no adequate equivalent position, just set the ingoing
+       * layout on the current layout. */
       *ingoingLayout = m_layout;
     }
   } else {
-    assert(m_position == outgoingPosition);
-    if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
+    assert(currentLayoutIsEmpty || m_position == outgoingPosition);
+    /* The cursor is on the outgoing position, for instance right of a layout
+     * when we want to select towards the right. */
+    if (!currentLayoutIsEmpty && !equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
+      /* If there is an equivalent layout positionned on the ingoing position,
+       * select it. */
       *ingoingLayout = equivalentLayout;
+      m_position = ingoingPosition;
     } else {
-      Layout notHorizontalParentLayout = m_layout.parent();
-      while(!notHorizontalParentLayout.isUninitialized() && notHorizontalParentLayout.type() == LayoutNode::Type::HorizontalLayout) {
-        notHorizontalParentLayout = notHorizontalParentLayout.parent();
+      // Else, find the first non horizontal ancestor and select it.
+      Layout notHorizontalAncestor = m_layout.parent();
+      while (!notHorizontalAncestor.isUninitialized()
+          && notHorizontalAncestor.type() == LayoutNode::Type::HorizontalLayout)
+      {
+        notHorizontalAncestor = notHorizontalAncestor.parent();
       }
-      if (!notHorizontalParentLayout.isUninitialized()) {
-        *ingoingLayout = notHorizontalParentLayout;
-        *outgoingLayout = notHorizontalParentLayout;
-        m_layout = notHorizontalParentLayout;
+      if (!notHorizontalAncestor.isUninitialized()) {
+        *ingoingLayout = notHorizontalAncestor;
+        *outgoingLayout = notHorizontalAncestor;
+        m_layout = notHorizontalAncestor;
         m_position = outgoingPosition;
       }
       return;
     }
   }
+
   move(direction, shouldRecomputeLayout);
   if (m_layout.parent() != previousPointedLayoutParent) {
     int previousIndex = previousPointedLayoutParent.indexOfChild(previousPointedLayout);
@@ -132,6 +152,8 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
     m_position = outgoingPosition;
     return;
   }
+
+
   equivalentCursor = m_layout.equivalentCursor(this);
   equivalentLayout = equivalentCursor.layoutReference();
   if (m_position == outgoingPosition) {

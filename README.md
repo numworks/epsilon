@@ -117,6 +117,12 @@ Also, you can change the number of processes that run in parallel during the bui
 
 To contribute, please refer to the [Wiki](https://github.com/Omega-Numworks/Omega/wiki/Contributing)
 
+## Branches
+
+* `omega-master` : stable releases
+* `omega-dev` : beta releases
+* `omega-hotfix` : developers only, branch to fix issues
+
 ## Related repositories
 
 * [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer) `BETA`

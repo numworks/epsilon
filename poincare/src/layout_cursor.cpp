@@ -96,6 +96,7 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
     if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
       assert(equivalentCursor.position() == ingoingPosition);
       *ingoingLayout = equivalentLayout;
+      previousPointedLayoutParent = m_layout;
     } else {
       *ingoingLayout = m_layout;
     }
@@ -121,10 +122,13 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
   if (m_layout.parent() != previousPointedLayoutParent) {
     int previousIndex = previousPointedLayoutParent.indexOfChild(previousPointedLayout);
     int nextIndex = previousIndex + ((direction == MoveDirection::Right) ? 1 : -1);
-    assert(nextIndex >= 0 && previousPointedLayoutParent.numberOfChildren() >= nextIndex + 1);
-    Layout previousParentCurrentChild = previousPointedLayoutParent.childAtIndex(nextIndex);
-    *outgoingLayout = previousParentCurrentChild;
-    m_layout = previousParentCurrentChild;
+    if (!(nextIndex >= 0 && previousPointedLayoutParent.numberOfChildren() >= nextIndex + 1)) {
+      m_layout = previousPointedLayout;
+    } else {
+      Layout previousParentCurrentChild = previousPointedLayoutParent.childAtIndex(nextIndex);
+      m_layout = previousParentCurrentChild;
+    }
+    *outgoingLayout = m_layout;
     m_position = outgoingPosition;
     return;
   }

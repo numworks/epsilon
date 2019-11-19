@@ -3,6 +3,7 @@
 #include <assert.h>
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Calculation {
 
@@ -64,9 +65,12 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     } else {
       ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Burger) {
-        std::complex<float> c;
-        if (calculation->additionalOuput(App::app()->localContext(), &c) == Calculation::AdditionalOutput::ComplexPlan) {
-          m_complexController.complexModel()->setComplex(c);
+        Expression::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
+        /* TODO
+         * Controller * c = additionalInformationType ? graphController : listController?
+         * m_controller->setType(additionalInformationType)*/
+        if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
+          m_complexController.complexModel()->setComplex(std::complex<float>(1.2f,2.0f));
           Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, Metric::PopUpTopMargin, Metric::PopUpRightMargin);
         }
       } else {

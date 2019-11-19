@@ -81,19 +81,18 @@ bool IsBefore(Layout& l1, Layout& l2) {
 
 void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selectionLeft, Layout * selectionRight) {
   assert(!m_layout.isUninitialized());
-  Layout previousPointedLayout = m_layout;
-  Layout previousPointedLayoutParent = m_layout.parent();
+
+  // Compute ingoing / outgoing positions
 
   Position ingoingPosition = direction == MoveDirection::Right ? Position::Left : Position::Right;
   Position outgoingPosition = direction == MoveDirection::Right ? Position::Right : Position::Left;
   Layout * ingoingLayout = direction == MoveDirection::Right ? selectionLeft : selectionRight;
   Layout * outgoingLayout = direction == MoveDirection::Right ? selectionRight : selectionLeft;
 
+  // Find the layout to select
+
   LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
   Layout equivalentLayout = equivalentCursor.layoutReference();
-
-  // Step 1 - Find the ingoing layout
-
   bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
 
   if (!currentLayoutIsEmpty && m_position == ingoingPosition) {
@@ -105,7 +104,6 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
        * not left of the horizontal layout. */
       assert(equivalentCursor.position() == ingoingPosition);
       *ingoingLayout = equivalentLayout;
-      previousPointedLayoutParent = m_layout;
     } else {
       /* If there is no adequate equivalent position, just set the ingoing
        * layout on the current layout. */
@@ -136,78 +134,10 @@ void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout,
       return;
     }
   }
-
-  // Step 2 - Move the cursor
-
-  move(direction, shouldRecomputeLayout);
-
-  // Step 3 - Figure out the selection
-
-  Layout currentParent = m_layout.parent();
-  if (currentParent != previousPointedLayoutParent) {
-    /* The cursor hasn't the same parent as before: we might need to overselect.
-     * For instance, 123
-     *               ---   ** is the selection, if we select right again,
-     *               4**|  we want to select the whole fraction
-     *
-     *               ***   Whole fraction selected, if we select left, we want
-     * Or :          ---|  to deselect the whole fraction
-     *               ***
-     */
-    assert(!currentParent.isUninitialized()); //TODO LEA ?
-    assert(!previousPointedLayoutParent.isUninitialized()); //TODO LEA ?
-
-    Layout ancestorLayout = previousPointedLayoutParent.hasAncestor(currentParent, false) ? currentParent :
-      (currentParent.hasAncestor(previousPointedLayoutParent, false) ? previousPointedLayoutParent : Layout());
-    assert(ancestorLayout != currentParent);
-    assert(!ancestorLayout.isUninitialized());
-    Layout childParentLayout = (ancestorLayout == previousPointedLayoutParent) ? currentParent : (ancestorLayout == currentParent ? previousPointedLayoutParent : Layout());
-    assert(childParentLayout == currentParent);
-
-    assert(previousPointedLayoutParent.type() == LayoutNode::Type::HorizontalLayout);
-    int previousIndex = previousPointedLayoutParent.indexOfChild(previousPointedLayout);
-    int nextIndex = previousIndex + ((direction == MoveDirection::Right) ? 1 : -1);
-    if (!(nextIndex >= 0 && previousPointedLayoutParent.numberOfChildren() >= nextIndex + 1)) {
-      m_layout = childParentLayout;
-    } else {
-      Layout previousParentCurrentChild = previousPointedLayoutParent.childAtIndex(nextIndex);
-      m_layout = previousParentCurrentChild;
-    }
-    *outgoingLayout = m_layout;
-    m_position = outgoingPosition;
-    return;
-  }
-
-
-  // Find the equivalent cursor position
-  equivalentCursor = m_layout.equivalentCursor(this);
-  equivalentLayout = equivalentCursor.layoutReference();
-  if (m_position == outgoingPosition) {
-    /* The current position is already the outgoing position, we put the curor
-     * on the innermost outgoing position. */
-    if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
-      assert(equivalentCursor.position() == outgoingPosition);
-      *outgoingLayout = equivalentLayout;
-    } else {
-      *outgoingLayout = m_layout;
-    }
-  } else {
-    /* The cursor is on the ingoing position, for instance right of a layout
-     * when we want to select towards the right. */
-    assert(m_position == ingoingPosition);
-    if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == outgoingPosition) {
-      /* If there is an equivalent layout positionned on the ingoing position,
-       * select it. */
-      *outgoingLayout = equivalentLayout;
-    } else {
-      // TODO LEA
-      assert(false);
-      return;
-    }
-  }
-  if (isDefined()) {
-    // TODO LEA
-  }
+  *outgoingLayout = *ingoingLayout;
+  m_layout = *ingoingLayout;
+  m_position = outgoingPosition;
+  return;
 }
 
 /* Layout modification */

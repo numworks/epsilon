@@ -102,10 +102,10 @@ public:
   }
 
   /* Select */
-  void select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selectionLeft, Layout * selectionRight);
-  LayoutCursor selectAtDirection(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selectionLeft, Layout * selectionRight) {
+  void select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selection);
+  LayoutCursor selectAtDirection(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
     LayoutCursor result = clone();
-    result.select(direction, shouldRecomputeLayout, selectionLeft, selectionRight);
+    result.select(direction, shouldRecomputeLayout, selection);
     return result;
   }
 

@@ -376,7 +376,21 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
+static inline bool IsSimpleMoveEvent(Ion::Events::Event event) {
+  return event == Ion::Events::Left
+    || event == Ion::Events::Right
+    || event == Ion::Events::Up
+    || event == Ion::Events::Down;
+}
+
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
+  if (!IsSimpleMoveEvent(event)) {
+    return false;
+  }
+  if (resetSelection()) {
+    *shouldRecomputeLayout = true;
+    return true;
+  }
   LayoutCursor result;
   if (event == Ion::Events::Left) {
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Left, shouldRecomputeLayout);
@@ -384,7 +398,8 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Right, shouldRecomputeLayout);
   } else if (event == Ion::Events::Up) {
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Up, shouldRecomputeLayout);
-  } else if (event == Ion::Events::Down) {
+  } else {
+    assert(event == Ion::Events::Down);
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
   }
   if (result.isDefined()) {

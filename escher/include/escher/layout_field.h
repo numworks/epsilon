@@ -44,7 +44,7 @@ public:
   }
 
   // Selection
-  void resetSelection() { m_contentView.resetSelection(); }
+  bool resetSelection() { return m_contentView.resetSelection(); }
   void deleteSelection();
 
 private:

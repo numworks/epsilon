@@ -194,6 +194,131 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("π×confidence(π/5,3)[[1,2]]", "π×confidence(π/5,3)×[[1,2]]");
 }
 
+QUIZ_CASE(poincare_simplification_units) {
+  /* SI base units */
+  assert_parsed_expression_simplify_to("_s", "_s");
+  assert_parsed_expression_simplify_to("_m", "_m");
+  assert_parsed_expression_simplify_to("_kg", "_kg");
+  assert_parsed_expression_simplify_to("_A", "_A");
+  assert_parsed_expression_simplify_to("_K", "_K");
+  assert_parsed_expression_simplify_to("_mol", "_mol");
+  assert_parsed_expression_simplify_to("_cd", "_cd");
+
+  /* Inverses of SI base units */
+  assert_parsed_expression_simplify_to("_s^-1", "_s^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_m^-1", "_m^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_kg^-1", "_kg^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_A^-1", "_A^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_K^-1", "_K^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_mol^-1", "_mol^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_cd^-1", "_cd^\u0012-1\u0013");
+
+  /* SI derived units with special names and symbols */
+  assert_parsed_expression_simplify_to("_kg×_m×_s^(-2)", "_N");
+  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-2)", "_Pa");
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)", "_J");
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)", "_W");
+  assert_parsed_expression_simplify_to("_A×_s", "_C");
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-1)", "_V");
+  assert_parsed_expression_simplify_to("_m^(-2)×_kg^(-1)×_s^4×_A^2", "_F");
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-2)", "_Ω");
+  // FIXME _S should not be simplified to _Ω^(-1)
+  // A possible solution: a unit with exponent +1 is simpler than a unit with exponent -1.
+  // The same should probably go for Hz.
+  // assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-2)×_s^3×_A^2", "_S");
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-1)", "_Wb");
+  assert_parsed_expression_simplify_to("_kg×_s^(-2)×_A^(-1)", "_T");
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-2)", "_H");
+  assert_parsed_expression_simplify_to("_mol×_s^-1", "_kat");
+
+  /* Test simplification of all possible (prefixed) unit symbols.
+   * Some symbols are however excluded:
+   *  - Observe that _ms is simplified to 1×_ms but _s stays the same. Indeed
+   *    a constant 1 is generally introduced if not already there, except when
+   *    a unit is the standard unit with the standard prefix in a dimension.
+   *    Thus the latter case is not tested.
+   *  - At present, some units will not appear as simplification output:
+   *    t, Hz, S, L. These exceptions are tested below. */
+  for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
+    for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
+      if (strcmp(rep->rootSymbol(), "t") == 0 || strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "L") == 0) {
+        continue;
+      }
+      static constexpr size_t bufferSize = 12;
+      char buffer[bufferSize] = "1×";
+      if (rep != dim->stdRepresentative()) {
+        Unit::Builder(dim, rep, &Unit::EmptyPrefix).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+        assert_parsed_expression_simplify_to(buffer, buffer);
+      }
+      if (rep->isPrefixable()) {
+        for (const Unit::Prefix * pre = rep->outputPrefixes(); pre < rep->outputPrefixesUpperBound(); pre++) {
+          if (rep != dim->stdRepresentative() || pre->exponent() != dim->stdRepresentativePrefix()->exponent()) {
+            Unit::Builder(dim, rep, pre).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+            assert_parsed_expression_simplify_to(buffer, buffer);
+          }
+        }
+      }
+    }
+  }
+
+  /* Units that do not appear as output yet */
+  assert_parsed_expression_simplify_to("_t", "1×_Mg");
+  assert_parsed_expression_simplify_to("_Hz", "_s^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_S", "_Ω^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_L", "0.001×_m^3");
+  assert_parsed_expression_simplify_to("_ha", "0.01×_km^2");
+
+  /* Usual physical quantities */
+  assert_parsed_expression_simplify_to("_A×_s×_m^(-3)", "_C×_m^\u0012-3\u0013"); // Charge density
+  assert_parsed_expression_simplify_to("_kg×_m×_s^(-3)×_K^(-1)", "_N×_K^\u0012-1\u0013×_s^\u0012-1\u0013"); // Thermal conductivity _W×_m^-1×_K^-1
+  assert_parsed_expression_simplify_to("_K×_kg^(-1)×_m^(-2)×_s^3", "_W^\u0012-1\u0013×_K"); // Thermal resistance
+  assert_parsed_expression_simplify_to("_kg×_m×_s^(-3)×_A^(-1)", "_V×_m^\u0012-1\u0013"); // Electrical field
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-1)", "_J×_s"); // Action
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_K^(-1)", "_J×_K^\u0012-1\u0013"); // Entropy | Heat capacity
+  assert_parsed_expression_simplify_to("_m^2×_s^(-2)×_K^(-1)", "_K^\u0012-1\u0013×_m^2×_s^\u0012-2\u0013"); // Specific heat capacity _J×_K^-1×_kg^-1
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_K^(-1)×_mol^(-1)", "_J×_mol^\u0012-1\u0013×_K^\u0012-1\u0013"); // Molar heat capacity
+  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-2)×_K^(-1)", "_Pa×_K^\u0012-1\u0013"); // Volumetric heat capacity _J×_K^-1×_m^-3
+  assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-1)", "_K^\u0012-1\u0013×_kg×_s^\u0012-3\u0013"); // Heat transfer coefficient _W×_m^-2×_K^-1
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_K^(-1)", "_W×_K^\u0012-1\u0013"); // Thermal conductivity
+  assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-3)×_s^3×_A^2", "_Ω^\u0012-1\u0013×_m^\u0012-1\u0013"); // Electrical conductivity _S×_m^-1
+  assert_parsed_expression_simplify_to("_kg×_s^(-2)", "_kg×_s^\u0012-2\u0013"); // Stiffness _N×_m^-1
+  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-3)", "_Pa×_s^\u0012-1\u0013"); // Power density _W×_m^-3
+  assert_parsed_expression_simplify_to("_kg×_m^3×_s^(-3)×_A^(-1)", "_V×_m"); // Electric flux
+  assert_parsed_expression_simplify_to("_K×_kg^(-1)×_s^(3)", "_K×_kg^\u0012-1\u0013×_s^3"); // Superficial thermal resistance _m^2×_K×_W^-1
+  assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-2)×_s^2", "_J^\u0012-1\u0013"); // Thermodynamic beta
+  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-1)", "_Pa×_s"); // Dynamic viscosity
+  assert_parsed_expression_simplify_to("_m^2×_s^(-2)", "_m^2×_s^\u0012-2\u0013"); // Gray/Sievert _J×_kg^\u0012-1\u0013
+  assert_parsed_expression_simplify_to("_m^2×_kg×_s^(-1)", "_J×_s"); // Angular momentum _N×_m×_s
+  assert_parsed_expression_simplify_to("_m^(-1)×_kg×_s^(-2)", "_Pa"); // Energy density _J×_m^-3
+  assert_parsed_expression_simplify_to("_m×_kg×_s^(-3)", "_N×_s^\u0012-1\u0013"); // Spectral power _W×_m^-1
+  assert_parsed_expression_simplify_to("_m×_kg^(-1)×_s^2", "_Pa^\u0012-1\u0013"); // Compressibility
+  assert_parsed_expression_simplify_to("_kg^(-1)×_s^3×_A^2×_mol^(-1)", "_Ω^\u0012-1\u0013×_mol^\u0012-1\u0013×_m^2"); // Molar conductivity _S×_m^2×_mol^-1
+  assert_parsed_expression_simplify_to("_m^(-2)×_s×_A", "_C×_m^\u0012-2\u0013"); // Polarization density
+  assert_parsed_expression_simplify_to("_kg^(-1)×_s×_A", "_C×_kg^\u0012-1\u0013"); // Exposure
+  assert_parsed_expression_simplify_to("_kg×_m^3×_s^(-3)×_A^(-2)", "_Ω×_m"); // Electrical resistivity
+  assert_parsed_expression_simplify_to("_m^(-1)×_s×_A", "_C×_m^\u0012-1\u0013"); // Dipole moment
+  assert_parsed_expression_simplify_to("_kg^(-1)×_s^2×_A", "_T^\u0012-1\u0013"); // Electron mobility _m^2×_V^-1×_s^-1
+  assert_parsed_expression_simplify_to("_m^(-2)×_kg^(-1)×_s^2×_A^2", "_H^\u0012-1\u0013"); // Magnetic reluctance
+  assert_parsed_expression_simplify_to("_m×_kg×_s^(-2)×_A^(-1)", "_N×_A^\u0012-1\u0013"); // Magnetic vector potential _Wb×_m^-1 and Magnetic rigidity _T×_m
+  assert_parsed_expression_simplify_to("_m^3×_kg×_s^(-2)×_A^(-1)", "_Wb×_m"); // Magnetic moment
+  assert_parsed_expression_simplify_to("_m^(-1)×_kg^(-1)×_s^2×_A^2", "_N^\u0012-1\u0013×_A^2"); // Magnetic susceptibility _H^-1×_m
+
+  // Physical constants
+  assert_parsed_expression_simplify_to("_kg^(-1)×_m^3×_s^(-2)", "_kg^\u0012-1\u0013×_m^3×_s^\u0012-2\u0013"); // Gravitational constant G _N×_m^2×_kg^-2
+  assert_parsed_expression_simplify_to("_kg×_m×_s^(-2)×_A^(-2)", "_N×_A^\u0012-2\u0013"); // Vacuum electric permittivity µ0 _H×_m^-1
+  assert_parsed_expression_simplify_to("_A^2×_s^4×_kg^(-1)×_m^(-3)", "_F×_m^\u0012-1\u0013"); // Vacuum magnetic permeability 𝝴0
+  assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-4)", "_K^\u0012-4\u0013×_kg×_s^\u0012-3\u0013"); // Stefan–Boltzmann constant _W×_m^-2×_K^-4
+
+  /* Units with invalid exponent */
+  assert_parsed_expression_simplify_to("_s^(1/2)", "undef");
+
+  /* Inhomogeneous expressions */
+  assert_parsed_expression_simplify_to("1+_s", "undef");
+  assert_parsed_expression_simplify_to("_m+_s", "undef");
+  assert_parsed_expression_simplify_to("_m^2+_m", "undef");
+  assert_parsed_expression_simplify_to("cos(_m)", "undef");
+}
+
 QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("3^4", "81");
   assert_parsed_expression_simplify_to("3^(-4)", "1/81");

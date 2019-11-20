@@ -871,8 +871,8 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
     return result;
   }
 
-  /* Optional Step 3: if the ReductionTarget is the SystemForApproximation,
-   * turn a^(p/q) into (root(a, q))^p
+  /* Optional Step 3: if the ReductionTarget is the SystemForApproximation or
+   * SystemForAnalysis, turn a^(p/q) into (root(a, q))^p
    * Indeed, root(a, q) can have a real root which is not the principale angle
    * but that we want to return in real complex format. This special case is
    * handled in NthRoot approximation but not in Power approximation. */

@@ -152,14 +152,11 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
 }
 
 bool LayoutField::ContentView::resetSelection() {
-  Layout previousStart = m_selectionStart;
   if (selectionIsEmpty()) {
     return false;
   }
-  Layout previousEnd = m_selectionEnd;
   m_selectionStart = Layout();
   m_selectionEnd = Layout();
-  //TODO LEA reloadRectFromAndToPositions(previousStart, previousEnd);
   return true;
 }
 
@@ -169,9 +166,32 @@ bool LayoutField::ContentView::selectionIsEmpty() const {
   return m_selectionStart.isUninitialized();
 }
 
-size_t LayoutField::ContentView::deleteSelection() {
-  //TODO LEA
-  return 1;
+void LayoutField::ContentView::deleteSelection() {
+  assert(!selectionIsEmpty());
+  Layout selectionParent = m_selectionStart.parent();
+
+  /* If the selected layout is the upmost layout, it must be an horizontal
+   * layout. Empty it. */
+  if (selectionParent.isUninitialized()) {
+    assert(m_selectionStart == m_selectionEnd);
+    assert(m_selectionStart.type() == LayoutNode::Type::HorizontalLayout);
+    clearLayout();
+  } else {
+    assert(selectionParent == m_selectionEnd.parent());
+    // Remove the selected children or replace it with an empty layout.
+    if (selectionParent.type() == LayoutNode::Type::HorizontalLayout) {
+      int firstIndex = selectionParent.indexOfChild(m_selectionStart);
+      int lastIndex = m_selectionStart == m_selectionEnd ? firstIndex : selectionParent.indexOfChild(m_selectionEnd);
+      for (int i = lastIndex; i >= firstIndex; i--) {
+        static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
+      }
+    } else {
+      // Only one child can be selected
+      assert(m_selectionStart == m_selectionEnd);
+      selectionParent.replaceChildWithEmpty(m_selectionStart, &m_cursor);
+    }
+  }
+  resetSelection();
 }
 
 View * LayoutField::ContentView::subviewAtIndex(int index) {
@@ -323,7 +343,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 }
 
 void LayoutField::deleteSelection() {
-  //TODO LEA
+  m_contentView.deleteSelection();
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
@@ -374,7 +394,11 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
       handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
     } else {
       assert(event == Ion::Events::Backspace);
-      m_contentView.cursor()->performBackspace();
+      if (!m_contentView.selectionIsEmpty()) {
+        deleteSelection();
+      } else {
+        m_contentView.cursor()->performBackspace();
+      }
     }
     return true;
   }

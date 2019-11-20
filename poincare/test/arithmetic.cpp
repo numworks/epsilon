@@ -1,8 +1,4 @@
-#include <quiz.h>
-#include <poincare/expression.h>
-#include <poincare/integer.h>
 #include <poincare/arithmetic.h>
-#include <assert.h>
 #include <utility>
 #include "helper.h"
 

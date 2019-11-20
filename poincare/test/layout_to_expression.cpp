@@ -1,10 +1,5 @@
-#include <quiz.h>
 #include <poincare_layouts.h>
-#include <apps/shared/global_context.h>
-#include <ion.h>
-#include <assert.h>
 #include "helper.h"
-#include "./tree/helpers.h"
 
 using namespace Poincare;
 

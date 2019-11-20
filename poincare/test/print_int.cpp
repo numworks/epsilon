@@ -1,6 +1,4 @@
-#include <quiz.h>
 #include <poincare/print_int.h>
-#include <assert.h>
 #include "helper.h"
 
 using namespace Poincare;

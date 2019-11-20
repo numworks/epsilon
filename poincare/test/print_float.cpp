@@ -1,12 +1,5 @@
-#include <quiz.h>
-#include <poincare/preferences.h>
-#include <poincare/float.h>
-#include <poincare/decimal.h>
-#include <poincare/rational.h>
 #include <string.h>
-#include <ion.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <cmath>
 #include "helper.h"
 

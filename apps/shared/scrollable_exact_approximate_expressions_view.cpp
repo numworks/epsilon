@@ -65,7 +65,7 @@ KDSize AbstractScrollableExactApproximateExpressionsView::ContentCell::minimalSi
   KDCoordinate leftViewBaseline = 0;
   KDCoordinate width = 0;
   if (m_displayLeft) {
-    leftSize = leftView()->minimalSizeForOptimalDisplay();
+    leftSize = leftMinimalSizeForOptimalDisplay();
     leftViewBaseline = leftBaseline();
     width += leftSize.width() + Metric::CommonLargeMargin;
   }

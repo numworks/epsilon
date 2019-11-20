@@ -50,7 +50,7 @@ protected:
     MessageTextView * approximateSign() {
       return &m_approximateSign;
     }
-    SubviewPosition selectedSubviewPosition() {
+    SubviewPosition selectedSubviewPosition() const {
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
@@ -60,11 +60,12 @@ protected:
     void setDisplayLeft(bool display) { m_displayLeft = display; }
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
-    Poincare::Layout layout() const override;
+    virtual Poincare::Layout layout() const override;
 
-    virtual View * leftView() const = 0;
+    virtual View * leftView() = 0;
   private:
     virtual void setLeftViewBackgroundColor(KDColor color) = 0;
+    virtual KDSize leftMinimalSizeForOptimalDisplay() const = 0;
     virtual KDCoordinate leftBaseline() const = 0;
 
     View * subviewAtIndex(int index) override;
@@ -87,14 +88,15 @@ public:
 private:
   class ContentCell : public AbstractScrollableExactApproximateExpressionsView::ContentCell {
   public:
-    View * leftView() const override { return ContentCell::burgerMenuView(); }
+    View * leftView() override { return ContentCell::burgerMenuView(); }
   private:
     /* We keep only one instance of BurgerMenuView to avoid wasting space when
      * we know that only one ScrollableExactApproximateExpressionsView display
      * the burger view at a time. */
     static BurgerMenuView * burgerMenuView();
     void setLeftViewBackgroundColor(KDColor color) override { burgerMenuView()->setBackgroundColor(color); }
-    KDCoordinate leftBaseline() const override { return burgerMenuView()->minimalSizeForOptimalDisplay().height()/2; }
+    KDSize leftMinimalSizeForOptimalDisplay() const override { return burgerMenuView()->minimalSizeForOptimalDisplay(); }
+    KDCoordinate leftBaseline() const override { return leftMinimalSizeForOptimalDisplay().height()/2; }
   };
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };

@@ -48,7 +48,7 @@ Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat
   Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
   /* When reducing the equation, we specify the reduction target to be
    * SystemForAnalysis. This enables to expand Newton multinom to be able to
-   * detect polynom correctly ("(x=2)^2" in this form won't be detected
+   * detect polynom correctly ("(x+2)^2" in this form won't be detected
    * unless expanded). */
   return sub.reduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForAnalysis);
 }

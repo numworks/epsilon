@@ -1,8 +1,4 @@
-#include <quiz.h>
 #include <apps/shared/global_context.h>
-#include <poincare/expression.h>
-#include <poincare/include/poincare_nodes.h>
-#include <assert.h>
 #include "helper.h"
 
 using namespace Poincare;
@@ -79,7 +75,7 @@ void assert_multiplication_or_addition_is_ordered_as(Expression e1, Expression e
         &globalContext,
         true);
   } else {
-    assert(e1.type() == ExpressionNode::Type::Addition);
+    quiz_assert(e1.type() == ExpressionNode::Type::Addition);
     static_cast<Addition&>(e1).sortChildrenInPlace(
         [](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); },
         &globalContext,

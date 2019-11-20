@@ -1,4 +1,3 @@
-#include <quiz.h>
 #include <poincare_layouts.h>
 #include "helper.h"
 

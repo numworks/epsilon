@@ -1,9 +1,5 @@
-#include <quiz.h>
 #include <apps/shared/global_context.h>
-#include <poincare/decimal.h>
-#include <assert.h>
 #include "helper.h"
-#include "tree/helpers.h"
 
 using namespace Poincare;
 

@@ -1,6 +1,3 @@
-#include <quiz.h>
-#include <ion.h>
-#include <assert.h>
 #include <apps/shared/global_context.h>
 #include <poincare/serialization_helper.h>
 #include "helper.h"

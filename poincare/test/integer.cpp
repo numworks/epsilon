@@ -1,8 +1,3 @@
-#include <quiz.h>
-#include <poincare/integer.h>
-#include <assert.h>
-
-#include "tree/helpers.h"
 #include "helper.h"
 
 using namespace Poincare;

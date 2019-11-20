@@ -1,8 +1,5 @@
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
-#include <ion.h>
-#include <cmath>
-#include <assert.h>
 #include <poincare/src/parsing/parser.h>
 #include "tree/helpers.h"
 #include "helper.h"

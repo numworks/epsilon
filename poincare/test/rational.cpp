@@ -1,9 +1,4 @@
-#include <quiz.h>
-#include <poincare/integer.h>
-#include <poincare/rational.h>
-#include <assert.h>
 #include "helper.h"
-#include "tree/helpers.h"
 
 using namespace Poincare;
 

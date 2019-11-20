@@ -1,6 +1,3 @@
-#include <quiz.h>
-#include <ion.h>
-#include <assert.h>
 #include "helper.h"
 
 using namespace Poincare;

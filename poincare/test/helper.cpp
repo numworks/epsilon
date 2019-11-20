@@ -1,7 +1,6 @@
 #include "helper.h"
 #include <apps/shared/global_context.h>
 #include <poincare/src/parsing/parser.h>
-#include <assert.h>
 
 using namespace Poincare;
 

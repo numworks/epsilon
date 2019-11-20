@@ -1,9 +1,6 @@
-#include <quiz.h>
 #include <poincare/ieee754.h>
 #include <string.h>
-#include <ion.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <cmath>
 #include "helper.h"
 
@@ -26,8 +23,8 @@ QUIZ_CASE(ieee754_next_and_previous) {
   assert_next_and_previous_IEEE754_is<float>(-0.0f, 0.0f);
   assert_next_and_previous_IEEE754_is<float>(-1.4E-45f, -0.0f);
   assert_next_and_previous_IEEE754_is<float>(-3.4359738E10f, -3.43597363E10f);
-  assert(IEEE754<float>::next(3.4028235E38f) == INFINITY);
-  assert(IEEE754<float>::previous(-3.4028235E38f) == -INFINITY);
+  quiz_assert(IEEE754<float>::next(3.4028235E38f) == INFINITY);
+  quiz_assert(IEEE754<float>::previous(-3.4028235E38f) == -INFINITY);
 
   assert_next_and_previous_IEEE754_is<double>(0.0f, 4.94065645841246544176568792868E-324);
   assert_next_and_previous_IEEE754_is<double>(INFINITY, INFINITY);

@@ -78,7 +78,7 @@ private:
     void addSelection(Poincare::Layout addedLayout);
     bool resetSelection(); // returns true if the selection was indeed reset
     bool selectionIsEmpty() const;
-    size_t deleteSelection();
+    void deleteSelection();
 
   private:
     int numberOfSubviews() const override { return 2; }

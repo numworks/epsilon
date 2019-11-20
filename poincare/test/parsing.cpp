@@ -281,7 +281,7 @@ QUIZ_CASE(poincare_parsing_matrices) {
   assert_text_not_parsable("[,]");
 }
 
-QUIZ_CASE(poincare_parsing_symbols_and_functions) {
+QUIZ_CASE(poincare_parsing_identifiers) {
   // User-defined symbols
   assert_parsed_expression_is("a", Symbol::Builder("a", 1));
   assert_parsed_expression_is("x", Symbol::Builder("x", 1));
@@ -368,6 +368,19 @@ QUIZ_CASE(poincare_parsing_symbols_and_functions) {
   assert_parsed_expression_is("√(1)", SquareRoot::Builder(BasedInteger::Builder(1)));
   assert_text_not_parsable("cos(1,2)");
   assert_text_not_parsable("log(1,2,3)");
+
+  // Units
+  for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
+    for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
+      for (const Unit::Prefix * pre = rep->allowedPrefixes(); pre < rep->allowedPrefixesUpperBound(); pre++) {
+        static constexpr size_t bufferSize = 10;
+        char buffer[bufferSize];
+        Unit::Builder(dim, rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+        Expression unit = parse_expression(buffer, nullptr, false);
+        quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
+      }
+    }
+  }
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {

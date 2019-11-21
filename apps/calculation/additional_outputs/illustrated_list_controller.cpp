@@ -30,6 +30,7 @@ IllustratedListController::IllustratedListController(Responder * parentResponder
 {
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
     m_additionalCalculationCells[i].setParentResponder(m_listController.selectableTableView());
+    m_additionalCalculationCells[i].setDisplayLeft(true);
   }
 }
 
@@ -83,8 +84,11 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
     // TODO ?
     return;
   }
+  Poincare::Context * context = App::app()->localContext();
   ScrollableInputExactApproximateExpressionsCell * myCell = (ScrollableInputExactApproximateExpressionsCell *)cell;
-  myCell->setCalculation(m_calculationStore.calculationAtIndex(index-1).pointer());
+  Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
+  myCell->setCalculation(c);
+  myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);
   //myCell->setHighlighted(myCell->isHighlighted()); //TODO??
 }
 

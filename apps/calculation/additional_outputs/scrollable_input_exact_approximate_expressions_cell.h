@@ -37,6 +37,8 @@ public:
   ScrollableInputExactApproximateExpressionsCell() : m_view(nullptr) {}
   void setParentResponder(Responder * r) { m_view.setParentResponder(r); }
   void setCalculation(Calculation * calculation) { m_view.setCalculation(calculation); }
+  void setDisplayCenter(bool display) { m_view.setDisplayCenter(display); }
+  void setDisplayLeft(bool display) { m_view.setDisplayLeft(display); }
 private:
   int numberOfSubviews() const override { return 1; }
   View * subviewAtIndex(int index) override { return &m_view; }

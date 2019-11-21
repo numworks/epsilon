@@ -32,13 +32,26 @@ private:
   ContentCell m_contentCell;
 };
 
-class ScrollableInputExactApproximateExpressionsCell : public HighlightCell {
+class ScrollableInputExactApproximateExpressionsCell : public HighlightCell, public Responder {
 public:
-  ScrollableInputExactApproximateExpressionsCell() : m_view(nullptr) {}
-  void setParentResponder(Responder * r) { m_view.setParentResponder(r); }
+  ScrollableInputExactApproximateExpressionsCell() :
+    Responder(nullptr),
+    m_view(this) {}
+
+  // Responder cell
+  Responder * responder() override {
+    return this;
+  }
+  void didBecomeFirstResponder() override;
+
+  void setHighlighted(bool highlight) override {
+    m_view.evenOddCell()->setHighlighted(highlight);
+    m_view.reloadScroll();
+  }
   void setCalculation(Calculation * calculation) { m_view.setCalculation(calculation); }
   void setDisplayCenter(bool display) { m_view.setDisplayCenter(display); }
   void setDisplayLeft(bool display) { m_view.setDisplayLeft(display); }
+
 private:
   int numberOfSubviews() const override { return 1; }
   View * subviewAtIndex(int index) override { return &m_view; }

@@ -32,6 +32,10 @@ void HistoryController::reload() {
   }
 }
 
+void HistoryController::viewWillAppear() {
+  reload();
+}
+
 void HistoryController::didBecomeFirstResponder() {
   selectCellAtLocation(0, numberOfRows()-1);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);

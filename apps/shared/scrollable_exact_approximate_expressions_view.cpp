@@ -138,7 +138,7 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::layoutSubvi
   // Layout left view
   KDCoordinate currentWidth = 0;
   if (m_displayLeft) {
-    leftView()->setFrame(KDRect(currentWidth, baseline-leftBaseline(), leftSize), force);
+    leftView()->setFrame(KDRect(currentWidth, baseline-leftViewBaseline, leftSize), force);
     currentWidth += leftSize.width() + Metric::CommonLargeMargin;
   }
   // Layout centerd expression

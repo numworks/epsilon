@@ -75,7 +75,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
          * m_controller->setType(additionalInformationType)*/
         if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
            m_complexController.fillCalculationStoreFromExpression(calculation->exactOutput());
-          Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, Metric::PopUpTopMargin, Metric::PopUpRightMargin);
+          Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       } else {
         m_selectableTableView.deselectTable();

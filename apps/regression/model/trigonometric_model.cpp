@@ -70,11 +70,7 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   return 0.0;
 }
 
-void TrigonometricModel::initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store, int series) const {
-  if (forceDefaultValue) {
-    Model::initCoefficientsForFit(modelCoefficients, defaultValue, forceDefaultValue);
-    return;
-  }
+void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series));
   for (int i = 1; i < k_numberOfCoefficients - 1; i++) {
     modelCoefficients[i] = defaultValue;

@@ -16,7 +16,7 @@ public:
   int bannerLinesCount() const override { return 4; }
 private:
   static constexpr int k_numberOfCoefficients = 4;
-  void initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store = nullptr, int series = -1) const override;
+  void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const override;
   Poincare::Expression expression(double * modelCoefficients) override;
 };
 

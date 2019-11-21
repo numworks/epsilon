@@ -20,6 +20,12 @@ $(eval $(call rule_for, \
   with_local_version \
 ))
 
+$(eval $(call rule_for, \
+  RAMSIZE, %_ram_map.png, %.$$(EXE), \
+  $$(PYTHON) build/device/ram_map.py $$< $$@, \
+  with_local_version \
+))
+
 .PHONY: %_size
 %_size: $(BUILD_DIR)/%.$(EXE)
 	@echo "========= BUILD OUTPUT ========"

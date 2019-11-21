@@ -40,14 +40,6 @@ void Model::fit(Store * store, int series, double * modelCoefficients, Poincare:
   }
 }
 
-void Model::initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store, int series) const {
-  assert(defaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series)));
-  int nbCoef = numberOfCoefficients();
-  for (int i = 0; i < nbCoef; i++) {
-    modelCoefficients[i] = defaultValue;
-  }
-}
-
 bool Model::dataSuitableForFit(Store * store, int series) const {
   if (!store->seriesNumberOfAbscissaeGreaterOrEqualTo(series, numberOfCoefficients())) {
     return false;
@@ -209,5 +201,20 @@ int Model::solveLinearSystem(double * solutions, double * coefficients, double *
   return 0;
 }
 
+void Model::initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store, int series) const {
+  assert(forceDefaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series)));
+  if (forceDefaultValue) {
+    Model::specializedInitCoefficientsForFit(modelCoefficients, defaultValue);
+  } else {
+    specializedInitCoefficientsForFit(modelCoefficients, defaultValue, store, series);
+  }
 }
 
+void Model::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
+  const int nbCoef = numberOfCoefficients();
+  for (int i = 0; i < nbCoef; i++) {
+    modelCoefficients[i] = defaultValue;
+  }
+}
+
+}

@@ -39,7 +39,6 @@ public:
   virtual int bannerLinesCount() const { return 2; }
 protected:
   // Fit
-  virtual void initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store = nullptr, int series = -1) const;
   virtual bool dataSuitableForFit(Store * store, int series) const;
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   Poincare::Layout m_layout;
@@ -62,6 +61,8 @@ private:
   double alphaCoefficient(Store * store, int series, double * modelCoefficients, int k, int l) const;
   double betaCoefficient(Store * store, int series, double * modelCoefficients, int k) const;
   int solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Poincare::Context * context);
+  void initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store = nullptr, int series = -1) const;
+  virtual void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store = nullptr, int series = -1) const;
 };
 
 }

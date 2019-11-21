@@ -32,7 +32,7 @@ private:
   ContentCell m_contentCell;
 };
 
-class ScrollableInputExactApproximateExpressionsCell : public HighlightCell, public Responder {
+class ScrollableInputExactApproximateExpressionsCell : public TableCell, public Responder {
 public:
   ScrollableInputExactApproximateExpressionsCell() :
     Responder(nullptr),
@@ -44,6 +44,9 @@ public:
   }
   void didBecomeFirstResponder() override;
 
+  // Table cell
+  View * labelView() const override { return (View *)&m_view; }
+
   void setHighlighted(bool highlight) override {
     m_view.evenOddCell()->setHighlighted(highlight);
     m_view.reloadScroll();
@@ -53,9 +56,6 @@ public:
   void setDisplayLeft(bool display) { m_view.setDisplayLeft(display); }
 
 private:
-  int numberOfSubviews() const override { return 1; }
-  View * subviewAtIndex(int index) override { return &m_view; }
-  void layoutSubviews(bool force = false) override { m_view.setFrame(bounds(), force); }
   ScrollableInputExactApproximateExpressionsView m_view;
 };
 

@@ -83,7 +83,14 @@ protected:
 
 class ScrollableExactApproximateExpressionsView : public AbstractScrollableExactApproximateExpressionsView {
 public:
-  ScrollableExactApproximateExpressionsView(Responder * parentResponder) : AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell) {}
+  ScrollableExactApproximateExpressionsView(Responder * parentResponder) : AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell) {
+    setMargins(
+        Metric::CommonSmallMargin,
+        Metric::CommonLargeMargin,
+        Metric::CommonSmallMargin,
+        Metric::CommonLargeMargin
+    );
+  }
 
 private:
   class ContentCell : public AbstractScrollableExactApproximateExpressionsView::ContentCell {

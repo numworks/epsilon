@@ -9,7 +9,9 @@ namespace Calculation {
 
 class ScrollableInputExactApproximateExpressionsView : public Shared::AbstractScrollableExactApproximateExpressionsView {
 public:
-  ScrollableInputExactApproximateExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell), m_contentCell() {}
+  ScrollableInputExactApproximateExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
+    setMargins(0, 0, 0, 0);
+  }
   void setCalculation(Calculation * calculation);
 private:
   class ContentCell : public Shared::AbstractScrollableExactApproximateExpressionsView::ContentCell {

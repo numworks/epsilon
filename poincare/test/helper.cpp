@@ -44,7 +44,30 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
-  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, expression);
+  const bool test = strcmp(buffer, result) == 0;
+  char information[bufferSize] = "";
+  if (!test) {
+    char * position = information;
+    size_t remainingLength = bufferSize;
+    static constexpr size_t numberOfPieces = 6;
+    const char * piecesOfInformation[numberOfPieces] = {
+      "  ",
+      expression,
+      "\n  processed to\n  ",
+      buffer,
+      "\n  instead of\n  ",
+      result,
+    };
+    for (size_t piece = 0; piece < numberOfPieces; piece++) {
+      const size_t length = strlcpy(position, piecesOfInformation[piece], remainingLength);
+      if (length > remainingLength) {
+        break;
+      }
+      remainingLength -= length;
+      position += length;
+    }
+  }
+  quiz_assert_print_if_failure(test, information);
 }
 
 Poincare::Expression parse_expression(const char * expression, bool addParentheses) {

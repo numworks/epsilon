@@ -32,4 +32,8 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
   reloadScroll();
 }
 
+void ScrollableInputExactApproximateExpressionsCell::didBecomeFirstResponder() {
+  Container::activeApp()->setFirstResponder(&m_view);
+}
+
 }

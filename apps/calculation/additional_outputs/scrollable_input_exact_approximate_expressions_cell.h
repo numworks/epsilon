@@ -9,11 +9,12 @@ namespace Calculation {
 
 class ScrollableInputExactApproximateExpressionsView : public Shared::AbstractScrollableExactApproximateExpressionsView {
 public:
-  ScrollableInputExactApproximateExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell) {}
+  ScrollableInputExactApproximateExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell), m_contentCell() {}
   void setCalculation(Calculation * calculation);
 private:
   class ContentCell : public Shared::AbstractScrollableExactApproximateExpressionsView::ContentCell {
   public:
+    ContentCell() : m_leftExpressionView() {}
     Poincare::Layout layout() const override;
     KDColor backgroundColor() const override { return KDColorWhite; }
     void setEven(bool even) override { return; }
@@ -29,6 +30,18 @@ private:
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
+};
+
+class ScrollableInputExactApproximateExpressionsCell : public HighlightCell {
+public:
+  ScrollableInputExactApproximateExpressionsCell() : m_view(nullptr) {}
+  void setParentResponder(Responder * r) { m_view.setParentResponder(r); }
+  void setCalculation(Calculation * calculation) { m_view.setCalculation(calculation); }
+private:
+  int numberOfSubviews() const override { return 1; }
+  View * subviewAtIndex(int index) override { return &m_view; }
+  void layoutSubviews(bool force = false) override { m_view.setFrame(bounds(), force); }
+  ScrollableInputExactApproximateExpressionsView m_view;
 };
 
 }

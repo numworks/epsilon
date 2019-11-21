@@ -7,9 +7,10 @@ app_calculation_test_src += $(addprefix apps/calculation/,\
 )
 
 app_calculation_src = $(addprefix apps/calculation/,\
-  additional_outputs/complex_graph_controller.cpp \
-  additional_outputs/complex_graph_view.cpp \
+  additional_outputs/complex_graph_cell.cpp \
   additional_outputs/complex_model.cpp \
+  additional_outputs/complex_list_controller.cpp \
+  additional_outputs/illustrated_list_controller.cpp \
   additional_outputs/scrollable_input_exact_approximate_expressions_cell.cpp \
   app.cpp \
   edit_expression_controller.cpp \

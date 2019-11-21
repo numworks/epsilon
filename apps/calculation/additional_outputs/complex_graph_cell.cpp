@@ -1,4 +1,4 @@
-#include "complex_graph_view.h"
+#include "complex_graph_cell.h"
 
 using namespace Shared;
 using namespace Poincare;

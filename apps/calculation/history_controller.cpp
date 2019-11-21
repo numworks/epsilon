@@ -74,7 +74,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
          * Controller * c = additionalInformationType ? graphController : listController?
          * m_controller->setType(additionalInformationType)*/
         if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
-          m_complexController.complexModel()->setComplex(std::complex<float>(1.2f,2.0f));
+           m_complexController.fillCalculationStoreFromExpression(calculation->exactOutput());
           Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, Metric::PopUpTopMargin, Metric::PopUpRightMargin);
         }
       } else {

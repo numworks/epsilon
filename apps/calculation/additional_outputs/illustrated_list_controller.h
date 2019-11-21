@@ -39,7 +39,7 @@ private:
     SelectableTableView m_selectableTableView;
   };
   constexpr static int k_maxNumberOfAdditionalCalculations = 3;
-  constexpr static KDCoordinate k_illustrationHeight = 50;
+  constexpr static KDCoordinate k_illustrationHeight = 100;
   ListController m_listController;
   // Cells
   virtual HighlightCell * illustrationCell() = 0;

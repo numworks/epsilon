@@ -22,7 +22,7 @@ private:
     ExpressionView * leftExpressionView() { return &m_leftExpressionView; }
   private:
     void setLeftViewBackgroundColor(KDColor color) override { m_leftExpressionView.setBackgroundColor(color); }
-    KDCoordinate leftBaseline() const override { return m_leftExpressionView.layout().isUninitialized() ? m_leftExpressionView.layout().baseline() : 0; }
+    KDCoordinate leftBaseline() const override { return !m_leftExpressionView.layout().isUninitialized() ? m_leftExpressionView.layout().baseline() : 0; }
     KDSize leftMinimalSizeForOptimalDisplay() const override { return m_leftExpressionView.minimalSizeForOptimalDisplay(); }
     ExpressionView m_leftExpressionView;
   };

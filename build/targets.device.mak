@@ -3,6 +3,12 @@ include build/targets.device.$(MODEL).mak
 HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
+$(eval $(call rule_for, \
+  RAMSIZE, %_ram_map.png, %.elf, \
+  $$(PYTHON) build/device/ram_map.py $$< $$@, \
+  local \
+))
+
 .PHONY: %_size
 %_size: $(BUILD_DIR)/%.$(EXE)
 	@echo "========= BUILD OUTPUT ========"

@@ -157,12 +157,6 @@ AbstractScrollableExactApproximateExpressionsView::AbstractScrollableExactApprox
   ScrollableView(parentResponder, contentCell, this)
 {
   setDecoratorType(ScrollView::Decorator::Type::Arrows);
-  setMargins(
-    Metric::CommonSmallMargin,
-    Metric::CommonLargeMargin,
-    Metric::CommonSmallMargin,
-    Metric::CommonLargeMargin
-  );
 }
 
 void AbstractScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout rightLayout, Poincare::Layout leftLayout) {

@@ -17,6 +17,7 @@ public:
   EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore);
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   void insertTextBody(const char * text);
 
   /* TextFieldDelegate */

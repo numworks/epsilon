@@ -58,6 +58,10 @@ void EditExpressionController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(m_contentView.expressionField());
 }
 
+void EditExpressionController::viewWillAppear() {
+  m_historyController->viewWillAppear();
+}
+
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
   bool shouldDuplicateLastCalculation = textField->isEditing() && textField->shouldFinishEditing(event) && textField->draftTextLength() == 0;
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {

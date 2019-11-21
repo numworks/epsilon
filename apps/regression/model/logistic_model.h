@@ -15,6 +15,8 @@ public:
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 3; }
   int bannerLinesCount() const override { return 3; }
+private:
+  void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const override;
 };
 
 }

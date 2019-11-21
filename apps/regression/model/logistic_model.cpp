@@ -1,4 +1,5 @@
 #include "logistic_model.h"
+#include "../store.h"
 #include <math.h>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
@@ -80,5 +81,17 @@ double LogisticModel::partialDerivate(double * modelCoefficients, int derivateCo
   assert(false);
   return 0.0;
 }
+
+void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
+  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series));
+  modelCoefficients[0] = defaultValue;
+  modelCoefficients[1] = defaultValue;
+  /* If the data is a standard logistic function, the ordinates are between 0
+   * and c. Twice the standard vertical deviation is a rough estimate of c
+   * that is "close enough" to c to seed the coefficient, without being too
+   * dependent on outliers.*/
+  modelCoefficients[2] = 2.0*store->standardDeviationOfColumn(series, 1);
+}
+
 
 }

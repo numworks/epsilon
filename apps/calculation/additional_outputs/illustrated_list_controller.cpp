@@ -18,7 +18,6 @@ IllustratedListController::ListController::ListController(IllustratedListControl
 void IllustratedListController::ListController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, 1);
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 /* Illustrated list controller */

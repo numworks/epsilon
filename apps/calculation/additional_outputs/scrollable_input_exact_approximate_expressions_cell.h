@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "../../shared/scrollable_exact_approximate_expressions_view.h"
 #include "../calculation.h"
+#include "expression_with_equal_sign_view.h"
 
 namespace Calculation {
 
@@ -21,12 +22,12 @@ private:
     KDColor backgroundColor() const override { return KDColorWhite; }
     void setEven(bool even) override { return; }
     View * leftView() override { return &m_leftExpressionView; }
-    ExpressionView * leftExpressionView() { return &m_leftExpressionView; }
+    ExpressionWithEqualSignView * leftExpressionView() { return &m_leftExpressionView; }
   private:
     void setLeftViewBackgroundColor(KDColor color) override { m_leftExpressionView.setBackgroundColor(color); }
     KDCoordinate leftBaseline() const override { return !m_leftExpressionView.layout().isUninitialized() ? m_leftExpressionView.layout().baseline() : 0; }
     KDSize leftMinimalSizeForOptimalDisplay() const override { return m_leftExpressionView.minimalSizeForOptimalDisplay(); }
-    ExpressionView m_leftExpressionView;
+    ExpressionWithEqualSignView m_leftExpressionView;
   };
 
   ContentCell *  contentCell() override { return &m_contentCell; };

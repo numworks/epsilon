@@ -11,7 +11,8 @@ namespace Calculation {
 class ScrollableInputExactApproximateExpressionsView : public Shared::AbstractScrollableExactApproximateExpressionsView {
 public:
   ScrollableInputExactApproximateExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
-    setMargins(0, 0, 0, 0);
+    setMargins(Metric::CommonSmallMargin, 0, Metric::CommonSmallMargin, 0); // Left Right margins are already added by TableCell
+    setBackgroundColor(KDColorWhite);
   }
   void setCalculation(Calculation * calculation);
 private:

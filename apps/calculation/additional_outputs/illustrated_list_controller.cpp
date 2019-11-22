@@ -9,7 +9,7 @@ namespace Calculation {
 
 IllustratedListController::ListController::ListController(IllustratedListController * dataSource) :
   ViewController(dataSource),
-  m_selectableTableView(this, dataSource, dataSource)
+  m_selectableTableView(this, dataSource, dataSource, dataSource)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
@@ -90,6 +90,22 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
   myCell->setCalculation(c);
   myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);
   //myCell->setHighlighted(myCell->isHighlighted()); //TODO??
+}
+
+void IllustratedListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
+  // Forbid selecting Illustration cell
+  if (t->selectedRow() == 0) {
+    t->selectCellAtLocation(0, 1);
+  }
+  /* But scroll to the top when we select the first
+   * ScrollableInputExactApproximateExpressionsCell in order display the
+   * illustration cell. */
+  if (t->selectedRow() == 1) {
+    t->scrollToCell(0, 0);
+  }
 }
 
 void IllustratedListController::fillCalculationStoreFromExpression(Expression e) {

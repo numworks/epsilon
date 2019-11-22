@@ -8,7 +8,7 @@
 
 namespace Calculation {
 
-class IllustratedListController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class IllustratedListController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   IllustratedListController(Responder * parentResponder);
 
@@ -23,6 +23,9 @@ public:
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // IllustratedListController
   virtual void fillCalculationStoreFromExpression(Poincare::Expression e);

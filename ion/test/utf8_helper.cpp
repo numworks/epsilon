@@ -87,6 +87,21 @@ QUIZ_CASE(ion_utf8_copy_and_remove_code_point) {
   c = UCodePointLatinLetterSmallCapitalE;
   result = "124";
   assert_copy_and_remove_code_point_gives(buffer, bufferSize, s, c, result);
+
+  // The buffer size is to small to hold s
+  s = "1234ᴇ";
+  c = '5';
+  result = "1234"; // "1234ᴇ" size is 7
+  assert_copy_and_remove_code_point_gives(buffer, 6, s, c, result);
+  assert_copy_and_remove_code_point_gives(buffer, 7, s, c, result);
+  result = "1234ᴇ";
+  assert_copy_and_remove_code_point_gives(buffer, 8, s, c, result);
+
+  s = "1234ᴇ";
+  c = '4';
+  result = "123ᴇ";
+  assert_copy_and_remove_code_point_gives(buffer, 7, s, c, result);
+
 }
 
 void assert_remove_code_point_gives(char * buffer, CodePoint c, const char * * indexToUpdate, const char * stoppingPosition, const char * indexToUpdateResult, const char * result) {

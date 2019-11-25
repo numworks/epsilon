@@ -5,7 +5,6 @@
 
 namespace UTF8Helper {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 static inline size_t minSizeT(size_t x, size_t y) { return x < y ? x : y; }
 
 int CountOccurrences(const char * s, CodePoint c) {
@@ -110,7 +109,11 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
   // Remove CodePoint c
   while (codePoint != UCodePointNull && bufferIndex < dstSize) {
     if (codePoint != c) {
-      int copySize = minInt(nextPointer - currentPointer, dstSize - bufferIndex);
+      int copySize = nextPointer - currentPointer;
+      if (copySize > dstSize - 1 - bufferIndex) {
+        // Copying the current code point to the buffer would overflow the buffer
+        break;
+      }
       memcpy(dst + bufferIndex, currentPointer, copySize);
       bufferIndex+= copySize;
     }
@@ -118,7 +121,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
     codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();
   }
-  *(dst + minInt(bufferIndex, dstSize - 1)) = 0;
+  *(dst + bufferIndex) = 0;
 }
 
 void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate, const char * stoppingPosition) {

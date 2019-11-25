@@ -345,11 +345,14 @@ Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record re
       return notifyFullnessToDelegate();
     }
     overrideSizeAtPosition(p, newRecordSize);
-    overrideBaseNameWithExtensionAtPosition(p+sizeof(record_size_t), baseName, extension);
+    char * fullNamePosition = p + sizeof(record_size_t);
+    overrideBaseNameWithExtensionAtPosition(fullNamePosition, baseName, extension);
+    // Recompute the CRC32
+    record = Record(fullNamePosition);
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
-   return Record::ErrorStatus::None;
+    return Record::ErrorStatus::None;
   }
   return Record::ErrorStatus::RecordDoesNotExist;
 }

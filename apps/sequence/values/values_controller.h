@@ -21,7 +21,10 @@ public:
     return &m_intervalParameterController;
   }
 private:
-  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
+  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override {
+    setDefaultStartEndMessages();
+  }
+  void setDefaultStartEndMessages();
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   void printEvaluationOfAbscissaAtColumn(double abscissa, int columnIndex, char * buffer, const int bufferSize) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;

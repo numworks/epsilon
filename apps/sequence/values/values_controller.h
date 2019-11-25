@@ -33,7 +33,11 @@ private:
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableSequences * k_maxNumberOfDisplayableRows;
 
   // ValuesController
-  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
+  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override {
+    setDefaultStartEndMessages();
+  }
+
+  void setDefaultStartEndMessages();
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableSequences; }

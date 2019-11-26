@@ -36,7 +36,7 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind >= MP_TOKEN_DEL_EQUAL && tokenKind <= MP_TOKEN_DEL_MINUS_MORE) {
     return OperatorColor;
   }
-  return KDColorBlack;
+  return Palette::Text;
 }
 
 static inline size_t TokenLength(mp_lexer_t * lex) {

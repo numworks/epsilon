@@ -208,7 +208,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
     myCell->setLayout(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
-  KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
+  KDColor textColor = active ? Palette::Text : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }
 

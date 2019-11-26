@@ -1,7 +1,7 @@
 #include "button_with_separator.h"
 
 ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder, I18n::Message message, Invocation invocation) :
-  Button(parentResponder, message, invocation, KDFont::LargeFont, KDColorBlack)
+  Button(parentResponder, message, invocation, KDFont::LargeFont, Palette::Text)
 {
 }
 

@@ -9,7 +9,7 @@
 class SolidTextArea : public TextArea {
 public:
   SolidTextArea(Responder * parentResponder, const KDFont * font = KDFont::LargeFont,
-    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) :
+    KDColor textColor = Palette::Text, KDColor backgroundColor = KDColorWhite) :
     TextArea(parentResponder, &m_contentView, font),
     m_contentView(font, textColor, backgroundColor) {}
 protected:

@@ -12,7 +12,7 @@ static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
-  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_expressionView(0.0f, 0.5f, Palette::Text, KDColorWhite),
   m_cursorView(),
   m_isEditing(false)
 {

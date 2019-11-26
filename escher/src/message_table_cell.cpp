@@ -4,7 +4,7 @@
 
 MessageTableCell::MessageTableCell(I18n::Message label, const KDFont * font, Layout layout) :
   TableCell(layout),
-  m_messageTextView(font, label, 0, 0.5, KDColorBlack, KDColorWhite)
+  m_messageTextView(font, label, 0, 0.5, Palette::Text, KDColorWhite)
 {
 }
 

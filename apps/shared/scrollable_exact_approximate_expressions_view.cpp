@@ -45,7 +45,7 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setEven(bool even) 
 
 void ScrollableExactApproximateExpressionsView::ContentCell::reloadTextColor() {
   if (numberOfSubviews() == 1) {
-    m_rightExpressionView.setTextColor(KDColorBlack);
+    m_rightExpressionView.setTextColor(Palette::Text);
   } else {
     m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
   }

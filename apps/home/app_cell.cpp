@@ -5,7 +5,7 @@ namespace Home {
 
 AppCell::AppCell() :
   HighlightCell(),
-  m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, KDColorWhite),
+  m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::Text, KDColorWhite),
   m_visible(true)
 {
 }
@@ -45,7 +45,7 @@ void AppCell::setVisible(bool visible) {
 }
 
 void AppCell::reloadCell() {
-  m_nameView.setTextColor(isHighlighted() ? KDColorWhite : KDColorBlack);
+  m_nameView.setTextColor(isHighlighted() ? KDColorWhite : Palette::Text);
   m_nameView.setBackgroundColor(isHighlighted() ? Palette::YellowDark : KDColorWhite);
 }
 

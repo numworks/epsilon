@@ -18,8 +18,8 @@ namespace Solver {
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
-  m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
-  m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
+  m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, Palette::Text, Palette::WallScreenDark),
+  m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, Palette::Text, Palette::WallScreenDark),
   m_selectableTableView(controller),
   m_displayWarningMoreSolutions(false)
 {

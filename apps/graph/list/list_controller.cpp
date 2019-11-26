@@ -178,7 +178,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
+  KDColor textColor = f->isActive() ? Palette::Text : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }
 

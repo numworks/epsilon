@@ -4,7 +4,7 @@ namespace Shared {
 
 void VerticalCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
-  ctx->fillRect(KDRect(0, 0, 1, height), KDColorBlack);
+  ctx->fillRect(KDRect(0, 0, 1, height), Palette::Text);
 }
 
 KDSize VerticalCursorView::minimalSizeForOptimalDisplay() const {

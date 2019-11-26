@@ -111,11 +111,11 @@ void EquationListView::BraceView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   KDCoordinate height = bounds().height();
   KDCoordinate margin = 3;
-  ctx->blendRectWithMask(KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight), KDColorBlack, (const uint8_t *)topBrace, (KDColor *)(s_braceWorkingBuffer));
-  ctx->blendRectWithMask(KDRect(0, height/2-braceCenterHeight/2, braceCenterWidth, braceCenterHeight), KDColorBlack, (const uint8_t *)middleBrace, (KDColor *)(s_braceWorkingBuffer));
-  ctx->blendRectWithMask(KDRect(margin, height-braceExtremumHeight, braceExtremumWidth, braceExtremumHeight), KDColorBlack, (const uint8_t *)bottomBrace, (KDColor *)(s_braceWorkingBuffer));
-  ctx->fillRect(KDRect(margin, braceExtremumHeight, 1, height/2-braceCenterHeight/2-braceExtremumHeight), KDColorBlack);
-  ctx->fillRect(KDRect(margin, height/2+braceCenterHeight/2, 1, height/2-braceExtremumHeight/2-braceExtremumHeight), KDColorBlack);
+  ctx->blendRectWithMask(KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight), Palette::Text, (const uint8_t *)topBrace, (KDColor *)(s_braceWorkingBuffer));
+  ctx->blendRectWithMask(KDRect(0, height/2-braceCenterHeight/2, braceCenterWidth, braceCenterHeight), Palette::Text, (const uint8_t *)middleBrace, (KDColor *)(s_braceWorkingBuffer));
+  ctx->blendRectWithMask(KDRect(margin, height-braceExtremumHeight, braceExtremumWidth, braceExtremumHeight), Palette::Text, (const uint8_t *)bottomBrace, (KDColor *)(s_braceWorkingBuffer));
+  ctx->fillRect(KDRect(margin, braceExtremumHeight, 1, height/2-braceCenterHeight/2-braceExtremumHeight), Palette::Text);
+  ctx->fillRect(KDRect(margin, height/2+braceCenterHeight/2, 1, height/2-braceExtremumHeight/2-braceExtremumHeight), Palette::Text);
 }
 
 KDSize EquationListView::BraceView::minimalSizeForOptimalDisplay() const {

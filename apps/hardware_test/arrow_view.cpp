@@ -30,7 +30,7 @@ const uint8_t arrowDownMask[10][9] = {
 
 ArrowView::ArrowView() :
   m_directionIsUp(true),
-  m_color(KDColorBlack)
+  m_color(Palette::Text)
 {
 }
 

@@ -15,7 +15,7 @@ TreePool * TreePool::SharedStaticPool = nullptr;
 
 void TreePool::freeIdentifier(int identifier) {
   if (identifier >= 0 && identifier < MaxNumberOfNodes) {
-    m_nodeForIdentifier[identifier] = nullptr;
+    m_nodeForIdentifier[identifier] = nullptr; // TODO: We do not really need to do this, but it cleaner...
     m_identifiers.push(identifier);
   }
 }

@@ -50,12 +50,10 @@ public:
   constexpr static KDColor Halogen = KDColor::RGB24(0x00debd);
   constexpr static KDColor ReactiveNonmetal = KDColor::RGB24(0x00ee00);
   constexpr static KDColor NobleGas = KDColor::RGB24(0x8baaff);
-  
   constexpr static KDColor TableLines = KDColor::RGB24(0x323532);
-  
   constexpr static KDColor AtomColor[] = {
-    Unknown, AlkaliMetal, AlkaliEarthMetal, Lanthanide, Actinide, TransitionMetal,
-    PostTransitionMetal, Metalloid, Halogen, ReactiveNonmetal, NobleGas
+      Unknown, AlkaliMetal, AlkaliEarthMetal, Lanthanide, Actinide, TransitionMetal,
+      PostTransitionMetal, Metalloid, Halogen, ReactiveNonmetal, NobleGas
   };
 };
 

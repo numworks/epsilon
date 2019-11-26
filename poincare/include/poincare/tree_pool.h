@@ -27,7 +27,8 @@ public:
 
   // Node
   TreeNode * node(int identifier) const {
-    assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
+    assert(identifier >= 0 && identifier < MaxNumberOfNodes);
+    assert(m_nodeForIdentifier[identifier] != nullptr);
     return m_nodeForIdentifier[identifier];
   }
 

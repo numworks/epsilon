@@ -15,7 +15,11 @@ TreePool * TreePool::SharedStaticPool = nullptr;
 
 void TreePool::freeIdentifier(int identifier) {
   if (identifier >= 0 && identifier < MaxNumberOfNodes) {
-    m_nodeForIdentifier[identifier] = nullptr; // TODO: We do not really need to do this, but it cleaner...
+    /* We could clean m_nodeForIdentifierOffset[identifier] to a default offset
+     * (for instance BufferSize) to be able to return nullptr when we access an
+     * inexisting cleaned node. However, transforming a default offset to a
+     * nullptr tree node adds one check per "get node", which is quite
+     * unefficient. We thus do nothing. */
     m_identifiers.push(identifier);
   }
 }
@@ -135,7 +139,7 @@ void TreePool::dealloc(TreeNode * node, size_t size) {
   );
   m_cursor -= size;
 
-  // Step 2: Update m_nodeForIdentifier for all nodes downstream
+  // Step 2: Update m_nodeForIdentifierOffset for all nodes downstream
   updateNodeForIdentifierFromNode(node);
 }
 
@@ -151,13 +155,15 @@ void TreePool::registerNode(TreeNode * node) {
   int nodeID = node->identifier();
   if (nodeID >= 0) {
     assert(nodeID < MaxNumberOfNodes);
-    m_nodeForIdentifier[nodeID] = node;
+    assert((((char *)node) - ((char *)m_alignedBuffer)) / ByteAlignment < k_maxNodeOffset); // Check that the offset can be stored in a uint16_t
+    m_nodeForIdentifierOffset[nodeID] = (((char *)node) - (char *)m_alignedBuffer)/ByteAlignment;
   }
 }
 
 void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
   for (TreeNode * n : Nodes(node)) {
-    m_nodeForIdentifier[n->identifier()] = n;
+    assert((((char *)node) - ((char *)m_alignedBuffer))/ByteAlignment < k_maxNodeOffset); // Check that the offset can be stored in a uint16_t
+    m_nodeForIdentifierOffset[n->identifier()] = (((char *)n) - (char *)m_alignedBuffer)/ByteAlignment;
   }
 }
 

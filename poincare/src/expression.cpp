@@ -856,8 +856,13 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       Expression norm;
       Expression exp;
       if (!isOneRa || isZeroTb) {
-        assert(!isNegativeRa); // norm cannot be negative
-        norm = ra;
+        /* Norm cannot be negative but can be preceded by a negative sign (for
+         * instance "-log(0.3)") which would lead to isNegativeRa = True. */
+        if (isNegativeRa) {
+          norm = Opposite::Builder(ra);
+        } else {
+          norm = ra;
+        }
       }
       if (!isZeroRa && !isZeroTb) {
         Expression arg;

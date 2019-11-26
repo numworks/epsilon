@@ -941,6 +941,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,ℯ^\u0012π/2×𝐢\u0013]]", User, Radian, Polar);
   assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, Polar);
   assert_parsed_expression_simplify_to("atan(-2)", "atan(2)×ℯ^\u0012π×𝐢\u0013", User, Radian, Polar);
+  assert_parsed_expression_simplify_to("cos(42π)", "-cos(42×π)×ℯ^\x12π×𝐢\x13", User, Degree, Polar);
 
   // User defined variable
   assert_parsed_expression_simplify_to("a", "a", User, Radian, Polar);

@@ -28,8 +28,7 @@ public:
   // Node
   TreeNode * node(int identifier) const {
     assert(identifier >= 0 && identifier < MaxNumberOfNodes);
-    assert(m_nodeForIdentifier[identifier] != nullptr);
-    return m_nodeForIdentifier[identifier];
+    return const_cast<TreeNode *>(reinterpret_cast<const TreeNode *>(m_alignedBuffer + m_nodeForIdentifierOffset[identifier]));
   }
 
   // Pool memory
@@ -52,6 +51,8 @@ public:
 private:
   constexpr static int BufferSize = 32768;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
+  constexpr static int k_maxNodeOffset = BufferSize/ByteAlignment;
+
   static TreePool * SharedStaticPool;
 
   // TreeNode
@@ -144,7 +145,9 @@ private:
   AlignedNodeBuffer m_alignedBuffer[BufferSize/ByteAlignment];
   char * m_cursor;
   IdentifierStack m_identifiers;
-  TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
+  uint16_t m_nodeForIdentifierOffset[MaxNumberOfNodes];
+  static_assert(k_maxNodeOffset < UINT16_MAX && sizeof(m_nodeForIdentifierOffset[0]) == sizeof(uint16_t),
+        "The tree pool node offsets in m_nodeForIdentifierOffset cannot be written with the chosen data size (uint16_t)");
 };
 
 }

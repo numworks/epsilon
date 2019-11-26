@@ -149,7 +149,8 @@ void TreePool::discardTreeNode(TreeNode * node) {
 
 void TreePool::registerNode(TreeNode * node) {
   int nodeID = node->identifier();
-  if (nodeID >= 0 && nodeID < MaxNumberOfNodes) {
+  if (nodeID >= 0) {
+    assert(nodeID < MaxNumberOfNodes);
     m_nodeForIdentifier[nodeID] = node;
   }
 }

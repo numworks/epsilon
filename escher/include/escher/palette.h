@@ -6,6 +6,7 @@
 class Palette {
 public:
   constexpr static KDColor Text = KDColor::RGB24(0x000000);
+  constexpr static KDColor BackgroundHard = KDColor::RGB24(0xffffff);
   constexpr static KDColor YellowDark = KDColor::RGB24(0xffb734);
   constexpr static KDColor YellowLight = KDColor::RGB24(0xffcc7b);
   constexpr static KDColor PurpleBright = KDColor::RGB24(0x656975);

@@ -211,8 +211,8 @@ int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascend
   return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), ascending, canBeInterrupted);
 }
 
-Expression PowerNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return Power(this).denominator(context, complexFormat, angleUnit);
+Expression PowerNode::denominator(ReductionContext reductionContext) const {
+  return Power(this).denominator(reductionContext);
 }
 
 // Evaluation
@@ -743,8 +743,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* Step 13: (a0+a1+...am)^n with n integer
-   *              -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome) */
+   *              -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
+   * We don't apply this rule when the target is the SystemForApproximation.
+   * Indeed, developing the multinome is likely to increase the numbers of
+   * operations and lead to precision loss. */
   if (!letPowerAtRoot
+      && reductionContext.target() != ExpressionNode::ReductionTarget::SystemForApproximation
       && indexType == ExpressionNode::Type::Rational
       && !static_cast<Rational &>(index).signedIntegerNumerator().isZero()
       && static_cast<Rational &>(index).isInteger()
@@ -845,7 +849,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
 Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   // Step 1: X^-y -> 1/(X->shallowBeautify)^y
-  Expression p = denominator(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  Expression p = denominator(reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
     Division d = Division::Builder(Rational::Builder(1), p);
@@ -867,12 +871,12 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
     return result;
   }
 
-  /* Optional Step 3: if the ReductionTarget is the System, turn a^(p/q) into
-   * (root(a, q))^p
+  /* Optional Step 3: if the ReductionTarget is the SystemForApproximation or
+   * SystemForAnalysis, turn a^(p/q) into (root(a, q))^p
    * Indeed, root(a, q) can have a real root which is not the principale angle
    * but that we want to return in real complex format. This special case is
    * handled in NthRoot approximation but not in Power approximation. */
-  if (reductionContext.target()  == ExpressionNode::ReductionTarget::System && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
+  if (reductionContext.target() != ExpressionNode::ReductionTarget::User && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     Integer p = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
     Integer q = childAtIndex(1).convert<Rational>().integerDenominator();
     Expression nthRoot = q.isOne() ? childAtIndex(0) : NthRoot::Builder(childAtIndex(0), Rational::Builder(q));
@@ -887,11 +891,11 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
 // Private
 
 // Simplification
-Expression Power::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Power::denominator(ExpressionNode::ReductionContext reductionContext) const {
   // Clone the power
   Expression clone = Power::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
   // If the power is of form x^(-y), denominator should be x^y
-  Expression positiveIndex = clone.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User));
+  Expression positiveIndex = clone.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(reductionContext);
   if (!positiveIndex.isUninitialized()) {
     // if y was -1, clone is now x^1, denominator is then only x
     // we cannot shallowReduce the clone as it is not attached to its parent yet

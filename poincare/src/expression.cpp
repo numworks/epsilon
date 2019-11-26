@@ -519,7 +519,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-  exp = exp.simplify(context, complexFormat, angleUnit, symbolicSimplification);
+  exp = exp.simplify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicSimplification);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
@@ -547,9 +547,9 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   }
 }
 
-Expression Expression::simplify(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
+Expression Expression::simplify(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   sSimplificationHasBeenInterrupted = false;
-  ExpressionNode::ReductionContext c = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System, symbolicComputation);
+  ExpressionNode::ReductionContext c = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, target, symbolicComputation);
   Expression e = deepReduce(c);
   if (!sSimplificationHasBeenInterrupted) {
     e = e.deepBeautify(c);
@@ -618,7 +618,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   Expression e = clone().deepReduce(userReductionContext);
   if (sSimplificationHasBeenInterrupted) {
     sSimplificationHasBeenInterrupted = false;
-    ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System, symbolicComputation);
+    ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation);
     e = deepReduce(systemReductionContext);
   }
   *simplifiedExpression = Expression();
@@ -730,9 +730,9 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
   return *this;
 }
 
-Expression Expression::reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Expression::reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   sSimplificationHasBeenInterrupted = false;
-  return deepReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System, true));
+  return deepReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, target, true));
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -856,8 +856,13 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       Expression norm;
       Expression exp;
       if (!isOneRa || isZeroTb) {
-        assert(!isNegativeRa); // norm cannot be negative
-        norm = ra;
+        /* Norm cannot be negative but can be preceded by a negative sign (for
+         * instance "-log(0.3)") which would lead to isNegativeRa = True. */
+        if (isNegativeRa) {
+          norm = Opposite::Builder(ra);
+        } else {
+          norm = ra;
+        }
       }
       if (!isZeroRa && !isZeroTb) {
         Expression arg;

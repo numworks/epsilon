@@ -243,10 +243,23 @@ void ValuesController::didChangeCell(int column, int row) {
     return;
   }
 
+  // Find the abscissa column corresponding to column
+  int abscissaColumn = 0;
+  int nbOfColumns = numberOfColumnsForAbscissaColumn(abscissaColumn);
+   while (column >= nbOfColumns) {
+    abscissaColumn = nbOfColumns;
+    nbOfColumns += numberOfColumnsForAbscissaColumn(abscissaColumn);
+  }
+
   // Update the memoization of rows linked to the changed cell
   int nbOfMemoizedColumns = numberOfMemoizedColumn();
-  for (int i = column+1; i < column+numberOfColumnsForAbscissaColumn(column); i++) {
+  int nbOfColumnsForAbscissa = numberOfColumnsForAbscissaColumn(abscissaColumn);
+  for (int i = abscissaColumn+1; i < abscissaColumn+nbOfColumnsForAbscissa; i++) {
     int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
+    if (memoizedI < 0 || memoizedI >= nbOfMemoizedColumns) {
+      // The changed column is out of the memoized table
+      continue;
+    }
     fillMemoizedBuffer(i, row, nbOfMemoizedColumns*memoizedRow+memoizedI);
   }
 }

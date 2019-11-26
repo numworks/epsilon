@@ -108,6 +108,9 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(10000000000000000000000000000.0, "1ᴇ28", DecimalMode, 14);
   assert_float_prints_to(10000000000000000000000000000.0, "10ᴇ27", EngineeringMode, 14);
 
+  // This used to crash on web platform
+  assert_float_prints_to(1000.0, "1000", DecimalMode, 7);
+
   assert_float_prints_to(1000000.0f, "1ᴇ6", ScientificMode, 7);
   assert_float_prints_to(1000000.0f, "1000000", DecimalMode, 7);
   assert_float_prints_to(1000000.0f, "1ᴇ6", EngineeringMode, 7);

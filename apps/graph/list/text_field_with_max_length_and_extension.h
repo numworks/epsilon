@@ -18,7 +18,7 @@ public:
       float horizontalAlignment = 0.0f,
       float verticalAlignment = 0.5f,
       KDColor textColor = Palette::Text,
-      KDColor backgroundColor = KDColorWhite) :
+      KDColor backgroundColor = Palette::BackgroundHard) :
     TextFieldWithExtension(extensionLength, parentResponder, textBuffer, textBufferSize, draftTextBufferSize, inputEventHandlerDelegate, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor) {}
   void setDraftTextBufferSize(size_t size) { m_contentView.setDraftTextBufferSize(size); }
 };

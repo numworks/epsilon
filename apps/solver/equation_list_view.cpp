@@ -19,7 +19,7 @@ EquationListView::EquationListView(ListController * listController) :
   listController->setScrollViewDelegate(this);
   m_scrollBraceView.setMargins(k_margin, k_margin, k_margin, k_margin);
   m_scrollBraceView.setDecoratorType(ScrollView::Decorator::Type::None);
-  m_scrollBraceView.setBackgroundColor(KDColorWhite);
+  m_scrollBraceView.setBackgroundColor(Palette::BackgroundHard);
 }
 
 void EquationListView::setBraceStyle(BraceStyle style) {
@@ -108,7 +108,7 @@ const uint8_t bottomBrace[braceExtremumHeight][braceExtremumWidth] = {
 KDColor s_braceWorkingBuffer[60];
 
 void EquationListView::BraceView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::BackgroundHard);
   KDCoordinate height = bounds().height();
   KDCoordinate margin = 3;
   ctx->blendRectWithMask(KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight), Palette::Text, (const uint8_t *)topBrace, (KDColor *)(s_braceWorkingBuffer));

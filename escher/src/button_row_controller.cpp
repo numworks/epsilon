@@ -102,10 +102,10 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   }
   if (m_style == Style::PlainWhite) {
     if (m_position == Position::Top) {
-      ctx->fillRect(KDRect(0, 0, bounds().width(), k_plainStyleHeight), KDColorWhite);
+      ctx->fillRect(KDRect(0, 0, bounds().width(), k_plainStyleHeight), Palette::BackgroundHard);
       ctx->fillRect(KDRect(0, k_plainStyleHeight, bounds().width(), 1), Palette::GreyWhite);
     } else {
-      ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight, bounds().width(), k_plainStyleHeight), KDColorWhite);
+      ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight, bounds().width(), k_plainStyleHeight), Palette::BackgroundHard);
       ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight-1, bounds().width(), 1), Palette::GreyWhite);
     }
     return;

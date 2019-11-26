@@ -161,7 +161,7 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField, cons
 
 void ParametersController::buttonAction() {
   StackViewController * stack = stackController();
-  stack->push(m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+  stack->push(m_calculationController, Palette::BackgroundHard, Palette::SubTab, Palette::SubTab);
 }
 
 }

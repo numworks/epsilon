@@ -89,7 +89,7 @@ void NestedMenuController::ListController::setFirstSelectedRow(int firstSelected
 /* NestedMenuController */
 
 NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Message title) :
-  StackViewController(parentResponder, &m_listController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
+  StackViewController(parentResponder, &m_listController, Palette::BackgroundHard, Palette::PurpleBright, Palette::PurpleDark),
   m_selectableTableView(&m_listController, this, this),
   m_listController(this, &m_selectableTableView, title),
   m_sender(nullptr)

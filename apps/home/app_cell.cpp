@@ -5,7 +5,7 @@ namespace Home {
 
 AppCell::AppCell() :
   HighlightCell(),
-  m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::Text, KDColorWhite),
+  m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::Text, Palette::BackgroundHard),
   m_visible(true)
 {
 }
@@ -13,7 +13,7 @@ AppCell::AppCell() :
 
 void AppCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
-  ctx->fillRect(KDRect(0,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, bounds().width(), nameSize.height()+2*k_nameHeightMargin), KDColorWhite);
+  ctx->fillRect(KDRect(0,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, bounds().width(), nameSize.height()+2*k_nameHeightMargin), Palette::BackgroundHard);
 }
 
 int AppCell::numberOfSubviews() const {
@@ -45,8 +45,8 @@ void AppCell::setVisible(bool visible) {
 }
 
 void AppCell::reloadCell() {
-  m_nameView.setTextColor(isHighlighted() ? KDColorWhite : Palette::Text);
-  m_nameView.setBackgroundColor(isHighlighted() ? Palette::YellowDark : KDColorWhite);
+  m_nameView.setTextColor(isHighlighted() ? Palette::BackgroundHard : Palette::Text);
+  m_nameView.setBackgroundColor(isHighlighted() ? Palette::YellowDark : Palette::BackgroundHard);
 }
 
 }

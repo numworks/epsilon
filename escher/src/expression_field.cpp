@@ -8,15 +8,15 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, nullptr, k_textFieldBufferSize, k_textFieldBufferSize, inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, Palette::Text, KDColorWhite),
+  m_textField(parentResponder, nullptr, k_textFieldBufferSize, k_textFieldBufferSize, inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, Palette::Text, Palette::BackgroundHard),
   m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
 {
   // Initialize text field
   m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
-  m_textField.setBackgroundColor(KDColorWhite);
+  m_textField.setBackgroundColor(Palette::BackgroundHard);
   // Initialize layout field
   m_layoutField.setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
-  m_layoutField.setBackgroundColor(KDColorWhite);
+  m_layoutField.setBackgroundColor(Palette::BackgroundHard);
 }
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {

@@ -11,7 +11,7 @@ ResponderImageCell::ResponderImageCell(Responder * parentResponder, Distribution
 }
 
 void ResponderImageCell::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::BackgroundHard);
   ctx->strokeRect(KDRect(0, 0, ImageCell::k_width+2*k_outline, ImageCell::k_height+2*k_outline), Palette::GreyMiddle);
 }
 

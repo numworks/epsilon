@@ -11,7 +11,7 @@
 
 class TextView : public View {
 public:
-  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f, KDColor textColor = Palette::Text, KDColor backgroundColor = KDColorWhite) :
+  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f, KDColor textColor = Palette::Text, KDColor backgroundColor = Palette::BackgroundHard) :
     View(),
     m_font(font),
     m_horizontalAlignment(horizontalAlignment),

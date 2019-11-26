@@ -7,7 +7,7 @@ class BufferTextView : public TextView {
 public:
   static constexpr int k_maxNumberOfChar = 256;
   BufferTextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f,
-    KDColor textColor = Palette::Text, KDColor backgroundColor = KDColorWhite);
+    KDColor textColor = Palette::Text, KDColor backgroundColor = Palette::BackgroundHard);
   void setText(const char * text) override;
   const char * text() const override;
   void appendText(const char * text);

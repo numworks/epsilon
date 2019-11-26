@@ -61,7 +61,7 @@ public:
   bool isIdenticalTo(Layout l);
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = Palette::Text, KDColor backgroundColor = KDColorWhite);
+  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = Palette::Text, KDColor backgroundColor = Palette::BackgroundHard);
   KDPoint origin();
   KDPoint absoluteOrigin();
   KDSize layoutSize();

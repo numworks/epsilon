@@ -17,7 +17,7 @@ ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
 }
 
 KDColor ScrollableExactApproximateExpressionsView::ContentCell::backgroundColor() const {
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor background = m_even ? Palette::BackgroundHard : Palette::WallScreen;
   return background;
 }
 

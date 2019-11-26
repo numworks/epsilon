@@ -13,7 +13,7 @@ View * MessageTableCellWithChevronAndMessage::subAccessoryView() const {
 
 void MessageTableCellWithChevronAndMessage::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : Palette::BackgroundHard;
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 

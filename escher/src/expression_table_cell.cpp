@@ -4,7 +4,7 @@
 
 ExpressionTableCell::ExpressionTableCell(Layout layout) :
   TableCell(layout),
-  m_labelExpressionView(0.0f, 0.5f, Palette::Text, KDColorWhite)
+  m_labelExpressionView(0.0f, 0.5f, Palette::Text, Palette::BackgroundHard)
 {
 }
 
@@ -14,7 +14,7 @@ View * ExpressionTableCell::labelView() const {
 
 void ExpressionTableCell::setHighlighted(bool highlight) {
   TableCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = highlight? Palette::Select : Palette::BackgroundHard;
   m_labelExpressionView.setBackgroundColor(backgroundColor);
 }
 

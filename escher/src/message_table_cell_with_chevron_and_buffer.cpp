@@ -13,7 +13,7 @@ View * MessageTableCellWithChevronAndBuffer::subAccessoryView() const {
 
 void MessageTableCellWithChevronAndBuffer::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : Palette::BackgroundHard;
   m_subAccessoryView.setBackgroundColor(backgroundColor);
 }
 

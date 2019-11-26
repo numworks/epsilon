@@ -18,7 +18,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     return true;
   }, this), KDFont::LargeFont, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
-  m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
+  m_modelsStackController(nullptr, &m_modelsParameterController, Palette::BackgroundHard, Palette::PurpleDark, Palette::PurpleDark)
 {
   m_addNewModel.setAlignment(0.3f, 0.5f); // (EquationListView::k_braceTotalWidth+k_expressionMargin) / (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
   for (int i = 0; i < k_maxNumberOfRows; i++) {
@@ -188,14 +188,14 @@ void ListController::resolveEquations() {
     case EquationStore::Error::RequireApproximateSolution:
     {
       StackViewController * stack = stackController();
-      stack->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(App::app()->intervalController(), Palette::BackgroundHard, Palette::PurpleBright, Palette::PurpleBright);
       return;
     }
     default:
     {
       assert(e == EquationStore::Error::NoError);
       StackViewController * stack = stackController();
-      stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(App::app()->solutionsControllerStack(), Palette::BackgroundHard, Palette::PurpleBright, Palette::PurpleBright);
     }
  }
 }

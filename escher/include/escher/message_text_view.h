@@ -8,7 +8,7 @@
 class MessageTextView : public TextView {
 public:
   MessageTextView(const KDFont * font = KDFont::LargeFont, I18n::Message message = (I18n::Message)0, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
-    KDColor textColor = Palette::Text, KDColor backgroundColor = KDColorWhite);
+    KDColor textColor = Palette::Text, KDColor backgroundColor = Palette::BackgroundHard);
   void setText(const char * text) override;
   void setMessage(I18n::Message message);
   const char * text() const override;

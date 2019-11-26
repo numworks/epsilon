@@ -104,7 +104,7 @@ void TableCell::layoutSubviews() {
 void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted() ? Palette::Select : Palette::BackgroundHard;
   ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, height-k_separatorThickness), backgroundColor);
   // Draw rectangle around cell
   ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::GreyBright);

@@ -103,7 +103,7 @@ bool IntervalController::textFieldDidFinishEditing(TextField * textField, const 
 void IntervalController::buttonAction() {
   StackViewController * stack = stackController();
   m_equationStore->approximateSolve(textFieldDelegateApp()->localContext());
-  stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::SubTab, Palette::SubTab);
+  stack->push(App::app()->solutionsControllerStack(), Palette::BackgroundHard, Palette::SubTab, Palette::SubTab);
 }
 
 }

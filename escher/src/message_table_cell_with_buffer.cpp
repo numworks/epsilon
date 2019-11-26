@@ -22,7 +22,7 @@ View * MessageTableCellWithBuffer::accessoryView() const {
 
 void MessageTableCellWithBuffer::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : Palette::BackgroundHard;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
 

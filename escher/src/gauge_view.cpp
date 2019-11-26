@@ -16,7 +16,7 @@ const uint8_t gaugeIndicatorMask[GaugeView::k_indicatorDiameter][GaugeView::k_in
 
 GaugeView::GaugeView() :
   m_level(1),
-  m_backgroundColor(KDColorWhite)
+  m_backgroundColor(Palette::BackgroundHard)
 {
 }
 

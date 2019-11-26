@@ -1,6 +1,7 @@
 #include <escher/palette.h>
 
 constexpr KDColor Palette::Text;
+constexpr KDColor Palette::BackgroundHard;
 constexpr KDColor Palette::YellowDark;
 constexpr KDColor Palette::YellowLight;
 constexpr KDColor Palette::PurpleBright;

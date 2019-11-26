@@ -52,7 +52,7 @@ void BoxView::reload() {
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
+  ctx->fillRect(rect, Palette::BackgroundHard);
 
   KDCoordinate lowBoundPixel = boxLowerBoundPixel();
   KDCoordinate upBoundPixel = boxUpperBoundPixel();

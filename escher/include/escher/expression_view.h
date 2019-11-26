@@ -14,7 +14,7 @@
 class ExpressionView : public View {
 public:
   ExpressionView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
-    KDColor textColor = Palette::Text, KDColor backgroundColor = KDColorWhite);
+    KDColor textColor = Palette::Text, KDColor backgroundColor = Palette::BackgroundHard);
   Poincare::Layout layout() const { return m_layout; }
   bool setLayout(Poincare::Layout layout);
   void drawRect(KDContext * ctx, KDRect rect) const override;

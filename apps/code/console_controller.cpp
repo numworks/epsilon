@@ -39,7 +39,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
 #endif
 {
   m_selectableTableView.setMargins(0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin);
-  m_selectableTableView.setBackgroundColor(KDColorWhite);
+  m_selectableTableView.setBackgroundColor(Palette::BackgroundHard);
   m_editCell.setPrompt(sStandardPromptText);
   for (int i = 0; i < k_numberOfLineCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);

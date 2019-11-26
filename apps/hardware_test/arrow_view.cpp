@@ -51,7 +51,7 @@ void ArrowView::setColor(KDColor color) {
 KDColor s_arrowWorkingBuffer[10*9];
 
 void ArrowView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::BackgroundHard);
   KDCoordinate startLine = m_directionIsUp ? k_arrowHeight : 0;
   KDCoordinate startArrow = m_directionIsUp ? 0 : bounds().height()-k_arrowHeight;
   ctx->fillRect(KDRect((Ion::Display::Width-k_arrowThickness)/2, startLine, k_arrowThickness, bounds().height()-k_arrowHeight), m_color);

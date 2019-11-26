@@ -15,7 +15,7 @@ ListController::ListController(Responder * parentResponder, ::InputEventHandlerD
   m_expressionCells{},
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this, TableCell::Layout::Vertical),
-  m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
+  m_typeStackController(nullptr, &m_typeParameterController, Palette::BackgroundHard, Palette::PurpleDark, Palette::PurpleDark),
   m_sequenceToolbox()
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {

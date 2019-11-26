@@ -76,11 +76,11 @@ App::App(Snapshot * snapshot) :
 {
     switch (snapshot->activePage()) {
     case Snapshot::Page::Parameters:
-      m_stackViewController.push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      m_stackViewController.push(&m_parametersController, Palette::BackgroundHard, Palette::PurpleBright, Palette::PurpleBright);
       break;
     case Snapshot::Page::Calculations:
-      m_stackViewController.push(&m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
-      m_stackViewController.push(&m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
+      m_stackViewController.push(&m_parametersController, Palette::BackgroundHard, Palette::PurpleBright, Palette::PurpleBright);
+      m_stackViewController.push(&m_calculationController, Palette::BackgroundHard, Palette::SubTab, Palette::SubTab);
     default:
       break;
   }

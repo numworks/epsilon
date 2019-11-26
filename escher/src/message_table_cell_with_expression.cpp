@@ -13,7 +13,7 @@ View * MessageTableCellWithExpression::accessoryView() const {
 
 void MessageTableCellWithExpression::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted()? Palette::Select : Palette::BackgroundHard;
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 

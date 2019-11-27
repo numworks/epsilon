@@ -42,6 +42,7 @@ public:
 class AtomPalette {
 public:
   constexpr static KDColor Unknown = KDColor::RGB24(0xeeeeee);
+  constexpr static KDColor AtomText = KDColor::RGB24(0x000000);
   constexpr static KDColor AlkaliMetal = KDColor::RGB24(0xffaa00);
   constexpr static KDColor AlkaliEarthMetal = KDColor::RGB24(0xf6f200);
   constexpr static KDColor Lanthanide = KDColor::RGB24(0xffaa8b);

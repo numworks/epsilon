@@ -33,6 +33,7 @@ constexpr KDColor Palette::DataColor[];
 constexpr KDColor Palette::DataColorLight[];
 
 constexpr KDColor AtomPalette::Unknown;
+constexpr KDColor AtomPalette::AtomText;
 constexpr KDColor AtomPalette::AlkaliMetal;
 constexpr KDColor AtomPalette::AlkaliEarthMetal;
 constexpr KDColor AtomPalette::Lanthanide;

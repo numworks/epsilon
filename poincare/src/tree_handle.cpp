@@ -228,7 +228,7 @@ TreeHandle TreeHandle::BuildWithGhostChildren(TreeNode * node) {
   return TreeHandle(node);
 }
 
-void TreeHandle::setIdentifierAndRetain(int newId) {
+void TreeHandle::setIdentifierAndRetain(uint16_t newId) {
   m_identifier = newId;
   if (!isUninitialized()) {
     node()->retain();
@@ -246,7 +246,7 @@ void TreeHandle::setTo(const TreeHandle & tr) {
   release(currentId);
 }
 
-void TreeHandle::release(int identifier) {
+void TreeHandle::release(uint16_t identifier) {
   if (!hasNode(identifier)) {
     return;
   }

@@ -62,7 +62,7 @@ public:
   /* Clone */
   TreeHandle clone() const;
 
-  int identifier() const { return m_identifier; }
+  uint16_t identifier() const { return m_identifier; }
   TreeNode * node() const;
   int nodeRetainCount() const { return node()->retainCount(); }
   size_t size() const;
@@ -79,7 +79,7 @@ public:
   int indexOfChild(TreeHandle t) const;
   TreeHandle parent() const;
   TreeHandle childAtIndex(int i) const;
-  void setParentIdentifier(int id) { node()->setParentIdentifier(id); }
+  void setParentIdentifier(uint16_t id) { node()->setParentIdentifier(id); }
   void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() { node()->deleteParentIdentifierInChildren(); }
   void incrementNumberOfChildren(int increment = 1) { node()->incrementNumberOfChildren(increment); }
@@ -110,7 +110,7 @@ protected:
   /* Constructor */
   TreeHandle(const TreeNode * node);
   // Un-inlining this constructor actually inscreases the firmware size
-  TreeHandle(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {
+  TreeHandle(uint16_t nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {
     if (hasNode(nodeIndentifier)) {
       node()->retain();
     }
@@ -124,10 +124,10 @@ protected:
 
   static TreeHandle BuildWithGhostChildren(TreeNode * node);
 
-  void setIdentifierAndRetain(int newId);
+  void setIdentifierAndRetain(uint16_t newId);
   void setTo(const TreeHandle & tr);
 
-  static bool hasNode(int identifier) { return identifier > TreeNode::NoNodeIdentifier; }
+  static bool hasNode(uint16_t identifier) { return identifier > TreeNode::NoNodeIdentifier; }
 
   /* Hierarchy operations */
   // Add
@@ -137,7 +137,7 @@ protected:
   void removeChildInPlace(TreeHandle t, int childNumberOfChildren);
   void removeChildrenInPlace(int currentNumberOfChildren);
 
-  int m_identifier;
+  uint16_t m_identifier;
 
 private:
   template <class U>
@@ -146,7 +146,7 @@ private:
   void detachFromParent();
   // Add ghost children on layout construction
   void buildGhostChildren();
-  void release(int identifier);
+  void release(uint16_t identifier);
 };
 
 }

@@ -13,7 +13,7 @@ namespace Poincare {
 
 TreePool * TreePool::SharedStaticPool = nullptr;
 
-void TreePool::freeIdentifier(int identifier) {
+void TreePool::freeIdentifier(uint16_t identifier) {
   if (identifier >= 0 && identifier < MaxNumberOfNodes) {
     /* We could clean m_nodeForIdentifierOffset[identifier] to a default offset
      * (for instance BufferSize) to be able to return nullptr when we access an
@@ -144,7 +144,7 @@ void TreePool::dealloc(TreeNode * node, size_t size) {
 }
 
 void TreePool::discardTreeNode(TreeNode * node) {
-  int nodeIdentifier = node->identifier();
+  uint16_t nodeIdentifier = node->identifier();
   size_t size = node->size();
   node->~TreeNode();
   dealloc(node, size);

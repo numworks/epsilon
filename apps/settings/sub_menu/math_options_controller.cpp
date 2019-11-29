@@ -22,7 +22,7 @@ bool MathOptionsController::handleEvent(Ion::Events::Event event) {
     GenericSubController * subController = nullptr;
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::DisplayMode)
       subController = &m_displayModeController;
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::SymbolMultiplication)
+    else if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::SymbolMultiplication)
       subController = &m_symbolController;
     else
       subController = &m_preferencesController;

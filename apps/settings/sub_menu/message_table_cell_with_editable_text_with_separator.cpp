@@ -15,7 +15,7 @@ void MessageTableCellWithEditableTextWithSeparator::setHighlighted(bool highligh
 
 void MessageTableCellWithEditableTextWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, k_separatorThickness, bounds().width(), k_margin-k_separatorThickness), Palette::WallScreen);
+  ctx->fillRect(KDRect(0, k_separatorThickness, bounds().width(), k_margin-k_separatorThickness), Palette::BackgroundApps);
 }
 
 int MessageTableCellWithEditableTextWithSeparator::numberOfSubviews() const {

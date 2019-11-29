@@ -28,7 +28,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
 {
   m_r2Layout = HorizontalLayout::Builder(CodePointLayout::Builder('r', KDFont::SmallFont), VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript));
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableTableView.setBackgroundColor(Palette::BackgroundAppsSecondary);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   m_r2TitleCell.setAlignment(1.0f, 0.5f);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {

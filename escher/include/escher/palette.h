@@ -12,6 +12,7 @@ public:
   constexpr static KDColor AccentText = KDColor::RGB24(0x00857f);
   constexpr static KDColor BackgroundHard = KDColor::RGB24(0xffffff);
   constexpr static KDColor BackgroundApps = KDColor::RGB24(0xfafafa);
+  constexpr static KDColor BackgroundAppsSecondary = KDColor::RGB24(0xf0f0f0);
   constexpr static KDColor Toolbar = KDColor::RGB24(0xc03535);
   constexpr static KDColor ToolbarText = KDColor::RGB24(0xffffff);
   constexpr static KDColor ExpressionInputBackground = KDColor::RGB24(0xe0e0e0);

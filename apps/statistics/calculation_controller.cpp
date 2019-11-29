@@ -19,7 +19,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell(),
   m_store(store)
 {
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableTableView.setBackgroundColor(Palette::BackgroundAppsSecondary);
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {

@@ -18,18 +18,20 @@ namespace Solver {
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
-  m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, Palette::PrimaryText, Palette::WallScreenDark),
-  m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, Palette::PrimaryText, Palette::WallScreenDark),
+  m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, Palette::PrimaryText, Palette::BackgroundAppsSecondary),
+  m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, Palette::PrimaryText, Palette::BackgroundAppsSecondary),
   m_selectableTableView(controller),
   m_displayWarningMoreSolutions(false)
 {
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableTableView.setBackgroundColor(Palette::BackgroundAppsSecondary
+  );
   m_selectableTableView.setVerticalCellOverlap(0);
 }
 
 void SolutionsController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_displayWarningMoreSolutions) {
-    ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin), Palette::WallScreenDark);
+    ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin), Palette::BackgroundAppsSecondary
+    );
   }
 }
 

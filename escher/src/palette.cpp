@@ -5,6 +5,7 @@ constexpr KDColor Palette::SecondaryText; // =GREYDARK
 constexpr KDColor Palette::AccentText;
 constexpr KDColor Palette::BackgroundHard;
 constexpr KDColor Palette::BackgroundApps;
+constexpr KDColor Palette::BackgroundAppsSecondary;
 constexpr KDColor Palette::Toolbar;
 constexpr KDColor Palette::ToolbarText;
 constexpr KDColor Palette::ExpressionInputBackground;
@@ -90,12 +91,12 @@ constexpr KDColor Palette::GreyBright;
 constexpr KDColor Palette::GreyMiddle;
 constexpr KDColor Palette::GreyDark;
 constexpr KDColor Palette::GreyVeryDark;
-constexpr KDColor Palette::Select;
-constexpr KDColor Palette::SelectDark;
-constexpr KDColor Palette::WallScreen;
-constexpr KDColor Palette::WallScreenDark;
-constexpr KDColor Palette::SubTab;
-constexpr KDColor Palette::LowBattery;
+constexpr KDColor Palette::Select; // Done
+constexpr KDColor Palette::SelectDark; // Done
+constexpr KDColor Palette::WallScreen; // Done
+constexpr KDColor Palette::WallScreenDark; // Done
+constexpr KDColor Palette::SubTab; // Done
+constexpr KDColor Palette::LowBattery; // Done
 constexpr KDColor Palette::Red;
 constexpr KDColor Palette::RedLight;
 constexpr KDColor Palette::Magenta;

@@ -10,10 +10,10 @@ constexpr uint8_t kMaxNumberOfStacks = 4;
 class StackViewController : public ViewController {
 public:
   StackViewController(Responder * parentResponder, ViewController * rootViewController,
-    KDColor textColor = Palette::SubTab, KDColor backgroundColor = Palette::BackgroundHard, KDColor separatorColor = Palette::GreyBright);
+    KDColor textColor = Palette::SubMenuText, KDColor backgroundColor = Palette::SubMenuBackground, KDColor separatorColor = Palette::SubMenuBorder);
 
   /* Push creates a new StackView and adds it */
-  void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = Palette::BackgroundHard, KDColor separatorColor = Palette::GreyBright);
+  void push(ViewController * vc, KDColor textColor = Palette::SubMenuText, KDColor backgroundColor = Palette::SubMenuBackground, KDColor separatorColor = Palette::SubMenuBorder);
   void pop();
 
   int depth();
@@ -27,7 +27,7 @@ public:
 private:
   class Frame {
   public:
-    Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::SubTab, KDColor backgroundColor = Palette::BackgroundHard, KDColor separatorColor = Palette::GreyBright) :
+    Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::SubMenuText, KDColor backgroundColor = Palette::SubMenuBackground, KDColor separatorColor = Palette::SubMenuBorder) :
       m_viewController(viewController),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor),

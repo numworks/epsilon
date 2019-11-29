@@ -7,7 +7,7 @@ using namespace Poincare;
 using namespace Ion;
 
 VariableBoxEmptyController::VariableBoxEmptyView::VariableBoxEmptyView() :
-  m_layoutExample(0.5f, 0.5f, Palette::Text, Palette::WallScreen)
+  m_layoutExample(0.5f, 0.5f, Palette::PrimaryText, Palette::WallScreen)
 {
   for (int i = 0; i < k_numberOfMessages; i++) {
     m_messages[i].setFont(k_font);

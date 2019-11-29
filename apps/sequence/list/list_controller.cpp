@@ -190,7 +190,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
     myCell->setLayout(sequence->secondInitialConditionName());
   }
   // Set the color
-  KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
+  KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::SecondaryText;
   myCell->setColor(nameColor);
 }
 
@@ -208,7 +208,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
     myCell->setLayout(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
-  KDColor textColor = active ? Palette::Text : Palette::GreyDark;
+  KDColor textColor = active ? Palette::PrimaryText : Palette::SecondaryText;
   myCell->setTextColor(textColor);
 }
 

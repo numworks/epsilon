@@ -5,8 +5,8 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 WarningController::ContentView::ContentView() :
   SolidColorView(KDColorBlack),
-  m_textView1(KDFont::SmallFont, (I18n::Message)0, k_middleAlignment, k_middleAlignment, Palette::BackgroundHard, Palette::Text),
-  m_textView2(KDFont::SmallFont, (I18n::Message)0, k_middleAlignment, (1.0f-k_shiftedAlignment), Palette::BackgroundHard, Palette::Text)
+  m_textView1(KDFont::SmallFont, (I18n::Message)0, k_middleAlignment, k_middleAlignment, Palette::BackgroundHard, Palette::PrimaryText),
+  m_textView2(KDFont::SmallFont, (I18n::Message)0, k_middleAlignment, (1.0f-k_shiftedAlignment), Palette::BackgroundHard, Palette::PrimaryText)
 {
 }
 

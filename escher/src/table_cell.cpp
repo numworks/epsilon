@@ -104,11 +104,11 @@ void TableCell::layoutSubviews() {
 void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDColor backgroundColor = isHighlighted() ? Palette::Select : Palette::BackgroundHard;
+  KDColor backgroundColor = isHighlighted() ? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, height-k_separatorThickness), backgroundColor);
   // Draw rectangle around cell
-  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
-  ctx->fillRect(KDRect(width-k_separatorThickness, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, height-k_separatorThickness, width, k_separatorThickness), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::ListCellBorder);
+  ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::ListCellBorder);
+  ctx->fillRect(KDRect(width-k_separatorThickness, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::ListCellBorder);
+  ctx->fillRect(KDRect(0, height-k_separatorThickness, width, k_separatorThickness), Palette::ListCellBorder);
  }

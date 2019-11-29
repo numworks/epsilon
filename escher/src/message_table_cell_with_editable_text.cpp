@@ -32,7 +32,7 @@ void MessageTableCellWithEditableText::setEditing(bool isEditing) {
 
 void MessageTableCellWithEditableText::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : Palette::BackgroundHard;
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_textField.setBackgroundColor(backgroundColor);
 }
 

@@ -107,7 +107,7 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
-  KDColor background = m_even ? Palette::BackgroundHard : Palette::WallScreen;
+  KDColor background = m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd;
   return background;
 }
 

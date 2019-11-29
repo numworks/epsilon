@@ -14,14 +14,14 @@ static I18n::Message sUSBConnectedMessages[] = {
   I18n::Message::ConnectedMessage6};
 
 static KDColor sUSBConnectedColors[] = {
-  Palette::Text,
-  Palette::Text,
-  Palette::Text,
+  Palette::PrimaryText,
+  Palette::PrimaryText,
+  Palette::PrimaryText,
   Palette::YellowDark,
   KDColorWhite,
-  Palette::Text,
-  Palette::Text,
-  Palette::Text};
+  Palette::PrimaryText,
+  Palette::PrimaryText,
+  Palette::PrimaryText};
 
 USBConnectedController::USBConnectedController() :
   ViewController(nullptr),

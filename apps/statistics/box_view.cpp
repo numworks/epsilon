@@ -71,7 +71,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     upBoundPixel-lowBoundPixel), boxColor);
 
   // Draw the horizontal lines linking the box to the extreme bounds
-  KDColor horizontalColor = isMainViewSelected() ? m_selectedHistogramColor : Palette::GreyDark;
+  KDColor horizontalColor = isMainViewSelected() ? m_selectedHistogramColor : Palette::SecondaryText;
   float segmentOrd = (lowBound + upBound)/ 2.0f;
   drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, horizontalColor);
   drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, horizontalColor);

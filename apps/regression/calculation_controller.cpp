@@ -35,11 +35,11 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_columnTitleCells[i].setParentResponder(&m_selectableTableView);
   }
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
-    m_doubleCalculationCells[i].setTextColor(Palette::GreyDark);
+    m_doubleCalculationCells[i].setTextColor(Palette::SecondaryText);
     m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
   }
   for (int i = 0; i < k_numberOfCalculationCells;i++) {
-    m_calculationCells[i].setTextColor(Palette::GreyDark);
+    m_calculationCells[i].setTextColor(Palette::SecondaryText);
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_titleCells[i].setMessageFont(KDFont::SmallFont);

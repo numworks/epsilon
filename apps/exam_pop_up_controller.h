@@ -7,7 +7,7 @@
 class HighContrastButton : public Button {
 public:
   using Button::Button;
-  virtual KDColor highlightedBackgroundColor() const override { return Palette::YellowDark; }
+  virtual KDColor highlightedBackgroundColor() const override { return Palette::ButtonBackgroundSelectedHighContrast; }
 };
 
 class ExamPopUpController : public ViewController {

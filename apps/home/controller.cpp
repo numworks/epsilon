@@ -13,7 +13,7 @@ Controller::ContentView::ContentView(Controller * controller, SelectableTableVie
 {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
-  m_selectableTableView.setBackgroundColor(Palette::BackgroundHard);
+  m_selectableTableView.setBackgroundColor(Palette::HomeBackground);
   static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->verticalBar()->setMargin(k_indicatorMargin);
 }
 
@@ -22,7 +22,7 @@ SelectableTableView * Controller::ContentView::selectableTableView() {
 }
 
 void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::BackgroundHard);
+  ctx->fillRect(bounds(), Palette::HomeBackground);
 }
 
 void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons, int numberOfColumns) {

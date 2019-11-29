@@ -301,7 +301,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
             labelPosition,
             k_labelGraduationLength,
             1);
-      ctx->fillRect(graduation, Palette::Text);
+      ctx->fillRect(graduation, Palette::PrimaryText);
     }
   }
 
@@ -352,7 +352,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     }
     KDPoint origin = KDPoint(xPosition, yPosition);
     if (rect.intersects(KDRect(origin, textSize))) {
-      ctx->drawString(labelI, origin, k_font, Palette::Text, backgroundColor);
+      ctx->drawString(labelI, origin, k_font, Palette::PrimaryText, backgroundColor);
     }
   }
 }
@@ -449,7 +449,7 @@ void CurveView::drawAxes(KDContext * ctx, KDRect rect) const {
 }
 
 void CurveView::drawAxis(KDContext * ctx, KDRect rect, Axis axis) const {
-  drawLine(ctx, rect, axis, 0.0f, Palette::Text, 1);
+  drawLine(ctx, rect, axis, 0.0f, Palette::PrimaryText, 1);
 }
 
 #define LINE_THICKNESS 2

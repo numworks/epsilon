@@ -102,10 +102,10 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   }
   if (m_style == Style::PlainWhite) {
     if (m_position == Position::Top) {
-      ctx->fillRect(KDRect(0, 0, bounds().width(), k_plainStyleHeight), Palette::BackgroundHard);
+      ctx->fillRect(KDRect(0, 0, bounds().width(), k_plainStyleHeight), Palette::SubTabBackground);
       ctx->fillRect(KDRect(0, k_plainStyleHeight, bounds().width(), 1), Palette::GreyWhite);
     } else {
-      ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight, bounds().width(), k_plainStyleHeight), Palette::BackgroundHard);
+      ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight, bounds().width(), k_plainStyleHeight), Palette::SubTabBackground);
       ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight-1, bounds().width(), 1), Palette::GreyWhite);
     }
     return;
@@ -133,10 +133,10 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
     Button * button = buttonAtIndex(i);
     KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
     ctx->fillRect(KDRect(currentXOrigin, y0, 1, y1-y0+1), Palette::GreyMiddle);
-    ctx->fillRect(KDRect(currentXOrigin-1, y0, 1, y1-y0+2), Palette::GreyDark);
+    ctx->fillRect(KDRect(currentXOrigin-1, y0, 1, y1-y0+2), Palette::SecondaryText);
     ctx->fillRect(KDRect(currentXOrigin, y0, buttonWidth+2, 1), Palette::GreyMiddle);
     ctx->fillRect(KDRect(currentXOrigin, y1, buttonWidth+2, 1), Palette::GreyMiddle);
-    ctx->fillRect(KDRect(currentXOrigin, y1+1, buttonWidth+2, 1), Palette::GreyDark);
+    ctx->fillRect(KDRect(currentXOrigin, y1+1, buttonWidth+2, 1), Palette::SecondaryText);
     ctx->fillRect(KDRect(currentXOrigin+1+buttonWidth, y0, 1, y1-y0+1), Palette::GreyMiddle);
     currentXOrigin += buttonWidth + widthMargin;
   }

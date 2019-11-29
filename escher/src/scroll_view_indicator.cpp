@@ -7,7 +7,7 @@ extern "C" {
 
 ScrollViewIndicator::ScrollViewIndicator() :
   View(),
-  m_color(Palette::GreyDark),
+  m_color(Palette::SecondaryText),
   m_margin(14)
 {
 }

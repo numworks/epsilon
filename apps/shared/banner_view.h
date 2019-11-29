@@ -12,7 +12,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void reload() { layoutSubviews(); }
   static constexpr const KDFont * Font() { return KDFont::SmallFont; }
-  static constexpr KDColor TextColor() { return Palette::Text; }
+  static constexpr KDColor TextColor() { return Palette::PrimaryText; }
   static constexpr KDColor BackgroundColor() { return Palette::GreyMiddle; }
 private:
   static constexpr KDCoordinate LineSpacing = 2;

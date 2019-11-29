@@ -17,8 +17,8 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(Consol
 }
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::BackgroundHard);
-  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_font, textColor(m_line), isHighlighted()? Palette::Select : Palette::BackgroundHard);
+  ctx->fillRect(bounds(), Palette::CodeBackground);
+  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_font, textColor(m_line), isHighlighted()? Palette::CodeBackgroundSelected : Palette::CodeBackground);
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {

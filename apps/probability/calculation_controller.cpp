@@ -25,7 +25,7 @@ namespace Probability {
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::SecondaryText, Palette::BackgroundApps),
   m_selectableTableView(selectableTableView),
   m_distributionCurveView(distribution, calculation)
 {

@@ -17,7 +17,7 @@ ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
 }
 
 KDColor ScrollableExactApproximateExpressionsView::ContentCell::backgroundColor() const {
-  KDColor background = m_even ? Palette::BackgroundHard : Palette::WallScreen;
+  KDColor background = m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd;
   return background;
 }
 
@@ -45,7 +45,7 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setEven(bool even) 
 
 void ScrollableExactApproximateExpressionsView::ContentCell::reloadTextColor() {
   if (numberOfSubviews() == 1) {
-    m_rightExpressionView.setTextColor(Palette::Text);
+    m_rightExpressionView.setTextColor(Palette::PrimaryText);
   } else {
     m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
   }

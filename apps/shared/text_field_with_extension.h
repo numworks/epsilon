@@ -17,7 +17,7 @@ public:
       const KDFont * size = KDFont::LargeFont,
       float horizontalAlignment = 0.0f,
       float verticalAlignment = 0.5f,
-      KDColor textColor = Palette::Text,
+      KDColor textColor = Palette::PrimaryText,
       KDColor backgroundColor = Palette::BackgroundHard) :
     TextField(parentResponder, textBuffer, textBufferSize, draftTextBufferSize, inputEventHandlerDelegate, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
     m_extensionLength(extensionLength)

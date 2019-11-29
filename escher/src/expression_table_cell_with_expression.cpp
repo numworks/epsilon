@@ -4,7 +4,7 @@
 
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression() :
   ExpressionTableCell(Layout::Horizontal),
-  m_accessoryExpressionView(1.0f, 0.5f, Palette::GreyDark, Palette::BackgroundHard)
+  m_accessoryExpressionView(1.0f, 0.5f, Palette::SecondaryText, Palette::ListCellBackground)
 {}
 
 View * ExpressionTableCellWithExpression::accessoryView() const {
@@ -13,7 +13,7 @@ View * ExpressionTableCellWithExpression::accessoryView() const {
 
 void ExpressionTableCellWithExpression::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : Palette::BackgroundHard;
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_accessoryExpressionView.setBackgroundColor(backgroundColor);
 }
 

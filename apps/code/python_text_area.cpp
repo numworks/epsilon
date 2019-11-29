@@ -10,13 +10,13 @@ extern "C" {
 
 namespace Code {
 
-constexpr KDColor CommentColor = KDColor::RGB24(0x999988);
-constexpr KDColor NumberColor =  KDColor::RGB24(0x009999);
-constexpr KDColor KeywordColor = KDColor::RGB24(0xFF000C);
+constexpr KDColor CommentColor = Palette::CodeComment;
+constexpr KDColor NumberColor =  Palette::CodeNumber;
+constexpr KDColor KeywordColor = Palette::CodeKeyword;
 // constexpr KDColor BuiltinColor = KDColor::RGB24(0x0086B3);
-constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
-constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
-constexpr KDColor BackgroundColor = Palette::BackgroundHard;
+constexpr KDColor OperatorColor = Palette::CodeOperator;
+constexpr KDColor StringColor = Palette::CodeString;
+constexpr KDColor BackgroundColor = Palette::CodeBackground;
 
 static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
 
@@ -36,7 +36,7 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind >= MP_TOKEN_DEL_EQUAL && tokenKind <= MP_TOKEN_DEL_MINUS_MORE) {
     return OperatorColor;
   }
-  return Palette::Text;
+  return Palette::CodeText;
 }
 
 static inline size_t TokenLength(mp_lexer_t * lex) {

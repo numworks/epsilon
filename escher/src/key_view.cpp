@@ -84,7 +84,7 @@ void KeyView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height =  bounds().height();
   KDRect frame((width - k_keySize)/2, (height - k_keySize)/2, k_keySize, k_keySize);
-  ctx->blendRectWithMask(frame, Palette::Text, mask(), s_keyWorkingBuffer);
+  ctx->blendRectWithMask(frame, Palette::PrimaryText, mask(), s_keyWorkingBuffer);
 }
 
 KDSize KeyView::minimalSizeForOptimalDisplay() const {

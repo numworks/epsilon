@@ -9,11 +9,15 @@ public:
   // Shared
   constexpr static KDColor PrimaryText = KDColor::RGB24(0x000000);
   constexpr static KDColor SecondaryText = KDColor::RGB24(0x6e6e6e);
+  constexpr static KDColor AccentText = KDColor::RGB24(0x00857f);
   constexpr static KDColor BackgroundHard = KDColor::RGB24(0xffffff);
   constexpr static KDColor BackgroundApps = KDColor::RGB24(0xfafafa);
   constexpr static KDColor Toolbar = KDColor::RGB24(0xc03535);
   constexpr static KDColor ToolbarText = KDColor::RGB24(0xffffff);
   constexpr static KDColor ExpressionInputBackground = KDColor::RGB24(0xe0e0e0);
+  constexpr static KDColor Battery = KDColor::RGB24(0xffffff);
+  constexpr static KDColor BatteryInCharge = KDColor::RGB24(0x179e1f);
+  constexpr static KDColor BatteryLow = KDColor::RGB24(0x992321);
 
   // Controls (switches, gauge, arrows...)
   constexpr static KDColor Control = KDColor::RGB24(0x00857f);
@@ -23,6 +27,8 @@ public:
   // Calculation
   constexpr static KDColor CalculationBackgroundOdd = KDColor::RGB24(0xffffff);
   constexpr static KDColor CalculationBackgroundEven = KDColor::RGB24(0xfafafa);
+  constexpr static KDColor CalculationEmptyBox = KDColor::RGB24(0xc4c4c4);
+  constexpr static KDColor CalculationEmptyBoxNeeded = KDColor::RGB24(0x00857f);
   
   // Code
   constexpr static KDColor CodeBackground = KDColor::RGB24(0x000000);
@@ -33,6 +39,13 @@ public:
   constexpr static KDColor CodeKeyword = KDColor::RGB24(0xff000c);
   constexpr static KDColor CodeOperator = KDColor::RGB24(0xd73a49);
   constexpr static KDColor CodeString = KDColor::RGB24(0x032f62);
+
+  // Probability
+  constexpr static KDColor ProbabilityCurve = KDColor::RGB24(0x00857f);
+
+  // Statistics
+  constexpr static KDColor StatisticsBox = KDColor::RGB24(0x00857f);
+  constexpr static KDColor StatisticsSelect = KDColor::RGB24(0xe0e0e0);
 
   // SubMenus
   constexpr static KDColor SubMenuBackground = KDColor::RGB24(0xe0e0e0);

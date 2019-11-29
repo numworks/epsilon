@@ -86,7 +86,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, k_quantileBarWidth);
   }
   if (isMainViewSelected()) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, k_quantileBarWidth);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::StatisticsBox, k_quantileBarWidth);
   }
 }
 

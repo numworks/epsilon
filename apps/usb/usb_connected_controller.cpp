@@ -17,7 +17,7 @@ static KDColor sUSBConnectedColors[] = {
   Palette::PrimaryText,
   Palette::PrimaryText,
   Palette::PrimaryText,
-  Palette::YellowDark,
+  Palette::AccentText,
   KDColorWhite,
   Palette::PrimaryText,
   Palette::PrimaryText,

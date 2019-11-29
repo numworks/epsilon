@@ -2,11 +2,15 @@
 
 constexpr KDColor Palette::PrimaryText;
 constexpr KDColor Palette::SecondaryText; // =GREYDARK
+constexpr KDColor Palette::AccentText;
 constexpr KDColor Palette::BackgroundHard;
 constexpr KDColor Palette::BackgroundApps;
 constexpr KDColor Palette::Toolbar;
 constexpr KDColor Palette::ToolbarText;
 constexpr KDColor Palette::ExpressionInputBackground;
+constexpr KDColor Palette::Battery;
+constexpr KDColor Palette::BatteryInCharge;
+constexpr KDColor Palette::BatteryLow;
 
 constexpr KDColor Palette::Control;
 constexpr KDColor Palette::ControlEnabled;
@@ -14,6 +18,8 @@ constexpr KDColor Palette::ControlDisabled;
 
 constexpr KDColor Palette::CalculationBackgroundOdd;
 constexpr KDColor Palette::CalculationBackgroundEven;
+constexpr KDColor Palette::CalculationEmptyBox;
+constexpr KDColor Palette::CalculationEmptyBoxNeeded;
 
 constexpr KDColor Palette::CodeBackground;
 constexpr KDColor Palette::CodeBackgroundSelected;
@@ -23,6 +29,10 @@ constexpr KDColor Palette::CodeNumber;
 constexpr KDColor Palette::CodeKeyword;
 constexpr KDColor Palette::CodeOperator;
 constexpr KDColor Palette::CodeString;
+
+constexpr KDColor Palette::ProbabilityCurve;
+
+constexpr KDColor Palette::StatisticsBox;
 
 constexpr KDColor Palette::SubMenuBackground;
 constexpr KDColor Palette::SubMenuBorder;
@@ -71,10 +81,10 @@ constexpr KDColor Palette::HomeCellBackgroundActive;
 constexpr KDColor Palette::HomeCellText;
 constexpr KDColor Palette::HomeCellTextActive;
 
-constexpr KDColor Palette::YellowDark;
-constexpr KDColor Palette::YellowLight;
-constexpr KDColor Palette::PurpleBright;
-constexpr KDColor Palette::PurpleDark;
+constexpr KDColor Palette::YellowDark; // DONE
+constexpr KDColor Palette::YellowLight; // DONE
+constexpr KDColor Palette::PurpleBright; // DONE
+constexpr KDColor Palette::PurpleDark; // DONE
 constexpr KDColor Palette::GreyWhite;
 constexpr KDColor Palette::GreyBright;
 constexpr KDColor Palette::GreyMiddle;

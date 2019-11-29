@@ -29,9 +29,9 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setHighlighted(bool
   m_approximateSign.setBackgroundColor(backgroundColor());
   if (highlight) {
     if (m_selectedSubviewPosition == SubviewPosition::Left) {
-      m_leftExpressionView.setBackgroundColor(Palette::Select);
+      m_leftExpressionView.setBackgroundColor(Palette::ListCellBackgroundSelected);
     } else {
-      m_rightExpressionView.setBackgroundColor(Palette::Select);
+      m_rightExpressionView.setBackgroundColor(Palette::ListCellBackgroundSelected);
     }
   }
 }

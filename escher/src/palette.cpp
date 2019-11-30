@@ -9,11 +9,14 @@ constexpr KDColor Palette::BackgroundAppsSecondary;
 constexpr KDColor Palette::Toolbar;
 constexpr KDColor Palette::ToolbarText;
 constexpr KDColor Palette::ExpressionInputBackground;
+constexpr KDColor Palette::ExpressionInputBorder;
 constexpr KDColor Palette::Battery;
 constexpr KDColor Palette::BatteryInCharge;
 constexpr KDColor Palette::BatteryLow;
 constexpr KDColor Palette::ApproximateSignText;
 constexpr KDColor Palette::ApproximateExpressionText;
+constexpr KDColor Palette::ScrollBarForeground;
+constexpr KDColor Palette::ScrollBarBackground;
 
 constexpr KDColor Palette::Control;
 constexpr KDColor Palette::ControlEnabled;
@@ -34,8 +37,13 @@ constexpr KDColor Palette::CodeOperator;
 constexpr KDColor Palette::CodeString;
 
 constexpr KDColor Palette::ProbabilityCurve;
+constexpr KDColor Palette::ProbabilityCellBorder;
+constexpr KDColor Palette::ProbabilityHistogramBar;
 
 constexpr KDColor Palette::StatisticsBox;
+constexpr KDColor Palette::StatisticsBoxVerticalLine;
+constexpr KDColor Palette::StatisticsSelected;
+constexpr KDColor Palette::StatisticsNotSelected;
 
 constexpr KDColor Palette::GraphTangent;
 
@@ -56,6 +64,8 @@ constexpr KDColor Palette::ButtonBackground;
 constexpr KDColor Palette::ButtonBackgroundSelected;
 constexpr KDColor Palette::ButtonBackgroundSelectedHighContrast;
 constexpr KDColor Palette::ButtonBorder;
+constexpr KDColor Palette::ButtonRowBorder;
+constexpr KDColor Palette::ButtonBorderOut;
 constexpr KDColor Palette::ButtonShadow;
 constexpr KDColor Palette::ButtonText;
 
@@ -79,6 +89,8 @@ constexpr KDColor Palette::BannerFirstVariantText;
 constexpr KDColor Palette::BannerSecondBackground;
 constexpr KDColor Palette::BannerSecondBorder;
 constexpr KDColor Palette::BannerSecondText;
+constexpr KDColor Palette::GridPrimaryLine;
+constexpr KDColor Palette::GridSecondaryLine;
 
 constexpr KDColor Palette::HomeBackground;
 constexpr KDColor Palette::HomeCellBackground;
@@ -86,13 +98,13 @@ constexpr KDColor Palette::HomeCellBackgroundActive;
 constexpr KDColor Palette::HomeCellText;
 constexpr KDColor Palette::HomeCellTextActive;
 
-constexpr KDColor Palette::YellowDark; // DONE
-constexpr KDColor Palette::YellowLight; // DONE
-constexpr KDColor Palette::PurpleBright; // DONE
-constexpr KDColor Palette::PurpleDark; // DONE
-constexpr KDColor Palette::GreyWhite;
-constexpr KDColor Palette::GreyBright;
-constexpr KDColor Palette::GreyMiddle;
+constexpr KDColor Palette::YellowDark; // Done
+constexpr KDColor Palette::YellowLight; // Done
+constexpr KDColor Palette::PurpleBright; // Done
+constexpr KDColor Palette::PurpleDark; // Done
+constexpr KDColor Palette::GreyWhite; // Done
+constexpr KDColor Palette::GreyBright; // Done
+constexpr KDColor Palette::GreyMiddle; // Done
 constexpr KDColor Palette::GreyDark; // Done
 constexpr KDColor Palette::GreyVeryDark; // Done
 constexpr KDColor Palette::Select; // Done

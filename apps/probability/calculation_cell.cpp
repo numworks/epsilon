@@ -43,7 +43,7 @@ void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::BackgroundHard);
   if (m_isResponder) {
     KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-    ctx->strokeRect(KDRect(2*k_margin+textSize.width(), 0, calculationCellWidth()+2*ResponderImageCell::k_outline, ImageCell::k_height+2*ResponderImageCell::k_outline), Palette::GreyMiddle);
+    ctx->strokeRect(KDRect(2*k_margin+textSize.width(), 0, calculationCellWidth()+2*ResponderImageCell::k_outline, ImageCell::k_height+2*ResponderImageCell::k_outline), Palette::ProbabilityCellBorder);
   }
 }
 

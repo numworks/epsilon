@@ -63,7 +63,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   double thirdQuart = m_store->thirdQuartile(m_series);
   double maxVal = m_store->maxValue(m_series);
 
-  KDColor boxColor = isMainViewSelected() ? m_selectedHistogramLightColor : Palette::GreyWhite;
+  KDColor boxColor = isMainViewSelected() ? m_selectedHistogramLightColor : Palette::StatisticsNotSelected;
   // Draw the main box
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
@@ -83,7 +83,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
    * lines. This solution could hide the highlighted line by coloring the next
    * quantile if it has the same value. */
   for (int k = 0; k < 5; k++) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, k_quantileBarWidth);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::StatisticsBoxVerticalLine, k_quantileBarWidth);
   }
   if (isMainViewSelected()) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::StatisticsBox, k_quantileBarWidth);

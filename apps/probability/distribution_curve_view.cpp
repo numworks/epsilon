@@ -31,7 +31,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_distribution->isContinuous()) {
     drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr, Palette::ProbabilityCurve, true, lowerBound, upperBound);
   } else {
-    drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::GreyMiddle, Palette::ProbabilityCurve, lowerBound, upperBound+0.5f);
+    drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::ProbabilityHistogramBar, Palette::ProbabilityCurve, lowerBound, upperBound+0.5f);
   }
 }
 

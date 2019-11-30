@@ -80,7 +80,7 @@ void ExpressionField::reload() {
 
 void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the separator
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::ExpressionInputBorder);
 }
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {

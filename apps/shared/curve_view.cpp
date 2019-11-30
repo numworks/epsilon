@@ -437,8 +437,8 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
-  KDColor boldColor = Palette::GreyMiddle;
-  KDColor lightColor = Palette::GreyWhite;
+  KDColor boldColor = Palette::GridPrimaryLine;
+  KDColor lightColor = Palette::GridSecondaryLine;
   drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->xGridUnit(), boldColor, lightColor);
   drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->yGridUnit(), boldColor, lightColor);
 }

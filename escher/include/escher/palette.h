@@ -16,11 +16,16 @@ public:
   constexpr static KDColor Toolbar = KDColor::RGB24(0xc03535);
   constexpr static KDColor ToolbarText = KDColor::RGB24(0xffffff);
   constexpr static KDColor ExpressionInputBackground = KDColor::RGB24(0xe0e0e0);
+  constexpr static KDColor ExpressionInputBorder = KDColor::RGB24(0xd9d9d9);
   constexpr static KDColor Battery = KDColor::RGB24(0xffffff);
   constexpr static KDColor BatteryInCharge = KDColor::RGB24(0x179e1f);
   constexpr static KDColor BatteryLow = KDColor::RGB24(0x992321);
   constexpr static KDColor ApproximateSignText = KDColor::RGB24(0x595959);
   constexpr static KDColor ApproximateExpressionText = KDColor::RGB24(0x595959);
+  constexpr static KDColor GridPrimaryLine = KDColor::RGB24(0xd9d9d9);
+  constexpr static KDColor GridSecondaryLine = KDColor::RGB24(0xf5f5f5);
+  constexpr static KDColor ScrollBarForeground = KDColor::RGB24(0x4a4a4a);
+  constexpr static KDColor ScrollBarBackground = KDColor::RGB24(0xd9d9d9);
 
   // Controls (switches, gauge, arrows...)
   constexpr static KDColor Control = KDColor::RGB24(0x00857f);
@@ -45,10 +50,14 @@ public:
 
   // Probability
   constexpr static KDColor ProbabilityCurve = KDColor::RGB24(0x00857f);
+  constexpr static KDColor ProbabilityCellBorder = KDColor::RGB24(0xececec);
+  constexpr static KDColor ProbabilityHistogramBar = KDColor::RGB24(0xd9d9d9);
 
   // Statistics
   constexpr static KDColor StatisticsBox = KDColor::RGB24(0x00857f);
-  constexpr static KDColor StatisticsSelect = KDColor::RGB24(0xe0e0e0);
+  constexpr static KDColor StatisticsBoxVerticalLine = KDColor::RGB24(0xd9d9d9);
+  constexpr static KDColor StatisticsSelected = KDColor::RGB24(0x00857f);
+  constexpr static KDColor StatisticsNotSelected = KDColor::RGB24(0xf5f5f5);
 
   // Graph
   constexpr static KDColor GraphTangent = KDColor::RGB24(0x595959);
@@ -74,6 +83,8 @@ public:
   constexpr static KDColor ButtonBackgroundSelected = KDColor::RGB24(0xd1d1d1);
   constexpr static KDColor ButtonBackgroundSelectedHighContrast = KDColor::RGB24(0x595959);
   constexpr static KDColor ButtonBorder = KDColor::RGB24(0xadadad);
+  constexpr static KDColor ButtonRowBorder = KDColor::RGB24(0xd9d9d9);
+  constexpr static KDColor ButtonBorderOut = KDColor::RGB24(0xf5f5f5);
   constexpr static KDColor ButtonShadow = KDColor::RGB24(0x003833);
   constexpr static KDColor ButtonText = KDColor::RGB24(0x000000);
 

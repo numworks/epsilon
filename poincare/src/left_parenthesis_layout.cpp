@@ -25,20 +25,21 @@ const uint8_t bottomLeftCurve[ParenthesisLayoutNode::k_parenthesisCurveHeight][P
 };
 
 void LeftParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  KDColor parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   KDCoordinate parenthesisHeight = ParenthesisLayoutNode::HeightGivenChildHeight(childHeight);
   KDRect frame(p.x()+ParenthesisLayoutNode::k_externWidthMargin,
       p.y()+ParenthesisLayoutNode::k_externHeightMargin,
       ParenthesisLayoutNode::k_parenthesisCurveWidth,
       ParenthesisLayoutNode::k_parenthesisCurveHeight);
 
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topLeftCurve, (KDColor *)(ParenthesisLayoutNode::s_parenthesisWorkingBuffer));
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topLeftCurve, parenthesisWorkingBuffer);
 
   frame = KDRect(p.x()+ParenthesisLayoutNode::k_externWidthMargin,
       p.y() + parenthesisHeight - ParenthesisLayoutNode::k_parenthesisCurveHeight - ParenthesisLayoutNode::k_externHeightMargin,
       ParenthesisLayoutNode::k_parenthesisCurveWidth,
       ParenthesisLayoutNode::k_parenthesisCurveHeight);
 
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomLeftCurve, (KDColor *)(ParenthesisLayoutNode::s_parenthesisWorkingBuffer));
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomLeftCurve, parenthesisWorkingBuffer);
 
   ctx->fillRect(KDRect(p.x()+ParenthesisLayoutNode::k_externWidthMargin,
         p.y()+ParenthesisLayoutNode::k_parenthesisCurveHeight+ParenthesisLayoutNode::k_externHeightMargin,

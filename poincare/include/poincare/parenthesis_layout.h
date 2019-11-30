@@ -27,7 +27,6 @@ public:
 #endif
 
 protected:
-  static KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   KDSize computeSize() override {
     return KDSize(ParenthesisWidth(), HeightGivenChildHeight(childHeight()));
   }

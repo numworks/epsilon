@@ -76,14 +76,13 @@ void KeyView::setType(Type type) {
   markRectAsDirty(bounds());
 }
 
-KDColor s_keyWorkingBuffer[KeyView::k_keySize*KeyView::k_keySize];
-
 void KeyView::drawRect(KDContext * ctx, KDRect rect) const {
   /* Draw the key centered on the view. */
   KDCoordinate width = bounds().width();
   KDCoordinate height =  bounds().height();
   KDRect frame((width - k_keySize)/2, (height - k_keySize)/2, k_keySize, k_keySize);
-  ctx->blendRectWithMask(frame, KDColorBlack, mask(), s_keyWorkingBuffer);
+  KDColor keyWorkingBuffer[KeyView::k_keySize*KeyView::k_keySize];
+  ctx->blendRectWithMask(frame, KDColorBlack, mask(), keyWorkingBuffer);
 }
 
 KDSize KeyView::minimalSizeForOptimalDisplay() const {

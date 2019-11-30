@@ -19,6 +19,8 @@ public:
   constexpr static KDColor Battery = KDColor::RGB24(0xffffff);
   constexpr static KDColor BatteryInCharge = KDColor::RGB24(0x179e1f);
   constexpr static KDColor BatteryLow = KDColor::RGB24(0x992321);
+  constexpr static KDColor ApproximateSignText = KDColor::RGB24(0x595959);
+  constexpr static KDColor ApproximateExpressionText = KDColor::RGB24(0x595959);
 
   // Controls (switches, gauge, arrows...)
   constexpr static KDColor Control = KDColor::RGB24(0x00857f);
@@ -47,6 +49,9 @@ public:
   // Statistics
   constexpr static KDColor StatisticsBox = KDColor::RGB24(0x00857f);
   constexpr static KDColor StatisticsSelect = KDColor::RGB24(0xe0e0e0);
+
+  // Graph
+  constexpr static KDColor GraphTangent = KDColor::RGB24(0x595959);
 
   // SubMenus
   constexpr static KDColor SubMenuBackground = KDColor::RGB24(0xe0e0e0);

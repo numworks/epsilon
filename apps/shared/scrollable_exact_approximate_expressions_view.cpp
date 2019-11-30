@@ -9,7 +9,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
-  m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
+  m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::ApproximateSignText),
   m_leftExpressionView(),
   m_selectedSubviewPosition((SubviewPosition)0),
   m_displayLeftExpression(true)
@@ -47,7 +47,7 @@ void ScrollableExactApproximateExpressionsView::ContentCell::reloadTextColor() {
   if (numberOfSubviews() == 1) {
     m_rightExpressionView.setTextColor(Palette::PrimaryText);
   } else {
-    m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
+    m_rightExpressionView.setTextColor(Palette::ApproximateExpressionText);
   }
 }
 

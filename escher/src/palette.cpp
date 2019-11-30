@@ -12,6 +12,8 @@ constexpr KDColor Palette::ExpressionInputBackground;
 constexpr KDColor Palette::Battery;
 constexpr KDColor Palette::BatteryInCharge;
 constexpr KDColor Palette::BatteryLow;
+constexpr KDColor Palette::ApproximateSignText;
+constexpr KDColor Palette::ApproximateExpressionText;
 
 constexpr KDColor Palette::Control;
 constexpr KDColor Palette::ControlEnabled;
@@ -34,6 +36,8 @@ constexpr KDColor Palette::CodeString;
 constexpr KDColor Palette::ProbabilityCurve;
 
 constexpr KDColor Palette::StatisticsBox;
+
+constexpr KDColor Palette::GraphTangent;
 
 constexpr KDColor Palette::SubMenuBackground;
 constexpr KDColor Palette::SubMenuBorder;
@@ -89,8 +93,8 @@ constexpr KDColor Palette::PurpleDark; // DONE
 constexpr KDColor Palette::GreyWhite;
 constexpr KDColor Palette::GreyBright;
 constexpr KDColor Palette::GreyMiddle;
-constexpr KDColor Palette::GreyDark;
-constexpr KDColor Palette::GreyVeryDark;
+constexpr KDColor Palette::GreyDark; // Done
+constexpr KDColor Palette::GreyVeryDark; // Done
 constexpr KDColor Palette::Select; // Done
 constexpr KDColor Palette::SelectDark; // Done
 constexpr KDColor Palette::WallScreen; // Done

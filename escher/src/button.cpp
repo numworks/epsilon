@@ -5,7 +5,7 @@
 Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font, KDColor textColor) :
   HighlightCell(),
   Responder(parentResponder),
-  m_messageTextView(font, textBody, 0.5f, 0.5f, textColor),
+  m_messageTextView(font, textBody, 0.5f, 0.5f, textColor, Palette::ButtonBackground),
   m_invocation(invocation),
   m_font(font)
 {

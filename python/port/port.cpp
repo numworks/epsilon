@@ -156,7 +156,7 @@ void gc_collect(void) {
     /* To compute the stack length:
      *                                  regs
      *                             <----------->
-     * STACK ->  ...|  |  |  |  |  |--|--|--|--|  |  |  |  |  |  |
+     * STACK <-  ...|  |  |  |  |  |--|--|--|--|  |  |  |  |  |  |
      *                             ^&regs                        ^python_stack_top
      * */
 
@@ -178,7 +178,22 @@ void gc_collect(void) {
   }
   /* Memory error detectors might find an error here as they might split regs
    * and stack memory zones. */
-  gc_collect_root(scanStart, stackLengthInByte/sizeof(void *));
+  for (size_t i = 0; i < sizeof(void *); i++) {
+    /* Objects on the stack are not necessarily aligned on sizeof(void *),
+     * which is also true for pointers refering to the heap. MicroPython
+     * gc_collect_root expects a table of void * that will be scanned every
+     * sizeof(void *) step. So we have to scan the stack repetitively with a
+     * increasing offset to be sure to check every byte for a heap address.
+     * If some memory can be reinterpreted as a pointer in the heap, gc_collect_root
+     * will prevent the destruction of the pointed heap memory. At worst (if
+     * the interpreted pointer was in fact an unaligned object or uninitialized
+     * memory), we will just keep extra objects in the heap which is not optimal
+     * but does not cause any crash. */
+    char * scanStartWithOffset = (char *)scanStart + i;
+    // Ensure to round the length to the ceiling
+    size_t stackLengthInAddressSize = (stackLengthInByte - i + sizeof(void *) - 1)/sizeof(void *);
+    gc_collect_root((void **)scanStartWithOffset, stackLengthInAddressSize);
+  }
 
   gc_collect_end();
 }

@@ -101,11 +101,15 @@ extern "C" {
 void MicroPython::init(void * heapStart, void * heapEnd) {
 #if MP_PORT_USE_STACK_SYMBOLS
   mp_stack_set_top(&_stack_start);
-  mp_stack_set_limit(&_stack_start - &_stack_end);
+  size_t stackLimitInBytes = (char *)&_stack_start - (char *)&_stack_end;
+  mp_stack_set_limit(stackLimitInBytes);
 #else
   volatile int stackTop;
   mp_stack_set_top((void *)(&stackTop));
-  mp_stack_set_limit(8192);
+  /* The stack limit is set to roughly mimic the maximal recursion depth of the
+   * device - and actually to be slightly less to be sure not to beat the device
+   * performance.  */
+  mp_stack_set_limit(29152);
 #endif
   gc_init(heapStart, heapEnd);
   mp_init();

@@ -58,7 +58,7 @@ public:
   Integer(double_native_int_t i);
   Integer(const char * digits, size_t length, bool negative);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {}
-  static Integer Overflow(bool negative) { return Integer(OverflowIdentifier, negative); }
+  static Integer Overflow(bool negative) { return Integer(TreeNode::OverflowIdentifier, negative); }
 
 #if POINCARE_TREE_LOG
   void logInteger(std::ostream & stream) const {
@@ -108,7 +108,7 @@ public:
   /* An integer can have (k_maxNumberOfDigits + 1) digits: either when it is an
    * overflow, or when we want to have one more digit than usual to compute a
    * big division. */
-  bool isOverflow() const { return m_identifier == OverflowIdentifier; }
+  bool isOverflow() const { return m_identifier == TreeNode::OverflowIdentifier; }
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
   bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && !m_negative); };
   bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && !m_negative); };
@@ -140,7 +140,6 @@ public:
   constexpr static int k_maxNumberOfDigits = 32;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
-  static constexpr int OverflowIdentifier = TreeNode::NoNodeIdentifier - 1;
 
   // Constructors
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);

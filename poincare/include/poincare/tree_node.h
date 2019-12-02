@@ -39,7 +39,8 @@ constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
 class TreeNode {
   friend class TreePool;
 public:
-  static constexpr uint16_t NoNodeIdentifier = -1;
+  static constexpr uint16_t NoNodeIdentifier = -2;
+  static constexpr uint16_t OverflowIdentifier = TreeNode::NoNodeIdentifier + 1; // Used for Integer
 
   // Constructor and destructor
   virtual ~TreeNode() {}

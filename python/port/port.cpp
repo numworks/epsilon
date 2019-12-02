@@ -99,13 +99,20 @@ extern "C" {
 }
 
 void MicroPython::init(void * heapStart, void * heapEnd) {
+  volatile int stackTop;
+  void * stackTopAddress = (void *)(&stackTop);
+  /* We delimit the stack part that will be used by Python. The stackTop is the
+   * address of the first object that can be allocated on Python stack. This
+   * boundaries are used:
+   * - by gc_collect to determine where to collect roots of the objects that
+   *   must be kept on the heap
+   * - to check if the maximal recursion depth has been reached. */
 #if MP_PORT_USE_STACK_SYMBOLS
-  mp_stack_set_top(&_stack_start);
-  size_t stackLimitInBytes = (char *)&_stack_start - (char *)&_stack_end;
+  mp_stack_set_top(stackTopAddress);
+  size_t stackLimitInBytes = (char *)stackTopAddress - (char *)&_stack_end;
   mp_stack_set_limit(stackLimitInBytes);
 #else
-  volatile int stackTop;
-  mp_stack_set_top((void *)(&stackTop));
+  mp_stack_set_top(stackTopAddress);
   /* The stack limit is set to roughly mimic the maximal recursion depth of the
    * device - and actually to be slightly less to be sure not to beat the device
    * performance.  */

@@ -40,13 +40,15 @@ void EditorController::setScript(Script script) {
 
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home) {
+  if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::USBEnumeration) {
+    /* Exit the edition on USB enumeration, because the storage needs to be in a
+     * "clean" state (with all records packed at the beginning of the storage) */
     Ion::Storage::Record::Data scriptValue = m_script.value();
     Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
         m_script,
         scriptValue.size - Script::k_importationStatusSize - (strlen(m_script.scriptContent()) + 1)); // TODO optimize number of script fetches
     stackController()->pop();
-    return event != Ion::Events::Home;
+    return event != Ion::Events::Home && event != Ion::Events::USBEnumeration;
   }
   return false;
 }

@@ -20,18 +20,31 @@ EditorController::EditorController(MenuController * menuController, App * python
 
 void EditorController::setScript(Script script) {
   m_script = script;
-  Script::Data scriptData = m_script.value();
-  size_t availableScriptSize = scriptData.size + Ion::Storage::sharedStorage()->availableSize();
-  assert(sizeof(m_areaBuffer) >= availableScriptSize);
-  // We cannot use strlcpy as the first char reprensenting the importation status can be 0.
-  memcpy(m_areaBuffer, (const char *)scriptData.buffer, scriptData.size);
-  m_editorView.setText(m_areaBuffer+1, availableScriptSize-1); // 1 char is taken by the importation status flag
+
+  /* We edit the script direclty in the storage buffer. We thus put all the
+   * storage available space at the end of the current edited script and we set
+   * its size.
+   *
+   * |****|****|m_script|****|**********|¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨|
+   *                                          available space
+   * is transformed to:
+   *
+   * |****|****|m_script|¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨|****|**********|
+   *                          available space
+   *
+   * */
+
+  size_t newScriptSize = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(m_script);
+  m_editorView.setText(const_cast<char *>(m_script.scriptContent()), newScriptSize - Script::k_importationStatusSize);
 }
 
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home) {
-    saveScript();
+    Ion::Storage::Record::Data scriptValue = m_script.value();
+    Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
+        m_script,
+        scriptValue.size - Script::k_importationStatusSize - (strlen(m_script.scriptContent()) + 1)); // TODO optimize number of script fetches
     stackController()->pop();
     return event != Ion::Events::Home;
   }
@@ -52,12 +65,6 @@ void EditorController::viewDidDisappear() {
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    /* We save the script before displaying the Variable box to add new
-     * functions or variables. */
-    saveScript();
-    return false;
-  }
   if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
@@ -116,13 +123,6 @@ VariableBoxController * EditorController::variableBoxForInputEventHandler(InputE
 
 StackViewController * EditorController::stackController() {
   return static_cast<StackViewController *>(parentResponder());
-}
-
-void EditorController::saveScript() {
-  size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
-  Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
-  assert(err != Script::ErrorStatus::NotEnoughSpaceAvailable && err != Script::ErrorStatus::RecordDoesNotExist); // This should not happen as we set the text area according to the available space in the Kallax
-  (void) err;
 }
 
 }

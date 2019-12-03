@@ -3,17 +3,8 @@
 
 namespace HardwareTest {
 
-KeyboardView::KeyboardView() :
-  m_testedKeyIndex(0)
-{
-}
-
-int KeyboardView::testedKeyIndex() const {
-  return m_testedKeyIndex;
-}
-
 void KeyboardView::setTestedKeyIndex(int i) {
-  m_testedKeyIndex = i;
+  m_keyboardModel.setTestedKeyIndex(i);
   markRectAsDirty(bounds());
 }
 
@@ -26,11 +17,8 @@ void KeyboardView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void KeyboardView::drawKey(int keyIndex, KDContext * ctx, KDRect rect) const {
-  KDColor color = keyIndex < m_testedKeyIndex ? KDColorGreen: KDColorBlack;
-  if (keyIndex == m_testedKeyIndex) {
-    color = KDColorBlue;
-  }
   Ion::Keyboard::Key key = Ion::Keyboard::ValidKeys[keyIndex];
+  KDColor color = keyColor(key);
   /* the key is on the cross */
   if ((uint8_t)key < 4) {
     KDCoordinate x = (uint8_t)key == 1 || (uint8_t)key == 2 ? k_margin + k_smallSquareSize : k_margin;
@@ -67,6 +55,16 @@ void KeyboardView::drawKey(int keyIndex, KDContext * ctx, KDRect rect) const {
     KDCoordinate y = 2*k_bigRectHeight + 3*k_smallRectHeight + (j+6)*k_margin + j*k_bigRectHeight;
     ctx->fillRect(KDRect(x, y, k_bigRectWidth, k_bigRectHeight), color);
   }
+}
+
+KDColor KeyboardView::keyColor(Ion::Keyboard::Key key) const {
+  if (!m_keyboardModel.belongsToTestedKeysSubset(key)) {
+    return Palette::GreyBright;
+  }
+  if (m_keyboardModel.testedKey() == key) {
+    return KDColorBlue;
+  }
+  return (uint8_t)key < (uint8_t)m_keyboardModel.testedKey() ? KDColorGreen : KDColorBlack;
 }
 
 }

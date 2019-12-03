@@ -22,21 +22,22 @@ bool micropython_port_vm_hook_loop() {
   return micropython_port_interrupt_if_needed();
 }
 
-bool micropython_port_interruptible_msleep(uint32_t delay) {
+bool micropython_port_interruptible_msleep(int32_t delay) {
+  assert(delay >= 0);
   /* We don't use millis because the systick drifts when changing the HCLK
    * frequency. */
-  constexpr uint32_t interruptionCheckDelay = 100;
-  const uint32_t numberOfInterruptionChecks = delay / interruptionCheckDelay;
-  uint32_t remainingInterruptionChecks = numberOfInterruptionChecks;
-  while (remainingInterruptionChecks > 0) {
+  constexpr int32_t interruptionCheckDelay = 100;
+  const int32_t numberOfInterruptionChecks = delay / interruptionCheckDelay;
+  int32_t remainingDelay = delay - numberOfInterruptionChecks * interruptionCheckDelay;
+  int32_t currentRemainingInterruptionChecks = numberOfInterruptionChecks;
+  do {
     // We assume the time taken by the interruption check is insignificant
     if (micropython_port_interrupt_if_needed()) {
       return true;
     }
-    remainingInterruptionChecks--;
-    Ion::Timing::msleep(interruptionCheckDelay);
-  }
-  Ion::Timing::msleep(delay - numberOfInterruptionChecks * interruptionCheckDelay);
+    Ion::Timing::msleep(currentRemainingInterruptionChecks == numberOfInterruptionChecks ? remainingDelay : interruptionCheckDelay);
+    currentRemainingInterruptionChecks--;
+  } while (currentRemainingInterruptionChecks >= 0);
   return false;
 }
 

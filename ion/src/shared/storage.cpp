@@ -114,6 +114,8 @@ void Storage::log() {
 #endif
 
 size_t Storage::availableSize() {
+  /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
+   * is needed after calling availableSize */
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
 }
 

@@ -335,6 +335,8 @@ bool Turtle::draw(bool force) {
     m_drawn = true;
   }
 
+  /* TODO: Maybe this threshold should be in time (mileage/speed) instead of
+   * mileage to interrupt with the same frequency whatever the speed is. */
   if (m_mileage > k_mileageLimit) {
     if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : 3 * (k_maxSpeed - m_speed)))) {
       return true;

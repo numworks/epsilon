@@ -34,12 +34,7 @@ public:
 
 private:
   StackViewController * stackController();
-  void saveScript();
   EditorView m_editorView;
-  /* m_areaBuffer first character is dedicated to the importation status.
-   * Thereby, we avoid wasteful copy while adding the Script to the storage
-   * (in order to add the importation status char before the areaBuffer). */
-  char m_areaBuffer[Ion::Storage::k_storageSize]; // this could be slightly optimize
   Script m_script;
   MenuController * m_menuController;
 };

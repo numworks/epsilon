@@ -17,6 +17,8 @@ class Storage {
 public:
   typedef uint16_t record_size_t;
   constexpr static size_t k_storageSize = 16384;
+  static_assert(UINT16_MAX >= k_storageSize, "record_size_t not big enough");
+
   static Storage * sharedStorage();
   constexpr static char k_dotChar = '.';
 
@@ -90,6 +92,8 @@ public:
 #endif
 
   size_t availableSize();
+  size_t putAvailableSpaceAtEndOfRecord(Record r);
+  void getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace);
   uint32_t checksum();
 
   // Delegate

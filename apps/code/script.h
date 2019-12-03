@@ -26,7 +26,7 @@ public:
   Script(Ion::Storage::Record r) : Record(r) {}
   bool importationStatus() const;
   void toggleImportationStatus();
-  const char * readContent() const;
+  const char * scriptContent() const;
 };
 
 }

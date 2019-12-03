@@ -117,6 +117,29 @@ size_t Storage::availableSize() {
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
 }
 
+size_t Storage::putAvailableSpaceAtEndOfRecord(Storage::Record r) {
+  char * p = pointerOfRecord(r);
+  size_t previousRecordSize = sizeOfRecordStarting(p);
+  size_t availableStorageSize = availableSize();
+  char * nextRecord = p + previousRecordSize;
+  memmove(nextRecord + availableStorageSize,
+      nextRecord,
+      (m_buffer + k_storageSize - availableStorageSize) - nextRecord);
+  size_t newRecordSize = previousRecordSize + availableStorageSize;
+  overrideSizeAtPosition(p, (record_size_t)newRecordSize);
+  return newRecordSize;
+}
+
+void Storage::getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace) {
+  char * p = pointerOfRecord(r);
+  size_t previousRecordSize = sizeOfRecordStarting(p);
+  char * nextRecord = p + previousRecordSize;
+  memmove(nextRecord - recordAvailableSpace,
+      nextRecord,
+      m_buffer + k_storageSize - nextRecord);
+  overrideSizeAtPosition(p, (record_size_t)(previousRecordSize - recordAvailableSpace));
+}
+
 uint32_t Storage::checksum() {
   return Ion::crc32Byte((const uint8_t *) m_buffer, endBuffer()-m_buffer);
 }

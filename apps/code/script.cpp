@@ -77,7 +77,7 @@ void Script::toggleImportationStatus() {
   setValue(d);
 }
 
-const char * Script::readContent() const {
+const char * Script::scriptContent() const {
   assert(!isNull());
   Data d = value();
   return (const char *)d.buffer + k_importationStatusSize;

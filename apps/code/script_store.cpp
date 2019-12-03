@@ -38,7 +38,7 @@ void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallba
     // Handle lexer or parser errors with nlr.
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
-      const char * scriptContent = scriptAtIndex(scriptIndex).readContent();
+      const char * scriptContent = scriptAtIndex(scriptIndex).scriptContent();
       if (scriptContent == nullptr) {
         continue;
       }
@@ -120,7 +120,7 @@ const char * ScriptStore::contentOfScript(const char * name) {
   if (script.isNull()) {
     return nullptr;
   }
-  return script.readContent();
+  return script.scriptContent();
 }
 
 Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {

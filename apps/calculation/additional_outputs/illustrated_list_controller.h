@@ -15,6 +15,7 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void viewDidDisappear() override;
 
   //ListViewDataSource
   int numberOfRows() const override;
@@ -28,9 +29,13 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // IllustratedListController
-  virtual void fillCalculationStoreFromExpression(Poincare::Expression e);
+  virtual void setExpression(Poincare::Expression e);
 
+protected:
+  Poincare::Expression m_savedExpression;
+  CalculationStore m_calculationStore;
 private:
+  virtual CodePoint expressionSymbol() const = 0;
   class ListController : public ViewController {
   public:
     ListController(IllustratedListController * dataSource);
@@ -41,13 +46,12 @@ private:
   private:
     SelectableTableView m_selectableTableView;
   };
-  constexpr static int k_maxNumberOfAdditionalCalculations = 3;
+  constexpr static int k_maxNumberOfAdditionalCalculations = 4;
   constexpr static KDCoordinate k_illustrationHeight = 100;
   ListController m_listController;
   // Cells
   virtual HighlightCell * illustrationCell() = 0;
   ScrollableInputExactApproximateExpressionsCell m_additionalCalculationCells[k_maxNumberOfAdditionalCalculations];
-  CalculationStore m_calculationStore;
 };
 
 }

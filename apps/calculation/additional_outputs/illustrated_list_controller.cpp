@@ -1,4 +1,5 @@
 #include "illustrated_list_controller.h"
+#include <poincare/symbol.h>
 #include "../app.h"
 
 using namespace Poincare;
@@ -39,6 +40,25 @@ bool IllustratedListController::handleEvent(Ion::Events::Event event) {
 
 void IllustratedListController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_listController);
+}
+
+void IllustratedListController::viewDidDisappear() {
+  StackViewController::viewDidDisappear();
+  // Reset the context as it was before displaying the IllustratedListController
+  Poincare::Context * context = App::app()->localContext();
+  if (m_savedExpression.isUninitialized()) {
+    /* If no expression was stored in the symbol used by the
+     * IllustratedListController, we delete the record we stored */
+    char symbolName[3];
+    size_t length = UTF8Decoder::CodePointToChars(expressionSymbol(), symbolName, 3);
+    assert(length < 3);
+    symbolName[length] = 0;
+    const char * const extensions[2] = {"exp", "func"};
+    Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(symbolName, extensions, 2).destroy();
+  } else {
+    Poincare::Symbol s = Poincare::Symbol::Builder(expressionSymbol());
+    context->setExpressionForSymbolAbstract(m_savedExpression, s);
+  }
 }
 
 int IllustratedListController::numberOfRows() const {
@@ -107,12 +127,11 @@ void IllustratedListController::tableViewDidChangeSelection(SelectableTableView 
   }
 }
 
-void IllustratedListController::fillCalculationStoreFromExpression(Expression e) {
-  // TODO
+void IllustratedListController::setExpression(Poincare::Expression e) {
   Poincare::Context * context = App::app()->localContext();
-  m_calculationStore.push("1+root(2,3)", context);
-  m_calculationStore.push("2+root(2,3)", context);
-  m_calculationStore.push("3+root(2,3)", context);
+  Poincare::Symbol s = Poincare::Symbol::Builder('z');
+  m_savedExpression = context->expressionForSymbolAbstract(s, false);
+  context->setExpressionForSymbolAbstract(e, s);
 }
 
 }

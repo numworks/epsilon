@@ -12,8 +12,9 @@ public:
   ComplexListController() :
     IllustratedListController(nullptr),
     m_complexGraphCell(&m_model) {}
-  void fillCalculationStoreFromExpression(Poincare::Expression e) override;
+  void setExpression(Poincare::Expression e) override;
 private:
+  CodePoint expressionSymbol() const override { return 'z'; }
   HighlightCell * illustrationCell() override { return &m_complexGraphCell; }
   ComplexGraphCell m_complexGraphCell;
   ComplexModel m_model;

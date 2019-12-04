@@ -72,9 +72,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         Expression::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
         /* TODO
          * Controller * c = additionalInformationType ? graphController : listController?
-         * m_controller->setType(additionalInformationType)*/
+         * m_controller->setType(additionalInformationType)
+         * m_controller->setCalculation()...*/
         if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
-           m_complexController.fillCalculationStoreFromExpression(calculation->exactOutput());
+           m_complexController.setExpression(calculation->exactOutput());
           Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       } else {

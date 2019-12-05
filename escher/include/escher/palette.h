@@ -27,13 +27,13 @@ public:
   constexpr static KDColor Control = KDColor::RGB24(0x00857f);
   constexpr static KDColor ControlEnabled = KDColor::RGB24(0x00b2b0);
   constexpr static KDColor ControlDisabled = KDColor::RGB24(0x9e9e9e);
-  constexpr static KDColor CalculationBackgroundOdd = KDColor::RGB24(0xffffff);
-  constexpr static KDColor CalculationBackgroundEven = KDColor::RGB24(0xfafafa);
+  constexpr static KDColor CalculationBackgroundOdd = KDColor::RGB24(0xfafafa);
+  constexpr static KDColor CalculationBackgroundEven = KDColor::RGB24(0xffffff);
   constexpr static KDColor CalculationEmptyBox = KDColor::RGB24(0xc4c4c4);
   constexpr static KDColor CalculationEmptyBoxNeeded = KDColor::RGB24(0x00857f);
-  constexpr static KDColor CodeBackground = KDColor::RGB24(0x000000);
+  constexpr static KDColor CodeBackground = KDColor::RGB24(0xffffff);
   constexpr static KDColor CodeBackgroundSelected = KDColor::RGB24(0xe0e0e0);
-  constexpr static KDColor CodeText = KDColor::RGB24(0xffffff);
+  constexpr static KDColor CodeText = KDColor::RGB24(0x000000);
   constexpr static KDColor CodeComment = KDColor::RGB24(0x999988);
   constexpr static KDColor CodeNumber = KDColor::RGB24(0x009999);
   constexpr static KDColor CodeKeyword = KDColor::RGB24(0xff000c);

@@ -25,7 +25,7 @@ namespace Probability {
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::SecondaryText, Palette::BackgroundApps),
   m_selectableTableView(selectableTableView),
   m_distributionCurveView(distribution, calculation)
 {
@@ -67,7 +67,7 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
   m_selectableTableView.setMargins(k_tableMargin);
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
-  m_selectableTableView.setBackgroundColor(KDColorWhite);
+  m_selectableTableView.setBackgroundColor(Palette::BackgroundHard);
 
 
   for (int i = 0; i < k_numberOfCalculationCells; i++) {

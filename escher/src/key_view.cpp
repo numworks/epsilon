@@ -1,4 +1,5 @@
 #include <escher/key_view.h>
+#include <escher/palette.h>
 
 const uint8_t upMask[KeyView::k_keySize][KeyView::k_keySize] = {
   {0xFF, 0xFF, 0xFF, 0x45, 0x45, 0xFF, 0xFF, 0xFF},
@@ -83,7 +84,7 @@ void KeyView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height =  bounds().height();
   KDRect frame((width - k_keySize)/2, (height - k_keySize)/2, k_keySize, k_keySize);
-  ctx->blendRectWithMask(frame, KDColorBlack, mask(), s_keyWorkingBuffer);
+  ctx->blendRectWithMask(frame, Palette::PrimaryText, mask(), s_keyWorkingBuffer);
 }
 
 KDSize KeyView::minimalSizeForOptimalDisplay() const {

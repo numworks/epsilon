@@ -24,6 +24,8 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     IntervalParameterController * controller = valuesController->intervalParameterController();
     controller->setInterval(valuesController->intervalAtColumn(valuesController->selectedColumn()));
+    /* No need to change Nstart/Nend messages because they are the only messages
+     * used and we set them in ValuesController::ValuesController(...) */
     stack->push(controller);
     return true;
   }, this), k_font)
@@ -32,6 +34,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     m_sequenceTitleCells[i].setOrientation(Shared::FunctionTitleCell::Orientation::HorizontalIndicator);
   }
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
+  setDefaultStartEndMessages();
 }
 
 // TableViewDataSource
@@ -64,7 +67,7 @@ I18n::Message ValuesController::emptyMessage() {
 }
 
 // ValuesController
-void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
+void ValuesController::setDefaultStartEndMessages() {
   m_intervalParameterController.setStartEndMessages(I18n::Message::NStart, I18n::Message::NEnd);
 }
 

@@ -5,7 +5,7 @@
 EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   EvenOddCell(),
   Responder(parentResponder),
-  m_editableCell(this, inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, KDColorBlack, KDColorWhite, topMargin, rightMargin, bottomMargin, leftMargin)
+  m_editableCell(this, inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, Palette::PrimaryText, Palette::BackgroundHard, topMargin, rightMargin, bottomMargin, leftMargin)
 {
 }
 

@@ -54,7 +54,7 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
   if (isHighlighted()) {
     if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
-      m_inputView.setExpressionBackgroundColor(Palette::Select);
+      m_inputView.setExpressionBackgroundColor(Palette::ListCellBackgroundSelected);
     } else {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
     }
@@ -107,7 +107,7 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor background = m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd;
   return background;
 }
 

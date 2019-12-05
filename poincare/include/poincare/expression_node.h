@@ -110,7 +110,15 @@ public:
 
   /* Properties */
   enum class ReductionTarget {
-    System = 0,
+    /* Minimal reduction: this at least reduces rationals operations as
+     * "1-0.3-0.7 --> 0" */
+    SystemForApproximation = 0,
+    /* Expansion of Newton multinome to be able to identify polynoms */
+    SystemForAnalysis,
+    /* Additional features as:
+     * - factorizing on a common denominator
+     * - turning complex expression into the form a+ib
+     * - identifying tangent in cos/sin polynoms ... */
     User
   };
   enum class Sign {
@@ -196,7 +204,7 @@ public:
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowBeautify(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ virtual Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions. It depends on the "layout syle" of the on the right of the left expression */
   enum class LayoutShape {
     Decimal,

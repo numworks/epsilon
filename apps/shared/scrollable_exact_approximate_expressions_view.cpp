@@ -9,7 +9,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
-  m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
+  m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::ApproximateSignText),
   m_leftExpressionView(),
   m_selectedSubviewPosition((SubviewPosition)0),
   m_displayLeftExpression(true)
@@ -17,7 +17,7 @@ ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
 }
 
 KDColor ScrollableExactApproximateExpressionsView::ContentCell::backgroundColor() const {
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor background = m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd;
   return background;
 }
 
@@ -29,9 +29,9 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setHighlighted(bool
   m_approximateSign.setBackgroundColor(backgroundColor());
   if (highlight) {
     if (m_selectedSubviewPosition == SubviewPosition::Left) {
-      m_leftExpressionView.setBackgroundColor(Palette::Select);
+      m_leftExpressionView.setBackgroundColor(Palette::ListCellBackgroundSelected);
     } else {
-      m_rightExpressionView.setBackgroundColor(Palette::Select);
+      m_rightExpressionView.setBackgroundColor(Palette::ListCellBackgroundSelected);
     }
   }
 }
@@ -45,9 +45,9 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setEven(bool even) 
 
 void ScrollableExactApproximateExpressionsView::ContentCell::reloadTextColor() {
   if (numberOfSubviews() == 1) {
-    m_rightExpressionView.setTextColor(KDColorBlack);
+    m_rightExpressionView.setTextColor(Palette::PrimaryText);
   } else {
-    m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
+    m_rightExpressionView.setTextColor(Palette::ApproximateExpressionText);
   }
 }
 

@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUT_NODE_H
 
 #include <poincare/tree_node.h>
+#include <escher/palette.h>
 #include <kandinsky.h>
 
 namespace Poincare {
@@ -60,7 +61,7 @@ public:
   bool isIdenticalTo(Layout l);
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = Palette::PrimaryText, KDColor backgroundColor = Palette::BackgroundHard);
   KDPoint origin();
   KDPoint absoluteOrigin();
   KDSize layoutSize();

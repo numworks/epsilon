@@ -4,7 +4,7 @@
 
 ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(I18n::Message accessoryMessage, Layout layout) :
   ExpressionTableCell(layout),
-  m_accessoryView(KDFont::SmallFont, accessoryMessage, 0.0f, 0.5f, Palette::GreyDark, KDColorWhite)
+  m_accessoryView(KDFont::SmallFont, accessoryMessage, 0.0f, 0.5f, Palette::SecondaryText, Palette::ListCellBackground)
 {
   if (layout == Layout::Horizontal) {
     m_accessoryView.setAlignment(1.0f, 0.5f);
@@ -17,7 +17,7 @@ View * ExpressionTableCellWithPointer::accessoryView() const {
 
 void ExpressionTableCellWithPointer::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
 

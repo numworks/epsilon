@@ -56,12 +56,12 @@ void SwitchView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate heightCenter =  bounds().height()/2;
   KDCoordinate switchHalfHeight = k_switchHeight/2;
 
-  KDColor mainColor = m_state ? Palette::YellowDark : Palette::GreyDark;
+  KDColor mainColor = m_state ? Palette::Control : Palette::ControlDisabled;
   KDRect frame(width - k_switchWidth, heightCenter -switchHalfHeight, k_switchWidth, k_switchHeight);
   ctx->blendRectWithMask(frame, mainColor, (const uint8_t *)switchMask, s_switchWorkingBuffer);
   KDCoordinate onOffX = width - (m_state ? k_onOffSize : k_switchWidth);
   KDRect onOffFrame(onOffX, heightCenter -switchHalfHeight, k_onOffSize, k_onOffSize);
-  ctx->blendRectWithMask(onOffFrame, KDColorWhite, (const uint8_t *)onOffMask, s_switchWorkingBuffer);
+  ctx->blendRectWithMask(onOffFrame, Palette::ListCellBackground, (const uint8_t *)onOffMask, s_switchWorkingBuffer);
 }
 
 KDSize SwitchView::minimalSizeForOptimalDisplay() const {

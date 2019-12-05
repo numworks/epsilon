@@ -5,7 +5,7 @@ namespace Code {
 
 SandboxController::SandboxController(Responder * parentResponder, MicroPython::ExecutionEnvironment * executionEnvironment) :
   ViewController(parentResponder),
-  m_solidColorView(KDColorWhite),
+  m_solidColorView(Palette::CodeBackground),
   m_executionEnvironment(executionEnvironment)
 {
   assert(executionEnvironment != nullptr);

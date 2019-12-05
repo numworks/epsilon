@@ -30,7 +30,7 @@
 namespace Probability {
 
 DistributionController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ChooseDistribution, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ChooseDistribution, 0.5f, 0.5f, Palette::SecondaryText, Palette::BackgroundApps),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -98,7 +98,7 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     setDistributionAccordingToIndex(selectedRow());
-    stack->push(m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+    stack->push(m_parametersController, Palette::BannerFirstText, Palette::BannerFirstBackground, Palette::BannerFirstBorder);
     return true;
   }
   return false;

@@ -8,7 +8,7 @@ KDSize FunctionExpressionCell::minimalSizeForOptimalDisplay() const {
 }
 
 void FunctionExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor separatorColor = m_even ? Palette::WallScreen : KDColorWhite;
+  KDColor separatorColor = m_even ? Palette::BackgroundApps : Palette::BackgroundHard;
   // Color the horizontal separator
   ctx->fillRect(KDRect(0, bounds().height()-k_separatorThickness, bounds().width(), k_separatorThickness), separatorColor);
   // Color the left margin

@@ -17,27 +17,28 @@ SymbolController::SymbolController(Responder * parentResponder) :
 
 bool SymbolController::handleEvent(Ion::Events::Event event) {
   Preferences * preferences = Preferences::sharedPreferences();
-  Poincare::Preferences::SymbolMultiplication symbolofMultiplication = preferences->symbolofMultiplication();
+  Poincare::Preferences::SymbolMultiplication oldSymbolOfMultiplication = preferences->symbolofMultiplication();
+  Poincare::Preferences::SymbolMultiplication newSymbolOfMultiplication = preferences->symbolofMultiplication();
   if (event == Ion::Events::OK || event == Ion::Events::EXE){
     switch(selectedRow()){
       case 0:
         {
-          symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Cross;
+          newSymbolOfMultiplication = Poincare::Preferences::SymbolMultiplication::Cross;
           break;
         }
       case 1:
         {
-          symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::MiddleDot;
+          newSymbolOfMultiplication = Poincare::Preferences::SymbolMultiplication::MiddleDot;
           break;
         }
       case 2:
         {
-          symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Star;
+          newSymbolOfMultiplication = Poincare::Preferences::SymbolMultiplication::Star;
           break;
         }
       case 3:
         {
-          symbolofMultiplication = Poincare::Preferences::SymbolMultiplication::Auto;
+          newSymbolOfMultiplication = Poincare::Preferences::SymbolMultiplication::Auto;
           break;
         }
       default:
@@ -45,7 +46,15 @@ bool SymbolController::handleEvent(Ion::Events::Event event) {
           GenericSubController::handleEvent(event);
         }
     }
-    preferences->setSymbolMultiplication(symbolofMultiplication);
+    if (oldSymbolOfMultiplication == newSymbolOfMultiplication) {
+      if (newSymbolOfMultiplication == Poincare::Preferences::SymbolMultiplication::Auto) {
+        preferences->setSymbolMultiplication(Poincare::Preferences::SymbolMultiplication::Cross);
+      } else {
+        preferences->setSymbolMultiplication(Poincare::Preferences::SymbolMultiplication::Auto);
+      }
+    } else {
+      preferences->setSymbolMultiplication(newSymbolOfMultiplication);
+    }
     m_selectableTableView.reloadData();
     return true;
   } else {

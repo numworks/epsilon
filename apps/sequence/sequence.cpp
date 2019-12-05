@@ -189,8 +189,24 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
 }
 
 Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
-  assert(std::round(start) == start && std::round(end) == end);
-  return Poincare::Sum::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Sum takes ownership of args
+  /* Here, we cannot just create the expression sum(u(n), start, end) because
+   * the approximation of u(n) is not handled by Poincare (but only by
+   * Sequence). */
+  double result = 0.0;
+  if (end-start > ExpressionNode::k_maxNumberOfSteps || start + 1.0 == start) {
+    return Float<double>::Builder(NAN);
+  }
+  start = std::round(start);
+  end = std::round(end);
+  for (double i = start; i <= end; i = i + 1.0) {
+    /* When |start| >> 1.0, start + 1.0 = start. In that case, quit the
+     * infinite loop. */
+    if (i == i-1.0 || i == i+1.0) {
+      return Float<double>::Builder(NAN);
+    }
+    result += evaluateXYAtParameter(i, context).x2();
+  }
+  return Float<double>::Builder(result);
 }
 
 Sequence::RecordDataBuffer * Sequence::recordData() const {

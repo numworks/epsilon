@@ -9,7 +9,7 @@ namespace Shared {
 
 class RoundCursorView : public CursorView {
 public:
-  RoundCursorView(KDColor color = KDColorBlack) : m_color(color), m_underneathPixelBufferLoaded(false) {}
+  RoundCursorView(KDColor color = Palette::PrimaryText) : m_color(color), m_underneathPixelBufferLoaded(false) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);

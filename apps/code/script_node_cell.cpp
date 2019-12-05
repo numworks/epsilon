@@ -23,12 +23,12 @@ void ScriptNodeCell::ScriptNodeView::setScriptStore(ScriptStore * scriptStore) {
 }
 
 void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->drawString(m_scriptNode->name(), KDPoint(0, Metric::TableCellLabelTopMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite);
+  ctx->drawString(m_scriptNode->name(), KDPoint(0, Metric::TableCellLabelTopMargin), k_font, Palette::CodeText, isHighlighted()? Palette::CodeBackgroundSelected : Palette::CodeBackground);
   KDSize nameSize = k_font->stringSize(m_scriptNode->name());
   if (m_scriptNode->type() == ScriptNode::Type::Function) {
-    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), Metric::TableCellLabelTopMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite);
+    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), Metric::TableCellLabelTopMargin), k_font, Palette::CodeText, isHighlighted()? Palette::CodeBackgroundSelected : Palette::CodeBackground);
   }
-  ctx->drawString(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName(), KDPoint(0, Metric::TableCellLabelTopMargin + nameSize.height() + k_verticalMargin), k_font, Palette::GreyDark, isHighlighted()? Palette::Select : KDColorWhite);
+  ctx->drawString(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName(), KDPoint(0, Metric::TableCellLabelTopMargin + nameSize.height() + k_verticalMargin), k_font, Palette::SecondaryText, isHighlighted()? Palette::CodeBackgroundSelected : Palette::CodeBackground);
 }
 
 KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {

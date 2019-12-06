@@ -139,8 +139,8 @@ constexpr Event Equal = Event::ShiftKey(Keyboard::Key::Pi);
 constexpr Event Lower = Event::ShiftKey(Keyboard::Key::Sqrt);
 constexpr Event Greater = Event::ShiftKey(Keyboard::Key::Square);
 
-constexpr Event BrightnessPlus = Event::ShiftKey(Keyboard::Key::LeftParenthesis);
-constexpr Event BrightnessMinus = Event::ShiftKey(Keyboard::Key::RightParenthesis);
+constexpr Event BrightnessPlus = Event::ShiftKey(Keyboard::Key::Plus);
+constexpr Event BrightnessMinus = Event::ShiftKey(Keyboard::Key::Minus);
 
 constexpr Event ShiftSeven = Event::ShiftKey(Keyboard::Key::Seven);
 constexpr Event ShiftEight = Event::ShiftKey(Keyboard::Key::Eight);

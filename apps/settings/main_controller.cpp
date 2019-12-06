@@ -36,6 +36,10 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus){
+    m_selectableTableView.reloadData();
+    return false;
+  }
   if (model()->children(selectedRow())->numberOfChildren() == 0) {
     if (model()->children(selectedRow())->label() == promptMessage()) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {

@@ -129,7 +129,7 @@ void IllustratedListController::tableViewDidChangeSelection(SelectableTableView 
 
 void IllustratedListController::setExpression(Poincare::Expression e) {
   Poincare::Context * context = App::app()->localContext();
-  Poincare::Symbol s = Poincare::Symbol::Builder('z');
+  Poincare::Symbol s = Poincare::Symbol::Builder(expressionSymbol());
   m_savedExpression = context->expressionForSymbolAbstract(s, false);
   context->setExpressionForSymbolAbstract(e, s);
 }

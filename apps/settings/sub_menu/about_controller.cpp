@@ -1,4 +1,5 @@
 #include "about_controller.h"
+#include "../../../python/src/py/mpconfig.h"
 #include <assert.h>
 #include <cmath>
 #include <apps/settings/main_controller.h>
@@ -93,12 +94,15 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   else {
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+    // TODO: Use MICROPY_VERSION_STRING from "mpconfig"
+    static const char * mpVersion = "1.11.0";
     static const char * messages[] = {
 #ifdef USERNAME
       Ion::username(),
 #endif
       Ion::softwareVersion(),
       Ion::customSoftwareVersion(),
+      mpVersion,
       Ion::serialNumber(),
       Ion::fccId()
     };

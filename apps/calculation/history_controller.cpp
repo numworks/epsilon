@@ -75,7 +75,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
          * m_controller->setType(additionalInformationType)
          * m_controller->setCalculation()...*/
         if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
-           m_complexController.setExpression(calculation->exactOutput());
+           m_complexController.setExpression(calculation->input());
           Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       } else {

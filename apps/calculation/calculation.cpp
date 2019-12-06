@@ -235,7 +235,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 Poincare::Expression::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
   Preferences * preferences = Preferences::sharedPreferences();
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-  return exactOutput().additionalInformationType(context, complexFormat, preferences->angleUnit());
+  return input().additionalInformationType(context, complexFormat, preferences->angleUnit());
 }
 
 }

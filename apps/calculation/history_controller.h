@@ -6,6 +6,7 @@
 #include "calculation_store.h"
 #include "selectable_table_view.h"
 #include "additional_outputs/complex_list_controller.h"
+#include "additional_outputs/trigonometry_list_controller.h"
 
 namespace Calculation {
 
@@ -38,6 +39,7 @@ private:
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore * m_calculationStore;
   ComplexListController m_complexController;
+  TrigonometryListController m_trigonometryController;
 };
 
 }

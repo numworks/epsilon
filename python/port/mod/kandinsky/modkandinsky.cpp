@@ -71,6 +71,10 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   KDColor backgroundColor = (n_args >= 5) ? ColorForTuple(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->drawString(text, point, KDFont::LargeFont, textColor, backgroundColor);
+  /* drawString function might take some time to execute so we add an extra check
+   * for user interruption (to avoid freezing in an infinite loop calling
+   * 'drawString' for instance). */
+  micropython_port_interrupt_if_needed();
   return mp_const_none;
 }
 
@@ -84,6 +88,10 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   KDColor color = ColorForTuple(args[4]);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->fillRect(rect, color);
+  /* fillRect function might take some time to execute so we add an extra check
+   * for user interruption (to avoid freezing in an infinite loop calling
+   * 'fillRect' for instance). */
+  micropython_port_interrupt_if_needed();
   return mp_const_none;
 }
 

@@ -77,6 +77,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
            m_complexController.setExpression(calculation->input());
           Container::activeApp()->displayModalViewController(&m_complexController, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+        } else if (additionalInfoType == Expression::AdditionalInformationType::Trigonometry) {
+           m_trigonometryController.setExpression(calculation->input());
+          Container::activeApp()->displayModalViewController(&m_trigonometryController, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       } else {
         m_selectableTableView.deselectTable();

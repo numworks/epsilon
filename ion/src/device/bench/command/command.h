@@ -30,6 +30,7 @@ void ScreenID(const char * input);
 void Sleep(const char * input);
 void Stop(const char * input);
 void Standby(const char * input);
+void USBPlugged(const char * input);
 void VBlank(const char * input);
 
 extern const char * const sOK;

@@ -62,7 +62,7 @@ void IllustratedListController::viewDidDisappear() {
 }
 
 int IllustratedListController::numberOfRows() const {
-  return k_maxNumberOfAdditionalCalculations + 1;
+  return m_calculationStore.numberOfCalculations() + 1;
 }
 
 int IllustratedListController::reusableCellCount(int type) {

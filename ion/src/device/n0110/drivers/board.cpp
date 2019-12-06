@@ -35,10 +35,36 @@ void initMPU() {
 
   // 2. MPU settings
   // 2.1 Configure a MPU region for the FMC memory area
-  // This is needed for interfacing with the LCD
-  MPU.RNR()->setREGION(0x00);
+  /* This is needed for interfacing with the LCD
+   * We define the whole FMC memory bank 1 as strongly ordered, non-executable
+   * and not accessible. We define the FMC command and data addresses as
+   * writeable non-cachable, non-buffereable and non shareable. */
+  int sector = 0;
+  MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x60000000);
-  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32MB);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setTEX(2);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0x60000000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32B);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setTEX(2);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  MPU.RNR()->setREGION(sector++);
+  MPU.RBAR()->setADDR(0x60000000+0x20000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32B);
   MPU.RASR()->setXN(true);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
   MPU.RASR()->setTEX(2);
@@ -56,7 +82,7 @@ void initMPU() {
    * strongly ordered, non-executable and not accessible. Plus, we define the
    * Quad-SPI region corresponding to the Expternal Chip as executable and
    * fully accessible (AN4861). */
-  MPU.RNR()->setREGION(0x01);
+  MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x90000000);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
@@ -67,7 +93,7 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  MPU.RNR()->setREGION(0x02);
+  MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x90000000);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_8MB);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);

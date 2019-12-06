@@ -21,9 +21,6 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
-      return false;
-    }
     AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
     return true;
   }

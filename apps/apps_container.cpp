@@ -222,7 +222,6 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
       int direction = (event == Ion::Events::BrightnessPlus) ? NumberOfStepsForShiftPlusMinus*delta : -delta*NumberOfStepsForShiftPlusMinus;
       GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
-    return true;
   }
   return false;
 }

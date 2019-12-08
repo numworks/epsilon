@@ -4,7 +4,6 @@
 #include "generic_sub_controller.h"
 #include <escher.h>
 #include "display_mode_controller.h"
-#include "symbol_controller.h"
 #include "preferences_controller.h"
 
 namespace Settings {
@@ -21,7 +20,6 @@ private:
   MessageTableCellWithChevronAndMessage m_cells[k_totalNumberOfCell];
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
-  SymbolController m_symbolController;
 };
 
 }

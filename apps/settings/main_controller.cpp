@@ -2,6 +2,7 @@
 #include "../global_preferences.h"
 #include <apps/i18n.h>
 #include <assert.h>
+#include <ion/backlight.h>
 
 using namespace Poincare;
 
@@ -36,6 +37,13 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus){
+    int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+    int direction = (event == Ion::Events::BrightnessPlus) ? Ion::Backlight::NumberOfStepsPerShortcut*delta : -delta*Ion::Backlight::NumberOfStepsPerShortcut;
+    GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
+    m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), 1);
+    return true;
+  }
   if (model()->children(selectedRow())->numberOfChildren() == 0) {
     if (model()->children(selectedRow())->label() == promptMessage()) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {

@@ -4,6 +4,7 @@
 #include <ion.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
+#include <ion/backlight.h>
 
 extern "C" {
 #include <assert.h>
@@ -220,7 +221,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus) {
       int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
-      int direction = (event == Ion::Events::BrightnessPlus) ? NumberOfStepsForShiftPlusMinus*delta : -delta*NumberOfStepsForShiftPlusMinus;
+      int direction = (event == Ion::Events::BrightnessPlus) ? Ion::Backlight::NumberOfStepsPerShortcut*delta : -delta*Ion::Backlight::NumberOfStepsPerShortcut;
       GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
   }
   return false;

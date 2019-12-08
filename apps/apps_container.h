@@ -78,7 +78,6 @@ private:
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
   USB::App::Snapshot m_usbConnectedSnapshot;
-  const int NumberOfStepsForShiftPlusMinus = 3;
 };
 
 #endif

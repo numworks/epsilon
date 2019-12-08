@@ -42,6 +42,7 @@ private:
   AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
+  const int NumberOfStepsForShiftPlusMinus = 3;
 };
 
 }

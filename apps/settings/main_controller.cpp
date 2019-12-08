@@ -37,8 +37,11 @@ void MainController::didBecomeFirstResponder() {
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus){
-    m_selectableTableView.reloadData();
-    return false;
+    int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+    int direction = (event == Ion::Events::BrightnessPlus) ? NumberOfStepsForShiftPlusMinus*delta : -delta*NumberOfStepsForShiftPlusMinus;
+    GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
+    m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), 1);
+    return true;
   }
   if (model()->children(selectedRow())->numberOfChildren() == 0) {
     if (model()->children(selectedRow())->label() == promptMessage()) {

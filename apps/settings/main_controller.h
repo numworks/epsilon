@@ -8,7 +8,6 @@
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
 #include "sub_menu/math_options_controller.h"
-#include "sub_menu/symbol_controller.h"
 
 namespace Settings {
 

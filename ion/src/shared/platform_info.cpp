@@ -27,19 +27,25 @@ public:
   constexpr PlatformInfo() :
     m_header(Magic),
     m_version{EPSILON_VERSION},
-    m_customVersion{EPSILON_CUSTOM_VERSION},
-#ifdef USERNAME
-    m_username{USERNAME},
-#endif
     m_patchLevel{PATCH_LEVEL},
     m_storageAddress(storageAddress),
     m_storageSize(Ion::Storage::k_storageSize),
-    m_footer(Magic) { }
+    m_footer(Magic),
+    m_ohm_header(OmegaMagic),
+    m_customVersion{EPSILON_CUSTOM_VERSION},
+#ifdef USERNAME
+    m_username{USERNAME},
+#else
+    m_username{"\0"},
+#endif
+    m_ohm_footer(OmegaMagic) { }
   const char * version() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
+    assert(m_ohm_header == OmegaMagic);
+    assert(m_ohm_footer == OmegaMagic);
     return m_version;
   }
   const char * customVersion() const {
@@ -47,6 +53,8 @@ public:
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
+    assert(m_ohm_header == OmegaMagic);
+    assert(m_ohm_footer == OmegaMagic);
     return m_customVersion;
   }
 #ifdef USERNAME
@@ -55,6 +63,8 @@ public:
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
+    assert(m_ohm_header == OmegaMagic);
+    assert(m_ohm_footer == OmegaMagic);
     return m_username;
   }
 #endif
@@ -63,20 +73,23 @@ public:
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
+    assert(m_ohm_header == OmegaMagic);
+    assert(m_ohm_footer == OmegaMagic);
     return m_patchLevel;
   }
 private:
   constexpr static uint32_t Magic = 0xDEC00DF0;
+  constexpr static uint32_t OmegaMagic = 0xEFBEADDE;
   uint32_t m_header;
   const char m_version[8];
   const char m_patchLevel[8];
   void * m_storageAddress;
   size_t m_storageSize;
   uint32_t m_footer;
+  uint32_t m_ohm_header;
   const char m_customVersion[16];
-#ifdef USERNAME
   const char m_username[16];
-#endif
+  uint32_t m_ohm_footer;
 };
 
 constexpr PlatformInfo HEADER_SECTION platform_infos;

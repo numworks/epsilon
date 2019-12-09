@@ -15,7 +15,8 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_preferencesController(this),
   m_examModeCell(I18n::Message::Default, KDFont::LargeFont),
-  m_ledCell(KDFont::LargeFont, KDFont::SmallFont)
+  m_ledCell(KDFont::LargeFont, KDFont::SmallFont),
+  m_symbolicCell(I18n::Message::SymbolicEnabled, KDFont::LargeFont)
 {
 }
 
@@ -40,6 +41,12 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
       stack->push(subController);
       return true;
     }
+    if (childLabel == I18n::Message::SymbolicEnabled) {
+      Preferences * preferences = Preferences::sharedPreferences();
+      preferences->setExamSymbolic(!preferences->isExamSymbolic());
+      m_selectableTableView.reloadData();
+      return true;
+    }
   }
   return GenericSubController::handleEvent(event);
 }
@@ -49,6 +56,9 @@ HighlightCell * ExamModeController::reusableCell(int index, int type) {
   if (type == 0) {
     return &m_ledCell;
   }
+  if (type == 1) {
+    return &m_symbolicCell;
+  }
   return &m_examModeCell;
 }
 
@@ -57,6 +67,8 @@ int ExamModeController::reusableCellCount(int type) {
     case 0:
       return 1;
     case 1:
+      return 1;
+    case 2:
       return 1;
     default:
       assert(false);
@@ -78,6 +90,11 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
     I18n::Message message = (I18n::Message) m_messageTreeModel->children(index)->children((int)preferences->colorOfLED())->label();
     myTextCell->setSubtitle(message);
   }
+  if (thisLabel == I18n::Message::SymbolicEnabled) {
+    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
+    mySwitch->setState(preferences->isExamSymbolic());
+  }
 }
 
 int ExamModeController::typeAtLocation(int i, int j) {
@@ -86,6 +103,8 @@ int ExamModeController::typeAtLocation(int i, int j) {
       return 0;
     case 1:
       return 1;
+    case 2:
+      return 2;
     default:
       assert(false);
       return 0;

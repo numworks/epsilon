@@ -19,6 +19,7 @@ private:
   MessageTableCell m_examModeCell;
   MessageTableCellWithChevronAndMessage m_ledCell;
   PreferencesController m_preferencesController;
+  MessageTableCellWithSwitch m_symbolicCell;
 };
 
 }

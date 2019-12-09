@@ -36,13 +36,13 @@ public:
     Radian = 1,
     Gradian = 2
   };
-  enum class LEDColor {
+  enum class LEDColor : uint8_t {
     White = 0,
     Green = 1,
     Blue = 2,
     Yellow = 3
   };
-  enum class SymbolMultiplication {
+  enum class SymbolMultiplication : uint8_t {
     Cross = 0,
     MiddleDot = 1,
     Star = 2,

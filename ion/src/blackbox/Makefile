@@ -17,6 +17,7 @@ ion_src += $(addprefix ion/src/shared/, \
   dummy/battery.cpp \
   dummy/display.cpp \
   dummy/events_modifier.cpp \
+  dummy/exam_mode.cpp \
   dummy/fcc_id.cpp \
   dummy/led.cpp \
   dummy/keyboard.cpp \

@@ -39,7 +39,7 @@ int ExamModeController::reusableCellCount(int type) {
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+  if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(I18n::Message::ExamModeActive);
   }

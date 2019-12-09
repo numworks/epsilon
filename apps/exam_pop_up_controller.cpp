@@ -13,10 +13,8 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
 }
 
 void ExamPopUpController::setActivatingExamMode(bool activatingExamMode) {
-  if (m_isActivatingExamMode != activatingExamMode) {
-    m_isActivatingExamMode = activatingExamMode;
-    m_contentView.setMessages(activatingExamMode);
-  }
+  m_isActivatingExamMode = activatingExamMode;
+  m_contentView.setMessages(activatingExamMode);
 }
 
 View * ExamPopUpController::view() {
@@ -52,13 +50,10 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   }, parentResponder), KDFont::SmallFont),
   m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
-    GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Deactivate;
-    GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
+    GlobalPreferences::sharedGlobalPreferences()->setExamMode(controller->isActivatingExamMode());
     AppsContainer * container = AppsContainer::sharedAppsContainer();
     if (controller->isActivatingExamMode()) {
-      container->reset();
-      Ion::LED::setColor(KDColorRed);
-      Ion::LED::setBlinking(1000, 0.1f);
+      container->activateExamMode();
     } else {
       Ion::LED::setColor(KDColorBlack);
       Ion::LED::updateColorWithPlugAndCharge();

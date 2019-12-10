@@ -1,5 +1,5 @@
 #include "device.h"
-#include <drivers/config/flash.h>
+#include <drivers/config/internal_flash.h>
 #include <drivers/reset.h>
 #include <regs/regs.h>
 
@@ -92,7 +92,7 @@ void Device::detach() {
 }
 
 void Device::leave(uint32_t leaveAddress) {
-  if (leaveAddress == Ion::Device::Flash::Config::StartAddress) {
+  if (leaveAddress == Ion::Device::InternalFlash::Config::StartAddress) {
     Ion::Device::Reset::coreWhilePlugged();
   } else {
     Ion::Device::Reset::jump(leaveAddress);

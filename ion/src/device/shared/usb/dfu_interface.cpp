@@ -1,17 +1,11 @@
 #include "dfu_interface.h"
-#include <drivers/config/external_flash.h>
 #include <string.h>
 #include <drivers/flash.h>
-#include <drivers/external_flash.h>
-#include <drivers/config/flash.h>
-#include <drivers/config/external_flash.h>
 #include <ion/timing.h>
 
 namespace Ion {
 namespace Device {
 namespace USB {
-
-using namespace Ion::Device::Regs;
 
 static inline uint32_t minUint32T(uint32_t x, uint32_t y) { return x < y ? x : y; }
 
@@ -188,7 +182,7 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
 
   if (transferBufferLength == 1) {
     // Mass erase
-    m_erasePage = Flash::Config::NumberOfSectors + ExternalFlash::Config::NumberOfSectors;
+    m_erasePage = Flash::TotalNumberOfSectors();
     return;
   }
 
@@ -200,11 +194,8 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
     + (transferBuffer[3] << 16)
     + (transferBuffer[4] << 24);
 
-  if (eraseAddress >= Flash::Config::StartAddress && eraseAddress <= Flash::Config::EndAddress) {
-    m_erasePage = Flash::SectorAtAddress(eraseAddress);
-  } else if (eraseAddress >= ExternalFlash::Config::StartAddress && eraseAddress <= ExternalFlash::Config::EndAddress) {
-    m_erasePage = Flash::Config::NumberOfSectors + ExternalFlash::SectorAtAddress(eraseAddress - ExternalFlash::Config::StartAddress);
-  } else {
+  m_erasePage = Flash::SectorAtAddress(eraseAddress);
+  if (m_erasePage < 0) {
     // Unrecognized sector
     m_state = State::dfuERROR;
     m_status = Status::errTARGET;
@@ -218,13 +209,10 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
-  if (m_erasePage == Flash::Config::NumberOfSectors + ExternalFlash::Config::NumberOfSectors) {
+  if (m_erasePage == Flash::TotalNumberOfSectors()) {
     Flash::MassErase();
-    ExternalFlash::MassErase();
-  } else if (m_erasePage < Flash::Config::NumberOfSectors) {
-    Flash::EraseSector(m_erasePage);
   } else {
-    ExternalFlash::EraseSector(m_erasePage - Flash::Config::NumberOfSectors);
+    Flash::EraseSector(m_erasePage);
   }
 
   /* Put an out of range value in m_erasePage to indicate that no erase is
@@ -235,15 +223,12 @@ void DFUInterface::eraseMemoryIfNeeded() {
 }
 
 void DFUInterface::writeOnMemory() {
-  if (m_writeAddress >= Flash::Config::StartAddress && m_writeAddress <= Flash::Config::EndAddress) {
-    // Write to the Flash memory
-    Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
-  } else if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
+  if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
-  } else if (m_writeAddress >= ExternalFlash::Config::StartAddress && m_writeAddress <= ExternalFlash::Config::EndAddress) {
-    ExternalFlash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress) - ExternalFlash::Config::StartAddress, m_largeBuffer, m_largeBufferLength);
+  } else if (Flash::SectorAtAddress(m_writeAddress) >= 0) {
+    Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
   } else {
     // Invalid write address
     m_largeBufferLength = 0;

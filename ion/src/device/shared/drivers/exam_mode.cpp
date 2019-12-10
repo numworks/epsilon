@@ -1,5 +1,6 @@
 #include <ion/exam_mode.h>
 #include "flash.h"
+#include <assert.h>
 
 namespace Ion {
 namespace ExamMode {

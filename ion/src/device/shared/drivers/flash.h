@@ -2,23 +2,18 @@
 #define ION_DEVICE_SHARED_FLASH_H
 
 #include <stddef.h>
-#include <regs/regs.h>
+#include <stdint.h>
 
 namespace Ion {
 namespace Device {
 namespace Flash {
 
-void MassErase();
-
+int TotalNumberOfSectors();
 int SectorAtAddress(uint32_t address);
+
+void MassErase();
 void EraseSector(int i);
-
 void WriteMemory(uint8_t * destination, uint8_t * source, size_t length);
-
-/* The Device is powered by a 2.8V LDO. This allows us to perform writes to the
- * Flash 32 bits at once. */
-constexpr Regs::FLASH::CR::PSIZE MemoryAccessWidth = Regs::FLASH::CR::PSIZE::X32;
-typedef uint32_t MemoryAccessType;
 
 }
 }

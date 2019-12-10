@@ -1,11 +1,11 @@
-#ifndef ION_DEVICE_N0100_CONFIG_FLASH_H
-#define ION_DEVICE_N0100_CONFIG_FLASH_H
+#ifndef ION_DEVICE_N0100_CONFIG_INTERNAL_FLASH_H
+#define ION_DEVICE_N0100_CONFIG_INTERNAL_FLASH_H
 
 #include <regs/regs.h>
 
 namespace Ion {
 namespace Device {
-namespace Flash {
+namespace InternalFlash {
 namespace Config {
 
 constexpr static uint32_t StartAddress = 0x08000000;

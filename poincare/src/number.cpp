@@ -1,4 +1,5 @@
 #include <poincare/number.h>
+#include <poincare/based_integer.h>
 #include <poincare/decimal.h>
 #include <poincare/float.h>
 #include <poincare/infinity.h>
@@ -31,6 +32,8 @@ double NumberNode::doubleApproximation() const {
       }
     case Type::Rational:
       return static_cast<const RationalNode *>(this)->templatedApproximate<double>();
+    case Type::BasedInteger:
+      return static_cast<const BasedIntegerNode *>(this)->templatedApproximate<double>();
     default:
       assert(false);
       return 0.0;

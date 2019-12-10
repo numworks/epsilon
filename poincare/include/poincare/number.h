@@ -8,6 +8,7 @@ namespace Poincare {
 /* Number class has 5 subclasses:
  * - Undefined
  * - Unreal
+ * - BasedInteger
  * - Rational
  * - Float
  * - Decimal

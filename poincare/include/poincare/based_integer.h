@@ -52,7 +52,7 @@ public:
   /* The constructor build a irreductible fraction */
   BasedInteger(const BasedIntegerNode * node) : Number(node) {}
   static BasedInteger Builder(const char * digits, size_t size, Integer::Base base);
-  static BasedInteger Builder(const Integer & m, Integer::Base base);
+  static BasedInteger Builder(const Integer & m, Integer::Base base = Integer::Base::Decimal);
 
   // TreeNode
   BasedIntegerNode * node() const { return static_cast<BasedIntegerNode *>(Number::node()); }

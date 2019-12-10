@@ -109,7 +109,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
   // Remove CodePoint c
   while (codePoint != UCodePointNull && bufferIndex < dstSize) {
     if (codePoint != c) {
-      int copySize = nextPointer - currentPointer;
+      size_t copySize = nextPointer - currentPointer;
       if (copySize > dstSize - 1 - bufferIndex) {
         // Copying the current code point to the buffer would overflow the buffer
         break;

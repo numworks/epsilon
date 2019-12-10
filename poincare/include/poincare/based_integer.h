@@ -39,7 +39,8 @@ public:
 
 private:
   Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::Integer; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Integer; }
+  LayoutShape rightLayoutShape() const override;
   Integer::Base m_base;
   uint8_t m_numberOfDigits;
   native_uint_t m_digits[0];

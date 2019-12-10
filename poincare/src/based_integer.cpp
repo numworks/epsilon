@@ -70,6 +70,20 @@ Expression BasedIntegerNode::shallowReduce(ReductionContext reductionContext) {
   return BasedInteger(this).shallowReduce();
 }
 
+ExpressionNode::LayoutShape BasedIntegerNode::rightLayoutShape() const {
+  if (m_base == Integer::Base::Hexadecimal) {
+    Integer i = integer();
+    if (i.isZero()) {
+      return LayoutShape::Integer;
+    }
+    uint8_t lastHexadecimalDigit = i.digit(0) & 0xF;
+    if (lastHexadecimalDigit > 9) {
+      return LayoutShape::MoreLetters;
+    }
+  }
+  return LayoutShape::Integer;
+}
+
 /* BasedInteger  */
 
 // Constructors

@@ -26,6 +26,7 @@ class Expression : public TreeHandle {
   friend class ArcSine;
   friend class ArcTangent;
   friend class Arithmetic;
+  friend class BasedInteger;
   friend class BinomialCoefficient;
   friend class BinomialDistributionFunction;
   friend class Ceiling;

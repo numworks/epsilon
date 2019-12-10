@@ -46,6 +46,7 @@ poincare_src += $(addprefix poincare/src/,\
   arc_sine.cpp \
   arc_tangent.cpp \
   arithmetic.cpp \
+  based_integer.cpp \
   binom_cdf.cpp \
   binomial_coefficient.cpp \
   binomial_distribution_function.cpp \

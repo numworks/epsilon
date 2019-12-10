@@ -1,5 +1,5 @@
 #include <drivers/reset.h>
-#include "config/flash.h"
+#include "config/internal_flash.h"
 
 namespace Ion {
 namespace Device {
@@ -10,7 +10,7 @@ void coreWhilePlugged() {
    * might be plugged in. Doing a full core reset would result in the device
    * entering the ST DFU bootloader. By performing a jump-reset, we mimic the
    * core reset without entering ST bootloader.*/
-  jump(Flash::Config::StartAddress);
+  jump(InternalFlash::Config::StartAddress);
 }
 
 }

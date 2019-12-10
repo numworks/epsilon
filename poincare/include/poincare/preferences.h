@@ -64,6 +64,8 @@ public:
   void setColorOfLED(LEDColor color) { m_colorOfLED = color; }
   SymbolMultiplication symbolofMultiplication() const {return m_symbolMultiplication;}
   void setSymbolMultiplication(SymbolMultiplication symbolofMultiplication) {m_symbolMultiplication = symbolofMultiplication;}
+  bool isExamSymbolic() const {return m_examSymbolic;}
+  void setExamSymbolic(bool examSymbolic) {m_examSymbolic = examSymbolic;}
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
@@ -72,6 +74,7 @@ private:
   uint8_t m_numberOfSignificantDigits;
   LEDColor m_colorOfLED;
   SymbolMultiplication m_symbolMultiplication;
+  bool m_examSymbolic; 
 };
 
 }

@@ -51,6 +51,7 @@ private:
 };
 
 class Integer final : public TreeHandle {
+  friend class BasedIntegerNode;
 public:
   enum class Base : uint16_t {
     Binary = 2,

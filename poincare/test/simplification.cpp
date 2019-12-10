@@ -3,6 +3,11 @@
 
 using namespace Poincare;
 
+QUIZ_CASE(poincare_simplification_based_integer) {
+  assert_parsed_expression_simplify_to("0b10011", "19");
+  assert_parsed_expression_simplify_to("0x2A", "42");
+}
+
 QUIZ_CASE(poincare_simplification_decimal) {
   assert_parsed_expression_simplify_to("-2.3", "-23/10");
   assert_parsed_expression_simplify_to("-232.2ᴇ-4", "-1161/50000");

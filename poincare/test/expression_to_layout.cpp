@@ -50,6 +50,14 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // BoundaryPunctuation x Root
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Cosine::Builder(Rational::Builder(2)), SquareRoot::Builder(Rational::Builder(2))), "cos(2)√\u00122\u0013");
 
+  // BasedInteger x OneLetter
+  // 0b101π
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("5", Integer::Base::Binary), Symbol::Builder(UCodePointGreekSmallLetterPi)), "0b101π");
+  // 0x23π
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("35", Integer::Base::Hexadecimal), Symbol::Builder(UCodePointGreekSmallLetterPi)), "0x23π");
+  // 0x2Aπ
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("42", Integer::Base::Hexadecimal), Symbol::Builder(UCodePointGreekSmallLetterPi)), "0x2A·π");
+
   // 2√(2)
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), SquareRoot::Builder(Rational::Builder(2))), "2√\u00122\u0013");
   // √(2)x2

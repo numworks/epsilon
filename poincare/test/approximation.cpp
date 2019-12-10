@@ -35,6 +35,11 @@ QUIZ_CASE(poincare_approximation_decimal) {
   assert_expression_approximates_to_scalar<double>("-567.2ᴇ2", -56720.0);
 }
 
+QUIZ_CASE(poincare_approximation_based_integer) {
+  assert_expression_approximates_to<float>("1232", "1232");
+  assert_expression_approximates_to<double>("0b110101", "53");
+  assert_expression_approximates_to<double>("0xabc1234", "180097588");
+}
 
 QUIZ_CASE(poincare_approximation_rational) {
   assert_expression_approximates_to<float>("1/3", "0.3333333");

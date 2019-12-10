@@ -48,6 +48,8 @@ public:
     Empty,
     Constant,
     Number,
+    BinaryNumber,
+    HexadecimalNumber,
     Identifier,
     Undefined
   };
@@ -56,6 +58,7 @@ public:
 
   Type type() const { return m_type; }
   bool is(Type t) const { return m_type == t; }
+  bool isNumber() const { return m_type == Type::Number || m_type == Type::BinaryNumber || m_type == HexadecimalNumber; }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
   Expression expression() const { return m_expression; }

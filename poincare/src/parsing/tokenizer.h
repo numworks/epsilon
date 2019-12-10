@@ -22,6 +22,8 @@ private:
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest, CodePoint context = UCodePointNull);
   size_t popDigits();
+  size_t popBinaryDigits();
+  size_t popHexadecimalDigits();
   size_t popIdentifier();
   Token popNumber();
 

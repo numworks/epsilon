@@ -82,6 +82,8 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseEmpty,           // Token::Empty
     &Parser::parseConstant,        // Token::Constant
     &Parser::parseNumber,          // Token::Number
+    &Parser::parseNumber,          // Token::BinaryNumber
+    &Parser::parseNumber,          // Token::HexadecimalNumber
     &Parser::parseIdentifier,      // Token::Identifier
     &Parser::parseUnexpected       // Token::Undefined
   };
@@ -152,7 +154,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   leftHandSide = m_currentToken.expression();
-  if (m_nextToken.is(Token::Number)) {
+  if (m_nextToken.isNumber()) {
     m_status = Status::Error; // No implicit multiplication between two numbers
     return;
   }

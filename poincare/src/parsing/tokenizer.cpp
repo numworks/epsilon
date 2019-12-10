@@ -1,4 +1,5 @@
 #include "tokenizer.h"
+#include <poincare/based_integer.h>
 #include <poincare/number.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
@@ -61,12 +62,40 @@ size_t Tokenizer::popDigits() {
   return popWhile([](CodePoint c, CodePoint context) { return isDigit(c); });
 }
 
+size_t Tokenizer::popBinaryDigits() {
+  return popWhile([](CodePoint c, CodePoint context) { return c == '0' || c == '1'; });
+}
+
+size_t Tokenizer::popHexadecimalDigits() {
+  return popWhile([](CodePoint c, CodePoint context) { return isDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); });
+}
+
 Token Tokenizer::popNumber() {
   const char * integralPartText = m_text;
   size_t integralPartLength = popDigits();
 
   const char * fractionalPartText = m_text;
   size_t fractionalPartLength = 0;
+
+  // Check for binary or hexadecimal number
+  if (integralPartLength == 1 && integralPartText[0] == '0') {
+    // Look for "0b"
+    if (canPopCodePoint('b')) {
+      const char * binaryText = m_text;
+      size_t binaryLength = popBinaryDigits();
+      Token result(Token::BinaryNumber);
+      result.setExpression(BasedInteger::Builder(binaryText, binaryLength, Integer::Base::Binary));
+      return result;
+    }
+    // Look for "0x"
+    if (canPopCodePoint('x')) {
+      const char * hexaText = m_text;
+      size_t hexaLength = popHexadecimalDigits();
+      Token result(Token::HexadecimalNumber);
+      result.setExpression(BasedInteger::Builder(hexaText, hexaLength, Integer::Base::Hexadecimal));
+      return result;
+    }
+  }
 
   assert(integralPartLength > 0 || UTF8Helper::CodePointIs(m_text, '.'));
   if (canPopCodePoint('.')) {

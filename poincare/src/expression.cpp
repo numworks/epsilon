@@ -248,10 +248,10 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 
 Expression::AdditionalInformationType Expression::additionalInformationType(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   ExpressionNode::Type t = type();
-  if (t == ExpressionNode::Type::Rational) {
-    if (convert<Rational>().isInteger()) {
-      return AdditionalInformationType::Integer;
-    }
+  if (t == ExpressionNode::Type::BasedInteger) {
+    return AdditionalInformationType::Integer;
+  }
+  if (t == ExpressionNode::Type::Division && childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && childAtIndex(1).type() == ExpressionNode::Type::BasedInteger) {
     return AdditionalInformationType::Rational;
   }
   if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {

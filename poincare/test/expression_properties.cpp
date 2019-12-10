@@ -4,6 +4,9 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_properties_is_number) {
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).isNumber());
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).isNumber());
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).isNumber());
   quiz_assert(Decimal::Builder("2",3).isNumber());
   quiz_assert(Float<float>::Builder(1.0f).isNumber());
   quiz_assert(Infinity::Builder(true).isNumber());
@@ -112,6 +115,12 @@ QUIZ_CASE(poincare_properties_decimal_sign) {
   quiz_assert(Decimal::Builder(2, -3).sign() == ExpressionNode::Sign::Positive);
   quiz_assert(Decimal::Builder(2, 3).sign() == ExpressionNode::Sign::Positive);
   quiz_assert(Decimal::Builder(0, 1).sign() == ExpressionNode::Sign::Positive);
+}
+
+QUIZ_CASE(poincare_properties_based_integer_sign) {
+  quiz_assert(BasedInteger::Builder(2, Integer::Base::Binary).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(BasedInteger::Builder(2, Integer::Base::Decimal).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(BasedInteger::Builder(2, Integer::Base::Hexadecimal).sign() == ExpressionNode::Sign::Positive);
 }
 
 QUIZ_CASE(poincare_properties_rational_sign) {

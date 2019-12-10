@@ -45,7 +45,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   if (exponentLength == 0 && decimalLenght == 0) {
     Integer i(integralPart, integralLength, false);
     if (!i.isOverflow()) {
-      return Rational::Builder(i);
+      return BasedInteger::Builder(i, Integer::Base::Decimal);
     }
   }
   int exp;

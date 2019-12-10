@@ -12,7 +12,8 @@
 MEMORY {
   INTERNAL_FLASH (rx) : ORIGIN = 0x00200000, LENGTH = 64K
   SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
-  EXTERNAL_FLASH (rx) : ORIGIN = 0x90000000, LENGTH = 8M
+  EXTERNAL_FLASH_FIRST_SECTOR (rx) : ORIGIN = 0x90000000, LENGTH = 4K
+  EXTERNAL_FLASH_NEXT_SECTORS (rx) : ORIGIN = (0x90000000 + 4K), LENGTH = (8M - 4K)
   /*
   ITCM (rwx) : ORIGIN = 0x00000000, LENGTH = 16K
   DTCM (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
@@ -54,6 +55,13 @@ SECTIONS {
   .text.internal_to_external : {
     *(.text._ZL22jump_to_external_flashv)
   } >INTERNAL_FLASH
+
+  .exam_mode_persistence ORIGIN(EXTERNAL_FLASH_FIRST_SECTOR): {
+    _exam_mode_persistence_start = .;
+    /* Note: We don't increment "." here, we set it. */
+    . = (ORIGIN(EXTERNAL_FLASH_FIRST_SECTOR) + LENGTH(EXTERNAL_FLASH_FIRST_SECTOR));
+    _exam_mode_persistence_end = .;
+  } >EXTERNAL_FLASH_FIRST_SECTOR
 
   /* Use boot routine and required dependencies */
   /* We're relying on symbols being in their own sub-section. On GCC, this is
@@ -120,12 +128,12 @@ SECTIONS {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >EXTERNAL_FLASH
+  } >EXTERNAL_FLASH_NEXT_SECTORS
 
   .rodata.external : {
     *(.rodata)
     *(.rodata.*)
-  } >EXTERNAL_FLASH
+  } >EXTERNAL_FLASH_NEXT_SECTORS
 
   .init_array : {
     . = ALIGN(4);
@@ -202,3 +210,8 @@ NOCROSSREFS_TO(.text.external .isr_vector_table);
 NOCROSSREFS_TO(.rodata.external .isr_vector_table);
 NOCROSSREFS_TO(.text.external .header);
 NOCROSSREFS_TO(.rodata.external .header);
+
+NOCROSSREFS_TO(.exam_mode_persistence .text.internal);
+NOCROSSREFS_TO(.exam_mode_persistence .rodata.internal);
+NOCROSSREFS_TO(.exam_mode_persistence .isr_vector_table);
+NOCROSSREFS_TO(.exam_mode_persistence .header);

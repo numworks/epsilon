@@ -28,6 +28,7 @@ public:
     Undefined = 1,
     Unreal,
     Rational,
+    BasedInteger,
     Decimal,
     Float,
     Infinity,

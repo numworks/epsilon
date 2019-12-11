@@ -88,32 +88,38 @@ static inline int maxInt(int x, int y) { return x > y ? x : y; }
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
- *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * Decimal       |    ×    |   x     |    ø      |     ×       |      ×        |  ×   |    ×    |    ×
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * Integer       |    ×    |   x     |    ø      |     •       |      ø        |  ø   |    •    |    ×
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * OneLetter     |    ×    |   •     |    •      |     •       |      •        |  ø   |    •    |    ø
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * MoreLetters   |    ×    |   •     |    •      |     •       |      •        |  ø   |    •    |    ø
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * BundaryPunct. |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * Root          |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * Fraction      |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------
- * RightOfPower  |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×
+ *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Hexa/Binary
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * Decimal       |    ×    |   x     |    ø      |     ×       |      ×        |  ×   |    ×    |    ×     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * Integer       |    ×    |   x     |    ø      |     •       |      ø        |  ø   |    •    |    ×     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * OneLetter     |    ×    |   •     |    •      |     •       |      •        |  ø   |    •    |    ø     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * MoreLetters   |    ×    |   •     |    •      |     •       |      •        |  ø   |    •    |    ø     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * BundaryPunct. |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * Root          |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * Fraction      |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * RightOfPower  |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
+ * Hexa/Binary   |    •    |   •     |    •      |     •       |      •        |  •   |    •    |    •     |    •
  *
  * */
 
 static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
   switch (left) {
+    case ExpressionNode::LayoutShape::BinaryHexadecimal:
+      return 1;
     case ExpressionNode::LayoutShape::Decimal:
       switch (right) {
         case ExpressionNode::LayoutShape::OneLetter:
           return 0;
+        case ExpressionNode::LayoutShape::BinaryHexadecimal:
+          return 1;
         default:
           return 2;
       }
@@ -125,6 +131,7 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
           return 2;
         case ExpressionNode::LayoutShape::MoreLetters:
         case ExpressionNode::LayoutShape::NthRoot:
+        case ExpressionNode::LayoutShape::BinaryHexadecimal:
           return 1;
         default:
           return 0;
@@ -150,6 +157,7 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
         case ExpressionNode::LayoutShape::Integer:
         case ExpressionNode::LayoutShape::Fraction:
           return 2;
+        case ExpressionNode::LayoutShape::BinaryHexadecimal:
         case ExpressionNode::LayoutShape::NthRoot:
           return 1;
         default:

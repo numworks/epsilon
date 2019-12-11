@@ -238,7 +238,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_text_not_parsable("0=0→x");
   assert_text_not_parsable("1ᴇ2ᴇ3");
   assert_text_not_parsable("0b001112");
-  //assert_text_not_parsable("0x123G");
+  assert_text_not_parsable("0x123G");
 }
 
 Matrix BuildMatrix(int rows, int columns, Expression entries[]) {

@@ -370,7 +370,7 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
       constexpr int symbolNameSize = 5;
       char sym[symbolNameSize] = {name, '(', 'n', ')', 0};
       leftHandSide = Symbol::Builder(sym, symbolNameSize);
-    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder('n'), Rational::Builder("1")))) {
+    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder('n'), BasedInteger::Builder("1")))) {
       constexpr int symbolNameSize = 7;
       char sym[symbolNameSize] = {name, '(', 'n', '+', '1', ')', 0};
       leftHandSide = Symbol::Builder(sym, symbolNameSize);

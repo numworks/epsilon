@@ -210,6 +210,7 @@ public:
   enum class LayoutShape {
     Decimal,
     Integer,
+    BinaryHexadecimal,
     OneLetter,
     MoreLetters,
     BoundaryPunctuation, // ( [ ∫

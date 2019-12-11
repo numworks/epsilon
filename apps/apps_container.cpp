@@ -5,11 +5,13 @@
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
 #include <ion/backlight.h>
+#include <poincare/preferences.h>
 
 extern "C" {
 #include <assert.h>
 }
 
+using namespace Poincare;
 using namespace Shared;
 
 AppsContainer * AppsContainer::sharedAppsContainer() {
@@ -199,7 +201,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
-      if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+      if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
         displayExamModePopUp(false);
         window()->redraw();
       } else {
@@ -244,6 +246,9 @@ bool AppsContainer::switchTo(App::Snapshot * snapshot) {
 
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+    activateExamMode();
+  }
   refreshPreferences();
 
   /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
@@ -319,7 +324,7 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     Ion::Backlight::setBrightness(0);
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Deactivate) {
+    if (!GlobalPreferences::sharedGlobalPreferences()->examMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
        * low battery event happened during the Power-On Self-Test, a LED might
        * have stayed lit up. */
@@ -350,6 +355,26 @@ OnBoarding::PopUpController * AppsContainer::promptController() {
 
 void AppsContainer::redrawWindow(bool force) {
   m_window.redraw(force);
+}
+
+void AppsContainer::activateExamMode() {
+  reset();
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch ((int)preferences->colorOfLED()) {
+    case 0:
+      Ion::LED::setColor(KDColorWhite);
+      break;
+    case 1:
+      Ion::LED::setColor(KDColorGreen);
+      break;
+    case 2:
+      Ion::LED::setColor(KDColorBlue);
+      break;
+    case 3:
+      Ion::LED::setColor(KDColorYellow);
+      break;
+  }
+  Ion::LED::setBlinking(1000, 0.1f);
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {

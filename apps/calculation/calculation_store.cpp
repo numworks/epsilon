@@ -92,7 +92,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   // Compute and serialize the outputs
   {
     Expression outputs[] = {Expression(), Expression()};
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate ? Preferences::sharedPreferences()->isExamSymbolic() : true); // Symbolic computation
+    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->examMode() ? Preferences::sharedPreferences()->isExamSymbolic() : true); // Symbolic computation
     for (int i = 0; i < 2; i++) {
       if (!serializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation)) {
         /* If the exat/approximate output does not fit in the store (event if the

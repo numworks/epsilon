@@ -402,7 +402,7 @@ void MassErase() {
   set_as_memory_mapped();
 }
 
-void EraseSector(int i) {
+void __attribute__((noinline)) EraseSector(int i) {
   assert(i >= 0 && i < Config::NumberOfSectors);
   unset_memory_mapped_mode();
   unlockFlash();
@@ -413,7 +413,7 @@ void EraseSector(int i) {
   set_as_memory_mapped();
 }
 
-void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
+void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
   if (Config::NumberOfSectors == 0) {
     return;
   }

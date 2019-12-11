@@ -83,6 +83,9 @@ Token Tokenizer::popNumber() {
     if (canPopCodePoint('b')) {
       const char * binaryText = m_text;
       size_t binaryLength = popBinaryDigits();
+      if (binaryLength == 0) {
+        return Token(Token::Undefined);
+      }
       Token result(Token::BinaryNumber);
       result.setExpression(BasedInteger::Builder(binaryText, binaryLength, Integer::Base::Binary));
       return result;
@@ -91,6 +94,9 @@ Token Tokenizer::popNumber() {
     if (canPopCodePoint('x')) {
       const char * hexaText = m_text;
       size_t hexaLength = popHexadecimalDigits();
+      if (hexaLength == 0) {
+        return Token(Token::Undefined);
+      }
       Token result(Token::HexadecimalNumber);
       result.setExpression(BasedInteger::Builder(hexaText, hexaLength, Integer::Base::Hexadecimal));
       return result;

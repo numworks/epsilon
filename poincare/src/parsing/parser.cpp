@@ -154,8 +154,11 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   leftHandSide = m_currentToken.expression();
-  if (m_nextToken.isNumber()) {
-    m_status = Status::Error; // No implicit multiplication between two numbers
+   // No implicit multiplication between two numbers
+  if (m_nextToken.isNumber()
+       // No implicit multiplication between a hexadecimal number and an identifer (avoid parsing 0x2abch as 0x2ABC*h)
+      || (m_currentToken.is(Token::Type::HexadecimalNumber) && m_nextToken.is(Token::Type::Identifier))) {
+    m_status = Status::Error;
     return;
   }
   isThereImplicitMultiplication();

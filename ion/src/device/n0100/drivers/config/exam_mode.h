@@ -5,6 +5,8 @@ namespace Ion {
 namespace ExamMode {
 namespace Config {
 
+// TODO: factorize the macro with equivalent macro on N110
+
 #define byte4 0xFF, 0xFF, 0xFF, 0xFF
 #define byte8 byte4, byte4
 #define byte16 byte8, byte8

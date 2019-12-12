@@ -40,12 +40,12 @@ SECTIONS {
     ASSERT ((. < ORIGIN(FLASH) + FLASH_SECOND_SECTOR_OFFSET), "Error: ISR table or HEADER overflows in the flash sector reserved for the exam mode");
   } >FLASH
 
-  .exam_mode_persistence ORIGIN(FLASH) + FLASH_SECOND_SECTOR_OFFSET : {
-    _exam_mode_persistence_start = .;
+  .exam_mode_buffer ORIGIN(FLASH) + FLASH_SECOND_SECTOR_OFFSET : {
+    _exam_mode_buffer_start = .;
     KEEP(*(.exam_mode_buffer))
     /* Note: We don't increment "." here, we set it. */
     . = ORIGIN(FLASH) + FLASH_SECOND_SECTOR_OFFSET + FLASH_SECOND_SECTOR_SIZE;
-    _exam_mode_persistence_end = .;
+    _exam_mode_buffer_end = .;
   } >FLASH
 
   .text : {

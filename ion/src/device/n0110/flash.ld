@@ -116,12 +116,12 @@ SECTIONS {
     *(.rodata._ZN3Ion6Device5Board4initEv.str1.4)
   } >INTERNAL_FLASH
 
-  .exam_mode_persistence ORIGIN(EXTERNAL_FLASH) : {
-    _exam_mode_persistence_start = .;
+  .exam_mode_buffer ORIGIN(EXTERNAL_FLASH) : {
+    _exam_mode_buffer_start = .;
     KEEP(*(.exam_mode_buffer))
     /* Note: We don't increment "." here, we set it. */
     . = ORIGIN(EXTERNAL_FLASH) + FIRST_EXTERNAL_FLASH_SECTOR_SIZE;
-    _exam_mode_persistence_end = .;
+    _exam_mode_buffer_end = .;
   } >EXTERNAL_FLASH
 
   /* External flash memory */
@@ -206,7 +206,7 @@ NOCROSSREFS_TO(.rodata.external .isr_vector_table);
 NOCROSSREFS_TO(.text.external .header);
 NOCROSSREFS_TO(.rodata.external .header);
 
-NOCROSSREFS_TO(.exam_mode_persistence .text.internal);
-NOCROSSREFS_TO(.exam_mode_persistence .rodata.internal);
-NOCROSSREFS_TO(.exam_mode_persistence .isr_vector_table);
-NOCROSSREFS_TO(.exam_mode_persistence .header);
+NOCROSSREFS_TO(.exam_mode_buffer .text.internal);
+NOCROSSREFS_TO(.exam_mode_buffer .rodata.internal);
+NOCROSSREFS_TO(.exam_mode_buffer .isr_vector_table);
+NOCROSSREFS_TO(.exam_mode_buffer .header);

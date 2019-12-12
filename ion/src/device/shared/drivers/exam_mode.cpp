@@ -1,4 +1,5 @@
 #include <ion/exam_mode.h>
+#include <drivers/config/exam_mode.h>
 #include "flash.h"
 #include <assert.h>
 
@@ -9,6 +10,11 @@ extern "C" {
   extern char _exam_mode_persistence_start;
   extern char _exam_mode_persistence_end;
 }
+
+char ones[Config::ExamModeBufferSize]
+  __attribute__((section(".exam_mode_buffer")))
+  __attribute__((used))
+= {EXAM_BUFFER_CONTENT};
 
 /* The exam mode is written in flash so that it is resilient to resets.
  * We erase the dedicated flash sector (all bits written to 1) and, upon

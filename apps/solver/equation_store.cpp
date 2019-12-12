@@ -1,6 +1,7 @@
 #include "equation_store.h"
 #include "../constant.h"
 #include "../shared/poincare_helpers.h"
+#include "../global_preferences.h"
 #include <limits.h>
 
 #include <poincare/constant.h>
@@ -193,6 +194,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     }
   }
   // Create the results' layouts
+  // In Dutch exam mode, display only approximate solutions
+  bool forbidExactSolutions = GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch;
   int solutionIndex = 0;
   int initialNumberOfSolutions = m_numberOfSolutions <= k_maxNumberOfExactSolutions ? m_numberOfSolutions : -1;
   // We iterate through the solutions and the potential delta
@@ -211,7 +214,9 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       char approximateBuffer[::Constant::MaxSerializedExpressionSize];
       m_exactSolutionExactLayouts[solutionIndex].serializeForParsing(exactBuffer, ::Constant::MaxSerializedExpressionSize);
       m_exactSolutionApproximateLayouts[solutionIndex].serializeForParsing(approximateBuffer, ::Constant::MaxSerializedExpressionSize);
-      m_exactSolutionIdentity[solutionIndex] = strcmp(exactBuffer, approximateBuffer) == 0;
+      /* Cheat: declare exact and approximate solutions to be identical in
+       * Dutch exam mode to display only the approximate solutions. */
+      m_exactSolutionIdentity[solutionIndex] = forbidExactSolutions || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
         char buffer[::Constant::MaxSerializedExpressionSize];
         m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, ::Constant::MaxSerializedExpressionSize, preferences->complexFormat(), preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context);

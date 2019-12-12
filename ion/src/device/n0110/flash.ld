@@ -12,8 +12,7 @@
 MEMORY {
   INTERNAL_FLASH (rx) : ORIGIN = 0x00200000, LENGTH = 64K
   SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
-  EXTERNAL_FLASH_FIRST_SECTOR (rx) : ORIGIN = 0x90000000, LENGTH = 4K
-  EXTERNAL_FLASH_NEXT_SECTORS (rx) : ORIGIN = (0x90000000 + 4K), LENGTH = (8M - 4K)
+  EXTERNAL_FLASH (rx) : ORIGIN = 0x90000000, LENGTH = 8M
   /*
   ITCM (rwx) : ORIGIN = 0x00000000, LENGTH = 16K
   DTCM (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
@@ -23,6 +22,7 @@ MEMORY {
 }
 
 STACK_SIZE = 32K;
+FIRST_EXTERNAL_FLASH_SECTOR_SIZE = 4K;
 
 SECTIONS {
   .isr_vector_table ORIGIN(INTERNAL_FLASH) : {
@@ -55,13 +55,6 @@ SECTIONS {
   .text.internal_to_external : {
     *(.text._ZL22jump_to_external_flashv)
   } >INTERNAL_FLASH
-
-  .exam_mode_persistence ORIGIN(EXTERNAL_FLASH_FIRST_SECTOR): {
-    _exam_mode_persistence_start = .;
-    /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(EXTERNAL_FLASH_FIRST_SECTOR) + LENGTH(EXTERNAL_FLASH_FIRST_SECTOR));
-    _exam_mode_persistence_end = .;
-  } >EXTERNAL_FLASH_FIRST_SECTOR
 
   /* Use boot routine and required dependencies */
   /* We're relying on symbols being in their own sub-section. On GCC, this is
@@ -123,17 +116,25 @@ SECTIONS {
     *(.rodata._ZN3Ion6Device5Board4initEv.str1.4)
   } >INTERNAL_FLASH
 
+  .exam_mode_persistence ORIGIN(EXTERNAL_FLASH) : {
+    _exam_mode_persistence_start = .;
+    KEEP(*(.exam_mode_buffer))
+    /* Note: We don't increment "." here, we set it. */
+    . = ORIGIN(EXTERNAL_FLASH) + FIRST_EXTERNAL_FLASH_SECTOR_SIZE;
+    _exam_mode_persistence_end = .;
+  } >EXTERNAL_FLASH
+
   /* External flash memory */
   .text.external : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >EXTERNAL_FLASH_NEXT_SECTORS
+  } >EXTERNAL_FLASH
 
   .rodata.external : {
     *(.rodata)
     *(.rodata.*)
-  } >EXTERNAL_FLASH_NEXT_SECTORS
+  } >EXTERNAL_FLASH
 
   .init_array : {
     . = ALIGN(4);

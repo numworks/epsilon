@@ -9,16 +9,16 @@
  * This will let us use shortcuts such as ">FLASH" to ask for a given section to
  * be stored in Flash. */
 MEMORY {
-  FLASH_FIRST_SECTOR (rx)  : ORIGIN = 0x08000000, LENGTH = 16K
-  FLASH_SECOND_SECTOR (rx) : ORIGIN = (0x08000000 + 16K), LENGTH = 16K
-  FLASH_LAST_SECTORS (rx)  : ORIGIN = (0x08000000 + 32K), LENGTH = (1024K - 32K)
+  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
   SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 256K
 }
 
 STACK_SIZE = 32K;
+FLASH_SECOND_SECTOR_OFFSET = 16K;
+FLASH_SECOND_SECTOR_SIZE = 16K;
 
 SECTIONS {
-  .isr_vector_table ORIGIN(FLASH_FIRST_SECTOR) : {
+  .isr_vector_table ORIGIN(FLASH) : {
     /* When booting, the STM32F412 fetches the content of address 0x0, and
      * extracts from it various key infos: the initial value of the PC register
      * (program counter), the initial value of the stack pointer, and various
@@ -33,37 +33,39 @@ SECTIONS {
      * convenient: using function pointers, we can easily point to the service
      * routine for each interrupt. */
     KEEP(*(.isr_vector_table))
-  } >FLASH_FIRST_SECTOR
+  } >FLASH
 
   .header : {
     KEEP(*(.header))
-  } >FLASH_FIRST_SECTOR
+    ASSERT ((. < ORIGIN(FLASH) + FLASH_SECOND_SECTOR_OFFSET), "Error: ISR table or HEADER overflows in the flash sector reserved for the exam mode");
+  } >FLASH
 
-  .exam_mode_persistence ORIGIN(FLASH_SECOND_SECTOR): {
+  .exam_mode_persistence ORIGIN(FLASH) + FLASH_SECOND_SECTOR_OFFSET : {
     _exam_mode_persistence_start = .;
+    KEEP(*(.exam_mode_buffer))
     /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(FLASH_SECOND_SECTOR) + LENGTH(FLASH_SECOND_SECTOR));
+    . = ORIGIN(FLASH) + FLASH_SECOND_SECTOR_OFFSET + FLASH_SECOND_SECTOR_SIZE;
     _exam_mode_persistence_end = .;
-  } >FLASH_SECOND_SECTOR
+  } >FLASH
 
   .text : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >FLASH_LAST_SECTORS
+  } >FLASH
 
   .init_array : {
     . = ALIGN(4);
     _init_array_start = .;
     KEEP (*(.init_array*))
     _init_array_end = .;
-  } >FLASH_LAST_SECTORS
+  } >FLASH
 
   .rodata : {
     . = ALIGN(4);
     *(.rodata)
     *(.rodata.*)
-  } >FLASH_LAST_SECTORS
+  } >FLASH
 
   .data : {
     /* The data section is written to Flash but linked as if it were in RAM.
@@ -84,7 +86,7 @@ SECTIONS {
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
-  } >SRAM AT> FLASH_LAST_SECTORS
+  } >SRAM AT> FLASH
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

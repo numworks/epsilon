@@ -7,8 +7,8 @@ namespace Ion {
 namespace ExamMode {
 
 extern "C" {
-  extern char _exam_mode_persistence_start;
-  extern char _exam_mode_persistence_end;
+  extern char _exam_mode_buffer_start;
+  extern char _exam_mode_buffer_end;
 }
 
 char ones[Config::ExamModeBufferSize]
@@ -28,16 +28,16 @@ char ones[Config::ExamModeBufferSize]
  * sector. */
 
 uint32_t * SignificantExamModeAddress() {
-  uint32_t * persitence_start = (uint32_t *)&_exam_mode_persistence_start;
-  uint32_t * persitence_end = (uint32_t *)&_exam_mode_persistence_end;
+  uint32_t * persitence_start = (uint32_t *)&_exam_mode_buffer_start;
+  uint32_t * persitence_end = (uint32_t *)&_exam_mode_buffer_end;
   while (persitence_start < persitence_end && *persitence_start == 0x0) {
     // Skip even number of zero bits
     persitence_start++;
   }
   if (persitence_start == persitence_end) {
-    assert(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_persistence_start) >= 0);
-    Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_persistence_start));
-    return (uint32_t *)&_exam_mode_persistence_start;
+    assert(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start) >= 0);
+    Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start));
+    return (uint32_t *)&_exam_mode_buffer_start;
   }
   return persitence_start;
 }

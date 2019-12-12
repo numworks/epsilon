@@ -5,20 +5,24 @@ GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
   return &globalPreferences;
 }
 
-bool GlobalPreferences::examMode() const {
+GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
   if (m_examMode == ExamMode::Unknown) {
     m_examMode = (ExamMode)Ion::ExamMode::FetchExamMode();
   }
-  assert((int)m_examMode == 0 || (int)m_examMode == 1);
-  return (bool)m_examMode;
+  assert((int)m_examMode >= 0 && (int)m_examMode <= 2);
+  return m_examMode;
 }
 
-void GlobalPreferences::setExamMode(bool activateExamMode) {
-  if (((bool)examMode()) == activateExamMode) {
+void GlobalPreferences::setExamMode(ExamMode mode) {
+  if (examMode() == mode) {
     return;
   }
-  Ion::ExamMode::ToggleExamMode();
-  m_examMode = (ExamMode)activateExamMode;
+  assert(mode != ExamMode::Unknown);
+  int8_t deltaMode = (int8_t)mode - (int8_t)examMode();
+  deltaMode = deltaMode < 0 ? deltaMode + 3 : deltaMode;
+  assert(deltaMode > 0);
+  Ion::ExamMode::IncrementExamMode(deltaMode);
+  m_examMode = mode;
 }
 
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {

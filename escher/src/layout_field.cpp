@@ -236,6 +236,12 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
    * - the result of a copy-paste. */
+
+  // Delete the selected layouts if needed
+  if (!m_contentView.selectionIsEmpty()) {
+    deleteSelection();
+  }
+
   if (text[0] == 0) {
     // The text is empty
     return true;

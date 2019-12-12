@@ -50,7 +50,8 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   }, parentResponder), KDFont::SmallFont),
   m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
-    GlobalPreferences::sharedGlobalPreferences()->setExamMode(controller->isActivatingExamMode());
+    // TODO
+    GlobalPreferences::sharedGlobalPreferences()->setExamMode(controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Dutch : GlobalPreferences::ExamMode::Off);
     AppsContainer * container = AppsContainer::sharedAppsContainer();
     if (controller->isActivatingExamMode()) {
       container->activateExamMode();

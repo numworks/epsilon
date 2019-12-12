@@ -49,7 +49,7 @@ void LogoController::viewDidDisappear() {
     Ion::LED::setColor(m_previousLEDColor);
     /* TODO: instead of setting again the exam mode, put the previous led color
      * AND BLINKING.*/
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+    if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) { // TODO
       AppsContainer::sharedAppsContainer()->activateExamMode();
     }
   }

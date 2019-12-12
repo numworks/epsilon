@@ -168,7 +168,8 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
-      if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+      // TODO
+      if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
         displayExamModePopUp(false);
         window()->redraw();
       } else {
@@ -213,7 +214,8 @@ void AppsContainer::run() {
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
   Ion::Display::pushRectUniform(screenRect, KDColorWhite);
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+  // TODO
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     activateExamMode();
   }
   refreshPreferences();
@@ -291,7 +293,7 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     Ion::Backlight::setBrightness(0);
-    if (!GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+    if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
        * low battery event happened during the Power-On Self-Test, a LED might
        * have stayed lit up. */

@@ -209,9 +209,8 @@ bool AppsContainer::switchTo(App::Snapshot * snapshot) {
 
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-  // TODO
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    activateExamMode();
+    activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
   }
   refreshPreferences();
 
@@ -321,9 +320,10 @@ void AppsContainer::redrawWindow() {
   m_window.redraw();
 }
 
-void AppsContainer::activateExamMode() {
+void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
+  assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch);
   reset();
-  Ion::LED::setColor(KDColorRed);
+  Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorOrange : KDColorRed);
   Ion::LED::setBlinking(1000, 0.1f);
 }
 

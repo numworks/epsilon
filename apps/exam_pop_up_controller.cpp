@@ -51,10 +51,11 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
     // TODO
-    GlobalPreferences::sharedGlobalPreferences()->setExamMode(controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Dutch : GlobalPreferences::ExamMode::Off);
+    GlobalPreferences::ExamMode mode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Dutch : GlobalPreferences::ExamMode::Off;
+    GlobalPreferences::sharedGlobalPreferences()->setExamMode(mode);
     AppsContainer * container = AppsContainer::sharedAppsContainer();
     if (controller->isActivatingExamMode()) {
-      container->activateExamMode();
+      container->activateExamMode(mode);
     } else {
       Ion::LED::setColor(KDColorBlack);
       Ion::LED::updateColorWithPlugAndCharge();

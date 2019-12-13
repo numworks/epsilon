@@ -16,7 +16,7 @@ class StorageDelegate;
 class Storage {
 public:
   typedef uint16_t record_size_t;
-  constexpr static size_t k_storageSize = 16384;
+  constexpr static size_t k_storageSize = 20480;
   static Storage * sharedStorage();
   constexpr static char k_dotChar = '.';
 

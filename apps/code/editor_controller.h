@@ -1,6 +1,8 @@
 #ifndef CODE_EDITOR_CONTROLLER_H
 #define CODE_EDITOR_CONTROLLER_H
 
+#define MAX_SCRIPTSIZE 12288
+
 #include <escher.h>
 #include "script.h"
 #include "editor_view.h"
@@ -39,7 +41,7 @@ private:
   /* m_areaBuffer first character is dedicated to the importation status.
    * Thereby, we avoid wasteful copy while adding the Script to the storage
    * (in order to add the importation status char before the areaBuffer). */
-  char m_areaBuffer[Ion::Storage::k_storageSize]; // this could be slightly optimize
+  char m_areaBuffer[Ion::Storage::k_storageSize>MAX_SCRIPTSIZE?MAX_SCRIPTSIZE:Ion::Storage::k_storageSize]; // this could be slightly optimize
   Script m_script;
   MenuController * m_menuController;
 };

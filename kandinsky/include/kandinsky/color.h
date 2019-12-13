@@ -34,8 +34,8 @@ public:
   static KDColor blend(KDColor first, KDColor second, uint8_t alpha);
   KDColor invert() const { return KDColor(~m_value); }
   operator uint16_t() const { return m_value; }
-private:
   constexpr KDColor(uint16_t value) : m_value(value) {}
+private:
   uint16_t m_value;
 };
 

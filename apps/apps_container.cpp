@@ -214,9 +214,8 @@ void AppsContainer::run() {
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
   Ion::Display::pushRectUniform(screenRect, KDColorWhite);
-  // TODO
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    activateExamMode();
+    activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
   }
   refreshPreferences();
 
@@ -326,9 +325,10 @@ void AppsContainer::redrawWindow() {
   m_window.redraw();
 }
 
-void AppsContainer::activateExamMode() {
+void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
+  assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch);
   reset();
-  Ion::LED::setColor(KDColorRed);
+  Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorOrange : KDColorRed);
   Ion::LED::setBlinking(1000, 0.1f);
 }
 

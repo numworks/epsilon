@@ -41,6 +41,7 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
         dcisw.setWAY(w);
         CORTEX.DCISW()->set(dcisw);
       }
+      __asm volatile("nop");
     } while (w-- != 0);
   } while (sets-- != 0);
 

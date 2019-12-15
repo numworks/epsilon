@@ -72,6 +72,7 @@ public:
 #if REGS_CORTEX_CONFIG_CACHE
   class CCSIDR : public Register32 {
   public:
+    using Register32::Register32;
     REGS_FIELD(ASSOCIATIVITY, uint16_t, 12, 3);
     REGS_FIELD(NUMSETS, uint16_t, 27, 13);
   };

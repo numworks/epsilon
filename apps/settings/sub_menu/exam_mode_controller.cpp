@@ -81,7 +81,7 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
   GenericSubController::willDisplayCellForIndex(cell, index);
   I18n::Message thisLabel = m_messageTreeModel->children(index)->label();
 
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate && (thisLabel == I18n::Message::ActivateExamMode || thisLabel == I18n::Message::ExamModeActive)) {
+  if (GlobalPreferences::sharedGlobalPreferences()->examMode() && (thisLabel == I18n::Message::ActivateExamMode || thisLabel == I18n::Message::ExamModeActive)) {
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(I18n::Message::ExamModeActive);
   }

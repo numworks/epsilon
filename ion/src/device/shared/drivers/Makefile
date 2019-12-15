@@ -6,8 +6,10 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   crc32.cpp \
   display.cpp \
   events_keyboard_platform.cpp \
+  exam_mode.cpp \
   external_flash.cpp \
   flash.cpp \
+  internal_flash.cpp \
   keyboard.cpp \
   led.cpp \
   power.cpp\

@@ -16,7 +16,7 @@ class StorageDelegate;
 class Storage {
 public:
   typedef uint16_t record_size_t;
-  constexpr static size_t k_storageSize = 16384;
+  constexpr static size_t k_storageSize = 20480;
   static Storage * sharedStorage();
   constexpr static char k_dotChar = '.';
 
@@ -115,7 +115,6 @@ public:
   void destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension);
   void destroyRecordsWithExtension(const char * extension);
 
-private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
 

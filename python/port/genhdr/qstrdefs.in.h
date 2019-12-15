@@ -129,6 +129,8 @@ Q(.)
 Q(EE)
 Q(Ans)
 Q(EXE)
+Q(get_key)
+Q(Pause)
 
 // Turtle QSTRs
 Q(turtle)

@@ -8,19 +8,22 @@ extern "C" {
 #include "port.h"
 
 static KDColor ColorForTuple(mp_obj_t tuple) {
-    size_t len;
-    mp_obj_t * elem;
+  if (MP_OBJ_IS_SMALL_INT(tuple)) // BP change: accept int for color
+    return MP_OBJ_SMALL_INT_VALUE(tuple);
 
-    mp_obj_get_array(tuple, &len, &elem);
-    if (len != 3) {
-      mp_raise_TypeError("color needs 3 components");
-    }
+  size_t len;
+  mp_obj_t * elem;
 
-    return KDColor::RGB888(
-      mp_obj_get_int(elem[0]),
-      mp_obj_get_int(elem[1]),
-      mp_obj_get_int(elem[2])
-    );
+  mp_obj_get_array(tuple, &len, &elem);
+  if (len != 3) {
+    mp_raise_TypeError("color needs 3 components");
+  }
+  
+  return KDColor::RGB888(
+			 mp_obj_get_int(elem[0]),
+			 mp_obj_get_int(elem[1]),
+			 mp_obj_get_int(elem[2])
+			 );
 }
 
 static mp_obj_t TupleForRGB(uint8_t r, uint8_t g, uint8_t b) {
@@ -178,4 +181,118 @@ mp_obj_t modkandinsky_get_keys() {
   }
 
   return result;
+}
+
+/* C-- SDK (c) B. Parisse, 2019 */
+mp_obj_t modkandinsky_Pause(mp_obj_t x) {
+  double d=mp_obj_get_float(x);
+  numworks_wait_1ms(d*1000);
+  return mp_const_none;
+}
+
+#define LCD_WIDTH_PX 320
+#define LCD_HEIGHT_PX 222
+
+void numworks_set_pixel(int x, int y, int color) {
+  if (x<0 || x>=LCD_WIDTH_PX || y<0 || y>=LCD_HEIGHT_PX)
+    return;
+  auto ctx=KDIonContext::sharedContext();
+  KDRect save=ctx->m_clippingRect;
+  KDPoint o=ctx->m_origin;
+  ctx->setClippingRect(KDRect(0,0,320,240));
+  ctx->setOrigin(KDPoint(0,0));
+  KDColor c(color);
+  KDPoint point(x,y+18);
+  KDIonContext::sharedContext()->pushRect(KDRect(point, 1, 1), &c);
+  ctx->setClippingRect(save);
+  ctx->setOrigin(o);  
+}
+
+void numworks_fill_rect(int x,int y,int w,int h,int c){
+  KDColor color = c;
+  auto ctx=KDIonContext::sharedContext();
+  KDRect save=ctx->m_clippingRect;
+  KDPoint o=ctx->m_origin;
+  ctx->setClippingRect(KDRect(0,0,320,240));
+  ctx->setOrigin(KDPoint(0,0));
+#if 1
+  if (x<0){
+    w += x;
+    x=0;
+  }
+  if (y<0){
+    h += y;
+    y=0;
+  }
+  if (h+y>=LCD_HEIGHT_PX)
+    h=LCD_HEIGHT_PX-y;
+  if (x+w>=LCD_WIDTH_PX)
+    w=LCD_WIDTH_PX-x;
+  if (h<=0 || w<=0)
+    return;
+  KDRect rect(x,y+18,w,h);
+  KDIonContext::sharedContext()->pushRectUniform(rect,color);
+#else
+  KDRect rect(x,y,w,h); 
+  KDIonContext::sharedContext()->fillRect(rect, color);
+#endif
+  ctx->setClippingRect(save);
+  ctx->setOrigin(o);  
+}
+
+int numworks_get_pixel(int x, int y) {
+  KDPoint point(x,y);
+  KDColor c = KDIonContext::sharedContext()->getPixel(point);
+  return c;
+}
+
+int numworks_draw_string(int x,int y,int c,int bg,const char * text,bool fake){
+  auto ptr=MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
+  KDPoint point(x,y);
+  if (ptr)
+    ptr->displaySandbox();
+  auto ctx=KDIonContext::sharedContext();
+  KDRect save=ctx->m_clippingRect;
+  KDPoint o=ctx->m_origin;
+  ctx->setClippingRect(KDRect(0,18,320,fake?0:222));
+  ctx->setOrigin(KDPoint(0,18));
+  point=KDIonContext::sharedContext()->drawString(text, point, KDFont::LargeFont, c, bg);
+  ctx->setClippingRect(save);
+  ctx->setOrigin(o);
+  return point.x();
+}
+
+int numworks_draw_string_small(int x,int y,int c,int bg,const char * text,bool fake){
+  auto ptr=MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
+  KDPoint point(x,y);
+  if (ptr)
+    ptr->displaySandbox();
+  auto ctx=KDIonContext::sharedContext();
+  KDRect save=ctx->m_clippingRect;
+  KDPoint o=ctx->m_origin;
+  ctx->setClippingRect(KDRect(0,18,320,fake?0:222));
+  ctx->setOrigin(KDPoint(0,18));
+  point=ctx->drawString(text, point, KDFont::SmallFont, c, bg);
+  ctx->setClippingRect(save);
+  ctx->setOrigin(o);
+  return point.x();
+}
+
+void numworks_hide_graph(){
+  auto ptr=MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
+  if (ptr)
+    ptr->hideSandbox();
+}
+
+void numworks_show_graph(){
+  auto ptr=MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
+  if (ptr)
+    ptr->displaySandbox();
+}
+
+// Python module get_key() addition
+mp_obj_t modkandinsky_get_key() {
+  micropython_port_interrupt_if_needed();
+  int key=getkey(false); // no suspend
+  return mp_obj_new_int(key);
 }

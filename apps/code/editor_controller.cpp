@@ -18,6 +18,22 @@ EditorController::EditorController(MenuController * menuController, App * python
   m_editorView.setTextAreaDelegates(this, this);
 }
 
+#ifdef MAX_SCRIPTSIZE
+void EditorController::setScript(Script script) {
+  m_script = script;
+  Script::Data scriptData = m_script.value();
+  size_t s=scriptData.size,ms=sizeof(m_areaBuffer);
+  if (s>ms)
+    s=ms;
+  size_t availableScriptSize = s + Ion::Storage::sharedStorage()->availableSize();
+  if (availableScriptSize>ms)
+    availableScriptSize=ms;
+  // assert(sizeof(m_areaBuffer) >= availableScriptSize);
+  // We cannot use strlcpy as the first char reprensenting the importation status can be 0.
+  memcpy(m_areaBuffer, (const char *)scriptData.buffer, s);
+  m_editorView.setText(m_areaBuffer+1, availableScriptSize-1); // 1 char is taken by the importation status flag
+}
+#else
 void EditorController::setScript(Script script) {
   m_script = script;
   Script::Data scriptData = m_script.value();
@@ -27,7 +43,7 @@ void EditorController::setScript(Script script) {
   memcpy(m_areaBuffer, (const char *)scriptData.buffer, scriptData.size);
   m_editorView.setText(m_areaBuffer+1, availableScriptSize-1); // 1 char is taken by the importation status flag
 }
-
+#endif
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home) {

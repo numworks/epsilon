@@ -82,7 +82,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
  * For instance, when simplfy a Cosine, we always compute the value for an angle
  * in the top right trigonometric quadrant. */
 const TrigonometryCheatTable * TrigonometryCheatTable::Table() {
-  static Row sTableRows[] = {
+  const Row sTableRows[] = {
     Row(Row::Pair("-90", -90.0f),
         Row::Pair("π*(-2)^(-1)", -1.5707963267948966f),
         Row::Pair("-100", -100.0f),

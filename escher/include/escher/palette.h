@@ -59,7 +59,7 @@ public:
   constexpr static KDColor ListCellBorder = KDColor::RGB24(0xededef);
   constexpr static KDColor ButtonBackground = KDColor::RGB24(0xe0e0e0);
   constexpr static KDColor ButtonBackgroundSelected = KDColor::RGB24(0xd1d1d1);
-  constexpr static KDColor ButtonBackgroundSelectedHighContrast = KDColor::RGB24(0x595959);
+  constexpr static KDColor ButtonBackgroundSelectedHighContrast = KDColor::RGB24(0x00b2b0);
   constexpr static KDColor ButtonBorder = KDColor::RGB24(0xadadad);
   constexpr static KDColor ButtonRowBorder = KDColor::RGB24(0xd9d9d9);
   constexpr static KDColor ButtonBorderOut = KDColor::RGB24(0xf5f5f5);

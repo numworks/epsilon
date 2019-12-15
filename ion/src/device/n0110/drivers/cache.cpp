@@ -23,24 +23,19 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
   do {
     uint32_t w = ways;
     do {
-      if (clean) {
-        if (invalidate) {
-          class CORTEX::DCCISW dccisw;
-          dccisw.setSET(sets);
-          dccisw.setWAY(w);
-          CORTEX.DCCISW()->set(dccisw);
-        } else {
-          class CORTEX::DCCSW dccsw;
-          dccsw.setSET(sets);
-          dccsw.setWAY(w);
-          CORTEX.DCCSW()->set(dccsw);
-        }
-      } else if (invalidate) {
-        class CORTEX::DCISW dcisw;
-        dcisw.setSET(sets);
-        dcisw.setWAY(w);
-        CORTEX.DCISW()->set(dcisw);
+      class CORTEX::DCSW dcsw;
+      dcsw.setSET(sets);
+      dcsw.setWAY(w);
+      volatile CORTEX::DCSW * target = nullptr;
+      if (clean && invalidate) {
+        target = CORTEX.DCCISW();
+      } else if (clean) {
+        target = CORTEX.DCCSW();
+      } else {
+        assert(invalidate);
+        target = CORTEX.DCISW();
       }
+      target->set(dcsw);
       __asm volatile("nop");
     } while (w-- != 0);
   } while (sets-- != 0);

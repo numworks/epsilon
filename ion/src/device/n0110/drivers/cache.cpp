@@ -17,28 +17,29 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
     dsb();
   }
 
-  uint32_t sets = CORTEX.CCSIDR()->getNUMSETS();
-  uint32_t ways = CORTEX.CCSIDR()->getASSOCIATIVITY();
+  // Pick the right DC??SW register according to invalidate/disable parameters
+  volatile CORTEX::DCSW * target = nullptr;
+  if (clean && invalidate) {
+    target = CORTEX.DCCISW();
+  } else if (clean) {
+    target = CORTEX.DCCSW();
+  } else {
+    assert(invalidate);
+    target = CORTEX.DCISW();
+  }
 
-  do {
-    uint32_t w = ways;
-    do {
+  class CORTEX::CCSIDR ccsidr = CORTEX.CCSIDR()->get();
+  uint32_t sets = ccsidr.getNUMSETS();
+  uint32_t ways = ccsidr.getASSOCIATIVITY();
+
+  for (int set = sets; set >= 0; set--) {
+    for (int way = ways; way >= 0; way--) {
       class CORTEX::DCSW dcsw;
-      dcsw.setSET(sets);
-      dcsw.setWAY(w);
-      volatile CORTEX::DCSW * target = nullptr;
-      if (clean && invalidate) {
-        target = CORTEX.DCCISW();
-      } else if (clean) {
-        target = CORTEX.DCCSW();
-      } else {
-        assert(invalidate);
-        target = CORTEX.DCISW();
-      }
+      dcsw.setSET(set);
+      dcsw.setWAY(way);
       target->set(dcsw);
-      __asm volatile("nop");
-    } while (w-- != 0);
-  } while (sets-- != 0);
+    }
+  }
 
   dsb();
   isb();

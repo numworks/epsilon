@@ -28,6 +28,8 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
   I18n::Message childLabel = m_messageTreeModel->children(selectedRow())->label();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+      if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive)
+        AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
       return true;
     }
     if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive) {

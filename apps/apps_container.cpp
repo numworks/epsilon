@@ -245,7 +245,12 @@ bool AppsContainer::switchTo(App::Snapshot * snapshot) {
 }
 
 void AppsContainer::run() {
-  window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  KDRect screenRect = KDRect(0, 0, Ion::Display::Width, Ion::Display::Height);
+  window()->setFrame(screenRect);
+  /* We push a white screen here, because fetching the exam mode takes some time
+   * and it is visible when reflashing a N0100 (there is some noise on the
+   * screen before the logo appears). */
+  Ion::Display::pushRectUniform(screenRect, KDColorWhite);
   if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
     activateExamMode();
   }

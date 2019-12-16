@@ -102,10 +102,8 @@ private:
   static bool TermHasNumeralBase(const Expression & e);
   static bool TermHasNumeralExponent(const Expression & e);
   static const Expression CreateExponent(Expression e);
-  /* Warning: mergeNegativePower doesnot always return  a multiplication:
-   *      *(b^-1,c^-1) -> (bc)^-1 */
-  Expression mergeNegativePower(ExpressionNode::ReductionContext reductionContext);
   static inline const Expression Base(const Expression e);
+  void splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const;
 };
 
 }

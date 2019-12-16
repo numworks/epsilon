@@ -271,7 +271,6 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
 Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
-   * - Adding parenthesis if needed (a*(b+c) is not a*b+c)
    * - Creating a Division if there's either a term with a power of -1 (a.b^(-1)
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
@@ -285,61 +284,27 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     return std::move(o);
   }
 
-  /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)
-   * This also turns 2/3*a into 2*a*3^(-1) */
-  Expression thisExp = mergeNegativePower(reductionContext);
-  if (thisExp.type() == ExpressionNode::Type::Power) {
-    return thisExp.shallowBeautify(reductionContext);
+  Expression numer;
+  Expression denom;
+  splitIntoNormalForm(numer, denom, reductionContext);
+  Expression result;
+
+  // Step 2: Create a Division if relevant
+  if (!numer.isUninitialized()) {
+    result = numer;
   }
-  assert(thisExp.type() == ExpressionNode::Type::Multiplication);
-
-  // Step 3: Create a Division if needed
-  for (int i = 0; i < numberOfChildren(); i++) {
-    Expression childI = thisExp.childAtIndex(i);
-    if (!(childI.type() == ExpressionNode::Type::Power && childI.childAtIndex(1).type() == ExpressionNode::Type::Rational && childI.childAtIndex(1).convert<Rational>().isMinusOne())) {
-      continue;
-    }
-
-    // Let's remove the denominator-to-be from this
-    Expression denominatorOperand = childI.childAtIndex(0);
-    removeChildInPlace(childI, childI.numberOfChildren());
-
-    Expression numeratorOperand = shallowReduce(reductionContext);
-    // Delete unnecessary parentheses on numerator
-    if (numeratorOperand.type() == ExpressionNode::Type::Parenthesis) {
-      Expression numeratorChild0 = numeratorOperand.childAtIndex(0);
-      numeratorOperand.replaceWithInPlace(numeratorChild0);
-      numeratorOperand = numeratorChild0;
-    }
-    Division d = Division::Builder();
-    numeratorOperand.replaceWithInPlace(d);
-    d.replaceChildAtIndexInPlace(0, numeratorOperand);
-    d.replaceChildAtIndexInPlace(1, denominatorOperand);
-    return d.shallowBeautify(reductionContext);
+  if (!denom.isUninitialized()) {
+    result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
   }
-  return thisExp;
+  replaceWithInPlace(result);
+  return result;
 }
 
 Expression Multiplication::denominator(ExpressionNode::ReductionContext reductionContext) const {
-  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  // WARNING: we do not want to change the expression but to create a new one.
-  Multiplication thisClone = clone().convert<Multiplication>();
-  Expression e = thisClone.mergeNegativePower(reductionContext);
-  if (e.type() == ExpressionNode::Type::Power) {
-    return e.denominator(reductionContext);
-  } else {
-    assert(e.type() == ExpressionNode::Type::Multiplication);
-    for (int i = 0; i < e.numberOfChildren(); i++) {
-      // a*b^(-1)*... -> a*.../b
-      if (e.childAtIndex(i).type() == ExpressionNode::Type::Power
-          && e.childAtIndex(i).childAtIndex(1).type() == ExpressionNode::Type::Rational
-          && e.childAtIndex(i).childAtIndex(1).convert<Rational>().isMinusOne())
-      {
-        return e.childAtIndex(i).childAtIndex(0);
-      }
-    }
-  }
-  return Expression();
+  Expression numer;
+  Expression denom;
+  splitIntoNormalForm(numer, denom, reductionContext);
+  return denom;
 }
 
 Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
@@ -855,48 +820,52 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
   return false;
 }
 
-Expression Multiplication::mergeNegativePower(ExpressionNode::ReductionContext reductionContext) {
-  /* mergeNegativePower groups all factors that are power of form a^(-b) together
-   * for instance, a^(-1)*b^(-c)*c = c*(a*b^c)^(-1) */
-  Multiplication m = Multiplication::Builder();
-  // Special case for rational p/q: if q != 1, q should be at denominator
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !childAtIndex(0).convert<Rational>().isInteger()) {
-    Rational r = childAtIndex(0).convert<Rational>();
-    m.addChildAtIndexInPlace(Rational::Builder(r.integerDenominator()), 0, m.numberOfChildren());
-    if (r.signedIntegerNumerator().isOne()) {
-      removeChildAtIndexInPlace(0);
-    } else {
-      replaceChildAtIndexInPlace(0, Rational::Builder(r.signedIntegerNumerator()));
-    }
-  }
-  int i = 0;
-  // Look for power of form a^(-b)
-  while (i < numberOfChildren()) {
-    if (childAtIndex(i).type() == ExpressionNode::Type::Power) {
-      Expression p = childAtIndex(i);
-      Expression positivePIndex = p.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(reductionContext);
-      if (!positivePIndex.isUninitialized()) {
-        // Remove a^(-b) from the Multiplication
-        removeChildAtIndexInPlace(i);
-        // Add a^b to m
-        m.addChildAtIndexInPlace(p, m.numberOfChildren(), m.numberOfChildren());
-        if (p.childAtIndex(1).isRationalOne()) {
-          p.replaceWithInPlace(p.childAtIndex(0));
-        }
-        // We do not increment i because we removed one child from the Multiplication
-        continue;
+void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {
+  Multiplication mNumerator = Multiplication::Builder();
+  Multiplication mDenominator = Multiplication::Builder();
+  int numberOfFactorsInNumerator = 0;
+  int numberOfFactorsInDenominator = 0;
+  const int numberOfFactors = numberOfChildren();
+  for (int i = 0; i < numberOfFactors; i++) {
+    Expression factor = childAtIndex(i).clone();
+    ExpressionNode::Type factorType = factor.type();
+    Expression factorsNumerator;
+    Expression factorsDenominator;
+    if (factorType == ExpressionNode::Type::Rational) {
+      Rational r = static_cast<Rational &>(factor);
+      Integer rNum = r.signedIntegerNumerator();
+      if (!rNum.isOne()) {
+        factorsNumerator = Rational::Builder(rNum);
       }
+      Integer rDen = r.integerDenominator();
+      if (!rDen.isOne()) {
+        factorsDenominator = Rational::Builder(rDen);
+      }
+    } else if (factorType == ExpressionNode::Type::Power) {
+      Expression fd = factor.denominator(reductionContext);
+      if (fd.isUninitialized()) {
+        factorsNumerator = factor;
+      } else {
+        factorsDenominator = fd;
+      }
+    } else {
+      factorsNumerator = factor;
     }
-    i++;
+    if (!factorsNumerator.isUninitialized()) {
+      mNumerator.addChildAtIndexInPlace(factorsNumerator, numberOfFactorsInNumerator, numberOfFactorsInNumerator);
+      numberOfFactorsInNumerator++;
+    }
+    if (!factorsDenominator.isUninitialized()) {
+      mDenominator.addChildAtIndexInPlace(factorsDenominator, numberOfFactorsInDenominator, numberOfFactorsInDenominator);
+      numberOfFactorsInDenominator++;
+    }
   }
-  if (m.numberOfChildren() == 0) {
-    return *this;
+  if (numberOfFactorsInNumerator) {
+    numerator = mNumerator.squashUnaryHierarchyInPlace();
   }
-  m.sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
-  Power p = Power::Builder(m.squashUnaryHierarchyInPlace(), Rational::Builder(-1));
-  addChildAtIndexInPlace(p, 0, numberOfChildren());
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
-  return squashUnaryHierarchyInPlace();
+  if (numberOfFactorsInDenominator) {
+    denominator = mDenominator.squashUnaryHierarchyInPlace();
+  }
 }
 
 const Expression Multiplication::Base(const Expression e) {

@@ -292,26 +292,33 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     return std::move(o);
   }
 
-  Expression numer;
-  Expression denom;
-  splitIntoNormalForm(numer, denom, reductionContext);
-  Expression result;
+  Expression numer, denom, units;
+  splitIntoNormalForm(numer, denom, units, reductionContext);
 
   // Step 2: Create a Division if relevant
+  Expression result;
   if (!numer.isUninitialized()) {
     result = numer;
   }
   if (!denom.isUninitialized()) {
     result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
   }
+  if (!units.isUninitialized()) {
+    if (result.isUninitialized()) {
+      result = units;
+    } else {
+      result = Multiplication::Builder(result, units);
+      static_cast<Multiplication &>(result).mergeMultiplicationChildrenInPlace();
+    }
+  }
+
   replaceWithInPlace(result);
   return result;
 }
 
 Expression Multiplication::denominator(ExpressionNode::ReductionContext reductionContext) const {
-  Expression numer;
-  Expression denom;
-  splitIntoNormalForm(numer, denom, reductionContext);
+  Expression numer, denom, units;
+  splitIntoNormalForm(numer, denom, units, reductionContext);
   return denom;
 }
 
@@ -828,17 +835,20 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
   return false;
 }
 
-void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {
+void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, Expression & units, ExpressionNode::ReductionContext reductionContext) const {
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
+  Multiplication mUnits = Multiplication::Builder();
   int numberOfFactorsInNumerator = 0;
   int numberOfFactorsInDenominator = 0;
+  int numberOfFactorsInUnits = 0;
   const int numberOfFactors = numberOfChildren();
   for (int i = 0; i < numberOfFactors; i++) {
     Expression factor = childAtIndex(i).clone();
     ExpressionNode::Type factorType = factor.type();
     Expression factorsNumerator;
     Expression factorsDenominator;
+    Expression factorsUnit;
     if (factorType == ExpressionNode::Type::Rational) {
       Rational r = static_cast<Rational &>(factor);
       if (r.isRationalOne()) {
@@ -857,10 +867,16 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
     } else if (factorType == ExpressionNode::Type::Power) {
       Expression fd = factor.denominator(reductionContext);
       if (fd.isUninitialized()) {
-        factorsNumerator = factor;
+        if (factor.childAtIndex(0).type() == ExpressionNode::Type::Unit) {
+          factorsUnit = factor;
+        } else {
+          factorsNumerator = factor;
+        }
       } else {
         factorsDenominator = fd;
       }
+    } else if (factorType == ExpressionNode::Type::Unit) {
+      factorsUnit = factor;
     } else {
       factorsNumerator = factor;
     }
@@ -872,12 +888,19 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
       mDenominator.addChildAtIndexInPlace(factorsDenominator, numberOfFactorsInDenominator, numberOfFactorsInDenominator);
       numberOfFactorsInDenominator++;
     }
+    if (!factorsUnit.isUninitialized()) {
+      mUnits.addChildAtIndexInPlace(factorsUnit, numberOfFactorsInUnits, numberOfFactorsInUnits);
+      numberOfFactorsInUnits++;
+    }
   }
   if (numberOfFactorsInNumerator) {
     numerator = mNumerator.squashUnaryHierarchyInPlace();
   }
   if (numberOfFactorsInDenominator) {
     denominator = mDenominator.squashUnaryHierarchyInPlace();
+  }
+  if (numberOfFactorsInUnits) {
+    units = mUnits.squashUnaryHierarchyInPlace();
   }
 }
 

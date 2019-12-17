@@ -26,8 +26,12 @@ View * GenericSubController::view() {
   return &m_selectableTableView;
 }
 
+void GenericSubController::didEnterResponderChain(Responder * previousFirstResponder) {
+  selectCellAtLocation(0, initialSelectedRow());
+  m_selectableTableView.reloadData();
+}
+
 void GenericSubController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -73,10 +77,6 @@ void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int ind
 
 void GenericSubController::setMessageTreeModel(const MessageTree * messageTreeModel) {
   m_messageTreeModel = (MessageTree *)messageTreeModel;
-}
-
-void GenericSubController::viewWillAppear() {
-  m_selectableTableView.reloadData();
 }
 
 void GenericSubController::viewDidDisappear() {

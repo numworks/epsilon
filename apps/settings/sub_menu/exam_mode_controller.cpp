@@ -16,9 +16,14 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
 {
 }
 
-void ExamModeController::didEnterResponderChain(Responder * previousFirstResponder) {
-  selectCellAtLocation(0, 0);
-  m_selectableTableView.reloadData();
+int ExamModeController::initialSelectedRow() const {
+  int row = selectedRow();
+  if (row >= numberOfRows()) {
+    return numberOfRows()-1;
+  } else if (row < 0) {
+    return 0;
+  }
+  return row;
 }
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {

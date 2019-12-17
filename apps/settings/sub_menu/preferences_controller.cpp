@@ -23,7 +23,6 @@ PreferencesController::PreferencesController(Responder * parentResponder) :
 }
 
 void PreferencesController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -145,7 +144,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   }
 }
 
-int PreferencesController::valueIndexForPreference(I18n::Message message) {
+int PreferencesController::valueIndexForPreference(I18n::Message message) const {
   Preferences * preferences = Preferences::sharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();

@@ -3,13 +3,13 @@
 #include "flash.h"
 #include <assert.h>
 
-namespace Ion {
-namespace ExamMode {
-
 extern "C" {
   extern char _exam_mode_buffer_start;
   extern char _exam_mode_buffer_end;
 }
+
+namespace Ion {
+namespace ExamMode {
 
 char ones[Config::ExamModeBufferSize]
   __attribute__((section(".exam_mode_buffer")))
@@ -30,26 +30,11 @@ char ones[Config::ExamModeBufferSize]
  * if it has only one 1, it is erased (to 1) and significantExamModeAddress
  * returns the start of the sector. */
 
-uint32_t * SignificantExamModeAddress() {
-  uint32_t * persitence_start = (uint32_t *)&_exam_mode_buffer_start;
-  uint32_t * persitence_end = (uint32_t *)&_exam_mode_buffer_end;
-  while (persitence_start < persitence_end && *persitence_start == 0x0) {
-    // Skip even number of zero bits
-    persitence_start++;
-  }
-  if (persitence_start == persitence_end
-  // we can't toggle from 0[3] to 2[3] when there is only one 1 bit in the whole sector
-  || (persitence_start + 1 == persitence_end && *persitence_start == 1)) {
-    assert(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start) >= 0);
-    Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start));
-    return (uint32_t *)&_exam_mode_buffer_start;
-  }
-  return persitence_start;
-}
+constexpr static size_t numberOfBitsInByte = 8;
 
-size_t firstOneBit(int i, size_t size) {
+size_t firstOneBitInByte(int i) {
   int minShift = 0;
-  int maxShift = size;
+  int maxShift = numberOfBitsInByte;
   while (maxShift > minShift+1) {
     int shift = (minShift + maxShift)/2;
     int shifted = i >> shift;
@@ -62,32 +47,68 @@ size_t firstOneBit(int i, size_t size) {
   return maxShift;
 }
 
+uint8_t * SignificantExamModeAddress() {
+  uint32_t * persitence_start_32 = (uint32_t *)&_exam_mode_buffer_start;
+  uint32_t * persitence_end_32 = (uint32_t *)&_exam_mode_buffer_end;
+  while (persitence_start_32 < persitence_end_32 && *persitence_start_32 == 0x0) {
+    // Scan by groups of 32 bits to reach first non-zero bit
+    persitence_start_32++;
+  }
+  uint8_t * persitence_start_8 = (uint8_t *)persitence_start_32;
+  uint8_t * persitence_end_8 = (uint8_t *)persitence_end_32;
+  while (persitence_start_8 < persitence_end_8 && *persitence_start_8 == 0x0) {
+    // Scan by groups of 8 bits to reach first non-zero bit
+    persitence_start_8++;
+  }
+  if (persitence_start_8 == persitence_end_8
+  // we can't toggle from 0[3] to 2[3] when there is only one 1 bit in the whole sector
+  || (persitence_start_8 + 1 == persitence_end_8 && *persitence_start_8 == 1)) {
+    assert(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start) >= 0);
+    Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start));
+    return (uint8_t *)&_exam_mode_buffer_start;
+  }
+
+  return persitence_start_8;
+}
+
 uint8_t FetchExamMode() {
-  uint32_t * readingAddress = SignificantExamModeAddress();
+  uint8_t * readingAddress = SignificantExamModeAddress();
   // Count the number of 0[3] before reading address
-  uint32_t nbOfZerosBefore = ((readingAddress - (uint32_t *)&_exam_mode_buffer_start)/4 * 2) % 3;
+  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * 2) % 3;
   // Count the number of 0[3] at reading address
-  size_t numberOfLeading0 = (32 - firstOneBit(*readingAddress, 32)) % 3;
+  size_t numberOfLeading0 = (numberOfBitsInByte - firstOneBitInByte(*readingAddress)) % 3;
   return (nbOfZerosBefore + numberOfLeading0) % 3;
 }
 
 void IncrementExamMode(uint8_t delta) {
   assert(delta == 1 || delta == 2);
-  uint32_t * writingAddress = SignificantExamModeAddress();
+  uint8_t * writingAddress = SignificantExamModeAddress();
   assert(*writingAddress != 0);
-  size_t nbOfOnes = firstOneBit(*writingAddress, 32);
-  // Compute the new value with two bits switched to 0.
-  /* We write in a uint64_t instead of uint32_t, in case there was only one bit
+  size_t nbOfTargetedOnes = firstOneBitInByte(*writingAddress);
+
+  // Compute the new value with delta bits switched to 0.
+  /* We write in 2 bytes instead of 1, in case there was only one bit
    * left to 1 in writingAddress. */
-  /* When writing in flash, we can only switch a 1 to a 0. If we want to switch
-   * the fifth and sixth bit in a byte, we can thus write "11100111". */
-  uint64_t deltaOnes = (1 << delta) - 1;
-  uint64_t newValue = ~(deltaOnes << (32 + nbOfOnes - delta));
+  nbOfTargetedOnes += numberOfBitsInByte;
+  nbOfTargetedOnes -= delta;
+  constexpr size_t newValueSize = sizeof(uint16_t)/sizeof(uint8_t);
+  uint8_t newValue[newValueSize];
+  if (nbOfTargetedOnes > numberOfBitsInByte) {
+    size_t nbOfTargetedOnesInFirstByte = nbOfTargetedOnes - numberOfBitsInByte;
+    assert(nbOfTargetedOnesInFirstByte <= numberOfBitsInByte);
+    newValue[0] = ((uint16_t)1 << nbOfTargetedOnesInFirstByte) - 1;
+    newValue[1] = 0xFF;
+  } else {
+    assert(nbOfTargetedOnes <= numberOfBitsInByte);
+    newValue[0] = 0;
+    newValue[1] = ((uint16_t)1 << nbOfTargetedOnes) - 1;
+  }
+
   // Write the value in flash
   /* Avoid writing out of sector */
-  assert(writingAddress < (uint32_t *)&_exam_mode_buffer_end - 1 || *writingAddress > 1);
-  size_t writtenFlash = *writingAddress == 1 ? sizeof(uint64_t) : sizeof(uint32_t);
-  Ion::Device::Flash::WriteMemory((uint8_t *)writingAddress, (uint8_t *)&newValue, writtenFlash);
+  size_t writtenFlash = *writingAddress == 1 ? sizeof(uint16_t) : sizeof(uint8_t);
+  assert(writingAddress < (uint8_t *)&_exam_mode_buffer_end - 1 || (writingAddress == (uint8_t *)&_exam_mode_buffer_end - 1 && writtenFlash == 1));
+  Ion::Device::Flash::WriteMemory(writingAddress, newValue, writtenFlash);
 }
 
 }

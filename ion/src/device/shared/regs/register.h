@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <assert.h>
 
+#define always_inline __attribute__((always_inline))
+
 namespace Ion {
 namespace Device {
 namespace Regs {
@@ -22,7 +24,7 @@ public:
   T get() volatile {
     return m_value;
   }
-  void setBitRange(uint8_t high, uint8_t low, T value) volatile {
+  always_inline void setBitRange(uint8_t high, uint8_t low, T value) volatile {
     m_value = bit_range_set_value(high, low, m_value, value);
   }
   T getBitRange(uint8_t high, uint8_t low) volatile {
@@ -57,8 +59,8 @@ typedef Register<uint64_t> Register64;
 }
 }
 
-#define REGS_FIELD_R(name,type,high,low) type get##name() volatile { return (type)getBitRange(high,low); };
-#define REGS_FIELD_W(name,type,high,low) void set##name(type v) volatile { static_assert(sizeof(type) <= 4, "Invalid size"); setBitRange(high, low, static_cast<uint32_t>(v)); };
+#define REGS_FIELD_R(name,type,high,low) always_inline type get##name() volatile { return (type)getBitRange(high,low); };
+#define REGS_FIELD_W(name,type,high,low) always_inline void set##name(type v) volatile { static_assert(sizeof(type) <= 4, "Invalid size"); setBitRange(high, low, static_cast<uint32_t>(v)); };
 #define REGS_FIELD(name,type,high,low) REGS_FIELD_R(name,type,high,low); REGS_FIELD_W(name,type,high,low);
 #define REGS_TYPE_FIELD(name,high,low) REGS_FIELD(name,name,high,low)
 #define REGS_BOOL_FIELD(name,bit) REGS_FIELD(name,bool,bit,bit)

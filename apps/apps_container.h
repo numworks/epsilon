@@ -42,7 +42,7 @@ public:
   bool updateBatteryState();
   void refreshPreferences();
   void reloadTitleBarView();
-  void displayExamModePopUp(bool activate);
+  void displayExamModePopUp(GlobalPreferences::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PopUpController * promptController();

@@ -23,7 +23,13 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    GlobalPreferences::ExamMode mode = m_messageTreeModel->children(selectedRow())->label() == I18n::Message::ActivateExamMode ? GlobalPreferences::ExamMode::Standard : GlobalPreferences::ExamMode::Dutch;
+    GlobalPreferences::ExamMode mode = GlobalPreferences::ExamMode::Standard;
+    if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+      // If the exam mode is already on, this re-activate the same exam mode
+      mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+    } else if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::ActivateDutchExamMode) {
+      mode = GlobalPreferences::ExamMode::Dutch;
+    }
     AppsContainer::sharedAppsContainer()->displayExamModePopUp(mode);
     return true;
   }

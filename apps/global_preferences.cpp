@@ -14,11 +14,12 @@ GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
 }
 
 void GlobalPreferences::setExamMode(ExamMode mode) {
-  if (examMode() == mode) {
+  ExamMode currentMode = examMode();
+  if (currentMode == mode) {
     return;
   }
   assert(mode != ExamMode::Unknown);
-  int8_t deltaMode = (int8_t)mode - (int8_t)examMode();
+  int8_t deltaMode = (int8_t)mode - (int8_t)currentMode;
   deltaMode = deltaMode < 0 ? deltaMode + 3 : deltaMode;
   assert(deltaMode > 0);
   Ion::ExamMode::IncrementExamMode(deltaMode);

@@ -1,6 +1,7 @@
 #include "exam_mode_controller.h"
 #include "../../global_preferences.h"
 #include "../../apps_container.h"
+#include <apps/i18n.h>
 #include <assert.h>
 #include <cmath>
 
@@ -11,35 +12,43 @@ namespace Settings {
 
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
-  m_cell(I18n::Message::ExamModeActive, KDFont::LargeFont)
+  m_cell{MessageTableCell(I18n::Message::ExamModeActive, KDFont::LargeFont), MessageTableCell(I18n::Message::ActivateDutchExamMode, KDFont::LargeFont)}
 {
 }
 
 void ExamModeController::didEnterResponderChain(Responder * previousFirstResponder) {
+  selectCellAtLocation(0, 0);
   m_selectableTableView.reloadData();
 }
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
+    GlobalPreferences::ExamMode mode = m_messageTreeModel->children(selectedRow())->label() == I18n::Message::ActivateExamMode ? GlobalPreferences::ExamMode::Standard : GlobalPreferences::ExamMode::Dutch;
+    AppsContainer::sharedAppsContainer()->displayExamModePopUp(mode);
     return true;
   }
   return GenericSubController::handleEvent(event);
 }
 
+int ExamModeController::numberOfRows() const {
+  if (GlobalPreferences::sharedGlobalPreferences()->language() != I18n::Language::EN || GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    return 1;
+  }
+  return GenericSubController::numberOfRows();
+}
+
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
   assert(type == 0);
-  assert(index == 0);
-  return &m_cell;
+  assert(index >= 0 && index < k_maxNumberOfCells);
+  return &m_cell[index];
 }
 
 int ExamModeController::reusableCellCount(int type) {
-  return 1;
+  return k_maxNumberOfCells;
 }
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  // TODO
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(I18n::Message::ExamModeActive);

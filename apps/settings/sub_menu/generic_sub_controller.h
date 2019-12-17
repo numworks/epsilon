@@ -11,6 +11,7 @@ public:
   GenericSubController(Responder * parentResponder);
   const char * title() override;
   View * view() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
@@ -20,10 +21,10 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setMessageTreeModel(const MessageTree * messageTreeModel);
-  void viewWillAppear() override;
   void viewDidDisappear() override;
 protected:
   StackViewController * stackController() const;
+  virtual int initialSelectedRow() const { return 0; }
   constexpr static KDCoordinate k_topBottomMargin = 13;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;

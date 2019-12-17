@@ -168,9 +168,8 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
-      // TODO
       if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-        displayExamModePopUp(false);
+        displayExamModePopUp(GlobalPreferences::ExamMode::Off);
         window()->redraw();
       } else {
         Ion::USB::enable();
@@ -276,8 +275,8 @@ void AppsContainer::reloadTitleBarView() {
   m_window.reloadTitleBarView();
 }
 
-void AppsContainer::displayExamModePopUp(bool activate) {
-  m_examPopUpController.setActivatingExamMode(activate);
+void AppsContainer::displayExamModePopUp(GlobalPreferences::ExamMode mode) {
+  m_examPopUpController.setTargetExamMode(mode);
   s_activeApp->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
 }
 

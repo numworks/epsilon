@@ -135,11 +135,11 @@ void TextInput::scrollToCursor() {
   scrollToContentRect(contentView()->cursorRect(), true);
 }
 
-void TextInput::deleteSelectedText() {
+void TextInput::deleteSelection() {
   assert(!contentView()->selectionIsEmpty());
   const char * previousSelectionStart = contentView()->selectionStart();
   const char * previousSelectionEnd = contentView()->selectionEnd();
-  size_t removedLength = contentView()->deleteSelectedText();
+  size_t removedLength = contentView()->deleteSelection();
   if (previousSelectionEnd == contentView()->cursorLocation()) {
     setCursorLocation(contentView()->cursorLocation() - removedLength);
   }

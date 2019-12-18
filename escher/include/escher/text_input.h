@@ -16,7 +16,7 @@ public:
   bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
   void resetSelection() { contentView()->resetSelection(); }
-  void deleteSelectedText();
+  void deleteSelection();
 protected:
   class ContentView : public View {
   public:
@@ -42,7 +42,7 @@ protected:
     void addSelection(const char * left, const char * right);
     bool resetSelection(); // returns true if the selection was indeed reset
     bool selectionIsEmpty() const;
-    virtual size_t deleteSelectedText() = 0;
+    virtual size_t deleteSelection() = 0;
     void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);
     const char * m_selectionStart;
     const char * m_selectionEnd;

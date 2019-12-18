@@ -224,7 +224,7 @@ void TextField::ContentView::didModifyTextBuffer() {
   layoutSubviews();
 }
 
-size_t TextField::ContentView::deleteSelectedText() {
+size_t TextField::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   assert(m_isEditing);
   size_t removedLength = m_selectionEnd - m_selectionStart;
@@ -348,7 +348,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     if (m_contentView.selectionIsEmpty()) {
       return removePreviousGlyph();
     }
-    deleteSelectedText();
+    deleteSelection();
     return true;
   }
   if (event == Ion::Events::Back && isEditing()) {
@@ -361,7 +361,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Clear && isEditing()) {
     if (!m_contentView.selectionIsEmpty()) {
-      deleteSelectedText();
+      deleteSelection();
     } else if (!removeEndOfLine()) {
       removeWholeText();
     }
@@ -507,7 +507,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 
   // Delete the selected text if needed
   if (!contentView()->selectionIsEmpty()) {
-    deleteSelectedText();
+    deleteSelection();
   }
 
   if (eventText[0] == 0) {

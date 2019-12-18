@@ -33,10 +33,13 @@ public:
   void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
-  KDContext(KDPoint origin, KDRect clippingRect);
+
   virtual void pushRect(KDRect, const KDColor * pixels) = 0;
   virtual void pushRectUniform(KDRect rect, KDColor color) = 0;
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
+protected:
+  KDContext(KDPoint origin, KDRect clippingRect);
+private:
   KDRect absoluteFillRect(KDRect rect);
   KDPoint pushOrPullString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength, bool push, int * result = nullptr);
   KDPoint m_origin;

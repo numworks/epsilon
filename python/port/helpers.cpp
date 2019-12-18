@@ -1,8 +1,5 @@
 #include "helpers.h"
 #include <ion.h>
-#ifdef SIMULATOR
-#include <FL/Fl.H>
-#endif
 extern "C" {
 #include "mphalport.h"
 }

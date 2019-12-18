@@ -11,10 +11,11 @@ app_external_src = $(addprefix apps/external/,\
 
 SFLAGS += -Iapps/external/
 
+EXTAPP_PATH ?= apps/external/app/
 ifeq ($(PLATFORM),device)
 	SFLAGS += -DDEVICE
 else
-	include apps/external/app/sources.mak
+	include $(EXTAPP_PATH)/sources.mak
 endif
 
 app_src += $(app_external_src)

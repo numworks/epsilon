@@ -27,6 +27,7 @@ public:
   bool zoomInhibit;
   bool gammaEnabled;
   int zoomPosition;
+private:
   KDIonContext();
   void pushRect(KDRect rect, const KDColor * pixels) override;
   void pushRectUniform(KDRect rect, KDColor color) override;

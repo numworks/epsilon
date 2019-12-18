@@ -12,7 +12,13 @@ using namespace Regs;
 
 void core() {
   // Perform a full core reset
+  Ion::Device::Cache::dsb(); // Complete all memory accesses
   CORTEX.AIRCR()->requestReset();
+  Ion::Device::Cache::dsb();
+  // Wait until reset
+  while (true) {
+    asm("nop");
+  }
 }
 
 /* We isolate the jump code that needs to be executed from the internal

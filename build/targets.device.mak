@@ -60,31 +60,3 @@ $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/interna
 bench_objs = $(call object_for,$(ion_src) $(liba_src) $(kandinsky_src) $(ion_device_dfu_xip_src) $(poincare_src) $(libaxx_src) $(bench_src) $(app_shared_src))
 $(BUILD_DIR)/bench.ram.$(EXE): $(bench_objs)
 $(BUILD_DIR)/bench.flash.$(EXE): $(bench_objs)
-
-.PHONY: %.two_binaries
-%.two_binaries: %.elf
-	@echo "Building an internal and an external binary for     $<"
-	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external $< $(basename $<).external.bin
-	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external $< $(basename $<).internal.bin
-	@echo "Padding $(basename $<).external.bin and $(basename $<).internal.bin"
-	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).external.bin
-	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).internal.bin
-
-.PHONY: binpack
-binpack:
-	rm -rf build/binpack
-	mkdir -p build/binpack
-	make clean
-	make -j8 $(BUILD_DIR)/flasher.light.bin
-	cp $(BUILD_DIR)/flasher.light.bin build/binpack
-	make clean
-	make -j8 $(BUILD_DIR)/bench.flash.bin
-	make -j8 $(BUILD_DIR)/bench.ram.bin
-	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin build/binpack
-	make clean
-	make -j8 $(BUILD_DIR)/epsilon.on-boarding.update.two_binaries
-	cp $(BUILD_DIR)/epsilon.on-boarding.update.internal.bin $(BUILD_DIR)/epsilon.on-boarding.update.external.bin build/binpack
-	make clean
-	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.on-boarding.internal.bin epsilon.on-boarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
-	cd build && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
-	rm -rf build/binpack

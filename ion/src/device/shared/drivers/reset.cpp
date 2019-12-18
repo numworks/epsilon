@@ -41,8 +41,7 @@ void __attribute__((noinline)) internalFlashJump(uint32_t jumpIsrVectorAddress) 
 
 void jump(uint32_t jumpIsrVectorAddress) {
   // Disable cache before reset
-  Ion::Device::Cache::disableDCache();
-  Ion::Device::Cache::disableICache();
+  Ion::Device::Cache::disable();
 
   /* Shutdown all clocks and periherals to mimic a hardware reset. */
   Board::shutdownPeripherals();

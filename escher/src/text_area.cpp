@@ -42,7 +42,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 
   // Delete the selected text if needed
   if (!contentView()->selectionIsEmpty()) {
-    deleteSelectedText();
+    deleteSelection();
   }
 
   /* Compute the indentation. If the text cannot be inserted with the
@@ -142,7 +142,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     const char * start = contentView()->selectionStart();
     Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
     if (event == Ion::Events::Cut) {
-      deleteSelectedText();
+      deleteSelection();
     }
     return true;
   }
@@ -157,7 +157,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
         return false;
       }
     } else {
-      deleteSelectedText();
+      deleteSelection();
       return true;
     }
   } else if (event == Ion::Events::Up) {
@@ -168,7 +168,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->moveCursorGeo(0, 1);
   } else if (event == Ion::Events::Clear) {
     if (!contentView()->selectionIsEmpty()) {
-      deleteSelectedText();
+      deleteSelection();
       return true;
     } else if (!contentView()->removeEndOfLine()) {
       contentView()->removeStartOfLine();
@@ -518,7 +518,7 @@ bool TextArea::ContentView::removeStartOfLine() {
   return false;
 }
 
-size_t TextArea::ContentView::deleteSelectedText() {
+size_t TextArea::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   size_t removedLength = m_text.removeText(m_selectionStart, m_selectionEnd);
   /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd

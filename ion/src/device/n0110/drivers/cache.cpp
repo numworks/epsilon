@@ -65,7 +65,7 @@ void cleanDCache() {
 
 void enableDCache() {
   invalidateDCache();
-  CORTEX.CCR()->setDC(true);
+  CORTEX.CCR()->setDC(true); // Enable D-cache
   dsb();
   isb();
 }
@@ -77,14 +77,14 @@ void disableDCache() {
 void invalidateICache() {
   dsb();
   isb();
-  CORTEX.ICIALLU()->set(0);
+  CORTEX.ICIALLU()->set(0); // Invalidate I-cache
   dsb();
   isb();
 }
 
 void enableICache() {
   invalidateICache();
-  CORTEX.CCR()->setIC(true);
+  CORTEX.CCR()->setIC(true); // Enable I-cache
   dsb();
   isb();
 }
@@ -92,8 +92,10 @@ void enableICache() {
 void disableICache() {
   dsb();
   isb();
-  CORTEX.CCR()->setIC(false);
-  invalidateICache();
+  CORTEX.CCR()->setIC(false); // Disable I-cache
+  CORTEX.ICIALLU()->set(0); // Invalidate I-cache
+  dsb();
+  isb();
 }
 
 

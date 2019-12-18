@@ -65,7 +65,7 @@ protected:
     bool removeEndOfLine() override;
     void willModifyTextBuffer();
     void didModifyTextBuffer();
-    size_t deleteSelectedText() override;
+    size_t deleteSelection() override;
     /* In some app (ie Calculation), text fields record expression results whose
      * lengths can reach 70 (ie
      * [[1.234567e-123*e^(1.234567e-123*i), 1.234567e-123*e^(1.234567e-123*i)]]).

@@ -14,7 +14,7 @@ constexpr static AFGPIOPin VbusPin = AFGPIOPin(GPIOA, 9, GPIO::AFR::AlternateFun
 constexpr static AFGPIOPin DmPin = AFGPIOPin(GPIOA, 11, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast);
 constexpr static AFGPIOPin DpPin = AFGPIOPin(GPIOA, 12, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast);
 
-constexpr static const char * InterfaceStringDescriptor = "@Flash/0x08000000/04*016Kg/0x90000000/64*064Kg,64*064Kg";
+constexpr static const char * InterfaceStringDescriptor = "@Flash/0x08000000/04*016Kg/0x90000000/08*004Kg,01*032Kg,63*064Kg,64*064Kg";
 
 }
 }

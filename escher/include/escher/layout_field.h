@@ -77,6 +77,7 @@ private:
     Poincare::Layout * selectionEnd() { return &m_selectionEnd; }
     void addSelection(Poincare::Layout addedLayout);
     bool resetSelection(); // returns true if the selection was indeed reset
+    void copySelection();
     bool selectionIsEmpty() const;
     void deleteSelection();
 

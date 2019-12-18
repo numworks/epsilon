@@ -160,6 +160,29 @@ bool LayoutField::ContentView::resetSelection() {
   return true;
 }
 
+void LayoutField::ContentView::copySelection() {
+  if (selectionIsEmpty()) {
+    // TODO LEA if selection empty?
+    return;
+  }
+  constexpr int bufferSize = TextField::maxBufferSize();
+  char buffer[bufferSize];
+
+  if (m_selectionStart == m_selectionEnd) {
+    m_selectionStart.serializeParsedExpression(buffer, bufferSize);
+  } else {
+    Layout selectionParent = m_selectionStart.parent();
+    assert(!selectionParent.isUninitialized());
+    assert(selectionParent.type() == LayoutNode::Type::HorizontalLayout);
+    int firstIndex = selectionParent.indexOfChild(m_selectionStart);
+    int lastIndex = selectionParent.indexOfChild(m_selectionEnd);
+    static_cast<HorizontalLayout&>(selectionParent).serializeChildren(firstIndex, lastIndex, buffer, bufferSize);
+  }
+  if (buffer[0] != 0) {
+    Clipboard::sharedClipboard()->store(buffer);
+  }
+}
+
 bool LayoutField::ContentView::selectionIsEmpty() const {
   assert(!m_selectionStart.isUninitialized() || m_selectionEnd.isUninitialized());
   assert(!m_selectionEnd.isUninitialized() || m_selectionStart.isUninitialized());
@@ -400,6 +423,10 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
         m_contentView.cursor()->performBackspace();
       }
     }
+    return true;
+  }
+  if (event == Ion::Events::Copy && isEditing()) {
+    m_contentView.copySelection();
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {

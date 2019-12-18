@@ -181,6 +181,10 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
 }
 
 int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return serializeChildrenBetweenIndexes(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, false);
+}
+
+int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool forceIndexes, int firstIndex, int lastIndex) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -192,9 +196,12 @@ int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::
 
   int numberOfChar = 0;
   // Write the children, adding multiplication signs if needed
-  LayoutNode * currentChild = childAtIndex(0);
+  int index1 = forceIndexes ? firstIndex : 0;
+  int index2 = forceIndexes ? lastIndex + 1 : childrenCount;
+  assert(index1 >= 0 && index2 <= childrenCount && index1 <= index2);
+  LayoutNode * currentChild = childAtIndex(index1);
   LayoutNode * nextChild = nullptr;
-  for (int i = 0; i < childrenCount; i++) {
+  for (int i = index1; i < index2; i++) {
     // Write the child
     numberOfChar+= currentChild->serialize(buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfSignificantDigits);
     if (i != childrenCount - 1) {
@@ -503,6 +510,10 @@ Layout HorizontalLayout::squashUnaryHierarchyInPlace() {
     return child;
   }
   return *this;
+}
+
+void HorizontalLayout::serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize) {
+  static_cast<HorizontalLayoutNode *>(node())->serializeChildrenBetweenIndexes(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), true, firstIndex, lastIndex);
 }
 
 void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor) {

@@ -28,6 +28,20 @@ int TreeHandle::indexOfChild(TreeHandle t) const { return node()->indexOfChild(t
 
 bool TreeHandle::hasChild(TreeHandle t) const { return node()->hasChild(t.node()); }
 
+TreeHandle TreeHandle::commonAncestorWith(TreeHandle t) const {
+  if (*(const_cast<TreeHandle *>(this)) == t) {
+    return t;
+  }
+  TreeHandle p = *this;
+  while (!p.isUninitialized()) {
+    if (t.hasAncestor(p, true)) {
+      return p;
+    }
+    p = p.parent();
+  }
+  return TreeHandle();
+}
+
 TreeHandle TreeHandle::childAtIndex(int i) const { return TreeHandle(node()->childAtIndex(i)); }
 
 void TreeHandle::replaceWithInPlace(TreeHandle t) {

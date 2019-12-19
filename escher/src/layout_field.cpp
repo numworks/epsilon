@@ -469,21 +469,24 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   return false;
 }
 
+bool eventIsSelection(Ion::Events::Event event) {
+  return event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight || event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown;
+}
+
 bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
   LayoutCursor result;
-  if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
+  if (eventIsSelection(event)) {
     Layout addedSelection;
-    result = m_contentView.cursor()->selectAtDirection(event == Ion::Events::ShiftLeft ? LayoutCursor::MoveDirection::Left : LayoutCursor::MoveDirection::Right, shouldRecomputeLayout, &addedSelection);
-    if (!addedSelection.isUninitialized()) { //TODO LEA assert?
-      m_contentView.addSelection(addedSelection);
-    } else {
+    LayoutCursor::MoveDirection direction = event == Ion::Events::ShiftLeft ? LayoutCursor::MoveDirection::Left :
+      (event == Ion::Events::ShiftRight ? LayoutCursor::MoveDirection::Right :
+       (event == Ion::Events::ShiftUp ? LayoutCursor::MoveDirection::Up :
+        LayoutCursor::MoveDirection::Down));
+    result = m_contentView.cursor()->selectAtDirection(direction, shouldRecomputeLayout, &addedSelection);
+    if (addedSelection.isUninitialized()) {
       return false;
     }
-  }/* else if (event == Ion::Events::ShiftUp) {
-    //TODO LEA result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Up, shouldRecomputeLayout);
-  } else if (event == Ion::Events::ShiftDown) {
-    //TODO LEA result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
-  }*/
+    m_contentView.addSelection(addedSelection);
+  }
   if (result.isDefined()) {
     m_contentView.setCursor(result);
     return true;

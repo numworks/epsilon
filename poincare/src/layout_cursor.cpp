@@ -80,56 +80,11 @@ bool IsBefore(Layout& l1, Layout& l2) {
 }
 
 void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
-  assert(!m_layout.isUninitialized());
-
-  // Compute ingoing / outgoing positions
-
-  Position ingoingPosition = direction == MoveDirection::Right ? Position::Left : Position::Right;
-  Position outgoingPosition = direction == MoveDirection::Right ? Position::Right : Position::Left;
-
-  // Find the layout to select
-
-  LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
-  Layout equivalentLayout = equivalentCursor.layoutReference();
-  bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
-
-  if (!currentLayoutIsEmpty && m_position == ingoingPosition) {
-    /* The current cursor is positionned on the ingoing position, for instance
-     * left a layout if we want to select towards the right. */
-    if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
-      /* Put the cursor on the inner most equivalent ingoing position : for
-       * instance, in the layout   |1234    , the cursor should be left of the 1,
-       * not left of the horizontal layout. */
-      assert(equivalentCursor.position() == ingoingPosition);
-      *selection = equivalentLayout;
-    } else {
-      /* If there is no adequate equivalent position, just set the ingoing
-       * layout on the current layout. */
-      *selection = m_layout;
-    }
+  if (direction == MoveDirection::Right || direction == MoveDirection::Left) {
+    selectLeftRight(direction == MoveDirection::Right, shouldRecomputeLayout, selection);
   } else {
-    assert(currentLayoutIsEmpty || m_position == outgoingPosition);
-    /* The cursor is on the outgoing position, for instance right of a layout
-     * when we want to select towards the right. */
-    if (!currentLayoutIsEmpty && !equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
-      /* If there is an equivalent layout positionned on the ingoing position,
-       * select it. */
-      *selection = equivalentLayout;
-    } else {
-      // Else, find the first non horizontal ancestor and select it.
-      Layout notHorizontalAncestor = m_layout.parent();
-      while (!notHorizontalAncestor.isUninitialized()
-          && notHorizontalAncestor.type() == LayoutNode::Type::HorizontalLayout)
-      {
-        notHorizontalAncestor = notHorizontalAncestor.parent();
-      }
-      if (!notHorizontalAncestor.isUninitialized()) {
-        *selection = notHorizontalAncestor;
-      }
-    }
+    selectUpDown(direction == MoveDirection::Up, shouldRecomputeLayout, selection);
   }
-  m_layout = *selection;
-  m_position = outgoingPosition;
 }
 
 /* Layout modification */
@@ -352,6 +307,71 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
     static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.node())->setVisible(show);
   }
   return true;
+}
+
+void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Layout * selection) {
+  assert(!m_layout.isUninitialized());
+
+  // Compute ingoing / outgoing positions
+  Position ingoingPosition = right ? Position::Left : Position::Right;
+  Position outgoingPosition = right ? Position::Right : Position::Left;
+
+  // Find the layout to select
+
+  LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
+  Layout equivalentLayout = equivalentCursor.layoutReference();
+  bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
+
+  if (!currentLayoutIsEmpty && m_position == ingoingPosition) {
+    /* The current cursor is positionned on the ingoing position, for instance
+     * left a layout if we want to select towards the right. */
+    if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
+      /* Put the cursor on the inner most equivalent ingoing position: for
+       * instance, in the layout   |1234    , the cursor should be left of the 1,
+       * not left of the horizontal layout. */
+      assert(equivalentCursor.position() == ingoingPosition);
+      *selection = equivalentLayout;
+    } else {
+      /* If there is no adequate equivalent position, just set the ingoing
+       * layout on the current layout. */
+      *selection = m_layout;
+    }
+  } else {
+    assert(currentLayoutIsEmpty || m_position == outgoingPosition);
+    /* The cursor is on the outgoing position, for instance right of a layout
+     * when we want to select towards the right. */
+    if (!currentLayoutIsEmpty && !equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
+      /* If there is an equivalent layout positionned on the ingoing position,
+       * select it. */
+      *selection = equivalentLayout;
+    } else {
+      // Else, find the first non horizontal ancestor and select it.
+      Layout notHorizontalAncestor = m_layout.parent();
+      while (!notHorizontalAncestor.isUninitialized()
+          && notHorizontalAncestor.type() == LayoutNode::Type::HorizontalLayout)
+      {
+        notHorizontalAncestor = notHorizontalAncestor.parent();
+      }
+      if (!notHorizontalAncestor.isUninitialized()) {
+        *selection = notHorizontalAncestor;
+      }
+    }
+  }
+  m_layout = *selection; //TODO LEA remove selection param
+  m_position = outgoingPosition;
+}
+
+void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection) {
+  LayoutCursor c = cursorAtDirection(up ? MoveDirection::Up : MoveDirection::Down, shouldRecomputeLayout);
+  if (!c.isDefined()) {
+    return;
+  }
+  /* Find the first common ancestor between the current layout and the layout of
+   * the moved cursor. */
+  TreeHandle ancestor = m_layout.commonAncestorWith(c.layoutReference());
+  *selection = static_cast<Layout &>(ancestor);
+  m_layout = *selection;
+  m_position = up ? Position::Left : Position::Right;
 }
 
 }

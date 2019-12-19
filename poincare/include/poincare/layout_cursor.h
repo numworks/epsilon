@@ -145,6 +145,8 @@ private:
   void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
+  void selectLeftRight(bool right, bool * shouldRecomputeLayout, Layout * selection);
+  void selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection);
   Layout m_layout;
   Position m_position;
 };

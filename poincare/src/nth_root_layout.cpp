@@ -207,7 +207,7 @@ KDSize NthRootLayoutNode::adjustedIndexSize() {
     KDSize(maxCoordinate(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
 }
 
-void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize radicandSize = radicandLayout()->layoutSize();
   KDSize indexSize = adjustedIndexSize();
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];

@@ -47,7 +47,7 @@ protected:
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
   LayoutNode * baseLayout() { return childAtIndex(0); }
   LayoutNode * subscriptLayout() { return childAtIndex(1); }
   LayoutNode * superscriptLayout() { return childAtIndex(2); }

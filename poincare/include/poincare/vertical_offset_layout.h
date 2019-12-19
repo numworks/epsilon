@@ -52,7 +52,7 @@ private:
   constexpr static KDCoordinate k_indiceHeight = 5;
   constexpr static KDCoordinate k_separationMargin = 5;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
   bool protectedIsIdenticalTo(Layout l) override;
   LayoutNode * indiceLayout() { return childAtIndex(0); }
   LayoutNode * baseLayout();

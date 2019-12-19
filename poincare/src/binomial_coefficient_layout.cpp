@@ -98,7 +98,7 @@ KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {
   return KDPoint(horizontalCenter - kLayout()->layoutSize().width()/2, knHeight() - kLayout()->layoutSize().height());
 }
 
-void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Render the parentheses.
   KDCoordinate childHeight = knHeight();
   KDCoordinate rightParenthesisPointX = maxCoordinate(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()) + LeftParenthesisLayoutNode::ParenthesisWidth();

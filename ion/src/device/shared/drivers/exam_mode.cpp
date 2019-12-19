@@ -75,7 +75,7 @@ uint8_t * SignificantExamModeAddress() {
 uint8_t FetchExamMode() {
   uint8_t * readingAddress = SignificantExamModeAddress();
   // Count the number of 0[3] before reading address
-  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * 2) % 3;
+  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * numberOfBitsInByte) % 3;
   // Count the number of 0[3] at reading address
   size_t numberOfLeading0 = (numberOfBitsInByte - firstOneBitInByte(*readingAddress)) % 3;
   return (nbOfZerosBefore + numberOfLeading0) % 3;

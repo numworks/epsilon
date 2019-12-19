@@ -111,7 +111,7 @@ int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences:
   return numberOfChar;
 }
 
-void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize childSize = childLayout()->layoutSize();
   KDCoordinate verticalBarHeight = childSize.height() + 2*k_verticalMargin;
   ctx->fillRect(KDRect(p.x()+externWidthMargin(), p.y()+verticalExternMargin(), k_lineThickness, verticalBarHeight), expressionColor);

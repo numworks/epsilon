@@ -34,8 +34,8 @@ public:
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Palette::Select) {
     return node()->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-    return node()->render(ctx, p, expressionColor, backgroundColor);
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) {
+    return node()->render(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
   KDSize layoutSize() { return node()->layoutSize(); }
   KDPoint absoluteOrigin() { return node()->absoluteOrigin(); }

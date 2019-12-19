@@ -171,7 +171,7 @@ private:
     LayoutNode ** childResult,
     void * resultPosition,
     int * resultScore);
-  virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
+  virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
   bool changeGreySquaresOfAllMatrixAncestors(bool add);
 };
 

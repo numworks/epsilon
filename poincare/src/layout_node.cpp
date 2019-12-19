@@ -91,7 +91,7 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   // Only HorizontalLayout may have no parent, and it overloads this method
   assert(parent() != nullptr);
-  return (cursor->layoutReference().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
+  return (cursor->layout().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
 
 // Tree modification
@@ -173,7 +173,7 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
   if (!equivalentPositionVisited) {
     LayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
-      cursor->setLayout(cursorEquivalent.layoutReference());
+      cursor->setLayout(cursorEquivalent.layout());
       cursor->setPosition(cursorEquivalent.position());
       if (direction == VerticalDirection::Up) {
         cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true);

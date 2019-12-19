@@ -28,7 +28,7 @@ KDCoordinate LayoutCursor::baseline() {
     return k_cursorHeight/2;
   }
   KDCoordinate layoutBaseline = m_layout.baseline();
-  Layout equivalentLayout = m_layout.equivalentCursor(this).layoutReference();
+  Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
   if (equivalentLayout.isUninitialized()) {
     return layoutBaseline;
   }
@@ -51,7 +51,7 @@ bool LayoutCursor::isEquivalentTo(LayoutCursor cursor) {
 /* Position */
 
 KDPoint LayoutCursor::middleLeftPoint() {
-  KDPoint layoutOrigin = layoutReference().absoluteOrigin();
+  KDPoint layoutOrigin = layout().absoluteOrigin();
   KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layout.layoutSize().width());
   KDCoordinate y = layoutOrigin.y() + m_layout.baseline() - k_cursorHeight/2;
   return KDPoint(x,y);
@@ -223,7 +223,7 @@ void LayoutCursor::clearLayout() {
 /* Private */
 
 KDCoordinate LayoutCursor::layoutHeight() {
-  Layout equivalentLayout = m_layout.equivalentCursor(this).layoutReference();
+  Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
   if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.layoutSize().height();
   }
@@ -269,8 +269,8 @@ bool LayoutCursor::baseForNewPowerLayout() {
       return true;
     }
     LayoutCursor equivalentLayoutCursor = m_layout.equivalentCursor(this);
-    if (equivalentLayoutCursor.layoutReference().isUninitialized()
-        || (equivalentLayoutCursor.layoutReference().type() == LayoutNode::Type::HorizontalLayout
+    if (equivalentLayoutCursor.layout().isUninitialized()
+        || (equivalentLayoutCursor.layout().type() == LayoutNode::Type::HorizontalLayout
           && equivalentLayoutCursor.position() == Position::Left))
     {
       return false;
@@ -289,7 +289,7 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
     adjacentEmptyLayout = m_layout;
   } else {
     // Check the equivalent cursor position
-    Layout equivalentPointedLayout = m_layout.equivalentCursor(this).layoutReference();
+    Layout equivalentPointedLayout = m_layout.equivalentCursor(this).layout();
     if (!equivalentPointedLayout.isUninitialized() && equivalentPointedLayout.isEmpty()) {
       adjacentEmptyLayout = equivalentPointedLayout;
     }
@@ -319,7 +319,7 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
   // Find the layout to select
 
   LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
-  Layout equivalentLayout = equivalentCursor.layoutReference();
+  Layout equivalentLayout = equivalentCursor.layout();
   bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
 
   if (!currentLayoutIsEmpty && m_position == ingoingPosition) {
@@ -368,7 +368,7 @@ void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * 
   }
   /* Find the first common ancestor between the current layout and the layout of
    * the moved cursor. */
-  TreeHandle ancestor = m_layout.commonAncestorWith(c.layoutReference());
+  TreeHandle ancestor = m_layout.commonAncestorWith(c.layout());
   *selection = static_cast<Layout &>(ancestor);
   m_layout = *selection;
   m_position = up ? Position::Left : Position::Right;

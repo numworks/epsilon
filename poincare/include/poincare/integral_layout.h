@@ -56,7 +56,7 @@ private:
   LayoutNode * differentialLayout() { return childAtIndex(k_differentialLayoutIndex); } // dx
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); } // a
   LayoutNode * upperBoundLayout() { return childAtIndex(3); } // b
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
 class IntegralLayout final : public Layout {

@@ -81,7 +81,7 @@ KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child) {
       k_overlineWidth + k_overlineVerticalMargin);
 }
 
-void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   ctx->fillRect(
       KDRect(
         p.x() + Metric::FractionAndConjugateHorizontalMargin,

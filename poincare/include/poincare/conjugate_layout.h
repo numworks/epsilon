@@ -38,7 +38,7 @@ private:
   constexpr static KDCoordinate k_overlineVerticalMargin = 1;
   LayoutNode * childLayout() { return childAtIndex(0); }
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
 class ConjugateLayout final : public Layout {

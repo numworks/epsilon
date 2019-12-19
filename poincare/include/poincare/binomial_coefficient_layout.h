@@ -39,7 +39,7 @@ protected:
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   KDCoordinate knHeight() { return nLayout()->layoutSize().height() + GridLayoutNode::k_gridEntryMargin + kLayout()->layoutSize().height(); }
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   LayoutNode * nLayout() { return childAtIndex(0); }
   LayoutNode * kLayout() { return childAtIndex(1); }
 };

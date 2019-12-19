@@ -29,7 +29,7 @@ int SumLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SequenceLayoutNode::writeDerivedClassInBuffer("sum", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Computes sizes.
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals();

@@ -416,6 +416,43 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   return true;
 }
 
+void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  // Fill the background
+  KDSize s = layoutSize();
+  ctx->fillRect(KDRect(p, s), backgroundColor);
+  // Fill the selection background
+  HorizontalLayout thisLayout = HorizontalLayout(this);
+  bool childrenAreSelected = selectionStart != nullptr && selectionEnd != nullptr
+    && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
+    && thisLayout.hasChild(*selectionStart);
+  if (childrenAreSelected) {
+    assert(thisLayout.hasChild(*selectionEnd));
+
+    // Compute the positions
+    KDCoordinate selectionXStart = positionOfChild(selectionStart->node()).x();
+    KDCoordinate selectionXEnd = positionOfChild(selectionEnd->node()).x() + selectionEnd->layoutSize().width();
+    KDCoordinate drawX = p.x() + selectionXStart;
+    KDCoordinate drawWidth = selectionXEnd - selectionXStart;
+
+    // Compute the height
+    int firstSelectedNodeIndex = thisLayout.indexOfChild(*selectionStart);
+    int secondSelectedNodeIndex = thisLayout.indexOfChild(*selectionEnd);
+    if (firstSelectedNodeIndex == 0 && secondSelectedNodeIndex == numberOfChildren() - 1) {
+      ctx->fillRect(KDRect(KDPoint(drawX, p.y()), KDSize(drawWidth, s.height())), selectionColor);
+      return;
+    }
+    KDCoordinate maxUnderBaseline = 0;
+    KDCoordinate maxAboveBaseline = 0;
+    for (int i = firstSelectedNodeIndex; i <= secondSelectedNodeIndex; i++) {
+      Layout childi = thisLayout.childAtIndex(i);
+      KDSize childSize = childi.layoutSize();
+      maxUnderBaseline = maxCoordinate(maxUnderBaseline, childSize.height() - childi.baseline());
+      maxAboveBaseline = maxCoordinate(maxAboveBaseline, childi.baseline());
+    }
+    ctx->fillRect(KDRect(KDPoint(drawX, p.y() + baseline() - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline)), selectionColor);
+  }
+}
+
 // HorizontalLayout
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {

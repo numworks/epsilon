@@ -118,7 +118,7 @@ int TreePool::numberOfNodes() const {
 
 void * TreePool::alloc(size_t size) {
   size = Helpers::AlignedSize(size, ByteAlignment);
-  if (m_cursor >= buffer() + BufferSize || m_cursor + size > buffer() + BufferSize) {
+  if (m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
   void * result = m_cursor;

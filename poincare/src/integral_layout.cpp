@@ -248,7 +248,7 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
   return KDPoint(x,y);
 }
 
-void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize integrandSize = integrandLayout()->layoutSize();
   KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();

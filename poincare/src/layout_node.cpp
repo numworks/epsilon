@@ -27,7 +27,7 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCol
   KDColor backColor = isSelected ? selectionColor : backgroundColor;
   KDPoint renderingAbsoluteOrigin = absoluteOrigin().translatedBy(p);
   ctx->fillRect(KDRect(renderingAbsoluteOrigin, layoutSize()), backColor);
-  render(ctx, renderingAbsoluteOrigin, expressionColor, backColor);
+  render(ctx, renderingAbsoluteOrigin, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
   if (!isSelected) {
     for (LayoutNode * l : children()) {
       l->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);

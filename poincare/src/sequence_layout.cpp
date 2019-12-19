@@ -244,7 +244,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   return numberOfChar;
 }
 
-void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Render the "="
   KDSize variableSize = variableLayout()->layoutSize();
   KDPoint equalPosition = positionOfChild(variableLayout()).translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline()-k_font->stringSize(k_equal).height()/2));

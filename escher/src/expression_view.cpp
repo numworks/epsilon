@@ -1,4 +1,6 @@
 #include <escher/expression_view.h>
+#include <escher/palette.h>
+
 using namespace Poincare;
 
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
@@ -73,6 +75,6 @@ KDPoint ExpressionView::absoluteDrawingOrigin() const {
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
   if (!m_layout.isUninitialized()) {
-    m_layout.draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor, m_selectionStart, m_selectionEnd, KDColorRed/*TODO LEA*/);
+    m_layout.draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor, m_selectionStart, m_selectionEnd, Palette::Select);
   }
 }

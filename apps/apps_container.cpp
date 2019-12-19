@@ -327,6 +327,13 @@ void AppsContainer::redrawWindow() {
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch);
   reset();
+  /* The Dutch exam mode LED is supposed to be orange but we can only make
+   * blink "pure" colors: with RGB leds on or off (as the PWM is used for
+   * blinking). The closest "pure" color is Yellow. Moreover, Orange LED is
+   * already used when the battery is charging. Using yellow, we can assert
+   * that the yellow LED only means that Dutch exam mode is on and avoid
+   * confusing states when the battery is charging and states when the Dutch
+   * exam mode is on. */
   Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed);
   Ion::LED::setBlinking(1000, 0.1f);
 }

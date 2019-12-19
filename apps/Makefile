@@ -94,6 +94,10 @@ epsilon_src += $(addprefix apps/, \
   i18n.py \
 )
 
+tests_src += $(addprefix apps/,\
+  global_preferences.cpp \
+)
+
 all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_container_prompt_update) $(apps_prompt_beta_src) $(tests_src)
 
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h

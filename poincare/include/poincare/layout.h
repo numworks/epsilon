@@ -4,6 +4,7 @@
 #include <poincare/array_builder.h>
 #include <poincare/layout_node.h>
 #include <poincare/tree_handle.h>
+#include <escher/palette.h>
 
 namespace Poincare {
 
@@ -30,7 +31,7 @@ public:
   bool isIdenticalTo(Layout l) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l); }
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed /*TODO LEA*/) {
+  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Palette::Select) {
     return node()->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

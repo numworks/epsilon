@@ -9,7 +9,6 @@ GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
   if (m_examMode == ExamMode::Unknown) {
     m_examMode = (ExamMode)Ion::ExamMode::FetchExamMode();
   }
-  assert((int)m_examMode >= 0 && (int)m_examMode <= 2);
   return m_examMode;
 }
 

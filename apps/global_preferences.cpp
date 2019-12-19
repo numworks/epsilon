@@ -7,7 +7,9 @@ GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
 
 GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
   if (m_examMode == ExamMode::Unknown) {
-    m_examMode = (ExamMode)Ion::ExamMode::FetchExamMode();
+    uint8_t mode = Ion::ExamMode::FetchExamMode();
+    assert(mode >= 0 && mode < 3); // mode can be cast in ExamMode (Off, Standard or Dutch)
+    m_examMode = (ExamMode)mode;
   }
   return m_examMode;
 }

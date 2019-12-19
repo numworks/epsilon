@@ -107,12 +107,12 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
      *  +++++-----  -> next selection
      * */
      LayoutCursor c1 = LayoutCursor(addedLayout, LayoutCursor::Position::Left);
-     if (c1.layoutReference() == m_selectionStart) {
+     if (c1.layout() == m_selectionStart) {
        m_selectionStart = Layout();
        m_selectionEnd = Layout();
      } else {
        LayoutCursor c2 = addedLayout.equivalentCursor(&c1);
-       Layout c2Layout = c2.layoutReference();
+       Layout c2Layout = c2.layout();
        if (c2.position() == LayoutCursor::Position::Right) {
          assert(IsBefore(m_selectionStart, c2Layout, false));
          m_selectionEnd = c2Layout;
@@ -129,12 +129,12 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
      *  -----+++++  -> next selection
      * */
      LayoutCursor c1 = LayoutCursor(addedLayout, LayoutCursor::Position::Right);
-     if (c1.layoutReference() == m_selectionEnd) {
+     if (c1.layout() == m_selectionEnd) {
        m_selectionStart = Layout();
        m_selectionEnd = Layout();
      } else {
        LayoutCursor c2 = addedLayout.equivalentCursor(&c1);
-       Layout c2Layout = c2.layoutReference();
+       Layout c2Layout = c2.layout();
        if (c2.position() == LayoutCursor::Position::Left) {
          assert(IsBefore(c2Layout, m_selectionEnd, false));
          m_selectionStart = c2Layout;
@@ -234,11 +234,11 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
-  Layout pointedLayoutR = m_cursor.layoutReference();
+  Layout pointedLayoutR = m_cursor.layout();
   LayoutCursor::Position cursorPosition = m_cursor.position();
   LayoutCursor eqCursor = pointedLayoutR.equivalentCursor(&m_cursor);
-  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layoutReference())) {
-    pointedLayoutR = eqCursor.layoutReference();
+  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layout())) {
+    pointedLayoutR = eqCursor.layout();
     cursorPosition = eqCursor.position();
   }
   KDPoint cursoredExpressionViewOrigin = pointedLayoutR.absoluteOrigin();
@@ -258,7 +258,7 @@ void LayoutField::setEditing(bool isEditing) {
 }
 
 CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
-  CodePoint xnt = m_contentView.cursor()->layoutReference().XNTCodePoint();
+  CodePoint xnt = m_contentView.cursor()->layout().XNTCodePoint();
   if (xnt != UCodePointNull) {
     return xnt;
   }
@@ -583,7 +583,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   }
 
   // Handle matrices
-  cursor->layoutReference().addGreySquaresToAllMatrixAncestors();
+  cursor->layout().addGreySquaresToAllMatrixAncestors();
 
   // Handle empty layouts
   cursor->hideEmptyLayoutIfNeeded();

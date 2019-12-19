@@ -192,7 +192,7 @@ void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutC
     if (i >= lastIndex) {
       break;
     }
-    if (cursor->layoutReference().node()->hasAncestor(l, true)) {
+    if (cursor->layout().node()->hasAncestor(l, true)) {
       // The cursor is leaving the matrix, so remove the grey squares.
       shouldRemoveGreySquares = true;
       break;

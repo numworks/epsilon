@@ -2,30 +2,6 @@
 #include <escher/container.h>
 #include <assert.h>
 
-Responder::Responder(Responder * parentResponder) :
-  m_parentResponder(parentResponder)
-{
-}
-
-Responder * Responder::parentResponder() const {
-  return m_parentResponder;
-}
-
-void Responder::setParentResponder(Responder * responder) {
-  m_parentResponder = responder;
-}
-
-void Responder::didBecomeFirstResponder() {
-}
-
-void Responder::willResignFirstResponder() {
-}
-
-void Responder::didEnterResponderChain(Responder * previousFirstResponder) {
-}
-
-void Responder::willExitResponderChain(Responder * nextFirstResponder) {
-}
 
 Responder * Responder::commonAncestorWith(Responder * responder) {
   if (responder == nullptr) {

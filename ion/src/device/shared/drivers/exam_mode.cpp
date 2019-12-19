@@ -32,7 +32,8 @@ char ones[Config::ExamModeBufferSize]
 
 constexpr static size_t numberOfBitsInByte = 8;
 
-size_t firstOneBitInByte(int i) {
+// if i = 0b000011101, firstOneBitInByte(i) returns 5
+size_t numberOfBitsAfterLeadingZeroes(int i) {
   int minShift = 0;
   int maxShift = numberOfBitsInByte;
   while (maxShift > minShift+1) {
@@ -77,7 +78,7 @@ uint8_t FetchExamMode() {
   // Count the number of 0[3] before reading address
   uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * numberOfBitsInByte) % 3;
   // Count the number of 0[3] at reading address
-  size_t numberOfLeading0 = (numberOfBitsInByte - firstOneBitInByte(*readingAddress)) % 3;
+  size_t numberOfLeading0 = (numberOfBitsInByte - numberOfBitsAfterLeadingZeroes(*readingAddress)) % 3;
   return (nbOfZerosBefore + numberOfLeading0) % 3;
 }
 
@@ -85,7 +86,7 @@ void IncrementExamMode(uint8_t delta) {
   assert(delta == 1 || delta == 2);
   uint8_t * writingAddress = SignificantExamModeAddress();
   assert(*writingAddress != 0);
-  size_t nbOfTargetedOnes = firstOneBitInByte(*writingAddress);
+  size_t nbOfTargetedOnes = numberOfBitsAfterLeadingZeroes(*writingAddress);
 
   // Compute the new value with delta bits switched to 0.
   /* We write in 2 bytes instead of 1, in case there was only one bit

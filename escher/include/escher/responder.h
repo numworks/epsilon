@@ -15,6 +15,7 @@ public:
   Responder * commonAncestorWith(Responder * responder);
   void setParentResponder(Responder * responder) { m_parentResponder = responder; }
 private:
+  bool hasAncestor(Responder * responder) const;
   Responder * m_parentResponder;
 };
 

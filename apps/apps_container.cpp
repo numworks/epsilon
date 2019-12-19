@@ -327,7 +327,7 @@ void AppsContainer::redrawWindow() {
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch);
   reset();
-  Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorOrange : KDColorRed);
+  Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed);
   Ion::LED::setBlinking(1000, 0.1f);
 }
 

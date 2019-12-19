@@ -7,7 +7,7 @@ namespace LED {
 
 KDColor updateColorWithPlugAndCharge() {
   KDColor ledColor = getColor();
-  if (ledColor != KDColorRed) { // If exam mode is on, we do not update the LED with the plugged/charging state
+  if (ledColor != KDColorRed && ledColor != KDColorYellow) { // If exam mode is on, we do not update the LED with the plugged/charging state
     if (USB::isPlugged()) {
       ledColor = Battery::isCharging() ? KDColorOrange : KDColorGreen;
     } else {

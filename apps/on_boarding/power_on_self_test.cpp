@@ -20,7 +20,7 @@ KDColor PowerOnSelfTest::Perform() {
       resultColor = KDColorRed;
     }
   } else {
-    resultColor = KDColorBlue;
+    resultColor = KDColorPurple;
   }
   Ion::LED::setColor(resultColor);
   return previousLEDColor;

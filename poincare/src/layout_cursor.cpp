@@ -369,10 +369,22 @@ void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * 
   }
   /* Find the first common ancestor between the current layout and the layout of
    * the moved cursor. */
-  TreeHandle ancestor = m_layout.commonAncestorWith(c.layout());
+  TreeHandle ancestor1 = m_layout.commonAncestorWith(c.layout());
+  TreeHandle ancestor2 = Layout();
+  Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
+  if (!equivalentLayout.isUninitialized()) {
+    ancestor2 = equivalentLayout.commonAncestorWith(c.layout());
+  }
+  TreeHandle ancestor = (!ancestor2.isUninitialized() && ancestor2.hasAncestor(ancestor1, true)) ? ancestor2 : ancestor1;
   *selection = static_cast<Layout &>(ancestor);
+  if (m_layout == *selection) {
+    m_position = m_position == Position::Right ? Position::Left : Position::Right;
+  } else if (m_layout.hasAncestor(*selection, true)) {
+    m_position = up ? Position::Left : Position::Right;
+  } else {
+    m_position = IsBefore(m_layout, *selection) ? Position::Right : Position::Left;
+  }
   m_layout = *selection;
-  m_position = up ? Position::Left : Position::Right;
 }
 
 }

@@ -29,8 +29,8 @@ Expression GreatCommonDivisorNode::shallowReduce(ReductionContext reductionConte
 template<typename T>
 Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   bool isUndefined = false;
-  int a = ApproximationHelper::IntegerApproximationIfPossible<T>(childAtIndex(0), &isUndefined, context, complexFormat, angleUnit);
-  int b = ApproximationHelper::IntegerApproximationIfPossible<T>(childAtIndex(1), &isUndefined, context, complexFormat, angleUnit);
+  int a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(0), &isUndefined, context, complexFormat, angleUnit);
+  int b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(1), &isUndefined, context, complexFormat, angleUnit);
   if (isUndefined) {
     return Complex<T>::Undefined();
   }

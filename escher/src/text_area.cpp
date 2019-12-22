@@ -112,8 +112,6 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->moveCursorGeo(INT_MAX/2, 0);
   } else if (event == Ion::Events::Backspace) {
     return removePreviousGlyph();
-  } else if (event.hasText()) {
-    return handleEventWithText(event.text());
   } else if (event == Ion::Events::EXE) {
     return handleEventWithText("\n");
   } else if (event == Ion::Events::Clear) {
@@ -122,6 +120,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     }
   } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
+  } else if (!(preferences->isPercentOnKeyboard()) && event == Ion::Events::Percent) {
+    return removePreviousGlyph();
+  } else if (event.hasText()) {
+    return handleEventWithText(event.text());
   } else {
     return false;
   }

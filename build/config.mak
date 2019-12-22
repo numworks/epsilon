@@ -11,6 +11,7 @@ EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom se
 EPSILON_I18N ?= en fr es de pt
 EPSILON_GETOPT ?= 0
 ESCHER_LOG_EVENTS_BINARY ?= 0
+OMEGA_THEME ?= omega_light
 
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak

@@ -95,6 +95,13 @@ $(eval $(call rule_for, \
   $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@ \
 ))
 
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
+  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@ \
+))
+
 INLINER := $(BUILD_DIR)/escher/image/inliner
 
 .PRECIOUS: $(BUILD_DIR)/%.h $(BUILD_DIR)/%.cpp

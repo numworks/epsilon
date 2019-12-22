@@ -120,7 +120,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     }
   } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
-  } else if (!(preferences->isPercentOnKeyboard()) && event == Ion::Events::Percent) {
+  } else if (event == Ion::Events::Percent) {
     return removePreviousGlyph();
   } else if (event.hasText()) {
     return handleEventWithText(event.text());

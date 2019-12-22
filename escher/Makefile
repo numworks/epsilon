@@ -102,13 +102,20 @@ $(eval $(call rule_for, \
   $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@ \
 ))
 
+$(eval $(call rule_for, \
+  THEME, \
+  %.png, \
+  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
+  $$(PYTHON) themes/themes_manager.py -i $(OMEGA_THEME) $$@ $(BUILD_DIR)/ \
+))
+
 INLINER := $(BUILD_DIR)/escher/image/inliner
 
 .PRECIOUS: $(BUILD_DIR)/%.h $(BUILD_DIR)/%.cpp
 $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \
-  %.png $$(INLINER), \
+  $$(addprefix $$(BUILD_DIR)/,%.png) $$(INLINER), \
   $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp \
 ))
 

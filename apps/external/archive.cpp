@@ -1,5 +1,6 @@
 #include "archive.h"
 #include "extapp_api.h"
+#include "../global_preferences.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -34,12 +35,16 @@ bool isSane(const TarHeader* tar) {
   return !memcmp(tar->magic, "ustar  ", 8) && tar->name[0] != '\x00' && tar->name[0] != '\xFF';
 }
 
+bool isExamModeAndFileNotExecutable(const TarHeader* tar) {
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() && (tar->mode[4] & 0x01) == 0;
+}
+
 bool fileAtIndex(size_t index, File &entry) {
   const TarHeader* tar = reinterpret_cast<const TarHeader*>(0x90200000);
   unsigned size = 0;
 
   // Sanity check.
-  if (!isSane(tar)) {
+  if (!isSane(tar) || isExamModeAndFileNotExecutable(tar)) {
     return false;
   }
 
@@ -58,7 +63,7 @@ bool fileAtIndex(size_t index, File &entry) {
     tar = reinterpret_cast<const TarHeader*>(reinterpret_cast<const char*>(tar) + stride);
 
     // Sanity check.
-    if (!isSane(tar)) {
+    if (!isSane(tar) || isExamModeAndFileNotExecutable(tar)) {
       return false;
     }
   }

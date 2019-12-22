@@ -7,8 +7,6 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_draw_string_obj, 3, 5, m
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_fill_rect_obj, 5, 5, modkandinsky_fill_rect);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modkandinsky_wait_vblank_obj, modkandinsky_wait_vblank);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modkandinsky_get_keys_obj, modkandinsky_get_keys);
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(modkandinsky_get_key_obj, modkandinsky_get_key); 
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(modkandinsky_Pause_obj, modkandinsky_Pause); 
 
 STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_kandinsky) },
@@ -19,8 +17,6 @@ STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_fill_rect), (mp_obj_t)&modkandinsky_fill_rect_obj },
   { MP_ROM_QSTR(MP_QSTR_wait_vblank), (mp_obj_t)&modkandinsky_wait_vblank_obj },
   { MP_ROM_QSTR(MP_QSTR_get_keys), (mp_obj_t)&modkandinsky_get_keys_obj },
-  { MP_ROM_QSTR(MP_QSTR_get_key), (mp_obj_t)&modkandinsky_get_key_obj },
-  { MP_ROM_QSTR(MP_QSTR_Pause), (mp_obj_t)&modkandinsky_Pause_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(modkandinsky_module_globals, modkandinsky_module_globals_table);

@@ -7,6 +7,7 @@
 #include "selectable_table_view.h"
 #include "additional_outputs/complex_list_controller.h"
 #include "additional_outputs/integer_list_controller.h"
+#include "additional_outputs/rational_list_controller.h"
 #include "additional_outputs/trigonometry_list_controller.h"
 
 namespace Calculation {
@@ -41,6 +42,7 @@ private:
   CalculationStore * m_calculationStore;
   ComplexListController m_complexController;
   IntegerListController m_integerController;
+  RationalListController m_rationalController;
   TrigonometryListController m_trigonometryController;
 };
 

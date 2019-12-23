@@ -4,16 +4,16 @@
 #include <escher.h>
 #include <poincare/expression.h>
 #include <apps/i18n.h>
+#include "list_controller.h"
 
 namespace Calculation {
 
-class SimpleListController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class SimpleListController : public ListController {
 public:
   SimpleListController(Responder * parentResponder);
 
   // Responder
-  bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
 
   //ListViewDataSource
   int reusableCellCount(int type) override;
@@ -23,24 +23,14 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   // IllustratedListController
-  void setExpression(Poincare::Expression e) { m_expression = e; }
+  void setExpression(Poincare::Expression e) override { m_expression = e; }
 
 protected:
   Poincare::Expression m_expression;
 private:
   virtual Poincare::Layout layoutAtIndex(int index) = 0;
   virtual I18n::Message messageAtIndex(int index) = 0;
-  class ListController : public ViewController {
-  public:
-    ListController(SimpleListController * dataSource);
-    const char * title() override { return I18n::translate(I18n::Message::AdditionalResults); }
-    View * view() override { return &m_selectableTableView; }
-    SelectableTableView * selectableTableView() { return &m_selectableTableView; }
-  private:
-    SelectableTableView m_selectableTableView;
-  };
   constexpr static int k_maxNumberOfCells = 4;
-  ListController m_listController;
   // Cells
   ExpressionTableCellWithPointer m_cells[k_maxNumberOfCells];
 };

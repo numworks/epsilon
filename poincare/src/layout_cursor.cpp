@@ -74,11 +74,6 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 
 /* Select */
 
-bool IsBefore(Layout& l1, Layout& l2) {
-  //TODO LEA
-  return reinterpret_cast<char *>(l1.node()) <= reinterpret_cast<char *>(l2.node());
-}
-
 void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
   if (direction == MoveDirection::Right || direction == MoveDirection::Left) {
     selectLeftRight(direction == MoveDirection::Right, shouldRecomputeLayout, selection);
@@ -363,26 +358,46 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
 }
 
 void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection) {
+  // Move the cursor in the selection direction
   LayoutCursor c = cursorAtDirection(up ? MoveDirection::Up : MoveDirection::Down, shouldRecomputeLayout);
   if (!c.isDefined()) {
     return;
   }
+
   /* Find the first common ancestor between the current layout and the layout of
-   * the moved cursor. */
+   * the moved cursor (also check the common ancestor with the equivalent
+   * position). This ancestor will be the added selection. */
   TreeHandle ancestor1 = m_layout.commonAncestorWith(c.layout());
   TreeHandle ancestor2 = Layout();
-  Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
+  LayoutCursor eqCursor = m_layout.equivalentCursor(this);
+  Layout equivalentLayout = eqCursor.layout();
   if (!equivalentLayout.isUninitialized()) {
     ancestor2 = equivalentLayout.commonAncestorWith(c.layout());
   }
-  TreeHandle ancestor = (!ancestor2.isUninitialized() && ancestor2.hasAncestor(ancestor1, true)) ? ancestor2 : ancestor1;
+  // Select the closest common ancestor
+  bool ancestorOfPointedLayoutSelected = ancestor2.isUninitialized() || !ancestor2.hasAncestor(ancestor1, true);
+  TreeHandle ancestor = ancestorOfPointedLayoutSelected ? ancestor1 : ancestor2;
   *selection = static_cast<Layout &>(ancestor);
-  if (m_layout == *selection) {
-    m_position = m_position == Position::Right ? Position::Left : Position::Right;
-  } else if (m_layout.hasAncestor(*selection, true)) {
-    m_position = up ? Position::Left : Position::Right;
+  LayoutCursor * usedCursor = ancestorOfPointedLayoutSelected ? this : &eqCursor;
+
+  if (usedCursor->layout() == *selection) {
+    /* Example:
+     *    415
+     * 89|--- + 1 -> If the cursor is left of the fraction and we select up, we
+     *     2         want to add the whole fraction to the selection.
+     *          The fraction is the common ancestor between the pointed layout
+     *          (or its equivalent layout) and the layout pointed after the move
+     *          (either the horizontal layout containing "415", or the layout
+     *          "4"). */
+    m_position = usedCursor->position() == Position::Right ? Position::Left : Position::Right;
   } else {
-    m_position = IsBefore(m_layout, *selection) ? Position::Right : Position::Left;
+    /* We choose arbitrarily to select towards the left if we go up, and towards
+     * the right if we go down.
+     * Example:
+     * 415
+     * --- -> If the 2 is selected and we select up, we select the whole
+     * |2     fraction towards the left.  */
+    m_position = up ? Position::Left : Position::Right;
   }
   m_layout = *selection;
 }

@@ -80,7 +80,6 @@ void LayoutCursor::select(Direction direction, bool * shouldRecomputeLayout, Lay
   } else {
     selectUpDown(direction == Direction::Up, shouldRecomputeLayout, selection);
   }
-  *shouldRecomputeLayout = true;
 }
 
 /* Layout modification */

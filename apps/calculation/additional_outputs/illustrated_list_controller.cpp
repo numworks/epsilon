@@ -6,26 +6,10 @@ using namespace Poincare;
 
 namespace Calculation {
 
-/* List Controller */
-
-IllustratedListController::ListController::ListController(IllustratedListController * dataSource) :
-  ViewController(dataSource),
-  m_selectableTableView(this, dataSource, dataSource, dataSource)
-{
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
-}
-
-void IllustratedListController::ListController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, 1);
-}
-
 /* Illustrated list controller */
 
 IllustratedListController::IllustratedListController(Responder * parentResponder) :
-  StackViewController(parentResponder, &m_listController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
-  m_listController(this),
+  ListController(parentResponder, this),
   m_additionalCalculationCells{}
 {
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
@@ -34,12 +18,8 @@ IllustratedListController::IllustratedListController(Responder * parentResponder
   }
 }
 
-bool IllustratedListController::handleEvent(Ion::Events::Event event) {
-  return false;
-}
-
-void IllustratedListController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_listController);
+void IllustratedListController::didEnterResponderChain(Responder * previousFirstResponder) {
+  selectCellAtLocation(0, 1);
 }
 
 void IllustratedListController::viewDidDisappear() {

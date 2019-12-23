@@ -86,6 +86,9 @@ escher_src += $(addprefix escher/src/,\
   window.cpp \
 )
 
+tests_src += $(addprefix escher/test/,\
+  layout_field.cpp\
+)
 
 $(eval $(call rule_for, \
   HOSTCC, \

@@ -379,7 +379,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
+  if (isEditing() && m_delegate && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
     setEditing(false);
     if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
       // Reinit layout for next use

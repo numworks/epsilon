@@ -108,6 +108,7 @@ void IllustratedListController::tableViewDidChangeSelection(SelectableTableView 
 }
 
 void IllustratedListController::setExpression(Poincare::Expression e) {
+  m_calculationStore.deleteAll();
   Poincare::Context * context = App::app()->localContext();
   Poincare::Symbol s = Poincare::Symbol::Builder(expressionSymbol());
   m_savedExpression = context->expressionForSymbolAbstract(s, false);

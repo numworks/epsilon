@@ -453,14 +453,14 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   }
   LayoutCursor result;
   if (event == Ion::Events::Left) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Left, shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Left, shouldRecomputeLayout);
   } else if (event == Ion::Events::Right) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Right, shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Right, shouldRecomputeLayout);
   } else if (event == Ion::Events::Up) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Up, shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Up, shouldRecomputeLayout);
   } else {
     assert(event == Ion::Events::Down);
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Down, shouldRecomputeLayout);
   }
   if (result.isDefined()) {
     m_contentView.setCursor(result);
@@ -477,10 +477,10 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
   LayoutCursor result;
   if (eventIsSelection(event)) {
     Layout addedSelection;
-    LayoutCursor::MoveDirection direction = event == Ion::Events::ShiftLeft ? LayoutCursor::MoveDirection::Left :
-      (event == Ion::Events::ShiftRight ? LayoutCursor::MoveDirection::Right :
-       (event == Ion::Events::ShiftUp ? LayoutCursor::MoveDirection::Up :
-        LayoutCursor::MoveDirection::Down));
+    LayoutCursor::Direction direction = event == Ion::Events::ShiftLeft ? LayoutCursor::Direction::Left :
+      (event == Ion::Events::ShiftRight ? LayoutCursor::Direction::Right :
+       (event == Ion::Events::ShiftUp ? LayoutCursor::Direction::Up :
+        LayoutCursor::Direction::Down));
     result = m_contentView.cursor()->selectAtDirection(direction, shouldRecomputeLayout, &addedSelection);
     if (addedSelection.isUninitialized()) {
       return false;

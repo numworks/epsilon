@@ -70,20 +70,18 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Left) {
         Expression::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
-        ViewController * vc = nullptr;
+        ListController * vc = nullptr;
         /* TODO
          * Faire un parent commun à tous les controllers qui sait faire setExpression */
         if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
-           m_complexController.setExpression(calculation->input());
            vc = &m_complexController;
         } else if (additionalInfoType == Expression::AdditionalInformationType::Trigonometry) {
-           m_trigonometryController.setExpression(calculation->input());
            vc = &m_trigonometryController;
         } else if (additionalInfoType == Expression::AdditionalInformationType::Integer) {
-          m_integerController.setExpression(calculation->input());
           vc = &m_integerController;
         }
         if (vc) {
+          vc->setExpression(calculation->input());
           Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       } else {

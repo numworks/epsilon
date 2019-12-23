@@ -86,6 +86,7 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
+    KDRect computeSelectionRect() const;
     Poincare::LayoutCursor m_cursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;

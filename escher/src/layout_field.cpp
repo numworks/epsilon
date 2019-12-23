@@ -56,6 +56,7 @@ bool IsBefore(Layout& l1, Layout& l2, bool strict) {
 }
 
 void LayoutField::ContentView::addSelection(Layout addedLayout) {
+  KDRect rectBefore = computeSelectionRect();
   if (selectionIsEmpty()) {
     /*
      *  ----------  -> +++ is the previous previous selection
@@ -121,7 +122,10 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
       }
     }
   }
-  //reloadRectFromAndToPositions(left, right); TODO LEA
+
+  KDRect rectAfter = computeSelectionRect();
+  // We need to update the background color for selected/unselected layouts
+  markRectAsDirty(rectBefore.unionedWith(rectAfter));
 }
 
 bool LayoutField::ContentView::resetSelection() {
@@ -222,6 +226,20 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
   m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()), force);
 }
 
+KDRect LayoutField::ContentView::computeSelectionRect() const {
+  if (selectionIsEmpty()) {
+    return KDRectZero;
+  }
+  if (m_selectionStart == m_selectionEnd) {
+    return KDRect(m_selectionStart.absoluteOrigin(), m_selectionStart.layoutSize());
+  }
+  Layout selectionParent = m_selectionStart.parent();
+  assert(m_selectionEnd.parent() == selectionParent);
+  assert(selectionParent.type() == LayoutNode::Type::HorizontalLayout);
+  KDRect selectionRectInParent = static_cast<HorizontalLayout &>(selectionParent).relativeSelectionRect(&m_selectionStart, &m_selectionEnd);
+  return selectionRectInParent.translatedBy(selectionParent.absoluteOrigin());
+}
+
 void LayoutField::setEditing(bool isEditing) {
   KDSize previousLayoutSize = m_contentView.minimalSizeForOptimalDisplay();
   if (m_contentView.setEditing(isEditing)) {
@@ -317,7 +335,6 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     didHandleEvent = true;
   } else if (privateHandleSelectionEvent(event, &shouldRecomputeLayout)) {
     didHandleEvent = true;
-    shouldRecomputeLayout = true; //TODO LEA
   } else if (privateHandleEvent(event)) {
     shouldRecomputeLayout = true;
     didHandleEvent = true;

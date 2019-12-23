@@ -287,6 +287,37 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
   return KDPoint(x, y);
 }
 
+KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd) const {
+  assert(selectionStart != nullptr && !selectionStart->isUninitialized());
+  assert(selectionEnd != nullptr && !selectionEnd->isUninitialized());
+  HorizontalLayout thisLayout = HorizontalLayout(const_cast<HorizontalLayoutNode *>(this));
+  assert(thisLayout.hasChild(*selectionStart));
+  assert(thisLayout.hasChild(*selectionEnd));
+  assert(thisLayout.indexOfChild(*selectionStart) <= thisLayout.indexOfChild(*selectionEnd));
+
+  // Compute the positions
+  KDCoordinate selectionXStart = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionStart->node()).x();
+  KDCoordinate selectionXEnd = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionEnd->node()).x() + selectionEnd->layoutSize().width();
+  KDCoordinate drawWidth = selectionXEnd - selectionXStart;
+
+  // Compute the height
+  int firstSelectedNodeIndex = thisLayout.indexOfChild(*selectionStart);
+  int secondSelectedNodeIndex = thisLayout.indexOfChild(*selectionEnd);
+  if (firstSelectedNodeIndex == 0 && secondSelectedNodeIndex == numberOfChildren() - 1) {
+    return KDRect(KDPointZero, const_cast<HorizontalLayoutNode *>(this)->layoutSize());
+  }
+  KDCoordinate maxUnderBaseline = 0;
+  KDCoordinate maxAboveBaseline = 0;
+  for (int i = firstSelectedNodeIndex; i <= secondSelectedNodeIndex; i++) {
+    Layout childi = thisLayout.childAtIndex(i);
+    KDSize childSize = childi.layoutSize();
+    maxUnderBaseline = maxCoordinate(maxUnderBaseline, childSize.height() - childi.baseline());
+    maxAboveBaseline = maxCoordinate(maxAboveBaseline, childi.baseline());
+  }
+  return KDRect(KDPoint(selectionXStart, const_cast<HorizontalLayoutNode *>(this)->baseline() - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline));
+}
+
+
 // Private
 
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) {
@@ -427,29 +458,8 @@ void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
     && thisLayout.hasChild(*selectionStart);
   if (childrenAreSelected) {
     assert(thisLayout.hasChild(*selectionEnd));
-
-    // Compute the positions
-    KDCoordinate selectionXStart = positionOfChild(selectionStart->node()).x();
-    KDCoordinate selectionXEnd = positionOfChild(selectionEnd->node()).x() + selectionEnd->layoutSize().width();
-    KDCoordinate drawX = p.x() + selectionXStart;
-    KDCoordinate drawWidth = selectionXEnd - selectionXStart;
-
-    // Compute the height
-    int firstSelectedNodeIndex = thisLayout.indexOfChild(*selectionStart);
-    int secondSelectedNodeIndex = thisLayout.indexOfChild(*selectionEnd);
-    if (firstSelectedNodeIndex == 0 && secondSelectedNodeIndex == numberOfChildren() - 1) {
-      ctx->fillRect(KDRect(KDPoint(drawX, p.y()), KDSize(drawWidth, s.height())), selectionColor);
-      return;
-    }
-    KDCoordinate maxUnderBaseline = 0;
-    KDCoordinate maxAboveBaseline = 0;
-    for (int i = firstSelectedNodeIndex; i <= secondSelectedNodeIndex; i++) {
-      Layout childi = thisLayout.childAtIndex(i);
-      KDSize childSize = childi.layoutSize();
-      maxUnderBaseline = maxCoordinate(maxUnderBaseline, childSize.height() - childi.baseline());
-      maxAboveBaseline = maxCoordinate(maxAboveBaseline, childi.baseline());
-    }
-    ctx->fillRect(KDRect(KDPoint(drawX, p.y() + baseline() - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline)), selectionColor);
+    KDRect selectionRectangle = HorizontalLayout(this).relativeSelectionRect(selectionStart, selectionEnd);
+    ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
   }
 }
 

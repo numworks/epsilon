@@ -339,6 +339,7 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
     if (!currentLayoutIsEmpty && !equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
       /* If there is an equivalent layout positionned on the ingoing position,
        * select it. */
+      assert(equivalentLayout.type() != LayoutNode::Type::HorizontalLayout);
       *selection = equivalentLayout;
     } else {
       // Else, find the first non horizontal ancestor and select it.
@@ -348,12 +349,13 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
       {
         notHorizontalAncestor = notHorizontalAncestor.parent();
       }
-      if (!notHorizontalAncestor.isUninitialized()) {
-        *selection = notHorizontalAncestor;
+      if (notHorizontalAncestor.isUninitialized()) {
+        return; // Leave selection empty
       }
+      *selection = notHorizontalAncestor;
     }
   }
-  m_layout = *selection; //TODO LEA remove selection param
+  m_layout = *selection;
   m_position = outgoingPosition;
 }
 

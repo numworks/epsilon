@@ -79,6 +79,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
            vc = &m_trigonometryController;
         } else if (additionalInfoType == Expression::AdditionalInformationType::Integer) {
           vc = &m_integerController;
+        } else if (additionalInfoType == Expression::AdditionalInformationType::Rational) {
+          vc = &m_rationalController;
         }
         if (vc) {
           vc->setExpression(calculation->input());

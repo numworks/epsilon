@@ -135,7 +135,6 @@ bool LayoutField::ContentView::resetSelection() {
 
 void LayoutField::ContentView::copySelection() {
   if (selectionIsEmpty()) {
-    // TODO LEA if selection empty?
     return;
   }
   constexpr int bufferSize = TextField::maxBufferSize();

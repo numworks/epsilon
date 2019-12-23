@@ -89,6 +89,8 @@ private:
     Poincare::LayoutCursor m_cursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;
+    /* The selection starts on the left of m_selectionStart, and ends on the
+     * right of m_selectionEnd. */
     Poincare::Layout m_selectionStart;
     Poincare::Layout m_selectionEnd;
     bool m_isEditing;

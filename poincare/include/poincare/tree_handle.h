@@ -56,8 +56,8 @@ public:
   }
 
   /* Comparison */
-  inline bool operator==(const TreeHandle& t) { return m_identifier == t.identifier(); }
-  inline bool operator!=(const TreeHandle& t) { return m_identifier != t.identifier(); }
+  inline bool operator==(const TreeHandle& t) const { return m_identifier == t.identifier(); }
+  inline bool operator!=(const TreeHandle& t) const { return m_identifier != t.identifier(); }
 
   /* Clone */
   TreeHandle clone() const;

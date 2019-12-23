@@ -8,9 +8,11 @@ namespace Poincare {
 
 /* WARNING: A HorizontalLayout should never have a HorizontalLayout child. For
  * instance, use addOrMergeChildAtIndex to add a LayoutNode safely. */
+class HorizontalLayout;
 
 class HorizontalLayoutNode final : public LayoutNode {
   friend class Layout;
+  friend class HorizontalLayout;
 public:
 
   HorizontalLayoutNode() :
@@ -55,6 +57,7 @@ protected:
   KDSize computeSize() override;
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * l) override;
+  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd) const;
 
 private:
   bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override;
@@ -93,6 +96,8 @@ public:
   Layout squashUnaryHierarchyInPlace();
 
   void serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize);
+
+  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd) const { return static_cast<HorizontalLayoutNode *>(node())->relativeSelectionRect(selectionStart, selectionEnd); }
 private:
   void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };

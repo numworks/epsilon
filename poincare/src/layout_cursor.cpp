@@ -58,14 +58,14 @@ KDPoint LayoutCursor::middleLeftPoint() {
 }
 
 /* Move */
-void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
-  if (direction == MoveDirection::Left) {
+void LayoutCursor::move(Direction direction, bool * shouldRecomputeLayout) {
+  if (direction == Direction::Left) {
     moveLeft(shouldRecomputeLayout);
-  } else if (direction == MoveDirection::Right) {
+  } else if (direction == Direction::Right) {
     moveRight(shouldRecomputeLayout);
-  } else if (direction == MoveDirection::Up) {
+  } else if (direction == Direction::Up) {
     moveAbove(shouldRecomputeLayout);
-  } else if (direction == MoveDirection::Down) {
+  } else if (direction == Direction::Down) {
     moveUnder(shouldRecomputeLayout);
   } else {
     assert(false);
@@ -74,11 +74,11 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 
 /* Select */
 
-void LayoutCursor::select(MoveDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
-  if (direction == MoveDirection::Right || direction == MoveDirection::Left) {
-    selectLeftRight(direction == MoveDirection::Right, shouldRecomputeLayout, selection);
+void LayoutCursor::select(Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
+  if (direction == Direction::Right || direction == Direction::Left) {
+    selectLeftRight(direction == Direction::Right, shouldRecomputeLayout, selection);
   } else {
-    selectUpDown(direction == MoveDirection::Up, shouldRecomputeLayout, selection);
+    selectUpDown(direction == Direction::Up, shouldRecomputeLayout, selection);
   }
   *shouldRecomputeLayout = true;
 }
@@ -361,7 +361,7 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
 
 void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection) {
   // Move the cursor in the selection direction
-  LayoutCursor c = cursorAtDirection(up ? MoveDirection::Up : MoveDirection::Down, shouldRecomputeLayout);
+  LayoutCursor c = cursorAtDirection(up ? Direction::Up : Direction::Down, shouldRecomputeLayout);
   if (!c.isDefined()) {
     return;
   }

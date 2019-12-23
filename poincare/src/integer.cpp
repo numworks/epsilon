@@ -183,6 +183,16 @@ char hexadecimalCharacterForDigit(uint8_t d) {
 }
 
 int Integer::serialize(char * buffer, int bufferSize, Base base) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  if (bufferSize == 1) {
+    return 0;
+  }
+  if (isOverflow()) {
+    return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
+  }
   switch (base) {
     case Base::Binary:
       return serializeInBinaryBase(buffer, bufferSize, 1, 'b', binaryCharacterForDigit);
@@ -195,17 +205,6 @@ int Integer::serialize(char * buffer, int bufferSize, Base base) const {
 }
 
 int Integer::serializeInDecimal(char * buffer, int bufferSize) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  if (bufferSize == 1) {
-    return 0;
-  }
-  if (isOverflow()) {
-    return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
-  }
-
   Integer base(10);
   Integer abs = *this;
   abs.setNegative(false);

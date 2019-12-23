@@ -50,7 +50,6 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
 }
 
 bool IsBefore(Layout& l1, Layout& l2, bool strict) {
-  //TODO LEA
   char * node1 = reinterpret_cast<char *>(l1.node());
   char * node2 = reinterpret_cast<char *>(l2.node());
   return strict ? (node1 < node2) : (node1 <= node2);
@@ -65,30 +64,17 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
      * */
     m_selectionStart = addedLayout;
     m_selectionEnd = addedLayout;
-  }
-#if 0
-  else if (left == m_selectionEnd) {
-    /*
-     *  +++-------  -> +++ is the previous previous selection
-     *     (   )    -> added selection
-     *  ++++++++--  -> next selection
-     * */
-    m_selectionEnd = right;
-  } else if (right == m_selectionStart) {
-    /*
-     *  -------+++  -> +++ is the previous previous selection
-     *     (   )    -> added selection
-     *  ---+++++++  -> next selection
-     * */
-    m_selectionStart = left;
-  }
-#endif
-   else if (IsBefore(m_selectionEnd, addedLayout, false) && !addedLayout.hasAncestor(m_selectionEnd, true)) {
+  } else if (IsBefore(m_selectionEnd, addedLayout, true)) {
     /*
      *  +++-------  -> +++ is the previous previous selection
      *       (   )  -> added selection
      *  ++++++++++  -> next selection
-     * */
+     *
+     *  The previous selected layouts and the new added selection are all
+     *  children of a same horizontal layout. */
+     assert(m_selectionStart.parent() == m_selectionEnd.parent()
+         && m_selectionStart.parent() == addedLayout.parent()
+         && m_selectionStart.parent().type() == LayoutNode::Type::HorizontalLayout);
      m_selectionEnd = addedLayout;
   } else if (IsBefore(addedLayout, m_selectionStart, true)) {
     /*
@@ -97,58 +83,45 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
      *  ++++++++++  -> next selection
      * */
     if (m_selectionStart.hasAncestor(addedLayout, true)) {
+      // We are selecting a layout containing the current selection
       m_selectionEnd = addedLayout;
     }
     m_selectionStart = addedLayout;
-  } else if (m_selectionEnd == addedLayout) {
-    /*
-     *  ++++++++++  -> +++ is the previous previous selection
-     *       (   )  -> added selection
-     *  +++++-----  -> next selection
-     * */
-     LayoutCursor c1 = LayoutCursor(addedLayout, LayoutCursor::Position::Left);
-     if (c1.layout() == m_selectionStart) {
-       m_selectionStart = Layout();
-       m_selectionEnd = Layout();
-     } else {
-       LayoutCursor c2 = addedLayout.equivalentCursor(&c1);
-       Layout c2Layout = c2.layout();
-       if (c2.position() == LayoutCursor::Position::Right) {
-         assert(IsBefore(m_selectionStart, c2Layout, false));
-         m_selectionEnd = c2Layout;
-       } else {
-        //TODO LEA
-        assert(false);
-       }
-     }
   } else {
-    assert(m_selectionStart == addedLayout);
-    /*
-     *  ++++++++++  -> +++ is the previous previous selection
-     *  (   )       -> added selection
-     *  -----+++++  -> next selection
-     * */
-     LayoutCursor c1 = LayoutCursor(addedLayout, LayoutCursor::Position::Right);
-     if (c1.layout() == m_selectionEnd) {
-       m_selectionStart = Layout();
-       m_selectionEnd = Layout();
-     } else {
-       LayoutCursor c2 = addedLayout.equivalentCursor(&c1);
-       Layout c2Layout = c2.layout();
-       if (c2.position() == LayoutCursor::Position::Left) {
-         assert(IsBefore(c2Layout, m_selectionEnd, false));
-         m_selectionStart = c2Layout;
-       } else {
-        //TODO LEA
-        assert(false);
-       }
-     }
+    bool sameEnd = m_selectionEnd == addedLayout;
+    bool sameStart = m_selectionStart == addedLayout;
+    if (sameStart && sameEnd) {
+      /*
+       *  -----+++++  -> +++ is the previous previous selection
+       *       (   )  -> added selection
+       *  ----------  -> next selection
+       * */
+      m_selectionStart = Layout();
+      m_selectionEnd = Layout();
+    } else {
+      assert(sameStart || sameEnd);
+      /*
+       *  ++++++++++  -> +++ is the previous previous selection
+       *  (   )       -> added selection if sameStart
+       *       (   )  -> added selection if sameEnd
+       *  +++++-----  -> next selection
+       *  The previous selected layouts and the new "added" selection are all
+       *  children of a same horizontal layout. */
+      Layout horizontalParent = m_selectionStart.parent();
+      assert(!horizontalParent.isUninitialized()
+          && horizontalParent == m_selectionEnd.parent()
+          && horizontalParent == addedLayout.parent()
+          && horizontalParent.type() == LayoutNode::Type::HorizontalLayout
+          && ((sameEnd && horizontalParent.indexOfChild(m_selectionEnd) > 0)
+            || (sameStart && horizontalParent.indexOfChild(m_selectionStart) < horizontalParent.numberOfChildren())));
+      if (sameStart) {
+        m_selectionStart = horizontalParent.childAtIndex(horizontalParent.indexOfChild(m_selectionStart) + 1);
+      } else {
+        m_selectionEnd = horizontalParent.childAtIndex(horizontalParent.indexOfChild(m_selectionEnd) - 1);
+      }
+    }
   }
-  //reloadRectFromAndToPositions(left, right);
-  /*if (m_selectionStart == m_selectionEnd) {
-    m_selectionStart = Layout();
-    m_selectionEnd = Layout();
-  } TODO LEA*/
+  //reloadRectFromAndToPositions(left, right); TODO LEA
 }
 
 bool LayoutField::ContentView::resetSelection() {

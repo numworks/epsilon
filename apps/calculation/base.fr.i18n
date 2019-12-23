@@ -1,3 +1,7 @@
 CalculApp = "Calculs"
 CalculAppCapital = "CALCULS"
 AdditionalResults = "Résultats complémentaires"
+DecimalBase = "Décimal"
+HexadecimalBase = "Hexadécimal"
+BinaryBase = "Binaire"
+PrimeFactors = "Facteurs premiers"

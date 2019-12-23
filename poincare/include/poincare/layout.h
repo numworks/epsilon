@@ -37,8 +37,8 @@ public:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) {
     return node()->render(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
-  KDSize layoutSize() { return node()->layoutSize(); }
-  KDPoint absoluteOrigin() { return node()->absoluteOrigin(); }
+  KDSize layoutSize() const { return node()->layoutSize(); }
+  KDPoint absoluteOrigin() const { return node()->absoluteOrigin(); }
   KDCoordinate baseline() { return node()->baseline(); }
   void invalidAllSizesPositionsAndBaselines() { return node()->invalidAllSizesPositionsAndBaselines(); }
 

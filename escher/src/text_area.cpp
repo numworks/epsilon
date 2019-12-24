@@ -123,7 +123,11 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Percent) {
     return removePreviousGlyph();
   } else if (event.hasText()) {
-    return handleEventWithText(event.text());
+    if(event.text() == "%" && Ion::Events::isLockActive()){
+      return removePreviousGlyph();
+    } else {
+      return handleEventWithText(event.text());
+    }
   } else {
     return false;
   }

@@ -72,6 +72,7 @@ public:
 #if REGS_CORTEX_CONFIG_CACHE
   class CCSIDR : public Register32 {
   public:
+    using Register32::Register32;
     REGS_FIELD(ASSOCIATIVITY, uint16_t, 12, 3);
     REGS_FIELD(NUMSETS, uint16_t, 27, 13);
   };
@@ -100,25 +101,20 @@ public:
     using Register32::Register32;
   };
 
-  class DCISW : public Register32 {
+  class DCSW : public Register32 {
   public:
-    DCISW() : Register32(0) {}
+    DCSW() : Register32(0) {}
     REGS_FIELD(SET, uint16_t, 13, 5);
     REGS_FIELD(WAY, uint8_t, 31, 30);
   };
 
-  class DCCSW : public Register32 {
-  public:
-    DCCSW() : Register32(0) {}
-    REGS_FIELD(SET, uint16_t, 13, 5);
-    REGS_FIELD(WAY, uint8_t, 31, 30);
+  class DCISW : public DCSW {
   };
 
-  class DCCISW : public Register32 {
-  public:
-    DCCISW() : Register32(0) {}
-    REGS_FIELD(SET, uint16_t, 13, 5);
-    REGS_FIELD(WAY, uint8_t, 31, 30);
+  class DCCSW : public DCSW {
+  };
+
+  class DCCISW : public DCSW {
   };
 #endif
 

@@ -93,7 +93,9 @@ $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
 apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_solver_test_src)
-
+apps_tests_src += $(addprefix apps/,\
+  global_preferences.cpp \
+)
 
 
 $(foreach img,$(image_list), $(eval $(call rule_for, \
@@ -102,7 +104,6 @@ $(foreach img,$(image_list), $(eval $(call rule_for, \
   $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
   $$(PYTHON) themes/themes_manager.py -i $(OMEGA_THEME) $$@ $(BUILD_DIR)/ \
 )))
-
 
 # Configure variants
 apps_all_src = $(app_src)

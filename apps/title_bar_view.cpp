@@ -71,7 +71,7 @@ void TitleBarView::layoutSubviews() {
   m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()));
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize));
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
   } else {
     m_examModeIconView.setFrame(KDRectZero);
@@ -85,7 +85,7 @@ void TitleBarView::refreshPreferences() {
   char buffer[bufferSize];
   int numberOfChar = 0;
   Preferences * preferences = Preferences::sharedPreferences();
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode() && Preferences::sharedPreferences()->isExamSymbolic()) {
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && Preferences::sharedPreferences()->isExamSymbolic()) {
     // Display "cas" if in exam mode with symbolic computation enabled
       numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Sym), bufferSize - numberOfChar);
       assert(numberOfChar < bufferSize-1);

@@ -15,6 +15,18 @@ template <typename T> T absMod(T a, T b) {
   return result > b/2 ? b-result : result;
 }
 
+static inline int absInt(int x) { return x < 0 ? -x : x; }
+
+template <typename T> int ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Evaluation<T> evaluation = expression->approximate(T(), context, complexFormat, angleUnit);
+  T scalar = evaluation.toScalar();
+  if (std::isnan(scalar) || scalar != (int)scalar) {
+    *isUndefined = true;
+    return 0;
+  }
+  return absInt((int)scalar);
+}
+
 template <typename T> std::complex<T> ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(std::complex<T> c) {
   T arg = std::arg(c);
   T precision = 10*Expression::Epsilon<T>();
@@ -92,6 +104,8 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
   return matrix;
 }
 
+template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
+template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
 template std::complex<float> Poincare::ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument<float>(std::complex<float>);
 template std::complex<double> Poincare::ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument<double>(std::complex<double>);
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexCompute<float> compute);

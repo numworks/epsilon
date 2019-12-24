@@ -1,5 +1,6 @@
 #include <poincare/great_common_divisor.h>
 
+#include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -27,22 +28,20 @@ Expression GreatCommonDivisorNode::shallowReduce(ReductionContext reductionConte
 
 template<typename T>
 Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
-  T f1 = f1Input.toScalar();
-  T f2 = f2Input.toScalar();
-  if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
+  bool isUndefined = false;
+  int a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(0), &isUndefined, context, complexFormat, angleUnit);
+  int b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(1), &isUndefined, context, complexFormat, angleUnit);
+  if (isUndefined) {
     return Complex<T>::Undefined();
   }
-  int a = (int)f2;
-  int b = (int)f1;
-  if (f1 > f2) {
+  if (b > a) {
+    int temp = b;
     b = a;
-    a = (int)f1;
+    a = temp;
   }
   int r = 0;
   while((int)b!=0){
-    r = a - ((int)(a/b))*b;
+    r = a - (a/b)*b;
     a = b;
     b = r;
   }

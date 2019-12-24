@@ -3,11 +3,11 @@
 namespace Ion {
 namespace ExamMode {
 
-bool FetchExamMode() {
+uint8_t FetchExamMode() {
   return false;
 }
 
-void ToggleExamMode() {
+void IncrementExamMode(uint8_t delta) {
 }
 
 }

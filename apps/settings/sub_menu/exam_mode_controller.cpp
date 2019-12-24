@@ -1,6 +1,7 @@
 #include "exam_mode_controller.h"
 #include "../../global_preferences.h"
 #include "../../apps_container.h"
+#include <apps/i18n.h>
 #include <assert.h>
 #include <cmath>
 #include <poincare/preferences.h>
@@ -16,24 +17,38 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
   m_preferencesController(this),
   m_examModeCell(I18n::Message::Default, KDFont::LargeFont),
   m_ledCell(KDFont::LargeFont, KDFont::SmallFont),
-  m_symbolicCell(I18n::Message::SymbolicEnabled, KDFont::LargeFont)
+  m_symbolicCell(I18n::Message::SymbolicEnabled, KDFont::LargeFont),
+  m_cell{ MessageTableCell(I18n::Message::ExamModeActive, KDFont::LargeFont), MessageTableCell(I18n::Message::ActivateDutchExamMode, KDFont::LargeFont) }
 {
 }
 
-void ExamModeController::didEnterResponderChain(Responder * previousFirstResponder) {
-  m_selectableTableView.reloadData();
+int ExamModeController::initialSelectedRow() const {
+  int row = selectedRow();
+  if (row >= numberOfRows()) {
+    return numberOfRows()-1;
+  } else if (row < 0) {
+    return 0;
+  }
+  return row;
 }
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   I18n::Message childLabel = m_messageTreeModel->children(selectedRow())->label();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode()) {
+    if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+      // If the exam mode is already on, this re-activate the same exam mode
+      GlobalPreferences::ExamMode mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
       if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive)
-        AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
+        AppsContainer::sharedAppsContainer()->displayExamModePopUp(mode);
+      return true;
+    } else if (childLabel == I18n::Message::ActivateDutchExamMode) {
+      GlobalPreferences::ExamMode mode = GlobalPreferences::ExamMode::Dutch;
+      if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive)
+        AppsContainer::sharedAppsContainer()->displayExamModePopUp(mode);
       return true;
     }
     if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive) {
-      AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
+      AppsContainer::sharedAppsContainer()->displayExamModePopUp(GlobalPreferences::sharedGlobalPreferences()->examMode());
       return true;
     }
     if (childLabel == I18n::Message::LEDColor) {
@@ -51,6 +66,13 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
     }
   }
   return GenericSubController::handleEvent(event);
+}
+
+int ExamModeController::numberOfRows() const {
+  if (GlobalPreferences::sharedGlobalPreferences()->language() != I18n::Language::EN || GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    return 1;
+  }
+  return GenericSubController::numberOfRows();
 }
 
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
@@ -76,14 +98,21 @@ int ExamModeController::reusableCellCount(int type) {
       assert(false);
       return 0;
   }
+  /*assert(type == 0);
+  assert(index >= 0 && index < k_maxNumberOfCells);
+  return &m_cell[index];*/
 }
+
+/*int ExamModeController::reusableCellCount(int type) {
+  return k_maxNumberOfCells;
+}*/
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Preferences * preferences = Preferences::sharedPreferences();
   GenericSubController::willDisplayCellForIndex(cell, index);
   I18n::Message thisLabel = m_messageTreeModel->children(index)->label();
 
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode() && (thisLabel == I18n::Message::ActivateExamMode || thisLabel == I18n::Message::ExamModeActive)) {
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && (thisLabel == I18n::Message::ActivateExamMode || thisLabel == I18n::Message::ExamModeActive)) {
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(I18n::Message::ExamModeActive);
   }

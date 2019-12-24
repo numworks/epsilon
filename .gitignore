@@ -2,3 +2,4 @@
 build/device/**/*.pyc
 epsilon.elf
 .vscode
+.DS_Store

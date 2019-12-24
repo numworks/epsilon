@@ -87,7 +87,7 @@ static constexpr const char * s_nameForEvent[255] = {
   //Shift+Alpha,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, "Percent",
   "UpperA", "UpperB", "UpperC", "UpperD", "UpperE", "UpperF",
   "UpperG", "UpperH", "UpperI", "UpperJ", "UpperK", "UpperL",
   "UpperM", "UpperN", "UpperO", "UpperP", "UpperQ", nullptr,

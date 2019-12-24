@@ -10,14 +10,14 @@ using namespace Poincare;
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
   ViewController(nullptr),
   m_contentView(this),
-  m_isActivatingExamMode(false),
+  m_targetExamMode(GlobalPreferences::ExamMode::Unknown),
   m_delegate(delegate)
 {
 }
 
-void ExamPopUpController::setActivatingExamMode(bool activatingExamMode) {
-  m_isActivatingExamMode = activatingExamMode;
-  m_contentView.setMessages(activatingExamMode);
+void ExamPopUpController::setTargetExamMode(GlobalPreferences::ExamMode mode) {
+  m_targetExamMode = mode;
+  m_contentView.setMessagesForExamMode(mode);
 }
 
 View * ExamPopUpController::view() {
@@ -25,7 +25,7 @@ View * ExamPopUpController::view() {
 }
 
 void ExamPopUpController::viewDidDisappear() {
-  if (m_isActivatingExamMode == false) {
+  if (m_targetExamMode == GlobalPreferences::ExamMode::Off) {
     m_delegate->examDeactivatingPopUpIsDismissed();
   }
 }
@@ -53,13 +53,15 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   }, parentResponder), KDFont::SmallFont),
   m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
-    GlobalPreferences::sharedGlobalPreferences()->setExamMode(controller->isActivatingExamMode());
+    GlobalPreferences::ExamMode mode = controller->targetExamMode();
+    assert(mode != GlobalPreferences::ExamMode::Unknown);
+    GlobalPreferences::sharedGlobalPreferences()->setExamMode(mode);
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    if (controller->isActivatingExamMode()) {
-      container->activateExamMode();
-    } else {
+    if (mode == GlobalPreferences::ExamMode::Off) {
       Ion::LED::setColor(KDColorBlack);
       Ion::LED::updateColorWithPlugAndCharge();
+    } else {
+      container->activateExamMode(mode);
     }
     container->refreshPreferences();
     Container::activeApp()->dismissModalViewController();
@@ -89,15 +91,20 @@ int ExamPopUpController::ContentView::selectedButton() {
   return 1;
 }
 
-void ExamPopUpController::ContentView::setMessages(bool activingExamMode) {
-  if (activingExamMode) {
+void ExamPopUpController::ContentView::setMessagesForExamMode(GlobalPreferences::ExamMode mode) {
+  if (mode == GlobalPreferences::ExamMode::Off) {
+    m_messageTextView1.setMessage(I18n::Message::ExitExamMode1);
+    m_messageTextView2.setMessage(I18n::Message::ExitExamMode2);
+    m_messageTextView3.setMessage(I18n::Message::Default);
+  } else if (mode == GlobalPreferences::ExamMode::Standard) {
     m_messageTextView1.setMessage(I18n::Message::ActiveExamModeMessage1);
     m_messageTextView2.setMessage(I18n::Message::ActiveExamModeMessage2);
     m_messageTextView3.setMessage(I18n::Message::ActiveExamModeMessage3);
   } else {
-    m_messageTextView1.setMessage(I18n::Message::ExitExamMode1);
-    m_messageTextView2.setMessage(I18n::Message::ExitExamMode2);
-    m_messageTextView3.setMessage(I18n::Message::Default);
+    assert(mode == GlobalPreferences::ExamMode::Dutch);
+    m_messageTextView1.setMessage(I18n::Message::ActiveDutchExamModeMessage1);
+    m_messageTextView2.setMessage(I18n::Message::ActiveDutchExamModeMessage2);
+    m_messageTextView3.setMessage(I18n::Message::ActiveDutchExamModeMessage3);
   }
 }
 

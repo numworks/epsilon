@@ -3,13 +3,13 @@
 #include "flash.h"
 #include <assert.h>
 
-namespace Ion {
-namespace ExamMode {
-
 extern "C" {
   extern char _exam_mode_buffer_start;
   extern char _exam_mode_buffer_end;
 }
+
+namespace Ion {
+namespace ExamMode {
 
 char ones[Config::ExamModeBufferSize]
   __attribute__((section(".exam_mode_buffer")))
@@ -18,33 +18,24 @@ char ones[Config::ExamModeBufferSize]
 
 /* The exam mode is written in flash so that it is resilient to resets.
  * We erase the dedicated flash sector (all bits written to 1) and, upon
- * activating or deactivating the exam mode we write one bit to 0. To determine
- * if we are in exam mode, we count the number of leading 0 bits. If it is even,
- * the exam mode is deactivated, if it is odd, the exam mode is activated. */
+ * deactivating or activating standard or Dutch exam mode we write one or two
+ * bits to 0. To determine in which exam mode we are, we count the number of
+ * leading 0 bits. If it is equal to:
+ * - 0[3]: the exam mode is off;
+ * - 1[3]: the standard exam mode is activated;
+ * - 2[3]: the Dutch exam mode is activated. */
 
 /* significantExamModeAddress returns the first uint32_t * in the exam mode
- * flash sector that does not point to 0. If this flash sector has only 0s, it
- * is erased (to 1) and significantExamModeAddress returns the start of the
- * sector. */
+ * flash sector that does not point to 0. If this flash sector has only 0s or
+ * if it has only one 1, it is erased (to 1) and significantExamModeAddress
+ * returns the start of the sector. */
 
-uint32_t * SignificantExamModeAddress() {
-  uint32_t * persitence_start = (uint32_t *)&_exam_mode_buffer_start;
-  uint32_t * persitence_end = (uint32_t *)&_exam_mode_buffer_end;
-  while (persitence_start < persitence_end && *persitence_start == 0x0) {
-    // Skip even number of zero bits
-    persitence_start++;
-  }
-  if (persitence_start == persitence_end) {
-    assert(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start) >= 0);
-    Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start));
-    return (uint32_t *)&_exam_mode_buffer_start;
-  }
-  return persitence_start;
-}
+constexpr static size_t numberOfBitsInByte = 8;
 
-size_t firstOneBit(int i, size_t size) {
+// if i = 0b000011101, firstOneBitInByte(i) returns 5
+size_t numberOfBitsAfterLeadingZeroes(int i) {
   int minShift = 0;
-  int maxShift = size;
+  int maxShift = numberOfBitsInByte;
   while (maxShift > minShift+1) {
     int shift = (minShift + maxShift)/2;
     int shifted = i >> shift;
@@ -57,23 +48,72 @@ size_t firstOneBit(int i, size_t size) {
   return maxShift;
 }
 
-bool FetchExamMode() {
-  uint32_t * readingAddress = SignificantExamModeAddress();
-  size_t numberOfLeading0 = 32 - firstOneBit(*readingAddress, 32);
-  return numberOfLeading0 % 2 == 1;
+uint8_t * SignificantExamModeAddress() {
+  uint32_t * persitence_start_32 = (uint32_t *)&_exam_mode_buffer_start;
+  uint32_t * persitence_end_32 = (uint32_t *)&_exam_mode_buffer_end;
+  assert(persitence_end_32 - persitence_start_32 % 4 == 0);
+  while (persitence_start_32 < persitence_end_32 && *persitence_start_32 == 0x0) {
+    // Scan by groups of 32 bits to reach first non-zero bit
+    persitence_start_32++;
+  }
+  uint8_t * persitence_start_8 = (uint8_t *)persitence_start_32;
+  uint8_t * persitence_end_8 = (uint8_t *)persitence_end_32;
+  while (persitence_start_8 < persitence_end_8 && *persitence_start_8 == 0x0) {
+    // Scan by groups of 8 bits to reach first non-zero bit
+    persitence_start_8++;
+  }
+  if (persitence_start_8 == persitence_end_8
+  // we can't toggle from 0[3] to 2[3] when there is only one 1 bit in the whole sector
+  || (persitence_start_8 + 1 == persitence_end_8 && *persitence_start_8 == 1)) {
+    assert(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start) >= 0);
+    Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start));
+    return (uint8_t *)&_exam_mode_buffer_start;
+  }
+
+  return persitence_start_8;
 }
 
-void ToggleExamMode() {
-  uint32_t * writingAddress = SignificantExamModeAddress();
+uint8_t FetchExamMode() {
+  uint8_t * readingAddress = SignificantExamModeAddress();
+  // Count the number of 0[3] before reading address
+  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * numberOfBitsInByte) % 3;
+  // Count the number of 0[3] at reading address
+  size_t numberOfLeading0 = (numberOfBitsInByte - numberOfBitsAfterLeadingZeroes(*readingAddress)) % 3;
+  return (nbOfZerosBefore + numberOfLeading0) % 3;
+}
+
+void IncrementExamMode(uint8_t delta) {
+  assert(delta == 1 || delta == 2);
+  uint8_t * writingAddress = SignificantExamModeAddress();
   assert(*writingAddress != 0);
-  // Compute the new value with one bit switched
-  uint8_t numberOfLeadingZeroes = 32 - firstOneBit(*writingAddress, 32);
-  /* When writing in flash, we can only switch a 1 to a 0. If we want to switch
-   * the fifth bit in a byte, we can thus write "11110111". */
-  uint32_t newValue = ~(1 << (31 - numberOfLeadingZeroes));
+  size_t nbOfTargetedOnes = numberOfBitsAfterLeadingZeroes(*writingAddress);
+
+  // Compute the new value with delta bits switched to 0.
+  /* We write in 2 bytes instead of 1, in case there was only one bit
+   * left to 1 in writingAddress. */
+  nbOfTargetedOnes += numberOfBitsInByte;
+  nbOfTargetedOnes -= delta;
+  constexpr size_t newValueSize = sizeof(uint16_t)/sizeof(uint8_t);
+  uint8_t newValue[newValueSize];
+  if (nbOfTargetedOnes > numberOfBitsInByte) {
+    size_t nbOfTargetedOnesInFirstByte = nbOfTargetedOnes - numberOfBitsInByte;
+    assert(nbOfTargetedOnesInFirstByte <= numberOfBitsInByte);
+    newValue[0] = ((uint16_t)1 << nbOfTargetedOnesInFirstByte) - 1;
+    newValue[1] = 0xFF;
+  } else {
+    assert(nbOfTargetedOnes <= numberOfBitsInByte);
+    newValue[0] = 0;
+    newValue[1] = ((uint16_t)1 << nbOfTargetedOnes) - 1;
+  }
 
   // Write the value in flash
-  Ion::Device::Flash::WriteMemory((uint8_t *)writingAddress, (uint8_t *)&newValue, sizeof(uint32_t));
+  /* As the number of changed bits is capped by 2, if *writingAddress has more
+   * than one remaining 1 bit, we know we toggle bits only in the first byte of
+   * newValue. We can settle for writing one byte instead of two. */
+  size_t writtenFlash = *writingAddress == 1 ? sizeof(uint16_t) : sizeof(uint8_t);
+  /* Avoid writing out of sector */
+  assert(writingAddress < (uint8_t *)&_exam_mode_buffer_end - 1 || (writingAddress == (uint8_t *)&_exam_mode_buffer_end - 1 && writtenFlash == 1));
+  Ion::Device::Flash::WriteMemory(writingAddress, newValue, writtenFlash);
 }
 
 }

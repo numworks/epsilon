@@ -1,2 +1,5 @@
 Apps = "Aplicaciones"
 AppsCapital = "OMEGA"
+AppsCapital = "APLICACIONES"
+ForbidenAppInExamMode1 = "This application is"
+ForbidenAppInExamMode2 = "forbidden in exam mode"

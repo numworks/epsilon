@@ -15,7 +15,12 @@
  *   2^7                64KiB blocks   0x..0000 - 0x..FFFF
  *   2^7 * 2            32KiB blocks   0x..0000 - 0x..7FFF or 0x..8000 - 0x..FFFF
  *   2^7 * 2 * 2^3       4KiB blocks   0x...000 - 0x...FFF
- *   2^7 * 2 * 2^3 * 2^4 256B pages    0x....00 - 0x....FF */
+ *   2^7 * 2 * 2^3 * 2^4 256B pages    0x....00 - 0x....FF
+ *
+ * To be able to erase a small sector for the exam mode, we say that the flash
+ * is cut into 8 + 1 + 2^7-1 = 136 sectors: 8 sectors of 4Kb, 1 sector of 32Kb
+ * and 2^7-1 sectors of 64Kb. These sectors are the smallest erasable units. If
+ * need be, we can define more sectors to erase even more finely the flash. */
 
 namespace Ion {
 namespace Device {

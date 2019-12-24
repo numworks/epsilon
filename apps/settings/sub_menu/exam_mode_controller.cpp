@@ -17,8 +17,8 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
   m_preferencesController(this),
   m_examModeCell(I18n::Message::Default, KDFont::LargeFont),
   m_ledCell(KDFont::LargeFont, KDFont::SmallFont),
-  m_symbolicCell(I18n::Message::SymbolicEnabled, KDFont::LargeFont)
-  m_cell{MessageTableCell(I18n::Message::ExamModeActive, KDFont::LargeFont), MessageTableCell(I18n::Message::ActivateDutchExamMode, KDFont::LargeFont)}
+  m_symbolicCell(I18n::Message::SymbolicEnabled, KDFont::LargeFont),
+  m_cell{ MessageTableCell(I18n::Message::ExamModeActive, KDFont::LargeFont), MessageTableCell(I18n::Message::ActivateDutchExamMode, KDFont::LargeFont) }
 {
 }
 
@@ -37,18 +37,18 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
       // If the exam mode is already on, this re-activate the same exam mode
-      mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+      GlobalPreferences::ExamMode mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
       if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive)
-        AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
+        AppsContainer::sharedAppsContainer()->displayExamModePopUp(mode);
       return true;
     } else if (childLabel == I18n::Message::ActivateDutchExamMode) {
-      mode = GlobalPreferences::ExamMode::Dutch
+      GlobalPreferences::ExamMode mode = GlobalPreferences::ExamMode::Dutch;
       if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive)
-        AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
+        AppsContainer::sharedAppsContainer()->displayExamModePopUp(mode);
       return true;
     }
     if (childLabel == I18n::Message::ActivateExamMode || childLabel == I18n::Message::ExamModeActive) {
-      AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
+      AppsContainer::sharedAppsContainer()->displayExamModePopUp(GlobalPreferences::sharedGlobalPreferences()->examMode());
       return true;
     }
     if (childLabel == I18n::Message::LEDColor) {

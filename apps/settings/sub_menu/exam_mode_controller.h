@@ -16,16 +16,13 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;
 private:
-<<<<<<< HEAD
   MessageTableCell m_examModeCell;
   MessageTableCellWithChevronAndMessage m_ledCell;
   PreferencesController m_preferencesController;
   MessageTableCellWithSwitch m_symbolicCell;
-=======
   int initialSelectedRow() const override;
   static constexpr int k_maxNumberOfCells = 2;
   MessageTableCell m_cell[k_maxNumberOfCells];
->>>>>>> upstream/master
 };
 
 }

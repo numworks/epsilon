@@ -59,7 +59,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1);
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch && selectedSnapshot->descriptor()->name() == I18n::Message::CodeApp) {
+    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch &&
+      (selectedSnapshot->descriptor()->name() == I18n::Message::CodeApp || selectedSnapshot->descriptor()->name() == I18n::Message::ExternalApp)) {
       App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
     } else {
       bool switched = container->switchTo(selectedSnapshot);

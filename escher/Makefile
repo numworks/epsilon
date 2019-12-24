@@ -108,7 +108,7 @@ INLINER := $(BUILD_DIR)/escher/image/inliner
 $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \
-  %.png $$(INLINER), \
+  $(BUILD_DIR)/%.png $$(INLINER), \
   $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp \
 ))
 
@@ -122,4 +122,5 @@ define depends_on_image
 $(call object_for,$(1)): $(call object_for,$(2))
 $(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
 escher_src += $(2)
+image_list += $(2)
 endef

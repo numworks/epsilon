@@ -36,7 +36,7 @@ bool isSane(const TarHeader* tar) {
 }
 
 bool isExamModeAndFileNotExecutable(const TarHeader* tar) {
-  return GlobalPreferences::sharedGlobalPreferences()->examMode() && (tar->mode[4] & 0x01) == 0;
+  return GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && (tar->mode[4] & 0x01) == 0;
 }
 
 bool fileAtIndex(size_t index, File &entry) {

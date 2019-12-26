@@ -28,11 +28,16 @@ Integer extractInteger(const Expression e) {
 }
 
 Layout RationalListController::layoutAtIndex(int index) {
-  // TODO: implement mixed fraction
   assert(m_expression.type() == ExpressionNode::Type::Division);
   Integer numerator = extractInteger(m_expression.childAtIndex(0));
   Integer denominator = extractInteger(m_expression.childAtIndex(1));
-  Expression e = Integer::CreateEuclideanDivision(numerator, denominator);
+  Expression e;
+  if (index == 0) {
+    e = Integer::CreateMixedFraction(numerator, denominator);
+  } else {
+    assert(index == 1);
+    e = Integer::CreateEuclideanDivision(numerator, denominator);
+  }
   return PoincareHelpers::CreateLayout(e);
 }
 

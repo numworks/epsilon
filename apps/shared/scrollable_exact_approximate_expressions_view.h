@@ -57,7 +57,7 @@ protected:
     bool displayCenter() const { return m_displayCenter; }
     void setDisplayCenter(bool display);
     bool displayLeft() const { return m_displayLeft; }
-    void setDisplayLeft(bool display) { m_displayLeft = display; }
+    void setDisplayLeft(bool display);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     virtual Poincare::Layout layout() const override;

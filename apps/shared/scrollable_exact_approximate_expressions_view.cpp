@@ -91,6 +91,11 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::setSelected
 void AbstractScrollableExactApproximateExpressionsView::ContentCell::setDisplayCenter(bool display) {
   m_displayCenter = display;
   reloadTextColor();
+  layoutSubviews();
+}
+
+void AbstractScrollableExactApproximateExpressionsView::ContentCell::setDisplayLeft(bool display) {
+  m_displayLeft = display; layoutSubviews();
 }
 
 Poincare::Layout AbstractScrollableExactApproximateExpressionsView::ContentCell::layout() const {

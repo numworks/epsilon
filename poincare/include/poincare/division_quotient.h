@@ -2,6 +2,7 @@
 #define POINCARE_DIVISION_QUOTIENT_H
 
 #include <poincare/expression.h>
+#include <poincare/integer.h>
 
 namespace Poincare {
 
@@ -44,6 +45,7 @@ public:
 
   // Expression
   Expression shallowReduce(Context * context);
+  static Expression Reduce(const Integer & a, const Integer & b);
 };
 
 }

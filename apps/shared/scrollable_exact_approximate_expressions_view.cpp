@@ -141,7 +141,7 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::layoutSubvi
     leftView()->setFrame(KDRect(currentWidth, baseline-leftViewBaseline, leftSize), force);
     currentWidth += leftSize.width() + Metric::CommonLargeMargin;
   }
-  // Layout centerd expression
+  // Layout centered expression
   if (m_displayCenter && !m_centeredExpressionView.layout().isUninitialized()) {
     KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
     m_centeredExpressionView.setFrame(KDRect(currentWidth, baseline-centeredBaseline, centeredExpressionSize), force);

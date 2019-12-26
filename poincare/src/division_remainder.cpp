@@ -70,7 +70,7 @@ Expression DivisionRemainder::shallowReduce(Context * context) {
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   if (b.isZero()) {
-    Expression result = Infinity::Builder(a.isNegative());
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }

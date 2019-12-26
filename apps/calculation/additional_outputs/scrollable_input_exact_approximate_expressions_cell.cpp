@@ -33,6 +33,7 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
 }
 
 void ScrollableInputExactApproximateExpressionsCell::didBecomeFirstResponder() {
+  m_view.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
   Container::activeApp()->setFirstResponder(&m_view);
 }
 

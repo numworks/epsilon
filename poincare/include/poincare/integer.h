@@ -143,6 +143,10 @@ public:
   static Integer Power(const Integer & i, const Integer & j);
   static Integer Factorial(const Integer & i);
 
+  // Derived expression builder
+  static Expression CreateMixedFraction(const Integer & num, const Integer & denom);
+  static Expression CreateEuclideanDivision(const Integer & num, const Integer & denom);
+
   constexpr static int k_maxNumberOfDigits = 32;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308

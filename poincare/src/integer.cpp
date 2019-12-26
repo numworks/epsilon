@@ -6,6 +6,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/addition.h>
+#include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/equal.h>
@@ -688,7 +689,10 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 }
 
 Expression Integer::CreateMixedFraction(const Integer & num, const Integer & denom) {
-  return Expression();
+  Expression quo = DivisionQuotient::Reduce(num, denom);
+  Expression rem = DivisionRemainder::Reduce(num, denom);
+  return Addition::Builder(quo, Division::Builder(rem, Rational::Builder(denom)));
+
 }
 
 Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer & denom) {

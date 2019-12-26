@@ -68,16 +68,18 @@ Expression DivisionQuotient::shallowReduce(Context * context) {
 
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
+  Expression result = Reduce(a, b);
+  replaceWithInPlace(result);
+  return result;
+}
+
+Expression DivisionQuotient::Reduce(const Integer & a, const Integer & b) {
   if (b.isZero()) {
-    Expression result = Infinity::Builder(a.isNegative());
-    replaceWithInPlace(result);
-    return result;
+    return Infinity::Builder(a.isNegative());
   }
   Integer result = Integer::Division(a, b).quotient;
   assert(!result.isOverflow());
-  Expression rationalResult = Rational::Builder(result);
-  replaceWithInPlace(rationalResult);
-  return rationalResult;
+  return Rational::Builder(result);
 }
 
 }

@@ -2,6 +2,8 @@
 #include <escher/palette.h>
 #include <escher/metric.h>
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+
 TableCell::TableCell(Layout layout) :
   HighlightCell(),
   m_layout(layout)
@@ -50,14 +52,14 @@ void TableCell::layoutSubviews(bool force) {
               k_separatorThickness+k_labelMargin,
               k_separatorThickness+Metric::TableCellLabelTopMargin,
               width-2*k_separatorThickness-k_labelMargin,
-              labelSize.height()),
+              minCoordinate(labelSize.height(), height)),
         force);
         break;
       default:
         label->setFrame(KDRect(
               k_separatorThickness+k_labelMargin,
               k_separatorThickness,
-              labelSize.width(),
+              minCoordinate(labelSize.width(), width),
               height - 2*k_separatorThickness),
         force);
         break;
@@ -90,7 +92,7 @@ void TableCell::layoutSubviews(bool force) {
           accessory->setFrame(KDRect(
                 minX,
                 k_separatorThickness,
-                accessorySize.width(),
+                minCoordinate(accessorySize.width(), width - minX),
                 height-2*k_separatorThickness),
           force);
         }

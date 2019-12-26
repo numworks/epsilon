@@ -5,6 +5,11 @@
 #include <poincare/serialization_helper.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/addition.h>
+#include <poincare/division_quotient.h>
+#include <poincare/division_remainder.h>
+#include <poincare/equal.h>
+#include <poincare/multiplication.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -680,6 +685,19 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     div.remainder = div.remainder.divideByPowerOf2(pow);
   }
   return div;
+}
+
+Expression Integer::CreateMixedFraction(const Integer & num, const Integer & denom) {
+  return Expression();
+}
+
+Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer & denom) {
+  Expression quo = DivisionQuotient::Reduce(num, denom);
+  Expression rem = DivisionRemainder::Reduce(num, denom);
+  Expression e = Equal::Builder(Rational::Builder(num), Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
+  ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, ExpressionNode::ReductionTarget::User, false);
+  e = e.deepBeautify(defaultReductionContext);
+  return e;
 }
 
 template float Integer::approximate<float>() const;

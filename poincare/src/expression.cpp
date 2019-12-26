@@ -177,6 +177,10 @@ bool Expression::IsInfinity(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Infinity;
 }
 
+bool Expression::IsSignedBasedInteger(const Expression e) {
+  return e.type() == ExpressionNode::Type::BasedInteger || (e.type() == ExpressionNode::Type::Opposite && e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger);
+}
+
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {
   if (e.type() == ExpressionNode::Type::Symbol) {
     int index = 0;
@@ -251,7 +255,8 @@ Expression::AdditionalInformationType Expression::additionalInformationType(Cont
   if (t == ExpressionNode::Type::BasedInteger) {
     return AdditionalInformationType::Integer;
   }
-  if (t == ExpressionNode::Type::Division && childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && childAtIndex(1).type() == ExpressionNode::Type::BasedInteger) {
+  // Find forms like [12]/[23] or [-12]/[23] or [12]/[-23] or [-12]/[-23]
+  if (t == ExpressionNode::Type::Division && IsSignedBasedInteger(childAtIndex(1)) && IsSignedBasedInteger(childAtIndex(1))) {
     return AdditionalInformationType::Rational;
   }
   if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {

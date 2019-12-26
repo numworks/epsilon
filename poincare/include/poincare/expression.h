@@ -155,6 +155,7 @@ public:
   static bool IsRandom(const Expression e, Context * context);
   static bool IsMatrix(const Expression e, Context * context);
   static bool IsInfinity(const Expression e, Context * context);
+  static bool IsSignedBasedInteger(const Expression e);
   /* 'characteristicXRange' tries to assess the range on x where the expression
    * (considered as a function on x) has an interesting evolution. For example,
    * the period of the function on 'x' if it is periodic. If

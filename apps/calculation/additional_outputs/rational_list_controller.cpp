@@ -12,22 +12,27 @@ int RationalListController::numberOfRows() const {
   return 2;
 }
 
+Integer extractInteger(const Expression e) {
+  assert(Expression::IsSignedBasedInteger(e));
+  // e is of form [±12]/[±23]
+  Integer i;
+  if (e.type() == ExpressionNode::Type::BasedInteger) {
+    i = static_cast<const BasedInteger &>(e).integer();
+  } else {
+    Expression f = e.childAtIndex(0);
+    assert(f.type() == ExpressionNode::Type::BasedInteger);
+    i = static_cast<const BasedInteger &>(f).integer();
+    i.setNegative(true);
+  }
+  return i;
+}
+
 Layout RationalListController::layoutAtIndex(int index) {
-  // TODO: do something simpler using rational?
   // TODO: implement mixed fraction
   assert(m_expression.type() == ExpressionNode::Type::Division);
-  Expression c0 = m_expression.childAtIndex(0);
-  Expression c1 = m_expression.childAtIndex(1);
-  assert(c0.type() == ExpressionNode::Type::BasedInteger);
-  assert(c1.type() == ExpressionNode::Type::BasedInteger);
-  Integer num = static_cast<BasedInteger &>(c0).integer();
-  Integer denom = static_cast<BasedInteger &>(c1).integer();
-  Poincare::Context * context = App::app()->localContext();
-  DivisionQuotient quo = DivisionQuotient::Builder(Rational::Builder(num), Rational::Builder(denom));
-  PoincareHelpers::Simplify(&quo, context, ExpressionNode::ReductionTarget::User);
-  DivisionRemainder rem = DivisionRemainder::Builder(Rational::Builder(num), Rational::Builder(denom));
-  PoincareHelpers::Simplify(&rem, context, ExpressionNode::ReductionTarget::User);
-  Expression e = Equal::Builder(Rational::Builder(num), Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
+  Integer numerator = extractInteger(m_expression.childAtIndex(0));
+  Integer denominator = extractInteger(m_expression.childAtIndex(1));
+  Expression e = Integer::CreateEuclideanDivision(numerator, denominator);
   return PoincareHelpers::CreateLayout(e);
 }
 

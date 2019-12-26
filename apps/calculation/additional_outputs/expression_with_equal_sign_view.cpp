@@ -5,7 +5,7 @@ namespace Calculation {
 KDSize ExpressionWithEqualSignView::minimalSizeForOptimalDisplay() const {
   KDSize expressionSize = m_expressionView.minimalSizeForOptimalDisplay();
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
-  return KDSize(expressionSize.width() + equalSize.width(), expressionSize.height());
+  return KDSize(expressionSize.width() + equalSize.width() + Metric::CommonLargeMargin, expressionSize.height());
 }
 
 View * ExpressionWithEqualSignView::subviewAtIndex(int index) {
@@ -21,7 +21,7 @@ void ExpressionWithEqualSignView::layoutSubviews(bool force) {
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
   KDCoordinate expressionBaseline = m_expressionView.layout().baseline();
   m_expressionView.setFrame(KDRect(0, 0, expressionSize), force);
-  m_equalSign.setFrame(KDRect(expressionSize.width(), expressionBaseline - equalSize.height()/2, equalSize), force);
+  m_equalSign.setFrame(KDRect(expressionSize.width() + Metric::CommonLargeMargin, expressionBaseline - equalSize.height()/2, equalSize), force);
 }
 
 }

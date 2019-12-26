@@ -353,9 +353,10 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("quo(19,3)", "6");
   assert_parsed_expression_simplify_to("quo(19,0)", Infinity::Name());
   assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
+  assert_parsed_expression_simplify_to("quo(19,0)", Infinity::Name());
   assert_parsed_expression_simplify_to("rem(19,3)", "1");
   assert_parsed_expression_simplify_to("rem(-19,3)", "2");
-  assert_parsed_expression_simplify_to("rem(19,0)", Infinity::Name());
+  assert_parsed_expression_simplify_to("rem(19,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
   assert_parsed_expression_simplify_to("factor(-10008/6895)", "-\u00122^3×3^2×139\u0013/\u00125×7×197\u0013");
   assert_parsed_expression_simplify_to("factor(1008/6895)", "\u00122^4×3^2\u0013/\u00125×197\u0013");

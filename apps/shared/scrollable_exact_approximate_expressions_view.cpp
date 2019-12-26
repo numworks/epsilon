@@ -174,12 +174,12 @@ void AbstractScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Me
 }
 
 void AbstractScrollableExactApproximateExpressionsView::reloadScroll() {
-  if (selectedSubviewPosition() == SubviewPosition::Center) {
-    // Scroll to the left extremity
-    ScrollableView::reloadScroll();
-  } else {
+  if (selectedSubviewPosition() == SubviewPosition::Right) {
     // Scroll to the right extremity
     scrollToContentPoint(KDPoint(contentCell()->bounds().width(), 0), true);
+  } else {
+    // Scroll to the left extremity
+    ScrollableView::reloadScroll();
   }
 }
 

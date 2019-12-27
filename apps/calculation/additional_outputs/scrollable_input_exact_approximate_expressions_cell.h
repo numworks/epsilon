@@ -11,7 +11,7 @@ namespace Calculation {
 class ScrollableInputExactApproximateExpressionsView : public Shared::AbstractScrollableExactApproximateExpressionsView {
 public:
   ScrollableInputExactApproximateExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
-    setMargins(Metric::CommonSmallMargin, 0, Metric::CommonSmallMargin, 0); // Left Right margins are already added by TableCell
+    setMargins(Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin); // Left Right margins are already added by TableCell
     setBackgroundColor(KDColorWhite);
   }
   void setCalculation(Calculation * calculation);
@@ -60,6 +60,8 @@ public:
   void setDisplayLeft(bool display) { m_view.setDisplayLeft(display); }
 
 private:
+  // Remove label margin added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView
+  KDCoordinate labelMargin() const override { return 0; }
   ScrollableInputExactApproximateExpressionsView m_view;
 };
 

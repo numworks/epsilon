@@ -1,8 +1,7 @@
-#include "scrollable_expression_view.h"
+#include <escher/scrollable_expression_view.h>
+#include <poincare/layout.h>
+#include <escher/metric.h>
 #include <assert.h>
-using namespace Poincare;
-
-namespace Calculation {
 
 ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) :
   ScrollableView(parentResponder, &m_expressionView, this),
@@ -21,7 +20,7 @@ Poincare::Layout ScrollableExpressionView::layout() const {
   return m_expressionView.layout();
 }
 
-void ScrollableExpressionView::setLayout(Layout layout) {
+void ScrollableExpressionView::setLayout(Poincare::Layout layout) {
   m_expressionView.setLayout(layout);
 }
 
@@ -32,6 +31,4 @@ void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
 
 void ScrollableExpressionView::setExpressionBackgroundColor(KDColor backgroundColor) {
   m_expressionView.setBackgroundColor(backgroundColor);
-}
-
 }

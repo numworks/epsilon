@@ -2,8 +2,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-ExpressionTableCellWithExpression::ExpressionTableCellWithExpression() :
-  ExpressionTableCell(Layout::Horizontal),
+ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder) :
+  ExpressionTableCell(parentResponder, Layout::Horizontal),
   m_accessoryExpressionView(1.0f, 0.5f, Palette::GreyDark, KDColorWhite)
 {}
 

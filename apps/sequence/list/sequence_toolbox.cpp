@@ -14,6 +14,9 @@ SequenceToolbox::SequenceToolbox() :
   m_addedCellLayout{},
   m_numberOfAddedCells(0)
 {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_addedCells[i].setParentResponder(&m_selectableTableView);
+  }
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {

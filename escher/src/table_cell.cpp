@@ -50,7 +50,7 @@ void TableCell::layoutSubviews(bool force) {
       case Layout::Vertical:
       {
         KDCoordinate x = k_separatorThickness+labelMargin();
-        KDCoordinate y = k_separatorThickness+Metric::TableCellLabelTopMargin;
+        KDCoordinate y = k_separatorThickness+Metric::TableCellVerticalMargin;
         label->setFrame(KDRect(
               x,
               y,

@@ -89,7 +89,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
       int glyphLength = writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
-      int numberOfAvailableGlyphs = (m_functionDomain.bounds().width() - m_functionDomain.labelView()->bounds().width() - m_functionDomain.accessoryView()->bounds().width() - TableCell::k_labelMargin - TableCell::k_accessoryMargin)/KDFont::SmallFont->glyphSize().width();
+      int numberOfAvailableGlyphs = (m_functionDomain.bounds().width() - m_functionDomain.labelView()->bounds().width() - m_functionDomain.accessoryView()->bounds().width() - 2*Metric::TableCellHorizontalMargin)/KDFont::SmallFont->glyphSize().width();
       if (glyphLength > numberOfAvailableGlyphs) {
         writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits-1, Preferences::PrintFloatMode::Scientific);
       }

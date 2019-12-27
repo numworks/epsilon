@@ -4,6 +4,9 @@
 #include <cmath>
 #include <apps/settings/main_controller.h>
 
+#define MP_STRINGIFY_HELPER(x) #x
+#define MP_STRINGIFY(x) MP_STRINGIFY_HELPER(x)
+
 namespace Settings {
 
 AboutController::AboutController(Responder * parentResponder) :
@@ -94,8 +97,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   else {
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-    // TODO: Use MICROPY_VERSION_STRING from "mpconfig"
-    static const char * mpVersion = "1.11.0";
+    static const char * mpVersion = MICROPY_VERSION_STRING;
     static const char * messages[] = {
 #ifdef USERNAME
       Ion::username(),

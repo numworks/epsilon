@@ -96,7 +96,7 @@ void ExamPopUpController::ContentView::setMessagesForExamMode(GlobalPreferences:
     m_messageTextView1.setMessage(I18n::Message::ExitExamMode1);
     m_messageTextView2.setMessage(I18n::Message::ExitExamMode2);
     m_messageTextView3.setMessage(I18n::Message::Default);
-  } else if (mode == GlobalPreferences::ExamMode::Standard) {
+  } else if (mode == GlobalPreferences::ExamMode::Standard || mode == GlobalPreferences::ExamMode::NoSym) {
     m_messageTextView1.setMessage(I18n::Message::ActiveExamModeMessage1);
     m_messageTextView2.setMessage(I18n::Message::ActiveExamModeMessage2);
     m_messageTextView3.setMessage(I18n::Message::ActiveExamModeMessage3);

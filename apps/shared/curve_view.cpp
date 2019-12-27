@@ -110,7 +110,7 @@ const float CurveView::pixelWidth() const {
 }
 
 const float CurveView::pixelHeight() const {
-  return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
+  return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - m_bannerView->minimalSizeForOptimalDisplay().height() - 1);
 }
 
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {

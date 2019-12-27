@@ -3,16 +3,16 @@
 #include <escher/metric.h>
 #include <assert.h>
 
-ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) :
+ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder, KDCoordinate leftRightMargin, KDCoordinate topBottomMargin, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   ScrollableView(parentResponder, &m_expressionView, this),
-  m_expressionView()
+  m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor)
 {
   setDecoratorType(ScrollView::Decorator::Type::Arrows);
   setMargins(
-    Metric::CommonSmallMargin,
-    Metric::CommonLargeMargin,
-    Metric::CommonSmallMargin,
-    Metric::CommonLargeMargin
+    topBottomMargin,
+    leftRightMargin,
+    topBottomMargin,
+    leftRightMargin
   );
 }
 

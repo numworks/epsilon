@@ -1,18 +1,25 @@
 #ifndef ESCHER_EXPRESSION_TABLE_CELL_H
 #define ESCHER_EXPRESSION_TABLE_CELL_H
 
-#include <escher/expression_view.h>
+#include <escher/scrollable_expression_view.h>
 #include <escher/table_cell.h>
 
-class ExpressionTableCell : public TableCell {
+class ExpressionTableCell : public Responder, public TableCell {
 public:
-  ExpressionTableCell(Layout layout = Layout::Horizontal);
+  ExpressionTableCell(Responder * responder = nullptr, Layout layout = Layout::Horizontal);
   View * labelView() const override;
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
   Poincare::Layout layout() const override { return m_labelExpressionView.layout(); }
+
+  Responder * responder() override {
+    return this;
+  }
+  void didBecomeFirstResponder() override;
 private:
-  ExpressionView m_labelExpressionView;
+  // Remove margins added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView
+  KDCoordinate labelMargin() const override { return 0; }
+  ScrollableExpressionView m_labelExpressionView;
 };
 
 #endif

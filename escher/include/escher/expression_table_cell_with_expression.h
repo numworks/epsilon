@@ -6,7 +6,7 @@
 
 class ExpressionTableCellWithExpression : public ExpressionTableCell {
 public:
-  ExpressionTableCellWithExpression();
+  ExpressionTableCellWithExpression(Responder * parentResponder = nullptr);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setAccessoryLayout(Poincare::Layout l);

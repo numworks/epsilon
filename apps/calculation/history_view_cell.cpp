@@ -35,7 +35,7 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
   m_calculationAdditionInformation(Poincare::Expression::AdditionalInformationType::None),
-  m_inputView(this),
+  m_inputView(this, Metric::CommonLargeMargin, Metric::CommonSmallMargin),
   m_scrollableOutputView(this)
 {
   m_calculationCRC32 = 0;

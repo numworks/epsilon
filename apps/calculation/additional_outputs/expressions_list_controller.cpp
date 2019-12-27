@@ -11,6 +11,9 @@ ExpressionsListController::ExpressionsListController(Responder * parentResponder
   ListController(parentResponder),
   m_cells{}
 {
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    m_cells[i].setParentResponder(m_listController.selectableTableView());
+  }
 }
 
 void ExpressionsListController::didEnterResponderChain(Responder * previousFirstResponder) {

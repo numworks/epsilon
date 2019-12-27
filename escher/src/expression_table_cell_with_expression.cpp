@@ -3,7 +3,7 @@
 #include <assert.h>
 
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder) :
-  ExpressionTableCell(parentResponder, Layout::Horizontal),
+  ExpressionTableCell(parentResponder, Layout::HorizontalLeftOverlap),
   m_accessoryExpressionView(1.0f, 0.5f, Palette::GreyDark, KDColorWhite)
 {}
 

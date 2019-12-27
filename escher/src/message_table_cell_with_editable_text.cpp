@@ -52,11 +52,11 @@ void MessageTableCellWithEditableText::layoutSubviews(bool force) {
   KDSize labelSize = labelView()->minimalSizeForOptimalDisplay();
   /* Handle textfield that has no defined width (as their width evolves with
    * the length of edited text */
-  textFieldSize = KDSize(bounds().width() - 2*k_separatorThickness - labelSize.width()-2*labelMargin()-k_accessoryMargin, textFieldSize.height());
+  textFieldSize = KDSize(bounds().width() - 2*k_separatorThickness - labelSize.width()-2*labelMargin()-k_horizontalMargin, textFieldSize.height());
   m_textField.setFrame(KDRect(
-    bounds().width() - textFieldSize.width() - k_separatorThickness-k_accessoryMargin,
-    (bounds().height()-textFieldSize.height()-k_accessoryMargin)/2,
+    bounds().width() - textFieldSize.width() - k_separatorThickness-k_horizontalMargin,
+    (bounds().height()-textFieldSize.height()-k_horizontalMargin)/2,
     textFieldSize.width(),
-    textFieldSize.height()+k_accessoryMargin),
+    textFieldSize.height()+k_horizontalMargin),
   force);
 }

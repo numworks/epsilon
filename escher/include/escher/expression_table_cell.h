@@ -6,7 +6,7 @@
 
 class ExpressionTableCell : public Responder, public TableCell {
 public:
-  ExpressionTableCell(Responder * responder = nullptr, Layout layout = Layout::Horizontal);
+  ExpressionTableCell(Responder * responder = nullptr, Layout layout = Layout::HorizontalRightOverlap);
   View * labelView() const override;
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);

@@ -1,5 +1,5 @@
-#ifndef CALCULATION_ADDITIONAL_OUTPUTS_SIMPLE_LIST_CONTROLLER_H
-#define CALCULATION_ADDITIONAL_OUTPUTS_SIMPLE_LIST_CONTROLLER_H
+#ifndef CALCULATION_ADDITIONAL_OUTPUTS_EXPRESSIONS_LIST_CONTROLLER_H
+#define CALCULATION_ADDITIONAL_OUTPUTS_EXPRESSIONS_LIST_CONTROLLER_H
 
 #include <escher.h>
 #include <poincare/expression.h>
@@ -8,9 +8,9 @@
 
 namespace Calculation {
 
-class SimpleListController : public ListController {
+class ExpressionsListController : public ListController {
 public:
-  SimpleListController(Responder * parentResponder);
+  ExpressionsListController(Responder * parentResponder);
 
   // Responder
   void didEnterResponderChain(Responder * previousFirstResponder) override;

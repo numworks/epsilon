@@ -25,6 +25,7 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
     Poincare::Expression e = Expression::Parse(k_models[i+1]);
     m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits);
     m_modelCells[i].setLayout(m_layouts[i]);
+    m_modelCells[i].setParentResponder(&m_selectableTableView);
   }
 }
 

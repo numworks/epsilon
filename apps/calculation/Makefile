@@ -25,7 +25,6 @@ app_calculation_src = $(addprefix apps/calculation/,\
   expression_field.cpp \
   history_view_cell.cpp \
   history_controller.cpp \
-  scrollable_expression_view.cpp \
   selectable_table_view.cpp \
 )
 

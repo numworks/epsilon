@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "calculation.h"
-#include "scrollable_expression_view.h"
 #include "../shared/scrollable_exact_approximate_expressions_view.h"
 
 namespace Calculation {

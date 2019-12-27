@@ -11,12 +11,12 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/complex_model.cpp \
   additional_outputs/complex_list_controller.cpp \
   additional_outputs/expression_with_equal_sign_view.cpp \
+  additional_outputs/expressions_list_controller.cpp \
   additional_outputs/illustrated_list_controller.cpp \
   additional_outputs/integer_list_controller.cpp \
   additional_outputs/scrollable_input_exact_approximate_expressions_cell.cpp \
   additional_outputs/list_controller.cpp \
   additional_outputs/rational_list_controller.cpp \
-  additional_outputs/simple_list_controller.cpp \
   additional_outputs/trigonometry_graph_cell.cpp \
   additional_outputs/trigonometry_list_controller.cpp \
   additional_outputs/trigonometry_model.cpp \

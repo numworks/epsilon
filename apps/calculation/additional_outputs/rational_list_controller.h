@@ -1,14 +1,14 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_RATIONAL_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_RATIONAL_LIST_CONTROLLER_H
 
-#include "simple_list_controller.h"
+#include "expressions_list_controller.h"
 
 namespace Calculation {
 
-class RationalListController : public SimpleListController {
+class RationalListController : public ExpressionsListController {
 public:
   RationalListController() :
-    SimpleListController(nullptr) {}
+    ExpressionsListController(nullptr) {}
 
   //ListViewDataSource
   int numberOfRows() const override;

@@ -141,3 +141,23 @@ cowsay_%:
 .PHONY: clena
 clena: cowsay_CLENA clean
 
+.PHONY: compile
+compile: output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)
+
+.PHONY: cleanandcompile
+cleanandcompile:
+	${MAKE} cleanall
+	${MAKE} compile
+
+.PHONY: start
+start:
+	@echo "INFO Starting output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)"
+	@$(Q) output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)
+
+.PHONY: clean_run
+clean_run: cleanandcompile
+	${MAKE} start
+
+.PHONY: run
+run: compile
+	${MAKE} start

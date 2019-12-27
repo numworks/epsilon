@@ -68,6 +68,12 @@ help:
 	@echo "  make PLATFORM=simulator TARGET=web"
 	@echo "  make PLATFORM=simulator TARGET=windows"
 
+.PHONY: doc
+doc:
+	@echo "DOXYGEN"
+	@mkdir -p output/doc/
+	$(Q) doxygen build/doc/Doxyfile
+
 .PHONY: print-%
 print-%:
 	@echo $* = $($*)

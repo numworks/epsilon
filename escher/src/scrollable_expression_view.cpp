@@ -14,6 +14,7 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder, 
     topBottomMargin,
     leftRightMargin
   );
+  setBackgroundColor(backgroundColor);
 }
 
 Poincare::Layout ScrollableExpressionView::layout() const {

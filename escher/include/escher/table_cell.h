@@ -18,6 +18,7 @@ public:
   constexpr static KDCoordinate k_labelMargin = 10;
   constexpr static KDCoordinate k_accessoryMargin = 10;
 protected:
+  virtual KDCoordinate labelMargin() const { return k_labelMargin; }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

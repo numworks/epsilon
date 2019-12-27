@@ -81,21 +81,13 @@ void TableCell::layoutSubviews(bool force) {
         // In some cases, the accessory view cannot take all the size it can
         KDCoordinate wantedX = width-accessorySize.width()-k_separatorThickness-k_accessoryMargin;
         KDCoordinate minX = label ? label->bounds().x()+labelSize.width()+labelMargin()+k_separatorThickness+k_accessoryMargin : k_accessoryMargin;
-        if (minX < wantedX) {
-          accessory->setFrame(KDRect(
-                wantedX,
-                k_separatorThickness,
-                accessorySize.width(),
-                height-2*k_separatorThickness),
+        KDCoordinate x = minX < wantedX ? wantedX : minX;
+        accessory->setFrame(KDRect(
+            x,
+            k_separatorThickness,
+            minCoordinate(accessorySize.width(), width - x),
+            height-2*k_separatorThickness),
           force);
-        } else {
-          accessory->setFrame(KDRect(
-                minX,
-                k_separatorThickness,
-                minCoordinate(accessorySize.width(), width - minX),
-                height-2*k_separatorThickness),
-          force);
-        }
         break;
     }
   }

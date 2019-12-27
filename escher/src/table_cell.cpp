@@ -48,21 +48,29 @@ void TableCell::layoutSubviews(bool force) {
   if (label) {
     switch (m_layout) {
       case Layout::Vertical:
+      {
+        KDCoordinate x = k_separatorThickness+labelMargin();
+        KDCoordinate y = k_separatorThickness+Metric::TableCellLabelTopMargin;
         label->setFrame(KDRect(
-              k_separatorThickness+labelMargin(),
-              k_separatorThickness+Metric::TableCellLabelTopMargin,
-              width-2*k_separatorThickness-labelMargin(),
-              minCoordinate(labelSize.height(), height)),
+              x,
+              y,
+              width-2*x,
+              minCoordinate(labelSize.height(), height-2*y)),
         force);
         break;
+      }
       default:
+      {
+        KDCoordinate x = k_separatorThickness+labelMargin();
+        KDCoordinate y = k_separatorThickness;
         label->setFrame(KDRect(
-              k_separatorThickness+labelMargin(),
+              x,
               k_separatorThickness,
-              minCoordinate(labelSize.width(), width),
-              height - 2*k_separatorThickness),
+              minCoordinate(labelSize.width(), width-2*x),
+              height - 2*y),
         force);
         break;
+      }
     }
   }
   View * accessory = accessoryView();
@@ -70,13 +78,16 @@ void TableCell::layoutSubviews(bool force) {
     KDSize accessorySize = accessory->minimalSizeForOptimalDisplay();
     switch (m_layout) {
       case Layout::Vertical:
+      {
+        KDCoordinate x = k_separatorThickness+k_accessoryMargin;
         accessory->setFrame(KDRect(
-              k_separatorThickness+k_accessoryMargin,
+              x,
               height-k_separatorThickness-accessorySize.height()-k_accessoryBottomMargin,
-              width-2*k_separatorThickness - k_accessoryMargin,
+              width-2*x,
               accessorySize.height()),
         force);
         break;
+      }
       default:
         // In some cases, the accessory view cannot take all the size it can
         KDCoordinate wantedX = width-accessorySize.width()-k_separatorThickness-k_accessoryMargin;

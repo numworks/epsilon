@@ -14,8 +14,7 @@ Preferences::Preferences() :
   m_complexFormat(Preferences::ComplexFormat::Real),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits),
   m_colorOfLED(Preferences::LEDColor::White),
-  m_symbolMultiplication(Preferences::SymbolMultiplication::Auto),
-  m_examSymbolic(true)
+  m_symbolMultiplication(Preferences::SymbolMultiplication::Auto)
 {}
 
 Preferences * Preferences::sharedPreferences() {

@@ -363,7 +363,7 @@ void AppsContainer::redrawWindow(bool force) {
 }
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
-  assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch);
+  assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch || examMode == GlobalPreferences::ExamMode::NoSym);
   reset();
   Preferences * preferences = Preferences::sharedPreferences();
   switch ((int)preferences->colorOfLED()) {

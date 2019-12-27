@@ -85,7 +85,7 @@ void TitleBarView::refreshPreferences() {
   char buffer[bufferSize];
   int numberOfChar = 0;
   Preferences * preferences = Preferences::sharedPreferences();
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && Preferences::sharedPreferences()->isExamSymbolic()) {
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()) {
     // Display "cas" if in exam mode with symbolic computation enabled
       numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Sym), bufferSize - numberOfChar);
       assert(numberOfChar < bufferSize-1);

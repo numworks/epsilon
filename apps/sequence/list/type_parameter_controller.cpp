@@ -14,9 +14,9 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_explicitCell(I18n::Message::Explicit, cellLayout),
-  m_singleRecurrenceCell(I18n::Message::SingleRecurrence, cellLayout),
-  m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
+  m_explicitCell(&m_selectableTableView, I18n::Message::Explicit, cellLayout),
+  m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence, cellLayout),
+  m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence, cellLayout),
   m_layouts{},
   m_selectableTableView(this),
   m_record(),

@@ -55,6 +55,7 @@ escher_src += $(addprefix escher/src/,\
   scroll_view.cpp \
   scroll_view_data_source.cpp \
   scroll_view_indicator.cpp \
+  scrollable_expression_view.cpp \
   scrollable_view.cpp \
   selectable_table_view.cpp \
   selectable_table_view_delegate.cpp \

@@ -12,7 +12,7 @@ ListParameterController::ListParameterController(::InputEventHandlerDelegate * i
   Shared::ListParameterController(listController, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
   m_typeCell(I18n::Message::SequenceType),
   m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, I18n::Message::FirstTermIndex),
-  m_typeParameterController(this, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
+  m_typeParameterController(this, listController, TableCell::Layout::HorizontalLeftOverlap, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)
 {
 }

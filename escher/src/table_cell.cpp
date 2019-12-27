@@ -49,15 +49,15 @@ void TableCell::layoutSubviews(bool force) {
     switch (m_layout) {
       case Layout::Vertical:
         label->setFrame(KDRect(
-              k_separatorThickness+k_labelMargin,
+              k_separatorThickness+labelMargin(),
               k_separatorThickness+Metric::TableCellLabelTopMargin,
-              width-2*k_separatorThickness-k_labelMargin,
+              width-2*k_separatorThickness-labelMargin(),
               minCoordinate(labelSize.height(), height)),
         force);
         break;
       default:
         label->setFrame(KDRect(
-              k_separatorThickness+k_labelMargin,
+              k_separatorThickness+labelMargin(),
               k_separatorThickness,
               minCoordinate(labelSize.width(), width),
               height - 2*k_separatorThickness),
@@ -80,7 +80,7 @@ void TableCell::layoutSubviews(bool force) {
       default:
         // In some cases, the accessory view cannot take all the size it can
         KDCoordinate wantedX = width-accessorySize.width()-k_separatorThickness-k_accessoryMargin;
-        KDCoordinate minX = label ? label->bounds().x()+labelSize.width()+k_labelMargin+k_separatorThickness+k_accessoryMargin : k_accessoryMargin;
+        KDCoordinate minX = label ? label->bounds().x()+labelSize.width()+labelMargin()+k_separatorThickness+k_accessoryMargin : k_accessoryMargin;
         if (minX < wantedX) {
           accessory->setFrame(KDRect(
                 wantedX,

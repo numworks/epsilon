@@ -79,18 +79,31 @@ $(eval $(call rule_for, \
   $$(PYTHON) apps/i18n.py --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ \
 ))
 
+
+
 $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
 # Handle PNG files
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
-all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_container_prompt_update) $(apps_prompt_beta_src) $(tests_src)
+all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src) $(tests_src)
 
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
 apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_solver_test_src)
+apps_tests_src += $(addprefix apps/,\
+  global_preferences.cpp \
+)
+
+
+$(foreach img,$(image_list), $(eval $(call rule_for, \
+  ICON, \
+  $(img), \
+  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
+  $$(PYTHON) themes/themes_manager.py -i $(OMEGA_THEME) $$@ $(BUILD_DIR)/ \
+)))
 
 # Configure variants
 apps_all_src = $(app_src)

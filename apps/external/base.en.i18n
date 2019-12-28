@@ -1,0 +1,4 @@
+ExternalApp = "External"
+ExternalAppCapital = "EXTERNAL"
+ExternalAppApiMismatch = "API mismatch"
+ExternalAppExecError = "Cannot execute file"

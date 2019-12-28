@@ -95,13 +95,20 @@ $(eval $(call rule_for, \
   $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@ \
 ))
 
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
+  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@ \
+))
+
 INLINER := $(BUILD_DIR)/escher/image/inliner
 
 .PRECIOUS: $(BUILD_DIR)/%.h $(BUILD_DIR)/%.cpp
 $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \
-  %.png $$(INLINER), \
+  $(BUILD_DIR)/%.png $$(INLINER), \
   $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp \
 ))
 
@@ -115,4 +122,5 @@ define depends_on_image
 $(call object_for,$(1)): $(call object_for,$(2))
 $(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
 escher_src += $(2)
+image_list += $(2)
 endef

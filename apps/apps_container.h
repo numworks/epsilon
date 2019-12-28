@@ -13,6 +13,7 @@
 #include "exam_pop_up_controller_delegate.h"
 #include "battery_timer.h"
 #include "suspend_timer.h"
+#include "global_preferences.h"
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
 #include "on_boarding/pop_up_controller.h"
@@ -41,11 +42,12 @@ public:
   bool updateBatteryState();
   void refreshPreferences();
   void reloadTitleBarView();
-  void displayExamModePopUp(bool activate);
+  void displayExamModePopUp(GlobalPreferences::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PopUpController * promptController();
   void redrawWindow(bool force = false);
+  void activateExamMode(GlobalPreferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
   // Ion::StorageDelegate

@@ -1,7 +1,11 @@
 #include "about_controller.h"
+#include "../../../python/src/py/mpconfig.h"
 #include <assert.h>
 #include <cmath>
 #include <apps/settings/main_controller.h>
+
+#define MP_STRINGIFY_HELPER(x) #x
+#define MP_STRINGIFY(x) MP_STRINGIFY_HELPER(x)
 
 namespace Settings {
 
@@ -93,12 +97,14 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   else {
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+    static const char * mpVersion = MICROPY_VERSION_STRING;
     static const char * messages[] = {
 #ifdef USERNAME
       Ion::username(),
 #endif
       Ion::softwareVersion(),
       Ion::customSoftwareVersion(),
+      mpVersion,
       Ion::serialNumber(),
       Ion::fccId()
     };

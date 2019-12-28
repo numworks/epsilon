@@ -9,8 +9,7 @@ namespace Settings {
 MathOptionsController::MathOptionsController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   GenericSubController(parentResponder),
   m_preferencesController(this),
-  m_displayModeController(this, inputEventHandlerDelegate),
-  m_symbolController(this)
+  m_displayModeController(this, inputEventHandlerDelegate)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -22,8 +21,6 @@ bool MathOptionsController::handleEvent(Ion::Events::Event event) {
     GenericSubController * subController = nullptr;
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::DisplayMode)
       subController = &m_displayModeController;
-    else if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::SymbolMultiplication)
-      subController = &m_symbolController;
     else
       subController = &m_preferencesController;
     subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));

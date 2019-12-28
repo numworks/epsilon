@@ -35,6 +35,8 @@ info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
 	@echo "EPSILON_APPS = $(EPSILON_APPS)"
 	@echo "EPSILON_I18N = $(EPSILON_I18N)"
+	@echo "OMEGA_THEME = $(OMEGA_THEME)"
+	@echo "BUILD_DIR = $(BUILD_DIR)"
 	@echo "PLATFORM" = $(PLATFORM)
 	@echo "DEBUG" = $(DEBUG)
 	@echo "EPSILON_GETOPT" = $(EPSILON_GETOPT)
@@ -65,6 +67,17 @@ help:
 	@echo "  make PLATFORM=simulator TARGET=macos"
 	@echo "  make PLATFORM=simulator TARGET=web"
 	@echo "  make PLATFORM=simulator TARGET=windows"
+
+.PHONY: doc
+doc:
+	@echo "DOXYGEN"
+	@mkdir -p output/doc/
+	$(Q) doxygen build/doc/Doxyfile
+
+.PHONY: print-%
+print-%:
+	@echo $* = $($*)
+	@echo $*\'s origin is $(origin $*)
 
 # Since we're building out-of-tree, we need to make sure the output directories
 # are created, otherwise the receipes will fail (e.g. gcc will fail to create
@@ -103,6 +116,11 @@ include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
 all_src = $(apps_all_src) $(escher_src) $(ion_all_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(epsilon_src) $(runner_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(ion_target_device_bench_src) $(tests_src)
+
+# Make palette.h a dep for every source-file.
+# This ensures that the theming engine works correctly.
+$(call object_for,$(all_app_src)): $(BUILD_DIR)/escher/palette.h
+
 all_objs = $(call object_for,$(all_src))
 .SECONDARY: $(all_objs)
 
@@ -127,6 +145,11 @@ clean:
 	@echo "CLEAN"
 	$(Q) rm -rf $(BUILD_DIR)
 
+.PHONY: cleanall
+cleanall:
+	@echo "CLEANALL"
+	$(Q) rm -rf output
+
 .PHONY: cowsay_%
 cowsay_%:
 	@echo " -------"
@@ -141,3 +164,23 @@ cowsay_%:
 .PHONY: clena
 clena: cowsay_CLENA clean
 
+.PHONY: compile
+compile: output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)
+
+.PHONY: cleanandcompile
+cleanandcompile:
+	${MAKE} cleanall
+	${MAKE} compile
+
+.PHONY: start
+start:
+	@echo "INFO Starting output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)"
+	@$(Q) output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)
+
+.PHONY: clean_run
+clean_run: cleanandcompile
+	${MAKE} start
+
+.PHONY: run
+run: compile
+	${MAKE} start

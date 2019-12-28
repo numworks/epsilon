@@ -4,13 +4,14 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 12.0.0
-EPSILON_CUSTOM_VERSION ?= 1.17.2-0
+EPSILON_CUSTOM_VERSION ?= 1.18.0-0
 # USERNAME ?= N/A
 # Valid values are "none", "update", "beta"
-EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings
+EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings external
 EPSILON_I18N ?= en fr es de pt
 EPSILON_GETOPT ?= 0
 ESCHER_LOG_EVENTS_BINARY ?= 0
+OMEGA_THEME ?= omega_light
 
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak

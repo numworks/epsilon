@@ -7,42 +7,39 @@ namespace Cache {
 using namespace Regs;
 
 void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disable) {
+  // Select Level 1 data cache
   CORTEX.CSSELR()->set(0);
   dsb();
 
-  // Associativity = 6
-
-  uint32_t sets = CORTEX.CCSIDR()->getNUMSETS();
-  uint32_t ways = CORTEX.CCSIDR()->getASSOCIATIVITY();
-
+  // Disable D-Cache
   if (disable) {
     CORTEX.CCR()->setDC(false);
     dsb();
   }
 
-  do {
-    uint32_t w = ways;
-    do {
-      if (clean) {
-        if (invalidate) {
-          class CORTEX::DCCISW dccisw;
-          dccisw.setSET(sets);
-          dccisw.setWAY(w);
-          CORTEX.DCCISW()->set(dccisw);
-        } else {
-          class CORTEX::DCCSW dccsw;
-          dccsw.setSET(sets);
-          dccsw.setWAY(w);
-          CORTEX.DCCSW()->set(dccsw);
-        }
-      } else if (invalidate) {
-        class CORTEX::DCISW dcisw;
-        dcisw.setSET(sets);
-        dcisw.setWAY(w);
-        CORTEX.DCISW()->set(dcisw);
-      }
-    } while (w-- != 0);
-  } while (sets-- != 0);
+  // Pick the right DC??SW register according to invalidate/disable parameters
+  volatile CORTEX::DCSW * target = nullptr;
+  if (clean && invalidate) {
+    target = CORTEX.DCCISW();
+  } else if (clean) {
+    target = CORTEX.DCCSW();
+  } else {
+    assert(invalidate);
+    target = CORTEX.DCISW();
+  }
+
+  class CORTEX::CCSIDR ccsidr = CORTEX.CCSIDR()->get();
+  uint32_t sets = ccsidr.getNUMSETS();
+  uint32_t ways = ccsidr.getASSOCIATIVITY();
+
+  for (int set = sets; set >= 0; set--) {
+    for (int way = ways; way >= 0; way--) {
+      class CORTEX::DCSW dcsw;
+      dcsw.setSET(set);
+      dcsw.setWAY(way);
+      target->set(dcsw);
+    }
+  }
 
   dsb();
   isb();
@@ -68,7 +65,7 @@ void cleanDCache() {
 
 void enableDCache() {
   invalidateDCache();
-  CORTEX.CCR()->setDC(true);
+  CORTEX.CCR()->setDC(true); // Enable D-cache
   dsb();
   isb();
 }
@@ -80,14 +77,14 @@ void disableDCache() {
 void invalidateICache() {
   dsb();
   isb();
-  CORTEX.ICIALLU()->set(0);
+  CORTEX.ICIALLU()->set(0); // Invalidate I-cache
   dsb();
   isb();
 }
 
 void enableICache() {
   invalidateICache();
-  CORTEX.CCR()->setIC(true);
+  CORTEX.CCR()->setIC(true); // Enable I-cache
   dsb();
   isb();
 }
@@ -95,8 +92,10 @@ void enableICache() {
 void disableICache() {
   dsb();
   isb();
-  CORTEX.CCR()->setIC(false);
-  invalidateICache();
+  CORTEX.CCR()->setIC(false); // Disable I-cache
+  CORTEX.ICIALLU()->set(0); // Invalidate I-cache
+  dsb();
+  isb();
 }
 
 

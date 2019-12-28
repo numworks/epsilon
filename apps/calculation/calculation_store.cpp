@@ -1,5 +1,6 @@
 #include "calculation_store.h"
 #include "../shared/poincare_helpers.h"
+#include "../global_preferences.h"
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -91,7 +92,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   // Compute and serialize the outputs
   {
     Expression outputs[] = {Expression(), Expression()};
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, true); // Symbolic computation
+    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()); // Symbolic computation
     for (int i = 0; i < 2; i++) {
       if (!serializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation)) {
         /* If the exat/approximate output does not fit in the store (event if the

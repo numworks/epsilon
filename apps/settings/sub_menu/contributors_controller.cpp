@@ -28,7 +28,19 @@ int ContributorsController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
+constexpr static I18n::Message s_contributorsUsernames[7] = {
+  I18n::Message::PQuentinGuidee,
+  I18n::Message::PDannySimmons,
+  I18n::Message::PJoachimLeFournis,
+  I18n::Message::PJeanBaptisteBoric,
+  I18n::Message::PMaximeFriess,
+  I18n::Message::PDavid,
+  I18n::Message::PDamienNicolet
+};
+
 void ContributorsController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  MessageTableCellWithBuffer * myTextCell = (MessageTableCellWithBuffer *)cell;
+  myTextCell->setAccessoryText(I18n::translate(s_contributorsUsernames[index]));
   GenericSubController::willDisplayCellForIndex(cell, index);
 }
 

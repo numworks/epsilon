@@ -1,5 +1,7 @@
 #include "logo_controller.h"
 #include "power_on_self_test.h"
+#include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 #include <ion/led.h>
 
 namespace OnBoarding {
@@ -45,6 +47,11 @@ void LogoController::viewWillAppear() {
 void LogoController::viewDidDisappear() {
   if (m_didPerformTests) {
     Ion::LED::setColor(m_previousLEDColor);
+    /* TODO: instead of setting again the exam mode, put the previous led color
+     * AND BLINKING.*/
+    if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+      AppsContainer::sharedAppsContainer()->activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
+    }
   }
   ViewController::viewDidDisappear();
 }

@@ -32,7 +32,12 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * co
        * multiplication) so we never swap 2 matrices. */
       ExpressionNode * cj = childAtIndex(j);
       ExpressionNode * cj1 = childAtIndex(j+1);
-      if (order(cj, cj1, canBeInterrupted) > 0 && (canSwapMatrices || !(Expression(cj).deepIsMatrix(context) && Expression(cj1).deepIsMatrix(context)))) {
+      bool cjIsMatrix = Expression(cj).deepIsMatrix(context);
+      bool cj1IsMatrix = Expression(cj1).deepIsMatrix(context);
+      bool cj1GreaterThanCj = order(cj, cj1, canBeInterrupted) > 0;
+      if ((cjIsMatrix && !cj1IsMatrix) || // we always put matrices at the end of expressions
+          (cjIsMatrix && cj1IsMatrix && canSwapMatrices && cj1GreaterThanCj) ||
+          (!cjIsMatrix && !cj1IsMatrix && cj1GreaterThanCj)) {
         reference.swapChildrenInPlace(j, j+1);
         isSorted = false;
       }

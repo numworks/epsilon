@@ -71,7 +71,7 @@ void TitleBarView::layoutSubviews() {
   m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()));
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize));
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
   } else {
     m_examModeIconView.setFrame(KDRectZero);
@@ -85,6 +85,14 @@ void TitleBarView::refreshPreferences() {
   char buffer[bufferSize];
   int numberOfChar = 0;
   Preferences * preferences = Preferences::sharedPreferences();
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()) {
+    // Display "cas" if in exam mode with symbolic computation enabled
+      numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Sym), bufferSize - numberOfChar);
+      assert(numberOfChar < bufferSize-1);
+      assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
+      buffer[numberOfChar++] = '/';
+  }
+  assert(numberOfChar <= bufferSize);
   {
     // Display Sci/ or Eng/ if the print float mode is not decimal
     const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
@@ -93,7 +101,7 @@ void TitleBarView::refreshPreferences() {
       assert(printFloatMode == Preferences::PrintFloatMode::Scientific
           || printFloatMode == Preferences::PrintFloatMode::Engineering);
       I18n::Message printMessage = printFloatMode == Preferences::PrintFloatMode::Scientific ? I18n::Message::Sci : I18n::Message::Eng;
-      numberOfChar += strlcpy(buffer, I18n::translate(printMessage), bufferSize);
+      numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(printMessage), bufferSize - numberOfChar);
       assert(numberOfChar < bufferSize-1);
       assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
       buffer[numberOfChar++] = '/';
@@ -108,6 +116,7 @@ void TitleBarView::refreshPreferences() {
         (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(angleMessage), bufferSize - numberOfChar);
   }
+  
   m_preferenceView.setText(buffer);
   // Layout the exam mode icon if needed
   layoutSubviews();

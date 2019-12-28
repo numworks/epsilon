@@ -6,7 +6,7 @@ namespace OnBoarding {
 
 KDColor PowerOnSelfTest::Perform() {
   KDColor previousLEDColor = Ion::LED::getColor();
-  KDColor resultColor = KDColorGreen;
+  KDColor resultColor = KDColorWhite;
 
   // Screen tests
   bool screenTestsOK = Shared::POSTAndHardwareTests::VBlankOK() && (Shared::POSTAndHardwareTests::TextLCDGlyphFailures() <= k_textErrorsLimit);
@@ -20,7 +20,7 @@ KDColor PowerOnSelfTest::Perform() {
       resultColor = KDColorRed;
     }
   } else {
-    resultColor = KDColorBlue;
+    resultColor = KDColorPurple;
   }
   Ion::LED::setColor(resultColor);
   return previousLEDColor;

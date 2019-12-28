@@ -23,7 +23,6 @@ PreferencesController::PreferencesController(Responder * parentResponder) :
 }
 
 void PreferencesController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
@@ -129,6 +128,40 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * text = " ";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
+    
+    // Exam mode modes
+    case I18n::Message::ExamModeModeStandard:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeNoSym:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeDutch:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    
+
+    // Symbol controller
+    case I18n::Message::SymbolMultiplicationCross: // × and · aren't single characters, so they cannot be constructed into codepoints..?
+    {
+      const char * text = "×";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::SymbolMultiplicationMiddleDot:
+    {
+      const char * text = "·";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::SymbolMultiplicationStar:
+      return CodePointLayout::Builder('*', k_layoutFont);
+    case I18n::Message::SymbolMultiplicationAutoSymbol:
+      return CodePointLayout::Builder(' ', k_layoutFont);
 
     default:
       assert(false);
@@ -167,10 +200,14 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   } else if (message == I18n::Message::LEDColor) {
     preferences->setColorOfLED((Preferences::LEDColor)valueIndex);
+  } else if (message == I18n::Message::ExamModeMode) {
+    GlobalPreferences::sharedGlobalPreferences()->setTempExamMode((GlobalPreferences::ExamMode)((uint8_t)valueIndex + 1));
+  } else if (message == I18n::Message::SymbolMultiplication) {
+    preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
   }
 }
 
-int PreferencesController::valueIndexForPreference(I18n::Message message) {
+int PreferencesController::valueIndexForPreference(I18n::Message message) const {
   Preferences * preferences = Preferences::sharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();
@@ -186,6 +223,9 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) {
   }
   if (message == I18n::Message::LEDColor) {
     return (int)preferences->colorOfLED();
+  }
+  if (message == I18n::Message::SymbolMultiplication) {
+    return (int)preferences->symbolofMultiplication();
   }
   return 0;
 }

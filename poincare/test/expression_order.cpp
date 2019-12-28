@@ -216,4 +216,14 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
 
+  {
+    // ∑Matrix + 𝐢  -> 𝐢 + ∑Matrix
+    Expression childMatrix = Matrix::Builder();
+    static_cast<Matrix &>(childMatrix).addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
+    Expression child1 = Sum::Builder(childMatrix, Symbol::Builder('n'), Rational::Builder(0), Rational::Builder(0));
+    Expression child2 = Symbol::Builder(UCodePointMathematicalBoldSmallI);
+    Expression e1 = Addition::Builder(child1.clone(), child2.clone());
+    Expression e2 = Addition::Builder(child2, child1);
+    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+  }
 }

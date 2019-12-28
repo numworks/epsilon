@@ -19,20 +19,5 @@ ion_src += $(addprefix ion/src/shared/, \
 
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
-$(call object_for,$(ion_device_src) $(dfu_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(usb_src) $(ion_target_device_bench_src) $(ion_device_dfu_xip_src) $(ion_device_dfu_relocated_src) $(ion_console_uart_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
+$(call object_for,$(sort $(ion_device_src) $(dfu_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(usb_src) $(ion_target_device_bench_src) $(ion_device_dfu_xip_src) $(ion_device_dfu_relocated_src) $(ion_console_uart_src))): SFLAGS += $(ION_DEVICE_SFLAGS)
 ion_src += $(ion_device_src)
-
-# When using the register.h C++ file in production mode, we expect the compiler
-# to completely inline all bit manipulations. For some reason, if we build using
-# the -Os optimization flag, GCC doesn't inline everything and and ends up
-# emitting calls to aeabi_llsl for 64-bits registers. This is very sub-optimal
-# so we're enforcing -O3 for this specific file.
-
-ifneq ($(DEBUG),1)
-ifneq ($(COMPILER),llvm)
-$(BUILD_DIR)/ion/src/device/led.o: SFLAGS+=-O3
-$(BUILD_DIR)/ion/src/device/console.o: SFLAGS+=-O3
-$(BUILD_DIR)/ion/src/device/display.o: SFLAGS+=-O3
-$(BUILD_DIR)/ion/src/device/swd.o: SFLAGS+=-O3
-endif
-endif

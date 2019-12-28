@@ -4,11 +4,14 @@
 #include <ion.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
+#include <ion/backlight.h>
+#include <poincare/preferences.h>
 
 extern "C" {
 #include <assert.h>
 }
 
+using namespace Poincare;
 using namespace Shared;
 
 AppsContainer * AppsContainer::sharedAppsContainer() {
@@ -198,8 +201,8 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
-      if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
-        displayExamModePopUp(false);
+      if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+        displayExamModePopUp(GlobalPreferences::ExamMode::Off);
         window()->redraw();
       } else {
         Ion::USB::enable();
@@ -217,6 +220,11 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;
+  }
+  if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus) {
+      int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+      int direction = (event == Ion::Events::BrightnessPlus) ? Ion::Backlight::NumberOfStepsPerShortcut*delta : -delta*Ion::Backlight::NumberOfStepsPerShortcut;
+      GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
   }
   return false;
 }
@@ -237,7 +245,15 @@ bool AppsContainer::switchTo(App::Snapshot * snapshot) {
 }
 
 void AppsContainer::run() {
-  window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  KDRect screenRect = KDRect(0, 0, Ion::Display::Width, Ion::Display::Height);
+  window()->setFrame(screenRect);
+  /* We push a white screen here, because fetching the exam mode takes some time
+   * and it is visible when reflashing a N0100 (there is some noise on the
+   * screen before the logo appears). */
+  Ion::Display::pushRectUniform(screenRect, KDColorWhite);
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  }
   refreshPreferences();
 
   /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
@@ -297,8 +313,8 @@ void AppsContainer::reloadTitleBarView() {
   m_window.reloadTitleBarView();
 }
 
-void AppsContainer::displayExamModePopUp(bool activate) {
-  m_examPopUpController.setActivatingExamMode(activate);
+void AppsContainer::displayExamModePopUp(GlobalPreferences::ExamMode mode) {
+  m_examPopUpController.setTargetExamMode(mode);
   s_activeApp->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
 }
 
@@ -313,7 +329,7 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     Ion::Backlight::setBrightness(0);
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Deactivate) {
+    if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
        * low battery event happened during the Power-On Self-Test, a LED might
        * have stayed lit up. */
@@ -344,6 +360,35 @@ OnBoarding::PopUpController * AppsContainer::promptController() {
 
 void AppsContainer::redrawWindow(bool force) {
   m_window.redraw(force);
+}
+
+void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
+  assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch || examMode == GlobalPreferences::ExamMode::NoSym);
+  reset();
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch ((int)preferences->colorOfLED()) {
+    case 0:
+      Ion::LED::setColor(KDColorWhite);
+      break;
+    case 1:
+      Ion::LED::setColor(KDColorGreen);
+      break;
+    case 2:
+      Ion::LED::setColor(KDColorBlue);
+      break;
+    case 3:
+      Ion::LED::setColor(KDColorYellow);
+      break;
+  }
+  /* The Dutch exam mode LED is supposed to be orange but we can only make
+   * blink "pure" colors: with RGB leds on or off (as the PWM is used for
+   * blinking). The closest "pure" color is Yellow. Moreover, Orange LED is
+   * already used when the battery is charging. Using yellow, we can assert
+   * that the yellow LED only means that Dutch exam mode is on and avoid
+   * confusing states when the battery is charging and states when the Dutch
+   * exam mode is on. */
+  // Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed);
+  Ion::LED::setBlinking(1000, 0.1f);
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {

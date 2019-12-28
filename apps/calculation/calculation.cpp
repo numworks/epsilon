@@ -1,5 +1,6 @@
 #include "calculation.h"
 #include "../shared/poincare_helpers.h"
+#include "../global_preferences.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/undefined.h>
 #include <poincare/unreal.h>
@@ -123,7 +124,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   }
   if (shouldOnlyDisplayExactOutput()) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (input().recursivelyMatches(
+  // Force all results to be ApproximateOnly in Dutch exam mode
+  } else if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch ||
+      input().recursivelyMatches(
         [](const Expression e, Context * c) {
           constexpr int approximateOnlyTypesCount = 9;
           /* If the input contains the following types, we only display the

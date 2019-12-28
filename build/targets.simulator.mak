@@ -7,8 +7,4 @@ $(BUILD_DIR)/test.headless.$(EXE): $(call object_for,$(test_runner_headless_src)
 
 HANDY_TARGETS += epsilon.headless test.headless
 
-run: $(BUILD_DIR)/epsilon.$(EXE)
-	@echo RUN
-	@$(Q) $(BUILD_DIR)/epsilon.$(EXE) -s
-
 -include build/targets.simulator.$(TARGET).mak

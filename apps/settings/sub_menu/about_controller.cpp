@@ -50,7 +50,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       if (childLabel == I18n::Message::CustomSoftwareVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
-          myCell->setAccessoryText("Public"); //Change for public/dev
+          myCell->setAccessoryText("Dev"); //Change for public/dev
           return true;
         }
         myCell->setAccessoryText(Ion::customSoftwareVersion());

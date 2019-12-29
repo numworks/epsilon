@@ -9,8 +9,8 @@ namespace Code {
 ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(ConsoleController::k_font, nullptr, 0, 0.5),
-  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, ConsoleController::k_font)
+  m_promptView(Poincare::Preferences::sharedPreferences()->KDPythonFont(), nullptr, 0, 0.5),
+  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, Poincare::Preferences::sharedPreferences()->KDPythonFont())
 {
 }
 

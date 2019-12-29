@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <python/port/port.h>
+#include <poincare/preferences.h>
 
 #include "console_edit_cell.h"
 #include "console_line_cell.h"
@@ -16,7 +17,6 @@ class App;
 
 class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
-  static constexpr const KDFont * k_font = KDFont::LargeFont;
 
   ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT

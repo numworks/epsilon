@@ -21,7 +21,7 @@ constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(
 #ifdef USERNAME
 constexpr SettingsMessageTree s_modelAboutChildren[7] = {SettingsMessageTree(I18n::Message::Username), SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 7)};
 #else
-constexpr SettingsMessageTree s_modelAboutChildren[6] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 5)};
+constexpr SettingsMessageTree s_modelAboutChildren[6] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 7)};
 #endif
 
 constexpr SettingsMessageTree s_modelMenu[] =

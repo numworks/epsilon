@@ -8,6 +8,7 @@
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
 #include "sub_menu/math_options_controller.h"
+#include "sub_menu/preferences_controller.h"
 
 namespace Settings {
 
@@ -31,7 +32,7 @@ private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 5;
+  constexpr static int k_numberOfSimpleChevronCells = 6;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
@@ -41,6 +42,7 @@ private:
   AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
+  PreferencesController m_preferencesController;
 };
 
 }

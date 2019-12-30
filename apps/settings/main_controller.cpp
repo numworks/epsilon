@@ -162,11 +162,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   if (thisLabel == I18n::Message::PythonFont) {
-    MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)myCell;
-    int childIndex = -1;
-    childIndex = (int)preferences->pythonFont();
-    I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
-    myTextCell->setSubtitle(message);
+    int childIndex = (int)preferences->pythonFont();
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(model()->children(index)->children(childIndex)->label());
+    return;
   }
   if (hasPrompt() && (thisLabel == I18n::Message::UpdatePopUp || thisLabel == I18n::Message::BetaPopUp)) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
@@ -174,6 +172,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
+  static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::Message::Default);
 }
 
 void MainController::viewWillAppear() {

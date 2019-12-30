@@ -16,6 +16,7 @@ constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::M
 //sub-menus
 constexpr SettingsMessageTree s_modelMathOptionsChildren[5] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren, 3), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren, 4), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren, 2), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren, 3), SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren, 4)};
 constexpr SettingsMessageTree s_modelExamChildren[3] = {SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren, 4), SettingsMessageTree(I18n::Message::ExamModeMode, s_examModeMode, 3), SettingsMessageTree(I18n::Message::ActivateExamMode)};
+constexpr SettingsMessageTree s_pythonFont[2] = {SettingsMessageTree(I18n::Message::Large), SettingsMessageTree(I18n::Message::Small)};
 constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
 #ifdef USERNAME
 constexpr SettingsMessageTree s_modelAboutChildren[7] = {SettingsMessageTree(I18n::Message::Username), SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 7)};
@@ -27,7 +28,8 @@ constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren, 5),
     SettingsMessageTree(I18n::Message::Brightness),
     SettingsMessageTree(I18n::Message::Language),
-    SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren, 4),
+    SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren, 3),
+    SettingsMessageTree(I18n::Message::PythonFont, s_pythonFont, 2),
     SettingsMessageTree(I18n::Message::UpdatePopUp),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren, 6),
 #ifdef USERNAME
@@ -36,7 +38,7 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 6)};
 #endif
 
-constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 7);
+constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 8);
 
 I18n::Message MainController::promptMessage() const {
   return I18n::Message::UpdatePopUp;

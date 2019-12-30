@@ -128,7 +128,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * text = " ";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
-    
+
     // Exam mode modes
     case I18n::Message::ExamModeModeStandard:
     {
@@ -145,7 +145,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * text = " ";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
-    
+
 
     // Symbol controller
     case I18n::Message::SymbolMultiplicationCross: // × and · aren't single characters, so they cannot be constructed into codepoints..?
@@ -162,6 +162,12 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return CodePointLayout::Builder('*', k_layoutFont);
     case I18n::Message::SymbolMultiplicationAutoSymbol:
       return CodePointLayout::Builder(' ', k_layoutFont);
+
+      // Font size
+    case I18n::Message::Large:
+      return LayoutHelper::String("000", 3, KDFont::LargeFont);
+    case I18n::Message::Small:
+      return LayoutHelper::String("000", 3, KDFont::SmallFont);
 
     default:
       assert(false);
@@ -204,6 +210,8 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     GlobalPreferences::sharedGlobalPreferences()->setTempExamMode((GlobalPreferences::ExamMode)((uint8_t)valueIndex + 1));
   } else if (message == I18n::Message::SymbolMultiplication) {
     preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
+  } else if (message == I18n::Message::PythonFont) {
+    preferences->setPythonFont((Preferences::PythonFont)valueIndex);
   }
 }
 
@@ -226,6 +234,9 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
   if (message == I18n::Message::SymbolMultiplication) {
     return (int)preferences->symbolofMultiplication();
+  }
+  if (message == I18n::Message::PythonFont) {
+    return (int)preferences->pythonFont();
   }
   return 0;
 }

@@ -1,18 +1,17 @@
 #include "editor_view.h"
 #include <poincare/integer.h>
 #include <escher/app.h>
+#include <poincare/preferences.h>
 
 namespace Code {
 
 /* EditorView */
 
-static constexpr const KDFont * editorFont = KDFont::LargeFont;
-
 EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder, pythonDelegate, editorFont),
-  m_gutterView(editorFont)
+  m_textArea(parentResponder, pythonDelegate, Poincare::Preferences::sharedPreferences()->KDPythonFont()),
+  m_gutterView(Poincare::Preferences::sharedPreferences()->KDPythonFont())
 {
   m_textArea.setScrollViewDelegate(this);
 }
@@ -51,7 +50,6 @@ void EditorView::layoutSubviews() {
 
 EditorView::GutterView::GutterView(const KDFont * font) :
   View(),
-  m_font(font),
   m_offset(0)
 {
 }
@@ -62,7 +60,7 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
 
   ctx->fillRect(rect, backgroundColor);
 
-  KDSize glyphSize = m_font->glyphSize();
+  KDSize glyphSize = Poincare::Preferences::sharedPreferences()->KDPythonFont()->glyphSize();
 
   KDCoordinate firstLine = m_offset / glyphSize.height();
   KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
@@ -76,7 +74,7 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->drawString(
       lineNumber,
       KDPoint(k_margin + leftPadding, i*glyphSize.height() - firstLinePixelOffset),
-      m_font,
+      Poincare::Preferences::sharedPreferences()->KDPythonFont(),
       textColor,
       backgroundColor
     );
@@ -94,7 +92,7 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
 
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
   int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * m_font->glyphSize().width(), 0);
+  return KDSize(2 * k_margin + numberOfChars * Poincare::Preferences::sharedPreferences()->KDPythonFont()->glyphSize().width(), 0);
 }
 
 }

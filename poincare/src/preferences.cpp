@@ -14,7 +14,8 @@ Preferences::Preferences() :
   m_complexFormat(Preferences::ComplexFormat::Real),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits),
   m_colorOfLED(Preferences::LEDColor::White),
-  m_symbolMultiplication(Preferences::SymbolMultiplication::Auto)
+  m_symbolMultiplication(Preferences::SymbolMultiplication::Auto),
+  m_pythonFont(Preferences::PythonFont::Large)
 {}
 
 Preferences * Preferences::sharedPreferences() {

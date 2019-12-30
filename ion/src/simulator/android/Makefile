@@ -1,6 +1,5 @@
 ion_src += $(addprefix ion/src/simulator/android/src/cpp/, \
   images.cpp \
-  telemetry.cpp \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \

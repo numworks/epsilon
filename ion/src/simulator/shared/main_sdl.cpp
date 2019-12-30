@@ -56,12 +56,12 @@ int main(int argc, char * argv[]) {
     arguments.push_back(language);
   }
 
-  IonSimulatorTelemetryInit();
+  // IonSimulatorTelemetryInit();
   Ion::Simulator::Main::init();
-  IonSimulatorTelemetryEvent("Calculator");
+  // IonSimulatorTelemetryEvent("Calculator");
   ion_main(arguments.size(), &arguments[0]);
   Ion::Simulator::Main::quit();
-  IonSimulatorTelemetryDeinit();
+  // IonSimulatorTelemetryDeinit();
 
   return 0;
 }

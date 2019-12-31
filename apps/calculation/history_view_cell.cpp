@@ -35,6 +35,7 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
   m_calculationAdditionInformation(Poincare::Expression::AdditionalInformationType::None),
+  m_calculationExpanded(false),
   m_inputView(this, Metric::CommonLargeMargin, Metric::CommonSmallMargin),
   m_scrollableOutputView(this)
 {
@@ -94,17 +95,17 @@ void HistoryViewCell::reloadOutputSelection() {
 }
 
 void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
-  bool outputSelected = type == HistoryViewCellDataSource::SubviewType::Output;
+  m_calculationExpanded = (type == HistoryViewCellDataSource::SubviewType::Output);
   // Init output selection
-  if (outputSelected) {
+  if (m_calculationExpanded) {
     reloadOutputSelection();
   }
 
   /* The selected subview has changed. The displayed outputs might have changed.
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
    * display 1.2+2 --> 16/5 = 3.2. */
-  m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && outputSelected));
-  m_scrollableOutputView.setDisplayLeft(outputSelected && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
+  m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && m_calculationExpanded));
+  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -165,6 +166,9 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   Poincare::Layout leftOutputLayout = calculation->createExactOutputLayout();
   Poincare::Layout rightOutputLayout = (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout :
     calculation->createApproximateOutputLayout(context);
+  // We must set which subviews are displayed before setLayouts to mark the right rectangle as dirty
+  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
+  m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationExpanded && m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle));
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);

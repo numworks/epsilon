@@ -12,6 +12,8 @@ public:
   void setAccessoryLayout(Poincare::Layout l);
   void didBecomeFirstResponder() override;
 private:
+  // Accessory margin is already handled in ScrollableExpressionView
+  KDCoordinate accessoryMargin() const override { return 0; }
   ScrollableExpressionView m_accessoryExpressionView;
 };
 

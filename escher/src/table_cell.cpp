@@ -87,7 +87,7 @@ void TableCell::layoutSubviews(bool force) {
      *  Horizontally:
      * || Line separator | margin* | SUBVIEW | margin* | Line separator ||
      *
-     * * = margin can either be labelMargin() or k_horizontalMargin depending on the subview
+     * * = margin can either be labelMargin(), accessoryMargin() or k_horizontalMargin depending on the subview
      *
      * */
     KDCoordinate horizontalMargin = k_separatorThickness + labelMargin();
@@ -105,6 +105,7 @@ void TableCell::layoutSubviews(bool force) {
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, subAccessoryHeight), force);
       y += subAccessoryHeight;
     }
+    horizontalMargin = k_separatorThickness + accessoryMargin();
     y = maxCoordinate(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin));
     if (accessory) {
       KDCoordinate accessoryHeight = minCoordinate(accessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
@@ -128,15 +129,15 @@ void TableCell::layoutSubviews(bool force) {
      *      [ White space if possible otherwise the overlap can be from left to
      *      right subviews or the contrary ]
      *
-     *  ... | SUBACCESSORY | ACCESSORY | k_horizontalMargin | Line separator ||
+     *  ... | SUBACCESSORY | ACCESSORY | Accessory margin | Line separator ||
      *
      * */
 
     KDCoordinate verticalMargin = k_separatorThickness;
     KDCoordinate x = 0;
     KDCoordinate labelX = k_separatorThickness + labelMargin();
-    KDCoordinate subAccessoryX = maxCoordinate(k_separatorThickness+k_horizontalMargin, width - k_separatorThickness - withMargin(accessorySize.width(), k_horizontalMargin) - withMargin(subAccessorySize.width(), 0));
-    KDCoordinate accessoryX = maxCoordinate(k_separatorThickness+k_horizontalMargin, width - k_separatorThickness - withMargin(accessorySize.width(), k_horizontalMargin));
+    KDCoordinate subAccessoryX = maxCoordinate(k_separatorThickness + k_horizontalMargin, width - k_separatorThickness - withMargin(accessorySize.width(), accessoryMargin()) - withMargin(subAccessorySize.width(), 0));
+    KDCoordinate accessoryX = maxCoordinate(k_separatorThickness + accessoryMargin(), width - k_separatorThickness - withMargin(accessorySize.width(), accessoryMargin()));
     if (label) {
       x = labelX;
       KDCoordinate labelWidth = minCoordinate(labelSize.width(), width - x - k_separatorThickness - labelMargin());
@@ -157,7 +158,7 @@ void TableCell::layoutSubviews(bool force) {
     }
     if (accessory) {
       x = maxCoordinate(x, accessoryX);
-      KDCoordinate accessoryWidth = minCoordinate(accessorySize.width(), width - x - k_separatorThickness - k_horizontalMargin);
+      KDCoordinate accessoryWidth = minCoordinate(accessorySize.width(), width - x - k_separatorThickness - accessoryMargin());
       accessory->setFrame(KDRect(x, verticalMargin, accessoryWidth, height-2*verticalMargin), force);
     }
   }

@@ -54,6 +54,7 @@ private:
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Poincare::Expression::AdditionalInformationType m_calculationAdditionInformation;
+  bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;

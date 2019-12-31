@@ -71,8 +71,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Left) {
         Expression::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
         ListController * vc = nullptr;
-        /* TODO
-         * Faire un parent commun à tous les controllers qui sait faire setExpression */
         if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
            vc = &m_complexController;
         } else if (additionalInfoType == Expression::AdditionalInformationType::Trigonometry) {

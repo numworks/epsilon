@@ -95,7 +95,8 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::setDisplayC
 }
 
 void AbstractScrollableExactApproximateExpressionsView::ContentCell::setDisplayLeft(bool display) {
-  m_displayLeft = display; layoutSubviews();
+  m_displayLeft = display;
+  layoutSubviews();
 }
 
 Poincare::Layout AbstractScrollableExactApproximateExpressionsView::ContentCell::layout() const {

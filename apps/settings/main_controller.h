@@ -31,7 +31,7 @@ private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 7;
+  constexpr static int k_numberOfSimpleChevronCells = 8;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;

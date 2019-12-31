@@ -66,13 +66,13 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
     int rowIndex = selectedRow();
-    if (rowIndex == 1) {
+    if (model()->children(rowIndex)->label() == I18n::Message::DisplayMode) {
       subController = &m_displayModeController;
-    } else if (rowIndex == 4 || rowIndex == 5) {
+    } else if (model()->children(rowIndex)->label() == I18n::Message::Language || model()->children(rowIndex)->label() == I18n::Message::Brightness) {
       assert(false);
-    } else if (rowIndex == 6) {
+    } else if (model()->children(rowIndex)->label() == I18n::Message::ExamMode) {
       subController = &m_examModeController;
-    } else if (rowIndex == 7 + hasPrompt()) {
+    } else if ((model()->children(rowIndex)->label() == I18n::Message::UpdatePopUp || model()->children(rowIndex)->label() == I18n::Message::BetaPopUp) + hasPrompt()) {
       subController = &m_aboutController;
     } else {
       subController = &m_preferencesController;
@@ -123,10 +123,10 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 4) {
+  if (model()->children(j)->label() == I18n::Message::Brightness) {
     return 1;
   }
-  if (hasPrompt() && j == 7) {
+  if (hasPrompt() && (model()->children(j)->label() == I18n::Message::UpdatePopUp || model()->children(j)->label() == I18n::Message::BetaPopUp)) {
     return 2;
   }
   return 0;
@@ -137,18 +137,18 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(model()->children(index)->label());
-  if (index == 4) {
+  if (model()->children(index)->label() == I18n::Message::Brightness) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  if (index == 5) {
+  if (model()->children(index)->label() == I18n::Message::Language) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-  if (hasPrompt() && index == 7) {
+  if (hasPrompt() && (model()->children(index)->label() == I18n::Message::UpdatePopUp || model()->children(index)->label() == I18n::Message::BetaPopUp)) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -156,18 +156,21 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
-  switch (index) {
-    case 0:
+  switch (model()->children(index)->label()) {
+    case I18n::Message::AngleUnit:
       childIndex = (int)preferences->angleUnit();
       break;
-    case 1:
+    case I18n::Message::DisplayMode:
       childIndex = (int)preferences->displayMode();
       break;
-    case 2:
+    case I18n::Message::EditionMode:
       childIndex = (int)preferences->editionMode();
       break;
-    case 3:
+    case I18n::Message::ComplexFormat:
       childIndex = (int)preferences->complexFormat();
+      break;
+    case I18n::Message::PythonFont:
+      childIndex = (int)preferences->pythonFont();
       break;
   }
   I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;

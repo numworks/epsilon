@@ -5,6 +5,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include <poincare/preferences.h>
 #include "../apps_container.h"
 
 extern "C" {
@@ -27,7 +28,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   TextFieldDelegate(),
   MicroPython::ExecutionEnvironment(),
   m_pythonDelegate(pythonDelegate),
-  m_rowHeight(k_font->glyphSize().height()),
+  m_rowHeight(Poincare::Preferences::sharedPreferences()->KDPythonFont()->glyphSize().height()),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
   m_editCell(this, pythonDelegate, this),

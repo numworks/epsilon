@@ -11,6 +11,7 @@ public:
   void setHighlighted(bool highlight) override;
   void setAccessoryLayout(Poincare::Layout l);
   void didBecomeFirstResponder() override;
+  void reloadScroll() override { m_accessoryExpressionView.reloadScroll(); }
 private:
   // Accessory margin is already handled in ScrollableExpressionView
   KDCoordinate accessoryMargin() const override { return 0; }

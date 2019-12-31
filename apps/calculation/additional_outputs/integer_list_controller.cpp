@@ -26,16 +26,17 @@ Integer::Base baseAtIndex(int index) {
   }
 }
 
-Layout IntegerListController::layoutAtIndex(int index) {
+void IntegerListController::computeLayoutAtIndex(int index) {
   assert(m_expression.type() == ExpressionNode::Type::BasedInteger);
   Poincare::Context * context = App::app()->localContext();
   if (index == 3) {
     Expression factor = Factor::Builder(m_expression.clone());
     PoincareHelpers::Simplify(&factor, context, ExpressionNode::ReductionTarget::User);
-    return PoincareHelpers::CreateLayout(factor);
+    m_layouts[index] = PoincareHelpers::CreateLayout(factor);
+    return;
   }
   Integer i = static_cast<BasedInteger &>(m_expression).integer();
-  return i.createLayout(baseAtIndex(index));
+  m_layouts[index] = i.createLayout(baseAtIndex(index));
 }
 
 I18n::Message IntegerListController::messageAtIndex(int index) {

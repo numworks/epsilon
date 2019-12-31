@@ -27,7 +27,7 @@ Integer extractInteger(const Expression e) {
   return i;
 }
 
-Layout RationalListController::layoutAtIndex(int index) {
+void RationalListController::computeLayoutAtIndex(int index) {
   assert(m_expression.type() == ExpressionNode::Type::Division);
   Integer numerator = extractInteger(m_expression.childAtIndex(0));
   Integer denominator = extractInteger(m_expression.childAtIndex(1));
@@ -38,7 +38,7 @@ Layout RationalListController::layoutAtIndex(int index) {
     assert(index == 1);
     e = Integer::CreateEuclideanDivision(numerator, denominator);
   }
-  return PoincareHelpers::CreateLayout(e);
+  m_layouts[index] = PoincareHelpers::CreateLayout(e);
 }
 
 I18n::Message RationalListController::messageAtIndex(int index) {

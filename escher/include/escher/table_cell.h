@@ -24,6 +24,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   virtual KDCoordinate labelMargin() const { return Metric::TableCellHorizontalMargin; }
+  virtual KDCoordinate accessoryMargin() const { return Metric::TableCellHorizontalMargin; }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

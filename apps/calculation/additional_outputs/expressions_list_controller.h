@@ -23,14 +23,17 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   // IllustratedListController
-  void setExpression(Poincare::Expression e) override { m_expression = e; }
+  void setExpression(Poincare::Expression e) override;
 
 protected:
-  Poincare::Expression m_expression;
-private:
-  virtual Poincare::Layout layoutAtIndex(int index) = 0;
-  virtual I18n::Message messageAtIndex(int index) = 0;
   constexpr static int k_maxNumberOfCells = 4;
+  Poincare::Expression m_expression;
+  // Memoization of layouts
+  Poincare::Layout m_layouts[k_maxNumberOfCells];
+private:
+  Poincare::Layout layoutAtIndex(int index);
+  virtual void computeLayoutAtIndex(int index) = 0;
+  virtual I18n::Message messageAtIndex(int index) = 0;
   // Cells
   ExpressionTableCellWithPointer m_cells[k_maxNumberOfCells];
 };

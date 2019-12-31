@@ -42,4 +42,20 @@ void ExpressionsListController::willDisplayCellForIndex(HighlightCell * cell, in
   myCell->setAccessoryMessage(messageAtIndex(index));
 }
 
+void ExpressionsListController::setExpression(Poincare::Expression e) {
+  // Reinitialize memoization
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    m_layouts[i] = Layout();
+  }
+  m_expression = e;
+}
+
+Poincare::Layout ExpressionsListController::layoutAtIndex(int index) {
+  if (m_layouts[index].isUninitialized()) {
+    computeLayoutAtIndex(index);
+  }
+  assert(!m_layouts[index].isUninitialized());
+  return m_layouts[index];
+}
+
 }

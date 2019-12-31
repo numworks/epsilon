@@ -13,7 +13,7 @@ public:
   //ListViewDataSource
   int numberOfRows() const override;
 private:
-  Poincare::Layout layoutAtIndex(int index) override;
+  void computeLayoutAtIndex(int index) override;
   I18n::Message messageAtIndex(int index) override;
 };
 

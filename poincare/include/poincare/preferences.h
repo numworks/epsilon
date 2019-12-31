@@ -2,6 +2,7 @@
 #define POINCARE_PREFERENCES_H
 
 #include <stdint.h>
+#include <kandinsky.h>
 
 namespace Poincare {
 
@@ -36,6 +37,10 @@ public:
     Radian = 1,
     Gradian = 2
   };
+  enum class PythonFont : uint8_t {
+    Large = 0,
+    Small = 1
+  };
   Preferences();
   static Preferences * sharedPreferences();
   AngleUnit angleUnit() const { return m_angleUnit; }
@@ -48,12 +53,16 @@ public:
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
   uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
+  PythonFont pythonFont() const { return m_pythonFont; }
+  void setPythonFont(PythonFont pythonFont) { m_pythonFont = pythonFont; }
+  const KDFont * KDPythonFont() const { return (m_pythonFont == PythonFont::Small) ? KDFont::SmallFont : KDFont::LargeFont; }
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
+  PythonFont m_pythonFont;
 };
 
 }

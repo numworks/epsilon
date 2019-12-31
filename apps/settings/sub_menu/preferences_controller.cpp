@@ -106,6 +106,13 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
           VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript), k_layoutFont), VerticalOffsetLayoutNode::Position::Superscript)
         );
     }
+
+    // Font size
+    case I18n::Message::Large:
+      return LayoutHelper::String("000", 3, KDFont::LargeFont);
+    case I18n::Message::Small:
+      return LayoutHelper::String("000", 3, KDFont::SmallFont);
+
     default:
       assert(false);
       return Layout();
@@ -141,6 +148,8 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+  } else if (message == I18n::Message::PythonFont) {
+    preferences->setPythonFont((Preferences::PythonFont)valueIndex);
   }
 }
 
@@ -157,6 +166,9 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
+  }
+  if (message == I18n::Message::PythonFont) {
+    return (int)preferences->pythonFont();
   }
   return 0;
 }

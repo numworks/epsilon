@@ -10,8 +10,9 @@ public:
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setAccessoryLayout(Poincare::Layout l);
+  void didBecomeFirstResponder() override;
 private:
-  ExpressionView m_accessoryExpressionView;
+  ScrollableExpressionView m_accessoryExpressionView;
 };
 
 #endif

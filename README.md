@@ -12,15 +12,15 @@
 
 ## About
 
-Omega is an extension to Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for people who want to add features to the calculator, but cannot because they have been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator, but it's fun, so we would add it into Omega!
+Omega is a fork of Numworks' Epsilon, the OS that runs on their calculator, which brings many features to it. Omega is for the people who want to add features to the calculator, but cannot because they have been rejected by Numworks (for reasons that are 100% understandable!).
 
 ## Some new features
 - Adding symbolic calculation back into the calculator
 - An app for RPN
 - A periodic table app + all of the molar masses for the elements in the toolbox
 - More steps for brightness (16 instead of 5)
-- Different colors for the LED in exam mode
 - 32 KB Python heap instead of 16 KB
+- And more...
 
 The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Main-features), and the complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog).
 
@@ -125,14 +125,17 @@ To contribute, please refer to the [Wiki](https://github.com/Omega-Numworks/Omeg
 
 ## Related repositories
 
-* [Omega CLI Installer](https://github.com/Omega-Numworks/Omega-CLI-Installer) `BETA`
-* [Omega WEB Installer](https://github.com/Omega-Numworks/Omega-WEB-Installer) `BETA`
-* [Omega RPN](https://github.com/Omega-Numworks/Omega-RPN)
-* [Omega Atom](https://github.com/Omega-Numworks/Omega-Atom)
+* [Omega Themes](https://github.com/Omega-Numworks/Omega-Themes)
+* [Omega Website](https://github.com/Omega-Numworks/Omega-Website)
+* [Omega RPN `APP`](https://github.com/Omega-Numworks/Omega-RPN)
+* [Omega Atom `APP`](https://github.com/Omega-Numworks/Omega-Atom)
+* [Omega Converter `APP`](https://github.com/Omega-Numworks/Omega-Converter)
+* [Omega Design](https://github.com/Omega-Numworks/Omega-Design)
+* [Omega CLI Installer `BETA`](https://github.com/Omega-Numworks/Omega-CLI-Installer)
 
 ## Omega License
 
-Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+NumWorks is a registered trademark. Omega is not affiliated with Numworks. Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode). 
 
 ---
 
@@ -162,5 +165,4 @@ We welcome contributions. For smaller changes just open a pull request straight 
 
 ## License
 
-NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode). NumWorks is a registered trademark.
-
+NumWorks is a registered trademark. Omega is not affiliated with Numworks. NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).

@@ -208,6 +208,12 @@ void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cel
   // Fill the selected cell and the previous selected cell because cells repartition might have changed
   *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
   *previousCell = static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(previousSelectedCellX, previousSelectedCellY));
+  /* 'reloadData' calls 'willDisplayCellForIndex' for each cell while the table
+   * has been deselected. To reload the expanded cell, we call one more time
+   * 'willDisplayCellForIndex' but once the right cell has been selected. */
+  if (*cell) {
+    willDisplayCellForIndex(*cell, selectedRow());
+  }
 }
 
 }

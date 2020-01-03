@@ -166,8 +166,13 @@ AbstractScrollableExactApproximateExpressionsView::AbstractScrollableExactApprox
 }
 
 void AbstractScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout rightLayout, Poincare::Layout leftLayout) {
-  contentCell()->rightExpressionView()->setLayout(rightLayout);
-  contentCell()->centeredExpressionView()->setLayout(leftLayout);
+  bool updateRightLayout = contentCell()->rightExpressionView()->setLayout(rightLayout);
+  bool updateLeftLayout = contentCell()->centeredExpressionView()->setLayout(leftLayout);
+  if (updateRightLayout || updateLeftLayout) {
+    contentCell()->reloadTextColor();
+    contentCell()->layoutSubviews();
+    reloadScroll();
+  }
 }
 
 void AbstractScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Message equalSignMessage) {

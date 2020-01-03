@@ -4,7 +4,7 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 12.0.0
-EPSILON_CUSTOM_VERSION ?= 1.18.3-0
+EPSILON_CUSTOM_VERSION ?= 1.18.4-0
 # USERNAME ?= N/A
 # Valid values are "none", "update", "beta"
 EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings external

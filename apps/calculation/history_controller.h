@@ -30,7 +30,7 @@ private:
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   CalculationSelectableTableView * selectableTableView();
-  void historyViewCellDidChangeSelection() override;
+  HistoryViewCell * historyViewCellDidChangeSelection() override;
   constexpr static int k_maxNumberOfDisplayedRows = 5;
   CalculationSelectableTableView m_selectableTableView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];

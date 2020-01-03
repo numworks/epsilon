@@ -112,13 +112,12 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   if (withinTemporarySelection || previousSelectedCellY == selectedRow()) {
     return;
   }
-  HistoryViewCell * cell = static_cast<HistoryViewCell *>(t->selectedCell());
   if (previousSelectedCellY == -1) {
-    setSelectedSubviewType(SubviewType::Output, cell);
+    setSelectedSubviewType(SubviewType::Output);
   } else if (selectedRow() < previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Output, cell);
+    setSelectedSubviewType(SubviewType::Output);
   } else if (selectedRow() > previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Input, cell);
+    setSelectedSubviewType(SubviewType::Input);
   }
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   if (selectedCell == nullptr) {
@@ -166,10 +165,12 @@ void HistoryController::scrollToCell(int i, int j) {
   m_selectableTableView.scrollToCell(i, j);
 }
 
-void HistoryController::historyViewCellDidChangeSelection() {
+HistoryViewCell * HistoryController::historyViewCellDidChangeSelection() {
   /* Update the whole table as the height of the selected cell row might have
    * changed. */
   m_selectableTableView.reloadData();
+  // Return the selected cell if one
+  return static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
 }
 
 }

@@ -52,6 +52,7 @@ private:
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
+    bool displayLeftExpression() const { return m_displayLeftExpression; }
     void setDisplayLeftExpression(bool display);
     void layoutSubviews() override;
     int numberOfSubviews() const override;

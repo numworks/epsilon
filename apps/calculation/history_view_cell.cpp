@@ -144,9 +144,9 @@ void HistoryViewCell::layoutSubviews(bool force) {
   force);
 }
 
-void HistoryViewCell::setCalculation(Calculation * calculation) {
+void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   uint32_t newCalculationCRC = Ion::crc32Byte((const uint8_t *)calculation, ((char *)calculation->next()) - ((char *) calculation));
-  if (newCalculationCRC == m_calculationCRC32) {
+  if (m_calculationExpanded == expanded && newCalculationCRC == m_calculationCRC32) {
     return;
   }
   Poincare::Context * context = App::app()->localContext();
@@ -157,6 +157,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
+  m_calculationExpanded = expanded;
   m_calculationDisplayOutput = calculation->displayOutput(context);
   m_calculationAdditionInformation = calculation->additionalInformationType(context);
   m_inputView.setLayout(calculation->createInputLayout());

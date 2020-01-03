@@ -152,6 +152,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   Poincare::Context * context = App::app()->localContext();
 
   // Clean the layouts to make room in the pool
+  // TODO: maybe do this only when the layout won't change to avoid blinking
   m_inputView.setLayout(Poincare::Layout());
   m_scrollableOutputView.setLayouts(Poincare::Layout(), Poincare::Layout());
 

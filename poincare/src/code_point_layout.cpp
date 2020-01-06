@@ -5,7 +5,7 @@
 namespace Poincare {
 
 // LayoutNode
-void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Right) {
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
@@ -16,7 +16,7 @@ void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   }
 }
 
-void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Left) {
     cursor->setPosition(LayoutCursor::Position::Right);
     return;

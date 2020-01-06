@@ -15,8 +15,8 @@ public:
   {}
 
   // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void invalidAllSizesPositionsAndBaselines() override;
 
   // TreeNode

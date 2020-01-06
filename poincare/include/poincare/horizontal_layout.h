@@ -24,8 +24,8 @@ public:
   Type type() const override { return Type::HorizontalLayout; }
 
   // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override;

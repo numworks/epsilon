@@ -13,6 +13,7 @@ using namespace Shared;
 using namespace Ion;
 
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxInt(int x, int y) { return x > y ? x : y; }
 
 VariableBoxController::VariableBoxController() :
   NestedMenuController(nullptr, I18n::Message::Variables),
@@ -268,9 +269,12 @@ void VariableBoxController::resetMemoization() {
 void VariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
   // Destroy the record
   recordAtIndex(rowIndex).destroy();
-  // Shift the memoization
-  assert(rowIndex >= m_firstMemoizedLayoutIndex && rowIndex < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
-  for (int i = rowIndex - m_firstMemoizedLayoutIndex; i < k_maxNumberOfDisplayedRows - 1; i++) {
+  // Shift the memoization if needed
+  if (rowIndex >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows) {
+    // The deleted row is after the memoization
+    return;
+  }
+  for (int i = maxInt(0, rowIndex - m_firstMemoizedLayoutIndex); i < k_maxNumberOfDisplayedRows - 1; i++) {
     m_layouts[i] = m_layouts[i+1];
   }
   m_layouts[k_maxNumberOfDisplayedRows - 1] = Layout();

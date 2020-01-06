@@ -10,7 +10,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { ret
 
 // LayoutNode
 
-void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (this == cursor->layoutNode()) {
     if (cursor->position() == LayoutCursor::Position::Left) {
       // Case: Left. Ask the parent.
@@ -50,7 +50,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
   cursor->moveLeft(shouldRecomputeLayout);
 }
 
-void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (this == cursor->layoutNode()) {
     if (cursor->position() == LayoutCursor::Position::Right) {
       // Case: Right. Ask the parent.

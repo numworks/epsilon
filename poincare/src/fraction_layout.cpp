@@ -10,7 +10,7 @@ namespace Poincare {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
-void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
    if (cursor->position() == LayoutCursor::Position::Left
        && (cursor->layoutNode() == numeratorLayout()
          || cursor->layoutNode() == denominatorLayout()))
@@ -34,7 +34,7 @@ void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   }
 }
 
-void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
    if (cursor->position() == LayoutCursor::Position::Right
        && (cursor->layoutNode() == numeratorLayout()
          || cursor->layoutNode() == denominatorLayout()))
@@ -57,7 +57,7 @@ void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   }
 }
 
-void FractionLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void FractionLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(denominatorLayout(), true)) {
     // If the cursor is inside denominator, move it to the numerator.
     numeratorLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
@@ -71,7 +71,7 @@ void FractionLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomp
   LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void FractionLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void FractionLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(numeratorLayout(), true)) {
     // If the cursor is inside numerator, move it to the denominator.
     denominatorLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);

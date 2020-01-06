@@ -23,8 +23,8 @@ public:
   void removeGreySquares();
 
   // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void willAddSiblingToEmptyChildAtIndex(int childIndex) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
 
@@ -43,7 +43,7 @@ protected:
   // LayoutNode
   KDSize computeSize() override;
   KDPoint positionOfChild(LayoutNode * l) override;
-  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor,  bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
+  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;
 
 private:
   // MatrixNode

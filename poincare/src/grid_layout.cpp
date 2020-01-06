@@ -8,7 +8,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 // LayoutNode
 
-void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go to the last entry.
     cursor->setLayoutNode(childAtIndex(numberOfChildren() - 1));
@@ -36,7 +36,7 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
   }
 }
 
-void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go to the first entry.
     assert(numberOfChildren() >= 1);
@@ -65,7 +65,7 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
   }
 }
 
-void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   /* If the cursor is child that is not on the top row, move it inside its upper
    * neighbour. */
   int childIndex = m_numberOfColumns;
@@ -79,7 +79,7 @@ void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeL
   LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   int childIndex = 0;
   int maxIndex = numberOfChildren() - m_numberOfColumns;
   for (LayoutNode * l : children()) {

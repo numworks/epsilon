@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -29,7 +29,7 @@ void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   }
 }
 
-void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   // Case: Right of the operand. Move Right.
   if (cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Right)

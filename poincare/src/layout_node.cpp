@@ -169,7 +169,7 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   return true;
 }
 
-void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (!equivalentPositionVisited) {
     LayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
@@ -195,7 +195,7 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
   }
 }
 
-void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   LayoutNode * childResult = nullptr;
   LayoutNode ** childResultPtr = &childResult;
   LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
@@ -203,7 +203,7 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
    * than this initial value of score. */
   int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
 
-  scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
+  scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore, forSelection);
 
   // If there is a valid result
   Layout resultRef(childResult);
@@ -221,7 +221,8 @@ void LayoutNode::scoreCursorInDescendantsVertically (
     bool * shouldRecomputeLayout,
     LayoutNode ** childResult,
     void * resultPosition,
-    int * resultScore)
+    int * resultScore,
+    bool forSelection)
 {
   LayoutCursor::Position * castedResultPosition = static_cast<LayoutCursor::Position *>(resultPosition);
   KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
@@ -247,7 +248,7 @@ void LayoutNode::scoreCursorInDescendantsVertically (
   }
   if (layoutIsUnderOrAbove || layoutContains) {
     for (LayoutNode * c : children()) {
-      c->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
+      c->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore, forSelection);
     }
   }
 }

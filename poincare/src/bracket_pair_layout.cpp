@@ -23,7 +23,7 @@ void BracketPairLayoutNode::RenderWithChildSize(KDSize childSize, KDContext * ct
   ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+childSize.width()+2*k_widthMargin-k_bracketWidth, p.y()+k_verticalExternMargin+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
 }
 
-void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == childLayout()
     && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -45,7 +45,7 @@ void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldR
   }
 }
 
-void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == childLayout()
     && cursor->position() == LayoutCursor::Position::Right)
   {

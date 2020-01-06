@@ -32,7 +32,7 @@ bool NthRootLayoutNode::isSquareRoot() const {
   return false;
 }
 
-void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == radicandLayout()
     && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -67,7 +67,7 @@ void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecom
   }
 }
 
-void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == radicandLayout()
       && cursor->position() == LayoutCursor::Position::Right)
   {
@@ -102,7 +102,7 @@ void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldReco
   }
 }
 
-void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (indexLayout() != nullptr
       && cursor->isEquivalentTo(LayoutCursor(radicandLayout(), LayoutCursor::Position::Left)))
   {
@@ -123,7 +123,7 @@ void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecompu
   LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (indexLayout() != nullptr
       && cursor->layoutNode()->hasAncestor(indexLayout(), true))
   {

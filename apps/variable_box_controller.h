@@ -33,7 +33,7 @@ public:
   };
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 private:
-  constexpr static int k_maxNumberOfDisplayedRows = 6; //240/Metric::ToolboxRowHeight
+  constexpr static int k_maxNumberOfDisplayedRows = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin - Metric::StackTitleHeight) / Metric::ToolboxRowHeight + 1; // (240 - 18 - 50 - 20) / 40  = 3.8 and +1 to get 4
   constexpr static int k_numberOfMenuRows = 2;
   constexpr static KDCoordinate k_leafMargin = 20;
   ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;

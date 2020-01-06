@@ -238,8 +238,8 @@ bool GraphController::moveCursorHorizontally(int direction, bool fast) {
   if (*m_selectedDotIndex >= 0) {
     int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-      x = m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex);
-      y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
+      x = m_store->get(*m_selectedSeriesIndex, 0, dotSelected);
+      y = m_store->get(*m_selectedSeriesIndex, 1, dotSelected);
     } else if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
       y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);

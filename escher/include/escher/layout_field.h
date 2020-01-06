@@ -24,7 +24,7 @@ public:
   void setEditing(bool isEditing) override;
   void clearLayout() { m_contentView.clearLayout(); }
   void scrollToCursor() {
-    scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());
+    scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baselineWithoutSelection());
   }
   bool hasText() const { return layout().hasText(); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
@@ -86,7 +86,7 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
-    KDRect computeSelectionRect() const;
+    KDRect selectionRect() const;
     Poincare::LayoutCursor m_cursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;

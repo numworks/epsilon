@@ -18,12 +18,12 @@ namespace Poincare {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
-KDCoordinate LayoutCursor::cursorHeight() {
+KDCoordinate LayoutCursor::cursorHeightWithoutSelection() {
   KDCoordinate height = layoutHeight();
   return height == 0 ? k_cursorHeight : height;
 }
 
-KDCoordinate LayoutCursor::baseline() {
+KDCoordinate LayoutCursor::baselineWithoutSelection() {
   if (layoutHeight() == 0) {
     return k_cursorHeight/2;
   }

@@ -71,8 +71,8 @@ public:
   }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
-  KDCoordinate cursorHeight();
-  KDCoordinate baseline();
+  KDCoordinate cursorHeightWithoutSelection();
+  KDCoordinate baselineWithoutSelection();
 
 
   /* Comparison */

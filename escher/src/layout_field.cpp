@@ -56,7 +56,7 @@ bool IsBefore(Layout& l1, Layout& l2, bool strict) {
 }
 
 void LayoutField::ContentView::addSelection(Layout addedLayout) {
-  KDRect rectBefore = computeSelectionRect();
+  KDRect rectBefore = selectionRect();
   if (selectionIsEmpty()) {
     /*
      *  ----------  -> +++ is the previous previous selection
@@ -123,7 +123,7 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
     }
   }
 
-  KDRect rectAfter = computeSelectionRect();
+  KDRect rectAfter = selectionRect();
   // We need to update the background color for selected/unselected layouts
   markRectAsDirty(rectBefore.unionedWith(rectAfter));
 }
@@ -222,11 +222,17 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
   if (cursorPosition == LayoutCursor::Position::Right) {
     cursorX += pointedLayoutR.layoutSize().width();
   }
-  KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline() - m_cursor.baseline());
-  m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()), force);
+  if (selectionIsEmpty()) {
+    KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline() - m_cursor.baselineWithoutSelection());
+    m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeightWithoutSelection()), force);
+  } else {
+    KDRect cursorRect = selectionRect();
+    KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursorRect.y());
+    m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, cursorRect.height()), force);
+  }
 }
 
-KDRect LayoutField::ContentView::computeSelectionRect() const {
+KDRect LayoutField::ContentView::selectionRect() const {
   if (selectionIsEmpty()) {
     return KDRectZero;
   }

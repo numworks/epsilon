@@ -75,19 +75,19 @@ public:
   LayoutNode * root() override { return static_cast<LayoutNode *>(TreeNode::root()); }
 
   // Tree navigation
-  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {
-    moveCursorVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
+  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
+  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
+    moveCursorVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
-  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {
-    moveCursorVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
+    moveCursorVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
-  void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-    return moveCursorInDescendantsVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout);
+  void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
+    return moveCursorInDescendantsVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, forSelection);
   }
-  void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-    return moveCursorInDescendantsVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout);
+  void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
+    return moveCursorInDescendantsVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, forSelection);
   }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
@@ -143,7 +143,7 @@ protected:
   virtual bool protectedIsIdenticalTo(Layout l);
 
   // Tree navigation
-  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
+  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection);
 
   // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
@@ -163,14 +163,15 @@ protected:
   bool m_positioned;
   bool m_sized;
 private:
-  void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
+  void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
   void scoreCursorInDescendantsVertically (
     VerticalDirection direction,
     LayoutCursor * cursor,
     bool * shouldRecomputeLayout,
     LayoutNode ** childResult,
     void * resultPosition,
-    int * resultScore);
+    int * resultScore,
+    bool forSelection);
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
   bool changeGreySquaresOfAllMatrixAncestors(bool add);
 };

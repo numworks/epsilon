@@ -58,18 +58,23 @@ KDPoint LayoutCursor::middleLeftPoint() {
 }
 
 /* Move */
-void LayoutCursor::move(Direction direction, bool * shouldRecomputeLayout) {
+void LayoutCursor::move(Direction direction, bool * shouldRecomputeLayout, bool forSelection) {
   if (direction == Direction::Left) {
-    moveLeft(shouldRecomputeLayout);
+    moveLeft(shouldRecomputeLayout, forSelection);
   } else if (direction == Direction::Right) {
-    moveRight(shouldRecomputeLayout);
+    moveRight(shouldRecomputeLayout, forSelection);
   } else if (direction == Direction::Up) {
-    moveAbove(shouldRecomputeLayout);
-  } else if (direction == Direction::Down) {
-    moveUnder(shouldRecomputeLayout);
+    moveAbove(shouldRecomputeLayout, forSelection);
   } else {
-    assert(false);
+    assert(direction == Direction::Down);
+    moveUnder(shouldRecomputeLayout, forSelection);
   }
+}
+
+LayoutCursor LayoutCursor::cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection) {
+  LayoutCursor result = clone();
+  result.move(direction, shouldRecomputeLayout, forSelection);
+  return result;
 }
 
 /* Select */
@@ -360,7 +365,7 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
 
 void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection) {
   // Move the cursor in the selection direction
-  LayoutCursor c = cursorAtDirection(up ? Direction::Up : Direction::Down, shouldRecomputeLayout);
+  LayoutCursor c = cursorAtDirection(up ? Direction::Up : Direction::Down, shouldRecomputeLayout, true);
   if (!c.isDefined()) {
     return;
   }

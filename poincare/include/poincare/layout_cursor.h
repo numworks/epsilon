@@ -82,24 +82,20 @@ public:
   KDPoint middleLeftPoint();
 
   /* Move */
-  void move(Direction direction, bool * shouldRecomputeLayout);
-  void moveLeft(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorLeft(this, shouldRecomputeLayout);
+  void move(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
+  void moveLeft(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorLeft(this, shouldRecomputeLayout, forSelection);
   }
-  void moveRight(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorRight(this, shouldRecomputeLayout);
+  void moveRight(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorRight(this, shouldRecomputeLayout, forSelection);
   }
-  void moveAbove(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorUp(this, shouldRecomputeLayout);
+  void moveAbove(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorUp(this, shouldRecomputeLayout, false, forSelection);
   }
-  void moveUnder(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorDown(this, shouldRecomputeLayout);
+  void moveUnder(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorDown(this, shouldRecomputeLayout, false, forSelection);
   }
-  LayoutCursor cursorAtDirection(Direction direction, bool * shouldRecomputeLayout) {
-    LayoutCursor result = clone();
-    result.move(direction, shouldRecomputeLayout);
-    return result;
-  }
+  LayoutCursor cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
 
   /* Select */
   void select(Direction direction, bool * shouldRecomputeLayout, Layout * selection);

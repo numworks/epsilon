@@ -75,7 +75,7 @@ protected:
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const;
-  void drawLabel(KDContext * ctx, KDRect rect, Axis axis, float position, const char * label) const;
+  void drawLabel(KDContext * ctx, KDRect rect, Axis axis, float position, const char * label, KDColor color) const;
   void drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
@@ -87,7 +87,7 @@ private:
     Min,
     Max
   };
-  void privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, FloatingPosition floatingLabels = FloatingPosition::None, bool shiftOrigin = false,  KDCoordinate viewHeight = 0, KDColor backgroundColor = KDColorWhite) const;
+  void privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, KDColor color, FloatingPosition floatingLabels = FloatingPosition::None, bool shiftOrigin = false,  KDCoordinate viewHeight = 0, KDColor backgroundColor = KDColorWhite) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */

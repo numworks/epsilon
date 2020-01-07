@@ -96,7 +96,7 @@ private:
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void jointDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const;
+  void joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const;
   /* Join two dots with a straight line. */
   void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the

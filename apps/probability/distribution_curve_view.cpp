@@ -18,7 +18,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   float upperBound = m_calculation->upperBound();
   ctx->fillRect(bounds(), k_backgroundColor);
   drawAxis(ctx, rect, Axis::Horizontal);
-  drawLabels(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
+  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   if (m_distribution->type() == Distribution::Type::Normal) {
     /* Special case for the normal distribution, which has always the same curve
      * We indicate the pixels from and to which we color under the curve, not

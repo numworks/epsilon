@@ -35,10 +35,10 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }, m_complex, nullptr, Palette::Red, false);
   drawAxes(ctx, rect);
   drawDot(ctx, rect, real, imag, KDColorBlack);
-  drawLabel(ctx, rect, Axis::Horizontal, real);
-  drawLabel(ctx, rect, Axis::Vertical, imag);
-  drawAxisLabel(ctx, rect, Axis::Horizontal, "Re", real > 0.0f);
-  drawAxisLabel(ctx, rect, Axis::Vertical, "Im", imag > 0.0f);
+  //drawLabel(ctx, rect, Axis::Horizontal, real);
+  //drawLabel(ctx, rect, Axis::Vertical, imag);
+  //drawAxisLabel(ctx, rect, Axis::Horizontal, "Re", real > 0.0f);
+  //drawAxisLabel(ctx, rect, Axis::Vertical, "Im", imag > 0.0f);
   char buffer[k_labelBufferMaxSize];
   PrintFloat::ConvertFloatToText<float>(
       std::arg(*m_complex),

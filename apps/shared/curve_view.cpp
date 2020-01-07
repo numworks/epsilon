@@ -220,8 +220,8 @@ void CurveView::computeLabels(Axis axis) {
 }
 
 void CurveView::simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const {
-  drawLabels(ctx, rect, Axis::Vertical, true);
-  drawLabels(ctx, rect, Axis::Horizontal, true);
+  drawLabelsAndGraduations(ctx, rect, Axis::Vertical, true);
+  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
 }
 
 void CurveView::drawGraduation(KDContext * ctx, KDRect rect, Axis axis, float grad) const {
@@ -242,7 +242,7 @@ void CurveView::drawGraduation(KDContext * ctx, KDRect rect, Axis axis, float gr
   ctx->fillRect(graduation, KDColorBlack);
 }
 
-void CurveView::privateDrawLabelOnly(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, FloatingPosition floatingLabels, bool shiftOrigin, KDCoordinate viewHeight, KDColor backgroundColor) const {
+void CurveView::privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, FloatingPosition floatingLabels, bool shiftOrigin, KDCoordinate viewHeight, KDColor backgroundColor) const {
   KDCoordinate labelPosition = std::round(floatToPixel(axis, grad));
   KDSize textSize = k_font->stringSize(label);
   float xPosition = 0.0f;
@@ -287,31 +287,13 @@ void CurveView::privateDrawLabelOnly(KDContext * ctx, KDRect rect, Axis axis, fl
   }
 }
 
-void CurveView::drawAxisLabel(KDContext * ctx, KDRect rect, Axis axis, const char * label, bool minExtremityPosition) const {
+void CurveView::drawLabel(KDContext * ctx, KDRect rect, Axis axis, float position, const char * label) const {
   float verticalCoordinate = std::round(floatToPixel(Axis::Vertical, 0.0f));
   float horizontalCoordinate = std::round(floatToPixel(Axis::Horizontal, 0.0f));
-  float position = minExtremityPosition ? min(axis) : max(axis);
-  position *= 0.9f;
-  privateDrawLabelOnly(ctx, rect, axis, position, label, verticalCoordinate, horizontalCoordinate);
+  privateDrawLabel(ctx, rect, axis, position, label, verticalCoordinate, horizontalCoordinate);
 }
 
-void CurveView::drawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad) const {
-  drawGraduation(ctx, rect, axis, grad);
-
-  float verticalCoordinate = std::round(floatToPixel(Axis::Vertical, 0.0f));
-  float horizontalCoordinate = std::round(floatToPixel(Axis::Horizontal, 0.0f));
-  char labelBuffer[k_labelBufferMaxSize];
-  PrintFloat::ConvertFloatToText<float>(
-        grad,
-        labelBuffer,
-        k_labelBufferMaxSize,
-        k_labelBufferMaxGlyphLength,
-        k_numberSignificantDigits,
-        Preferences::PrintFloatMode::Decimal);
-  privateDrawLabelOnly(ctx, rect, axis, grad, labelBuffer, verticalCoordinate, horizontalCoordinate);
-}
-
-void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
+void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
   int numberLabels = numberOfLabels(axis);
   if (numberLabels <= 1) {
     return;
@@ -380,7 +362,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
 
   // Draw the labels
   for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-    privateDrawLabelOnly(ctx, rect, axis, labelValueAtIndex(axis, i), label(axis, i), verticalCoordinate, horizontalCoordinate, floatingLabels, shiftOrigin, viewHeight, backgroundColor);
+    privateDrawLabel(ctx, rect, axis, labelValueAtIndex(axis, i), label(axis, i), verticalCoordinate, horizontalCoordinate, floatingLabels, shiftOrigin, viewHeight, backgroundColor);
   }
 }
 

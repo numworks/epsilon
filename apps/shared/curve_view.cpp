@@ -384,30 +384,11 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
   }
 }
 
-void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordinate, KDColor color, KDCoordinate thickness) const {
-  KDRect lineRect = KDRectZero;
-  switch(axis) {
-    case Axis::Horizontal:
-      lineRect = KDRect(
-          rect.x(), std::round(floatToPixel(Axis::Vertical, coordinate)),
-          rect.width(), thickness
-          );
-      break;
-    case Axis::Vertical:
-      lineRect = KDRect(
-          std::round(floatToPixel(Axis::Horizontal, coordinate)), rect.y(),
-          thickness, rect.height()
-      );
-      break;
-  }
-  if (rect.intersects(lineRect)) {
-    ctx->fillRect(lineRect, color);
-  }
-}
-
 void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
-  KDCoordinate start = std::round(floatToPixel(axis, lowerBound));
-  KDCoordinate end = std::round(floatToPixel(axis, upperBound));
+  KDCoordinate min = (axis == Axis::Horizontal) ? rect.x() : rect.y();
+  KDCoordinate max = (axis == Axis::Horizontal) ? rect.x() + rect.width() : rect.y() + rect.height();
+  KDCoordinate start = std::isinf(lowerBound) ? min : std::round(floatToPixel(axis, lowerBound));
+  KDCoordinate end = std::isinf(upperBound) ? max : std::round(floatToPixel(axis, upperBound));
   if (start > end) {
     start = end;
     end = std::round(floatToPixel(axis, lowerBound));

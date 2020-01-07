@@ -242,7 +242,7 @@ void CurveView::drawGraduation(KDContext * ctx, KDRect rect, Axis axis, float gr
   ctx->fillRect(graduation, KDColorBlack);
 }
 
-void CurveView::privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, FloatingPosition floatingLabels, bool shiftOrigin, KDCoordinate viewHeight, KDColor backgroundColor) const {
+void CurveView::privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, KDColor color, FloatingPosition floatingLabels, bool shiftOrigin, KDCoordinate viewHeight, KDColor backgroundColor) const {
   KDCoordinate labelPosition = std::round(floatToPixel(axis, grad));
   KDSize textSize = k_font->stringSize(label);
   float xPosition = 0.0f;
@@ -283,14 +283,14 @@ void CurveView::privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float 
   }
   KDPoint origin = KDPoint(xPosition, yPosition);
   if (rect.intersects(KDRect(origin, textSize))) {
-    ctx->drawString(label, origin, k_font, KDColorBlack, backgroundColor);
+    ctx->drawString(label, origin, k_font, color, backgroundColor);
   }
 }
 
-void CurveView::drawLabel(KDContext * ctx, KDRect rect, Axis axis, float position, const char * label) const {
+void CurveView::drawLabel(KDContext * ctx, KDRect rect, Axis axis, float position, const char * label, KDColor color) const {
   float verticalCoordinate = std::round(floatToPixel(Axis::Vertical, 0.0f));
   float horizontalCoordinate = std::round(floatToPixel(Axis::Horizontal, 0.0f));
-  privateDrawLabel(ctx, rect, axis, position, label, verticalCoordinate, horizontalCoordinate);
+  privateDrawLabel(ctx, rect, axis, position, label, verticalCoordinate, horizontalCoordinate, color);
 }
 
 void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
@@ -362,7 +362,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
 
   // Draw the labels
   for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-    privateDrawLabel(ctx, rect, axis, labelValueAtIndex(axis, i), label(axis, i), verticalCoordinate, horizontalCoordinate, floatingLabels, shiftOrigin, viewHeight, backgroundColor);
+    privateDrawLabel(ctx, rect, axis, labelValueAtIndex(axis, i), label(axis, i), verticalCoordinate, horizontalCoordinate, KDColorBlack, floatingLabels, shiftOrigin, viewHeight, backgroundColor);
   }
 }
 

@@ -405,24 +405,32 @@ void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordina
   }
 }
 
-void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness) const {
-  KDRect lineRect = KDRectZero;
-  switch(axis) {
-    case Axis::Horizontal:
-      lineRect = KDRect(
-        std::round(floatToPixel(Axis::Horizontal, lowerBound)), std::round(floatToPixel(Axis::Vertical, coordinate)),
-        std::round(floatToPixel(Axis::Horizontal, upperBound)) - std::round(floatToPixel(Axis::Horizontal, lowerBound)), thickness
-      );
-      break;
-    case Axis::Vertical:
-      lineRect = KDRect(
-        std::round(floatToPixel(Axis::Horizontal, coordinate)), std::round(floatToPixel(Axis::Vertical, upperBound)),
-        thickness, std::round(floatToPixel(Axis::Vertical, lowerBound)) - std::round(floatToPixel(Axis::Vertical, upperBound))
-      );
-      break;
+void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
+  KDCoordinate start = std::round(floatToPixel(axis, lowerBound));
+  KDCoordinate end = std::round(floatToPixel(axis, upperBound));
+  if (start > end) {
+    start = end;
+    end = std::round(floatToPixel(axis, lowerBound));
   }
-  if (rect.intersects(lineRect)) {
-    ctx->fillRect(lineRect, color);
+  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
+  KDCoordinate pixelCoordinate = std::round(floatToPixel(otherAxis, coordinate));
+  if (dashSize < 0) {
+    // Continuous segment is equivalent to one big dash
+    dashSize = end - start;
+  }
+  KDRect lineRect = KDRectZero;
+  for (KDCoordinate i = start; i < end; i += 2*dashSize) {
+    switch(axis) {
+      case Axis::Horizontal:
+        lineRect = KDRect(i, pixelCoordinate, dashSize, thickness);
+        break;
+      case Axis::Vertical:
+        lineRect = KDRect(pixelCoordinate, i, thickness, dashSize);
+        break;
+    }
+    if (rect.intersects(lineRect)) {
+      ctx->fillRect(lineRect, color);
+    }
   }
 }
 
@@ -444,7 +452,6 @@ const uint8_t oversizeDotMask[oversizeDotDiameter][oversizeDotDiameter] = {
   {0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C},
   {0x45, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0x45},
   {0xE1, 0x45, 0x0C, 0x00, 0x0C, 0x45, 0xE1},
-
 };
 
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize) const {

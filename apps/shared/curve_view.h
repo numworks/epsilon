@@ -61,7 +61,7 @@ protected:
       float coordinate, KDColor color, KDCoordinate thickness = 1) const;
   void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
-      KDColor color, KDCoordinate thickness = 1) const;
+      KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize = false) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;

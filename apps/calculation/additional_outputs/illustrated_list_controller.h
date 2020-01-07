@@ -31,13 +31,13 @@ public:
   // IllustratedListController
   void setExpression(Poincare::Expression e) override;
 
+  constexpr static KDCoordinate k_illustrationHeight = 100;
 protected:
   Poincare::Expression m_savedExpression;
   CalculationStore m_calculationStore;
 private:
   virtual CodePoint expressionSymbol() const = 0;
   constexpr static int k_maxNumberOfAdditionalCalculations = 4;
-  constexpr static KDCoordinate k_illustrationHeight = 100;
   // Cells
   virtual HighlightCell * illustrationCell() = 0;
   ScrollableInputExactApproximateExpressionsCell m_additionalCalculationCells[k_maxNumberOfAdditionalCalculations];

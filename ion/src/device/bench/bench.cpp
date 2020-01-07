@@ -29,6 +29,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("SLEEP", Command::Sleep),
   CommandHandler("STOP", Command::Stop),
   CommandHandler("STANDBY", Command::Standby),
+  CommandHandler("USB_PLUGGED", Command::USBPlugged),
   CommandHandler("VBLANK", Command::VBlank),
   CommandHandler(nullptr, nullptr)
 };

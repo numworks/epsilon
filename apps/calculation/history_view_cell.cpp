@@ -15,13 +15,13 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 HistoryViewCellDataSource::HistoryViewCellDataSource() :
   m_selectedSubviewType(SubviewType::Output) {}
 
-void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, HistoryViewCell * cell) {
+void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType) {
   m_selectedSubviewType = subviewType;
+  HistoryViewCell * cell = historyViewCellDidChangeSelection();
   if (cell) {
     cell->setHighlighted(cell->isHighlighted());
     cell->cellDidSelectSubview(subviewType);
   }
-  historyViewCellDidChangeSelection();
 }
 
 /* HistoryViewCell */
@@ -185,7 +185,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Down && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) ||
     (event == Ion::Events::Up && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Output)) {
     HistoryViewCellDataSource::SubviewType otherSubviewType = m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input ? HistoryViewCellDataSource::SubviewType::Output : HistoryViewCellDataSource::SubviewType::Input;
-    m_dataSource->setSelectedSubviewType(otherSubviewType, this);
+    m_dataSource->setSelectedSubviewType(otherSubviewType);
     CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
     tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
     Container::activeApp()->setFirstResponder(this);

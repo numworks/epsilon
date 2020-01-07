@@ -50,6 +50,9 @@
 // Whether to support property object
 #define MICROPY_PY_BUILTINS_PROPERTY (0)
 
+// Whether to support unicode strings
+#define MICROPY_PY_BUILTINS_STR_UNICODE (1)
+
 // Whether to set __file__ for imported modules
 #define MICROPY_PY___FILE__ (0)
 

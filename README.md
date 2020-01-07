@@ -6,7 +6,7 @@
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>
   <a href="https://github.com/Omega-Numworks/Omega/issues"><img alt="Issues" src="https://img.shields.io/github/issues/Omega-Numworks/Omega.svg?labelColor=292929&logo=git&style=for-the-badge" /></a>
   </br>
-  <a href="https://join.slack.com/t/omeganumworks/shared_invite/enQtODI0NjU5NDU2MDUwLTRkODc1NDgzNmJkMzNlZGEyYWU2YzNlOWY4NWZlZjk1ZTM0YzY0ZjJjYTgyYzYwNDA1ZWZiYmUyMjA2MGU0ZDM"><img alt="Slack" src="https://img.shields.io/badge/Chat-Slack-blue?labelColor=292929&logo=slack&style=for-the-badge" /></a>
+  <a href="https://discord.gg/hjH3gtd"><img alt="Discord" src="https://img.shields.io/discord/663420259851567114?color=blue&labelColor=292929&label=chat%20-%20discord&logo=discord&style=for-the-badge" /></a>
   <a href="https://gitlab.com/joachim2lefournis/Omega/pipelines"><img alt="Pipeline" src="https://img.shields.io/gitlab/pipeline/joachim2lefournis/Omega/omega-master?labelColor=292929&logo=gitlab&style=for-the-badge" /></a>
 </p>
 

@@ -1,6 +1,6 @@
 ---
 name: Problems during installation
-about: Create a report to help us improve
+about: Need help to install Omega?
 title: ''
 labels: Installation issue, Triage
 assignees: ''

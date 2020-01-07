@@ -379,6 +379,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
       // Reinit layout for next use
       clearLayout();
+      resetSelection();
     } else {
       setEditing(true);
     }
@@ -398,6 +399,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Back && isEditing()) {
     clearLayout();
+    resetSelection();
     setEditing(false);
     m_delegate->layoutFieldDidAbortEditing(this);
     return true;
@@ -426,6 +428,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Clear && isEditing()) {
     clearLayout();
+    resetSelection();
     return true;
   }
   return false;

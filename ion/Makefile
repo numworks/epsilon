@@ -56,6 +56,7 @@ ion_all_src += $(ion_simulator_sdl_src) $(ion_simulator_headless_src)
 ion_all_src += $(ion_device_dfu_relocated_src) $(ion_device_dfu_xip_src)
 ion_all_src += $(ion_console_display_src) $(ion_console_stdio_src) $(ion_console_uart_src)
 
-ion_default_src = $(ion_src) $(ion_simulator_sdl_src) $(ion_device_dfu_relocated_src) $(ion_console_display_src)
+ion_default_src = $(ion_src) $(ion_simulator_sdl_src) $(ion_device_dfu_relocated_src) $(ion_console_stdio_src)
+ion_console_on_screen_src = $(ion_src) $(ion_simulator_sdl_src) $(ion_device_dfu_relocated_src) $(ion_console_display_src)
 ion_xip_src = $(ion_src) $(ion_simulator_sdl_src) $(ion_device_dfu_xip_src) $(ion_console_uart_src)
 ion_headless_src = $(ion_src) $(ion_simulator_headless_src) $(ion_device_dfu_relocated_src) $(ion_console_stdio_src)

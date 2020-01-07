@@ -15,11 +15,7 @@ TreePool * TreePool::SharedStaticPool = nullptr;
 
 void TreePool::freeIdentifier(uint16_t identifier) {
   if (identifier >= 0 && identifier < MaxNumberOfNodes) {
-    /* We could clean m_nodeForIdentifierOffset[identifier] to a default offset
-     * (for instance BufferSize) to be able to return nullptr when we access an
-     * inexisting cleaned node. However, transforming a default offset to a
-     * nullptr tree node adds one check per "get node", which is quite
-     * unefficient. We thus do nothing. */
+    m_nodeForIdentifierOffset[identifier] = UINT16_MAX;
     m_identifiers.push(identifier);
   }
 }

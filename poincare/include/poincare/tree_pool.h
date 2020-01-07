@@ -28,7 +28,10 @@ public:
   // Node
   TreeNode * node(uint16_t identifier) const {
     assert(identifier >= 0 && identifier < MaxNumberOfNodes);
-    return const_cast<TreeNode *>(reinterpret_cast<const TreeNode *>(m_alignedBuffer + m_nodeForIdentifierOffset[identifier]));
+    if (m_nodeForIdentifierOffset[identifier] != UINT16_MAX) {
+      return const_cast<TreeNode *>(reinterpret_cast<const TreeNode *>(m_alignedBuffer + m_nodeForIdentifierOffset[identifier]));
+    }
+    return nullptr;
   }
 
   // Pool memory

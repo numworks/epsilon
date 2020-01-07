@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for an improvement of Omega
 title: ''
-labels: Triage
+labels: Feature, Triage
 assignees: ''
 
 ---

@@ -7,7 +7,7 @@ namespace Calculation {
 
 TrigonometryGraphView::TrigonometryGraphView(TrigonometryModel * model) :
   CurveView(model),
-  m_angle(model)
+  m_model(model)
 {
 }
 

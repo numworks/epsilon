@@ -12,7 +12,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override { return nullptr; }
-  TrigonometryModel * m_angle;
+  TrigonometryModel * m_model;
 };
 
 class TrigonometryGraphCell : public HighlightCell {

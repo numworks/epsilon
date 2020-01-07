@@ -58,7 +58,10 @@ protected:
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
-      float coordinate, KDColor color, KDCoordinate thickness = 1) const;
+      float coordinate, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const {
+    return drawSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
+        thickness, dashSize);
+  }
   void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;

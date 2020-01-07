@@ -13,7 +13,7 @@ $(BUILD_DIR)/epsilon.onboarding.beta.$(EXE): $(call object_for,$(epsilon_onboard
 
 test_base_src = $(base_src) $(apps_tests_src) $(runner_src) $(tests_src)
 
-test_runner_src = $(test_base_src) $(ion_default_src)
+test_runner_src = $(test_base_src) $(ion_console_on_screen_src)
 $(BUILD_DIR)/test.$(EXE): $(call object_for,$(test_runner_src))
 
 # Define handy targets

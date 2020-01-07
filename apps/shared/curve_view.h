@@ -66,8 +66,8 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
-  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
+  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
@@ -96,13 +96,13 @@ private:
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const;
+  void joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion) const;
   /* Join two dots with a straight line. */
-  void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const;
+  void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the
    * function shifts the stamp (by blending adjacent pixel colors) to draw with
    * anti alising. */
-  void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
+  void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color, bool thick) const;
   void layoutSubviews(bool force = false) override;
   KDRect cursorFrame();
   KDRect bannerFrame();

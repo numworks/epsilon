@@ -479,60 +479,58 @@ void CurveView::drawAxis(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 1);
 }
 
-#define LINE_THICKNESS 2
-
-#if LINE_THICKNESS == 1
-
-constexpr KDCoordinate circleDiameter = 1;
-constexpr KDCoordinate stampSize = circleDiameter+1;
-const uint8_t stampMask[stampSize+1][stampSize+1] = {
-  {0xFF, 0xE1, 0xFF},
-  {0xE1, 0x00, 0xE1},
-  {0xFF, 0xE1, 0xFF},
+constexpr KDCoordinate thinCircleDiameter = 1;
+constexpr KDCoordinate thinStampSize = thinCircleDiameter+1;
+const uint8_t thinStampMask[(thinStampSize+1)*(thinStampSize+1)] = {
+  0xFF, 0xE1, 0xFF,
+  0xE1, 0x00, 0xE1,
+  0xFF, 0xE1, 0xFF,
 };
 
-#elif LINE_THICKNESS == 2
+#define LINE_THICKNESS 2
 
-constexpr KDCoordinate circleDiameter = 2;
-constexpr KDCoordinate stampSize = circleDiameter+1;
-const uint8_t stampMask[stampSize+1][stampSize+1] = {
-  {0xFF, 0xE6, 0xE6, 0xFF},
-  {0xE6, 0x33, 0x33, 0xE6},
-  {0xE6, 0x33, 0x33, 0xE6},
-  {0xFF, 0xE6, 0xE6, 0xFF},
+#if LINE_THICKNESS == 2
+
+constexpr KDCoordinate thickCircleDiameter = 2;
+constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
+const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
+  0xFF, 0xE6, 0xE6, 0xFF,
+  0xE6, 0x33, 0x33, 0xE6,
+  0xE6, 0x33, 0x33, 0xE6,
+  0xFF, 0xE6, 0xE6, 0xFF,
 };
 
 #elif LINE_THICKNESS == 3
 
-constexpr KDCoordinate circleDiameter = 3;
-constexpr KDCoordinate stampSize = circleDiameter+1;
-const uint8_t stampMask[stampSize+1][stampSize+1] = {
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0x7A, 0x0C, 0x7A, 0xFF},
-  {0xFF, 0x0C, 0x00, 0x0C, 0xFF},
-  {0xFF, 0x7A, 0x0C, 0x7A, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF}
+constexpr KDCoordinate thickCircleDiameter = 3;
+constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
+const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0x7A, 0x0C, 0x7A, 0xFF,
+  0xFF, 0x0C, 0x00, 0x0C, 0xFF,
+  0xFF, 0x7A, 0x0C, 0x7A, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF
 };
 
 #elif LINE_THICKNESS == 5
 
-constexpr KDCoordinate circleDiameter = 5;
-constexpr KDCoordinate stampSize = circleDiameter+1;
-const uint8_t stampMask[stampSize+1][stampSize+1] = {
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF},
-  {0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF},
-  {0xFF, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0xFF},
-  {0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF},
-  {0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
+constexpr KDCoordinate thickCircleDiameter = 5;
+constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
+const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF,
+  0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF,
+  0xFF, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0xFF,
+  0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF,
+  0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 };
 
 #endif
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
   float previousT = NAN;
   float t = NAN;
   float previousX = NAN;
@@ -560,11 +558,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, k_maxNumberOfIterations);
+    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations);
   } while (true);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   float tStart = std::isnan(rectLeft) ? xMin : maxFloat(xMin, rectLeft);
@@ -574,7 +572,7 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, flo
     return;
   }
   float tStep = pixelWidth();
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, colorUnderCurve, colorLowerBound, colorUpperBound);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
@@ -615,7 +613,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
   }
 }
 
-void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const {
+void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xyEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
@@ -630,6 +628,7 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
   if (!isRightDotValid && !isLeftDotValid) {
     return;
   }
+  KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
   if (isRightDotValid) {
     const float deltaX = pxf - puf;
     const float deltaY = pyf - pvf;
@@ -637,7 +636,7 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
        || (!isLeftDotValid && maxNumberOfRecursion == 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
        || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
       // the dots are already joined
-      stampAtLocation(ctx, rect, puf, pvf, color);
+      stampAtLocation(ctx, rect, puf, pvf, color, thick);
       return;
     }
   }
@@ -650,12 +649,12 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
       ((x <= cx && cx <= u) || (u <= cx && cx <= x)) && ((y <= cy && cy <= v) || (v <= cy && cy <= y))) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
-    straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
+    straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
     return;
   }
   if (maxNumberOfRecursion > 0) {
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, maxNumberOfRecursion-1);
-    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, maxNumberOfRecursion-1);
+    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1);
+    joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, maxNumberOfRecursion-1);
   }
 }
 
@@ -673,7 +672,7 @@ static void clipBarycentricCoordinatesBetweenBounds(float & start, float & end, 
   }
 }
 
-void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const {
+void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick) const {
   {
     /* Before drawing the line segment, clip it to rect:
      * start and end are the barycentric coordinates on the line segment (0
@@ -681,6 +680,7 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
      * points. */
     float start = 0;
     float end   = 1;
+    KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
     const KDCoordinate xBounds[2] = {
       static_cast<KDCoordinate>(rect.left() - stampSize),
       static_cast<KDCoordinate>(rect.right() + stampSize)
@@ -701,18 +701,19 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
   }
   const float deltaX = pxf - puf;
   const float deltaY = pyf - pvf;
+  KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
   const float normsRatio = std::sqrt(deltaX*deltaX + deltaY*deltaY) / (circleDiameter / 2.0f);
   const float stepX = deltaX / normsRatio ;
   const float stepY = deltaY / normsRatio;
   const int numberOfStamps = std::floor(normsRatio);
   for (int i = 0; i < numberOfStamps; i++) {
-    stampAtLocation(ctx, rect, puf, pvf, color);
+    stampAtLocation(ctx, rect, puf, pvf, color, thick);
     puf += stepX;
     pvf += stepY;
   }
 }
 
-void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
+void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color, bool thick) const {
   /* The (pxf, pyf) coordinates are not generally locating the center of a
    * pixel. We use stampMask, which is one pixel wider and higher than
    * stampSize, in order to cover stampRect without aligning the pixels. Then
@@ -725,6 +726,8 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
    * (pxf,pyf) which is then translated to the center of the top-left pixel of
    * stampMask.
    */
+  KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
+  const uint8_t * stampMask = thick ? thickStampMask : thinStampMask;
   pxf -= (stampSize + 1 - 1)/2.0f;
   pyf -= (stampSize + 1 - 1)/2.0f;
   const KDCoordinate px = std::ceil(pxf);
@@ -740,10 +743,11 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
   /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
    * dx and dy would be rounded to one tenth or one hundredth to choose the
    * right shifted mask. */
+  const KDCoordinate stampMaskSize = stampSize + 1;
   for (int i=0; i<stampSize; i++) {
     for (int j=0; j<stampSize; j++) {
-      shiftedMask[j][i] = (1.0f - dx) * (stampMask[j][i]*(1.0-dy)+stampMask[j+1][i]*dy)
-        + dx * (stampMask[j][i+1]*(1.0f-dy) + stampMask[j+1][i+1]*dy);
+      shiftedMask[j][i] = (1.0f - dx) * (stampMask[j*stampMaskSize+i]*(1.0-dy)+stampMask[(j+1)*stampMaskSize+i]*dy)
+        + dx * (stampMask[j*stampMaskSize+(i+1)]*(1.0f-dy) + stampMask[(j+1)*stampMaskSize+(i+1)]*dy);
     }
   }
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);

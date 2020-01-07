@@ -27,12 +27,12 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
       float real = complexModel->real();
       float imag = complexModel->imag();
       return Poincare::Coordinate2D<float>(t, (imag/real)*std::sqrt(real*real/4.0f - t*t));
-    }, m_complex, nullptr, false, Palette::Blue);
+    }, m_complex, nullptr, false, Palette::Blue, false);
   // Draw the segment from the origin to the dot (real, imag) of equation y = x*imag/real
   drawCartesianCurve(ctx, rect, 0, real, [](float t, void * model, void * context) {
         ComplexModel * complexModel = (ComplexModel *)model;
         return Poincare::Coordinate2D<float>(t, t*complexModel->imag()/complexModel->real());
-      }, m_complex, nullptr, Palette::Red);
+      }, m_complex, nullptr, Palette::Red, false);
   drawAxes(ctx, rect);
   drawDot(ctx, rect, real, imag, KDColorBlack);
   drawLabel(ctx, rect, Axis::Horizontal, real);

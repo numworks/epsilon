@@ -341,6 +341,21 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     didHandleEvent = true;
   } else if (privateHandleSelectionEvent(event, &shouldRecomputeLayout)) {
     didHandleEvent = true;
+    // Handle matrices
+    if (!m_contentView.selectionIsEmpty()) {
+      bool removedSquares = false;
+      Layout * selectStart = m_contentView.selectionStart();
+      Layout * selectEnd = m_contentView.selectionEnd();
+      if (*selectStart != *selectEnd) {
+        Layout p = selectStart->parent();
+        assert(p == selectEnd->parent());
+        assert(p.type() == LayoutNode::Type::HorizontalLayout);
+        removedSquares = p.removeGreySquaresFromAllMatrixChildren();
+      } else {
+        removedSquares = selectStart->removeGreySquaresFromAllMatrixChildren();
+      }
+      shouldRecomputeLayout = m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixChildren() || removedSquares || shouldRecomputeLayout;
+    }
   } else if (privateHandleEvent(event)) {
     shouldRecomputeLayout = true;
     didHandleEvent = true;
@@ -472,24 +487,22 @@ bool eventIsSelection(Ion::Events::Event event) {
 }
 
 bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
-  LayoutCursor result;
-  if (eventIsSelection(event)) {
-    Layout addedSelection;
-    LayoutCursor::Direction direction = event == Ion::Events::ShiftLeft ? LayoutCursor::Direction::Left :
-      (event == Ion::Events::ShiftRight ? LayoutCursor::Direction::Right :
-       (event == Ion::Events::ShiftUp ? LayoutCursor::Direction::Up :
-        LayoutCursor::Direction::Down));
-    result = m_contentView.cursor()->selectAtDirection(direction, shouldRecomputeLayout, &addedSelection);
-    if (addedSelection.isUninitialized()) {
-      return false;
-    }
-    m_contentView.addSelection(addedSelection);
+  if (!eventIsSelection(event)) {
+    return false;
   }
-  if (result.isDefined()) {
-    m_contentView.setCursor(result);
-    return true;
+  Layout addedSelection;
+  LayoutCursor::Direction direction = event == Ion::Events::ShiftLeft ? LayoutCursor::Direction::Left :
+    (event == Ion::Events::ShiftRight ? LayoutCursor::Direction::Right :
+     (event == Ion::Events::ShiftUp ? LayoutCursor::Direction::Up :
+      LayoutCursor::Direction::Down));
+  LayoutCursor result = m_contentView.cursor()->selectAtDirection(direction, shouldRecomputeLayout, &addedSelection);
+  if (addedSelection.isUninitialized()) {
+    return false;
   }
-  return false;
+  m_contentView.addSelection(addedSelection);
+  assert(result.isDefined());
+  m_contentView.setCursor(result);
+  return true;
 }
 
 void LayoutField::scrollRightOfLayout(Layout layoutR) {

@@ -60,6 +60,7 @@ public:
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
   bool removeGreySquaresFromAllMatrixAncestors() { return node()->removeGreySquaresFromAllMatrixAncestors(); }
+  bool removeGreySquaresFromAllMatrixChildren() { return node()->removeGreySquaresFromAllMatrixChildren(); }
   bool addGreySquaresToAllMatrixAncestors() { return node()->addGreySquaresToAllMatrixAncestors(); }
   Layout layoutToPointWhenInserting(Expression * correspondingExpression) {
     // Pointer to correspondingExpr because expression.h includes layout.h

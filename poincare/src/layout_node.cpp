@@ -128,6 +128,24 @@ LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingEx
   return numberOfChildren() > 0 ? childAtIndex(0) : this;
 }
 
+bool LayoutNode::removeGreySquaresFromAllMatrixAncestors() {
+  bool result = false;
+  changeGreySquaresOfAllMatrixRelatives(false, true, &result);
+  return result;
+}
+
+bool LayoutNode::removeGreySquaresFromAllMatrixChildren() {
+  bool result = false;
+  changeGreySquaresOfAllMatrixRelatives(false, false, &result);
+  return result;
+}
+
+bool LayoutNode::addGreySquaresToAllMatrixAncestors() {
+  bool result = false;
+  changeGreySquaresOfAllMatrixRelatives(true, true, &result);
+  return result;
+}
+
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   if (!force) {
     Layout(this).replaceChildWithEmpty(Layout(l), cursor);
@@ -253,21 +271,37 @@ void LayoutNode::scoreCursorInDescendantsVertically (
   }
 }
 
-bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
-  bool changedSquares = false;
-  Layout currentAncestor = Layout(parent());
-  while (!currentAncestor.isUninitialized()) {
-    if (currentAncestor.type() == Type::MatrixLayout) {
-      if (add) {
-        MatrixLayout(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();
-      } else {
-        MatrixLayout(static_cast<MatrixLayoutNode *>(currentAncestor.node())).removeGreySquares();
-      }
-      changedSquares = true;
-    }
-    currentAncestor = currentAncestor.parent();
+bool addRemoveGreySquaresInLayoutIfNeeded(bool add, Layout * l) {
+  if (l->type() != LayoutNode::Type::MatrixLayout) {
+    return false;
   }
-  return changedSquares;
+  if (add) {
+    static_cast<MatrixLayoutNode *>(l->node())->addGreySquares();
+  } else {
+    static_cast<MatrixLayoutNode *>(l->node())->removeGreySquares();
+  }
+  return true;
+}
+
+void LayoutNode::changeGreySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares) {
+  if (!ancestors) {
+    // If in children, we also change the squares for this
+    Layout thisLayout = Layout(this);
+    if (addRemoveGreySquaresInLayoutIfNeeded(add, &thisLayout)) {
+      *changedSquares = true;
+    }
+    for (Layout l : children()) {
+      l.node()->changeGreySquaresOfAllMatrixRelatives(add, false, changedSquares);
+    }
+  } else {
+    Layout currentAncestor = Layout(parent());
+    while (!currentAncestor.isUninitialized()) {
+      if (addRemoveGreySquaresInLayoutIfNeeded(add, &currentAncestor)) {
+        *changedSquares = true;
+      }
+      currentAncestor = currentAncestor.parent();
+    }
+  }
 }
 
 }

@@ -289,7 +289,8 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   /* If the axis is not visible, draw floating labels on the edge of the screen.
    * The X axis floating status is needed when drawing both axes labels. */
   FloatingPosition floatingHorizontalLabels = FloatingPosition::None;
-  if (verticalCoordinate > viewHeight - k_font->glyphSize().height() - k_labelMargin) {
+  KDCoordinate maximalVerticalPosition = graduationOnly ? viewHeight : viewHeight - k_font->glyphSize().height() - k_labelMargin;
+  if (verticalCoordinate > maximalVerticalPosition) {
     floatingHorizontalLabels = FloatingPosition::Max;
   } else if (max(Axis::Vertical) < 0.0f) {
     floatingHorizontalLabels = FloatingPosition::Min;
@@ -299,7 +300,8 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   if (axis == Axis::Horizontal) {
     floatingLabels = floatingHorizontalLabels;
   } else {
-    if (horizontalCoordinate < k_labelMargin + k_font->glyphSize().width() * 3) { // We want do display at least 3 characters left of the Y axis
+    KDCoordinate minimalHorizontalPosition = graduationOnly ? 0 : k_labelMargin + k_font->glyphSize().width() * 3; // We want do display at least 3 characters left of the Y axis
+    if (horizontalCoordinate < minimalHorizontalPosition) {
       floatingLabels = FloatingPosition::Min;
     } else if (max(Axis::Horizontal) < 0.0f) {
       floatingLabels = FloatingPosition::Max;

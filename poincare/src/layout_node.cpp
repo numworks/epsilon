@@ -286,12 +286,16 @@ bool addRemoveGreySquaresInLayoutIfNeeded(bool add, Layout * l) {
 void LayoutNode::changeGreySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares) {
   if (!ancestors) {
     // If in children, we also change the squares for this
-    Layout thisLayout = Layout(this);
-    if (addRemoveGreySquaresInLayoutIfNeeded(add, &thisLayout)) {
-      *changedSquares = true;
+    {
+      Layout thisLayout = Layout(this);
+      if (addRemoveGreySquaresInLayoutIfNeeded(add, &thisLayout)) {
+        *changedSquares = true;
+      }
     }
-    for (Layout l : children()) {
-      l.node()->changeGreySquaresOfAllMatrixRelatives(add, false, changedSquares);
+    for (int i = 0; i < numberOfChildren(); i++) {
+      /* We cannot use "for l : children()", as the node addresses might change,
+       * especially the iterator stopping address. */
+      childAtIndex(i)->changeGreySquaresOfAllMatrixRelatives(add, false, changedSquares);
     }
   } else {
     Layout currentAncestor = Layout(parent());

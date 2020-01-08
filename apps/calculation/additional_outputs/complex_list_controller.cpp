@@ -7,6 +7,11 @@ using namespace Shared;
 
 namespace Calculation {
 
+void ComplexListController::viewWillAppear() {
+  IllustratedListController::viewWillAppear();
+  m_complexGraphCell.reload(); // compute labels
+}
+
 void ComplexListController::setExpression(Poincare::Expression e) {
   IllustratedListController::setExpression(e);
 

@@ -11,7 +11,11 @@ public:
   ComplexGraphView(ComplexModel * complexModel);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  char * label(Axis axis, int index) const override { return nullptr; }
+  char * label(Axis axis, int index) const override {
+    return (axis == Axis::Horizontal ? (char *)m_xLabels[index] : (char *)m_yLabels[index]);
+  }
+  char m_xLabels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
+  char m_yLabels[k_maxNumberOfYLabels][k_labelBufferMaxSize];
   ComplexModel * m_complex;
 };
 
@@ -19,6 +23,7 @@ class ComplexGraphCell : public HighlightCell {
 public:
   ComplexGraphCell(ComplexModel * complexModel) : m_view(complexModel) {}
   void setHighlighted(bool highlight) override { return; }
+  void reload() { m_view.reload(); }
 private:
   int numberOfSubviews() const override { return 1; }
   View * subviewAtIndex(int index) override { return &m_view; }

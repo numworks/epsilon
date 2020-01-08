@@ -22,9 +22,9 @@ protected:
   public:
     ContentView(const KDFont * font) :
       View(),
+      m_cursorView(),
       m_selectionStart(nullptr),
       m_selectionEnd(nullptr),
-      m_cursorView(),
       m_font(font),
       m_cursorLocation(nullptr)
     {}
@@ -44,14 +44,14 @@ protected:
     bool selectionIsEmpty() const;
     virtual size_t deleteSelection() = 0;
     void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);
-    const char * m_selectionStart;
-    const char * m_selectionEnd;
   protected:
     virtual void layoutSubviews(bool force = false) override;
     void reloadRectFromAndToPositions(const char * start, const char * end);
     virtual KDRect glyphFrameAtPosition(const char * buffer, const char * position) const = 0;
     virtual KDRect dirtyRectFromPosition(const char * position, bool includeFollowingLines) const;
     TextCursorView m_cursorView;
+    const char * m_selectionStart;
+    const char * m_selectionEnd;
     const KDFont * m_font;
     const char * m_cursorLocation;
   private:

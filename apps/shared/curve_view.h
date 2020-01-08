@@ -81,7 +81,6 @@ protected:
   CurveViewCursor * m_curveViewCursor;
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
-  void drawGraduation(KDContext * ctx, KDRect rect, Axis axis, float grad) const;
   enum class FloatingPosition : uint8_t {
     None,
     Min,

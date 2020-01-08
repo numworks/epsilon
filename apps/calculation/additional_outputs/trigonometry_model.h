@@ -20,7 +20,7 @@ public:
   void setAngle(float f) { m_angle = f; }
   float angle() const { return m_angle*M_PI/Poincare::Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit()); }
 private:
-  constexpr static float k_xHalfRange = 1.9f;
+  constexpr static float k_xHalfRange = 2.1f;
   // We center the yRange around the semi-circle where the angle is
   float yCenter() const { return std::sin(angle()) >= 0.0f ? 0.5f : -0.5f; }
 

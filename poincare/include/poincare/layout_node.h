@@ -104,8 +104,9 @@ public:
 
   // Other
   virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression);
-  bool removeGreySquaresFromAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(false); }
-  bool addGreySquaresToAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(true); }
+  bool removeGreySquaresFromAllMatrixAncestors();
+  bool removeGreySquaresFromAllMatrixChildren();
+  bool addGreySquaresToAllMatrixAncestors();
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
@@ -173,7 +174,7 @@ private:
     int * resultScore,
     bool forSelection);
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
-  bool changeGreySquaresOfAllMatrixAncestors(bool add);
+  void changeGreySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares);
 };
 
 }

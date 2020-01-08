@@ -8,17 +8,17 @@
 static inline const char * minCharPointer(const char * x, const char * y) { return x < y ? x : y; }
 static inline const char * maxCharPointer(const char * x, const char * y) { return x > y ? x : y; }
 
+void TextInput::ContentView::setFont(const KDFont * font) {
+  m_font = font;
+  markRectAsDirty(bounds());
+}
+
 void TextInput::ContentView::setCursorLocation(const char * location) {
   assert(location != nullptr);
   assert(location >= editedText());
   const char * adjustedLocation = minCharPointer(location, editedText() + editedTextLength());
   m_cursorLocation = adjustedLocation;
   layoutSubviews();
-}
-
-void TextInput::ContentView::setFont(const KDFont * font) {
-  m_font = font;
-  markRectAsDirty(bounds());
 }
 
 KDRect TextInput::ContentView::cursorRect() {
@@ -75,12 +75,12 @@ bool TextInput::ContentView::selectionIsEmpty() const {
   return m_selectionStart == nullptr;
 }
 
-void TextInput::ContentView::layoutSubviews(bool force) {
-  m_cursorView.setFrame(cursorRect(), force);
-}
-
 void TextInput::ContentView::reloadRectFromPosition(const char * position, bool includeFollowingLines) {
   markRectAsDirty(dirtyRectFromPosition(position, includeFollowingLines));
+}
+
+void TextInput::ContentView::layoutSubviews(bool force) {
+  m_cursorView.setFrame(cursorRect(), force);
 }
 
 void TextInput::ContentView::reloadRectFromAndToPositions(const char * start, const char * end) {
@@ -123,6 +123,15 @@ bool TextInput::removePreviousGlyph() {
   return true;
 }
 
+bool TextInput::setCursorLocation(const char * location) {
+  assert(location != nullptr);
+  const char * adjustedLocation = maxCharPointer(location, text());
+  willSetCursorLocation(&adjustedLocation);
+  contentView()->setCursorLocation(adjustedLocation);
+  scrollToCursor();
+  return true;
+}
+
 void TextInput::scrollToCursor() {
   /* Technically, we do not need to overscroll in text input. However, we should
    * layout the scroll view before calling scrollToContentRect (in case the size
@@ -145,15 +154,6 @@ void TextInput::deleteSelection() {
     setCursorLocation(contentView()->cursorLocation() - removedLength);
   }
   contentView()->reloadRectFromPosition(previousSelectionStart, true);
-}
-
-bool TextInput::setCursorLocation(const char * location) {
-  assert(location != nullptr);
-  const char * adjustedLocation = maxCharPointer(location, text());
-  willSetCursorLocation(&adjustedLocation);
-  contentView()->setCursorLocation(adjustedLocation);
-  scrollToCursor();
-  return true;
 }
 
 bool TextInput::insertTextAtLocation(const char * text, const char * location) {

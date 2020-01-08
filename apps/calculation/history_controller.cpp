@@ -60,12 +60,11 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.selectedCell();
     SubviewType subviewType = selectedSubviewType();
-    Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     if (subviewType == SubviewType::Input) {
       m_selectableTableView.deselectTable();
       Container::activeApp()->setFirstResponder(editController);
-      editController->insertTextBody(calculation->inputText());
+      editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
     } else {
       ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Left) {
@@ -81,12 +80,13 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc = &m_rationalController;
         }
         if (vc) {
-          vc->setExpression(calculation->input());
+          vc->setExpression(calculationAtIndex(focusRow)->input());
           Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       } else {
         m_selectableTableView.deselectTable();
         Container::activeApp()->setFirstResponder(editController);
+        Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
         if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Right
             && !calculation->shouldOnlyDisplayExactOutput())
         {

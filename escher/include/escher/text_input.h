@@ -60,6 +60,7 @@ protected:
 
     // Alignment
     void setAlignment(float horizontalAlignment, float verticalAlignment);
+    float horizontalAlignment() const { return m_horizontalAlignment; }
 
     // Reload
     void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);

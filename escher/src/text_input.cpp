@@ -151,15 +151,19 @@ void TextInput::scrollToCursor() {
 }
 
 void TextInput::deleteSelection() {
-  assert(!contentView()->selectionIsEmpty());
-  const char * previousSelectionStart = contentView()->selectionStart();
-  const char * previousSelectionEnd = contentView()->selectionEnd();
-  bool cursorIsAtEndOfSelection = previousSelectionEnd == contentView()->cursorLocation();
-  size_t removedLength = contentView()->deleteSelection();
-  if (cursorIsAtEndOfSelection) {
-    setCursorLocation(contentView()->cursorLocation() - removedLength);
+  ContentView * cv = contentView();
+  assert(!cv->selectionIsEmpty());
+  const float horizontalAlignment = cv->horizontalAlignment();
+  if (horizontalAlignment == 0.0f) {
+    cv->reloadRectFromPosition(cv->selectionStart(), true);
   }
-  contentView()->reloadRectFromPosition(previousSelectionStart, true);
+  bool cursorIsAtEndOfSelection = cv->selectionEnd() == cv->cursorLocation();
+  size_t removedLength = cv->deleteSelection();
+  if (cursorIsAtEndOfSelection) {
+    setCursorLocation(cv->cursorLocation() - removedLength);
+  }
+  layoutSubviews(true); // Set the cursor frame by calling the subviews relayouting
+  scrollToCursor();
 }
 
 void TextInput::setAlignment(float horizontalAlignment, float verticalAlignment) {

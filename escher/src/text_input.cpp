@@ -139,8 +139,9 @@ void TextInput::deleteSelection() {
   assert(!contentView()->selectionIsEmpty());
   const char * previousSelectionStart = contentView()->selectionStart();
   const char * previousSelectionEnd = contentView()->selectionEnd();
+  bool cursorIsAtEndOfSelection = previousSelectionEnd == contentView()->cursorLocation();
   size_t removedLength = contentView()->deleteSelection();
-  if (previousSelectionEnd == contentView()->cursorLocation()) {
+  if (cursorIsAtEndOfSelection) {
     setCursorLocation(contentView()->cursorLocation() - removedLength);
   }
   contentView()->reloadRectFromPosition(previousSelectionStart, true);

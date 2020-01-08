@@ -224,56 +224,46 @@ void CurveView::simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const {
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
 }
 
-void CurveView::privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, KDColor color, FloatingPosition floatingLabels, bool shiftOrigin, KDCoordinate viewHeight, KDColor backgroundColor) const {
-  KDCoordinate labelPosition = std::round(floatToPixel(axis, grad));
-  KDSize textSize = k_font->stringSize(label);
-  float xPosition = 0.0f;
-  float yPosition = 0.0f;
+KDPoint CurveView::positionLabel(KDCoordinate xPosition, KDCoordinate yPosition, KDSize labelSize, RelativePosition horizontalPosition, RelativePosition verticalPosition) const {
+  switch (horizontalPosition) {
+    case RelativePosition::Before: // Left
+      xPosition -= labelSize.width() + k_labelMargin;
+      break;
+    case RelativePosition::After: // Right
+      xPosition += k_labelMargin;
+      break;
+    default:
+      xPosition -= labelSize.width()/2;
+  }
+  switch (verticalPosition) {
+    case RelativePosition::Before: // Above
+      yPosition -= labelSize.height() + k_labelMargin;
+      break;
+    case RelativePosition::After: // Below
+      yPosition += k_labelMargin;
+      break;
+    default:
+      yPosition -= labelSize.height()/2;
+  }
+  return KDPoint(xPosition, yPosition);
+}
 
-  bool positioned = false;
-  if (strcmp(label, "0") == 0) {
-    if (floatingLabels != FloatingPosition::None) {
-      // Do not draw the zero, it is symbolized by the other axis
-      return;
-    }
-    if (shiftOrigin && floatingLabels == FloatingPosition::None) {
-      xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
-      yPosition = verticalCoordinate + k_labelMargin;
-      positioned = true;
-    }
-  }
-  if (!positioned) {
-    if (axis == Axis::Horizontal) {
-      xPosition = labelPosition - textSize.width()/2;
-      if (floatingLabels == FloatingPosition::None) {
-        yPosition = verticalCoordinate + k_labelMargin;
-      } else if (floatingLabels == FloatingPosition::Min) {
-        yPosition = k_labelMargin;
-      } else {
-        yPosition = viewHeight - k_font->glyphSize().height() - k_labelMargin;
-      }
-    } else {
-      yPosition = labelPosition - textSize.height()/2;
-      if (floatingLabels == FloatingPosition::None) {
-        xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
-      } else if (floatingLabels == FloatingPosition::Min) {
-        xPosition = k_labelMargin;
-      } else {
-        xPosition = Ion::Display::Width - textSize.width() - k_labelMargin;
-      }
-    }
-  }
-  KDPoint origin = KDPoint(xPosition, yPosition);
-  if (rect.intersects(KDRect(origin, textSize))) {
-    ctx->drawString(label, origin, k_font, color, backgroundColor);
+void CurveView::drawLabel(KDContext * ctx, KDRect rect, float xPosition, float yPosition, const char * label, KDColor color, RelativePosition horizontalPosition, RelativePosition verticalPosition) const {
+  KDSize labelSize = k_font->stringSize(label);
+  KDCoordinate xCoordinate = std::round(floatToPixel(Axis::Horizontal, xPosition));
+  KDCoordinate yCoordinate = std::round(floatToPixel(Axis::Vertical, yPosition));
+  KDPoint position = positionLabel(xCoordinate, yCoordinate, labelSize, horizontalPosition, verticalPosition);
+  if (rect.intersects(KDRect(position, labelSize))) {
+    // TODO: should we blend?
+    ctx->drawString(label, position, k_font, color, KDColorWhite);
   }
 }
 
-void CurveView::drawLabel(KDContext * ctx, KDRect rect, Axis axis, float position, const char * label, KDColor color) const {
-  float verticalCoordinate = std::round(floatToPixel(Axis::Vertical, 0.0f));
-  float horizontalCoordinate = std::round(floatToPixel(Axis::Horizontal, 0.0f));
-  privateDrawLabel(ctx, rect, axis, position, label, verticalCoordinate, horizontalCoordinate, color);
-}
+enum class FloatingPosition : uint8_t {
+  None,
+  Min,
+  Max
+};
 
 void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
   int numberLabels = numberOfLabels(axis);
@@ -358,7 +348,39 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
 
   // Draw the labels
   for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-    privateDrawLabel(ctx, rect, axis, labelValueAtIndex(axis, i), label(axis, i), verticalCoordinate, horizontalCoordinate, KDColorBlack, floatingLabels, shiftOrigin, viewHeight, backgroundColor);
+    KDCoordinate labelPosition = std::round(floatToPixel(axis, labelValueAtIndex(axis, i)));
+    char * labelI = label(axis, i);
+    KDSize textSize = k_font->stringSize(labelI);
+    KDPoint position = KDPointZero;
+    if (strcmp(labelI, "0") == 0) {
+      if (floatingLabels != FloatingPosition::None) {
+        // Do not draw the zero, it is symbolized by the other axis
+        continue;
+      }
+      if (shiftOrigin && floatingLabels == FloatingPosition::None) {
+        position = positionLabel(horizontalCoordinate, verticalCoordinate, textSize, RelativePosition::Before, RelativePosition::After);
+      }
+    } else {
+      if (axis == Axis::Horizontal) {
+        position = positionLabel(labelPosition, verticalCoordinate, textSize, RelativePosition::None, RelativePosition::After);
+        if (floatingLabels == FloatingPosition::Min) {
+          position = KDPoint(position.x(), k_labelMargin);
+        } else if (floatingLabels == FloatingPosition::Max) {
+          position = KDPoint(position.x(), viewHeight - k_font->glyphSize().height() - k_labelMargin);
+        }
+      } else {
+        position = positionLabel(horizontalCoordinate, labelPosition, textSize, RelativePosition::Before, RelativePosition::None);
+        if (floatingLabels == FloatingPosition::Min) {
+          position = KDPoint(k_labelMargin, position.y());
+        } else if (floatingLabels == FloatingPosition::Min) {
+          position = KDPoint(Ion::Display::Width - textSize.width() - k_labelMargin, position.y());
+        }
+      }
+    }
+
+    if (rect.intersects(KDRect(position, textSize))) {
+      ctx->drawString(labelI, position, k_font, KDColorBlack, backgroundColor);
+    }
   }
 }
 

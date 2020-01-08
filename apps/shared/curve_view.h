@@ -75,18 +75,20 @@ protected:
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const;
-  void drawLabel(KDContext * ctx, KDRect rect, Axis axis, float position, const char * label, KDColor color) const;
+  enum class RelativePosition : uint8_t {
+    None,
+    Before,
+    After
+  };
+  // Draw the label at the above/below and to the left/right of the given position
+  void drawLabel(KDContext * ctx, KDRect rect, float xPosition, float yPosition, const char * label, KDColor color, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
   void drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
-  enum class FloatingPosition : uint8_t {
-    None,
-    Min,
-    Max
-  };
-  void privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, KDColor color, FloatingPosition floatingLabels = FloatingPosition::None, bool shiftOrigin = false,  KDCoordinate viewHeight = 0, KDColor backgroundColor = KDColorWhite) const;
+  // returns the coordinates where should be drawn the label knowing the coordinates of its graduation and its relative position
+   KDPoint positionLabel(KDCoordinate xPosition, KDCoordinate yPosition, KDSize labelSize, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */

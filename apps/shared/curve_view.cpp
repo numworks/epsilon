@@ -224,24 +224,6 @@ void CurveView::simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const {
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
 }
 
-void CurveView::drawGraduation(KDContext * ctx, KDRect rect, Axis axis, float grad) const {
-  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-  float otherAxisCoordinate = std::round(floatToPixel(otherAxis, 0.0f));
-  KDCoordinate labelPosition = std::round(floatToPixel(axis, grad));
-  KDRect graduation = axis == Axis::Horizontal ?
-    KDRect(
-        labelPosition,
-        otherAxisCoordinate -(k_labelGraduationLength-2)/2,
-        1,
-        k_labelGraduationLength) :
-    KDRect(
-        otherAxisCoordinate-(k_labelGraduationLength-2)/2,
-        labelPosition,
-        k_labelGraduationLength,
-        1);
-  ctx->fillRect(graduation, KDColorBlack);
-}
-
 void CurveView::privateDrawLabel(KDContext * ctx, KDRect rect, Axis axis, float grad, const char * label, float verticalCoordinate, float horizontalCoordinate, KDColor color, FloatingPosition floatingLabels, bool shiftOrigin, KDCoordinate viewHeight, KDColor backgroundColor) const {
   KDCoordinate labelPosition = std::round(floatToPixel(axis, grad));
   KDSize textSize = k_font->stringSize(label);
@@ -352,7 +334,19 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
 
   if (floatingLabels == FloatingPosition::None) {
     for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-      drawGraduation(ctx, rect, axis, labelValueAtIndex(axis, i));
+      KDCoordinate labelPosition = std::round(floatToPixel(axis, labelValueAtIndex(axis, i)));
+      KDRect graduation = axis == Axis::Horizontal ?
+        KDRect(
+            labelPosition,
+            verticalCoordinate -(k_labelGraduationLength-2)/2,
+            1,
+            k_labelGraduationLength) :
+        KDRect(
+            horizontalCoordinate-(k_labelGraduationLength-2)/2,
+            labelPosition,
+            k_labelGraduationLength,
+            1);
+      ctx->fillRect(graduation, KDColorBlack);
     }
   }
 

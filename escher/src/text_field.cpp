@@ -372,9 +372,11 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     storeInClipboard();
     if (event == Ion::Events::Cut) {
-      reinitDraftTextBuffer();
-      resetSelection();
-      setEditing(true);
+      if (!m_contentView.selectionIsEmpty()) {
+        deleteSelection();
+      } else {
+        removeWholeText();
+      }
     }
     return true;
   }

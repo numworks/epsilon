@@ -193,16 +193,13 @@ bool TextInput::moveCursorRight() {
 
 bool TextInput::selectLeftRight(bool left) {
   const char * cursorLoc = cursorLocation();
-  if ((left && cursorLoc <= text())
-     || (!left && UTF8Helper::CodePointIs(cursorLoc, UCodePointNull)))
-  {
-    assert(!left || cursorLoc == text());
+  bool moved = left ? moveCursorLeft() : moveCursorRight();
+  if (!moved) {
     return false;
   }
-  UTF8Decoder decoder(text(), cursorLoc);
-  const char * nextCursorLocation = left ? decoder.previousGlyphPosition() : decoder.nextGlyphPosition();
-  contentView()->addSelection(left ? nextCursorLocation : cursorLoc, left ? cursorLoc : nextCursorLocation); //TODO LEA adjusted location?
-  return setCursorLocation(nextCursorLocation);
+  const char * nextCursorLoc = cursorLocation();
+  contentView()->addSelection(left ? nextCursorLoc : cursorLoc, left ? cursorLoc : nextCursorLoc);
+  return true;
 }
 
 bool TextInput::privateRemoveEndOfLine() {

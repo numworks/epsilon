@@ -124,12 +124,12 @@ void TextField::ContentView::reinitDraftTextBuffer() {
 bool TextField::ContentView::insertTextAtLocation(const char * text, const char * location) {
   assert(m_isEditing);
 
-  int textSize = strlen(text);
-  if (m_currentDraftTextLength + textSize >= m_draftTextBufferSize || textSize == 0) {
+  int textLength = strlen(text);
+  if (m_currentDraftTextLength + textLength >= m_draftTextBufferSize || textLength == 0) {
     return false;
   }
 
-  memmove(const_cast<char *>(location + textSize), location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
+  memmove(const_cast<char *>(location + textLength), location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
   // Caution! One byte will be overridden by the null-terminating char of strlcpy
   char * overridenByteLocation = const_cast<char *>(location + strlen(text));
@@ -137,7 +137,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, const char 
   strlcpy(const_cast<char *>(location), text, (s_draftTextBuffer + m_draftTextBufferSize) - location);
   assert(overridenByteLocation < s_draftTextBuffer + m_draftTextBufferSize);
   *overridenByteLocation = overridenByte;
-  m_currentDraftTextLength += textSize;
+  m_currentDraftTextLength += textLength;
 
   UTF8Decoder decoder(s_draftTextBuffer);
   const char * codePointPointer = decoder.stringPosition();
@@ -177,19 +177,19 @@ bool TextField::ContentView::removePreviousGlyph() {
     reloadRectFromPosition(s_draftTextBuffer);
   }
   // Remove the glyph if possible
-  int removedSize = UTF8Helper::RemovePreviousGlyph(s_draftTextBuffer, const_cast<char *>(cursorLocation()));
-  if (removedSize == 0) {
+  int removedLength = UTF8Helper::RemovePreviousGlyph(s_draftTextBuffer, const_cast<char *>(cursorLocation()));
+  if (removedLength == 0) {
     assert(cursorLocation() == s_draftTextBuffer);
     return false;
   }
 
   // Update the draft buffer length
-  m_currentDraftTextLength-= removedSize;
+  m_currentDraftTextLength-= removedLength;
   assert(s_draftTextBuffer[m_currentDraftTextLength] == 0);
 
   // Set the cursor location and reload the view
-  assert(cursorLocation() - removedSize >= s_draftTextBuffer);
-  setCursorLocation(cursorLocation() - removedSize);
+  assert(cursorLocation() - removedLength >= s_draftTextBuffer);
+  setCursorLocation(cursorLocation() - removedLength);
   if (m_horizontalAlignment == 0.0f) {
     reloadRectFromPosition(cursorLocation());
   }

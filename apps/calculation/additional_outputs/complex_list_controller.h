@@ -12,6 +12,10 @@ public:
   ComplexListController() :
     IllustratedListController(nullptr),
     m_complexGraphCell(&m_model) {}
+
+  // ViewController
+  void viewWillAppear() override;
+
   void setExpression(Poincare::Expression e) override;
 private:
   CodePoint expressionSymbol() const override { return 'z'; }

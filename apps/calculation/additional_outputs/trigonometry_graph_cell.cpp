@@ -23,7 +23,10 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawSegment(ctx, rect, Axis::Vertical, std::cos(m_model->angle()), 0.0f, std::sin(m_model->angle()), Palette::Red, 1, 3);
   drawSegment(ctx, rect, Axis::Horizontal, std::sin(m_model->angle()), 0.0f, std::cos(m_model->angle()), Palette::Red, 1, 3);
   // Draw angle position on the circle
-  drawDot(ctx, rect, std::cos(m_model->angle()), std::sin(m_model->angle()), Palette::Red);
+  drawDot(ctx, rect, std::cos(m_model->angle()), std::sin(m_model->angle()), Palette::Red, true);
+  // Draw graduations
+  drawLabelsAndGraduations(ctx, rect, Axis::Vertical, false, true);
+  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, true);
   // Draw labels
   drawLabel(ctx, rect, Axis::Vertical, std::sin(m_model->angle()), "sin(θ)", Palette::Red);
   drawLabel(ctx, rect, Axis::Horizontal, std::cos(m_model->angle()), "cos(θ)", Palette::Red);

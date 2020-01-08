@@ -12,6 +12,8 @@ TrigonometryGraphView::TrigonometryGraphView(TrigonometryModel * model) :
 }
 
 void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
+  float s = std::sin(m_model->angle());
+  float c = std::cos(m_model->angle());
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
   drawAxes(ctx, rect);
@@ -20,16 +22,16 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
       return Poincare::Coordinate2D<float>(std::cos(t), std::sin(t));
     }, nullptr, nullptr, true, Palette::GreyDark, false);
   // Draw dashed segment to indicate sine and cosine
-  drawSegment(ctx, rect, Axis::Vertical, std::cos(m_model->angle()), 0.0f, std::sin(m_model->angle()), Palette::Red, 1, 3);
-  drawSegment(ctx, rect, Axis::Horizontal, std::sin(m_model->angle()), 0.0f, std::cos(m_model->angle()), Palette::Red, 1, 3);
+  drawSegment(ctx, rect, Axis::Vertical, c, 0.0f, s, Palette::Red, 1, 3);
+  drawSegment(ctx, rect, Axis::Horizontal, s, 0.0f, c, Palette::Red, 1, 3);
   // Draw angle position on the circle
-  drawDot(ctx, rect, std::cos(m_model->angle()), std::sin(m_model->angle()), Palette::Red, true);
+  drawDot(ctx, rect, c, s, Palette::Red, true);
   // Draw graduations
   drawLabelsAndGraduations(ctx, rect, Axis::Vertical, false, true);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, true);
   // Draw labels
-  drawLabel(ctx, rect, Axis::Vertical, std::sin(m_model->angle()), "sin(θ)", Palette::Red);
-  drawLabel(ctx, rect, Axis::Horizontal, std::cos(m_model->angle()), "cos(θ)", Palette::Red);
+  drawLabel(ctx, rect, Axis::Vertical, s, "sin(θ)", Palette::Red);
+  drawLabel(ctx, rect, Axis::Horizontal, c, "cos(θ)", Palette::Red);
 }
 
 }

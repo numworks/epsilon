@@ -12,14 +12,12 @@ static char s_draftTextBuffer[TextField::maxBufferSize()];
 /* TextField::ContentView */
 
 TextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  TextInput::ContentView(font),
+  TextInput::ContentView(font, horizontalAlignment, verticalAlignment),
   m_isEditing(false),
   m_textBuffer(textBuffer),
   m_textBufferSize(textBufferSize),
   m_draftTextBufferSize(draftTextBufferSize),
   m_currentDraftTextLength(0),
-  m_horizontalAlignment(horizontalAlignment),
-  m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),
   m_backgroundColor(backgroundColor)
 {
@@ -87,12 +85,6 @@ void TextField::ContentView::setText(const char * text) {
   if (m_isEditing || m_textBuffer == s_draftTextBuffer) {
     m_currentDraftTextLength = textLength;
   }
-  markRectAsDirty(bounds());
-}
-
-void TextField::ContentView::setAlignment(float horizontalAlignment, float verticalAlignment) {
-  m_horizontalAlignment = horizontalAlignment;
-  m_verticalAlignment = verticalAlignment;
   markRectAsDirty(bounds());
 }
 
@@ -295,10 +287,6 @@ void TextField::setText(const char * text) {
   /* Set the cursor location here and not in ContentView::setText so that
    * TextInput::willSetCursorLocation is called. */
   setCursorLocation(m_contentView.editedText()+strlen(text));
-}
-
-void TextField::setAlignment(float horizontalAlignment, float verticalAlignment) {
-  m_contentView.setAlignment(horizontalAlignment, verticalAlignment);
 }
 
 bool TextField::privateHandleEvent(Ion::Events::Event event) {

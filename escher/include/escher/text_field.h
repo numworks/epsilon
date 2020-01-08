@@ -28,7 +28,6 @@ public:
   char * draftTextBuffer() const { return const_cast<char *>(m_contentView.editedText()); }
   size_t draftTextLength() const;
   void setText(const char * text);
-  void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
   CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
@@ -42,7 +41,7 @@ public:
 protected:
   class ContentView : public TextInput::ContentView {
   public:
-    ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor);
+    ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor);
     void setBackgroundColor(KDColor backgroundColor);
     KDColor backgroundColor() const { return m_backgroundColor; }
     void setTextColor(KDColor textColor);
@@ -52,7 +51,6 @@ protected:
     const char * editedText() const override;
     size_t editedTextLength() const override { return m_currentDraftTextLength; }
     void setText(const char * text);
-    void setAlignment(float horizontalAlignment, float verticalAlignment);
     void setEditing(bool isEditing);
     void reinitDraftTextBuffer();
     void setDraftTextBufferSize(size_t size) { m_draftTextBufferSize = size; }
@@ -83,8 +81,6 @@ protected:
     size_t m_textBufferSize;
     size_t m_draftTextBufferSize;
     size_t m_currentDraftTextLength;
-    float m_horizontalAlignment;
-    float m_verticalAlignment;
     KDColor m_textColor;
     KDColor m_backgroundColor;
   };

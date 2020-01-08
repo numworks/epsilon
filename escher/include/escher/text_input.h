@@ -15,18 +15,24 @@ public:
   const char * cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
   bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
+  // Selection
   void resetSelection() { contentView()->resetSelection(); }
   void deleteSelection();
+  // Alignment
+  void setAlignment(float horizontalAlignment, float verticalAlignment);
 protected:
+
   class ContentView : public View {
   public:
-    ContentView(const KDFont * font) :
+    ContentView(const KDFont * font, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f) :
       View(),
       m_cursorView(),
       m_font(font),
       m_selectionStart(nullptr),
       m_selectionEnd(nullptr),
-      m_cursorLocation(nullptr)
+      m_cursorLocation(nullptr),
+      m_horizontalAlignment(horizontalAlignment),
+      m_verticalAlignment(verticalAlignment)
     {}
 
     // Font
@@ -52,6 +58,9 @@ protected:
     bool selectionIsEmpty() const;
     virtual size_t deleteSelection() = 0;
 
+    // Alignment
+    void setAlignment(float horizontalAlignment, float verticalAlignment);
+
     // Reload
     void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);
   protected:
@@ -64,6 +73,8 @@ protected:
     const char * m_selectionStart;
     const char * m_selectionEnd;
     const char * m_cursorLocation;
+    float m_horizontalAlignment;
+    float m_verticalAlignment;
   private:
     int numberOfSubviews() const override { return 1; }
     View * subviewAtIndex(int index) override {

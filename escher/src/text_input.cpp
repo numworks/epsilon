@@ -75,6 +75,12 @@ bool TextInput::ContentView::selectionIsEmpty() const {
   return m_selectionStart == nullptr;
 }
 
+void TextInput::ContentView::setAlignment(float horizontalAlignment, float verticalAlignment) {
+  m_horizontalAlignment = horizontalAlignment;
+  m_verticalAlignment = verticalAlignment;
+  markRectAsDirty(bounds());
+}
+
 void TextInput::ContentView::reloadRectFromPosition(const char * position, bool includeFollowingLines) {
   markRectAsDirty(dirtyRectFromPosition(position, includeFollowingLines));
 }
@@ -154,6 +160,10 @@ void TextInput::deleteSelection() {
     setCursorLocation(contentView()->cursorLocation() - removedLength);
   }
   contentView()->reloadRectFromPosition(previousSelectionStart, true);
+}
+
+void TextInput::setAlignment(float horizontalAlignment, float verticalAlignment) {
+  contentView()->setAlignment(horizontalAlignment, verticalAlignment);
 }
 
 bool TextInput::insertTextAtLocation(const char * text, const char * location) {

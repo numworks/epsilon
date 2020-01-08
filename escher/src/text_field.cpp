@@ -373,6 +373,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     storeInClipboard();
     if (event == Ion::Events::Cut) {
       reinitDraftTextBuffer();
+      resetSelection();
       setEditing(true);
     }
     return true;

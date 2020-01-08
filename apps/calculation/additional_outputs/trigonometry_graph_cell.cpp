@@ -30,8 +30,8 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabelsAndGraduations(ctx, rect, Axis::Vertical, false, true);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, true);
   // Draw labels
-  drawLabel(ctx, rect, Axis::Vertical, s, "sin(θ)", Palette::Red);
-  drawLabel(ctx, rect, Axis::Horizontal, c, "cos(θ)", Palette::Red);
+  drawLabel(ctx, rect, 0.0f, s, "sin(θ)", Palette::Red, c >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
+  drawLabel(ctx, rect, c, 0.0f, "cos(θ)", Palette::Red, CurveView::RelativePosition::None, s >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::Before);
 }
 
 }

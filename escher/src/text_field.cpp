@@ -233,6 +233,8 @@ size_t TextField::ContentView::deleteSelection() {
    * are invalid */
   m_selectionStart = nullptr;
   m_selectionEnd = nullptr;
+  assert(removedLength <= m_currentDraftTextLength);
+  m_currentDraftTextLength -= removedLength;
   return removedLength;
 }
 

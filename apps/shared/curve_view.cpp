@@ -236,10 +236,10 @@ KDPoint CurveView::positionLabel(KDCoordinate xPosition, KDCoordinate yPosition,
       xPosition -= labelSize.width()/2;
   }
   switch (verticalPosition) {
-    case RelativePosition::Before: // Above
+    case RelativePosition::After: // Above
       yPosition -= labelSize.height() + k_labelMargin;
       break;
-    case RelativePosition::After: // Below
+    case RelativePosition::Before: // Below
       yPosition += k_labelMargin;
       break;
     default:
@@ -358,11 +358,11 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
         continue;
       }
       if (shiftOrigin && floatingLabels == FloatingPosition::None) {
-        position = positionLabel(horizontalCoordinate, verticalCoordinate, textSize, RelativePosition::Before, RelativePosition::After);
+        position = positionLabel(horizontalCoordinate, verticalCoordinate, textSize, RelativePosition::Before, RelativePosition::Before);
       }
     } else {
       if (axis == Axis::Horizontal) {
-        position = positionLabel(labelPosition, verticalCoordinate, textSize, RelativePosition::None, RelativePosition::After);
+        position = positionLabel(labelPosition, verticalCoordinate, textSize, RelativePosition::None, RelativePosition::Before);
         if (floatingLabels == FloatingPosition::Min) {
           position = KDPoint(position.x(), k_labelMargin);
         } else if (floatingLabels == FloatingPosition::Max) {

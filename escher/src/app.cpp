@@ -86,8 +86,8 @@ void App::displayModalViewController(ViewController * vc, float verticalAlignmen
   m_modalViewController.displayModalViewController(vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
 }
 
-void App::dismissModalViewController() {
-  m_modalViewController.dismissModalViewController();
+void App::dismissModalViewController(bool willExitApp) {
+  m_modalViewController.dismissModalViewController(willExitApp);
 }
 
 void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2, bool specialExitKeys) {
@@ -105,7 +105,7 @@ void App::didBecomeActive(Window * window) {
 
 void App::willBecomeInactive() {
   if (m_modalViewController.isDisplayingModal()) {
-    dismissModalViewController();
+    dismissModalViewController(true);
   }
   setFirstResponder(nullptr);
   m_modalViewController.viewDidDisappear();

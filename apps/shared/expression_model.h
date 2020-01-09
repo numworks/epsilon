@@ -32,7 +32,7 @@ private:
   virtual void * expressionAddress(const Ion::Storage::Record * record) const = 0;
   virtual size_t expressionSize(const Ion::Storage::Record * record) const = 0;
   bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
-  mutable int m_circular;
+  mutable int8_t m_circular;
 };
 
 }

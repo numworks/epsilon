@@ -55,9 +55,9 @@ public:
     m_view.evenOddCell()->setHighlighted(highlight);
     m_view.reloadScroll();
   }
-  void setCalculation(Calculation * calculation) { m_view.setCalculation(calculation); }
-  void setDisplayCenter(bool display) { m_view.setDisplayCenter(display); }
-  void setDisplayLeft(bool display) { m_view.setDisplayLeft(display); }
+  void setCalculation(Calculation * calculation);
+  void setDisplayCenter(bool display);
+  void setDisplayLeft(bool display);
 
 private:
   // Remove label margin added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView

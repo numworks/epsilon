@@ -188,6 +188,15 @@ void AbstractScrollableExactApproximateExpressionsView::reloadScroll() {
     ScrollableView::reloadScroll();
   }
 }
+void AbstractScrollableExactApproximateExpressionsView::setDisplayCenter(bool display) {
+  contentCell()->setDisplayCenter(display);
+  layoutSubviews();
+}
+
+void AbstractScrollableExactApproximateExpressionsView::setDisplayLeft(bool display) {
+  contentCell()->setDisplayLeft(display);
+  layoutSubviews();
+}
 
 void AbstractScrollableExactApproximateExpressionsView::didBecomeFirstResponder() {
   if (contentCell()->centeredExpressionView()->layout().isUninitialized()) {

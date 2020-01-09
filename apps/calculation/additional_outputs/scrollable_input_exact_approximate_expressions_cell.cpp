@@ -37,4 +37,19 @@ void ScrollableInputExactApproximateExpressionsCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_view);
 }
 
+void ScrollableInputExactApproximateExpressionsCell::setCalculation(Calculation * calculation) {
+  m_view.setCalculation(calculation);
+  layoutSubviews();
+}
+
+void ScrollableInputExactApproximateExpressionsCell::setDisplayCenter(bool display) {
+  m_view.setDisplayCenter(display);
+  layoutSubviews();
+}
+
+void ScrollableInputExactApproximateExpressionsCell::setDisplayLeft(bool display) {
+  m_view.setDisplayLeft(display);
+  layoutSubviews();
+}
+
 }

@@ -24,8 +24,8 @@ public:
   void setSelectedSubviewPosition(SubviewPosition subviewPosition) {
     contentCell()->setSelectedSubviewPosition(subviewPosition);
   }
-  void setDisplayCenter(bool display) { contentCell()->setDisplayCenter(display); }
-  void setDisplayLeft(bool display) { contentCell()->setDisplayLeft(display); }
+  void setDisplayCenter(bool display);
+  void setDisplayLeft(bool display);
   void reloadScroll();
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

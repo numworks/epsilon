@@ -38,15 +38,16 @@ void EditorController::setScript(Script script) {
   m_editorView.setText(const_cast<char *>(m_script.scriptContent()), newScriptSize - Script::k_importationStatusSize);
 }
 
+void EditorController::willExitApp() {
+  cleanStorageEmptySpace();
+}
+
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::USBEnumeration) {
     /* Exit the edition on USB enumeration, because the storage needs to be in a
      * "clean" state (with all records packed at the beginning of the storage) */
-    Ion::Storage::Record::Data scriptValue = m_script.value();
-    Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
-        m_script,
-        scriptValue.size - Script::k_importationStatusSize - (strlen(m_script.scriptContent()) + 1)); // TODO optimize number of script fetches
+    cleanStorageEmptySpace();
     stackController()->pop();
     return event != Ion::Events::Home && event != Ion::Events::USBEnumeration;
   }
@@ -127,5 +128,16 @@ VariableBoxController * EditorController::variableBoxForInputEventHandler(InputE
 StackViewController * EditorController::stackController() {
   return static_cast<StackViewController *>(parentResponder());
 }
+
+void EditorController::cleanStorageEmptySpace() {
+  if (m_script.isNull()) {
+    return;
+  }
+  Ion::Storage::Record::Data scriptValue = m_script.value();
+  Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
+      m_script,
+      scriptValue.size - Script::k_importationStatusSize - (strlen(m_script.scriptContent()) + 1)); // TODO optimize number of script fetches
+}
+
 
 }

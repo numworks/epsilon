@@ -52,6 +52,7 @@ public:
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
 
   /* InputEventHandlerDelegate */
   Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override;

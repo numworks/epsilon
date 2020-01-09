@@ -22,16 +22,18 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   float real = m_complex->real();
   float imag = m_complex->imag();
   float ph = std::arg(*m_complex);
-  // Draw the segment from the origin to the dot (real, imag) of equation y = x*imag/real
+  /* Draw the segment from the origin to the dot (real, imag) of equation
+   * x(t) = t*real and y(t) = t*imag with t in [0,1] */
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
       [](float t, void * model, void * context) {
         ComplexModel * complexModel = (ComplexModel *)model;
         return Poincare::Coordinate2D<float>(complexModel->real()*t, complexModel->imag()*t);
       }, m_complex, nullptr, false, Palette::GreyDark, false);
   /* Draw the partial ellipse indicating the angle theta
-   * - the ellipse parameters are a = |real|5 and b = |imag|/5,
-   * - the parametric ellipse equation is x(t) = a*cos(t) and y(t) = b*sin(t)
-   * - we draw the ellipse from t = 0 to t = the phase of the complex
+   * - the ellipse parameters are a = |real|/5 and b = |imag|/5,
+   * - the parametric ellipse equation is x(t) = a*cos(θ*t) and y(t) = b*sin(θ*t)
+   * - we draw the ellipse for t in [0,1] to represent it from the abscissa axis
+   * to the phase of the complex
    */
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
       [](float t, void * model, void * context) {

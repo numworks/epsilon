@@ -110,6 +110,7 @@ public:
   Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size);
 
   // Record getters
+  bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
   Record recordWithExtensionAtIndex(const char * extension, int index);
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);

@@ -156,6 +156,10 @@ void MenuController::scriptContentEditionDidFinish() {
   reloadConsole();
 }
 
+void MenuController::willExitApp() {
+  m_editorController.willExitApp();
+}
+
 int MenuController::numberOfRows() const {
   return m_scriptStore->numberOfScripts() + m_shouldDisplayAddScriptRow;
 }

@@ -316,13 +316,17 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
   Position ingoingPosition = right ? Position::Left : Position::Right;
   Position outgoingPosition = right ? Position::Right : Position::Left;
 
-  // Find the layout to select
+  // Handle empty layouts
+  bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
+  if (currentLayoutIsEmpty) {
+    m_position = outgoingPosition;
+  }
 
+  // Find the layout to select
   LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);
   Layout equivalentLayout = equivalentCursor.layout();
-  bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
 
-  if (!currentLayoutIsEmpty && m_position == ingoingPosition) {
+  if (m_position == ingoingPosition) {
     /* The current cursor is positionned on the ingoing position, for instance
      * left a layout if we want to select towards the right. */
     if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
@@ -337,14 +341,16 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
       *selection = m_layout;
     }
   } else {
-    assert(currentLayoutIsEmpty || m_position == outgoingPosition);
     /* The cursor is on the outgoing position, for instance right of a layout
      * when we want to select towards the right. */
-    if (!currentLayoutIsEmpty && !equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
+    if (!equivalentLayout.isUninitialized() && equivalentCursor.position() == ingoingPosition) {
       /* If there is an equivalent layout positionned on the ingoing position,
-       * select it. */
+       * try the algorithm with it. */
       assert(equivalentLayout.type() != LayoutNode::Type::HorizontalLayout);
-      *selection = equivalentLayout;
+      m_layout = equivalentLayout;
+      m_position = ingoingPosition;
+      selectLeftRight(right, shouldRecomputeLayout, selection);
+      return;
     } else {
       // Else, find the first non horizontal ancestor and select it.
       Layout notHorizontalAncestor = m_layout.parent();

@@ -16,6 +16,15 @@ public:
   float yMax() const override;
 
   void setComplex(std::complex<float> c) { *this = ComplexModel(c); }
+
+
+  static constexpr float k_minVerticalMarginFactor = -0.5f;
+  static constexpr float k_maxVerticalMarginFactor = 1.2f;
+  static constexpr float k_minHorizontalMarginFactor = -1.0f;
+  static constexpr float k_maxHorizontalMarginFactor = 2.0f;
+
+private:
+  float rangeBound(float direction, bool horizontal) const;
 };
 
 }

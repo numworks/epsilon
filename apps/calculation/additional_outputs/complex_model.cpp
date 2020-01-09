@@ -8,34 +8,36 @@ ComplexModel::ComplexModel(std::complex<float> c) :
 {
 }
 
-float rangeBound(float value, float direction, bool horizontal) {
-  if (std::isnan(value) || std::isinf(value) || value == 0.0f) {
-    return direction;
-  }
-  float minFactor = -0.5f;
-  float maxFactor = 1.2f;
+float ComplexModel::rangeBound(float direction, bool horizontal) const {
+  float minFactor = k_minVerticalMarginFactor;
+  float maxFactor = k_maxVerticalMarginFactor;
+  float value = imag();
   if (horizontal) {
-    minFactor = -1.0f;
-    maxFactor = 2.0f;
+    minFactor = k_minHorizontalMarginFactor;
+    maxFactor = k_maxHorizontalMarginFactor;
+    value = real();
+  }
+  if (std::isnan(value) || std::isinf(value) || value == 0.0f) {
+    return direction*maxFactor;
   }
   float factor = direction*value >= 0.0f ? maxFactor : minFactor;
   return factor*value;
 }
 
 float ComplexModel::xMin() const {
-  return rangeBound(real(), -1.0f, true);
+  return rangeBound(-1.0f, true);
 }
 
 float ComplexModel::xMax() const {
-  return rangeBound(real(), 1.0f, true);
+  return rangeBound(1.0f, true);
 }
 
 float ComplexModel::yMin() const {
-  return rangeBound(imag(), -1.0f, false);
+  return rangeBound(-1.0f, false);
 }
 
 float ComplexModel::yMax() const {
-  return rangeBound(imag(), 1.0f, false);
+  return rangeBound(1.0f, false);
 }
 
 }

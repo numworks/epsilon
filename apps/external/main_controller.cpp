@@ -4,6 +4,8 @@
 #include <assert.h>
 #include "archive.h"
 #include "app.h"
+#include <kandinsky/palette.h>
+#include <ion/include/ion.h>
 
 using namespace Poincare;
 
@@ -30,7 +32,7 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  if (numberOfRows() > 0 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && ((selectedRow() < k_numberOfCells - 2) && numberOfFiles() > 0)) {
       uint32_t res = executeFile(m_cells[selectedRow()].text(), ((App *)m_app)->heap(), ((App *)m_app)->heapSize());
       ((App*)m_app)->redraw();
       switch(res) {
@@ -83,14 +85,64 @@ int MainController::typeAtLocation(int i, int j) {
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   PointerTextTableCell * myTextCell = (PointerTextTableCell *)cell;
   struct File f;
-  if(fileAtIndex(index, f)) {
-    myTextCell->setText(f.name);
-    myTextCell->setTextColor(f.isExecutable ? KDColorBlack : Palette::GreyDark);
+  #ifdef DEVICE
+  if(Ion::fccId() == "2ALWP-N0100"){
+    if(index == 0){
+      myTextCell->setText("External is not compatible");
+      myTextCell->setTextColor(Palette::Red);
+    } else {
+      myTextCell->setText("with n0100");
+      myTextCell->setTextColor(Palette::Red);
+    }
+  }else{
+  if(index == k_numberOfCells-1){
+    myTextCell->setText("zardam.github.io/nw-external-apps/");
+    myTextCell->setTextColor(Palette::AccentText);
+    return;
   }
+  if(index == k_numberOfCells-2){
+    myTextCell->setText("Get more apps at");
+    myTextCell->setTextColor(Palette::AccentText);
+    return;
+  }
+  if(index == 0 && numberOfFiles() == 0){
+    myTextCell->setText("No apps installed");
+    myTextCell->setTextColor(Palette::Red);
+  }
+  if(numberOfFiles() > 0){
+    if(fileAtIndex(index, f)) {
+      myTextCell->setText(f.name);
+      myTextCell->setTextColor(f.isExecutable ? KDColorBlack : Palette::GreyDark);
+    }
+  }
+  }
+  #else
+  if(index == 0){
+    myTextCell->setText("External is not compatible");
+    myTextCell->setTextColor(Palette::Red);
+  } else {
+    myTextCell->setText("with the simulator");
+    myTextCell->setTextColor(Palette::Red);
+  }
+  #endif
 }
 
 void MainController::viewWillAppear() {
-  int count = numberOfFiles();
+  int count;
+  #ifdef DEVICE
+  if(Ion::fccId() == "2ALWP-N0100"){
+    count = 2;
+  }else {
+    if(numberOfFiles() > 0){
+      count = numberOfFiles()+2;
+    } else {
+      count = 3;
+    }
+  }
+
+  #else
+    count = 2;
+  #endif
   k_numberOfCells = count <= k_maxNumberOfCells ? count : k_maxNumberOfCells;
   m_selectableTableView.reloadData();
 }

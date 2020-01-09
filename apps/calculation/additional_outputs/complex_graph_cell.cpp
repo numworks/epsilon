@@ -21,7 +21,6 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
 
   float real = m_complex->real();
   float imag = m_complex->imag();
-  float ph = std::arg(*m_complex);
   /* Draw the segment from the origin to the dot (real, imag) of equation
    * x(t) = t*real and y(t) = t*imag with t in [0,1] */
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
@@ -29,24 +28,34 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
         ComplexModel * complexModel = (ComplexModel *)model;
         return Poincare::Coordinate2D<float>(complexModel->real()*t, complexModel->imag()*t);
       }, m_complex, nullptr, false, Palette::GreyDark, false);
-  /* Draw the partial ellipse indicating the angle theta
+  /* Draw the partial ellipse indicating the angle θ
    * - the ellipse parameters are a = |real|/5 and b = |imag|/5,
-   * - the parametric ellipse equation is x(t) = a*cos(θ*t) and y(t) = b*sin(θ*t)
+   * - the parametric ellipse equation is x(t) = a*cos(th*t) and y(t) = b*sin(th*t)
+   *   with th computed in order to be the intersection of the line forming an
+   *   angle θ with the abscissa and the ellipsis
    * - we draw the ellipse for t in [0,1] to represent it from the abscissa axis
-   * to the phase of the complex
+   *   to the phase of the complex
    */
+  /* Compute th: th is the intersection of ellipsis of equation (a*cos(t), b*sin(t))
+   * and the line of equation (t,t*tan(θ)).
+   * (a*cos(t), b*sin(t)) = (t,t*tan(θ)) --> t = arctan((a/b)*tan(θ)) (± π) */
+
+  float th = imag != 0.0f ? std::atan(std::fabs(real/imag)*std::tan(std::arg(*m_complex))) : 0.0f;
+  if (real < 0.0f) {
+    th += imag < 0.0f ? -M_PI : M_PI;
+  }
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
       [](float t, void * model, void * context) {
         ComplexModel * complexModel = (ComplexModel *)model;
-        float ph = *(float *)context;
+        float th = *(float *)context;
         float factor = 5.0f;
         float a = std::fabs(complexModel->real())/factor;
         float b = std::fabs(complexModel->imag())/factor;
         // Avoid flat ellipsis in edge cases (i or -i)
         a = a == 0.0f ? 1.0f/factor : a;
         b = b == 0.0f ? 1.0f/factor : b;
-        return Poincare::Coordinate2D<float>(a*std::cos(t*ph), b*std::sin(t*ph));
-    }, m_complex, &ph, false, Palette::GreyDark, false);
+        return Poincare::Coordinate2D<float>(a*std::cos(t*th), b*std::sin(t*th));
+    }, m_complex, &th, false, Palette::GreyDark, false);
   // Draw dashed segment to indicate real and imaginary
   drawSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);
   drawSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
@@ -72,7 +81,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // we positioned its label consistently
   real = real == 0.0f ? 1.0f : real;
   imag = imag == 0.0f ? 1.0f : imag;
-  drawLabel(ctx, rect, std::fabs(real)/5.0f*std::cos(factor*ph), std::fabs(imag)/5.0f*std::sin(factor*ph), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
+  drawLabel(ctx, rect, std::fabs(real)/5.0f*std::cos(factor*th), std::fabs(imag)/5.0f*std::sin(factor*th), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
 }
 
 }

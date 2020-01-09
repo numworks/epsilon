@@ -151,7 +151,7 @@ void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record,
 void ExpressionModel::tidy() const {
   m_layout = Layout();
   m_expression = Expression();
-  m_circular = 0;
+  m_circular = -1;
 }
 
 Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol) {

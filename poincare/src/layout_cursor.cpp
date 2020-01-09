@@ -365,6 +365,7 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
 
 void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection) {
   // Move the cursor in the selection direction
+  Layout p = m_layout.parent();
   LayoutCursor c = cursorAtDirection(up ? Direction::Up : Direction::Down, shouldRecomputeLayout, true);
   if (!c.isDefined()) {
     return;
@@ -372,13 +373,24 @@ void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * 
 
   /* Find the first common ancestor between the current layout and the layout of
    * the moved cursor (also check the common ancestor with the equivalent
-   * position). This ancestor will be the added selection. */
-  TreeHandle ancestor1 = m_layout.commonAncestorWith(c.layout());
+   * position). This ancestor will be the added selection.
+   *
+   * The current layout might have been detached from its parent, for instance
+   * if it was a grey empty layout of a matrix and the cursor move exited this
+   * matrix. In this case, use the layout parent (it should still be attached to
+   * the main layout). */
+
+  const bool previousLayoutWasDetached = m_layout.parent() != p;
+  Layout previousCursoredLayout = previousLayoutWasDetached ? p : m_layout;
+  TreeHandle ancestor1 = previousCursoredLayout.commonAncestorWith(c.layout());
   TreeHandle ancestor2 = Layout();
-  LayoutCursor eqCursor = m_layout.equivalentCursor(this);
-  Layout equivalentLayout = eqCursor.layout();
-  if (!equivalentLayout.isUninitialized()) {
-    ancestor2 = equivalentLayout.commonAncestorWith(c.layout());
+  LayoutCursor eqCursor;
+  if (!previousLayoutWasDetached) {
+    eqCursor = previousCursoredLayout.equivalentCursor(this);
+    Layout equivalentLayout = eqCursor.layout();
+    if (!equivalentLayout.isUninitialized()) {
+      ancestor2 = equivalentLayout.commonAncestorWith(c.layout());
+    }
   }
   // Select the closest common ancestor
   bool ancestorOfPointedLayoutSelected = ancestor2.isUninitialized() || !ancestor2.hasAncestor(ancestor1, true);

@@ -70,24 +70,46 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
      *  +++-------  -> +++ is the previous previous selection
      *       (   )  -> added selection
      *  ++++++++++  -> next selection
-     *
-     *  The previous selected layouts and the new added selection are all
-     *  children of a same horizontal layout. */
-     assert(m_selectionStart.parent() == m_selectionEnd.parent()
-         && m_selectionStart.parent() == addedLayout.parent()
-         && m_selectionStart.parent().type() == LayoutNode::Type::HorizontalLayout);
-     m_selectionEnd = addedLayout;
+     *  */
+    if (addedLayout.parent() == m_selectionStart) {
+      /* The previous selected layout is an horizontal layout and we remove one
+       * of its children. */
+      assert(m_selectionStart == m_selectionEnd
+          && m_selectionStart.type() == LayoutNode::Type::HorizontalLayout);
+      m_selectionStart = m_selectionStart.childAtIndex(0);
+      m_selectionEnd = m_selectionEnd.childAtIndex(m_selectionEnd.numberOfChildren() - 1);
+      addSelection(addedLayout);
+      return;
+    }
+    /* The previous selected layouts and the new added selection are all
+     * children of a same horizontal layout. */
+    assert(m_selectionStart.parent() == m_selectionEnd.parent()
+        && m_selectionStart.parent() == addedLayout.parent()
+        && m_selectionStart.parent().type() == LayoutNode::Type::HorizontalLayout);
+    m_selectionEnd = addedLayout;
   } else if (IsBefore(addedLayout, m_selectionStart, true)) {
     /*
      *  -------+++  -> +++ is the previous previous selection
      *  (   )       -> added selection
      *  ++++++++++  -> next selection
      * */
-    if (m_selectionStart.hasAncestor(addedLayout, true)) {
-      // We are selecting a layout containing the current selection
-      m_selectionEnd = addedLayout;
+    if (addedLayout.type() == LayoutNode::Type::HorizontalLayout
+        && m_selectionStart.parent() == addedLayout)
+    {
+      /* The selection was from the first to the last child of an horizontal
+       * layout, we add this horizontal layout -> the selection is now empty. */
+      assert(m_selectionEnd.parent() == addedLayout);
+      assert(addedLayout.childAtIndex(0) == m_selectionStart);
+      assert(addedLayout.childAtIndex(addedLayout.numberOfChildren() - 1) == m_selectionEnd);
+      m_selectionStart = Layout();
+      m_selectionEnd = Layout();
+    } else {
+      if (m_selectionStart.hasAncestor(addedLayout, true)) {
+        // We are selecting a layout containing the current selection
+        m_selectionEnd = addedLayout;
+      }
+      m_selectionStart = addedLayout;
     }
-    m_selectionStart = addedLayout;
   } else {
     bool sameEnd = m_selectionEnd == addedLayout;
     bool sameStart = m_selectionStart == addedLayout;

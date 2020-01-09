@@ -53,16 +53,17 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // 'im(z)' label
   drawLabel(ctx, rect, 0.0f, imag, "im(θ)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
   // '|z|' label, the relative horizontal position of this label depends on the quadrant
-  drawLabel(ctx, rect, real/2.0f, imag/2.0f, "|z|", Palette::Red, CurveView::RelativePosition::None, CurveView::RelativePosition::After);
-  // 'arg(z)' label, the relative horizontal/vertical positions of this label depends on the quadrant
-  CurveView::RelativePosition horizontalPosition = CurveView::RelativePosition::None;
-  CurveView::RelativePosition verticalPosition = CurveView::RelativePosition::None;
-  if (real >= 0.0f) {
-    horizontalPosition = imag >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::Before;
-  } else {
-    verticalPosition = CurveView::RelativePosition::After;
-  }
-  drawLabel(ctx, rect, std::fabs(real)/5.0f*std::cos(ph/2.0f), std::fabs(imag)/5.0f*std::sin(ph/2.0f), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
+  CurveView::RelativePosition verticalPosition = imag < 0.0f && real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After;
+  drawLabel(ctx, rect, real/2.0f, imag/2.0f, "|z|", Palette::Red, CurveView::RelativePosition::None, verticalPosition);
+  // 'arg(z)' label, the absolute and relative horizontal/vertical positions of this label depends on the quadrant
+  /* factor is the ratio of the angle where we position the label
+   * For the right half plan, we position the label close to the abscissa axis
+   * and for the left half plan, we position the label at the half angle. The
+   * relative position is chosen accordingly. */
+  float factor = real >= 0.0f ? 0.0f : 0.5f;
+  CurveView::RelativePosition horizontalPosition = real >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::None;
+  verticalPosition = imag >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::Before;
+  drawLabel(ctx, rect, std::fabs(real)/5.0f*std::cos(factor*ph), std::fabs(imag)/5.0f*std::sin(factor*ph), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
 }
 
 }

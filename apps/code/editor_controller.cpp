@@ -130,7 +130,7 @@ StackViewController * EditorController::stackController() {
 }
 
 void EditorController::cleanStorageEmptySpace() {
-  if (m_script.isNull()) {
+  if (m_script.isNull() || !Ion::Storage::sharedStorage()->hasRecord(m_script)) {
     return;
   }
   Ion::Storage::Record::Data scriptValue = m_script.value();

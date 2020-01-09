@@ -39,10 +39,14 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   /* Compute th: th is the intersection of ellipsis of equation (a*cos(t), b*sin(t))
    * and the line of equation (t,t*tan(θ)).
    * (a*cos(t), b*sin(t)) = (t,t*tan(θ)) --> t = arctan((a/b)*tan(θ)) (± π) */
-
-  float th = imag != 0.0f ? std::atan(std::fabs(real/imag)*std::tan(std::arg(*m_complex))) : 0.0f;
+  assert(imag != 0.0f); // ComplexGraphView is not displayed for pure real
+  float th = std::atan(std::fabs(real/imag)*std::tan(std::arg(*m_complex)));
   if (real < 0.0f) {
     th += imag < 0.0f ? -M_PI : M_PI;
+  }
+  // Avoid flat ellipsis for edge cases (real = 0)
+  if (real == 0.0f) {
+    th = imag < 0.0f ? -M_PI/2.0f : M_PI/2.0f;
   }
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
       [](float t, void * model, void * context) {
@@ -52,8 +56,8 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float a = std::fabs(complexModel->real())/factor;
         float b = std::fabs(complexModel->imag())/factor;
         // Avoid flat ellipsis in edge cases (i or -i)
+        assert(b != 0.0f);
         a = a == 0.0f ? 1.0f/factor : a;
-        b = b == 0.0f ? 1.0f/factor : b;
         return Poincare::Coordinate2D<float>(a*std::cos(t*th), b*std::sin(t*th));
     }, m_complex, &th, false, Palette::GreyDark, false);
   // Draw dashed segment to indicate real and imaginary
@@ -68,6 +72,10 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabel(ctx, rect, 0.0f, imag, "im(θ)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
   // '|z|' label, the relative horizontal position of this label depends on the quadrant
   CurveView::RelativePosition verticalPosition = real*imag < 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After;
+  if (real == 0.0f) {
+    // Edge case: pure imaginary
+    verticalPosition = CurveView::RelativePosition::None;
+  }
   drawLabel(ctx, rect, real/2.0f, imag/2.0f, "|z|", Palette::Red, CurveView::RelativePosition::None, verticalPosition);
   // 'arg(z)' label, the absolute and relative horizontal/vertical positions of this label depends on the quadrant
   CurveView::RelativePosition horizontalPosition = real >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::None;
@@ -79,8 +87,8 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   float factor = real >= 0.0f ? 0.0f : 0.5f;
   // The angle represented by flat ellipsis have been avoided previously, so
   // we positioned its label consistently
+  assert(imag != 0.0f);
   real = real == 0.0f ? 1.0f : real;
-  imag = imag == 0.0f ? 1.0f : imag;
   drawLabel(ctx, rect, std::fabs(real)/5.0f*std::cos(factor*th), std::fabs(imag)/5.0f*std::sin(factor*th), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
 }
 

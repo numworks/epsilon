@@ -22,7 +22,6 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   float real = m_complex->real();
   float imag = m_complex->imag();
   float ph = std::arg(*m_complex);
-  ph = ph < 0.0f ? ph + 2*M_PI : ph; // Take the argument in [0;2π]
   // Draw the segment from the origin to the dot (real, imag) of equation y = x*imag/real
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
       [](float t, void * model, void * context) {

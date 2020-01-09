@@ -206,13 +206,23 @@ bool TextInput::moveCursorRight() {
   return setCursorLocation(decoder.nextGlyphPosition());
 }
 
-bool TextInput::selectLeftRight(bool left) {
+bool TextInput::selectLeftRight(bool left, bool all) {
   const char * cursorLoc = cursorLocation();
-  bool moved = left ? moveCursorLeft() : moveCursorRight();
-  if (!moved) {
-    return false;
+  const char * nextCursorLoc = nullptr;
+  if (!all) {
+    bool moved = left ? moveCursorLeft() : moveCursorRight();
+    if (!moved) {
+      return false;
+    }
+    nextCursorLoc = cursorLocation();
+  } else {
+    const char * t = text();
+    nextCursorLoc = left ? t : t + strlen(t);
+    if (cursorLoc == nextCursorLoc) {
+      return false;
+    }
+    setCursorLocation(nextCursorLoc);
   }
-  const char * nextCursorLoc = cursorLocation();
   contentView()->addSelection(left ? nextCursorLoc : cursorLoc, left ? cursorLoc : nextCursorLoc);
   return true;
 }

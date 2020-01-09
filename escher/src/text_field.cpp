@@ -481,8 +481,8 @@ bool TextField::privateHandleSelectEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
-  if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    selectLeftRight(event == Ion::Events::ShiftLeft);
+  if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight || event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
+    selectLeftRight(event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftUp, event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown);
     return true;
   }
   return false;

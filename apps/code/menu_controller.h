@@ -23,6 +23,7 @@ public:
   void reloadConsole();
   void openConsoleWithScript(Script script);
   void scriptContentEditionDidFinish();
+  void willExitApp();
 
   /* ViewController */
   View * view() override { return &m_selectableTableView; }

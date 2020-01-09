@@ -105,6 +105,10 @@ bool App::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void App::willExitResponderChain(Responder * nextFirstResponder) {
+  m_menuController.willExitApp();
+}
+
 Toolbox * App::toolboxForInputEventHandler(InputEventHandler * textInput) {
   return &m_toolbox;
 }

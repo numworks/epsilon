@@ -17,6 +17,7 @@ class EditorController : public ViewController, public TextAreaDelegate, public 
 public:
   EditorController(MenuController * menuController, App * pythonDelegate);
   void setScript(Script script);
+  void willExitApp();
 
   /* ViewController */
   View * view() override { return &m_editorView; }
@@ -33,6 +34,7 @@ public:
   VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 
 private:
+  void cleanStorageEmptySpace();
   StackViewController * stackController();
   EditorView m_editorView;
   Script m_script;

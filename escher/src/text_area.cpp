@@ -109,7 +109,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    selectLeftRight(event == Ion::Events::ShiftLeft);
+    selectLeftRight(event == Ion::Events::ShiftLeft, false);
     return true;
   }
   if (event == Ion::Events::ShiftUp ||event == Ion::Events::ShiftDown) {

@@ -19,6 +19,10 @@ IllustratedListController::IllustratedListController(Responder * parentResponder
 }
 
 void IllustratedListController::didEnterResponderChain(Responder * previousFirstResponder) {
+  // Select the left subview on all cells
+  for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
+    m_additionalCalculationCells[i].setSelectedSubviewPosition(ScrollableInputExactApproximateExpressionsView::SubviewPosition::Left);
+  }
   selectCellAtLocation(0, 1);
 }
 

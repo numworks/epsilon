@@ -58,6 +58,7 @@ public:
   void setCalculation(Calculation * calculation);
   void setDisplayCenter(bool display);
   void setDisplayLeft(bool display);
+  void setSelectedSubviewPosition(ScrollableInputExactApproximateExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 
 private:
   // Remove label margin added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView

@@ -42,6 +42,9 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float factor = 5.0f;
         float a = std::fabs(complexModel->real())/factor;
         float b = std::fabs(complexModel->imag())/factor;
+        // Avoid flat ellipsis in edge cases (i or -i)
+        a = a == 0.0f ? 1.0f/factor : a;
+        b = b == 0.0f ? 1.0f/factor : b;
         return Poincare::Coordinate2D<float>(a*std::cos(t*ph), b*std::sin(t*ph));
     }, m_complex, &ph, false, Palette::GreyDark, false);
   // Draw dashed segment to indicate real and imaginary
@@ -58,13 +61,17 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   CurveView::RelativePosition verticalPosition = imag < 0.0f && real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After;
   drawLabel(ctx, rect, real/2.0f, imag/2.0f, "|z|", Palette::Red, CurveView::RelativePosition::None, verticalPosition);
   // 'arg(z)' label, the absolute and relative horizontal/vertical positions of this label depends on the quadrant
+  CurveView::RelativePosition horizontalPosition = real >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::None;
+  verticalPosition = imag >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::Before;
   /* factor is the ratio of the angle where we position the label
    * For the right half plan, we position the label close to the abscissa axis
    * and for the left half plan, we position the label at the half angle. The
    * relative position is chosen accordingly. */
   float factor = real >= 0.0f ? 0.0f : 0.5f;
-  CurveView::RelativePosition horizontalPosition = real >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::None;
-  verticalPosition = imag >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::Before;
+  // The angle represented by flat ellipsis have been avoided previously, so
+  // we positioned its label consistently
+  real = real == 0.0f ? 1.0f : real;
+  imag = imag == 0.0f ? 1.0f : imag;
   drawLabel(ctx, rect, std::fabs(real)/5.0f*std::cos(factor*ph), std::fabs(imag)/5.0f*std::sin(factor*ph), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
 }
 

@@ -84,41 +84,36 @@ int MainController::typeAtLocation(int i, int j) {
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   PointerTextTableCell * myTextCell = (PointerTextTableCell *)cell;
+  myTextCell->setHighlighted(myTextCell->isHighlighted());
   struct File f;
   #ifdef DEVICE
   if(Ion::fccId() == "2ALWP-N0100"){
     if(index == 0){
       myTextCell->setText("External is not compatible");
       myTextCell->setTextColor(Palette::Red);
-      myTextCell->setHighlighted(myTextCell->isHighlighted());
     } else {
       myTextCell->setText("with n0100");
       myTextCell->setTextColor(Palette::Red);
-      myTextCell->setHighlighted(myTextCell->isHighlighted());
     }
   }else{
   if(index == k_numberOfCells-1){
     myTextCell->setText("zardam.github.io/nw-external-apps/");
     myTextCell->setTextColor(Palette::AccentText);
-    myTextCell->setHighlighted(myTextCell->isHighlighted());
     return;
   }
   if(index == k_numberOfCells-2){
     myTextCell->setText("Get more apps at");
     myTextCell->setTextColor(Palette::AccentText);
-    myTextCell->setHighlighted(myTextCell->isHighlighted());
     return;
   }
   if(index == 0 && numberOfFiles() == 0){
     myTextCell->setText("No apps installed");
     myTextCell->setTextColor(Palette::Red);
-    myTextCell->setHighlighted(myTextCell->isHighlighted());
   }
   if(numberOfFiles() > 0){
     if(fileAtIndex(index, f)) {
       myTextCell->setText(f.name);
       myTextCell->setTextColor(f.isExecutable ? Palette::PrimaryText : Palette::Palette::SecondaryText);
-      myTextCell->setHighlighted(myTextCell->isHighlighted());
     }
   }
   }
@@ -126,11 +121,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if(index == 0){
     myTextCell->setText("External is not compatible");
     myTextCell->setTextColor(Palette::Red);
-    myTextCell->setHighlighted(myTextCell->isHighlighted());
   } else {
     myTextCell->setText("with the simulator");
     myTextCell->setTextColor(Palette::Red);
-    myTextCell->setHighlighted(myTextCell->isHighlighted());
   }
   #endif
 }

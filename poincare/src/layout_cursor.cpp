@@ -154,7 +154,7 @@ void LayoutCursor::addXNTCodePointLayout() {
   m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTCodePoint()), true);
 }
 
-void LayoutCursor::insertText(const char * text) {
+void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText) {
   Layout newChild;
   Layout pointedChild;
   UTF8Decoder decoder(text);
@@ -199,7 +199,7 @@ void LayoutCursor::insertText(const char * text) {
       codePoint = decoder.nextCodePoint();
     }
   }
-  if (!pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
+  if (!forceCursorRightOfText && !pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
     m_position = Position::Right;
   }

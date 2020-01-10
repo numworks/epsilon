@@ -147,7 +147,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Paste) {
-    return handleEventWithText(Clipboard::sharedClipboard()->storedText());
+    return handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
   }
 
   // The following events need a scrollToCursor and return true

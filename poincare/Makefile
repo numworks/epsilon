@@ -30,6 +30,7 @@ poincare_src += $(addprefix poincare/src/,\
 
 poincare_src += $(addprefix poincare/src/,\
   init.cpp \
+  beta_function.cpp \
   binomial_distribution.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \

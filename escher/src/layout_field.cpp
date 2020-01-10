@@ -336,7 +336,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     if (resultExpression.isUninitialized()) {
       // The text is not parsable (for instance, ",") and is added char by char.
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-      m_contentView.cursor()->insertText(text);
+      m_contentView.cursor()->insertText(text, forceCursorRightOfText);
       reload(previousLayoutSize);
       return true;
     }

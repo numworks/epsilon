@@ -114,7 +114,7 @@ public:
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();
   void addXNTCodePointLayout();
-  void insertText(const char * text);
+  void insertText(const char * text, bool forceCursorRightOfText = false);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }

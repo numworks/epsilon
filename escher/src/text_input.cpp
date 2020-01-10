@@ -218,6 +218,7 @@ bool TextInput::selectLeftRight(bool left, bool all) {
   } else {
     const char * t = text();
     nextCursorLoc = left ? t : t + strlen(t);
+    willSetCursorLocation(&nextCursorLoc);
     if (cursorLoc == nextCursorLoc) {
       return false;
     }

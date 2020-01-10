@@ -4,6 +4,7 @@ app_headers += apps/probability/app.h
 app_probability_test_src = $(addprefix apps/probability/,\
   distribution/binomial_distribution.cpp \
   distribution/chi_squared_distribution.cpp \
+  distribution/fisher_distribution.cpp \
   distribution/geometric_distribution.cpp \
   distribution/helper.cpp \
   distribution/distribution.cpp \
@@ -64,9 +65,11 @@ $(eval $(call depends_on_image,apps/probability/distribution_controller.cpp,$(ad
   binomial_icon.png \
   chi_squared_icon.png \
   exponential_icon.png \
+  fisher_icon.png \
   focused_binomial_icon.png \
   focused_chi_squared_icon.png \
   focused_exponential_icon.png \
+  focused_fisher_icon.png \
   focused_geometric_icon.png \
   focused_normal_icon.png \
   focused_poisson_icon.png \

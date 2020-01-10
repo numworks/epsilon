@@ -18,7 +18,8 @@ public:
     ChiSquared,
     Student,
     Geometric,
-    Poisson
+    Poisson,
+    Fisher
   };
   virtual ~Distribution() = default;
   virtual I18n::Message title() = 0;

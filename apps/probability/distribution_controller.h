@@ -34,8 +34,8 @@ private:
     SelectableTableView * m_selectableTableView;
   };
   void setDistributionAccordingToIndex(int index);
-  constexpr static int k_totalNumberOfModels = 8;
-  Cell m_cells[k_totalNumberOfModels];
+  constexpr static int k_totalNumberOfModels = 9;
+  Cell m_cells[k_totalNumberOfModels]; // TODO LEA replace with number of visible cells
   SelectableTableView m_selectableTableView;
   ContentView m_contentView;
   I18n::Message * m_messages;

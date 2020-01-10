@@ -140,6 +140,7 @@ void refresh() {
   Display::draw(sRenderer, &screenRect);
 #endif
   SDL_RenderPresent(sRenderer);
+  sNeedsRefresh = false;
 
   IonSimulatorCallbackDidRefresh();
 }

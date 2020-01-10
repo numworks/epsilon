@@ -6,23 +6,27 @@
 
 namespace Poincare {
 
-void replaceOneCharSizedCodePointWith(char * buffer, CodePoint searchedCodePoint, CodePoint newCodePoint) {
-  assert(UTF8Decoder::CharSizeOfCodePoint(searchedCodePoint == 1));
-  assert(UTF8Decoder::CharSizeOfCodePoint(newCodePoint == 1));
-  UTF8Helper::PerformAtCodePoints(
-      buffer,
-      searchedCodePoint,
-      [](int codePointOffset, void * text, int newCodePoint, int bufferLength) {
-        *((char *)text+codePointOffset) = (char)newCodePoint;
-      },
-      [](int c1, void * c2, int c3, int c4) {},
-      (void *)buffer,
-      newCodePoint);
-}
+void SerializationHelper::ReplaceSystemParenthesesByUserParentheses(char * buffer, int length) {
+  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint('(' == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint(')' == 1));
+  assert(length == -1 || length > 0);
 
-void SerializationHelper::ReplaceSystemParenthesesByUserParentheses(char * buffer) {
-  replaceOneCharSizedCodePointWith(buffer, UCodePointLeftSystemParenthesis, '(');
-  replaceOneCharSizedCodePointWith(buffer, UCodePointRightSystemParenthesis, ')');
+  int offset = 0;
+  char c = *(buffer + offset);
+  while (c != 0) {
+    if (c == UCodePointLeftSystemParenthesis) {
+      *(buffer + offset) = '(';
+    } else if (c == UCodePointRightSystemParenthesis) {
+      *(buffer + offset) = ')';
+    }
+    offset++;
+    if (length >= 0 && offset > length - 1) {
+      break;
+    }
+    c = *(buffer + offset);
+  }
 }
 
 static bool checkBufferSize(char * buffer, int bufferSize, int * result) {

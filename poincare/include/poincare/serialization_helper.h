@@ -14,7 +14,7 @@ namespace Poincare {
 
 namespace SerializationHelper {
 
-  void ReplaceSystemParenthesesByUserParentheses(char * buffer);
+  void ReplaceSystemParenthesesByUserParentheses(char * buffer, int length = -1);
 
   // SerializableReference to text
   int Infix(

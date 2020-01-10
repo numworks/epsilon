@@ -5,6 +5,7 @@
 #include "distribution/binomial_distribution.h"
 #include "distribution/chi_squared_distribution.h"
 #include "distribution/exponential_distribution.h"
+#include "distribution/fisher_distribution.h"
 #include "distribution/geometric_distribution.h"
 #include "distribution/normal_distribution.h"
 #include "distribution/poisson_distribution.h"
@@ -13,6 +14,7 @@
 #include "images/binomial_icon.h"
 #include "images/chi_squared_icon.h"
 #include "images/exponential_icon.h"
+#include "images/fisher_icon.h"
 #include "images/geometric_icon.h"
 #include "images/normal_icon.h"
 #include "images/poisson_icon.h"
@@ -21,6 +23,7 @@
 #include "images/focused_binomial_icon.h"
 #include "images/focused_chi_squared_icon.h"
 #include "images/focused_exponential_icon.h"
+#include "images/focused_fisher_icon.h"
 #include "images/focused_geometric_icon.h"
 #include "images/focused_normal_icon.h"
 #include "images/focused_poisson_icon.h"
@@ -61,7 +64,8 @@ static I18n::Message sMessages[] = {
   I18n::Message::ChiSquared,
   I18n::Message::Student,
   I18n::Message::Geometric,
-  I18n::Message::Poisson
+  I18n::Message::Poisson,
+  I18n::Message::Fisher
 };
 
 DistributionController::DistributionController(Responder * parentResponder, Distribution * distribution, ParametersController * parametersController) :
@@ -129,7 +133,8 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
     ImageStore::ChiSquaredIcon,
     ImageStore::StudentIcon,
     ImageStore::GeometricIcon,
-    ImageStore::PoissonIcon
+    ImageStore::PoissonIcon,
+    ImageStore::FisherIcon
   };
   const Image * focusedImages[k_totalNumberOfModels] = {
     ImageStore::FocusedBinomialIcon,
@@ -139,7 +144,8 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
     ImageStore::FocusedChiSquaredIcon,
     ImageStore::FocusedStudentIcon,
     ImageStore::FocusedGeometricIcon,
-    ImageStore::FocusedPoissonIcon
+    ImageStore::FocusedPoissonIcon,
+    ImageStore::FocusedFisherIcon
   };
   myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();
@@ -179,7 +185,9 @@ void Probability::DistributionController::setDistributionAccordingToIndex(int in
     case 7:
       new(m_distribution) PoissonDistribution();
       break;
-
+    case 8:
+      new(m_distribution) FisherDistribution();
+      break;
     default:
      return;
   }

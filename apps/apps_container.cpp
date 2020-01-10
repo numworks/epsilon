@@ -368,15 +368,18 @@ void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   Preferences * preferences = Preferences::sharedPreferences();
   switch ((int)preferences->colorOfLED()) {
     case 0:
-      Ion::LED::setColor(KDColorWhite);
+      Ion::LED::setColor(KDColorRed);
       break;
     case 1:
-      Ion::LED::setColor(KDColorGreen);
+      Ion::LED::setColor(KDColorWhite);
       break;
     case 2:
-      Ion::LED::setColor(KDColorBlue);
+      Ion::LED::setColor(KDColorGreen);
       break;
     case 3:
+      Ion::LED::setColor(KDColorBlue);
+      break;
+    case 4:
       Ion::LED::setColor(KDColorYellow);
       break;
   }

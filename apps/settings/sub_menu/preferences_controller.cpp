@@ -108,6 +108,11 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     }
 
     // LED placeholders
+    case I18n::Message::ColorRed:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
     case I18n::Message::ColorWhite:
     {
       const char * text = " ";

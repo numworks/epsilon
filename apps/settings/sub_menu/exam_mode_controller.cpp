@@ -68,6 +68,9 @@ int ExamModeController::reusableCellCount(int type) {
 }
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if(index == 0){
+    m_examModeCell.setHighlighted(false);
+  }
   Preferences * preferences = Preferences::sharedPreferences();
   GenericSubController::willDisplayCellForIndex(cell, index);
   I18n::Message thisLabel = m_messageTreeModel->children(index)->label();

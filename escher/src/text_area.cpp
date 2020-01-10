@@ -3,6 +3,7 @@
 #include <escher/text_input_helpers.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/serialization_helper.h>
 
 #include <stddef.h>
 #include <assert.h>
@@ -475,6 +476,8 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
 
   assert(UTF8Helper::CodePointIs(nullLocation, 0));
   m_text.insertText(text, nullLocation - text, const_cast<char *>(location));
+  // Replace System parentheses (used to keep layout tree structure) by normal parentheses
+  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(const_cast<char *>(location), nullLocation - text);
   reloadRectFromPosition(location, lineBreak);
   return true;
 }

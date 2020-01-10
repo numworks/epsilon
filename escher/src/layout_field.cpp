@@ -168,6 +168,14 @@ void LayoutField::ContentView::copySelection() {
 
   if (m_selectionStart == m_selectionEnd) {
     m_selectionStart.serializeParsedExpression(buffer, bufferSize);
+    if (buffer[0] == 0) {
+      int offset = 0;
+      if (m_selectionStart.type() == LayoutNode::Type::VerticalOffsetLayout) {
+        assert(bufferSize > 1);
+        buffer[offset++] = UCodePointEmpty;
+      }
+      m_selectionStart.serializeForParsing(buffer + offset, bufferSize - offset);
+    }
   } else {
     Layout selectionParent = m_selectionStart.parent();
     assert(!selectionParent.isUninitialized());

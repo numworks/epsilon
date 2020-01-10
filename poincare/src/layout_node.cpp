@@ -194,9 +194,9 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
       cursor->setLayout(cursorEquivalent.layout());
       cursor->setPosition(cursorEquivalent.position());
       if (direction == VerticalDirection::Up) {
-        cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true);
+        cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
       } else {
-        cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true);
+        cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
       }
       return;
     }
@@ -207,9 +207,9 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
     return;
   }
   if (direction == VerticalDirection::Up) {
-    p->moveCursorUp(cursor, shouldRecomputeLayout, true);
+    p->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
   } else {
-    p->moveCursorDown(cursor, shouldRecomputeLayout, true);
+    p->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
   }
 }
 

@@ -117,8 +117,21 @@ void LayoutCursor::addEmptySquarePowerLayout() {
 
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
+  Preferences * preferences = Preferences::sharedPreferences();
+  int Symbol;
+  switch((int)preferences->symbolofMultiplication()){
+    case 1:
+      Symbol = UCodePointMiddleDot;
+      break;
+    case 2:
+      Symbol = UCodePointStar;
+      break;
+    default:
+      Symbol = UCodePointMultiplicationSign;
+      break;
+  }
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(UCodePointMultiplicationSign),
+      CodePointLayout::Builder(Symbol),
       CodePointLayout::Builder('1'),
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(

@@ -89,25 +89,25 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   #ifdef DEVICE
   if(Ion::fccId() == "2ALWP-N0100"){
     if(index == 0){
-      myTextCell->setText("External is not compatible");
+      myTextCell->setText(I18n::translate(I18n::Message::ExternalNotCompatible));
       myTextCell->setTextColor(Palette::Red);
     } else {
-      myTextCell->setText("with n0100");
+      myTextCell->setText(I18n::translate(I18n::Message::WithN0100));
       myTextCell->setTextColor(Palette::Red);
     }
   }else{
   if(index == k_numberOfCells-1){
-    myTextCell->setText("zardam.github.io/nw-external-apps/");
+    myTextCell->setText(I18n::translate(I18n::Message::URL));
     myTextCell->setTextColor(Palette::AccentText);
     return;
   }
   if(index == k_numberOfCells-2){
-    myTextCell->setText("Get more apps at");
+    myTextCell->setText(I18n::translate(I18n::Message::GetMoreAppsAt));
     myTextCell->setTextColor(Palette::AccentText);
     return;
   }
   if(index == 0 && numberOfFiles() == 0){
-    myTextCell->setText("No apps installed");
+    myTextCell->setText(I18n::translate(I18n::Message::NoAppsInstalled));
     myTextCell->setTextColor(Palette::Red);
   }
   if(numberOfFiles() > 0){
@@ -119,10 +119,10 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   #else
   if(index == 0){
-    myTextCell->setText("External is not compatible");
+    myTextCell->setText(I18n::translate(I18n::Message::ExternalNotCompatible));
     myTextCell->setTextColor(Palette::Red);
   } else {
-    myTextCell->setText("with the simulator");
+    myTextCell->setText(I18n::translate(I18n::Message::WithSimulator));
     myTextCell->setTextColor(Palette::Red);
   }
   #endif

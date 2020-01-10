@@ -191,6 +191,7 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
         if (*i == c) {
           actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
         } else {
+          // FIXME we are stopping at every char, not every code point -> it does not make any bug for now
           actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
         }
         i++;

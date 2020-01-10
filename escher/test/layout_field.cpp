@@ -156,7 +156,7 @@ QUIZ_CASE(escher_layout_field_select_up_down) {
       Ion::Events::Division, Ion::Events::Four, Ion::Events::Five,
       Ion::Events::Six,      Ion::Events::Left, Ion::Events::Left,
       Ion::Events::Left,     Ion::Events::Left, Ion::Events::ShiftUp};
-    assert_events_lead_to_selection(events, eventsCount, "123/456");
+    assert_events_lead_to_selection(events, eventsCount, "");
   }
   {
     // Select down next to a fraction (cursor not on the fraction)
@@ -168,7 +168,27 @@ QUIZ_CASE(escher_layout_field_select_up_down) {
       Ion::Events::Six,      Ion::Events::Left, Ion::Events::Left,
       Ion::Events::Left,     Ion::Events::Left, Ion::Events::Left,
       Ion::Events::Right,    Ion::Events::ShiftDown};
-    assert_events_lead_to_selection(events, eventsCount, "123/456");
+    assert_events_lead_to_selection(events, eventsCount, "");
+  }
+  /*  12345
+   *  -----
+   *   ghi
+   *   ----
+   *   k|lm  */
+  {
+    // Select up next to a fraction (cursor on fraction)
+    const int eventsCount = 17;
+    Ion::Events::Event events[eventsCount] = {
+      Ion::Events::One,      Ion::Events::Two,    Ion::Events::Three,
+      Ion::Events::Four,     Ion::Events::Five,   Ion::Events::Division,
+      Ion::Events::LowerG,   Ion::Events::LowerH, Ion::Events::LowerI,
+      Ion::Events::Division, Ion::Events::LowerK, Ion::Events::LowerL,
+      Ion::Events::LowerM,   Ion::Events::Left,   Ion::Events::Left,
+      Ion::Events::ShiftUp,  Ion::Events::ShiftUp
+
+    };
+    assert_events_lead_to_selection(events, eventsCount - 1, "ghi/klm");
+    assert_events_lead_to_selection(events, eventsCount, "12345/\x12ghi/klm\x13");
   }
 }
 

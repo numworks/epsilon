@@ -1,0 +1,8 @@
+Console = "Python Konzol"
+AddScript = "Script hozzadáadása"
+ScriptOptions = "Script beállítások"
+ExecuteScript = "Script indítása"
+AutoImportScript = "Script automata importálása"
+DeleteScript = "Script törlése"
+FunctionsAndVariables = "Függvények és változók"
+AllowedCharactersaz09 = "Engedélyezett karakterek: a-z, 0-9, _"

@@ -1,0 +1,4 @@
+ExternalApp = "Külsö"
+ExternalAppCapital = "KÜLSö"
+ExternalAppApiMismatch = "API eltérés"
+ExternalAppExecError = "A fájl nem futtatható"

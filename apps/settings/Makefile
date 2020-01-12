@@ -29,6 +29,7 @@ i18n_files += $(addprefix apps/settings/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.hu.i18n\
 )
 
 $(eval $(call depends_on_image,apps/settings/app.cpp,apps/settings/settings_icon.png))

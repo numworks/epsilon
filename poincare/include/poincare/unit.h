@@ -435,6 +435,8 @@ public:
   static bool CanParse(const char * symbol, size_t length,
       const Dimension * * dimension, const Representative * * representative, const Prefix * * prefix);
 
+  const Dimension * dimension() const { return static_cast<const UnitNode *>(node())->dimension(); }
+
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
 

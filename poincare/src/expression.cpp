@@ -256,7 +256,7 @@ Expression::AdditionalInformationType Expression::additionalInformationType(Cont
     return AdditionalInformationType::Integer;
   }
   // Find forms like [12]/[23] or [-12]/[23] or [12]/[-23] or [-12]/[-23]
-  if (t == ExpressionNode::Type::Division && IsSignedBasedInteger(childAtIndex(1)) && IsSignedBasedInteger(childAtIndex(1))) {
+  if (t == ExpressionNode::Type::Division && IsSignedBasedInteger(childAtIndex(0)) && IsSignedBasedInteger(childAtIndex(1))) {
     return AdditionalInformationType::Rational;
   }
   if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {

@@ -119,4 +119,8 @@ void IllustratedListController::setExpression(Poincare::Expression e) {
   context->setExpressionForSymbolAbstract(e, s);
 }
 
+int IllustratedListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
+  return strlcpy(buffer, m_calculationStore.calculationAtIndex(index-1)->exactOutputText(), bufferSize);
+}
+
 }

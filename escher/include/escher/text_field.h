@@ -91,7 +91,7 @@ private:
   bool privateHandleMoveEvent(Ion::Events::Event event);
   bool privateHandleSelectEvent(Ion::Events::Event event);
   virtual void removeWholeText();
-  void storeInClipboard() const;
+  bool storeInClipboard() const;
   TextFieldDelegate * m_delegate;
 };
 

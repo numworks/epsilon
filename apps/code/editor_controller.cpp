@@ -77,7 +77,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     return true;
   }
 
-  if (event == Ion::Events::Backspace) {
+  if (event == Ion::Events::Backspace && textArea->selectionIsEmpty()) {
     /* If the cursor is on the left of the text of a line, backspace one
      * indentation space at a time. */
     const char * text = textArea->text();

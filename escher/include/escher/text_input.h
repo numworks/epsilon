@@ -16,6 +16,7 @@ public:
   bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
   // Selection
+  bool selectionIsEmpty() const { return nonEditableContentView()->selectionIsEmpty(); }
   void resetSelection() { contentView()->resetSelection(); }
   void deleteSelection();
   // Alignment

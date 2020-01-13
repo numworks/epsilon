@@ -7,11 +7,15 @@ using namespace Poincare;
 
 namespace Calculation {
 
-HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
-  ViewController(parentResponder),
+HistoryController::HistoryController(EditExpressionController * editExpressionController, CalculationStore * calculationStore) :
+  ViewController(editExpressionController),
   m_selectableTableView(this, this, this, this),
   m_calculationHistory{},
-  m_calculationStore(calculationStore)
+  m_calculationStore(calculationStore),
+  m_complexController(editExpressionController),
+  m_integerController(editExpressionController),
+  m_rationalController(editExpressionController),
+  m_trigonometryController(editExpressionController)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].setParentResponder(&m_selectableTableView);

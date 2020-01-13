@@ -7,8 +7,8 @@ namespace Calculation {
 
 /* Expressions list controller */
 
-ExpressionsListController::ExpressionsListController(Responder * parentResponder) :
-  ListController(parentResponder),
+ExpressionsListController::ExpressionsListController(Responder * parentResponder, EditExpressionController * editExpressionController) :
+  ListController(parentResponder, editExpressionController),
   m_cells{}
 {
   for (int i = 0; i < k_maxNumberOfCells; i++) {

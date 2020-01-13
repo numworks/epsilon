@@ -9,8 +9,8 @@ namespace Calculation {
 
 class TrigonometryListController : public IllustratedListController {
 public:
-  TrigonometryListController() :
-    IllustratedListController(nullptr),
+  TrigonometryListController(EditExpressionController * editExpressionController) :
+    IllustratedListController(nullptr, editExpressionController),
     m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
 private:

@@ -6,9 +6,11 @@
 
 namespace Calculation {
 
+class EditExpressionController;
+
 class ListController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ListController(Responder * parentResponder, SelectableTableViewDelegate * delegate = nullptr);
+  ListController(Responder * parentResponder, EditExpressionController * editExpressionController, SelectableTableViewDelegate * delegate = nullptr);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -29,6 +31,7 @@ protected:
     SelectableTableView m_selectableTableView;
   };
   InnerListController m_listController;
+  EditExpressionController * m_editExpressionController;
 };
 
 }

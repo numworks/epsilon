@@ -28,6 +28,7 @@ private:
     void setLeftViewBackgroundColor(KDColor color) override { m_leftExpressionView.setBackgroundColor(color); }
     KDCoordinate leftBaseline() const override { return !m_leftExpressionView.layout().isUninitialized() ? m_leftExpressionView.layout().baseline() : 0; }
     KDSize leftMinimalSizeForOptimalDisplay() const override { return m_leftExpressionView.minimalSizeForOptimalDisplay(); }
+    Poincare::Layout leftLayout() const override { return m_leftExpressionView.layout(); }
     ExpressionWithEqualSignView m_leftExpressionView;
   };
 
@@ -41,6 +42,9 @@ public:
   ScrollableInputExactApproximateExpressionsCell() :
     Responder(nullptr),
     m_view(this) {}
+
+  // Cell
+  Poincare::Layout layout() const override { return m_view.layout(); }
 
   // Responder cell
   Responder * responder() override {

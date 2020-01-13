@@ -8,8 +8,8 @@ namespace Calculation {
 
 /* Illustrated list controller */
 
-IllustratedListController::IllustratedListController(Responder * parentResponder) :
-  ListController(parentResponder, this),
+IllustratedListController::IllustratedListController(Responder * parentResponder, EditExpressionController * editExpressionController) :
+  ListController(parentResponder, editExpressionController, this),
   m_additionalCalculationCells{}
 {
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {

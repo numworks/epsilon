@@ -67,6 +67,7 @@ protected:
     virtual void setLeftViewBackgroundColor(KDColor color) = 0;
     virtual KDSize leftMinimalSizeForOptimalDisplay() const = 0;
     virtual KDCoordinate leftBaseline() const = 0;
+    virtual Poincare::Layout leftLayout() const { return Poincare::Layout(); }
 
     View * subviewAtIndex(int index) override;
     ExpressionView m_rightExpressionView;

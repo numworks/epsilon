@@ -102,10 +102,11 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::setDisplayL
 Poincare::Layout AbstractScrollableExactApproximateExpressionsView::ContentCell::layout() const {
   if (m_selectedSubviewPosition == SubviewPosition::Center) {
     return m_centeredExpressionView.layout();
-  } else {
-    assert(m_selectedSubviewPosition == SubviewPosition::Right);
+  } else if (m_selectedSubviewPosition == SubviewPosition::Right) {
     return m_rightExpressionView.layout();
   }
+  assert(m_selectedSubviewPosition == SubviewPosition::Left);
+  return leftLayout();
 }
 
 int AbstractScrollableExactApproximateExpressionsView::ContentCell::numberOfSubviews() const {

@@ -32,6 +32,7 @@ protected:
   mutable Poincare::Layout m_layouts[k_maxNumberOfCells];
 private:
   Poincare::Layout layoutAtIndex(int index);
+  virtual int textAtIndex(char * buffer, size_t bufferSize, int index) override;
   virtual void computeLayoutAtIndex(int index) = 0;
   virtual I18n::Message messageAtIndex(int index) = 0;
   // Cells

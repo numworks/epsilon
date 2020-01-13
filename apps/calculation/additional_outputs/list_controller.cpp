@@ -30,7 +30,9 @@ ListController::ListController(Responder * parentResponder, EditExpressionContro
 
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_editExpressionController->insertTextBody("TODO");
+    char buffer[Constant::MaxSerializedExpressionSize];
+    textAtIndex(buffer, Constant::MaxSerializedExpressionSize, selectedRow());
+    m_editExpressionController->insertTextBody(buffer);
     Container::activeApp()->dismissModalViewController();
     Container::activeApp()->setFirstResponder(m_editExpressionController);
     return true;

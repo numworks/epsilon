@@ -36,6 +36,7 @@ protected:
   Poincare::Expression m_savedExpression;
   CalculationStore m_calculationStore;
 private:
+  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
   virtual CodePoint expressionSymbol() const = 0;
   constexpr static int k_maxNumberOfAdditionalCalculations = 4;
   // Cells

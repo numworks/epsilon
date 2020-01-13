@@ -13,8 +13,10 @@ public:
   //ListViewDataSource
   int numberOfRows() const override;
 private:
+  static constexpr int k_indexOfFactorExpression = 3;
   void computeLayoutAtIndex(int index) override;
   I18n::Message messageAtIndex(int index) override;
+  bool factorExpressionIsComputable() const;
 };
 
 }

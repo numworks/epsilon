@@ -29,7 +29,7 @@ protected:
   constexpr static int k_maxNumberOfCells = 4;
   Poincare::Expression m_expression;
   // Memoization of layouts
-  Poincare::Layout m_layouts[k_maxNumberOfCells];
+  mutable Poincare::Layout m_layouts[k_maxNumberOfCells];
 private:
   Poincare::Layout layoutAtIndex(int index);
   virtual void computeLayoutAtIndex(int index) = 0;

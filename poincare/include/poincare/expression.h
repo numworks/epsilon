@@ -363,6 +363,7 @@ protected:
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
+  static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
   static bool sSymbolReplacementsCountLock;
 
   /* Add missing parenthesis will add parentheses that easen the reading of the

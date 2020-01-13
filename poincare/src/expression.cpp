@@ -252,7 +252,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 
 Expression::AdditionalInformationType Expression::additionalInformationType(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   ExpressionNode::Type t = type();
-  if (t == ExpressionNode::Type::BasedInteger) {
+  if (t == ExpressionNode::Type::BasedInteger && Integer::NaturalOrder(convert<BasedInteger>().integer(), Integer(k_maximalIntegerWithAdditionalInformation)) < 0) {
     return AdditionalInformationType::Integer;
   }
   // Find forms like [12]/[23] or [-12]/[23] or [12]/[-23] or [-12]/[-23]

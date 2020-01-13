@@ -16,7 +16,7 @@ class App;
 
 class HistoryController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public HistoryViewCellDataSource {
 public:
-  HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
+  HistoryController(EditExpressionController * editExpressionController, CalculationStore * calculationStore);
   View * view() override { return &m_selectableTableView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

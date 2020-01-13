@@ -358,8 +358,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    storeInClipboard();
-    if (event == Ion::Events::Cut) {
+    if (storeInClipboard() && event == Ion::Events::Cut) {
       if (!m_contentView.selectionIsEmpty()) {
         deleteSelection();
       } else {
@@ -542,11 +541,14 @@ void TextField::removeWholeText() {
   reloadScroll();
 }
 
-void TextField::storeInClipboard() const {
+bool TextField::storeInClipboard() const {
   if (!isEditing()) {
     Clipboard::sharedClipboard()->store(text());
+    return true;
   } else if (!m_contentView.selectionIsEmpty()) {
     const char * start = m_contentView.selectionStart();
     Clipboard::sharedClipboard()->store(start, m_contentView.selectionEnd() - start);
+    return true;
   }
+  return false;
 }

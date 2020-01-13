@@ -502,34 +502,29 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     deleteSelection();
   }
 
-  if (eventText[0] == 0) {
-    /* For instance, the event might be EXE on a non-editing text field to start
-     * edition. */
-    setCursorLocation(m_contentView.editedText());
-    return m_delegate->textFieldDidHandleEvent(this, true, previousTextLength != 0);
-  }
+  if (eventText[0] != 0) {
+    // Remove the Empty code points
+    constexpr int bufferSize = TextField::maxBufferSize();
+    char buffer[bufferSize];
+    UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
 
-  // Remove the Empty code points
-  constexpr int bufferSize = TextField::maxBufferSize();
-  char buffer[bufferSize];
-  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
+    // Replace System parentheses (used to keep layout tree structure) by normal parentheses
+    Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
 
-  // Replace System parentheses (used to keep layout tree structure) by normal parentheses
-  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
-
-  const char * nextCursorLocation = m_contentView.editedText() + draftTextLength();
-  if (insertTextAtLocation(buffer, cursorLocation())) {
-    /* The cursor position depends on the text as we sometimes want to position
-     * the cursor at the end of the text and sometimes after the first
-     * parenthesis. */
-    nextCursorLocation = cursorLocation();
-    if (forceCursorRightOfText) {
-      nextCursorLocation+= strlen(buffer);
-    } else {
-      nextCursorLocation+= TextInputHelpers::CursorPositionInCommand(eventText) - eventText;
+    const char * nextCursorLocation = m_contentView.editedText() + draftTextLength();
+    if (insertTextAtLocation(buffer, cursorLocation())) {
+      /* The cursor position depends on the text as we sometimes want to position
+       * the cursor at the end of the text and sometimes after the first
+       * parenthesis. */
+      nextCursorLocation = cursorLocation();
+      if (forceCursorRightOfText) {
+        nextCursorLocation+= strlen(buffer);
+      } else {
+        nextCursorLocation+= TextInputHelpers::CursorPositionInCommand(eventText) - eventText;
+      }
     }
+    setCursorLocation(nextCursorLocation);
   }
-  setCursorLocation(nextCursorLocation);
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
 }
 

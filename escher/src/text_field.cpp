@@ -536,7 +536,9 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 
 void TextField::removeWholeText() {
   reinitDraftTextBuffer();
-  setEditing(true);
+  resetSelection();
+  markRectAsDirty(bounds());
+  layoutSubviews();
   reloadScroll();
 }
 

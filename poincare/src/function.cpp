@@ -137,7 +137,7 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * did
           return strcmp(static_cast<Function&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
         }, reinterpret_cast<const void *>(name())))
   {
-    return replaceWithUndefinedInPlace();
+    return Expression();
   }
   replaceWithInPlace(e);
   *didReplace = true;

@@ -22,6 +22,7 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
+  constexpr static float k_maxParameter = 144.0f; // The display works badly for d1 = d2 > 144.
   constexpr static float k_defaultMax = 3.0f;
   float mode() const;
 };

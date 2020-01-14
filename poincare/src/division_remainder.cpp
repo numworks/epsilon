@@ -31,7 +31,7 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context * context, Pre
   T f1 = f1Input.toScalar();
   T f2 = f2Input.toScalar();
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   return Complex<T>::Builder(std::round(f1-f2*std::floor(f1/f2)));
 }

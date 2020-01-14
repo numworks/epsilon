@@ -45,6 +45,9 @@ public:
   static Complex<T> Undefined() {
     return Complex<T>::Builder(NAN, NAN);
   }
+  static Complex<T> RealUndefined() {
+    return Complex<T>::Builder(NAN, 0.0);
+  }
   std::complex<T> stdComplex() { return *node(); }
   T real() { return node()->real(); }
   T imag() { return node()->imag(); }

@@ -82,11 +82,12 @@ Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
   }
 }
 
-Layout Calculation::createApproximateOutputLayout(Context * context) {
+Layout Calculation::createApproximateOutputLayout(Context * context, bool * couldNotCreateApproximateLayout) {
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     return PoincareHelpers::CreateLayout(approximateOutput(context));
   } else {
+    *couldNotCreateApproximateLayout = true;
     return Layout();
   }
 }
@@ -130,7 +131,24 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
       result = inputHeight+exactOutputHeight;
     }
   } else {
-    Layout approximateLayout = createApproximateOutputLayout(context);
+    bool couldNotCreateApproximateLayout = false;
+    Layout approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+    if (couldNotCreateApproximateLayout) {
+      if (display == DisplayOutput::ApproximateOnly) {
+        Poincare::ExceptionCheckpoint::Raise();
+      } else {
+        /* Set the display output to ApproximateOnly, make room in the pool by
+         * erasing the exact layout, and retry to create the approximate layout */
+        forceDisplayOutput(DisplayOutput::ApproximateOnly);
+        exactLayout = Poincare::Layout();
+        couldNotCreateApproximateLayout = false;
+        approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+        if (couldNotCreateExactLayout) {
+          Poincare::ExceptionCheckpoint::Raise();
+        }
+      }
+    }
+
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     if (display == DisplayOutput::ApproximateOnly || (!expanded && display == DisplayOutput::ExactAndApproximateToggle)) {
       if (allExpressionsInline) {

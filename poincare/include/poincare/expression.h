@@ -241,6 +241,8 @@ public:
   Expression reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target = ExpressionNode::ReductionTarget::SystemForApproximation);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
+  /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
+   * circularly defined. Same convention as for 'deepReplaceReplaceableSymbols'.*/
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context);
 
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
@@ -339,6 +341,8 @@ protected:
   /* Properties */
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
+  /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
+   * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
   Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace) { return node()->deepReplaceReplaceableSymbols(context, didReplace); }
   Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace);
 

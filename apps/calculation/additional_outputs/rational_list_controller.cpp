@@ -2,6 +2,7 @@
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare_nodes.h>
+#include <string.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -48,6 +49,18 @@ I18n::Message RationalListController::messageAtIndex(int index) {
     default:
       return I18n::Message::EuclideanDivision;
   }
+}
+
+int RationalListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
+  int length = ExpressionsListController::textAtIndex(buffer, bufferSize, index);
+  if (index == 1) {
+    // Get rid of the left part of the equality
+    char * equalPosition = strchr(buffer, '=');
+    assert(equalPosition != nullptr);
+    strlcpy(buffer, equalPosition + 1, bufferSize);
+    return buffer + length - 1 - equalPosition;
+  }
+  return length;
 }
 
 }

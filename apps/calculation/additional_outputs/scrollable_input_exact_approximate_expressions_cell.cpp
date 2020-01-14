@@ -18,7 +18,10 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
   contentCell()->leftExpressionView()->setLayout(Poincare::Layout());
   setLayouts(Poincare::Layout(), Poincare::Layout());
 
+  // Create the input layout
   contentCell()->leftExpressionView()->setLayout(calculation->createInputLayout());
+
+  // Create the exact output layout
   Poincare::Layout leftOutputLayout = Poincare::Layout();
   if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
@@ -32,8 +35,31 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
     }
   }
   Calculation::DisplayOutput displayOutput = calculation->displayOutput(context);
-  Poincare::Layout rightOutputLayout = (displayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout :
-    calculation->createApproximateOutputLayout(context);
+
+  // Create the approximate output layout
+  Poincare::Layout rightOutputLayout = Poincare::Layout();
+  if (displayOutput == Calculation::DisplayOutput::ExactOnly) {
+    rightOutputLayout = leftOutputLayout;
+  } else {
+    bool couldNotCreateApproximateLayout = false;
+    rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+    if (couldNotCreateApproximateLayout) {
+      if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
+        Poincare::ExceptionCheckpoint::Raise();
+      } else {
+        /* Set the display output to ApproximateOnly, make room in the pool by
+         * erasing the exact layout, and retry to create the approximate layout */
+        calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+        leftOutputLayout = Poincare::Layout();
+        couldNotCreateApproximateLayout = false;
+        rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+        if (couldNotCreateApproximateLayout) {
+          Poincare::ExceptionCheckpoint::Raise();
+        }
+      }
+    }
+
+  }
   setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   setEqualMessage(equalMessage);

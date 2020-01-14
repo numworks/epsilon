@@ -67,7 +67,7 @@ public:
   // Layouts
   Poincare::Layout createInputLayout();
   Poincare::Layout createExactOutputLayout(bool * couldNotCreateExactLayout);
-  Poincare::Layout createApproximateOutputLayout(Poincare::Context * context);
+  Poincare::Layout createApproximateOutputLayout(Poincare::Context * context, bool * couldNotCreateApproximateLayout);
 
   // Memoization of height
   KDCoordinate height(Poincare::Context * context, bool expanded = false, bool allExpressionsInline = false);

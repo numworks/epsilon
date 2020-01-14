@@ -180,9 +180,12 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   m_calculationExpanded = expanded;
   m_calculationAdditionInformation = calculation->additionalInformationType(context);
   m_inputView.setLayout(calculation->createInputLayout());
+
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
+
+  // Create the left output layout
   Poincare::Layout leftOutputLayout = Poincare::Layout();
   if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
@@ -197,8 +200,32 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
       }
     }
   }
+
+  // Create the right output layout
+  Poincare::Layout rightOutputLayout;
+  if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactOnly) {
+    rightOutputLayout = leftOutputLayout;
+  } else {
+    bool couldNotCreateApproximateLayout = false;
+    rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+    if (couldNotCreateApproximateLayout) {
+      if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
+        Poincare::ExceptionCheckpoint::Raise();
+      } else {
+        /* Set the display output to ApproximateOnly, make room in the pool by
+         * erasing the exact layout, and retry to create the approximate layout */
+        calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+        leftOutputLayout = Poincare::Layout();
+        couldNotCreateApproximateLayout = false;
+        rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+        if (couldNotCreateApproximateLayout) {
+          Poincare::ExceptionCheckpoint::Raise();
+        }
+      }
+    }
+  }
   m_calculationDisplayOutput = calculation->displayOutput(context);
-  Poincare::Layout rightOutputLayout = (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout : calculation->createApproximateOutputLayout(context);
+
   // We must set which subviews are displayed before setLayouts to mark the right rectangle as dirty
   m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationExpanded && m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle));

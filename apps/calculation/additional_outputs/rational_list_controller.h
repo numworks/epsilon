@@ -15,6 +15,7 @@ public:
 private:
   void computeLayoutAtIndex(int index) override;
   I18n::Message messageAtIndex(int index) override;
+  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
 };
 
 }

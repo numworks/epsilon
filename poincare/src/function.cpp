@@ -125,6 +125,12 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
 }
 
 Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace) {
+  // Replace replaceable symbols in child
+  Expression self = defaultReplaceReplaceableSymbols(context, didReplace);
+  if (self.isUninitialized()) { // if the child is circularly defined, escape
+    return self;
+  }
+  assert(*this == self);
   Expression e = context->expressionForSymbolAbstract(*this, false);
   if (e.isUninitialized()) {
     return *this;

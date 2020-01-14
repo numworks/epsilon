@@ -380,7 +380,10 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
 Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace);
+    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace);
+    if (c.isUninitialized()) { // the expression is circularly defined, escape
+      return Expression();
+    }
   }
   return *this;
 }
@@ -709,6 +712,9 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context)
     }
     didReplace = false;
     e = e.deepReplaceReplaceableSymbols(context, &didReplace);
+    if (e.isUninitialized()) { // the expression is circularly defined, escape
+      replacementCount = k_maxSymbolReplacementsCount;
+    }
   } while (didReplace);
   if (unlock) {
     sSymbolReplacementsCountLock = false;

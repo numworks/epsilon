@@ -33,6 +33,7 @@ public:
     ExactAndApproximate,
     ExactAndApproximateToggle
   };
+  static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }
 
   /* It is not really the minimal size, but it clears enough space for most
    * calculations instead of clearing less space, then fail to serialize, clear
@@ -65,7 +66,7 @@ public:
 
   // Layouts
   Poincare::Layout createInputLayout();
-  Poincare::Layout createExactOutputLayout();
+  Poincare::Layout createExactOutputLayout(bool * couldNotCreateExactLayout);
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context);
 
   // Memoization of height
@@ -73,6 +74,7 @@ public:
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);
+  void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
   bool shouldOnlyDisplayExactOutput();
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 

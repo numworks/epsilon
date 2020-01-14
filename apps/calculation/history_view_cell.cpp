@@ -2,6 +2,7 @@
 #include "app.h"
 #include "../constant.h"
 #include "selectable_table_view.h"
+#include <poincare/exception_checkpoint.h>
 #include <assert.h>
 #include <string.h>
 
@@ -177,15 +178,27 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
   m_calculationExpanded = expanded;
-  m_calculationDisplayOutput = calculation->displayOutput(context);
   m_calculationAdditionInformation = calculation->additionalInformationType(context);
   m_inputView.setLayout(calculation->createInputLayout());
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
-  Poincare::Layout leftOutputLayout = calculation->createExactOutputLayout();
-  Poincare::Layout rightOutputLayout = (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout :
-    calculation->createApproximateOutputLayout(context);
+  Poincare::Layout leftOutputLayout = Poincare::Layout();
+  if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
+    bool couldNotCreateExactLayout = false;
+    leftOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
+    if (couldNotCreateExactLayout) {
+      if (calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ExactOnly) {
+        calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+      } else {
+        /* We should only display the exact result, but we cannot create it
+         * -> raise an exception. */
+        Poincare::ExceptionCheckpoint::Raise();
+      }
+    }
+  }
+  m_calculationDisplayOutput = calculation->displayOutput(context);
+  Poincare::Layout rightOutputLayout = (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout : calculation->createApproximateOutputLayout(context);
   // We must set which subviews are displayed before setLayouts to mark the right rectangle as dirty
   m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationExpanded && m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle));

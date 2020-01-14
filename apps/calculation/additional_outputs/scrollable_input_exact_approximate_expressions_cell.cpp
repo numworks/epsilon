@@ -1,4 +1,5 @@
 #include "scrollable_input_exact_approximate_expressions_cell.h"
+#include <poincare/exception_checkpoint.h>
 #include "../app.h"
 
 namespace Calculation {
@@ -17,9 +18,20 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
   contentCell()->leftExpressionView()->setLayout(Poincare::Layout());
   setLayouts(Poincare::Layout(), Poincare::Layout());
 
-  Calculation::DisplayOutput displayOutput = calculation->displayOutput(context);
   contentCell()->leftExpressionView()->setLayout(calculation->createInputLayout());
-  Poincare::Layout leftOutputLayout = calculation->createExactOutputLayout();
+  Poincare::Layout leftOutputLayout = Poincare::Layout();
+  if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
+    bool couldNotCreateExactLayout = false;
+    leftOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
+    if (couldNotCreateExactLayout) {
+      if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactOnly) {
+        Poincare::ExceptionCheckpoint::Raise();
+      } else {
+        calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+      }
+    }
+  }
+  Calculation::DisplayOutput displayOutput = calculation->displayOutput(context);
   Poincare::Layout rightOutputLayout = (displayOutput == Calculation::DisplayOutput::ExactOnly) ? leftOutputLayout :
     calculation->createApproximateOutputLayout(context);
   setLayouts(rightOutputLayout, leftOutputLayout);

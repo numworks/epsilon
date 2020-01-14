@@ -72,33 +72,67 @@ Layout Calculation::createInputLayout() {
   return input().createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
 }
 
-Layout Calculation::createExactOutputLayout() {
-  return PoincareHelpers::CreateLayout(exactOutput());
+Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    return PoincareHelpers::CreateLayout(exactOutput());
+  } else {
+    *couldNotCreateExactLayout = true;
+    return Layout();
+  }
 }
 
 Layout Calculation::createApproximateOutputLayout(Context * context) {
-  return PoincareHelpers::CreateLayout(approximateOutput(context));
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    return PoincareHelpers::CreateLayout(approximateOutput(context));
+  } else {
+    return Layout();
+  }
 }
 
 KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpressionsInline) {
-  KDCoordinate result =  expanded ? m_expandedHeight : m_height;
-  if (result < 0) {
-    DisplayOutput display = displayOutput(context);
-    Layout inputLayout = createInputLayout();
-    KDCoordinate inputHeight = inputLayout.layoutSize().height();
-    KDCoordinate inputBaseline = inputLayout.baseline();
-    if (display == DisplayOutput::ExactOnly) {
-      Layout exactLayout = createExactOutputLayout();
-      KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-      if (allExpressionsInline) {
-        KDCoordinate exactOutputBaseline = exactLayout.baseline();
-        result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
+  KDCoordinate result = expanded ? m_expandedHeight : m_height;
+  if (result >= 0) {
+    // Height already computed
+    return result;
+  }
+
+  // Get input height
+  Layout inputLayout = createInputLayout();
+  KDCoordinate inputHeight = inputLayout.layoutSize().height();
+  KDCoordinate inputBaseline = inputLayout.baseline();
+
+  // Get exact output height if needed
+  Poincare::Layout exactLayout;
+  bool couldNotCreateExactLayout = false;
+  if (DisplaysExact(displayOutput(context))) {
+    // Create the exact output layout
+    exactLayout = createExactOutputLayout(&couldNotCreateExactLayout);
+    if (couldNotCreateExactLayout) {
+      if (displayOutput(context) != DisplayOutput::ExactOnly) {
+        forceDisplayOutput(DisplayOutput::ApproximateOnly);
       } else {
-        result = inputHeight+exactOutputHeight;
+        /* We should only display the exact result, but we cannot create it
+         * -> raise an exception. */
+        ExceptionCheckpoint::Raise();
       }
-    } else if (display == DisplayOutput::ApproximateOnly || (!expanded && display == DisplayOutput::ExactAndApproximateToggle)) {
-      Layout approximateLayout = createApproximateOutputLayout(context);
-      KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
+    }
+  }
+
+  DisplayOutput display = displayOutput(context);
+  if (display == DisplayOutput::ExactOnly) {
+    KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
+    if (allExpressionsInline) {
+      KDCoordinate exactOutputBaseline = exactLayout.baseline();
+      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
+    } else {
+      result = inputHeight+exactOutputHeight;
+    }
+  } else {
+    Layout approximateLayout = createApproximateOutputLayout(context);
+    KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
+    if (display == DisplayOutput::ApproximateOnly || (!expanded && display == DisplayOutput::ExactAndApproximateToggle)) {
       if (allExpressionsInline) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
         result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline);
@@ -107,31 +141,29 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
       }
     } else {
       assert(display == DisplayOutput::ExactAndApproximate || (display == DisplayOutput::ExactAndApproximateToggle && expanded));
-      Layout approximateLayout = createApproximateOutputLayout(context);
-      Layout exactLayout = createExactOutputLayout();
-      KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
       if (allExpressionsInline) {
         result = maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline));
       } else {
-      KDCoordinate outputHeight = maxCoordinate(exactOutputBaseline, approximateOutputBaseline) + maxCoordinate(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
-      result = inputHeight + outputHeight;
+        KDCoordinate outputHeight = maxCoordinate(exactOutputBaseline, approximateOutputBaseline) + maxCoordinate(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
+        result = inputHeight + outputHeight;
       }
     }
-    /* For all display output except ExactAndApproximateToggle, the selected
-     * height and the usual height are identical. We update both heights in
-     * theses cases. */
-    if (display != DisplayOutput::ExactAndApproximateToggle) {
-      m_height = result;
+  }
+
+  /* For all display outputs except ExactAndApproximateToggle, the selected
+   * height and the usual height are identical. We update both heights in
+   * theses cases. */
+  if (display != DisplayOutput::ExactAndApproximateToggle) {
+    m_height = result;
+    m_expandedHeight = result;
+  } else {
+    if (expanded) {
       m_expandedHeight = result;
     } else {
-      if (expanded) {
-        m_expandedHeight = result;
-      } else {
-        m_height = result;
-      }
+      m_height = result;
     }
   }
   return result;

@@ -23,6 +23,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   float real = m_complex->real();
   float imag = m_complex->imag();
 
+   assert(std::isnan(real) || std::isnan(imag) || std::isinf(real) || std::isinf(imag));
   /* Draw the segment from the origin to the dot (real, imag) of equation
    * x(t) = t*real and y(t) = t*imag with t in [0,1] */
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,

@@ -13,16 +13,14 @@ float FisherDistribution::xMin() const {
 }
 
 float FisherDistribution::xMax() const {
-  return 10.0f; //TODO LEA
+  return 5.0f; // The mode is always < 1
 }
 
 float FisherDistribution::yMax() const {
-  float maxAbscissa = m_parameter1;
-  float result = evaluateAtAbscissa(maxAbscissa);
-  if (std::isnan(result) || result <= 0.0f) {
-    result = 1.0f;
-  }
-  return 1.0f; //TODO LEA
+  const float m = mode();
+  float max = std::isnan(m) ? k_defaultMax : evaluateAtAbscissa(m);
+  max = std::isnan(max) ? k_defaultMax : max;
+  return max * (1.0f + k_displayTopMarginRatio);
 }
 
 I18n::Message FisherDistribution::parameterNameAtIndex(int index) {
@@ -78,8 +76,15 @@ double FisherDistribution::cumulativeDistributiveInverseForProbability(double * 
     return 0.0;
   }
   return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, DBL_EPSILON, maxDouble(xMax(), 100.0));  // Ad-hoc value;
+}
 
-
+float FisherDistribution::mode() const {
+  const float d1 = m_parameter1;
+  if (d1 > 2.0f) {
+    const float d2 = m_parameter2;
+    return (d1 - 2.0f)/d1 * d2/(d2 + 2.0f);
+  }
+  return NAN;
 }
 
 }

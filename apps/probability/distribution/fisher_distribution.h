@@ -21,6 +21,9 @@ public:
   void setParameterAtIndex(float f, int index) override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
+private:
+  constexpr static float k_defaultMax = 3.0f;
+  float mode() const;
 };
 
 }

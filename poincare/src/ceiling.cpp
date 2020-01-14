@@ -26,7 +26,7 @@ int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 template<typename T>
 Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   return Complex<T>::Builder(std::ceil(c.real()));
 }

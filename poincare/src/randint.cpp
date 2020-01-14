@@ -50,7 +50,7 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context * c
       || a > b
       || a != (int)a || b != (int)b
       || (Expression::Epsilon<T>()*(b+1.0-a) > 1.0)) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   T result = std::floor(Random::random<T>()*(b+1.0-a)+a);
   return Complex<T>::Builder(result);

@@ -62,6 +62,7 @@ public:
   void setCalculation(Calculation * calculation);
   void setDisplayCenter(bool display);
   void setDisplayLeft(bool display);
+  ScrollableInputExactApproximateExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableInputExactApproximateExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 
 private:

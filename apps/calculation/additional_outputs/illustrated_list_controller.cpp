@@ -120,7 +120,10 @@ void IllustratedListController::setExpression(Poincare::Expression e) {
 }
 
 int IllustratedListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
-  return strlcpy(buffer, m_calculationStore.calculationAtIndex(index-1)->exactOutputText(), bufferSize);
+  ScrollableInputExactApproximateExpressionsCell * myCell = static_cast<ScrollableInputExactApproximateExpressionsCell *>(m_listController.selectableTableView()->selectedCell());
+  Shared::ExpiringPointer<Calculation> c =  m_calculationStore.calculationAtIndex(index-1);
+  const char * text = myCell->selectedSubviewPosition() == ScrollableInputExactApproximateExpressionsView::SubviewPosition::Right ? c->approximateOutputText() : c->exactOutputText();
+  return strlcpy(buffer, text, bufferSize);
 }
 
 }

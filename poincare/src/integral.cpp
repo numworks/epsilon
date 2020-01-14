@@ -50,7 +50,7 @@ Evaluation<T> IntegralNode::templatedApproximate(Context * context, Preferences:
   T a = aInput.toScalar();
   T b = bInput.toScalar();
   if (std::isnan(a) || std::isnan(b)) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
 #ifdef LAGRANGE_METHOD
   T result = lagrangeGaussQuadrature<T>(a, b, context, complexFormat, angleUnit);

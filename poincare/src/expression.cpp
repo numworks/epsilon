@@ -267,11 +267,19 @@ Expression::AdditionalInformationType Expression::additionalInformationType(Cont
   }
   // TODO: return AdditionalInformationType::Unit
   if (complexFormat != Preferences::ComplexFormat::Real) {
+    /* We return Complex AdditionalInformationType when both real and imaginary
+     * approximation are defined and imaginary part is not null. */
     Expression imag = ImaginaryPart::Builder(*this);
-    float i = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
-    if (i != 0.0f) {
-      return AdditionalInformationType::Complex;
+    float b = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
+    if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
+      return AdditionalInformationType::None;
     }
+    Expression real = RealPart::Builder(*this);
+    float a = real.approximateToScalar<float>(context, complexFormat, angleUnit);
+    if (std::isinf(a) || std::isnan(a)) {
+      return AdditionalInformationType::None;
+    }
+    return AdditionalInformationType::Complex;
   }
   return AdditionalInformationType::None;
 }

@@ -53,12 +53,11 @@ float FisherDistribution::evaluateAtAbscissa(float x) const {
 
 bool FisherDistribution::authorizedValueAtIndex(float x, int index) const {
   assert(index == 0 || index == 1);
-  return x > FLT_MIN; // TODO LEA Add max limit? See NormalDistribution
+  return x > FLT_MIN && x <= k_maxParameter;
 }
 
 void FisherDistribution::setParameterAtIndex(float f, int index) {
   TwoParameterDistribution::setParameterAtIndex(f, index);
-  // TODO LEA Adjust parameter if max definition ? See NormalDistribution
 }
 
 double FisherDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {

@@ -22,10 +22,6 @@ const char * GenericSubController::title() {
   return "";
 }
 
-View * GenericSubController::view() {
-  return &m_selectableTableView;
-}
-
 void GenericSubController::didEnterResponderChain(Responder * previousFirstResponder) {
   selectCellAtLocation(0, initialSelectedRow());
   m_selectableTableView.reloadData();

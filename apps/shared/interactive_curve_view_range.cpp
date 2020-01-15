@@ -10,6 +10,8 @@ using namespace Poincare;
 
 namespace Shared {
 
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+
 uint32_t InteractiveCurveViewRange::rangeChecksum() {
   float data[5] = {xMin(), xMax(), yMin(), yMax(), m_yAuto ? 1.0f : 0.0f};
   size_t dataLengthInBytes = 5*sizeof(float);
@@ -89,18 +91,23 @@ void InteractiveCurveViewRange::roundAbscissa() {
 
 void InteractiveCurveViewRange::normalize() {
   /* We center the ranges on the current range center, and put each axis so that
-   * 1cm = 2 units. */
+   * 1cm = 2 current units. */
   m_yAuto = false;
+
+  const float unit = maxFloat(xGridUnit(), yGridUnit());
+
   // Set x range
-  float newXMin = xCenter() - NormalizedXHalfRange();
-  float newXMax = xCenter() + NormalizedXHalfRange();
+  float newXHalfRange = NormalizedXHalfRange(unit);
+  float newXMin = xCenter() - newXHalfRange;
+  float newXMax = xCenter() + newXHalfRange;
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   }
   // Set y range
-  float newYMin = yCenter() - NormalizedYHalfRange();
-  float newYMax = yCenter() + NormalizedYHalfRange();
+  float newYHalfRange = NormalizedYHalfRange(unit);
+  float newYMin = yCenter() - newYHalfRange;
+  float newYMax = yCenter() + newYHalfRange;
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yRange.setMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
@@ -152,7 +159,11 @@ void InteractiveCurveViewRange::setDefault() {
   xRange = xMax() - xMin();
   yRange = yMax() - yMin();
   float xyRatio = xRange/yRange;
-  float normalizedXYRatio = NormalizedXHalfRange()/NormalizedYHalfRange();
+
+  const float unit = maxFloat(xGridUnit(), yGridUnit());
+  const float newXHalfRange = NormalizedXHalfRange(unit);
+  const float newYHalfRange = NormalizedYHalfRange(unit);
+  float normalizedXYRatio = newXHalfRange/newYHalfRange;
   if (xyRatio < normalizedXYRatio) {
     float newXRange = normalizedXYRatio * yRange;
     assert(newXRange > xRange);
@@ -160,7 +171,7 @@ void InteractiveCurveViewRange::setDefault() {
     m_xRange.setMin(xMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetXMax(xMax()+delta, k_lowerMaxFloat, k_upperMaxFloat);
   } else if (xyRatio > normalizedXYRatio) {
-    float newYRange = NormalizedYHalfRange()/NormalizedXHalfRange() * xRange;
+    float newYRange = newYHalfRange/newXHalfRange * xRange;
     assert(newYRange > yRange);
     float delta = (newYRange - yRange) / 2.0f;
     m_yRange.setMin(yMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);

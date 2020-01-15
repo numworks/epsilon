@@ -114,9 +114,9 @@ struct key2mp
 const static key2mp keyMapping[] =
 {
     { Ion::Keyboard::Key::Left, MP_ROM_QSTR(MP_QSTR_left) },
-    { Ion::Keyboard::Key::Right, MP_ROM_QSTR(MP_QSTR_up) },
+    { Ion::Keyboard::Key::Right, MP_ROM_QSTR(MP_QSTR_right) },
     { Ion::Keyboard::Key::Down, MP_ROM_QSTR(MP_QSTR_down) },
-    { Ion::Keyboard::Key::Up, MP_ROM_QSTR(MP_QSTR_right) },
+    { Ion::Keyboard::Key::Up, MP_ROM_QSTR(MP_QSTR_up) },
     { Ion::Keyboard::Key::OK, MP_ROM_QSTR(MP_QSTR_OK) },
     { Ion::Keyboard::Key::Back, MP_ROM_QSTR(MP_QSTR_back) },
 

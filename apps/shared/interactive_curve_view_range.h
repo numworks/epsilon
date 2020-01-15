@@ -46,15 +46,17 @@ protected:
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
    * the screen has size 43.2mm * 57.6mm.
    * We want:
-   *   2*NormalizedXHalfRange -> 57.6mm
-   *   2*1 -> 10.0mm
-   * So NormalizedXHalfRange = 5.76
+   *   2 * normalizedXHalfRange -> 57.6mm
+   *   2 * 1 unit -> 10.0mm
+   * So normalizedXHalfRange = 57.6mm * 1 unit / 10.0mm */
+  constexpr static float NormalizedXHalfRange(float unit) { return 5.76f * unit; }
+  /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
+   * the screen has size 43.2mm * 57.6mm.
    * We want:
-   *   2*NormalizedYHalfRange -> 43.2mm * 170/240
-   *   2*1 -> 10.0mm
-   * So NormalizedYHalfRange = 3.06 */
-  constexpr static float NormalizedXHalfRange() { return 5.76f; }
-  constexpr static float NormalizedYHalfRange() { return 3.06f; }
+   *   2 * normalizedYHalfRange -> 43.2mm * 170/240
+   *   2 * 1 unit -> 10.0mm
+   * So normalizedYHalfRange = 43.2mm * 170/240 * 1 unit / 10.0mm */
+  constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
   bool m_yAuto;
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:

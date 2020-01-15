@@ -3,6 +3,7 @@
 
 #include "../../shared/curve_view.h"
 #include "complex_model.h"
+#include "illustration_cell.h"
 
 namespace Calculation {
 
@@ -21,15 +22,12 @@ private:
   ComplexModel * m_complex;
 };
 
-class ComplexGraphCell : public HighlightCell {
+class ComplexGraphCell : public IllustrationCell {
 public:
   ComplexGraphCell(ComplexModel * complexModel) : m_view(complexModel) {}
-  void setHighlighted(bool highlight) override { return; }
   void reload() { m_view.reload(); }
 private:
-  int numberOfSubviews() const override { return 1; }
-  View * subviewAtIndex(int index) override { return &m_view; }
-  void layoutSubviews(bool force = false) override { m_view.setFrame(bounds(), force); }
+  View * view() override { return &m_view; }
   ComplexGraphView m_view;
 };
 

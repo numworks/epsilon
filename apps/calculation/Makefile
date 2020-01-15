@@ -13,6 +13,7 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/expression_with_equal_sign_view.cpp \
   additional_outputs/expressions_list_controller.cpp \
   additional_outputs/illustrated_list_controller.cpp \
+  additional_outputs/illustration_cell.cpp \
   additional_outputs/integer_list_controller.cpp \
   additional_outputs/scrollable_input_exact_approximate_expressions_cell.cpp \
   additional_outputs/list_controller.cpp \

@@ -47,7 +47,7 @@ public:
   int indexOfKthNonEmptySeries(int k) const;
 
   // Calculations
-  double sumOfColumn(int series, int i) const;
+  double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
   bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
   uint32_t storeChecksum() const;
   uint32_t storeChecksumForSeries(int series) const;

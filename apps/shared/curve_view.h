@@ -96,6 +96,7 @@ private:
   float max(Axis axis) const;
   float gridUnit(Axis axis) const;
   virtual char * label(Axis axis, int index) const = 0;
+  virtual size_t labelMaxGlyphLengthSize() const { return k_labelBufferMaxGlyphLength; }
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */

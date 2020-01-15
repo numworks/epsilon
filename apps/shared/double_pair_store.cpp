@@ -98,12 +98,12 @@ int DoublePairStore::indexOfKthNonEmptySeries(int k) const {
   return 0;
 }
 
-double DoublePairStore::sumOfColumn(int series, int i) const {
+double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   double result = 0;
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
-    result += m_data[series][i][k];
+    result += lnOfSeries ? log(m_data[series][i][k]) : m_data[series][i][k];
   }
   return result;
 }

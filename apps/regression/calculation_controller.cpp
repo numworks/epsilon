@@ -176,8 +176,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   const int numberSignificantDigits = Preferences::LargeNumberOfSignificantDigits;
   if (i > 0 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
-    double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0);
-    double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1);
+    double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0, false);
+    double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1, false);
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)cell;
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
@@ -196,8 +196,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   if (i > 0 && j > k_totalNumberOfDoubleBufferRows && j < k_regressionCellIndex) {
     assert(j != k_regressionCellIndex);
-    CalculPointer calculationMethods[] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum};
-    double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);
+    double calculation = 0;
+    const int calculationIndex = j-k_totalNumberOfDoubleBufferRows-1;
+    if (calculationIndex == 0) {
+      calculation = m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber);
+    } else if (calculationIndex == 1) {
+      calculation = m_store->covariance(seriesNumber);
+    } else {
+      assert(calculationIndex == 2);
+      calculation = m_store->columnProductSum(seriesNumber);
+   }
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
@@ -228,8 +236,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     if (j > k_regressionCellIndex + maxNumberCoefficients) {
       // Fill r and r2 if needed
       if (modelType == Model::Type::Linear) {
-        CalculPointer calculationMethods[2] = {&Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
-        double calculation = (m_store->*calculationMethods[j - k_regressionCellIndex - maxNumberCoefficients - 1])(seriesNumber);
+        const int calculationIndex = j - k_regressionCellIndex - maxNumberCoefficients - 1;
+        double calculation = calculationIndex == 0 ? m_store->correlationCoefficient(seriesNumber) : m_store->squaredCorrelationCoefficient(seriesNumber);
         constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
         char buffer[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);

@@ -61,6 +61,12 @@ double PowerModel::partialDerivate(double * modelCoefficients, int derivateCoeff
   return 0.0;
 }
 
+void PowerModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
+  /* Y1 = aX1^b => ln(Y1) = ln(a) + b*ln(X1)*/
+  modelCoefficients[0] = exp(store->yIntercept(series, true));
+  modelCoefficients[1] = store->slope(series, true);
+}
+
 bool PowerModel::dataSuitableForFit(Store * store, int series) const {
   if (!Model::dataSuitableForFit(store, series)) {
     return false;

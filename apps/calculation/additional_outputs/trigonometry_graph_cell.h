@@ -3,6 +3,7 @@
 
 #include "../../shared/curve_view.h"
 #include "trigonometry_model.h"
+#include "illustration_cell.h"
 
 namespace Calculation {
 
@@ -15,14 +16,11 @@ private:
   TrigonometryModel * m_model;
 };
 
-class TrigonometryGraphCell : public HighlightCell {
+class TrigonometryGraphCell : public IllustrationCell {
 public:
   TrigonometryGraphCell(TrigonometryModel * model) : m_view(model) {}
-  void setHighlighted(bool highlight) override { return; }
 private:
-  int numberOfSubviews() const override { return 1; }
-  View * subviewAtIndex(int index) override { return &m_view; }
-  void layoutSubviews(bool force = false) override { m_view.setFrame(bounds(), force); }
+  View * view() override { return &m_view; }
   TrigonometryGraphView m_view;
 };
 

@@ -10,7 +10,7 @@ class GenericSubController : public ViewController, public ListViewDataSource, p
 public:
   GenericSubController(Responder * parentResponder);
   const char * title() override;
-  View * view() override;
+  View * view() override { return &m_selectableTableView; }
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

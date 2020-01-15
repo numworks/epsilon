@@ -1,10 +1,9 @@
 #ifndef ESCHER_TABLE_CELL_H
 #define ESCHER_TABLE_CELL_H
 
-#include <escher/highlight_cell.h>
-#include <escher/metric.h>
+#include <escher/bordered_cell.h>
 
-class TableCell : public HighlightCell {
+class TableCell : public BorderedCell {
 public:
   /* Layout enum class determines the way subviews are layouted.
    * We can split the cell vertically or horizontally.
@@ -28,7 +27,6 @@ protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_verticalMargin = Metric::TableCellVerticalMargin;
   constexpr static KDCoordinate k_horizontalMargin = Metric::TableCellHorizontalMargin;
 private:

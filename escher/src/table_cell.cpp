@@ -6,7 +6,7 @@ static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { retur
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 TableCell::TableCell(Layout layout) :
-  HighlightCell(),
+  BorderedCell(),
   m_layout(layout)
 {
 }
@@ -169,9 +169,5 @@ void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, width-2*k_separatorThickness, height-k_separatorThickness), backgroundColor);
-  // Draw rectangle around cell
-  ctx->fillRect(KDRect(0, 0, width, k_separatorThickness), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
-  ctx->fillRect(KDRect(width-k_separatorThickness, k_separatorThickness, k_separatorThickness, height-k_separatorThickness), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, height-k_separatorThickness, width, k_separatorThickness), Palette::GreyBright);
+  BorderedCell::drawRect(ctx, rect);
  }

@@ -14,6 +14,8 @@ private:
   char * label(Axis axis, int index) const override {
     return (axis == Axis::Horizontal ? (char *)m_xLabels[index] : (char *)m_yLabels[index]);
   }
+  // '-' + significant digits + ".E-" + 2 digits (the represented dot is a float, so it is bounded by 1E38 and 1E-38
+  size_t labelMaxGlyphLengthSize() const override { return 1 + Poincare::Preferences::VeryShortNumberOfSignificantDigits + 3 + 2; }
   char m_xLabels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   char m_yLabels[k_maxNumberOfYLabels][k_labelBufferMaxSize];
   ComplexModel * m_complex;

@@ -177,12 +177,12 @@ void CurveView::computeLabels(Axis axis) {
   int axisLabelsCount = numberOfLabels(axis);
   for (int i = 0; i < axisLabelsCount; i++) {
     float labelValue = labelValueAtIndex(axis, i);
-    /* Label cannot hold more than k_labelBufferMaxSize characters to prevent
+    /* Label cannot hold more than k_labelBufferMaxGlyphLength characters to prevent
      * them from overprinting one another.*/
-    int labelMaxGlyphLength = k_labelBufferMaxGlyphLength;
+    int labelMaxGlyphLength = labelMaxGlyphLengthSize();
     if (axis == Axis::Horizontal) {
       float pixelsPerLabel = maxFloat(0.0f, ((float)Ion::Display::Width)/((float)axisLabelsCount) - k_labelMargin);
-      labelMaxGlyphLength = minInt(k_labelBufferMaxGlyphLength, pixelsPerLabel/k_font->glyphSize().width());
+      labelMaxGlyphLength = minInt(labelMaxGlyphLengthSize(), pixelsPerLabel/k_font->glyphSize().width());
     }
 
     if (labelValue < step && labelValue > -step) {
@@ -849,7 +849,7 @@ void CurveView::computeHorizontalExtremaLabels(bool increaseNumberOfSignificantD
         labelValueAtIndex(axis, i),
         label(axis, i),
         k_labelBufferMaxSize,
-        k_labelBufferMaxGlyphLength,
+        labelMaxGlyphLengthSize(),
         increaseNumberOfSignificantDigits ? k_bigNumberSignificantDigits : k_numberSignificantDigits,
         Preferences::PrintFloatMode::Decimal);
   }

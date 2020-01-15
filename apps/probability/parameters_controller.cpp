@@ -6,7 +6,7 @@
 
 namespace Probability {
 
-ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
+ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
   m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_firstParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
@@ -69,7 +69,7 @@ void ParametersController::ContentView::layoutSubviews(bool force) {
 
 ParametersController::ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, CalculationController * calculationController) :
   FloatParameterController(parentResponder),
-  m_contentView(this, &m_selectableTableView),
+  m_contentView(&m_selectableTableView),
   m_menuListCell{},
   m_distribution(distribution),
   m_calculationController(calculationController)

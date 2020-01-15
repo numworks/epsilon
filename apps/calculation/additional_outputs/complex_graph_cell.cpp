@@ -41,13 +41,11 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
    *   to the phase of the complex
    */
   /* Compute th: th is the intersection of ellipsis of equation (a*cos(t), b*sin(t))
-   * and the line of equation (t,t*tan(θ)).
-   * (a*cos(t), b*sin(t)) = (t,t*tan(θ)) --> t = arctan((a/b)*tan(θ)) (± π) */
-  assert(imag != 0.0f); // ComplexGraphView is not displayed for pure real
-  float th = std::atan(std::fabs(real/imag)*std::tan(std::arg(*m_complex)));
-  if (real < 0.0f) {
-    th += imag < 0.0f ? -M_PI : M_PI; // atan returns value in [-π/2,π/2]
-  }
+   * and the line of equation (real*t,imag*t).
+   * (a*cos(t), b*sin(t)) = (real*t,imag*t) --> tan(t) = sign(a)*sign(b) (± π)
+   * --> t = π/4 [π/2] according to sign(a) and sign(b). */
+  float th = real < 0.0f ? 3.0f*M_PI/4.0f : M_PI/4.0f;
+  th = imag < 0.0f ? -th : th;
   // Compute ellipsis parameters a and b
   float factor = 5.0f;
   float a = std::fabs(real)/factor;

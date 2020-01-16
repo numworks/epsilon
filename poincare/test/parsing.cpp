@@ -1,6 +1,7 @@
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/src/parsing/parser.h>
+#include <apps/shared/global_context.h>
 #include "tree/helpers.h"
 #include "helper.h"
 
@@ -36,7 +37,7 @@ void assert_tokenizes_as_undefined_token(const char * string) {
 
 void assert_text_not_parsable(const char * text) {
   Parser p(text);
-  Expression result = p.parse();
+  Expression result = p.parse(nullptr);
   quiz_assert_print_if_failure(p.getStatus() != Parser::Status::Success, text);
 }
 
@@ -290,20 +291,15 @@ QUIZ_CASE(poincare_parsing_symbols_and_functions) {
   assert_parsed_expression_is("tot12", Symbol::Builder("tot12", 5));
   assert_parsed_expression_is("TOto", Symbol::Builder("TOto", 4));
   assert_parsed_expression_is("TO12_Or", Symbol::Builder("TO12_Or", 7));
+  assert_parsed_expression_is("f(f)", Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("f", 1))));
+  assert_parsed_expression_is("f((1))", Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder( Parenthesis::Builder(BasedInteger::Builder(1)))));
   assert_text_not_parsable("_a");
   assert_text_not_parsable("abcdefgh");
+  assert_text_not_parsable("f(1,2)");
 
   // User-defined functions
-  assert_parsed_expression_is("f(x)", Function::Builder("f", 1, Symbol::Builder("x",1)));
-  assert_parsed_expression_is("f(1)", Function::Builder("f", 1, BasedInteger::Builder(1)));
-  assert_parsed_expression_is("ab12AB_(x)", Function::Builder("ab12AB_", 7, Symbol::Builder("x",1)));
-  assert_parsed_expression_is("ab12AB_(1)", Function::Builder("ab12AB_", 7, BasedInteger::Builder(1)));
-  assert_parsed_expression_is("f(g(x))", Function::Builder("f", 1, Function::Builder("g", 1, Symbol::Builder("x",1))));
-  assert_parsed_expression_is("f(g(1))", Function::Builder("f", 1, Function::Builder("g", 1, BasedInteger::Builder(1))));
-  assert_parsed_expression_is("f((1))", Function::Builder("f", 1, Parenthesis::Builder(BasedInteger::Builder(1))));
-  assert_text_not_parsable("f(1,2)");
-  assert_text_not_parsable("f(f)");
-  assert_text_not_parsable("abcdefgh(1)");
+  assert_parsed_expression_is("1→f(x)", Store::Builder(BasedInteger::Builder(1), Function::Builder("f", 1, Symbol::Builder("x",1))));
+  assert_parsed_expression_is("1→ab12AB_(x)", Store::Builder(BasedInteger::Builder(1), Function::Builder("ab12AB_", 7, Symbol::Builder("x",1))));
 
   // Reserved symbols
   assert_parsed_expression_is("ans", Symbol::Builder("ans", 3));

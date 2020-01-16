@@ -259,7 +259,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("𝐢^(2/3)", "1/2+√(3)/2×𝐢");
   assert_parsed_expression_simplify_to("ℯ^(𝐢×π/3)", "1/2+√(3)/2×𝐢");
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×𝐢");
-  assert_parsed_expression_simplify_to("R(-x)", "R(-x)");
+  assert_parsed_expression_simplify_to("√(-x)", "√(-x)");
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Real);
   // Principal angle of root of unity
@@ -809,7 +809,6 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
-  assert_parsed_expression_simplify_to("f(3)", "f(3)", User, Radian, Real);
   // f : x → x+1
   assert_simplify("x+1+𝐢→f(x)", Radian, Real);
   assert_parsed_expression_simplify_to("f(3)", "unreal", User, Radian, Real);
@@ -896,7 +895,6 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
-  assert_parsed_expression_simplify_to("f(3)", "f(3)", User, Radian, Cartesian);
   // f : x → x+1
   assert_simplify("x+1+𝐢→f(x)", Radian, Cartesian);
   assert_parsed_expression_simplify_to("f(3)", "4+𝐢", User, Radian, Cartesian);
@@ -947,7 +945,6 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
-  assert_parsed_expression_simplify_to("f(3)", "f(3)", User, Radian, Polar);
   // f: x → x+1
   assert_simplify("x+1+𝐢→f(x)", Radian, Polar);
   assert_parsed_expression_simplify_to("f(3)", "√(17)×ℯ^\u0012\u0012-2×atan(4)+π\u0013/2×𝐢\u0013", User, Radian, Polar);

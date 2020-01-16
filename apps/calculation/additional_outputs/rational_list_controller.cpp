@@ -14,24 +14,21 @@ int RationalListController::numberOfRows() const {
 }
 
 Integer extractInteger(const Expression e) {
-  assert(Expression::IsSignedBasedInteger(e));
-  // e is of form [±12]/[±23]
-  Integer i;
-  if (e.type() == ExpressionNode::Type::BasedInteger) {
-    i = static_cast<const BasedInteger &>(e).integer();
-  } else {
-    Expression f = e.childAtIndex(0);
-    assert(f.type() == ExpressionNode::Type::BasedInteger);
-    i = static_cast<const BasedInteger &>(f).integer();
-    i.setNegative(true);
-  }
-  return i;
+  assert(e.type() == ExpressionNode::Type::BasedInteger);
+  return static_cast<const BasedInteger &>(e).integer();
 }
 
 void RationalListController::computeLayoutAtIndex(int index) {
-  assert(m_expression.type() == ExpressionNode::Type::Division);
-  Integer numerator = extractInteger(m_expression.childAtIndex(0));
-  Integer denominator = extractInteger(m_expression.childAtIndex(1));
+  bool negative = false;
+  Expression div = m_expression;
+  if (m_expression.type() == ExpressionNode::Type::Opposite) {
+    negative = true;
+    div = m_expression.childAtIndex(0);
+  }
+  assert(div.type() == ExpressionNode::Type::Division);
+  Integer numerator = extractInteger(div.childAtIndex(0));
+  numerator.setNegative(negative);
+  Integer denominator = extractInteger(div.childAtIndex(1));
   Expression e;
   if (index == 0) {
     e = Integer::CreateMixedFraction(numerator, denominator);

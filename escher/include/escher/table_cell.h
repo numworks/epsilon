@@ -1,9 +1,10 @@
 #ifndef ESCHER_TABLE_CELL_H
 #define ESCHER_TABLE_CELL_H
 
-#include <escher/bordered_cell.h>
+#include <escher/bordered.h>
+#include <escher/highlight_cell.h>
 
-class TableCell : public BorderedCell {
+class TableCell : public Bordered, public HighlightCell {
 public:
   /* Layout enum class determines the way subviews are layouted.
    * We can split the cell vertically or horizontally.

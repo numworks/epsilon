@@ -284,7 +284,7 @@ void Parser::parseStore(Context * context, Expression & leftHandSide, Token::Typ
     return;
   }
   Expression rightHandSide;
-  parseCustomIdentifier(context, rightHandSide, m_currentToken.text(), m_currentToken.length());
+  parseCustomIdentifier(context, rightHandSide, m_currentToken.text(), m_currentToken.length(), true);
   if (m_status != Status::Progress) {
     return;
   }
@@ -421,12 +421,25 @@ void Parser::parseSpecialIdentifier(Context * context, Expression & leftHandSide
   }
 }
 
-void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length) {
+void Parser::parseCustomIdentifier(Context * context, Expression & leftHandSide, const char * name, size_t length, bool symbolPlusParenthesesAreFunctions) {
   if (length >= SymbolAbstract::k_maxNameSize) {
     m_status = Status::Error; // Identifier name too long.
     return;
   }
   bool poppedParenthesisIsSystem = false;
+
+  /* Check the context: if the identifier does not already exist as a function,
+   * interpret it as a symbol, even if there are parentheses afterwards. */
+
+  Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
+  if (context != nullptr && !symbolPlusParenthesesAreFunctions) {
+    idType = context->expressionTypeForIdentifier(name, length);
+    if (idType != Context::SymbolAbstractType::Function) {
+      leftHandSide = Symbol::Builder(name, length);
+      return;
+    }
+  }
+
   /* If the identifier is followed by parentheses it is a function, else it is a
    * symbol. The parentheses can be system parentheses, if serialized using
    * SerializationHelper::Prefix. */
@@ -470,7 +483,7 @@ void Parser::parseIdentifier(Context * context, Expression & leftHandSide, Token
   } else if (IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length())) {
     parseSpecialIdentifier(context, leftHandSide);
   } else {
-    parseCustomIdentifier(context, leftHandSide, m_currentToken.text(), m_currentToken.length());
+    parseCustomIdentifier(context, leftHandSide, m_currentToken.text(), m_currentToken.length(), false);
   }
   isThereImplicitMultiplication();
 }

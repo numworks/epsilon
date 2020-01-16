@@ -115,6 +115,7 @@ public:
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
   Record recordBaseNamedWithExtensions(const char * baseName, const char * const extension[], size_t numberOfExtensions);
+  const char * extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extension[], size_t numberOfExtensions);
 
   // Record destruction
   void destroyAllRecords();
@@ -169,7 +170,9 @@ private:
     }
     return RecordIterator((char *)m_buffer);
   };
-  RecordIterator end() const { return RecordIterator(nullptr); };
+  RecordIterator end() const { return RecordIterator(nullptr); }
+
+  Record privateRecordAndExtensionOfRecordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult = nullptr, int baseNameLength = -1);
 
   uint32_t m_magicHeader;
   char m_buffer[k_storageSize];

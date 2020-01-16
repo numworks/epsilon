@@ -32,6 +32,16 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseNam
   }
 }
 
+Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const char * identifier, int length) {
+  const char * extension = Ion::Storage::sharedStorage()->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
+  if (extension == nullptr) {
+    return Context::SymbolAbstractType::None;
+  }
+  assert(k_numberOfExtensions == 2);
+  assert(extension == Ion::Storage::expExtension || extension == Ion::Storage::funcExtension);
+  return extension == Ion::Storage::expExtension ? Context::SymbolAbstractType::Symbol : Context::SymbolAbstractType::Function;
+}
+
 const Expression GlobalContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
   return ExpressionForSymbolAndRecord(symbol, r);

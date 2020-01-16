@@ -72,19 +72,21 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     } else {
       ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Left) {
-        Expression::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
+        Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
         ListController * vc = nullptr;
-        if (additionalInfoType == Expression::AdditionalInformationType::Complex) {
+        Expression e = calculationAtIndex(focusRow)->exactOutput();
+        if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
            vc = &m_complexController;
-        } else if (additionalInfoType == Expression::AdditionalInformationType::Trigonometry) {
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
            vc = &m_trigonometryController;
-        } else if (additionalInfoType == Expression::AdditionalInformationType::Integer) {
+           e = calculationAtIndex(focusRow)->input();
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
           vc = &m_integerController;
-        } else if (additionalInfoType == Expression::AdditionalInformationType::Rational) {
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
           vc = &m_rationalController;
         }
         if (vc) {
-          vc->setExpression(calculationAtIndex(focusRow)->input());
+          vc->setExpression(e);
           Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       } else {

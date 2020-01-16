@@ -1,14 +1,15 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_ILLUSTRATION_CELL_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_ILLUSTRATION_CELL_H
 
-#include <escher/bordered_cell.h>
+#include <escher/bordered.h>
+#include <escher/highlight_cell.h>
 
 namespace Calculation {
 
-class IllustrationCell : public BorderedCell {
+class IllustrationCell : public Bordered, public HighlightCell {
 public:
-  using BorderedCell::BorderedCell;
   void setHighlighted(bool highlight) override { return; }
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   int numberOfSubviews() const override { return 1; }
   View * subviewAtIndex(int index) override { return view(); }

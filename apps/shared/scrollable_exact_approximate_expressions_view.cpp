@@ -199,15 +199,6 @@ void AbstractScrollableExactApproximateExpressionsView::setDisplayLeft(bool disp
   layoutSubviews();
 }
 
-void AbstractScrollableExactApproximateExpressionsView::didBecomeFirstResponder() {
-  if (contentCell()->centeredExpressionView()->layout().isUninitialized()) {
-    setSelectedSubviewPosition(SubviewPosition::Right);
-  }
-  if (contentCell()->rightExpressionView()->layout().isUninitialized()) {
-    setSelectedSubviewPosition(SubviewPosition::Center);
-  }
-}
-
 bool AbstractScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event event) {
   bool leftIsVisible = false;
   KDCoordinate leftWidth = 0;

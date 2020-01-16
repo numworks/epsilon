@@ -27,7 +27,6 @@ public:
   void setDisplayCenter(bool display);
   void setDisplayLeft(bool display);
   void reloadScroll();
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Poincare::Layout layout() const {
     return constContentCell()->layout();

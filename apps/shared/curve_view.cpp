@@ -1,5 +1,6 @@
 #include "curve_view.h"
 #include "../constant.h"
+#include "dots.h"
 #include <poincare/print_float.h>
 #include <assert.h>
 #include <string.h>
@@ -416,40 +417,31 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   }
 }
 
-constexpr KDCoordinate dotDiameter = 5;
-const uint8_t dotMask[dotDiameter][dotDiameter] = {
-  {0xE1, 0x45, 0x0C, 0x45, 0xE1},
-  {0x45, 0x00, 0x00, 0x00, 0x45},
-  {0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x45, 0x00, 0x00, 0x00, 0x45},
-  {0xE1, 0x45, 0x0C, 0x45, 0xE1},
-};
-
-constexpr KDCoordinate oversizeDotDiameter = 7;
-const uint8_t oversizeDotMask[oversizeDotDiameter][oversizeDotDiameter] = {
-  {0xE1, 0x45, 0x0C, 0x00, 0x0C, 0x45, 0xE1},
-  {0x45, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0x45},
-  {0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0C},
-  {0x45, 0x0C, 0x00, 0x00, 0x00, 0x0C, 0x45},
-  {0xE1, 0x45, 0x0C, 0x00, 0x0C, 0x45, 0xE1},
-};
-
-void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize) const {
-  const KDCoordinate diameter = oversize ? oversizeDotDiameter : dotDiameter;
+void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size) const {
+  KDCoordinate diameter = 0;
+  const uint8_t * mask = nullptr;
+  switch (size) {
+    case Size::Small:
+      diameter = Dots::SmallDotDiameter;
+      mask = (const uint8_t *)Dots::SmallDotMask;
+      break;
+    case Size::Medium:
+      diameter = Dots::MediumDotDiameter;
+      mask = (const uint8_t *)Dots::MediumDotMask;
+      break;
+    default:
+      assert(size == Size::Large);
+      diameter = Dots::LargeDotDiameter;
+      mask = (const uint8_t *)Dots::LargeDotMask;
+  }
   KDCoordinate px = std::round(floatToPixel(Axis::Horizontal, x));
   KDCoordinate py = std::round(floatToPixel(Axis::Vertical, y));
   KDRect dotRect(px - diameter/2, py - diameter/2, diameter, diameter);
   if (!rect.intersects(dotRect)) {
     return;
   }
-  KDColor workingBuffer[oversizeDotDiameter*oversizeDotDiameter];
-  ctx->blendRectWithMask(
-    dotRect, color,
-    oversize ? (const uint8_t *)oversizeDotMask : (const uint8_t *)dotMask,
-    workingBuffer
-  );
+  KDColor workingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiameter];
+  ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {

@@ -95,26 +95,16 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
-  // g: x → f(x)+1
-  assert_simplify("f(x)+1→g(x)");
-  assert_expression_approximates_to<double>("g(1)", Undefined::Name());
-  // f: x → x+1
-  assert_simplify("x+1→f(x)");
-  assert_expression_approximates_to<double>("g(1)", "3");
-  assert_expression_approximates_to<double>("f(1)", "2");
   // h: x → h(x)
   assert_simplify("h(x)→h(x)");
-  assert_expression_approximates_to<double>("f(1)", "2");
-  assert_expression_approximates_to<double>("g(1)", "3");
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
+  assert_simplify("1→f(x)");
   assert_simplify("f(x)→g(x)");
   assert_simplify("g(x)→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
@@ -126,6 +116,7 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
+  assert_simplify("1→f(x)");
   assert_simplify("f(x)→g(x)");
   assert_simplify("g(x)→h(x)");
   assert_simplify("h(x)→f(x)");

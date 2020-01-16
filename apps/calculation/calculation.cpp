@@ -285,11 +285,17 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
   Preferences * preferences = Preferences::sharedPreferences();
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-  if (input().isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
+  Expression o = exactOutput();
+  /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:
+   * - > input: cos(60)
+   *   > output: 1/2
+   * - > input: 2cos(2) - cos(2)
+   *   > output: cos(2)
+   */
+  if (input().isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit()) || o.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
     return AdditionalInformationType::Trigonometry;
   }
 
-  Expression o = exactOutput();
   // TODO: return AdditionalInformationType::Unit
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;

@@ -78,6 +78,12 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   m_consoleStore.pushCommand(command, strlen(command));
   assert(m_outputAccumulationBuffer[0] == '\0');
 
+  // Draw the console before running the code
+  // TODO LEA Hide the input line?
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  AppsContainer::sharedAppsContainer()->redrawWindow();
+
   runCode(command);
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();

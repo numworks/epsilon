@@ -33,6 +33,14 @@ public:
     ExactAndApproximate,
     ExactAndApproximateToggle
   };
+  enum class AdditionalInformationType {
+    None = 0,
+    Integer,
+    Rational,
+    Trigonometry,
+    Unit,
+    Complex
+  };
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }
 
   /* It is not really the minimal size, but it clears enough space for most
@@ -79,9 +87,10 @@ public:
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 
   // Additional Information
-  Poincare::Expression::AdditionalInformationType additionalInformationType(Poincare::Context * context);
+  AdditionalInformationType additionalInformationType(Poincare::Context * context);
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
+  static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::maxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...) */

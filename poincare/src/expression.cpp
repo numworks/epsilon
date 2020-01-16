@@ -177,10 +177,6 @@ bool Expression::IsInfinity(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Infinity;
 }
 
-bool Expression::IsSignedBasedInteger(const Expression e) {
-  return e.type() == ExpressionNode::Type::BasedInteger || (e.type() == ExpressionNode::Type::Opposite && e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger);
-}
-
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {
   if (e.type() == ExpressionNode::Type::Symbol) {
     int index = 0;
@@ -250,38 +246,42 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
   return !isMultivariablePolynomial;
 }
 
-Expression::AdditionalInformationType Expression::additionalInformationType(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+bool Expression::isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   ExpressionNode::Type t = type();
-  if (t == ExpressionNode::Type::BasedInteger && Integer::NaturalOrder(convert<BasedInteger>().integer(), Integer(k_maximalIntegerWithAdditionalInformation)) < 0) {
-    return AdditionalInformationType::Integer;
-  }
-  // Find forms like [12]/[23] or [-12]/[23] or [12]/[-23] or [-12]/[-23]
-  if (t == ExpressionNode::Type::Division && IsSignedBasedInteger(childAtIndex(0)) && IsSignedBasedInteger(childAtIndex(1))) {
-    return AdditionalInformationType::Rational;
-  }
   if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {
     float r = childAtIndex(0).approximateToScalar<float>(context, complexFormat, angleUnit);
     if (!std::isnan(r)) {
-      return AdditionalInformationType::Trigonometry;
+      return true;
     }
   }
-  // TODO: return AdditionalInformationType::Unit
-  if (complexFormat != Preferences::ComplexFormat::Real) {
-    /* We return Complex AdditionalInformationType when both real and imaginary
-     * approximation are defined and imaginary part is not null. */
-    Expression imag = ImaginaryPart::Builder(*this);
-    float b = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
-    if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
-      return AdditionalInformationType::None;
-    }
-    Expression real = RealPart::Builder(*this);
-    float a = real.approximateToScalar<float>(context, complexFormat, angleUnit);
-    if (std::isinf(a) || std::isnan(a)) {
-      return AdditionalInformationType::None;
-    }
-    return AdditionalInformationType::Complex;
+  return false;
+}
+
+bool Expression::isBasedIntegerCappedBy(const char * stringInteger) const {
+  return type() == ExpressionNode::Type::BasedInteger && (Integer::NaturalOrder(convert<BasedInteger>().integer(), Integer(stringInteger)) < 0);
+}
+
+bool Expression::isDivisionOfIntegers() const {
+  return type() == ExpressionNode::Type::Division && childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && childAtIndex(1).type() == ExpressionNode::Type::BasedInteger;
+}
+
+bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  if (complexFormat == Preferences::ComplexFormat::Real) {
+    return false;
   }
-  return AdditionalInformationType::None;
+  /* We return true when both real and imaginary approximation are defined and
+   * imaginary part is not null. */
+  Expression imag = ImaginaryPart::Builder(*this);
+  float b = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
+  if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
+    return false;
+  }
+  Expression real = RealPart::Builder(*this);
+  float a = real.approximateToScalar<float>(context, complexFormat, angleUnit);
+  if (std::isinf(a) || std::isnan(a)) {
+    return false;
+  }
+  return true;
 }
 
 // Private

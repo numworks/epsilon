@@ -35,7 +35,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
-  m_calculationAdditionInformation(Poincare::Expression::AdditionalInformationType::None),
+  m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
   m_calculationExpanded(false),
   m_inputView(this, Metric::CommonLargeMargin, Metric::CommonSmallMargin),
   m_scrollableOutputView(this)
@@ -106,7 +106,7 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
    * display 1.2+2 --> 16/5 = 3.2. */
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && m_calculationExpanded));
-  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
+  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None);
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -227,7 +227,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   m_calculationDisplayOutput = calculation->displayOutput(context);
 
   // We must set which subviews are displayed before setLayouts to mark the right rectangle as dirty
-  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Poincare::Expression::AdditionalInformationType::None);
+  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None);
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationExpanded && m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle));
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;

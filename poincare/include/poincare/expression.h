@@ -144,6 +144,10 @@ public:
   bool isRationalOne() const;
   bool isRandom() const { return node()->isRandom(); }
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
+  bool isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool isBasedIntegerCappedBy(const char * integerString) const;
+  bool isDivisionOfIntegers() const;
+  bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context, bool replaceSymbols = true) const;
   typedef bool (*ExpressionTypeTest)(const Expression e, const void * context);
@@ -156,7 +160,6 @@ public:
   static bool IsRandom(const Expression e, Context * context);
   static bool IsMatrix(const Expression e, Context * context);
   static bool IsInfinity(const Expression e, Context * context);
-  static bool IsSignedBasedInteger(const Expression e);
   /* 'characteristicXRange' tries to assess the range on x where the expression
    * (considered as a function on x) has an interesting evolution. For example,
    * the period of the function on 'x' if it is periodic. If
@@ -192,16 +195,6 @@ public:
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
-
-  enum class AdditionalInformationType {
-    None = 0,
-    Integer,
-    Rational,
-    Trigonometry,
-    Unit,
-    Complex
-  };
-  AdditionalInformationType additionalInformationType(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   /* Complex */
   static bool EncounteredComplex();
@@ -367,7 +360,6 @@ protected:
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
-  static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
   static bool sSymbolReplacementsCountLock;
 
   /* Add missing parenthesis will add parentheses that easen the reading of the

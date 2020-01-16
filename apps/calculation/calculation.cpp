@@ -282,10 +282,26 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   }
 }
 
-Poincare::Expression::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
+Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
   Preferences * preferences = Preferences::sharedPreferences();
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-  return input().additionalInformationType(context, complexFormat, preferences->angleUnit());
+  if (input().isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
+    return AdditionalInformationType::Trigonometry;
+  }
+
+  Expression o = exactOutput();
+  // TODO: return AdditionalInformationType::Unit
+  if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
+    return AdditionalInformationType::Integer;
+  }
+  // Find forms like [12]/[23] or -[12]/[23]
+  if (o.isDivisionOfIntegers() || (o.type() == ExpressionNode::Type::Opposite && o.childAtIndex(0).isDivisionOfIntegers())) {
+    return AdditionalInformationType::Rational;
+  }
+  if (o.hasDefinedComplexApproximation(context, complexFormat, preferences->angleUnit())) {
+    return AdditionalInformationType::Complex;
+  }
+  return AdditionalInformationType::None;
 }
 
 }

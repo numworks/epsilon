@@ -841,13 +841,18 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
     Expression factorsDenominator;
     if (factorType == ExpressionNode::Type::Rational) {
       Rational r = static_cast<Rational &>(factor);
-      Integer rNum = r.signedIntegerNumerator();
-      if (!rNum.isOne()) {
-        factorsNumerator = Rational::Builder(rNum);
-      }
-      Integer rDen = r.integerDenominator();
-      if (!rDen.isOne()) {
-        factorsDenominator = Rational::Builder(rDen);
+      if (r.isRationalOne()) {
+        // Special case: add a unary numeral factor if r = 1
+        factorsNumerator = r.clone();
+      } else {
+        Integer rNum = r.signedIntegerNumerator();
+        if (!rNum.isOne()) {
+          factorsNumerator = Rational::Builder(rNum);
+        }
+        Integer rDen = r.integerDenominator();
+        if (!rDen.isOne()) {
+          factorsDenominator = Rational::Builder(rDen);
+        }
       }
     } else if (factorType == ExpressionNode::Type::Power) {
       Expression fd = factor.denominator(reductionContext);

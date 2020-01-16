@@ -20,6 +20,7 @@ public:
     m_delegate(delegate)
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
+  Poincare::Context * context() const;
   bool isEditing() const override { return m_contentView.isEditing(); }
   void setEditing(bool isEditing) override;
   void clearLayout() { m_contentView.clearLayout(); }
@@ -77,7 +78,7 @@ private:
     Poincare::Layout * selectionEnd() { return &m_selectionEnd; }
     void addSelection(Poincare::Layout addedLayout);
     bool resetSelection(); // returns true if the selection was indeed reset
-    void copySelection();
+    void copySelection(Poincare::Context * context);
     bool selectionIsEmpty() const;
     void deleteSelection();
 

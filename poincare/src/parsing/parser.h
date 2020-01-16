@@ -27,7 +27,7 @@ public:
     m_nextToken(m_tokenizer.popToken()),
     m_pendingImplicitMultiplication(false) {}
 
-  Expression parse();
+  Expression parse(Context * context);
   Status getStatus() const { return m_status; }
 
   static bool IsReservedName(const char * name, size_t nameLength);
@@ -36,7 +36,7 @@ private:
   static const Expression::FunctionHelper * const * GetReservedFunction(const char * name, size_t nameLength);
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
 
-  Expression parseUntil(Token::Type stoppingType);
+  Expression parseUntil(Context * context, Token::Type stoppingType);
 
   // Methods on Tokens
   void popToken();
@@ -45,36 +45,36 @@ private:
   void isThereImplicitMultiplication();
 
   // Specific Token parsers
-  void parseUnexpected(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseNumber(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseConstant(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseIdentifier(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseEmpty(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseMatrix(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseBang(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parsePlus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseMinus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseSlash(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseStore(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseUnexpected(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseNumber(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseConstant(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseIdentifier(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseEmpty(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseMatrix(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftParenthesis(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftSystemParenthesis(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseBang(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parsePlus(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseMinus(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseTimes(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseSlash(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseImplicitTimes(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaret(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaretWithParenthesis(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseEqual(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseStore(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftSuperscript(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
 
   // Parsing helpers
-  bool parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);
-  Expression parseVector();
-  Expression parseFunctionParameters();
-  Expression parseCommaSeparatedList();
-  void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
-  void parseSpecialIdentifier(Expression & leftHandSide);
-  void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
-  void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
-  void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
+  bool parseBinaryOperator(Context * context, const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);
+  Expression parseVector(Context * context);
+  Expression parseFunctionParameters(Context * context);
+  Expression parseCommaSeparatedList(Context * context);
+  void parseReservedFunction(Context * context, Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
+  void parseSpecialIdentifier(Context * context, Expression & leftHandSide);
+  void parseSequence(Context * context, Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
+  void parseCustomIdentifier(Context * context, Expression & leftHandSide, const char * name, size_t length, bool symbolPlusParenthesesAreFunctions);
+  void defaultParseLeftParenthesis(Context * context, bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 
   // Data members
   Status m_status;

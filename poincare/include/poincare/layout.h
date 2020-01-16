@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUT_REFERENCE_H
 
 #include <poincare/array_builder.h>
+#include <poincare/context.h>
 #include <poincare/layout_node.h>
 #include <poincare/tree_handle.h>
 #include <escher/palette.h>
@@ -44,7 +45,7 @@ public:
 
   // Serialization
   int serializeForParsing(char * buffer, int bufferSize) const { return node()->serialize(buffer, bufferSize); }
-  int serializeParsedExpression(char * buffer, int bufferSize) const;
+  int serializeParsedExpression(char * buffer, int bufferSize, Context * context) const;
 
   // Layout properties
   typedef bool (*LayoutTest)(const Layout l);

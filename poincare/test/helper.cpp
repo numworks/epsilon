@@ -39,7 +39,7 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   Expression m = process(e, &globalContext, target, complexFormat, angleUnit, symbolicComputation);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
@@ -70,15 +70,15 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   quiz_assert_print_if_failure(test, information);
 }
 
-Poincare::Expression parse_expression(const char * expression, bool addParentheses) {
-  Expression result = Expression::Parse(expression, addParentheses);
+Poincare::Expression parse_expression(const char * expression, Context * context, bool addParentheses) {
+  Expression result = Expression::Parse(expression, context, addParentheses);
   quiz_assert(!result.isUninitialized());
   return result;
 }
 
 void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   quiz_assert_print_if_failure(!e.isUninitialized(), expression);
   e = e.simplify(&globalContext, complexFormat, angleUnit, target);
   quiz_assert_print_if_failure(!(e.isUninitialized()), expression);

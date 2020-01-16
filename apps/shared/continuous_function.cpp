@@ -120,7 +120,7 @@ ContinuousFunction::PlotType ContinuousFunction::plotType() const {
   return recordData()->plotType();
 }
 
-void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences::AngleUnit angleUnit) {
+void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences::AngleUnit angleUnit, Context * context) {
   PlotType currentPlotType = plotType();
   if (newPlotType == currentPlotType) {
     return;
@@ -143,7 +143,7 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
   constexpr int previousTextContentMaxSize = Constant::MaxSerializedExpressionSize;
   char previousTextContent[previousTextContentMaxSize];
   m_model.text(this, previousTextContent, previousTextContentMaxSize, symbol());
-  setContent(previousTextContent);
+  setContent(previousTextContent, context);
 
   // Handle parametric function switch
   if (currentPlotType == PlotType::Parametric) {

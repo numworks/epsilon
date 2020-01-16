@@ -149,7 +149,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (!l.isUninitialized()) {
       constexpr int bufferSize = TextField::maxBufferSize();
       char buffer[bufferSize];
-      l.serializeParsedExpression(buffer, bufferSize);
+      l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
       Clipboard::sharedClipboard()->store(buffer);
       return true;
     }

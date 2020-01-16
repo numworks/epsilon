@@ -23,12 +23,12 @@ static bool sApproximationEncounteredComplex = false;
 
 Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }
 
-Expression Expression::Parse(char const * string, bool addParentheses) {
+Expression Expression::Parse(char const * string, Context * context, bool addParentheses) {
   if (string[0] == 0) {
     return Expression();
   }
   Parser p(string);
-  Expression expression = p.parse();
+  Expression expression = p.parse(context);
   if (p.getStatus() != Parser::Status::Success) {
     expression = Expression();
   }
@@ -546,7 +546,7 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 /* Simplification */
 
 Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicSimplification) {
-  Expression exp = Parse(text, false);
+  Expression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
@@ -554,14 +554,14 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
-    return Parse(text);
+    return Parse(text, context);
   }
   return exp;
 }
 
 void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
   assert(simplifiedExpression);
-  Expression exp = Parse(text, false);
+  Expression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -571,7 +571,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (simplifiedExpression->isUninitialized()) {
-    *simplifiedExpression = Parse(text);
+    *simplifiedExpression = Parse(text, context);
     if (approximateExpression) {
       *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
     }

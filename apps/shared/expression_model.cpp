@@ -1,6 +1,7 @@
 #include "expression_model.h"
 #include "global_context.h"
 #include "poincare_helpers.h"
+#include <apps/apps_container.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/undefined.h>
 #include <string.h>
@@ -159,7 +160,7 @@ Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, Co
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
-    expressionToStore = Expression::Parse(c);
+    expressionToStore = Expression::Parse(c, Container::activeApp()->localContext());
     if (!expressionToStore.isUninitialized() && symbol != 0) {
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknown));
     }

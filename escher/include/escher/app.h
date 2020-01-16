@@ -9,6 +9,7 @@
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
 #include <ion/storage.h>
+#include <poincare/context.h>
 
 /* An app is fed events and outputs drawing calls.
  *
@@ -63,6 +64,7 @@ public:
   View * modalView();
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);
+  virtual Poincare::Context * localContext() { return nullptr; }
 protected:
   App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0);
   ModalViewController m_modalViewController;

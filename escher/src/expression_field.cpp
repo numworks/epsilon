@@ -40,7 +40,7 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    m_layoutField.layout().serializeParsedExpression(m_textField.draftTextBuffer(), k_textFieldBufferSize);
+    m_layoutField.layout().serializeParsedExpression(m_textField.draftTextBuffer(), k_textFieldBufferSize, m_layoutField.context());
   }
   return m_textField.draftTextBuffer();
 }

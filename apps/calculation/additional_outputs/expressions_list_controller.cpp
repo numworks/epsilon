@@ -60,7 +60,7 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(int index) {
 }
 
 int ExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
-  return m_layouts[index].serializeParsedExpression(buffer, bufferSize);
+  return m_layouts[index].serializeParsedExpression(buffer, bufferSize, App::app()->localContext());
 }
 
 }

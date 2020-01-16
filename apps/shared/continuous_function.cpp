@@ -95,7 +95,7 @@ Poincare::Expression ContinuousFunction::expressionReduced(Poincare::Context * c
       static_cast<Poincare::Matrix&>(result).numberOfRows() != 2 ||
       static_cast<Poincare::Matrix&>(result).numberOfColumns() != 1)
      ) {
-    return Poincare::Expression::Parse("[[undef][undef]]");
+    return Poincare::Expression::Parse("[[undef][undef]]", nullptr);
   }
   return result;
 }

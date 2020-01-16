@@ -159,7 +159,7 @@ bool LayoutField::ContentView::resetSelection() {
   return true;
 }
 
-void LayoutField::ContentView::copySelection() {
+void LayoutField::ContentView::copySelection(Context * context) {
   if (selectionIsEmpty()) {
     return;
   }
@@ -167,7 +167,7 @@ void LayoutField::ContentView::copySelection() {
   char buffer[bufferSize];
 
   if (m_selectionStart == m_selectionEnd) {
-    m_selectionStart.serializeParsedExpression(buffer, bufferSize);
+    m_selectionStart.serializeParsedExpression(buffer, bufferSize, context);
     if (buffer[0] == 0) {
       int offset = 0;
       if (m_selectionStart.type() == LayoutNode::Type::VerticalOffsetLayout) {
@@ -283,6 +283,10 @@ void LayoutField::setEditing(bool isEditing) {
   }
 }
 
+Context * LayoutField::context() const {
+  return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
+}
+
 CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
   CodePoint xnt = m_contentView.cursor()->layout().XNTCodePoint();
   if (xnt != UCodePointNull) {
@@ -340,7 +344,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
     m_contentView.cursor()->addEmptyMatrixLayout();
   } else {
-    Expression resultExpression = Expression::Parse(text);
+    Expression resultExpression = Expression::Parse(text, nullptr);
     if (resultExpression.isUninitialized()) {
       // The text is not parsable (for instance, ",") and is added char by char.
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
@@ -468,7 +472,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Copy && isEditing()) {
-    m_contentView.copySelection();
+    m_contentView.copySelection(context());
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {

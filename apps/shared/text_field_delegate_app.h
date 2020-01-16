@@ -13,7 +13,7 @@ namespace Shared {
 class TextFieldDelegateApp : public InputEventHandlerDelegateApp, public TextFieldDelegate {
 public:
   virtual ~TextFieldDelegateApp() = default;
-  virtual Poincare::Context * localContext();
+  Poincare::Context * localContext() override;
   virtual bool XNTCanBeOverriden() const { return true; }
   virtual CodePoint XNT() { return 'x'; }
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
@@ -26,7 +26,7 @@ protected:
   bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
   bool isFinishingEvent(Ion::Events::Event event);
   virtual bool isAcceptableExpression(const Poincare::Expression expression);
-  static bool ExpressionCanBeSerialized(const Poincare::Expression expression, bool replaceAns, Poincare::Expression ansExpression);
+  static bool ExpressionCanBeSerialized(const Poincare::Expression expression, bool replaceAns, Poincare::Expression ansExpression, Poincare::Context * context);
 };
 
 }

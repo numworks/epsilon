@@ -9,7 +9,7 @@ static constexpr TrigonometryCheatTable::Type s_targetType[] = {
 };
 
 Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUninitialized, ExpressionNode::ReductionContext reductionContext) const {
-  Expression e = Expression::Parse(m_expression);
+  Expression e = Expression::Parse(m_expression, nullptr); // No context needed
   if (assertNotUninitialized) {
     assert(!e.isUninitialized());
   } else {

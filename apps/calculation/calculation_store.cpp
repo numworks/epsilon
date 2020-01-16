@@ -78,7 +78,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
    * want to keep Ans symbol in the calculation store. */
   const char * inputSerialization = nextSerializationLocation;
   {
-    Expression input = Expression::Parse(text).replaceSymbolWithExpression(Symbol::Ans(), ans);
+    Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
     if (!serializeExpression(input, nextSerializationLocation, &newCalculationsLocation)) {
       /* If the input does not fit in the store (event if the current
        * calculation is the only calculation), just replace the calculation with

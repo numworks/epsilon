@@ -47,7 +47,7 @@ const char * Calculation::approximateOutputText() const {
 }
 
 Expression Calculation::input() {
-  return Expression::Parse(m_inputText);
+  return Expression::Parse(m_inputText, nullptr);
 }
 
 Expression Calculation::exactOutput() {
@@ -55,7 +55,7 @@ Expression Calculation::exactOutput() {
    * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
-  Expression exactOutput = Expression::Parse(exactOutputText());
+  Expression exactOutput = Expression::Parse(exactOutputText(), nullptr);
   assert(!exactOutput.isUninitialized());
   return exactOutput;
 }
@@ -63,7 +63,7 @@ Expression Calculation::exactOutput() {
 Expression Calculation::approximateOutput(Context * context) {
   /* To ensure that the expression 'm_output' is a matrix or a complex, we
    * call 'evaluate'. */
-  Expression exp = Expression::Parse(approximateOutputText());
+  Expression exp = Expression::Parse(approximateOutputText(), nullptr);
   assert(!exp.isUninitialized());
   return PoincareHelpers::Approximate<double>(exp, context);
 }

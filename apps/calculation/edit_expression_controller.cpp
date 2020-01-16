@@ -139,13 +139,14 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
 
 
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {
+  Context * context = textFieldDelegateApp()->localContext();
   if (layoutR.isUninitialized()) {
     assert(text);
     strlcpy(m_cacheBuffer, text, k_cacheBufferSize);
   } else {
-    layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize);
+    layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize, context);
   }
-  m_calculationStore->push(m_cacheBuffer, textFieldDelegateApp()->localContext());
+  m_calculationStore->push(m_cacheBuffer, context);
   m_historyController->reload();
   m_contentView.expressionField()->setEditing(true, true);
   return true;

@@ -62,7 +62,7 @@ bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::E
 bool App::isAcceptableExpression(const Poincare::Expression expression) {
   {
     Expression ansExpression = static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext());
-    if (!TextFieldDelegateApp::ExpressionCanBeSerialized(expression, true, ansExpression)) {
+    if (!TextFieldDelegateApp::ExpressionCanBeSerialized(expression, true, ansExpression, localContext())) {
       return false;
     }
   }

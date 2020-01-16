@@ -28,7 +28,7 @@ Poincare::Layout Layout(int index) {
   if (index < 2) {
     return Poincare::LayoutHelper::String(text, strlen(text));
   }
-  Poincare::Expression parametric = Poincare::Expression::Parse(text);
+  Poincare::Expression parametric = Poincare::Expression::Parse(text, nullptr); // No need for context
   return parametric.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, 1);
 }
 

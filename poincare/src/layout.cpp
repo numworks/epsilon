@@ -18,7 +18,7 @@ Layout Layout::clone() const {
   return cast;
 }
 
-int Layout::serializeParsedExpression(char * buffer, int bufferSize) const {
+int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * context) const {
   /* This method fixes the following problem:
    * Some layouts have a special serialization so they can be parsed afterwards,
    * such has logBase3(2) that serializes as log_{3}(2). When handling the
@@ -29,7 +29,7 @@ int Layout::serializeParsedExpression(char * buffer, int bufferSize) const {
     return 0;
   }
   serializeForParsing(buffer, bufferSize);
-  Poincare::Expression e = Poincare::Expression::Parse(buffer);
+  Poincare::Expression e = Poincare::Expression::Parse(buffer, context);
   if (e.isUninitialized()) {
     buffer[0] = 0;
     return 0;

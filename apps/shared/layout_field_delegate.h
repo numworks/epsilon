@@ -12,6 +12,7 @@ public:
   bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
+  Poincare::Context * context() const override { return expressionFieldDelegateApp()->localContext(); }
 protected:
   ExpressionFieldDelegateApp * expressionFieldDelegateApp() const {
     return static_cast<ExpressionFieldDelegateApp *>(Container::activeApp());

@@ -1003,6 +1003,18 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4", User);
 }
 
+QUIZ_CASE(poincare_simplification_user_function) {
+  // User defined function
+  // f: x → x*1
+  assert_simplify("x*3→f(x)", Radian, Polar);
+  assert_parsed_expression_simplify_to("f(1+1)", "6", User, Radian, Polar);
+  // f: x → 3
+  assert_simplify("3→f(x)", Radian, Polar);
+  assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name(), User, Radian, Polar);
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+}
+
 QUIZ_CASE(poincare_simplification_mix) {
   // Root at denominator
   assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)");

@@ -65,7 +65,12 @@ protected:
   void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;
-  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize = false) const;
+  enum class Size : uint8_t {
+    Small,
+    Medium,
+    Large
+  };
+  void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;

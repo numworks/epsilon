@@ -41,7 +41,12 @@ void BurgerMenuView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate heightCenter =  bounds().height()/2;
   KDCoordinate burgerHalfSize = k_burgerSize/2;
   KDRect frame(widthCenter - burgerHalfSize, heightCenter - burgerHalfSize, k_burgerSize, k_burgerSize);
+  // Reinitialize the color of the rectangle to avoid corruptions after successive drawings of burger view
+  KDColor sample = ctx->getPixel(KDPointZero);
+  ctx->fillRect(bounds(), sample);
+  // Draw the circle
   ctx->blendRectWithMask(frame, m_backgroundColor, (const uint8_t *)sCircleMask, sBurgerWorkingBuffer);
+  // Draw the burger
   ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)sBurgerMask, sBurgerWorkingBuffer);
 }
 

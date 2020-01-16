@@ -143,7 +143,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
         exactLayout = Poincare::Layout();
         couldNotCreateApproximateLayout = false;
         approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
-        if (couldNotCreateExactLayout) {
+        if (couldNotCreateApproximateLayout) {
           Poincare::ExceptionCheckpoint::Raise();
         }
       }

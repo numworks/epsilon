@@ -162,9 +162,8 @@ Expression CalculationStore::ansExpression(Context * context) {
    * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
    * parsed), ans is replaced by the approximation output when any Store or
    * Equal expression appears. */
-  bool exactOuptutInvolvesStoreEqual = mostRecentCalculation->exactOutput().recursivelyMatches([](const Expression e, Context * context) {
-          return e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
-        }, context, false);
+  Expression e = mostRecentCalculation->exactOutput();
+  bool exactOuptutInvolvesStoreEqual = e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
   if (mostRecentCalculation->input().recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
     return mostRecentCalculation->approximateOutput(context);
   }

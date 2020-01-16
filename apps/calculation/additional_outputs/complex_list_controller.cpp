@@ -1,6 +1,9 @@
 #include "complex_list_controller.h"
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
+#include <poincare/imaginary_part.h>
+#include <poincare/real_part.h>
+#include "complex_list_controller.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -29,8 +32,9 @@ void ComplexListController::setExpression(Poincare::Expression e) {
   m_calculationStore.push("abs(z)", context);
 
   // Set Complex illustration
-  float a = Shared::PoincareHelpers::ApproximateToScalar<float>(m_calculationStore.calculationAtIndex(2)->approximateOutput(context), context);
-  float b = Shared::PoincareHelpers::ApproximateToScalar<float>(m_calculationStore.calculationAtIndex(3)->approximateOutput(context), context);
+  // Compute a and b as in Expression::hasDefinedComplexApproximation to ensure the same defined result
+  float a = Shared::PoincareHelpers::ApproximateToScalar<float>(RealPart::Builder(e.clone()), context);
+  float b = Shared::PoincareHelpers::ApproximateToScalar<float>(ImaginaryPart::Builder(e.clone()), context);
   m_model.setComplex(std::complex<float>(a,b));
 
   // Reset complex format as before

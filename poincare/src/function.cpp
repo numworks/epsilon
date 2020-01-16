@@ -3,7 +3,6 @@
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -80,6 +79,10 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context * contex
 
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  if (childAtIndex(0)->approximate((T)1, context, complexFormat, angleUnit).isUndefined()) {
+    return Complex<T>::Undefined();
+  }
+
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
@@ -112,6 +115,9 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  if (childAtIndex(0).isUndefined()) {
+    return replaceWithUndefinedInPlace();
+  }
   Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation()) {

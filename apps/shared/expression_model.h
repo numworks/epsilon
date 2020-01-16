@@ -18,13 +18,13 @@ public:
   Poincare::Layout layout(const Ion::Storage::Record * record, CodePoint symbol = 0) const;
 
   // Setters
-  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol = 0);
+  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, Poincare::Context * context, CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
 
   virtual void tidy() const;
 protected:
   // Setters helper
-  static Poincare::Expression BuildExpressionFromText(const char * c, CodePoint symbol = 0);
+  static Poincare::Expression BuildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr);
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
 private:

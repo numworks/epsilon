@@ -12,19 +12,19 @@ using namespace Shared;
 
 namespace Sequence {
 
-Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
+Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * definition, const char * condition1, const char * condition2, Context * context) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void) err; // Silence compilation warning about unused variable.
   Ion::Storage::Record record = store->recordAtIndex(store->numberOfModels()-1);
   Sequence * u = store->modelForRecord(record);
   u->setType(type);
-  u->setContent(definition);
+  u->setContent(definition, context);
   if (condition1) {
-    u->setFirstInitialConditionContent(condition1);
+    u->setFirstInitialConditionContent(condition1, context);
   }
   if (condition2) {
-    u->setSecondInitialConditionContent(condition2);
+    u->setSecondInitialConditionContent(condition2, context);
   }
   return u;
 }
@@ -36,7 +36,7 @@ void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequenc
 
   Sequence * seqs[MaxNumberOfSequences];
   for (int i = 0; i < MaxNumberOfSequences; i++) {
-    seqs[i] = addSequence(&store, types[i], definitions[i], conditions1[i], conditions2[i]);
+    seqs[i] = addSequence(&store, types[i], definitions[i], conditions1[i], conditions2[i], &globalContext);
   }
 
   for (int j = 0; j < 10; j++) {
@@ -55,7 +55,7 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
   SequenceStore store;
   SequenceContext sequenceContext(&globalContext, &store);
 
-  Sequence * seq = addSequence(&store, type, definition, condition1, condition2);
+  Sequence * seq = addSequence(&store, type, definition, condition1, condition2, &globalContext);
 
   double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, &sequenceContext), &globalContext);
   quiz_assert(std::fabs(sum - result) < 0.00000001);

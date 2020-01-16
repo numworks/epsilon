@@ -149,7 +149,8 @@ bool ListController::editInitialConditionOfSelectedRecordWithText(const char * t
   resetMemoizationForIndex(k_memoizedCellsCount/2);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   Sequence * sequence = modelStore()->modelForRecord(record);
-  Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text) : sequence->setSecondInitialConditionContent(text);
+  Context * context = App::app()->localContext();
+  Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text, context) : sequence->setSecondInitialConditionContent(text, context);
   return (error == Ion::Storage::Record::ErrorStatus::None);
 }
 
@@ -265,19 +266,19 @@ void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHan
       if (sequence->firstInitialConditionExpressionClone().isUninitialized()) {
         return;
       }
-      sequence->setFirstInitialConditionContent("");
+      sequence->setFirstInitialConditionContent("", nullptr); // No context needed here
       break;
     case 2:
       if (sequence->secondInitialConditionExpressionClone().isUninitialized()) {
         return;
       }
-      sequence->setSecondInitialConditionContent("");
+      sequence->setSecondInitialConditionContent("", nullptr); // No context needed here
       break;
     default:
       if (sequence->expressionClone().isUninitialized()) {
         return;
       }
-      sequence->setContent("");
+      sequence->setContent("", nullptr); // No context needed
       break;
   }
   selectableTableView()->reloadData();

@@ -35,7 +35,7 @@ public:
     Parametric = 2
   };
   PlotType plotType() const;
-  void setPlotType(PlotType plotType, Poincare::Preferences::AngleUnit angleUnit);
+  void setPlotType(PlotType plotType, Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
   static I18n::Message ParameterMessageForPlotType(PlotType plotType);
 
   // Evaluation

@@ -79,7 +79,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
            vc = &m_complexController;
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
            vc = &m_trigonometryController;
-           e = calculationAtIndex(focusRow)->input();
+           // Find which of the input or output is the cosine/sine
+           ExpressionNode::Type t = e.type();
+           e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
           vc = &m_integerController;
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {

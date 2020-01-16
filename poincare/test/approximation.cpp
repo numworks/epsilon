@@ -6,7 +6,7 @@ using namespace Poincare;
 template<typename T>
 void assert_expression_approximates_to_scalar(const char * expression, T approximation, Preferences::AngleUnit angleUnit = Degree, Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   T result = e.approximateToScalar<T>(&globalContext, complexFormat, angleUnit);
   quiz_assert_print_if_failure((std::isnan(result) && std::isnan(approximation)) || (std::isinf(result) && std::isinf(approximation) && result*approximation >= 0) || (std::fabs(result - approximation) <= Poincare::Expression::Epsilon<T>()), expression);
 }
@@ -212,8 +212,8 @@ QUIZ_CASE(poincare_approximation_logarithm) {
 
 template<typename T>
 void assert_expression_approximation_is_bounded(const char * expression, T lowBound, T upBound, bool upBoundIncluded = false) {
-  Expression e = parse_expression(expression, true);
   Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, true);
   T result = e.approximateToScalar<T>(&globalContext, Cartesian, Radian);
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(result < upBound || (result == upBound && upBoundIncluded), expression);

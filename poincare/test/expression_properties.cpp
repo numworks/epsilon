@@ -34,12 +34,12 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
 }
 
 void assert_expression_has_property(const char * expression, Context * context, Expression::ExpressionTest test) {
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, context, false);
   quiz_assert_print_if_failure(e.recursivelyMatches(test, context, true), expression);
 }
 
 void assert_expression_has_not_property(const char * expression, Context * context, Expression::ExpressionTest test) {
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, context, false);
   quiz_assert_print_if_failure(!e.recursivelyMatches(test, context, true), expression);
 }
 
@@ -68,13 +68,13 @@ QUIZ_CASE(poincare_properties_is_matrix) {
 
 void assert_expression_is_deep_matrix(const char * expression) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &context, false);
   quiz_assert_print_if_failure(e.deepIsMatrix(&context), expression);
 }
 
 void assert_expression_is_not_deep_matrix(const char * expression) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &context, false);
   quiz_assert_print_if_failure(!e.deepIsMatrix(&context), expression);
 }
 
@@ -104,7 +104,7 @@ constexpr Poincare::ExpressionNode::Sign Unknown = Poincare::ExpressionNode::Sig
 
 void assert_reduced_expression_sign(const char * expression, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(&globalContext, complexFormat, angleUnit);
   quiz_assert_print_if_failure(e.sign(&globalContext) == sign, expression);
 }
@@ -163,14 +163,14 @@ QUIZ_CASE(poincare_properties_sign) {
 void assert_expression_is_real(const char * expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  Expression e = parse_expression(expression, false).reduce(&context, Cartesian, Radian);
+  Expression e = parse_expression(expression, &context, false).reduce(&context, Cartesian, Radian);
   quiz_assert_print_if_failure(e.isReal(&context), expression);
 }
 
 void assert_expression_is_not_real(const char * expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  Expression e = parse_expression(expression, false).reduce(&context, Cartesian, Radian);
+  Expression e = parse_expression(expression, &context, false).reduce(&context, Cartesian, Radian);
   quiz_assert_print_if_failure(!e.isReal(&context), expression);
 }
 
@@ -206,7 +206,7 @@ QUIZ_CASE(poincare_properties_is_real) {
 
 void assert_reduced_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x", Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   Expression result = e.reduce(&globalContext, complexFormat, angleUnit);
   quiz_assert_print_if_failure(result.polynomialDegree(&globalContext, symbolName) == degree, expression);
 }
@@ -276,10 +276,10 @@ QUIZ_CASE(poincare_properties_characteristic_range) {
 }
 
 void assert_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {
-  Expression e = parse_expression(expression, false);
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
   constexpr static int k_maxVariableSize = Poincare::SymbolAbstract::k_maxNameSize;
   char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
-  Shared::GlobalContext globalContext;
   int numberOfVariables = e.getVariables(&globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);
   quiz_assert_print_if_failure(trueNumberOfVariables == numberOfVariables, expression);
   if (numberOfVariables < 0) {
@@ -315,12 +315,12 @@ QUIZ_CASE(poincare_preperties_get_variables) {
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(&globalContext, complexFormat, angleUnit, SystemForAnalysis);
   Expression coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
   int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, &globalContext, complexFormat, Radian);
   for (int i = 0; i <= d; i++) {
-    Expression f = parse_expression(coefficients[i], false);
+    Expression f = parse_expression(coefficients[i], &globalContext, false);
     quiz_assert(!f.isUninitialized());
     coefficientBuffer[i] = coefficientBuffer[i].reduce(&globalContext, complexFormat, angleUnit);
     f = f.reduce(&globalContext, complexFormat, angleUnit);

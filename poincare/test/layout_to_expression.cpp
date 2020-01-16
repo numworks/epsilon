@@ -7,7 +7,7 @@ void assert_layout_is_not_parsed(Layout l) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
-  Expression e = Expression::Parse(buffer, false);
+  Expression e = Expression::Parse(buffer, nullptr, false);
   quiz_assert_print_if_failure(e.isUninitialized(), buffer);
 }
 
@@ -262,7 +262,7 @@ void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
-  Expression e = parse_expression(buffer, true);
+  Expression e = parse_expression(buffer, nullptr, true);
   quiz_assert_print_if_failure(e.isIdenticalTo(r), buffer);
 }
 

@@ -27,7 +27,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
 
 // Parsing
 
-Poincare::Expression parse_expression(const char * expression, bool addParentheses);
+Poincare::Expression parse_expression(const char * expression, Poincare::Context * context, bool addParentheses);
 
 // Simplification
 

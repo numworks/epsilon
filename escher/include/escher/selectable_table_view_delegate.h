@@ -1,9 +1,11 @@
 #ifndef ESCHER_SELECTABLE_TABLE_VIEW_DELEGATE_H
 #define ESCHER_SELECTABLE_TABLE_VIEW_DELEGATE_H
 
+#include <escher/context_provider.h>
+
 class SelectableTableView;
 
-class SelectableTableViewDelegate {
+class SelectableTableViewDelegate : public ContextProvider {
 public:
   /* withinTemporarySelection flag indicates when the selection change happens
    * in a temporary deselection: indeed, when reloading the data of the table,

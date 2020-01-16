@@ -285,7 +285,16 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
   Preferences * preferences = Preferences::sharedPreferences();
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
+  Expression i = input();
   Expression o = exactOutput();
+  /* Special case for Equal and Store:
+   * Equal/Store nodes have to be at the root of the expression, which prevents
+   * from creating new expressions with equal/store node as a child. We don't
+   * return any additional outputs for them to avoid bothering with special
+   * cases. */
+  if (i.type() == ExpressionNode::Type::Equal || i.type() == ExpressionNode::Type::Store) {
+    return AdditionalInformationType::None;
+  }
   /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:
    * - > input: cos(60)
    *   > output: 1/2

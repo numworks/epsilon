@@ -11,5 +11,5 @@ void Bordered::drawBorderOfRect(KDContext * ctx, KDRect rect, KDColor borderColo
  }
 
 void Bordered::drawInnerRect(KDContext * ctx, KDRect rect, KDColor backgroundColor) const {
-  ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, rect.width()-2*k_separatorThickness, rect.height()-k_separatorThickness), backgroundColor);
+  ctx->fillRect(KDRect(k_separatorThickness, k_separatorThickness, rect.width()-2*k_separatorThickness, rect.height()-2*k_separatorThickness), backgroundColor);
 }

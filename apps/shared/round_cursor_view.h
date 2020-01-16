@@ -2,6 +2,7 @@
 #define SHARED_ROUND_CURSOR_VIEW_H
 
 #include "cursor_view.h"
+#include "dots.h"
 
 namespace Shared {
 
@@ -21,7 +22,7 @@ private:
 #ifdef GRAPH_CURSOR_SPEEDUP
   bool eraseCursorIfPossible();
 #endif
-  constexpr static int k_cursorSize = 10;
+  constexpr static int k_cursorSize = Dots::LargeDotDiameter;
   mutable KDColor m_underneathPixelBuffer[k_cursorSize*k_cursorSize];
   KDColor m_color;
   mutable bool m_underneathPixelBufferLoaded;

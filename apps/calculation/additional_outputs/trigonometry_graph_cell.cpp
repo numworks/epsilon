@@ -25,7 +25,7 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawSegment(ctx, rect, Axis::Vertical, c, 0.0f, s, Palette::Red, 1, 3);
   drawSegment(ctx, rect, Axis::Horizontal, s, 0.0f, c, Palette::Red, 1, 3);
   // Draw angle position on the circle
-  drawDot(ctx, rect, c, s, Palette::Red, true);
+  drawDot(ctx, rect, c, s, Palette::Red, Size::Large);
   // Draw graduations
   drawLabelsAndGraduations(ctx, rect, Axis::Vertical, false, true);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, true);

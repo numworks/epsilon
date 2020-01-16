@@ -70,7 +70,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
 
   // Draw complex position on the plan
-  drawDot(ctx, rect, real, imag, Palette::Red, true);
+  drawDot(ctx, rect, real, imag, Palette::Red, Size::Large);
 
   // Draw labels
   // 're(z)' label

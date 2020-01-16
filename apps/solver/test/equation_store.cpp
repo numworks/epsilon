@@ -11,13 +11,13 @@ using namespace Poincare;
 
 namespace Solver {
 
-void addEquationWithText(EquationStore * equationStore, const char * text) {
+void addEquationWithText(EquationStore * equationStore, const char * text, Context * context) {
   Ion::Storage::Record::ErrorStatus err = equationStore->addEmptyModel();
   quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, text);
   (void) err; // Silence warning in DEBUG=0
   Ion::Storage::Record record = equationStore->recordAtIndex(equationStore->numberOfModels()-1);
   Shared::ExpiringPointer<Equation> model = equationStore->modelForRecord(record);
-  model->setContent(text);
+  model->setContent(text, context);
 }
 
 void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions) {
@@ -25,7 +25,7 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   EquationStore equationStore;
   int index = 0;
   while (equations[index] != 0) {
-    addEquationWithText(&equationStore, equations[index++]);
+    addEquationWithText(&equationStore, equations[index++], &globalContext);
   }
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
   quiz_assert_print_if_failure(err == error, equations[0]);
@@ -58,7 +58,7 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
 void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char * variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions) {
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
-  addEquationWithText(&equationStore, equations);
+  addEquationWithText(&equationStore, equations, &globalContext);
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
   quiz_assert(err == EquationStore::Error::RequireApproximateSolution);
   equationStore.setIntervalBound(0, xMin);

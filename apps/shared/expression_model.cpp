@@ -105,8 +105,8 @@ Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol)
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol) {
-  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol);
+Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
+  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol, context);
   return setExpressionContent(record, e);
 }
 
@@ -155,12 +155,12 @@ void ExpressionModel::tidy() const {
   m_circular = -1;
 }
 
-Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol) {
+Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
-    expressionToStore = Expression::Parse(c, Container::activeApp()->localContext());
+    expressionToStore = Expression::Parse(c, context);
     if (!expressionToStore.isUninitialized() && symbol != 0) {
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknown));
     }

@@ -379,10 +379,10 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace);
+    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
     if (c.isUninitialized()) { // the expression is circularly defined, escape
       return Expression();
     }
@@ -692,7 +692,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   }
 }
 
-Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context) {
+Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context, bool replaceFunctionsOnly) {
   if (e.isUninitialized()) {
     return e;
   }
@@ -717,7 +717,7 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context)
       break;
     }
     didReplace = false;
-    e = e.deepReplaceReplaceableSymbols(context, &didReplace);
+    e = e.deepReplaceReplaceableSymbols(context, &didReplace, replaceFunctionsOnly);
     if (e.isUninitialized()) { // the expression is circularly defined, escape
       replacementCount = k_maxSymbolReplacementsCount;
     }

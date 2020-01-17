@@ -11,6 +11,8 @@ namespace Solver {
 class SolutionsController : public ViewController, public AlternateEmptyViewDefaultDelegate, public SelectableTableViewDataSource, public TableViewDataSource {
 public:
   SolutionsController(Responder * parentResponder, EquationStore * equationStore);
+  void setShouldReplaceFuncionsButNotSymbols(bool shouldReplaceFuncionsButNotSymbols) { m_shouldReplaceFuncionsButNotSymbols = shouldReplaceFuncionsButNotSymbols; }
+  bool shouldReplaceFuncionsButNotSymbols() const { return m_shouldReplaceFuncionsButNotSymbols; }
   /* ViewController */
   const char * title() override;
   View * view() override;
@@ -64,6 +66,7 @@ private:
   Shared::ScrollableTwoExpressionsCell m_exactValueCells[EquationStore::k_maxNumberOfExactSolutions];
   EvenOddBufferTextCell m_approximateValueCells[EquationStore::k_maxNumberOfApproximateSolutions];
   ContentView m_contentView;
+  bool m_shouldReplaceFuncionsButNotSymbols;
 };
 
 }

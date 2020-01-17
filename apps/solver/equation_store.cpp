@@ -92,22 +92,22 @@ double EquationStore::approximateSolutionAtIndex(int i) {
   return m_approximateSolutions[i];
 }
 
-bool EquationStore::haveMoreApproximationSolutions(Context * context) {
+bool EquationStore::haveMoreApproximationSolutions(Context * context, bool solveWithoutContext) {
   if (m_numberOfSolutions < k_maxNumberOfEquations) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], context));
+  return !std::isnan(PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context, solveWithoutContext), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], context));
 }
 
-void EquationStore::approximateSolve(Poincare::Context * context) {
+void EquationStore::approximateSolve(Poincare::Context * context, bool shouldReplaceFuncionsButNotSymbols) {
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context), m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
+    m_approximateSolutions[i] = PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context, shouldReplaceFuncionsButNotSymbols), m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -117,14 +117,14 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   }
 }
 
-EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
+EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
   tidySolution();
 
   // Step 0. Get unknown variables
   m_variables[0][0] = 0;
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context);
+    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols);
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
       return Error::EquationUndefined;
     }
@@ -149,7 +149,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context,  updatedComplexFormat(context), preferences->angleUnit());
+    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context,  updatedComplexFormat(context), preferences->angleUnit());
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -180,7 +180,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     // Step 2. Polynomial & Monovariable?
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, context, updatedComplexFormat(context), preferences->angleUnit());
+    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context, replaceFunctionsButNotSymbols).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, context, updatedComplexFormat(context), preferences->angleUnit());
     if (degree == 2) {
       // Polynomial degree <= 2
       m_type = Type::PolynomialMonovariable;

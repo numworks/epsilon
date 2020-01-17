@@ -77,7 +77,7 @@ void ConsoleController::autoImport() {
 }
 
 void ConsoleController::runAndPrintForCommand(const char * command) {
-  const char * storedCommand = m_consoleStore.pushCommand(command, strlen(command));
+  const char * storedCommand = m_consoleStore.pushCommand(command);
   assert(m_outputAccumulationBuffer[0] == '\0');
 
   // Draw the console before running the code
@@ -449,7 +449,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
 }
 
 void ConsoleController::flushOutputAccumulationBufferToStore() {
-  m_consoleStore.pushResult(m_outputAccumulationBuffer, strlen(m_outputAccumulationBuffer));
+  m_consoleStore.pushResult(m_outputAccumulationBuffer);
   emptyOutputAccumulationBuffer();
 }
 

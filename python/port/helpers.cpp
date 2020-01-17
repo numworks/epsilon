@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "port.h"
 #include <ion.h>
 extern "C" {
 #include "mphalport.h"
@@ -18,6 +19,12 @@ bool micropython_port_vm_hook_loop() {
     return false;
   }
 
+  return micropython_port_vm_hook_loop_content();
+}
+
+bool micropython_port_vm_hook_loop_content() {
+  assert(MicroPython::ExecutionEnvironment::currentExecutionEnvironment() != nullptr);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->refreshPrintOutput();
   // Check if the user asked for an interruption from the keyboard
   return micropython_port_interrupt_if_needed();
 }

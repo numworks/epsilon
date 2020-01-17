@@ -22,6 +22,7 @@ public:
   virtual void hideSandbox() {}
   virtual void resetSandbox() {}
   virtual void printText(const char * text, size_t length) {}
+  virtual void refreshPrintOutput() {}
   void interrupt();
   void setSandboxIsDisplayed(bool display);
 protected:

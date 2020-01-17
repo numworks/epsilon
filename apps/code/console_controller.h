@@ -62,6 +62,7 @@ public:
   void displaySandbox() override;
   void hideSandbox() override;
   void resetSandbox() override;
+  void refreshPrintOutput() override;
   void printText(const char * text, size_t length) override;
   const char * inputText(const char * prompt) override;
 

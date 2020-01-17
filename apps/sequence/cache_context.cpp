@@ -8,8 +8,8 @@ namespace Sequence {
 
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :
-  m_values{{NAN, NAN},{NAN, NAN},{NAN,NAN}},
-  m_parentContext(parentContext)
+  ContextWithParent(parentContext),
+  m_values{{NAN, NAN},{NAN, NAN},{NAN,NAN}}
 {
 }
 
@@ -24,12 +24,7 @@ const Expression CacheContext<T>::expressionForSymbolAbstract(const SymbolAbstra
     Symbol s = const_cast<Symbol &>(static_cast<const Symbol &>(symbol));
     return Float<T>::Builder(m_values[nameIndexForSymbol(s)][rankIndexForSymbol(s)]);
   }
-  return m_parentContext->expressionForSymbolAbstract(symbol, clone);
-}
-
-template<typename T>
-void CacheContext<T>::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
-  m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
+  return ContextWithParent::expressionForSymbolAbstract(symbol, clone);
 }
 
 template<typename T>

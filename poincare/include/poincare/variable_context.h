@@ -1,14 +1,14 @@
 #ifndef POINCARE_VARIABLE_CONTEXT_H
 #define POINCARE_VARIABLE_CONTEXT_H
 
-#include <poincare/context.h>
+#include <poincare/context_with_parent.h>
 #include <poincare/float.h>
 
 namespace Poincare {
 
-class VariableContext : public Context {
+class VariableContext : public ContextWithParent {
 public:
-  VariableContext(const char * name, Context * parentContext = nullptr);
+  VariableContext(const char * name, Context * parentContext);
   template<typename T>
   void setApproximationForVariable(T value);
 
@@ -19,7 +19,6 @@ public:
 private:
   const char * m_name;
   Expression m_value;
-  Context * m_parentContext;
 };
 
 }

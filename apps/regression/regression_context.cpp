@@ -24,7 +24,7 @@ const Expression RegressionContext::expressionForSymbolAbstract(const SymbolAbst
     assert(m_seriesPairIndex < m_store->numberOfPairsOfSeries(series));
     return Float<double>::Builder(m_store->get(series, storeI, m_seriesPairIndex));
   } else {
-    return m_parentContext->expressionForSymbolAbstract(symbol, clone);
+    return ContextWithParent::expressionForSymbolAbstract(symbol, clone);
   }
 }
 

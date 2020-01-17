@@ -16,7 +16,7 @@ public:
     Function,
     Symbol
   };
-  virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) { assert(false); return SymbolAbstractType::None; }
+  virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) = 0;
   virtual const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) = 0;
   virtual void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) = 0;
 };

@@ -55,8 +55,8 @@ int ConsoleStore::numberOfLines() const {
   return 0;
 }
 
-void ConsoleStore::pushCommand(const char * text, size_t length) {
-  push(CurrentSessionCommandMarker, text, length);
+const char * ConsoleStore::pushCommand(const char * text, size_t length) {
+  return push(CurrentSessionCommandMarker, text, length);
 }
 
 void ConsoleStore::pushResult(const char * text, size_t length) {
@@ -91,7 +91,7 @@ int ConsoleStore::deleteCommandAndResultsAtIndex(int index) {
   return indexOfLineToDelete;
 }
 
-void ConsoleStore::push(const char marker, const char * text, size_t length) {
+const char * ConsoleStore::push(const char marker, const char * text, size_t length) {
   size_t textLength = length;
   if (ConsoleLine::sizeOfConsoleLine(length) > k_historySize - 1) {
     textLength = k_historySize - 1 - 1 - 1; // Marker, null termination and null marker.
@@ -105,6 +105,7 @@ void ConsoleStore::push(const char marker, const char * text, size_t length) {
   m_history[i] = marker;
   strlcpy(&m_history[i+1], text, minInt(k_historySize-(i+1),textLength+1));
   m_history[i+1+textLength+1] = 0;
+  return &m_history[i+1];
 }
 
 ConsoleLine::Type ConsoleStore::lineTypeForMarker(char marker) const {

@@ -34,7 +34,8 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this, this),
-  m_inputRunLoopActive(false)
+  m_inputRunLoopActive(false),
+  m_preventEdition(false)
 #if EPSILON_GETOPT
   , m_locked(lockOnConsole)
 #endif
@@ -76,16 +77,24 @@ void ConsoleController::autoImport() {
 }
 
 void ConsoleController::runAndPrintForCommand(const char * command) {
-  m_consoleStore.pushCommand(command, strlen(command));
+  const char * storedCommand = m_consoleStore.pushCommand(command, strlen(command));
   assert(m_outputAccumulationBuffer[0] == '\0');
 
   // Draw the console before running the code
-  // TODO LEA Hide the input line?
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  m_editCell.setEditing(false);
+  m_editCell.setText("");
+  m_editCell.setPrompt("");
+  m_preventEdition = true;
   AppsContainer::sharedAppsContainer()->redrawWindow();
 
-  runCode(command);
+  runCode(storedCommand);
+
+  m_preventEdition = false;
+  m_editCell.setPrompt(sStandardPromptText);
+  m_editCell.setEditing(true);
+
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
 }
@@ -368,6 +377,9 @@ void ConsoleController::resetSandbox() {
 void ConsoleController::refreshPrintOutput() {
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  if (m_preventEdition) {
+    m_editCell.setEditing(false);
+  }
   AppsContainer::sharedAppsContainer()->redrawWindow();
 }
 

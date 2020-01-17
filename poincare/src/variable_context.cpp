@@ -7,20 +7,13 @@
 
 namespace Poincare {
 
-VariableContext::VariableContext(const char * name, Context * parentContext) :
-  ContextWithParent(parentContext),
-  m_name(name),
-  m_value()
-{
-}
-
 template<typename T>
 void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>::Builder(value);
 }
 
 void VariableContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
-  if (strcmp(symbol.name(), m_name) == 0) {
+  if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
     assert(symbol.type() == ExpressionNode::Type::Symbol);
     if (expression.isUninitialized()) {
       return;
@@ -32,7 +25,7 @@ void VariableContext::setExpressionForSymbolAbstract(const Expression & expressi
 }
 
 const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
-  if (strcmp(symbol.name(), m_name) == 0) {
+  if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
     if (symbol.type() == ExpressionNode::Type::Symbol) {
       return clone ? m_value.clone() : m_value;
     }

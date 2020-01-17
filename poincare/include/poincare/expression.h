@@ -241,7 +241,7 @@ public:
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
   /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
    * circularly defined. Same convention as for 'deepReplaceReplaceableSymbols'.*/
-  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context);
+  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, bool replaceFunctionsOnly = false);
 
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
   Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
@@ -341,8 +341,8 @@ protected:
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
    * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace) { return node()->deepReplaceReplaceableSymbols(context, didReplace); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace);
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
 
   /* Simplification */
   void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);

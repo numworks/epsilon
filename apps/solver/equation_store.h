@@ -42,7 +42,7 @@ public:
     return m_numberOfSolutions;
   }
   /* Exact resolution */
-  Error exactSolve(Poincare::Context * context);
+  Error exactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols);
   /* The exact solutions are displayed in a table with 2 layouts: an exact
    * Layout and an approximate layout. For example, 'sqrt(2)' and '1.414213'.
    * The boolean exactLayout indicates if we want the exact layout or the
@@ -65,8 +65,8 @@ public:
   double intervalBound(int index) const;
   void setIntervalBound(int index, double value);
   double approximateSolutionAtIndex(int i);
-  void approximateSolve(Poincare::Context * context);
-  bool haveMoreApproximationSolutions(Poincare::Context * context);
+  void approximateSolve(Poincare::Context * context, bool shouldReplaceFuncionsButNotSymbols);
+  bool haveMoreApproximationSolutions(Poincare::Context * context, bool solveWithoutContext);
 
   void tidy() override;
 

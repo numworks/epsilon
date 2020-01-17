@@ -65,8 +65,8 @@ Expression FunctionNode::shallowReduce(ReductionContext reductionContext) {
   return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
 }
 
-Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace) {
-  return Function(this).deepReplaceReplaceableSymbols(context, didReplace);
+Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
+  return Function(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
@@ -130,9 +130,9 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result.deepReduce(reductionContext);
 }
 
-Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace) {
+Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
   // Replace replaceable symbols in child
-  Expression self = defaultReplaceReplaceableSymbols(context, didReplace);
+  Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
   if (self.isUninitialized()) { // if the child is circularly defined, escape
     return self;
   }

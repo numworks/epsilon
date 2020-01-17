@@ -43,7 +43,7 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
   /* Specific to Solver */
-  void resolveEquations();
+  void resolveEquations(bool secondTry = false);
 private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
   SelectableTableView * selectableTableView() override;

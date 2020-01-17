@@ -164,7 +164,7 @@ public:
   /*!*/ virtual Expression setSign(Sign s, ReductionContext reductionContext);
   virtual int polynomialDegree(Context * context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
-  /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace);
+  /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
   typedef bool (*isVariableTest)(const char * c);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
   virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;

@@ -11,7 +11,6 @@ app_shared_test_src = $(addprefix apps/shared/,\
   interactive_curve_view_range.cpp \
   memoized_curve_view_range.cpp \
   range_1D.cpp \
-  store_context.cpp \
 )
 
 app_shared_src = $(addprefix apps/shared/,\

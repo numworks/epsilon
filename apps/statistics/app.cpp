@@ -1,5 +1,6 @@
 #include "app.h"
 #include "stat_icon.h"
+#include "../apps_container.h"
 #include <apps/i18n.h>
 
 using namespace Shared;
@@ -31,7 +32,7 @@ App::Snapshot::Snapshot() :
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(this);
+  return new (container->currentAppBuffer()) App(this, static_cast<AppsContainer *>(container)->globalContext());
 }
 
 void App::Snapshot::reset() {
@@ -49,7 +50,7 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-App::App(Snapshot * snapshot) :
+App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   TextFieldDelegateApp(snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
@@ -61,7 +62,7 @@ App::App(Snapshot * snapshot) :
   m_histogramAlternateEmptyViewController(&m_histogramHeader, &m_histogramController, &m_histogramController),
   m_histogramHeader(&m_histogramStackViewController, &m_histogramAlternateEmptyViewController, &m_histogramController),
   m_histogramStackViewController(&m_tabViewController, &m_histogramHeader),
-  m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader),
+  m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader, parentContext),
   m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
   m_storeStackViewController(&m_tabViewController, &m_storeHeader),
   m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_histogramStackViewController, &m_boxHeader, &m_calculationHeader)

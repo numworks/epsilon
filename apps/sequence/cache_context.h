@@ -9,17 +9,15 @@
 namespace Sequence {
 
 template<typename T>
-class CacheContext : public Poincare::Context {
+class CacheContext : public Poincare::ContextWithParent {
 public:
   CacheContext(Poincare::Context * parentContext);
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone) override;
-  void setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
   int nameIndexForSymbol(const Poincare::Symbol & symbol);
   int rankIndexForSymbol(const Poincare::Symbol & symbol);
   T m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
-  Context * m_parentContext;
 };
 
 }

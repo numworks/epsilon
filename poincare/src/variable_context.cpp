@@ -8,9 +8,9 @@
 namespace Poincare {
 
 VariableContext::VariableContext(const char * name, Context * parentContext) :
+  ContextWithParent(parentContext),
   m_name(name),
-  m_value(),
-  m_parentContext(parentContext)
+  m_value()
 {
 }
 
@@ -27,7 +27,7 @@ void VariableContext::setExpressionForSymbolAbstract(const Expression & expressi
     }
     m_value = expression.clone();
   } else {
-    m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
+    return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
   }
 }
 
@@ -38,7 +38,7 @@ const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstra
     }
     return Undefined::Builder();
   } else {
-    return m_parentContext->expressionForSymbolAbstract(symbol, clone);
+    return ContextWithParent::expressionForSymbolAbstract(symbol, clone);
   }
 }
 

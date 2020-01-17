@@ -12,18 +12,13 @@ using namespace Shared;
 
 namespace Statistics {
 
-StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header) :
+StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
   Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_titleCells{},
   m_store(store),
-  m_statisticsContext(m_store),
+  m_statisticsContext(m_store, parentContext),
   m_storeParameterController(this, store, this)
 {
-}
-
-StoreContext * StoreController::storeContext() {
-  m_statisticsContext.setParentContext(AppsContainer::sharedAppsContainer()->globalContext());
-  return &m_statisticsContext;
 }
 
 void StoreController::setFormulaLabel() {

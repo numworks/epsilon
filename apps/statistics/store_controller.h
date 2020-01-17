@@ -11,8 +11,8 @@ namespace Statistics {
 
 class StoreController : public Shared::StoreController {
 public:
-  StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header);
-  Shared::StoreContext * storeContext() override;
+  StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Poincare::Context * parentContext);
+  Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
   void setFormulaLabel() override;
   bool fillColumnWithFormula(Poincare::Expression formula) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;

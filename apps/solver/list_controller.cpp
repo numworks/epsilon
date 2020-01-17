@@ -1,6 +1,7 @@
 #include "list_controller.h"
 #include "app.h"
 #include <poincare/code_point_layout.h>
+#include <poincare/variable_context.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -166,12 +167,12 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poin
   return true;
 }
 
-void ListController::resolveEquations() {
+void ListController::resolveEquations(bool secondTry) {
   if (modelStore()->numberOfDefinedModels() == 0) {
     Container::activeApp()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext());
+  EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext(), secondTry);
   switch (e) {
     case EquationStore::Error::EquationUndefined:
       Container::activeApp()->displayWarning(I18n::Message::UndefinedEquation);
@@ -187,14 +188,20 @@ void ListController::resolveEquations() {
       return;
     case EquationStore::Error::RequireApproximateSolution:
     {
-      StackViewController * stack = stackController();
-      stack->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(secondTry);
+      stackController()->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
       return;
     }
     default:
     {
       assert(e == EquationStore::Error::NoError);
+      if (modelStore()->numberOfSolutions() == 0 && !secondTry) {
+        modelStore()->tidy();
+        resolveEquations(true);
+        return;
+      }
       StackViewController * stack = stackController();
+      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(secondTry);
       stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     }
  }

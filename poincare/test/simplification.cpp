@@ -362,6 +362,7 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("factor(1008/6895)", "\u00122^4×3^2\u0013/\u00125×197\u0013");
   assert_parsed_expression_simplify_to("factor(10007)", "10007");
   assert_parsed_expression_simplify_to("factor(10007^2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("factor(𝐢)", Undefined::Name());
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
   assert_parsed_expression_simplify_to("floor(2π)", "6");
   assert_parsed_expression_simplify_to("floor(123456789012345678901234567892/3)", "41152263004115226300411522630");

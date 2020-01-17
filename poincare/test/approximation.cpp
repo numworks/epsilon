@@ -343,6 +343,7 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("factor(-23/4)", "-5.75");
   assert_expression_approximates_to<double>("factor(-123/24)", "-5.125");
+  assert_expression_approximates_to<float>("factor(𝐢)", "undef");
 
   assert_expression_approximates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
   assert_expression_approximates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-8.3333333333333ᴇ-2,0.375][1.0833333333333,1.6666666666667ᴇ-1,-0.25][4.1666666666667ᴇ-2,-8.3333333333333ᴇ-2,4.1666666666667ᴇ-2]]");

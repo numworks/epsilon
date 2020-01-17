@@ -35,6 +35,17 @@ Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);
 }
 
+// Add tests :)
+template<typename T>
+Evaluation<T> FactorNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> e = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  if (std::isnan(e.toScalar())) {
+    return Complex<T>::Undefined();
+  }
+  return e;
+}
+
+
 Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());

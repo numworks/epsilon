@@ -36,20 +36,20 @@ int ExpressionNode::getPolynomialCoefficients(Context * context, const char * sy
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-Expression ExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace) {
-  return Expression(this).defaultReplaceReplaceableSymbols(context, didReplace);
+Expression ExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
+  return Expression(this).defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
 }
 
 int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
- int numberOfVariables = 0;
+  int numberOfVariables = 0;
   for (ExpressionNode * c : children()) {
-   int n = c->getVariables(context, isVariable, variables, maxSizeVariable);
-   if (n < 0) {
-     return n;
-   }
-   numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
- }
- return numberOfVariables;
+    int n = c->getVariables(context, isVariable, variables, maxSizeVariable);
+    if (n < 0) {
+      return n;
+    }
+    numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
+  }
+  return numberOfVariables;
 }
 
 float ExpressionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {

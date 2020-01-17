@@ -121,8 +121,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     }
   }
 
-  DisplayOutput display = displayOutput(context);
-  if (display == DisplayOutput::ExactOnly) {
+  if (displayOutput(context) == DisplayOutput::ExactOnly) {
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     if (allExpressionsInline) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
@@ -134,7 +133,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     bool couldNotCreateApproximateLayout = false;
     Layout approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
-      if (display == DisplayOutput::ApproximateOnly) {
+      if (displayOutput(context) == DisplayOutput::ApproximateOnly) {
         Poincare::ExceptionCheckpoint::Raise();
       } else {
         /* Set the display output to ApproximateOnly, make room in the pool by
@@ -150,7 +149,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     }
 
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
-    if (display == DisplayOutput::ApproximateOnly || (!expanded && display == DisplayOutput::ExactAndApproximateToggle)) {
+    if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
       if (allExpressionsInline) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
         result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline);
@@ -158,7 +157,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
         result = inputHeight+approximateOutputHeight;
       }
     } else {
-      assert(display == DisplayOutput::ExactAndApproximate || (display == DisplayOutput::ExactAndApproximateToggle && expanded));
+      assert(displayOutput(context) == DisplayOutput::ExactAndApproximate || (displayOutput(context) == DisplayOutput::ExactAndApproximateToggle && expanded));
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
@@ -174,7 +173,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
   /* For all display outputs except ExactAndApproximateToggle, the selected
    * height and the usual height are identical. We update both heights in
    * theses cases. */
-  if (display != DisplayOutput::ExactAndApproximateToggle) {
+  if (displayOutput(context) != DisplayOutput::ExactAndApproximateToggle) {
     m_height = result;
     m_expandedHeight = result;
   } else {

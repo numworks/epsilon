@@ -1,6 +1,7 @@
 #include <quiz.h>
 #include <string.h>
 #include <assert.h>
+#include <apps/shared/global_context.h>
 #include "../model/model.h"
 #include "../regression_context.h"
 #include "../store.h"
@@ -21,7 +22,8 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
     store.set(xi[i], series, 0, i);
     store.set(yi[i], series, 1, i);
   }
-  RegressionContext context(&store);
+  Shared::GlobalContext globalContext;
+  RegressionContext context(&store, &globalContext);
   store.setSeriesRegressionType(series, modelType);
 
   // Compute the coefficients

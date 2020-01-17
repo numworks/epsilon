@@ -7,6 +7,7 @@
 #include <escher/metric.h>
 #include <apps/global_preferences.h>
 #include <apps/apps_container.h>
+#include <python/port/helpers.h>
 
 extern "C" {
 #include <stdlib.h>
@@ -364,9 +365,16 @@ void ConsoleController::resetSandbox() {
   m_sandboxController.reset();
 }
 
+void ConsoleController::refreshPrintOutput() {
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  AppsContainer::sharedAppsContainer()->redrawWindow();
+}
+
 /* printText is called by the Python machine.
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
+  micropython_port_vm_hook_loop_content();
   size_t textCutIndex = firstNewLineCharIndex(text, length);
   if (textCutIndex >= length) {
     /* If there is no new line in text, just append it to the output

@@ -10,17 +10,12 @@ using namespace Shared;
 
 namespace Regression {
 
-StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header) :
+StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
   Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_titleCells{},
-  m_regressionContext(store),
+  m_regressionContext(store, parentContext),
   m_storeParameterController(this, store, this)
 {
-}
-
-StoreContext * StoreController::storeContext() {
-  m_regressionContext.setParentContext(AppsContainer::sharedAppsContainer()->globalContext());
-  return &m_regressionContext;
 }
 
 void StoreController::setFormulaLabel() {

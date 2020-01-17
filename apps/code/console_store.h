@@ -14,7 +14,7 @@ public:
   void startNewSession();
   ConsoleLine lineAtIndex(int i) const;
   int numberOfLines() const;
-  void pushCommand(const char * text, size_t length);
+  const char * pushCommand(const char * text, size_t length);
   void pushResult(const char * text, size_t length);
   void deleteLastLineIfEmpty();
   int deleteCommandAndResultsAtIndex(int index);
@@ -30,7 +30,7 @@ private:
     }
     return marker;
   }
-  void push(const char marker, const char * text, size_t length);
+  const char * push(const char marker, const char * text, size_t length);
   ConsoleLine::Type lineTypeForMarker(char marker) const;
   int indexOfNullMarker() const;
   void deleteLineAtIndex(int index);

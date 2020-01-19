@@ -3,12 +3,12 @@ include apps/home/Makefile
 include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
 include apps/usb/Makefile
-apps =
 
+apps =
 # All selected apps are included. Each Makefile below is responsible for setting
 # the $apps variable (name of the app class) and the $app_headers
 # (path to the apps header).
-$(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
+$(foreach i,${apps_list},${eval include apps/$(i)/Makefile})
 
 app_src += $(addprefix apps/,\
   apps_container.cpp \
@@ -43,7 +43,7 @@ snapshots_construction = $(foreach i,$(apps),,m_snapshot$(subst :,,$(i))Snapshot
 snapshots_list = $(foreach i,$(apps),,&m_snapshot$(subst :,,$(i))Snapshot)
 snapshots_count = $(words $(apps))
 snapshot_includes = $(foreach i,$(app_headers),-include $(i) )
-epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
+epsilon_app_names = '$(foreach i,${apps_list},"$(i)", )'
 
 $(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names) -DUSERNAME="$(USERNAME)"
 

@@ -18,6 +18,7 @@ public:
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
+    int examinationLevel() override;
     const Image * icon() override;
   };
   class Snapshot : public ::App::Snapshot {

@@ -1,5 +1,11 @@
 include build/config.mak
 
+ifeq (${DEVICE}, n0110)
+  apps_list = ${EPSILON_APPS}
+else
+  apps_list = $(foreach i, ${EPSILON_APPS}, $(if $(filter external, $(i)),,$(i)))
+endif
+
 # Disable default Make rules
 .SUFFIXES:
 

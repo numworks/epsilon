@@ -8,12 +8,12 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor, Poincare::Layout * selectionStart, Poincare::Layout * selectionEnd ) :
   m_layout(),
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor),
   m_selectionStart(selectionStart),
   m_selectionEnd(selectionEnd),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
-  m_textColor(textColor),
-  m_backgroundColor(backgroundColor),
   m_horizontalMargin(0)
 {
 }

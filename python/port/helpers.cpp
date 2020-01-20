@@ -19,14 +19,14 @@ bool micropython_port_vm_hook_loop() {
     return false;
   }
 
-  return micropython_port_vm_hook_loop_content();
-}
-
-bool micropython_port_vm_hook_loop_content() {
-  assert(MicroPython::ExecutionEnvironment::currentExecutionEnvironment() != nullptr);
-  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->refreshPrintOutput();
+  micropython_port_vm_hook_refresh_print();
   // Check if the user asked for an interruption from the keyboard
   return micropython_port_interrupt_if_needed();
+}
+
+void micropython_port_vm_hook_refresh_print() {
+  assert(MicroPython::ExecutionEnvironment::currentExecutionEnvironment() != nullptr);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->refreshPrintOutput();
 }
 
 bool micropython_port_interruptible_msleep(int32_t delay) {

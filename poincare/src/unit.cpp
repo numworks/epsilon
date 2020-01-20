@@ -197,7 +197,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   }
   Expression result = *this;
   if (rep->definition() != nullptr) {
-    result = Expression::Parse(rep->definition(), nullptr).deepReduce(reductionContext);
+    result = Expression::Parse(rep->definition(), nullptr, false).deepReduce(reductionContext);
   }
   if (prefixMultiplier != 0) {
     Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier));

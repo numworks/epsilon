@@ -214,6 +214,10 @@ public:
 
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+  /* TODO:
+   * - change signature to
+   *   size_t serialize(char * buffer, size_t bufferSize...)
+   * - Use same convention as strlcpy: return size of the source even if the bufferSize was too small.*/
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */

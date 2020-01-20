@@ -81,13 +81,10 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   assert(m_outputAccumulationBuffer[0] == '\0');
 
   // Draw the console before running the code
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  m_editCell.setEditing(false);
+  m_preventEdition = true;
   m_editCell.setText("");
   m_editCell.setPrompt("");
-  m_preventEdition = true;
-  AppsContainer::sharedAppsContainer()->redrawWindow();
+  refreshPrintOutput();
 
   runCode(storedCommand);
 
@@ -134,6 +131,7 @@ const char * ConsoleController::inputText(const char * prompt) {
     }
   }
 
+  const char * previousPrompt = m_editCell.promptText();
   m_editCell.setPrompt(promptText);
   m_editCell.setText("");
 
@@ -156,7 +154,9 @@ const char * ConsoleController::inputText(const char * prompt) {
   printText(text, strlen(text));
   flushOutputAccumulationBufferToStore();
 
-  m_editCell.setPrompt(sStandardPromptText);
+  m_editCell.setPrompt(previousPrompt);
+  m_editCell.setText("");
+  refreshPrintOutput();
 
   return text;
 }

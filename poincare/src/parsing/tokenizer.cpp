@@ -147,6 +147,11 @@ Token Tokenizer::popToken() {
   if (!nextCodePointIsNeitherDotNorDigit) {
     return popNumber();
   }
+  if (c == '_') {
+    Token result(Token::Unit);
+    result.setString(start + 1, popIdentifier());
+    return result;
+  }
   if (isLetter(c)) {
     Token result(Token::Identifier);
     result.setString(start, 1 + popIdentifier()); // We already popped 1 code point

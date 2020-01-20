@@ -16,7 +16,7 @@ public:
   ::EvenOddCell * evenOddCell() {
     return contentCell();
   }
-  void setLayouts(Poincare::Layout rightlayout, Poincare::Layout leftLayout);
+  void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerlayout, Poincare::Layout rightLayout);
   void setEqualMessage(I18n::Message equalSignMessage);
   SubviewPosition selectedSubviewPosition() {
     return contentCell()->selectedSubviewPosition();
@@ -25,7 +25,6 @@ public:
     contentCell()->setSelectedSubviewPosition(subviewPosition);
   }
   void setDisplayCenter(bool display);
-  void setDisplayLeft(bool display);
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
   Poincare::Layout layout() const {
@@ -40,6 +39,7 @@ protected:
     void setEven(bool even) override;
     void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
+    virtual ExpressionView * leftExpressionView() const { return nullptr; }
     ExpressionView * rightExpressionView() {
       return &m_rightExpressionView;
     }
@@ -53,33 +53,23 @@ protected:
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
-    bool displayCenter() const { return m_displayCenter; }
+    bool displayCenter() const { return m_displayCenter && !m_centeredExpressionView.layout().isUninitialized(); }
     void setDisplayCenter(bool display);
-    bool displayLeft() const { return m_displayLeft; }
-    void setDisplayLeft(bool display);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     virtual Poincare::Layout layout() const override;
 
-    virtual View * leftView() = 0;
   private:
-    virtual void setLeftViewBackgroundColor(KDColor color) = 0;
-    virtual KDSize leftMinimalSizeForOptimalDisplay() const = 0;
-    virtual KDCoordinate leftBaseline() const = 0;
-    virtual Poincare::Layout leftLayout() const { return Poincare::Layout(); }
-
     View * subviewAtIndex(int index) override;
     ExpressionView m_rightExpressionView;
     MessageTextView m_approximateSign;
     ExpressionView m_centeredExpressionView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
-    bool m_displayLeft;
   };
   virtual ContentCell *  contentCell() = 0;
   virtual const ContentCell *  constContentCell() const = 0;
 };
-
 
 class ScrollableExactApproximateExpressionsView : public AbstractScrollableExactApproximateExpressionsView {
 public:
@@ -93,22 +83,11 @@ public:
   }
 
 private:
-  class ContentCell : public AbstractScrollableExactApproximateExpressionsView::ContentCell {
-  public:
-    View * leftView() override { return ContentCell::burgerMenuView(); }
-  private:
-    /* We keep only one instance of BurgerMenuView to avoid wasting space when
-     * we know that only one ScrollableExactApproximateExpressionsView display
-     * the burger view at a time. */
-    static BurgerMenuView * burgerMenuView();
-    void setLeftViewBackgroundColor(KDColor color) override { burgerMenuView()->setBackgroundColor(color); }
-    KDSize leftMinimalSizeForOptimalDisplay() const override { return burgerMenuView()->minimalSizeForOptimalDisplay(); }
-    KDCoordinate leftBaseline() const override { return leftMinimalSizeForOptimalDisplay().height()/2; }
-  };
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
 };
+
 
 }
 

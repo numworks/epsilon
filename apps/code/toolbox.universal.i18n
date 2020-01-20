@@ -1,6 +1,6 @@
-MathModule = "math"
 CmathModule = "cmath"
 KandinskyModule = "kandinsky"
+MathModule = "math"
 TurtleModule = "turtle"
 ForLoopMenu = "For"
 IfStatementMenu = "If"

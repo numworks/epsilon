@@ -10,8 +10,9 @@ namespace Poincare {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
-size_t UnitNode::Prefix::serialize(char * buffer, size_t length) const {
-  return minInt(strlcpy(buffer, m_symbol, length), length - 1);
+int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
+  assert(bufferSize >= 0);
+  return minInt(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
 }
 
 bool UnitNode::Representative::canParse(const char * symbol, size_t length,
@@ -31,11 +32,12 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length,
   return false;
 }
 
-size_t UnitNode::Representative::serialize(char * buffer, size_t length, const Prefix * prefix) const {
-  size_t prefixLength = prefix->serialize(buffer, length);
+int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Prefix * prefix) const {
+  int prefixLength = prefix->serialize(buffer, bufferSize);
+  assert(prefixLength < bufferSize);
   buffer += prefixLength;
-  length -= prefixLength;
-  return prefixLength + minInt(strlcpy(buffer, m_rootSymbol, length), length - 1);
+  bufferSize -= prefixLength;
+  return prefixLength + minInt(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
 }
 
 bool UnitNode::Dimension::canParse(const char * symbol, size_t length,

@@ -386,7 +386,6 @@ void ConsoleController::refreshPrintOutput() {
 /* printText is called by the Python machine.
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
-  micropython_port_vm_hook_loop_content();
   size_t textCutIndex = firstNewLineCharIndex(text, length);
   if (textCutIndex >= length) {
     /* If there is no new line in text, just append it to the output
@@ -406,6 +405,7 @@ void ConsoleController::printText(const char * text, size_t length) {
   assert(textCutIndex == length - 1);
   appendTextToOutputAccumulationBuffer(text, length-1);
   flushOutputAccumulationBufferToStore();
+  micropython_port_vm_hook_refresh_print();
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {

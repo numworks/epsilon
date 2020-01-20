@@ -106,7 +106,6 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
    * display 1.2+2 --> 16/5 = 3.2. */
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle && m_calculationExpanded));
-  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None);
 
   /* The displayed outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -173,7 +172,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   // Clean the layouts to make room in the pool
   // TODO: maybe do this only when the layout won't change to avoid blinking
   m_inputView.setLayout(Poincare::Layout());
-  m_scrollableOutputView.setLayouts(Poincare::Layout(), Poincare::Layout());
+  m_scrollableOutputView.setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
@@ -181,15 +180,15 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   m_calculationAdditionInformation = calculation->additionalInformationType(context);
   m_inputView.setLayout(calculation->createInputLayout());
 
-  /* Both output expressions have to be updated at the same time. Otherwise,
+  /* All expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
 
-  // Create the left output layout
-  Poincare::Layout leftOutputLayout = Poincare::Layout();
+  // Create the exact output layout
+  Poincare::Layout exactOutputLayout = Poincare::Layout();
   if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
-    leftOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
+    exactOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
       if (calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ExactOnly) {
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
@@ -201,13 +200,13 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
     }
   }
 
-  // Create the right output layout
-  Poincare::Layout rightOutputLayout;
+  // Create the approximate output layout
+  Poincare::Layout approximateOutputLayout;
   if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactOnly) {
-    rightOutputLayout = leftOutputLayout;
+    approximateOutputLayout = exactOutputLayout;
   } else {
     bool couldNotCreateApproximateLayout = false;
-    rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+    approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
       if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
         Poincare::ExceptionCheckpoint::Raise();
@@ -215,9 +214,9 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
         /* Set the display output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, and retry to create the approximate layout */
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
-        leftOutputLayout = Poincare::Layout();
+        exactOutputLayout = Poincare::Layout();
         couldNotCreateApproximateLayout = false;
-        rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+        approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           Poincare::ExceptionCheckpoint::Raise();
         }
@@ -227,9 +226,8 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   m_calculationDisplayOutput = calculation->displayOutput(context);
 
   // We must set which subviews are displayed before setLayouts to mark the right rectangle as dirty
-  m_scrollableOutputView.setDisplayLeft(m_calculationExpanded && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None);
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || (m_calculationExpanded && m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle));
-  m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
+  m_scrollableOutputView.setLayouts(Poincare::Layout(), exactOutputLayout, approximateOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
 

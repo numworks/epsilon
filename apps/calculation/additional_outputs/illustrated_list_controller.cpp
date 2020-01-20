@@ -14,7 +14,6 @@ IllustratedListController::IllustratedListController(Responder * parentResponder
 {
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
     m_additionalCalculationCells[i].setParentResponder(m_listController.selectableTableView());
-    m_additionalCalculationCells[i].setDisplayLeft(true);
   }
 }
 

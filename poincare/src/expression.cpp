@@ -27,8 +27,8 @@ Expression Expression::Parse(char const * string, Context * context, bool addPar
   if (string[0] == 0) {
     return Expression();
   }
-  Parser p(string);
-  Expression expression = p.parse(context);
+  Parser p(string, context);
+  Expression expression = p.parse();
   if (p.getStatus() != Parser::Status::Success) {
     expression = Expression();
   }

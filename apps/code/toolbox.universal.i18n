@@ -1,4 +1,5 @@
 CmathModule = "cmath"
+IonModule = "ion"
 KandinskyModule = "kandinsky"
 MathModule = "math"
 TurtleModule = "turtle"

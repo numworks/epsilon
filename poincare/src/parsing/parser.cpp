@@ -18,12 +18,8 @@ Expression Parser::parse(Context * context) {
 }
 
 bool Parser::IsReservedName(const char * name, size_t nameLength) {
-  const Unit::Dimension * unitDimension = nullptr;
-  const Unit::Representative * unitRepresentative = nullptr;
-  const Unit::Prefix * unitPrefix = nullptr;
   return GetReservedFunction(name, nameLength) != nullptr
-    || IsSpecialIdentifierName(name, nameLength)
-    || Unit::CanParse(name, nameLength, &unitDimension, &unitRepresentative, &unitPrefix);
+    || IsSpecialIdentifierName(name, nameLength);
 }
 
 // Private
@@ -88,6 +84,7 @@ Expression Parser::parseUntil(Context * context, Token::Type stoppingType) {
     &Parser::parseNumber,          // Token::Number
     &Parser::parseNumber,          // Token::BinaryNumber
     &Parser::parseNumber,          // Token::HexadecimalNumber
+    &Parser::parseUnit,            // Token::Unit
     &Parser::parseIdentifier,      // Token::Identifier
     &Parser::parseUnexpected       // Token::Undefined
   };
@@ -134,13 +131,15 @@ bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
 
 void Parser::isThereImplicitMultiplication() {
   /* This function is called at the end of
-   * parseNumber, parseIdentifier, parseFactorial, parseMatrix, parseLeftParenthesis
-   * in order to check whether it should be followed by a Token::ImplicitTimes.
+   * parseNumber, parseIdentifier, parseUnit, parseFactorial, parseMatrix,
+   * parseLeftParenthesis in order to check whether it should be followed by a
+   * Token::ImplicitTimes.
    * In that case, m_pendingImplicitMultiplication is set to true,
    * so that popToken, popTokenIfType, nextTokenHasPrecedenceOver can handle implicit multiplication. */
   m_pendingImplicitMultiplication = (
     m_nextToken.is(Token::Number) ||
     m_nextToken.is(Token::Constant) ||
+    m_nextToken.is(Token::Unit) ||
     m_nextToken.is(Token::Identifier) ||
     m_nextToken.is(Token::LeftParenthesis) ||
     m_nextToken.is(Token::LeftSystemParenthesis) ||
@@ -336,7 +335,24 @@ void Parser::parseBang(Context * context, Expression & leftHandSide, Token::Type
 }
 
 void Parser::parseConstant(Context * context, Expression & leftHandSide, Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
   leftHandSide = Constant::Builder(m_currentToken.codePoint());
+  isThereImplicitMultiplication();
+}
+
+void Parser::parseUnit(Context * context, Expression & leftHandSide, Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
+  const Unit::Dimension * unitDimension = nullptr;
+  const Unit::Representative * unitRepresentative = nullptr;
+  const Unit::Prefix * unitPrefix = nullptr;  leftHandSide = Constant::Builder(m_currentToken.codePoint());
+  if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
+        &unitDimension, &unitRepresentative, &unitPrefix))
+  {
+    leftHandSide = Unit::Builder(unitDimension, unitRepresentative, unitPrefix);
+  } else {
+    m_status = Status::Error; // Unit does not exist
+    return;
+  }
   isThereImplicitMultiplication();
 }
 
@@ -477,22 +493,12 @@ void Parser::parseCustomIdentifier(Context * context, Expression & leftHandSide,
 }
 
 void Parser::parseIdentifier(Context * context, Expression & leftHandSide, Token::Type stoppingType) {
-  if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error; //FIXME
-    return;
-  }
+  assert(leftHandSide.isUninitialized());
   const Expression::FunctionHelper * const * functionHelper = GetReservedFunction(m_currentToken.text(), m_currentToken.length());
-  const Unit::Dimension * unitDimension = nullptr;
-  const Unit::Representative * unitRepresentative = nullptr;
-  const Unit::Prefix * unitPrefix = nullptr;
   if (functionHelper != nullptr) {
     parseReservedFunction(context, leftHandSide, functionHelper);
   } else if (IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length())) {
     parseSpecialIdentifier(context, leftHandSide);
-  } else if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
-        &unitDimension, &unitRepresentative, &unitPrefix))
-  {
-    leftHandSide = Unit::Builder(unitDimension, unitRepresentative, unitPrefix);
   } else {
     parseCustomIdentifier(context, leftHandSide, m_currentToken.text(), m_currentToken.length(), false);
   }

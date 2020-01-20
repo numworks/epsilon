@@ -52,6 +52,7 @@ public:
     bool canParse(const char * symbol, size_t length,
         const Prefix * * prefix) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
+    const Prefix * bestPrefixForValue(double & value, const int exponent) const;
   private:
     const char * m_rootSymbol;
     const char * m_definition;
@@ -121,6 +122,7 @@ public:
   const Dimension * dimension() const { return m_dimension; }
   const Representative * representative() const { return m_representative; }
   const Prefix * prefix() const { return m_prefix; }
+  void setRepresentative(const Representative * representative) { m_representative = representative; }
   void setPrefix(const Prefix * prefix) { m_prefix = prefix; }
 
 private:
@@ -444,6 +446,7 @@ public:
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  void chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext);
 };
 
 }

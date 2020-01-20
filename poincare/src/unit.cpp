@@ -83,6 +83,9 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascendi
 }
 
 Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  /* TODO: compute the bufferSize more precisely... So far the longest unit is
+   * "month" of size 6 but later, we might add unicode to represent ohm or µ
+   * which would change the required size?*/
   static constexpr size_t bufferSize = 10;
   char buffer[bufferSize];
   int length = serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
@@ -91,7 +94,11 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return m_representative->serialize(buffer, bufferSize, m_prefix);
+  assert(bufferSize >= 0);
+  int underscoreLength = minInt(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
+  buffer += underscoreLength;
+  bufferSize -= underscoreLength;
+  return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix);
 }
 
 template<typename T>

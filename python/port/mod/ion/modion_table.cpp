@@ -8,12 +8,12 @@ extern "C" {
  * use the macros that micropython recommends, and we have to hand build those
  * structs. To avoid errors, we drop in a few static_asserts. */
 
-static_assert(sizeof(mp_fun_1_t) == sizeof(mp_fun_0_t));
-static_assert(sizeof(mp_obj_fun_builtin_fixed_t) == sizeof(mp_obj_base_t) + sizeof(mp_fun_1_t));
+static_assert(sizeof(mp_fun_1_t) == sizeof(mp_fun_0_t), "modion_table badly formed");
+static_assert(sizeof(mp_obj_fun_builtin_fixed_t) == sizeof(mp_obj_base_t) + sizeof(mp_fun_1_t), "modion_keyboard_keydown_obj badly formed");
 
 const mp_obj_fun_builtin_fixed_t modion_keyboard_keydown_obj = {
   {&mp_type_fun_builtin_1},
-  (mp_fun_0_t)modion_keyboard_keydown
+  {(mp_fun_0_t)modion_keyboard_keydown}
 };
 
 STATIC const mp_rom_map_elem_t modion_module_globals_table[] = {
@@ -69,7 +69,7 @@ STATIC const mp_rom_map_elem_t modion_module_globals_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(modion_module_globals, modion_module_globals_table);
 
-static_assert(sizeof(mp_obj_module_t) == sizeof(mp_obj_base_t) + sizeof(mp_obj_dict_t *));
+static_assert(sizeof(mp_obj_module_t) == sizeof(mp_obj_base_t) + sizeof(mp_obj_dict_t *), "modion_module badly formed");
 
 extern "C" const mp_obj_module_t modion_module = {
   { &mp_type_module },

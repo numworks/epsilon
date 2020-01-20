@@ -26,19 +26,20 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
   KDPoint absoluteDrawingOrigin() const;
-private:
+protected:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression
    * layout is always possessed by a controller which only gives a pointer to
    * the expression view (without cloning it). The named controller is then
    * responsible for freeing the expression layout when required. */
   mutable Poincare::Layout m_layout; // TODO find better way to have minimalSizeForOptimalDisplay const
-  Poincare::Layout * m_selectionStart;
-  Poincare::Layout * m_selectionEnd;
-  float m_horizontalAlignment;
-  float m_verticalAlignment;
   KDColor m_textColor;
   KDColor m_backgroundColor;
+  Poincare::Layout * m_selectionStart;
+  Poincare::Layout * m_selectionEnd;
+private:
+  float m_horizontalAlignment;
+  float m_verticalAlignment;
   KDCoordinate m_horizontalMargin;
 };
 

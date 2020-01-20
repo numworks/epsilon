@@ -31,6 +31,7 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier) {
 // Hierarchy
 
 TreeNode * TreeNode::parent() const {
+  assert(m_parentIdentifier != m_identifier);
   return TreeHandle::hasNode(m_parentIdentifier) ?  TreePool::sharedPool()->node(m_parentIdentifier) : nullptr;
 }
 
@@ -64,6 +65,7 @@ TreeNode * TreeNode::childAtIndex(int i) const {
     assert(child != nullptr);
     i--;
   }
+  assert(m_identifier != child->identifier());
   return child;
 }
 

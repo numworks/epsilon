@@ -4,28 +4,20 @@
 
 namespace Calculation {
 
-Poincare::Layout ScrollableInputExactApproximateExpressionsView::ContentCell::layout() const {
-  if (selectedSubviewPosition() == SubviewPosition::Left) {
-    return m_leftExpressionView.layout();
-  }
-  return AbstractScrollableExactApproximateExpressionsView::ContentCell::layout();
-}
-
 void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation * calculation) {
   Poincare::Context * context = App::app()->localContext();
 
   // Clean the layouts to make room in the pool
-  contentCell()->leftExpressionView()->setLayout(Poincare::Layout());
-  setLayouts(Poincare::Layout(), Poincare::Layout());
+  setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
 
   // Create the input layout
-  contentCell()->leftExpressionView()->setLayout(calculation->createInputLayout());
+  Poincare::Layout inputLayout = calculation->createInputLayout();
 
   // Create the exact output layout
-  Poincare::Layout leftOutputLayout = Poincare::Layout();
+  Poincare::Layout exactOutputLayout = Poincare::Layout();
   if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
-    leftOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
+    exactOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
       if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactOnly) {
         Poincare::ExceptionCheckpoint::Raise();
@@ -37,12 +29,12 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
   Calculation::DisplayOutput displayOutput = calculation->displayOutput(context);
 
   // Create the approximate output layout
-  Poincare::Layout rightOutputLayout = Poincare::Layout();
+  Poincare::Layout approximateOutputLayout = Poincare::Layout();
   if (displayOutput == Calculation::DisplayOutput::ExactOnly) {
-    rightOutputLayout = leftOutputLayout;
+    approximateOutputLayout = exactOutputLayout;
   } else {
     bool couldNotCreateApproximateLayout = false;
-    rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+    approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
       if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
         Poincare::ExceptionCheckpoint::Raise();
@@ -50,9 +42,9 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
         /* Set the display output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, and retry to create the approximate layout */
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
-        leftOutputLayout = Poincare::Layout();
+        exactOutputLayout = Poincare::Layout();
         couldNotCreateApproximateLayout = false;
-        rightOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+        approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           Poincare::ExceptionCheckpoint::Raise();
         }
@@ -60,7 +52,7 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
     }
 
   }
-  setLayouts(rightOutputLayout, leftOutputLayout);
+  setLayouts(inputLayout, exactOutputLayout, approximateOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   setEqualMessage(equalMessage);
 
@@ -82,11 +74,6 @@ void ScrollableInputExactApproximateExpressionsCell::setCalculation(Calculation 
 
 void ScrollableInputExactApproximateExpressionsCell::setDisplayCenter(bool display) {
   m_view.setDisplayCenter(display);
-  layoutSubviews();
-}
-
-void ScrollableInputExactApproximateExpressionsCell::setDisplayLeft(bool display) {
-  m_view.setDisplayLeft(display);
   layoutSubviews();
 }
 

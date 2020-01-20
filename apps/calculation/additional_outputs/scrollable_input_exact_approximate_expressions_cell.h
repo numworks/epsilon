@@ -19,16 +19,10 @@ private:
   class ContentCell : public Shared::AbstractScrollableExactApproximateExpressionsView::ContentCell {
   public:
     ContentCell() : m_leftExpressionView() {}
-    Poincare::Layout layout() const override;
     KDColor backgroundColor() const override { return KDColorWhite; }
     void setEven(bool even) override { return; }
-    View * leftView() override { return &m_leftExpressionView; }
-    ExpressionWithEqualSignView * leftExpressionView() { return &m_leftExpressionView; }
+    ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }
   private:
-    void setLeftViewBackgroundColor(KDColor color) override { m_leftExpressionView.setBackgroundColor(color); }
-    KDCoordinate leftBaseline() const override { return !m_leftExpressionView.layout().isUninitialized() ? m_leftExpressionView.layout().baseline() : 0; }
-    KDSize leftMinimalSizeForOptimalDisplay() const override { return m_leftExpressionView.minimalSizeForOptimalDisplay(); }
-    Poincare::Layout leftLayout() const override { return m_leftExpressionView.layout(); }
     ExpressionWithEqualSignView m_leftExpressionView;
   };
 
@@ -61,7 +55,6 @@ public:
   }
   void setCalculation(Calculation * calculation);
   void setDisplayCenter(bool display);
-  void setDisplayLeft(bool display);
   ScrollableInputExactApproximateExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableInputExactApproximateExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 

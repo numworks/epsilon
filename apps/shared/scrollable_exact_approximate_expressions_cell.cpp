@@ -10,8 +10,8 @@ ScrollableExactApproximateExpressionsCell::ScrollableExactApproximateExpressions
 {
 }
 
-void ScrollableExactApproximateExpressionsCell::setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout) {
-  m_view.setLayouts(approximateLayout, exactLayout);
+void ScrollableExactApproximateExpressionsCell::setLayouts(Poincare::Layout exactLayout, Poincare::Layout approximateLayout) {
+  m_view.setLayouts(Layout(), exactLayout, approximateLayout);
   m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Center);
 }
 

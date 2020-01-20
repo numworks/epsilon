@@ -6,7 +6,6 @@ escher_src += $(addprefix escher/src/,\
   bank_view_controller.cpp \
   bordered.cpp \
   buffer_text_view.cpp \
-  burger_menu_view.cpp \
   button.cpp \
   button_row_controller.cpp \
   chevron_view.cpp \

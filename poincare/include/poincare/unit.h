@@ -30,7 +30,7 @@ public:
     {}
     const char * symbol() const { return m_symbol; }
     const int8_t exponent() const { return m_exponent; }
-    size_t serialize(char * buffer, size_t length) const;
+    int serialize(char * buffer, int bufferSize) const;
   private:
     const char * m_symbol;
     int8_t m_exponent;
@@ -51,7 +51,7 @@ public:
     const Prefix * allowedPrefixesUpperBound() const { return m_allowedPrefixesUpperBound; }
     bool canParse(const char * symbol, size_t length,
         const Prefix * * prefix) const;
-    size_t serialize(char * buffer, size_t length, const Prefix * prefix) const;
+    int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
   private:
     const char * m_rootSymbol;
     const char * m_definition;

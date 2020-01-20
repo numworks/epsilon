@@ -93,7 +93,8 @@ public:
     stream << "Unit";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    stream << " symbol=\"" << m_prefix->symbol() << m_representative->rootSymbol() << "\"";
+    stream << " prefix=\"" << m_prefix->symbol() << "\"";
+    stream << " rootSymbol=\"" << m_representative->rootSymbol() << "\"";
   }
 #endif
 

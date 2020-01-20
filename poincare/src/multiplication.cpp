@@ -2,6 +2,8 @@
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
+#include <poincare/float.h>
+#include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/opposite.h>
@@ -464,12 +466,66 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   if (!denom.isUninitialized()) {
     result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
   }
+
+  // Step 4: Turn into 'Float x units' and choose a unit multiple adequate for
+  // the numerical value
   if (!units.isUninitialized()) {
+    /* An exhaustive exploration of all possible multiples would have
+     * exponential complexity with respect to the number of factors. Instead,
+     * we focus on one single factor. The first Unit factor is certainly the
+     * most relevant.
+     */
+    if (units.type() == ExpressionNode::Type::Multiplication) {
+      /* First, as step 2 might have introduced non Unit factors in 'units',
+       * 'units' must be split again.
+       */
+      Expression unitsNumer, unitsDenom, unitsUnits;
+      static_cast<Multiplication&>(units).splitIntoNormalForm(unitsNumer, unitsDenom, unitsUnits, reductionContext);
+      if (!unitsNumer.isUninitialized()) {
+        result = result.isUninitialized() ? unitsNumer : Multiplication::Builder(result, unitsNumer);
+      }
+      if (!unitsDenom.isUninitialized()) {
+        result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
+      }
+      units = unitsUnits;
+    }
+
     if (result.isUninitialized()) {
       result = units;
     } else {
-      result = Multiplication::Builder(result, units);
-      static_cast<Multiplication &>(result).mergeMultiplicationChildrenInPlace();
+      double value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      if (std::isinf(value)) {
+        result = Infinity::Builder(false); //FIXME sign?
+      } else if (std::isnan(value)) {
+        result = Undefined::Builder();
+      } else {
+        // Identify the first Unit factor and its exponent
+        Expression firstFactor = units;
+        int exponent = 1;
+        if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
+          firstFactor = firstFactor.childAtIndex(0);
+        }
+        if (firstFactor.type() == ExpressionNode::Type::Power) {
+          Expression exp = firstFactor.childAtIndex(1);
+          firstFactor = firstFactor.childAtIndex(0);
+          assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
+          Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
+          if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
+            exponent = expInt.extractedInt();
+          } else {
+            // The exponent is too large to be extracted, so do not try to use it.
+            exponent = 0;
+          }
+        }
+        assert(firstFactor.type() == ExpressionNode::Type::Unit);
+        // Choose its multiple and update value accordingly
+        if (exponent != 0) {
+          static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
+        }
+        // Build final Expression
+        result = Multiplication::Builder(Float<double>::Builder(value), units);
+        static_cast<Multiplication &>(result).mergeMultiplicationChildrenInPlace();
+      }
     }
   }
 

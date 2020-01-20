@@ -1,13 +1,16 @@
 #include <poincare/unit.h>
+#include <poincare/division.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
+#include <cmath>
 #include <assert.h>
 #include <string.h>
 
 namespace Poincare {
 
+static inline int absInt(int x) { return x >= 0 ? x : -x; }
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
@@ -38,6 +41,24 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
   buffer += prefixLength;
   bufferSize -= prefixLength;
   return prefixLength + minInt(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
+}
+
+const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const int exponent) const {
+  const Prefix * bestPre = nullptr;
+  unsigned int diff = -1;
+  /* Find the 'Prefix' with the most adequate 'exponent' for the order of
+   * magnitude of 'value'.
+   */
+  const int orderOfMagnitude = std::floor(std::log10(std::fabs(value)));
+  for (const Prefix * pre = m_allowedPrefixes; pre < m_allowedPrefixesUpperBound; pre++) {
+    unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
+    if (newDiff < diff) {
+      diff = newDiff;
+      bestPre = pre;
+    }
+  }
+  value *= std::pow(10.0, -bestPre->exponent() * exponent);
+  return bestPre;
 }
 
 bool UnitNode::Dimension::canParse(const char * symbol, size_t length,
@@ -241,6 +262,34 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
    * specific error. For instance: inhomogeneous expression.
    */
   return replaceWithUndefinedInPlace();
+}
+
+void Unit::chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext) {
+  assert(value != 0 && !std::isnan(value) && !std::isinf(value) && exponent != 0);
+  UnitNode * unitNode = static_cast<UnitNode *>(node());
+  const Dimension * dim = unitNode->dimension();
+  /* Find in the Dimension 'dim' which unit (Representative and Prefix) make
+   * the value closer to 1.
+   */
+  const Representative * bestRep = unitNode->representative();
+  const Prefix * bestPre = unitNode->prefix();
+  double bestVal = value;
+
+  for (const Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
+    // evaluate quotient
+    double val = value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
+    // Get the best prefix and update val accordingly
+    const Prefix * pre = rep->bestPrefixForValue(val, exponent);
+    if (std::fabs(std::log10(std::fabs(val))) < std::fabs(std::log10(std::fabs(bestVal)))) {
+      /* At this point, val is closer to one than bestVal is.*/
+      bestRep = rep;
+      bestPre = pre;
+      bestVal = val;
+    }
+  }
+  unitNode->setRepresentative(bestRep);
+  unitNode->setPrefix(bestPre);
+  value = bestVal;
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

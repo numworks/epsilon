@@ -220,13 +220,22 @@ const ToolboxMessageTree IonModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKeyExe, I18n::Message::PythonKeyExe, false)
 };
 
+const ToolboxMessageTree TimeModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportTime, I18n::Message::PythonImportTime, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromTime, I18n::Message::PythonImportTime, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTimeFunction, I18n::Message::PythonTimeFunction, false, I18n::Message::PythonCommandTimeFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMonotonic, I18n::Message::PythonMonotonic, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSleep, I18n::Message::PythonSleep)
+};
+
 const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::MathModule, MathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::CmathModule, CMathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::RandomModule, RandomModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::TurtleModule, TurtleModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren),
-  ToolboxMessageTree::Node(I18n::Message::IonModule, IonModuleChildren)
+  ToolboxMessageTree::Node(I18n::Message::IonModule, IonModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::TimeModule, TimeModuleChildren)
 };
 
 const ToolboxMessageTree catalogChildren[] = {
@@ -287,6 +296,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMath, I18n::Message::PythonImportFromMath, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromRandom, I18n::Message::PythonImportFromRandom, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromTurtle, I18n::Message::PythonImportFromTurtle, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromTime, I18n::Message::PythonImportTime, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGamma, I18n::Message::PythonGamma),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetPixel, I18n::Message::PythonGetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetrandbits, I18n::Message::PythonGetrandbits),
@@ -302,6 +312,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportMath, I18n::Message::PythonImportMath, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportRandom, I18n::Message::PythonImportRandom, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportTurtle, I18n::Message::PythonImportTurtle, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportTime, I18n::Message::PythonImportTime, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandIndex, I18n::Message::PythonIndex),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandInput, I18n::Message::PythonInput),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandInsert, I18n::Message::PythonInsert),
@@ -324,6 +335,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMax, I18n::Message::PythonMax),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMin, I18n::Message::PythonMin),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandModf, I18n::Message::PythonModf),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMonotonic, I18n::Message::PythonMonotonic, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandOct, I18n::Message::PythonOct),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandOrange, I18n::Message::PythonTurtleOrange, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPendown, I18n::Message::PythonTurtlePendown, false),
@@ -358,6 +370,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandShowturtle, I18n::Message::PythonTurtleShowturtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSin, I18n::Message::PythonSin),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSinh, I18n::Message::PythonSinh),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSleep, I18n::Message::PythonSleep),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSort, I18n::Message::PythonSort, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSorted, I18n::Message::PythonSorted),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandSpeed, I18n::Message::PythonTurtleSpeed),
@@ -365,6 +378,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSum, I18n::Message::PythonSum),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTan, I18n::Message::PythonTan),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTanh, I18n::Message::PythonTanh),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTimeFunction, I18n::Message::PythonTimeFunction, false, I18n::Message::PythonCommandTimeFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTrunc, I18n::Message::PythonTrunc),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTurtleFunction, I18n::Message::PythonTurtleFunction, false, I18n::Message::PythonCommandTurtleFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUniform, I18n::Message::PythonUniform),

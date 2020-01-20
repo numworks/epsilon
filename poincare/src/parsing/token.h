@@ -50,6 +50,7 @@ public:
     Number,
     BinaryNumber,
     HexadecimalNumber,
+    Unit,
     Identifier,
     Undefined
   };

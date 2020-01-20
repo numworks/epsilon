@@ -48,6 +48,7 @@ private:
   void parseUnexpected(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseNumber(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseConstant(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseUnit(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseIdentifier(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseEmpty(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMatrix(Context * context, Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);

@@ -43,7 +43,7 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   m_calculationCRC32 = 0;
 }
 
-Shared::ScrollableExactApproximateExpressionsView * HistoryViewCell::outputView() {
+Shared::ScrollableTwoExpressionsView * HistoryViewCell::outputView() {
   return &m_scrollableOutputView;
 }
 
@@ -86,12 +86,12 @@ void HistoryViewCell::reloadOutputSelection() {
   /* Select the right output according to the calculation display output. This
    * will reload the scroll to display the selected output. */
   if (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate) {
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Center);
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableTwoExpressionsView::SubviewPosition::Center);
   } else {
     assert((m_calculationDisplayOutput == Calculation::DisplayOutput::ApproximateOnly)
         || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle)
         || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly));
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableTwoExpressionsView::SubviewPosition::Right);
   }
 }
 

@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "equation_store.h"
-#include "../shared/scrollable_exact_approximate_expressions_cell.h"
+#include "../shared/scrollable_two_expressions_cell.h"
 #include <apps/i18n.h>
 
 namespace Solver {
@@ -61,7 +61,7 @@ private:
   EvenOddBufferTextCell m_symbolCells[EquationStore::k_maxNumberOfSolutions];
   EvenOddExpressionCell m_deltaCell;
   Poincare::Layout m_delta2Layout;
-  Shared::ScrollableExactApproximateExpressionsCell m_exactValueCells[EquationStore::k_maxNumberOfExactSolutions];
+  Shared::ScrollableTwoExpressionsCell m_exactValueCells[EquationStore::k_maxNumberOfExactSolutions];
   EvenOddBufferTextCell m_approximateValueCells[EquationStore::k_maxNumberOfApproximateSolutions];
   ContentView m_contentView;
 };

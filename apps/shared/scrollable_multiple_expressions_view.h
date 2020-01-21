@@ -1,18 +1,18 @@
-#ifndef SHARED_SCROLLABLE_EXACT_APPROXIMATE_EXPRESSIONS_VIEW_H
-#define SHARED_SCROLLABLE_EXACT_APPROXIMATE_EXPRESSIONS_VIEW_H
+#ifndef SHARED_SCROLLABLE_MULTIPLE_EXPRESSIONS_VIEW_H
+#define SHARED_SCROLLABLE_MULTIPLE_EXPRESSIONS_VIEW_H
 
 #include <escher.h>
 
 namespace Shared {
 
-class AbstractScrollableExactApproximateExpressionsView : public ScrollableView, public ScrollViewDataSource {
+class AbstractScrollableMultipleExpressionsView : public ScrollableView, public ScrollViewDataSource {
 public:
   enum class SubviewPosition : uint8_t {
     Left = 0,
     Center = 1,
     Right = 2
   };
-  AbstractScrollableExactApproximateExpressionsView(Responder * parentResponder, View * contentCell);
+  AbstractScrollableMultipleExpressionsView(Responder * parentResponder, View * contentCell);
   ::EvenOddCell * evenOddCell() {
     return contentCell();
   }
@@ -72,9 +72,9 @@ protected:
   virtual const ContentCell *  constContentCell() const = 0;
 };
 
-class ScrollableExactApproximateExpressionsView : public AbstractScrollableExactApproximateExpressionsView {
+class ScrollableTwoExpressionsView : public AbstractScrollableMultipleExpressionsView {
 public:
-  ScrollableExactApproximateExpressionsView(Responder * parentResponder) : AbstractScrollableExactApproximateExpressionsView(parentResponder, &m_contentCell) {
+  ScrollableTwoExpressionsView(Responder * parentResponder) : AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell) {
     setMargins(
         Metric::CommonSmallMargin,
         Metric::CommonLargeMargin,

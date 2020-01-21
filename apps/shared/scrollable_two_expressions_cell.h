@@ -1,14 +1,14 @@
-#ifndef SHARED_SCROLLABLE_EXACT_APPROXIMATE_EXPRESSIONS_CELL_H
-#define SHARED_SCROLLABLE_EXACT_APPROXIMATE_EXPRESSIONS_CELL_H
+#ifndef SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
+#define SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
 
 #include <escher.h>
-#include "scrollable_exact_approximate_expressions_view.h"
+#include "scrollable_multiple_expressions_view.h"
 
 namespace Shared {
 
-class ScrollableExactApproximateExpressionsCell : public ::EvenOddCell, public Responder {
+class ScrollableTwoExpressionsCell : public ::EvenOddCell, public Responder {
 public:
-  ScrollableExactApproximateExpressionsCell(Responder * parentResponder = nullptr);
+  ScrollableTwoExpressionsCell(Responder * parentResponder = nullptr);
   void setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout);
   void setEqualMessage(I18n::Message equalSignMessage) {
     return m_view.setEqualMessage(equalSignMessage);
@@ -26,7 +26,7 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  ScrollableExactApproximateExpressionsView m_view;
+  ScrollableTwoExpressionsView m_view;
 };
 
 }

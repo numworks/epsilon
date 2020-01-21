@@ -1,4 +1,4 @@
-#include "scrollable_exact_approximate_expressions_view.h"
+#include "scrollable_multiple_expressions_view.h"
 #include <apps/i18n.h>
 #include <assert.h>
 using namespace Poincare;
@@ -7,7 +7,7 @@ namespace Shared {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
-AbstractScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
+AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
   m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
   m_centeredExpressionView(),
@@ -16,12 +16,12 @@ AbstractScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
 {
 }
 
-KDColor AbstractScrollableExactApproximateExpressionsView::ContentCell::backgroundColor() const {
+KDColor AbstractScrollableMultipleExpressionsView::ContentCell::backgroundColor() const {
   KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
   return background;
 }
 
-void AbstractScrollableExactApproximateExpressionsView::ContentCell::setHighlighted(bool highlight) {
+void AbstractScrollableMultipleExpressionsView::ContentCell::setHighlighted(bool highlight) {
   // Do not call HighlightCell::setHighlighted to avoid marking all cell as dirty
   m_highlighted = highlight;
   KDColor defaultColor = backgroundColor();
@@ -36,7 +36,7 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::setHighligh
   }
 }
 
-void AbstractScrollableExactApproximateExpressionsView::ContentCell::setEven(bool even) {
+void AbstractScrollableMultipleExpressionsView::ContentCell::setEven(bool even) {
   EvenOddCell::setEven(even);
   KDColor defaultColor = backgroundColor();
   m_centeredExpressionView.setBackgroundColor(defaultColor);
@@ -47,7 +47,7 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::setEven(boo
   }
 }
 
-void AbstractScrollableExactApproximateExpressionsView::ContentCell::reloadTextColor() {
+void AbstractScrollableMultipleExpressionsView::ContentCell::reloadTextColor() {
   if (displayCenter()) {
     m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
   } else {
@@ -55,7 +55,7 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::reloadTextC
   }
 }
 
-KDSize AbstractScrollableExactApproximateExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
+KDSize AbstractScrollableMultipleExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
   KDSize leftSize = KDSizeZero;
   KDCoordinate leftViewBaseline = 0;
   KDCoordinate width = 0;
@@ -79,18 +79,18 @@ KDSize AbstractScrollableExactApproximateExpressionsView::ContentCell::minimalSi
   return KDSize(width, height);
 }
 
-void AbstractScrollableExactApproximateExpressionsView::ContentCell::setSelectedSubviewPosition(AbstractScrollableExactApproximateExpressionsView::SubviewPosition subviewPosition) {
+void AbstractScrollableMultipleExpressionsView::ContentCell::setSelectedSubviewPosition(AbstractScrollableMultipleExpressionsView::SubviewPosition subviewPosition) {
   m_selectedSubviewPosition = subviewPosition;
   setHighlighted(isHighlighted());
 }
 
-void AbstractScrollableExactApproximateExpressionsView::ContentCell::setDisplayCenter(bool display) {
+void AbstractScrollableMultipleExpressionsView::ContentCell::setDisplayCenter(bool display) {
   m_displayCenter = display;
   reloadTextColor();
   layoutSubviews();
 }
 
-Poincare::Layout AbstractScrollableExactApproximateExpressionsView::ContentCell::layout() const {
+Poincare::Layout AbstractScrollableMultipleExpressionsView::ContentCell::layout() const {
   if (m_selectedSubviewPosition == SubviewPosition::Center) {
     return m_centeredExpressionView.layout();
   } else if (m_selectedSubviewPosition == SubviewPosition::Right) {
@@ -101,7 +101,7 @@ Poincare::Layout AbstractScrollableExactApproximateExpressionsView::ContentCell:
   return leftExpressionView()->layout();
 }
 
-int AbstractScrollableExactApproximateExpressionsView::ContentCell::numberOfSubviews() const {
+int AbstractScrollableMultipleExpressionsView::ContentCell::numberOfSubviews() const {
   int nbOfSubviews = 1;
   if (displayCenter()) {
     nbOfSubviews += 2;
@@ -112,7 +112,7 @@ int AbstractScrollableExactApproximateExpressionsView::ContentCell::numberOfSubv
   return nbOfSubviews;
 }
 
-View * AbstractScrollableExactApproximateExpressionsView::ContentCell::subviewAtIndex(int index) {
+View * AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(int index) {
   bool leftIsVisible = leftExpressionView() != nullptr;
   if (leftIsVisible && index == 0) {
     return leftExpressionView();
@@ -121,7 +121,7 @@ View * AbstractScrollableExactApproximateExpressionsView::ContentCell::subviewAt
   return views[index - leftIsVisible];
 }
 
-void AbstractScrollableExactApproximateExpressionsView::ContentCell::layoutSubviews(bool force) {
+void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(bool force) {
   // Subviews sizes
   KDSize leftSize = leftExpressionView() ? leftExpressionView()->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDCoordinate leftViewBaseline = leftExpressionView() && !leftExpressionView()->layout().isUninitialized() ? leftExpressionView()->layout().baseline() : 0;
@@ -153,13 +153,13 @@ void AbstractScrollableExactApproximateExpressionsView::ContentCell::layoutSubvi
   m_rightExpressionView.setFrame(KDRect(currentWidth, baseline-rightBaseline, rightExpressionSize), force);
 }
 
-AbstractScrollableExactApproximateExpressionsView::AbstractScrollableExactApproximateExpressionsView(Responder * parentResponder, View * contentCell) :
+AbstractScrollableMultipleExpressionsView::AbstractScrollableMultipleExpressionsView(Responder * parentResponder, View * contentCell) :
   ScrollableView(parentResponder, contentCell, this)
 {
   setDecoratorType(ScrollView::Decorator::Type::Arrows);
 }
 
-void AbstractScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout, Poincare::Layout rightLayout) {
+void AbstractScrollableMultipleExpressionsView::setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout, Poincare::Layout rightLayout) {
   bool updateRightLayout = contentCell()->rightExpressionView()->setLayout(rightLayout);
   bool updateCenterLayout = contentCell()->centeredExpressionView()->setLayout(centerLayout);
   bool updateLeftLayout = false;
@@ -173,11 +173,11 @@ void AbstractScrollableExactApproximateExpressionsView::setLayouts(Poincare::Lay
   }
 }
 
-void AbstractScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Message equalSignMessage) {
+void AbstractScrollableMultipleExpressionsView::setEqualMessage(I18n::Message equalSignMessage) {
   contentCell()->approximateSign()->setMessage(equalSignMessage);
 }
 
-void AbstractScrollableExactApproximateExpressionsView::reloadScroll() {
+void AbstractScrollableMultipleExpressionsView::reloadScroll() {
   if (selectedSubviewPosition() == SubviewPosition::Right) {
     // Scroll to the right extremity
     scrollToContentPoint(KDPoint(contentCell()->bounds().width(), 0), true);
@@ -186,12 +186,12 @@ void AbstractScrollableExactApproximateExpressionsView::reloadScroll() {
     ScrollableView::reloadScroll();
   }
 }
-void AbstractScrollableExactApproximateExpressionsView::setDisplayCenter(bool display) {
+void AbstractScrollableMultipleExpressionsView::setDisplayCenter(bool display) {
   contentCell()->setDisplayCenter(display);
   layoutSubviews();
 }
 
-bool AbstractScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event event) {
+bool AbstractScrollableMultipleExpressionsView::handleEvent(Ion::Events::Event event) {
   bool leftIsVisible = false;
   KDCoordinate leftWidth = 0;
   if (contentCell()->leftExpressionView()) {

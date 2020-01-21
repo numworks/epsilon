@@ -61,11 +61,17 @@ Expression Calculation::exactOutput() {
 }
 
 Expression Calculation::approximateOutput(Context * context) {
-  /* To ensure that the expression 'm_output' is a matrix or a complex, we
-   * call 'evaluate'. */
   Expression exp = Expression::Parse(approximateOutputText(), nullptr);
   assert(!exp.isUninitialized());
-  return PoincareHelpers::Approximate<double>(exp, context);
+  /* Warning:
+   * Since quite old versions of Epsilon, the Expression 'exp' was used to be
+   * approximated again to ensure its content was in the expected form. That is
+   * currently the case (see Poincare::Expression::simplifyAndApproximate). So
+   * 'exp' does not need to be approximated. Moreover since the approximate
+   * output may contain units and that a Poincare::Unit approximates to undef,
+   * thus it must not be approximated. If another behavior is desired, the
+   * previous considerations should be taken into account. */
+  return exp;
 }
 
 Layout Calculation::createInputLayout() {

@@ -35,7 +35,7 @@ int DisplayModeController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 }
 
 HighlightCell * DisplayModeController::reusableCell(int index, int type) {
-  if (type == 1) {
+  if (type == k_significantDigitsType) {
     assert(index == 0);
     return &m_editableCell;
   }
@@ -43,19 +43,15 @@ HighlightCell * DisplayModeController::reusableCell(int index, int type) {
 }
 
 int DisplayModeController::reusableCellCount(int type) {
-  switch (type) {
-    case 0:
-      return PreferencesController::k_totalNumberOfCell;
-    case 1:
-      return 1;
-    default:
-      assert(false);
-      return 0;
+  if (type == k_resultFormatType) {
+    return PreferencesController::k_totalNumberOfCell;
   }
+  assert(type == k_significantDigitsType);
+  return 1;
 }
 
 int DisplayModeController::typeAtLocation(int i, int j) {
-  return (j == numberOfRows() - 1 ? 1 : 0);
+  return (j == numberOfRows() - 1 ? k_significantDigitsType : k_resultFormatType);
 }
 
 void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -63,8 +59,9 @@ void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int in
   if (index == numberOfRows()-1) {
     MessageTableCellWithEditableTextWithSeparator * myCell = (MessageTableCellWithEditableTextWithSeparator *)cell;
     GenericSubController::willDisplayCellForIndex(myCell->messageTableCellWithEditableText(), index);
-    char buffer[3];
-    Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, 3);
+    constexpr int bufferSize = 3;
+    char buffer[bufferSize];
+    Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, bufferSize);
     myCell->messageTableCellWithEditableText()->setAccessoryText(buffer);
     return;
   }
@@ -81,11 +78,11 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  if (floatBody < 1) {
-   floatBody = 1;
+  if (floatBody < 1.0) {
+   floatBody = 1.0;
   }
-  if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Engineering && floatBody < 3) {
-    floatBody = 3;
+  if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Engineering && floatBody < 3.0) {
+    floatBody = 3.0;
   }
   if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
     floatBody = PrintFloat::k_numberOfStoredSignificantDigits;

@@ -18,9 +18,9 @@ IllustratedListController::IllustratedListController(Responder * parentResponder
 }
 
 void IllustratedListController::didEnterResponderChain(Responder * previousFirstResponder) {
-  // Select the left subview on all cells
+  // Select the left subview on all cells and reinitialize scroll
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
-    m_additionalCalculationCells[i].setSelectedSubviewPosition(ScrollableInputExactApproximateExpressionsView::SubviewPosition::Left);
+    m_additionalCalculationCells[i].reinitSelection();
   }
   selectCellAtLocation(0, 1);
 }

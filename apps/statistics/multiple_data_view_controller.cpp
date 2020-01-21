@@ -79,7 +79,8 @@ void MultipleDataViewController::didEnterResponderChain(Responder * firstRespond
 }
 
 void MultipleDataViewController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
+  if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
     assert(*m_selectedSeriesIndex >= 0);
     multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
     multipleDataView()->setDisplayBanner(false);

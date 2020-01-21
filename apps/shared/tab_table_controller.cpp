@@ -17,6 +17,7 @@ void TabTableController::viewWillAppear() {
 
 void TabTableController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
     selectableTableView()->deselectTable();
     selectableTableView()->scrollToCell(0,0);
   }

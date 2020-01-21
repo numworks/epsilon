@@ -1,6 +1,5 @@
 ---
 title: Software Engineering
-layout: breadcrumb
 breadcrumb: Software
 ---
 # Epsilon

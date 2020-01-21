@@ -67,7 +67,7 @@ public:
 
 private:
   static constexpr int k_maxNumberOfDisplayableScriptCells = 5; // = 240/50
-  static constexpr int k_parametersColumnWidth = 37;
+  static constexpr int k_parametersColumnWidth = Metric::EllipsisCellWidth;
   static constexpr int AddScriptCellType = 0;
   static constexpr int ScriptCellType = 1;
   static constexpr int ScriptParameterCellType = 2;

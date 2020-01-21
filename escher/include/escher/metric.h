@@ -35,6 +35,7 @@ public:
   constexpr static KDCoordinate CellSeparatorThickness = 1;
   constexpr static KDCoordinate TableSeparatorThickness = 5;
   constexpr static KDCoordinate ExpressionViewHorizontalMargin = 5;
+  constexpr static KDCoordinate EllipsisCellWidth = 37;
 };
 
 #endif

@@ -21,6 +21,7 @@ public:
   }
   Poincare::Layout layout() const override { return m_view.layout(); }
   void didBecomeFirstResponder() override;
+  void reinitSelection();
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

@@ -49,15 +49,13 @@ public:
   // Table cell
   View * labelView() const override { return (View *)&m_view; }
 
-  void setHighlighted(bool highlight) override {
-    m_view.evenOddCell()->setHighlighted(highlight);
-    m_view.reloadScroll();
-  }
+  void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
   void setCalculation(Calculation * calculation);
   void setDisplayCenter(bool display);
   ScrollableInputExactApproximateExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableInputExactApproximateExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 
+  void reinitSelection();
 private:
   // Remove label margin added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView
   KDCoordinate labelMargin() const override { return 0; }

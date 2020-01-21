@@ -169,7 +169,7 @@ void AbstractScrollableExactApproximateExpressionsView::setLayouts(Poincare::Lay
   if (updateLeftLayout || updateCenterLayout || updateRightLayout) {
     contentCell()->reloadTextColor();
     contentCell()->layoutSubviews();
-    reloadScroll();
+    // Do no reload scroll here as 'setLayouts' is called every time the table is re-layout (when scrolling for instance)
   }
 }
 

@@ -51,12 +51,14 @@ private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection();
+  bool displayedEllipsis() const;
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformationType m_calculationAdditionInformation;
   bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableTwoExpressionsView m_scrollableOutputView;
+  EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource * m_dataSource;
 };
 

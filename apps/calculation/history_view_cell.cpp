@@ -52,6 +52,7 @@ void HistoryViewCell::setEven(bool even) {
   m_inputView.setBackgroundColor(backgroundColor());
   m_scrollableOutputView.setBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setEven(even);
+  m_ellipsis.setEven(even);
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
@@ -59,6 +60,7 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   m_highlighted = highlight;
   m_inputView.setExpressionBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
+  m_ellipsis.setHighlighted(false);
   if (isHighlighted()) {
     if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
       m_inputView.setExpressionBackgroundColor(Palette::Select);
@@ -119,7 +121,7 @@ KDColor HistoryViewCell::backgroundColor() const {
 }
 
 int HistoryViewCell::numberOfSubviews() const {
-  return 2;
+  return 2 + displayedEllipsis();
 }
 
 View * HistoryViewCell::subviewAtIndex(int index) {
@@ -141,12 +143,18 @@ View * HistoryViewCell::subviewAtIndex(int index) {
    * complex view enables to redraw it before the vblank thereby preventing
    * blinking).
    * TODO: this is a dirty hack which should be fixed! */
-  View * views[2] = {&m_scrollableOutputView, &m_inputView};
+  View * views[3] = {&m_scrollableOutputView, &m_inputView, &m_ellipsis};
   return views[index];
 }
 
 void HistoryViewCell::layoutSubviews(bool force) {
   KDCoordinate maxFrameWidth = bounds().width();
+  if (displayedEllipsis()) {
+    m_ellipsis.setFrame(KDRect(maxFrameWidth - Metric::EllipsisCellWidth, 0, Metric::EllipsisCellWidth, bounds().height()), force);
+    maxFrameWidth -= Metric::EllipsisCellWidth;
+  } else {
+    m_ellipsis.setFrame(KDRectZero, force); // Required to mark previous rect as dirty
+  }
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   m_inputView.setFrame(KDRect(
     0, 0,
@@ -258,6 +266,10 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+bool HistoryViewCell::displayedEllipsis() const {
+  return m_highlighted && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None;
 }
 
 }

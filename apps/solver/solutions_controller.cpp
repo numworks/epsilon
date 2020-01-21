@@ -121,6 +121,13 @@ void SolutionsController::viewWillAppear() {
   }
 }
 
+void SolutionsController::didEnterResponderChain(Responder * previousFirstResponder) {
+  // Select the most left present subview on all cells and reinitialize scroll
+  for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
+    m_exactValueCells[i].reinitSelection();
+  }
+}
+
 /* AlternateEmptyRowDelegate */
 
 bool SolutionsController::isEmpty() const {

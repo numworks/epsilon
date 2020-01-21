@@ -59,12 +59,16 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
   /* The displayed input and outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
   layoutSubviews();
-  reloadScroll();
 }
 
 void ScrollableInputExactApproximateExpressionsCell::didBecomeFirstResponder() {
-  m_view.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+  reinitSelection();
   Container::activeApp()->setFirstResponder(&m_view);
+}
+
+void ScrollableInputExactApproximateExpressionsCell::reinitSelection() {
+  m_view.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+  m_view.reloadScroll();
 }
 
 void ScrollableInputExactApproximateExpressionsCell::setCalculation(Calculation * calculation) {

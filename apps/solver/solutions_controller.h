@@ -15,6 +15,7 @@ public:
   const char * title() override;
   View * view() override;
   void viewWillAppear() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override;
   virtual I18n::Message emptyMessage() override;

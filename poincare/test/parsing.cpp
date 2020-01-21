@@ -41,8 +41,8 @@ void assert_tokenizes_as_undefined_token(const char * string) {
 }
 
 void assert_text_not_parsable(const char * text) {
-  Parser p(text);
-  Expression result = p.parse(nullptr);
+  Parser p(text, nullptr);
+  Expression result = p.parse();
   quiz_assert_print_if_failure(p.getStatus() != Parser::Status::Success, text);
 }
 

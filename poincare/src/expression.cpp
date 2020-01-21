@@ -636,6 +636,14 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
     *simplifiedExpression = deepBeautify(userReductionContext);
     // Step 2: approximation
     if (approximateExpression) {
+      if (simplifiedExpression->recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, false)) {
+        /* Approximate and simplified expressions are set equal so that only
+         * one of them will be output. Note that there is no need to clone
+         * since the expressions will not be altered. */
+        *approximateExpression = *simplifiedExpression;
+        return;
+      }
+
       *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
     }
   }

@@ -46,6 +46,9 @@ void HistoryController::didBecomeFirstResponder() {
 }
 
 void HistoryController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == nullptr) {
+    return;
+  }
   if (nextFirstResponder == parentResponder()) {
     m_selectableTableView.deselectTable();
   }

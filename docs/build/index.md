@@ -1,6 +1,5 @@
 ---
-title: Installing the SDK &mdash; Software Engineering
-layout: breadcrumb
+title: Installing the SDK
 breadcrumb: SDK
 ---
 # Build and run your own version of Epsilon

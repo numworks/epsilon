@@ -1,8 +1,5 @@
 ---
-title: Poincare &mdash; Firmware architecture &mdash; Software Engineering
-layout: breadcrumb
-breadcrumb: Poincare
-katex: true
+title: Poincare
 ---
 # Poincaré
 

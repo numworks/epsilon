@@ -70,7 +70,8 @@ void HistogramController::viewWillAppear() {
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
+  if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
     if (selectedSeriesIndex() >= 0) {
       m_view.dataViewAtIndex(selectedSeriesIndex())->setForceOkDisplay(false);
     }

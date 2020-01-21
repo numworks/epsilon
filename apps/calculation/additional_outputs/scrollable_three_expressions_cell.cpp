@@ -1,10 +1,10 @@
-#include "scrollable_input_exact_approximate_expressions_cell.h"
+#include "scrollable_three_expressions_cell.h"
 #include <poincare/exception_checkpoint.h>
 #include "../app.h"
 
 namespace Calculation {
 
-void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation * calculation) {
+void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation) {
   Poincare::Context * context = App::app()->localContext();
 
   // Clean the layouts to make room in the pool
@@ -61,22 +61,22 @@ void ScrollableInputExactApproximateExpressionsView::setCalculation(Calculation 
   layoutSubviews();
 }
 
-void ScrollableInputExactApproximateExpressionsCell::didBecomeFirstResponder() {
+void ScrollableThreeExpressionsCell::didBecomeFirstResponder() {
   reinitSelection();
   Container::activeApp()->setFirstResponder(&m_view);
 }
 
-void ScrollableInputExactApproximateExpressionsCell::reinitSelection() {
-  m_view.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+void ScrollableThreeExpressionsCell::reinitSelection() {
+  m_view.setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition::Left);
   m_view.reloadScroll();
 }
 
-void ScrollableInputExactApproximateExpressionsCell::setCalculation(Calculation * calculation) {
+void ScrollableThreeExpressionsCell::setCalculation(Calculation * calculation) {
   m_view.setCalculation(calculation);
   layoutSubviews();
 }
 
-void ScrollableInputExactApproximateExpressionsCell::setDisplayCenter(bool display) {
+void ScrollableThreeExpressionsCell::setDisplayCenter(bool display) {
   m_view.setDisplayCenter(display);
   layoutSubviews();
 }

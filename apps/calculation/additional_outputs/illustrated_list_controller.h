@@ -2,7 +2,7 @@
 #define CALCULATION_ADDITIONAL_OUTPUTS_ILLUSTRATED_LIST_CONTROLLER_H
 
 #include <escher.h>
-#include "scrollable_input_exact_approximate_expressions_cell.h"
+#include "scrollable_three_expressions_cell.h"
 #include "list_controller.h"
 #include "../calculation_store.h"
 #include <apps/i18n.h>
@@ -41,7 +41,7 @@ private:
   constexpr static int k_maxNumberOfAdditionalCalculations = 4;
   // Cells
   virtual HighlightCell * illustrationCell() = 0;
-  ScrollableInputExactApproximateExpressionsCell m_additionalCalculationCells[k_maxNumberOfAdditionalCalculations];
+  ScrollableThreeExpressionsCell m_additionalCalculationCells[k_maxNumberOfAdditionalCalculations];
 };
 
 }

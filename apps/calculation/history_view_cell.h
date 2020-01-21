@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "calculation.h"
-#include "../shared/scrollable_exact_approximate_expressions_view.h"
+#include "../shared/scrollable_multiple_expressions_view.h"
 
 namespace Calculation {
 
@@ -45,7 +45,7 @@ public:
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Shared::ScrollableExactApproximateExpressionsView * outputView();
+  Shared::ScrollableTwoExpressionsView * outputView();
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
@@ -56,7 +56,7 @@ private:
   Calculation::AdditionalInformationType m_calculationAdditionInformation;
   bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
-  Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
+  Shared::ScrollableTwoExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;
 };
 

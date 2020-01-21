@@ -201,7 +201,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, bufferSize, precision);
       valueCell->setText(bufferValue);
     } else {
-      Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);
+      ScrollableTwoExpressionsCell * valueCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
       Poincare::Layout exactLayout = m_equationStore->exactSolutionLayoutsAtIndexAreIdentical(j) ? Poincare::Layout() : m_equationStore->exactSolutionLayoutAtIndex(j, true);
       valueCell->setLayouts(exactLayout, m_equationStore->exactSolutionLayoutAtIndex(j, false));
       if (!exactLayout.isUninitialized()) {

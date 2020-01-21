@@ -87,7 +87,7 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
     return;
   }
   Poincare::Context * context = App::app()->localContext();
-  ScrollableInputExactApproximateExpressionsCell * myCell = (ScrollableInputExactApproximateExpressionsCell *)cell;
+  ScrollableThreeExpressionsCell * myCell = (ScrollableThreeExpressionsCell *)cell;
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
   myCell->setCalculation(c);
   myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);
@@ -103,7 +103,7 @@ void IllustratedListController::tableViewDidChangeSelection(SelectableTableView 
     t->selectCellAtLocation(0, 1);
   }
   /* But scroll to the top when we select the first
-   * ScrollableInputExactApproximateExpressionsCell in order display the
+   * ScrollableThreeExpressionsCell in order display the
    * illustration cell. */
   if (t->selectedRow() == 1) {
     t->scrollToCell(0, 0);
@@ -119,9 +119,9 @@ void IllustratedListController::setExpression(Poincare::Expression e) {
 }
 
 int IllustratedListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
-  ScrollableInputExactApproximateExpressionsCell * myCell = static_cast<ScrollableInputExactApproximateExpressionsCell *>(m_listController.selectableTableView()->selectedCell());
+  ScrollableThreeExpressionsCell * myCell = static_cast<ScrollableThreeExpressionsCell *>(m_listController.selectableTableView()->selectedCell());
   Shared::ExpiringPointer<Calculation> c =  m_calculationStore.calculationAtIndex(index-1);
-  const char * text = myCell->selectedSubviewPosition() == ScrollableInputExactApproximateExpressionsView::SubviewPosition::Right ? c->approximateOutputText() : c->exactOutputText();
+  const char * text = myCell->selectedSubviewPosition() == ScrollableThreeExpressionsView::SubviewPosition::Right ? c->approximateOutputText() : c->exactOutputText();
   return strlcpy(buffer, text, bufferSize);
 }
 

@@ -73,8 +73,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       Container::activeApp()->setFirstResponder(editController);
       editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
     } else {
-      ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
-      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Left) {
+      ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
+      if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Left) {
         Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
         ListController * vc = nullptr;
         Expression e = calculationAtIndex(focusRow)->exactOutput();
@@ -98,7 +98,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         m_selectableTableView.deselectTable();
         Container::activeApp()->setFirstResponder(editController);
         Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
-        if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Right
+        if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
             && !calculation->shouldOnlyDisplayExactOutput())
         {
           editController->insertTextBody(calculation->approximateOutputText());

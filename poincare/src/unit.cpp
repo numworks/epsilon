@@ -216,14 +216,16 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
     unitNode->setPrefix(stdPre);
     prefixMultiplier -= stdPre->exponent();
   }
-  Expression result = *this;
-  if (rep->definition() != nullptr) {
+  Expression result;
+  if (rep->definition() == nullptr) {
+    result = clone();
+  } else {
     result = Expression::Parse(rep->definition(), nullptr, false).deepReduce(reductionContext);
   }
   if (prefixMultiplier != 0) {
     Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier)).shallowReduce(reductionContext);
     if (result.type() != ExpressionNode::Type::Multiplication) {
-      result = Multiplication::Builder(multiplier, result.clone());
+      result = Multiplication::Builder(multiplier, result);
     } else {
       static_cast<Multiplication &>(result).addChildAtIndexInPlace(
           multiplier,

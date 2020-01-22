@@ -34,6 +34,7 @@ private:
 void init(void * heapStart, void * heapEnd);
 void deinit();
 void registerScriptProvider(ScriptProvider * s);
+void collectRootsAtAddress(char * address, int len);
 
 };
 

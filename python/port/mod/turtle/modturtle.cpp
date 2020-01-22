@@ -3,17 +3,13 @@ extern "C" {
 #include <py/gc.h>
 }
 #include "turtle.h"
+#include "../../port.h"
 
 static Turtle sTurtle;
 
 void modturtle_gc_collect() {
   // Mark the shared sTurtle object as a GC root
-  for (size_t i = 0; i < sizeof(void *); i++) {
-    // See comment in port.cpp: gc_collect implementation
-    char * turtleWithOffset = (char *)&sTurtle + i;
-    size_t turtleLengthInAddressSize = (sizeof(Turtle) - i + sizeof(void *) - 1)/sizeof(void *);
-    gc_collect_root((void **)turtleWithOffset, turtleLengthInAddressSize);
-  }
+  MicroPython::collectRootsAtAddress((char *)&sTurtle, sizeof(Turtle));
 }
 
 void modturtle_view_did_disappear() {

@@ -80,7 +80,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
           && !calculation->shouldOnlyDisplayExactOutput())
       {
-        editController->insertTextBody(calculation->approximateOutputText());
+        editController->insertTextBody(calculation->approximateOutputText(Calculation::NumberOfSignificantDigits::Maximal));
       } else {
         editController->insertTextBody(calculation->exactOutputText());
       }

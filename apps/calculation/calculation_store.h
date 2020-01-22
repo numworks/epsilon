@@ -3,6 +3,7 @@
 
 #include "calculation.h"
 #include <apps/shared/expiring_pointer.h>
+#include <poincare/print_float.h>
 
 namespace Calculation {
 
@@ -35,7 +36,7 @@ public:
   void tidy();
 private:
   static constexpr int k_maxNumberOfCalculations = 25;
-  static constexpr int k_bufferSize = 10 * 3 * Constant::MaxSerializedExpressionSize;
+  static constexpr int k_bufferSize = 10 * Calculation::k_numberOfExpressions * Constant::MaxSerializedExpressionSize;
 
   class CalculationIterator {
   public:
@@ -55,12 +56,10 @@ private:
 
   Calculation * bufferCalculationAtIndex(int i);
   int remainingBufferSize() const { assert(m_bufferEnd >= m_buffer); return k_bufferSize - (m_bufferEnd - m_buffer); }
-  bool serializeExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation);
+  bool pushSerializeExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   char * slideCalculationsToEndOfBuffer(); // returns the new position of the calculations
   size_t deleteLastCalculation(const char * calculationsStart = nullptr);
   const char * lastCalculationPosition(const char * calculationsStart) const;
-  typedef bool (*ValueCreator)(char * location, size_t locationSize, void * e);
-  bool pushExpression(ValueCreator valueCrator, Poincare::Expression * expression, char * location, char * * newCalculationsLocation);
   Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context);
 
   char m_buffer[k_bufferSize];

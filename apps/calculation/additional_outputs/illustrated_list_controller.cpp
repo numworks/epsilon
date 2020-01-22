@@ -121,7 +121,7 @@ void IllustratedListController::setExpression(Poincare::Expression e) {
 int IllustratedListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
   ScrollableThreeExpressionsCell * myCell = static_cast<ScrollableThreeExpressionsCell *>(m_listController.selectableTableView()->selectedCell());
   Shared::ExpiringPointer<Calculation> c =  m_calculationStore.calculationAtIndex(index-1);
-  const char * text = myCell->selectedSubviewPosition() == ScrollableThreeExpressionsView::SubviewPosition::Right ? c->approximateOutputText() : c->exactOutputText();
+  const char * text = myCell->selectedSubviewPosition() == ScrollableThreeExpressionsView::SubviewPosition::Right ? c->approximateOutputText(Calculation::NumberOfSignificantDigits::Maximal) : c->exactOutputText();
   return strlcpy(buffer, text, bufferSize);
 }
 

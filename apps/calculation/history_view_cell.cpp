@@ -266,7 +266,7 @@ void HistoryViewCell::didBecomeFirstResponder() {
   assert(m_dataSource);
   if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
     Container::activeApp()->setFirstResponder(&m_inputView);
-  } else {
+  } else if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Output) {
     Container::activeApp()->setFirstResponder(&m_scrollableOutputView);
   }
 }

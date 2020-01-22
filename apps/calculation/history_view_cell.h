@@ -34,6 +34,7 @@ public:
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
+  void reloadSubviewHighlight();
   void setDataSource(HistoryViewCellDataSource * dataSource) { m_dataSource = dataSource; }
   Responder * responder() override {
     return this;

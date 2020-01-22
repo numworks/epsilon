@@ -485,7 +485,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
         result = result.isUninitialized() ? unitsNumer : Multiplication::Builder(result, unitsNumer);
       }
       if (!unitsDenom.isUninitialized()) {
-        result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
+        result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, unitsDenom);
       }
       units = unitsUnits;
     }

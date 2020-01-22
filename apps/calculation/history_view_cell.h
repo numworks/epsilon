@@ -13,7 +13,8 @@ class HistoryViewCellDataSource {
 public:
   enum class SubviewType {
     Input,
-    Output
+    Output,
+    Ellipsis
   };
   HistoryViewCellDataSource();
   void setSelectedSubviewType(SubviewType subviewType, int previousSelectedX = -1, int previousSelectedY = -1);

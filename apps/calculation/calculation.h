@@ -19,6 +19,7 @@ class CalculationStore;
  * */
 
 class Calculation {
+friend CalculationStore;
 public:
   enum class EqualSign : uint8_t {
     Unknown,
@@ -63,14 +64,19 @@ public:
   void tidy();
 
   // Texts
+  enum class NumberOfSignificantDigits {
+    Maximal,
+    UserDefined
+  };
   const char * inputText() const { return m_inputText; }
   const char * exactOutputText() const { return m_inputText + strlen(m_inputText) + 1; }
-  const char * approximateOutputText() const;
+  // See comment in approximateOutput implementation explaining the need of two approximateOutputTexts
+  const char * approximateOutputText(NumberOfSignificantDigits numberOfSignificantDigits) const;
 
   // Expressions
   Poincare::Expression input();
   Poincare::Expression exactOutput();
-  Poincare::Expression approximateOutput(Poincare::Context * context);
+  Poincare::Expression approximateOutput(Poincare::Context * context, NumberOfSignificantDigits numberOfSignificantDigits);
 
   // Layouts
   Poincare::Layout createInputLayout();
@@ -89,6 +95,7 @@ public:
   // Additional Information
   AdditionalInformationType additionalInformationType(Poincare::Context * context);
 private:
+  static constexpr int k_numberOfExpressions = 4;
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
   /* Buffers holding text expressions have to be longer than the text written

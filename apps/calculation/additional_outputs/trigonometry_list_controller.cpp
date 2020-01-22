@@ -16,7 +16,7 @@ void TrigonometryListController::setExpression(Poincare::Expression e) {
   m_calculationStore.push("θ", context);
 
   // Set trigonometry illustration
-  float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(m_calculationStore.calculationAtIndex(0)->approximateOutput(context), context);
+  float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(m_calculationStore.calculationAtIndex(0)->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal), context);
   m_model.setAngle(angle);
 }
 

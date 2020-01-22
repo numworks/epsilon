@@ -16,7 +16,8 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 bool Calculation::operator==(const Calculation& c) {
   return strcmp(inputText(), c.inputText()) == 0
-      && strcmp(approximateOutputText(), c.approximateOutputText()) == 0
+      && strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), c.approximateOutputText(NumberOfSignificantDigits::Maximal)) == 0
+      && strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined), c.approximateOutputText(NumberOfSignificantDigits::UserDefined)) == 0
       /* Some calculations can make appear trigonometric functions in their
        * exact output. Their argument will be different with the angle unit
        * preferences but both input and approximate output will be the same.
@@ -28,8 +29,8 @@ bool Calculation::operator==(const Calculation& c) {
 
 Calculation * Calculation::next() const {
   const char * result = reinterpret_cast<const char *>(this) + sizeof(Calculation);
-  for (int i = 0; i < 3; i++) {
-    result = result + strlen(result) + 1; // Pass inputText, exactOutputText, ApproximateOutputText
+  for (int i = 0; i < k_numberOfExpressions; i++) {
+    result = result + strlen(result) + 1; // Pass inputText, exactOutputText, ApproximateOutputText x2
   }
   return reinterpret_cast<Calculation *>(const_cast<char *>(result));
 }
@@ -41,9 +42,13 @@ void Calculation::tidy() {
   m_expandedHeight = -1;
 }
 
-const char * Calculation::approximateOutputText() const {
+const char * Calculation::approximateOutputText(NumberOfSignificantDigits numberOfSignificantDigits) const {
   const char * exactOutput = exactOutputText();
-  return exactOutput + strlen(exactOutput) + 1;
+  const char * approximateOutputTextWithMaxNumberOfDigits = exactOutput + strlen(exactOutput) + 1;
+  if (numberOfSignificantDigits == NumberOfSignificantDigits::Maximal) {
+    return approximateOutputTextWithMaxNumberOfDigits;
+  }
+  return approximateOutputTextWithMaxNumberOfDigits + strlen(approximateOutputTextWithMaxNumberOfDigits) + 1;
 }
 
 Expression Calculation::input() {
@@ -60,18 +65,39 @@ Expression Calculation::exactOutput() {
   return exactOutput;
 }
 
-Expression Calculation::approximateOutput(Context * context) {
-  Expression exp = Expression::Parse(approximateOutputText(), nullptr);
+Expression Calculation::approximateOutput(Context * context, NumberOfSignificantDigits numberOfSignificantDigits) {
+  Expression exp = Expression::Parse(approximateOutputText(numberOfSignificantDigits), nullptr);
   assert(!exp.isUninitialized());
   /* Warning:
    * Since quite old versions of Epsilon, the Expression 'exp' was used to be
-   * approximated again to ensure its content was in the expected form. That is
-   * currently the case (see Poincare::Expression::simplifyAndApproximate). So
-   * 'exp' does not need to be approximated. Moreover since the approximate
-   * output may contain units and that a Poincare::Unit approximates to undef,
-   * thus it must not be approximated. If another behavior is desired, the
-   * previous considerations should be taken into account. */
-  return exp;
+   * approximated again to ensure its content was in the expected form - a
+   * linear combination of Decimal.
+   * However, since the approximate output may contain units and that a
+   * Poincare::Unit approximates to undef, thus it must not be approximated
+   * anymore.
+   * We have to keep two serializations of the approximation outputs:
+   * - one with the maximal significant digits, to be used by 'ans' or when
+   *   handling 'OK' event on the approximation output.
+   * - one with the displayed number of significant digits that we parse to
+   *   create the displayed layout. If we used the other serialization to
+   *   create the layout, the result of the parsing could be an Integer which
+   *   does not take the number of significant digits into account when creating
+   *   its layout. This would lead to wrong number of significant digits in the
+   *   layout.
+   *   For instance:
+   *        Number of asked significant digits: 7
+   *        Input: "123456780", Approximate output: "1.234567E8"
+   *
+   *  |--------------------------------------------------------------------------------------|
+   *  | Number of significant digits | Approximate text | Parse expression    | Layout       |
+   *  |------------------------------+------------------+---------------------+--------------|
+   *  | Maximal                      | "123456780"      | Integer(123456780)  | "123456780"  |
+   *  |------------------------------+------------------+---------------------+--------------|
+   *  | User defined                 | "1.234567E8"     | Decimal(1.234567E8) | "1.234567E8" |
+   *  |--------------------------------------------------------------------------------------|
+   *
+   */
+   return exp;
 }
 
 Layout Calculation::createInputLayout() {
@@ -91,7 +117,7 @@ Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
 Layout Calculation::createApproximateOutputLayout(Context * context, bool * couldNotCreateApproximateLayout) {
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    return PoincareHelpers::CreateLayout(approximateOutput(context));
+    return PoincareHelpers::CreateLayout(approximateOutput(context, NumberOfSignificantDigits::UserDefined));
   } else {
     *couldNotCreateApproximateLayout = true;
     return Layout();
@@ -220,18 +246,18 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
         }, context, true))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (strcmp(exactOutputText(), approximateOutputText()) == 0) {
-    /* If the exact and approximate results' texts are equal and their layouts
-     * too, do not display the exact result. If the two layouts are not equal
-     * because of the number of significant digits, we display both. */
-    m_displayOutput = exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? DisplayOutput::ApproximateOnly : DisplayOutput::ExactAndApproximate;
+  } else if (strcmp(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined)) == 0) {
+    /* If the exact and approximate results' texts are equal (with the
+     * UserDefined number of significant digits), do not display the exact
+     * result. Indeed, in this case, the layouts are identical. */
+    m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (strcmp(exactOutputText(), Undefined::Name()) == 0
-      || strcmp(approximateOutputText(), Unreal::Name()) == 0
+      || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Unreal::Name()) == 0
       || exactOutput().type() == ExpressionNode::Type::Undefined)
   {
     // If the approximate result is 'unreal' or the exact result is 'undef'
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (strcmp(approximateOutputText(), Undefined::Name()) == 0
+  } else if (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
       && strcmp(inputText(), exactOutputText()) == 0)
   {
     /* If the approximate result is 'undef' and the input and exactOutput are
@@ -278,7 +304,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
       exactOutputExpression = Undefined::Builder();
     }
     Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-    m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context) ? EqualSign::Equal : EqualSign::Approximation;
+    m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context, NumberOfSignificantDigits::UserDefined), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool

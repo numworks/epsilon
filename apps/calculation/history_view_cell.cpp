@@ -16,14 +16,15 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 HistoryViewCellDataSource::HistoryViewCellDataSource() :
   m_selectedSubviewType(SubviewType::Output) {}
 
-void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, int previousSelectedCellX, int previousSelectedCellY) {
+void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedCellX, int previousSelectedCellY) {
+  SubviewType previousSubviewType = sameCell ? m_selectedSubviewType : SubviewType::None;
   m_selectedSubviewType = subviewType;
   HistoryViewCell * selectedCell = nullptr;
   HistoryViewCell * previouslySelectedCell = nullptr;
   historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell, previousSelectedCellX, previousSelectedCellY);
   if (selectedCell) {
     selectedCell->reloadSubviewHighlight();
-    selectedCell->cellDidSelectSubview(subviewType);
+    selectedCell->cellDidSelectSubview(subviewType, previousSubviewType);
   }
   if (previouslySelectedCell) {
     previouslySelectedCell->cellDidSelectSubview(SubviewType::Input);
@@ -95,11 +96,15 @@ void HistoryViewCell::reloadScroll() {
   m_scrollableOutputView.reloadScroll();
 }
 
-void HistoryViewCell::reloadOutputSelection() {
+void HistoryViewCell::reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType) {
   /* Select the right output according to the calculation display output. This
    * will reload the scroll to display the selected output. */
   if (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate) {
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableTwoExpressionsView::SubviewPosition::Center);
+    m_scrollableOutputView.setSelectedSubviewPosition(
+        previousType == HistoryViewCellDataSource::SubviewType::Ellipsis ?
+          Shared::ScrollableTwoExpressionsView::SubviewPosition::Right :
+          Shared::ScrollableTwoExpressionsView::SubviewPosition::Center
+        );
   } else {
     assert((m_calculationDisplayOutput == Calculation::DisplayOutput::ApproximateOnly)
         || (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle)
@@ -108,10 +113,10 @@ void HistoryViewCell::reloadOutputSelection() {
   }
 }
 
-void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
+void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType) {
   // Init output selection
   if (type == HistoryViewCellDataSource::SubviewType::Output) {
-    reloadOutputSelection();
+    reloadOutputSelection(previousType);
   }
 
   // Update m_calculationExpanded
@@ -284,7 +289,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
       assert(event == Ion::Events::Left);
       otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
     }
-    m_dataSource->setSelectedSubviewType(otherSubviewType);
+    m_dataSource->setSelectedSubviewType(otherSubviewType, true);
     CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
     tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
     Container::activeApp()->setFirstResponder(this);

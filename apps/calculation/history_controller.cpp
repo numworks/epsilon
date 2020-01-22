@@ -72,39 +72,38 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       m_selectableTableView.deselectTable();
       Container::activeApp()->setFirstResponder(editController);
       editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
-    } else {
+    } else if (subviewType == SubviewType::Output) {
+      m_selectableTableView.deselectTable();
+      Container::activeApp()->setFirstResponder(editController);
+      Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
       ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
-      if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Left) {
-        Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
-        ListController * vc = nullptr;
-        Expression e = calculationAtIndex(focusRow)->exactOutput();
-        if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
-           vc = &m_complexController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
-           vc = &m_trigonometryController;
-           // Find which of the input or output is the cosine/sine
-           ExpressionNode::Type t = e.type();
-           e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
-          vc = &m_integerController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
-          vc = &m_rationalController;
-        }
-        if (vc) {
-          vc->setExpression(e);
-          Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-        }
+      if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
+          && !calculation->shouldOnlyDisplayExactOutput())
+      {
+        editController->insertTextBody(calculation->approximateOutputText());
       } else {
-        m_selectableTableView.deselectTable();
-        Container::activeApp()->setFirstResponder(editController);
-        Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
-        if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
-            && !calculation->shouldOnlyDisplayExactOutput())
-        {
-          editController->insertTextBody(calculation->approximateOutputText());
-        } else {
-          editController->insertTextBody(calculation->exactOutputText());
-        }
+        editController->insertTextBody(calculation->exactOutputText());
+      }
+    } else {
+      assert(subviewType == SubviewType::Ellipsis);
+      Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
+      ListController * vc = nullptr;
+      Expression e = calculationAtIndex(focusRow)->exactOutput();
+      if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
+        vc = &m_complexController;
+      } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
+        vc = &m_trigonometryController;
+        // Find which of the input or output is the cosine/sine
+        ExpressionNode::Type t = e.type();
+        e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
+      } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
+        vc = &m_integerController;
+      } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
+        vc = &m_rationalController;
+      }
+      if (vc) {
+        vc->setExpression(e);
+        Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
       }
     }
     return true;

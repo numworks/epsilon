@@ -115,6 +115,7 @@ void LayoutCursor::addEmptySquareRootLayout() {
   NthRootLayout newChild = NthRootLayout::Builder(child1);
   m_layout.addSibling(this, newChild, false);
   m_layout = newChild.childAtIndex(0);
+  m_position = Position::Left;
   ((Layout *)&newChild)->collapseSiblings(this);
 }
 

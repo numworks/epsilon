@@ -276,7 +276,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   HistoryViewCellDataSource::SubviewType type = m_dataSource->selectedSubviewType();
   if ((event == Ion::Events::Down && type == HistoryViewCellDataSource::SubviewType::Input) ||
       (event == Ion::Events::Up && type == HistoryViewCellDataSource::SubviewType::Output) ||
-      (event == Ion::Events::Right && type != HistoryViewCellDataSource::SubviewType::Ellipsis) ||
+      (event == Ion::Events::Right && type != HistoryViewCellDataSource::SubviewType::Ellipsis && displayedEllipsis()) ||
       (event == Ion::Events::Left && type == HistoryViewCellDataSource::SubviewType::Ellipsis)) {
     HistoryViewCellDataSource::SubviewType otherSubviewType;
     if (event == Ion::Events::Down) {

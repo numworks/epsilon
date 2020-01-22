@@ -221,7 +221,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
     result = Expression::Parse(rep->definition(), nullptr, false).deepReduce(reductionContext);
   }
   if (prefixMultiplier != 0) {
-    Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier));
+    Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier)).shallowReduce(reductionContext);
     if (result.type() != ExpressionNode::Type::Multiplication) {
       result = Multiplication::Builder(multiplier, result.clone());
     } else {

@@ -224,14 +224,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   }
   if (prefixMultiplier != 0) {
     Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier)).shallowReduce(reductionContext);
-    if (result.type() != ExpressionNode::Type::Multiplication) {
-      result = Multiplication::Builder(multiplier, result);
-    } else {
-      static_cast<Multiplication &>(result).addChildAtIndexInPlace(
-          multiplier,
-          0,
-          result.numberOfChildren());
-    }
+    result = Multiplication::Builder(multiplier, result).shallowReduce(reductionContext);
   }
   replaceWithInPlace(result);
   return result;

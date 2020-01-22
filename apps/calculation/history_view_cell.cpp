@@ -64,8 +64,11 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   if (isHighlighted()) {
     if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
       m_inputView.setExpressionBackgroundColor(Palette::Select);
-    } else {
+    } else if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Output) {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
+    } else {
+      assert(m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Ellipsis);
+      m_ellipsis.setHighlighted(true);
     }
   }
 }
@@ -257,9 +260,22 @@ void HistoryViewCell::didBecomeFirstResponder() {
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   assert(m_dataSource);
-  if ((event == Ion::Events::Down && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) ||
-    (event == Ion::Events::Up && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Output)) {
-    HistoryViewCellDataSource::SubviewType otherSubviewType = m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input ? HistoryViewCellDataSource::SubviewType::Output : HistoryViewCellDataSource::SubviewType::Input;
+  HistoryViewCellDataSource::SubviewType type = m_dataSource->selectedSubviewType();
+  if ((event == Ion::Events::Down && type == HistoryViewCellDataSource::SubviewType::Input) ||
+      (event == Ion::Events::Up && type == HistoryViewCellDataSource::SubviewType::Output) ||
+      (event == Ion::Events::Right && type != HistoryViewCellDataSource::SubviewType::Ellipsis) ||
+      (event == Ion::Events::Left && type == HistoryViewCellDataSource::SubviewType::Ellipsis)) {
+    HistoryViewCellDataSource::SubviewType otherSubviewType;
+    if (event == Ion::Events::Down) {
+      otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
+    } else if (event == Ion::Events::Up) {
+      otherSubviewType = HistoryViewCellDataSource::SubviewType::Input;
+    } else if (event == Ion::Events::Right) {
+      otherSubviewType = HistoryViewCellDataSource::SubviewType::Ellipsis;
+    } else {
+      assert(event == Ion::Events::Left);
+      otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
+    }
     m_dataSource->setSelectedSubviewType(otherSubviewType);
     CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
     tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());

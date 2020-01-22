@@ -262,7 +262,7 @@ public:
     EnergyRepresentatives[] = {
         Representative("J",   "_kg*_m^2*_s^-2",
             AllPrefixes, AllPrefixesCount),
-        Representative("eV",  "1.602176634*10^−19*J",
+        Representative("eV",  "1.602176634ᴇ-19*_J",
             AllPrefixes, AllPrefixesCount),
         },
     PowerRepresentatives[] = {

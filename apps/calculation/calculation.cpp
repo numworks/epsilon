@@ -296,15 +296,9 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
    * Store in the exactOutput. */
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    constexpr int bufferSize = Constant::MaxSerializedExpressionSize + 30;
-    char buffer[bufferSize];
     Preferences * preferences = Preferences::sharedPreferences();
-    Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(exactOutputText(), context, false);
-    if (exactOutputExpression.isUninitialized()) {
-      exactOutputExpression = Undefined::Builder();
-    }
     Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-    m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context, NumberOfSignificantDigits::UserDefined), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context) ? EqualSign::Equal : EqualSign::Approximation;
+    m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, complexFormat, preferences->angleUnit()) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool

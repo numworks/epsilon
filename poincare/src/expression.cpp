@@ -522,17 +522,13 @@ bool Expression::isIdenticalTo(const Expression e) const {
   return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
 }
 
-bool Expression::isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) {
-  approximation.serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
-  /* Warning: we cannot use directly the the approximate expression but we have
-   * to re-serialize it because the number of stored significative
-   * numbers and the number of displayed significative numbers might not be
-   * identical. (For example, 0.000025 might be displayed "0.00003" and stored
-   * as Decimal(0.000025) and isEqualToItsApproximationLayout should return
-   * false) */
-  Expression approximateOutput = Expression::ParseAndSimplify(buffer, context, complexFormat, angleUnit, true);
-  bool equal = isIdenticalTo(approximateOutput);
-  return equal;
+bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression exp0 = Expression::ParseAndSimplify(e0, context, complexFormat, angleUnit, false);
+  Expression exp1 = Expression::ParseAndSimplify(e1, context, complexFormat, angleUnit, false);
+  if (exp0.isUninitialized() || exp1.isUninitialized()) {
+    return false;
+  }
+  return exp0.isIdenticalTo(exp1);
 }
 
 /* Layout Helper */

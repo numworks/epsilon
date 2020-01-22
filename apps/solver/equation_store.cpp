@@ -218,8 +218,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
        * Dutch exam mode to display only the approximate solutions. */
       m_exactSolutionIdentity[solutionIndex] = forbidExactSolutions || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
-        char buffer[::Constant::MaxSerializedExpressionSize];
-        m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, ::Constant::MaxSerializedExpressionSize, preferences->complexFormat(), preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context);
+        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit());
       }
       solutionIndex++;
     }

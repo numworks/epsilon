@@ -22,7 +22,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
   HistoryViewCell * previouslySelectedCell = nullptr;
   historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell, previousSelectedCellX, previousSelectedCellY);
   if (selectedCell) {
-    selectedCell->setHighlighted(selectedCell->isHighlighted());
+    selectedCell->reloadSubviewHighlight();
     selectedCell->cellDidSelectSubview(subviewType);
   }
   if (previouslySelectedCell) {
@@ -56,8 +56,16 @@ void HistoryViewCell::setEven(bool even) {
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
-  assert(m_dataSource);
+  if (m_highlighted == highlight) {
+    return;
+  }
   m_highlighted = highlight;
+  // Re-layout as the ellispsis subview might have appear/disappear
+  layoutSubviews();
+}
+
+void HistoryViewCell::reloadSubviewHighlight() {
+  assert(m_dataSource);
   m_inputView.setExpressionBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
   m_ellipsis.setHighlighted(false);

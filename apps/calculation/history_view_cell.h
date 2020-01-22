@@ -12,12 +12,13 @@ class HistoryViewCell;
 class HistoryViewCellDataSource {
 public:
   enum class SubviewType {
+    None,
     Input,
     Output,
     Ellipsis
   };
   HistoryViewCellDataSource();
-  void setSelectedSubviewType(SubviewType subviewType, int previousSelectedX = -1, int previousSelectedY = -1);
+  void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
   SubviewType selectedSubviewType() { return m_selectedSubviewType; }
 private:
   /* This method should belong to a delegate instead of a data source but as
@@ -31,7 +32,7 @@ private:
 class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   HistoryViewCell(Responder * parentResponder = nullptr);
-  void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
+  void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType = HistoryViewCellDataSource::SubviewType::None);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void reloadSubviewHighlight();
@@ -52,7 +53,7 @@ public:
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
-  void reloadOutputSelection();
+  void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);
   bool displayedEllipsis() const;
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;

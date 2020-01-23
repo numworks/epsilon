@@ -612,15 +612,6 @@ QUIZ_CASE(poincare_simplication_trigonometry_functions) {
   assert_parsed_expression_simplify_to("sin(atan(3/4))", "3/5", User, Degree);
 }
 
-QUIZ_CASE(poincare_simplication_hyperbolic_trigonometry_functions) {
-  assert_parsed_expression_simplify_to("sinh(0)", "0");
-  assert_parsed_expression_simplify_to("cosh(0)", "1");
-  assert_parsed_expression_simplify_to("tanh(0)", "0");
-  assert_parsed_expression_simplify_to("asinh(0)", "0");
-  assert_parsed_expression_simplify_to("acosh(1)", "0");
-  assert_parsed_expression_simplify_to("atanh(0)", "0");
-}
-
 QUIZ_CASE(poincare_simplication_matrix) {
   // Addition Matrix
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", Undefined::Name());
@@ -1071,6 +1062,14 @@ QUIZ_CASE(poincare_simplification_mix) {
 }
 
 QUIZ_CASE(poincare_hyperbolic_trigonometry) {
+  // Exact values
+  assert_parsed_expression_simplify_to("sinh(0)", "0");
+  assert_parsed_expression_simplify_to("cosh(0)", "1");
+  assert_parsed_expression_simplify_to("tanh(0)", "0");
+  assert_parsed_expression_simplify_to("asinh(0)", "0");
+  assert_parsed_expression_simplify_to("acosh(1)", "0");
+  assert_parsed_expression_simplify_to("atanh(0)", "0");
+
   // acosh(cosh)
   assert_parsed_expression_simplify_to("acosh(cosh(3))", "3");
   assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2");

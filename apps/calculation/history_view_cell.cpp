@@ -17,11 +17,16 @@ HistoryViewCellDataSource::HistoryViewCellDataSource() :
   m_selectedSubviewType(SubviewType::Output) {}
 
 void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedCellX, int previousSelectedCellY) {
-  SubviewType previousSubviewType = sameCell ? m_selectedSubviewType : SubviewType::None;
-  m_selectedSubviewType = subviewType;
   HistoryViewCell * selectedCell = nullptr;
   HistoryViewCell * previouslySelectedCell = nullptr;
-  historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell, previousSelectedCellX, previousSelectedCellY);
+  SubviewType previousSubviewType = m_selectedSubviewType;
+  m_selectedSubviewType = subviewType;
+  /* We need to notify the whole table that the selection changed if it
+   * involves the selection/deselection of an output. Indeed, only them can
+   * trigger change in the displayed expressions. */
+  historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell, previousSelectedCellX, previousSelectedCellY, subviewType, previousSubviewType);
+
+  previousSubviewType = sameCell ? previousSubviewType : SubviewType::None;
   if (selectedCell) {
     selectedCell->reloadSubviewHighlight();
     selectedCell->cellDidSelectSubview(subviewType, previousSubviewType);

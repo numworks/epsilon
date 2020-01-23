@@ -42,7 +42,9 @@ public:
     White = 1,
     Green = 2,
     Blue = 3,
-    Yellow = 4
+    Yellow = 4,
+    Purple = 5,
+    Orange = 6,
   };
   enum class SymbolMultiplication : uint8_t {
     Cross = 0,

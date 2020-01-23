@@ -133,6 +133,16 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * text = " ";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
+    case I18n::Message::ColorPurple:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ColorOrange:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
 
     // Exam mode modes
     case I18n::Message::ExamModeModeStandard:

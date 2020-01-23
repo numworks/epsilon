@@ -43,9 +43,9 @@ void TextField::ContentView::setTextColor(KDColor textColor) {
 
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backgroundColor = m_backgroundColor;
-  if (m_isEditing) {
+  /*if (m_isEditing) {
     backgroundColor = Palette::BackgroundHard;
-  }
+  }*/
   ctx->fillRect(bounds(), backgroundColor);
   ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor);
 }

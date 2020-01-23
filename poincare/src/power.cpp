@@ -495,8 +495,22 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
+#if 0
+  /* This was implemented when complex were not handled with the
+   * ComplexCartesian node. It was used for instance to turn
+   * sqrt(i) -> i^(1/2)
+   *         -> e(i*π/4)        HERE!
+   *         -> cos(π/4)+i*sin(π/4)
+   *         -> sqrt(2)/2+i*sqrt(2)/2
+   *
+   * However, now, ComplexCartesian class handles power of ComplexCartesian
+   * when the target of simplification is the User. When the target of
+   * simplification is the system, i^(p/q) is a shorter expression than
+   * e^(i*Pi*p/2q) so we rather keep it in the first form.
+   * We thereby don't need the rule anymore!
+   *  */
   /* Step 4: we simplify i^(p/q) = e^(i*Pi*p/2q) */
-  if (indexType == ExpressionNode::Type::Rational) {
+  /*if (indexType == ExpressionNode::Type::Rational) {
     const Rational rationalIndex = static_cast<Rational &>(index);
     // i^(p/q)
     if (baseType == ExpressionNode::Type::Constant && static_cast<Constant &>(base).isIComplex()) {
@@ -505,7 +519,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
     }
-  }
+  }*/
+#endif
 
   // Step 5: (±inf)^x = 0 or ±inf
   if (baseType == ExpressionNode::Type::Infinity) {

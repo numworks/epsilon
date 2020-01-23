@@ -253,10 +253,10 @@ public:
         },
     PressureRepresentatives[] = {
         Representative("Pa",  "_kg*_m^-1*_s^-2",
+            AllPrefixes, AllPrefixesCount),
+        Representative("bar", "1000_hPa",
             NoPrefix, NoPrefixCount),
-        Representative("bar", "1000hPa",
-            NoPrefix, NoPrefixCount),
-        Representative("atm", "101325Pa",
+        Representative("atm", "101325_Pa",
             NoPrefix, NoPrefixCount),
         },
     EnergyRepresentatives[] = {

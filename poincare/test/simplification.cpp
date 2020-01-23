@@ -1061,6 +1061,8 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("𝐢^𝐢", "1/ℯ^\u0012π/2\u0013");
   assert_parsed_expression_simplify_to("𝐢/(1+𝐢×√(x))", "𝐢/\u0012√(x)×𝐢+1\u0013");
   assert_parsed_expression_simplify_to("x+𝐢/(1+𝐢×√(x))", "\u0012x^\u00123/2\u0013×𝐢+𝐢+x\u0013/\u0012√(x)×𝐢+1\u0013");
+  assert_parsed_expression_simplify_to("√(√(√(√(√(√(𝐢))))))", "√(√(√(√(√(√(𝐢))))))");
+
 
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)"); // TODO: for this to work, we must know the sign of cos(9)
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)×log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)

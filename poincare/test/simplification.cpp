@@ -342,6 +342,11 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("abs(-π)", "π");
   assert_parsed_expression_simplify_to("abs(1+𝐢)", "√(2)");
   assert_parsed_expression_simplify_to("abs(0)", "0");
+  assert_parsed_expression_simplify_to("abs(x*y)", "abs(x)×abs(y)");
+  assert_parsed_expression_simplify_to("abs(x^π)", "abs(x)^π");
+  assert_parsed_expression_simplify_to("abs(𝐢)", "1", SystemForApproximation);
+  assert_parsed_expression_simplify_to("abs(√(√(√(√(√(√(𝐢)))))))", "1");
+  assert_parsed_expression_simplify_to("abs(√(√(√(√(√(√(π𝐢)))))))", "root(π,64)");
   assert_parsed_expression_simplify_to("arg(1+𝐢)", "π/4");
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");

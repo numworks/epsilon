@@ -312,7 +312,9 @@ Expression Expression::addMissingParentheses() {
 }
 
 void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  for (int i = 0; i < numberOfChildren(); i++) {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    assert(childrenCount == numberOfChildren());
     childAtIndex(i).deepReduce(reductionContext);
   }
 }

@@ -211,10 +211,18 @@ void HistoryController::scrollToCell(int i, int j) {
   m_selectableTableView.scrollToCell(i, j);
 }
 
-void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY) {
-  /* Update the whole table as the height of the selected cell row might have
-   * changed. */
-  m_selectableTableView.reloadData();
+bool HistoryController::calculationAtIndexToggles(int index) {
+  Context * context = App::app()->localContext();
+  return index >= 0 && index < m_calculationStore->numberOfCalculations() && calculationAtIndex(index)->displayOutput(context) == Calculation::DisplayOutput::ExactAndApproximateToggle;
+}
+
+void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY, SubviewType type, SubviewType previousType) {
+  /* If the selection change triggers the toggling of the outputs, we update
+   * the whole table as the height of the selected cell row might have changed. */
+  if ((type == SubviewType::Output || previousType == SubviewType::Output) && (calculationAtIndexToggles(selectedRow()) || calculationAtIndexToggles(previousSelectedCellY))) {
+    m_selectableTableView.reloadData();
+  }
+
   // Fill the selected cell and the previous selected cell because cells repartition might have changed
   *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
   *previousCell = static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(previousSelectedCellX, previousSelectedCellY));

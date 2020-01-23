@@ -25,7 +25,7 @@ private:
    * both the data source and the delegate will be the same controller, we
    * avoid keeping 2 pointers in HistoryViewCell. */
   // It returns the selected cell at the end of the method
-  virtual void historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY) = 0;
+  virtual void historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY, SubviewType type, SubviewType previousType) = 0;
   SubviewType m_selectedSubviewType;
 };
 

@@ -2,7 +2,6 @@
 #include <poincare/based_integer.h>
 #include <poincare/number.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
 
 namespace Poincare {
 
@@ -95,10 +94,11 @@ Token Tokenizer::popNumber() {
     }
   }
 
-  assert(integralPartLength > 0 || UTF8Helper::CodePointIs(m_text, '.'));
   if (canPopCodePoint('.')) {
     fractionalPartText = m_text;
     fractionalPartLength = popDigits();
+  } else {
+    assert(integralPartLength > 0);
   }
 
   if (integralPartLength == 0 && fractionalPartLength == 0) {

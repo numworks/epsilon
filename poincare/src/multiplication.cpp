@@ -1076,7 +1076,7 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
       Rational r = static_cast<Rational &>(factor);
       if (r.isRationalOne()) {
         // Special case: add a unary numeral factor if r = 1
-        factorsNumerator = r.clone();
+        factorsNumerator = r;
       } else {
         Integer rNum = r.signedIntegerNumerator();
         if (!rNum.isOne()) {

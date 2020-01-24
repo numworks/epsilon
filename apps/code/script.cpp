@@ -48,7 +48,7 @@ bool Script::nameCompliant(const char * name) {
    * problems with case sensitivity. */
   UTF8Decoder decoder(name);
   CodePoint c = decoder.nextCodePoint();
-  if (c == UCodePointNull || !(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || c == '.')) {
+  if (c == UCodePointNull || !(c.isLowerCaseLetter() || c == '_' || c == '.')) {
     /* The name cannot be empty. Its first letter must be in [a-z_] or the
      * extension dot. */
     return false;
@@ -57,7 +57,7 @@ bool Script::nameCompliant(const char * name) {
     if (c == '.' && strcmp(decoder.stringPosition(), ScriptStore::k_scriptExtension) == 0) {
       return true;
     }
-    if (!(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || UTF8Helper::CodePointIsNumber(c))) {
+    if (!(c.isLowerCaseLetter() || c == '_' || c.isDigit())) {
       return false;
     }
     c = decoder.nextCodePoint();

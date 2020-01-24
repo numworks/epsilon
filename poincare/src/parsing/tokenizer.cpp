@@ -6,14 +6,6 @@
 
 namespace Poincare {
 
-static inline bool isLetter(const CodePoint c) {
-  return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
-}
-
-static inline bool isDigit(const CodePoint c) {
-  return '0' <= c && c <= '9';
-}
-
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
   UTF8Decoder decoder(m_text);
   CodePoint c = decoder.nextCodePoint();
@@ -55,11 +47,11 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
 size_t Tokenizer::popIdentifier() {
   /* TODO handle combined code points? For now combining code points will
    * trigger a syntax error. */
-  return popWhile([](CodePoint c, CodePoint context) { return isLetter(c) || isDigit(c) || c == context; }, '_');
+  return popWhile([](CodePoint c, CodePoint context) { return c.isLetter() || c.isDigit() || c == context; }, '_');
 }
 
 size_t Tokenizer::popDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return isDigit(c); });
+  return popWhile([](CodePoint c, CodePoint context) { return c.isDigit(); });
 }
 
 size_t Tokenizer::popBinaryDigits() {
@@ -67,7 +59,7 @@ size_t Tokenizer::popBinaryDigits() {
 }
 
 size_t Tokenizer::popHexadecimalDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return isDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); });
+  return popWhile([](CodePoint c, CodePoint context) { return c.isDigit() || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); });
 }
 
 Token Tokenizer::popNumber() {
@@ -141,7 +133,7 @@ Token Tokenizer::popToken() {
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
   bool nextCodePointIsNeitherDotNorDigit = true;
-  const CodePoint c = nextCodePoint([](CodePoint cp, CodePoint context) { return cp != context && !isDigit(cp); }, '.', &nextCodePointIsNeitherDotNorDigit);
+  const CodePoint c = nextCodePoint([](CodePoint cp, CodePoint context) { return cp != context && !cp.isDigit(); }, '.', &nextCodePointIsNeitherDotNorDigit);
 
   // According to c, recognize the Token::Type.
   if (!nextCodePointIsNeitherDotNorDigit) {
@@ -152,7 +144,7 @@ Token Tokenizer::popToken() {
     result.setString(start + 1, popIdentifier());
     return result;
   }
-  if (isLetter(c)) {
+  if (c.isLetter()) {
     Token result(Token::Identifier);
     result.setString(start, 1 + popIdentifier()); // We already popped 1 code point
     return result;

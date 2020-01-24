@@ -69,10 +69,6 @@ const char * PerformAtCodePoints(
 
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);
-bool CodePointIsLetter(CodePoint c);
-bool CodePointIsLowerCaseLetter(CodePoint c);
-bool CodePointIsUpperCaseLetter(CodePoint c);
-bool CodePointIsNumber(CodePoint c);
 
 // Shift the buffer and return the number of bytes removed.
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c = nullptr);

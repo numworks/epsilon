@@ -1,7 +1,6 @@
 #include "function.h"
 #include "poincare_helpers.h"
 #include "poincare/src/parsing/parser.h"
-#include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <cmath>
@@ -16,7 +15,7 @@ bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * 
 
   UTF8Decoder decoder(baseName);
   CodePoint c = decoder.nextCodePoint();
-  if (UTF8Helper::CodePointIsNumber(c)) {
+  if (c.isDigit()) {
     // The name cannot start with a number
     if (error != nullptr) {
       *error = NameNotCompliantError::NameCannotStartWithNumber;
@@ -26,11 +25,9 @@ bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * 
 
   // The name should only have allowed characters
   while (c != UCodePointNull) {
-    if (!(UTF8Helper::CodePointIsUpperCaseLetter(c)
-        || UTF8Helper::CodePointIsLowerCaseLetter(c)
-        || UTF8Helper::CodePointIsNumber(c))
-        || c == '_')
-    {
+    // FIXME '_' should be accepted but not as first character
+    // TODO Factor this piece of code with similar one in the Parser
+    if (!(c.isLetter() || c.isDigit()) || c == '_') {
       if (error != nullptr) {
         *error = NameNotCompliantError::CharacterNotAllowed;
       }

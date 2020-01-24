@@ -98,6 +98,14 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return true;
   } else if (handleBoxEvent(event)) {
     return true;
+  } else if (event == Ion::Events::ShiftLeft) {
+    contentView()->moveCursorGeo(-INT_MAX/2, 0);
+  } else if (event == Ion::Events::ShiftRight) {
+    contentView()->moveCursorGeo(INT_MAX/2, 0);
+  } else if (event == Ion::Events::ShiftUp) {
+    contentView()->moveCursorGeo(0, -INT_MAX/2);
+  } else if (event == Ion::Events::ShiftDown) {
+    contentView()->moveCursorGeo(0, INT_MAX/2);
   } else if (event == Ion::Events::Left) {
     return TextInput::moveCursorLeft();
   } else if (event == Ion::Events::Right) {
@@ -106,10 +114,6 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {
     contentView()->moveCursorGeo(0, 1);
-  } else if (event == Ion::Events::ShiftLeft) {
-    contentView()->moveCursorGeo(-INT_MAX/2, 0);
-  } else if (event == Ion::Events::ShiftRight) {
-    contentView()->moveCursorGeo(INT_MAX/2, 0);
   } else if (event == Ion::Events::Backspace) {
     return removePreviousGlyph();
   } else if (event == Ion::Events::EXE) {

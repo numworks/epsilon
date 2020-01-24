@@ -267,22 +267,6 @@ bool CodePointIs(const char * location, CodePoint c) {
   return decoder.nextCodePoint() == c;
 }
 
-bool CodePointIsLetter(CodePoint c) {
-  return CodePointIsLowerCaseLetter(c) || CodePointIsUpperCaseLetter(c);
-}
-
-bool CodePointIsLowerCaseLetter(CodePoint c) {
-  return c >= 'a' && c <= 'z';
-}
-
-bool CodePointIsUpperCaseLetter(CodePoint c) {
-  return c >= 'A' && c <= 'Z';
-}
-
-bool CodePointIsNumber(CodePoint c) {
-  return c >= '0' && c <= '9';
-}
-
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
   if (location <= text) {
     assert(location == text);

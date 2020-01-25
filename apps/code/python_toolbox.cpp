@@ -167,12 +167,20 @@ const ToolboxMessageTree TurtleModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGrey, I18n::Message::PythonTurtleGrey, false)
 };
 
+const ToolboxMessageTree IonModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportIon, I18n::Message::PythonImportIon, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromIon, I18n::Message::PythonImportFromIon, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandIonFunction, I18n::Message::PythonIonFunction, false, I18n::Message::PythonCommandIonFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKeydown, I18n::Message::PythonKeydown)
+};
+
 const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::MathModule, MathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::CmathModule, CMathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::RandomModule, RandomModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::TurtleModule, TurtleModuleChildren),
-  ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren)
+  ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::IonModule, IonModuleChildren)
 };
 
 const ToolboxMessageTree catalogChildren[] = {

@@ -1,5 +1,6 @@
 MathModule = "math"
 CmathModule = "cmath"
+IonModule = "ion"
 KandinskyModule = "kandinsky"
 TurtleModule = "turtle"
 ForLoopMenu = "For"

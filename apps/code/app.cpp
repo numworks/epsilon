@@ -14,6 +14,10 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::CodeAppCapital;
 }
 
+int App::Descriptor::examinationLevel() {
+  return App::Descriptor::BasicExaminationLevel;
+}
+
 const Image * App::Descriptor::icon() {
   return ImageStore::CodeIcon;
 }

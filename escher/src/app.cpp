@@ -13,6 +13,10 @@ I18n::Message App::Descriptor::upperName() {
   return (I18n::Message)0;
 }
 
+int App::Descriptor::examinationLevel() {
+  return App::Descriptor::NoExaminationLevel;
+}
+
 const Image * App::Descriptor::icon() {
   return nullptr;
 }

@@ -3,11 +3,11 @@ include build/config.mak
 ifeq (${DEVICE}, n0110)
   apps_list = ${EPSILON_APPS}
 else
-  ifdef FORCE_EXTERNAL
-    apps_list = ${EPSILON_APPS}
-  else
-    apps_list = $(foreach i, ${EPSILON_APPS}, $(if $(filter external, $(i)),,$(i)))
-  endif
+  apps_list = $(foreach i, ${EPSILON_APPS}, $(if $(filter external, $(i)),,$(i)))
+endif
+
+ifdef FORCE_EXTERNAL
+  apps_list = ${EPSILON_APPS}
 endif
 
 # Disable default Make rules

@@ -78,7 +78,7 @@ private:
   static constexpr size_t k_maxImportCommandSize = 5 + 9 + TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
-  static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
+  static constexpr int k_numberOfLineCells = 20; // May change depending on the screen height
   static constexpr int k_outputAccumulationBufferSize = 100;
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);

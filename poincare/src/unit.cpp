@@ -21,8 +21,12 @@ int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
 bool UnitNode::Representative::canParse(const char * symbol, size_t length,
     const Prefix * * prefix) const
 {
-  const Prefix * pre = m_allowedPrefixes;
-  while (pre < m_allowedPrefixesUpperBound) {
+  if (!isPrefixable()) {
+    *prefix = &Unit::EmptyPrefix;
+    return length == 0;
+  }
+  const Prefix * pre = Unit::AllPrefixes;
+  while (pre < Unit::AllPrefixes + Unit::AllPrefixesCount) {
     const char * prefixSymbol = pre->symbol();
     if (strncmp(symbol, prefixSymbol, length) == 0 &&
         prefixSymbol[length] == 0)
@@ -36,28 +40,35 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length,
 }
 
 int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Prefix * prefix) const {
-  int prefixLength = prefix->serialize(buffer, bufferSize);
-  assert(prefixLength < bufferSize);
-  buffer += prefixLength;
-  bufferSize -= prefixLength;
-  return prefixLength + minInt(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
+  int length = 0;
+  if (isPrefixable()) {
+    length += prefix->serialize(buffer, bufferSize);
+    assert(length < bufferSize);
+    buffer += length;
+    bufferSize -= length;
+  }
+  assert(bufferSize >= 0);
+  length += minInt(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
+  return length;
 }
 
 const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const int exponent) const {
-  const Prefix * bestPre = nullptr;
-  unsigned int diff = -1;
-  /* Find the 'Prefix' with the most adequate 'exponent' for the order of
-   * magnitude of 'value'.
-   */
-  const int orderOfMagnitude = std::floor(std::log10(std::fabs(value)));
-  for (const Prefix * pre = m_allowedPrefixes; pre < m_allowedPrefixesUpperBound; pre++) {
-    unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
-    if (newDiff < diff) {
-      diff = newDiff;
-      bestPre = pre;
+  const Prefix * bestPre = &Unit::EmptyPrefix;
+  if (isPrefixable()) {
+    unsigned int diff = -1;
+    /* Find the 'Prefix' with the most adequate 'exponent' for the order of
+     * magnitude of 'value'.
+     */
+    const int orderOfMagnitude = std::floor(std::log10(std::fabs(value)));
+    for (const Prefix * pre = m_outputPrefixes; pre < m_outputPrefixesUpperBound; pre++) {
+      unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
+      if (newDiff < diff) {
+        diff = newDiff;
+        bestPre = pre;
+      }
     }
+    value *= std::pow(10.0, -bestPre->exponent() * exponent);
   }
-  value *= std::pow(10.0, -bestPre->exponent() * exponent);
   return bestPre;
 }
 

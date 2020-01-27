@@ -34,9 +34,11 @@ void SolutionsController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
 }
 
 void SolutionsController::ContentView::setWarning(bool warning) {
-  m_displayWarningMoreSolutions = warning;
-  m_selectableTableView.setTopMargin(m_displayWarningMoreSolutions ? 0 : Metric::CommonTopMargin);
-  layoutSubviews();
+  if (m_displayWarningMoreSolutions != warning) {
+    m_displayWarningMoreSolutions = warning;
+    m_selectableTableView.setTopMargin(m_displayWarningMoreSolutions ? 0 : Metric::CommonTopMargin);
+    layoutSubviews();
+  }
 }
 
 void SolutionsController::ContentView::setWarningMessages(I18n::Message message0, I18n::Message message1) {
@@ -45,16 +47,18 @@ void SolutionsController::ContentView::setWarningMessages(I18n::Message message0
 }
 
 int SolutionsController::ContentView::numberOfSubviews() const {
-  return 1+2*m_displayWarningMoreSolutions;
+  return 1 + 2*m_displayWarningMoreSolutions;
 }
 
 View * SolutionsController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 1+2*m_displayWarningMoreSolutions);
-  if (index == 0 && m_displayWarningMoreSolutions) {
-    return &m_warningMessageView0;
-  }
-  if (index == 1 && m_displayWarningMoreSolutions) {
-    return &m_warningMessageView1;
+  assert(index >= 0 && index < numberOfSubviews());
+  if (m_displayWarningMoreSolutions) {
+    if (index == 0) {
+      return &m_warningMessageView0;
+    }
+    if (index == 1) {
+      return &m_warningMessageView1;
+    }
   }
   return &m_selectableTableView;
 }
@@ -81,13 +85,13 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout = HorizontalLayout::Builder(VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
   const char * deltaB = "Δ=b";
   static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, strlen(deltaB), KDFont::SmallFont), 0, false);
-  for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
+  for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }
-  for (int i = 0; i < EquationStore::k_maxNumberOfApproximateSolutions; i++) {
+  for (int i = 0; i < k_numberOfApproximateValueCells; i++) {
     m_approximateValueCells[i].setFont(KDFont::LargeFont);
   }
-  for (int i = 0; i < EquationStore::k_maxNumberOfSolutions; i++) {
+  for (int i = 0; i < k_numberOfSymbolCells; i++) {
     m_symbolCells[i].setAlignment(0.5f, 0.5f);
   }
 }
@@ -98,10 +102,6 @@ const char * SolutionsController::title() {
     return I18n::translate(I18n::Message::ApproximateSolution);
   }
   return I18n::translate(I18n::Message::Solution);
-}
-
-View * SolutionsController::view() {
-  return &m_contentView;
 }
 
 void SolutionsController::viewWillAppear() {
@@ -161,10 +161,6 @@ int SolutionsController::numberOfRows() const {
   return m_equationStore->numberOfSolutions();
 }
 
-int SolutionsController::numberOfColumns() const {
-  return 2;
-}
-
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (i == 0) {
     // Name of the variable or discriminant
@@ -215,10 +211,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
 }
 
 KDCoordinate SolutionsController::columnWidth(int i) {
-  if (i == 0) {
-    return k_symbolCellWidth;
-  }
-  return k_valueCellWidth;
+  return i == 0 ? k_symbolCellWidth : k_valueCellWidth;
 }
 
 KDCoordinate SolutionsController::rowHeight(int j) {
@@ -260,25 +253,29 @@ int SolutionsController::indexFromCumulatedWidth(KDCoordinate offsetX) {
 }
 
 HighlightCell * SolutionsController::reusableCell(int index, int type) {
-  if (type == 0) {
-    return &m_symbolCells[index];
-  } else if (type == 1) {
-    return &m_deltaCell;
-  } else if (type == 2) {
-    return &m_exactValueCells[index];
+  switch (type) {
+    case k_symbolCellType:
+      return &m_symbolCells[index];
+    case k_deltaCellType:
+      return &m_deltaCell;
+    case k_exactValueCellType:
+      return &m_exactValueCells[index];
+    default:
+      assert(type == k_approximateValueCellType);
+      return &m_approximateValueCells[index];
   }
-  return &m_approximateValueCells[index];
 }
 
 int SolutionsController::reusableCellCount(int type) {
   switch (type) {
-    case 0:
+    case k_symbolCellType:
       return EquationStore::k_maxNumberOfSolutions;
-    case 1:
+    case k_deltaCellType:
       return 1;
-    case 2:
+    case k_exactValueCellType:
       return EquationStore::k_maxNumberOfExactSolutions;
     default:
+      assert(type == k_approximateValueCellType);
       return EquationStore::k_maxNumberOfApproximateSolutions;
   }
 }
@@ -286,11 +283,11 @@ int SolutionsController::reusableCellCount(int type) {
 int SolutionsController::typeAtLocation(int i, int j) {
   if (i == 0) {
     if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()-1) {
-      return 1;
+      return k_deltaCellType;
     }
-    return 0;
+    return k_symbolCellType;
   }
-  return m_equationStore->type() == EquationStore::Type::Monovariable ? 3 : 2;
+  return m_equationStore->type() == EquationStore::Type::Monovariable ? k_approximateValueCellType : k_exactValueCellType;
 }
 
 void SolutionsController::didBecomeFirstResponder() {

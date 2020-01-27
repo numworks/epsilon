@@ -6,12 +6,52 @@
   "commit": false,
   "contributors": [
     {
+      "login": "quentinguidee",
+      "name": "Quentin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/12123721?v=4",
+      "profile": "https://github.com/quentinguidee",
+      "contributions": [
+        "code",
+        "doc",
+        "design",
+        "maintenance",
+        "projectManagement",
+        "question",
+        "review"
+      ]
+    },
+    {
       "login": "MixedMatched",
       "name": "Alessandra Danielle Simmons",
       "avatar_url": "https://avatars1.githubusercontent.com/u/30960626?v=4",
       "profile": "https://github.com/MixedMatched",
       "contributions": [
         "code",
+        "ideas",
+        "question"
+    },
+    {
+      "login": "RedGl0w",
+      "name": "redgl0w",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/43498612?v=4",
+      "profile": "http://redgl0w.github.io",
+      "contributions": [
+        "code",
+        "bug",
+        "ideas",
+        "financial",
+        "question"
+      ]
+    },
+    {
+      "login": "M4xi1m3",
+      "name": "M4x1m3",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/57234558?v=4",
+      "profile": "https://M4xi1m3.github.io/",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
         "ideas",
         "question"
       ]

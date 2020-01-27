@@ -30,6 +30,12 @@ public:
   bool isCombining() const {
     return (m_code >= 0x300 && m_code <= 0x036F);
   }
+  bool isGreekCapitalLetter() const {
+    return 0x391 <= m_code && m_code <= 0x3a9 && m_code != 0x3a2;
+  }
+  bool isGreekSmallLetter() const {
+    return 0x3b1 <= m_code && m_code <= 0x3c9;
+  }
 private:
   uint32_t m_code;
 };

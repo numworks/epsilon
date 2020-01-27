@@ -40,8 +40,15 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
 
 size_t Tokenizer::popIdentifier() {
   /* TODO handle combined code points? For now combining code points will
-   * trigger a syntax error. */
-  return popWhile([](CodePoint c, CodePoint context) { return c.isDecimalDigit() || c.isLatinLetter() || c == '_'; });
+   * trigger a syntax error.
+   * This method is used to parse any identifier, reserved or custom, or even
+   * unit symbols.
+   * Exceptionally π is always parsed separately so that the user may for
+   * instance input '2πx' without any danger.
+   */
+  return popWhile([](CodePoint c, CodePoint context) {
+      return c.isDecimalDigit() || c.isLatinLetter() || c == '_' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+      });
 }
 
 size_t Tokenizer::popDigits() {
@@ -134,12 +141,34 @@ Token Tokenizer::popToken() {
   if (!nextCodePointIsNeitherDotNorDigit) {
     return popNumber();
   }
+  if (c == UCodePointGreekSmallLetterPi ||
+      c == UCodePointMathematicalBoldSmallI ||
+      c == UCodePointScriptSmallE)
+  {
+    Token result(Token::Constant);
+    result.setCodePoint(c);
+    return result;
+  }
   if (c == '_') {
+    /* For now, unit symbols must be prefixed with an underscore. Otherwise,
+     * common custom identifiers would be systematically parsed as units (for
+     * instance, A and g).
+     * TODO The Context of the Parser might be used to decide whether a symbol
+     * as 'A' should be parsed as a custom identifier, if 'A' already exists in
+     * the context, or as a unit if not.
+     *
+     * Besides unit symbols may contain Greek letters as μ and Ω. Since there
+     * is no particular reason to parse unit symbols differently from any other
+     * reserved or custom identifier, popIdentifier is called in both cases.
+     */
     Token result(Token::Unit);
     result.setString(start + 1, popIdentifier());
     return result;
   }
-  if (c.isLatinLetter()) {
+  if (c.isLatinLetter() ||
+      c.isGreekCapitalLetter() ||
+      c.isGreekSmallLetter()) // Greek small letter pi is matched earlier
+  {
     Token result(Token::Identifier);
     result.setString(start, 1 + popIdentifier()); // We already popped 1 code point
     return result;
@@ -195,17 +224,7 @@ Token Tokenizer::popToken() {
   if (c == '}') {
     return Token(Token::RightBrace);
   }
-  if (c == UCodePointGreekSmallLetterPi
-      || c == UCodePointMathematicalBoldSmallI
-      || c == UCodePointScriptSmallE)
-  {
-    Token result(Token::Constant);
-    result.setCodePoint(c);
-    return result;
-  }
-  if (c == UCodePointSquareRoot
-      || c == UCodePointGreekSmallLetterTheta)
-  {
+  if (c == UCodePointSquareRoot) {
     Token result(Token::Identifier);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;

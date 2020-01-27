@@ -18,14 +18,14 @@ public:
   bool isHexadecimalDigit() const {
     return isDecimalDigit() || ('A' <= m_code && m_code <= 'F') || ('a' <= m_code && m_code <= 'f');
   }
-  bool isLowerCaseLetter() const {
-    return 'a' <= m_code && m_code <= 'z';
-  }
-  bool isUpperCaseLetter() const {
+  bool isLatinCapitalLetter() const {
     return 'A' <= m_code && m_code <= 'Z';
   }
-  bool isLetter() const {
-    return isLowerCaseLetter() || isUpperCaseLetter();
+  bool isLatinSmallLetter() const {
+    return 'a' <= m_code && m_code <= 'z';
+  }
+  bool isLatinLetter() const {
+    return isLatinCapitalLetter() || isLatinSmallLetter();
   }
   bool isCombining() const {
     return (m_code >= 0x300 && m_code <= 0x036F);

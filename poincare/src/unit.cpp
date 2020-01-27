@@ -165,12 +165,14 @@ constexpr const Unit::Prefix
   Unit::NegativeLongScalePrefixes[],
   Unit::PositiveLongScalePrefixes[],
   Unit::LongScalePrefixes[],
+  Unit::NegativePrefixes[],
   Unit::AllPrefixes[];
 constexpr size_t
   Unit::NoPrefixCount,
   Unit::NegativeLongScalePrefixesCount,
   Unit::PositiveLongScalePrefixesCount,
   Unit::LongScalePrefixesCount,
+  Unit::NegativePrefixesCount,
   Unit::AllPrefixesCount;
 constexpr const Unit::Representative
   Unit::TimeRepresentatives[],

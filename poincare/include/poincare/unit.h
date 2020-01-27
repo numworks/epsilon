@@ -17,7 +17,7 @@ public:
    * Each representative has
    *  - a root symbol
    *  - a definition
-   *  - a list of allowed prefixes
+   *  - a list of allowed output prefixes
    * Given a Dimension, a representative in that Dimension and a Prefix
    * allowed for that representative, one may get a symbol and an Expression.
    */
@@ -38,17 +38,26 @@ public:
 
   class Representative {
   public:
-    constexpr Representative(const char * rootSymbol, const char * definition, const Prefix * allowedPrefixes, size_t numberOfAllowedPrefixes) :
+    /* The following class is meant to be an attribute determining whether a
+     * unit symbol is prefixable at all. If Yes, any prefix is accepted as
+     * input, whereas the allowed output prefixes are prescribed manually. */
+    enum class Prefixable {
+      No,
+      Yes
+    };
+    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix * outputPrefixes, size_t numberOfOutputPrefixes) :
       m_rootSymbol(rootSymbol),
       m_definition(definition),
-      m_allowedPrefixes(allowedPrefixes),
-      m_allowedPrefixesUpperBound(allowedPrefixes + numberOfAllowedPrefixes)
+      m_prefixable(prefixable),
+      m_outputPrefixes(outputPrefixes),
+      m_outputPrefixesUpperBound(outputPrefixes + numberOfOutputPrefixes)
     {
     }
     const char * rootSymbol() const { return m_rootSymbol; }
     const char * definition() const { return m_definition; }
-    const Prefix * allowedPrefixes() const { return m_allowedPrefixes; }
-    const Prefix * allowedPrefixesUpperBound() const { return m_allowedPrefixesUpperBound; }
+    bool isPrefixable() const { return m_prefixable == Prefixable::Yes; }
+    const Prefix * outputPrefixes() const { return m_outputPrefixes; }
+    const Prefix * outputPrefixesUpperBound() const { return m_outputPrefixesUpperBound; }
     bool canParse(const char * symbol, size_t length,
         const Prefix * * prefix) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
@@ -56,8 +65,9 @@ public:
   private:
     const char * m_rootSymbol;
     const char * m_definition;
-    const Prefix * m_allowedPrefixes;
-    const Prefix * m_allowedPrefixesUpperBound;
+    const Prefixable m_prefixable;
+    const Prefix * m_outputPrefixes;
+    const Prefix * m_outputPrefixesUpperBound;
   };
 
   class Dimension {
@@ -193,124 +203,162 @@ public:
   static constexpr const Representative
     TimeRepresentatives[] = {
         Representative("s",   nullptr,
+            Representative::Prefixable::Yes,
             NegativeLongScalePrefixes, NegativeLongScalePrefixesCount),
         Representative("min", "60*_s",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("h",   "60*60*_s",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("day", "24*60*60*_s",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("week", "7*24*60*60*_s",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("month", "30*7*24*60*60*_s",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("year", "365.25*24*60*60*_s",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         },
     DistanceRepresentatives[] = {
         Representative("m",   nullptr,
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         Representative("ang", "10^-10*_m",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount), //FIXME Codepoint
         Representative("au",  "149587870700*_m",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("ly",  "299792458*_m/_s*_year",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("pc",  "180*60*60/π*_au",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         },
     MassRepresentatives[] = {
         Representative("g",   nullptr,
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         Representative("t",   "1000_kg",
+            Representative::Prefixable::Yes,
             PositiveLongScalePrefixes, PositiveLongScalePrefixesCount),
         Representative("Da",  "(6.02214076*10^23*1000)^-1*_kg",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         },
     CurrentRepresentatives[] = {
         Representative("A",   nullptr,
+            Representative::Prefixable::Yes,
             NegativeLongScalePrefixes, NegativeLongScalePrefixesCount),
         },
     TemperatureRepresentatives[] = {
         Representative("K",   nullptr,
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         },
     AmountOfSubstanceRepresentatives[] = {
         Representative("mol", nullptr,
+            Representative::Prefixable::Yes,
             NegativeLongScalePrefixes, NegativeLongScalePrefixesCount),
         },
     LuminousIntensityRepresentatives[] = {
         Representative("cd",  nullptr,
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         },
     FrequencyRepresentatives[] = {
         Representative("Hz",  "_s^-1",
+            Representative::Prefixable::Yes,
             PositiveLongScalePrefixes, PositiveLongScalePrefixesCount),
         },
     ForceRepresentatives[] = {
         Representative("N",   "_kg*_m*_s^-2",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         },
     PressureRepresentatives[] = {
         Representative("Pa",  "_kg*_m^-1*_s^-2",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         Representative("bar", "1000_hPa",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         Representative("atm", "101325_Pa",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         },
     EnergyRepresentatives[] = {
         Representative("J",   "_kg*_m^2*_s^-2",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         Representative("eV",  "1.602176634ᴇ-19*_J",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         },
     PowerRepresentatives[] = {
         Representative("W",   "_kg*_m^2*_s^-3",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         },
     ElectricChargeRepresentatives[] = {
         Representative("C",   "_A*_s",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         },
     ElectricPotentialRepresentatives[] = {
         Representative("V",   "_kg*_m^2*_s^-3*_A^-1",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         },
     ElectricCapacitanceRepresentatives[] = {
         Representative("F",   "_A^2*_s^4*_kg^-1*_m^-2",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         },
     ElectricResistanceRepresentatives[] = {
         Representative("Ohm", "_kg*_m^2*_s^-3*_A^-2",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount), //FIXME Omega CodePoint?
         },
     ElectricConductanceRepresentatives[] = {
         Representative("S",   "_A^2*_s^3*_kg^-1*_m^-2",
+            Representative::Prefixable::Yes,
             AllPrefixes, AllPrefixesCount),
         },
     MagneticFluxRepresentatives[] = {
         Representative("Wb",  "_kg*_m^2*_s^-2*_A^-1",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         },
     MagneticFieldRepresentatives[] = {
         Representative("T",   "_kg*_s^-2*_A^-1",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         },
     InductanceRepresentatives[] = {
         Representative("H",   "_kg*_m^2*_s^-2*_A^-2",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         },
     CatalyticActivityRepresentatives[] = {
         Representative("kat", "_mol*_s^-1",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         },
     SurfaceRepresentatives[] = {
         Representative("ha",  "10^4*_m^2",
+            Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         },
     VolumeRepresentatives[] = {
         Representative("L",   "10^-3*_m^3",
+            Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
         };
   static constexpr const Dimension DimensionTable[] = {

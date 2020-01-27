@@ -180,6 +180,17 @@ public:
       GigaPrefix,
       TeraPrefix,
     },
+    LongScalePrefixes[] = {
+      PicoPrefix,
+      NanoPrefix,
+      MicroPrefix,
+      MilliPrefix,
+      EmptyPrefix,
+      KiloPrefix,
+      MegaPrefix,
+      GigaPrefix,
+      TeraPrefix,
+    },
     AllPrefixes[] = {
       PicoPrefix,
       NanoPrefix,
@@ -199,6 +210,7 @@ public:
     NoPrefixCount = sizeof(NoPrefix)/sizeof(Prefix),
     NegativeLongScalePrefixesCount = sizeof(NegativeLongScalePrefixes)/sizeof(Prefix),
     PositiveLongScalePrefixesCount = sizeof(PositiveLongScalePrefixes)/sizeof(Prefix),
+    LongScalePrefixesCount = sizeof(LongScalePrefixes)/sizeof(Prefix),
     AllPrefixesCount = sizeof(AllPrefixes)/sizeof(Prefix);
   static constexpr const Representative
     TimeRepresentatives[] = {
@@ -227,7 +239,7 @@ public:
     DistanceRepresentatives[] = {
         Representative("m",   nullptr,
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         Representative("ang", "10^-10*_m",
             Representative::Prefixable::No,
             NoPrefix, NoPrefixCount), //FIXME Codepoint
@@ -244,7 +256,7 @@ public:
     MassRepresentatives[] = {
         Representative("g",   nullptr,
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         Representative("t",   "1000_kg",
             Representative::Prefixable::Yes,
             PositiveLongScalePrefixes, PositiveLongScalePrefixesCount),
@@ -280,12 +292,12 @@ public:
     ForceRepresentatives[] = {
         Representative("N",   "_kg*_m*_s^-2",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     PressureRepresentatives[] = {
         Representative("Pa",  "_kg*_m^-1*_s^-2",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         Representative("bar", "1000_hPa",
             Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),
@@ -296,40 +308,40 @@ public:
     EnergyRepresentatives[] = {
         Representative("J",   "_kg*_m^2*_s^-2",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         Representative("eV",  "1.602176634ᴇ-19*_J",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     PowerRepresentatives[] = {
         Representative("W",   "_kg*_m^2*_s^-3",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     ElectricChargeRepresentatives[] = {
         Representative("C",   "_A*_s",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     ElectricPotentialRepresentatives[] = {
         Representative("V",   "_kg*_m^2*_s^-3*_A^-1",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     ElectricCapacitanceRepresentatives[] = {
         Representative("F",   "_A^2*_s^4*_kg^-1*_m^-2",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     ElectricResistanceRepresentatives[] = {
         Representative("Ohm", "_kg*_m^2*_s^-3*_A^-2",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount), //FIXME Omega CodePoint?
+            LongScalePrefixes, LongScalePrefixesCount), //FIXME Omega CodePoint?
         },
     ElectricConductanceRepresentatives[] = {
         Representative("S",   "_A^2*_s^3*_kg^-1*_m^-2",
             Representative::Prefixable::Yes,
-            AllPrefixes, AllPrefixesCount),
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     MagneticFluxRepresentatives[] = {
         Representative("Wb",  "_kg*_m^2*_s^-2*_A^-1",

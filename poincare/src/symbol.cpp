@@ -43,7 +43,7 @@ int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char 
   while(variables[variablesIndex] != 0) {
     variablesIndex+= maxSizeVariable;
   }
-  if (isVariable(m_name)) {
+  if (isVariable(m_name, context)) {
     int index = 0;
     while (variables[index] != 0) {
       if (strcmp(m_name, &variables[index]) == 0) {
@@ -134,7 +134,7 @@ Symbol Symbol::Builder(CodePoint name) {
   return Symbol::Builder(buffer, codePointLength);
 }
 
-bool Symbol::isSeriesSymbol(const char * c) {
+bool Symbol::isSeriesSymbol(const char * c, Poincare::Context * context) {
   // [NV][1-3]
   if (c[2] == 0 && (c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {
     return true;
@@ -142,7 +142,7 @@ bool Symbol::isSeriesSymbol(const char * c) {
   return false;
 }
 
-bool Symbol::isRegressionSymbol(const char * c) {
+bool Symbol::isRegressionSymbol(const char * c, Poincare::Context * context) {
   // [XY][1-3]
   if (c[2] == 0 && (c[0] == 'X' || c[0] == 'Y') && c[1] >= '1' && c[1] <= '3') {
     return true;

@@ -38,6 +38,16 @@ public:
     assert(i < Poincare::Expression::k_maxNumberOfVariables && m_variables[i][0] != 0);
     return m_variables[i];
   }
+  const char * userVariableAtIndex(size_t i) {
+    assert(i < Poincare::Expression::k_maxNumberOfVariables && m_userVariables[i][0] != 0);
+    return m_userVariables[i];
+  }
+  int numberOfUserVariables() const {
+    return m_numberOfUserVariables;
+  }
+  bool userVariablesUsed() const {
+    return m_userVariablesUsed;
+  }
   int numberOfSolutions() const {
     return m_numberOfSolutions;
   }
@@ -93,6 +103,7 @@ private:
   mutable Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
+  char m_userVariables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   int m_numberOfSolutions;
   Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
@@ -100,6 +111,8 @@ private:
   bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
   double m_intervalApproximateSolutions[2];
   double m_approximateSolutions[k_maxNumberOfApproximateSolutions];
+  int m_numberOfUserVariables;
+  bool m_userVariablesUsed;
 };
 
 }

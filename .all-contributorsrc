@@ -21,17 +21,14 @@
       ]
     },
     {
-      "login": "M4xi1m3",
-      "name": "M4x1m3",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/57234558?v=4",
-      "profile": "https://M4xi1m3.github.io/",
+      "login": "MixedMatched",
+      "name": "Alessandra Danielle Simmons",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/30960626?v=4",
+      "profile": "https://github.com/MixedMatched",
       "contributions": [
         "code",
-        "bug",
-        "doc",
         "ideas",
         "question"
-      ]
     },
     {
       "login": "RedGl0w",
@@ -43,6 +40,19 @@
         "bug",
         "ideas",
         "financial",
+        "question"
+      ]
+    },
+    {
+      "login": "M4xi1m3",
+      "name": "M4x1m3",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/57234558?v=4",
+      "profile": "https://M4xi1m3.github.io/",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
+        "ideas",
         "question"
       ]
     }

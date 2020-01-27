@@ -9,6 +9,15 @@ public:
   constexpr CodePoint(uint32_t c) : m_code(c) {}
   constexpr operator uint32_t() const { return m_code; }
 
+  bool isBinaryDigit() const {
+    return '0' <= m_code && m_code <= '1';
+  }
+  bool isDecimalDigit() const {
+    return '0' <= m_code && m_code <= '9';
+  }
+  bool isHexadecimalDigit() const {
+    return isDecimalDigit() || ('A' <= m_code && m_code <= 'F') || ('a' <= m_code && m_code <= 'f');
+  }
   bool isLowerCaseLetter() const {
     return 'a' <= m_code && m_code <= 'z';
   }
@@ -17,9 +26,6 @@ public:
   }
   bool isLetter() const {
     return isLowerCaseLetter() || isUpperCaseLetter();
-  }
-  bool isDigit() const {
-    return '0' <= m_code && m_code <= '9';
   }
   bool isCombining() const {
     return (m_code >= 0x300 && m_code <= 0x036F);

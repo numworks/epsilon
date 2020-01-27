@@ -1,0 +1,30 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "quentinguidee",
+      "name": "Quentin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/12123721?v=4",
+      "profile": "https://github.com/quentinguidee",
+      "contributions": [
+        "code",
+        "doc",
+        "design",
+        "maintenance",
+        "projectManagement",
+        "question",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Omega",
+  "projectOwner": "Omega-Numworks",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

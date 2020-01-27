@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "MixedMatched",
+      "name": "Alessandra Danielle Simmons",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/30960626?v=4",
+      "profile": "https://github.com/MixedMatched",
+      "contributions": [
+        "code",
+        "ideas",
+        "question"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Omega",
+  "projectOwner": "Omega-Numworks",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

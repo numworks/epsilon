@@ -191,6 +191,15 @@ public:
       GigaPrefix,
       TeraPrefix,
     },
+    NegativePrefixes[] = {
+      PicoPrefix,
+      NanoPrefix,
+      MicroPrefix,
+      MilliPrefix,
+      CentiPrefix,
+      DeciPrefix,
+      EmptyPrefix,
+    },
     AllPrefixes[] = {
       PicoPrefix,
       NanoPrefix,
@@ -211,6 +220,7 @@ public:
     NegativeLongScalePrefixesCount = sizeof(NegativeLongScalePrefixes)/sizeof(Prefix),
     PositiveLongScalePrefixesCount = sizeof(PositiveLongScalePrefixes)/sizeof(Prefix),
     LongScalePrefixesCount = sizeof(LongScalePrefixes)/sizeof(Prefix),
+    NegativePrefixesCount = sizeof(NegativePrefixes)/sizeof(Prefix),
     AllPrefixesCount = sizeof(AllPrefixes)/sizeof(Prefix);
   static constexpr const Representative
     TimeRepresentatives[] = {
@@ -371,7 +381,7 @@ public:
     VolumeRepresentatives[] = {
         Representative("L",   "10^-3*_m^3",
             Representative::Prefixable::Yes,
-            NoPrefix, NoPrefixCount),
+            NegativePrefixes, NegativePrefixesCount),
         };
   static constexpr const Dimension DimensionTable[] = {
     /* The current table is sorted from most to least simple units.

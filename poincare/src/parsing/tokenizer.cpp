@@ -46,7 +46,7 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
 size_t Tokenizer::popIdentifier() {
   /* TODO handle combined code points? For now combining code points will
    * trigger a syntax error. */
-  return popWhile([](CodePoint c, CodePoint context) { return c.isLetter() || c.isDigit() || c == context; }, '_');
+  return popWhile([](CodePoint c, CodePoint context) { return c.isLetter() || c.isDigit() || c == '_'; });
 }
 
 size_t Tokenizer::popDigits() {

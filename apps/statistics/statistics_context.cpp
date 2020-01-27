@@ -10,7 +10,7 @@ using namespace Shared;
 namespace Statistics {
 
 const Expression StatisticsContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
-  if (symbol.type() == ExpressionNode::Type::Symbol && Symbol::isSeriesSymbol(symbol.name())) {
+  if (symbol.type() == ExpressionNode::Type::Symbol && Symbol::isSeriesSymbol(symbol.name(), nullptr)) {
     const char * seriesName = symbol.name();
     assert(strlen(seriesName) == 2);
 

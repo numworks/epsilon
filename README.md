@@ -1,4 +1,7 @@
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega-Banner.png" /></p>
 
@@ -146,3 +149,22 @@ NumWorks is a registered trademark. Omega is not affiliated with NumWorks.
 
 * NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://M4xi1m3.github.io/"><img src="https://avatars0.githubusercontent.com/u/57234558?v=4" width="100px;" alt=""/><br /><sub><b>M4x1m3</b></sub></a><br /><a href="https://github.com/Omega-Numworks/Omega/commits?author=M4xi1m3" title="Code">💻</a> <a href="https://github.com/Omega-Numworks/Omega/issues?q=author%3AM4xi1m3" title="Bug reports">🐛</a> <a href="https://github.com/Omega-Numworks/Omega/commits?author=M4xi1m3" title="Documentation">📖</a> <a href="#ideas-M4xi1m3" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-M4xi1m3" title="Answering Questions">💬</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

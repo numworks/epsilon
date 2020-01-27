@@ -10,7 +10,7 @@ using namespace Shared;
 namespace Regression {
 
 const Expression RegressionContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
-  if (symbol.type() == ExpressionNode::Type::Symbol && Symbol::isRegressionSymbol(symbol.name())) {
+  if (symbol.type() == ExpressionNode::Type::Symbol && Symbol::isRegressionSymbol(symbol.name(), nullptr)) {
     const char * seriesName = symbol.name();
     assert(strlen(seriesName) == 2);
 

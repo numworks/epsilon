@@ -280,7 +280,7 @@ void assert_expression_has_variables(const char * expression, const char * varia
   Expression e = parse_expression(expression, &globalContext, false);
   constexpr static int k_maxVariableSize = Poincare::SymbolAbstract::k_maxNameSize;
   char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
-  int numberOfVariables = e.getVariables(&globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);
+  int numberOfVariables = e.getVariables(&globalContext, [](const char * symbol, Poincare::Context * context) { return true; }, (char *)variableBuffer, k_maxVariableSize);
   quiz_assert_print_if_failure(trueNumberOfVariables == numberOfVariables, expression);
   if (numberOfVariables < 0) {
     // Too many variables

@@ -41,19 +41,19 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
 size_t Tokenizer::popIdentifier() {
   /* TODO handle combined code points? For now combining code points will
    * trigger a syntax error. */
-  return popWhile([](CodePoint c, CodePoint context) { return c.isLetter() || c.isDigit() || c == '_'; });
+  return popWhile([](CodePoint c, CodePoint context) { return c.isLetter() || c.isDecimalDigit() || c == '_'; });
 }
 
 size_t Tokenizer::popDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return c.isDigit(); });
+  return popWhile([](CodePoint c, CodePoint context) { return c.isDecimalDigit(); });
 }
 
 size_t Tokenizer::popBinaryDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return c == '0' || c == '1'; });
+  return popWhile([](CodePoint c, CodePoint context) { return c.isBinaryDigit(); });
 }
 
 size_t Tokenizer::popHexadecimalDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return c.isDigit() || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); });
+  return popWhile([](CodePoint c, CodePoint context) { return c.isHexadecimalDigit(); });
 }
 
 Token Tokenizer::popNumber() {
@@ -128,7 +128,7 @@ Token Tokenizer::popToken() {
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
   bool nextCodePointIsNeitherDotNorDigit = true;
-  const CodePoint c = nextCodePoint([](CodePoint cp, CodePoint context) { return cp != context && !cp.isDigit(); }, '.', &nextCodePointIsNeitherDotNorDigit);
+  const CodePoint c = nextCodePoint([](CodePoint cp, CodePoint context) { return cp != context && !cp.isDecimalDigit(); }, '.', &nextCodePointIsNeitherDotNorDigit);
 
   // According to c, recognize the Token::Type.
   if (!nextCodePointIsNeitherDotNorDigit) {

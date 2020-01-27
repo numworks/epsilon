@@ -57,7 +57,7 @@ bool Script::nameCompliant(const char * name) {
     if (c == '.' && strcmp(decoder.stringPosition(), ScriptStore::k_scriptExtension) == 0) {
       return true;
     }
-    if (!(c.isLowerCaseLetter() || c == '_' || c.isDigit())) {
+    if (!(c.isLowerCaseLetter() || c == '_' || c.isDecimalDigit())) {
       return false;
     }
     c = decoder.nextCodePoint();

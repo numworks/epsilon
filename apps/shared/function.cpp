@@ -15,7 +15,7 @@ bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * 
 
   UTF8Decoder decoder(baseName);
   CodePoint c = decoder.nextCodePoint();
-  if (c.isDigit()) {
+  if (c.isDecimalDigit()) {
     // The name cannot start with a number
     if (error != nullptr) {
       *error = NameNotCompliantError::NameCannotStartWithNumber;
@@ -27,7 +27,7 @@ bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * 
   while (c != UCodePointNull) {
     // FIXME '_' should be accepted but not as first character
     // TODO Factor this piece of code with similar one in the Parser
-    if (!(c.isLetter() || c.isDigit()) || c == '_') {
+    if (!(c.isLetter() || c.isDecimalDigit()) || c == '_') {
       if (error != nullptr) {
         *error = NameNotCompliantError::CharacterNotAllowed;
       }

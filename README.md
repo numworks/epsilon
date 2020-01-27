@@ -1,4 +1,7 @@
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega-Banner.png" /></p>
 
@@ -146,3 +149,22 @@ NumWorks is a registered trademark. Omega is not affiliated with NumWorks.
 
 * NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/quentinguidee"><img src="https://avatars0.githubusercontent.com/u/12123721?v=4" width="100px;" alt=""/><br /><sub><b>Quentin</b></sub></a><br /><a href="https://github.com/Omega-Numworks/Omega/commits?author=quentinguidee" title="Code">💻</a> <a href="https://github.com/Omega-Numworks/Omega/commits?author=quentinguidee" title="Documentation">📖</a> <a href="#design-quentinguidee" title="Design">🎨</a> <a href="#maintenance-quentinguidee" title="Maintenance">🚧</a> <a href="#projectManagement-quentinguidee" title="Project Management">📆</a> <a href="#question-quentinguidee" title="Answering Questions">💬</a> <a href="https://github.com/Omega-Numworks/Omega/pulls?q=is%3Apr+reviewed-by%3Aquentinguidee" title="Reviewed Pull Requests">👀</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

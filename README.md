@@ -142,11 +142,7 @@ You can try Epsilon straight from your browser in the [online simulator](https:/
 
 ## License
 
-<<<<<<< HEAD
-NumWorks is a registered trademark. Omega is not affiliated with Numworks. NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-=======
 NumWorks is a registered trademark. Omega is not affiliated with NumWorks.
 
 * NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
->>>>>>> omega-hotfix

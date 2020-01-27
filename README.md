@@ -1,5 +1,3 @@
-
-
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega-Banner.png" /></p>
 
 <p align="center">
@@ -139,6 +137,12 @@ To contribute, please refer to the [Wiki](https://github.com/Omega-Numworks/Omeg
 Omega is a fork of Epsilon, a high-performance graphing calculator operating system. It includes eight apps that cover the high school mathematics curriculum.
 
 You can try Epsilon straight from your browser in the [online simulator](https://www.numworks.com/simulator/).
+
+## Contributors ✨
+
+Thanks goes to these wonderful people!
+
+<p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega-Contributors.png" /></p>
 
 ## License
 

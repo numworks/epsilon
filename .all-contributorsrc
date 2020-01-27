@@ -6,6 +6,21 @@
   "commit": false,
   "contributors": [
     {
+      "login": "quentinguidee",
+      "name": "Quentin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/12123721?v=4",
+      "profile": "https://github.com/quentinguidee",
+      "contributions": [
+        "code",
+        "doc",
+        "design",
+        "maintenance",
+        "projectManagement",
+        "question",
+        "review"
+      ]
+    },
+    {
       "login": "M4xi1m3",
       "name": "M4x1m3",
       "avatar_url": "https://avatars0.githubusercontent.com/u/57234558?v=4",

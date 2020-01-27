@@ -1,8 +1,3 @@
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
 <p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega-Banner.png" /></p>
 
 <p align="center">
@@ -152,22 +147,6 @@ NumWorks is a registered trademark. Omega is not affiliated with NumWorks.
 
 ## Contributors ✨
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks goes to these wonderful people!
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/quentinguidee"><img src="https://avatars0.githubusercontent.com/u/12123721?v=4" width="100px;" alt=""/><br /><sub><b>Quentin</b></sub></a><br /><a href="https://github.com/Omega-Numworks/Omega/commits?author=quentinguidee" title="Code">💻</a> <a href="https://github.com/Omega-Numworks/Omega/commits?author=quentinguidee" title="Documentation">📖</a> <a href="#design-quentinguidee" title="Design">🎨</a> <a href="#maintenance-quentinguidee" title="Maintenance">🚧</a> <a href="#projectManagement-quentinguidee" title="Project Management">📆</a> <a href="#question-quentinguidee" title="Answering Questions">💬</a> <a href="https://github.com/Omega-Numworks/Omega/pulls?q=is%3Apr+reviewed-by%3Aquentinguidee" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://github.com/MixedMatched"><img src="https://avatars1.githubusercontent.com/u/30960626?v=4" width="100px;" alt=""/><br /><sub><b>Alessandra Danielle Simmons</b></sub></a><br /><a href="https://github.com/Omega-Numworks/Omega/commits?author=MixedMatched" title="Code">💻</a> <a href="#ideas-MixedMatched" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-MixedMatched" title="Answering Questions">💬</a></td>
-    <td align="center"><a href="http://redgl0w.github.io"><img src="https://avatars1.githubusercontent.com/u/43498612?v=4" width="100px;" alt=""/><br /><sub><b>redgl0w</b></sub></a><br /><a href="https://github.com/Omega-Numworks/Omega/commits?author=RedGl0w" title="Code">💻</a> <a href="https://github.com/Omega-Numworks/Omega/issues?q=author%3ARedGl0w" title="Bug reports">🐛</a> <a href="#ideas-RedGl0w" title="Ideas, Planning, & Feedback">🤔</a> <a href="#financial-RedGl0w" title="Financial">💵</a> <a href="#question-RedGl0w" title="Answering Questions">💬</a></td>
-    <td align="center"><a href="https://M4xi1m3.github.io/"><img src="https://avatars0.githubusercontent.com/u/57234558?v=4" width="100px;" alt=""/><br /><sub><b>M4x1m3</b></sub></a><br /><a href="https://github.com/Omega-Numworks/Omega/commits?author=M4xi1m3" title="Code">💻</a> <a href="https://github.com/Omega-Numworks/Omega/issues?q=author%3AM4xi1m3" title="Bug reports">🐛</a> <a href="https://github.com/Omega-Numworks/Omega/commits?author=M4xi1m3" title="Documentation">📖</a> <a href="#ideas-M4xi1m3" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-M4xi1m3" title="Answering Questions">💬</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+<p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega-Contributors.png" /></p>

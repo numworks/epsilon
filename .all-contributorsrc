@@ -1,0 +1,28 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "RedGl0w",
+      "name": "redgl0w",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/43498612?v=4",
+      "profile": "http://redgl0w.github.io",
+      "contributions": [
+        "code",
+        "bug",
+        "ideas",
+        "financial",
+        "question"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Omega",
+  "projectOwner": "Omega-Numworks",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

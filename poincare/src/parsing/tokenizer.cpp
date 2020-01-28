@@ -19,12 +19,6 @@ const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, boo
   return c;
 }
 
-const CodePoint Tokenizer::popCodePoint() {
-  return nextCodePoint([](CodePoint c, CodePoint context) { return true; });
-  /* m_text now points to the start of the first non combining code point after
-   * the returned code point. */
-}
-
 bool Tokenizer::canPopCodePoint(const CodePoint c) {
   bool didPop = false;
   nextCodePoint([](CodePoint nextC, CodePoint context) { return nextC == context; }, c, &didPop);
@@ -126,7 +120,7 @@ Token Tokenizer::popToken() {
   // Skip whitespaces
   while (canPopCodePoint(' ')) {}
 
-  /* Save for later use (since m_text is altered by popCodePoint, popNumber,
+  /* Save for later use (since m_text is altered by popNumber,
    * popIdentifier). */
   const char * start = m_text;
 

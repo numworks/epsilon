@@ -19,9 +19,9 @@ constexpr SettingsMessageTree s_modelExamChildren[3] = {SettingsMessageTree(I18n
 constexpr SettingsMessageTree s_pythonFont[2] = {SettingsMessageTree(I18n::Message::Large), SettingsMessageTree(I18n::Message::Small)};
 constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
 #ifdef USERNAME
-constexpr SettingsMessageTree s_modelAboutChildren[7] = {SettingsMessageTree(I18n::Message::Username), SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 7)};
+constexpr SettingsMessageTree s_modelAboutChildren[8] = {SettingsMessageTree(I18n::Message::Username), SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::MemUse), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 7)};
 #else
-constexpr SettingsMessageTree s_modelAboutChildren[6] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 7)};
+constexpr SettingsMessageTree s_modelAboutChildren[7] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::MemUse), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 7)};
 #endif
 
 constexpr SettingsMessageTree s_modelMenu[] =
@@ -33,12 +33,12 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::UpdatePopUp),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren, 6),
 #ifdef USERNAME
-    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 7)};
+    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 8)};
 #else
-    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 6)};
+    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren, 7)};
 #endif
 
-constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 8);
+constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 7);
 
 I18n::Message MainController::promptMessage() const {
   return I18n::Message::UpdatePopUp;

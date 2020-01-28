@@ -17,9 +17,9 @@ public:
   int typeAtLocation(int i, int j) override;
 private:
 #ifdef USERNAME
-  constexpr static int k_totalNumberOfCell = 7;
+  constexpr static int k_totalNumberOfCell = 8;
 #else
-  constexpr static int k_totalNumberOfCell = 6;
+  constexpr static int k_totalNumberOfCell = 7;
 #endif
   ContributorsController m_contributorsController;
   MessageTableCellWithChevronAndMessage m_contributorsCell;

@@ -29,11 +29,11 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
   size_t length = 0;
   bool didPop = true;
   while (true) {
-    nextCodePoint(popTest, context, &didPop);
+    CodePoint c = nextCodePoint(popTest, context, &didPop);
     if (!didPop) {
       break;
     }
-    length++;
+    length += UTF8Decoder::CharSizeOfCodePoint(c);
   }
   return length;
 }

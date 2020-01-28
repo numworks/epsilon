@@ -28,11 +28,12 @@ bool Tokenizer::canPopCodePoint(const CodePoint c) {
 size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
   size_t length = 0;
   bool didPop = true;
-  while (didPop) {
+  while (true) {
     nextCodePoint(popTest, context, &didPop);
-    if (didPop) {
-      length++;
+    if (!didPop) {
+      break;
     }
+    length++;
   }
   return length;
 }

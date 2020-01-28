@@ -453,12 +453,12 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   );
 }
 
-void TextArea::TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
+void TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
   m_text.setText(textBuffer, textBufferSize);
   m_cursorLocation = text();
 }
 
-bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, const char * location) {
+bool TextArea::ContentView::insertTextAtLocation(const char * text, const char * location) {
   int textSize = strlen(text);
   if (m_text.textLength() + textSize >= m_text.bufferSize() || textSize == 0) {
     return false;
@@ -482,7 +482,7 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
   return true;
 }
 
-bool TextArea::TextArea::ContentView::removePreviousGlyph() {
+bool TextArea::ContentView::removePreviousGlyph() {
   if (cursorLocation() <= text()) {
     assert(cursorLocation() == text());
     return false;

@@ -23,7 +23,7 @@ constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
   m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorBlack, k_backgroundColor),
   m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorBlack, k_backgroundColor),
-  m_selectableTableView(controller),
+  m_selectableTableView(controller, controller, controller, controller),
   m_displayWarningMoreSolutions(false)
 {
   m_selectableTableView.setBackgroundColor(k_backgroundColor);
@@ -339,6 +339,18 @@ int SolutionsController::typeAtLocation(int i, int j) {
 
 void SolutionsController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(m_contentView.selectableTableView());
+}
+
+void SolutionsController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  const int rowOfUserVariablesMessage = userVariablesMessageRow();
+  if (rowOfUserVariablesMessage < 0) {
+    return;
+  }
+  assert(rowOfUserVariablesMessage > 0);
+  // Forbid the selection of the messages row
+  if (t->selectedRow() == rowOfUserVariablesMessage) {
+    t->selectCellAtLocation(t->selectedColumn(), rowOfUserVariablesMessage + (rowOfUserVariablesMessage < previousSelectedCellY ? -1 : 1));
+  }
 }
 
 int SolutionsController::userVariablesMessageRow() const {

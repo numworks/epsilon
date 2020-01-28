@@ -170,7 +170,7 @@ void TextInput::setAlignment(float horizontalAlignment, float verticalAlignment)
   contentView()->setAlignment(horizontalAlignment, verticalAlignment);
 }
 
-bool TextInput::insertTextAtLocation(const char * text, const char * location) {
+bool TextInput::insertTextAtLocation(const char * text, char * location) {
   if (contentView()->insertTextAtLocation(text, location)) {
     /* We layout the scrollable view before scrolling to cursor because the
      * content size might have changed. */

@@ -57,7 +57,7 @@ protected:
     /* If the text to be appended is too long to be added without overflowing the
      * buffer, nothing is done (not even adding few letters from the text to reach
      * the maximum buffer capacity) and false is returned. */
-    bool insertTextAtLocation(const char * text, const char * location) override;
+    bool insertTextAtLocation(const char * text, char * location) override;
     KDSize minimalSizeForOptimalDisplay() const override;
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;

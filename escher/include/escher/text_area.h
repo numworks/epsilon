@@ -115,7 +115,7 @@ protected:
     const char * editedText() const override { return m_text.text(); }
     size_t editedTextLength() const override { return m_text.textLength(); }
     const Text * getText() const { return &m_text; }
-    bool insertTextAtLocation(const char * text, const char * location) override;
+    bool insertTextAtLocation(const char * text, char * location) override;
     void moveCursorGeo(int deltaX, int deltaY);
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;

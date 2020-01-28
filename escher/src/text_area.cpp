@@ -458,7 +458,7 @@ void TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
   m_cursorLocation = text();
 }
 
-bool TextArea::ContentView::insertTextAtLocation(const char * text, const char * location) {
+bool TextArea::ContentView::insertTextAtLocation(const char * text, char * location) {
   int textSize = strlen(text);
   if (m_text.textLength() + textSize >= m_text.bufferSize() || textSize == 0) {
     return false;
@@ -475,9 +475,9 @@ bool TextArea::ContentView::insertTextAtLocation(const char * text, const char *
       &lineBreak, 0);
 
   assert(UTF8Helper::CodePointIs(nullLocation, 0));
-  m_text.insertText(text, nullLocation - text, const_cast<char *>(location));
+  m_text.insertText(text, nullLocation - text, location);
   // Replace System parentheses (used to keep layout tree structure) by normal parentheses
-  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(const_cast<char *>(location), nullLocation - text);
+  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(location, nullLocation - text);
   reloadRectFromPosition(location, lineBreak);
   return true;
 }

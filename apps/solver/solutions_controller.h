@@ -8,7 +8,7 @@
 
 namespace Solver {
 
-class SolutionsController : public ViewController, public AlternateEmptyViewDefaultDelegate, public SelectableTableViewDataSource, public TableViewDataSource {
+class SolutionsController : public ViewController, public AlternateEmptyViewDefaultDelegate, public SelectableTableViewDataSource, public TableViewDataSource, public SelectableTableViewDelegate {
 public:
   SolutionsController(Responder * parentResponder, EquationStore * equationStore);
   void setShouldReplaceFuncionsButNotSymbols(bool shouldReplaceFuncionsButNotSymbols) { m_shouldReplaceFunctionsButNotSymbols = shouldReplaceFuncionsButNotSymbols; }
@@ -35,7 +35,8 @@ public:
   int typeAtLocation(int i, int j) override;
   /* Responder */
   void didBecomeFirstResponder() override;
-
+  /* SelectableTableViewDelegate */
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
   class ContentView : public View {
   public:

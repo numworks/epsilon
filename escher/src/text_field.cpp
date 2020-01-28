@@ -113,7 +113,7 @@ void TextField::ContentView::reinitDraftTextBuffer() {
   setCursorLocation(s_draftTextBuffer);
 }
 
-bool TextField::ContentView::insertTextAtLocation(const char * text, const char * location) {
+bool TextField::ContentView::insertTextAtLocation(const char * text, char * location) {
   assert(m_isEditing);
 
   int textLength = strlen(text);
@@ -121,12 +121,12 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, const char 
     return false;
   }
 
-  memmove(const_cast<char *>(location + textLength), location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
+  memmove(location + textLength, location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
   // Caution! One byte will be overridden by the null-terminating char of strlcpy
-  char * overridenByteLocation = const_cast<char *>(location + strlen(text));
+  char * overridenByteLocation = location + textLength;
   char overridenByte = *overridenByteLocation;
-  strlcpy(const_cast<char *>(location), text, (s_draftTextBuffer + m_draftTextBufferSize) - location);
+  strlcpy(location, text, (s_draftTextBuffer + m_draftTextBufferSize) - location);
   assert(overridenByteLocation < s_draftTextBuffer + m_draftTextBufferSize);
   *overridenByteLocation = overridenByte;
   m_currentDraftTextLength += textLength;
@@ -512,7 +512,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
 
     const char * nextCursorLocation = m_contentView.editedText() + draftTextLength();
-    if (insertTextAtLocation(buffer, cursorLocation())) {
+    if (insertTextAtLocation(buffer, const_cast<char *>(cursorLocation()))) {
       /* The cursor position depends on the text as we sometimes want to position
        * the cursor at the end of the text and sometimes after the first
        * parenthesis. */

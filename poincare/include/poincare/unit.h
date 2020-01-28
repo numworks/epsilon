@@ -250,9 +250,6 @@ public:
         Representative("m",   nullptr,
             Representative::Prefixable::Yes,
             LongScalePrefixes, LongScalePrefixesCount),
-        Representative("ang", "10^-10*_m",
-            Representative::Prefixable::No,
-            NoPrefix, NoPrefixCount), //FIXME Codepoint
         Representative("au",  "149587870700*_m",
             Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),

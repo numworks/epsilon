@@ -196,7 +196,6 @@ void ListController::resolveEquations(bool secondTry) {
     {
       assert(e == EquationStore::Error::NoError);
       if (modelStore()->numberOfSolutions() == 0 && !secondTry) {
-        modelStore()->tidy();
         resolveEquations(true);
         return;
       }

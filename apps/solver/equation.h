@@ -22,7 +22,8 @@ private:
   private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
-    mutable Poincare::Expression m_standardForm;
+    mutable Poincare::Expression m_standardFormWithReplacedFunctionsAndSymbols;
+    mutable Poincare::Expression m_standardFormWithReplacedFunctionsButNotSymbols;
   };
   size_t metaDataSize() const override { return 0; }
   const Shared::ExpressionModel * model() const override { return &m_model; }

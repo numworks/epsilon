@@ -243,11 +243,11 @@ KDCoordinate SolutionsController::columnWidth(int i) {
 }
 
 KDCoordinate SolutionsController::rowHeight(int j) {
-  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
-    return k_defaultCellHeight;
-  }
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage) {
+    if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+      return k_defaultCellHeight;
+    }
     Poincare::Layout exactLayout = m_equationStore->exactSolutionLayoutAtIndex(j, true);
     Poincare::Layout approximateLayout = m_equationStore->exactSolutionLayoutAtIndex(j, false);
     KDCoordinate exactLayoutHeight = exactLayout.layoutSize().height();

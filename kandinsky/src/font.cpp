@@ -136,16 +136,16 @@ KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
   }
 #else
   const CodePointIndexPair * currentPair = m_table;
-  if (c < currentPair->codePoint()) {
-    return defaultIndex;
-  }
   const CodePointIndexPair * endPair = m_table + m_tableLength - 1;
+  if (c < currentPair->codePoint()) {
+    goto NoMatchingGlyph;
+  }
   while (currentPair < endPair) {
     const CodePointIndexPair * nextPair = currentPair + 1;
     if (c < nextPair->codePoint()) {
       CodePoint lastCodePointOfCurrentPair = currentPair->codePoint() + (nextPair->glyphIndex() - currentPair->glyphIndex() - 1);
       if (c > lastCodePointOfCurrentPair) {
-        return defaultIndex;
+        goto NoMatchingGlyph;
       }
       return currentPair->glyphIndex() + (c - currentPair->codePoint());
     }
@@ -154,6 +154,7 @@ KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
   if (endPair->codePoint() == c) {
     return endPair->glyphIndex();
   }
+  NoMatchingGlyph:
   return defaultIndex;
 #endif
 }

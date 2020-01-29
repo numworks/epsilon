@@ -11,26 +11,24 @@ static constexpr KDFont::CodePointIndexPair table[] = {
 
 constexpr KDFont testFont(4, table, 10, 10, nullptr, nullptr);
 
-constexpr int defaultIndex = 132; // Taken from KDFont::indexForCodePoint
-
 constexpr int numberOfTests = 16;
 const KDFont::GlyphIndex index_for_code_point[numberOfTests] = {
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
+   KDFont::IndexForReplacementCharacterCodePoint,
+   KDFont::IndexForReplacementCharacterCodePoint,
+   KDFont::IndexForReplacementCharacterCodePoint,
    1,
    2,
    3,
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
+   KDFont::IndexForReplacementCharacterCodePoint,
+   KDFont::IndexForReplacementCharacterCodePoint,
+   KDFont::IndexForReplacementCharacterCodePoint,
    4,
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
+   KDFont::IndexForReplacementCharacterCodePoint,
+   KDFont::IndexForReplacementCharacterCodePoint,
    5,
    6,
    7,
-   static_cast<KDFont::GlyphIndex>(defaultIndex),
+   KDFont::IndexForReplacementCharacterCodePoint,
 };
 
 QUIZ_CASE(kandinsky_font_index_for_code_point) {

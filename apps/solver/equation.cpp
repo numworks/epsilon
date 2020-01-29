@@ -19,7 +19,8 @@ bool Equation::containsIComplex(Context * context) const {
 }
 
 Expression Equation::Model::standardForm(const Storage::Record * record, Context * context, bool replaceFunctionsButNotSymbols) const {
-  if (m_standardForm.isUninitialized()) {
+  Expression * returnedExpression = replaceFunctionsButNotSymbols ? &m_standardFormWithReplacedFunctionsButNotSymbols : &m_standardFormWithReplacedFunctionsAndSymbols;
+  if (returnedExpression->isUninitialized()) {
     const Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, replaceFunctionsButNotSymbols);
 
     EmptyContext emptyContext;
@@ -34,35 +35,38 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
     }
 
     if (expressionRed.type() == ExpressionNode::Type::Unreal) {
-      m_standardForm = Unreal::Builder();
-      return m_standardForm;
-    }
-    if (expressionRed.recursivelyMatches(
+      *returnedExpression = Unreal::Builder();
+    } else if (expressionRed.recursivelyMatches(
           [](const Expression e, Context * context) {
             return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context);
           },
           contextToUse,
           true))
     {
-      m_standardForm = Undefined::Builder();
-      return m_standardForm;
-    }
-    if (expressionRed.type() == ExpressionNode::Type::Equal) {
+      *returnedExpression = Undefined::Builder();
+    } else if (expressionRed.type() == ExpressionNode::Type::Equal) {
       Preferences * preferences = Preferences::sharedPreferences();
-      m_standardForm = static_cast<const Equal&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit());
+      *returnedExpression = static_cast<const Equal&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit());
     } else {
       assert(expressionRed.type() == ExpressionNode::Type::Rational && static_cast<const Rational&>(expressionRed).isOne());
       // The equality was reduced which means the equality was always true.
-      m_standardForm = Rational::Builder(0);
+      *returnedExpression = Rational::Builder(0);
+    }
+    if (!m_standardFormWithReplacedFunctionsButNotSymbols.isUninitialized() && !m_standardFormWithReplacedFunctionsAndSymbols.isUninitialized()) {
+      // Do not keep two equal expressions
+      if (m_standardFormWithReplacedFunctionsButNotSymbols.isIdenticalTo(m_standardFormWithReplacedFunctionsAndSymbols)) {
+        m_standardFormWithReplacedFunctionsButNotSymbols = m_standardFormWithReplacedFunctionsAndSymbols;
+      }
     }
   }
-  return m_standardForm;
+  return *returnedExpression;
 }
 
 void Equation::Model::tidy() const {
   ExpressionModel::tidy();
   // Free the pool of the m_standardForm
-  m_standardForm = Expression();
+  m_standardFormWithReplacedFunctionsAndSymbols = Expression();
+  m_standardFormWithReplacedFunctionsButNotSymbols = Expression();
 }
 
 void * Equation::Model::expressionAddress(const Ion::Storage::Record * record) const {

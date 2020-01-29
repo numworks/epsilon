@@ -20,14 +20,14 @@ void addEquationWithText(EquationStore * equationStore, const char * text, Conte
   model->setContent(text, context);
 }
 
-void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions) {
+void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions, bool replaceFunctionsButNotSymbols = false) {
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
   int index = 0;
   while (equations[index] != 0) {
     addEquationWithText(&equationStore, equations[index++], &globalContext);
   }
-  EquationStore::Error err = equationStore.exactSolve(&globalContext);
+  EquationStore::Error err = equationStore.exactSolve(&globalContext, replaceFunctionsButNotSymbols);
   quiz_assert_print_if_failure(err == error, equations[0]);
   if (err != EquationStore::Error::NoError) {
     equationStore.removeAll();
@@ -55,21 +55,21 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   equationStore.removeAll();
 }
 
-void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char * variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions) {
+void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char * variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions, bool replaceFunctionsButNotSymbols = false, bool solveWithoutContext = false) { //TODO LEA
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
   addEquationWithText(&equationStore, equations, &globalContext);
-  EquationStore::Error err = equationStore.exactSolve(&globalContext);
+  EquationStore::Error err = equationStore.exactSolve(&globalContext, replaceFunctionsButNotSymbols);
   quiz_assert(err == EquationStore::Error::RequireApproximateSolution);
   equationStore.setIntervalBound(0, xMin);
   equationStore.setIntervalBound(1, xMax);
-  equationStore.approximateSolve(&globalContext);
+  equationStore.approximateSolve(&globalContext, replaceFunctionsButNotSymbols);
   quiz_assert(equationStore.numberOfSolutions() == numberOfSolutions);
   quiz_assert(strcmp(equationStore.variableAtIndex(0), variable)== 0);
   for (int i = 0; i < numberOfSolutions; i++) {
     quiz_assert(std::fabs(equationStore.approximateSolutionAtIndex(i) - solutions[i]) < 1E-5);
   }
-  quiz_assert(equationStore.haveMoreApproximationSolutions(&globalContext) == hasMoreSolutions);
+  quiz_assert(equationStore.haveMoreApproximationSolutions(&globalContext, solveWithoutContext) == hasMoreSolutions);
   equationStore.removeAll();
 }
 

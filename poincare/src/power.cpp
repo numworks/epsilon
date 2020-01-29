@@ -81,7 +81,7 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
   return -1;
 }
 
-int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 

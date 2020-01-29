@@ -50,8 +50,8 @@ int MultiplicationNode::polynomialDegree(Context * context, const char * symbolN
   return degree;
 }
 
-int MultiplicationNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
-  return Multiplication(this).getPolynomialCoefficients(context, symbolName, coefficients);
+int MultiplicationNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+  return Multiplication(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
 bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
@@ -217,7 +217,7 @@ Expression MultiplicationNode::denominator(ReductionContext reductionContext) co
 
 /* Multiplication */
 
-int Multiplication::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+int Multiplication::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;
@@ -232,7 +232,7 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
   // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
   for (int i = 0; i < numberOfChildren(); i++) {
     // childAtIndex(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
-    int degI = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients);
+    int degI = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients, symbolicComputation);
     assert(degI <= Expression::k_maxPolynomialDegree);
     for (int j = deg; j > 0; j--) {
       // new coefficients[j] = b(0)*a(j)+b(1)*a(j-1)+b(2)*a(j-2)+...

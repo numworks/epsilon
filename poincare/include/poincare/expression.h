@@ -187,14 +187,14 @@ public:
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
    * order) and 'constant' with the constant of the expression. */
-  bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
    * of the first 3 polynomial coefficients and returns the  polynomial degree.
    * It is supposed to be called on a reduced expression.
    * coefficients has up to 3 entries.  */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Complex */
@@ -231,12 +231,12 @@ public:
    *   account the complex format required in the expression they return.
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
-  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
-  Expression simplify(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation = true);
+  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  Expression simplify(ExpressionNode::ReductionContext reductionContext);
 
-  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
-  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
-  Expression reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target = ExpressionNode::ReductionTarget::SystemForApproximation);
+  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  Expression reduce(ExpressionNode::ReductionContext context);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
   /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
@@ -251,7 +251,7 @@ public:
   template<typename U> static U Epsilon();
   template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   template<typename U> U approximateToScalar(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
+  template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
   Coordinate2D<double> nextMinimum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
@@ -337,7 +337,7 @@ protected:
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation); }
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
    * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/

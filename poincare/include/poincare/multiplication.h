@@ -23,7 +23,7 @@ public:
   Type type() const override { return Type::Multiplication; }
   Sign sign(Context * context) const override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
   // Approximation
@@ -75,7 +75,7 @@ public:
   static Multiplication Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(children, numberOfChildren); }
 
   // Properties
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
   // Approximation
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Simplification

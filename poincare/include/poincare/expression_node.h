@@ -123,6 +123,11 @@ public:
      * - identifying tangent in cos/sin polynoms ... */
     User
   };
+  enum class SymbolicComputation {
+    ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,
+    ReplaceAllDefinedSymbolsWithDefinition = 1,
+    ReplaceDefinedFunctionsWithDefinitions = 2
+  };
   enum class Sign {
     Negative = -1,
     Unknown = 0,
@@ -131,7 +136,7 @@ public:
 
   class ReductionContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation = true) :
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) :
       m_context(context),
       m_complexFormat(complexFormat),
       m_angleUnit(angleUnit),
@@ -142,13 +147,13 @@ public:
     Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
     Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
     ReductionTarget target() const { return m_target; }
-    bool symbolicComputation() const { return m_symbolicComputation; }
+    SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
   private:
     Context * m_context;
     Preferences::ComplexFormat m_complexFormat;
     Preferences::AngleUnit m_angleUnit;
     ReductionTarget m_target;
-    bool m_symbolicComputation;
+    SymbolicComputation m_symbolicComputation;
   };
 
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
@@ -163,7 +168,7 @@ public:
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression setSign(Sign s, ReductionContext reductionContext);
   virtual int polynomialDegree(Context * context, const char * symbolName) const;
-  /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
+  /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;

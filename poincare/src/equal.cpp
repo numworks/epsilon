@@ -50,7 +50,7 @@ Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat
    * SystemForAnalysis. This enables to expand Newton multinom to be able to
    * detect polynom correctly ("(x+2)^2" in this form won't be detected
    * unless expanded). */
-  return sub.reduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  return sub.reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForAnalysis));
 }
 
 Expression Equal::shallowReduce() {

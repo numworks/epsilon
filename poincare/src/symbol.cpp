@@ -33,8 +33,8 @@ int SymbolNode::polynomialDegree(Context * context, const char * symbolName) con
   return 0;
 }
 
-int SymbolNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
-  return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients);
+int SymbolNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+  return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
 int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
@@ -151,6 +151,9 @@ bool Symbol::isRegressionSymbol(const char * c, Poincare::Context * context) {
 }
 
 Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
+    return *this;
+  }
   {
     Expression current = *this;
     Expression p = parent();
@@ -177,7 +180,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
 
   Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
   if (result.isUninitialized()) {
-    if (reductionContext.symbolicComputation()) {
+    if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
     result = Undefined::Builder();
@@ -200,7 +203,7 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
   return *this;
 }
 
-int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   if (strcmp(name(), symbolName) == 0) {
     coefficients[0] = Rational::Builder(0);
     coefficients[1] = Rational::Builder(1);

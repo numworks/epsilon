@@ -26,13 +26,13 @@ int FunctionNode::polynomialDegree(Context * context, const char * symbolName) c
   return e.polynomialDegree(context, symbolName);
 }
 
-int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+int FunctionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return -1;
   }
-  return e.getPolynomialCoefficients(context, symbolName, coefficients);
+  return e.getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
 int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
@@ -120,7 +120,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
   Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
   if (result.isUninitialized()) {
-    if (reductionContext.symbolicComputation()) {
+    if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
     result = Undefined::Builder();

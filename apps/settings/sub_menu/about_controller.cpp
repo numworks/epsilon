@@ -133,6 +133,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     len = Poincare::Integer((int)((float) Ion::Storage::k_storageSize / 1024.f)).serialize(memUseBuffer + len + 3, 4) + len + 3;
     memUseBuffer[len] = 'k';
     memUseBuffer[len+1] = 'B';
+    memUseBuffer[len+2] = '\0';
     
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
     myCell->setAccessoryText(memUseBuffer);

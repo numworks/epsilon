@@ -25,8 +25,8 @@ int AdditionNode::polynomialDegree(Context * context, const char * symbolName) c
   return degree;
 }
 
-int AdditionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
-  return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients);
+int AdditionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+  return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
 // Layout
@@ -59,7 +59,7 @@ const Number Addition::NumeralFactor(const Expression & e) {
   return Rational::Builder(1);
 }
 
-int Addition::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+int Addition::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;
@@ -69,7 +69,7 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
   }
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   for (int i = 0; i < numberOfChildren(); i++) {
-    int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients);
+    int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients, symbolicComputation);
     assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
       static_cast<Addition&>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
@@ -394,8 +394,8 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
 
   /* To simplify the numerator and the denominator, we allow symbolic
    * computation: all unwanted symbols should have already disappeared by now,
-   * and if we checked again for symbols we might find "paramter" symbols
-   * disconnected from the parametered expression, which would be replaed with
+   * and if we checked again for symbols we might find "parameter" symbols
+   * disconnected from the parametered expression, which would be replaced with
    * undef.
    * Example: int((ℯ^(-x))-x^(0.5), x, 0, 3), when creating the common
    * denominator for the integrand. */
@@ -404,7 +404,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
       reductionContext.target(),
-      true);
+      ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 
   // Step 4: Simplify the numerator
   numerator.shallowReduce(contextWithSymbolicComputation);

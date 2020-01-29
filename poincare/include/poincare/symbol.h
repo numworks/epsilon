@@ -23,7 +23,7 @@ public:
   Type type() const override { return Type::Symbol; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
   float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
@@ -68,7 +68,7 @@ public:
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }

@@ -32,7 +32,7 @@ int ExpressionNode::polynomialDegree(Context * context, const char * symbolName)
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+int ExpressionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 

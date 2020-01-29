@@ -266,7 +266,7 @@ public:
             LongScalePrefixes, LongScalePrefixesCount),
         Representative("t",   "1000_kg",
             Representative::Prefixable::Yes,
-            PositiveLongScalePrefixes, PositiveLongScalePrefixesCount),
+            NoPrefix, NoPrefixCount),
         Representative("Da",  "(6.02214076*10^23*1000)^-1*_kg",
             Representative::Prefixable::Yes,
             NoPrefix, NoPrefixCount),

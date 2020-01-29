@@ -1,8 +1,10 @@
-#include <assert.h>
 #include <kandinsky/font.h>
+extern "C" {
 #include <kandinsky/fonts/code_points.h>
+}
 #include <ion.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <assert.h>
 
 constexpr static int k_tabCharacterWidth = 4;
 

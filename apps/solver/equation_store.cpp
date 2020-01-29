@@ -119,7 +119,18 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   }
 }
 
-EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
+EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols) {
+  assert(replaceFunctionsButNotSymbols != nullptr);
+  *replaceFunctionsButNotSymbols = false;
+  Error e = privateExactSolve(context, false);
+  if (e == Error::NoError && numberOfSolutions() == 0 && m_numberOfUserVariables > 0) {
+    *replaceFunctionsButNotSymbols = true;
+    e = privateExactSolve(context, true);
+  }
+  return e;
+}
+
+EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
   tidySolution();
 
   m_userVariablesUsed = !replaceFunctionsButNotSymbols;

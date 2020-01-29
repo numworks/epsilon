@@ -167,12 +167,13 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poin
   return true;
 }
 
-void ListController::resolveEquations(bool secondTry) {
+void ListController::resolveEquations() {
   if (modelStore()->numberOfDefinedModels() == 0) {
     Container::activeApp()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext(), secondTry);
+  bool resultWithoutUserDefinedSymbols = false;
+  EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext(), &resultWithoutUserDefinedSymbols);
   switch (e) {
     case EquationStore::Error::EquationUndefined:
       Container::activeApp()->displayWarning(I18n::Message::UndefinedEquation);
@@ -188,22 +189,18 @@ void ListController::resolveEquations(bool secondTry) {
       return;
     case EquationStore::Error::RequireApproximateSolution:
     {
-      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(secondTry);
+      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
       stackController()->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
       return;
     }
     default:
     {
       assert(e == EquationStore::Error::NoError);
-      if (modelStore()->numberOfSolutions() == 0 && !secondTry) {
-        resolveEquations(true);
-        return;
-      }
       StackViewController * stack = stackController();
-      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(secondTry);
+      App::app()->solutionsController()->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
       stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     }
- }
+  }
 }
 
 void ListController::reloadButtonMessage() {

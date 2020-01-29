@@ -131,6 +131,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   *overridenByteLocation = overridenByte;
   m_currentDraftTextLength += textLength;
 
+  // Remove the \n code points
   UTF8Decoder decoder(s_draftTextBuffer);
   const char * codePointPointer = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
@@ -139,11 +140,12 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
     assert(codePointPointer < s_draftTextBuffer + m_draftTextBufferSize);
     if (codePoint == '\n') {
       assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
-      *(const_cast<char *>(codePointPointer)) = 0;
-      m_currentDraftTextLength = codePointPointer - s_draftTextBuffer;
-      break;
+      strlcpy(const_cast<char *>(codePointPointer), codePointPointer + 1, (s_draftTextBuffer + m_draftTextBufferSize) - codePointPointer);
+      // Put the decoder to the code point replacing \n
+      decoder.setPosition(codePointPointer);
+    } else  {
+      codePointPointer = decoder.stringPosition();
     }
-    codePointPointer = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
 

@@ -151,7 +151,7 @@ public:
   static constexpr const Prefix
     PicoPrefix  = Prefix("p", -12),
     NanoPrefix  = Prefix("n",  -9),
-    MicroPrefix = Prefix("u",  -6), // FIXME μ
+    MicroPrefix = Prefix("μ",  -6),
     MilliPrefix = Prefix("m",  -3),
     CentiPrefix = Prefix("c",  -2),
     DeciPrefix  = Prefix("d",  -1),

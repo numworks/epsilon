@@ -131,6 +131,7 @@ uint32_t CodePoints[] = {
 
   0x393,   // Γ // GREEK CAPITAL LETTER GAMMA
   0x394,   // Δ // GREEK CAPITAL LETTER DELTA
+  0x3a9,   // Ω // GREEK CAPITAL LETTER OMEGA
   0x3b8,   // θ // GREEK SMALL LETTER THETA
   0x3bb,   // λ // GREEK SMALL LETTER LAMDA
   0x3bc,   // μ // GREEK SMALL LETTER MU

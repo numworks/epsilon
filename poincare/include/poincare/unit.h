@@ -341,9 +341,9 @@ public:
             LongScalePrefixes, LongScalePrefixesCount),
         },
     ElectricResistanceRepresentatives[] = {
-        Representative("Ohm", "_kg*_m^2*_s^-3*_A^-2",
+        Representative("Ω", "_kg*_m^2*_s^-3*_A^-2",
             Representative::Prefixable::Yes,
-            LongScalePrefixes, LongScalePrefixesCount), //FIXME Omega CodePoint?
+            LongScalePrefixes, LongScalePrefixesCount),
         },
     ElectricConductanceRepresentatives[] = {
         Representative("S",   "_A^2*_s^3*_kg^-1*_m^-2",

@@ -52,7 +52,7 @@ public:
     return m_numberOfSolutions;
   }
   /* Exact resolution */
-  Error exactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols);
+  Error exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols);
   /* The exact solutions are displayed in a table with 2 layouts: an exact
    * Layout and an approximate layout. For example, 'sqrt(2)' and '1.414213'.
    * The boolean exactLayout indicates if we want the exact layout or the
@@ -94,6 +94,7 @@ private:
   Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
 
+  Error privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols);
   Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
   Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
   void tidySolution();

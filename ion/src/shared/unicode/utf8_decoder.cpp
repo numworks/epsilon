@@ -1,4 +1,5 @@
 #include <ion/unicode/utf8_decoder.h>
+#include <string.h>
 #include <assert.h>
 
 static inline int leading_ones(uint8_t value) {
@@ -87,6 +88,12 @@ const char * UTF8Decoder::previousGlyphPosition() {
   return resultGlyphPosition;
 }
 
+void UTF8Decoder::setPosition(const char * position) {
+  assert(m_stringPosition >= m_string && m_stringPosition <= m_string + strlen(m_string));
+  assert(!IsInTheMiddleOfACodePoint(*position));
+  m_stringPosition = position;
+}
+
 size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
   if (c <= 0x7F) {
     return 1;
@@ -130,4 +137,8 @@ size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferSi
   }
   assert(i == charCount);
   return charCount;
+}
+
+bool UTF8Decoder::IsInTheMiddleOfACodePoint(uint8_t value) {
+  return value >= 0b10000000 && value < 0b11000000;
 }

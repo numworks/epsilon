@@ -32,18 +32,8 @@
 
 namespace Probability {
 
-DistributionController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ChooseDistribution, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
-  m_selectableTableView(selectableTableView)
-{
-}
-
-int DistributionController::ContentView::numberOfSubviews() const {
-  return 2;
-}
-
 View * DistributionController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
+  assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {
     return &m_titleView;
   }
@@ -51,6 +41,7 @@ View * DistributionController::ContentView::subviewAtIndex(int index) {
 }
 
 void DistributionController::ContentView::layoutSubviews(bool force) {
+  assert(KDFont::SmallFont->glyphSize().height() == 14); // otherwise, k_numberOfCells badly computed
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight), force);
@@ -80,10 +71,6 @@ DistributionController::DistributionController(Responder * parentResponder, Dist
   m_selectableTableView.setTopMargin(Metric::CommonTopMargin-ContentView::k_titleMargin);
 }
 
-View * DistributionController::view() {
-  return &m_contentView;
-}
-
 void Probability::DistributionController::viewWillAppear() {
   selectRow((int)m_distribution->type());
 }
@@ -108,18 +95,10 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   return false;
 }
 
-int Probability::DistributionController::numberOfRows() const {
-  return k_totalNumberOfModels;
-};
-
 HighlightCell * Probability::DistributionController::reusableCell(int index) {
   assert(index >= 0);
-  assert(index < k_totalNumberOfModels);
+  assert(index < k_numberOfCells);
   return &m_cells[index];
-}
-
-int Probability::DistributionController::reusableCellCount() const {
-  return k_totalNumberOfModels;
 }
 
 void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -149,10 +128,6 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
   };
   myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();
-}
-
-KDCoordinate Probability::DistributionController::cellHeight() {
-  return Metric::ParameterCellHeight;
 }
 
 void Probability::DistributionController::setDistributionAccordingToIndex(int index) {

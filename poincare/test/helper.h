@@ -24,7 +24,7 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode = Poincare::Pref
 void quiz_assert_print_if_failure(bool test, const char * information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
-typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ExpressionNode::SymbolicComputation symbolicComputation); //TODO LEA replace with reductionContext
+typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ExpressionNode::ReductionContext reductionContext);
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ExpressionNode::SymbolicComputation symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
 

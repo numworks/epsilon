@@ -407,7 +407,10 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor) const {
+void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, const char * text, int length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor) const {
+  if (length < 0) {
+    return;
+  }
   KDSize glyphSize = m_font->glyphSize();
 
   bool drawSelection = selectionStart != nullptr && selectionEnd > text && selectionStart < text + length;

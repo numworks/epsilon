@@ -106,7 +106,7 @@ protected:
       m_cursorLocation = m_text.text();
     }
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor) const;
+    void drawStringAt(KDContext * ctx, int line, int column, const char * text, int length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor) const;
     virtual void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const = 0;
     virtual void clearRect(KDContext * ctx, KDRect rect) const = 0;
     KDSize minimalSizeForOptimalDisplay() const override;

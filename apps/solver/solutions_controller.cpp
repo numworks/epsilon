@@ -186,7 +186,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       deltaCell->setLayout(m_delta2Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
-      char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+1]; // Holds at maximum the variable name + a digit
+      char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+2]; // Holds at maximum the variable name + 2 digits (for 10)
       if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage) {
         // Solution symbol name
         if (m_equationStore->type() == EquationStore::Type::LinearSystem) {
@@ -197,7 +197,13 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
           /* The system has one variable but might have many solutions: the cell
            * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
           int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0), Poincare::SymbolAbstract::k_maxNameSize);
-          bufferSymbol[length++] = j+'1'; // TODO LEA change for 10
+          if (j < 9) {
+            bufferSymbol[length++] = j+'1';
+          } else {
+            assert(j == 9);
+            bufferSymbol[length++] = '1';
+            bufferSymbol[length++] = '0';
+          }
           bufferSymbol[length] = 0;
         }
       } else {

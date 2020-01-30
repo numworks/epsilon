@@ -62,11 +62,15 @@ bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test,
   return !e.isUninitialized() && e.recursivelyMatches(test, context, false);
 }
 
-Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone) {
+Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
+  bool shouldNotReplaceSymbols = symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
+  if (symbol.type() == ExpressionNode::Type::Symbol && shouldNotReplaceSymbols) {
+    return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);
+  }
   Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
-  e = Expression::ExpressionWithoutSymbols(e, context);
+  e = Expression::ExpressionWithoutSymbols(e, context, shouldNotReplaceSymbols);
   return e;
 }
 

@@ -118,7 +118,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   if (childAtIndex(0).isUndefined()) {
     return replaceWithUndefinedInPlace();
   }
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true);
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, reductionContext.symbolicComputation());
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;

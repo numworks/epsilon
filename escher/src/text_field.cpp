@@ -131,24 +131,6 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   *overridenByteLocation = overridenByte;
   m_currentDraftTextLength += textLength;
 
-  // Remove the \n code points
-  UTF8Decoder decoder(s_draftTextBuffer);
-  const char * codePointPointer = decoder.stringPosition();
-  CodePoint codePoint = decoder.nextCodePoint();
-  assert(!codePoint.isCombining());
-  while (codePoint != UCodePointNull) {
-    assert(codePointPointer < s_draftTextBuffer + m_draftTextBufferSize);
-    if (codePoint == '\n') {
-      assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
-      strlcpy(const_cast<char *>(codePointPointer), codePointPointer + 1, (s_draftTextBuffer + m_draftTextBufferSize) - codePointPointer);
-      // Put the decoder to the code point replacing \n
-      decoder.setPosition(codePointPointer);
-    } else  {
-      codePointPointer = decoder.stringPosition();
-    }
-    codePoint = decoder.nextCodePoint();
-  }
-
   reloadRectFromPosition(m_horizontalAlignment == 0.0f ? location : s_draftTextBuffer);
   return true;
 }
@@ -508,8 +490,10 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     // Remove the Empty code points
     constexpr int bufferSize = TextField::maxBufferSize();
     char buffer[bufferSize];
-    UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
-
+    {
+      CodePoint c[] = {UCodePointEmpty, '\n'};
+      UTF8Helper::CopyAndRemoveCodePoints(buffer, bufferSize, eventText, c, 2);
+    }
     // Replace System parentheses (used to keep layout tree structure) by normal parentheses
     Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
 

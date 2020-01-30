@@ -341,11 +341,34 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   const char * solutions9[] = {"-1",};
   assert_equation_system_exact_solve_to(equation9, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables9, solutions9, 1, true);
 
+  /* c = d
+   * d = 5
+   * h(x) = c + d + 3
+   *   /c = -3
+   *   \h(x) = 0
+   * c and d context values should not be used, and the solution is c = -3, d = 0 */
+  Expression::ParseAndSimplify("5→d", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+  Expression::ParseAndSimplify("d→c", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+  Expression::ParseAndSimplify("c+d+3→h(x)", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+  const char * equation10[] = {"h(x)=0", "c = -3", 0};
+  const char * variables10[] = {"c", "d", ""};
+  const char * solutions10[] = {"-3", "0"};
+  assert_equation_system_exact_solve_to(equation10, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables10, solutions10, 2, true);
+
+  const char * equation11[] = {"c+d=5", "c-d=1", 0};
+  const char * variables11[] = {"c", "d", ""};
+  const char * solutions11[] = {"3", "2"};
+  assert_equation_system_exact_solve_to(equation11, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables11, solutions11, 2, true);
+
+
   // Clean the storage
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("c.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("d.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
 }
 
 }

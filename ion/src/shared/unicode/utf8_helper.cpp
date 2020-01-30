@@ -94,21 +94,27 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
   return codePointPointer;
 }
 
-void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c) {
+void CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodePoint * codePoints, int numberOfCodePoints) {
   if (dstSize <= 0) {
     return;
   }
+  assert(numberOfCodePoints >= 1);
   UTF8Decoder decoder(src);
   const char * currentPointer = src;
   CodePoint codePoint = decoder.nextCodePoint();
   const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
-  size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
-  (void)codePointCharSize; // Silence compilation warning about unused variable.
 
   // Remove CodePoint c
   while (codePoint != UCodePointNull && bufferIndex < dstSize) {
-    if (codePoint != c) {
+    bool remove = false;
+    for (int i = 0; i < numberOfCodePoints; i++) {
+      if (codePoint == codePoints[i]) {
+        remove = true;
+        break;
+      }
+    }
+    if (!remove) {
       size_t copySize = nextPointer - currentPointer;
       if (copySize > dstSize - 1 - bufferIndex) {
         // Copying the current code point to the buffer would overflow the buffer

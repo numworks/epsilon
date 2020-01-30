@@ -207,7 +207,7 @@ QUIZ_CASE(poincare_properties_is_real) {
 void assert_reduced_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x", Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  Expression result = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForApproximation));
+  Expression result = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, SystemForApproximation));
 
   quiz_assert_print_if_failure(result.polynomialDegree(&globalContext, symbolName) == degree, expression);
 }
@@ -294,7 +294,7 @@ void assert_expression_has_variables(const char * expression, const char * varia
   }
 }
 
-QUIZ_CASE(poincare_preperties_get_variables) {
+QUIZ_CASE(poincare_properties_get_variables) {
   const char * variableBuffer1[] = {"x","y",""};
   assert_expression_has_variables("x+y", variableBuffer1, 2);
   const char * variableBuffer2[] = {"x","y","z","t",""};
@@ -340,15 +340,25 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   //assert_reduced_expression_has_polynomial_coefficient("2×(n+1)^3-4n+32×x", "n", coefficient2);
   const char * coefficient3[] = {"1", "-π", "1", 0}; //x^2-π×x+1
   assert_reduced_expression_has_polynomial_coefficient("x^2-π×x+1", "x", coefficient3);
+
   // f: x→x^2+Px+1
-  const char * coefficient4[] = {"1", "π", "1", 0}; //x^2+π×x+1
   assert_simplify("1+π×x+x^2→f(x)");
+  const char * coefficient4[] = {"1", "π", "1", 0}; //x^2+π×x+1
   assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4);
   const char * coefficient5[] = {"0", "𝐢", 0}; //√(-1)x
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient5);
   const char * coefficient6[] = {0}; //√(-1)x
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient6, Real);
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-}
 
-// TODO LEA Add for replaceFunctionsButNotSymbols
+  // 3 -> x
+  assert_simplify("3→x");
+  const char * coefficient7[] = {"4", 0};
+  assert_reduced_expression_has_polynomial_coefficient("x+1", "x", coefficient7 );
+  const char * coefficient8[] = {"2", "1", 0};
+  assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, ReplaceDefinedFunctionsWithDefinitions);
+  assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4, Cartesian, Radian, ReplaceDefinedFunctionsWithDefinitions);
+
+  // Clear the storage
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+}

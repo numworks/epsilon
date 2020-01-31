@@ -5,6 +5,19 @@
 /* MicroPython configuration options
  * We're not listing the default options as defined in mpconfig.h */
 
+#if __EMSCRIPTEN__
+// Enable a PyStack where most objects are allocated instead of always using the heap
+/* This enables to allocate and free memory in a scope (thus, Python can call
+ * Python) but also has the collateral effect of removing bugs regarding
+ * garbage collection on the web simulator. Indeed, fewer objetcts are
+ * allocated on the heap and the garbage collection is less frequently called.
+ * We suspect that garbage collection failed in javascript because when
+ * collecting roots the transpiled C code is denied access to Javascript
+ * variables that can store pointers to the Python heap. The pointed objects
+ * are therefore erased prematurely. */
+#define MICROPY_ENABLE_PYSTACK (1)
+#endif
+
 // Maximum length of a path in the filesystem
 #define MICROPY_ALLOC_PATH_MAX (32)
 

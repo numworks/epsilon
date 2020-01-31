@@ -36,6 +36,9 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
+    /* The input type is "single input" because the Python console is supposed
+     * to be fed lines and not files. */
+    // TODO: add a parameter when other input types (file, eval) are required
     mp_parse_tree_t pt = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
     mp_obj_t module_fun = mp_compile(&pt, lex->source_name, MP_EMIT_OPT_NONE, true);
     mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::Back);

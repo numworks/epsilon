@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <assert.h>
+#include <string.h>
 #include <python/port/port.h>
 
 
@@ -31,9 +32,37 @@ mandelbrot(2)
 print('ok')
 )";
 
+// TODO: this will be obsolete when runCode will take a parameter to choose the input type
+
+void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script) {
+  static const char * openExec = "exec(\"";
+  static const char * closeExec = "\")";
+  assert(strlen(script) + strlen(openExec) + strlen(closeExec) < bufferSize);
+  char * bufferChar = buffer;
+  bufferChar += strlcpy(buffer, openExec, bufferSize);
+  const char * scriptChar = script;
+  while (*scriptChar != 0) {
+    assert(bufferChar - buffer + 2 < bufferSize - 1);
+    if (*scriptChar == '\n') {
+      // Turn carriage return in {'\', 'n'} to be processed by exec
+      *bufferChar++ = '\\';
+      *bufferChar++ = 'n';
+    } else {
+      *bufferChar++ = *scriptChar;
+    }
+    scriptChar++;
+  }
+  bufferChar += strlcpy(bufferChar, closeExec, buffer + bufferSize - bufferChar);
+  assert(bufferChar - buffer < bufferSize);
+  *bufferChar = 0;
+}
+
 QUIZ_CASE(python_mandelbrot) {
+  constexpr size_t bufferSize = 500;
+  char buffer[bufferSize];
+  inlineToBeSingleInput(buffer, bufferSize, s_mandelbrotScript);
   MicroPython::init(s_pythonHeap, s_pythonHeap + k_pythonHeapSize);
   TestExecutionEnvironment env;
-  env.runCode(s_mandelbrotScript);
+  env.runCode(buffer);
   MicroPython::deinit();
 }

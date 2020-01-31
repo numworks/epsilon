@@ -102,6 +102,11 @@ extern "C" {
 }
 
 void MicroPython::init(void * heapStart, void * heapEnd) {
+#if __EMSCRIPTEN__
+  static mp_obj_t pystack[1024];
+  mp_pystack_init(pystack, &pystack[MP_ARRAY_SIZE(pystack)]);
+#endif
+
   volatile int stackTop;
   void * stackTopAddress = (void *)(&stackTop);
   /* We delimit the stack part that will be used by Python. The stackTop is the

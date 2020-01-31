@@ -162,7 +162,7 @@ Token Tokenizer::popToken() {
      * reserved or custom identifier, popIdentifier is called in both cases.
      */
     Token result(Token::Unit);
-    result.setString(start + 1, popIdentifier());
+    result.setString(start + 1, popIdentifier()); // + 1 for the underscore
     return result;
   }
   if (c.isLatinLetter() ||
@@ -170,7 +170,7 @@ Token Tokenizer::popToken() {
       c.isGreekSmallLetter()) // Greek small letter pi is matched earlier
   {
     Token result(Token::Identifier);
-    result.setString(start, 1 + popIdentifier()); // We already popped 1 code point
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popIdentifier()); // We already popped 1 code point
     return result;
   }
   if ('(' <= c && c <= '/') {

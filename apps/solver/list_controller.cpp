@@ -125,10 +125,11 @@ bool layoutRepresentsAnEquality(Poincare::Layout l) {
 
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
-    if (!textRepresentsAnEquality(textField->text())) {
-      textField->handleEvent(Ion::Events::ShiftRight);
+    const char * text = textField->text();
+    if (!textRepresentsAnEquality(text)) {
+      textField->setCursorLocation(text + strlen(text));
       textField->handleEventWithText("=0");
-      if (!textRepresentsAnEquality(textField->text())) {
+      if (!textRepresentsAnEquality(text)) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }
@@ -143,7 +144,7 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquality(layoutField->layout())) {
-      layoutField->handleEvent(Ion::Events::ShiftRight);
+      layoutField->putCursorRightOfLayout();
       layoutField->handleEventWithText("=0");
       if (!layoutRepresentsAnEquality(layoutField->layout())) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);

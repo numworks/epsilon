@@ -176,6 +176,10 @@ void gc_collect(void) {
    * regs is the also the last object on the stack so the stack is bound by
    * &regs and python_stack_top. */
   jmp_buf regs;
+  /* TODO: we use setjmp to get the registers values to look for python heap
+   * root. However, the 'setjmp' does not guarantee that it gets all registers
+   * values. We should check our setjmp implementation for the device and
+   * ensure that it also works for other platforms. */
   setjmp(regs);
 
   void **regs_ptr = (void**)&regs;

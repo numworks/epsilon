@@ -66,16 +66,6 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
 {
 }
 
-int ExamModeController::initialSelectedRow() const {
-  int row = selectedRow();
-  if (row >= numberOfRows()) {
-    return numberOfRows()-1;
-  } else if (row < 0) {
-    return 0;
-  }
-  return row;
-}
-
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     GlobalPreferences::ExamMode mode = GlobalPreferences::ExamMode::Standard;

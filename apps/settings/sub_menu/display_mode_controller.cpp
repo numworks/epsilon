@@ -95,13 +95,4 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
   return true;
 }
 
-void DisplayModeController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
-  GenericSubController::didBecomeFirstResponder();
-}
-
-void DisplayModeController::viewWillAppear() {
-  m_selectableTableView.reloadData();
-}
-
 }

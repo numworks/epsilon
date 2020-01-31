@@ -83,4 +83,14 @@ StackViewController * GenericSubController::stackController() const {
   return (StackViewController *)parentResponder();
 }
 
+int GenericSubController::initialSelectedRow() const {
+  int row = selectedRow();
+  if (row >= numberOfRows()) {
+    return numberOfRows()-1;
+  } else if (row < 0) {
+    return 0;
+  }
+  return row;
+}
+
 }

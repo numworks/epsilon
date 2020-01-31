@@ -6,11 +6,16 @@
 
 namespace Shared {
 
-#define GRAPH_CURSOR_SPEEDUP 1
+#define GRAPH_CURSOR_SPEEDUP
 
 class RoundCursorView : public CursorView {
 public:
-  RoundCursorView(KDColor color = KDColorBlack) : m_color(color), m_underneathPixelBufferLoaded(false) {}
+  RoundCursorView(KDColor color = KDColorBlack) :
+    m_color(color)
+#ifdef GRAPH_CURSOR_SPEEDUP
+  , m_underneathPixelBufferLoaded(false)
+#endif
+  {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);
@@ -23,9 +28,11 @@ private:
   bool eraseCursorIfPossible();
 #endif
   constexpr static int k_cursorSize = Dots::LargeDotDiameter;
-  mutable KDColor m_underneathPixelBuffer[k_cursorSize*k_cursorSize];
   KDColor m_color;
+#ifdef GRAPH_CURSOR_SPEEDUP
+  mutable KDColor m_underneathPixelBuffer[k_cursorSize*k_cursorSize];
   mutable bool m_underneathPixelBufferLoaded;
+#endif
 };
 
 }

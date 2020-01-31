@@ -6,8 +6,10 @@ static KDColor s_cursorWorkingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiamet
 
 void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect r = bounds();
+#ifdef GRAPH_CURSOR_SPEEDUP
   ctx->getPixels(r, m_underneathPixelBuffer);
   m_underneathPixelBufferLoaded = true;
+#endif
   ctx->blendRectWithMask(r, m_color, (const uint8_t *)Dots::LargeDotMask, s_cursorWorkingBuffer);
 }
 
@@ -17,12 +19,14 @@ KDSize RoundCursorView::minimalSizeForOptimalDisplay() const {
 
 void RoundCursorView::setColor(KDColor color) {
   m_color = color;
+#ifdef GRAPH_CURSOR_SPEEDUP
   eraseCursorIfPossible();
+#endif
   markRectAsDirty(bounds());
 }
 
 void RoundCursorView::setCursorFrame(KDRect f, bool force) {
-#if GRAPH_CURSOR_SPEEDUP
+#ifdef GRAPH_CURSOR_SPEEDUP
   /* TODO This is quite dirty (we are out of the dirty tracking and we assume
    * the cursor is the upmost view) but it works well. */
   if (m_frame == f && !force) {

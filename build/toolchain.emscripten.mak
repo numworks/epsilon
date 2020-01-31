@@ -115,6 +115,15 @@ endif
 # Configure EMFLAGS
 EMFLAGS += -s WASM=0
 
+# Since emcc 1.39.5, DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR is defautly
+# to 1 which discards old looks up to find DOM elements. However SDL relies on
+# the presence of a target "#canvas" that used to return the Module['canvas']
+# target but not anymore. It also expects the existence of Module['canvas'].
+# Until we fix the DOM of the html calling epsilon module, we use the deprecated
+# 'find_event_target'.
+# TODO: fix DOM of htmls files that uses epsilon js module
+EMFLAGS += -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
+
 # Configure LDFLAGS
 EMSCRIPTEN_MODULARIZE ?= 1
 LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"'

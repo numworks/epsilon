@@ -12,7 +12,7 @@ public:
 
   // Pixel manipulation
   void setPixel(KDPoint p, KDColor c);
-  KDColor getPixel(KDPoint p);
+  void getPixel(KDPoint p, KDColor * pixel);
   void getPixels(KDRect r, KDColor * pixels);
 
   // Text

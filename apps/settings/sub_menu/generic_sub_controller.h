@@ -24,7 +24,7 @@ public:
   void viewDidDisappear() override;
 protected:
   StackViewController * stackController() const;
-  virtual int initialSelectedRow() const { return 0; }
+  virtual int initialSelectedRow() const;
   constexpr static KDCoordinate k_topBottomMargin = 13;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;

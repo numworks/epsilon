@@ -19,15 +19,10 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-
-  /* DisplayModeController is different to GenericSubController as it can
-   * display the modal view if there is a syntax error in the text field. We
-   * need to tweak the different Responder methods to handle the modal view
-   * properly. */
-  void didEnterResponderChain(Responder * previousFirstResponder) override {} // Override GenericSubController which reinitializes the selected cell
 private:
   static constexpr int k_resultFormatType = 0;
   static constexpr int k_significantDigitsType = 1;
+  int initialSelectedRow() const override;
   MessageTableCellWithEditableTextWithSeparator m_editableCell;
 };
 

@@ -7,6 +7,11 @@ static KDColor s_cursorWorkingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiamet
 void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect r = bounds();
 #ifdef GRAPH_CURSOR_SPEEDUP
+  /* Beware that only the pixels of the intersection of rect with KDContext's
+   * clipping rect are pulled. All other pixels are left unaltered. Indeed
+   * nothing outside the clipping rect should be redrawn and hence was not
+   * dirty.
+   */
   ctx->getPixels(r, m_underneathPixelBuffer);
   m_underneathPixelBufferLoaded = true;
 #endif

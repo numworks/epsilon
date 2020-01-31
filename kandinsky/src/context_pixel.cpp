@@ -7,14 +7,11 @@ void KDContext::setPixel(KDPoint p, KDColor c) {
   }
 }
 
-KDColor KDContext::getPixel(KDPoint p) {
+void KDContext::getPixel(KDPoint p, KDColor * pixel) {
   KDPoint absolutePoint = p.translatedBy(m_origin);
   if (m_clippingRect.contains(absolutePoint)) {
-    KDColor result = KDColorBlack;
-    pullRect(KDRect(absolutePoint, 1, 1), &result);
-    return result;
+    pullRect(KDRect(absolutePoint, 1, 1), pixel);
   }
-  return KDColorBlack;
 }
 
 void KDContext::getPixels(KDRect r, KDColor * pixels) {
@@ -28,7 +25,7 @@ void KDContext::getPixels(KDRect r, KDColor * pixels) {
   KDCoordinate xMax = r.x()+r.width();
   for (int y = r.y(); y < yMax; y++) {
     for (int x = r.x(); x < xMax; x++) {
-      pixels[i++] = getPixel(KDPoint(x, y));
+      getPixel(KDPoint(x, y), pixels + (i++));
     }
   }
 }

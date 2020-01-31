@@ -36,7 +36,6 @@ void GraphController::viewWillAppear() {
 #endif
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
-  selectFunctionWithCursor(indexFunctionSelectedByCursor());
 }
 
 bool GraphController::defautRangeIsNormalized() const {

@@ -25,8 +25,6 @@ public:
    * need to tweak the different Responder methods to handle the modal view
    * properly. */
   void didEnterResponderChain(Responder * previousFirstResponder) override {} // Override GenericSubController which reinitializes the selected cell
-  void didBecomeFirstResponder() override;
-  void viewWillAppear() override;
 private:
   static constexpr int k_resultFormatType = 0;
   static constexpr int k_significantDigitsType = 1;

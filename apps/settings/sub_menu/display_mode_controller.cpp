@@ -94,5 +94,13 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
   }
   return true;
 }
-
+int DisplayModeController::initialSelectedRow() const {
+  int row = selectedRow();
+  /* If the significant number of digits row was selected, keep selecting it,
+   * else select the display mode currently used. */
+  if (row == numberOfRows() - 1) {
+    return row;
+  }
+  return PreferencesController::initialSelectedRow();
+}
 }

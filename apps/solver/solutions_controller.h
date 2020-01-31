@@ -17,6 +17,7 @@ public:
   const char * title() override;
   View * view() override { return &m_contentView; }
   void viewWillAppear() override;
+  void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override;

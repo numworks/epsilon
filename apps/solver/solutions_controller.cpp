@@ -121,9 +121,11 @@ void SolutionsController::viewWillAppear() {
   }
   m_contentView.setWarning(requireWarning);
   m_contentView.selectableTableView()->reloadData();
-  if (selectedRow() < 0) {
-    selectCellAtLocation(0, 0);
-  }
+  selectCellAtLocation(0, 0);
+}
+
+void SolutionsController::viewDidDisappear() {
+  selectCellAtLocation(-1, -1);
 }
 
 void SolutionsController::didEnterResponderChain(Responder * previousFirstResponder) {

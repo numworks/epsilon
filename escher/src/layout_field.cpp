@@ -295,6 +295,10 @@ CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
   return defaultXNTCodePoint;
 }
 
+void LayoutField::putCursorRightOfLayout() {
+  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Right));
+}
+
 void LayoutField::reload(KDSize previousSize) {
   layout().invalidAllSizesPositionsAndBaselines();
   KDSize newSize = minimalSizeForOptimalDisplay();

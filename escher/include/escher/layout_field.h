@@ -30,6 +30,7 @@ public:
   bool hasText() const { return layout().hasText(); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
+  void putCursorRightOfLayout();
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {

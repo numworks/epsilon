@@ -135,6 +135,7 @@ FunctionStore * FunctionGraphController::functionStore() const {
 
 void FunctionGraphController::initCursorParameters() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
+  const int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
   int functionIndex = 0;
   Coordinate2D<double> xy;
   double t;
@@ -143,7 +144,7 @@ void FunctionGraphController::initCursorParameters() {
     ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(record);
     t = defaultCursorT(record);
     xy = firstFunction->evaluateXYAtParameter(t, context);
-  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && functionIndex < functionStore()->numberOfActiveFunctions());
+  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && functionIndex < activeFunctionsCount);
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   functionIndex = (std::isnan(xy.x2()) || std::isinf(xy.x2())) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);

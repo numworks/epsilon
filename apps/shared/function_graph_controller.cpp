@@ -140,13 +140,15 @@ void FunctionGraphController::initCursorParameters() {
   Coordinate2D<double> xy;
   double t;
   do {
-    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex++);
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
     ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(record);
     t = defaultCursorT(record);
     xy = firstFunction->evaluateXYAtParameter(t, context);
-  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && functionIndex < activeFunctionsCount);
+  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && ++functionIndex < activeFunctionsCount);
+  if (functionIndex == activeFunctionsCount) {
+    functionIndex = 0;
+  }
   m_cursor->moveTo(t, xy.x1(), xy.x2());
-  functionIndex = (std::isnan(xy.x2()) || std::isinf(xy.x2())) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);
   if (interactiveCurveViewRange()->yAuto()) {
     interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);

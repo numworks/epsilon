@@ -369,6 +369,14 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   return true;
 }
 
+bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
+  if (m_delegate->layoutFieldShouldFinishEditing(this, event)) {
+    resetSelection();
+    return true;
+  }
+  return false;
+}
+
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   bool didHandleEvent = false;
   KDSize previousSize = minimalSizeForOptimalDisplay();

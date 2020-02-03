@@ -228,11 +228,11 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   } else if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch ||
       input().recursivelyMatches(
         [](const Expression e, Context * c) {
-          constexpr int approximateOnlyTypesCount = 9;
           /* If the input contains the following types, we only display the
            * approximate output. */
-          ExpressionNode::Type approximateOnlyTypes[approximateOnlyTypesCount] = {
+          ExpressionNode::Type approximateOnlyTypes[] = {
             ExpressionNode::Type::Random,
+            ExpressionNode::Type::Unit,
             ExpressionNode::Type::Round,
             ExpressionNode::Type::FracPart,
             ExpressionNode::Type::Integral,
@@ -242,7 +242,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::ConfidenceInterval,
             ExpressionNode::Type::PredictionInterval
           };
-          return e.isOfType(approximateOnlyTypes, approximateOnlyTypesCount);
+          return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes));
         }, context, true))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;

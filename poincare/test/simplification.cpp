@@ -309,6 +309,16 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_A^2×_s^4×_kg^(-1)×_m^(-3)", "_F×_m^\u0012-1\u0013"); // Vacuum magnetic permeability 𝝴0
   assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-4)", "_K^\u0012-4\u0013×_kg×_s^\u0012-3\u0013"); // Stefan–Boltzmann constant _W×_m^-2×_K^-4
 
+  /* Keep units for 0, infinity float results, Remove unit for undefined
+   * expression */
+  //assert_parsed_expression_simplify_to("0_s", "0_s");
+  assert_parsed_expression_simplify_to("inf×_s", "inf×_s");
+  //assert_parsed_expression_simplify_to("-inf×_s", "-inf×_s");
+  //assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0_s");
+  assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "0×_s");
+  //assert_parsed_expression_simplify_to("log(0)×_s", "-inf×_s");
+  assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
+
   /* Units with invalid exponent */
   assert_parsed_expression_simplify_to("_s^(1/2)", "undef");
 

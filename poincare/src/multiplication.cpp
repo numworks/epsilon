@@ -766,13 +766,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     const Expression c = childAtIndex(0);
     if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isZero()) {
       // Check that other children don't match inf or unit
-      bool infiniteOrUnitFactor = false;
-      for (int i = 1; i < numberOfChildren(); i++) {
-        infiniteOrUnitFactor = childAtIndex(i).recursivelyMatches([](const Expression e, Context * context) { return Expression::IsInfinity(e,context) || e.type() == ExpressionNode::Type::Unit; }, reductionContext.context());
-        if (infiniteOrUnitFactor) {
-          break;
-        }
-      }
+      bool infiniteOrUnitFactor = recursivelyMatches([](const Expression e, Context * context) { return Expression::IsInfinity(e,context) || e.type() == ExpressionNode::Type::Unit; }, reductionContext.context());
       if (!infiniteOrUnitFactor) {
         replaceWithInPlace(c);
         return c;

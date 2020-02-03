@@ -154,6 +154,9 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
     return *this;
   }
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits) {
+    return replaceWithUndefinedInPlace();
+  }
   {
     Expression current = *this;
     Expression p = parent();

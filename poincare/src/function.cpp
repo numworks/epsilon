@@ -115,7 +115,9 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (childAtIndex(0).isUndefined()) {
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits
+      || childAtIndex(0).isUndefined())
+  {
     return replaceWithUndefinedInPlace();
   }
   Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, reductionContext.symbolicComputation());
@@ -123,7 +125,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
-    result = Undefined::Builder();
+    return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
   // The stored expression is as entered by the user, so we need to call reduce

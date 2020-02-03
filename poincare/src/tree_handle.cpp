@@ -47,7 +47,9 @@ TreeHandle TreeHandle::childAtIndex(int i) const { return TreeHandle(node()->chi
 void TreeHandle::replaceWithInPlace(TreeHandle t) {
   assert(!isUninitialized());
   TreeHandle p = parent();
-  if (!p.isUninitialized()) {
+  if (p.isUninitialized()) {
+    t.detachFromParent();
+  } else {
     p.replaceChildInPlace(*this, t);
   }
 }

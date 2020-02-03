@@ -492,7 +492,13 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     char buffer[bufferSize];
     {
       CodePoint c[] = {UCodePointEmpty, '\n'};
-      UTF8Helper::CopyAndRemoveCodePoints(buffer, bufferSize, eventText, c, 2);
+      bool complete = UTF8Helper::CopyAndRemoveCodePoints(buffer, bufferSize, eventText, c, 2);
+      /* If the text is too long to be stored in buffer, we do not insert any
+       * text. This behaviour is consistent with 'insertTextAtLocation'
+       * behaviour. */
+      if (!complete) {
+        return false;
+      }
     }
     // Replace System parentheses (used to keep layout tree structure) by normal parentheses
     Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);

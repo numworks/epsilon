@@ -362,6 +362,7 @@ template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(TreeHandle*, size_t);
 template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(TreeHandle*, size_t);
 template Tangent TreeHandle::FixedArityBuilder<Tangent, TangentNode>(TreeHandle*, size_t);
 template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(TreeHandle*, size_t);
+template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(TreeHandle*, size_t);
 template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(TreeHandle*, size_t);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(TreeHandle*, size_t);
 

@@ -60,7 +60,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   static constexpr TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
-    &Parser::parseStore,           // Token::Store
+    &Parser::parseStoreOrUnitConvert, // Token::Store
     &Parser::parseEqual,           // Token::Equal
     &Parser::parseUnexpected,      // Token::RightSystemParenthesis
     &Parser::parseUnexpected,      // Token::RightBracket
@@ -275,30 +275,42 @@ void Parser::parseEqual(Expression & leftHandSide, Token::Type stoppingType) {
   }
 }
 
-void Parser::parseStore(Expression & leftHandSide, Token::Type stoppingType) {
+void Parser::parseStoreOrUnitConvert(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing.
     return;
   }
   // At this point, m_currentToken is Token::Store.
-  popToken();
-  if (!m_currentToken.is(Token::Identifier) || IsReservedName(m_currentToken.text(), m_currentToken.length())) {
-    m_status = Status::Error; // The right-hand side of Token::Store must be symbol or function that is not reserved.
+  bool parseId = m_nextToken.is(Token::Identifier) && !IsReservedName(m_nextToken.text(), m_nextToken.length());
+  if (parseId) {
+    popToken();
+    // Try parsing a store
+    Expression rightHandSide;
+    parseCustomIdentifier(rightHandSide, m_currentToken.text(), m_currentToken.length(), true);
+    if (m_status != Status::Progress) {
+      return;
+    }
+    if (!m_nextToken.is(Token::EndOfStream)
+        || !(rightHandSide.type() == ExpressionNode::Type::Symbol
+          || (rightHandSide.type() == ExpressionNode::Type::Function
+            && rightHandSide.childAtIndex(0).type() == ExpressionNode::Type::Symbol)))
+    {
+      m_status = Status::Error; // Store expects a single symbol or function.
+      return;
+    }
+    leftHandSide = Store::Builder(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
     return;
   }
-  Expression rightHandSide;
-  parseCustomIdentifier(rightHandSide, m_currentToken.text(), m_currentToken.length(), true);
+  // Try parsing a unit convert
+  Expression rightHandSide = parseUntil(stoppingType);
   if (m_status != Status::Progress) {
     return;
   }
-  if (!m_nextToken.is(Token::EndOfStream) ||
-      !( rightHandSide.type() == ExpressionNode::Type::Symbol ||
-        (rightHandSide.type() == ExpressionNode::Type::Function && rightHandSide.childAtIndex(0).type() == ExpressionNode::Type::Symbol)))
-  {
-    m_status = Status::Error; // Store expects a single symbol or function.
+  if (!m_nextToken.is(Token::EndOfStream) || !rightHandSide.isUnitsOnly(m_context)) {
+    m_status = Status::Error; // Store expects a single symbol or function or a unit.
     return;
   }
-  leftHandSide = Store::Builder(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
+  leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
 }
 
 bool Parser::parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType) {

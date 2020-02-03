@@ -32,6 +32,8 @@ public:
 
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
+  bool beautifiedExpressionHasUnits() const override { return reducedExpressionIsUnitsOnly(); }
+  bool reducedExpressionIsUnitsOnly() const override;
 
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
 

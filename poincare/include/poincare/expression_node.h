@@ -40,6 +40,7 @@ public:
     Constant,
     Symbol,
     Store,
+    UnitConvert,
     Equal,
     Sine,
     Cosine,
@@ -126,7 +127,8 @@ public:
   enum class SymbolicComputation {
     ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,
     ReplaceAllDefinedSymbolsWithDefinition = 1,
-    ReplaceDefinedFunctionsWithDefinitions = 2
+    ReplaceDefinedFunctionsWithDefinitions = 2,
+    ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits = 3 // Used in Expression::isUnitsOnly
   };
   enum class Sign {
     Negative = -1,
@@ -174,6 +176,8 @@ public:
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
   virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
+  virtual bool beautifiedExpressionHasUnits() const { return false; } // This must be called on a beautified expression
+  virtual bool reducedExpressionIsUnitsOnly() const { return false; } // This must be called on a reduced expression
 
   /* Simplification */
   /* SimplificationOrder returns:

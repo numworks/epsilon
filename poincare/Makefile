@@ -144,6 +144,7 @@ poincare_src += $(addprefix poincare/src/,\
   trigonometry_cheat_table.cpp \
   undefined.cpp \
   unit.cpp \
+  unit_convert.cpp \
   unreal.cpp \
   variable_context.cpp \
 )

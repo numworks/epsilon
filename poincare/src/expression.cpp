@@ -453,6 +453,14 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   return degree;
 }
 
+bool Expression::isUnitsOnly(Context * context) const {
+  if (type() == ExpressionNode::Type::Unit) {
+    return true;
+  }
+  Expression thisBeautified = clone().reduce(ExpressionNode::ReductionContext(context, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits)); // The values do not really matter except for the symbolicComputation
+  return thisBeautified.reducedExpressionIsUnitsOnly();
+}
+
 /* Complex */
 
 bool Expression::EncounteredComplex() {
@@ -684,8 +692,13 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
     if (approximateExpression) {
       static_cast<Matrix *>(approximateExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
     }
+  } else if (e.type() == ExpressionNode::Type::UnitConvert) {
+    /* Case 2: the initial expression is a unit convert, so we already beautified the result. */
+    *simplifiedExpression = e;
+    *approximateExpression = e;
+    return;
   } else {
-    /* Case 2: the reduced expression is scalar or too complex to respect the
+    /* Case 3: the reduced expression is scalar or too complex to respect the
      * complex format. */
     return e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
   }

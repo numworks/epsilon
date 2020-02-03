@@ -221,6 +221,9 @@ Unit Unit::Builder(const Dimension * dimension, const Representative * represent
 }
 
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits) {
+    return *this;
+  }
   UnitNode * unitNode = static_cast<UnitNode *>(node());
   const Dimension * dim = unitNode->dimension();
   const Representative * rep = unitNode->representative();

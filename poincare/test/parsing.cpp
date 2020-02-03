@@ -436,6 +436,24 @@ QUIZ_CASE(poincare_parsing_parse_store) {
   assert_text_not_parsable("ans→ans");
 }
 
+QUIZ_CASE(poincare_parsing_parse_unit_convert) {
+  Parser p1("_m", nullptr);
+  Expression meter = p1.parse();
+  assert_parsed_expression_is("1→_m", UnitConvert::Builder(BasedInteger::Builder(1), meter));
+  Parser p2("_km", nullptr);
+  Expression kilometer = p2.parse();
+  assert_parsed_expression_is("1→_m/_km", UnitConvert::Builder(BasedInteger::Builder(1), Division::Builder(meter, kilometer)));
+
+  assert_text_not_parsable("1→3_m");
+  assert_simplify("_m→a", Radian, Real);
+  assert_simplify("_m→b", Radian, Real);
+  assert_text_not_parsable("1_km→a×b");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+}
+
 QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_text_not_parsable(".1.2");
   assert_text_not_parsable("1 2");

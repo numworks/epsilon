@@ -64,7 +64,7 @@ private:
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseStore(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseStoreOrUnitConvert(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
 
   // Parsing helpers

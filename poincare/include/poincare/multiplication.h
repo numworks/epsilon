@@ -25,6 +25,8 @@ public:
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
+  bool beautifiedExpressionHasUnits() const override;
+  bool reducedExpressionIsUnitsOnly() const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c*d); }
@@ -65,6 +67,7 @@ class Multiplication : public NAryExpression {
   friend class AdditionNode;
   friend class Addition;
   friend class Power;
+  friend class UnitConvert;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   static Multiplication Builder() { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(); }

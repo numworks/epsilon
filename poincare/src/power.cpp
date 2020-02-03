@@ -85,6 +85,10 @@ int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolN
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
+bool PowerNode::reducedExpressionIsUnitsOnly() const {
+  return childAtIndex(0)->type() == ExpressionNode::Type::Unit;
+}
+
 bool PowerNode::isReal(Context * context) const {
   Expression base(childAtIndex(0));
   Expression index(childAtIndex(1));

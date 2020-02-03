@@ -265,6 +265,9 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
   if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Multiplication) {
     ancestor = ancestor.parent();
   }
+  if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Opposite) {
+    ancestor = ancestor.parent();
+  }
   if (ancestor.isUninitialized()) {
     return *this;
   }

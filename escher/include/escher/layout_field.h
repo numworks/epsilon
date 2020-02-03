@@ -41,9 +41,7 @@ public:
   /* Responder */
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
-  bool shouldFinishEditing(Ion::Events::Event event) override { // TODO REMOVE ?
-    return m_delegate->layoutFieldShouldFinishEditing(this, event);
-  }
+  bool shouldFinishEditing(Ion::Events::Event event) override; // TODO REMOVE ?
 
   // Selection
   bool resetSelection() { return m_contentView.resetSelection(); }

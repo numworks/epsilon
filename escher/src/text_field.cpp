@@ -503,19 +503,18 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     // Replace System parentheses (used to keep layout tree structure) by normal parentheses
     Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
 
-    const char * nextCursorLocation = m_contentView.editedText() + draftTextLength();
     if (insertTextAtLocation(buffer, const_cast<char *>(cursorLocation()))) {
       /* The cursor position depends on the text as we sometimes want to position
        * the cursor at the end of the text and sometimes after the first
        * parenthesis. */
-      nextCursorLocation = cursorLocation();
+      const char * nextCursorLocation = cursorLocation();
       if (forceCursorRightOfText) {
         nextCursorLocation+= strlen(buffer);
       } else {
         nextCursorLocation+= TextInputHelpers::CursorPositionInCommand(eventText) - eventText;
       }
+      setCursorLocation(nextCursorLocation);
     }
-    setCursorLocation(nextCursorLocation);
   }
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
 }

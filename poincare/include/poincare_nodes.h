@@ -84,6 +84,7 @@
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
+#include <poincare/unit_convert.h>
 #include <poincare/unreal.h>
 #include <poincare/variable_context.h>
 

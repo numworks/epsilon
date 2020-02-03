@@ -22,7 +22,7 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft = fa
 
 /* Copy src into dst while removing all code points in codePoints. Ensure null-
  * termination of dst. */
-void CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodePoint * codePoints, int numberOfCodePoints);
+bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodePoint * codePoints, int numberOfCodePoints);
 
 /* Remove all code points c. and update an index that should be lower if code
  * points where removed before it. Ensure null-termination of dst. */

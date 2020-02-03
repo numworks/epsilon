@@ -231,9 +231,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
       strcmp(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined)) == 0
       ||
       // If the approximate output is 'unreal' or the exact result is 'undef'
-      (strcmp(exactOutputText(), Undefined::Name()) == 0 ||
-       strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Unreal::Name()) == 0 ||
-       exactOutput().type() == ExpressionNode::Type::Undefined)
+      strcmp(exactOutputText(), Undefined::Name()) == 0 ||
+      strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Unreal::Name()) == 0
       ||
       /* If the approximate output is 'undef' and the input and exactOutput are
        * equal */

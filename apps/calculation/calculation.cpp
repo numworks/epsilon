@@ -224,12 +224,29 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   }
   if (shouldOnlyDisplayExactOutput()) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  // Force all results to be ApproximateOnly in Dutch exam mode
-  } else if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch ||
+  } else if (
+      /* If the exact and approximate outputs are equal (with the
+       * UserDefined number of significant digits), do not display the exact
+       * output. Indeed, in this case, the layouts are identical. */
+      strcmp(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined)) == 0
+      ||
+      // If the approximate output is 'unreal' or the exact result is 'undef'
+      (strcmp(exactOutputText(), Undefined::Name()) == 0 ||
+       strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Unreal::Name()) == 0 ||
+       exactOutput().type() == ExpressionNode::Type::Undefined)
+      ||
+      /* If the approximate output is 'undef' and the input and exactOutput are
+       * equal */
+      (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0 &&
+       strcmp(inputText(), exactOutputText()) == 0)
+      ||
+      // Force all outputs to be ApproximateOnly in Dutch exam mode
+      GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch
+      ||
+      /* If the input contains the following types, we only display the
+       * approximate output. */
       input().recursivelyMatches(
         [](const Expression e, Context * c) {
-          /* If the input contains the following types, we only display the
-           * approximate output. */
           ExpressionNode::Type approximateOnlyTypes[] = {
             ExpressionNode::Type::Random,
             ExpressionNode::Type::Unit,
@@ -243,25 +260,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::PredictionInterval
           };
           return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes));
-        }, context, true))
+        }, context, true)
+  )
   {
-    m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (strcmp(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined)) == 0) {
-    /* If the exact and approximate results' texts are equal (with the
-     * UserDefined number of significant digits), do not display the exact
-     * result. Indeed, in this case, the layouts are identical. */
-    m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (strcmp(exactOutputText(), Undefined::Name()) == 0
-      || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Unreal::Name()) == 0
-      || exactOutput().type() == ExpressionNode::Type::Undefined)
-  {
-    // If the approximate result is 'unreal' or the exact result is 'undef'
-    m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
-      && strcmp(inputText(), exactOutputText()) == 0)
-  {
-    /* If the approximate result is 'undef' and the input and exactOutput are
-     * equal */
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (input().recursivelyMatches(Expression::IsApproximate, context)
       || exactOutput().recursivelyMatches(Expression::IsApproximate, context))

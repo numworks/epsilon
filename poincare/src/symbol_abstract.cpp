@@ -4,7 +4,7 @@
 #include <poincare/function.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
-#include <poincare/expression.h>
+#include <poincare/undefined.h>
 #include <poincare/helpers.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
@@ -63,6 +63,9 @@ bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test,
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits) {
+    return Undefined::Builder();
+  }
   bool shouldNotReplaceSymbols = symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
   if (symbol.type() == ExpressionNode::Type::Symbol && shouldNotReplaceSymbols) {
     return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);

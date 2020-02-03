@@ -919,6 +919,16 @@ QUIZ_CASE(poincare_simplification_store_matrix) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
+QUIZ_CASE(poincare_simplification_unit_convert) {
+  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km/_hour");
+  assert_parsed_expression_simplify_to("2_m→_km×_m/_m", "0.002×_km×_m/_m");
+  assert_parsed_expression_simplify_to("10_m/_s→_km", Undefined::Name());
+  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km/_hour");
+  assert_parsed_expression_simplify_to("10_m^2→_mm×_km", "10×_mm×_km");
+  assert_parsed_expression_simplify_to("2_hour+2_min→_s", "7320×_s");
+  assert_parsed_expression_simplify_to("2×_kg×_m^2×_s^(-2)→_J", "2×_J");
+}
+
 QUIZ_CASE(poincare_simplification_complex_format) {
   // Real
   assert_parsed_expression_simplify_to("𝐢", "unreal", User, Radian, Real);

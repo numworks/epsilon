@@ -83,6 +83,8 @@ _main \
 _micropython_port_interruptible_msleep \
 _micropython_port_interrupt_if_needed \
 _micropython_port_vm_hook_loop \
+_modion_keyboard_keydown \
+_modtime_sleep \
 _modturtle_backward \
 _modturtle_circle \
 _modturtle_forward \

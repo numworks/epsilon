@@ -24,7 +24,7 @@ public:
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
-  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
+  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
   float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
   /* Layout */

@@ -304,10 +304,21 @@ QUIZ_CASE(poincare_parsing_units) {
     }
   }
 
+  // Non-existing units are not parsable
   assert_text_not_parsable("_n");
   assert_text_not_parsable("_a");
+
+  // Any identifier starting with '_' is tokenized as a unit
   assert_tokenizes_as_unit("_m");
   assert_tokenizes_as_unit("_A");
+
+  // Can parse implicit multiplication with units
+  Expression kilometer = Expression::Parse("_km", nullptr);
+  Expression second = Expression::Parse("_s", nullptr);
+  assert_parsed_expression_is("_kmπ", Multiplication::Builder(kilometer, Constant::Builder(UCodePointGreekSmallLetterPi)));
+  assert_parsed_expression_is("π_km", Multiplication::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), kilometer));
+  assert_parsed_expression_is("_s_km", Multiplication::Builder(second, kilometer));
+  assert_parsed_expression_is("3_s", Multiplication::Builder(BasedInteger::Builder(3), second));
 }
 
 QUIZ_CASE(poincare_parsing_identifiers) {

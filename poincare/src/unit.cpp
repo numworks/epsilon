@@ -1,5 +1,6 @@
 #include <poincare/unit.h>
 #include <poincare/division.h>
+#include <poincare/float.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -250,6 +251,13 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
 
 Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression ancestor = parent();
+  // Force Float(1) in front of an orphan Unit
+  if (ancestor.isUninitialized()) {
+    Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
+    replaceWithInPlace(m);
+    m.addChildAtIndexInPlace(*this, 1, 1);
+    return std::move(m);
+  }
   // Check that the exponent, if any, of a Unit is an integer
   if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Power) {
     Expression exponent = ancestor.childAtIndex(1);

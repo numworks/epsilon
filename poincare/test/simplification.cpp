@@ -546,7 +546,7 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 }
 
-QUIZ_CASE(poincare_simplication_trigonometry_functions) {
+QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   // -- sin/cos -> tan
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
   assert_parsed_expression_simplify_to("cos(x)/sin(x)", "1/tan(x)");
@@ -751,7 +751,7 @@ QUIZ_CASE(poincare_simplication_trigonometry_functions) {
   assert_parsed_expression_simplify_to("sin(atan(3/4))", "3/5", User, Degree);
 }
 
-QUIZ_CASE(poincare_simplication_matrix) {
+QUIZ_CASE(poincare_simplification_matrix) {
   // Addition Matrix
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", Undefined::Name());
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+1", Undefined::Name());

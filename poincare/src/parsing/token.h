@@ -17,13 +17,13 @@ public:
   enum Type {
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0, // Must be the first
-    Store,
+    RightwardsArrow,
     Equal,
-      /* Equal should have a higher precedence than Store, because
+      /* Equal should have a higher precedence than RightArrow, because
        * Tokenizer::parseEqual looks for a right hand side until it finds a
-       * token of lesser precedence than Equal, and this prevents expressions
-       * such as "3=4>a". Tokenizer::parseStore uses a special algorithm that
-       * prevents (3>4=a). */
+       * token of lesser precedence than EqualSymbolAbstract, and this prevents
+       * expressions such as "3=4>a". Tokenizer::parseRightArrow uses a special
+       * algorithm that prevents (3>4=a). */
     RightSystemParenthesis,
     RightBracket,
     RightParenthesis,

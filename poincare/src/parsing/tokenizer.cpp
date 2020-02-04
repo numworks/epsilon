@@ -38,7 +38,7 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
   return length;
 }
 
-size_t Tokenizer::popIdentifier() {
+size_t Tokenizer::popIdentifier(CodePoint additionalAcceptedCodePoint) {
   /* TODO handle combined code points? For now combining code points will
    * trigger a syntax error.
    * This method is used to parse any identifier, reserved or custom, or even
@@ -47,8 +47,8 @@ size_t Tokenizer::popIdentifier() {
    * instance input '2πx' without any danger.
    */
   return popWhile([](CodePoint c, CodePoint context) {
-      return c.isDecimalDigit() || c.isLatinLetter() || c == '_' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
-      });
+      return c.isDecimalDigit() || c.isLatinLetter() || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+      }, additionalAcceptedCodePoint);
 }
 
 size_t Tokenizer::popDigits() {
@@ -162,7 +162,7 @@ Token Tokenizer::popToken() {
      * reserved or custom identifier, popIdentifier is called in both cases.
      */
     Token result(Token::Unit);
-    result.setString(start + 1, popIdentifier()); // + 1 for the underscore
+    result.setString(start + 1, popIdentifier(UCodePointNull)); // + 1 for the underscore
     return result;
   }
   if (c.isLatinLetter() ||
@@ -170,7 +170,7 @@ Token Tokenizer::popToken() {
       c.isGreekSmallLetter()) // Greek small letter pi is matched earlier
   {
     Token result(Token::Identifier);
-    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popIdentifier()); // We already popped 1 code point
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popIdentifier('_')); // We already popped 1 code point
     return result;
   }
   if ('(' <= c && c <= '/') {

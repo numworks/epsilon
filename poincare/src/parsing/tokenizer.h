@@ -23,7 +23,7 @@ private:
   size_t popDigits();
   size_t popBinaryDigits();
   size_t popHexadecimalDigits();
-  size_t popIdentifier();
+  size_t popIdentifier(CodePoint additionalAcceptedCodePoint);
   Token popNumber();
 
   const char * m_text;

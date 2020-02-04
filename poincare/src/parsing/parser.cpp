@@ -60,7 +60,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   static constexpr TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
-    &Parser::parseStoreOrUnitConvert, // Token::Store
+    &Parser::parseRightwardsArrow, // Token::RightwardsArrow
     &Parser::parseEqual,           // Token::Equal
     &Parser::parseUnexpected,      // Token::RightSystemParenthesis
     &Parser::parseUnexpected,      // Token::RightBracket
@@ -266,7 +266,7 @@ void Parser::parseEqual(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Equal)) {
     /* We parse until finding a token of lesser precedence than Equal. The next
-     * token is thus either EndOfStream or Store. */
+     * token is thus either EndOfStream or RightwardsArrow. */
     leftHandSide = Equal::Builder(leftHandSide, rightHandSide);
   }
   if (!m_nextToken.is(Token::EndOfStream)) {
@@ -275,12 +275,12 @@ void Parser::parseEqual(Expression & leftHandSide, Token::Type stoppingType) {
   }
 }
 
-void Parser::parseStoreOrUnitConvert(Expression & leftHandSide, Token::Type stoppingType) {
+void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing.
     return;
   }
-  // At this point, m_currentToken is Token::Store.
+  // At this point, m_currentToken is Token::RightwardsArrow.
   bool parseId = m_nextToken.is(Token::Identifier) && !IsReservedName(m_nextToken.text(), m_nextToken.length());
   if (parseId) {
     popToken();
@@ -307,7 +307,7 @@ void Parser::parseStoreOrUnitConvert(Expression & leftHandSide, Token::Type stop
     return;
   }
   if (!m_nextToken.is(Token::EndOfStream) || !rightHandSide.isUnitsOnly(m_context)) {
-    m_status = Status::Error; // Store expects a single symbol or function or a unit.
+    m_status = Status::Error; // UnitConvert expects "units only" on the right.
     return;
   }
   leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);

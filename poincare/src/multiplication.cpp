@@ -506,50 +506,49 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       units = unitsUnits;
     }
 
-    if (result.isUninitialized()) {
-      result = units;
+    double value = 1.0;
+    if (!result.isUninitialized()) {
+      value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    }
+    if (std::isnan(value)) {
+      // If the value is undefined, return "undef" without any unit
+      result = Undefined::Builder();
     } else {
-      double value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
-      if (std::isnan(value)) {
-        // If the value is undefined, return "undef" without any unit
-        result = Undefined::Builder();
+      Expression resultWithoutUnit;
+      if (std::isinf(value)) {
+        resultWithoutUnit = Infinity::Builder(value < 0.0);
       } else {
-        Expression resultWithoutUnit;
-        if (std::isinf(value)) {
-          resultWithoutUnit = Infinity::Builder(value < 0.0);
-        } else {
-          // Find the right unit prefix when the value ≠ 0
-          if (value != 0.0) {
-            // Identify the first Unit factor and its exponent
-            Expression firstFactor = units;
-            int exponent = 1;
-            if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
-              firstFactor = firstFactor.childAtIndex(0);
-            }
-            if (firstFactor.type() == ExpressionNode::Type::Power) {
-              Expression exp = firstFactor.childAtIndex(1);
-              firstFactor = firstFactor.childAtIndex(0);
-              assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
-              Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
-              if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
-                exponent = expInt.extractedInt();
-              } else {
-                // The exponent is too large to be extracted, so do not try to use it.
-                exponent = 0;
-              }
-            }
-            assert(firstFactor.type() == ExpressionNode::Type::Unit);
-            // Choose its multiple and update value accordingly
-            if (exponent != 0) {
-              static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
+        // Find the right unit prefix when the value ≠ 0
+        if (value != 0.0 && value != 1.0) {
+          // Identify the first Unit factor and its exponent
+          Expression firstFactor = units;
+          int exponent = 1;
+          if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
+            firstFactor = firstFactor.childAtIndex(0);
+          }
+          if (firstFactor.type() == ExpressionNode::Type::Power) {
+            Expression exp = firstFactor.childAtIndex(1);
+            firstFactor = firstFactor.childAtIndex(0);
+            assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
+            Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
+            if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
+              exponent = expInt.extractedInt();
+            } else {
+              // The exponent is too large to be extracted, so do not try to use it.
+              exponent = 0;
             }
           }
-          resultWithoutUnit = Float<double>::Builder(value);
+          assert(firstFactor.type() == ExpressionNode::Type::Unit);
+          // Choose its multiple and update value accordingly
+          if (exponent != 0) {
+            static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
+          }
         }
-        // Build final Expression
-        result = Multiplication::Builder(resultWithoutUnit, units);
-        static_cast<Multiplication &>(result).mergeMultiplicationChildrenInPlace();
+        resultWithoutUnit = Float<double>::Builder(value);
       }
+      // Build final Expression
+      result = Multiplication::Builder(resultWithoutUnit, units);
+      static_cast<Multiplication &>(result).mergeMultiplicationChildrenInPlace();
     }
   }
 

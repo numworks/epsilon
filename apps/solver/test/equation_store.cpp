@@ -160,6 +160,11 @@ QUIZ_CASE(equation_solve) {
   const char * solutions14[] = {"\u0012\u0012-π-20\u0013/\u00128\u0013\u0013", "\u0012\u0012π+20\u0013/\u00128\u0013\u0013", "\u0012\u0012π\u0013/\u00124\u0013\u0013"}; // (-π-20)/8, (π+20)/8, π/4
   assert_equation_system_exact_solve_to(equations14,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesxyz, solutions14, 3);
 
+  const char * variablesxyzabc[] = {"x", "y", "z", "a", "b", "c"};
+  const char * equations22[] = {"x+y=0", "3x+y+z=-5", "4z-π=0", "a+b+c=0", "a = 3", "c = a+2", 0};
+  const char * solutions22[] = {"\u0012\u0012-π-20\u0013/\u00128\u0013\u0013", "\u0012\u0012π+20\u0013/\u00128\u0013\u0013", "\u0012\u0012π\u0013/\u00124\u0013\u0013", "3", "-8", "5"}; // (-π-20)/8, (π+20)/8, π/4, 3, 5, -8
+  assert_equation_system_exact_solve_to(equations22,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesxyzabc, solutions22, 6);
+
   // Monovariable non-polynomial equation
   double solutions15[] = {-90.0, 90.0};
   assert_equation_approximate_solve_to("cos(x)=0", -100.0, 100.0, "x", solutions15, 2, false);

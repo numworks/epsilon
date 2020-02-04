@@ -28,7 +28,7 @@ int ContributorsController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-constexpr static int s_numberOfDevelopers = 7;
+constexpr static int s_numberOfDevelopers = 10;
 
 constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PQuentinGuidee,
@@ -38,16 +38,19 @@ constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PMaximeFriess,
   I18n::Message::PDavid,
   I18n::Message::PDamienNicolet,
+  I18n::Message::PEvannDreumont,
+  I18n::Message::PSzaboLevente,
+  I18n::Message::PVenceslasDuet,
 };
 
 constexpr static int s_numberOfBetaTesters = 5;
 
 constexpr static I18n::Message s_betaTestersUsernames[s_numberOfBetaTesters] = {
   I18n::Message::PCyprienMejat,
-  I18n::Message::PDogm,
-  I18n::Message::PWin9X,
+  I18n::Message::PTimeoArnouts,
+  I18n::Message::PLouisC,
   I18n::Message::PLucaRusso,
-  I18n::Message::PLelahelry,
+  I18n::Message::PLelahelHideux,
 };
 
 void ContributorsController::willDisplayCellForIndex(HighlightCell * cell, int index) {

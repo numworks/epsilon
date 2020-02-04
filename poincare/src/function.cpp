@@ -35,13 +35,13 @@ int FunctionNode::getPolynomialCoefficients(Context * context, const char * symb
   return e.getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
-int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+int FunctionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return 0;
   }
-  return e.getVariables(context, isVariable, variables, maxSizeVariable);
+  return e.node()->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
 }
 
 float FunctionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {

@@ -280,7 +280,7 @@ void assert_expression_has_variables(const char * expression, const char * varia
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   constexpr static int k_maxVariableSize = Poincare::SymbolAbstract::k_maxNameSize;
-  char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
+  char variableBuffer[Expression::k_maxNumberOfVariables][k_maxVariableSize] = {{0}};
   int numberOfVariables = e.getVariables(&globalContext, [](const char * symbol, Poincare::Context * context) { return true; }, (char *)variableBuffer, k_maxVariableSize);
   quiz_assert_print_if_failure(trueNumberOfVariables == numberOfVariables, expression);
   if (numberOfVariables < 0) {
@@ -288,7 +288,7 @@ void assert_expression_has_variables(const char * expression, const char * varia
     return;
   }
   int index = 0;
-  while (variableBuffer[index][0] != 0 || variables[index][0] != 0) {
+  while (index < Expression::k_maxNumberOfVariables && (variableBuffer[index][0] != 0 || variables[index][0] != 0)) {
     quiz_assert_print_if_failure(strcmp(variableBuffer[index], variables[index]) == 0, expression);
     index++;
   }
@@ -307,11 +307,17 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("BBBBBB", variableBuffer5, 1);
   const char * variableBuffer6[] = {""};
   assert_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
+  assert_expression_has_variables("a+b+c+d+e+f+g", variableBuffer6, -1);
   // f: x→1+πx+x^2+toto
   assert_simplify("1+π×x+x^2+toto→f(x)");
   const char * variableBuffer7[] = {"tata","toto", ""};
   assert_expression_has_variables("f(tata)", variableBuffer7, 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  const char * variableBuffer8[] = {"y", ""};
+  assert_expression_has_variables("diff(3x,x,0)y-2", variableBuffer8, 1);
+  const char * variableBuffer9[] = {"a", "b", "c", "d", "e", "f"};
+  assert_expression_has_variables("a+b+c+d+e+f", variableBuffer9, 6);
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {

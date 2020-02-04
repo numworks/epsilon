@@ -1,5 +1,5 @@
-#ifndef POINCARE_RIGHT_ARROW_EXPRESSION_H
-#define POINCARE_RIGHT_ARROW_EXPRESSION_H
+#ifndef POINCARE_RIGHTWARDS_ARROW_EXPRESSION_H
+#define POINCARE_RIGHTWARDS_ARROW_EXPRESSION_H
 
 #include <poincare/expression.h>
 #include <poincare/symbol_abstract.h>
@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class RightArrowExpressionNode : public ExpressionNode {
+class RightwardsArrowExpressionNode : public ExpressionNode {
 public:
   // TreeNode
   int numberOfChildren() const override { return 2; }

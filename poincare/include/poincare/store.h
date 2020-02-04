@@ -1,13 +1,13 @@
 #ifndef POINCARE_STORE_H
 #define POINCARE_STORE_H
 
-#include <poincare/right_arrow_expression.h>
+#include <poincare/rightwards_arrow_expression.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/evaluation.h>
 
 namespace Poincare {
 
-class StoreNode /*final*/ : public RightArrowExpressionNode {
+class StoreNode /*final*/ : public RightwardsArrowExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(StoreNode); }

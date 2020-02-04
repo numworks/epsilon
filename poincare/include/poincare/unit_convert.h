@@ -1,13 +1,13 @@
 #ifndef POINCARE_UNIT_CONVERT_H
 #define POINCARE_UNIT_CONVERT_H
 
-#include <poincare/right_arrow_expression.h>
+#include <poincare/rightwards_arrow_expression.h>
 #include <poincare/unit.h>
 #include <poincare/evaluation.h>
 
 namespace Poincare {
 
-class UnitConvertNode /*final*/ : public RightArrowExpressionNode {
+class UnitConvertNode /*final*/ : public RightwardsArrowExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(UnitConvertNode); }

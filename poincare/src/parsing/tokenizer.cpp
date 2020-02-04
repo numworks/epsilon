@@ -233,7 +233,7 @@ Token Tokenizer::popToken() {
     return Token(Token::Empty);
   }
   if (c == UCodePointRightwardsArrow) {
-    return Token(Token::Store);
+    return Token(Token::RightwardsArrow);
   }
   if (c == 0) {
     return Token(Token::EndOfStream);

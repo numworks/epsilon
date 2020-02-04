@@ -238,10 +238,10 @@ QUIZ_CASE(poincare_simplification_units) {
    *    a unit is the standard unit with the standard prefix in a dimension.
    *    Thus the latter case is not tested.
    *  - At present, some units will not appear as simplification output:
-   *    t, Hz, S, L. These exceptions are tested below. */
+   *    t, Hz, S, ha, L. These exceptions are tested below. */
   for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
     for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
-      if (strcmp(rep->rootSymbol(), "t") == 0 || strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "L") == 0) {
+      if (strcmp(rep->rootSymbol(), "t") == 0 || strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "ha") == 0 || strcmp(rep->rootSymbol(), "L") == 0) {
         continue;
       }
       static constexpr size_t bufferSize = 12;

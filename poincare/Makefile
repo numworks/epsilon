@@ -124,7 +124,7 @@ poincare_src += $(addprefix poincare/src/,\
   random.cpp \
   rational.cpp \
   real_part.cpp \
-  right_arrow_expression.cpp \
+  rightwards_arrow_expression.cpp \
   round.cpp \
   sequence.cpp \
   serialization_helper.cpp \

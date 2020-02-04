@@ -173,7 +173,7 @@ public:
   /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
-  virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
+  virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const;
   virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
   virtual bool beautifiedExpressionHasUnits() const { return false; } // This must be called on a beautified expression

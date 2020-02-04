@@ -14,6 +14,8 @@ public:
   // Expression
   bool isParameteredExpression() const override { return true; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
+  // Expression properties
+  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
 };
 
 class ParameteredExpression : public Expression {

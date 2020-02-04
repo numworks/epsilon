@@ -41,9 +41,8 @@ void assert_tokenizes_as_undefined_token(const char * string) {
 }
 
 void assert_text_not_parsable(const char * text) {
-  Parser p(text, nullptr);
-  Expression result = p.parse();
-  quiz_assert_print_if_failure(p.getStatus() != Parser::Status::Success, text);
+  Expression result = Expression::Parse(text, nullptr);
+  quiz_assert_print_if_failure(result.isUninitialized(), text);
 }
 
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r, bool addParentheses = false) {
@@ -437,11 +436,9 @@ QUIZ_CASE(poincare_parsing_parse_store) {
 }
 
 QUIZ_CASE(poincare_parsing_parse_unit_convert) {
-  Parser p1("_m", nullptr);
-  Expression meter = p1.parse();
+  Expression meter = Expression::Parse("_m", nullptr);
   assert_parsed_expression_is("1→_m", UnitConvert::Builder(BasedInteger::Builder(1), meter));
-  Parser p2("_km", nullptr);
-  Expression kilometer = p2.parse();
+  Expression kilometer = Expression::Parse("_km", nullptr);
   assert_parsed_expression_is("1→_m/_km", UnitConvert::Builder(BasedInteger::Builder(1), Division::Builder(meter, kilometer)));
 
   assert_text_not_parsable("1→3_m");

@@ -40,16 +40,15 @@ Expression ExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool
   return Expression(this).defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
 }
 
-int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
-  int numberOfVariables = 0;
+int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   for (ExpressionNode * c : children()) {
-    int n = c->getVariables(context, isVariable, variables, maxSizeVariable);
+    int n = c->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
     if (n < 0) {
       return n;
     }
-    numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
+    nextVariableIndex = n;
   }
-  return numberOfVariables;
+  return nextVariableIndex;
 }
 
 float ExpressionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {

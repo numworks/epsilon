@@ -146,7 +146,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     if (e.type() == ExpressionNode::Type::Unreal) {
       return Error::EquationUnreal;
     }
-    numberOfVariables = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize);
+    numberOfVariables = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, numberOfVariables);
     if (numberOfVariables == -1) {
       return Error::TooManyVariables;
     }
@@ -162,7 +162,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   for (int i = 0; i < numberOfDefinedModels(); i++) {
     const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context, true);
     assert(!e.isUninitialized() && e.type() != ExpressionNode::Type::Undefined && e.type() != ExpressionNode::Type::Unreal);
-    int varCount = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return context->expressionTypeForIdentifier(symbol, strlen(symbol)) == Poincare::Context::SymbolAbstractType::Symbol; }, (char *)m_userVariables, Poincare::SymbolAbstract::k_maxNameSize);
+    int varCount = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return context->expressionTypeForIdentifier(symbol, strlen(symbol)) == Poincare::Context::SymbolAbstractType::Symbol; }, (char *)m_userVariables, Poincare::SymbolAbstract::k_maxNameSize, m_numberOfUserVariables);
     if (varCount < 0) {
       m_numberOfUserVariables = Expression::k_maxNumberOfVariables;
       break;

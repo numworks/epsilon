@@ -37,31 +37,31 @@ int SymbolNode::getPolynomialCoefficients(Context * context, const char * symbol
   return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
-int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   // variables is in fact of type char[k_maxNumberOfVariables][maxSizeVariable]
-  size_t variablesIndex = 0;
-  while(variables[variablesIndex] != 0) {
-    variablesIndex+= maxSizeVariable;
-  }
   if (isVariable(m_name, context)) {
     int index = 0;
-    while (variables[index] != 0) {
+    while (index < maxSizeVariable*Expression::k_maxNumberOfVariables && variables[index] != 0) {
       if (strcmp(m_name, &variables[index]) == 0) {
-        return variablesIndex/maxSizeVariable;
+        return nextVariableIndex;
       }
       index+= maxSizeVariable;
     }
-    if ((variablesIndex/maxSizeVariable) < Expression::k_maxNumberOfVariables) {
+    if (nextVariableIndex < Expression::k_maxNumberOfVariables) {
+      assert(variables[nextVariableIndex*maxSizeVariable] == 0);
       if (strlen(m_name) + 1 > (size_t)maxSizeVariable) {
         return -2;
       }
-      strlcpy(&variables[variablesIndex], m_name, maxSizeVariable);
-      variables[variablesIndex+maxSizeVariable] = 0;
-      return variablesIndex/maxSizeVariable+1;
+      strlcpy(&variables[nextVariableIndex*maxSizeVariable], m_name, maxSizeVariable);
+      nextVariableIndex++;
+      if (nextVariableIndex < Expression::k_maxNumberOfVariables) {
+        variables[nextVariableIndex*maxSizeVariable] = 0;
+      }
+      return nextVariableIndex;
     }
     return -1;
   }
-  return variablesIndex/maxSizeVariable;
+  return nextVariableIndex;
 }
 
 float SymbolNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {

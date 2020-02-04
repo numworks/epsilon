@@ -327,6 +327,9 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_m+_s", "undef");
   assert_parsed_expression_simplify_to("_m^2+_m", "undef");
   assert_parsed_expression_simplify_to("cos(_m)", "undef");
+
+  // Units with values
+  assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
 }
 
 QUIZ_CASE(poincare_simplification_power) {

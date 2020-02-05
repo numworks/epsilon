@@ -52,6 +52,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Pr
 Expression GreatCommonDivisor::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

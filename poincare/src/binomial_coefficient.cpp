@@ -58,6 +58,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 Expression BinomialCoefficient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

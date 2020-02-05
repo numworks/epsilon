@@ -37,6 +37,7 @@ Expression AbsoluteValueNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = Expression::defaultShallowReduce();
+  e = e.defaultHandleUnitsInChildren();
   if (e.isUndefined()) {
     return e;
   }

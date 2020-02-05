@@ -55,6 +55,7 @@ Complex<T> ComplexCartesianNode::templatedApproximate(Context * context, Prefere
 Expression ComplexCartesian::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
+    e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

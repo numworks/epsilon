@@ -52,6 +52,7 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
 Expression ArcSine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

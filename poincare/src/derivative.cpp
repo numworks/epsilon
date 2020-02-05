@@ -154,6 +154,7 @@ T DerivativeNode::riddersApproximation(Context * context, Preferences::ComplexFo
 Expression Derivative::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

@@ -14,6 +14,7 @@ Expression BinomialDistributionFunction::shallowReduce(Context * context, bool *
   }
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

@@ -51,6 +51,7 @@ Expression ArcTangentNode::shallowReduce(ReductionContext reductionContext) {
 Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

@@ -610,9 +610,10 @@ void makePositive(Expression * e, bool * isNegative) {
 }
 
 void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  bool hasUnits = hasUnit();
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
    * take into account the complex format to display a+i*b or r*e^(i*th) */
-  if (type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) {
+  if ((type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) && !hasUnits) {
     ComplexCartesian ecomplex = type() == ExpressionNode::Type::ComplexCartesian ? convert<ComplexCartesian>() : ComplexCartesian::Builder(*this, Rational::Builder(0));
     if (approximateExpression) {
       /* Step 1: Approximation
@@ -650,7 +651,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
     *simplifiedExpression = deepBeautify(userReductionContext);
     // Step 2: approximation
     if (approximateExpression) {
-      if (simplifiedExpression->recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, false)) {
+      if (hasUnits) {
         /* Approximate and simplified expressions are set equal so that only
          * one of them will be output. Note that there is no need to clone
          * since the expressions will not be altered. */

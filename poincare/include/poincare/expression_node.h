@@ -128,7 +128,7 @@ public:
     ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,
     ReplaceAllDefinedSymbolsWithDefinition = 1,
     ReplaceDefinedFunctionsWithDefinitions = 2,
-    ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits = 3 // Used in Expression::isUnitsOnly
+    ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits = 3 // Used in UnitConvert::shallowReduce
   };
   enum class Sign {
     Negative = -1,

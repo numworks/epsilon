@@ -74,6 +74,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
 Expression Factor::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

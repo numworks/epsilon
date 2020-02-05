@@ -453,14 +453,6 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   return degree;
 }
 
-bool Expression::isUnitsOnly(Context * context) const {
-  if (type() == ExpressionNode::Type::Unit) {
-    return true;
-  }
-  Expression thisBeautified = clone().reduce(ExpressionNode::ReductionContext(context, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits)); // The values do not really matter except for the symbolicComputation
-  return thisBeautified.reducedExpressionIsUnitsOnly();
-}
-
 /* Complex */
 
 bool Expression::EncounteredComplex() {

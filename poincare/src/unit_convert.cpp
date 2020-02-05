@@ -26,11 +26,30 @@ Evaluation<T> UnitConvertNode::templatedApproximate(Context * context, Preferenc
 }
 
 Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  // UnitConvert the expression.
-  Expression finalUnit = childAtIndex(1).clone();
-  Expression division = Division::Builder(childAtIndex(0), childAtIndex(1));
-  division = division.simplify(reductionContext);
-  if (division.beautifiedExpressionHasUnits()) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  // Find the unit
+  ReductionContext unitReductionContext = ReductionContext(
+      reductionContext.context(),
+      reductionContext.complexFormat(),
+      reductionContext.angleUnit(),
+      reductionContext.target(),
+      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+  Expression finalUnit = childAtIndex(1).reduce(unitReductionContext).getUnit();
+  if (finalUnit.isUndefined()) {
+    // There is no unit on the right
+    return replaceWithUndefinedInPlace();
+  }
+
+  // Divide the left member by the new unit
+  Expression division = Division::Builder(childAtIndex(0), finalUnit.clone());
+  division = division.reduce(reductionContext);
+  if (division.hasUnit()) {
+    // The left and right members are not homogeneous
     return replaceWithUndefinedInPlace();
   }
   double floatValue = division.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());

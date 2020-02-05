@@ -671,7 +671,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         // The inner power is unreal, return "unreal"
         replaceWithInPlace(approximation);
         return approximation;
-      } else if (approximation.type() == ExpressionNode::Type::Undefined) {
+      } else if (approximation.type() == ExpressionNode::Type::Undefined && !powerBase.isReal(reductionContext.context())) { //TODO Quite dirty way to check this. We want to forbid x, but not a unit.
         /* The inner power is undefined, it can be 'x^(1/2)' for instance. We
          * don't want to simplify this as it could be unreal with x = -2 but
          * also real with x = 2. */

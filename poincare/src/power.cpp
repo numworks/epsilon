@@ -312,7 +312,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
 
-  // Step 0: Handle matrices
+  // Step 1: There should be no unit in the index!
+  if (index.hasUnit()) {
+    return replaceWithUndefinedInPlace();
+  }
+
+  // Step 2: Handle matrices
   if (index.deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
@@ -364,7 +369,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   Expression power = *this;
-  /* Step 0: if both children are true unresolved complexes, the result is not
+  /* Step 3: if both children are true unresolved complexes, the result is not
    * simplified. TODO? */
   if (!base.isReal(reductionContext.context())
       && baseType != ExpressionNode::Type::ComplexCartesian
@@ -374,7 +379,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     return *this;
   }
 
-  /* Step 1: Handle simple cases as x^0, x^1, 0^x and 1^x first, for 2 reasons:
+  /* Step 4: Handle simple cases as x^0, x^1, 0^x and 1^x first, for 2 reasons:
    * - we can assert after this step that there is no division by 0:
    *   for instance, 0^(-2)->undefined
    * - we save computational time by early escaping for these cases. */
@@ -435,7 +440,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * ln(e^(3^(1/2))->3^(1/2). */
   bool letPowerAtRoot = parentIsALogarithmOfSameBase();
 
-  /* Step 2: we now bubble up ComplexCartesian, we handle different cases:
+  /* Step 5: we now bubble up ComplexCartesian, we handle different cases:
    * At least, one child is a ComplexCartesian and the other is either a
    * ComplexCartesian or real. */
 
@@ -491,7 +496,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     return result.shallowReduce();
   }
 
-  /* Step 3: We look for square root and sum of square roots (two terms maximum
+  /* Step 6: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */
   if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
     Expression r = removeSquareRootsFromDenominator(reductionContext);
@@ -527,7 +532,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }*/
 #endif
 
-  // Step 5: (±inf)^x = 0 or ±inf
+  // Step 7: (±inf)^x = 0 or ±inf
   if (baseType == ExpressionNode::Type::Infinity) {
     Expression result;
     ExpressionNode::Sign indexSign = index.sign(reductionContext.context());
@@ -550,7 +555,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
-  // Step 6: p^q with p, q rationals --> a*b^c*exp(i*pi*d) with a, b, c, d rationals
+  // Step 8: p^q with p, q rationals --> a*b^c*exp(i*pi*d) with a, b, c, d rationals
   if (!letPowerAtRoot && baseType == ExpressionNode::Type::Rational) {
     Rational rationalBase = static_cast<Rational &>(base);
     // p^q with p, q rationals
@@ -563,7 +568,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return simplifyRationalRationalPower(reductionContext);
     }
   }
-  /* Step 7: (a)^(1/2) --> i*(-a)^(1/2)
+  /* Step 9: (a)^(1/2) --> i*(-a)^(1/2)
    * WARNING: this rule true only if:
    * - a real: (-1*i)^(1/2) != i*i^(1/2)
    * - a is negative: (-(-2))^(1/2) != -2^(1/2)
@@ -589,7 +594,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return m1.shallowReduce(reductionContext);
     }
   }
-  // Step 8: e^(r*i*Pi) with r rational --> cos(pi*r) + i*sin(pi*r)
+  // Step 10: e^(r*i*Pi) with r rational --> cos(pi*r) + i*sin(pi*r)
   if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression i = index.childAtIndex(index.numberOfChildren()-2);
     static_cast<Multiplication &>(index).removeChildAtIndexInPlace(index.numberOfChildren()-2);
@@ -607,7 +612,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }
-  // Step 9: x^log(y,x)->y if y > 0
+  // Step 11: x^log(y,x)->y if y > 0
   if (indexType == ExpressionNode::Type::Logarithm) {
     if (index.numberOfChildren() == 2 && base.isIdenticalTo(index.childAtIndex(1))) {
       // y > 0
@@ -627,7 +632,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return result;
     }
   }
-  /* Step 10: (a^b)^c -> a^(b*c)
+  /* Step 12: (a^b)^c -> a^(b*c)
    * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
    * This rule is true if:
    * - a > 0
@@ -678,7 +683,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
-  // Step 11: (a*b*c*...)^r ?
+  // Step 13: (a*b*c*...)^r ?
   if (!letPowerAtRoot && baseType == ExpressionNode::Type::Multiplication) {
     Multiplication multiplicationBase = static_cast<Multiplication &>(base);
     // Case 1: (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
@@ -719,7 +724,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
     }
   }
-  /* Step 12: a^(p/q+c+...) -> Rational::Builder(a^p)*a^(1/q+c+...) with a
+  /* Step 14: a^(p/q+c+...) -> Rational::Builder(a^p)*a^(1/q+c+...) with a
    * rational and a != 0 and p, q integers */
   if (!letPowerAtRoot
       && baseType == ExpressionNode::Type::Rational
@@ -762,7 +767,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
-  /* Step 13: (a0+a1+...am)^n with n integer
+  /* Step 15: (a0+a1+...am)^n with n integer
    *              -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
    * We don't apply this rule when the target is the SystemForApproximation.
    * Indeed, developing the multinome is likely to increase the numbers of

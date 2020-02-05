@@ -2,6 +2,7 @@
 #define SETTINGS_EXAM_MODE_CONTROLLER_H
 
 #include "generic_sub_controller.h"
+#include "../../global_preferences.h"
 
 namespace Settings {
 
@@ -31,6 +32,7 @@ private:
     MessageTextView m_deactivateLine3;
   };
   int initialSelectedRow() const override;
+  GlobalPreferences::ExamMode examMode();
   static constexpr int k_maxNumberOfCells = 2;
   ContentView m_contentView;
   MessageTableCell m_cell[k_maxNumberOfCells];

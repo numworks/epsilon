@@ -68,14 +68,7 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    GlobalPreferences::ExamMode mode = GlobalPreferences::ExamMode::Standard;
-    if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-      // If the exam mode is already on, this re-activate the same exam mode
-      mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
-    } else if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::ActivateDutchExamMode) {
-      mode = GlobalPreferences::ExamMode::Dutch;
-    }
-    AppsContainer::sharedAppsContainer()->displayExamModePopUp(mode);
+    AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
     return true;
   }
   return GenericSubController::handleEvent(event);
@@ -89,13 +82,6 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   m_selectableTableView.reloadData();
   // We add a message when the mode exam is on
   m_contentView.layoutSubviews(true);
-}
-
-int ExamModeController::numberOfRows() const {
-  if (GlobalPreferences::sharedGlobalPreferences()->language() != I18n::Language::EN || GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    return 1;
-  }
-  return GenericSubController::numberOfRows();
 }
 
 HighlightCell * ExamModeController::reusableCell(int index, int type) {

@@ -22,7 +22,6 @@ public:
 private:
   static constexpr int k_resultFormatType = 0;
   static constexpr int k_significantDigitsType = 1;
-  int initialSelectedRow() const override;
   MessageTableCellWithEditableTextWithSeparator m_editableCell;
 };
 

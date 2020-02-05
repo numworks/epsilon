@@ -82,7 +82,12 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
 }
 
 void ExamModeController::didEnterResponderChain(Responder * previousFirstResponder) {
-  GenericSubController::didEnterResponderChain(previousFirstResponder);
+  /* When a pop-up is dismissed, the exam mode status might have changed. We
+   * reload the selection as the number of rows might have also changed. We
+   * force to reload the entire data because they might have changed. */
+  selectCellAtLocation(0, initialSelectedRow());
+  m_selectableTableView.reloadData();
+  // We add a message when the mode exam is on
   m_contentView.layoutSubviews(true);
 }
 
@@ -109,6 +114,16 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(I18n::Message::ExamModeActive);
   }
+}
+
+int ExamModeController::initialSelectedRow() const {
+  int row = selectedRow();
+  if (row >= numberOfRows()) {
+    return numberOfRows()-1;
+  } else if (row < 0) {
+    return 0;
+  }
+  return row;
 }
 
 }

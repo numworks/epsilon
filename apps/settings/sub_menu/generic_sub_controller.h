@@ -11,8 +11,8 @@ public:
   GenericSubController(Responder * parentResponder);
   const char * title() override;
   View * view() override { return &m_selectableTableView; }
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
@@ -24,7 +24,7 @@ public:
   void viewDidDisappear() override;
 protected:
   StackViewController * stackController() const;
-  virtual int initialSelectedRow() const;
+  virtual int initialSelectedRow() const { return 0; }
   constexpr static KDCoordinate k_topBottomMargin = 13;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;

@@ -30,6 +30,7 @@ private:
     MessageTextView m_deactivateLine2;
     MessageTextView m_deactivateLine3;
   };
+  int initialSelectedRow() const override;
   static constexpr int k_maxNumberOfCells = 2;
   ContentView m_contentView;
   MessageTableCell m_cell[k_maxNumberOfCells];

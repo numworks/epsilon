@@ -22,13 +22,20 @@ const char * GenericSubController::title() {
   return "";
 }
 
-void GenericSubController::didEnterResponderChain(Responder * previousFirstResponder) {
-  selectCellAtLocation(0, initialSelectedRow());
-  m_selectableTableView.reloadData();
-}
-
 void GenericSubController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
+}
+
+void GenericSubController::viewWillAppear() {
+  /* This can't be done in didEnterResponderChain because we don't want it to
+   * be done everytime the pop-up disappears. For example, if we are editing a
+   * field and a pop-up shows up with a warning, we don't want to reload the
+   * entire table when dismissing the pop-up (that would erase the edition). */
+  selectCellAtLocation(0, initialSelectedRow());
+  /* A unique SubController is used for all sub pages of settings. We have to
+   * reload its data when it is displayed as it could switch from displaying
+   * "Angle unit" data to "Complex format" data for instance. */
+  m_selectableTableView.reloadData();
 }
 
 bool GenericSubController::handleEvent(Ion::Events::Event event) {
@@ -81,16 +88,6 @@ void GenericSubController::viewDidDisappear() {
 
 StackViewController * GenericSubController::stackController() const {
   return (StackViewController *)parentResponder();
-}
-
-int GenericSubController::initialSelectedRow() const {
-  int row = selectedRow();
-  if (row >= numberOfRows()) {
-    return numberOfRows()-1;
-  } else if (row < 0) {
-    return 0;
-  }
-  return row;
 }
 
 }

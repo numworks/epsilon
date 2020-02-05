@@ -467,7 +467,7 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
 /* Units */
 
 bool Expression::hasUnit() const {
-  return !getUnit().isUndefined();
+  return recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, false);
 }
 
 /* Complex */

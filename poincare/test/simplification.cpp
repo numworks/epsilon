@@ -915,13 +915,31 @@ QUIZ_CASE(poincare_simplification_store_matrix) {
 }
 
 QUIZ_CASE(poincare_simplification_unit_convert) {
-  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km/_hour");
-  assert_parsed_expression_simplify_to("2_m→_km×_m/_m", "0.002×_km×_m/_m");
+  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km×_hour^\x12-1\x13");
+  assert_parsed_expression_simplify_to("2_m→_km×_m/_m", "0.002×_km");
   assert_parsed_expression_simplify_to("10_m/_s→_km", Undefined::Name());
-  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km/_hour");
-  assert_parsed_expression_simplify_to("10_m^2→_mm×_km", "10×_mm×_km");
+  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km×_hour^\x12-1\x13");
+  assert_parsed_expression_simplify_to("10_m^2→_mm×_km", "10×_km×_mm");
   assert_parsed_expression_simplify_to("2_hour+2_min→_s", "7320×_s");
   assert_parsed_expression_simplify_to("2×_kg×_m^2×_s^(-2)→_J", "2×_J");
+
+  assert_parsed_expression_simplify_to("1→2", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u(n)", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u(n+1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v(n)", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v(n+1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u_{n}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u_{n+1}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v_{n}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v_{n+1}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→inf", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→undef", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→π", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→𝐢", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→ℯ", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→ans", Undefined::Name());
+  assert_parsed_expression_simplify_to("ans→ans", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {

@@ -53,6 +53,12 @@ Complex<T> ComplexCartesianNode::templatedApproximate(Context * context, Prefere
 }
 
 Expression ComplexCartesian::shallowReduce() {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
   if (imag().isRationalZero()) {
     Expression r = real();
     replaceWithInPlace(r);

@@ -448,11 +448,6 @@ Expression Decimal::setSign(ExpressionNode::Sign s) {
 }
 
 Expression Decimal::shallowReduce() {
-  Expression e = Expression::defaultShallowReduce();
-  if (e.isUndefined()) {
-    return e;
-  }
-  // this = e
   int exp = node()->exponent();
   Integer numerator = node()->signedMantissa();
   /* To avoid uselessly big numerator and denominator, we get rid of useless 0s

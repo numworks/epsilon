@@ -87,11 +87,6 @@ BasedInteger BasedInteger::Builder(const Integer & m, Integer::Base base) {
 }
 
 Expression BasedInteger::shallowReduce() {
-  Expression e = Expression::defaultShallowReduce();
-  if (e.isUndefined()) {
-    return e;
-  }
-  // this = e
   // Turn BasedInteger into Rational
   Integer numerator = node()->integer();
   Integer denominator(1);

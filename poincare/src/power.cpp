@@ -82,6 +82,10 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
   return -1;
 }
 
+Expression PowerNode::getUnit() const {
+  return Power(this).getUnit();
+}
+
 int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
@@ -910,6 +914,13 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
   }
 
   return *this;
+}
+
+Expression Power::getUnit() const {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
+    return clone();
+  }
+  return Power::Builder(childAtIndex(0).getUnit(), childAtIndex(1).clone());
 }
 
 // Private

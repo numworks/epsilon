@@ -453,6 +453,12 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   return degree;
 }
 
+/* Units */
+
+bool Expression::hasUnit() const {
+  return !getUnit().isUndefined();
+}
+
 /* Complex */
 
 bool Expression::EncounteredComplex() {

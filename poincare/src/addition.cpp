@@ -158,14 +158,26 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     i++;
   }
 
-  // Step 2: Sort the children
+  const int childrenCount = numberOfChildren();
+  assert(childrenCount > 1);
+
+  /* Step 2: Handle the units. All children should have the same unit, otherwise
+   * the result is not homogeneous. */
+  {
+    Expression unit = childAtIndex(0).getUnit();
+    for (int i = 1; i < childrenCount; i++) {
+      if (!unit.isIdenticalTo(childAtIndex(i).getUnit())) {
+        return replaceWithUndefinedInPlace();
+      }
+    }
+  }
+
+  // Step 3: Sort the children
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
 
-  /* Step 3: Handle matrices. We return undef for a scalar added to a matrix.
+  /* Step 4: Handle matrices. We return undef for a scalar added to a matrix.
    * Thanks to the simplification order, all matrix children (if any) are the
    * last children. */
-  int childrenCount = numberOfChildren();
-  assert(childrenCount > 1);
   {
     Expression lastChild = childAtIndex(childrenCount - 1);
     if (lastChild.deepIsMatrix(reductionContext.context())) {
@@ -217,7 +229,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     }
   }
 
-  /* Step 4: Factorize like terms. Thanks to the simplification order, those are
+  /* Step 5: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
   i = 0;
   while (i < numberOfChildren()-1) {
@@ -238,7 +250,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     i++;
   }
 
-  /* Step 5: Let's remove any zero. It's important to do this after having
+  /* Step 6: Let's remove any zero. It's important to do this after having
    * factorized because factorization can lead to new zeroes. For example
    * pi+(-1)*pi. We don't remove the last zero if it's the only child left
    * though. */
@@ -252,13 +264,13 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     i++;
   }
 
-  // Step 6: Let's remove the addition altogether if it has a single child
+  // Step 7: Let's remove the addition altogether if it has a single child
   Expression result = squashUnaryHierarchyInPlace();
   if (result != *this) {
     return result;
   }
 
-  /* Step 7: Let's bubble up the complex operator if possible
+  /* Step 8: Let's bubble up the complex operator if possible
    * 3 cases:
    * - All children are real, we do nothing (allChildrenAreReal == 1)
    * - One of the child is non-real and not a ComplexCartesian: it means a
@@ -291,7 +303,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return newComplexCartesian.shallowReduce();
   }
 
-  /* Step 8: Let's put everything under a common denominator.
+  /* Step 9: Let's put everything under a common denominator.
    * This step is done only for ReductionTarget::User if the parent expression
    * is not an addition. */
   Expression p = result.parent();

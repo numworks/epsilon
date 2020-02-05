@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <string.h>
 
+// See TODO in EditableField
+
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
   TextInput(Responder * parentResponder, View * contentView) : ScrollableView(parentResponder, contentView, this) {}

@@ -3,6 +3,8 @@
 
 #include <ion/events.h>
 
+// See TODO in EditableField
+
 class InputEventHandlerDelegate;
 
 class InputEventHandler {

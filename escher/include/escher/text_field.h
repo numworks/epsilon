@@ -6,6 +6,8 @@
 #include <escher/text_field_delegate.h>
 #include <string.h>
 
+// See TODO in EditableField
+
 /* TODO: TextField currently uses using 2 buffers:
  * - one to keep the displayed text
  * - another one to edit the text while keeping the previous text in the first
@@ -36,6 +38,7 @@ public:
      return ContentView::k_maxBufferSize;
   }
   void scrollToCursor() override;
+  // TODO: factorize with TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;
   const KDFont * font() const { return m_contentView.font(); }
 protected:

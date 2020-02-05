@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <string.h>
 
+// See TODO in EditableField
+
 class TextArea : public TextInput, public InputEventHandler {
 public:
   static constexpr int k_indentationSpaces = 2;

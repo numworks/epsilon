@@ -36,7 +36,7 @@ public:
      return ContentView::k_maxBufferSize;
   }
   void scrollToCursor() override;
-  bool shouldFinishEditing(Ion::Events::Event event) override { return m_delegate->textFieldShouldFinishEditing(this, event); }
+  bool shouldFinishEditing(Ion::Events::Event event) override;
   const KDFont * font() const { return m_contentView.font(); }
 protected:
   class ContentView : public TextInput::ContentView {

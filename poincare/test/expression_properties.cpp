@@ -368,3 +368,29 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
+
+void assert_reduced_expression_unit(const char * expression, const char * unit, ExpressionNode::SymbolicComputation symbolicComutation) {
+  Shared::GlobalContext globalContext;
+  ExpressionNode::ReductionContext redContext = ExpressionNode::ReductionContext(&globalContext, Real, Degree, SystemForApproximation, symbolicComutation);
+  Expression e = parse_expression(expression, &globalContext, false);
+  e = e.reduce(redContext);
+  Expression u1 = e.getUnit();
+  u1 = u1.reduce(redContext);
+  Expression u2 = parse_expression(unit, &globalContext, false);
+  u2 = u2.reduce(redContext);
+  quiz_assert_print_if_failure(u1.isIdenticalTo(u2), expression);
+}
+
+QUIZ_CASE(poincare_properties_get_unit) {
+  assert_reduced_expression_unit("_km", "_km", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+  assert_reduced_expression_unit("_min/_km", "_km^(-1)×_min", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+  assert_reduced_expression_unit("_km^3", "_km^3", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+  assert_reduced_expression_unit("1_m+_km", Undefined::Name(), ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+  assert_reduced_expression_unit("_L^2×3×_s", "_L^2×_s", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+
+  assert_reduced_expression_unit("_km", "_m", ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_reduced_expression_unit("_min/_km", "_m^(-1)×_s", ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_reduced_expression_unit("_km^3", "_m^3", ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_reduced_expression_unit("1_m+_km", "_m", ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_reduced_expression_unit("_L^2×3×_s", "_m^6×_s", ReplaceAllSymbolsWithDefinitionsOrUndefined);
+}

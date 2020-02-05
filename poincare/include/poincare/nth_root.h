@@ -20,6 +20,7 @@ public:
 #endif
 
 private:
+  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

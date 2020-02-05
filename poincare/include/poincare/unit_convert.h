@@ -20,6 +20,7 @@ public:
   Type type() const override { return Type::UnitConvert; }
 
 private:
+  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   // Evalutation

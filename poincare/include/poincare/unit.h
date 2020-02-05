@@ -112,6 +112,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Unit; }
   Sign sign(Context * context) const override;
+  Expression getUnit() const override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -509,6 +510,7 @@ public:
 
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
+  Expression getUnit() const { return clone(); }
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

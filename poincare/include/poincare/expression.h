@@ -197,7 +197,6 @@ public:
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
-  bool beautifiedExpressionHasUnits() const { return node()->beautifiedExpressionHasUnits(); } // This must be called on a beautified expression
 
   /* Complex */
   static bool EncounteredComplex();
@@ -397,7 +396,6 @@ private:
 
   /* Properties */
   int defaultGetPolynomialCoefficients(Context * context, const char * symbol, Expression expression[]) const;
-  bool reducedExpressionIsUnitsOnly() const { return node()->reducedExpressionIsUnitsOnly(); } // This must be called on a reduced expression
 
   /* Builder */
   static bool IsZero(const Expression e);

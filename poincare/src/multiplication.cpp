@@ -62,16 +62,6 @@ bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & chi
   return child.isOfType(types, 2);
 }
 
-bool MultiplicationNode::beautifiedExpressionHasUnits() const {
-  assert(numberOfChildren() > 0);
-  return Expression(this).childAtIndex(numberOfChildren() - 1).beautifiedExpressionHasUnits();
-}
-
-bool MultiplicationNode::reducedExpressionIsUnitsOnly() const {
-  assert(numberOfChildren() > 0);
-  return Expression(this).childAtIndex(0).reducedExpressionIsUnitsOnly();
-}
-
 template<typename T>
 MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   if (m.numberOfColumns() != n.numberOfRows()) {

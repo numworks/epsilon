@@ -20,6 +20,14 @@ apps_prompt_none_src += apps/settings/main_controller_prompt_none.cpp
 apps_prompt_beta_src += apps/settings/main_controller_prompt_beta.cpp
 apps_prompt_update_src += apps/settings/main_controller_prompt_update.cpp
 
+apps_settings_official += $(addprefix apps/settings/,\
+  sub_menu/exam_mode_controller_multi.cpp \
+)
+
+apps_settings_non_official += $(addprefix apps/settings/,\
+  sub_menu/exam_mode_controller_single.cpp \
+)
+
 i18n_files += $(addprefix apps/settings/,\
   base.de.i18n\
   base.en.i18n\

@@ -419,31 +419,15 @@ QUIZ_CASE(poincare_parsing_parse_store) {
   Expression m0[] = {Symbol::Builder('x')};
   assert_parsed_expression_is("[[x]]→f(x)", Store::Builder(BuildMatrix(1,1,m0), Function::Builder("f", 1, Symbol::Builder('x'))));
   assert_text_not_parsable("a→b→c");
-  assert_text_not_parsable("1→2");
   assert_text_not_parsable("1→");
   assert_text_not_parsable("→2");
   assert_text_not_parsable("(1→a)");
-  assert_text_not_parsable("1→u(n)");
-  assert_text_not_parsable("1→u(n+1)");
-  assert_text_not_parsable("1→v(n)");
-  assert_text_not_parsable("1→v(n+1)");
-  assert_text_not_parsable("1→u_{n}");
-  assert_text_not_parsable("1→u_{n+1}");
-  assert_text_not_parsable("1→v_{n}");
-  assert_text_not_parsable("1→v_{n+1}");
-  assert_text_not_parsable("1→inf");
-  assert_text_not_parsable("1→undef");
-  assert_text_not_parsable("1→π");
-  assert_text_not_parsable("1→𝐢");
-  assert_text_not_parsable("1→ℯ");
   assert_text_not_parsable("1→\1"); // UnknownX
   assert_text_not_parsable("1→\2"); // UnknownN
   assert_text_not_parsable("1→acos");
   assert_text_not_parsable("1→f(2)");
   assert_text_not_parsable("1→f(f)");
   assert_text_not_parsable("3→f(g(4))");
-  assert_text_not_parsable("1→ans");
-  assert_text_not_parsable("ans→ans");
 }
 
 QUIZ_CASE(poincare_parsing_parse_unit_convert) {
@@ -452,7 +436,6 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   Expression kilometer = Expression::Parse("_km", nullptr);
   assert_parsed_expression_is("1→_m/_km", UnitConvert::Builder(BasedInteger::Builder(1), Division::Builder(meter, kilometer)));
 
-  assert_text_not_parsable("1→3_m");
   assert_simplify("_m→a", Radian, Real);
   assert_simplify("_m→b", Radian, Real);
   assert_text_not_parsable("1_km→a×b");

@@ -112,8 +112,6 @@ public:
   // Expression Properties
   Type type() const override { return Type::Unit; }
   Sign sign(Context * context) const override;
-  bool beautifiedExpressionHasUnits() const override { return true; }
-  bool reducedExpressionIsUnitsOnly() const override { return true; }
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

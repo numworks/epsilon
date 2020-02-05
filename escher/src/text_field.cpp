@@ -440,6 +440,14 @@ void TextField::scrollToCursor() {
   return TextInput::scrollToCursor();
 }
 
+bool TextField::shouldFinishEditing(Ion::Events::Event event) {
+  if (m_delegate->textFieldShouldFinishEditing(this, event)) {
+    resetSelection();
+    return true;
+  }
+  return false;
+}
+
 bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;

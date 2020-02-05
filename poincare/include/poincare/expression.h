@@ -392,6 +392,7 @@ private:
   }
   void defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowReduce();
+  Expression defaultHandleUnitsInChildren(); // Children must be reduced
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
 

@@ -15,6 +15,7 @@ Expression NormalDistributionFunction::shallowReduce(Context * context, bool * s
   }
   {
     Expression e = Expression::defaultShallowReduce();
+    e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

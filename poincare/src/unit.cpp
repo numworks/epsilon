@@ -8,6 +8,7 @@
 #include <cmath>
 #include <assert.h>
 #include <string.h>
+#include <utility>
 
 namespace Poincare {
 

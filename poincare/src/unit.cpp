@@ -98,6 +98,10 @@ ExpressionNode::Sign UnitNode::sign(Context * context) const {
   return Sign::Positive;
 }
 
+Expression UnitNode::getUnit() const {
+  return Unit(this).getUnit();
+}
+
 int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, canBeInterrupted);

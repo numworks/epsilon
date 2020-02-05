@@ -26,6 +26,8 @@ public:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
   float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
+  /* getUnit returns Undefined, because the symbol would have
+   * already been replaced if it should have been.*/
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

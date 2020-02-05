@@ -177,6 +177,8 @@ public:
   virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
 
+  virtual Expression getUnit() const; // Only reduced nodes should answer
+
   /* Simplification */
   /* SimplificationOrder returns:
    *   1 if e1 > e2

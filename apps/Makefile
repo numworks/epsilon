@@ -85,7 +85,7 @@ $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
-all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src) $(tests_src)
+all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src) $(apps_settings_official) $(apps_settings_non_official) $(tests_src)
 
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
@@ -98,10 +98,15 @@ apps_tests_src += $(addprefix apps/,\
 
 # Configure variants
 apps_all_src = $(app_src)
-apps_all_src += $(apps_launch_default_src) $(apps_launch_on_boarding_src
+apps_all_src += $(apps_settings_official) $(apps_settings_non_official)
+apps_all_src += $(apps_launch_default_src) $(apps_launch_on_boarding_src)
 apps_all_src += $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src)
 
-apps_default_src = $(app_src) $(apps_launch_default_src) $(apps_prompt_none_src)
-apps_onboarding_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
-apps_onboarding_update_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
-apps_onboarding_beta_src = $(app_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)
+apps_default_src = $(app_src) $(apps_settings_non_official) $(apps_launch_default_src) $(apps_prompt_none_src)
+apps_official_default_src = $(app_src) $(apps_settings_official) $(apps_launch_default_src) $(apps_prompt_none_src)
+apps_onboarding_src = $(app_src) $(apps_settings_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
+apps_official_onboarding_src = $(app_src) $(apps_settings_official) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
+apps_onboarding_update_src = $(app_src) $(apps_settings_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
+apps_official_onboarding_update_src = $(app_src) $(apps_settings_official) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
+apps_onboarding_beta_src = $(app_src) $(apps_settings_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)
+apps_official_onboarding_beta_src = $(app_src) $(apps_settings_official) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)

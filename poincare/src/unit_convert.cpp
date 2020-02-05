@@ -33,7 +33,7 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
     }
   }
   // Find the unit
-  ReductionContext unitReductionContext = ReductionContext(
+  ExpressionNode::ReductionContext unitReductionContext = ExpressionNode::ReductionContext(
       reductionContext.context(),
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),

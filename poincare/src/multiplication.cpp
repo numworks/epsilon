@@ -62,6 +62,10 @@ bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & chi
   return child.isOfType(types, 2);
 }
 
+Expression MultiplicationNode::getUnit() const {
+  return Multiplication(this).getUnit();
+}
+
 template<typename T>
 MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   if (m.numberOfColumns() != n.numberOfRows()) {
@@ -250,6 +254,26 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
     coefficients[0] = Multiplication::Builder(coefficients[0], intermediateCoefficients[0]);
   }
   return deg;
+}
+
+Expression Multiplication::getUnit() const {
+  const int childrenCount = numberOfChildren();
+  if (childrenCount == 1) {
+    return childAtIndex(0).getUnit();
+  }
+  Multiplication result = Multiplication::Builder();
+  int resultChildrenCount = 0;
+  for (int i = 0; i < childrenCount; i++) {
+    Expression currentUnit = childAtIndex(i).getUnit();
+    if (!currentUnit.isUndefined()) {
+      result.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
+      resultChildrenCount++;
+    }
+  }
+  if (resultChildrenCount == 0) {
+    return Undefined::Builder();
+  }
+  return std::move(result);
 }
 
 template<typename T>

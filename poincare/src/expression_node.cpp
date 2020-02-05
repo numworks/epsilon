@@ -124,6 +124,10 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
+Expression ExpressionNode::getUnit() const {
+  return Undefined::Builder();
+}
+
 void ExpressionNode::setChildrenInPlace(Expression other) {
   Expression(this).defaultSetChildrenInPlace(other);
 }

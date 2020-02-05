@@ -258,7 +258,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::ConfidenceInterval,
             ExpressionNode::Type::PredictionInterval
           };
-          return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes));
+          return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes)/sizeof(ExpressionNode::Type));
         }, context, true)
   )
   {

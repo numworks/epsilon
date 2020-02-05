@@ -925,7 +925,11 @@ Expression Power::getUnit() const {
   if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
     return clone();
   }
-  return Power::Builder(childAtIndex(0).getUnit(), childAtIndex(1).clone());
+  Expression baseUnit = childAtIndex(0).getUnit();
+  if (baseUnit.isUndefined()) {
+    return baseUnit;
+  }
+  return Power::Builder(baseUnit, childAtIndex(1).clone());
 }
 
 // Private

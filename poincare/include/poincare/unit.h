@@ -231,7 +231,7 @@ public:
         Representative("min", "60*_s",
             Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
-        Representative("hour",   "60*60*_s",
+        Representative("h",   "60*60*_s",
             Representative::Prefixable::No,
             NoPrefix, NoPrefixCount),
         Representative("day", "24*60*60*_s",

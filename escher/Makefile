@@ -45,7 +45,6 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_message.cpp \
   message_table_cell_with_switch.cpp \
   message_text_view.cpp \
-  message_tree.cpp \
   modal_view_controller.cpp \
   nested_menu_controller.cpp \
   palette.cpp \

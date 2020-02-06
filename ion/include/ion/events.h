@@ -117,6 +117,8 @@ constexpr Event EXE = Event::PlainKey(Keyboard::Key::EXE);
 // Shift
 
 constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::Left);
+constexpr Event ShiftUp  = Event::ShiftKey(Keyboard::Key::Up);
+constexpr Event ShiftDown = Event::ShiftKey(Keyboard::Key::Down);
 constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
 
 constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::Alpha);

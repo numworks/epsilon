@@ -110,6 +110,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     contentView()->moveCursorGeo(-INT_MAX/2, 0);
   } else if (event == Ion::Events::ShiftRight) {
     contentView()->moveCursorGeo(INT_MAX/2, 0);
+  } else if (event == Ion::Events::ShiftUp) {
+    contentView()->moveCursorGeo(0, -INT_MAX/2);
+  } else if (event == Ion::Events::ShiftDown) {
+    contentView()->moveCursorGeo(0, INT_MAX/2);
   } else if (event == Ion::Events::Backspace) {
     return removePreviousGlyph();
   } else if (event.hasText()) {

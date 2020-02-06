@@ -295,7 +295,7 @@ QUIZ_CASE(poincare_parsing_units) {
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
       if (rep->isPrefixable()) {
-        for (const Unit::Prefix * pre = Unit::AllPrefixes; pre < Unit::AllPrefixes + Unit::AllPrefixesCount; pre++) {
+        for (const Unit::Prefix * pre = Unit::AllPrefixes; pre < Unit::AllPrefixes + sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix); pre++) {
           Unit::Builder(dim, rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");

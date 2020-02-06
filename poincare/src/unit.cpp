@@ -28,7 +28,7 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length,
     return length == 0;
   }
   const Prefix * pre = Unit::AllPrefixes;
-  while (pre < Unit::AllPrefixes + Unit::AllPrefixesCount) {
+  while (pre < Unit::AllPrefixes + sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix)) {
     const char * prefixSymbol = pre->symbol();
     if (strncmp(symbol, prefixSymbol, length) == 0 &&
         prefixSymbol[length] == 0)
@@ -173,13 +173,6 @@ constexpr const Unit::Prefix
   Unit::LongScalePrefixes[],
   Unit::NegativePrefixes[],
   Unit::AllPrefixes[];
-constexpr size_t
-  Unit::NoPrefixCount,
-  Unit::NegativeLongScalePrefixesCount,
-  Unit::PositiveLongScalePrefixesCount,
-  Unit::LongScalePrefixesCount,
-  Unit::NegativePrefixesCount,
-  Unit::AllPrefixesCount;
 constexpr const Unit::Representative
   Unit::TimeRepresentatives[],
   Unit::DistanceRepresentatives[],

@@ -56,7 +56,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context * context, P
 Expression LeastCommonMultiple::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

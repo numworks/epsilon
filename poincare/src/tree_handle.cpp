@@ -62,6 +62,7 @@ void TreeHandle::replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
   if (oldChild == newChild) {
     return;
   }
+  assert(!oldChild.hasAncestor(newChild, true));
 
   assert(!isUninitialized());
 

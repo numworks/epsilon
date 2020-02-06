@@ -73,9 +73,10 @@ public:
 
   class Dimension {
   public:
-    constexpr Dimension(const Representative * representatives, size_t numberOfRepresentatives, const Prefix * stdRepresentativePrefix) :
+    template <size_t N>
+    constexpr Dimension(const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
       m_representatives(representatives),
-      m_representativesUpperBound(representatives + numberOfRepresentatives),
+      m_representativesUpperBound(representatives + N),
       m_stdRepresentativePrefix(stdRepresentativePrefix)
     {
     }
@@ -381,117 +382,94 @@ public:
      */
     Dimension(
         TimeRepresentatives,
-        sizeof(TimeRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         DistanceRepresentatives,
-        sizeof(DistanceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         MassRepresentatives,
-        sizeof(MassRepresentatives)/sizeof(Representative),
         &KiloPrefix
         ),
     Dimension(
         CurrentRepresentatives,
-        sizeof(CurrentRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         TemperatureRepresentatives,
-        sizeof(TemperatureRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         AmountOfSubstanceRepresentatives,
-        sizeof(AmountOfSubstanceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         LuminousIntensityRepresentatives,
-        sizeof(LuminousIntensityRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         FrequencyRepresentatives,
-        sizeof(FrequencyRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         ForceRepresentatives,
-        sizeof(ForceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         PressureRepresentatives,
-        sizeof(PressureRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         EnergyRepresentatives,
-        sizeof(EnergyRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         PowerRepresentatives,
-        sizeof(PowerRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         ElectricChargeRepresentatives,
-        sizeof(ElectricChargeRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         ElectricPotentialRepresentatives,
-        sizeof(ElectricPotentialRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         ElectricCapacitanceRepresentatives,
-        sizeof(ElectricCapacitanceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         ElectricResistanceRepresentatives,
-        sizeof(ElectricResistanceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         ElectricConductanceRepresentatives,
-        sizeof(ElectricConductanceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         MagneticFluxRepresentatives,
-        sizeof(MagneticFluxRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         MagneticFieldRepresentatives,
-        sizeof(MagneticFieldRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         InductanceRepresentatives,
-        sizeof(InductanceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         CatalyticActivityRepresentatives,
-        sizeof(CatalyticActivityRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         SurfaceRepresentatives,
-        sizeof(SurfaceRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
     Dimension(
         VolumeRepresentatives,
-        sizeof(VolumeRepresentatives)/sizeof(Representative),
         &EmptyPrefix
         ),
   };

@@ -24,6 +24,7 @@ private:
     static constexpr int k_maxNumberOfLines = 6;
     static constexpr int k_numberOfDeactivationMessageLines = 3;
     void setMessages(I18n::Message m[k_maxNumberOfLines]);
+    int numberOfCautionLines() const;
   private:
     int numberOfMessages() const;
     int numberOfSubviews() const override { return 1 + numberOfMessages(); }

@@ -2,6 +2,7 @@
 #define SETTINGS_EXAM_MODE_CONTROLLER_H
 
 #include "generic_sub_controller.h"
+#include "selectable_view_with_messages.h"
 #include "../../global_preferences.h"
 
 namespace Settings {
@@ -17,26 +18,13 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  class ContentView : public View {
-  public:
-    ContentView(SelectableTableView * selectableTableView);
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    static constexpr int k_maxNumberOfLines = 6;
-    static constexpr int k_numberOfDeactivationMessageLines = 3;
-    void setMessages(I18n::Message m[k_maxNumberOfLines]);
-    int numberOfCautionLines() const;
-  private:
-    int numberOfMessages() const;
-    int numberOfSubviews() const override { return 1 + numberOfMessages(); }
-    View * subviewAtIndex(int index) override;
-    void layoutSubviews(bool force = false) override;
-    SelectableTableView * m_selectableTableView;
-    MessageTextView m_messageLines[k_maxNumberOfLines];
-  };
+  static constexpr int k_numberOfDeactivationMessageLines = 3;
+  static constexpr int k_numberOfCautionMessageLines = 6;
+  int numberOfCautionLines() const;
   int initialSelectedRow() const override;
   GlobalPreferences::ExamMode examMode();
   static constexpr int k_maxNumberOfCells = 2;
-  ContentView m_contentView;
+  SelectableViewWithMessages m_contentView;
   MessageTableCell m_cell[k_maxNumberOfCells];
 };
 

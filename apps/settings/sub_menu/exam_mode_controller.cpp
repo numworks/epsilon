@@ -10,59 +10,6 @@ using namespace Shared;
 
 namespace Settings {
 
-ExamModeController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_selectableTableView(selectableTableView)
-{
-  for (int i = 0; i < k_maxNumberOfLines; i++) {
-    m_messageLines[i].setFont(KDFont::SmallFont);
-    m_messageLines[i].setAlignment(0.5f, 0.5f);
-    m_messageLines[i].setBackgroundColor(Palette::WallScreen);
-  }
-}
-
-void ExamModeController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::WallScreen);
-}
-
-void ExamModeController::ContentView::setMessages(I18n::Message m[k_maxNumberOfLines]) {
-  for (int i = 0; i < k_maxNumberOfLines; i++) {
-    m_messageLines[i].setMessage(m[i]);
-  }
-  layoutSubviews();
-}
-
-View * ExamModeController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < numberOfSubviews());
-  if (index == 0) {
-    return m_selectableTableView;
-  }
-  return &m_messageLines[index-1];
-}
-
-void ExamModeController::ContentView::layoutSubviews(bool force) {
-  // Layout the table view
-  KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), tableHeight), force);
-
-  int nbOfMessages = numberOfMessages();
-
-  // Layout the text
-  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-  KDCoordinate defOrigin = tableHeight + (bounds().height() - tableHeight - nbOfMessages*textHeight - Metric::CommonTopMargin)/2;
-
-  for (int i = 0; i < nbOfMessages; i++) {
-    m_messageLines[i].setFrame(KDRect(0, defOrigin, bounds().width(), textHeight), force);
-    defOrigin += textHeight;
-  }
-  for (int i = nbOfMessages; i < k_maxNumberOfLines; i++) {
-    m_messageLines[i].setFrame(KDRectZero, force);
-  }
-}
-
-int ExamModeController::ContentView::numberOfMessages() const {
-  return GlobalPreferences::sharedGlobalPreferences()->isInExamMode() ? k_numberOfDeactivationMessageLines : numberOfCautionLines();
-}
-
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_contentView(&m_selectableTableView),
@@ -86,11 +33,11 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   m_selectableTableView.reloadData();
   // We add a message when the mode exam is on
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3, I18n::Message::Default, I18n::Message::Default, I18n::Message::Default};
-    m_contentView.setMessages(deactivateMessages);
-  } else if (m_contentView.numberOfCautionLines() > 0) {
+    I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3};
+    m_contentView.setMessages(deactivateMessages, k_numberOfDeactivationMessageLines);
+  } else if (numberOfCautionLines() > 0) {
     I18n::Message cautionMessages[] = {I18n::Message::ExamModeWarning1, I18n::Message::ExamModeWarning2, I18n::Message::ExamModeWarning3, I18n::Message::ExamModeWarning4, I18n::Message::ExamModeWarning5, I18n::Message::ExamModeWarning6};
-    m_contentView.setMessages(cautionMessages);
+    m_contentView.setMessages(cautionMessages, numberOfCautionLines());
   }
 }
 

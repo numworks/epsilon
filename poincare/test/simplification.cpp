@@ -1008,12 +1008,12 @@ QUIZ_CASE(poincare_simplification_store_matrix) {
 }
 
 QUIZ_CASE(poincare_simplification_unit_convert) {
-  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km×_hour^\x12-1\x13");
+  assert_parsed_expression_simplify_to("10_m/_s→_km/_h", "36×_km×_h^\x12-1\x13");
   assert_parsed_expression_simplify_to("2_m→_km×_m/_m", "0.002×_km");
   assert_parsed_expression_simplify_to("10_m/_s→_km", Undefined::Name());
-  assert_parsed_expression_simplify_to("10_m/_s→_km/_hour", "36×_km×_hour^\x12-1\x13");
+  assert_parsed_expression_simplify_to("10_m/_s→_km/_h", "36×_km×_h^\x12-1\x13");
   assert_parsed_expression_simplify_to("10_m^2→_mm×_km", "10×_km×_mm");
-  assert_parsed_expression_simplify_to("2_hour+2_min→_s", "7320×_s");
+  assert_parsed_expression_simplify_to("2_h+2_min→_s", "7320×_s");
   assert_parsed_expression_simplify_to("2×_kg×_m^2×_s^(-2)→_J", "2×_J");
   assert_parsed_expression_simplify_to("300000×_m^3→_km^(2.3+0.7)", "0.0003×_km^3");
   assert_parsed_expression_simplify_to("3×_m→6_km", "0.003×_km");

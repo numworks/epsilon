@@ -365,6 +365,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("ceil(1)", Ceiling::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("confidence(1,2)", ConfidenceInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_text_not_parsable("diff(1,2,3)");
+  assert_text_not_parsable("diff(0,_s,0)");
   assert_parsed_expression_is("diff(1,x,3)", Derivative::Builder(BasedInteger::Builder(1),Symbol::Builder("x",1),BasedInteger::Builder(3)));
   assert_parsed_expression_is("dim(1)", MatrixDimension::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("conj(1)", Conjugate::Builder(BasedInteger::Builder(1)));
@@ -378,6 +379,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("im(1)", ImaginaryPart::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("int(1,x,2,3)", Integral::Builder(BasedInteger::Builder(1),Symbol::Builder("x",1),BasedInteger::Builder(2),BasedInteger::Builder(3)));
   assert_text_not_parsable("int(1,2,3,4)");
+  assert_text_not_parsable("int(1,_s,3,4)");
   assert_parsed_expression_is("inverse(1)", MatrixInverse::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("lcm(1,2)", LeastCommonMultiple::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("ln(1)", NaperianLogarithm::Builder(BasedInteger::Builder(1)));
@@ -389,6 +391,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("prediction(1,2)", SimplePredictionInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("product(1,n,2,3)", Product::Builder(BasedInteger::Builder(1),Symbol::Builder("n",1),BasedInteger::Builder(2),BasedInteger::Builder(3)));
   assert_text_not_parsable("product(1,2,3,4)");
+  assert_text_not_parsable("product(1,_s,3,4)");
   assert_parsed_expression_is("quo(1,2)", DivisionQuotient::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("random()", Random::Builder());
   assert_parsed_expression_is("randint(1,2)", Randint::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
@@ -401,6 +404,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("sinh(1)", HyperbolicSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sum(1,n,2,3)", Sum::Builder(BasedInteger::Builder(1),Symbol::Builder("n",1),BasedInteger::Builder(2),BasedInteger::Builder(3)));
   assert_text_not_parsable("sum(1,2,3,4)");
+  assert_text_not_parsable("sum(1,_s,3,4)");
   assert_parsed_expression_is("tan(1)", Tangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("tanh(1)", HyperbolicTangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("trace(1)", MatrixTrace::Builder(BasedInteger::Builder(1)));

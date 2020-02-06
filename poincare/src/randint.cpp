@@ -62,7 +62,7 @@ Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = Expression::defaultShallowReduce();
-  e.defaultHandleUnitsInChildren();
+  e = e.defaultHandleUnitsInChildren();
   if (e.isUndefined()) {
     return e;
   }

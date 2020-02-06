@@ -87,7 +87,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

@@ -216,7 +216,7 @@ Expression Integral::UntypedBuilder(Expression children) {
 Expression Integral::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

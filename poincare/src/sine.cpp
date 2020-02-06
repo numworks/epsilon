@@ -38,7 +38,7 @@ Expression SineNode::shallowReduce(ReductionContext reductionContext) {
 Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

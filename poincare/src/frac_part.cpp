@@ -35,7 +35,7 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 Expression FracPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

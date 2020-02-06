@@ -38,7 +38,7 @@ Expression DeterminantNode::shallowReduce(ReductionContext reductionContext) {
 Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

@@ -38,7 +38,7 @@ Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
 Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

@@ -43,7 +43,7 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context * context, Prefe
 Expression MatrixDimension::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

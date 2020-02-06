@@ -6,14 +6,11 @@ using namespace Shared;
 
 namespace Settings {
 
-SelectableViewWithMessages::SelectableViewWithMessages(SelectableTableView * selectableTableView, I18n::Message * messages, int numberOfMessages) :
+SelectableViewWithMessages::SelectableViewWithMessages(SelectableTableView * selectableTableView) :
   m_selectableTableView(selectableTableView),
-  m_numberOfMessages(numberOfMessages)
+  m_numberOfMessages(0)
 {
   for (int i = 0; i < k_maxNumberOfLines; i++) {
-    if (i < numberOfMessages) {
-      m_messageLines[i].setMessage(messages[i]);
-    }
     m_messageLines[i].setFont(KDFont::SmallFont);
     m_messageLines[i].setAlignment(0.5f, 0.5f);
     m_messageLines[i].setBackgroundColor(Palette::WallScreen);

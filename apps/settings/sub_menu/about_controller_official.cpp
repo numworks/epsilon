@@ -2,8 +2,9 @@
 
 namespace Settings {
 
-View * AboutController::view() {
-  return GenericSubController::view();
+void AboutController::viewWillAppear() {
+  GenericSubController::viewWillAppear();
+  m_view.setMessages(nullptr, 0);
 }
 
 }

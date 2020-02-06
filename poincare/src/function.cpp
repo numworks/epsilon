@@ -116,6 +116,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 
 Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits
+      || reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits
       || childAtIndex(0).isUndefined())
   {
     return replaceWithUndefinedInPlace();

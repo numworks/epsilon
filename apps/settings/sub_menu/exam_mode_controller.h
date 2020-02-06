@@ -21,15 +21,16 @@ private:
   public:
     ContentView(SelectableTableView * selectableTableView);
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void layoutSubviews(bool force = false) override;
+    static constexpr int k_maxNumberOfLines = 6;
+    static constexpr int k_numberOfDeactivationMessageLines = 3;
+    void setMessages(I18n::Message m[k_maxNumberOfLines]);
   private:
-    bool shouldDisplayDeactivateMessages() const;
-    int numberOfSubviews() const override { return 1 + (shouldDisplayDeactivateMessages() ? 3 : 0); }
+    int numberOfMessages() const;
+    int numberOfSubviews() const override { return 1 + numberOfMessages(); }
     View * subviewAtIndex(int index) override;
+    void layoutSubviews(bool force = false) override;
     SelectableTableView * m_selectableTableView;
-    MessageTextView m_deactivateLine1;
-    MessageTextView m_deactivateLine2;
-    MessageTextView m_deactivateLine3;
+    MessageTextView m_messageLines[k_maxNumberOfLines];
   };
   int initialSelectedRow() const override;
   GlobalPreferences::ExamMode examMode();

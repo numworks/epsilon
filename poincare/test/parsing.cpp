@@ -441,9 +441,15 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   assert_simplify("_m→b", Radian, Real);
   assert_text_not_parsable("1_km→a×b");
 
+  assert_simplify("2→a");
+  assert_text_not_parsable("3_m→a×_km");
+  assert_simplify("2→f(x)");
+  assert_text_not_parsable("3_m→f(2)×_km");
+
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_parsing_implicit_multiplication) {

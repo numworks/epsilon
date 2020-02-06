@@ -946,14 +946,6 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
   assert_parsed_expression_simplify_to("4→_km/_m", Undefined::Name());
   assert_parsed_expression_simplify_to("3×_min→_s+1-1", Undefined::Name());
-
-  assert_simplify("2→a");
-  assert_parsed_expression_simplify_to("3_m→a×_km", Undefined::Name());
-  assert_simplify("2→f(x)");
-  assert_parsed_expression_simplify_to("3_m→f(2)×_km", Undefined::Name());
-  // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {

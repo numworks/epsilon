@@ -107,7 +107,7 @@ void Logarithm::deepReduceChildren(ExpressionNode::ReductionContext reductionCon
 Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }
@@ -124,7 +124,7 @@ Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reduc
 Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

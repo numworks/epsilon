@@ -12,6 +12,7 @@ app_settings_src = $(addprefix apps/settings/,\
   sub_menu/generic_sub_controller.cpp \
   sub_menu/language_controller.cpp \
   sub_menu/preferences_controller.cpp \
+  sub_menu/selectable_view_with_messages.cpp \
 )
 
 app_src += $(app_settings_src)

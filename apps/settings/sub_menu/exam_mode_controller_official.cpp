@@ -5,10 +5,6 @@ using namespace Shared;
 
 namespace Settings {
 
-int ExamModeController::ContentView::numberOfCautionLines() const {
-  return 0;
-}
-
 GlobalPreferences::ExamMode ExamModeController::examMode() {
   GlobalPreferences::ExamMode mode = GlobalPreferences::ExamMode::Standard;
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
@@ -25,6 +21,10 @@ int ExamModeController::numberOfRows() const {
     return 1;
   }
   return GenericSubController::numberOfRows();
+}
+
+int ExamModeController::numberOfCautionLines() const {
+  return 0;
 }
 
 }

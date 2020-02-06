@@ -22,10 +22,12 @@ apps_prompt_beta_src += apps/settings/main_controller_prompt_beta.cpp
 apps_prompt_update_src += apps/settings/main_controller_prompt_update.cpp
 
 apps_settings_official += $(addprefix apps/settings/,\
+  sub_menu/about_controller_official.cpp \
   sub_menu/exam_mode_controller_official.cpp \
 )
 
 apps_settings_non_official += $(addprefix apps/settings/,\
+  sub_menu/about_controller_non_official.cpp \
   sub_menu/exam_mode_controller_non_official.cpp \
 )
 

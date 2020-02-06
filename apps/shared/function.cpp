@@ -27,7 +27,7 @@ bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * 
   while (c != UCodePointNull) {
     // FIXME '_' should be accepted but not as first character
     // TODO Factor this piece of code with similar one in the Parser
-    if (!(c.isDecimalDigit()) || c.isLatinLetter() || c == '_') {
+    if (!(c.isDecimalDigit() || c.isLatinLetter()) || c == '_') {
       if (error != nullptr) {
         *error = NameNotCompliantError::CharacterNotAllowed;
       }

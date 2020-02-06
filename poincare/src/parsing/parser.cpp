@@ -306,8 +306,8 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
   if (m_status != Status::Progress) {
     return;
   }
-  if (!m_nextToken.is(Token::EndOfStream) || rightHandSide.isUninitialized()) {
-    m_status = Status::Error; // Store and UnitConvert expect a unit on the right.
+  if (!m_nextToken.is(Token::EndOfStream) || rightHandSide.isUninitialized() || rightHandSide.type() == ExpressionNode::Type::Store || rightHandSide.type() == ExpressionNode::Type::UnitConvert) {
+    m_status = Status::Error; // UnitConvert expect a unit on the right.
     return;
   }
   leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);

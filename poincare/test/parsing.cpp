@@ -419,6 +419,7 @@ QUIZ_CASE(poincare_parsing_parse_store) {
   Expression m0[] = {Symbol::Builder('x')};
   assert_parsed_expression_is("[[x]]→f(x)", Store::Builder(BuildMatrix(1,1,m0), Function::Builder("f", 1, Symbol::Builder('x'))));
   assert_text_not_parsable("a→b→c");
+  assert_text_not_parsable("0→0→c");
   assert_text_not_parsable("1→");
   assert_text_not_parsable("→2");
   assert_text_not_parsable("(1→a)");

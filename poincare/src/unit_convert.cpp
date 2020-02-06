@@ -32,18 +32,29 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
       return e;
     }
   }
+
   // Find the unit
-  ExpressionNode::ReductionContext unitReductionContext = ExpressionNode::ReductionContext(
+  {
+    ExpressionNode::ReductionContext reductionContextWithUnits = ExpressionNode::ReductionContext(
+        reductionContext.context(),
+        reductionContext.complexFormat(),
+        reductionContext.angleUnit(),
+        reductionContext.target(),
+        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits);
+    Expression unit = childAtIndex(1).clone().reduce(reductionContextWithUnits).getUnit();
+    if (unit.isUndefined()) {
+      // There is no unit on the right
+      return replaceWithUndefinedInPlace();
+    }
+  }
+
+  ExpressionNode::ReductionContext reductionContextWithoutUnits = ExpressionNode::ReductionContext(
       reductionContext.context(),
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  Expression finalUnit = childAtIndex(1).reduce(unitReductionContext).getUnit();
-  if (finalUnit.isUndefined()) {
-    // There is no unit on the right
-    return replaceWithUndefinedInPlace();
-  }
+  Expression finalUnit = childAtIndex(1).reduce(reductionContextWithoutUnits).getUnit();
 
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), finalUnit.clone());

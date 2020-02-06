@@ -95,6 +95,7 @@ public:
     Subtraction,
     Sum,
 
+    Unit,
     ComplexCartesian,
 
     ConfidenceInterval,
@@ -104,7 +105,6 @@ public:
     MatrixTranspose,
     PredictionInterval,
     Matrix,
-    Unit,
     EmptyExpression
    };
 

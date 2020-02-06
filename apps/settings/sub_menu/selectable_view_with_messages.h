@@ -8,7 +8,7 @@ namespace Settings {
 
 class SelectableViewWithMessages : public View {
 public:
-  SelectableViewWithMessages(SelectableTableView * selectableTableView);
+  SelectableViewWithMessages(SelectableTableView * selectableTableView, I18n::Message * messages = nullptr, int numberOfMessages = 0);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setMessages(I18n::Message * messages, int numberOfMessages);
 private:

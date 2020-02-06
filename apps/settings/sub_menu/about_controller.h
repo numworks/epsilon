@@ -9,6 +9,7 @@ namespace Settings {
 class AboutController : public GenericSubController {
 public:
   AboutController(Responder * parentResponder);
+  View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

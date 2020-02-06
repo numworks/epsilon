@@ -60,7 +60,7 @@ void ExamModeController::ContentView::layoutSubviews(bool force) {
 }
 
 int ExamModeController::ContentView::numberOfMessages() const {
-  return GlobalPreferences::sharedGlobalPreferences()->isInExamMode() ? k_numberOfDeactivationMessageLines : k_maxNumberOfLines;
+  return GlobalPreferences::sharedGlobalPreferences()->isInExamMode() ? k_numberOfDeactivationMessageLines : numberOfCautionLines();
 }
 
 ExamModeController::ExamModeController(Responder * parentResponder) :
@@ -88,9 +88,9 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3, I18n::Message::Default, I18n::Message::Default, I18n::Message::Default};
     m_contentView.setMessages(deactivateMessages);
-  } else {
-    I18n::Message warningMessages[] = {I18n::Message::ExamModeWarning1, I18n::Message::ExamModeWarning2, I18n::Message::ExamModeWarning3, I18n::Message::ExamModeWarning4, I18n::Message::ExamModeWarning5, I18n::Message::ExamModeWarning6};
-    m_contentView.setMessages(warningMessages);
+  } else if (m_contentView.numberOfCautionLines() > 0) {
+    I18n::Message cautionMessages[] = {I18n::Message::ExamModeWarning1, I18n::Message::ExamModeWarning2, I18n::Message::ExamModeWarning3, I18n::Message::ExamModeWarning4, I18n::Message::ExamModeWarning5, I18n::Message::ExamModeWarning6};
+    m_contentView.setMessages(cautionMessages);
   }
 }
 

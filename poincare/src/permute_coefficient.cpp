@@ -53,7 +53,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context * context, Pr
 Expression PermuteCoefficient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

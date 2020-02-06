@@ -39,7 +39,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context * context, Pref
 Expression DivisionQuotient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
-    e.defaultHandleUnitsInChildren();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

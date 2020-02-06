@@ -5,6 +5,10 @@ using namespace Shared;
 
 namespace Settings {
 
+int ExamModeController::ContentView::numberOfCautionLines() const {
+  return k_maxNumberOfLines;
+}
+
 GlobalPreferences::ExamMode ExamModeController::examMode() {
   return GlobalPreferences::ExamMode::Standard;
 }

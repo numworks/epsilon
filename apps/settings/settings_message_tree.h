@@ -7,8 +7,14 @@ namespace Settings {
 
 class SettingsMessageTree : public MessageTree {
 public:
-  constexpr SettingsMessageTree(I18n::Message label = I18n::Message::Default, const SettingsMessageTree * children = nullptr, int numberOfChildren = 0) :
-    MessageTree(label, numberOfChildren),
+  constexpr SettingsMessageTree(I18n::Message label = I18n::Message::Default) :
+    MessageTree(label, 0),
+    m_children(nullptr)
+  {
+  };
+  template <int N>
+  constexpr SettingsMessageTree(I18n::Message label, const SettingsMessageTree (&children)[N] = nullptr) :
+    MessageTree(label, N),
     m_children(children)
   {
   };

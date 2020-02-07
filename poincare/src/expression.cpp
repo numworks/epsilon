@@ -770,7 +770,7 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
   }
   matrix.setDimensions(static_cast<Matrix &>(c).numberOfRows(), static_cast<Matrix &>(c).numberOfColumns());
   replaceWithInPlace(matrix);
-  return matrix.shallowReduce(reductionContext);
+  return matrix.shallowReduce();
 }
 
 Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {

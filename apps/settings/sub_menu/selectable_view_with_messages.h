@@ -16,7 +16,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   SelectableTableView * m_selectableTableView;
-  static constexpr int k_maxNumberOfLines = 6;
+  static constexpr int k_maxNumberOfLines = 4;
   MessageTextView m_messageLines[k_maxNumberOfLines];
   int m_numberOfMessages;
 };

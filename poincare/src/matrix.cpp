@@ -29,6 +29,10 @@ int MatrixNode::polynomialDegree(Context * context, const char * symbolName) con
   return -1;
 }
 
+Expression MatrixNode::shallowReduce(ReductionContext reductionContext) {
+  return Matrix(this).shallowReduce();
+}
+
 Layout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(numberOfChildren() > 0);
   MatrixLayout layout = MatrixLayout::Builder();
@@ -384,6 +388,17 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
   Expression result = computeInverseOrDeterminant(true, reductionContext, couldComputeDeterminant);
   assert(!(*couldComputeDeterminant) || !result.isUninitialized());
   return result;
+}
+
+Expression Matrix::shallowReduce() {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  return *this;
 }
 
 Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, ExpressionNode::ReductionContext reductionContext, bool * couldCompute) const {

@@ -37,6 +37,7 @@ public:
 
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
+  Expression shallowReduce(ReductionContext reductionContext) override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
@@ -84,6 +85,10 @@ public:
   Expression determinant(ExpressionNode::ReductionContext reductionContext, bool * couldComputeDeterminant, bool inPlace);
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
+
+  // Expression
+  Expression shallowReduce();
+
 private:
   MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }

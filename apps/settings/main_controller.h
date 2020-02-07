@@ -12,6 +12,15 @@
 
 namespace Settings {
 
+extern const SettingsMessageTree s_modelAngleChildren[3];
+extern const SettingsMessageTree s_modelEditionModeChildren[2];
+extern const SettingsMessageTree s_modelFloatDisplayModeChildren[4];
+extern const SettingsMessageTree s_modelComplexFormatChildren[3];
+extern const SettingsMessageTree s_modelFontChildren[2];
+extern const SettingsMessageTree s_modelExamChildren[2];
+extern const SettingsMessageTree s_modelAboutChildren[3];
+extern const SettingsMessageTree s_model;
+
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);

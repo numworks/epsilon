@@ -118,7 +118,7 @@ size_t numberOfFiles() {
 #else
 
 bool fileAtIndex(size_t index, File &entry) {
-  entry.name = "App";
+  entry.name = "No apps installed ";
   entry.data = NULL;
   entry.dataLength = 0;
   entry.isExecutable = true;
@@ -137,7 +137,7 @@ int indexFromName(const char *name) {
 }
 
 size_t numberOfFiles() {
-  return 1;
+  return 0;
 }
 
 #endif

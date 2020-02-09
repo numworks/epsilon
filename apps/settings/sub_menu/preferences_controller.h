@@ -15,7 +15,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
 protected:
-  constexpr static int k_totalNumberOfCell = 5;
+  constexpr static int k_totalNumberOfCell = 7;
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   int initialSelectedRow() const override { return valueIndexForPreference(m_messageTreeModel->label()); }

@@ -24,6 +24,7 @@ i18n_files += $(addprefix apps/solver/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.hu.i18n\
 )
 
 tests_src += $(addprefix apps/solver/test/,\

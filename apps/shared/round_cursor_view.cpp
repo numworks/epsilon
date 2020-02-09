@@ -16,13 +16,12 @@ static const uint8_t cursorMask[cursorSize][cursorSize] = {
   {0xFF, 0xFF, 0xFF, 0xED, 0xB6, 0xB6, 0xED, 0xFF, 0xFF, 0xFF},
 };
 
-static KDColor s_cursorWorkingBuffer[cursorSize*cursorSize];
-
 void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect r = bounds();
+  KDColor cursorWorkingBuffer[cursorSize*cursorSize];
   ctx->getPixels(r, m_underneathPixelBuffer);
   m_underneathPixelBufferLoaded = true;
-  ctx->blendRectWithMask(r, m_color, (const uint8_t *)cursorMask, s_cursorWorkingBuffer);
+  ctx->blendRectWithMask(r, m_color, (const uint8_t *)cursorMask, cursorWorkingBuffer);
 }
 
 KDSize RoundCursorView::minimalSizeForOptimalDisplay() const {
@@ -64,10 +63,11 @@ bool RoundCursorView::eraseCursorIfPossible() {
     return false;
   }
   // Erase the cursor
+  KDColor cursorWorkingBuffer[cursorSize*cursorSize];
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->setOrigin(currentFrame.origin());
   ctx->setClippingRect(currentFrame);
-  ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, s_cursorWorkingBuffer);
+  ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, cursorWorkingBuffer);
   // TODO Restore the context to previous values?
   return true;
 }

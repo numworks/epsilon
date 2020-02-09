@@ -187,6 +187,7 @@ void refresh() {
   }
 
   SDL_RenderPresent(sRenderer);
+  sNeedsRefresh = false;
 
   IonSimulatorCallbackDidRefresh();
 }

@@ -1,5 +1,15 @@
 include build/config.mak
 
+ifeq (${MODEL}, n0110)
+  apps_list = ${EPSILON_APPS}
+else
+  apps_list = $(foreach i, ${EPSILON_APPS}, $(if $(filter external, $(i)),,$(i)))
+endif
+
+ifdef FORCE_EXTERNAL
+  apps_list = ${EPSILON_APPS}
+endif
+
 # Disable default Make rules
 .SUFFIXES:
 

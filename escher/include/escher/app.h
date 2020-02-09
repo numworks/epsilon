@@ -27,7 +27,12 @@ public:
   public:
     virtual I18n::Message name();
     virtual I18n::Message upperName();
+    virtual int examinationLevel();
     virtual const Image * icon();
+
+    const int NoExaminationLevel = 0;
+    const int BasicExaminationLevel = 1;
+    const int StrictExaminationLevel = 2;
   };
   class Snapshot {
   public:

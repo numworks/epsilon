@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <cmath>
 #include <apps/settings/main_controller.h>
+#include <poincare/integer.h>
+#include <ion/storage.h>
 
 #define MP_STRINGIFY_HELPER(x) #x
 #define MP_STRINGIFY(x) MP_STRINGIFY_HELPER(x)
@@ -50,10 +52,37 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       if (childLabel == I18n::Message::CustomSoftwareVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
-          myCell->setAccessoryText("Public"); //Change for public/dev
+          myCell->setAccessoryText("Dev"); //Change for public/dev
           return true;
         }
         myCell->setAccessoryText(Ion::customSoftwareVersion());
+        return true;
+      }
+      if (childLabel == I18n::Message::MemUse) {
+        MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+        
+        char memUseBuffer[15];
+        
+        if (strchr(myCell->accessoryText(), '%') == NULL) {
+          int len = Poincare::Integer((int)((float)(Ion::Storage::k_storageSize - Ion::Storage::sharedStorage()->availableSize()) / (float)(Ion::Storage::k_storageSize) * 100.0f)).serialize(memUseBuffer, 4);
+          memUseBuffer[len] = '%';
+          memUseBuffer[len+1] = '\0';
+          
+          myCell->setAccessoryText(memUseBuffer);
+        } else {
+          int len = Poincare::Integer((int)((float) (Ion::Storage::k_storageSize - Ion::Storage::sharedStorage()->availableSize()) / 1024.f)).serialize(memUseBuffer, 4);
+          memUseBuffer[len] = 'k';
+          memUseBuffer[len+1] = 'B';
+          memUseBuffer[len+2] = '/';
+          
+          len = Poincare::Integer((int)((float) Ion::Storage::k_storageSize / 1024.f)).serialize(memUseBuffer + len + 3, 4) + len + 3;
+          memUseBuffer[len] = 'k';
+          memUseBuffer[len+1] = 'B';
+          memUseBuffer[len+2] = '\0';
+          
+          myCell->setAccessoryText(memUseBuffer);
+        }
+        
         return true;
       }
     }
@@ -94,8 +123,21 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_messageTreeModel->children(index)->label() == I18n::Message::Contributors) {
     MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
     myTextCell->setSubtitle(I18n::Message::Default);
-  }
-  else {
+  } else if (m_messageTreeModel->children(index)->label() == I18n::Message::MemUse) {
+    char memUseBuffer[15];
+    int len = Poincare::Integer((int)((float) (Ion::Storage::k_storageSize - Ion::Storage::sharedStorage()->availableSize()) / 1024.f)).serialize(memUseBuffer, 4);
+    memUseBuffer[len] = 'k';
+    memUseBuffer[len+1] = 'B';
+    memUseBuffer[len+2] = '/';
+    
+    len = Poincare::Integer((int)((float) Ion::Storage::k_storageSize / 1024.f)).serialize(memUseBuffer + len + 3, 4) + len + 3;
+    memUseBuffer[len] = 'k';
+    memUseBuffer[len+1] = 'B';
+    memUseBuffer[len+2] = '\0';
+    
+    MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+    myCell->setAccessoryText(memUseBuffer);
+  } else {
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
     static const char * mpVersion = MICROPY_VERSION_STRING;
     static const char * messages[] = {
@@ -105,6 +147,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       Ion::softwareVersion(),
       Ion::customSoftwareVersion(),
       mpVersion,
+      "",
       Ion::serialNumber(),
       Ion::fccId()
     };

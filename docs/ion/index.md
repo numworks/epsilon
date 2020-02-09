@@ -1,7 +1,5 @@
 ---
-title: Ion &mdash; Firmware architecture &mdash; Software Engineering
-layout: breadcrumb
-breadcrumb: Ion
+title: Ion
 ---
 # Ion
 

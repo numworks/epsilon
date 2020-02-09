@@ -158,7 +158,7 @@ void ScrollableExactApproximateExpressionsView::didBecomeFirstResponder() {
 }
 
 bool ScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event event) {
-  if (m_contentCell.leftExpressionView()->layout().isUninitialized()) {
+  if (!m_contentCell.displayLeftExpression()) {
     return ScrollableView::handleEvent(event);
   }
   bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() - m_contentCell.rightExpressionView()->minimalSizeForOptimalDisplay().width() - contentOffset().x() < bounds().width()

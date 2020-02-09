@@ -2,6 +2,7 @@
 #define POINCARE_PREFERENCES_H
 
 #include <stdint.h>
+#include <kandinsky.h>
 
 namespace Poincare {
 
@@ -41,13 +42,19 @@ public:
     White = 1,
     Green = 2,
     Blue = 3,
-    Yellow = 4
+    Yellow = 4,
+    Purple = 5,
+    Orange = 6,
   };
   enum class SymbolMultiplication : uint8_t {
     Cross = 0,
     MiddleDot = 1,
     Star = 2,
     Auto = 3
+  };
+  enum class PythonFont : uint8_t {
+    Large = 0,
+    Small = 1
   };
   Preferences();
   static Preferences * sharedPreferences();
@@ -63,8 +70,11 @@ public:
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
   LEDColor colorOfLED() const { return m_colorOfLED; }
   void setColorOfLED(LEDColor color) { m_colorOfLED = color; }
-  SymbolMultiplication symbolofMultiplication() const {return m_symbolMultiplication;}
-  void setSymbolMultiplication(SymbolMultiplication symbolofMultiplication) {m_symbolMultiplication = symbolofMultiplication;}
+  SymbolMultiplication symbolofMultiplication() const { return m_symbolMultiplication; }
+  void setSymbolMultiplication(SymbolMultiplication symbolofMultiplication) { m_symbolMultiplication = symbolofMultiplication; }
+  PythonFont pythonFont() const { return m_pythonFont; }
+  void setPythonFont(PythonFont pythonFont) { m_pythonFont = pythonFont; }
+  const KDFont * KDPythonFont() const { return (m_pythonFont == PythonFont::Small) ? KDFont::SmallFont : KDFont::LargeFont; }
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
@@ -73,6 +83,7 @@ private:
   uint8_t m_numberOfSignificantDigits;
   LEDColor m_colorOfLED;
   SymbolMultiplication m_symbolMultiplication;
+  PythonFont m_pythonFont;
 };
 
 }

@@ -17,7 +17,8 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_languageController(this, 13),
   m_accessibilityController(this),
   m_examModeController(this),
-  m_aboutController(this)
+  m_aboutController(this),
+  m_preferencesController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -83,6 +84,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_accessibilityController;
     } else if (model()->children(selectedRow())->label() == I18n::Message::MathOptions) {
       subController = &m_mathOptionsController;
+    } else {
+      subController = &m_preferencesController;
     }
     subController->setMessageTreeModel(model()->children(selectedRow()));
     StackViewController * stack = stackController();
@@ -141,6 +144,7 @@ int MainController::typeAtLocation(int i, int j) {
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
   I18n::Message thisLabel = model()->children(index)->label();
   myCell->setMessage(thisLabel);
@@ -157,12 +161,18 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
+  if (thisLabel == I18n::Message::PythonFont) {
+    int childIndex = (int)preferences->pythonFont();
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(model()->children(index)->children(childIndex)->label());
+    return;
+  }
   if (hasPrompt() && (thisLabel == I18n::Message::UpdatePopUp || thisLabel == I18n::Message::BetaPopUp)) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
+  static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::Message::Default);
 }
 
 void MainController::viewWillAppear() {

@@ -306,7 +306,7 @@ const TrigonometryCheatTable * TrigonometryCheatTable::Table() {
         Row::Pair("0",0.0f),
         Row::Pair("0",0.0f))
   };
-  static TrigonometryCheatTable sTable(sTableRows);
+  static const TrigonometryCheatTable sTable(sTableRows);
   return &sTable;
 }
 

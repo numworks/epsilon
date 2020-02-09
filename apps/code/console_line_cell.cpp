@@ -3,6 +3,7 @@
 #include <kandinsky/point.h>
 #include <kandinsky/coordinate.h>
 #include <apps/i18n.h>
+#include <poincare/preferences.h>
 
 namespace Code {
 
@@ -18,11 +19,11 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(Consol
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::CodeBackground);
-  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_font, textColor(m_line), isHighlighted()? Palette::CodeBackgroundSelected : Palette::CodeBackground);
+  ctx->drawString(m_line->text(), KDPointZero, Poincare::Preferences::sharedPreferences()->KDPythonFont(), textColor(m_line), isHighlighted()? Palette::CodeBackgroundSelected : Palette::CodeBackground);
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {
-  return ConsoleController::k_font->stringSize(m_line->text());
+  return Poincare::Preferences::sharedPreferences()->KDPythonFont()->stringSize(m_line->text());
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :
@@ -34,7 +35,7 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder 
 ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(ConsoleController::k_font, I18n::Message::ConsolePrompt, 0, 0.5),
+  m_promptView(Poincare::Preferences::sharedPreferences()->KDPythonFont(), I18n::Message::ConsolePrompt, 0, 0.5),
   m_scrollableView(this),
   m_line()
 {
@@ -79,7 +80,7 @@ View * ConsoleLineCell::subviewAtIndex(int index) {
 
 void ConsoleLineCell::layoutSubviews() {
   if (m_line.isCommand()) {
-    KDSize promptSize = ConsoleController::k_font->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
+    KDSize promptSize = Poincare::Preferences::sharedPreferences()->KDPythonFont()->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
     m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()));
     m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()));
     return;

@@ -72,12 +72,17 @@ void TitleBarView::layoutSubviews() {
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize));
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
+    m_examModeIconView.setFrame(KDRect(bounds().width() - batterySize.width() - k_examIconWidth - k_alphaRightMargin - Metric::TitleBarExternHorizontalMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
   } else {
     m_examModeIconView.setFrame(KDRectZero);
   }
   KDSize shiftAlphaLockSize = m_shiftAlphaLockView.minimalSizeForOptimalDisplay();
-  m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+   // The Shift/Alpha frame is shifted when examination mode is active
+    m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-k_examIconWidth-Metric::TitleBarExternHorizontalMargin-2*k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
+  } else {
+    m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
+  }
 }
 
 void TitleBarView::refreshPreferences() {

@@ -225,9 +225,6 @@ const ToolboxMessageTree unitPowerWattChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattNanoSymbol, I18n::Message::UnitPowerWattNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattPicoSymbol, I18n::Message::UnitPowerWattPico)};
 
-const ToolboxMessageTree unitPowerChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitPowerWattMenu, unitPowerWattChildren)};
-
 const ToolboxMessageTree unitElectricChargeCoulombChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombTeraSymbol, I18n::Message::UnitChargeCoulombTera),
   ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombGigaSymbol, I18n::Message::UnitChargeCoulombGiga),
@@ -331,7 +328,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, unitForceNewtonChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPressureMenu, unitPressureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, unitEnergyChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu, unitPowerChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu, unitPowerWattChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitElectricChargeMenu, unitElectricChargeChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, unitCapacitanceChildren),

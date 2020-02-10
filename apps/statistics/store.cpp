@@ -31,9 +31,8 @@ uint32_t Store::barChecksum() const {
 /* Histogram bars */
 
 void Store::setBarWidth(double barWidth) {
-  if (barWidth > 0.0) {
-    m_barWidth = barWidth;
-  }
+  assert(barWidth > 0.0);
+  m_barWidth = barWidth;
 }
 
 double Store::heightOfBarAtIndex(int series, int index) const {

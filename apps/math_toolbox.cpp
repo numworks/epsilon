@@ -247,9 +247,6 @@ const ToolboxMessageTree unitPotentialVoltChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltNanoSymbol, I18n::Message::UnitPotentialVoltNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltPicoSymbol, I18n::Message::UnitPotentialVoltPico)};
 
-const ToolboxMessageTree unitPotentialChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitPotentialVoltMenu, unitPotentialVoltChildren)};
-
 const ToolboxMessageTree unitCapacitanceFaradChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradTeraSymbol, I18n::Message::UnitCapacitanceFaradTera),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradGigaSymbol, I18n::Message::UnitCapacitanceFaradGiga),
@@ -327,7 +324,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, unitEnergyChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu, unitPowerWattChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitElectricChargeMenu, unitElectricChargeCoulombChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialVoltChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, unitCapacitanceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitResistanceMenu, unitResistanceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitConductanceMenu, unitConductanceChildren),

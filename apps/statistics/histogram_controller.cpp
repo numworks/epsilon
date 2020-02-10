@@ -50,15 +50,19 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 void HistogramController::viewWillAppear() {
   MultipleDataViewController::viewWillAppear();
   uint32_t storeChecksum = m_store->storeChecksum();
+  bool initedRangeParameters = false;
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;
     initBarParameters();
     initRangeParameters();
+    initedRangeParameters = true;
   }
   uint32_t barChecksum = m_store->barChecksum();
   if (*m_barVersion != barChecksum) {
     *m_barVersion = barChecksum;
-    initRangeParameters();
+    if (!initedRangeParameters) {
+      initRangeParameters();
+    }
   }
   uint32_t rangeChecksum = m_store->rangeChecksum();
   if (*m_rangeVersion != rangeChecksum) {

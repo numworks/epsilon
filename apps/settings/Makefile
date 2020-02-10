@@ -31,6 +31,9 @@ apps_settings_non_official += $(addprefix apps/settings/,\
   sub_menu/exam_mode_controller_non_official.cpp \
 )
 
+apps_official += $(apps_settings_official)
+apps_non_official += $(apps_settings_non_official)
+
 i18n_files += $(addprefix apps/settings/,\
   base.de.i18n\
   base.en.i18n\

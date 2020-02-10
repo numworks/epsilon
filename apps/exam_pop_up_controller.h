@@ -41,9 +41,8 @@ private:
     HighContrastButton m_cancelButton;
     HighContrastButton m_okButton;
     MessageTextView m_warningTextView;
-    MessageTextView m_messageTextView1;
-    MessageTextView m_messageTextView2;
-    MessageTextView m_messageTextView3;
+    constexpr static int k_maxNumberOfLines = 3;
+    MessageTextView m_messageTextViews[k_maxNumberOfLines];
   };
   ContentView m_contentView;
   GlobalPreferences::ExamMode m_targetExamMode;

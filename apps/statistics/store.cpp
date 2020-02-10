@@ -43,8 +43,8 @@ double Store::heightOfBarAtIndex(int series, int index) const {
 double Store::heightOfBarAtValue(int series, double value) const {
   double width = barWidth();
   int barNumber = std::floor((value - m_firstDrawnBarAbscissa)/width);
-  double lowerBound = m_firstDrawnBarAbscissa + barNumber*width;
-  double upperBound = m_firstDrawnBarAbscissa + (barNumber+1)*width;
+  double lowerBound = m_firstDrawnBarAbscissa + ((double)barNumber)*width;
+  double upperBound = m_firstDrawnBarAbscissa + ((double)(barNumber+1))*width;
   return sumOfValuesBetween(series, lowerBound, upperBound);
 }
 

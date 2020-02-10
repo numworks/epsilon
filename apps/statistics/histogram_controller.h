@@ -34,7 +34,7 @@ private:
   void highlightSelection() override;
   Responder * tabController() const override;
   void reloadBannerView() override;
-  void preinitXRangeParameters();
+  void preinitXRangeParameters(double * xMin);
   void initRangeParameters();
   void initYRangeParameters(int series);
   void initBarParameters();

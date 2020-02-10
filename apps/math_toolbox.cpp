@@ -298,9 +298,6 @@ const ToolboxMessageTree unitVolumeLiterChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterNanoSymbol, I18n::Message::UnitVolumeLiterNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterPicoSymbol, I18n::Message::UnitVolumeLiterPico)};
 
-const ToolboxMessageTree unitVolumeChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitVolumeLiterMenu, unitVolumeLiterChildren)};
-
 const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildren),
@@ -322,7 +319,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitMagneticFieldMenu, unitMagneticFieldChildren),
   ToolboxMessageTree::Node(I18n::Message::InductanceMenu, unitInductanceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeLiterChildren),
 };
 
 const ToolboxMessageTree randomAndApproximationChildren[] = {

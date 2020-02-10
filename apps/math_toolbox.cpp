@@ -132,7 +132,7 @@ const ToolboxMessageTree unitMassGramChildren[] = {
 const ToolboxMessageTree unitMassChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitMassGramMenu, unitMassGramChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMassDaltonSymbol, I18n::Message::UnitMassDalton)};
+};
 
 const ToolboxMessageTree unitCurrentAmpereChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereSymbol, I18n::Message::UnitCurrentAmpere),

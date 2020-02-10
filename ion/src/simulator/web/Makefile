@@ -26,10 +26,10 @@ endif
 
 DEFAULT = $(BUILD_DIR)/simulator.zip
 
-$(BUILD_DIR)/simulator.zip: $(BUILD_DIR)/epsilon.packed.js
+$(BUILD_DIR)/simulator%zip: $(BUILD_DIR)/epsilon%packed.js
 	@rm -rf $(basename $@)
 	@mkdir -p $(basename $@)
-	@cp $^ $(basename $@)/epsilon.js
+	@cp $^ $(basename $@)/epsilon.official.packed.js
 	@cp ion/src/simulator/assets/background.jpg $(basename $@)/
 	@cp ion/src/simulator/web/simulator.html $(basename $@)/
 	$(call rule_label,ZIP)

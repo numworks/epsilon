@@ -161,9 +161,6 @@ const ToolboxMessageTree unitFrequencyHertzChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzKiloSymbol, I18n::Message::UnitFrequencyHertzKilo),
 ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzSymbol, I18n::Message::UnitFrequencyHertz)};
 
-const ToolboxMessageTree unitFrequencyChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitFrequencyHertzMenu, unitFrequencyHertzChildren)};
-
 const ToolboxMessageTree unitForceNewtonChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonTeraSymbol, I18n::Message::UnitForceNewtonTera),
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonGigaSymbol, I18n::Message::UnitForceNewtonGiga),
@@ -333,7 +330,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountMoleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitLuminousIntensityMenu, unitLuminousIntensityChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyHertzChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, unitForceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPressureMenu, unitPressureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, unitEnergyChildren),

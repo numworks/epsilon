@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: CC-BY-NC-ND-4.0
+// Caution: Dutch exam mode is subject to a compliance certification by a government agency. Distribution of a non-certified Dutch exam mode is illegal.
+
 #include "exam_mode_configuration.h"
 
 constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[2] = {Settings::SettingsMessageTree(I18n::Message::ActivateExamMode), Settings::SettingsMessageTree(I18n::Message::ActivateDutchExamMode)};

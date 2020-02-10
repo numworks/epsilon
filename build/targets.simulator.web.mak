@@ -1,13 +1,14 @@
-$(BUILD_DIR)/epsilon.js: EMSCRIPTEN_INIT_FILE = 1
+$(BUILD_DIR)/epsilon%packed.js: EMSCRIPTEN_INIT_FILE = 0
 
 $(BUILD_DIR)/test.headless.js: EMSCRIPTEN_MODULARIZE = 0
 
 $(BUILD_DIR)/epsilon.packed.js: $(call object_for,$(epsilon_src))
+$(BUILD_DIR)/epsilon.official.packed.js: $(call object_for,$(epsilon_official_src))
 
 .PHONY: workshop_python_emulator
 workshop_python_emulator:
 	$(MAKE) PLATFORM=simulator TARGET=web clean_for_apps_selection
-	$(MAKE) PLATFORM=simulator TARGET=web EPSILON_APPS=code
+	$(MAKE) PLATFORM=simulator TARGET=web EPSILON_APPS=code epsilon.official.js
 	$(MAKE) PLATFORM=simulator TARGET=web clean_for_apps_selection
 
 .PHONY: clean_for_apps_selection

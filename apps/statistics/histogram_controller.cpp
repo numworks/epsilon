@@ -180,31 +180,33 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   return false;
 }
 
-void HistogramController::preinitXRangeParameters() {
+void HistogramController::preinitXRangeParameters(double * xMin) {
   /* Compute m_store's min and max values, hold them temporarily in the
    * CurveViewRange, for later use by initRangeParameters and
    * initBarParameters. Indeed, initRangeParameters will anyway alter the
    * CurveViewRange. The CurveViewRange setter methods take care of the case
    * where minValue >= maxValue. Moreover they compute the xGridUnit, which is
    * used by initBarParameters. */
-  float minValue = FLT_MAX;
-  float maxValue = -FLT_MAX;
+  double minValue = DBL_MAX;
+  double maxValue = -DBL_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
-      minValue = std::min<float>(minValue, m_store->minValue(i));
-      maxValue = std::max<float>(maxValue, m_store->maxValue(i));
+      minValue = std::min<double>(minValue, m_store->minValue(i));
+      maxValue = std::max<double>(maxValue, m_store->maxValue(i));
     }
   }
+  assert(xMin != nullptr);
+  *xMin = minValue;
   m_store->setXMin(minValue);
   m_store->setXMax(maxValue);
 }
 
 void HistogramController::initRangeParameters() {
   assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
-  float barWidth = m_store->barWidth();
-  preinitXRangeParameters();
-  float xMin = m_store->firstDrawnBarAbscissa();
-  float xMax = m_store->xMax() + barWidth;
+  double barWidth = m_store->barWidth();
+  double xMin;
+  preinitXRangeParameters(&xMin);
+  double xMax = m_store->xMax() + barWidth;
   /* if a bar is represented by less than one pixel, we cap xMax */
   if ((xMax - xMin)/barWidth > k_maxNumberOfBarsPerWindow) {
     xMax = xMin + k_maxNumberOfBarsPerWindow*barWidth;
@@ -244,8 +246,9 @@ void HistogramController::initYRangeParameters(int series) {
 
 void HistogramController::initBarParameters() {
   assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
-  preinitXRangeParameters();
-  m_store->setFirstDrawnBarAbscissa(m_store->xMin());
+  double xMin;
+  preinitXRangeParameters(&xMin);
+  m_store->setFirstDrawnBarAbscissa(xMin);
   double barWidth = m_store->xGridUnit();
   if (barWidth <= 0.0) {
     barWidth = 1.0;

@@ -1,11 +1,14 @@
 apps += Settings::App
 app_headers += apps/settings/app.h
 
+app_settings_test_src  = $(addprefix apps/settings/,\
+  settings_message_tree.cpp \
+)
+
 app_settings_src = $(addprefix apps/settings/,\
   app.cpp \
   cell_with_separator.cpp \
   main_controller.cpp \
-  settings_message_tree.cpp \
   sub_menu/about_controller.cpp \
   sub_menu/display_mode_controller.cpp \
   sub_menu/exam_mode_controller.cpp \
@@ -15,6 +18,7 @@ app_settings_src = $(addprefix apps/settings/,\
   sub_menu/selectable_view_with_messages.cpp \
 )
 
+app_settings_src += $(app_settings_test_src)
 app_src += $(app_settings_src)
 
 apps_prompt_none_src += apps/settings/main_controller_prompt_none.cpp

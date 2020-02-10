@@ -31,6 +31,7 @@ app_src += $(addprefix apps/,\
   variable_box_empty_controller.cpp \
 )
 
+tests_src += apps/exam_mode_configuration_official.cpp
 apps_official += apps/exam_mode_configuration_official.cpp
 apps_non_official += apps/exam_mode_configuration_non_official.cpp
 
@@ -93,7 +94,7 @@ all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_la
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
-apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_solver_test_src)
+apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
 
 apps_tests_src += $(addprefix apps/,\
   global_preferences.cpp \

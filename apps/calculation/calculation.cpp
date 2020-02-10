@@ -1,6 +1,7 @@
 #include "calculation.h"
 #include "../shared/poincare_helpers.h"
 #include "../global_preferences.h"
+#include "../exam_mode_configuration.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/undefined.h>
 #include <poincare/unreal.h>
@@ -239,8 +240,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
       (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0 &&
        strcmp(inputText(), exactOutputText()) == 0)
       ||
-      // Force all outputs to be ApproximateOnly in Dutch exam mode
-      GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch
+      // Force all outputs to be ApproximateOnly if required by the exam mode configuration
+      ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())
       ||
       /* If the input contains the following types, we only display the
        * approximate output. */

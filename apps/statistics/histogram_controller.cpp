@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "app.h"
+#include <poincare/ieee754.h>
 #include <poincare/preferences.h>
 #include <cmath>
 #include <assert.h>
@@ -253,7 +254,7 @@ void HistogramController::initBarParameters() {
   } else {
     // Truncate the bar width, as we convert from float to double
     const double precision = 7; // TODO factorize? This is an experimental value, the same as in Expression;;Epsilon<float>()
-    const double logBarWidth = std::floor(std::log10(barWidth));
+    const double logBarWidth = IEEE754<double>::exponentBase10(barWidth);
     barWidth = ((int)(barWidth * std::pow(10.0, precision - logBarWidth))) * std::pow(10.0, -precision + logBarWidth);
   }
   m_store->setBarWidth(barWidth);

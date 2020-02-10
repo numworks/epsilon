@@ -1,4 +1,5 @@
 ActivateDeactivate = "Aktivieren/Deaktivieren"
+ActivateExamMode = "Starten Testmodus"
 ActiveExamModeMessage1 = "Alle Ihre Daten werden "
 ActiveExamModeMessage2 = "gelöscht, wenn Sie den "
 ActiveExamModeMessage3 = "Testmodus einschalten."

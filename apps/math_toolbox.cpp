@@ -141,9 +141,6 @@ const ToolboxMessageTree unitCurrentAmpereChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereNanoSymbol, I18n::Message::UnitCurrentAmpereNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmperePicoSymbol, I18n::Message::UnitCurrentAmperePico)};
 
-const ToolboxMessageTree unitCurrentChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitCurrentAmpereMenu, unitCurrentAmpereChildren)};
-
 const ToolboxMessageTree unitTemperatureChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin)};
 
@@ -335,7 +332,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, unitCurrentChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, unitCurrentAmpereChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitLuminousIntensityMenu, unitLuminousIntensityChildren),

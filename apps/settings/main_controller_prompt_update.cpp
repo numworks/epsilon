@@ -1,4 +1,5 @@
 #include "main_controller.h"
+#include "../exam_mode_configuration.h"
 #include <apps/i18n.h>
 
 namespace Settings {
@@ -11,7 +12,7 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::Brightness),
     SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     SettingsMessageTree(I18n::Message::Language),
-    SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren),
+    SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
     SettingsMessageTree(I18n::Message::UpdatePopUp),
     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
 

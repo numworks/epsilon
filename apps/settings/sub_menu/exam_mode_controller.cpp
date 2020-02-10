@@ -1,6 +1,7 @@
 #include "exam_mode_controller.h"
 #include "../../global_preferences.h"
 #include "../../apps_container.h"
+#include "../../exam_mode_configuration.h"
 #include <apps/i18n.h>
 #include <assert.h>
 #include <cmath>
@@ -13,8 +14,12 @@ namespace Settings {
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_contentView(&m_selectableTableView),
-  m_cell{MessageTableCell(I18n::Message::ExamModeActive, KDFont::LargeFont), MessageTableCell(I18n::Message::ActivateDutchExamMode, KDFont::LargeFont)}
+  m_cell{}
 {
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    m_cell[i].setMessage(ExamModeConfiguration::examModeActivationMessage(i));
+    m_cell[i].setMessageFont(KDFont::LargeFont);
+  }
 }
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
@@ -43,6 +48,10 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   // --------------------------------------------------------------------------
 }
 
+int ExamModeController::numberOfRows() const {
+  return ExamModeConfiguration::numberOfAvailableExamMode();
+}
+
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_maxNumberOfCells);
@@ -69,6 +78,15 @@ int ExamModeController::initialSelectedRow() const {
     return 0;
   }
   return row;
+}
+
+GlobalPreferences::ExamMode ExamModeController::examMode() {
+  GlobalPreferences::ExamMode mode = ExamModeConfiguration::examModeAtIndex(selectedRow());
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    // If the exam mode is already on, this re-activate the same exam mode
+    mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+  }
+  return mode;
 }
 
 }

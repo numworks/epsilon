@@ -50,21 +50,6 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
   const double nextFirstDrawnBarAbscissa = setBarWidth ? m_store->firstDrawnBarAbscissa() : value;
   const double nextBarWidth = setBarWidth ? value : m_store->barWidth();
 
-  {
-    // There should be at least one value in the drawn bin
-    bool foundOneDrawnValue = false;
-    for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-      if (nextFirstDrawnBarAbscissa <= m_store->maxValue(i) + nextBarWidth) {
-        foundOneDrawnValue = true;
-        break;
-      }
-    }
-    if (!foundOneDrawnValue) {
-      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
-  }
-
   // The number of bars cannot be above the max
   assert(DoublePairStore::k_numberOfSeries > 0);
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {

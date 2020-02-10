@@ -172,9 +172,6 @@ const ToolboxMessageTree unitForceNewtonChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonNanoSymbol, I18n::Message::UnitForceNewtonNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitForceNewtonPicoSymbol, I18n::Message::UnitForceNewtonPico)};
 
-const ToolboxMessageTree unitForceChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitForceNewtonMenu, unitForceNewtonChildren)};
-
 const ToolboxMessageTree unitPressurePascalChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalTeraSymbol, I18n::Message::UnitPressurePascalTera),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPressurePascalGigaSymbol, I18n::Message::UnitPressurePascalGiga),
@@ -331,7 +328,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountMoleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitLuminousIntensityMenu, unitLuminousIntensityChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyHertzChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, unitForceChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, unitForceNewtonChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPressureMenu, unitPressureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, unitEnergyChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu, unitPowerChildren),

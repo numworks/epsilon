@@ -319,9 +319,6 @@ const ToolboxMessageTree unitMagneticFieldChildren[] = {
 const ToolboxMessageTree unitInductanceChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitInductanceHenrySymbol, I18n::Message::UnitInductanceHenry)};
 
-const ToolboxMessageTree unitCatalyticChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCatalyticActivityKatSymbol, I18n::Message::UnitCatalyticActivityKat)};
-
 const ToolboxMessageTree unitSurfaceChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)};
 
@@ -358,7 +355,6 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitMagneticFluxMenu, unitMagneticFluxChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMagneticFieldMenu, unitMagneticFieldChildren),
   ToolboxMessageTree::Node(I18n::Message::InductanceMenu, unitInductanceChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitCatalyticActivityMenu, unitCatalyticChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeChildren),
 };

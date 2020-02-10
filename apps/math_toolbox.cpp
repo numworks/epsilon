@@ -280,9 +280,6 @@ const ToolboxMessageTree unitConductanceSiemensChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensNanoSymbol, I18n::Message::UnitConductanceSiemensNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensPicoSymbol, I18n::Message::UnitConductanceSiemensPico)};
 
-const ToolboxMessageTree unitConductanceChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitConductanceSiemensMenu, unitConductanceSiemensChildren)};
-
 const ToolboxMessageTree unitMagneticFieldChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitMagneticFieldTeslaSymbol, I18n::Message::UnitMagneticFieldTesla)};
 
@@ -321,7 +318,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialVoltChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, unitCapacitanceFaradChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitResistanceMenu, unitResistanceOhmChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitConductanceMenu, unitConductanceChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitConductanceMenu, unitConductanceSiemensChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMagneticFieldMenu, unitMagneticFieldChildren),
   ToolboxMessageTree::Node(I18n::Message::InductanceMenu, unitInductanceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildren),

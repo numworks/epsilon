@@ -459,7 +459,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
         };
         Integer entryUnitNorm(0);
         size_t entryUnitSupportSize = 0;
-        ExponentsOfBaseUnits(entryUnit.clone().deepReduce(reductionContext), entryUnitExponents);
+        ExponentsOfBaseUnits(entryUnit.clone().shallowReduce(reductionContext), entryUnitExponents);
         ExponentsMetrics(entryUnitExponents, entryUnitSupportSize, entryUnitNorm);
         CanSimplifyUnitProduct(
             unitsExponents, entryUnitExponents, entryUnitNorm, entryUnit,

@@ -151,9 +151,6 @@ const ToolboxMessageTree unitAmountMoleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleNanoSymbol, I18n::Message::UnitAmountMoleNano),
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMolePicoSymbol, I18n::Message::UnitAmountMolePico)};
 
-const ToolboxMessageTree unitAmountChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitAmountMoleMenu, unitAmountMoleChildren)};
-
 const ToolboxMessageTree unitLuminousIntensityChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousIntensityCandelaSymbol, I18n::Message::UnitLuminousIntensityCandela)};
 
@@ -334,7 +331,7 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, unitCurrentAmpereChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountMoleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitLuminousIntensityMenu, unitLuminousIntensityChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, unitForceChildren),

@@ -7,6 +7,7 @@ app_probability_test_src = $(addprefix apps/probability/,\
   distribution/fisher_distribution.cpp \
   distribution/geometric_distribution.cpp \
   distribution/helper.cpp \
+  distribution/hypergeometric_function.cpp\
   distribution/distribution.cpp \
   distribution/regularized_gamma.cpp \
   distribution/student_distribution.cpp \
@@ -48,9 +49,6 @@ i18n_files += $(addprefix apps/probability/,\
   base.universal.i18n\
 )
 
-tests_src += $(addprefix apps/probability/distribution/,\
-  hypergeometric_function.cpp\
-)
 tests_src += $(addprefix apps/probability/test/,\
   hypergeometric_function.cpp\
   distributions.cpp\

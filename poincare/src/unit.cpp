@@ -1,6 +1,7 @@
 #include <poincare/unit.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
+#include <poincare/ieee754.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -61,7 +62,7 @@ const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & v
     /* Find the 'Prefix' with the most adequate 'exponent' for the order of
      * magnitude of 'value'.
      */
-    const int orderOfMagnitude = std::floor(std::log10(std::fabs(value)));
+    const int orderOfMagnitude = IEEE754<double>::exponentBase10(std::fabs(value));
     for (const Prefix * pre = m_outputPrefixes; pre < m_outputPrefixesUpperBound; pre++) {
       unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
       if (newDiff < diff) {

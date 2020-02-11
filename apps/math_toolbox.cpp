@@ -137,8 +137,7 @@ const ToolboxMessageTree unitAmountMoleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleSymbol, I18n::Message::UnitAmountMole),
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMilliSymbol, I18n::Message::UnitAmountMoleMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleMicroSymbol, I18n::Message::UnitAmountMoleMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleNanoSymbol, I18n::Message::UnitAmountMoleNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMolePicoSymbol, I18n::Message::UnitAmountMolePico)};
+};
 
 const ToolboxMessageTree unitLuminousIntensityChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousIntensityCandelaSymbol, I18n::Message::UnitLuminousIntensityCandela)};

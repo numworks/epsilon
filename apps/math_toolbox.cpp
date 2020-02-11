@@ -167,15 +167,11 @@ const ToolboxMessageTree unitEnergyJouleChildren[] = {
 };
 
 const ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltTeraSymbol, I18n::Message::UnitEnergyElectronVoltTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltGigaSymbol, I18n::Message::UnitEnergyElectronVoltGiga),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol, I18n::Message::UnitEnergyElectronVoltMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol, I18n::Message::UnitEnergyElectronVoltKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol, I18n::Message::UnitEnergyElectronVolt),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol, I18n::Message::UnitEnergyElectronVoltMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMicroSymbol, I18n::Message::UnitEnergyElectronVoltMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltNanoSymbol, I18n::Message::UnitEnergyElectronVoltNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltPicoSymbol, I18n::Message::UnitEnergyElectronVoltPico)};
+};
 
 const ToolboxMessageTree unitEnergyChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu, unitEnergyJouleChildren),

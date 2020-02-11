@@ -191,15 +191,11 @@ const ToolboxMessageTree unitElectricChargeCoulombChildren[] = {
 };
 
 const ToolboxMessageTree unitPotentialVoltChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltTeraSymbol, I18n::Message::UnitPotentialVoltTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltGigaSymbol, I18n::Message::UnitPotentialVoltGiga),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMegaSymbol, I18n::Message::UnitPotentialVoltMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltKiloSymbol, I18n::Message::UnitPotentialVoltKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltSymbol, I18n::Message::UnitPotentialVolt),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMilliSymbol, I18n::Message::UnitPotentialVoltMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltMicroSymbol, I18n::Message::UnitPotentialVoltMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltNanoSymbol, I18n::Message::UnitPotentialVoltNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltPicoSymbol, I18n::Message::UnitPotentialVoltPico)};
+};
 
 const ToolboxMessageTree unitCapacitanceFaradChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradTeraSymbol, I18n::Message::UnitCapacitanceFaradTera),

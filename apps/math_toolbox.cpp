@@ -116,15 +116,12 @@ const ToolboxMessageTree unitDistanceChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceParsecSymbol, I18n::Message::UnitDistanceParsec)};
 
 const ToolboxMessageTree unitMassGramChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramTeraSymbol, I18n::Message::UnitMassGramTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramGigaSymbol, I18n::Message::UnitMassGramGiga),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMegaSymbol, I18n::Message::UnitMassGramMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramKiloSymbol, I18n::Message::UnitMassGramKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramSymbol, I18n::Message::UnitMassGram),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMilliSymbol, I18n::Message::UnitMassGramMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMicroSymbol, I18n::Message::UnitMassGramMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramNanoSymbol, I18n::Message::UnitMassGramNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramPicoSymbol, I18n::Message::UnitMassGramPico),};
+};
 
 const ToolboxMessageTree unitMassChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitMassGramMenu, unitMassGramChildren),

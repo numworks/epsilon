@@ -143,7 +143,6 @@ const ToolboxMessageTree unitLuminousIntensityChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousIntensityCandelaSymbol, I18n::Message::UnitLuminousIntensityCandela)};
 
 const ToolboxMessageTree unitFrequencyHertzChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzTeraSymbol, I18n::Message::UnitFrequencyHertzTera),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzMegaSymbol, I18n::Message::UnitFrequencyHertzMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzKiloSymbol, I18n::Message::UnitFrequencyHertzKilo),

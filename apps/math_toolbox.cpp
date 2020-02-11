@@ -115,17 +115,13 @@ const ToolboxMessageTree unitDistanceChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceLightYearSymbol, I18n::Message::UnitDistanceLightYear),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceParsecSymbol, I18n::Message::UnitDistanceParsec)};
 
-const ToolboxMessageTree unitMassGramChildren[] = {
+const ToolboxMessageTree unitMassChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramKiloSymbol, I18n::Message::UnitMassGramKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramSymbol, I18n::Message::UnitMassGram),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMilliSymbol, I18n::Message::UnitMassGramMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMicroSymbol, I18n::Message::UnitMassGramMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramNanoSymbol, I18n::Message::UnitMassGramNano),
-};
-
-const ToolboxMessageTree unitMassChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitMassGramMenu, unitMassGramChildren),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne),
 };
 
 const ToolboxMessageTree unitCurrentAmpereChildren[] = {

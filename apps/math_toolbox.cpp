@@ -89,7 +89,7 @@ const ToolboxMessageTree unitTimeSecondChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMilliSymbol, I18n::Message::UnitTimeSecondMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondMicroSymbol, I18n::Message::UnitTimeSecondMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondNanoSymbol, I18n::Message::UnitTimeSecondNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTimeSecondPicoSymbol, I18n::Message::UnitTimeSecondPico)};
+};
 
 const ToolboxMessageTree unitTimeChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTimeSecondMenu, unitTimeSecondChildren),

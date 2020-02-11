@@ -32,6 +32,11 @@ void SelectableViewWithMessages::setMessages(I18n::Message * m, int numberOfMess
   layoutSubviews();
 }
 
+void SelectableViewWithMessages::reload() {
+  m_selectableTableView->reloadData();
+  layoutSubviews();
+}
+
 View * SelectableViewWithMessages::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {

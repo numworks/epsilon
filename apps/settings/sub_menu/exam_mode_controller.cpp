@@ -35,7 +35,7 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
    * reload the selection as the number of rows might have also changed. We
    * force to reload the entire data because they might have changed. */
   selectCellAtLocation(0, initialSelectedRow());
-  m_selectableTableView.reloadData();
+  m_contentView.reload();
   // We add a message when the mode exam is on
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3};

@@ -11,6 +11,7 @@ public:
   SelectableViewWithMessages(SelectableTableView * selectableTableView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setMessages(I18n::Message * messages, int numberOfMessages);
+  void reload();
 private:
   int numberOfSubviews() const override { return 1 + m_numberOfMessages; }
   View * subviewAtIndex(int index) override;

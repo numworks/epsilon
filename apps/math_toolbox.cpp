@@ -198,15 +198,10 @@ const ToolboxMessageTree unitPotentialVoltChildren[] = {
 };
 
 const ToolboxMessageTree unitCapacitanceFaradChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradTeraSymbol, I18n::Message::UnitCapacitanceFaradTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradGigaSymbol, I18n::Message::UnitCapacitanceFaradGiga),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMegaSymbol, I18n::Message::UnitCapacitanceFaradMega),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradKiloSymbol, I18n::Message::UnitCapacitanceFaradKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradSymbol, I18n::Message::UnitCapacitanceFarad),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMilliSymbol, I18n::Message::UnitCapacitanceFaradMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradMicroSymbol, I18n::Message::UnitCapacitanceFaradMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradNanoSymbol, I18n::Message::UnitCapacitanceFaradNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCapacitanceFaradPicoSymbol, I18n::Message::UnitCapacitanceFaradPico)};
+};
 
 const ToolboxMessageTree unitResistanceOhmChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmTeraSymbol, I18n::Message::UnitResistanceOhmTera),

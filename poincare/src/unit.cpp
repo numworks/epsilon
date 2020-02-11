@@ -44,12 +44,11 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length,
 
 int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Prefix * prefix) const {
   int length = 0;
-  if (isPrefixable()) {
-    length += prefix->serialize(buffer, bufferSize);
-    assert(length < bufferSize);
-    buffer += length;
-    bufferSize -= length;
-  }
+  length += prefix->serialize(buffer, bufferSize);
+  assert(length == 0 || isPrefixable());
+  assert(length < bufferSize);
+  buffer += length;
+  bufferSize -= length;
   assert(bufferSize >= 0);
   length += std::min<int>(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
   return length;

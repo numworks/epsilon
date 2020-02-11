@@ -128,8 +128,7 @@ const ToolboxMessageTree unitCurrentAmpereChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereSymbol, I18n::Message::UnitCurrentAmpere),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMilliSymbol, I18n::Message::UnitCurrentAmpereMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereMicroSymbol, I18n::Message::UnitCurrentAmpereMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmpereNanoSymbol, I18n::Message::UnitCurrentAmpereNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitCurrentAmperePicoSymbol, I18n::Message::UnitCurrentAmperePico)};
+};
 
 const ToolboxMessageTree unitTemperatureChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin)};

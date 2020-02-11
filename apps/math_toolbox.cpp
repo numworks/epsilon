@@ -204,15 +204,9 @@ const ToolboxMessageTree unitCapacitanceFaradChildren[] = {
 };
 
 const ToolboxMessageTree unitResistanceOhmChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmTeraSymbol, I18n::Message::UnitResistanceOhmTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmGigaSymbol, I18n::Message::UnitResistanceOhmGiga),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmMegaSymbol, I18n::Message::UnitResistanceOhmMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmKiloSymbol, I18n::Message::UnitResistanceOhmKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmSymbol, I18n::Message::UnitResistanceOhm),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmMilliSymbol, I18n::Message::UnitResistanceOhmMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmMicroSymbol, I18n::Message::UnitResistanceOhmMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmNanoSymbol, I18n::Message::UnitResistanceOhmNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitResistanceOhmPicoSymbol, I18n::Message::UnitResistanceOhmPico)};
+};
 
 const ToolboxMessageTree unitConductanceSiemensChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensTeraSymbol, I18n::Message::UnitConductanceSiemensTera),

@@ -21,8 +21,8 @@ public:
   constexpr static KDCoordinate TableCellHorizontalMargin = 10;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate ScrollStep = 10;
-  constexpr static KDCoordinate PopUpLeftMargin = 32;
-  constexpr static KDCoordinate PopUpRightMargin = 32;
+  constexpr static KDCoordinate PopUpLeftMargin = 27;
+  constexpr static KDCoordinate PopUpRightMargin = 27;
   constexpr static KDCoordinate PopUpTopMargin = 50;
   constexpr static KDCoordinate ExamPopUpTopMargin = 27;
   constexpr static KDCoordinate ExamPopUpBottomMargin = 55;

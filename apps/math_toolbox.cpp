@@ -101,9 +101,6 @@ const ToolboxMessageTree unitTimeChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitTimeYearSymbol, I18n::Message::UnitTimeYear)};
 
 const ToolboxMessageTree unitDistanceMeterChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterTeraSymbol, I18n::Message::UnitDistanceMeterTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterGigaSymbol, I18n::Message::UnitDistanceMeterGiga),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterMegaSymbol, I18n::Message::UnitDistanceMeterMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterKiloSymbol, I18n::Message::UnitDistanceMeterKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterSymbol, I18n::Message::UnitDistanceMeter),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterMilliSymbol, I18n::Message::UnitDistanceMeterMilli),

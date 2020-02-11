@@ -227,9 +227,7 @@ const ToolboxMessageTree unitVolumeLiterChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterDeciSymbol, I18n::Message::UnitVolumeLiterDeci),
   ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterCentiSymbol, I18n::Message::UnitVolumeLiterCenti),
   ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterMilliSymbol, I18n::Message::UnitVolumeLiterMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterMicroSymbol, I18n::Message::UnitVolumeLiterMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterNanoSymbol, I18n::Message::UnitVolumeLiterNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterPicoSymbol, I18n::Message::UnitVolumeLiterPico)};
+};
 
 const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),

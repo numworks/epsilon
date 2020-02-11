@@ -187,15 +187,8 @@ const ToolboxMessageTree unitPowerWattChildren[] = {
 };
 
 const ToolboxMessageTree unitElectricChargeCoulombChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombTeraSymbol, I18n::Message::UnitChargeCoulombTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombGigaSymbol, I18n::Message::UnitChargeCoulombGiga),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombMegaSymbol, I18n::Message::UnitChargeCoulombMega),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombKiloSymbol, I18n::Message::UnitChargeCoulombKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombSymbol, I18n::Message::UnitChargeCoulomb),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombMilliSymbol, I18n::Message::UnitChargeCoulombMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombMicroSymbol, I18n::Message::UnitChargeCoulombMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombNanoSymbol, I18n::Message::UnitChargeCoulombNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombPicoSymbol, I18n::Message::UnitChargeCoulombPico)};
+};
 
 const ToolboxMessageTree unitPotentialVoltChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltTeraSymbol, I18n::Message::UnitPotentialVoltTera),

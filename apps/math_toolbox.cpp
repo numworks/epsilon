@@ -209,15 +209,9 @@ const ToolboxMessageTree unitResistanceOhmChildren[] = {
 };
 
 const ToolboxMessageTree unitConductanceSiemensChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensTeraSymbol, I18n::Message::UnitConductanceSiemensTera),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensGigaSymbol, I18n::Message::UnitConductanceSiemensGiga),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMegaSymbol, I18n::Message::UnitConductanceSiemensMega),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensKiloSymbol, I18n::Message::UnitConductanceSiemensKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensSymbol, I18n::Message::UnitConductanceSiemens),
   ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMilliSymbol, I18n::Message::UnitConductanceSiemensMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMicroSymbol, I18n::Message::UnitConductanceSiemensMicro),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensNanoSymbol, I18n::Message::UnitConductanceSiemensNano),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensPicoSymbol, I18n::Message::UnitConductanceSiemensPico)};
+};
 
 const ToolboxMessageTree unitMagneticFieldChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitMagneticFieldTeslaSymbol, I18n::Message::UnitMagneticFieldTesla)};

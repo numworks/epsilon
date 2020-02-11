@@ -6,6 +6,9 @@
 constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[2] = {Settings::SettingsMessageTree(I18n::Message::ActivateExamMode), Settings::SettingsMessageTree(I18n::Message::ActivateDutchExamMode)};
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
+  if (GlobalPreferences::sharedGlobalPreferences()->language() != I18n::Language::EN || GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    return 1;
+  }
   return 2;
 }
 

@@ -460,8 +460,9 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
   }
   bool poppedParenthesisIsSystem = false;
 
-  /* Check the context: if the identifier does not already exist as a function,
-   * interpret it as a symbol, even if there are parentheses afterwards. */
+  /* If symbolPlusParenthesesAreFunctions is false, check the context: if the
+   * identifier does not already exist as a function, interpret it as a symbol,
+   * even if there are parentheses afterwards. */
 
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
   if (m_context != nullptr && !symbolPlusParenthesesAreFunctions) {

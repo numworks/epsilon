@@ -57,15 +57,7 @@ int ExamModeController::numberOfRows() const {
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0  && index < 3);
-  
-  switch(index) {
-    case 0:
-      return &m_ledCell;
-    case 1:
-      return &m_modeCell;
-    case 2:
-      return &m_examModeCell;
-  }
+  return &m_cell[index];
 }
 
 int ExamModeController::reusableCellCount(int type) {
@@ -75,7 +67,7 @@ int ExamModeController::reusableCellCount(int type) {
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if(index == 0){
-    m_examModeCell.setHighlighted(false);
+    m_cell[2].setHighlighted(false);
   }
   Preferences * preferences = Preferences::sharedPreferences();
   GenericSubController::willDisplayCellForIndex(cell, index);

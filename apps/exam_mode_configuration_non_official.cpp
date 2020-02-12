@@ -3,7 +3,7 @@
 constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[] = {Settings::SettingsMessageTree(I18n::Message::ActivateExamMode), Settings::SettingsMessageTree(I18n::Message::Default)};
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
-  return 1;
+  return 3;
 }
 
 GlobalPreferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {

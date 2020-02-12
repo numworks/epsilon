@@ -13,8 +13,8 @@ namespace Settings {
 
 AboutController::AboutController(Responder * parentResponder) :
   GenericSubController(parentResponder),
-  //m_contributorsController(this),
-  //m_contributorsCell(KDFont::LargeFont, KDFont::SmallFont),
+  m_contributorsController(this),
+  m_contributorsCell(KDFont::LargeFont, KDFont::SmallFont),
   m_view(&m_selectableTableView)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
@@ -99,7 +99,7 @@ HighlightCell * AboutController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-  return &m_contributorsCell;
+  return &m_contributorsCell; //E13HELP
 }
 
 int AboutController::typeAtLocation(int i, int j) {

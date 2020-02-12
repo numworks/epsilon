@@ -7,10 +7,10 @@ namespace Settings {
 constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren),
     SettingsMessageTree(I18n::Message::Brightness),
-    SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
-    SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren,
+    SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren),
+    SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren),
     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
 
 constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu);

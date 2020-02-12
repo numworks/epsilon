@@ -24,6 +24,8 @@ private:
 #else
   constexpr static int k_totalNumberOfCell = 7;
 #endif
+  ContributorsController m_contributorsController;
+  MessageTableCellWithChevronAndMessage m_contributorsCell;
   SelectableViewWithMessages m_view;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   HardwareTest::PopUpController m_hardwareTestPopUpController;

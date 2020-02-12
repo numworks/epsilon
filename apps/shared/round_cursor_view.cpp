@@ -59,11 +59,10 @@ bool RoundCursorView::eraseCursorIfPossible() {
     return false;
   }
   // Erase the cursor
-  KDColor cursorWorkingBuffer[cursorSize*cursorSize];
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->setOrigin(currentFrame.origin());
   ctx->setClippingRect(currentFrame);
-  ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, cursorWorkingBuffer);
+  ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, s_cursorWorkingBuffer);
   // TODO Restore the context to previous values?
   return true;
 }

@@ -23,7 +23,7 @@ private:
   int numberOfCautionLines() const;
   int initialSelectedRow() const override;
   GlobalPreferences::ExamMode examMode();
-  static constexpr int k_maxNumberOfCells = 2;
+  static constexpr int k_maxNumberOfCells = 4;
   SelectableViewWithMessages m_contentView;
   MessageTableCell m_cell[k_maxNumberOfCells];
 };

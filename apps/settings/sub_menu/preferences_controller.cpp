@@ -177,12 +177,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return CodePointLayout::Builder('*', k_layoutFont);
     case I18n::Message::SymbolMultiplicationAutoSymbol:
       return CodePointLayout::Builder(' ', k_layoutFont);
-
-      // Font size
-    case I18n::Message::Large:
-      return LayoutHelper::String("000", 3, KDFont::LargeFont);
-    case I18n::Message::Small:
-      return LayoutHelper::String("000", 3, KDFont::SmallFont);
+    
     // Font size
     case I18n::Message::LargeFont:
     case I18n::Message::SmallFont:

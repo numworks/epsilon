@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <python/port/port.h>
+#include <apps/code/app.h>
 
 
 class TestExecutionEnvironment : public MicroPython::ExecutionEnvironment {
@@ -13,8 +14,8 @@ void TestExecutionEnvironment::printText(const char * text, size_t length) {
   quiz_print(text);
 }
 
-static constexpr int k_pythonHeapSize = 16384;
-static char s_pythonHeap[k_pythonHeapSize*100];
+static constexpr int s_pythonHeapSize = Code::App::k_pythonHeapSize;
+static char s_pythonHeap[s_pythonHeapSize];
 
 static const char * s_mandelbrotScript = R"(#
 def mandelbrot(N_iteration):
@@ -61,7 +62,7 @@ QUIZ_CASE(python_mandelbrot) {
   constexpr size_t bufferSize = 500;
   char buffer[bufferSize];
   inlineToBeSingleInput(buffer, bufferSize, s_mandelbrotScript);
-  MicroPython::init(s_pythonHeap, s_pythonHeap + k_pythonHeapSize);
+  MicroPython::init(s_pythonHeap, s_pythonHeap + s_pythonHeapSize);
   TestExecutionEnvironment env;
   env.runCode(buffer);
   MicroPython::deinit();

@@ -55,22 +55,23 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
 }
 
 const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const int exponent) const {
-  const Prefix * bestPre = &Unit::EmptyPrefix;
-  if (isPrefixable()) {
-    unsigned int diff = -1;
-    /* Find the 'Prefix' with the most adequate 'exponent' for the order of
-     * magnitude of 'value'.
-     */
-    const int orderOfMagnitude = IEEE754<double>::exponentBase10(std::fabs(value));
-    for (const Prefix * pre = m_outputPrefixes; pre < m_outputPrefixesUpperBound; pre++) {
-      unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
-      if (newDiff < diff) {
-        diff = newDiff;
-        bestPre = pre;
-      }
-    }
-    value *= std::pow(10.0, -bestPre->exponent() * exponent);
+  if (!isPrefixable()) {
+    return &Unit::EmptyPrefix;
   }
+  const Prefix * bestPre = nullptr;
+  unsigned int diff = -1;
+  /* Find the 'Prefix' with the most adequate 'exponent' for the order of
+   * magnitude of 'value'.
+   */
+  const int orderOfMagnitude = IEEE754<double>::exponentBase10(std::fabs(value));
+  for (const Prefix * pre = m_outputPrefixes; pre < m_outputPrefixesUpperBound; pre++) {
+    unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
+    if (newDiff < diff) {
+      diff = newDiff;
+      bestPre = pre;
+    }
+  }
+  value *= std::pow(10.0, -bestPre->exponent() * exponent);
   return bestPre;
 }
 

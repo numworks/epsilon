@@ -24,7 +24,13 @@ static inline void ion_main_inner() {
     i++;
   }
   quiz_print("ALL TESTS FINISHED");
+#ifdef PLATFORM_DEVICE
+  while (1) {
+    Ion::Timing::msleep(100000);
+  }
+#endif
 }
+
 
 void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight

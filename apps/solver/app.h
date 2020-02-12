@@ -42,6 +42,7 @@ public:
   InputViewController * inputViewController() { return &m_inputViewController; }
   ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   ViewController * intervalController() { return &m_intervalController; }
+  SolutionsController * solutionsController() { return &m_solutionsController; }
   void willBecomeInactive() override;
 private:
   App(Snapshot * snapshot);

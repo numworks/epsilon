@@ -1,19 +1,12 @@
-#include <quiz.h>
-#include <poincare/expression.h>
-#include <poincare/rational.h>
-#include <poincare/addition.h>
 #include <apps/shared/global_context.h>
-#include <ion.h>
-#include <assert.h>
 #include "helper.h"
-#include "./tree/helpers.h"
 
 using namespace Poincare;
 
 template<typename T>
 void assert_expression_approximates_to_scalar(const char * expression, T approximation, Preferences::AngleUnit angleUnit = Degree, Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   T result = e.approximateToScalar<T>(&globalContext, complexFormat, angleUnit);
   quiz_assert_print_if_failure((std::isnan(result) && std::isnan(approximation)) || (std::isinf(result) && std::isinf(approximation) && result*approximation >= 0) || (std::fabs(result - approximation) <= Poincare::Expression::Epsilon<T>()), expression);
 }
@@ -42,6 +35,11 @@ QUIZ_CASE(poincare_approximation_decimal) {
   assert_expression_approximates_to_scalar<double>("-567.2ᴇ2", -56720.0);
 }
 
+QUIZ_CASE(poincare_approximation_based_integer) {
+  assert_expression_approximates_to<float>("1232", "1232");
+  assert_expression_approximates_to<double>("0b110101", "53");
+  assert_expression_approximates_to<double>("0xabc1234", "180097588");
+}
 
 QUIZ_CASE(poincare_approximation_rational) {
   assert_expression_approximates_to<float>("1/3", "0.3333333");
@@ -214,8 +212,8 @@ QUIZ_CASE(poincare_approximation_logarithm) {
 
 template<typename T>
 void assert_expression_approximation_is_bounded(const char * expression, T lowBound, T upBound, bool upBoundIncluded = false) {
-  Expression e = parse_expression(expression, true);
   Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, true);
   T result = e.approximateToScalar<T>(&globalContext, Cartesian, Radian);
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(result < upBound || (result == upBound && upBoundIncluded), expression);
@@ -345,6 +343,7 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("factor(-23/4)", "-5.75");
   assert_expression_approximates_to<double>("factor(-123/24)", "-5.125");
+  assert_expression_approximates_to<float>("factor(𝐢)", "undef");
 
   assert_expression_approximates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
   assert_expression_approximates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-8.3333333333333ᴇ-2,0.375][1.0833333333333,1.6666666666667ᴇ-1,-0.25][4.1666666666667ᴇ-2,-8.3333333333333ᴇ-2,4.1666666666667ᴇ-2]]");

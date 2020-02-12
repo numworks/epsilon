@@ -32,8 +32,8 @@ View * EvenOddEditableTextCell::subviewAtIndex(int index) {
   return &m_editableCell;
 }
 
-void EvenOddEditableTextCell::layoutSubviews() {
-  m_editableCell.setFrame(bounds());
+void EvenOddEditableTextCell::layoutSubviews(bool force) {
+  m_editableCell.setFrame(bounds(), force);
 }
 
 void EvenOddEditableTextCell::didBecomeFirstResponder() {

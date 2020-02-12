@@ -45,7 +45,7 @@ public:
     BoxView::Quantile m_selectedBoxQuantile;
   };
 private:
-  App(Snapshot * snapshot);
+  App(Snapshot * snapshot, Poincare::Context * parentContext);
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   ButtonRowController m_calculationHeader;

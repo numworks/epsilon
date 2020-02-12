@@ -67,8 +67,8 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   GlobalContext::DestroyRecordsBaseNamedWithoutExtension(baseName, Ion::Storage::funcExtension);
 
   // Set the name
-  Function::NameNotCompliantError nameError = Function::NameNotCompliantError::None;
-  Ion::Storage::Record::ErrorStatus error = Function::BaseNameCompliant(baseName, &nameError) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, Ion::Storage::funcExtension) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
+  Function::NameNotCompliantError nameError = Function::BaseNameCompliant(baseName);
+  Ion::Storage::Record::ErrorStatus error = nameError == Function::NameNotCompliantError::None ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, Ion::Storage::funcExtension) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {

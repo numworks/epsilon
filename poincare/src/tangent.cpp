@@ -41,6 +41,7 @@ Expression TangentNode::shallowReduce(ReductionContext reductionContext) {
 Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

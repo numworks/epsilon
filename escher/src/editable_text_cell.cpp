@@ -43,12 +43,13 @@ View * EditableTextCell::subviewAtIndex(int index) {
   return &m_textField;
 }
 
-void EditableTextCell::layoutSubviews() {
+void EditableTextCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
   m_textField.setFrame(KDRect(cellBounds.x() + m_leftMargin,
         cellBounds.y() + m_topMargin,
         cellBounds.width() - m_leftMargin - m_rightMargin,
-        cellBounds.height() - m_topMargin - m_bottomMargin));
+        cellBounds.height() - m_topMargin - m_bottomMargin),
+      force);
 }
 
 void EditableTextCell::didBecomeFirstResponder() {

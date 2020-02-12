@@ -183,6 +183,14 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return LayoutHelper::String("000", 3, KDFont::LargeFont);
     case I18n::Message::Small:
       return LayoutHelper::String("000", 3, KDFont::SmallFont);
+    // Font size
+    case I18n::Message::LargeFont:
+    case I18n::Message::SmallFont:
+    {
+      const char * text = "abc";
+      const KDFont * font = message == I18n::Message::LargeFont ? KDFont::LargeFont : KDFont::SmallFont;
+      return LayoutHelper::String(text, strlen(text), font);
+    }
 
     default:
       assert(false);
@@ -219,6 +227,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+<<<<<<< HEAD
   } else if (message == I18n::Message::LEDColor) {
     preferences->setColorOfLED((Preferences::LEDColor)valueIndex);
   } else if (message == I18n::Message::ExamModeMode) {
@@ -227,7 +236,12 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
   } else if (message == I18n::Message::PythonFont) {
     preferences->setPythonFont((Preferences::PythonFont)valueIndex);
+=======
+  } else if (message == I18n::Message::FontSizes) {
+    GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
+>>>>>>> upstream/master
   }
+
 }
 
 int PreferencesController::valueIndexForPreference(I18n::Message message) const {
@@ -244,6 +258,7 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
   }
+<<<<<<< HEAD
   if (message == I18n::Message::LEDColor) {
     return (int)preferences->colorOfLED();
   }
@@ -252,6 +267,10 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
   if (message == I18n::Message::PythonFont) {
     return (int)preferences->pythonFont();
+=======
+  if (message == I18n::Message::FontSizes) {
+    return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
+>>>>>>> upstream/master
   }
   return 0;
 }

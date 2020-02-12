@@ -1,7 +1,6 @@
 #include "function.h"
 #include "poincare_helpers.h"
 #include "poincare/src/parsing/parser.h"
-#include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <cmath>
@@ -11,42 +10,28 @@ using namespace Poincare;
 
 namespace Shared {
 
-bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
+Function::NameNotCompliantError Function::BaseNameCompliant(const char * baseName) {
   assert(baseName[0] != 0);
 
   UTF8Decoder decoder(baseName);
   CodePoint c = decoder.nextCodePoint();
-  if (UTF8Helper::CodePointIsNumber(c)) {
-    // The name cannot start with a number
-    if (error != nullptr) {
-      *error = NameNotCompliantError::NameCannotStartWithNumber;
-    }
-    return false;
+  if (c.isDecimalDigit()) {
+    return NameNotCompliantError::NameCannotStartWithNumber;
   }
 
-  // The name should only have allowed characters
   while (c != UCodePointNull) {
-    if (!(UTF8Helper::CodePointIsUpperCaseLetter(c)
-        || UTF8Helper::CodePointIsLowerCaseLetter(c)
-        || UTF8Helper::CodePointIsNumber(c))
-        || c == '_')
-    {
-      if (error != nullptr) {
-        *error = NameNotCompliantError::CharacterNotAllowed;
-      }
-      return false;
+    // FIXME '_' should be accepted but not as first character
+    // TODO Factor this piece of code with similar one in the Parser
+    if (!(c.isDecimalDigit() || c.isLatinLetter()) || c == '_') {
+      return NameNotCompliantError::CharacterNotAllowed;
     }
     c = decoder.nextCodePoint();
   }
 
-  // The name should not be a reserved name
   if (Parser::IsReservedName(baseName, strlen(baseName))) {
-    if (error != nullptr) {
-      *error = NameNotCompliantError::ReservedName;
-    }
-    return false;
+    return NameNotCompliantError::ReservedName;
   }
-  return true;
+  return NameNotCompliantError::None;
 }
 
 bool Function::isActive() const {

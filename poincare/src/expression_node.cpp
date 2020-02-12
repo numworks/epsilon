@@ -32,24 +32,23 @@ int ExpressionNode::polynomialDegree(Context * context, const char * symbolName)
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+int ExpressionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-Expression ExpressionNode::shallowReplaceReplaceableSymbols(Context * context) {
-  return Expression(this).defaultReplaceReplaceableSymbols(context);
+Expression ExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
+  return Expression(this).defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
 }
 
-int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
- int numberOfVariables = 0;
+int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   for (ExpressionNode * c : children()) {
-   int n = c->getVariables(context, isVariable, variables, maxSizeVariable);
-   if (n < 0) {
-     return n;
-   }
-   numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
- }
- return numberOfVariables;
+    int n = c->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
+    if (n < 0) {
+      return n;
+    }
+    nextVariableIndex = n;
+  }
+  return nextVariableIndex;
 }
 
 float ExpressionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
@@ -123,6 +122,10 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
     }
   }
   return false;
+}
+
+Expression ExpressionNode::getUnit() const {
+  return Undefined::Builder();
 }
 
 void ExpressionNode::setChildrenInPlace(Expression other) {

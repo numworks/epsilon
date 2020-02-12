@@ -3,18 +3,6 @@ extern "C" {
 }
 #include <escher/view.h>
 
-View::View() :
-  m_frame(KDRectZero),
-  m_superview(nullptr),
-  m_dirtyRect(KDRectZero)
-{
-}
-
-void View::drawRect(KDContext * ctx, KDRect rect) const {
-  // By default, a view doesn't do anything
-  // It's transparent!
-}
-
 const Window * View::window() const {
   if (m_superview == nullptr) {
     return nullptr;
@@ -105,11 +93,11 @@ View * View::subview(int index) {
 }
 
 void View::setSize(KDSize size) {
-  setFrame(KDRect(m_frame.origin(), size));
+  setFrame(KDRect(m_frame.origin(), size), false);
 }
 
-void View::setFrame(KDRect frame) {
-  if (frame == m_frame) {
+void View::setFrame(KDRect frame, bool force) {
+  if (frame == m_frame && !force) {
     return;
   }
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
@@ -133,7 +121,7 @@ void View::setFrame(KDRect frame) {
   // FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is being shrinked)
 
   if (!m_frame.isEmpty()) {
-    layoutSubviews();
+    layoutSubviews(force);
   }
 }
 
@@ -166,14 +154,6 @@ KDRect View::absoluteVisibleFrame() const {
     return absoluteFrame.intersectedWith(parentDrawingArea);
   }
 }
-
-KDSize View::minimalSizeForOptimalDisplay() const  {
-  return KDSizeZero;
-}
-
-void View::layoutSubviews() {
-}
-
 
 #if ESCHER_VIEW_LOGGING
 const char * View::className() const {

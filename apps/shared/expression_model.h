@@ -18,23 +18,21 @@ public:
   Poincare::Layout layout(const Ion::Storage::Record * record, CodePoint symbol = 0) const;
 
   // Setters
-  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol = 0);
+  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, Poincare::Context * context, CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
-
-  // Property
-  bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
-  virtual void * expressionAddress(const Ion::Storage::Record * record) const = 0;
 
   virtual void tidy() const;
 protected:
   // Setters helper
-  static Poincare::Expression BuildExpressionFromText(const char * c, CodePoint symbol = 0);
+  static Poincare::Expression BuildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr);
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
 private:
   virtual void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
+  virtual void * expressionAddress(const Ion::Storage::Record * record) const = 0;
   virtual size_t expressionSize(const Ion::Storage::Record * record) const = 0;
-  mutable int m_circular;
+  bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
+  mutable int8_t m_circular;
 };
 
 }

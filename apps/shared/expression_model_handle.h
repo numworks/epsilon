@@ -16,7 +16,6 @@ public:
   void text(char * buffer, size_t bufferSize) const { return model()->text(this, buffer, bufferSize, symbol()); }
   virtual Poincare::Expression expressionReduced(Poincare::Context * context) const { return model()->expressionReduced(this, context); }
   Poincare::Expression expressionClone() const { return model()->expressionClone(this); }
-  bool isCircularlyDefined(Poincare::Context * context) const { return model()->isCircularlyDefined(this, context); }
   Poincare::Layout layout() { return model()->layout(this, symbol()); }
    /* Here, isDefined is the exact contrary of isEmpty. However, for Sequence
    * inheriting from ExpressionModelHandle, isEmpty and isDefined have not exactly
@@ -31,7 +30,7 @@ public:
    * behaviour but it is not true for its child classes (for example, in
    * Sequence). */
   virtual void tidy() { model()->tidy(); }
-  Ion::Storage::Record::ErrorStatus setContent(const char * c) { return editableModel()->setContent(this, c, symbol()); }
+  Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) { return editableModel()->setContent(this, c, context, symbol()); }
   Ion::Storage::Record::ErrorStatus setExpressionContent(const Poincare::Expression & e) { return editableModel()->setExpressionContent(this, e); }
 protected:
   ExpressionModel * editableModel() { return const_cast<ExpressionModel *>(model()); }

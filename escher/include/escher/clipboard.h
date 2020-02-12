@@ -7,7 +7,7 @@
 class Clipboard {
 public:
   static Clipboard * sharedClipboard();
-  void store(const char * storedText);
+  void store(const char * storedText, int length = -1);
   const char * storedText() const { return m_textBuffer; }
   void reset();
 private:

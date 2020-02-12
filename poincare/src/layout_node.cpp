@@ -19,11 +19,24 @@ bool LayoutNode::isIdenticalTo(Layout l) {
 
 // Rendering
 
-void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  for (LayoutNode * l : children()) {
-    l->draw(ctx, p, expressionColor, backgroundColor);
+void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  bool isSelected = selectionStart != nullptr && selectionEnd != nullptr
+    && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
+    && reinterpret_cast<char *>(this) >= reinterpret_cast<char *>(selectionStart->node())
+    && reinterpret_cast<char *>(this) <= reinterpret_cast<char *>(selectionEnd->node());
+  KDColor backColor = isSelected ? selectionColor : backgroundColor;
+  KDPoint renderingAbsoluteOrigin = absoluteOrigin().translatedBy(p);
+  ctx->fillRect(KDRect(renderingAbsoluteOrigin, layoutSize()), backColor);
+  render(ctx, renderingAbsoluteOrigin, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
+  if (!isSelected) {
+    for (LayoutNode * l : children()) {
+      l->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+    }
+  } else {
+    for (LayoutNode * l : children()) {
+      l->draw(ctx, p, expressionColor, selectionColor);
+    }
   }
-  render(ctx, absoluteOrigin().translatedBy(p), expressionColor, backgroundColor);
 }
 
 KDPoint LayoutNode::origin() {
@@ -78,7 +91,7 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   // Only HorizontalLayout may have no parent, and it overloads this method
   assert(parent() != nullptr);
-  return (cursor->layoutReference().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
+  return (cursor->layout().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
 
 // Tree modification
@@ -113,6 +126,24 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
   assert(correspondingExpression != nullptr);
   return numberOfChildren() > 0 ? childAtIndex(0) : this;
+}
+
+bool LayoutNode::removeGreySquaresFromAllMatrixAncestors() {
+  bool result = false;
+  changeGreySquaresOfAllMatrixRelatives(false, true, &result);
+  return result;
+}
+
+bool LayoutNode::removeGreySquaresFromAllMatrixChildren() {
+  bool result = false;
+  changeGreySquaresOfAllMatrixRelatives(false, false, &result);
+  return result;
+}
+
+bool LayoutNode::addGreySquaresToAllMatrixAncestors() {
+  bool result = false;
+  changeGreySquaresOfAllMatrixRelatives(true, true, &result);
+  return result;
 }
 
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
@@ -156,16 +187,16 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   return true;
 }
 
-void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (!equivalentPositionVisited) {
     LayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
-      cursor->setLayout(cursorEquivalent.layoutReference());
+      cursor->setLayout(cursorEquivalent.layout());
       cursor->setPosition(cursorEquivalent.position());
       if (direction == VerticalDirection::Up) {
-        cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true);
+        cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
       } else {
-        cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true);
+        cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
       }
       return;
     }
@@ -176,13 +207,13 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
     return;
   }
   if (direction == VerticalDirection::Up) {
-    p->moveCursorUp(cursor, shouldRecomputeLayout, true);
+    p->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
   } else {
-    p->moveCursorDown(cursor, shouldRecomputeLayout, true);
+    p->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
   }
 }
 
-void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   LayoutNode * childResult = nullptr;
   LayoutNode ** childResultPtr = &childResult;
   LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
@@ -190,7 +221,7 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
    * than this initial value of score. */
   int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
 
-  scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
+  scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore, forSelection);
 
   // If there is a valid result
   Layout resultRef(childResult);
@@ -208,7 +239,8 @@ void LayoutNode::scoreCursorInDescendantsVertically (
     bool * shouldRecomputeLayout,
     LayoutNode ** childResult,
     void * resultPosition,
-    int * resultScore)
+    int * resultScore,
+    bool forSelection)
 {
   LayoutCursor::Position * castedResultPosition = static_cast<LayoutCursor::Position *>(resultPosition);
   KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
@@ -234,26 +266,46 @@ void LayoutNode::scoreCursorInDescendantsVertically (
   }
   if (layoutIsUnderOrAbove || layoutContains) {
     for (LayoutNode * c : children()) {
-      c->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
+      c->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore, forSelection);
     }
   }
 }
 
-bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
-  bool changedSquares = false;
-  Layout currentAncestor = Layout(parent());
-  while (!currentAncestor.isUninitialized()) {
-    if (currentAncestor.type() == Type::MatrixLayout) {
-      if (add) {
-        MatrixLayout(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();
-      } else {
-        MatrixLayout(static_cast<MatrixLayoutNode *>(currentAncestor.node())).removeGreySquares();
-      }
-      changedSquares = true;
-    }
-    currentAncestor = currentAncestor.parent();
+bool addRemoveGreySquaresInLayoutIfNeeded(bool add, Layout * l) {
+  if (l->type() != LayoutNode::Type::MatrixLayout) {
+    return false;
   }
-  return changedSquares;
+  if (add) {
+    static_cast<MatrixLayoutNode *>(l->node())->addGreySquares();
+  } else {
+    static_cast<MatrixLayoutNode *>(l->node())->removeGreySquares();
+  }
+  return true;
+}
+
+void LayoutNode::changeGreySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares) {
+  if (!ancestors) {
+    // If in children, we also change the squares for this
+    {
+      Layout thisLayout = Layout(this);
+      if (addRemoveGreySquaresInLayoutIfNeeded(add, &thisLayout)) {
+        *changedSquares = true;
+      }
+    }
+    for (int i = 0; i < numberOfChildren(); i++) {
+      /* We cannot use "for l : children()", as the node addresses might change,
+       * especially the iterator stopping address. */
+      childAtIndex(i)->changeGreySquaresOfAllMatrixRelatives(add, false, changedSquares);
+    }
+  } else {
+    Layout currentAncestor = Layout(parent());
+    while (!currentAncestor.isUninitialized()) {
+      if (addRemoveGreySquaresInLayoutIfNeeded(add, &currentAncestor)) {
+        *changedSquares = true;
+      }
+      currentAncestor = currentAncestor.parent();
+    }
+  }
 }
 
 }

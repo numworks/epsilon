@@ -7,6 +7,7 @@
 #include "../distribution/chi_squared_distribution.h"
 #include "../distribution/geometric_distribution.h"
 #include "../distribution/student_distribution.h"
+#include "../distribution/fisher_distribution.h"
 
 void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::Distribution * distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);
@@ -91,4 +92,27 @@ QUIZ_CASE(geometric_distribution) {
   distribution.setParameterAtIndex(0.2, 0);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 7.0, 0.8322278399999998299563230830244719982147216796875);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 3.0, 0.5904);
+}
+
+QUIZ_CASE(fisher_distribution) {
+  // Fisher distribution with d1 = 1 and d2 = 1
+  Probability::FisherDistribution distribution;
+  distribution.setParameterAtIndex(1.0, 0);
+  distribution.setParameterAtIndex(1.0, 1);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.7, 0.5834784097728860);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 3.3, 0.6796445888753);
+
+  // Fisher distribution with d1 = 3 and d2 = 2
+  distribution.setParameterAtIndex(3.0, 0);
+  distribution.setParameterAtIndex(2.0, 1);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 2.0, 0.6495190528383);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 3.0, 0.7400733003272);
+
+  // Fisher distribution with d1 = 100 and d2 = 87
+  distribution.setParameterAtIndex(100.0, 0);
+  distribution.setParameterAtIndex(87.0, 1);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 0.6, 0.00688477308162587);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.4, 0.94560850441205857);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.425, 0.95425004959692871775);
+
 }

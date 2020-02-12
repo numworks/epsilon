@@ -5,6 +5,7 @@ LD = emcc
 EMSCRIPTEN_ASYNC_SYMBOLS = \
 SAFE_HEAP_LOAD \
 SAFE_HEAP_STORE \
+_IonDisplayForceRefresh\
 _IonEventsEmscriptenKeyDown \
 _IonEventsEmscriptenKeyUp \
 _IonEventsEmscriptenPushEvent \
@@ -82,6 +83,8 @@ _main \
 _micropython_port_interruptible_msleep \
 _micropython_port_interrupt_if_needed \
 _micropython_port_vm_hook_loop \
+_modion_keyboard_keydown \
+_modtime_sleep \
 _modturtle_backward \
 _modturtle_circle \
 _modturtle_forward \
@@ -117,6 +120,15 @@ endif
 # Configure EMFLAGS
 EMFLAGS += -s WASM=0
 
+# Since emcc 1.39.5, DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR is defautly
+# to 1 which discards old looks up to find DOM elements. However SDL relies on
+# the presence of a target "#canvas" that used to return the Module['canvas']
+# target but not anymore. It also expects the existence of Module['canvas'].
+# Until we fix the DOM of the html calling epsilon module, we use the deprecated
+# 'find_event_target'.
+# TODO: fix DOM of htmls files that uses epsilon js module
+EMFLAGS += -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0
+
 # Configure LDFLAGS
 EMSCRIPTEN_MODULARIZE ?= 1
 LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"'
@@ -124,4 +136,4 @@ EMSCRIPTEN_INIT_FILE ?= 0
 LDFLAGS += --memory-init-file $(EMSCRIPTEN_INIT_FILE)
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString", "Pointer_stringify"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel", "_IonDisplayForceRefresh"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'

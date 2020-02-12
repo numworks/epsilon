@@ -26,9 +26,12 @@ public:
   TreePool() : m_cursor(buffer()) {}
 
   // Node
-  TreeNode * node(int identifier) const {
-    assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
-    return m_nodeForIdentifier[identifier];
+  TreeNode * node(uint16_t identifier) const {
+    assert(identifier >= 0 && identifier < MaxNumberOfNodes);
+    if (m_nodeForIdentifierOffset[identifier] != UINT16_MAX) {
+      return const_cast<TreeNode *>(reinterpret_cast<const TreeNode *>(m_alignedBuffer + m_nodeForIdentifierOffset[identifier]));
+    }
+    return nullptr;
   }
 
   // Pool memory
@@ -51,6 +54,8 @@ public:
 private:
   constexpr static int BufferSize = 16384;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
+  constexpr static int k_maxNodeOffset = BufferSize/ByteAlignment;
+
   static TreePool * SharedStaticPool;
 
   // TreeNode
@@ -109,31 +114,32 @@ private:
   void moveNodes(TreeNode * destination, TreeNode * source, size_t moveLength);
 
   // Identifiers
-  int generateIdentifier() { return m_identifiers.pop(); }
-  void freeIdentifier(int identifier);
+  uint16_t generateIdentifier() { return m_identifiers.pop(); }
+  void freeIdentifier(uint16_t identifier);
 
   class IdentifierStack final {
   public:
     IdentifierStack() : m_currentIndex(0) {
-      for (int i = 0; i < MaxNumberOfNodes; i++) {
+      for (uint16_t i = 0; i < MaxNumberOfNodes; i++) {
         push(i);
       }
     }
-    void push(int i) {
+    void push(uint16_t i) {
       assert(m_currentIndex >= 0 && m_currentIndex < MaxNumberOfNodes);
       m_availableIdentifiers[m_currentIndex++] = i;
     }
-    int pop() {
+    uint16_t pop() {
       if (m_currentIndex == 0) {
         assert(false);
-        return -1;
+        return 0;
       }
       assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfNodes);
       return m_availableIdentifiers[--m_currentIndex];
     }
   private:
-    int m_currentIndex;
-    int m_availableIdentifiers[MaxNumberOfNodes];
+    uint16_t m_currentIndex;
+    uint16_t m_availableIdentifiers[MaxNumberOfNodes];
+    static_assert(MaxNumberOfNodes < INT16_MAX && sizeof(m_availableIdentifiers[0] == sizeof(uint16_t)), "Tree node identifiers do not have the right data size.");
   };
 
   void freePoolFromNode(TreeNode * firstNodeToDiscard);
@@ -143,7 +149,9 @@ private:
   AlignedNodeBuffer m_alignedBuffer[BufferSize/ByteAlignment];
   char * m_cursor;
   IdentifierStack m_identifiers;
-  TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
+  uint16_t m_nodeForIdentifierOffset[MaxNumberOfNodes];
+  static_assert(k_maxNodeOffset < UINT16_MAX && sizeof(m_nodeForIdentifierOffset[0]) == sizeof(uint16_t),
+        "The tree pool node offsets in m_nodeForIdentifierOffset cannot be written with the chosen data size (uint16_t)");
 };
 
 }

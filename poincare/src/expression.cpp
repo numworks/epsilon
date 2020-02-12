@@ -23,11 +23,11 @@ static bool sApproximationEncounteredComplex = false;
 
 Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }
 
-Expression Expression::Parse(char const * string, bool addParentheses) {
+Expression Expression::Parse(char const * string, Context * context, bool addParentheses) {
   if (string[0] == 0) {
     return Expression();
   }
-  Parser p(string);
+  Parser p(string, context);
   Expression expression = p.parse();
   if (p.getStatus() != Parser::Status::Success) {
     expression = Expression();
@@ -196,7 +196,7 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
   return false;
 }
 
-bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const {
   assert(!recursivelyMatches(IsMatrix, context, true));
   // variables is in fact of type char[k_maxNumberOfVariables][maxVariableSize]
   int index = 0;
@@ -211,7 +211,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
   index = 0;
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
   while (variables[index*maxVariableSize] != 0) {
-    int degree = equation.getPolynomialReducedCoefficients(&variables[index*maxVariableSize], polynomialCoefficients, context, complexFormat, angleUnit);
+    int degree = equation.getPolynomialReducedCoefficients(&variables[index*maxVariableSize], polynomialCoefficients, context, complexFormat, angleUnit, symbolicComputation);
     switch (degree) {
       case 0:
         coefficients[index] = Rational::Builder(0);
@@ -232,7 +232,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     equation = polynomialCoefficients[0];
     index++;
   }
-  constant[0] = Opposite::Builder(equation.clone()).reduce(context, complexFormat, angleUnit);
+  constant[0] = Opposite::Builder(equation.clone()).reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
@@ -244,6 +244,44 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     isMultivariablePolynomial |= containsVariables(coefficients[i], variables, maxVariableSize);
   }
   return !isMultivariablePolynomial;
+}
+
+bool Expression::isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  ExpressionNode::Type t = type();
+  if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {
+    float r = childAtIndex(0).approximateToScalar<float>(context, complexFormat, angleUnit);
+    if (!std::isnan(r)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Expression::isBasedIntegerCappedBy(const char * stringInteger) const {
+  return type() == ExpressionNode::Type::BasedInteger && (Integer::NaturalOrder(convert<BasedInteger>().integer(), Integer(stringInteger)) < 0);
+}
+
+bool Expression::isDivisionOfIntegers() const {
+  return type() == ExpressionNode::Type::Division && childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && childAtIndex(1).type() == ExpressionNode::Type::BasedInteger;
+}
+
+bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  if (complexFormat == Preferences::ComplexFormat::Real) {
+    return false;
+  }
+  /* We return true when both real and imaginary approximation are defined and
+   * imaginary part is not null. */
+  Expression imag = ImaginaryPart::Builder(*this);
+  float b = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
+  if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
+    return false;
+  }
+  Expression real = RealPart::Builder(*this);
+  float a = real.approximateToScalar<float>(context, complexFormat, angleUnit);
+  if (std::isinf(a) || std::isnan(a)) {
+    return false;
+  }
+  return true;
 }
 
 // Private
@@ -274,7 +312,9 @@ Expression Expression::addMissingParentheses() {
 }
 
 void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  for (int i = 0; i < numberOfChildren(); i++) {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    assert(childrenCount == numberOfChildren());
     childAtIndex(i).deepReduce(reductionContext);
   }
 }
@@ -298,6 +338,17 @@ Expression Expression::defaultShallowReduce() {
   if (!result.isUninitialized()) {
     replaceWithInPlace(result);
     return result;
+  }
+  return *this;
+}
+
+Expression Expression::defaultHandleUnitsInChildren() {
+  // Generically, an Expression does not accept any Unit in its children.
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    if (childAtIndex(i).hasUnit()) {
+      return replaceWithUndefinedInPlace();
+    }
   }
   return *this;
 }
@@ -339,20 +390,13 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-bool Expression::hasReplaceableSymbols(Context * context) const {
-  return recursivelyMatches([](const Expression e, Context * context) {
-      return (e.type() == ExpressionNode::Type::Symbol
-          && !static_cast<const Symbol &>(e).isSystemSymbol()
-          && !context->expressionForSymbolAbstract(static_cast<const Symbol &>(e), false).isUninitialized())
-      || (e.type() == ExpressionNode::Type::Function
-           && !context->expressionForSymbolAbstract(static_cast<const Function &>(e), false).isUninitialized());
-      }, context, false);
-}
-
-Expression Expression::defaultReplaceReplaceableSymbols(Context * context) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).shallowReplaceReplaceableSymbols(context);
+    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
+    if (c.isUninitialized()) { // the expression is circularly defined, escape
+      return Expression();
+    }
   }
   return *this;
 }
@@ -411,13 +455,19 @@ int Expression::defaultGetPolynomialCoefficients(Context * context, const char *
   return -1;
 }
 
-int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const {
   // Reset interrupting flag because we use deepReduce
-  int degree = getPolynomialCoefficients(context, symbolName, coefficients);
+  int degree = getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
   for (int i = 0; i <= degree; i++) {
-    coefficients[i] = coefficients[i].reduce(context, complexFormat, angleUnit);
+    coefficients[i] = coefficients[i].reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
   }
   return degree;
+}
+
+/* Units */
+
+bool Expression::hasUnit() const {
+  return recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, false);
 }
 
 /* Complex */
@@ -451,19 +501,19 @@ bool Expression::isReal(Context * context) const {
 
   // These expressions are real if their children are
   ExpressionNode::Type types1[] = {ExpressionNode::Type::ArcTangent, ExpressionNode::Type::Conjugate, ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine, ExpressionNode::Type::Tangent};
-  if (isOfType(types1, 5)) {
+  if (isOfType(types1, sizeof(types1)/sizeof(ExpressionNode::Type))) {
     return childAtIndex(0).isReal(context);
   }
 
   // These expressions are always real
-  ExpressionNode::Type types2[] = {ExpressionNode::Type::BinomialCoefficient, ExpressionNode::Type::Derivative, ExpressionNode::Type::DivisionQuotient, ExpressionNode::Type::DivisionRemainder, ExpressionNode::Type::GreatCommonDivisor, ExpressionNode::Type::Integral, ExpressionNode::Type::LeastCommonMultiple, ExpressionNode::Type::PermuteCoefficient, ExpressionNode::Type::Randint, ExpressionNode::Type::Random, ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction};
-  if ((isNumber() && !isUndefined()) || isOfType(types2, 12)) {
+  ExpressionNode::Type types2[] = {ExpressionNode::Type::BinomialCoefficient, ExpressionNode::Type::Derivative, ExpressionNode::Type::DivisionQuotient, ExpressionNode::Type::DivisionRemainder, ExpressionNode::Type::GreatCommonDivisor, ExpressionNode::Type::Integral, ExpressionNode::Type::LeastCommonMultiple, ExpressionNode::Type::PermuteCoefficient, ExpressionNode::Type::Randint, ExpressionNode::Type::Random, ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction, ExpressionNode::Type::Unit};
+  if ((isNumber() && !isUndefined()) || isOfType(types2, sizeof(types2)/sizeof(ExpressionNode::Type))) {
     return true;
   }
 
   // These expressions are real when they are scalar
   ExpressionNode::Type types3[] = {ExpressionNode::Type::AbsoluteValue, ExpressionNode::Type::Ceiling, ExpressionNode::Type::ComplexArgument, ExpressionNode::Type::Factorial, ExpressionNode::Type::Floor, ExpressionNode::Type::FracPart, ExpressionNode::Type::ImaginaryPart, ExpressionNode::Type::RealPart};
-  if (isOfType(types3, 8)) {
+  if (isOfType(types3, sizeof(types3)/sizeof(ExpressionNode::Type))) {
     return !deepIsMatrix(context);
   }
 
@@ -491,17 +541,13 @@ bool Expression::isIdenticalTo(const Expression e) const {
   return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
 }
 
-bool Expression::isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) {
-  approximation.serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
-  /* Warning: we cannot use directly the the approximate expression but we have
-   * to re-serialize it because the number of stored significative
-   * numbers and the number of displayed significative numbers might not be
-   * identical. (For example, 0.000025 might be displayed "0.00003" and stored
-   * as Decimal(0.000025) and isEqualToItsApproximationLayout should return
-   * false) */
-  Expression approximateOutput = Expression::ParseAndSimplify(buffer, context, complexFormat, angleUnit, true);
-  bool equal = isIdenticalTo(approximateOutput);
-  return equal;
+bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression exp0 = Expression::ParseAndSimplify(e0, context, complexFormat, angleUnit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  Expression exp1 = Expression::ParseAndSimplify(e1, context, complexFormat, angleUnit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  if (exp0.isUninitialized() || exp1.isUninitialized()) {
+    return false;
+  }
+  return exp0.isIdenticalTo(exp1);
 }
 
 /* Layout Helper */
@@ -514,23 +560,23 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 /* Simplification */
 
-Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicSimplification) {
-  Expression exp = Parse(text, false);
+Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) {
+  Expression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-  exp = exp.simplify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicSimplification);
+  exp = exp.simplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation));
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
-    return Parse(text);
+    return Parse(text, context);
   }
   return exp;
 }
 
-void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
+void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) {
   assert(simplifiedExpression);
-  Expression exp = Parse(text, false);
+  Expression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -540,19 +586,18 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (simplifiedExpression->isUninitialized()) {
-    *simplifiedExpression = Parse(text);
+    *simplifiedExpression = Parse(text, context);
     if (approximateExpression) {
       *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
     }
   }
 }
 
-Expression Expression::simplify(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
   sSimplificationHasBeenInterrupted = false;
-  ExpressionNode::ReductionContext c = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, target, symbolicComputation);
-  Expression e = deepReduce(c);
+  Expression e = deepReduce(reductionContext);
   if (!sSimplificationHasBeenInterrupted) {
-    e = e.deepBeautify(c);
+    e = e.deepBeautify(reductionContext);
   }
   return sSimplificationHasBeenInterrupted ? Expression() : e;
 }
@@ -565,9 +610,10 @@ void makePositive(Expression * e, bool * isNegative) {
 }
 
 void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  bool hasUnits = hasUnit();
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
    * take into account the complex format to display a+i*b or r*e^(i*th) */
-  if (type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) {
+  if ((type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) && !hasUnits) {
     ComplexCartesian ecomplex = type() == ExpressionNode::Type::ComplexCartesian ? convert<ComplexCartesian>() : ComplexCartesian::Builder(*this, Rational::Builder(0));
     if (approximateExpression) {
       /* Step 1: Approximation
@@ -605,16 +651,25 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
     *simplifiedExpression = deepBeautify(userReductionContext);
     // Step 2: approximation
     if (approximateExpression) {
+      if (hasUnits) {
+        /* Approximate and simplified expressions are set equal so that only
+         * one of them will be output. Note that there is no need to clone
+         * since the expressions will not be altered. */
+        *approximateExpression = *simplifiedExpression;
+        return;
+      }
+
       *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
     }
   }
 }
 
-void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
+void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) {
   assert(simplifiedExpression);
   sSimplificationHasBeenInterrupted = false;
   // Step 1: we reduce the expression
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation);
+  const bool isUnitConvert = type() == ExpressionNode::Type::UnitConvert;
   Expression e = clone().deepReduce(userReductionContext);
   if (sSimplificationHasBeenInterrupted) {
     sSimplificationHasBeenInterrupted = false;
@@ -648,14 +703,21 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
     if (approximateExpression) {
       static_cast<Matrix *>(approximateExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
     }
+  } else if (isUnitConvert) {
+    /* Case 2: the initial expression is a unit convert, so we already beautified the result. */
+    *simplifiedExpression = e;
+    if (approximateExpression) {
+      *approximateExpression = e;
+    }
+    return;
   } else {
-    /* Case 2: the reduced expression is scalar or too complex to respect the
+    /* Case 3: the reduced expression is scalar or too complex to respect the
      * complex format. */
     return e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
   }
 }
 
-Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context) {
+Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context, bool replaceFunctionsOnly) {
   if (e.isUninitialized()) {
     return e;
   }
@@ -672,14 +734,19 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context)
     sSymbolReplacementsCountLock = true;
     unlock = true;
   }
-  while (e.hasReplaceableSymbols(context)) {
+  bool didReplace;
+  do {
     replacementCount++;
     if (replacementCount > k_maxSymbolReplacementsCount) {
       e = Expression();
       break;
     }
-    e = e.shallowReplaceReplaceableSymbols(context);
-  }
+    didReplace = false;
+    e = e.deepReplaceReplaceableSymbols(context, &didReplace, replaceFunctionsOnly);
+    if (e.isUninitialized()) { // the expression is circularly defined, escape
+      replacementCount = k_maxSymbolReplacementsCount;
+    }
+  } while (didReplace);
   if (unlock) {
     sSymbolReplacementsCountLock = false;
   }
@@ -703,7 +770,7 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
   }
   matrix.setDimensions(static_cast<Matrix &>(c).numberOfRows(), static_cast<Matrix &>(c).numberOfColumns());
   replaceWithInPlace(matrix);
-  return matrix.shallowReduce(reductionContext);
+  return matrix.shallowReduce();
 }
 
 Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
@@ -730,9 +797,9 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
   return *this;
 }
 
-Expression Expression::reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
   sSimplificationHasBeenInterrupted = false;
-  return deepReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, target, true));
+  return deepReduce(reductionContext);
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -745,10 +812,16 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
 
 Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression e = shallowBeautify(reductionContext);
-  int nbChildren = e.numberOfChildren();
+  const int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     Expression child = e.childAtIndex(i);
     child = child.deepBeautify(reductionContext);
+    /* Unit::shallowBeautify replaces units in inhomogeneous Expression by
+     * Undefined. Undefined children must be bubbled up to the root.
+     */
+    if (child.type() == ExpressionNode::Type::Undefined) {
+      return e.replaceWithUndefinedInPlace();
+    }
     // We add missing Parentheses after beautifying the parent and child
     if (e.node()->childAtIndexNeedsUserParentheses(child, i)) {
       e.replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
@@ -776,8 +849,8 @@ U Expression::approximateToScalar(Context * context, Preferences::ComplexFormat 
 }
 
 template<typename U>
-U Expression::ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicSimplification) {
-  Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit, symbolicSimplification);
+U Expression::ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) {
+  Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit, symbolicComputation);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
 }
@@ -1099,8 +1172,8 @@ template Expression Expression::approximate<double>(Context * context, Preferenc
 template float Expression::approximateToScalar(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 template double Expression::approximateToScalar(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 
-template float Expression::ApproximateToScalar<float>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation);
-template double Expression::ApproximateToScalar<double>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation);
+template float Expression::ApproximateToScalar<float>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation);
+template double Expression::ApproximateToScalar<double>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation);
 
 template Evaluation<float> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 template Evaluation<double> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;

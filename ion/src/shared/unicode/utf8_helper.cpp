@@ -94,22 +94,28 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
   return codePointPointer;
 }
 
-void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c) {
-  if (dstSize <= 0) {
-    return;
-  }
+bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodePoint * codePoints, int numberOfCodePoints) {
   UTF8Decoder decoder(src);
-  const char * currentPointer = src;
   CodePoint codePoint = decoder.nextCodePoint();
+  if (dstSize <= 0) {
+    return codePoint == UCodePointNull;
+  }
+  assert(numberOfCodePoints >= 1);
+  const char * currentPointer = src;
   const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
-  size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
-  (void)codePointCharSize; // Silence compilation warning about unused variable.
 
   // Remove CodePoint c
   while (codePoint != UCodePointNull && bufferIndex < dstSize) {
-    if (codePoint != c) {
-      int copySize = nextPointer - currentPointer;
+    bool remove = false;
+    for (int i = 0; i < numberOfCodePoints; i++) {
+      if (codePoint == codePoints[i]) {
+        remove = true;
+        break;
+      }
+    }
+    if (!remove) {
+      size_t copySize = nextPointer - currentPointer;
       if (copySize > dstSize - 1 - bufferIndex) {
         // Copying the current code point to the buffer would overflow the buffer
         break;
@@ -122,6 +128,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
     nextPointer = decoder.stringPosition();
   }
   *(dst + bufferIndex) = 0;
+  return codePoint == UCodePointNull;
 }
 
 void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate, const char * stoppingPosition) {
@@ -191,6 +198,7 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
         if (*i == c) {
           actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
         } else {
+          // FIXME we are stopping at every char, not every code point -> it does not make any bug for now
           actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
         }
         i++;
@@ -264,22 +272,6 @@ bool CodePointIs(const char * location, CodePoint c) {
   }
   UTF8Decoder decoder(location);
   return decoder.nextCodePoint() == c;
-}
-
-bool CodePointIsLetter(CodePoint c) {
-  return CodePointIsLowerCaseLetter(c) || CodePointIsUpperCaseLetter(c);
-}
-
-bool CodePointIsLowerCaseLetter(CodePoint c) {
-  return c >= 'a' && c <= 'z';
-}
-
-bool CodePointIsUpperCaseLetter(CodePoint c) {
-  return c >= 'A' && c <= 'Z';
-}
-
-bool CodePointIsNumber(CodePoint c) {
-  return c >= '0' && c <= '9';
 }
 
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {

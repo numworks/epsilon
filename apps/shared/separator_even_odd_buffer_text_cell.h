@@ -10,7 +10,7 @@ class SeparatorEvenOddBufferTextCell : public EvenOddBufferTextCell {
 public:
   using EvenOddBufferTextCell::EvenOddBufferTextCell;
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 private:
   constexpr static KDCoordinate k_rightMargin = Metric::CellMargin;
 };

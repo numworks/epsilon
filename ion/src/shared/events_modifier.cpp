@@ -5,6 +5,7 @@ namespace Ion {
 namespace Events {
 
 static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
+static bool sLongRepetition = false;
 
 ShiftAlphaStatus shiftAlphaStatus() {
   return sShiftAlphaStatus;
@@ -16,7 +17,14 @@ bool isShiftActive() {
 
 bool isAlphaActive() {
   return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
-;
+}
+
+void setLongRepetition(bool longRepetition) {
+ sLongRepetition = longRepetition;
+}
+
+bool isLongRepetition() {
+ return sLongRepetition;
 }
   
 bool isLockActive() {
@@ -48,37 +56,37 @@ void updateModifiersFromEvent(Event e) {
       break;
     case ShiftAlphaStatus::Alpha:
       if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
-        } else if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
-        } else {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-      case ShiftAlphaStatus::ShiftAlpha:
-        if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
-        } else if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
-        } else {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-      case ShiftAlphaStatus::AlphaLock:
-        if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
-        } else if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-      case ShiftAlphaStatus::ShiftAlphaLock:
-        if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
-        } else if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
-        }
-        break;
-    }
+        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
+      } else if (e == Alpha) {
+        sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+      } else {
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+    case ShiftAlphaStatus::ShiftAlpha:
+      if (e == Shift) {
+        sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+      } else if (e == Alpha) {
+        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
+      } else {
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+    case ShiftAlphaStatus::AlphaLock:
+      if (e == Shift) {
+        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
+      } else if (e == Alpha) {
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+    case ShiftAlphaStatus::ShiftAlphaLock:
+      if (e == Shift) {
+        sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+      } else if (e == Alpha) {
+        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+      }
+      break;
+  }
 }
 
 }

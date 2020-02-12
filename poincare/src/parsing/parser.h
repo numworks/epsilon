@@ -20,7 +20,8 @@ public:
     Error
   };
 
-  Parser(const char * text) :
+  Parser(const char * text, Context * context) :
+    m_context(context),
     m_status(Status::Progress),
     m_tokenizer(text),
     m_currentToken(Token(Token::Undefined)),
@@ -30,10 +31,10 @@ public:
   Expression parse();
   Status getStatus() const { return m_status; }
 
-  static bool IsReservedName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper = nullptr);
+  static bool IsReservedName(const char * name, size_t nameLength);
 
 private:
-  static bool IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper = nullptr);
+  static const Expression::FunctionHelper * const * GetReservedFunction(const char * name, size_t nameLength);
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
 
   Expression parseUntil(Token::Type stoppingType);
@@ -48,6 +49,7 @@ private:
   void parseUnexpected(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseNumber(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseConstant(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseUnit(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseIdentifier(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseEmpty(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMatrix(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -62,7 +64,7 @@ private:
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseStore(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
 
   // Parsing helpers
@@ -70,15 +72,14 @@ private:
   Expression parseVector();
   Expression parseFunctionParameters();
   Expression parseCommaSeparatedList();
-  bool currentTokenIsReservedFunction(const Expression::FunctionHelper * const * * functionHelper) const;
   void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
-  bool currentTokenIsSpecialIdentifier() const;
   void parseSpecialIdentifier(Expression & leftHandSide);
   void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
-  void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
+  void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length, bool symbolPlusParenthesesAreFunctions);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 
   // Data members
+  Context * m_context;
   Status m_status;
     /* m_status is initialized to Status::Progress,
      * is changed to Status::Error if the Parser encounters an error,
@@ -149,7 +150,7 @@ private:
     &SquareRoot::s_functionHelper
   };
   static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
-  /* The method currentTokenIsReservedFunction passes through the successive
+  /* The method GetReservedFunction passes through the successive
    * entries of the above array in order to determine whether m_currentToken
    * corresponds to an entry. As a helper, the static constexpr
    * s_reservedFunctionsUpperBound marks the end of the array. */

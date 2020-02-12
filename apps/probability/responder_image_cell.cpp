@@ -46,8 +46,8 @@ View * ResponderImageCell::subviewAtIndex(int index) {
   return &m_imageCell;
 }
 
-void ResponderImageCell::layoutSubviews() {
-  m_imageCell.setFrame(KDRect(k_outline, k_outline, bounds().width()-2*k_outline, bounds().height()-2*k_outline));
+void ResponderImageCell::layoutSubviews(bool force) {
+  m_imageCell.setFrame(KDRect(k_outline, k_outline, bounds().width()-2*k_outline, bounds().height()-2*k_outline), force);
 }
 
 }

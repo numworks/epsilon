@@ -17,7 +17,6 @@ class App;
 
 class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
-
   ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT
       , bool m_lockOnConsole
@@ -64,6 +63,7 @@ public:
   void displaySandbox() override;
   void hideSandbox() override;
   void resetSandbox() override;
+  void refreshPrintOutput() override;
   void printText(const char * text, size_t length) override;
   const char * inputText(const char * prompt) override;
 
@@ -78,7 +78,8 @@ private:
   static constexpr size_t k_maxImportCommandSize = 5 + 9 + TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
-  static constexpr int k_numberOfLineCells = 20; // May change depending on the screen height
+  static constexpr int k_numberOfLineCells = (Ion::Display::Height - Metric::TitleBarHeight) / 14 + 2; // 14 = KDFont::SmallFont->glyphSize().height()
+  // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
   static constexpr int k_outputAccumulationBufferSize = 100;
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
@@ -86,7 +87,6 @@ private:
   size_t firstNewLineCharIndex(const char * text, size_t length);
   StackViewController * stackViewController();
   App * m_pythonDelegate;
-  int m_rowHeight;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
   SelectableTableView m_selectableTableView;
@@ -102,6 +102,7 @@ private:
   SandboxController m_sandboxController;
   bool m_inputRunLoopActive;
   bool m_autoImportScripts;
+  bool m_preventEdition;
 #if EPSILON_GETOPT
   bool m_locked;
 #endif

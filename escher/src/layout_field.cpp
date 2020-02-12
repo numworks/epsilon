@@ -12,8 +12,10 @@ static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
-  m_expressionView(0.0f, 0.5f, Palette::PrimaryText, Palette::BackgroundHard),
+  m_expressionView(0.0f, 0.5f, Palette::PrimaryText, Palette::BackgroundHard, &m_selectionStart, &m_selectionEnd),
   m_cursorView(),
+  m_selectionStart(),
+  m_selectionEnd(),
   m_isEditing(false)
 {
   clearLayout();
@@ -47,28 +49,202 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth, evSize.height());
 }
 
+bool IsBefore(Layout& l1, Layout& l2, bool strict) {
+  char * node1 = reinterpret_cast<char *>(l1.node());
+  char * node2 = reinterpret_cast<char *>(l2.node());
+  return strict ? (node1 < node2) : (node1 <= node2);
+}
+
+void LayoutField::ContentView::addSelection(Layout addedLayout) {
+  KDRect rectBefore = selectionRect();
+  if (selectionIsEmpty()) {
+    /*
+     *  ----------  -> +++ is the previous previous selection
+     *     (   )    -> added selection
+     *  ---+++++--  -> next selection
+     * */
+    m_selectionStart = addedLayout;
+    m_selectionEnd = addedLayout;
+  } else if (IsBefore(m_selectionEnd, addedLayout, true)) {
+    /*
+     *  +++-------  -> +++ is the previous previous selection
+     *       (   )  -> added selection
+     *  ++++++++++  -> next selection
+     *  */
+    if (addedLayout.parent() == m_selectionStart) {
+      /* The previous selected layout is an horizontal layout and we remove one
+       * of its children. */
+      assert(m_selectionStart == m_selectionEnd
+          && m_selectionStart.type() == LayoutNode::Type::HorizontalLayout);
+      m_selectionStart = m_selectionStart.childAtIndex(0);
+      m_selectionEnd = m_selectionEnd.childAtIndex(m_selectionEnd.numberOfChildren() - 1);
+      addSelection(addedLayout);
+      return;
+    }
+    /* The previous selected layouts and the new added selection are all
+     * children of a same horizontal layout. */
+    assert(m_selectionStart.parent() == m_selectionEnd.parent()
+        && m_selectionStart.parent() == addedLayout.parent()
+        && m_selectionStart.parent().type() == LayoutNode::Type::HorizontalLayout);
+    m_selectionEnd = addedLayout;
+  } else if (IsBefore(addedLayout, m_selectionStart, true)) {
+    /*
+     *  -------+++  -> +++ is the previous previous selection
+     *  (   )       -> added selection
+     *  ++++++++++  -> next selection
+     * */
+    if (addedLayout.type() == LayoutNode::Type::HorizontalLayout
+        && m_selectionStart.parent() == addedLayout)
+    {
+      /* The selection was from the first to the last child of an horizontal
+       * layout, we add this horizontal layout -> the selection is now empty. */
+      assert(m_selectionEnd.parent() == addedLayout);
+      assert(addedLayout.childAtIndex(0) == m_selectionStart);
+      assert(addedLayout.childAtIndex(addedLayout.numberOfChildren() - 1) == m_selectionEnd);
+      m_selectionStart = Layout();
+      m_selectionEnd = Layout();
+    } else {
+      if (m_selectionStart.hasAncestor(addedLayout, true)) {
+        // We are selecting a layout containing the current selection
+        m_selectionEnd = addedLayout;
+      }
+      m_selectionStart = addedLayout;
+    }
+  } else {
+    bool sameEnd = m_selectionEnd == addedLayout;
+    bool sameStart = m_selectionStart == addedLayout;
+    if (sameStart && sameEnd) {
+      /*
+       *  -----+++++  -> +++ is the previous previous selection
+       *       (   )  -> added selection
+       *  ----------  -> next selection
+       * */
+      m_selectionStart = Layout();
+      m_selectionEnd = Layout();
+    } else {
+      assert(sameStart || sameEnd);
+      /*
+       *  ++++++++++  -> +++ is the previous previous selection
+       *  (   )       -> added selection if sameStart
+       *       (   )  -> added selection if sameEnd
+       *  +++++-----  -> next selection
+       *  The previous selected layouts and the new "added" selection are all
+       *  children of a same horizontal layout. */
+      Layout horizontalParent = m_selectionStart.parent();
+      assert(!horizontalParent.isUninitialized()
+          && horizontalParent == m_selectionEnd.parent()
+          && horizontalParent == addedLayout.parent()
+          && horizontalParent.type() == LayoutNode::Type::HorizontalLayout
+          && ((sameEnd && horizontalParent.indexOfChild(m_selectionEnd) > 0)
+            || (sameStart && horizontalParent.indexOfChild(m_selectionStart) < horizontalParent.numberOfChildren())));
+      if (sameStart) {
+        m_selectionStart = horizontalParent.childAtIndex(horizontalParent.indexOfChild(m_selectionStart) + 1);
+      } else {
+        m_selectionEnd = horizontalParent.childAtIndex(horizontalParent.indexOfChild(m_selectionEnd) - 1);
+      }
+    }
+  }
+
+  KDRect rectAfter = selectionRect();
+  // We need to update the background color for selected/unselected layouts
+  markRectAsDirty(rectBefore.unionedWith(rectAfter));
+}
+
+bool LayoutField::ContentView::resetSelection() {
+  if (selectionIsEmpty()) {
+    return false;
+  }
+  m_selectionStart = Layout();
+  m_selectionEnd = Layout();
+  return true;
+}
+
+void LayoutField::ContentView::copySelection(Context * context) {
+  if (selectionIsEmpty()) {
+    return;
+  }
+  constexpr int bufferSize = TextField::maxBufferSize();
+  char buffer[bufferSize];
+
+  if (m_selectionStart == m_selectionEnd) {
+    m_selectionStart.serializeParsedExpression(buffer, bufferSize, context);
+    if (buffer[0] == 0) {
+      int offset = 0;
+      if (m_selectionStart.type() == LayoutNode::Type::VerticalOffsetLayout) {
+        assert(bufferSize > 1);
+        buffer[offset++] = UCodePointEmpty;
+      }
+      m_selectionStart.serializeForParsing(buffer + offset, bufferSize - offset);
+    }
+  } else {
+    Layout selectionParent = m_selectionStart.parent();
+    assert(!selectionParent.isUninitialized());
+    assert(selectionParent.type() == LayoutNode::Type::HorizontalLayout);
+    int firstIndex = selectionParent.indexOfChild(m_selectionStart);
+    int lastIndex = selectionParent.indexOfChild(m_selectionEnd);
+    static_cast<HorizontalLayout&>(selectionParent).serializeChildren(firstIndex, lastIndex, buffer, bufferSize);
+  }
+  if (buffer[0] != 0) {
+    Clipboard::sharedClipboard()->store(buffer);
+  }
+}
+
+bool LayoutField::ContentView::selectionIsEmpty() const {
+  assert(!m_selectionStart.isUninitialized() || m_selectionEnd.isUninitialized());
+  assert(!m_selectionEnd.isUninitialized() || m_selectionStart.isUninitialized());
+  return m_selectionStart.isUninitialized();
+}
+
+void LayoutField::ContentView::deleteSelection() {
+  assert(!selectionIsEmpty());
+  Layout selectionParent = m_selectionStart.parent();
+
+  /* If the selected layout is the upmost layout, it must be an horizontal
+   * layout. Empty it. */
+  if (selectionParent.isUninitialized()) {
+    assert(m_selectionStart == m_selectionEnd);
+    assert(m_selectionStart.type() == LayoutNode::Type::HorizontalLayout);
+    clearLayout();
+  } else {
+    assert(selectionParent == m_selectionEnd.parent());
+    // Remove the selected children or replace it with an empty layout.
+    if (selectionParent.type() == LayoutNode::Type::HorizontalLayout) {
+      int firstIndex = selectionParent.indexOfChild(m_selectionStart);
+      int lastIndex = m_selectionStart == m_selectionEnd ? firstIndex : selectionParent.indexOfChild(m_selectionEnd);
+      for (int i = lastIndex; i >= firstIndex; i--) {
+        static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
+      }
+    } else {
+      // Only one child can be selected
+      assert(m_selectionStart == m_selectionEnd);
+      selectionParent.replaceChildWithEmpty(m_selectionStart, &m_cursor);
+    }
+  }
+  resetSelection();
+}
+
 View * LayoutField::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
+  assert(0 <= index && index < numberOfSubviews());
   View * m_views[] = {&m_expressionView, &m_cursorView};
   return m_views[index];
 }
 
-void LayoutField::ContentView::layoutSubviews() {
-  m_expressionView.setFrame(bounds());
-  layoutCursorSubview();
+void LayoutField::ContentView::layoutSubviews(bool force) {
+  m_expressionView.setFrame(bounds(), force);
+  layoutCursorSubview(force);
 }
 
-void LayoutField::ContentView::layoutCursorSubview() {
+void LayoutField::ContentView::layoutCursorSubview(bool force) {
   if (!m_isEditing) {
-    m_cursorView.setFrame(KDRectZero);
+    m_cursorView.setFrame(KDRectZero, force);
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
-  Layout pointedLayoutR = m_cursor.layoutReference();
+  Layout pointedLayoutR = m_cursor.layout();
   LayoutCursor::Position cursorPosition = m_cursor.position();
   LayoutCursor eqCursor = pointedLayoutR.equivalentCursor(&m_cursor);
-  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layoutReference())) {
-    pointedLayoutR = eqCursor.layoutReference();
+  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layout())) {
+    pointedLayoutR = eqCursor.layout();
     cursorPosition = eqCursor.position();
   }
   KDPoint cursoredExpressionViewOrigin = pointedLayoutR.absoluteOrigin();
@@ -76,8 +252,28 @@ void LayoutField::ContentView::layoutCursorSubview() {
   if (cursorPosition == LayoutCursor::Position::Right) {
     cursorX += pointedLayoutR.layoutSize().width();
   }
-  KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline() - m_cursor.baseline());
-  m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
+  if (selectionIsEmpty()) {
+    KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline() - m_cursor.baselineWithoutSelection());
+    m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeightWithoutSelection()), force);
+  } else {
+    KDRect cursorRect = selectionRect();
+    KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursorRect.y());
+    m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, cursorRect.height()), force);
+  }
+}
+
+KDRect LayoutField::ContentView::selectionRect() const {
+  if (selectionIsEmpty()) {
+    return KDRectZero;
+  }
+  if (m_selectionStart == m_selectionEnd) {
+    return KDRect(m_selectionStart.absoluteOrigin(), m_selectionStart.layoutSize());
+  }
+  Layout selectionParent = m_selectionStart.parent();
+  assert(m_selectionEnd.parent() == selectionParent);
+  assert(selectionParent.type() == LayoutNode::Type::HorizontalLayout);
+  KDRect selectionRectInParent = static_cast<HorizontalLayout &>(selectionParent).relativeSelectionRect(&m_selectionStart, &m_selectionEnd);
+  return selectionRectInParent.translatedBy(selectionParent.absoluteOrigin());
 }
 
 void LayoutField::setEditing(bool isEditing) {
@@ -87,12 +283,21 @@ void LayoutField::setEditing(bool isEditing) {
   }
 }
 
+Context * LayoutField::context() const {
+  return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
+}
+
 CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
-  CodePoint xnt = m_contentView.cursor()->layoutReference().XNTCodePoint();
+  CodePoint xnt = m_contentView.cursor()->layout().XNTCodePoint();
   if (xnt != UCodePointNull) {
     return xnt;
   }
   return defaultXNTCodePoint;
+}
+
+void LayoutField::putCursorRightOfLayout() {
+  m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixAncestors();
+  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Right));
 }
 
 void LayoutField::reload(KDSize previousSize) {
@@ -111,6 +316,12 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
    * - the result of a copy-paste. */
+
+  // Delete the selected layouts if needed
+  if (!m_contentView.selectionIsEmpty()) {
+    deleteSelection();
+  }
+
   if (text[0] == 0) {
     // The text is empty
     return true;
@@ -142,11 +353,11 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else if((strcmp(text, Ion::Events::Multiplication.text())) == 0){
     m_contentView.cursor()->addMultiplicationPointLayout();
   } else {
-    Expression resultExpression = Expression::Parse(text);
+    Expression resultExpression = Expression::Parse(text, nullptr);
     if (resultExpression.isUninitialized()) {
       // The text is not parsable (for instance, ",") and is added char by char.
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-      m_contentView.cursor()->insertText(text);
+      m_contentView.cursor()->insertText(text, forceCursorRightOfText);
       reload(previousLayoutSize);
       return true;
     }
@@ -160,6 +371,14 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   return true;
 }
 
+bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
+  if (m_delegate->layoutFieldShouldFinishEditing(this, event)) {
+    resetSelection();
+    return true;
+  }
+  return false;
+}
+
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   bool didHandleEvent = false;
   KDSize previousSize = minimalSizeForOptimalDisplay();
@@ -171,6 +390,23 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     }
     shouldRecomputeLayout = shouldRecomputeLayout || moveEventChangedLayout;
     didHandleEvent = true;
+  } else if (privateHandleSelectionEvent(event, &shouldRecomputeLayout)) {
+    didHandleEvent = true;
+    // Handle matrices
+    if (!m_contentView.selectionIsEmpty()) {
+      bool removedSquares = false;
+      Layout * selectStart = m_contentView.selectionStart();
+      Layout * selectEnd = m_contentView.selectionEnd();
+      if (*selectStart != *selectEnd) {
+        Layout p = selectStart->parent();
+        assert(p == selectEnd->parent());
+        assert(p.type() == LayoutNode::Type::HorizontalLayout);
+        removedSquares = p.removeGreySquaresFromAllMatrixChildren();
+      } else {
+        removedSquares = selectStart->removeGreySquaresFromAllMatrixChildren();
+      }
+      shouldRecomputeLayout = m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixChildren() || removedSquares || shouldRecomputeLayout;
+    }
   } else if (privateHandleEvent(event)) {
     shouldRecomputeLayout = true;
     didHandleEvent = true;
@@ -191,6 +427,10 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
+void LayoutField::deleteSelection() {
+  m_contentView.deleteSelection();
+}
+
 bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
@@ -201,11 +441,12 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
+  if (isEditing() && m_delegate && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
     setEditing(false);
     if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
       // Reinit layout for next use
       clearLayout();
+      resetSelection();
     } else {
       setEditing(true);
     }
@@ -225,6 +466,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Back && isEditing()) {
     clearLayout();
+    resetSelection();
     setEditing(false);
     m_delegate->layoutFieldDidAbortEditing(this);
     return true;
@@ -243,46 +485,80 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
       handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
     } else {
       assert(event == Ion::Events::Backspace);
-      m_contentView.cursor()->performBackspace();
+      if (!m_contentView.selectionIsEmpty()) {
+        deleteSelection();
+      } else {
+        m_contentView.cursor()->performBackspace();
+      }
     }
+    return true;
+  }
+  if (event == Ion::Events::Copy && isEditing()) {
+    m_contentView.copySelection(context());
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
     clearLayout();
+    resetSelection();
     return true;
   }
   return false;
 }
 
+static inline bool IsSimpleMoveEvent(Ion::Events::Event event) {
+  return event == Ion::Events::Left
+    || event == Ion::Events::Right
+    || event == Ion::Events::Up
+    || event == Ion::Events::Down;
+}
+
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
+  if (!IsSimpleMoveEvent(event)) {
+    return false;
+  }
+  if (resetSelection()) {
+    *shouldRecomputeLayout = true;
+    return true;
+  }
   LayoutCursor result;
   if (event == Ion::Events::Left) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Left, shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Left, shouldRecomputeLayout);
   } else if (event == Ion::Events::Right) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Right, shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Right, shouldRecomputeLayout);
   } else if (event == Ion::Events::Up) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Up, shouldRecomputeLayout);
-  } else if (event == Ion::Events::Down) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
-  } else if (event == Ion::Events::ShiftLeft) {
-    *shouldRecomputeLayout = true;
-    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
-      *shouldRecomputeLayout = true;
-    }
-    result.setLayout(layout());
-    result.setPosition(LayoutCursor::Position::Left);
-  } else if (event == Ion::Events::ShiftRight) {
-    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
-      *shouldRecomputeLayout = true;
-    }
-    result.setLayout(layout());
-    result.setPosition(LayoutCursor::Position::Right);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Up, shouldRecomputeLayout);
+  } else {
+    assert(event == Ion::Events::Down);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Down, shouldRecomputeLayout);
   }
   if (result.isDefined()) {
     m_contentView.setCursor(result);
     return true;
   }
   return false;
+}
+
+bool eventIsSelection(Ion::Events::Event event) {
+  return event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight || event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown;
+}
+
+bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
+  if (!eventIsSelection(event)) {
+    return false;
+  }
+  Layout addedSelection;
+  LayoutCursor::Direction direction = event == Ion::Events::ShiftLeft ? LayoutCursor::Direction::Left :
+    (event == Ion::Events::ShiftRight ? LayoutCursor::Direction::Right :
+     (event == Ion::Events::ShiftUp ? LayoutCursor::Direction::Up :
+      LayoutCursor::Direction::Down));
+  LayoutCursor result = m_contentView.cursor()->selectAtDirection(direction, shouldRecomputeLayout, &addedSelection);
+  if (addedSelection.isUninitialized()) {
+    return false;
+  }
+  m_contentView.addSelection(addedSelection);
+  assert(result.isDefined());
+  m_contentView.setCursor(result);
+  return true;
 }
 
 void LayoutField::scrollRightOfLayout(Layout layoutR) {
@@ -374,7 +650,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   }
 
   // Handle matrices
-  cursor->layoutReference().addGreySquaresToAllMatrixAncestors();
+  cursor->layout().addGreySquaresToAllMatrixAncestors();
 
   // Handle empty layouts
   cursor->hideEmptyLayoutIfNeeded();

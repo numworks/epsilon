@@ -10,14 +10,12 @@ class KDPostProcessContext;
 class KDContext {
   friend KDPostProcessContext;
 public:
-  KDPoint origin() const { return m_origin; }
-  KDRect clippingRect() const { return m_clippingRect; }
-  virtual void setOrigin(KDPoint origin);
-  virtual void setClippingRect(KDRect clippingRect);
+  void setOrigin(KDPoint origin) { m_origin = origin; }
+  void setClippingRect(KDRect clippingRect) { m_clippingRect = clippingRect; }
 
   // Pixel manipulation
   void setPixel(KDPoint p, KDColor c);
-  KDColor getPixel(KDPoint p);
+  void getPixel(KDPoint p, KDColor * pixel);
   void getPixels(KDRect r, KDColor * pixels);
 
   // Text
@@ -33,7 +31,11 @@ public:
   void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
-
+protected:
+  KDContext(KDPoint origin, KDRect clippingRect) :
+    m_origin(origin),
+    m_clippingRect(clippingRect)
+  {}
   virtual void pushRect(KDRect, const KDColor * pixels) = 0;
   virtual void pushRectUniform(KDRect rect, KDColor color) = 0;
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;

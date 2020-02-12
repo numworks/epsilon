@@ -23,24 +23,25 @@ public:
   Type type() const override { return Type::Symbol; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
-  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
+  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
   float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
+  /* getUnit returns Undefined, because the symbol would have
+   * already been replaced if it should have been.*/
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression shallowReplaceReplaceableSymbols(Context * context) override;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) override;
   LayoutShape leftLayoutShape() const override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
-  bool isUnknown(CodePoint unknownSymbol) const;
+  bool isUnknown() const;
 private:
   char m_name[0]; // MUST be the last member variable
 
@@ -50,7 +51,6 @@ private:
 
 class Symbol final : public SymbolAbstract {
   friend class Expression;
-  friend class Store;
   friend class SymbolNode;
 public:
   static constexpr int k_ansLength = 3;
@@ -61,16 +61,17 @@ public:
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
 
   // Symbol properties
-  bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX); }
+  bool isSystemSymbol() const { return node()->isUnknown(); }
   const char * name() const { return node()->name(); }
-  static bool isSeriesSymbol(const char * c);
-  static bool isRegressionSymbol(const char * c);
+  // IsVariable tests
+  static bool isSeriesSymbol(const char * c, Poincare::Context * context);
+  static bool isRegressionSymbol(const char * c, Poincare::Context * context);
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
-  Expression shallowReplaceReplaceableSymbols(Context * context);
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };

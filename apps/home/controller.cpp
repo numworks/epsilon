@@ -45,8 +45,8 @@ View * Controller::ContentView::subviewAtIndex(int index) {
   return &m_selectableTableView;
 }
 
-void Controller::ContentView::layoutSubviews() {
-  m_selectableTableView.setFrame(bounds());
+void Controller::ContentView::layoutSubviews(bool force) {
+  m_selectableTableView.setFrame(bounds(), force);
 }
 
 Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource) :

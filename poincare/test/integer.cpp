@@ -1,8 +1,3 @@
-#include <quiz.h>
-#include <poincare/integer.h>
-#include <assert.h>
-
-#include "tree/helpers.h"
 #include "helper.h"
 
 using namespace Poincare;
@@ -21,6 +16,9 @@ QUIZ_CASE(poincare_integer_constructor) {
   Integer d((int64_t)1234567891011121314);
   Integer nd((int64_t)(-1234567891011121314));
   Integer e = Integer::Overflow(false);
+  Integer f("101011", 6, false, Integer::Base::Binary);
+  Integer g("A2B3", 4, false, Integer::Base::Hexadecimal);
+  Integer h("123", 3, false, Integer::Base::Decimal);
 }
 
 static inline void assert_equal(const Integer i, const Integer j) {
@@ -211,8 +209,8 @@ QUIZ_CASE(poincare_integer_factorial) {
 // Simplify
 
 template<typename T>
-void assert_integer_evals_to(const char * i, T result) {
-  quiz_assert(Integer(i).approximate<T>() == result);
+void assert_integer_evals_to(const char * i, T result, Integer::Base base = Integer::Base::Decimal) {
+  quiz_assert(Integer(i, strlen(i), false, base).approximate<T>() == result);
 }
 
 QUIZ_CASE(poincare_integer_evaluate) {
@@ -253,19 +251,28 @@ QUIZ_CASE(poincare_integer_evaluate) {
   assert_integer_evals_to("179769313486230000002930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137215", 1.7976931348622999E+308);
   assert_integer_evals_to(OverflowedIntegerString(), 179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216.0);
   assert_integer_evals_to(MaxIntegerString(), 179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137215.0);
+
+  // Based Integer
+  assert_integer_evals_to("1011", 11.0f, Integer::Base::Binary);
+  assert_integer_evals_to("2A", 42.0f, Integer::Base::Hexadecimal);
+  assert_integer_evals_to("42", 42.0f, Integer::Base::Decimal);
 }
 
 //Serialize
 
-static inline void assert_integer_serializes_to(const Integer i, const char * serialization) {
+static inline void assert_integer_serializes_to(const Integer i, const char * serialization, Integer::Base base = Integer::Base::Decimal) {
   char buffer[500];
-  i.serialize(buffer, 500);
+  i.serialize(buffer, 500, base);
   quiz_assert(strcmp(buffer, serialization) == 0);
 }
 
 QUIZ_CASE(poincare_integer_serialize) {
   assert_integer_serializes_to(Integer(-2), "-2");
   assert_integer_serializes_to(Integer("2345678909876"), "2345678909876");
+  assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
+  assert_integer_serializes_to(Integer(9), "0b1001", Integer::Base::Binary);
+  assert_integer_serializes_to(Integer(9131), "0x23AB", Integer::Base::Hexadecimal);
+  assert_integer_serializes_to(Integer(123), "123", Integer::Base::Decimal);
   assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
   assert_integer_serializes_to(MaxInteger(), MaxIntegerString());
   assert_integer_serializes_to(OverflowedInteger(), Infinity::Name());

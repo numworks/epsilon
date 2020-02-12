@@ -22,11 +22,11 @@ View * AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   return m_mainViewController->view();
 }
 
-void AlternateEmptyViewController::ContentView::layoutSubviews() {
+void AlternateEmptyViewController::ContentView::layoutSubviews(bool force) {
   if (alternateEmptyViewDelegate()->isEmpty()) {
-    m_delegate->emptyView()->setFrame(bounds());
+    m_delegate->emptyView()->setFrame(bounds(), force);
   } else {
-    m_mainViewController->view()->setFrame(bounds());
+    m_mainViewController->view()->setFrame(bounds(), force);
   }
 }
 

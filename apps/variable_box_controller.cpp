@@ -21,6 +21,9 @@ VariableBoxController::VariableBoxController() :
   m_lockPageDelete(Page::RootMenu),
   m_firstMemoizedLayoutIndex(0)
 {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setParentResponder(&m_selectableTableView);
+  }
 }
 
 void VariableBoxController::viewWillAppear() {
@@ -117,6 +120,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);
   myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
+  myCell->reloadScroll();
   myCell->reloadCell();
 }
 

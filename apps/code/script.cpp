@@ -48,7 +48,7 @@ bool Script::nameCompliant(const char * name) {
    * problems with case sensitivity. */
   UTF8Decoder decoder(name);
   CodePoint c = decoder.nextCodePoint();
-  if (c == UCodePointNull || !(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || c == '.')) {
+  if (c == UCodePointNull || !(c.isLatinSmallLetter() || c == '_' || c == '.')) {
     /* The name cannot be empty. Its first letter must be in [a-z_] or the
      * extension dot. */
     return false;
@@ -57,7 +57,7 @@ bool Script::nameCompliant(const char * name) {
     if (c == '.' && strcmp(decoder.stringPosition(), ScriptStore::k_scriptExtension) == 0) {
       return true;
     }
-    if (!(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || UTF8Helper::CodePointIsNumber(c))) {
+    if (!(c.isLatinSmallLetter() || c == '_' || c.isDecimalDigit())) {
       return false;
     }
     c = decoder.nextCodePoint();
@@ -77,7 +77,7 @@ void Script::toggleImportationStatus() {
   setValue(d);
 }
 
-const char * Script::readContent() const {
+const char * Script::scriptContent() const {
   assert(!isNull());
   Data d = value();
   return (const char *)d.buffer + k_importationStatusSize;

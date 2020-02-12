@@ -10,7 +10,7 @@ using namespace Shared;
 namespace Statistics {
 
 const Expression StatisticsContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
-  if (symbol.type() == ExpressionNode::Type::Symbol && Symbol::isSeriesSymbol(symbol.name())) {
+  if (symbol.type() == ExpressionNode::Type::Symbol && Symbol::isSeriesSymbol(symbol.name(), nullptr)) {
     const char * seriesName = symbol.name();
     assert(strlen(seriesName) == 2);
 
@@ -24,7 +24,7 @@ const Expression StatisticsContext::expressionForSymbolAbstract(const SymbolAbst
     assert(m_seriesPairIndex < m_store->numberOfPairsOfSeries(series));
     return Float<double>::Builder(m_store->get(series, storeI, m_seriesPairIndex));
   } else {
-    return m_parentContext->expressionForSymbolAbstract(symbol, clone);
+    return ContextWithParent::expressionForSymbolAbstract(symbol, clone);
   }
 }
 

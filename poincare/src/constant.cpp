@@ -14,8 +14,6 @@
 
 namespace Poincare {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
-
 ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNode() {
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }
@@ -64,15 +62,8 @@ Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return LayoutHelper::String(m_name, strlen(m_name));
 }
 
-int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  return minInt(strlcpy(buffer, m_name, bufferSize), bufferSize - 1);
-}
-
 template<typename T>
-Evaluation<T> ConstantNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ConstantNode::templatedApproximate() const {
   if (isIComplex()) {
     return Complex<T>::Builder(0.0, 1.0);
   }
@@ -108,14 +99,11 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
     result = Unreal::Builder();
   } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {
     result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
+  } else {
+    return *this;
   }
-  if (!result.isUninitialized()) {
-    replaceWithInPlace(result);
-    return result;
-  }
-  return *this;
+  replaceWithInPlace(result);
+  return result;
 }
 
-template Evaluation<float> ConstantNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> ConstantNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 }

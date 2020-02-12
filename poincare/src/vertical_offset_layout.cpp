@@ -10,7 +10,7 @@ namespace Poincare {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
-void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == indiceLayout()
       && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -33,7 +33,7 @@ void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shou
   }
 }
 
-void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == indiceLayout()
       && cursor->position() == LayoutCursor::Position::Right)
   {
@@ -55,7 +55,7 @@ void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * sho
   }
 }
 
-void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (m_position == Position::Superscript) {
     // Case: Superscript.
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
@@ -70,20 +70,18 @@ void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * should
       cursor->setPosition(LayoutCursor::Position::Left);
       return;
     }
-  }
-  /* Case: Subscript, Left or Right of the indice. Put the cursor at the same
-   * position, pointing this. */
-  if (m_position == Position::Subscript
-    && (cursor->isEquivalentTo(LayoutCursor(indiceLayout(), LayoutCursor::Position::Left))
-      || cursor->isEquivalentTo(LayoutCursor(indiceLayout(), LayoutCursor::Position::Right))))
-  {
+  } else {
+    if (cursor->isEquivalentTo(LayoutCursor(Layout(indiceLayout()), cursor->position()))) {
+      /* Case: Subscript, Left or Right of the indice. Put the cursor at the
+       * same position, pointing this. */
       cursor->setLayoutNode(this);
       return;
+    }
   }
   LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (m_position == Position::Subscript) {
     // Case: Subscript.
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
@@ -98,14 +96,13 @@ void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shou
       cursor->setPosition(LayoutCursor::Position::Left);
       return;
     }
-  }
-  /* Case: Superscript, Left or Right of the indice. Put the cursor at the same
-   * position, pointing this. */
-  if (m_position == Position::Superscript
-    && cursor->layoutNode() == indiceLayout())
-  {
-    cursor->setLayoutNode(this);
-    return;
+  } else {
+    if (cursor->isEquivalentTo(LayoutCursor(Layout(indiceLayout()), cursor->position()))){
+      /* Case: Superscript, Left or Right of the indice. Put the cursor at the
+       * same position, pointing this. */
+      cursor->setLayoutNode(this);
+      return;
+    }
   }
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }

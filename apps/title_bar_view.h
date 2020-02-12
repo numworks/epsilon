@@ -23,7 +23,7 @@ private:
   constexpr static KDCoordinate k_examIconHeight = 9;
   constexpr static KDCoordinate k_examIconMargin = 93;
   int numberOfSubviews() const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   View * subviewAtIndex(int index) override;
   MessageTextView m_titleView;
   BatteryView m_batteryView;

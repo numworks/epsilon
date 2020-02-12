@@ -193,6 +193,9 @@ Q(<genexpr>)
 Q(<string>)
 Q(<stdin>)
 Q(utf-8)
+#if __EMSCRIPTEN__
+Q(pystack exhausted)
+#endif
 Q(ArithmeticError)
 Q(AssertionError)
 Q(AttributeError)
@@ -249,6 +252,9 @@ Q(__lt__)
 Q(__main__)
 Q(__module__)
 Q(__name__)
+#if __EMSCRIPTEN__
+Q(__ne__)
+#endif
 Q(__new__)
 Q(__next__)
 Q(__path__)
@@ -412,6 +418,10 @@ Q(pop)
 Q(popitem)
 Q(pow)
 Q(print)
+#if __EMSCRIPTEN__
+Q(pystack_space_exhausted)
+Q(pystack_use)
+#endif
 Q(radians)
 Q(randint)
 Q(random)

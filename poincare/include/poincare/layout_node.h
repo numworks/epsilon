@@ -61,7 +61,7 @@ public:
   bool isIdenticalTo(Layout l);
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = Palette::PrimaryText, KDColor backgroundColor = Palette::BackgroundHard);
+  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = Palette::PrimaryText, KDColor backgroundColor = Palette::BackgroundHard, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed);
   KDPoint origin();
   KDPoint absoluteOrigin();
   KDSize layoutSize();
@@ -76,19 +76,19 @@ public:
   LayoutNode * root() override { return static_cast<LayoutNode *>(TreeNode::root()); }
 
   // Tree navigation
-  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {
-    moveCursorVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
+  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
+  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
+    moveCursorVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
-  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {
-    moveCursorVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
+    moveCursorVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
-  void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-    return moveCursorInDescendantsVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout);
+  void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
+    return moveCursorInDescendantsVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, forSelection);
   }
-  void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-    return moveCursorInDescendantsVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout);
+  void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
+    return moveCursorInDescendantsVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, forSelection);
   }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
@@ -105,8 +105,9 @@ public:
 
   // Other
   virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression);
-  bool removeGreySquaresFromAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(false); }
-  bool addGreySquaresToAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(true); }
+  bool removeGreySquaresFromAllMatrixAncestors();
+  bool removeGreySquaresFromAllMatrixChildren();
+  bool addGreySquaresToAllMatrixAncestors();
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
@@ -144,7 +145,7 @@ protected:
   virtual bool protectedIsIdenticalTo(Layout l);
 
   // Tree navigation
-  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
+  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection);
 
   // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
@@ -164,16 +165,17 @@ protected:
   bool m_positioned;
   bool m_sized;
 private:
-  void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
+  void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
   void scoreCursorInDescendantsVertically (
     VerticalDirection direction,
     LayoutCursor * cursor,
     bool * shouldRecomputeLayout,
     LayoutNode ** childResult,
     void * resultPosition,
-    int * resultScore);
-  virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
-  bool changeGreySquaresOfAllMatrixAncestors(bool add);
+    int * resultScore,
+    bool forSelection);
+  virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
+  void changeGreySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares);
 };
 
 }

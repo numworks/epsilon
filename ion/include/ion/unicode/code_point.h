@@ -9,8 +9,32 @@ public:
   constexpr CodePoint(uint32_t c) : m_code(c) {}
   constexpr operator uint32_t() const { return m_code; }
 
+  bool isBinaryDigit() const {
+    return '0' <= m_code && m_code <= '1';
+  }
+  bool isDecimalDigit() const {
+    return '0' <= m_code && m_code <= '9';
+  }
+  bool isHexadecimalDigit() const {
+    return isDecimalDigit() || ('A' <= m_code && m_code <= 'F') || ('a' <= m_code && m_code <= 'f');
+  }
+  bool isLatinCapitalLetter() const {
+    return 'A' <= m_code && m_code <= 'Z';
+  }
+  bool isLatinSmallLetter() const {
+    return 'a' <= m_code && m_code <= 'z';
+  }
+  bool isLatinLetter() const {
+    return isLatinCapitalLetter() || isLatinSmallLetter();
+  }
   bool isCombining() const {
     return (m_code >= 0x300 && m_code <= 0x036F);
+  }
+  bool isGreekCapitalLetter() const {
+    return 0x391 <= m_code && m_code <= 0x3a9 && m_code != 0x3a2;
+  }
+  bool isGreekSmallLetter() const {
+    return 0x3b1 <= m_code && m_code <= 0x3c9;
   }
 private:
   uint32_t m_code;
@@ -19,7 +43,7 @@ private:
 static constexpr CodePoint UCodePointNull                     = 0x0;
 
 // 0x1 represents soh. It is not used, so we can use it for another purpose.
-static constexpr CodePoint UCodePointUnknownX                 = 0x1;
+static constexpr CodePoint UCodePointUnknown                  = 0x1;
 
 static constexpr CodePoint UCodePointTabulation               = 0x9;
 static constexpr CodePoint UCodePointLineFeed                 = 0xa;

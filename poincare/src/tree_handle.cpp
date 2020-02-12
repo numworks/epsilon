@@ -28,12 +28,28 @@ int TreeHandle::indexOfChild(TreeHandle t) const { return node()->indexOfChild(t
 
 bool TreeHandle::hasChild(TreeHandle t) const { return node()->hasChild(t.node()); }
 
+TreeHandle TreeHandle::commonAncestorWith(TreeHandle t) const {
+  if (*(const_cast<TreeHandle *>(this)) == t) {
+    return t;
+  }
+  TreeHandle p = *this;
+  while (!p.isUninitialized()) {
+    if (t.hasAncestor(p, true)) {
+      return p;
+    }
+    p = p.parent();
+  }
+  return TreeHandle();
+}
+
 TreeHandle TreeHandle::childAtIndex(int i) const { return TreeHandle(node()->childAtIndex(i)); }
 
 void TreeHandle::replaceWithInPlace(TreeHandle t) {
   assert(!isUninitialized());
   TreeHandle p = parent();
-  if (!p.isUninitialized()) {
+  if (p.isUninitialized()) {
+    t.detachFromParent();
+  } else {
     p.replaceChildInPlace(*this, t);
   }
 }
@@ -46,6 +62,7 @@ void TreeHandle::replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
   if (oldChild == newChild) {
     return;
   }
+  assert(!oldChild.hasAncestor(newChild, true));
 
   assert(!isUninitialized());
 
@@ -228,7 +245,7 @@ TreeHandle TreeHandle::BuildWithGhostChildren(TreeNode * node) {
   return TreeHandle(node);
 }
 
-void TreeHandle::setIdentifierAndRetain(int newId) {
+void TreeHandle::setIdentifierAndRetain(uint16_t newId) {
   m_identifier = newId;
   if (!isUninitialized()) {
     node()->retain();
@@ -246,7 +263,7 @@ void TreeHandle::setTo(const TreeHandle & tr) {
   release(currentId);
 }
 
-void TreeHandle::release(int identifier) {
+void TreeHandle::release(uint16_t identifier) {
   if (!hasNode(identifier)) {
     return;
   }
@@ -348,6 +365,7 @@ template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(TreeHandle*, size_t);
 template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(TreeHandle*, size_t);
 template Tangent TreeHandle::FixedArityBuilder<Tangent, TangentNode>(TreeHandle*, size_t);
 template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(TreeHandle*, size_t);
+template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(TreeHandle*, size_t);
 template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(TreeHandle*, size_t);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(TreeHandle*, size_t);
 

@@ -21,7 +21,18 @@ const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode
 {0xFF, 0xFF, 0xFF, 0xFF, 0xCB}
 };
 
-void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool NthRootLayoutNode::isSquareRoot() const {
+  if (!m_hasIndex) {
+    return true;
+  }
+  assert((const_cast<NthRootLayoutNode *>(this))->indexLayout() != nullptr);
+  if ((const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty()) {
+    return true;
+  }
+  return false;
+}
+
+void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == radicandLayout()
     && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -56,7 +67,7 @@ void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecom
   }
 }
 
-void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == radicandLayout()
       && cursor->position() == LayoutCursor::Position::Right)
   {
@@ -91,7 +102,7 @@ void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldReco
   }
 }
 
-void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (indexLayout() != nullptr
       && cursor->isEquivalentTo(LayoutCursor(radicandLayout(), LayoutCursor::Position::Left)))
   {
@@ -112,7 +123,7 @@ void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecompu
   LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (indexLayout() != nullptr
       && cursor->layoutNode()->hasAncestor(indexLayout(), true))
   {
@@ -149,17 +160,13 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (m_hasIndex) {
-    assert((const_cast<NthRootLayoutNode *>(this))->indexLayout());
-    if ((const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty()) {
-      // Case: root(x,empty): Write "'SquareRootSymbol'('radicandLayout')"
-      return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name(), true, 0);
-    }
-    // Case: root(x,n)
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name(), true);
+  if (isSquareRoot()) {
+    /* Case: squareRoot(x) or root(x,empty):
+     * Write "SquareRootSymbol(radicandLayout) */
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name(), true, 0);
   }
-  // Case: squareRoot(x)
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name(), true);
+  // Case: root(x,n)
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name(), true);
 }
 
 KDSize NthRootLayoutNode::computeSize() {
@@ -200,7 +207,7 @@ KDSize NthRootLayoutNode::adjustedIndexSize() {
     KDSize(maxCoordinate(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
 }
 
-void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize radicandSize = radicandLayout()->layoutSize();
   KDSize indexSize = adjustedIndexSize();
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];

@@ -46,7 +46,7 @@ public:
   }
   RegressionController * regressionController() { return &m_regressionController; }
 private:
-  App(Snapshot * snapshot);
+  App(Snapshot * snapshot, Poincare::Context * parentContext);
   CalculationController m_calculationController;
   AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   ButtonRowController m_calculationHeader;

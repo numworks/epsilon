@@ -20,8 +20,7 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
   m_failureAction(Invocation(nullptr, nullptr)),
   m_inputEventHandlerDelegate(inputEventHandlerDelegate),
   m_textFieldDelegate(textFieldDelegate),
-  m_layoutFieldDelegate(layoutFieldDelegate),
-  m_inputViewHeightIsMaximal(false)
+  m_layoutFieldDelegate(layoutFieldDelegate)
 {
 }
 
@@ -86,12 +85,17 @@ bool InputViewController::layoutFieldDidAbortEditing(LayoutField * layoutField) 
 }
 
 void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
-  /* Reload the view only if the ExpressionField height actually changes, i.e.
-   * not if the height is already maximal and stays maximal. */
-  bool newInputViewHeightIsMaximal = m_expressionFieldController.expressionField()->heightIsMaximal();
-  if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
-    m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
+  if (m_expressionFieldController.expressionField()->inputViewHeightDidChange()) {
+    /* Reload the whole view only if the ExpressionField's height did actually
+     * change. */
     reloadModalViewController();
+  } else {
+    /* The input view is already at maximal size so we do not need to relayout
+     * the view underneath, but the view inside the input view might still need
+     * to be relayouted.
+     * We force the relayout because the frame stays the same but we need to
+     * propagate a relayout to the content of the field scroll view. */
+    m_expressionFieldController.expressionField()->layoutSubviews(true);
   }
 }
 

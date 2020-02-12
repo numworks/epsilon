@@ -46,12 +46,12 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
   return &m_distributionCurveView;
 }
 
-void CalculationController::ContentView::layoutSubviews() {
+void CalculationController::ContentView::layoutSubviews(bool force) {
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleHeightMargin;
-  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
+  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight+2*k_tableMargin;
-  m_selectableTableView->setFrame(KDRect(0,  titleHeight, bounds().width(), calculationHeight));
-  m_distributionCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight));
+  m_selectableTableView->setFrame(KDRect(0,  titleHeight, bounds().width(), calculationHeight), force);
+  m_distributionCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight), force);
 }
 
 CalculationController::CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * distribution, Calculation * calculation) :

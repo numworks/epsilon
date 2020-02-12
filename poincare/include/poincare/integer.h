@@ -51,14 +51,20 @@ private:
 };
 
 class Integer final : public TreeHandle {
+  friend class BasedIntegerNode;
 public:
+  enum class Base : uint16_t {
+    Binary = 2,
+    Decimal = 10,
+    Hexadecimal = 16,
+  };
   /* Constructors & Destructors */
   static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(native_int_t i = 0);
   Integer(double_native_int_t i);
-  Integer(const char * digits, size_t length, bool negative);
+  Integer(const char * digits, size_t length, bool negative, Base base = Base::Decimal);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {}
-  static Integer Overflow(bool negative) { return Integer(OverflowIdentifier, negative); }
+  static Integer Overflow(bool negative) { return Integer(TreeNode::OverflowIdentifier, negative); }
 
 #if POINCARE_TREE_LOG
   void logInteger(std::ostream & stream) const {
@@ -94,10 +100,10 @@ public:
   void setNegative(bool negative) { m_negative = numberOfDigits() > 0 ? negative : false; } // 0 is always positive
 
   // Serialization
-  int serialize(char * buffer, int bufferSize) const;
+  int serialize(char * buffer, int bufferSize, Base base = Base::Decimal) const;
 
   // Layout
-  Layout createLayout() const;
+  Layout createLayout(Base base = Base::Decimal) const;
 
   // Approximation
   template<typename T> T approximate() const;
@@ -108,7 +114,7 @@ public:
   /* An integer can have (k_maxNumberOfDigits + 1) digits: either when it is an
    * overflow, or when we want to have one more digit than usual to compute a
    * big division. */
-  bool isOverflow() const { return m_identifier == OverflowIdentifier; }
+  bool isOverflow() const { return m_identifier == TreeNode::OverflowIdentifier; }
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
   bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && !m_negative); };
   bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && !m_negative); };
@@ -137,10 +143,13 @@ public:
   static Integer Power(const Integer & i, const Integer & j);
   static Integer Factorial(const Integer & i);
 
+  // Derived expression builder
+  static Expression CreateMixedFraction(const Integer & num, const Integer & denom);
+  static Expression CreateEuclideanDivision(const Integer & num, const Integer & denom);
+
   constexpr static int k_maxNumberOfDigits = 32;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
-  static constexpr int OverflowIdentifier = TreeNode::NoNodeIdentifier - 1;
 
   // Constructors
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
@@ -150,6 +159,11 @@ private:
   // Arithmetic
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative, bool enableOneDigitOverflow = false);
   static Integer multiplication(const Integer & a, const Integer & b, bool enableOneDigitOverflow = false);
+
+  // Serialization
+  typedef char (*CharacterForDigit)(uint8_t d);
+  int serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDigit, char symbol, CharacterForDigit charForDigit) const;
+  int serializeInDecimal(char * buffer, int bufferSize) const;
 
   /* buffer has to be k_maxNumberOfDigits+1 to allow temporary overflow (ie, in
    * subtraction) */

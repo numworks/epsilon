@@ -49,7 +49,7 @@ uint32_t random();
 // Decompress data
 void decompress(const uint8_t * src, uint8_t * dst, int srcSize, int dstSize);
 
-// Tells wether the stack pointer is within acceptable bounds
+// Tells whether the stack pointer is within acceptable bounds
 bool stackSafe();
 
 }

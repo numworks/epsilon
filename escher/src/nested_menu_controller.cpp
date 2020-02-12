@@ -78,8 +78,8 @@ View * NestedMenuController::ListController::view() {
 
 void NestedMenuController::ListController::didBecomeFirstResponder() {
   m_selectableTableView->reloadData();
-  m_selectableTableView->selectCellAtLocation(0, m_firstSelectedRow);
   Container::activeApp()->setFirstResponder(m_selectableTableView);
+  m_selectableTableView->selectCellAtLocation(0, m_firstSelectedRow);
 }
 
 void NestedMenuController::ListController::setFirstSelectedRow(int firstSelectedRow) {

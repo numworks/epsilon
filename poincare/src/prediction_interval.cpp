@@ -37,7 +37,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context * context, Pr
   T p = static_cast<Complex<T> &>(pInput).toScalar();
   T n = static_cast<Complex<T> &>(nInput).toScalar();
   if (std::isnan(p) || std::isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   std::complex<T> operands[2];
   operands[0] = std::complex<T>(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
@@ -49,6 +49,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context * context, Pr
 Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

@@ -13,9 +13,9 @@ namespace Poincare {
 
 TreePool * TreePool::SharedStaticPool = nullptr;
 
-void TreePool::freeIdentifier(int identifier) {
+void TreePool::freeIdentifier(uint16_t identifier) {
   if (identifier >= 0 && identifier < MaxNumberOfNodes) {
-    m_nodeForIdentifier[identifier] = nullptr;
+    m_nodeForIdentifierOffset[identifier] = UINT16_MAX;
     m_identifiers.push(identifier);
   }
 }
@@ -114,7 +114,7 @@ int TreePool::numberOfNodes() const {
 
 void * TreePool::alloc(size_t size) {
   size = Helpers::AlignedSize(size, ByteAlignment);
-  if (m_cursor >= buffer() + BufferSize || m_cursor + size > buffer() + BufferSize) {
+  if (m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
   void * result = m_cursor;
@@ -135,12 +135,12 @@ void TreePool::dealloc(TreeNode * node, size_t size) {
   );
   m_cursor -= size;
 
-  // Step 2: Update m_nodeForIdentifier for all nodes downstream
+  // Step 2: Update m_nodeForIdentifierOffset for all nodes downstream
   updateNodeForIdentifierFromNode(node);
 }
 
 void TreePool::discardTreeNode(TreeNode * node) {
-  int nodeIdentifier = node->identifier();
+  uint16_t nodeIdentifier = node->identifier();
   size_t size = node->size();
   node->~TreeNode();
   dealloc(node, size);
@@ -148,15 +148,16 @@ void TreePool::discardTreeNode(TreeNode * node) {
 }
 
 void TreePool::registerNode(TreeNode * node) {
-  int nodeID = node->identifier();
-  if (nodeID >= 0 && nodeID < MaxNumberOfNodes) {
-    m_nodeForIdentifier[nodeID] = node;
-  }
+  uint16_t nodeID = node->identifier();
+  assert(nodeID < MaxNumberOfNodes);
+  const int nodeOffset = (((char *)node) - (char *)m_alignedBuffer)/ByteAlignment;
+  assert(nodeOffset < k_maxNodeOffset); // Check that the offset can be stored in a uint16_t
+  m_nodeForIdentifierOffset[nodeID] = nodeOffset;
 }
 
 void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
   for (TreeNode * n : Nodes(node)) {
-    m_nodeForIdentifier[n->identifier()] = n;
+    registerNode(n);
   }
 }
 

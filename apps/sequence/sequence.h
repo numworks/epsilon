@@ -43,14 +43,14 @@ public:
   Poincare::Expression firstInitialConditionExpressionReduced(Poincare::Context * context) const { return m_firstInitialCondition.expressionReduced(this, context); }
   Poincare::Expression firstInitialConditionExpressionClone() const { return m_firstInitialCondition.expressionClone(this); }
   Poincare::Layout firstInitialConditionLayout() { return m_firstInitialCondition.layout(this); }
-  Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(const char * c) { return m_firstInitialCondition.setContent(this, c); }
+  Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(const char * c, Poincare::Context * context) { return m_firstInitialCondition.setContent(this, c, context); }
   // Second initial condition
   Poincare::Layout secondInitialConditionName() { return m_secondInitialCondition.name(this); }
   void secondInitialConditionText(char * buffer, size_t bufferSize) const { return m_secondInitialCondition.text(this, buffer, bufferSize); }
   Poincare::Expression secondInitialConditionExpressionReduced(Poincare::Context * context) const { return m_secondInitialCondition.expressionReduced(this, context); }
   Poincare::Expression secondInitialConditionExpressionClone() const { return m_secondInitialCondition.expressionClone(this); }
   Poincare::Layout secondInitialConditionLayout() { return m_secondInitialCondition.layout(this); }
-  Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(const char * c) { return m_secondInitialCondition.setContent(this, c); }
+  Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(const char * c, Poincare::Context * context) { return m_secondInitialCondition.setContent(this, c, context); }
 
   // Sequence properties
   int numberOfElements() { return (int)type() + 1; }
@@ -121,18 +121,16 @@ private:
   };
 
   class DefinitionModel : public SequenceModel {
-  public:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     void buildName(Sequence * sequence) override;
   };
 
   class InitialConditionModel : public SequenceModel {
-  public:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
     void updateMetaData(const Ion::Storage::Record * record, size_t newSize) override;
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     void buildName(Sequence * sequence) override;
     virtual int conditionIndex() const = 0;

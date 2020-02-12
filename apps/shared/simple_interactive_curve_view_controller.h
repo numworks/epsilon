@@ -30,7 +30,7 @@ protected:
   /* the result of moveCursorVertically/Horizontally means:
    * false -> the cursor cannot move in this direction
    * true -> the cursor moved */
-  virtual bool moveCursorHorizontally(int direction) { return false; };
+  virtual bool moveCursorHorizontally(int direction, bool fast = false) { return false; }
   virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
   virtual CurveView * curveView() = 0;
   virtual bool handleEnter() = 0;

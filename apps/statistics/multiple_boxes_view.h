@@ -19,7 +19,7 @@ public:
   int seriesOfSubviewAtIndex(int index) override;
   BoxBannerView * bannerView() override { return &m_bannerView; }
   BoxView * dataViewAtIndex(int index) override;
-  void layoutDataSubviews() override;
+  void layoutDataSubviews(bool force) override;
   void reload() override;
 
   // View

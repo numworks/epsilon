@@ -4,6 +4,7 @@ escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
   app.cpp \
   bank_view_controller.cpp \
+  bordered.cpp \
   buffer_text_view.cpp \
   button.cpp \
   button_row_controller.cpp \
@@ -44,7 +45,6 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_message.cpp \
   message_table_cell_with_switch.cpp \
   message_text_view.cpp \
-  message_tree.cpp \
   modal_view_controller.cpp \
   nested_menu_controller.cpp \
   palette.cpp \
@@ -54,13 +54,12 @@ escher_src += $(addprefix escher/src/,\
   scroll_view.cpp \
   scroll_view_data_source.cpp \
   scroll_view_indicator.cpp \
+  scrollable_expression_view.cpp \
   scrollable_view.cpp \
   selectable_table_view.cpp \
-  selectable_table_view_delegate.cpp \
   simple_list_view_data_source.cpp \
   simple_table_view_data_source.cpp \
   solid_color_view.cpp \
-  solid_text_area.cpp \
   stack_view.cpp \
   stack_view_controller.cpp \
   switch_view.cpp \
@@ -87,6 +86,9 @@ escher_src += $(addprefix escher/src/,\
   window.cpp \
 )
 
+tests_src += $(addprefix escher/test/,\
+  layout_field.cpp\
+)
 
 $(eval $(call rule_for, \
   HOSTCC, \

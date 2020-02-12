@@ -7,7 +7,7 @@ namespace Statistics {
 
 void MultipleDataView::setDisplayBanner(bool display) {
   m_displayBanner = display;
-  layoutBanner();
+  layoutBanner(false);
 }
 
 void MultipleDataView::reload() {
@@ -66,14 +66,14 @@ View * MultipleDataView::subviewAtIndex(int index) {
   return nullptr;
 }
 
-void MultipleDataView::layoutSubviews() {
+void MultipleDataView::layoutSubviews(bool force) {
   // We need to set the banner width first, so its height can be computed
-  bannerView()->setFrame(KDRect(0, 0, bounds().width(), 0));
-  layoutDataSubviews();
-  layoutBanner();
+  bannerView()->setFrame(KDRect(0, 0, bounds().width(), 0), force);
+  layoutDataSubviews(force);
+  layoutBanner(force);
 }
 
-void MultipleDataView::layoutDataSubviews() {
+void MultipleDataView::layoutDataSubviews(bool force) {
   int numberDataSubviews = m_store->numberOfNonEmptySeries();
   assert(numberDataSubviews > 0);
   KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
@@ -83,7 +83,7 @@ void MultipleDataView::layoutDataSubviews() {
     if (!m_store->seriesIsEmpty(i)) {
       CurveView * dataView = dataViewAtIndex(i);
       KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
-      dataView->setFrame(frame);
+      dataView->setFrame(frame, force);
       displayedSubviewIndex++;
     }
   }
@@ -100,13 +100,13 @@ KDRect MultipleDataView::bannerFrame() const {
   return frame;
 }
 
-void MultipleDataView::layoutBanner() {
+void MultipleDataView::layoutBanner(bool force) {
   KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
   if (m_displayBanner) {
-    bannerView()->setFrame(bannerFrame());
+    bannerView()->setFrame(bannerFrame(), force);
   } else {
     KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), 0);
-    bannerView()->setFrame(frame);
+    bannerView()->setFrame(frame, force);
   }
 }
 

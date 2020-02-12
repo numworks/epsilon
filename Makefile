@@ -31,11 +31,11 @@ endef
 
 define rule_for
 ifeq ($(strip $(5)),with_local_version)
-$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(addprefix $$(BUILD_DIR)/,$(strip $(3)))
+$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(addprefix $$(BUILD_DIR)/,$(strip $(3))) | $(if $(findstring official,${MAKECMDGOALS}),official_authorization)
 	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
 	$(Q) $(4)
 endif
-$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
+$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/. $(if $(findstring official,${MAKECMDGOALS}),official_authorization)
 	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
 	$(Q) $(4)
 endef

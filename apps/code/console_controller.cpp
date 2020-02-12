@@ -6,7 +6,9 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/preferences.h>
-#include "../apps_container.h"
+#include <apps/global_preferences.h>
+#include <apps/apps_container.h>
+#include <python/port/helpers.h>
 
 extern "C" {
 #include <stdlib.h>
@@ -28,13 +30,13 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   TextFieldDelegate(),
   MicroPython::ExecutionEnvironment(),
   m_pythonDelegate(pythonDelegate),
-  m_rowHeight(Poincare::Preferences::sharedPreferences()->KDPythonFont()->glyphSize().height()),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
   m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this, this),
-  m_inputRunLoopActive(false)
+  m_inputRunLoopActive(false),
+  m_preventEdition(false)
 #if EPSILON_GETOPT
   , m_locked(lockOnConsole)
 #endif
@@ -76,10 +78,21 @@ void ConsoleController::autoImport() {
 }
 
 void ConsoleController::runAndPrintForCommand(const char * command) {
-  m_consoleStore.pushCommand(command, strlen(command));
+  const char * storedCommand = m_consoleStore.pushCommand(command);
   assert(m_outputAccumulationBuffer[0] == '\0');
 
-  runCode(command);
+  // Draw the console before running the code
+  m_preventEdition = true;
+  m_editCell.setText("");
+  m_editCell.setPrompt("");
+  refreshPrintOutput();
+
+  runCode(storedCommand);
+
+  m_preventEdition = false;
+  m_editCell.setPrompt(sStandardPromptText);
+  m_editCell.setEditing(true);
+
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
 }
@@ -119,6 +132,7 @@ const char * ConsoleController::inputText(const char * prompt) {
     }
   }
 
+  const char * previousPrompt = m_editCell.promptText();
   m_editCell.setPrompt(promptText);
   m_editCell.setText("");
 
@@ -141,7 +155,9 @@ const char * ConsoleController::inputText(const char * prompt) {
   printText(text, strlen(text));
   flushOutputAccumulationBufferToStore();
 
-  m_editCell.setPrompt(sStandardPromptText);
+  m_editCell.setPrompt(previousPrompt);
+  m_editCell.setText("");
+  refreshPrintOutput();
 
   return text;
 }
@@ -202,7 +218,7 @@ int ConsoleController::numberOfRows() const {
 }
 
 KDCoordinate ConsoleController::rowHeight(int j) {
-  return m_rowHeight;
+  return GlobalPreferences::sharedGlobalPreferences()->font()->glyphSize().height();
 }
 
 KDCoordinate ConsoleController::cumulatedHeightFromIndex(int j) {
@@ -359,6 +375,15 @@ void ConsoleController::resetSandbox() {
   m_sandboxController.reset();
 }
 
+void ConsoleController::refreshPrintOutput() {
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  if (m_preventEdition) {
+    m_editCell.setEditing(false);
+  }
+  AppsContainer::sharedAppsContainer()->redrawWindow();
+}
+
 /* printText is called by the Python machine.
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
@@ -381,6 +406,7 @@ void ConsoleController::printText(const char * text, size_t length) {
   assert(textCutIndex == length - 1);
   appendTextToOutputAccumulationBuffer(text, length-1);
   flushOutputAccumulationBufferToStore();
+  micropython_port_vm_hook_refresh_print();
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {
@@ -424,7 +450,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
 }
 
 void ConsoleController::flushOutputAccumulationBufferToStore() {
-  m_consoleStore.pushResult(m_outputAccumulationBuffer, strlen(m_outputAccumulationBuffer));
+  m_consoleStore.pushResult(m_outputAccumulationBuffer);
   emptyOutputAccumulationBuffer();
 }
 

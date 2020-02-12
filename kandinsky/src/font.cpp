@@ -1,8 +1,10 @@
-#include <assert.h>
 #include <kandinsky/font.h>
+extern "C" {
 #include <kandinsky/fonts/code_points.h>
+}
 #include <ion.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <assert.h>
 
 constexpr static int k_tabCharacterWidth = 4;
 
@@ -81,9 +83,6 @@ void KDFont::colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffe
 }
 
 KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
-  int defaultIndex = NumberOfCodePoints - 2;
-  assert(defaultIndex == 132); // If not, change kandinsky/test/font.cpp
-  assert(CodePoints[defaultIndex] == 0xFFFD);
 #define USE_BINARY_SEARCH 0
 #if USE_BINARY_SEARCH
   int lowerBound = 0;
@@ -136,16 +135,16 @@ KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
   }
 #else
   const CodePointIndexPair * currentPair = m_table;
-  if (c < currentPair->codePoint()) {
-    return defaultIndex;
-  }
   const CodePointIndexPair * endPair = m_table + m_tableLength - 1;
+  if (c < currentPair->codePoint()) {
+    goto NoMatchingGlyph;
+  }
   while (currentPair < endPair) {
     const CodePointIndexPair * nextPair = currentPair + 1;
     if (c < nextPair->codePoint()) {
       CodePoint lastCodePointOfCurrentPair = currentPair->codePoint() + (nextPair->glyphIndex() - currentPair->glyphIndex() - 1);
       if (c > lastCodePointOfCurrentPair) {
-        return defaultIndex;
+        goto NoMatchingGlyph;
       }
       return currentPair->glyphIndex() + (c - currentPair->codePoint());
     }
@@ -154,6 +153,8 @@ KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
   if (endPair->codePoint() == c) {
     return endPair->glyphIndex();
   }
-  return defaultIndex;
+  NoMatchingGlyph:
+  assert(CodePoints[IndexForReplacementCharacterCodePoint] == 0xFFFD);
+  return IndexForReplacementCharacterCodePoint;
 #endif
 }

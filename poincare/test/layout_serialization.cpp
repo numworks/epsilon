@@ -1,14 +1,11 @@
-#include <quiz.h>
-#include <ion.h>
-#include <assert.h>
 #include <poincare_layouts.h>
 #include "helper.h"
 
 using namespace Poincare;
 
 QUIZ_CASE(poincare_layout_serialization) {
-  assert(UCodePointLeftSystemParenthesis == 0x12);
-  assert(UCodePointRightSystemParenthesis == 0x13);
+  quiz_assert(UCodePointLeftSystemParenthesis == 0x12);
+  quiz_assert(UCodePointRightSystemParenthesis == 0x13);
 
   // AbsoluteValueLayout
   assert_layout_serialize_to(

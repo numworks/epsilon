@@ -37,7 +37,7 @@ private:
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     SelectableTableView m_selectableTableView;
   };
   static constexpr KDCoordinate k_sideMargin = 4;

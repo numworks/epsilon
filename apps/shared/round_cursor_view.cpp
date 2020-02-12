@@ -2,43 +2,39 @@
 
 namespace Shared {
 
-static constexpr KDCoordinate cursorSize = 10;
-static const uint8_t cursorMask[cursorSize][cursorSize] = {
-  {0xFF, 0xFF, 0xFF, 0xED, 0xB6, 0xB6, 0xED, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0x7C, 0x06, 0x00, 0x00, 0x06, 0x7C, 0xFF, 0xFF},
-  {0xFF, 0x7C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xFF},
-  {0xED, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE5},
-  {0xB6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB6},
-  {0xB6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB6},
-  {0xED, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE5},
-  {0xFF, 0x7C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xFF},
-  {0xFF, 0xFF, 0x7C, 0x06, 0x00, 0x00, 0x06, 0x7C, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0xED, 0xB6, 0xB6, 0xED, 0xFF, 0xFF, 0xFF},
-};
+static KDColor s_cursorWorkingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiameter];
 
 void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect r = bounds();
-  KDColor cursorWorkingBuffer[cursorSize*cursorSize];
+#ifdef GRAPH_CURSOR_SPEEDUP
+  /* Beware that only the pixels of the intersection of rect with KDContext's
+   * clipping rect are pulled. All other pixels are left unaltered. Indeed
+   * nothing outside the clipping rect should be redrawn and hence was not
+   * dirty.
+   */
   ctx->getPixels(r, m_underneathPixelBuffer);
   m_underneathPixelBufferLoaded = true;
-  ctx->blendRectWithMask(r, m_color, (const uint8_t *)cursorMask, cursorWorkingBuffer);
+#endif
+  ctx->blendRectWithMask(r, m_color, (const uint8_t *)Dots::LargeDotMask, s_cursorWorkingBuffer);
 }
 
 KDSize RoundCursorView::minimalSizeForOptimalDisplay() const {
-  return KDSize(cursorSize, cursorSize);
+  return KDSize(k_cursorSize, k_cursorSize);
 }
 
 void RoundCursorView::setColor(KDColor color) {
   m_color = color;
+#ifdef GRAPH_CURSOR_SPEEDUP
   eraseCursorIfPossible();
+#endif
   markRectAsDirty(bounds());
 }
 
-void RoundCursorView::setCursorFrame(KDRect f) {
-#if GRAPH_CURSOR_SPEEDUP
+void RoundCursorView::setCursorFrame(KDRect f, bool force) {
+#ifdef GRAPH_CURSOR_SPEEDUP
   /* TODO This is quite dirty (we are out of the dirty tracking and we assume
    * the cursor is the upmost view) but it works well. */
-  if (m_frame == f) {
+  if (m_frame == f && !force) {
     return;
   }
   /* We want to avoid drawing the curve just because the cursor has been
@@ -50,7 +46,7 @@ void RoundCursorView::setCursorFrame(KDRect f) {
     return;
   }
 #endif
-  CursorView::setCursorFrame(f);
+  CursorView::setCursorFrame(f, force);
 }
 
 #ifdef GRAPH_CURSOR_SPEEDUP

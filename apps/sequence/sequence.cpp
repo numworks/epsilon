@@ -51,13 +51,13 @@ void Sequence::setType(Type t) {
   /* Reset all contents */
   switch (t) {
     case Type::Explicit:
-      setContent("");
+      setContent("", nullptr); // No context needed here
       break;
     case Type::SingleRecurrence:
     {
       char ex[5] = "u(n)";
       ex[0] = fullName()[0];
-      setContent(ex);
+      setContent(ex, nullptr); // No context needed here
       break;
     }
     case Type::DoubleRecurrence:
@@ -66,12 +66,12 @@ void Sequence::setType(Type t) {
       char name = fullName()[0];
       ex[0] = name;
       ex[7] = name;
-      setContent(ex);
+      setContent(ex, nullptr); // No context needed here
       break;
     }
   }
-  setFirstInitialConditionContent("");
-  setSecondInitialConditionContent("");
+  setFirstInitialConditionContent("", nullptr); // No context needed here
+  setSecondInitialConditionContent("", nullptr); // No context needed here
 }
 
 void Sequence::setInitialRank(int rank) {
@@ -129,7 +129,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
 
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownN[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknownX);
+  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
 
   CacheContext<T> ctx = CacheContext<T>(sqctx);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...

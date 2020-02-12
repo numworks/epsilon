@@ -32,6 +32,16 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseNam
   }
 }
 
+Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const char * identifier, int length) {
+  const char * extension = Ion::Storage::sharedStorage()->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
+  if (extension == nullptr) {
+    return Context::SymbolAbstractType::None;
+  }
+  assert(k_numberOfExtensions == 2);
+  assert(extension == Ion::Storage::expExtension || extension == Ion::Storage::funcExtension);
+  return extension == Ion::Storage::expExtension ? Context::SymbolAbstractType::Symbol : Context::SymbolAbstractType::Function;
+}
+
 const Expression GlobalContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
   return ExpressionForSymbolAndRecord(symbol, r);
@@ -52,6 +62,9 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
     SetExpressionForActualSymbol(finalExpression, symbol, record);
   } else {
     assert(symbol.type() == ExpressionNode::Type::Function);
+    Expression child = symbol.childAtIndex(0);
+    assert(child.type() == ExpressionNode::Type::Symbol);
+    finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<Symbol&>(child), Symbol::Builder(UCodePointUnknown));
     SetExpressionForFunction(finalExpression, symbol, record);
   }
 }
@@ -79,7 +92,11 @@ const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & sym
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
-  return ContinuousFunction(r).expressionClone();
+  Expression e = ContinuousFunction(r).expressionClone();
+  if (!e.isUninitialized()) {
+    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), symbol.childAtIndex(0));
+  }
+  return e;
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

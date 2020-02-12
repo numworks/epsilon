@@ -24,6 +24,7 @@ public:
   void reloadConsole();
   void openConsoleWithScript(Script script);
   void scriptContentEditionDidFinish();
+  void willExitApp();
 
   /* ViewController */
   View * view() override { return &m_selectableTableView; }
@@ -51,7 +52,7 @@ public:
 
   /* TextFieldDelegate */
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override { return false; }
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override {
     return privateTextFieldDidAbortEditing(textField, true);
@@ -67,7 +68,7 @@ public:
 
 private:
   static constexpr int k_maxNumberOfDisplayableScriptCells = 5; // = 240/50
-  static constexpr int k_parametersColumnWidth = 37;
+  static constexpr int k_parametersColumnWidth = Metric::EllipsisCellWidth;
   static constexpr int AddScriptCellType = 0;
   static constexpr int ScriptCellType = 1;
   static constexpr int ScriptParameterCellType = 2;

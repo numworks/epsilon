@@ -3,7 +3,7 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-EPSILON_VERSION ?= 12.0.0
+EPSILON_VERSION ?= 13.0.0
 EPSILON_CUSTOM_VERSION ?= 1.19.0-0
 # USERNAME ?= N/A
 # Valid values are "none", "update", "beta"

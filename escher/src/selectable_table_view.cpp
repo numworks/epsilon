@@ -58,7 +58,9 @@ void SelectableTableView::didEnterResponderChain(Responder * previousFirstRespon
 }
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
-  unhighlightSelectedCell();
+  if (nextFirstResponder != nullptr) {
+    unhighlightSelectedCell();
+  }
 }
 
 void SelectableTableView::deselectTable(bool withinTemporarySelection) {
@@ -149,7 +151,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (!l.isUninitialized()) {
       constexpr int bufferSize = TextField::maxBufferSize();
       char buffer[bufferSize];
-      l.serializeParsedExpression(buffer, bufferSize);
+      l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
       Clipboard::sharedClipboard()->store(buffer);
       return true;
     }

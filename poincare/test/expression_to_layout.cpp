@@ -1,13 +1,10 @@
-#include <quiz.h>
-#include <assert.h>
 #include <poincare_layouts.h>
 #include "helper.h"
-#include "tree/helpers.h"
 
 using namespace Poincare;
 
 void assert_parsed_expression_layouts_to(const char * expression, Layout l) {
-  Expression e = parse_expression(expression, true);
+  Expression e = parse_expression(expression, nullptr, true);
   Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
   quiz_assert_print_if_failure(el.isIdenticalTo(l), expression);
 }
@@ -53,6 +50,42 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // BoundaryPunctuation x Root
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Cosine::Builder(Rational::Builder(2)), SquareRoot::Builder(Rational::Builder(2))), "cos(2)√\u00122\u0013");
 
+  // BasedInteger x ?
+  // 0b101·0.23
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("5", Integer::Base::Binary), Decimal::Builder("23", -1)), "0b101·0.23");
+  // 0x2A3·23242
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("675", Integer::Base::Hexadecimal), Rational::Builder(23242)), "0x2A3·23242");
+  // 0b101·π
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("5", Integer::Base::Binary), Symbol::Builder(UCodePointGreekSmallLetterPi)), "0b101·π");
+  // 0x2A3·abc
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("675", Integer::Base::Hexadecimal), Symbol::Builder("abc", 3)), "0x2A3·abc");
+  // 0b101·(1+2)
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("5", Integer::Base::Binary), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Rational::Builder(2)))), "0b101·(1+2)");
+  // 0x2A3·√(2)
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("675", Integer::Base::Hexadecimal), SquareRoot::Builder(Rational::Builder(2))), "0x2A3·√\u00122\u0013");
+  // 0b101·root(2,3)
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("5", Integer::Base::Binary), NthRoot::Builder(Rational::Builder(2), Rational::Builder(3))), "0b101·root\u0012\u00122\u0013,\u00123\u0013\u0013");
+  // 0x2A3·2/3
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(BasedInteger::Builder("675", Integer::Base::Hexadecimal), Rational::Builder(2,3)), "0x2A3·\u0012\u00122\u0013/\u00123\u0013\u0013");
+
+  // ? x BasedInteger
+  // 0.23·0x2A3
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Decimal::Builder("23", -1), BasedInteger::Builder("675", Integer::Base::Hexadecimal)), "0.23·0x2A3");
+  // 23242·0b101
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(23242),BasedInteger::Builder("5", Integer::Base::Binary)), "23242·0b101");
+  // π·0x2A3
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Symbol::Builder(UCodePointGreekSmallLetterPi), BasedInteger::Builder(675, Integer::Base::Hexadecimal)), "π·0x2A3");
+  // abc·0b101
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Symbol::Builder("abc", 3), BasedInteger::Builder(5, Integer::Base::Binary)), "abc·0b101");
+  // (1+2)·0x2A3
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Rational::Builder(2))), BasedInteger::Builder(675, Integer::Base::Hexadecimal)), "(1+2)·0x2A3");
+  // √(2)·0b101
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(SquareRoot::Builder(Rational::Builder(2)),BasedInteger::Builder(5, Integer::Base::Binary)), "√\u00122\u0013·0b101");
+  // root(2,3)·0x2A3
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(NthRoot::Builder(Rational::Builder(2), Rational::Builder(3)), BasedInteger::Builder(675, Integer::Base::Hexadecimal)), "root\u0012\u00122\u0013,\u00123\u0013\u0013·0x2A3");
+  // 2/3·0b101
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2,3),BasedInteger::Builder(5, Integer::Base::Binary)), "\u0012\u00122\u0013/\u00123\u0013\u0013·0b101");
+
   // 2√(2)
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), SquareRoot::Builder(Rational::Builder(2))), "2√\u00122\u0013");
   // √(2)x2
@@ -82,7 +115,7 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
 }
 
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {
-  Expression e = parse_expression(expressionLayout, true);
+  Expression e = parse_expression(expressionLayout, nullptr, true);
   Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
   constexpr int bufferSize = 255;
   char buffer[bufferSize];

@@ -37,8 +37,8 @@ View * BufferFunctionTitleCell::subviewAtIndex(int index) {
   return &m_bufferTextView;
 }
 
-void BufferFunctionTitleCell::layoutSubviews() {
-  m_bufferTextView.setFrame(bufferTextViewFrame());
+void BufferFunctionTitleCell::layoutSubviews(bool force) {
+  m_bufferTextView.setFrame(bufferTextViewFrame(), force);
 }
 
 KDRect BufferFunctionTitleCell::bufferTextViewFrame() const {

@@ -64,7 +64,6 @@ private:
   InputEventHandlerDelegate * m_inputEventHandlerDelegate;
   TextFieldDelegate * m_textFieldDelegate;
   LayoutFieldDelegate * m_layoutFieldDelegate;
-  bool m_inputViewHeightIsMaximal;
 };
 
 #endif

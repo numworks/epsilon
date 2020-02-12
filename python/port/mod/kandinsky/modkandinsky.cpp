@@ -52,7 +52,8 @@ mp_obj_t modkandinsky_color(mp_obj_t red, mp_obj_t green, mp_obj_t blue) {
 
 mp_obj_t modkandinsky_get_pixel(mp_obj_t x, mp_obj_t y) {
   KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
-  KDColor c = KDIonContext::sharedContext()->getPixel(point);
+  KDColor c;
+  KDIonContext::sharedContext()->getPixel(point, &c);
   return TupleForRGB(c.red(), c.green(), c.blue());
 }
 

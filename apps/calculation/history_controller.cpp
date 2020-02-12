@@ -3,14 +3,19 @@
 #include <assert.h>
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Calculation {
 
-HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
-  ViewController(parentResponder),
+HistoryController::HistoryController(EditExpressionController * editExpressionController, CalculationStore * calculationStore) :
+  ViewController(editExpressionController),
   m_selectableTableView(this, this, this, this),
   m_calculationHistory{},
-  m_calculationStore(calculationStore)
+  m_calculationStore(calculationStore),
+  m_complexController(editExpressionController),
+  m_integerController(editExpressionController),
+  m_rationalController(editExpressionController),
+  m_trigonometryController(editExpressionController)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].setParentResponder(&m_selectableTableView);
@@ -20,6 +25,19 @@ HistoryController::HistoryController(Responder * parentResponder, CalculationSto
 
 void HistoryController::reload() {
   m_selectableTableView.reloadData();
+  /* TODO
+   * Replace the following by selectCellAtLocation in order to avoid laying out
+   * the table view twice.
+   */
+  if (numberOfRows() > 0) {
+    m_selectableTableView.scrollToCell(0, numberOfRows()-1);
+    // Force to reload last added cell (hide the burger and exact output if necessary)
+    tableViewDidChangeSelection(&m_selectableTableView, 0, numberOfRows()-1);
+  }
+}
+
+void HistoryController::viewWillAppear() {
+  reload();
 }
 
 void HistoryController::didBecomeFirstResponder() {
@@ -28,6 +46,9 @@ void HistoryController::didBecomeFirstResponder() {
 }
 
 void HistoryController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == nullptr) {
+    return;
+  }
   if (nextFirstResponder == parentResponder()) {
     m_selectableTableView.deselectTable();
   }
@@ -47,19 +68,42 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.selectedCell();
     SubviewType subviewType = selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
-    m_selectableTableView.deselectTable();
-    Container::activeApp()->setFirstResponder(editController);
-    Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
     if (subviewType == SubviewType::Input) {
-      editController->insertTextBody(calculation->inputText());
-    } else {
-      ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
-      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Right
+      m_selectableTableView.deselectTable();
+      Container::activeApp()->setFirstResponder(editController);
+      editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
+    } else if (subviewType == SubviewType::Output) {
+      m_selectableTableView.deselectTable();
+      Container::activeApp()->setFirstResponder(editController);
+      Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
+      ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
+      if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
           && !calculation->shouldOnlyDisplayExactOutput())
       {
-        editController->insertTextBody(calculation->approximateOutputText());
+        editController->insertTextBody(calculation->approximateOutputText(Calculation::NumberOfSignificantDigits::Maximal));
       } else {
         editController->insertTextBody(calculation->exactOutputText());
+      }
+    } else {
+      assert(subviewType == SubviewType::Ellipsis);
+      Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
+      ListController * vc = nullptr;
+      Expression e = calculationAtIndex(focusRow)->exactOutput();
+      if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
+        vc = &m_complexController;
+      } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
+        vc = &m_trigonometryController;
+        // Find which of the input or output is the cosine/sine
+        ExpressionNode::Type t = e.type();
+        e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
+      } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
+        vc = &m_integerController;
+      } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
+        vc = &m_rationalController;
+      }
+      if (vc) {
+        vc->setExpression(e);
+        Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::CommonTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
       }
     }
     return true;
@@ -113,11 +157,13 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
     return;
   }
   if (previousSelectedCellY == -1) {
-    setSelectedSubviewType(SubviewType::Output);
+    setSelectedSubviewType(SubviewType::Output, false, previousSelectedCellX, previousSelectedCellY);
   } else if (selectedRow() < previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Output);
+    setSelectedSubviewType(SubviewType::Output, false, previousSelectedCellX, previousSelectedCellY);
   } else if (selectedRow() > previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Input);
+    setSelectedSubviewType(SubviewType::Input, false, previousSelectedCellX, previousSelectedCellY);
+  } else if (selectedRow() == -1) {
+    setSelectedSubviewType(SubviewType::Input, false, previousSelectedCellX, previousSelectedCellY);
   }
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   if (selectedCell == nullptr) {
@@ -146,7 +192,7 @@ void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index)
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
   myCell->setCalculation(calculationAtIndex(index).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
-  myCell->setHighlighted(myCell->isHighlighted());
+  myCell->reloadSubviewHighlight();
 }
 
 KDCoordinate HistoryController::rowHeight(int j) {
@@ -165,12 +211,27 @@ void HistoryController::scrollToCell(int i, int j) {
   m_selectableTableView.scrollToCell(i, j);
 }
 
-HistoryViewCell * HistoryController::historyViewCellDidChangeSelection() {
-  /* Update the whole table as the height of the selected cell row might have
-   * changed. */
-  m_selectableTableView.reloadData();
-  // Return the selected cell if one
-  return static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
+bool HistoryController::calculationAtIndexToggles(int index) {
+  Context * context = App::app()->localContext();
+  return index >= 0 && index < m_calculationStore->numberOfCalculations() && calculationAtIndex(index)->displayOutput(context) == Calculation::DisplayOutput::ExactAndApproximateToggle;
+}
+
+void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY, SubviewType type, SubviewType previousType) {
+  /* If the selection change triggers the toggling of the outputs, we update
+   * the whole table as the height of the selected cell row might have changed. */
+  if ((type == SubviewType::Output || previousType == SubviewType::Output) && (calculationAtIndexToggles(selectedRow()) || calculationAtIndexToggles(previousSelectedCellY))) {
+    m_selectableTableView.reloadData();
+  }
+
+  // Fill the selected cell and the previous selected cell because cells repartition might have changed
+  *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
+  *previousCell = static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(previousSelectedCellX, previousSelectedCellY));
+  /* 'reloadData' calls 'willDisplayCellForIndex' for each cell while the table
+   * has been deselected. To reload the expanded cell, we call one more time
+   * 'willDisplayCellForIndex' but once the right cell has been selected. */
+  if (*cell) {
+    willDisplayCellForIndex(*cell, selectedRow());
+  }
 }
 
 }

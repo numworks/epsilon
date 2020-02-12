@@ -57,20 +57,16 @@ ContinuousFunctionStore * CalculationGraphController::functionStore() const {
   return App::app()->functionStore();
 }
 
-bool CalculationGraphController::handleLeftRightEvent(Ion::Events::Event event) {
-  if (!m_isActive) {
-    return false;
-  }
-  return SimpleInteractiveCurveViewController::handleLeftRightEvent(event);
-}
-
 bool CalculationGraphController::handleEnter() {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   stack->pop();
   return true;
 }
 
-bool CalculationGraphController::moveCursorHorizontally(int direction) {
+bool CalculationGraphController::moveCursorHorizontally(int direction, bool fast) {
+  if (!m_isActive) {
+    return false;
+  }
   Coordinate2D<double> newPointOfInterest = computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction);
   if (std::isnan(newPointOfInterest.x1())) {
     return false;

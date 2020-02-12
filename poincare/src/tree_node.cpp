@@ -15,7 +15,7 @@ void TreeNode::release(int currentNumberOfChildren) {
   }
 }
 
-void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
+void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier) {
   if (unregisterPreviousIdentifier) {
     /* The previous identifier should not always be unregistered. For instance,
      * if the node is a clone and still has the original node's identifier,
@@ -31,6 +31,7 @@ void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
 // Hierarchy
 
 TreeNode * TreeNode::parent() const {
+  assert(m_parentIdentifier != m_identifier);
   return TreeHandle::hasNode(m_parentIdentifier) ?  TreePool::sharedPool()->node(m_parentIdentifier) : nullptr;
 }
 
@@ -64,6 +65,7 @@ TreeNode * TreeNode::childAtIndex(int i) const {
     assert(child != nullptr);
     i--;
   }
+  assert(m_identifier != child->identifier());
   return child;
 }
 
@@ -183,7 +185,7 @@ size_t TreeNode::deepSize(int realNumberOfChildren) const {
     reinterpret_cast<const char *>(this);
 }
 
-void TreeNode::changeParentIdentifierInChildren(int id) const {
+void TreeNode::changeParentIdentifierInChildren(uint16_t id) const {
   for (TreeNode * c : directChildren()) {
     c->setParentIdentifier(id);
   }

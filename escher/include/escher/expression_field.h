@@ -21,30 +21,31 @@ public:
    * use text() there... TODO: change text() for fillTextInBuffer?*/
   const char * text();
   void setText(const char * text);
-  void reload();
   bool editionIsInTextField() const;
   bool isEmpty() const;
-  bool heightIsMaximal() const;
+  bool inputViewHeightDidChange();
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
 
   /* View */
   int numberOfSubviews() const override { return 1; }
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 
 private:
   static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
-  static constexpr KDCoordinate k_textFieldHeight = 37;
+  static constexpr KDCoordinate k_minimalHeight = 37;
+  static constexpr KDCoordinate k_maximalHeight = 0.6*Ion::Display::Height;
   static constexpr KDCoordinate k_horizontalMargin = 5;
   static constexpr KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
-  KDCoordinate maximalHeight() const;
+  KDCoordinate m_inputViewMemoizedHeight;
   TextField m_textField;
   LayoutField m_layoutField;
 };

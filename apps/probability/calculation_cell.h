@@ -22,7 +22,7 @@ private:
   constexpr static KDCoordinate k_margin = 5;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   KDCoordinate calculationCellWidth() const;
   MessageTextView m_text;
   EditableTextCell m_calculation;

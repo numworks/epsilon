@@ -37,6 +37,7 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context * context, Preferenc
 Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

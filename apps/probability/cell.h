@@ -20,7 +20,7 @@ private:
   constexpr static KDCoordinate k_chevronMargin = 10;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   MessageTextView m_labelView;
   ImageView m_iconView;
   /* TODO: One day, we would rather store a mask (8bits/pixel) instead of two

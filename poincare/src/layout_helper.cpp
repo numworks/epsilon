@@ -11,13 +11,12 @@
 namespace Poincare {
 
 Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
-  int numberOfChildren = expression.numberOfChildren();
-  assert(numberOfChildren > 1);
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
-  for (int i = 1; i < numberOfChildren; i++) {
-    size_t operatorLength = strlen(operatorName);
-    if (operatorLength > 0) {
+  const size_t operatorLength = strlen(operatorName);
+  const int numberOfChildren = expression.numberOfChildren();
+  assert(numberOfChildren > 1);
+  for (int i = 0; i < numberOfChildren; i++) {
+    if (i > 0 && operatorLength > 0) {
       result.addOrMergeChildAtIndex(String(operatorName, operatorLength), result.numberOfChildren(), true);
     }
     result.addOrMergeChildAtIndex(
@@ -35,13 +34,12 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
 
   // Create the layout of arguments separated by commas.
   HorizontalLayout args = HorizontalLayout::Builder();
-  int numberOfChildren = expression.numberOfChildren();
-  if (numberOfChildren > 0) {
-    args.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
-    for (int i = 1; i < numberOfChildren; i++) {
+  const int numberOfChildren = expression.numberOfChildren();
+  for (int i = 0; i < numberOfChildren; i++) {
+    if (i > 0) {
       args.addChildAtIndex(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
-      args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
+    args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
   }
   // Add the parenthesed arguments.
   result.addOrMergeChildAtIndex(Parentheses(args, false), result.numberOfChildren(), true);

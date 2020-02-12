@@ -1,8 +1,10 @@
 #include "main_controller.h"
+#include "../exam_mode_configuration.h"
 #include <apps/i18n.h>
 
 namespace Settings {
 
+<<<<<<< HEAD
 // TODO: factorize most parts of the final models with main_controller_prompt_beta and main_controller_prompt_update
 //sub-sub-menus
 constexpr SettingsMessageTree s_ledColorChildren[7] = {SettingsMessageTree(I18n::Message::ColorRed), SettingsMessageTree(I18n::Message::ColorWhite), SettingsMessageTree(I18n::Message::ColorGreen), SettingsMessageTree(I18n::Message::ColorBlue), SettingsMessageTree(I18n::Message::ColorYellow), SettingsMessageTree(I18n::Message::ColorPurple), SettingsMessageTree(I18n::Message::ColorOrange)};
@@ -27,8 +29,17 @@ constexpr SettingsMessageTree s_modelAboutChildren[7] = {SettingsMessageTree(I18
 
 constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren, 5),
+=======
+constexpr SettingsMessageTree s_modelMenu[] =
+  {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
+    SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),
+    SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
+    SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
+>>>>>>> upstream/master
     SettingsMessageTree(I18n::Message::Brightness),
+    SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     SettingsMessageTree(I18n::Message::Language),
+<<<<<<< HEAD
     SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren, 3),
     SettingsMessageTree(I18n::Message::PythonFont, s_pythonFont, 2),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren, 6),
@@ -39,13 +50,15 @@ constexpr SettingsMessageTree s_modelMenu[] =
 #endif
 
 constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu, 7);
+=======
+    SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
+    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
+
+constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu);
+>>>>>>> upstream/master
 
 I18n::Message MainController::promptMessage() const {
   return I18n::Message::Default;
-}
-
-const SettingsMessageTree * MainController::model() {
-  return &s_model;
 }
 
 }

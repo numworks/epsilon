@@ -3,7 +3,7 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-EPSILON_VERSION ?= 12.0.0
+EPSILON_VERSION ?= 13.0.0
 # Valid values are "none", "update", "beta"
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
 EPSILON_I18N ?= en fr es de pt

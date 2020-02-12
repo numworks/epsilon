@@ -3,7 +3,10 @@
 
 #include "exam_mode_configuration.h"
 
-constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[2] = {Settings::SettingsMessageTree(I18n::Message::ActivateExamMode), Settings::SettingsMessageTree(I18n::Message::ActivateDutchExamMode)};
+constexpr Settings::SettingsMessageTree s_ledColorChildren[7] = {Settings::SettingsMessageTree(I18n::Message::ColorRed), Settings::SettingsMessageTree(I18n::Message::ColorWhite), Settings::SettingsMessageTree(I18n::Message::ColorGreen), Settings::SettingsMessageTree(I18n::Message::ColorBlue), Settings::SettingsMessageTree(I18n::Message::ColorYellow), Settings::SettingsMessageTree(I18n::Message::ColorPurple), Settings::SettingsMessageTree(I18n::Message::ColorOrange)};
+constexpr Settings::SettingsMessageTree s_examModeMode[3] = {Settings::SettingsMessageTree(I18n::Message::ExamModeModeStandard), Settings::SettingsMessageTree(I18n::Message::ExamModeModeNoSym), Settings::SettingsMessageTree(I18n::Message::ExamModeModeDutch)};
+constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[3] = {Settings::SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren), Settings::SettingsMessageTree(I18n::Message::ExamModeMode, s_examModeMode), Settings::SettingsMessageTree(I18n::Message::ActivateExamMode)};
+
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
   if (GlobalPreferences::sharedGlobalPreferences()->language() != I18n::Language::EN || GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {

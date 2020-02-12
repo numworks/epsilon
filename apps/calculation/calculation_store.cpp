@@ -95,15 +95,10 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
    * - the approximate output with the maximal number of significant digits
    * - the approximate output with the displayed number of significant digits */
   {
-<<<<<<< HEAD
-    Expression outputs[] = {Expression(), Expression()};
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()); // Symbolic computation
-    for (int i = 0; i < 2; i++) {
-      if (!serializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation)) {
-=======
     // Outputs hold exact output, approximate output and its duplicate
     constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
     Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
+    // SYMBOLIC COMPUTATION <= E12: PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()); // Symbolic computation
     PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     outputs[2] = outputs[1];
     int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
@@ -112,7 +107,6 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
       }
       if (!pushSerializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation, numberOfSignificantDigits)) {
->>>>>>> upstream/master
         /* If the exat/approximate output does not fit in the store (event if the
          * current calculation is the only calculation), replace the output with
          * undef if it fits, else replace the whole calcualtion with undef. */

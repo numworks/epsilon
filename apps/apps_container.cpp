@@ -364,8 +364,7 @@ void AppsContainer::redrawWindow(bool force) {
 }
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
-<<<<<<< HEAD
-  assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch || examMode == GlobalPreferences::ExamMode::NoSym);
+  assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
   reset();
   Preferences * preferences = Preferences::sharedPreferences();
   switch ((int)preferences->colorOfLED()) {
@@ -399,11 +398,6 @@ void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
    * confusing states when the battery is charging and states when the Dutch
    * exam mode is on. */
   // Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed);
-=======
-  assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
-  reset();
-  Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
->>>>>>> upstream/master
   Ion::LED::setBlinking(1000, 0.1f);
 }
 

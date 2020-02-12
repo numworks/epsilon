@@ -12,8 +12,16 @@ constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
 constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
+constexpr SettingsMessageTree s_modelMathOptionsChildren[5] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren), SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren)};
 constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
-constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
+constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
+constexpr SettingsMessageTree s_contributorsChildren[17] = {SettingsMessageTree(I18n::Message::Developers), SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons), SettingsMessageTree(I18n::Message::JoachimLeFournis), SettingsMessageTree(I18n::Message::JeanBaptisteBoric), SettingsMessageTree(I18n::Message::MaximeFriess), SettingsMessageTree(I18n::Message::David), SettingsMessageTree(I18n::Message::DamienNicolet), SettingsMessageTree(I18n::Message::EvannDreumont), SettingsMessageTree(I18n::Message::SzaboLevente), SettingsMessageTree(I18n::Message::VenceslasDuet), SettingsMessageTree(I18n::Message::BetaTesters), SettingsMessageTree(I18n::Message::CyprienMejat), SettingsMessageTree(I18n::Message::TimeoArnouts), SettingsMessageTree(I18n::Message::LouisC), SettingsMessageTree(I18n::Message::LucaRusso), SettingsMessageTree(I18n::Message::LelahelHideux)};
+#ifdef USERNAME
+constexpr SettingsMessageTree s_modelAboutChildren[8] = {SettingsMessageTree(I18n::Message::Username), SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::MemUse), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren, 17)};
+#else
+constexpr SettingsMessageTree s_modelAboutChildren[7] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::MemUse), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren)};
+#endif
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   ViewController(parentResponder),
@@ -81,22 +89,12 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-<<<<<<< HEAD
-    if (model()->children(selectedRow())->label() == I18n::Message::Brightness || model()->children(selectedRow())->label() == I18n::Message::Language) {
-      assert(false);
-    } else if (model()->children(selectedRow())->label() == I18n::Message::ExamMode) {
-      subController = &m_examModeController;
-    } else if (model()->children(selectedRow())->label() == I18n::Message::About) {
-=======
     int rowIndex = selectedRow();
-    if (rowIndex == k_indexOfDisplayModeCell) {
-      subController = &m_displayModeController;
-    } else if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
+    if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
       assert(false);
     } else if (rowIndex == k_indexOfExamModeCell) {
       subController = &m_examModeController;
     } else if (rowIndex == k_indexOfAboutCell + hasPrompt()) {
->>>>>>> upstream/master
       subController = &m_aboutController;
     } else if (model()->children(selectedRow())->label() == I18n::Message::Accessibility) {
       subController = &m_accessibilityController;
@@ -161,17 +159,10 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-<<<<<<< HEAD
-  if (model()->children(j)->label() == I18n::Message::Brightness) {
-    return 1;
-  }
-  if (model()->children(j)->label() == I18n::Message::UpdatePopUp || model()->children(j)->label() == I18n::Message::BetaPopUp) {
-=======
   if (j == k_indexOfBrightnessCell) {
     return 1;
   }
   if (hasPrompt() && j == k_indexOfPopUpCell) {
->>>>>>> upstream/master
     return 2;
   }
   return 0;
@@ -180,53 +171,27 @@ int MainController::typeAtLocation(int i, int j) {
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
-<<<<<<< HEAD
-  MessageTableCell * myCell = (MessageTableCell *)cell;
-  I18n::Message thisLabel = model()->children(index)->label();
-  myCell->setMessage(thisLabel);
-
-  //switch to irregular cell types
-  if (thisLabel == I18n::Message::Brightness) {
-    MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
-=======
   I18n::Message title = model()->children(index)->label();
   if (index == k_indexOfBrightnessCell) {
     MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
     myGaugeCell->setMessage(title);
->>>>>>> upstream/master
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-<<<<<<< HEAD
-  if (thisLabel == I18n::Message::Language) {
-=======
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(title);
   if (index == k_indexOfLanguageCell) {
->>>>>>> upstream/master
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-<<<<<<< HEAD
-  if (thisLabel == I18n::Message::PythonFont) {
-    int childIndex = (int)preferences->pythonFont();
-    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(model()->children(index)->children(childIndex)->label());
-    return;
-  }
-  if (hasPrompt() && (thisLabel == I18n::Message::UpdatePopUp || thisLabel == I18n::Message::BetaPopUp)) {
-=======
   if (hasPrompt() && index == k_indexOfPopUpCell) {
->>>>>>> upstream/master
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
-<<<<<<< HEAD
-  static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::Message::Default);
-=======
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
   switch (index) {
@@ -248,7 +213,6 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
   myTextCell->setSubtitle(message);
->>>>>>> upstream/master
 }
 
 void MainController::viewWillAppear() {

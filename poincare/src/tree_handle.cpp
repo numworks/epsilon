@@ -2,9 +2,6 @@
 #include <poincare_nodes.h>
 #include <poincare_layouts.h>
 #include <poincare/ghost.h>
-#if POINCARE_TREE_LOG
-#include <iostream>
-#endif
 
 namespace Poincare {
 

@@ -1,7 +1,3 @@
-#if POINCARE_TREE_LOG
-#include <iostream>
-#endif
-
 int pool_size();
 void assert_pool_size(int i);
 

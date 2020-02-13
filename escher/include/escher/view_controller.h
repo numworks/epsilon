@@ -44,12 +44,12 @@ public:
     /* With WantsMaximumSpace, no stack headers are displayed. */
   };
 
-  ViewController(Responder * parentResponder);
-  virtual const char * title();
+  ViewController(Responder * parentResponder) : Responder(parentResponder) {}
+  virtual const char * title() { return nullptr; }
   virtual View * view() = 0;
   virtual void initView() {}
   virtual void viewWillAppear();
-  virtual void viewDidDisappear();
+  virtual void viewDidDisappear() {}
   virtual DisplayParameter displayParameter() { return DisplayParameter::Default; }
 };
 

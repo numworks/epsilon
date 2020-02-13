@@ -33,7 +33,11 @@ void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t
   if (symbol != 0) {
     e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
   }
-  e.serialize(buffer, bufferSize);
+  int serializedSize = e.serialize(buffer, bufferSize);
+  if (serializedSize >= bufferSize - 1) {
+    // It is very likely that the buffer is overflowed
+    buffer[0] = 0;
+  }
 }
 
 bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poincare::Context * context) const {

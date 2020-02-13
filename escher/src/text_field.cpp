@@ -78,6 +78,12 @@ void TextField::ContentView::setText(const char * text) {
     maxBufferSize = m_draftTextBufferSize;
     buffer = s_draftTextBuffer;
   }
+  if (textRealLength > maxBufferSize - 1) {
+    // The text was too long to be copied
+    // TODO Maybe add a warning for the user?
+    buffer[0] = 0;
+    return;
+  }
   int textLength = minInt(textRealLength, maxBufferSize - 1);
   // Copy the text
   strlcpy(buffer, text, maxBufferSize);

@@ -12,6 +12,7 @@ void TabTableController::didBecomeFirstResponder() {
 }
 
 void TabTableController::viewWillAppear() {
+  ViewController::viewWillAppear();
   selectableTableView()->reloadData();
 }
 

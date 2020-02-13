@@ -77,6 +77,7 @@ int CurveParameterController::reusableCellCount() const {
 }
 
 void CurveParameterController::viewWillAppear() {
+  Shared::FunctionCurveParameterController::viewWillAppear();
   m_selectableTableView.reloadData();
 }
 

@@ -34,6 +34,7 @@ void FloatParameterController<T>::didBecomeFirstResponder() {
 
 template<typename T>
 void FloatParameterController<T>::viewWillAppear() {
+  ViewController::viewWillAppear();
   if (selectedRow() == -1 || selectedRow() == numberOfRows()-1) {
     selectCellAtLocation(0, 0);
   } else {

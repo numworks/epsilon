@@ -79,6 +79,7 @@ void MenuController::didBecomeFirstResponder() {
 }
 
 void MenuController::viewWillAppear() {
+  ViewController::viewWillAppear();
   updateAddScriptRowDisplay();
 }
 

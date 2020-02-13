@@ -61,6 +61,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 void ScriptParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0,0);
 }

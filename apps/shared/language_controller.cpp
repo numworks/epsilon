@@ -35,6 +35,7 @@ void LanguageController::didBecomeFirstResponder() {
 }
 
 void LanguageController::viewWillAppear() {
+  ViewController::viewWillAppear();
   resetSelection();
 }
 

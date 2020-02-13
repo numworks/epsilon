@@ -162,6 +162,7 @@ const char * ConsoleController::inputText(const char * prompt) {
 }
 
 void ConsoleController::viewWillAppear() {
+  ViewController::viewWillAppear();
   loadPythonEnvironment();
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;

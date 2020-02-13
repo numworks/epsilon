@@ -72,6 +72,7 @@ DistributionController::DistributionController(Responder * parentResponder, Dist
 }
 
 void Probability::DistributionController::viewWillAppear() {
+  ViewController::viewWillAppear();
   selectRow((int)m_distribution->type());
 }
 

@@ -197,6 +197,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 void MainController::viewWillAppear() {
+  ViewController::viewWillAppear();
   m_selectableTableView.reloadData();
 }
 

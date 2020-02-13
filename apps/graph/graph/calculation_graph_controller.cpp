@@ -19,6 +19,7 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 }
 
 void CalculationGraphController::viewWillAppear() {
+  Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   assert(!m_record.isNull());
   Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), 1);
   if (std::isnan(pointOfInterest.x1())) {

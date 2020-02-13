@@ -19,6 +19,7 @@ liba_src += $(addprefix liba/src/, \
   nearbyintf.c \
   strcmp.c \
   strchr.c \
+  strlcat.c \
   strlcpy.c \
   strlen.c \
   external/sqlite/mem5.c \

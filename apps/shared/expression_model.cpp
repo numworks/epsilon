@@ -24,14 +24,16 @@ ExpressionModel::ExpressionModel() :
 
 void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol) const {
   Expression e = expressionClone(record);
-  if (e.isUninitialized() && bufferSize > 0) {
-    buffer[0] = 0;
-  } else {
-    if (symbol != 0 && !e.isUninitialized()) {
-      e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
+  if (e.isUninitialized()) {
+    if (bufferSize > 0) {
+      buffer[0] = 0;
     }
-    e.serialize(buffer, bufferSize);
+    return;
   }
+  if (symbol != 0) {
+    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
+  }
+  e.serialize(buffer, bufferSize);
 }
 
 bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poincare::Context * context) const {

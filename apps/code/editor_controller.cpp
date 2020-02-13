@@ -59,6 +59,7 @@ void EditorController::didBecomeFirstResponder() {
 }
 
 void EditorController::viewWillAppear() {
+  ViewController::viewWillAppear();
   m_editorView.loadSyntaxHighlighter();
   m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
 }

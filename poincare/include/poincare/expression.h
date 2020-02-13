@@ -10,8 +10,6 @@
 #include <poincare/solver.h>
 #include <ion/storage.h>
 
-#include <stdio.h>
-
 namespace Poincare {
 
 class Context;

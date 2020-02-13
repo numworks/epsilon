@@ -18,9 +18,6 @@ extern "C" {
 #include <string.h>
 #include <assert.h>
 }
-#if POINCARE_INTEGER_LOG
-#include<iostream>
-#endif
 #include <algorithm>
 
 namespace Poincare {

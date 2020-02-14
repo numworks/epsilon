@@ -1,8 +1,6 @@
 #include "quiz.h"
 #include "symbols.h"
-#include <string.h>
 #include <ion.h>
-#include <kandinsky.h>
 #include <poincare/init.h>
 #include <poincare/tree_pool.h>
 #include <poincare/exception_checkpoint.h>

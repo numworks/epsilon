@@ -103,7 +103,7 @@ jobs:
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v1
-      - run: make -j2 PLATFORM=simulator TARGET=ios GOOGLE_ANALYTICS=0
+      - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-simulator-ios.ipa

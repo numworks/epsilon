@@ -90,9 +90,6 @@ void Controller::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(m_view.selectableTableView());
 }
 
-void Controller::viewWillAppear() {
-}
-
 View * Controller::view() {
   return &m_view;
 }

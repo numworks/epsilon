@@ -24,6 +24,7 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(::App::snapshot());
   }
+  TELEMETRY_ID("Home");
 private:
   App(Snapshot * snapshot);
   Controller m_controller;

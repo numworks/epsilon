@@ -7,10 +7,10 @@ static inline JNIEnv * AndroidJNI() {
 }
 
 static inline jobject AndroidActivity() {
-  return static_cast<jobject>(SDL_AndroidGetActivity())
+  return static_cast<jobject>(SDL_AndroidGetActivity());
 }
 
-static inline JS(const char * s, JNIEnv * env) {
+static inline jstring JS(const char * s, JNIEnv * env) {
   return env->NewStringUTF(s);
 }
 
@@ -32,10 +32,6 @@ void shutdown() {
 
 }
 }
-}
-
-static inline JS(const char * s, JNIEnv * env) {
-  return env->NewStringUTF(s);
 }
 
 namespace Ion {

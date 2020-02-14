@@ -137,7 +137,6 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   return false;
 }
 
-
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {
   Context * context = textFieldDelegateApp()->localContext();
   if (layoutR.isUninitialized()) {

@@ -30,6 +30,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
+  TELEMETRY_ID("Menu");
 
   /* TableViewDataSource */
   int numberOfRows() const override;

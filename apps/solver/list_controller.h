@@ -37,6 +37,7 @@ public:
   bool editSelectedRecordWithText(const char * text) override { return Shared::ExpressionModelListController::editSelectedRecordWithText(text); }
   /* ViewController */
   View * view() override { return &m_equationListView; }
+  TELEMETRY_ID("List");
   /* Text/Layout Field Delegate */
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;

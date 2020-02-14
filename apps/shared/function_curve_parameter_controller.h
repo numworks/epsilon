@@ -10,6 +10,7 @@ class FunctionCurveParameterController : public ViewController, public SimpleLis
 public:
   FunctionCurveParameterController();
   View * view() override { return &m_selectableTableView; }
+  TELEMETRY_ID("CurveParameter");
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }

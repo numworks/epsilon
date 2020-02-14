@@ -16,6 +16,7 @@ class StoreController : public EditableCellTableViewController, public ButtonRow
 public:
   StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header);
   View * view() override { return &m_contentView; }
+  TELEMETRY_ID("Store");
 
   virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();

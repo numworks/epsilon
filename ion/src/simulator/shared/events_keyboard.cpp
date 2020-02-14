@@ -209,10 +209,6 @@ Event getPlatformEvent() {
     if (event.type == SDL_TEXTINPUT) {
       return eventFromSDLTextInputEvent(event.text);
     }
-    if (event.type == SDL_APP_WILLENTERFOREGROUND) {
-      IonSimulatorTelemetryEvent("Calculator");
-      return None;
-    }
   }
   return None;
 }

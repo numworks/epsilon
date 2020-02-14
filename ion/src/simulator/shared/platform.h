@@ -13,10 +13,6 @@ extern "C" {
 SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier);
 char * IonSimulatorGetLanguageCode();
 
-void IonSimulatorTelemetryInit();
-void IonSimulatorTelemetryEvent(const char * eventName);
-void IonSimulatorTelemetryDeinit();
-
 #if EPSILON_SDL_SCREEN_ONLY
 
 void IonSimulatorKeyboardKeyDown(int keyNumber);

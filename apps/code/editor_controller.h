@@ -26,6 +26,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  TELEMETRY_ID("Editor");
 
   /* TextAreaDelegate */
   bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;

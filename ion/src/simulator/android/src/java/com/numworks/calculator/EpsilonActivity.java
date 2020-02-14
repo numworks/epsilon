@@ -48,8 +48,18 @@ public class EpsilonActivity extends SDLActivity {
     sTracker = sAnalytics.newTracker("UA-93775823-3");
   }
 
-  public void telemetryEvent(String eventName) {
-    sTracker.setScreenName(eventName);
+  public void telemetryScreen(String screenName) {
+    sTracker.setScreenName(screenName);
     sTracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
+
+  public void telemetryEvent(String category, String action, String label) {
+    sTracker.send(new HitBuilders.EventBuilder()
+      .setCategory(category)
+      .setAction(action)
+      .setLabel(label)
+      .build()
+    );
+  }
+
 }

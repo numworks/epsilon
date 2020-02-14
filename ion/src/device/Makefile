@@ -12,6 +12,10 @@ ion_src += $(addprefix ion/src/shared/, \
   events_modifier.cpp \
 )
 
+ifeq ($(EPSILON_TELEMETRY),1)
+ion_src += ion/src/shared/telemetry_console.cpp
+endif
+
 # If you need to benchmark execution, you can replace events_keyboard with
 # events_benchmark.
 # If you need to profile execution, you can replace events_keyboard with

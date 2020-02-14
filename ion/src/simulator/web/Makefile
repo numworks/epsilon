@@ -17,8 +17,12 @@ ion_src += $(addprefix ion/src/simulator/web/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/language.cpp \
-  dummy/telemetry.cpp \
 )
+
+ifeq ($(EPSILON_TELEMETRY),1)
+ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
+ion_src += ion/src/shared/telemetry_console.cpp
+endif
 
 DEFAULT = $(BUILD_DIR)/simulator.zip
 

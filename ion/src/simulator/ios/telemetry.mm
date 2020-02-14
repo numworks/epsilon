@@ -4,13 +4,14 @@
 #import <GAIDictionaryBuilder.h>
 #import <GAIFields.h>
 
-class Ion {
-class Simulator {
-class Telemetry {
+namespace Ion {
+namespace Simulator {
+namespace Telemetry {
 
 void init() {
   [[GAI sharedInstance] trackerWithTrackingId:@"UA-93775823-3"];
 }
+
 void shutdown() {
 }
 
@@ -26,8 +27,8 @@ static inline NSString * NS(const char * s) {
   }
 }
 
-class Ion {
-class Telemetry {
+namespace Ion {
+namespace Telemetry {
 
 void reportScreen(const char * screenName) {
   id<GAITracker> tracker = [GAI sharedInstance].defaultTracker;

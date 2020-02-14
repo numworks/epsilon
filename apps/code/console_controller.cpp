@@ -322,6 +322,7 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
     m_inputRunLoopActive = false;
     return false;
   }
+  telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!sandboxIsDisplayed()) {
     m_selectableTableView.reloadData();

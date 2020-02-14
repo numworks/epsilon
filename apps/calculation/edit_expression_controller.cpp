@@ -149,6 +149,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   m_calculationStore->push(m_cacheBuffer, context);
   m_historyController->reload();
   m_contentView.expressionField()->setEditing(true, true);
+  telemetryReportEvent("Input", m_cacheBuffer);
   return true;
 }
 

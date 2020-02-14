@@ -3,6 +3,7 @@
 
 #include <kandinsky.h>
 #include <escher/i18n.h>
+#include <escher/telemetry.h>
 extern "C" {
 #include <stdint.h>
 }
@@ -51,6 +52,13 @@ public:
   virtual void viewWillAppear();
   virtual void viewDidDisappear() {}
   virtual DisplayParameter displayParameter() { return DisplayParameter::Default; }
+protected:
+#if EPSILON_TELEMETRY
+  virtual const char * telemetryId() const { return nullptr; }
+  void telemetryReportEvent(const char * action, const char * label) const;
+#else
+  void telemetryReportEvent(const char * action, const char * label) const {}
+#endif
 };
 
 #endif

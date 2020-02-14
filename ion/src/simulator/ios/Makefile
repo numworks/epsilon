@@ -9,8 +9,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
 
 $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
 
-GOOGLE_ANALYTICS ?= 1
-ifeq ($(GOOGLE_ANALYTICS),1)
+ifeq ($(EPSILON_TELEMETRY),1)
 # Display a nice error if the Google Analytics SDK is not installed
 $(call object_for,ion/src/simulator/ios/telemetry.m): ion/src/simulator/ios/GoogleAnalyticsServices/GoogleAnalytics/Library/GAI.h
 ion/src/simulator/ios/GoogleAnalyticsServices/GoogleAnalytics/Library/GAI.h:
@@ -25,8 +24,6 @@ LDFLAGS += -lz
 LDFLAGS += -framework SystemConfiguration
 LDFLAGS += -framework CoreData
 LDFLAGS += -Lion/src/simulator/ios/GoogleAnalyticsServices
-else
-ion_src += ion/src/simulator/shared/dummy/telemetry.cpp
 endif
 
 # App resources

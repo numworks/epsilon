@@ -4,6 +4,7 @@
 #if !EPSILON_SDL_SCREEN_ONLY
 #include "layout.h"
 #endif
+#include "telemetry.h"
 
 #include <assert.h>
 #include <ion.h>
@@ -25,12 +26,15 @@ int main(int argc, char * argv[]) {
     arguments.push_back(language);
   }
 
-  IonSimulatorTelemetryInit();
+#if EPSILON_TELEMETRY
+  Ion::Simulator::Telemetry::init();
+#endif
   Ion::Simulator::Main::init();
-  IonSimulatorTelemetryEvent("Calculator");
   ion_main(arguments.size(), &arguments[0]);
   Ion::Simulator::Main::quit();
-  IonSimulatorTelemetryDeinit();
+#if EPSILON_TELEMETRY
+  Ion::Simulator::Telemetry::shutdown();
+#endif
 
   return 0;
 }

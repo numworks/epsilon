@@ -17,6 +17,3 @@ inline uint32_t expected_value_at(uint32_t * ptr) {
   uint16_t * ptr16 = reinterpret_cast<uint16_t *>(ptr);
   return (static_cast<uint32_t>(expected_value_at(ptr16+1)) << 16) + static_cast<uint32_t>(expected_value_at(ptr16));
 }
-
-size_t uint64ToString(uint64_t n, char buffer[]);
-void printElapsedTime(uint64_t startTime);

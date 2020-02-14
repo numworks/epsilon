@@ -1,7 +1,6 @@
 #include <quiz.h>
+#include <quiz/stopwatch.h>
 #include <ion.h>
-#include <assert.h>
-#include <drivers/config/external_flash.h>
 #include <drivers/external_flash.h>
 #include "external_flash_helper.h"
 
@@ -47,56 +46,56 @@ void test(int accessType, int repeat) {
 }
 
 QUIZ_CASE(ion_extflash_read_byte_fwd) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint8_t>(0, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_byte_bck) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint8_t>(1, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_byte_rand) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint8_t>(2, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_half_fwd) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint16_t>(0, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_half_bck) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint16_t>(1, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_half_rand) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint16_t>(2, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_word_fwd) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint32_t>(0, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_word_bck) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint32_t>(1, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
 }
 
 QUIZ_CASE(ion_extflash_read_word_rand) {
-  uint64_t startTime = Ion::Timing::millis();
+  uint64_t startTime = quiz_stopwatch_start();
   test<uint32_t>(2, 1);
-  printElapsedTime(startTime);
+  quiz_stopwatch_print_lap(startTime);
   Ion::Timing::msleep(3000);
 }

@@ -14,6 +14,7 @@ runner_src += $(addprefix quiz/src/, \
   assertions.cpp \
   i18n.cpp \
   runner.cpp \
+  stopwatch.cpp \
 )
 
 runner_src += $(BUILD_DIR)/quiz/src/tests_symbols.c

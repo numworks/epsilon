@@ -15,6 +15,7 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  TELEMETRY_ID("Tangent");
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);
 private:

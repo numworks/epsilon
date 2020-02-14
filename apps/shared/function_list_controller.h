@@ -16,6 +16,7 @@ public:
 
   /* ViewController */
   void viewWillAppear() override;
+  TELEMETRY_ID("List");
 
   /* TableViewDataSource */
   int numberOfRows() const override { return this->numberOfExpressionRows(); }

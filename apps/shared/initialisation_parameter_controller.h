@@ -16,6 +16,7 @@ public:
   {}
   View * view() override;
   const char * title() override;
+  TELEMETRY_ID("Initialization");
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;

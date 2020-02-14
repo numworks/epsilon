@@ -19,6 +19,7 @@ public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
   };
+  TELEMETRY_ID("Settings");
 private:
   App(Snapshot * snapshot);
   MainController m_mainController;

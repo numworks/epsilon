@@ -37,6 +37,7 @@ public:
 
   // ViewController
   const char * title() override;
+  TELEMETRY_ID("Calculation");
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

@@ -38,6 +38,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  TELEMETRY_ID("Console");
 
   // ListViewDataSource
   int numberOfRows() const override;

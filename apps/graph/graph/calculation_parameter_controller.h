@@ -22,6 +22,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
   HighlightCell * reusableCell(int index, int type) override;

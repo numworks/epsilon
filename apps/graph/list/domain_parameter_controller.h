@@ -15,6 +15,7 @@ public:
 
   // ViewController
   const char * title() override;
+  TELEMETRY_ID("DomainParameter");
 
   // ListViewDataSource
   int numberOfRows() const override;

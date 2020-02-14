@@ -10,6 +10,7 @@ namespace Settings {
 class DisplayModeController : public PreferencesController, public Shared::ParameterTextFieldDelegate {
 public:
   DisplayModeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  TELEMETRY_ID("DisplayMode");
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

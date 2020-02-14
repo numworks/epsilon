@@ -21,6 +21,7 @@ public:
   const char * title() override;
   View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
+  TELEMETRY_ID("TypeParameter");
 
   // ListViewDataSource
   int numberOfRows() const override { return k_numberOfTypes; }

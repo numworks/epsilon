@@ -21,6 +21,7 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   MultipleDataView * multipleDataView() override { return &m_view; }
+  TELEMETRY_ID("Histogram");
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

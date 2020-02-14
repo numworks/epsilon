@@ -19,6 +19,8 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
+  TELEMETRY_ID("Solutions");
+
   /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override;
   virtual I18n::Message emptyMessage() override;

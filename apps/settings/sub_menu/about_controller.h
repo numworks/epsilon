@@ -12,6 +12,7 @@ public:
   AboutController(Responder * parentResponder);
   View * view() override { return &m_view; }
   void viewWillAppear() override;
+  TELEMETRY_ID("About");
   bool handleEvent(Ion::Events::Event event) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

@@ -43,6 +43,7 @@ public:
   ViewController * intervalController() { return &m_intervalController; }
   SolutionsController * solutionsController() { return &m_solutionsController; }
   void willBecomeInactive() override;
+  TELEMETRY_ID("Solver");
 private:
   App(Snapshot * snapshot);
   SolutionsController m_solutionsController;

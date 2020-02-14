@@ -36,6 +36,7 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
+  TELEMETRY_ID("");
 private:
   constexpr static int k_indexOfAngleUnitCell = 0;
   constexpr static int k_indexOfDisplayModeCell = k_indexOfAngleUnitCell + 1;

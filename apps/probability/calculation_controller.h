@@ -23,6 +23,7 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  TELEMETRY_ID("Calculation");
 
   /* TableViewDataSource */
   int numberOfRows() const override;

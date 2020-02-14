@@ -58,6 +58,7 @@ public:
     return static_cast<App *>(Container::activeApp());
   }
   Snapshot * snapshot() const { return static_cast<Snapshot *>(::App::snapshot()); }
+  TELEMETRY_ID("Probability");
 private:
   App(Snapshot * snapshot);
   CalculationController m_calculationController;

@@ -10,6 +10,7 @@ class LanguageController : public Shared::LanguageController {
 public:
   using Shared::LanguageController::LanguageController;
   bool handleEvent(Ion::Events::Event event) override;
+  TELEMETRY_ID("Language");
 };
 
 }

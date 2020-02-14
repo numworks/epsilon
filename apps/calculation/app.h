@@ -30,6 +30,7 @@ public:
   static App * app() {
     return static_cast<App *>(Container::activeApp());
   }
+  TELEMETRY_ID("Calculation");
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp

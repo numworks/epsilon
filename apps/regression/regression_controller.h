@@ -15,6 +15,7 @@ public:
   // ViewController
   const char * title() override;
   View * view() override { return &m_selectableTableView; }
+  TELEMETRY_ID("Regression");
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

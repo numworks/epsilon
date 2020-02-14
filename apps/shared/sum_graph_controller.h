@@ -18,6 +18,7 @@ public:
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
+  TELEMETRY_ID("Sum");
   void setRecord(Ion::Storage::Record record);
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 protected:

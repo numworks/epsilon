@@ -42,6 +42,7 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(::App::snapshot());
   }
+  TELEMETRY_ID("Sequence");
   // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }

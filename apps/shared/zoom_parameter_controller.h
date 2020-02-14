@@ -17,6 +17,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
+  TELEMETRY_ID("Zoom");
 private:
   constexpr static KDCoordinate k_standardViewHeight = 175;
   class ContentView : public View {

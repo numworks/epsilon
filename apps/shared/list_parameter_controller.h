@@ -14,6 +14,7 @@ public:
   View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
+  TELEMETRY_ID("ListParameter");
   void setRecord(Ion::Storage::Record record);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;

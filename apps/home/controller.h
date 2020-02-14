@@ -15,6 +15,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
+  TELEMETRY_ID("");
 
   virtual int numberOfRows() const override;
   virtual int numberOfColumns() const override;

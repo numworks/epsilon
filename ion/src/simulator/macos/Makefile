@@ -5,8 +5,12 @@ ion_src += $(addprefix ion/src/simulator/macos/, \
 ion_src += $(addprefix ion/src/simulator/shared/, \
   apple/language.m \
   dummy/callback.cpp \
-  dummy/telemetry.cpp \
 )
+
+ifeq ($(EPSILON_TELEMETRY),1)
+ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
+ion_src += ion/src/shared/telemetry_console.cpp
+endif
 
 # App resources
 

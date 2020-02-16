@@ -8,7 +8,7 @@ void CellWithSeparator::setHighlighted(bool highlight) {
 }
 
 void CellWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, Metric::CellSeparatorThickness, bounds().width(), k_margin), Palette::WallScreen);
+  ctx->fillRect(KDRect(0, Metric::CellSeparatorThickness, bounds().width(), k_margin), Palette::BackgroundApps);
 }
 
 int CellWithSeparator::numberOfSubviews() const {

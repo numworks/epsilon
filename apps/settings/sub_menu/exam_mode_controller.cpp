@@ -27,7 +27,7 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
 }
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::LEDColor) {
       (&m_ledController)->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
       StackViewController * stack = stackController();

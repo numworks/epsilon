@@ -4,6 +4,7 @@
 #include "generic_sub_controller.h"
 #include "selectable_view_with_messages.h"
 #include "../../global_preferences.h"
+#include "preferences_controller.h"
 
 namespace Settings {
 
@@ -26,6 +27,7 @@ private:
   static constexpr int k_maxNumberOfCells = 4;
   SelectableViewWithMessages m_contentView;
   MessageTableCell m_cell[k_maxNumberOfCells];
+  PreferencesController m_ledController;
   MessageTableCellWithChevronAndMessage m_ledColorCell;
 };
 

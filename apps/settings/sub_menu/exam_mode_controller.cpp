@@ -16,8 +16,9 @@ namespace Settings {
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_contentView(&m_selectableTableView),
-  m_ledColorCell(KDFont::LargeFont, KDFont::SmallFont),
-  m_cell{}
+  m_cell{},
+  m_ledController(this),
+  m_ledColorCell(KDFont::LargeFont, KDFont::SmallFont)
 {
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_cell[i].setMessage(ExamModeConfiguration::examModeActivationMessage(i));
@@ -27,8 +28,15 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
-    return true;
+    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::LEDColor) {
+      (&m_ledController)->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+      StackViewController * stack = stackController();
+      stack->push(&m_ledController);
+      return true;
+    } else {
+      AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
+      return true;
+    }
   }
   return GenericSubController::handleEvent(event);
 }

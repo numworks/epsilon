@@ -16,6 +16,7 @@ namespace Settings {
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_contentView(&m_selectableTableView),
+  m_ledColorCell(KDFont::LargeFont, KDFont::SmallFont),
   m_cell{}
 {
   for (int i = 0; i < k_maxNumberOfCells; i++) {
@@ -57,6 +58,9 @@ int ExamModeController::numberOfRows() const {
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0  && index < 3);
+  if (m_messageTreeModel->children(index)->label() == I18n::Message::LEDColor) {
+    return &m_ledColorCell;
+  }
   return &m_cell[index];
 }
 

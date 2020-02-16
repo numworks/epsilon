@@ -89,16 +89,16 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-    int rowIndex = selectedRow();
-    if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
+    I18n::Message title = model()->children(selectedRow())->label();
+    if (title == I18n::Message::Brightness || title == I18n::Message::Language) {
       assert(false);
-    } else if (rowIndex == k_indexOfExamModeCell) {
+    } else if (title == I18n::Message::ExamMode) {
       subController = &m_examModeController;
-    } else if (rowIndex == k_indexOfAboutCell + hasPrompt()) {
+    } else if (title == I18n::Message::About) {
       subController = &m_aboutController;
-    } else if (model()->children(selectedRow())->label() == I18n::Message::Accessibility) {
+    } else if (title == I18n::Message::Accessibility) {
       subController = &m_accessibilityController;
-    } else if (model()->children(selectedRow())->label() == I18n::Message::MathOptions) {
+    } else if (title == I18n::Message::MathOptions) {
       subController = &m_mathOptionsController;
     } else {
       subController = &m_preferencesController;
@@ -116,7 +116,7 @@ int MainController::numberOfRows() const {
 };
 
 KDCoordinate MainController::rowHeight(int j) {
-  if (j == k_indexOfBrightnessCell) {
+  if (model()->children(j)->label() == I18n::Message::Brightness) {
     return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
   }
   return Metric::ParameterCellHeight;
@@ -159,10 +159,10 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == k_indexOfBrightnessCell) {
+  if (model()->children(j)->label() == I18n::Message::Brightness) {
     return 1;
   }
-  if (hasPrompt() && j == k_indexOfPopUpCell) {
+  if (model()->children(j)->label() == I18n::Message::UpdatePopUp || model()->children(j)->label() == I18n::Message::BetaPopUp) {
     return 2;
   }
   return 0;
@@ -170,9 +170,8 @@ int MainController::typeAtLocation(int i, int j) {
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  Preferences * preferences = Preferences::sharedPreferences();
   I18n::Message title = model()->children(index)->label();
-  if (index == k_indexOfBrightnessCell) {
+  if (model()->children(index)->label() == I18n::Message::Brightness) {
     MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
@@ -181,12 +180,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(title);
-  if (index == k_indexOfLanguageCell) {
+  if (model()->children(index)->label() == I18n::Message::Language) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-  if (hasPrompt() && index == k_indexOfPopUpCell) {
+  if (model()->children(index)->label() == I18n::Message::UpdatePopUp || model()->children(index)->label() == I18n::Message::BetaPopUp) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -194,8 +193,8 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
-  switch (index) {
-    case k_indexOfFontCell:
+  switch (model()->children(index)->label()) {
+    case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
       break;
   }

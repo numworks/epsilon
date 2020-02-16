@@ -185,12 +185,19 @@ void HistoryViewCell::layoutSubviews(bool force) {
     inputSize.height()),
   force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  int outputY = (oneLine() && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? maxCoordinate(0, inputSize.height() - outputSize.height()) / 2 : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
     maxCoordinate(0, maxFrameWidth - outputSize.width()),
-    inputSize.height(),
+    outputY,
     minCoordinate(maxFrameWidth, outputSize.width()),
-    outputSize.height()),
+    oneLine() ? outputSize.height() : (bounds().height() - inputSize.height())),
   force);
+}
+
+bool HistoryViewCell::oneLine() {
+  KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
+  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  return outputSize.width() + inputSize.width() < bounds().width() - 6;
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {

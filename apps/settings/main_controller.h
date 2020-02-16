@@ -22,7 +22,7 @@ extern const SettingsMessageTree s_modelMathOptionsChildren[5];
 extern const SettingsMessageTree s_modelResultDisplayChildren[2];
 extern const SettingsMessageTree s_modelFontChildren[2];
 extern const SettingsMessageTree s_accessibilityChildren[6];
-extern const SettingsMessageTree s_contributorsChildren[17];
+extern const SettingsMessageTree s_contributorsChildren[16];
 #ifdef USERNAME
 extern const SettingsMessageTree s_modelAboutChildren[8];
 #else

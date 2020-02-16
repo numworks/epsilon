@@ -6,7 +6,7 @@
 
 class PointerTextTableCell : public TableCell {
 public:
-  PointerTextTableCell(const char * text = "", const KDFont * font = KDFont::SmallFont, Layout layout = Layout::Horizontal);
+  PointerTextTableCell(const char * text = "", const KDFont * font = KDFont::SmallFont, Layout layout = Layout::HorizontalLeftOverlap);
   View * labelView() const override;
   const char * text() const override;
   virtual void setHighlighted(bool highlight) override;

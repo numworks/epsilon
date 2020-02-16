@@ -11,7 +11,8 @@ namespace Settings {
 class AboutController : public GenericSubController {
 public:
   AboutController(Responder * parentResponder);
-  View * view() override { return &m_view; }
+  //View * view() override { return &m_view; }
+  View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   HighlightCell * reusableCell(int index, int type) override;
@@ -26,7 +27,7 @@ private:
 #endif
   ContributorsController m_contributorsController;
   MessageTableCellWithChevronAndMessage m_contributorsCell;
-  SelectableViewWithMessages m_view;
+  //SelectableViewWithMessages m_view;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   HardwareTest::PopUpController m_hardwareTestPopUpController;
 };

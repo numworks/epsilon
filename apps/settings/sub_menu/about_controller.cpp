@@ -14,8 +14,8 @@ namespace Settings {
 AboutController::AboutController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_contributorsController(this),
-  m_contributorsCell(KDFont::LargeFont, KDFont::SmallFont),
-  m_view(&m_selectableTableView)
+  m_contributorsCell(KDFont::LargeFont, KDFont::SmallFont)
+  //m_view(&m_selectableTableView)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -33,13 +33,13 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    /* if (childLabel == I18n::Message::Contributors) {
+    if (childLabel == I18n::Message::Contributors) {
       GenericSubController * subController = &m_contributorsController;
       subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
       StackViewController * stack = stackController();
       stack->push(subController);
       return true;
-    } */
+    }
     if (!(event == Ion::Events::Right)) {
       if (childLabel == I18n::Message::SoftwareVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
@@ -99,7 +99,7 @@ HighlightCell * AboutController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-  return &m_contributorsCell; //E13HELP
+  return &m_contributorsCell;
 }
 
 int AboutController::typeAtLocation(int i, int j) {

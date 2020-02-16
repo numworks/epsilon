@@ -3,7 +3,8 @@
 using namespace Poincare;
 
 constexpr Settings::SettingsMessageTree s_ledColorChildren[] = {Settings::SettingsMessageTree(I18n::Message::ColorRed), Settings::SettingsMessageTree(I18n::Message::ColorWhite), Settings::SettingsMessageTree(I18n::Message::ColorGreen), Settings::SettingsMessageTree(I18n::Message::ColorBlue), Settings::SettingsMessageTree(I18n::Message::ColorYellow), Settings::SettingsMessageTree(I18n::Message::ColorPurple), Settings::SettingsMessageTree(I18n::Message::ColorOrange)};
-constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[] = {Settings::SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren), Settings::SettingsMessageTree(I18n::Message::ExamModeModeStandard), Settings::SettingsMessageTree(I18n::Message::ExamModeModeNoSym)};
+constexpr Settings::SettingsMessageTree s_examModeMode[] = {Settings::SettingsMessageTree(I18n::Message::ExamModeModeStandard), Settings::SettingsMessageTree(I18n::Message::ExamModeModeNoSym), Settings::SettingsMessageTree(I18n::Message::ExamModeModeNoSymNoText)};
+constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[] = {Settings::SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren), Settings::SettingsMessageTree(I18n::Message::ExamModeMode, s_examModeMode), Settings::SettingsMessageTree(I18n::Message::ActivateExamMode)};
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
   return 3;
@@ -22,13 +23,13 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
     I18n::Message warnings[] = {I18n::Message::ExitExamMode1, I18n::Message::ExitExamMode2, I18n::Message::Default};
     return warnings[line];
   }
-  assert(mode == GlobalPreferences::ExamMode::Standard || mode == GlobalPreferences::ExamMode::NoSym);
+  assert(mode == GlobalPreferences::ExamMode::Standard || mode == GlobalPreferences::ExamMode::NoSym || mode == GlobalPreferences::ExamMode::NoSymNoText);
   I18n::Message warnings[] = {I18n::Message::ActiveExamModeMessage1, I18n::Message::ActiveExamModeMessage2, I18n::Message::ActiveExamModeMessage3};
   return warnings[line];
 }
 
 KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
-  assert(mode == GlobalPreferences::ExamMode::Standard || mode == GlobalPreferences::ExamMode::NoSym);
+  assert(mode == GlobalPreferences::ExamMode::Standard || mode == GlobalPreferences::ExamMode::NoSym || mode == GlobalPreferences::ExamMode::NoSymNoText);
   Preferences * preferences = Preferences::sharedPreferences();
 
   switch((int) preferences->colorOfLED()) {

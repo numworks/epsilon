@@ -23,8 +23,9 @@ char ones[Config::ExamModeBufferSize]
  * leading 0 bits. If it is equal to:
  * - 0[3]: the exam mode is off;
  * - 1[3]: the standard exam mode is activated;
- * - 2[3]: the NoSym exam mode is activated.
- * - 3[3]: the Dutch exam mode is activated. */
+ * - 2[3]: the NoSym exam mode is activated;
+ * - 3[3]: the Dutch exam mode is activated;
+ * - 4[3]: the NoSymNoText exam mode is activated. */
 
 /* significantExamModeAddress returns the first uint32_t * in the exam mode
  * flash sector that does not point to 0. If this flash sector has only 0s or

@@ -8,7 +8,7 @@ GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
 GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
   if (m_examMode == ExamMode::Unknown) {
     uint8_t mode = Ion::ExamMode::FetchExamMode();
-    assert(mode >= 0 && mode < 4); // mode can be cast in ExamMode (Off, Standard, NoSym or Dutch)
+    assert(mode >= 0 && mode < 5); // mode can be cast in ExamMode (Off, Standard, NoSym, Dutch or NoSymNoText)
     m_examMode = (ExamMode)mode;
   }
   return m_examMode;

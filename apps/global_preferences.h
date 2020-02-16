@@ -10,7 +10,8 @@ public:
     Off = 0,
     Standard = 1,
     NoSym = 2,
-    Dutch = 3,
+    NoSymNoText = 3,
+    Dutch = 4,
   };
   static GlobalPreferences * sharedGlobalPreferences();
   I18n::Language language() const { return m_language; }

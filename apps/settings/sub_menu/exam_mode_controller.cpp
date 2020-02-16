@@ -18,7 +18,9 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
   m_contentView(&m_selectableTableView),
   m_cell{},
   m_ledController(this),
-  m_ledColorCell(KDFont::LargeFont, KDFont::SmallFont)
+  m_examModeModeController(this),
+  m_ledColorCell(KDFont::LargeFont, KDFont::SmallFont),
+  m_examModeCell(KDFont::LargeFont, KDFont::SmallFont)
 {
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_cell[i].setMessage(ExamModeConfiguration::examModeActivationMessage(i));
@@ -32,6 +34,11 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
       (&m_ledController)->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
       StackViewController * stack = stackController();
       stack->push(&m_ledController);
+      return true;
+    } else if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::ExamModeMode) {
+      (&m_examModeModeController)->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+      StackViewController * stack = stackController();
+      stack->push(&m_examModeModeController);
       return true;
     } else {
       AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
@@ -68,6 +75,9 @@ HighlightCell * ExamModeController::reusableCell(int index, int type) {
   assert(index >= 0  && index < 3);
   if (m_messageTreeModel->children(index)->label() == I18n::Message::LEDColor) {
     return &m_ledColorCell;
+  }
+  if (m_messageTreeModel->children(index)->label() == I18n::Message::ExamModeMode) {
+    return &m_examModeCell;
   }
   return &m_cell[index];
 }
@@ -112,7 +122,7 @@ int ExamModeController::initialSelectedRow() const {
 }
 
 GlobalPreferences::ExamMode ExamModeController::examMode() {
-  GlobalPreferences::ExamMode mode = ExamModeConfiguration::examModeAtIndex(selectedRow());
+  GlobalPreferences::ExamMode mode = GlobalPreferences::sharedGlobalPreferences()->tempExamMode();
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     // If the exam mode is already on, this re-activate the same exam mode
     mode = GlobalPreferences::sharedGlobalPreferences()->examMode();

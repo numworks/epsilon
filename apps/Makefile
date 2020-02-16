@@ -31,8 +31,8 @@ app_src += $(addprefix apps/,\
   variable_box_empty_controller.cpp \
 )
 
-tests_src += apps/exam_mode_configuration_official.cpp
-apps_official += apps/exam_mode_configuration_official.cpp
+tests_src += apps/exam_mode_configuration_non_official.cpp
+apps_official += apps/exam_mode_configuration_non_official.cpp
 apps_non_official += apps/exam_mode_configuration_non_official.cpp
 
 apps_launch_on_boarding_src += apps/apps_container_launch_on_boarding.cpp

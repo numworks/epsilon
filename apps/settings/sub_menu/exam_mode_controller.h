@@ -28,7 +28,9 @@ private:
   SelectableViewWithMessages m_contentView;
   MessageTableCell m_cell[k_maxNumberOfCells];
   PreferencesController m_ledController;
+  PreferencesController m_examModeModeController;
   MessageTableCellWithChevronAndMessage m_ledColorCell;
+  MessageTableCellWithChevronAndMessage m_examModeCell;
 };
 
 }

@@ -155,6 +155,11 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * text = " ";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
+    case I18n::Message::ExamModeModeNoSymNoText:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
     case I18n::Message::ExamModeModeDutch:
     {
       const char * text = " ";

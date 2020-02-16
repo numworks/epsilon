@@ -22,7 +22,7 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
     I18n::Message warnings[] = {I18n::Message::ExitExamMode1, I18n::Message::ExitExamMode2, I18n::Message::Default};
     return warnings[line];
   }
-  assert(mode == GlobalPreferences::ExamMode::Standard);
+  assert(mode == GlobalPreferences::ExamMode::Standard || mode == GlobalPreferences::ExamMode::NoSym);
   I18n::Message warnings[] = {I18n::Message::ActiveExamModeMessage1, I18n::Message::ActiveExamModeMessage2, I18n::Message::ActiveExamModeMessage3};
   return warnings[line];
 }

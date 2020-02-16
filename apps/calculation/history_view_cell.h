@@ -51,6 +51,7 @@ public:
   Shared::ScrollableTwoExpressionsView * outputView();
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
+  bool oneLine();
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);

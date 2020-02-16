@@ -135,6 +135,10 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
   // Get input height
   Layout inputLayout = createInputLayout();
   KDCoordinate inputHeight = inputLayout.layoutSize().height();
+  KDCoordinate inputWidth = inputLayout.layoutSize().width();
+  float singleMargin = 2 * Metric::CommonSmallMargin;
+  float doubleMargin = 2 * Metric::CommonSmallMargin;
+  bool singleLine = false;
   KDCoordinate inputBaseline = inputLayout.baseline();
 
   // Get exact output height if needed
@@ -156,11 +160,22 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
 
   if (displayOutput(context) == DisplayOutput::ExactOnly) {
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-    if (allExpressionsInline) {
-      KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
+    KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
+    singleLine = exactOutputWidth + inputWidth < maxWidth - 40;
+    if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) {
+      if (allExpressionsInline) {
+        KDCoordinate exactOutputBaseline = exactLayout.baseline();
+        result = (inputHeight >= exactOutputHeight) ? maxCoordinate(inputBaseline, exactOutputBaseline) + singleMargin : maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
+      } else {
+        result = (inputHeight >= exactOutputHeight) ? inputHeight + singleMargin : exactOutputHeight + singleMargin;
+      }
     } else {
-      result = inputHeight+exactOutputHeight;
+      if (allExpressionsInline) {
+        KDCoordinate exactOutputBaseline = exactLayout.baseline();
+        result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline)+doubleMargin;
+      } else {
+        result = inputHeight+exactOutputHeight+doubleMargin+doubleMargin;
+      }
     }
   } else {
     bool couldNotCreateApproximateLayout = false;
@@ -182,23 +197,47 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     }
 
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
+    KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
+    singleLine = approximateOutputWidth + inputWidth < maxWidth - 40;
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
-      if (allExpressionsInline) {
-        KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-        result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline);
+      if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) {
+        if (allExpressionsInline) {
+          KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
+          result = (inputHeight >= approximateOutputHeight) ? maxCoordinate(inputBaseline, approximateOutputBaseline) + singleMargin : maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + singleMargin;
+        } else {
+          result = (inputHeight >= approximateOutputHeight) ? inputHeight + singleMargin : approximateOutputHeight + singleMargin;
+        }
       } else {
-        result = inputHeight+approximateOutputHeight;
+        if (allExpressionsInline) {
+          KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
+          result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + doubleMargin + singleMargin;
+        } else {
+          result = inputHeight+approximateOutputHeight+doubleMargin+singleMargin;
+        }
       }
     } else {
       assert(displayOutput(context) == DisplayOutput::ExactAndApproximate || (displayOutput(context) == DisplayOutput::ExactAndApproximateToggle && expanded));
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
+      KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
+      KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
+      KDCoordinate outputWidth = exactOutputWidth + approximateOutputWidth;
+      singleLine = outputWidth + inputWidth < maxWidth - 70;
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-      if (allExpressionsInline) {
-        result = maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline));
-      } else {
+      if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) {
         KDCoordinate outputHeight = maxCoordinate(exactOutputBaseline, approximateOutputBaseline) + maxCoordinate(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
-        result = inputHeight + outputHeight;
+        if (allExpressionsInline) {
+          result = (inputHeight >= outputHeight) ? maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + singleMargin : maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline)) + singleMargin;
+        } else {
+          result = (inputHeight >= outputHeight) ? inputHeight + singleMargin : outputHeight + singleMargin;
+        }
+      } else {
+        if (allExpressionsInline) {
+          result = maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline));
+        } else {
+          KDCoordinate outputHeight = maxCoordinate(exactOutputBaseline, approximateOutputBaseline) + maxCoordinate(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline) + doubleMargin;
+          result = inputHeight + outputHeight + doubleMargin;
+        }
       }
     }
   }

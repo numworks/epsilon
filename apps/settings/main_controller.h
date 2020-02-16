@@ -19,6 +19,7 @@ extern const SettingsMessageTree s_modelFloatDisplayModeChildren[4];
 extern const SettingsMessageTree s_modelComplexFormatChildren[3];
 extern const SettingsMessageTree s_symbolChildren[4];
 extern const SettingsMessageTree s_modelMathOptionsChildren[5];
+extern const SettingsMessageTree s_modelResultDisplayChildren[2];
 extern const SettingsMessageTree s_modelFontChildren[2];
 extern const SettingsMessageTree s_accessibilityChildren[6];
 extern const SettingsMessageTree s_contributorsChildren[17];
@@ -49,7 +50,8 @@ private:
   constexpr static int k_indexOfBrightnessCell = k_indexOfMathOptionsChildren + 1;
   constexpr static int k_indexOfLanguageCell = k_indexOfBrightnessCell + 1;
   constexpr static int k_indexOfExamModeCell = k_indexOfLanguageCell + 1;
-  constexpr static int k_indexOfFontCell = k_indexOfExamModeCell + 1;
+  constexpr static int k_indexOfResultDisplayCell = k_indexOfExamModeCell + 1;
+  constexpr static int k_indexOfFontCell = k_indexOfResultDisplayCell + 1;
   /* Pop-up cell and About cell are located at the same index because pop-up
    * cell is optional. We must always correct k_indexOfAboutCell with
    * hasPrompt() (TODO: make hasPrompt() constexpr and correct
@@ -61,7 +63,7 @@ private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 8;
+  constexpr static int k_numberOfSimpleChevronCells = 9;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;

@@ -17,7 +17,7 @@ AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell() :
 }
 
 KDColor AbstractScrollableMultipleExpressionsView::ContentCell::backgroundColor() const {
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor background = m_even ? KDColorWhite : Palette::BackgroundApps;
   return background;
 }
 

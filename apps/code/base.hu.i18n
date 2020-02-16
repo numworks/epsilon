@@ -1,4 +1,4 @@
-Console = "Python Konzol"
+Console = "Console d'execution"
 AddScript = "Script hozzadáadása"
 ScriptOptions = "Script beállítások"
 ExecuteScript = "Script indítása"

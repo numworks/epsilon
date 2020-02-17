@@ -42,7 +42,7 @@ define rule_for_libepsilon
 $$(BUILD_DIR)/app/libs/%/lib$(1): force_remake $$$$(@D)/.
 	$(Q) echo "MAKE    NDK_ABI=$$*"
 	$(Q) $$(MAKE) NDK_ABI=$$* $(1)
-	$(Q) cp $$(BUILD_DIR)/$$*/$(1) $@
+	$(Q) cp $$(BUILD_DIR)/$$*/$(1) $$@
 endef
 
 $(eval $(call rule_for_libepsilon,epsilon.so))

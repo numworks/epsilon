@@ -58,7 +58,7 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
 
   ctx->fillRect(rect, backgroundColor);
 
-  KDSize glyphSize = Poincare::Preferences::sharedPreferences()->KDPythonFont()->glyphSize();
+  KDSize glyphSize = m_font->glyphSize();
 
   KDCoordinate firstLine = m_offset / glyphSize.height();
   KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
@@ -72,7 +72,7 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->drawString(
       lineNumber,
       KDPoint(k_margin + leftPadding, i*glyphSize.height() - firstLinePixelOffset),
-      Poincare::Preferences::sharedPreferences()->KDPythonFont(),
+      m_font,
       textColor,
       backgroundColor
     );

@@ -15,7 +15,11 @@ ion_src += $(addprefix ion/src/simulator/linux/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/callback.cpp \
-  dummy/telemetry.cpp \
 )
+
+ifeq ($(EPSILON_TELEMETRY),1)
+ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
+ion_src += ion/src/shared/telemetry_console.cpp
+endif
 
 LDFLAGS += -ljpeg

@@ -10,6 +10,7 @@
 #include <escher/warning_controller.h>
 #include <ion/storage.h>
 #include <poincare/context.h>
+#include <escher/telemetry.h>
 
 /* An app is fed events and outputs drawing calls.
  *
@@ -70,6 +71,9 @@ public:
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }
+#if EPSILON_TELEMETRY
+  virtual const char * telemetryId() const { return nullptr; }
+#endif
 protected:
   App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0) :
     Responder(nullptr),

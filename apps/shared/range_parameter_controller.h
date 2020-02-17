@@ -16,6 +16,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool handleEvent(Ion::Events::Event event) override;
+  TELEMETRY_ID("Range");
 private:
   class MessageTableCellWithConvertibleEditableText : public MessageTableCellWithEditableText {
   public:

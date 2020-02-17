@@ -41,6 +41,7 @@ public:
     return static_cast<App *>(Container::activeApp());
   }
   ~App();
+  TELEMETRY_ID("Code");
   bool prepareForExit() override {
     if (m_consoleController.inputRunLoopActive()) {
       m_consoleController.terminateInputLoop();

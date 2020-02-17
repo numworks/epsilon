@@ -21,6 +21,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  TELEMETRY_ID("ScriptParameter");
 
   /* SimpleListViewDataSource */
   KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }

@@ -42,6 +42,7 @@ const char * TypeParameterController::title() {
 }
 
 void TypeParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   App * myApp = App::app();
   assert(!m_record.isNull());
   Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);

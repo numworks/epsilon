@@ -17,6 +17,7 @@ public:
   void reinitCalculation();
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
+  TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:

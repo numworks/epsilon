@@ -44,6 +44,7 @@ public:
     int m_selectedBoxSeriesIndex;
     BoxView::Quantile m_selectedBoxQuantile;
   };
+  TELEMETRY_ID("Statistics");
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   CalculationController m_calculationController;

@@ -20,6 +20,7 @@ public:
   View * view() override { return &m_selectableTableView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
+  TELEMETRY_ID("");
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
   void reload();

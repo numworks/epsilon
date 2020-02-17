@@ -3,19 +3,19 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
+include build/defaults.mak
+include build/platform.$(PLATFORM).mak
+
 EPSILON_VERSION ?= 13.0.0
 EPSILON_CUSTOM_VERSION ?= 1.19.0-0
 # USERNAME ?= N/A
-# Valid values are "none", "update", "beta"
 EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings external
 EPSILON_I18N ?= en fr es de pt hu
 # EPSILON_I18N ?= en fr es de pt hu
 EPSILON_GETOPT ?= 0
+EPSILON_TELEMETRY ?= 0
 ESCHER_LOG_EVENTS_BINARY ?= 0
 OMEGA_THEME ?= omega_light
-
-include build/defaults.mak
-include build/platform.$(PLATFORM).mak
 
 ifndef USE_LIBA
   $(error platform.mak should define USE_LIBA)
@@ -30,4 +30,5 @@ ifdef USERNAME
   SFLAGS += -DUSERNAME="$(USERNAME)"
 endif
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)
+SFLAGS += -DEPSILON_TELEMETRY=$(EPSILON_TELEMETRY)
 SFLAGS += -DESCHER_LOG_EVENTS_BINARY=$(ESCHER_LOG_EVENTS_BINARY)

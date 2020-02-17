@@ -44,6 +44,7 @@ public:
   static App * app() {
     return static_cast<App *>(Container::activeApp());
   }
+  TELEMETRY_ID("Regression");
   RegressionController * regressionController() { return &m_regressionController; }
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);

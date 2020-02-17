@@ -163,6 +163,7 @@ const char * ConsoleController::inputText(const char * prompt) {
 }
 
 void ConsoleController::viewWillAppear() {
+  ViewController::viewWillAppear();
   loadPythonEnvironment();
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;
@@ -322,6 +323,7 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
     m_inputRunLoopActive = false;
     return false;
   }
+  telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!sandboxIsDisplayed()) {
     m_selectableTableView.reloadData();

@@ -55,6 +55,7 @@ bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 void ZoomParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   m_contentView.curveView()->setOkView(nullptr);
   /* We need to change the curve range to keep the same visual aspect of the
    * view. */

@@ -43,6 +43,7 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(::App::snapshot());
   }
+  TELEMETRY_ID("Graph");
   bool XNTCanBeOverriden() const override { return false; }
   CodePoint XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;

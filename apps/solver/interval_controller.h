@@ -12,6 +12,7 @@ public:
   IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore);
   const char * title() override;
   View * view() override { return &m_contentView; }
+  TELEMETRY_ID("Interval");
   int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:

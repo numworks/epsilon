@@ -33,6 +33,7 @@ View * CalculationParameterController::view() {
 }
 
 void CalculationParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   m_selectableTableView.reloadData();
 }
 

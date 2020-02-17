@@ -38,6 +38,7 @@ FunctionListController::FunctionListController(Responder * parentResponder, Butt
 /* TableViewDataSource */
 
 void FunctionListController::viewWillAppear() {
+  ExpressionModelListController::viewWillAppear();
   computeTitlesColumnWidth();
 }
 

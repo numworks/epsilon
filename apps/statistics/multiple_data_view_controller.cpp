@@ -27,6 +27,7 @@ Responder * MultipleDataViewController::defaultController() {
 }
 
 void MultipleDataViewController::viewWillAppear() {
+  ViewController::viewWillAppear();
   if (*m_selectedSeriesIndex < 0 || m_store->sumOfOccurrences(*m_selectedSeriesIndex) == 0) {
     *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(0);
   }

@@ -13,6 +13,7 @@ public:
   ExamModeController(Responder * parentResponder);
   View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
+  TELEMETRY_ID("ExamMode");
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   int numberOfRows() const override;
   HighlightCell * reusableCell(int index, int type) override;

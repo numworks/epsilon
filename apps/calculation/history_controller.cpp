@@ -37,6 +37,7 @@ void HistoryController::reload() {
 }
 
 void HistoryController::viewWillAppear() {
+  ViewController::viewWillAppear();
   reload();
 }
 

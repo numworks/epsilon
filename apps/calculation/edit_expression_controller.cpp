@@ -137,7 +137,6 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   return false;
 }
 
-
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {
   Context * context = textFieldDelegateApp()->localContext();
   if (layoutR.isUninitialized()) {
@@ -149,6 +148,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   m_calculationStore->push(m_cacheBuffer, context);
   m_historyController->reload();
   m_contentView.expressionField()->setEditing(true, true);
+  telemetryReportEvent("Input", m_cacheBuffer);
   return true;
 }
 

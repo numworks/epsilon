@@ -7,10 +7,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/language.cpp \
 )
 
-ifeq ($(EPSILON_TELEMETRY),1)
-ion_src += ion/src/simulator/android/src/cpp/telemetry.cpp
-endif
-
 $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
 
 LDFLAGS += -ljnigraphics -llog

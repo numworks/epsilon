@@ -3,10 +3,7 @@
 size_t strlcat(char * dst, const char * src, size_t dstSize) {
   const size_t srcLen = strlen(src);
   size_t dstLen = strlen(dst);
-  if (dstLen > dstSize) {
-    dstLen = dstSize;
-  }
-  if (dstLen == dstSize) {
+  if (dstLen >= dstSize) {
     return dstSize+srcLen;
   }
   if (srcLen < dstSize-dstLen) {

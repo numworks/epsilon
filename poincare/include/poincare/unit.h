@@ -297,6 +297,7 @@ public:
         Representative("K",   nullptr,
             Representative::Prefixable::No,
             NoPrefix),
+        },
     AmountOfSubstanceRepresentatives[] = {
         Representative("mol", nullptr,
             Representative::Prefixable::Yes,

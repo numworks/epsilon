@@ -58,30 +58,30 @@ stable_release:
 	$(Q) rm -rf output/stable_release
 	$(Q) mkdir -p output/stable_release
 	$(Q) echo "BUILD_FIRMWARE    DEVICE N0110"
-	$(Q) make clean
-	$(Q) make -j8 epsilon.official.onboarding.dfu
+	$(Q) $(MAKE) clean
+	$(Q) $(MAKE) epsilon.official.onboarding.dfu
 	$(Q) cp output/release/device/n0110/epsilon.official.onboarding.dfu output/stable_release/epsilon.device.n0110.dfu
 	$(Q) echo "BUILD_FIRMWARE    DEVICE N0100"
-	$(Q) make MODEL=n0100 clean
-	$(Q) make -j8 MODEL=n0100 epsilon.official.onboarding.dfu
+	$(Q) $(MAKE) MODEL=n0100 clean
+	$(Q) $(MAKE) MODEL=n0100 epsilon.official.onboarding.dfu
 	$(Q) cp output/release/device/n0100/epsilon.official.onboarding.dfu output/stable_release/epsilon.device.n0100.dfu
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
-	$(Q) make -j8 DEBUG=0 PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); make -j8 DEBUG=0 PLATFORM=simulator TARGET=web output/release/simulator/web/simulator.official.zip
+	$(Q) $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web clean
+	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web output/release/simulator/web/simulator.official.zip
 	$(Q) cp output/release/simulator/web/simulator.official.zip output/stable_release/simulator.web.zip
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
-	$(Q) $(call source_emsdk); make -j8 DEBUG=0 PLATFORM=simulator TARGET=web epsilon.official.js
+	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web epsilon.official.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/stable_release/epsilon.js
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
-	$(Q) make -j8 DEBUG=0 PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); make -j8 DEBUG=0 PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
+	$(Q) $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web clean
+	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/stable_release/epsilon.python.js
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR ANDROID"
-	$(Q) make -j8 PLATFORM=simulator TARGET=android clean
-	$(Q) make -j8 PLATFORM=simulator TARGET=android epsilon.official.apk
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=android clean
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=android epsilon.official.apk
 	$(Q) cp output/release/simulator/android/app/outputs/apk/release/android-release-unsigned.apk output/stable_release/epsilon.apk
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR IOS"
-	$(Q) make -j8 PLATFORM=simulator TARGET=ios clean
-	$(Q) make -j8 PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE="~/Downloads/NumWorks_Graphing_Calculator_Distribution.mobileprovision" output/release/simulator/ios/app/epsilon.official.ipa
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios clean
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE="~/Downloads/NumWorks_Graphing_Calculator_Distribution.mobileprovision" output/release/simulator/ios/app/epsilon.official.ipa
 	$(Q) cp output/release/simulator/ios/app/epsilon.official.ipa output/stable_release/epsilon.ipa
 endif

@@ -72,7 +72,7 @@ $(eval $(call rule_for_gradle,assembleRelease,.official.))
 
 DEFAULT = epsilon.apk
 
-.PHONY: epsilon.apk
+.PHONY: epsilon%apk
 ifdef ANDROID_SIGNING_STORE_FILE
 epsilon%apk: gradle_assembleCodesigned_%
 else

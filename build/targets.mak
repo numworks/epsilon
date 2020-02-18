@@ -1,8 +1,11 @@
 # Define standard Epsilon targets
 base_src = $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src)
 
-$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(base_src) $(ion_default_src) $(apps_default_src))
-$(BUILD_DIR)/epsilon.official.$(EXE): $(call object_for,$(base_src) $(ion_default_src) $(apps_official_default_src))
+epsilon_src = $(base_src) $(ion_default_src) $(apps_default_src)
+epsilon_official_src = $(base_src) $(ion_default_src) $(apps_official_default_src)
+
+$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(epsilon_src))
+$(BUILD_DIR)/epsilon.official.$(EXE): $(call object_for,$(epsilon_official_src))
 $(BUILD_DIR)/epsilon.onboarding.$(EXE): $(call object_for, $(base_src) $(ion_default_src) $(apps_onboarding_src))
 $(BUILD_DIR)/epsilon.official.onboarding.$(EXE): $(call object_for,$(base_src) $(ion_default_src) $(apps_official_onboarding_src))
 $(BUILD_DIR)/epsilon.onboarding.update.$(EXE): $(call object_for, $(base_src) $(ion_default_src) $(apps_onboarding_update_src))

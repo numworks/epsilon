@@ -32,10 +32,9 @@ public:
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   HighlightCell * selectedCell();
 protected:
+  void unhighlightSelectedCell();
   SelectableTableViewDataSource * m_selectionDataSource;
   SelectableTableViewDelegate * m_delegate;
-private:
-  void unhighlightSelectedCell();
 };
 
 #endif

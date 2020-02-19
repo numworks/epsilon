@@ -73,6 +73,8 @@ public:
 
   class Dimension {
   public:
+    template<typename T>
+    using Vector = T[7];
     template <size_t N>
     constexpr Dimension(const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
       m_representatives(representatives),

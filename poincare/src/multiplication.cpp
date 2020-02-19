@@ -302,8 +302,9 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   return privateShallowReduce(reductionContext, true, true);
 }
 
-static void ExponentsMetrics(const Unit::Dimension::Vector<Integer> &exponents, size_t & supportSize, Integer & norm) {
-  assert(supportSize == 0 && norm.isZero());
+static Unit::Dimension::Vector<Integer>::Metrics ExponentsMetrics(const Unit::Dimension::Vector<Integer> &exponents) {
+  size_t supportSize = 0;
+  Integer norm(0);
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
     Integer unsignedExponent = exponents.coefficientAtIndex(i);
     unsignedExponent.setNegative(false);
@@ -312,6 +313,7 @@ static void ExponentsMetrics(const Unit::Dimension::Vector<Integer> &exponents, 
       norm = Integer::Addition(norm, unsignedExponent);
     }
   }
+  return {.supportSize = supportSize, .norm = norm};
 }
 
 static Unit::Dimension::Vector<Integer> ExponentsOfBaseUnits(const Expression units) {
@@ -350,7 +352,7 @@ static Unit::Dimension::Vector<Integer> ExponentsOfBaseUnits(const Expression un
 static bool CanSimplifyUnitProduct(
     const Unit::Dimension::Vector<Integer> &unitsExponents, const Unit::Dimension::Vector<Integer> &entryUnitExponents, const Integer entryUnitNorm, const Expression entryUnit,
     Integer (*operationOnExponents)(const Integer & unitsExponent, const Integer & entryUnitExponent),
-    Expression & bestUnit, Integer & bestUnitNorm, Unit::Dimension::Vector<Integer> &bestRemainderExponents, size_t & bestRemainderSupportSize, Integer & bestRemainderNorm) {
+    Expression & bestUnit, Integer & bestUnitNorm, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' Integer array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
@@ -359,18 +361,15 @@ static bool CanSimplifyUnitProduct(
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
     simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents.coefficientAtIndex(i)));
   }
-  size_t simplifiedSupportSize = 0;
-  Integer simplifiedNorm(0);
-  ExponentsMetrics(simplifiedExponents, simplifiedSupportSize, simplifiedNorm);
-  bool isSimpler = simplifiedSupportSize < bestRemainderSupportSize ||
-    (simplifiedSupportSize == bestRemainderSupportSize &&
-     Integer::Addition(simplifiedNorm, entryUnitNorm).isLowerThan(Integer::Addition(bestRemainderNorm, bestUnitNorm)));
+  Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = ExponentsMetrics(simplifiedExponents);
+  bool isSimpler = simplifiedMetrics.supportSize < bestRemainderMetrics.supportSize ||
+    (simplifiedMetrics.supportSize == bestRemainderMetrics.supportSize &&
+     Integer::Addition(simplifiedMetrics.norm, entryUnitNorm).isLowerThan(Integer::Addition(bestRemainderMetrics.norm, bestUnitNorm)));
   if (isSimpler) {
     bestUnit = entryUnit;
     bestUnitNorm = entryUnitNorm;
     bestRemainderExponents = simplifiedExponents;
-    bestRemainderSupportSize = simplifiedSupportSize;
-    bestRemainderNorm = simplifiedNorm;
+    bestRemainderMetrics = simplifiedMetrics;
   }
   return isSimpler;
 }
@@ -407,31 +406,26 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      */
     Multiplication unitsAccu = Multiplication::Builder();
     Unit::Dimension::Vector<Integer> unitsExponents = ExponentsOfBaseUnits(units);
-    size_t unitsSupportSize = 0;
-    Integer unitsNorm(0);
-    ExponentsMetrics(unitsExponents, unitsSupportSize, unitsNorm);
+    Unit::Dimension::Vector<Integer>::Metrics unitsMetrics = ExponentsMetrics(unitsExponents);
     Unit::Dimension::Vector<Integer> bestRemainderExponents;
-    while (unitsSupportSize > 1) {
+    while (unitsMetrics.supportSize > 1) {
       Expression bestUnit;
       Integer bestUnitNorm(0);
-      size_t bestRemainderSupportSize = unitsSupportSize - 1;
-      Integer bestRemainderNorm = unitsNorm;
+      Unit::Dimension::Vector<Integer>::Metrics bestRemainderMetrics = {.supportSize = unitsMetrics.supportSize - 1, .norm = unitsMetrics.norm};
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
         Unit::Dimension::Vector<Integer> entryUnitExponents = ExponentsOfBaseUnits(entryUnit.clone().shallowReduce(reductionContext));
-        Integer entryUnitNorm(0);
-        size_t entryUnitSupportSize = 0;
-        ExponentsMetrics(entryUnitExponents, entryUnitSupportSize, entryUnitNorm);
+        Integer entryUnitNorm = ExponentsMetrics(entryUnitExponents).norm;
         CanSimplifyUnitProduct(
             unitsExponents, entryUnitExponents, entryUnitNorm, entryUnit,
             Integer::Subtraction,
-            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderSupportSize, bestRemainderNorm
+            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderMetrics
             )
         ||
         CanSimplifyUnitProduct(
             unitsExponents, entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)),
             Integer::Addition,
-            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderSupportSize, bestRemainderNorm
+            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderMetrics
             );
       }
       if (bestUnit.isUninitialized()) {
@@ -440,8 +434,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       const int position = unitsAccu.numberOfChildren();
       unitsAccu.addChildAtIndexInPlace(bestUnit, position, position);
       unitsExponents = bestRemainderExponents;
-      unitsSupportSize = bestRemainderSupportSize;
-      unitsNorm = bestRemainderNorm;
+      unitsMetrics = bestRemainderMetrics;
     }
     if (unitsAccu.numberOfChildren() > 0) {
       units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);

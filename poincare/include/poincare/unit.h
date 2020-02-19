@@ -11,9 +11,6 @@ public:
   /* The units having the same physical dimension are grouped together.
    * Each such group has a standard representative with a standard prefix.
    *
-   * A standard unit is a derived unit, when defined from base units
-   * or otherwise a base unit (if no definition is provided).
-   *
    * Each representative has
    *  - a root symbol
    *  - a definition
@@ -21,6 +18,9 @@ public:
    * Given a Dimension, a representative in that Dimension and a Prefix
    * allowed for that representative, one may get a symbol and an Expression.
    */
+
+  // There are 7 base units from which all other units are derived.
+  static constexpr size_t NumberOfBaseUnits = 7;
 
   class Prefix {
   public:
@@ -74,7 +74,7 @@ public:
   class Dimension {
   public:
     template<typename T>
-    using Vector = T[7];
+    using Vector = T[NumberOfBaseUnits];
     template <size_t N>
     constexpr Dimension(const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
       m_representatives(representatives),
@@ -220,6 +220,7 @@ public:
       GigaPrefix,
       TeraPrefix,
     };
+  static constexpr size_t NumberOfBaseUnits = UnitNode::NumberOfBaseUnits;
   static constexpr const Representative
     TimeRepresentatives[] = {
         Representative("s",   nullptr,

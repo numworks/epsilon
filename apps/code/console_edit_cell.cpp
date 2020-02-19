@@ -55,4 +55,21 @@ bool ConsoleEditCell::insertText(const char * text) {
   return m_textField.handleEventWithText(text);
 }
 
+void ConsoleEditCell::clearAndReduceSize() {
+  setText("");
+  size_t previousBufferSize = m_textField.draftTextBufferSize();
+  assert(previousBufferSize > 1);
+  m_textField.setDraftTextBufferSize(previousBufferSize - 1);
+}
+
+const char * ConsoleEditCell::shiftCurrentTextAndClear() {
+  size_t previousBufferSize = m_textField.draftTextBufferSize();
+  m_textField.setDraftTextBufferSize(previousBufferSize + 1);
+  char * textFieldBuffer = m_textField.draftTextBuffer();
+  char * newTextPosition = textFieldBuffer + 1;
+  strlcpy(newTextPosition, textFieldBuffer, previousBufferSize);
+  textFieldBuffer[0] = 0;
+  return newTextPosition;
+}
+
 }

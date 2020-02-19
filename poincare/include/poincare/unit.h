@@ -85,6 +85,10 @@ public:
   public:
     template<typename T>
     struct Vector {
+      struct Metrics {
+        size_t supportSize;
+        T norm;
+      };
       const T coefficientAtIndex(size_t i) const {
         assert(i < NumberOfBaseUnits);
         return *(reinterpret_cast<const T*>(this) + i);

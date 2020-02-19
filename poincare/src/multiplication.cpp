@@ -303,14 +303,14 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
 }
 
 static void ExponentsCopy(Unit::Dimension::Vector<Integer> &dst, const Unit::Dimension::Vector<Integer> &src) {
-  for (int i = 0; i < 7; i++) {
+  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
     dst[i] = src[i];
   }
 }
 
 static void ExponentsMetrics(const Unit::Dimension::Vector<Integer> &exponents, size_t & supportSize, Integer & norm) {
   assert(supportSize == 0 && norm.isZero());
-  for (int i = 0; i < 7; i++) {
+  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
     Integer unsignedExponent = exponents[i];
     unsignedExponent.setNegative(false);
     if (!unsignedExponent.isZero()) {
@@ -346,7 +346,7 @@ static void ExponentsOfBaseUnits(const Expression units, Unit::Dimension::Vector
 
     // Fill the exponents array with the unit's exponent
     const int indexInTable = static_cast<Unit &>(factor).dimension() - Unit::DimensionTable;
-    assert(0 <= indexInTable && indexInTable < 7);
+    assert(0 <= indexInTable && indexInTable < Unit::NumberOfBaseUnits);
     exponents[indexInTable] = exponent;
   }
 }
@@ -368,7 +368,7 @@ static bool CanSimplifyUnitProduct(
     Integer(0),
     Integer(0),
   };
-  for (int i = 0; i < 7; i++) {
+  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
     simplifiedExponents[i] = operationOnExponents(unitsExponents[i], entryUnitExponents[i]);
   }
   size_t simplifiedSupportSize = 0;
@@ -445,7 +445,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       Integer bestUnitNorm(0);
       size_t bestRemainderSupportSize = unitsSupportSize - 1;
       Integer bestRemainderNorm = unitsNorm;
-      for (const Unit::Dimension * dim = Unit::DimensionTable + 7; dim < Unit::DimensionTableUpperBound; dim++) {
+      for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
         Unit::Dimension::Vector<Integer> entryUnitExponents = {
           Integer(0),

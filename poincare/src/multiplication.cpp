@@ -302,16 +302,10 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   return privateShallowReduce(reductionContext, true, true);
 }
 
-static void ExponentsCopy(Unit::Dimension::Vector<Integer> &dst, const Unit::Dimension::Vector<Integer> &src) {
-  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
-    dst[i] = src[i];
-  }
-}
-
 static void ExponentsMetrics(const Unit::Dimension::Vector<Integer> &exponents, size_t & supportSize, Integer & norm) {
   assert(supportSize == 0 && norm.isZero());
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
-    Integer unsignedExponent = exponents[i];
+    Integer unsignedExponent = exponents.coefficientAtIndex(i);
     unsignedExponent.setNegative(false);
     if (!unsignedExponent.isZero()) {
       supportSize++;
@@ -347,7 +341,7 @@ static void ExponentsOfBaseUnits(const Expression units, Unit::Dimension::Vector
     // Fill the exponents array with the unit's exponent
     const int indexInTable = static_cast<Unit &>(factor).dimension() - Unit::DimensionTable;
     assert(0 <= indexInTable && indexInTable < Unit::NumberOfBaseUnits);
-    exponents[indexInTable] = exponent;
+    exponents.setCoefficientAtIndex(indexInTable, exponent);
   }
 }
 
@@ -359,17 +353,9 @@ static bool CanSimplifyUnitProduct(
    * 'unitsExponents' Integer array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
-  Unit::Dimension::Vector<Integer> simplifiedExponents = {
-    Integer(0),
-    Integer(0),
-    Integer(0),
-    Integer(0),
-    Integer(0),
-    Integer(0),
-    Integer(0),
-  };
+  Unit::Dimension::Vector<Integer> simplifiedExponents;
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
-    simplifiedExponents[i] = operationOnExponents(unitsExponents[i], entryUnitExponents[i]);
+    simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents.coefficientAtIndex(i)));
   }
   size_t simplifiedSupportSize = 0;
   Integer simplifiedNorm(0);
@@ -380,7 +366,7 @@ static bool CanSimplifyUnitProduct(
   if (isSimpler) {
     bestUnit = entryUnit;
     bestUnitNorm = entryUnitNorm;
-    ExponentsCopy(bestRemainderExponents, simplifiedExponents);
+    bestRemainderExponents = simplifiedExponents;
     bestRemainderSupportSize = simplifiedSupportSize;
     bestRemainderNorm = simplifiedNorm;
   }
@@ -418,28 +404,12 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      * - Repeat those steps until no more simplification is possible.
      */
     Multiplication unitsAccu = Multiplication::Builder();
-    Unit::Dimension::Vector<Integer> unitsExponents = {
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-    };
+    Unit::Dimension::Vector<Integer> unitsExponents;
     ExponentsOfBaseUnits(units, unitsExponents);
     size_t unitsSupportSize = 0;
     Integer unitsNorm(0);
     ExponentsMetrics(unitsExponents, unitsSupportSize, unitsNorm);
-    Unit::Dimension::Vector<Integer> bestRemainderExponents = {
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-      Integer(0),
-    };
+    Unit::Dimension::Vector<Integer> bestRemainderExponents;
     while (unitsSupportSize > 1) {
       Expression bestUnit;
       Integer bestUnitNorm(0);
@@ -447,15 +417,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       Integer bestRemainderNorm = unitsNorm;
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
-        Unit::Dimension::Vector<Integer> entryUnitExponents = {
-          Integer(0),
-          Integer(0),
-          Integer(0),
-          Integer(0),
-          Integer(0),
-          Integer(0),
-          Integer(0),
-        };
+        Unit::Dimension::Vector<Integer> entryUnitExponents;
         Integer entryUnitNorm(0);
         size_t entryUnitSupportSize = 0;
         ExponentsOfBaseUnits(entryUnit.clone().shallowReduce(reductionContext), entryUnitExponents);
@@ -477,7 +439,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       }
       const int position = unitsAccu.numberOfChildren();
       unitsAccu.addChildAtIndexInPlace(bestUnit, position, position);
-      ExponentsCopy(unitsExponents, bestRemainderExponents);
+      unitsExponents = bestRemainderExponents;
       unitsSupportSize = bestRemainderSupportSize;
       unitsNorm = bestRemainderNorm;
     }

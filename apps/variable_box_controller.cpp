@@ -3,6 +3,7 @@
 #include "shared/continuous_function.h"
 #include <escher/metric.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/preferences.h>
@@ -235,10 +236,20 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
     assert(m_firstMemoizedLayoutIndex >= 0);
   }
   assert(index >= m_firstMemoizedLayoutIndex && index < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
+  Layout result;
   if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
-    m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::LayoutForRecord(record);
+    /* Creating the layout of a very long variable might throw a pool exception.
+     * We want to catch it and return a dummy layout instead, otherwise the user
+     * won't be able to open the variable box again, until she deletes the
+     * problematic variable -> and she has no help to remember its name, as she
+     * can't open the variable box. */
+    Poincare::ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
+      result = GlobalContext::LayoutForRecord(record);
+    }
   }
-  return m_layouts[index-m_firstMemoizedLayoutIndex];
+  m_layouts[index-m_firstMemoizedLayoutIndex] = result;
+  return result;
 }
 
 const char * VariableBoxController::extension() const {

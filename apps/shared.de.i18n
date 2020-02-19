@@ -1,4 +1,6 @@
 ActivateDeactivate = "Aktivieren/Deaktivieren"
+ActivateDutchExamMode = "Activate Dutch exam mode"
+ActivateExamMode = "Starten Testmodus"
 ActiveExamModeMessage1 = "Alle Ihre Daten werden "
 ActiveExamModeMessage2 = "gelöscht, wenn Sie den "
 ActiveExamModeMessage3 = "Testmodus einschalten."

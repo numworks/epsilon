@@ -134,7 +134,27 @@ const char * ConsoleController::inputText(const char * prompt) {
 
   const char * previousPrompt = m_editCell.promptText();
   m_editCell.setPrompt(promptText);
-  m_editCell.setText("");
+
+  /* The user will input some text that is stored in the edit cell. When the
+   * input is finished, we want to clear that cell and return the input text.
+   * We choose to shift the input in the edit cell and put a null char in first
+   * position, so that the cell seems cleared but we can still use it to store
+   * the input.
+   * To do so, we need to reduce the cell buffer size by one, so that the input
+   * can be shifted afterwards, even if it has maxSize.
+   *
+   * Illustration of a input sequence:
+   * | | | | | | | | |  <- the edit cell buffer
+   * |0| | | | | | |X|  <- clear and reduce the size
+   * |a|0| | | | | |X|  <- user input
+   * |a|b|0| | | | |X|  <- user input
+   * |a|b|c|0| | | |X|  <- user input
+   * |a|b|c|d|0| | |X|  <- last user input
+   * | |a|b|c|d|0| | |  <- increase the buffer size and shift the user input by one
+   * |0|a|b|c|d|0| | |  <- put a zero in first position: the edit cell seems empty
+   */
+
+   m_editCell.clearAndReduceSize();
 
   // Reload the history
   m_selectableTableView.reloadData();
@@ -147,16 +167,18 @@ const char * ConsoleController::inputText(const char * prompt) {
       return c->inputRunLoopActive();
   }, this);
 
-  // Handle the input text
+  // Print the prompt and the input text
   if (promptText != nullptr) {
     printText(promptText, s - promptText);
   }
   const char * text = m_editCell.text();
-  printText(text, strlen(text));
+  size_t textSize = strlen(text);
+  printText(text, textSize);
   flushOutputAccumulationBufferToStore();
 
+  // Clear the edit cell and return the input
+  text = m_editCell.shiftCurrentTextAndClear();
   m_editCell.setPrompt(previousPrompt);
-  m_editCell.setText("");
   refreshPrintOutput();
 
   return text;
@@ -394,21 +416,26 @@ void ConsoleController::printText(const char * text, size_t length) {
     /* If there is no new line in text, just append it to the output
      * accumulation buffer. */
     appendTextToOutputAccumulationBuffer(text, length);
-    return;
+  } else {
+    if (textCutIndex < length - 1) {
+      /* If there is a new line in the middle of the text, we have to store at
+       * least two new console lines in the console store. */
+      printText(text, textCutIndex + 1);
+      printText(&text[textCutIndex+1], length - (textCutIndex + 1));
+      return;
+    }
+    /* There is a new line at the end of the text, we have to store the line in
+     * the console store. */
+    assert(textCutIndex == length - 1);
+    appendTextToOutputAccumulationBuffer(text, length-1);
+    flushOutputAccumulationBufferToStore();
+    micropython_port_vm_hook_refresh_print();
   }
-  if (textCutIndex < length - 1) {
-    /* If there is a new line in the middle of the text, we have to store at
-     * least two new console lines in the console store. */
-    printText(text, textCutIndex + 1);
-    printText(&text[textCutIndex+1], length - (textCutIndex + 1));
-    return;
-  }
-  /* There is a new line at the end of the text, we have to store the line in
-   * the console store. */
-  assert(textCutIndex == length - 1);
-  appendTextToOutputAccumulationBuffer(text, length-1);
-  flushOutputAccumulationBufferToStore();
-  micropython_port_vm_hook_refresh_print();
+  /* micropython_port_vm_hook_loop is not enough to detect user interruptions,
+   * because it calls micropython_port_interrupt_if_needed every 20000
+   * operations, and a print operation is quite long. We thus explicitely call
+   * micropython_port_interrupt_if_needed here. */
+  micropython_port_interrupt_if_needed();
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {

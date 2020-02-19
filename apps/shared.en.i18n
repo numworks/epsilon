@@ -1,4 +1,6 @@
 ActivateDeactivate = "Turn on/off"
+ActivateExamMode = "Activate exam mode"
+ActivateDutchExamMode = "Activate Dutch exam mode"
 ActiveExamModeMessage1 = "All your data will be "
 ActiveExamModeMessage2 = "deleted when you activate "
 ActiveExamModeMessage3 = "the exam mode."

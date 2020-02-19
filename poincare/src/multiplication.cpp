@@ -314,7 +314,8 @@ static void ExponentsMetrics(const Unit::Dimension::Vector<Integer> &exponents, 
   }
 }
 
-static void ExponentsOfBaseUnits(const Expression units, Unit::Dimension::Vector<Integer> &exponents) {
+static Unit::Dimension::Vector<Integer> ExponentsOfBaseUnits(const Expression units) {
+  Unit::Dimension::Vector<Integer> exponents;
   // Make sure the provided Expression is a Multiplication
   Expression u = units;
   if (u.type() == ExpressionNode::Type::Unit || u.type() == ExpressionNode::Type::Power) {
@@ -343,6 +344,7 @@ static void ExponentsOfBaseUnits(const Expression units, Unit::Dimension::Vector
     assert(0 <= indexInTable && indexInTable < Unit::NumberOfBaseUnits);
     exponents.setCoefficientAtIndex(indexInTable, exponent);
   }
+  return exponents;
 }
 
 static bool CanSimplifyUnitProduct(
@@ -404,8 +406,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      * - Repeat those steps until no more simplification is possible.
      */
     Multiplication unitsAccu = Multiplication::Builder();
-    Unit::Dimension::Vector<Integer> unitsExponents;
-    ExponentsOfBaseUnits(units, unitsExponents);
+    Unit::Dimension::Vector<Integer> unitsExponents = ExponentsOfBaseUnits(units);
     size_t unitsSupportSize = 0;
     Integer unitsNorm(0);
     ExponentsMetrics(unitsExponents, unitsSupportSize, unitsNorm);
@@ -417,10 +418,9 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       Integer bestRemainderNorm = unitsNorm;
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
-        Unit::Dimension::Vector<Integer> entryUnitExponents;
+        Unit::Dimension::Vector<Integer> entryUnitExponents = ExponentsOfBaseUnits(entryUnit.clone().shallowReduce(reductionContext));
         Integer entryUnitNorm(0);
         size_t entryUnitSupportSize = 0;
-        ExponentsOfBaseUnits(entryUnit.clone().shallowReduce(reductionContext), entryUnitExponents);
         ExponentsMetrics(entryUnitExponents, entryUnitSupportSize, entryUnitNorm);
         CanSimplifyUnitProduct(
             unitsExponents, entryUnitExponents, entryUnitNorm, entryUnit,

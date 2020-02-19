@@ -24,6 +24,13 @@ HistoryController::HistoryController(EditExpressionController * editExpressionCo
 }
 
 void HistoryController::reload() {
+  /* When reloading, we might not used anymore cell that hold previous layouts.
+   * We clean them all before reloading their content to avoid taking extra
+   * useless space in the Poincare pool. */
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_calculationHistory[i].resetMemoization();
+  }
+
   m_selectableTableView.reloadData();
   /* TODO
    * Replace the following by selectCellAtLocation in order to avoid laying out

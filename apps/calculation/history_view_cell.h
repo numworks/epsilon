@@ -42,6 +42,7 @@ public:
   }
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override;
+  void resetMemoization();
   void setCalculation(Calculation * calculation, bool expanded);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

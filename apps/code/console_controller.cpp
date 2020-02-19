@@ -393,21 +393,26 @@ void ConsoleController::printText(const char * text, size_t length) {
     /* If there is no new line in text, just append it to the output
      * accumulation buffer. */
     appendTextToOutputAccumulationBuffer(text, length);
-    return;
+  } else {
+    if (textCutIndex < length - 1) {
+      /* If there is a new line in the middle of the text, we have to store at
+       * least two new console lines in the console store. */
+      printText(text, textCutIndex + 1);
+      printText(&text[textCutIndex+1], length - (textCutIndex + 1));
+      return;
+    }
+    /* There is a new line at the end of the text, we have to store the line in
+     * the console store. */
+    assert(textCutIndex == length - 1);
+    appendTextToOutputAccumulationBuffer(text, length-1);
+    flushOutputAccumulationBufferToStore();
+    micropython_port_vm_hook_refresh_print();
   }
-  if (textCutIndex < length - 1) {
-    /* If there is a new line in the middle of the text, we have to store at
-     * least two new console lines in the console store. */
-    printText(text, textCutIndex + 1);
-    printText(&text[textCutIndex+1], length - (textCutIndex + 1));
-    return;
-  }
-  /* There is a new line at the end of the text, we have to store the line in
-   * the console store. */
-  assert(textCutIndex == length - 1);
-  appendTextToOutputAccumulationBuffer(text, length-1);
-  flushOutputAccumulationBufferToStore();
-  micropython_port_vm_hook_refresh_print();
+  /* micropython_port_vm_hook_loop is not enough to detect user interruptions,
+   * because it calls micropython_port_interrupt_if_needed every 20000
+   * operations, and a print operation is quite long. We thus explicitely call
+   * micropython_port_interrupt_if_needed here. */
+  micropython_port_interrupt_if_needed();
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {

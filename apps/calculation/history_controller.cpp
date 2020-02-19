@@ -224,6 +224,10 @@ void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cel
     m_selectableTableView.reloadData();
   }
 
+  // It might be necessary to scroll to the sub type if the cell overflows the screen
+  if (selectedRow() >= 0) {
+    m_selectableTableView.scrollToSubviewOfTypeOfCellAtLocation(type, m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+  }
   // Fill the selected cell and the previous selected cell because cells repartition might have changed
   *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
   *previousCell = static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(previousSelectedCellX, previousSelectedCellY));

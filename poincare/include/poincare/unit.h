@@ -84,7 +84,23 @@ public:
   class Dimension {
   public:
     template<typename T>
-    using Vector = T[NumberOfBaseUnits];
+    struct Vector {
+      const T coefficientAtIndex(size_t i) const {
+        assert(i < NumberOfBaseUnits);
+        return *(reinterpret_cast<const T*>(this) + i);
+      }
+      void setCoefficientAtIndex(size_t i, T c) {
+        assert(i < NumberOfBaseUnits);
+        *(reinterpret_cast<T*>(this) + i) = c;
+      }
+      T time;
+      T distance;
+      T mass;
+      T current;
+      T temperature;
+      T amountOfSubstance;
+      T luminuousIntensity;
+    };
     template <size_t N>
     constexpr Dimension(const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
       m_representatives(representatives),

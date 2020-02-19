@@ -17,6 +17,16 @@ public:
    *  - a list of allowed output prefixes
    * Given a Dimension, a representative in that Dimension and a Prefix
    * allowed for that representative, one may get a symbol and an Expression.
+   *
+   * FIXME ?
+   * The UnitNode class holds as members pointers to a Dimension, a
+   * Representative, a Prefix. Those nested classes may not be forward
+   * declared and must be defined in UnitNode and then aliased in Unit so as
+   * to be used outside. That technical limitation could have been avoided if
+   * UnitNode were itself a nested class of Unit, say Unit::Node. More
+   * generally, turning all the Poincare::...Node classes into nested
+   * Poincare::...::Node classes might be a more clever usage of namespaces
+   * and scopes.
    */
 
   // There are 7 base units from which all other units are derived.

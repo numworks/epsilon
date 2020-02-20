@@ -88,7 +88,7 @@ public:
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);
-  void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
+  void forceDisplayOutput(DisplayOutput d);
   bool shouldOnlyDisplayExactOutput();
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 

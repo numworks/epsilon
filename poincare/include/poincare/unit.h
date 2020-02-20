@@ -89,6 +89,7 @@ public:
         size_t supportSize;
         T norm;
       };
+      Metrics metrics() const;
       const T coefficientAtIndex(size_t i) const {
         assert(i < NumberOfBaseUnits);
         return *(reinterpret_cast<const T*>(this) + i);

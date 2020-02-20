@@ -39,7 +39,7 @@ int FunctionNode::getVariables(Context * context, isVariableTest isVariable, cha
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
-    return 0;
+    return nextVariableIndex;
   }
   return e.node()->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
 }

@@ -309,9 +309,6 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
       otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
     }
     m_dataSource->setSelectedSubviewType(otherSubviewType, true);
-    CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
-    tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
-    Container::activeApp()->setFirstResponder(this);
     return true;
   }
   return false;

@@ -302,20 +302,6 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   return privateShallowReduce(reductionContext, true, true);
 }
 
-static Unit::Dimension::Vector<Integer>::Metrics ExponentsMetrics(const Unit::Dimension::Vector<Integer> &exponents) {
-  size_t supportSize = 0;
-  Integer norm(0);
-  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
-    Integer unsignedExponent = exponents.coefficientAtIndex(i);
-    unsignedExponent.setNegative(false);
-    if (!unsignedExponent.isZero()) {
-      supportSize++;
-      norm = Integer::Addition(norm, unsignedExponent);
-    }
-  }
-  return {.supportSize = supportSize, .norm = norm};
-}
-
 static Unit::Dimension::Vector<Integer> ExponentsOfBaseUnits(const Expression units) {
   Unit::Dimension::Vector<Integer> exponents;
   // Make sure the provided Expression is a Multiplication
@@ -361,7 +347,7 @@ static bool CanSimplifyUnitProduct(
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
     simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents.coefficientAtIndex(i)));
   }
-  Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = ExponentsMetrics(simplifiedExponents);
+  Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = simplifiedExponents.metrics();
   bool isSimpler = simplifiedMetrics.supportSize < bestRemainderMetrics.supportSize ||
     (simplifiedMetrics.supportSize == bestRemainderMetrics.supportSize &&
      Integer::Addition(simplifiedMetrics.norm, entryUnitNorm).isLowerThan(Integer::Addition(bestRemainderMetrics.norm, bestUnitNorm)));
@@ -406,7 +392,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      */
     Multiplication unitsAccu = Multiplication::Builder();
     Unit::Dimension::Vector<Integer> unitsExponents = ExponentsOfBaseUnits(units);
-    Unit::Dimension::Vector<Integer>::Metrics unitsMetrics = ExponentsMetrics(unitsExponents);
+    Unit::Dimension::Vector<Integer>::Metrics unitsMetrics = unitsExponents.metrics();
     Unit::Dimension::Vector<Integer> bestRemainderExponents;
     while (unitsMetrics.supportSize > 1) {
       Expression bestUnit;
@@ -415,7 +401,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
         Unit::Dimension::Vector<Integer> entryUnitExponents = ExponentsOfBaseUnits(entryUnit.clone().shallowReduce(reductionContext));
-        Integer entryUnitNorm = ExponentsMetrics(entryUnitExponents).norm;
+        Integer entryUnitNorm = entryUnitExponents.metrics().norm;
         CanSimplifyUnitProduct(
             unitsExponents, entryUnitExponents, entryUnitNorm, entryUnit,
             Integer::Subtraction,

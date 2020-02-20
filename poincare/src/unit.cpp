@@ -75,6 +75,22 @@ const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & v
   return bestPre;
 }
 
+template<>
+Unit::Dimension::Vector<Integer>::Metrics UnitNode::Dimension::Vector<Integer>::metrics() const {
+  size_t supportSize = 0;
+  Integer norm(0);
+  for (const Integer * i = reinterpret_cast<const Integer*>(this); i < reinterpret_cast<const Integer*>(this) + NumberOfBaseUnits; i++) {
+    Integer coefficient = *i;
+    if (coefficient.isZero()) {
+      continue;
+    }
+    supportSize++;
+    coefficient.setNegative(false);
+    norm = Integer::Addition(norm, coefficient);
+  }
+  return {.supportSize = supportSize, .norm = norm};
+}
+
 bool UnitNode::Dimension::canParse(const char * symbol, size_t length,
     const Representative * * representative, const Prefix * * prefix) const
 {

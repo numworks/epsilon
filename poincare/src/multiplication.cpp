@@ -303,7 +303,8 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
 }
 
 static bool CanSimplifyUnitProduct(
-    const Unit::Dimension::Vector<Integer> &unitsExponents, const Unit::Dimension::Vector<Integer> &entryUnitExponents, const Integer entryUnitNorm, const Expression entryUnit,
+    const Unit::Dimension::Vector<Integer> &unitsExponents, Unit::Dimension::Vector<Integer>::Metrics &unitsMetrics,
+    const Unit::Dimension::Vector<Integer> &entryUnitExponents, const Integer entryUnitNorm, const Expression entryUnit,
     Integer (*operationOnExponents)(const Integer & unitsExponent, const Integer & entryUnitExponent),
     Expression & bestUnit, Integer & bestUnitNorm, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
   /* This function tries to simplify a Unit product (given as the
@@ -315,14 +316,19 @@ static bool CanSimplifyUnitProduct(
     simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents.coefficientAtIndex(i)));
   }
   Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = simplifiedExponents.metrics();
-  bool isSimpler = simplifiedMetrics.supportSize < bestRemainderMetrics.supportSize ||
-    (simplifiedMetrics.supportSize == bestRemainderMetrics.supportSize &&
-     Integer::Addition(simplifiedMetrics.norm, entryUnitNorm).isLowerThan(Integer::Addition(bestRemainderMetrics.norm, bestUnitNorm)));
+  Unit::Dimension::Vector<Integer>::Metrics candidateMetrics = {
+    .supportSize = 1 + simplifiedMetrics.supportSize,
+    .norm = Integer::Addition(entryUnitNorm, simplifiedMetrics.norm)
+  };
+  bool isSimpler = candidateMetrics.supportSize < unitsMetrics.supportSize ||
+    (candidateMetrics.supportSize == unitsMetrics.supportSize &&
+     candidateMetrics.norm.isLowerThan(unitsMetrics.norm));
   if (isSimpler) {
     bestUnit = entryUnit;
     bestUnitNorm = entryUnitNorm;
     bestRemainderExponents = simplifiedExponents;
     bestRemainderMetrics = simplifiedMetrics;
+    unitsMetrics = candidateMetrics;
   }
   return isSimpler;
 }
@@ -361,22 +367,24 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     Unit::Dimension::Vector<Integer> unitsExponents = Unit::Dimension::Vector<Integer>::FromBaseUnits(units);
     Unit::Dimension::Vector<Integer>::Metrics unitsMetrics = unitsExponents.metrics();
     Unit::Dimension::Vector<Integer> bestRemainderExponents;
+    Unit::Dimension::Vector<Integer>::Metrics bestRemainderMetrics;
     while (unitsMetrics.supportSize > 1) {
       Expression bestUnit;
       Integer bestUnitNorm(0);
-      Unit::Dimension::Vector<Integer>::Metrics bestRemainderMetrics = {.supportSize = unitsMetrics.supportSize - 1, .norm = unitsMetrics.norm};
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
         Unit::Dimension::Vector<Integer> entryUnitExponents = Unit::Dimension::Vector<Integer>::FromBaseUnits(entryUnit.clone().shallowReduce(reductionContext));
         Integer entryUnitNorm = entryUnitExponents.metrics().norm;
         CanSimplifyUnitProduct(
-            unitsExponents, entryUnitExponents, entryUnitNorm, entryUnit,
+            unitsExponents, unitsMetrics,
+            entryUnitExponents, entryUnitNorm, entryUnit,
             Integer::Subtraction,
             bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderMetrics
             )
         ||
         CanSimplifyUnitProduct(
-            unitsExponents, entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)),
+            unitsExponents, unitsMetrics,
+            entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)),
             Integer::Addition,
             bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderMetrics
             );

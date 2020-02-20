@@ -204,6 +204,11 @@ Event getPlatformEvent() {
       return Termination;
     }
     if (event.type == SDL_KEYDOWN) {
+#if EPSILON_SDL_SCREEN_ONLY
+      if (IonSimulatorSDLKeyDetectedByScan(event.key.keysym.scancode)) {
+        continue;
+      }
+#endif
       return eventFromSDLKeyboardEvent(event.key);
     }
     if (event.type == SDL_TEXTINPUT) {

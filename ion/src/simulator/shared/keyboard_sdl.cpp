@@ -17,40 +17,53 @@ void IonSimulatorKeyboardKeyUp(int keyNumber) {
   Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
   sKeyboardState.clearKey(key);
 }
-#endif
 
 namespace Ion {
 namespace Keyboard {
 
-#if EPSILON_SDL_SCREEN_ONLY
-  class KeySDLKeyPair {
-  public:
-    constexpr KeySDLKeyPair(Ion::Keyboard::Key key, SDL_Scancode SDLKey) :
-      m_key(key),
-      m_SDLKey(SDLKey)
-    {}
-    Ion::Keyboard::Key key() const { return m_key; }
-    SDL_Scancode SDLKey() const { return m_SDLKey; }
-  private:
-    Ion::Keyboard::Key m_key;
-    SDL_Scancode m_SDLKey;
-  };
+class KeySDLKeyPair {
+public:
+  constexpr KeySDLKeyPair(Ion::Keyboard::Key key, SDL_Scancode SDLKey) :
+    m_key(key),
+    m_SDLKey(SDLKey)
+  {}
+  Ion::Keyboard::Key key() const { return m_key; }
+  SDL_Scancode SDLKey() const { return m_SDLKey; }
+private:
+  Ion::Keyboard::Key m_key;
+  SDL_Scancode m_SDLKey;
+};
 
-  constexpr static KeySDLKeyPair sKeyPairs[] = {
-    KeySDLKeyPair(Ion::Keyboard::Key::Down,      SDL_SCANCODE_DOWN),
-    KeySDLKeyPair(Ion::Keyboard::Key::Up,        SDL_SCANCODE_UP),
-    KeySDLKeyPair(Ion::Keyboard::Key::Left,      SDL_SCANCODE_LEFT),
-    KeySDLKeyPair(Ion::Keyboard::Key::Right,     SDL_SCANCODE_RIGHT),
-    KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_LSHIFT),
-    KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_RSHIFT),
-    KeySDLKeyPair(Ion::Keyboard::Key::EXE,       SDL_SCANCODE_RETURN),
-    KeySDLKeyPair(Ion::Keyboard::Key::Back,      SDL_SCANCODE_ESCAPE),
-    KeySDLKeyPair(Ion::Keyboard::Key::Toolbox,   SDL_SCANCODE_TAB),
-    KeySDLKeyPair(Ion::Keyboard::Key::Backspace, SDL_SCANCODE_BACKSPACE)
-  };
+constexpr static KeySDLKeyPair sKeyPairs[] = {
+  KeySDLKeyPair(Ion::Keyboard::Key::Down,      SDL_SCANCODE_DOWN),
+  KeySDLKeyPair(Ion::Keyboard::Key::Up,        SDL_SCANCODE_UP),
+  KeySDLKeyPair(Ion::Keyboard::Key::Left,      SDL_SCANCODE_LEFT),
+  KeySDLKeyPair(Ion::Keyboard::Key::Right,     SDL_SCANCODE_RIGHT),
+  KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_LSHIFT),
+  KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_RSHIFT),
+  KeySDLKeyPair(Ion::Keyboard::Key::EXE,       SDL_SCANCODE_RETURN),
+  KeySDLKeyPair(Ion::Keyboard::Key::Back,      SDL_SCANCODE_ESCAPE),
+  KeySDLKeyPair(Ion::Keyboard::Key::Toolbox,   SDL_SCANCODE_TAB),
+  KeySDLKeyPair(Ion::Keyboard::Key::Backspace, SDL_SCANCODE_BACKSPACE)
+};
 
-  constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);
+constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);
+
+}
+}
+
+bool IonSimulatorSDLKeyDetectedByScan(SDL_Scancode key) {
+  for (int i = 0; i < Ion::Keyboard::sNumberOfKeyPairs; i++) {
+    if (key == Ion::Keyboard::sKeyPairs[i].SDLKey()) {
+      return true;
+    }
+  }
+  return false;
+}
 #endif
+
+namespace Ion {
+namespace Keyboard {
 
 State scan() {
   // We need to tell SDL to get new state from the host OS

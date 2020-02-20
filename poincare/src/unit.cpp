@@ -91,6 +91,41 @@ Unit::Dimension::Vector<Integer>::Metrics UnitNode::Dimension::Vector<Integer>::
   return {.supportSize = supportSize, .norm = norm};
 }
 
+template<>
+Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseUnits(const Expression baseUnits) {
+  Vector<Integer> vector;
+  // Make sure the provided Expression is a Multiplication
+  Expression u = baseUnits;
+  if (u.type() == ExpressionNode::Type::Unit || u.type() == ExpressionNode::Type::Power) {
+    u = Multiplication::Builder(u.clone());
+  }
+  const int numberOfChildren = u.numberOfChildren();
+  for (int i = 0; i < numberOfChildren; i++) {
+    Expression factor = u.childAtIndex(i);
+
+    // Get the unit's exponent
+    Integer exponent(1);
+    if (factor.type() == ExpressionNode::Type::Power) {
+      Expression exp = factor.childAtIndex(1);
+      assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
+      exponent = static_cast<Rational &>(exp).signedIntegerNumerator();
+      factor = factor.childAtIndex(0);
+    }
+
+    // FIXME Remove this once this case may not occur anymore
+    // The leading factors may not be of Unit type
+    if (factor.type() != ExpressionNode::Type::Unit) {
+      continue;
+    }
+
+    // Fill the vector with the unit's exponent
+    const ptrdiff_t indexInTable = static_cast<UnitNode *>(factor.node())->dimension() - Unit::DimensionTable;
+    assert(0 <= indexInTable && indexInTable < NumberOfBaseUnits);
+    vector.setCoefficientAtIndex(indexInTable, exponent);
+  }
+  return vector;
+}
+
 bool UnitNode::Dimension::canParse(const char * symbol, size_t length,
     const Representative * * representative, const Prefix * * prefix) const
 {

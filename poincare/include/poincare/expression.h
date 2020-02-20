@@ -117,6 +117,7 @@ class Expression : public TreeHandle {
   friend class NAryExpressionNode;
   friend class StoreNode;
   friend class SymbolNode;
+  friend class UnitNode;
 
 public:
   static bool IsExpression() { return true; }

@@ -4,11 +4,15 @@
 
 namespace Calculation {
 
+void ScrollableThreeExpressionsView::resetMemoization() {
+  setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
+}
+
 void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation) {
   Poincare::Context * context = App::app()->localContext();
 
   // Clean the layouts to make room in the pool
-  setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
+  resetMemoization();
 
   // Create the input layout
   Poincare::Layout inputLayout = calculation->createInputLayout();

@@ -14,6 +14,7 @@ public:
     setMargins(Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin); // Left Right margins are already added by TableCell
     setBackgroundColor(KDColorWhite);
   }
+  void resetMemoization();
   void setCalculation(Calculation * calculation);
 private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
@@ -50,6 +51,7 @@ public:
   View * labelView() const override { return (View *)&m_view; }
 
   void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
+  void resetMemoization() { m_view.resetMemoization(); }
   void setCalculation(Calculation * calculation);
   void setDisplayCenter(bool display);
   ScrollableThreeExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }

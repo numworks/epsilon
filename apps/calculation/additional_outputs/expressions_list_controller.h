@@ -13,6 +13,7 @@ public:
   ExpressionsListController(Responder * parentResponder, EditExpressionController * editExpressionController);
 
   // Responder
+  void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
   //ListViewDataSource

@@ -313,6 +313,12 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   return m_displayOutput;
 }
 
+void Calculation::forceDisplayOutput(DisplayOutput d) {
+  m_displayOutput = d;
+  // Reset heights memoization as it might have changed when we modify the display output
+  m_height = -1;
+  m_expandedHeight = -1;
+}
 bool Calculation::shouldOnlyDisplayExactOutput() {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */

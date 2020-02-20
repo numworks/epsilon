@@ -70,7 +70,7 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   KDColor textColor = (n_args >= 4) ? ColorForTuple(args[3]) : KDColorBlack;
   KDColor backgroundColor = (n_args >= 5) ? ColorForTuple(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::sharedContext()->drawString(text, point, KDFont::LargeFont, textColor, backgroundColor);
+  KDIonContext::sharedContext()->drawString(text, point, (n_args >= 6) ?((mp_obj_get_int(args[5])) ? KDFont::SmallFont : KDFont::LargeFont) : KDFont::LargeFont, textColor, backgroundColor);
   /* Before and after execution of "modkandinsky_draw_string",
    * "micropython_port_vm_hook_loop" is called by "mp_execute_bytecode" and will
    * call "micropython_port_interrupt_if_needed" every 20000 calls.

@@ -20,6 +20,8 @@ void IonSimulatorKeyboardKeyUp(int keyNumber);
 
 void IonSimulatorEventsPushEvent(int eventNumber);
 
+bool IonSimulatorSDLKeyDetectedByScan(SDL_Scancode key);
+
 #endif
 
 void IonSimulatorCallbackDidRefresh();

@@ -15,6 +15,7 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  TELEMETRY_ID("Tangent");
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);
 private:
@@ -23,7 +24,7 @@ private:
   Shared::CurveView * curveView() override { return m_graphView; }
   BannerView * bannerView() override { return m_bannerView; };
   void reloadBannerView() override;
-  bool moveCursorHorizontally(int direction) override;
+  bool moveCursorHorizontally(int direction, bool fast = false) override;
   bool handleEnter() override;
   GraphView * m_graphView;
   BannerView * m_bannerView;

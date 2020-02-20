@@ -23,6 +23,7 @@ const char * TangentGraphController::title() {
 }
 
 void TangentGraphController::viewWillAppear() {
+  Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   m_graphView->drawTangent(true);
   m_graphView->setOkView(nullptr);
@@ -89,7 +90,7 @@ void TangentGraphController::reloadBannerView() {
   m_bannerView->reload();
 }
 
-bool TangentGraphController::moveCursorHorizontally(int direction) {
+bool TangentGraphController::moveCursorHorizontally(int direction, bool fast) {
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record);
 }
 

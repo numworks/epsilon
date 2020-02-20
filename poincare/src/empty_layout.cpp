@@ -13,7 +13,7 @@ void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   }
 }
 
-void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   LayoutNode * p = parent();
@@ -23,7 +23,7 @@ void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompu
   }
 }
 
-void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   LayoutNode * p = parent();
@@ -50,19 +50,19 @@ KDCoordinate EmptyLayoutNode::computeBaseline() {
   return (m_margins ? k_marginHeight : 0) + height()/2;
 }
 
-void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   /* The two cursor positions around an EmptyLayoutNode are equivalent, so both
    * should be checked. */
   assert(cursor->layoutNode() == this);
   LayoutCursor cursorResult = cursor->clone();
-  LayoutNode::moveCursorVertically(direction, &cursorResult, shouldRecomputeLayout, equivalentPositionVisited);
+  LayoutNode::moveCursorVertically(direction, &cursorResult, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   if (cursorResult.isDefined()) {
     cursor->setTo(&cursorResult);
     return;
   }
   LayoutCursor::Position newPosition = cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
   cursor->setPosition(newPosition);
-  LayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, false);
+  LayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, false, forSelection);
 }
 
 bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
@@ -86,7 +86,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
   }
 }
 
-void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   if (m_isVisible) {
     KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GreyBright;
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);

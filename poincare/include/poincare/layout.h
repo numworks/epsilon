@@ -2,8 +2,10 @@
 #define POINCARE_LAYOUT_REFERENCE_H
 
 #include <poincare/array_builder.h>
+#include <poincare/context.h>
 #include <poincare/layout_node.h>
 #include <poincare/tree_handle.h>
+#include <escher/palette.h>
 
 namespace Poincare {
 
@@ -30,20 +32,20 @@ public:
   bool isIdenticalTo(Layout l) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l); }
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {
-    return node()->draw(ctx, p, expressionColor, backgroundColor);
+  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Palette::Select) {
+    return node()->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-    return node()->render(ctx, p, expressionColor, backgroundColor);
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) {
+    return node()->render(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
-  KDSize layoutSize() { return node()->layoutSize(); }
-  KDPoint absoluteOrigin() { return node()->absoluteOrigin(); }
+  KDSize layoutSize() const { return node()->layoutSize(); }
+  KDPoint absoluteOrigin() const { return node()->absoluteOrigin(); }
   KDCoordinate baseline() { return node()->baseline(); }
   void invalidAllSizesPositionsAndBaselines() { return node()->invalidAllSizesPositionsAndBaselines(); }
 
   // Serialization
   int serializeForParsing(char * buffer, int bufferSize) const { return node()->serialize(buffer, bufferSize); }
-  int serializeParsedExpression(char * buffer, int bufferSize) const;
+  int serializeParsedExpression(char * buffer, int bufferSize, Context * context) const;
 
   // Layout properties
   typedef bool (*LayoutTest)(const Layout l);
@@ -59,6 +61,7 @@ public:
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
   bool removeGreySquaresFromAllMatrixAncestors() { return node()->removeGreySquaresFromAllMatrixAncestors(); }
+  bool removeGreySquaresFromAllMatrixChildren() { return node()->removeGreySquaresFromAllMatrixChildren(); }
   bool addGreySquaresToAllMatrixAncestors() { return node()->addGreySquaresToAllMatrixAncestors(); }
   Layout layoutToPointWhenInserting(Expression * correspondingExpression) {
     // Pointer to correspondingExpr because expression.h includes layout.h

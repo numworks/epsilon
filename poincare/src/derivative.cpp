@@ -46,7 +46,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preference
   T functionValue = approximateWithArgument(evaluationArgument, context, complexFormat, angleUnit);
   // No complex/matrix version of Derivative
   if (std::isnan(evaluationArgument) || std::isnan(functionValue)) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
 
   T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
@@ -71,7 +71,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preference
       || (std::fabs(result) < k_maxErrorRateOnApproximation && std::fabs(error) > std::fabs(result))
       || (std::fabs(result) >= k_maxErrorRateOnApproximation && std::fabs(error/result) > k_maxErrorRateOnApproximation))
   {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   if (std::fabs(error) < min) {
@@ -154,6 +154,7 @@ T DerivativeNode::riddersApproximation(Context * context, Preferences::ComplexFo
 Expression Derivative::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

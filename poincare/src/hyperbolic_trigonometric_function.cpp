@@ -11,6 +11,7 @@ Expression HyperbolicTrigonometricFunctionNode::shallowReduce(ReductionContext r
 Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

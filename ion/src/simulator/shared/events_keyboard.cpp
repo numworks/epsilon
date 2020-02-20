@@ -124,6 +124,18 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return Ans;
     }
   }
+  if (event.keysym.mod & KMOD_SHIFT) {
+    switch(event.keysym.sym) {
+      case SDLK_UP:
+        return ShiftUp;
+      case SDLK_DOWN:
+        return ShiftDown;
+      case SDLK_LEFT:
+        return ShiftLeft;
+      case SDLK_RIGHT:
+        return ShiftRight;
+    }
+  }
   switch(event.keysym.sym) {
     case SDLK_UP:
       return Up;
@@ -196,10 +208,6 @@ Event getPlatformEvent() {
     }
     if (event.type == SDL_TEXTINPUT) {
       return eventFromSDLTextInputEvent(event.text);
-    }
-    if (event.type == SDL_APP_WILLENTERFOREGROUND) {
-      IonSimulatorTelemetryEvent("Calculator");
-      return None;
     }
   }
   return None;

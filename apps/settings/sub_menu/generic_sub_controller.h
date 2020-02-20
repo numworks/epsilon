@@ -10,9 +10,9 @@ class GenericSubController : public ViewController, public ListViewDataSource, p
 public:
   GenericSubController(Responder * parentResponder);
   const char * title() override;
-  View * view() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  View * view() override { return &m_selectableTableView; }
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;

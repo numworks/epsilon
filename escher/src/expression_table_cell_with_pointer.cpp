@@ -2,11 +2,11 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(I18n::Message accessoryMessage, Layout layout) :
-  ExpressionTableCell(layout),
+ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(Responder * parentResponder, I18n::Message accessoryMessage, Layout layout) :
+  ExpressionTableCell(parentResponder, layout),
   m_accessoryView(KDFont::SmallFont, accessoryMessage, 0.0f, 0.5f, Palette::GreyDark, KDColorWhite)
 {
-  if (layout == Layout::Horizontal) {
+  if (layout != Layout::Vertical) {
     m_accessoryView.setAlignment(1.0f, 0.5f);
   }
 }

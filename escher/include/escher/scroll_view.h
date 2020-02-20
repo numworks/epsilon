@@ -6,6 +6,13 @@
 #include <escher/scroll_view_indicator.h>
 
 class ScrollView : public View {
+
+/* TODO: Should we add a reload method that forces the relayouting of the
+ * subviews? Or should ScrollView::setFrame always force the layouting of the
+ * subviews ? Because the scroll view frame might not change but its content
+ * might need to be relayouted.
+ * cf TableView, InputViewController, EditExpressionController. */
+
 public:
   ScrollView(View * contentView, ScrollViewDataSource * dataSource);
   ScrollView(ScrollView&& other);
@@ -35,7 +42,7 @@ public:
     virtual ~Decorator() = default;
     virtual int numberOfIndicators() const { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
-    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) { return frame; }
+    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
   };
 
@@ -44,7 +51,7 @@ public:
     BarDecorator() : m_verticalBar(), m_horizontalBar() {}
     int numberOfIndicators() const override { return 2; }
     View * indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) override;
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
   private:
@@ -63,7 +70,7 @@ public:
     {}
     int numberOfIndicators() const override { return 4; }
     View * indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) override;
     void setBackgroundColor(KDColor c) override;
   private:
     ScrollViewArrow m_topArrow;
@@ -96,7 +103,7 @@ protected:
     return m_frame.height() - m_topMargin - m_bottomMargin;
   }
   KDRect visibleContentRect();
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;

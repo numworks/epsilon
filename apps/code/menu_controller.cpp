@@ -79,6 +79,7 @@ void MenuController::didBecomeFirstResponder() {
 }
 
 void MenuController::viewWillAppear() {
+  ViewController::viewWillAppear();
   updateAddScriptRowDisplay();
 }
 
@@ -154,6 +155,10 @@ void MenuController::openConsoleWithScript(Script script) {
 
 void MenuController::scriptContentEditionDidFinish() {
   reloadConsole();
+}
+
+void MenuController::willExitApp() {
+  m_editorController.willExitApp();
 }
 
 int MenuController::numberOfRows() const {
@@ -284,24 +289,6 @@ void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int pr
 bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE
     || event == Ion::Events::Down || event == Ion::Events::Up;
-}
-
-bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Right
-      && textField->isEditing()
-      && textField->cursorLocation() == textField->text() + textField->draftTextLength()) {
-    return true;
-  }
-  if (event == Ion::Events::Clear && textField->isEditing()) {
-    constexpr size_t k_bufferSize = 4;
-    char buffer[k_bufferSize] = {'.', 0, 0, 0};
-    assert(k_bufferSize >= 1 + strlen(ScriptStore::k_scriptExtension) + 1);
-    strlcpy(&buffer[1], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension) + 1);
-    textField->setText(buffer);
-    textField->setCursorLocation(textField->text());
-    return true;
-  }
-  return false;
 }
 
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

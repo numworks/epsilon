@@ -1,5 +1,9 @@
 # Define standard compilation rules
 
+.PHONY: official_authorization
+official_authorization:
+	@echo "CAUTION: You are about to build an official NumWorks firmware. Distribution of such firmware by a third party is prohibited. Are you sure you want to proceed? Please type "yes" to confirm." && read ans && [ $${ans:-no} = yes ]
+
 $(eval $(call rule_for, \
   AS, %.o, %.s, \
   $$(CC) $$(SFLAGS) -c $$< -o $$@ \
@@ -20,6 +24,11 @@ $(eval $(call rule_for, \
 $(eval $(call rule_for, \
   OCC, %.o, %.m, \
   $$(CC) $$(CFLAGS) $$(SFLAGS) -c $$< -o $$@ \
+))
+
+$(eval $(call rule_for, \
+  OCC, %.o, %.mm, \
+  $$(CXX) $$(CXXFLAGS) $$(SFLAGS) -c $$< -o $$@ \
 ))
 
 ifeq ($(OS),Windows_NT)

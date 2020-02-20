@@ -17,6 +17,7 @@ public:
 
   // ViewController
   const char * title() override;
+  TELEMETRY_ID("Box");
 private:
   Responder * tabController() const override;
   void reloadBannerView() override;

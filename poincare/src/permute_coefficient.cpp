@@ -34,7 +34,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context * context, Pr
   T n = nInput.toScalar();
   T k = kInput.toScalar();
   if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   if (k > n) {
     return Complex<T>::Builder(0.0);
@@ -53,6 +53,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context * context, Pr
 Expression PermuteCoefficient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

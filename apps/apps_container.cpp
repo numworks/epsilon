@@ -1,6 +1,7 @@
 #include "apps_container.h"
 #include "apps_container_storage.h"
 #include "global_preferences.h"
+#include "exam_mode_configuration.h"
 #include <ion.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
@@ -32,7 +33,7 @@ AppsContainer::AppsContainer() :
   m_hardwareTestSnapshot(),
   m_usbConnectedSnapshot()
 {
-  m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
 #if __EMSCRIPTEN__
   /* AppsContainer::poincareCircuitBreaker uses Ion::Keyboard::scan(), which
    * calls emscripten_sleep. If we set the poincare circuit breaker, we would
@@ -208,7 +209,7 @@ bool AppsContainer::switchTo(App::Snapshot * snapshot) {
 
 void AppsContainer::run() {
   KDRect screenRect = KDRect(0, 0, Ion::Display::Width, Ion::Display::Height);
-  window()->setFrame(screenRect);
+  window()->setFrame(screenRect, false);
   /* We push a white screen here, because fetching the exam mode takes some time
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
@@ -325,16 +326,9 @@ void AppsContainer::redrawWindow() {
 }
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
-  assert(examMode == GlobalPreferences::ExamMode::Standard || examMode == GlobalPreferences::ExamMode::Dutch);
+  assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
   reset();
-  /* The Dutch exam mode LED is supposed to be orange but we can only make
-   * blink "pure" colors: with RGB leds on or off (as the PWM is used for
-   * blinking). The closest "pure" color is Yellow. Moreover, Orange LED is
-   * already used when the battery is charging. Using yellow, we can assert
-   * that the yellow LED only means that Dutch exam mode is on and avoid
-   * confusing states when the battery is charging and states when the Dutch
-   * exam mode is on. */
-  Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed);
+  Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
   Ion::LED::setBlinking(1000, 0.1f);
 }
 

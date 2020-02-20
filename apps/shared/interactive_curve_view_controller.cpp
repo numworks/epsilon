@@ -35,38 +35,29 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
 {
 }
 
-float InteractiveCurveViewController::addMargin(float x, float range, bool isVertical, bool isMin) {
-  /* We are adding margins. Let's name:
-   *   - The current range: rangeBefore
-   *   - The next range: rangeAfter
-   *   - The bottom margin ratio with which we will evaluate if a point is too
-   *       low on the screen: bottomRatioAfter
-   *   - The bottom margin ratio with which we will evaluate if a point is too
-   *       high on the screen: topRatioAfter
-   *   - The ratios we need to use to create the margins: bottomRatioBefore and
-   *       topRatioBefore
-   *
-   * We want to add margins so that:
-   *   bottomRatioAfter*rangeAfter == bottomRatioBefore * rangeBefore
-   *   topRatioAfter*rangeAfter == topRatioBefore * rangeBefore
-   * Knowing that:
-   *   rangeAfter = (1+bottomRatioBefore+topRatioBefore)*rangeBefore
-   *
-   * We thus have:
-   *   bottomRatioBefore = bottomRatioAfter / (1-bottomRatioAfter-topRatioAfter)
-   *   topRatioBefore = topRatioAfter / (1-bottomRatioAfter-topRatioAfter)
-   *
-   * If we just used bottomRatioBefore = bottomRatioAfter and
-   * topRatioBefore = topRatioAfter, we would create too small margins and the
-   * controller might need to pan right after a Y auto calibration. */
-
+float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) {
+  /* The provided min or max range limit y is altered by adding a margin.
+   * In pixels, the view's height occupied by the vertical range is equal to
+   *   viewHeight - topMargin - bottomMargin.
+   * Hence one pixel must correspond to
+   *   range / (viewHeight - topMargin - bottomMargin).
+   * Finally, adding topMargin pixels of margin, say at the top, comes down
+   * to adding
+   *   range * topMargin / (viewHeight - topMargin - bottomMargin)
+   * which is equal to
+   *   range * topMarginRatio / ( 1 - topMarginRatio - bottomMarginRatio)
+   * where
+   *   topMarginRation = topMargin / viewHeight
+   *   bottomMarginRatio = bottomMargin / viewHeight.
+   * The same goes horizontally.
+   */
   float topMarginRatio = isVertical ? cursorTopMarginRatio() : k_cursorRightMarginRatio;
   float bottomMarginRatio = isVertical ? cursorBottomMarginRatio() : k_cursorLeftMarginRatio;
   assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
   float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
   float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
   ratio = ratio / ratioDenominator;
-  return x+ratio*range;
+  return y + ratio * range;
 }
 
 const char * InteractiveCurveViewController::title() {
@@ -142,6 +133,7 @@ Responder * InteractiveCurveViewController::defaultController() {
 }
 
 void InteractiveCurveViewController::viewWillAppear() {
+  SimpleInteractiveCurveViewController::viewWillAppear();
   uint32_t newModelVersion = modelVersion();
   if (*m_modelVersion != newModelVersion) {
     if (*m_modelVersion == 0 || numberOfCurves() == 1 || shouldSetDefaultOnModelChange()) {
@@ -174,7 +166,8 @@ void InteractiveCurveViewController::viewDidDisappear() {
 }
 
 void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
+  if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
     curveView()->selectMainView(false);
     header()->setSelectedButton(-1);
     curveView()->reload();

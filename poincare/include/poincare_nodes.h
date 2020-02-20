@@ -6,6 +6,7 @@
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
+#include <poincare/based_integer.h>
 #include <poincare/binom_cdf.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binom_pdf.h>
@@ -82,6 +83,8 @@
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>
+#include <poincare/unit.h>
+#include <poincare/unit_convert.h>
 #include <poincare/unreal.h>
 #include <poincare/variable_context.h>
 

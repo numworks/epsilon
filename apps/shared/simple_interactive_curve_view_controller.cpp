@@ -45,7 +45,7 @@ bool SimpleInteractiveCurveViewController::handleZoom(Ion::Events::Event event) 
 
 bool SimpleInteractiveCurveViewController::handleLeftRightEvent(Ion::Events::Event event) {
   int direction = event == Ion::Events::Left ? -1 : 1;
-  if (moveCursorHorizontally(direction)) {
+  if (moveCursorHorizontally(direction, Ion::Events::isLongRepetition())) {
     interactiveCurveViewRange()->panToMakePointVisible(
       m_cursor->x(), m_cursor->y(),
       cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio

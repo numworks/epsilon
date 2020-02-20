@@ -18,10 +18,10 @@ public:
   Type type() const override { return Type::IntegralLayout; }
 
   // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
+  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
+  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override { return lowerBoundLayout(); }
@@ -56,7 +56,7 @@ private:
   LayoutNode * differentialLayout() { return childAtIndex(k_differentialLayoutIndex); } // dx
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); } // a
   LayoutNode * upperBoundLayout() { return childAtIndex(3); } // b
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
 class IntegralLayout final : public Layout {

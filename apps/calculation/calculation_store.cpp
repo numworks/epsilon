@@ -78,8 +78,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
    * want to keep Ans symbol in the calculation store. */
   const char * inputSerialization = nextSerializationLocation;
   {
-    Expression input = Expression::Parse(text).replaceSymbolWithExpression(Symbol::Ans(), ans);
-    if (!serializeExpression(input, nextSerializationLocation, &newCalculationsLocation)) {
+    Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
+    if (!pushSerializeExpression(input, nextSerializationLocation, &newCalculationsLocation)) {
       /* If the input does not fit in the store (event if the current
        * calculation is the only calculation), just replace the calculation with
        * undef. */
@@ -89,16 +89,27 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   }
 
   // Compute and serialize the outputs
+  /* The serialized outputs are:
+   * - the exact ouput
+   * - the approximate output with the maximal number of significant digits
+   * - the approximate output with the displayed number of significant digits */
   {
-    Expression outputs[] = {Expression(), Expression()};
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, false);
-    for (int i = 0; i < 2; i++) {
-      if (!serializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation)) {
+    // Outputs hold exact output, approximate output and its duplicate
+    constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
+    Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
+    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    outputs[2] = outputs[1];
+    int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
+    for (int i = 0; i < numberOfOutputs; i++) {
+      if (i == numberOfOutputs - 1) {
+        numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
+      }
+      if (!pushSerializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation, numberOfSignificantDigits)) {
         /* If the exat/approximate output does not fit in the store (event if the
          * current calculation is the only calculation), replace the output with
          * undef if it fits, else replace the whole calcualtion with undef. */
         Expression undef = Undefined::Builder();
-        if (!serializeExpression(undef, nextSerializationLocation, &newCalculationsLocation)) {
+        if (!pushSerializeExpression(undef, nextSerializationLocation, &newCalculationsLocation)) {
           return emptyStoreAndPushUndef(context);
         }
       }
@@ -162,11 +173,10 @@ Expression CalculationStore::ansExpression(Context * context) {
    * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
    * parsed), ans is replaced by the approximation output when any Store or
    * Equal expression appears. */
-  bool exactOuptutInvolvesStoreEqual = mostRecentCalculation->exactOutput().recursivelyMatches([](const Expression e, Context * context) {
-          return e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
-        }, context, false);
+  Expression e = mostRecentCalculation->exactOutput();
+  bool exactOuptutInvolvesStoreEqual = e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
   if (mostRecentCalculation->input().recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
-    return mostRecentCalculation->approximateOutput(context);
+    return mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
   }
   return mostRecentCalculation->exactOutput();
 }
@@ -183,12 +193,20 @@ Calculation * CalculationStore::bufferCalculationAtIndex(int i) {
   return nullptr;
 }
 
-bool CalculationStore::serializeExpression(Expression e, char * location, char * * newCalculationsLocation) {
+bool CalculationStore::pushSerializeExpression(Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits) {
   assert(m_slidedBuffer);
-  return pushExpression(
-      [](char * location, size_t locationSize, void * e) {
-        return PoincareHelpers::Serialize(*(Expression *)e, location, locationSize) < (int)locationSize-1;
-      }, &e, location, newCalculationsLocation);
+  assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
+  bool expressionIsPushed = false;
+  while (true) {
+    size_t locationSize = *newCalculationsLocation - location;
+    expressionIsPushed = (PoincareHelpers::Serialize(e, location, locationSize, numberOfSignificantDigits) < (int)locationSize-1);
+    if (expressionIsPushed || *newCalculationsLocation >= m_buffer + k_bufferSize) {
+      break;
+    }
+    *newCalculationsLocation = *newCalculationsLocation + deleteLastCalculation();
+    assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
+  }
+  return expressionIsPushed;
 }
 
 char * CalculationStore::slideCalculationsToEndOfBuffer() {
@@ -229,20 +247,6 @@ const char * CalculationStore::lastCalculationPosition(const char * calculations
     calculationIndex++;
   }
   return reinterpret_cast<const char *>(c);
-}
-
-bool CalculationStore::pushExpression(ValueCreator valueCreator, Expression * expression, char * location, char * * newCalculationsLocation) {
-  assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
-  bool expressionIsPushed = false;
-  while (true) {
-    expressionIsPushed = valueCreator(location, *newCalculationsLocation - location, expression);
-    if (expressionIsPushed || *newCalculationsLocation >= m_buffer + k_bufferSize) {
-      break;
-    }
-    *newCalculationsLocation = *newCalculationsLocation + deleteLastCalculation();
-    assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
-  }
-  return expressionIsPushed;
 }
 
 Shared::ExpiringPointer<Calculation> CalculationStore::emptyStoreAndPushUndef(Context * context) {

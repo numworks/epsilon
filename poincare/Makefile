@@ -30,6 +30,7 @@ poincare_src += $(addprefix poincare/src/,\
 
 poincare_src += $(addprefix poincare/src/,\
   init.cpp \
+  beta_function.cpp \
   binomial_distribution.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
@@ -46,6 +47,7 @@ poincare_src += $(addprefix poincare/src/,\
   arc_sine.cpp \
   arc_tangent.cpp \
   arithmetic.cpp \
+  based_integer.cpp \
   binom_cdf.cpp \
   binomial_coefficient.cpp \
   binomial_distribution_function.cpp \
@@ -122,6 +124,7 @@ poincare_src += $(addprefix poincare/src/,\
   random.cpp \
   rational.cpp \
   real_part.cpp \
+  rightwards_arrow_expression.cpp \
   round.cpp \
   sequence.cpp \
   serialization_helper.cpp \
@@ -141,6 +144,8 @@ poincare_src += $(addprefix poincare/src/,\
   trigonometry.cpp \
   trigonometry_cheat_table.cpp \
   undefined.cpp \
+  unit.cpp \
+  unit_convert.cpp \
   unreal.cpp \
   variable_context.cpp \
 )

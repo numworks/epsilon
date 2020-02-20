@@ -50,9 +50,9 @@ View * BufferTextViewWithTextField::subviewAtIndex(int index) {
   return views[index];
 }
 
-void BufferTextViewWithTextField::layoutSubviews() {
-  m_bufferTextView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, k_bufferTextWidth, bounds().height()));
-  m_textField.setFrame(textFieldFrame());
+void BufferTextViewWithTextField::layoutSubviews(bool force) {
+  m_bufferTextView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, k_bufferTextWidth, bounds().height()), force);
+  m_textField.setFrame(textFieldFrame(), force);
 }
 
 KDRect BufferTextViewWithTextField::textFieldFrame() const {

@@ -38,11 +38,21 @@ public:
     assert(i < Poincare::Expression::k_maxNumberOfVariables && m_variables[i][0] != 0);
     return m_variables[i];
   }
+  const char * userVariableAtIndex(size_t i) {
+    assert(i < Poincare::Expression::k_maxNumberOfVariables && m_userVariables[i][0] != 0);
+    return m_userVariables[i];
+  }
+  int numberOfUserVariables() const {
+    return m_numberOfUserVariables;
+  }
+  bool userVariablesUsed() const {
+    return m_userVariablesUsed;
+  }
   int numberOfSolutions() const {
     return m_numberOfSolutions;
   }
   /* Exact resolution */
-  Error exactSolve(Poincare::Context * context);
+  Error exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols);
   /* The exact solutions are displayed in a table with 2 layouts: an exact
    * Layout and an approximate layout. For example, 'sqrt(2)' and '1.414213'.
    * The boolean exactLayout indicates if we want the exact layout or the
@@ -65,8 +75,8 @@ public:
   double intervalBound(int index) const;
   void setIntervalBound(int index, double value);
   double approximateSolutionAtIndex(int i);
-  void approximateSolve(Poincare::Context * context);
-  bool haveMoreApproximationSolutions(Poincare::Context * context);
+  void approximateSolve(Poincare::Context * context, bool shouldReplaceFuncionsButNotSymbols);
+  bool haveMoreApproximationSolutions(Poincare::Context * context, bool solveWithoutContext);
 
   void tidy() override;
 
@@ -84,6 +94,7 @@ private:
   Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
 
+  Error privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols);
   Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
   Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
   void tidySolution();
@@ -93,6 +104,7 @@ private:
   mutable Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
+  char m_userVariables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   int m_numberOfSolutions;
   Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
@@ -100,6 +112,8 @@ private:
   bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
   double m_intervalApproximateSolutions[2];
   double m_approximateSolutions[k_maxNumberOfApproximateSolutions];
+  int m_numberOfUserVariables;
+  bool m_userVariablesUsed;
 };
 
 }

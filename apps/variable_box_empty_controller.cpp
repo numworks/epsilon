@@ -28,6 +28,10 @@ void VariableBoxEmptyController::VariableBoxEmptyView::setLayout(Poincare::Layou
   m_layoutExample.setLayout(layout);
 }
 
+void VariableBoxEmptyController::VariableBoxEmptyView::drawRect(KDContext * ctx, KDRect rect) const {
+  drawBorderOfRect(ctx, bounds(), Palette::GreyBright);
+}
+
 int VariableBoxEmptyController::VariableBoxEmptyView::numberOfSubviews() const {
   return k_numberOfMessages+1;
 }
@@ -42,20 +46,20 @@ View * VariableBoxEmptyController::VariableBoxEmptyView::subviewAtIndex(int inde
   return &m_messages[index-1];
 }
 
-void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews() {
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
+void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews(bool force) {
+  KDCoordinate width = bounds().width() - 2*k_separatorThickness;
+  KDCoordinate height = bounds().height() - 2*k_separatorThickness;
   KDCoordinate textHeight = k_font->glyphSize().height();
   KDCoordinate layoutHeight = m_layoutExample.minimalSizeForOptimalDisplay().height();
   KDCoordinate margin = (height - k_numberOfMessages*textHeight-layoutHeight)/2;
-  m_layoutExample.setFrame(KDRect(0, margin+k_layoutRowIndex*textHeight, width, layoutHeight));
-  KDCoordinate currentHeight = 0;
+  m_layoutExample.setFrame(KDRect(k_separatorThickness, k_separatorThickness+margin+k_layoutRowIndex*textHeight, width, layoutHeight), force);
+  KDCoordinate currentHeight = k_separatorThickness;
   for (uint8_t i = 0; i < k_numberOfMessages; i++) {
     if (i == k_layoutRowIndex) {
       currentHeight += layoutHeight;
     }
     KDCoordinate h = i == 0 || i == k_numberOfMessages - 1 ? textHeight+margin : textHeight;
-    m_messages[i].setFrame(KDRect(0, currentHeight, width, h));
+    m_messages[i].setFrame(KDRect(k_separatorThickness, currentHeight, width, h), force);
     currentHeight += h;
   }
 }

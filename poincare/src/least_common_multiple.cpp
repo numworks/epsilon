@@ -32,7 +32,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context * context, P
   int a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(0), &isUndefined, context, complexFormat, angleUnit);
   int b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(1), &isUndefined, context, complexFormat, angleUnit);
   if (isUndefined) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   if (a == 0 || b == 0) {
     return Complex<T>::Builder(0.0);
@@ -56,6 +56,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context * context, P
 Expression LeastCommonMultiple::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

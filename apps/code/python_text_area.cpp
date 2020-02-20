@@ -1,11 +1,13 @@
 #include "python_text_area.h"
 #include "app.h"
+#include <escher/palette.h>
+#include <ion/unicode/utf8_helper.h>
+#include <python/port/port.h>
 
 extern "C" {
 #include "py/nlr.h"
 #include "py/lexer.h"
 }
-#include <python/port/port.h>
 #include <stdlib.h>
 
 namespace Code {
@@ -17,6 +19,7 @@ constexpr KDColor KeywordColor = KDColor::RGB24(0xFF000C);
 constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
+constexpr KDColor HighlightColor = Palette::Select;
 
 static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
 
@@ -39,40 +42,15 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   return KDColorBlack;
 }
 
-static inline size_t TokenLength(mp_lexer_t * lex) {
-  if (lex->tok_kind == MP_TOKEN_STRING) {
-    return lex->vstr.len + 2;
+static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
+  /* The lexer stores the beginning of the current token and of the next token,
+   * so we just use that. */
+  if (lex->line > 1) {
+    /* The next token is on the next line, so we cannot just make the difference
+     * of the columns. */
+    return UTF8Helper::CodePointSearch(tokenPosition, '\n') - tokenPosition;
   }
-  if (lex->vstr.len > 0) {
-    return lex->vstr.len;
-  }
-  switch (lex->tok_kind) {
-    case MP_TOKEN_OP_DBL_STAR:
-    case MP_TOKEN_OP_DBL_SLASH:
-    case MP_TOKEN_OP_DBL_LESS:
-    case MP_TOKEN_OP_DBL_MORE:
-    case MP_TOKEN_OP_LESS_EQUAL:
-    case MP_TOKEN_OP_MORE_EQUAL:
-    case MP_TOKEN_OP_DBL_EQUAL:
-    case MP_TOKEN_OP_NOT_EQUAL:
-    case MP_TOKEN_DEL_PLUS_EQUAL:
-    case MP_TOKEN_DEL_MINUS_EQUAL:
-    case MP_TOKEN_DEL_STAR_EQUAL:
-    case MP_TOKEN_DEL_SLASH_EQUAL:
-    case MP_TOKEN_DEL_PERCENT_EQUAL:
-    case MP_TOKEN_DEL_AMPERSAND_EQUAL:
-    case MP_TOKEN_DEL_PIPE_EQUAL:
-    case MP_TOKEN_DEL_CARET_EQUAL:
-    case MP_TOKEN_DEL_MINUS_MORE:
-      return 2;
-    case MP_TOKEN_DEL_DBL_SLASH_EQUAL:
-    case MP_TOKEN_DEL_DBL_MORE_EQUAL:
-    case MP_TOKEN_DEL_DBL_LESS_EQUAL:
-    case MP_TOKEN_DEL_DBL_STAR_EQUAL:
-      return 3;
-    default:
-      return 1;
-  }
+  return lex->column - lex->tok_column;
 }
 
 void PythonTextArea::ContentView::loadSyntaxHighlighter() {
@@ -95,7 +73,7 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 #define LOG_DRAW(...)
 #endif
 
-void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t byteLength, int fromColumn, int toColumn) const {
+void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t byteLength, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const {
   LOG_DRAW("Drawing \"%.*s\"\n", byteLength, text);
 
   if (!m_pythonDelegate->isPythonUser(this)) {
@@ -108,46 +86,81 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       lineStart,
       minPointer(text + byteLength, lineEnd) - lineStart,
       StringColor,
-      BackgroundColor
+      BackgroundColor,
+      selectionStart,
+      selectionEnd,
+      HighlightColor
     );
+    return;
+  }
+
+  /* We're using the MicroPython lexer to do syntax highlighting on a per-line
+   * basis. This can work, however the MicroPython lexer won't accept a line
+   * starting with a whitespace. So we're discarding leading whitespaces
+   * beforehand. */
+  const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
+  if (firstNonSpace != text) {
+    // Color the discarded leading whitespaces
+    const char * spacesStart = UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
+    drawStringAt(
+        ctx,
+        line,
+        fromColumn,
+        spacesStart,
+        minPointer(text + byteLength, firstNonSpace) - spacesStart,
+        StringColor,
+        BackgroundColor,
+        selectionStart,
+        selectionEnd,
+        HighlightColor);
+  }
+  if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
     return;
   }
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    /* We're using the MicroPython lexer to do syntax highlighting on a per-line
-     * basis. This can work, however the MicroPython lexer won't accept a line
-     * starting with a whitespace. So we're discarding leading whitespaces
-     * beforehand. */
-    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
-    if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
-      nlr_pop();
-      return;
-    }
-
     mp_lexer_t * lex = mp_lexer_new_from_str_len(0, firstNonSpace, byteLength - (firstNonSpace - text), 0);
     LOG_DRAW("Pop token %d\n", lex->tok_kind);
 
     const char * tokenFrom = firstNonSpace;
     size_t tokenLength = 0;
+    const char * tokenEnd = firstNonSpace;
     while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END) {
-
       tokenFrom = firstNonSpace + lex->tok_column - 1;
-      tokenLength = TokenLength(lex);
+      if (tokenFrom != tokenEnd) {
+        // We passed over white spaces, we need to color them
+        drawStringAt(
+            ctx,
+            line,
+            UTF8Helper::GlyphOffsetAtCodePoint(text, tokenEnd),
+            tokenEnd,
+            minPointer(text + byteLength, tokenFrom) - tokenEnd,
+            StringColor,
+            BackgroundColor,
+            selectionStart,
+            selectionEnd,
+            HighlightColor);
+      }
+      tokenLength = TokenLength(lex, tokenFrom);
+      tokenEnd = tokenFrom + tokenLength;
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
         UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
         tokenFrom,
         tokenLength,
         TokenColor(lex->tok_kind),
-        BackgroundColor
-      );
+        BackgroundColor,
+        selectionStart,
+        selectionEnd,
+        HighlightColor);
 
       mp_lexer_to_next(lex);
       LOG_DRAW("Pop token %d\n", lex->tok_kind);
     }
 
     tokenFrom += tokenLength;
+
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
       drawStringAt(ctx, line,
@@ -155,7 +168,10 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
           tokenFrom,
           text + byteLength - tokenFrom,
           CommentColor,
-          BackgroundColor);
+          BackgroundColor,
+          selectionStart,
+          selectionEnd,
+          HighlightColor);
     }
 
     mp_lexer_free(lex);
@@ -163,13 +179,13 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   }
 }
 
-KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
+KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position, bool includeFollowingLines) const {
   /* Mark the whole line as dirty.
    * TextArea has a very conservative approach and only dirties the surroundings
    * of the current character. That works for plain text, but when doing syntax
    * highlighting, you may want to redraw the surroundings as well. For example,
    * if editing "def foo" into "df foo", you'll want to redraw "df". */
-  KDRect baseDirtyRect = TextArea::ContentView::dirtyRectFromPosition(position, lineBreak);
+  KDRect baseDirtyRect = TextArea::ContentView::dirtyRectFromPosition(position, includeFollowingLines);
   return KDRect(
     bounds().x(),
     baseDirtyRect.y(),

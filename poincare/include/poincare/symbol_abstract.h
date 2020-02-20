@@ -24,7 +24,6 @@ namespace Poincare {
  * */
 
 class SymbolAbstractNode : public ExpressionNode {
-  friend class Store;
 public:
   virtual const char * name() const = 0;
   size_t size() const override;
@@ -46,8 +45,11 @@ public:
   }
 #endif
 
-protected:
+private:
   virtual size_t nodeSize() const = 0;
+
+  // Layout
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 };
 
 /* WARNING: symbol abstract cannot have any virtual methods. Otherwise,
@@ -73,7 +75,7 @@ protected:
   static T Builder(const char * name, int length);
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
-  static Expression Expand(const SymbolAbstract & symbol, Context * context, bool clone);
+  static Expression Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 };
 
 }

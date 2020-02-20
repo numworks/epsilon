@@ -1,6 +1,3 @@
-#include <quiz.h>
-#include <ion.h>
-#include <assert.h>
 #include "helper.h"
 
 using namespace Poincare;
@@ -10,6 +7,12 @@ void assert_expression_serialize_to(Poincare::Expression expression, const char 
   char buffer[bufferSize];
   expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
   quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0, serialization);
+}
+
+QUIZ_CASE(poincare_serialization_based_integer) {
+  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Decimal), "23");
+  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Binary), "0b10111");
+  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Hexadecimal), "0x17");
 }
 
 QUIZ_CASE(poincare_serialization_rational) {

@@ -5,7 +5,7 @@
 namespace Poincare {
 
 // LayoutNode
-void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Right) {
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
@@ -16,7 +16,7 @@ void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   }
 }
 
-void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Left) {
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
@@ -84,7 +84,7 @@ bool CodePointLayoutNode::canBeOmittedMultiplicationLeftFactor() const {
   if (isMultiplicationCodePoint()) {
     return false;
   }
-  return LayoutNode::canBeOmittedMultiplicationRightFactor();
+  return LayoutNode::canBeOmittedMultiplicationLeftFactor();
 }
 
 bool CodePointLayoutNode::canBeOmittedMultiplicationRightFactor() const {
@@ -103,7 +103,7 @@ KDCoordinate CodePointLayoutNode::computeBaseline() {
   return m_font->glyphSize().height()/2;
 }
 
-void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
   char buffer[bufferSize];
   SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);

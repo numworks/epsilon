@@ -1,6 +1,7 @@
 #include "expression_model.h"
 #include "global_context.h"
 #include "poincare_helpers.h"
+#include <apps/apps_container.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/undefined.h>
 #include <string.h>
@@ -23,13 +24,19 @@ ExpressionModel::ExpressionModel() :
 
 void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol) const {
   Expression e = expressionClone(record);
-  if (e.isUninitialized() && bufferSize > 0) {
-    buffer[0] = 0;
-  } else {
-    if (symbol != 0 && !e.isUninitialized()) {
-      e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), Symbol::Builder(symbol));
+  if (e.isUninitialized()) {
+    if (bufferSize > 0) {
+      buffer[0] = 0;
     }
-    e.serialize(buffer, bufferSize);
+    return;
+  }
+  if (symbol != 0) {
+    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
+  }
+  int serializedSize = e.serialize(buffer, bufferSize);
+  if (serializedSize >= bufferSize - 1) {
+    // It is very likely that the buffer is overflowed
+    buffer[0] = 0;
   }
 }
 
@@ -41,6 +48,26 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poinca
 }
 
 Expression ExpressionModel::expressionReduced(const Storage::Record * record, Poincare::Context * context) const {
+  /* TODO
+   * By calling isCircularlyDefined and then Simplify, the expression tree is
+   * browsed twice. Note that Simplify does ALMOST the job of
+   * isCircularlyDefined, since Simplify reduces the expression, replaces the
+   * symbols it encounters (see SymbolAbstract::Expand). isCircularlyDefined
+   * should probably be removed. The difficulty relies in the ambiguous
+   * conventions about the values returned or set when a symbol has no proper
+   * expression: for example,
+   *  - GlobalContext::expressionForSymbolAbstract returns an uninitialized
+   *    expression,
+   *  - so do Expression::ExpressionWithoutSymbols and SymbolAbstract::Expand,
+   *  - Expression::deepReplaceReplaceableSymbols leaves unchanged the symbols,
+   *    whose expression is uninitialized, but returns Undefined if the
+   *    expression for a symbol contains the symbol itself,
+   *  - Symbol::shallowReduce and Function::shallowReduce return Undefined or
+   *    the expression unaltered according to symbolic-computation setting,
+   *  - expressionReduced returns Undefined if the expression
+   *    isCircularlyDefined but leaves the expression unchanged if Simplify
+   *    returns an uninitialized expression...
+   */
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
     if (isCircularlyDefined(record, context)) {
@@ -61,13 +88,20 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
   assert(record->fullName() != nullptr);
   /* A new Expression has to be created at each call (because it might be tempered with after calling) */
   return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  /* TODO
+   * The substitution of UCodePointUnknown back and forth is done in the
+   * methods text, setContent (through BuildExpressionFromText), layout and
+   * also in GlobalContext::expressionForSymbolAbstract and
+   * GlobalContext::setExpressionForSymbolAbstract. When getting the
+   * expression, the substitutions may probably be gathered here.
+   */
 }
 
 Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol) const {
   if (m_layout.isUninitialized()) {
     Expression clone = expressionClone(record);
     if (!clone.isUninitialized() && symbol != 0) {
-      clone = clone.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), Symbol::Builder(symbol));
+      clone = clone.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
     }
     m_layout = PoincareHelpers::CreateLayout(clone);
     if (m_layout.isUninitialized()) {
@@ -77,8 +111,8 @@ Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol)
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol) {
-  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol);
+Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
+  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol, context);
   return setExpressionContent(record, e);
 }
 
@@ -124,17 +158,17 @@ void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record,
 void ExpressionModel::tidy() const {
   m_layout = Layout();
   m_expression = Expression();
-  m_circular = 0;
+  m_circular = -1;
 }
 
-Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol) {
+Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
-    expressionToStore = Expression::Parse(c);
+    expressionToStore = Expression::Parse(c, context);
     if (!expressionToStore.isUninitialized() && symbol != 0) {
-      expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknownX));
+      expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknown));
     }
   }
   return expressionToStore;

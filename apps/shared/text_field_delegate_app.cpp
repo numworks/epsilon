@@ -32,7 +32,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
 
 
 bool TextFieldDelegateApp::isAcceptableText(const char * text) {
-  Expression exp = Expression::Parse(text);
+  Expression exp = Expression::Parse(text, localContext());
   bool isAcceptable = isAcceptableExpression(exp);
   if (!isAcceptable) {
     displayWarning(I18n::Message::SyntaxError);
@@ -94,7 +94,7 @@ bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   return true;
 }
 
-bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression) {
+bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression, Context * context) {
   if (expression.isUninitialized()) {
     return false;
   }
@@ -113,7 +113,7 @@ bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression
     return false;
   }
   if (replaceAns) {
-    exp = Expression::Parse(buffer);
+    exp = Expression::Parse(buffer, context);
     if (exp.isUninitialized()) {
       // The ans replacement made the expression unparsable
       return false;

@@ -33,7 +33,7 @@ Evaluation<T> RoundNode::templatedApproximate(Context * context, Preferences::Co
   T f1 = f1Input.toScalar();
   T f2 = f2Input.toScalar();
   if (std::isnan(f2) || f2 != std::round(f2)) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   T err = std::pow(10, std::floor(f2));
   return Complex<T>::Builder(std::round(f1*err)/err);
@@ -42,6 +42,7 @@ Evaluation<T> RoundNode::templatedApproximate(Context * context, Preferences::Co
 Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

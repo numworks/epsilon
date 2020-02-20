@@ -26,6 +26,7 @@ class Expression : public TreeHandle {
   friend class ArcSine;
   friend class ArcTangent;
   friend class Arithmetic;
+  friend class BasedInteger;
   friend class BinomialCoefficient;
   friend class BinomialDistributionFunction;
   friend class Ceiling;
@@ -54,6 +55,7 @@ class Expression : public TreeHandle {
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
   friend class ImaginaryPart;
+  friend class Integer;
   friend class Integral;
   friend class InvNorm;
   friend class LeastCommonMultiple;
@@ -97,6 +99,8 @@ class Expression : public TreeHandle {
   friend class Tangent;
   friend class Trigonometry;
   friend class TrigonometryCheatTable;
+  friend class Unit;
+  friend class UnitConvert;
 
   friend class AdditionNode;
   friend class DerivativeNode;
@@ -119,7 +123,7 @@ public:
   /* Constructor & Destructor */
   Expression() : TreeHandle() {}
   Expression clone() const;
-  static Expression Parse(char const * string, bool addMissingParenthesis = true);
+  static Expression Parse(char const * string, Context * context, bool addMissingParenthesis = true);
   static Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Circuit breaker */
@@ -142,6 +146,10 @@ public:
   bool isRationalOne() const;
   bool isRandom() const { return node()->isRandom(); }
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
+  bool isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool isBasedIntegerCappedBy(const char * integerString) const;
+  bool isDivisionOfIntegers() const;
+  bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context, bool replaceSymbols = true) const;
   typedef bool (*ExpressionTypeTest)(const Expression e, const void * context);
@@ -175,20 +183,24 @@ public:
    * If one of the variable lengths overflows maxVariableLength, getVariables
    * returns -2. */
   static constexpr int k_maxNumberOfVariables = 6;
-  int getVariables(Context * context, ExpressionNode::isVariableTest isVariable, char * variables, int maxVariableLength) const { return node()->getVariables(context, isVariable, variables, maxVariableLength); }
+  int getVariables(Context * context, ExpressionNode::isVariableTest isVariable, char * variables, int maxVariableLength, int nextVariableIndex = 0) const { return node()->getVariables(context, isVariable, variables, maxVariableLength, nextVariableIndex); }
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
    * order) and 'constant' with the constant of the expression. */
-  bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
    * of the first 3 polynomial coefficients and returns the  polynomial degree.
    * It is supposed to be called on a reduced expression.
    * coefficients has up to 3 entries.  */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
+
+  /* Units */
+  Expression getUnit() const { return node()->getUnit(); }
+  bool hasUnit() const;
 
   /* Complex */
   static bool EncounteredComplex();
@@ -203,10 +215,14 @@ public:
    * same structures and all their nodes have same types and values (ie,
    * sqrt(pi^2) is NOT identical to pi). */
   bool isIdenticalTo(const Expression e) const;
-  bool isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context);
+  static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+  /* TODO:
+   * - change signature to
+   *   size_t serialize(char * buffer, size_t bufferSize...)
+   * - Use same convention as strlcpy: return size of the source even if the bufferSize was too small.*/
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
@@ -220,15 +236,17 @@ public:
    *   account the complex format required in the expression they return.
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
-  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
-  Expression simplify(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation = true);
+  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  Expression simplify(ExpressionNode::ReductionContext reductionContext);
 
-  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
-  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
-  Expression reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target = ExpressionNode::ReductionTarget::SystemForApproximation);
+  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  Expression reduce(ExpressionNode::ReductionContext context);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
-  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context);
+  /* 'ExpressionWithoutSymbols' returns an uninitialized expression if it is
+   * circularly defined. Same convention as for 'deepReplaceReplaceableSymbols'.*/
+  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, bool replaceFunctionsOnly = false);
 
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
   Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
@@ -238,7 +256,7 @@ public:
   template<typename U> static U Epsilon();
   template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   template<typename U> U approximateToScalar(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
+  template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
   Coordinate2D<double> nextMinimum(const char * symbol, double start, double step, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
@@ -324,11 +342,12 @@ protected:
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation); }
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
-  bool hasReplaceableSymbols(Context * context) const;
-  Expression shallowReplaceReplaceableSymbols(Context * context) { return node()->shallowReplaceReplaceableSymbols(context); }
-  Expression defaultReplaceReplaceableSymbols(Context * context);
+  /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
+   * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
 
   /* Simplification */
   void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
@@ -373,6 +392,7 @@ private:
   }
   void defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowReduce();
+  Expression defaultHandleUnitsInChildren(); // Children must be reduced
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
 

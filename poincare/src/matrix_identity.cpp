@@ -44,6 +44,7 @@ Evaluation<T> MatrixIdentityNode::templatedApproximate(Context * context, Prefer
 Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

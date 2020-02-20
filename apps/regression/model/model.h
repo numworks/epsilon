@@ -61,6 +61,8 @@ private:
   double alphaCoefficient(Store * store, int series, double * modelCoefficients, int k, int l) const;
   double betaCoefficient(Store * store, int series, double * modelCoefficients, int k) const;
   int solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Poincare::Context * context);
+  void initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store = nullptr, int series = -1) const;
+  virtual void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store = nullptr, int series = -1) const;
 };
 
 }

@@ -12,6 +12,7 @@ public:
   IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore);
   const char * title() override;
   View * view() override { return &m_contentView; }
+  TELEMETRY_ID("Interval");
   int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
@@ -29,7 +30,7 @@ private:
     constexpr static KDCoordinate k_topMargin = 50;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     MessageTextView m_instructions0;
     MessageTextView m_instructions1;
     SelectableTableView * m_selectableTableView;

@@ -232,28 +232,25 @@ void GraphController::reloadBannerView() {
   m_bannerView.reload();
 }
 
-bool GraphController::moveCursorHorizontally(int direction) {
+bool GraphController::moveCursorHorizontally(int direction, bool fast) {
+  double x;
+  double y;
   if (*m_selectedDotIndex >= 0) {
     int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-      *m_selectedDotIndex = dotSelected;
-      double x = m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex);
-      double y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
-      m_cursor->moveTo(x, x, y);
-      return true;
+      x = m_store->get(*m_selectedSeriesIndex, 0, dotSelected);
+      y = m_store->get(*m_selectedSeriesIndex, 1, dotSelected);
+    } else if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+      x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+      y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+    } else {
+      return false;
     }
-    if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-      *m_selectedDotIndex = dotSelected;
-      double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
-      double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
-      m_cursor->moveTo(x, x, y);
-      return true;
-    }
-    return false;
+    *m_selectedDotIndex = dotSelected;
+  } else {
+    x = m_cursor->x() + direction * m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+    y = yValue(*m_selectedSeriesIndex, x, globalContext());
   }
-  double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
-    m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
-  double y = yValue(*m_selectedSeriesIndex, x, globalContext());
   m_cursor->moveTo(x, x, y);
   return true;
 }

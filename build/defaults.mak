@@ -42,6 +42,10 @@ ifeq ("$(origin V)", "command line")
   endif
 endif
 
+ifeq ("$(PLATFORM)", "device")
+  SFLAGS += -DPLATFORM_DEVICE
+endif
+
 # Host detection
 ifeq ($(OS),Windows_NT)
 HOST = windows

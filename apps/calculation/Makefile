@@ -7,12 +7,25 @@ app_calculation_test_src += $(addprefix apps/calculation/,\
 )
 
 app_calculation_src = $(addprefix apps/calculation/,\
+  additional_outputs/complex_graph_cell.cpp \
+  additional_outputs/complex_model.cpp \
+  additional_outputs/complex_list_controller.cpp \
+  additional_outputs/expression_with_equal_sign_view.cpp \
+  additional_outputs/expressions_list_controller.cpp \
+  additional_outputs/illustrated_list_controller.cpp \
+  additional_outputs/illustration_cell.cpp \
+  additional_outputs/integer_list_controller.cpp \
+  additional_outputs/scrollable_three_expressions_cell.cpp \
+  additional_outputs/list_controller.cpp \
+  additional_outputs/rational_list_controller.cpp \
+  additional_outputs/trigonometry_graph_cell.cpp \
+  additional_outputs/trigonometry_list_controller.cpp \
+  additional_outputs/trigonometry_model.cpp \
   app.cpp \
   edit_expression_controller.cpp \
   expression_field.cpp \
   history_view_cell.cpp \
   history_controller.cpp \
-  scrollable_expression_view.cpp \
   selectable_table_view.cpp \
 )
 

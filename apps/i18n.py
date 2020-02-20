@@ -33,6 +33,10 @@ def source_definition(i18n_string):
     result = result + u"\""
     return result.encode("utf-8")
 
+def is_commented_line(line):
+    match_comment = re.match(r"^#(.*)$", line)
+    return match_comment
+
 def split_line(line):
     match = re.match(r"^(\w+)\s*=\s*\"(.*)\"$", line)
     if not match:
@@ -53,6 +57,8 @@ def parse_files(files):
             data[locale] = {}
         with io.open(path, "r", encoding='utf-8') as file:
             for line in file:
+                if is_commented_line(line):
+                    continue
                 name,definition = split_line(line)
                 if locale == "universal":
                     if name in messages:

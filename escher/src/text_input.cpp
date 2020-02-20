@@ -8,6 +8,11 @@
 static inline const char * minCharPointer(const char * x, const char * y) { return x < y ? x : y; }
 static inline const char * maxCharPointer(const char * x, const char * y) { return x > y ? x : y; }
 
+void TextInput::ContentView::setFont(const KDFont * font) {
+  m_font = font;
+  markRectAsDirty(bounds());
+}
+
 void TextInput::ContentView::setCursorLocation(const char * location) {
   assert(location != nullptr);
   assert(location >= editedText());
@@ -16,37 +21,103 @@ void TextInput::ContentView::setCursorLocation(const char * location) {
   layoutSubviews();
 }
 
-void TextInput::ContentView::setFont(const KDFont * font) {
-  m_font = font;
-  markRectAsDirty(bounds());
-}
-
 KDRect TextInput::ContentView::cursorRect() {
   return glyphFrameAtPosition(editedText(), m_cursorLocation);
 }
 
-void TextInput::ContentView::layoutSubviews() {
-  m_cursorView.setFrame(cursorRect());
-}
-
-void TextInput::ContentView::reloadRectFromPosition(const char * position, bool lineBreak) {
-  markRectAsDirty(dirtyRectFromPosition(position, lineBreak));
-}
-
-KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
-  KDRect glyphRect = glyphFrameAtPosition(text(), position);
-  KDRect dirtyRect = KDRect(
-      glyphRect.x(),
-      glyphRect.y(),
-      bounds().width() - glyphRect.x(),
-      glyphRect.height());
-  if (lineBreak) {
-    dirtyRect = dirtyRect.unionedWith(
-        KDRect(0,
-          glyphRect.bottom() + 1,
-          bounds().width(),
-          bounds().height() - glyphRect.bottom() - 1));
+void TextInput::ContentView::addSelection(const char * left, const char * right) {
+  bool emptySelection = selectionIsEmpty();
+  if (emptySelection) {
+    m_selectionStart = left;
+    m_selectionEnd = right;
+  } else if (left == m_selectionEnd) {
+    m_selectionEnd = right;
+  } else if (right == m_selectionStart) {
+    m_selectionStart = left;
+  } else if (right == m_selectionEnd) {
+    if (left >= m_selectionStart) {
+     m_selectionEnd = left;
+    } else {
+      m_selectionEnd = m_selectionStart;
+      m_selectionStart = left;
+    }
+  } else {
+    assert(left == m_selectionStart);
+    if (right <= m_selectionEnd) {
+      m_selectionStart = right;
+    } else {
+      m_selectionStart = m_selectionEnd;
+      m_selectionEnd = right;
+    }
   }
+  reloadRectFromAndToPositions(left, right);
+  if (m_selectionStart == m_selectionEnd) {
+    m_selectionStart = nullptr;
+    m_selectionEnd = nullptr;
+  }
+}
+
+bool TextInput::ContentView::resetSelection() {
+  if (selectionIsEmpty()) {
+    return false;
+  }
+  const char * previousStart = m_selectionStart;
+  const char * previousEnd = m_selectionEnd;
+  m_selectionStart = nullptr;
+  m_selectionEnd = nullptr;
+  reloadRectFromAndToPositions(previousStart, previousEnd);
+  return true;
+}
+
+bool TextInput::ContentView::selectionIsEmpty() const {
+  assert(m_selectionStart != nullptr || m_selectionEnd == nullptr);
+  assert(m_selectionEnd != nullptr || m_selectionStart == nullptr);
+  return m_selectionStart == nullptr;
+}
+
+void TextInput::ContentView::setAlignment(float horizontalAlignment, float verticalAlignment) {
+  m_horizontalAlignment = horizontalAlignment;
+  m_verticalAlignment = verticalAlignment;
+  markRectAsDirty(bounds());
+}
+
+void TextInput::ContentView::reloadRectFromPosition(const char * position, bool includeFollowingLines) {
+  markRectAsDirty(dirtyRectFromPosition(position, includeFollowingLines));
+}
+
+void TextInput::ContentView::layoutSubviews(bool force) {
+  m_cursorView.setFrame(cursorRect(), force);
+}
+
+void TextInput::ContentView::reloadRectFromAndToPositions(const char * start, const char * end) {
+  if (start == end) {
+    return;
+  }
+  KDRect startFrame = glyphFrameAtPosition(text(), start);
+  KDRect endFrame = glyphFrameAtPosition(text(), end);
+  bool onSameLine = startFrame.y() == endFrame.y();
+  markRectAsDirty(KDRect(
+        onSameLine ? startFrame.x() : 0,
+        startFrame.y(),
+        onSameLine ? endFrame.right() - startFrame.left() : bounds().width(),
+        endFrame.bottom() - startFrame.top() + 1));
+}
+
+KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool includeFollowingLines) const {
+  KDRect glyphRect = glyphFrameAtPosition(text(), position);
+  if (!includeFollowingLines) {
+    KDRect dirtyRect = KDRect(
+        glyphRect.x(),
+        glyphRect.y(),
+        bounds().width() - glyphRect.x(),
+        glyphRect.height());
+    return dirtyRect;
+  }
+  KDRect dirtyRect = KDRect(
+      0,
+      glyphRect.y(),
+      bounds().width(),
+      bounds().height() - glyphRect.y());
   return dirtyRect;
 }
 
@@ -54,6 +125,15 @@ KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool
 
 bool TextInput::removePreviousGlyph() {
   contentView()->removePreviousGlyph();
+  scrollToCursor();
+  return true;
+}
+
+bool TextInput::setCursorLocation(const char * location) {
+  assert(location != nullptr);
+  const char * adjustedLocation = maxCharPointer(location, text());
+  willSetCursorLocation(&adjustedLocation);
+  contentView()->setCursorLocation(adjustedLocation);
   scrollToCursor();
   return true;
 }
@@ -70,16 +150,27 @@ void TextInput::scrollToCursor() {
   scrollToContentRect(contentView()->cursorRect(), true);
 }
 
-bool TextInput::setCursorLocation(const char * location) {
-  assert(location != nullptr);
-  const char * adjustedLocation = maxCharPointer(location, text());
-  willSetCursorLocation(&adjustedLocation);
-  contentView()->setCursorLocation(adjustedLocation);
+void TextInput::deleteSelection() {
+  ContentView * cv = contentView();
+  assert(!cv->selectionIsEmpty());
+  const float horizontalAlignment = cv->horizontalAlignment();
+  if (horizontalAlignment == 0.0f) {
+    cv->reloadRectFromPosition(cv->selectionStart(), true);
+  }
+  bool cursorIsAtEndOfSelection = cv->selectionEnd() == cv->cursorLocation();
+  size_t removedLength = cv->deleteSelection();
+  if (cursorIsAtEndOfSelection) {
+    setCursorLocation(cv->cursorLocation() - removedLength);
+  }
+  layoutSubviews(true); // Set the cursor frame by calling the subviews relayouting
   scrollToCursor();
-  return true;
 }
 
-bool TextInput::insertTextAtLocation(const char * text, const char * location) {
+void TextInput::setAlignment(float horizontalAlignment, float verticalAlignment) {
+  contentView()->setAlignment(horizontalAlignment, verticalAlignment);
+}
+
+bool TextInput::insertTextAtLocation(const char * text, char * location) {
   if (contentView()->insertTextAtLocation(text, location)) {
     /* We layout the scrollable view before scrolling to cursor because the
      * content size might have changed. */
@@ -113,6 +204,28 @@ bool TextInput::moveCursorRight() {
   }
   UTF8Decoder decoder(cursorLocation());
   return setCursorLocation(decoder.nextGlyphPosition());
+}
+
+bool TextInput::selectLeftRight(bool left, bool all) {
+  const char * cursorLoc = cursorLocation();
+  const char * nextCursorLoc = nullptr;
+  if (!all) {
+    bool moved = left ? moveCursorLeft() : moveCursorRight();
+    if (!moved) {
+      return false;
+    }
+    nextCursorLoc = cursorLocation();
+  } else {
+    const char * t = text();
+    nextCursorLoc = left ? t : t + strlen(t);
+    willSetCursorLocation(&nextCursorLoc);
+    if (cursorLoc == nextCursorLoc) {
+      return false;
+    }
+    setCursorLocation(nextCursorLoc);
+  }
+  contentView()->addSelection(left ? nextCursorLoc : cursorLoc, left ? cursorLoc : nextCursorLoc);
+  return true;
 }
 
 bool TextInput::privateRemoveEndOfLine() {

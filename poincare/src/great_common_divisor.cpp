@@ -32,7 +32,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Pr
   int a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(0), &isUndefined, context, complexFormat, angleUnit);
   int b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(1), &isUndefined, context, complexFormat, angleUnit);
   if (isUndefined) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   if (b > a) {
     int temp = b;
@@ -52,6 +52,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Pr
 Expression GreatCommonDivisor::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

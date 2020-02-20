@@ -14,10 +14,10 @@ public:
   Type type() const override { return Type::FractionLayout; }
 
   // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
+  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
+  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
 
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -54,7 +54,7 @@ protected:
 private:
   constexpr static KDCoordinate k_fractionLineMargin = 2;
   constexpr static KDCoordinate k_fractionLineHeight = 1;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   LayoutNode * numeratorLayout() { return childAtIndex(0); }
   LayoutNode * denominatorLayout() { return childAtIndex(1); }
 };

@@ -41,7 +41,9 @@ public:
   InputViewController * inputViewController() { return &m_inputViewController; }
   ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   ViewController * intervalController() { return &m_intervalController; }
+  SolutionsController * solutionsController() { return &m_solutionsController; }
   void willBecomeInactive() override;
+  TELEMETRY_ID("Solver");
 private:
   App(Snapshot * snapshot);
   SolutionsController m_solutionsController;

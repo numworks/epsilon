@@ -18,6 +18,7 @@ public:
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
+  TELEMETRY_ID("Sum");
   void setRecord(Ion::Storage::Record record);
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 protected:
@@ -65,8 +66,8 @@ private:
     constexpr static KDCoordinate k_sigmaHeight = 18;
     int numberOfSubviews() const override { return 3; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
-    void layoutSubviews(Step step);
+    void layoutSubviews(bool force = false) override;
+    void layoutSubviews(Step step, bool force);
     ExpressionView m_sum;
     Poincare::Layout m_sumLayout;
     MessageTextView m_legend;

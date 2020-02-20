@@ -41,6 +41,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context * context, Prefe
 Expression MatrixTranspose::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

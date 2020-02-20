@@ -6,9 +6,9 @@ $(BUILD_DIR)/epsilon.packed.js: $(call object_for,$(epsilon_src))
 
 .PHONY: workshop_python_emulator
 workshop_python_emulator:
-	make PLATFORM=simulator TARGET=web clean_for_apps_selection
-	make PLATFORM=simulator TARGET=web EPSILON_APPS=code
-	make PLATFORM=simulator TARGET=web clean_for_apps_selection
+	$(MAKE) PLATFORM=simulator TARGET=web clean_for_apps_selection
+	$(MAKE) PLATFORM=simulator TARGET=web EPSILON_APPS=code
+	$(MAKE) PLATFORM=simulator TARGET=web clean_for_apps_selection
 
 .PHONY: clean_for_apps_selection
 clean_for_apps_selection:

@@ -24,7 +24,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     App * myApp = App::app();
     assert(!m_record.isNull());
     Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
-    function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit());
+    function->setPlotType(plotType, Poincare::Preferences::sharedPreferences()->angleUnit(), myApp->localContext());
     StackViewController * stack = stackController();
     stack->pop();
     stack->pop();
@@ -42,6 +42,7 @@ const char * TypeParameterController::title() {
 }
 
 void TypeParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   App * myApp = App::app();
   assert(!m_record.isNull());
   Shared::ExpiringPointer<Shared::ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);

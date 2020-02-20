@@ -50,6 +50,7 @@ Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences:
 Expression Sequence::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

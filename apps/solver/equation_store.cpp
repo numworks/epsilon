@@ -1,6 +1,7 @@
 #include "equation_store.h"
 #include "../constant.h"
 #include "../shared/poincare_helpers.h"
+#include "../exam_mode_configuration.h"
 #include "../global_preferences.h"
 #include <limits.h>
 
@@ -27,7 +28,8 @@ EquationStore::EquationStore() :
   m_type(Type::LinearSystem),
   m_numberOfSolutions(0),
   m_exactSolutionExactLayouts{},
-  m_exactSolutionApproximateLayouts{}
+  m_exactSolutionApproximateLayouts{},
+  m_numberOfUserVariables(0)
 {
 }
 
@@ -92,22 +94,23 @@ double EquationStore::approximateSolutionAtIndex(int i) {
   return m_approximateSolutions[i];
 }
 
-bool EquationStore::haveMoreApproximationSolutions(Context * context) {
+bool EquationStore::haveMoreApproximationSolutions(Context * context, bool solveWithoutContext) {
   if (m_numberOfSolutions < k_maxNumberOfEquations) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], context));
+  return !std::isnan(PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context, solveWithoutContext), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], context));
 }
 
-void EquationStore::approximateSolve(Poincare::Context * context) {
+void EquationStore::approximateSolve(Poincare::Context * context, bool shouldReplaceFunctionsButNotSymbols) {
+  m_userVariablesUsed = !shouldReplaceFunctionsButNotSymbols;
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context), m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
+    m_approximateSolutions[i] = PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context, shouldReplaceFunctionsButNotSymbols), m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -117,21 +120,34 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   }
 }
 
-EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
+EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool * replaceFunctionsButNotSymbols) {
+  assert(replaceFunctionsButNotSymbols != nullptr);
+  *replaceFunctionsButNotSymbols = false;
+  Error e = privateExactSolve(context, false);
+  if (e == Error::NoError && numberOfSolutions() == 0 && m_numberOfUserVariables > 0) {
+    *replaceFunctionsButNotSymbols = true;
+    e = privateExactSolve(context, true);
+  }
+  return e;
+}
+
+EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
   tidySolution();
+
+  m_userVariablesUsed = !replaceFunctionsButNotSymbols;
 
   // Step 0. Get unknown variables
   m_variables[0][0] = 0;
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context);
+    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols);
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
       return Error::EquationUndefined;
     }
     if (e.type() == ExpressionNode::Type::Unreal) {
       return Error::EquationUnreal;
     }
-    numberOfVariables = e.getVariables(context, [](const char * symbol) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize);
+    numberOfVariables = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, numberOfVariables);
     if (numberOfVariables == -1) {
       return Error::TooManyVariables;
     }
@@ -140,7 +156,22 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     assert(numberOfVariables >= 0);
   }
 
-  // Step 1. Linear System?
+  // Step 1. Get user defined variables
+  // TODO used previously fetched variables?
+  m_userVariables[0][0] = 0;
+  m_numberOfUserVariables = 0;
+  for (int i = 0; i < numberOfDefinedModels(); i++) {
+    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context, true);
+    assert(!e.isUninitialized() && e.type() != ExpressionNode::Type::Undefined && e.type() != ExpressionNode::Type::Unreal);
+    int varCount = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return context->expressionTypeForIdentifier(symbol, strlen(symbol)) == Poincare::Context::SymbolAbstractType::Symbol; }, (char *)m_userVariables, Poincare::SymbolAbstract::k_maxNameSize, m_numberOfUserVariables);
+    if (varCount < 0) {
+      m_numberOfUserVariables = Expression::k_maxNumberOfVariables;
+      break;
+    }
+    m_numberOfUserVariables = varCount;
+  }
+
+  // Step 2. Linear System?
 
   /* Create matrix coefficients and vector constants as:
    *   coefficients * (x y z ...) = constants */
@@ -149,7 +180,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context,  updatedComplexFormat(context), preferences->angleUnit());
+    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -177,16 +208,16 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     m_type = Type::LinearSystem;
     error = resolveLinearSystem(exactSolutions, exactSolutionsApproximations, coefficients, constants, context);
   } else {
-    // Step 2. Polynomial & Monovariable?
+    // Step 3. Polynomial & Monovariable?
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, context, updatedComplexFormat(context), preferences->angleUnit());
+    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context, replaceFunctionsButNotSymbols).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, context, updatedComplexFormat(context), preferences->angleUnit(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
     if (degree == 2) {
       // Polynomial degree <= 2
       m_type = Type::PolynomialMonovariable;
       error = oneDimensialPolynomialSolve(exactSolutions, exactSolutionsApproximations, polynomialCoefficients, degree, context);
     } else {
-      // Step 3. Monovariable non-polynomial or polynomial with degree > 2
+      // Step 4. Monovariable non-polynomial or polynomial with degree > 2
       m_type = Type::Monovariable;
       m_intervalApproximateSolutions[0] = -10;
       m_intervalApproximateSolutions[1] = 10;
@@ -194,8 +225,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     }
   }
   // Create the results' layouts
-  // In Dutch exam mode, display only approximate solutions
-  bool forbidExactSolutions = GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch;
+  // Some exam mode configuration requires to display only approximate solutions
+  bool forbidExactSolutions = ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
   int solutionIndex = 0;
   int initialNumberOfSolutions = m_numberOfSolutions <= k_maxNumberOfExactSolutions ? m_numberOfSolutions : -1;
   // We iterate through the solutions and the potential delta
@@ -214,12 +245,12 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       char approximateBuffer[::Constant::MaxSerializedExpressionSize];
       m_exactSolutionExactLayouts[solutionIndex].serializeForParsing(exactBuffer, ::Constant::MaxSerializedExpressionSize);
       m_exactSolutionApproximateLayouts[solutionIndex].serializeForParsing(approximateBuffer, ::Constant::MaxSerializedExpressionSize);
-      /* Cheat: declare exact and approximate solutions to be identical in
-       * Dutch exam mode to display only the approximate solutions. */
+      /* Cheat: declare exact and approximate solutions to be identical in when
+       * 'forbidExactSolutions' is true to display only the approximate
+       * solutions. */
       m_exactSolutionIdentity[solutionIndex] = forbidExactSolutions || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
-        char buffer[::Constant::MaxSerializedExpressionSize];
-        m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, ::Constant::MaxSerializedExpressionSize, preferences->complexFormat(), preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context);
+        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit());
       }
       solutionIndex++;
     }
@@ -281,7 +312,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), coefficients[0].clone(), coefficients[2].clone()));
-  delta = delta.simplify(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), ExpressionNode::ReductionTarget::SystemForApproximation);
+  delta = delta.simplify(ExpressionNode::ReductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), ExpressionNode::ReductionTarget::SystemForApproximation));
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined::Builder();
   }

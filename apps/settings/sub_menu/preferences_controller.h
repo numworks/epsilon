@@ -14,11 +14,12 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
+  TELEMETRY_ID("Other");
 protected:
   constexpr static int k_totalNumberOfCell = 3;
+  int initialSelectedRow() const override { return valueIndexForPreference(m_messageTreeModel->label()); }
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
-  int initialSelectedRow() const override { return valueIndexForPreference(m_messageTreeModel->label()); }
   Poincare::Layout layoutForPreferences(I18n::Message message);
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
   int valueIndexForPreference(I18n::Message message) const;

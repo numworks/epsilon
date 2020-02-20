@@ -23,6 +23,7 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  TELEMETRY_ID("Calculation");
 
   /* TableViewDataSource */
   int numberOfRows() const override;
@@ -58,7 +59,7 @@ private:
     constexpr static KDCoordinate k_titleHeightMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     MessageTextView m_titleView;
     SelectableTableView * m_selectableTableView;
     DistributionCurveView m_distributionCurveView;

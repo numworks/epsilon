@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "app.h"
+#include <poincare/ieee754.h>
 #include <poincare/preferences.h>
 #include <cmath>
 #include <assert.h>
@@ -70,7 +71,8 @@ void HistogramController::viewWillAppear() {
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
+  if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
     if (selectedSeriesIndex() >= 0) {
       m_view.dataViewAtIndex(selectedSeriesIndex())->setForceOkDisplay(false);
     }
@@ -246,9 +248,14 @@ void HistogramController::initBarParameters() {
   assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
   preinitXRangeParameters();
   m_store->setFirstDrawnBarAbscissa(m_store->xMin());
-  float barWidth = m_store->xGridUnit();
-  if (barWidth <= 0.0f) {
-    barWidth = 1.0f;
+  double barWidth = m_store->xGridUnit();
+  if (barWidth <= 0.0) {
+    barWidth = 1.0;
+  } else {
+    // Truncate the bar width, as we convert from float to double
+    const double precision = 7; // TODO factorize? This is an experimental value, the same as in Expression;;Epsilon<float>()
+    const double logBarWidth = IEEE754<double>::exponentBase10(barWidth);
+    barWidth = ((int)(barWidth * std::pow(10.0, precision - logBarWidth))) * std::pow(10.0, -precision + logBarWidth);
   }
   m_store->setBarWidth(barWidth);
 }

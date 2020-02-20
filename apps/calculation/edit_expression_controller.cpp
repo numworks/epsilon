@@ -25,12 +25,12 @@ View * EditExpressionController::ContentView::subviewAtIndex(int index) {
   return &m_expressionField;
 }
 
-void EditExpressionController::ContentView::layoutSubviews() {
+void EditExpressionController::ContentView::layoutSubviews(bool force) {
   KDCoordinate inputViewFrameHeight = m_expressionField.minimalSizeForOptimalDisplay().height();
   KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - inputViewFrameHeight);
-  m_mainView->setFrame(mainViewFrame);
+  m_mainView->setFrame(mainViewFrame, force);
   KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight, bounds().width(), inputViewFrameHeight);
-  m_expressionField.setFrame(inputViewFrame);
+  m_expressionField.setFrame(inputViewFrame, force);
 }
 
 void EditExpressionController::ContentView::reload() {
@@ -42,25 +42,24 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   ViewController(parentResponder),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
-  m_contentView(this, (TableView *)m_historyController->view(), inputEventHandlerDelegate, this, this),
-  m_inputViewHeightIsMaximal(false)
+  m_contentView(this, (TableView *)m_historyController->view(), inputEventHandlerDelegate, this, this)
 {
   m_cacheBuffer[0] = 0;
 }
 
-View * EditExpressionController::view() {
-  return &m_contentView;
-}
-
 void EditExpressionController::insertTextBody(const char * text) {
-  ((ContentView *)view())->expressionField()->handleEventWithText(text, false, true);
+  m_contentView.expressionField()->handleEventWithText(text, false, true);
 }
 
 void EditExpressionController::didBecomeFirstResponder() {
   int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
   m_historyController->scrollToCell(0, lastRow);
-  ((ContentView *)view())->expressionField()->setEditing(true, false);
-  Container::activeApp()->setFirstResponder(((ContentView *)view())->expressionField());
+  m_contentView.expressionField()->setEditing(true, false);
+  Container::activeApp()->setFirstResponder(m_contentView.expressionField());
+}
+
+void EditExpressionController::viewWillAppear() {
+  m_historyController->viewWillAppear();
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
@@ -96,23 +95,23 @@ bool EditExpressionController::layoutFieldDidAbortEditing(::LayoutField * layout
 }
 
 void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutField) {
-  /* Reload the view only if the ExpressionField height actually changes, i.e.
-   * not if the height is already maximal and stays maximal. */
-  if (view()) {
-    bool newInputViewHeightIsMaximal = static_cast<ContentView *>(view())->expressionField()->heightIsMaximal();
-    if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
-      m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
-      reloadView();
-    }
+  if (m_contentView.expressionField()->inputViewHeightDidChange()) {
+    /* Reload the whole view only if the ExpressionField's height did actually
+     * change. */
+    reloadView();
+  } else {
+    /* The input view is already at maximal size so we do not need to relayout
+     * the view underneath, but the view inside the input view might still need
+     * to be relayouted.
+     * We force the relayout because the frame stays the same but we need to
+     * propagate a relayout to the content of the field scroll view. */
+    m_contentView.expressionField()->layoutSubviews(true);
   }
 }
 
 void EditExpressionController::reloadView() {
-  ((ContentView *)view())->reload();
+  m_contentView.reload();
   m_historyController->reload();
-  if (m_historyController->numberOfRows() > 0) {
-    ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  }
 }
 
 bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
@@ -125,13 +124,12 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     }
     m_calculationStore->push(m_cacheBuffer, myApp->localContext());
     m_historyController->reload();
-    ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
     return true;
   }
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       m_cacheBuffer[0] = 0;
-      ((ContentView *)view())->expressionField()->setEditing(false, false);
+      m_contentView.expressionField()->setEditing(false, false);
       Container::activeApp()->setFirstResponder(m_historyController);
     }
     return true;
@@ -139,31 +137,27 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   return false;
 }
 
-
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {
+  Context * context = textFieldDelegateApp()->localContext();
   if (layoutR.isUninitialized()) {
     assert(text);
     strlcpy(m_cacheBuffer, text, k_cacheBufferSize);
   } else {
-    layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize);
+    layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize, context);
   }
-  m_calculationStore->push(m_cacheBuffer, textFieldDelegateApp()->localContext());
+  m_calculationStore->push(m_cacheBuffer, context);
   m_historyController->reload();
-  ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  ((ContentView *)view())->expressionField()->setEditing(true, true);
+  m_contentView.expressionField()->setEditing(true, true);
+  telemetryReportEvent("Input", m_cacheBuffer);
   return true;
 }
 
 bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
   if (text != nullptr) {
-    ((ContentView *)view())->expressionField()->setEditing(true, true);
-    ((ContentView *)view())->expressionField()->setText(text);
+    m_contentView.expressionField()->setEditing(true, true);
+    m_contentView.expressionField()->setText(text);
   }
   return false;
-}
-
-void EditExpressionController::viewDidDisappear() {
-  m_historyController->viewDidDisappear();
 }
 
 }

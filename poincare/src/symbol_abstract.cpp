@@ -4,13 +4,15 @@
 #include <poincare/function.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
-#include <poincare/expression.h>
+#include <poincare/undefined.h>
 #include <poincare/helpers.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <string.h>
 
 namespace Poincare {
+
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 size_t SymbolAbstractNode::size() const {
   return nodeSize() + strlen(name()) + 1;
@@ -38,6 +40,10 @@ int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bo
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
 }
 
+int SymbolAbstractNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return minInt(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
+}
+
 template <typename T, typename U>
 T SymbolAbstract::Builder(const char * name, int length) {
   size_t size = sizeof(U) + length + 1;
@@ -56,17 +62,20 @@ bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test,
   return !e.isUninitialized() && e.recursivelyMatches(test, context, false);
 }
 
-Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone) {
-  bool isFunction = symbol.type() == ExpressionNode::Type::Function;
-  /* Always clone the expression for Function because we are going to alter e
-   * by replacing all UnknownX in it. */
-  Expression e = context->expressionForSymbolAbstract(symbol, clone || isFunction);
+Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits
+    || symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits)
+  {
+    return Undefined::Builder();
+  }
+  bool shouldNotReplaceSymbols = symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
+  if (symbol.type() == ExpressionNode::Type::Symbol && shouldNotReplaceSymbols) {
+    return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);
+  }
+  Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
-  e = Expression::ExpressionWithoutSymbols(e, context);
-  if (!e.isUninitialized() && isFunction) {
-    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), symbol.childAtIndex(0));
-  }
+  e = Expression::ExpressionWithoutSymbols(e, context, shouldNotReplaceSymbols);
   return e;
 }
 

@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <string.h>
 
+// See TODO in EditableField
+
 class TextArea : public TextInput, public InputEventHandler {
 public:
   static constexpr int k_indentationSpaces = 2;
@@ -80,6 +82,7 @@ protected:
     void insertSpacesAtLocation(int numberOfSpaces, char * location);
 
     CodePoint removePreviousGlyph(char * * position);
+    size_t removeText(const char * start, const char * end);
     size_t removeRemainingLine(const char * position, int direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
@@ -105,8 +108,8 @@ protected:
       m_cursorLocation = m_text.text();
     }
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor) const;
-    virtual void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const = 0;
+    void drawStringAt(KDContext * ctx, int line, int column, const char * text, int length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor) const;
+    virtual void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const = 0;
     virtual void clearRect(KDContext * ctx, KDRect rect) const = 0;
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
@@ -114,11 +117,12 @@ protected:
     const char * editedText() const override { return m_text.text(); }
     size_t editedTextLength() const override { return m_text.textLength(); }
     const Text * getText() const { return &m_text; }
-    bool insertTextAtLocation(const char * text, const char * location) override;
+    bool insertTextAtLocation(const char * text, char * location) override;
     void moveCursorGeo(int deltaX, int deltaY);
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
+    size_t deleteSelection() override;
   protected:
     KDRect glyphFrameAtPosition(const char * text, const char * position) const override;
     Text m_text;
@@ -126,6 +130,7 @@ protected:
 
   ContentView * contentView() { return static_cast<ContentView *>(TextInput::contentView()); }
 private:
+  void selectUpDown(bool up);
   TextAreaDelegate * m_delegate;
 };
 

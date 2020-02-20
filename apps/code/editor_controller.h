@@ -17,6 +17,7 @@ class EditorController : public ViewController, public TextAreaDelegate, public 
 public:
   EditorController(MenuController * menuController, App * pythonDelegate);
   void setScript(Script script);
+  void willExitApp();
 
   /* ViewController */
   View * view() override { return &m_editorView; }
@@ -25,6 +26,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  TELEMETRY_ID("Editor");
 
   /* TextAreaDelegate */
   bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;
@@ -33,13 +35,9 @@ public:
   VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 
 private:
+  void cleanStorageEmptySpace();
   StackViewController * stackController();
-  void saveScript();
   EditorView m_editorView;
-  /* m_areaBuffer first character is dedicated to the importation status.
-   * Thereby, we avoid wasteful copy while adding the Script to the storage
-   * (in order to add the importation status char before the areaBuffer). */
-  char m_areaBuffer[Ion::Storage::k_storageSize]; // this could be slightly optimize
   Script m_script;
   MenuController * m_menuController;
 };

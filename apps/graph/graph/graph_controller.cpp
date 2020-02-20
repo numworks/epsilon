@@ -93,7 +93,6 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
   /* In practice, a step smaller than a pixel's width is needed for sampling
    * the values of a function. Otherwise some relevant extremal values may be
    * missed. */
-  const float step = const_cast<GraphController *>(this)->curveView()->pixelWidth() / 2;
   for (int i = 0; i < functionsCount; i++) {
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     if (f->plotType() != ContinuousFunction::PlotType::Cartesian) {
@@ -103,8 +102,9 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
      * y-range for even functions (y = 1/x). */
     assert(!std::isnan(f->tMin()));
     assert(!std::isnan(f->tMax()));
-    double tMin = maxFloat(f->tMin(), resultxMin);
-    double tMax = minFloat(f->tMax(), resultxMax);
+    const double tMin = maxFloat(f->tMin(), resultxMin);
+    const double tMax = minFloat(f->tMax(), resultxMax);
+    const double step = (tMax - tMin) / (2.0 * (m_view.bounds().width() - 1.0));
     interestingFunctionRange(f, tMin, tMax, step, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
   }
   if (resultyMin > resultyMax) {
@@ -169,9 +169,9 @@ void GraphController::reloadBannerView() {
   reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record);
 }
 
-bool GraphController::moveCursorHorizontally(int direction) {
+bool GraphController::moveCursorHorizontally(int direction, bool fast) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, fast);
 }
 
 int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const {

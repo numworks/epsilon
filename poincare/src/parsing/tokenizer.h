@@ -18,11 +18,12 @@ public:
 private:
   typedef bool (*PopTest)(CodePoint c, CodePoint context);
   const CodePoint nextCodePoint(PopTest popTest, CodePoint context = UCodePointNull, bool * testResult = nullptr);
-  const CodePoint popCodePoint();
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest, CodePoint context = UCodePointNull);
   size_t popDigits();
-  size_t popIdentifier();
+  size_t popBinaryDigits();
+  size_t popHexadecimalDigits();
+  size_t popIdentifier(CodePoint additionalAcceptedCodePoint);
   Token popNumber();
 
   const char * m_text;

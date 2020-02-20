@@ -33,14 +33,10 @@ double Model::levelSet(double * modelCoefficients, double xMin, double step, dou
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   if (dataSuitableForFit(store, series)) {
-    for (int i = 0; i < numberOfCoefficients(); i++) {
-      modelCoefficients[i] = k_initialCoefficientValue;
-    }
+    initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false, store, series);
     fitLevenbergMarquardt(store, series, modelCoefficients, context);
   } else {
-    for (int i = 0; i < numberOfCoefficients(); i++) {
-      modelCoefficients[i] = NAN;
-    }
+    initCoefficientsForFit(modelCoefficients, NAN, true);
   }
 }
 
@@ -205,5 +201,20 @@ int Model::solveLinearSystem(double * solutions, double * coefficients, double *
   return 0;
 }
 
+void Model::initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store, int series) const {
+  assert(forceDefaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series)));
+  if (forceDefaultValue) {
+    Model::specializedInitCoefficientsForFit(modelCoefficients, defaultValue);
+  } else {
+    specializedInitCoefficientsForFit(modelCoefficients, defaultValue, store, series);
+  }
 }
 
+void Model::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
+  const int nbCoef = numberOfCoefficients();
+  for (int i = 0; i < nbCoef; i++) {
+    modelCoefficients[i] = defaultValue;
+  }
+}
+
+}

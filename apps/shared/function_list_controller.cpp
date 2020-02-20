@@ -38,6 +38,7 @@ FunctionListController::FunctionListController(Responder * parentResponder, Butt
 /* TableViewDataSource */
 
 void FunctionListController::viewWillAppear() {
+  ExpressionModelListController::viewWillAppear();
   computeTitlesColumnWidth();
 }
 
@@ -207,6 +208,7 @@ void FunctionListController::didEnterResponderChain(Responder * previousFirstRes
 
 void FunctionListController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
     selectableTableView()->deselectTable();
     footer()->setSelectedButton(-1);
   }

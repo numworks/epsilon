@@ -5,6 +5,7 @@
 #include "distribution/binomial_distribution.h"
 #include "distribution/chi_squared_distribution.h"
 #include "distribution/exponential_distribution.h"
+#include "distribution/fisher_distribution.h"
 #include "distribution/geometric_distribution.h"
 #include "distribution/normal_distribution.h"
 #include "distribution/poisson_distribution.h"
@@ -13,6 +14,7 @@
 #include "images/binomial_icon.h"
 #include "images/chi_squared_icon.h"
 #include "images/exponential_icon.h"
+#include "images/fisher_icon.h"
 #include "images/geometric_icon.h"
 #include "images/normal_icon.h"
 #include "images/poisson_icon.h"
@@ -21,6 +23,7 @@
 #include "images/focused_binomial_icon.h"
 #include "images/focused_chi_squared_icon.h"
 #include "images/focused_exponential_icon.h"
+#include "images/focused_fisher_icon.h"
 #include "images/focused_geometric_icon.h"
 #include "images/focused_normal_icon.h"
 #include "images/focused_poisson_icon.h"
@@ -29,28 +32,19 @@
 
 namespace Probability {
 
-DistributionController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(KDFont::SmallFont, I18n::Message::ChooseDistribution, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
-  m_selectableTableView(selectableTableView)
-{
-}
-
-int DistributionController::ContentView::numberOfSubviews() const {
-  return 2;
-}
-
 View * DistributionController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
+  assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {
     return &m_titleView;
   }
   return m_selectableTableView;
 }
 
-void DistributionController::ContentView::layoutSubviews() {
+void DistributionController::ContentView::layoutSubviews(bool force) {
+  assert(KDFont::SmallFont->glyphSize().height() == 14); // otherwise, k_numberOfCells badly computed
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
-  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight));
+  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight), force);
 }
 
 static I18n::Message sMessages[] = {
@@ -61,7 +55,8 @@ static I18n::Message sMessages[] = {
   I18n::Message::ChiSquared,
   I18n::Message::Student,
   I18n::Message::Geometric,
-  I18n::Message::Poisson
+  I18n::Message::Poisson,
+  I18n::Message::Fisher
 };
 
 DistributionController::DistributionController(Responder * parentResponder, Distribution * distribution, ParametersController * parametersController) :
@@ -76,11 +71,8 @@ DistributionController::DistributionController(Responder * parentResponder, Dist
   m_selectableTableView.setTopMargin(Metric::CommonTopMargin-ContentView::k_titleMargin);
 }
 
-View * DistributionController::view() {
-  return &m_contentView;
-}
-
 void Probability::DistributionController::viewWillAppear() {
+  ViewController::viewWillAppear();
   selectRow((int)m_distribution->type());
 }
 
@@ -104,18 +96,10 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   return false;
 }
 
-int Probability::DistributionController::numberOfRows() const {
-  return k_totalNumberOfModels;
-};
-
 HighlightCell * Probability::DistributionController::reusableCell(int index) {
   assert(index >= 0);
-  assert(index < k_totalNumberOfModels);
+  assert(index < k_numberOfCells);
   return &m_cells[index];
-}
-
-int Probability::DistributionController::reusableCellCount() const {
-  return k_totalNumberOfModels;
 }
 
 void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -129,7 +113,8 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
     ImageStore::ChiSquaredIcon,
     ImageStore::StudentIcon,
     ImageStore::GeometricIcon,
-    ImageStore::PoissonIcon
+    ImageStore::PoissonIcon,
+    ImageStore::FisherIcon
   };
   const Image * focusedImages[k_totalNumberOfModels] = {
     ImageStore::FocusedBinomialIcon,
@@ -139,14 +124,11 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
     ImageStore::FocusedChiSquaredIcon,
     ImageStore::FocusedStudentIcon,
     ImageStore::FocusedGeometricIcon,
-    ImageStore::FocusedPoissonIcon
+    ImageStore::FocusedPoissonIcon,
+    ImageStore::FocusedFisherIcon
   };
   myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();
-}
-
-KDCoordinate Probability::DistributionController::cellHeight() {
-  return Metric::ParameterCellHeight;
 }
 
 void Probability::DistributionController::setDistributionAccordingToIndex(int index) {
@@ -179,7 +161,9 @@ void Probability::DistributionController::setDistributionAccordingToIndex(int in
     case 7:
       new(m_distribution) PoissonDistribution();
       break;
-
+    case 8:
+      new(m_distribution) FisherDistribution();
+      break;
     default:
      return;
   }

@@ -58,6 +58,7 @@
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 #include <escher/scrollable_view.h>
+#include <escher/scrollable_expression_view.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>

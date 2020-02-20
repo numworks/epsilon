@@ -54,7 +54,7 @@ template<typename T>
 Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   T n = c.real();
   if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {
@@ -87,6 +87,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

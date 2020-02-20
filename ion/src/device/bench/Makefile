@@ -27,5 +27,6 @@ ion_target_device_bench_src += $(addprefix ion/src/device/bench/command/, \
   sleep.cpp \
   stop.cpp \
   standby.cpp \
+  usb_plugged.cpp \
   vblank.cpp \
 )

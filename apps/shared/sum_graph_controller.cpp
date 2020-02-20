@@ -26,6 +26,7 @@ SumGraphController::SumGraphController(Responder * parentResponder, InputEventHa
 }
 
 void SumGraphController::viewWillAppear() {
+  SimpleInteractiveCurveViewController::viewWillAppear();
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
@@ -174,7 +175,7 @@ KDSize SumGraphController::LegendView::minimalSizeForOptimalDisplay() const {
 
 void SumGraphController::LegendView::setLegendMessage(I18n::Message message, Step step) {
   m_legend.setMessage(message);
-  layoutSubviews(step);
+  layoutSubviews(step, false);
 }
 
 void SumGraphController::LegendView::setEditableZone(double d) {
@@ -226,7 +227,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   } else {
     m_sum.setAlignment(0.0f, 0.5f);
   }
-  layoutSubviews(step);
+  layoutSubviews(step, false);
 }
 
 View * SumGraphController::LegendView::subviewAtIndex(int index) {
@@ -240,21 +241,21 @@ View * SumGraphController::LegendView::subviewAtIndex(int index) {
   return &m_legend;
 }
 
-void SumGraphController::LegendView::layoutSubviews() {
-  layoutSubviews(Step::FirstParameter);
+void SumGraphController::LegendView::layoutSubviews(bool force) {
+  layoutSubviews(Step::FirstParameter, force);
 }
 
-void SumGraphController::LegendView::layoutSubviews(Step step) {
+void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate heigth = bounds().height();
   KDSize legendSize = m_legend.minimalSizeForOptimalDisplay();
 
   if (legendSize.width() > 0) {
-    m_sum.setFrame(KDRect(0, k_symbolHeightMargin, width-legendSize.width(), m_sum.minimalSizeForOptimalDisplay().height()));
-    m_legend.setFrame(KDRect(width-legendSize.width(), 0, legendSize.width(), heigth));
+    m_sum.setFrame(KDRect(0, k_symbolHeightMargin, width-legendSize.width(), m_sum.minimalSizeForOptimalDisplay().height()), force);
+    m_legend.setFrame(KDRect(width-legendSize.width(), 0, legendSize.width(), heigth), force);
   } else {
-    m_sum.setFrame(bounds());
-    m_legend.setFrame(KDRectZero);
+    m_sum.setFrame(bounds(), force);
+    m_legend.setFrame(KDRectZero, force);
   }
 
   KDRect frame = (step == Step::Result) ? KDRectZero : KDRect(
@@ -262,7 +263,7 @@ void SumGraphController::LegendView::layoutSubviews(Step step) {
     k_symbolHeightMargin + k_sigmaHeight/2 - (step == Step::SecondParameter) * editableZoneHeight(),
     editableZoneWidth(), editableZoneHeight()
   );
-  m_editableZone.setFrame(frame);
+  m_editableZone.setFrame(frame, force);
 }
 
 }

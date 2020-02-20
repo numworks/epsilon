@@ -34,6 +34,7 @@ void FloatParameterController<T>::didBecomeFirstResponder() {
 
 template<typename T>
 void FloatParameterController<T>::viewWillAppear() {
+  ViewController::viewWillAppear();
   if (selectedRow() == -1 || selectedRow() == numberOfRows()-1) {
     selectCellAtLocation(0, 0);
   } else {
@@ -48,6 +49,9 @@ void FloatParameterController<T>::viewWillAppear() {
 
 template<typename T>
 void FloatParameterController<T>::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == nullptr) {
+    return;
+  }
   if (parentResponder() == nullptr) {
     m_selectableTableView.deselectTable();
     m_selectableTableView.scrollToCell(0,0);

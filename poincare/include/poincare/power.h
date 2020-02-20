@@ -29,9 +29,10 @@ public:
   Sign sign(Context * context) const override;
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
+  Expression getUnit() const override;
 
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
 
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
 
@@ -76,6 +77,7 @@ public:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression getUnit() const;
 
 private:
   constexpr static int k_maxExactPowerMatrix = 100;

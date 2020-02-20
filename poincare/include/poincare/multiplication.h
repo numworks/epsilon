@@ -23,8 +23,9 @@ public:
   Type type() const override { return Type::Multiplication; }
   Sign sign(Context * context) const override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
+  Expression getUnit() const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c*d); }
@@ -65,6 +66,7 @@ class Multiplication : public NAryExpression {
   friend class AdditionNode;
   friend class Addition;
   friend class Power;
+  friend class UnitConvert;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   static Multiplication Builder() { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(); }
@@ -75,7 +77,8 @@ public:
   static Multiplication Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(children, numberOfChildren); }
 
   // Properties
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
+  Expression getUnit() const;
   // Approximation
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Simplification
@@ -102,10 +105,8 @@ private:
   static bool TermHasNumeralBase(const Expression & e);
   static bool TermHasNumeralExponent(const Expression & e);
   static const Expression CreateExponent(Expression e);
-  /* Warning: mergeNegativePower doesnot always return  a multiplication:
-   *      *(b^-1,c^-1) -> (bc)^-1 */
-  Expression mergeNegativePower(ExpressionNode::ReductionContext reductionContext);
   static inline const Expression Base(const Expression e);
+  void splitIntoNormalForm(Expression & numerator, Expression & denominator, Expression & units, ExpressionNode::ReductionContext reductionContext) const;
 };
 
 }

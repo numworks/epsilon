@@ -21,7 +21,7 @@ private:
     ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate);
     ViewController * mainViewController() const;
     AlternateEmptyViewDelegate * alternateEmptyViewDelegate() const;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;

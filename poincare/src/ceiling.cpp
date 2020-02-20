@@ -26,7 +26,7 @@ int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 template<typename T>
 Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   return Complex<T>::Builder(std::ceil(c.real()));
 }
@@ -39,6 +39,7 @@ Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
 Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

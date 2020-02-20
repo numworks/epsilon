@@ -10,7 +10,7 @@ class AbscissaTitleCell : public EvenOddMessageTextCell, public Shared::Separabl
 public:
   AbscissaTitleCell() : EvenOddMessageTextCell(), Separable() {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 private:
   void didSetSeparator() override;
 };

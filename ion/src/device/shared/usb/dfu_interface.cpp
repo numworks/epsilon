@@ -209,6 +209,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
+  willErase();
   if (m_erasePage == Flash::TotalNumberOfSectors()) {
     Flash::MassErase();
   } else {

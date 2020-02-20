@@ -8,6 +8,8 @@ using namespace Poincare;
 
 namespace Sequence {
 
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+
 CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
   InteractiveCurveViewRange(delegate)
 {
@@ -35,13 +37,16 @@ void CurveViewRange::normalize() {
   float xMean = xCenter();
   float yMean = yCenter();
 
+  const float unit = maxFloat(xGridUnit(), yGridUnit());
+
   // Compute the X
-  float newXMin = xMean - NormalizedXHalfRange();
-  float newXMax = xMean + NormalizedXHalfRange();
+  const float newXHalfRange = NormalizedXHalfRange(unit);
+  float newXMin = xMean - newXHalfRange;
+  float newXMax = xMean + newXHalfRange;
   float interestingXMin = m_delegate->interestingXMin();
   if (newXMin < interestingXMin) {
-    newXMin = interestingXMin -k_displayLeftMarginRatio*2.0f*NormalizedXHalfRange();
-    newXMax = newXMin + 2.0f*NormalizedXHalfRange();
+    newXMin = interestingXMin -k_displayLeftMarginRatio*2.0f*newXHalfRange;
+    newXMax = newXMin + 2.0f*newXHalfRange;
   }
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
@@ -50,8 +55,9 @@ void CurveViewRange::normalize() {
 
   // Compute the Y
   m_yAuto = false;
-  float newYMin = yMean - NormalizedYHalfRange();
-  float newYMax = clipped(yMean + NormalizedYHalfRange(), true);
+  const float newYHalfRange = NormalizedYHalfRange(unit);
+  float newYMin = yMean - newYHalfRange;
+  float newYMax = clipped(yMean + newYHalfRange, true);
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yRange.setMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);

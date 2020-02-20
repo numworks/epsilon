@@ -1,7 +1,6 @@
 #include "helper.h"
 #include <apps/shared/global_context.h>
 #include <poincare/src/parsing/parser.h>
-#include <assert.h>
 
 using namespace Poincare;
 
@@ -38,37 +37,60 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
   quiz_assert(test);
 }
 
-void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits) {
+void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
-  Expression m = process(e, &globalContext, target, complexFormat, angleUnit, symbolicComputation);
+  Expression e = parse_expression(expression, &globalContext, false);
+  Expression m = process(e, ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target, symbolicComputation));
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
-  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, expression);
+  const bool test = strcmp(buffer, result) == 0;
+  char information[bufferSize] = "";
+  if (!test) {
+    char * position = information;
+    size_t remainingLength = bufferSize;
+    static constexpr size_t numberOfPieces = 6;
+    const char * piecesOfInformation[numberOfPieces] = {
+      "  ",
+      expression,
+      "\n  processed to\n  ",
+      buffer,
+      "\n  instead of\n  ",
+      result,
+    };
+    for (size_t piece = 0; piece < numberOfPieces; piece++) {
+      const size_t length = strlcpy(position, piecesOfInformation[piece], remainingLength);
+      if (length > remainingLength) {
+        break;
+      }
+      remainingLength -= length;
+      position += length;
+    }
+  }
+  quiz_assert_print_if_failure(test, information);
 }
 
-Poincare::Expression parse_expression(const char * expression, bool addParentheses) {
-  Expression result = Expression::Parse(expression, addParentheses);
+Poincare::Expression parse_expression(const char * expression, Context * context, bool addParentheses) {
+  Expression result = Expression::Parse(expression, context, addParentheses);
   quiz_assert(!result.isUninitialized());
   return result;
 }
 
 void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, false);
+  Expression e = parse_expression(expression, &globalContext, false);
   quiz_assert_print_if_failure(!e.isUninitialized(), expression);
-  e = e.simplify(&globalContext, complexFormat, angleUnit, target);
+  e = e.simplify(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
   quiz_assert_print_if_failure(!(e.isUninitialized()), expression);
 }
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, bool symbolicComputation) {
-  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, symbolicComputation, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, symbolicComputation, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       Expression copy = e.clone();
-      if (target == ExpressionNode::ReductionTarget::User) {
-        copy.simplifyAndApproximate(&copy, nullptr, context, complexFormat, angleUnit, symbolicComputation);
+      if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+        copy.simplifyAndApproximate(&copy, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.symbolicComputation());
       } else {
-        copy = copy.simplify(context, complexFormat, angleUnit, target, symbolicComputation);
+        copy = copy.simplify(reductionContext);
       }
       if (copy.isUninitialized()) {
         return e;
@@ -81,8 +103,8 @@ template<typename T>
 void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, ExpressionNode::ReductionTarget::SystemForApproximation, complexFormat, angleUnit, false, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
-      return e.approximate<T>(context, complexFormat, angleUnit);
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+      return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);
 }
 

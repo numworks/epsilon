@@ -16,6 +16,7 @@ class StoreController : public EditableCellTableViewController, public ButtonRow
 public:
   StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header);
   View * view() override { return &m_contentView; }
+  TELEMETRY_ID("Store");
 
   virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();
@@ -64,7 +65,7 @@ protected:
     static constexpr KDCoordinate k_formulaInputHeight = 31;
     int numberOfSubviews() const override { return 1 + m_displayFormulaInputView; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     KDRect formulaFrame() const;
     StoreSelectableTableView m_dataView;
     BufferTextViewWithTextField m_formulaInputView;

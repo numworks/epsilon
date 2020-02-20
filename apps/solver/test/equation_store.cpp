@@ -11,24 +11,26 @@ using namespace Poincare;
 
 namespace Solver {
 
-void addEquationWithText(EquationStore * equationStore, const char * text) {
+void addEquationWithText(EquationStore * equationStore, const char * text, Context * context) {
   Ion::Storage::Record::ErrorStatus err = equationStore->addEmptyModel();
   quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, text);
   (void) err; // Silence warning in DEBUG=0
   Ion::Storage::Record record = equationStore->recordAtIndex(equationStore->numberOfModels()-1);
   Shared::ExpiringPointer<Equation> model = equationStore->modelForRecord(record);
-  model->setContent(text);
+  model->setContent(text, context);
 }
 
-void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions) {
+void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions, bool didReplaceFunctionsButNotSymbols = false) {
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
   int index = 0;
   while (equations[index] != 0) {
-    addEquationWithText(&equationStore, equations[index++]);
+    addEquationWithText(&equationStore, equations[index++], &globalContext);
   }
-  EquationStore::Error err = equationStore.exactSolve(&globalContext);
+  bool replaceFunctionsButNotSymbols = false;
+  EquationStore::Error err = equationStore.exactSolve(&globalContext, &replaceFunctionsButNotSymbols);
   quiz_assert_print_if_failure(err == error, equations[0]);
+  quiz_assert_print_if_failure(replaceFunctionsButNotSymbols == didReplaceFunctionsButNotSymbols, equations[0]);
   if (err != EquationStore::Error::NoError) {
     equationStore.removeAll();
     return;
@@ -58,18 +60,19 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
 void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char * variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions) {
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
-  addEquationWithText(&equationStore, equations);
-  EquationStore::Error err = equationStore.exactSolve(&globalContext);
+  addEquationWithText(&equationStore, equations, &globalContext);
+  bool replaceFunctionsButNotSymbols = false;
+  EquationStore::Error err = equationStore.exactSolve(&globalContext, &replaceFunctionsButNotSymbols);
   quiz_assert(err == EquationStore::Error::RequireApproximateSolution);
   equationStore.setIntervalBound(0, xMin);
   equationStore.setIntervalBound(1, xMax);
-  equationStore.approximateSolve(&globalContext);
+  equationStore.approximateSolve(&globalContext, replaceFunctionsButNotSymbols);
   quiz_assert(equationStore.numberOfSolutions() == numberOfSolutions);
   quiz_assert(strcmp(equationStore.variableAtIndex(0), variable)== 0);
   for (int i = 0; i < numberOfSolutions; i++) {
     quiz_assert(std::fabs(equationStore.approximateSolutionAtIndex(i) - solutions[i]) < 1E-5);
   }
-  quiz_assert(equationStore.haveMoreApproximationSolutions(&globalContext) == hasMoreSolutions);
+  quiz_assert(equationStore.haveMoreApproximationSolutions(&globalContext, replaceFunctionsButNotSymbols) == hasMoreSolutions);
   equationStore.removeAll();
 }
 
@@ -156,6 +159,11 @@ QUIZ_CASE(equation_solve) {
   const char * equations14[] = {"x+y=0", "3x+y+z=-5", "4z-π=0", 0};
   const char * solutions14[] = {"\u0012\u0012-π-20\u0013/\u00128\u0013\u0013", "\u0012\u0012π+20\u0013/\u00128\u0013\u0013", "\u0012\u0012π\u0013/\u00124\u0013\u0013"}; // (-π-20)/8, (π+20)/8, π/4
   assert_equation_system_exact_solve_to(equations14,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesxyz, solutions14, 3);
+
+  const char * variablesxyzabc[] = {"x", "y", "z", "a", "b", "c"};
+  const char * equations22[] = {"x+y=0", "3x+y+z=-5", "4z-π=0", "a+b+c=0", "a = 3", "c = a+2", 0};
+  const char * solutions22[] = {"\u0012\u0012-π-20\u0013/\u00128\u0013\u0013", "\u0012\u0012π+20\u0013/\u00128\u0013\u0013", "\u0012\u0012π\u0013/\u00124\u0013\u0013", "3", "-8", "5"}; // (-π-20)/8, (π+20)/8, π/4, 3, 5, -8
+  assert_equation_system_exact_solve_to(equations22,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesxyzabc, solutions22, 6);
 
   // Monovariable non-polynomial equation
   double solutions15[] = {-90.0, 90.0};
@@ -256,25 +264,116 @@ QUIZ_CASE(equation_solve_complex_format) {
   const char * solutions5Polar[] = {"\u0012\u00123\u0013/\u00122\u0013\u0013ℯ^\u0012\u0012\u00122π\u0013/\u00123\u0013\u0013𝐢\u0013"}; //3/2ℯ^\u0012\u00122π\u0012/3\u0013𝐢"};
   assert_equation_system_exact_solve_to(equations5,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions5Polar, 1);
 
+  // Put back the complex format
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
 }
 
 QUIZ_CASE(equation_and_symbolic_computation) {
-
   // x+a=0 : non linear system
-  const char * equation[] = {"x+a=0", 0};
-  assert_equation_system_exact_solve_to(equation, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, nullptr, nullptr, INT_MAX);
+  const char * equation1[] = {"x+a=0", 0};
+  assert_equation_system_exact_solve_to(equation1, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, nullptr, nullptr, INT_MAX);
 
   // -3->a
   Shared::GlobalContext globalContext;
   Expression::ParseAndSimplify("-3→a", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
 
   // x+a = 0 : x = 3
-  const char * variables[] = {"x", ""};
-  const char * solutions[] = {"3"};
-  assert_equation_system_exact_solve_to(equation, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables, solutions, 1);
+  const char * variables1[] = {"x", ""};
+  const char * solutions1[] = {"3"};
+  assert_equation_system_exact_solve_to(equation1, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables1, solutions1, 1);
+
+  /* a = 0 : the equation has no solution as the user defined a = -3, so a is
+   * not replaced with its context value and the result is a = 0. */
+  const char * equation2[] = {"a=0", 0};
+  const char * variables2[] = {"a", ""};
+  const char * solutions2[] = {"0"};
+  assert_equation_system_exact_solve_to(equation2, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables2, solutions2, 1, true);
+
+  // 4->b
+  Expression::ParseAndSimplify("-4→b", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+
+  /* a + b = 0 : the equation has no solution as the user defined a = -3, and
+   * b = -4 so a and b are not replaced with their context values and the result
+   * is an infinity of solutions. */
+  const char * equation3[] = {"a+b=0", 0};
+  const char * variables3[] = {"a", "b", ""};
+  assert_equation_system_exact_solve_to(equation3, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables3, nullptr, INT_MAX, true);
+
+  // a + b + c = 0 : the equation has the solution c = -7
+  const char * equation4[] = {"a+b+c=0", 0};
+  const char * variables4[] = {"c", ""};
+  const char * solutions4[] = {"7"};
+  assert_equation_system_exact_solve_to(equation4, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables4, solutions4, 1);
+
+  /* a + c = 0 and a = 3: the system has no solution as the user defined a = -3,
+   * so a is not replaced with its context value and the result is a = 3 and
+   * c = -3. */
+  const char * equation5[] = {"a+c=0", "a=3", 0};
+  const char * variables5[] = {"a", "c", ""};
+  const char * solutions5[] = {"3", "-3"};
+  assert_equation_system_exact_solve_to(equation5, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables5, solutions5, 2, true);
+
+  // x+1->f(x)
+  Expression::ParseAndSimplify("x+1→f(x)", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+
+  // f(x) = 0 : x = -1
+  const char * equation6[] = {"f(x)=0", 0};
+  const char * variables6[] = {"x", ""};
+  const char * solutions6[] = {"-1",};
+  assert_equation_system_exact_solve_to(equation6, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables6, solutions6, 1);
+
+  /* f(a) = 0 : the equation has no solution as the user defined a = -3, so a is
+   * not replaced with its context value and the result is a = -1. */
+  const char * equation7[] = {"f(a)=0", 0};
+  const char * variables7[] = {"a", ""};
+  const char * solutions7[] = {"-1",};
+  assert_equation_system_exact_solve_to(equation7, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables7, solutions7, 1, true);
+
+  // a+x+1->g(x)
+  Expression::ParseAndSimplify("a+x+2→g(x)", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+
+  // g(x) = 0 : x = 2
+  const char * equation8[] = {"g(x)=0", 0};
+  const char * variables8[] = {"x", ""};
+  const char * solutions8[] = {"1",};
+  assert_equation_system_exact_solve_to(equation8, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables8, solutions8, 1);
+
+  /* g(a) = 0 : the equation has no solution as the user defined a = -3, so a is
+   * not replaced with its context value and the equation becomes a+a+2=0. The
+   * solution is a = -1. */
+  const char * equation9[] = {"g(a)=0", 0};
+  const char * variables9[] = {"a", ""};
+  const char * solutions9[] = {"-1",};
+  assert_equation_system_exact_solve_to(equation9, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables9, solutions9, 1, true);
+
+  /* c = d
+   * d = 5
+   * h(x) = c + d + 3
+   *   /c = -3
+   *   \h(x) = 0
+   * c and d context values should not be used, and the solution is c = -3, d = 0 */
+  Expression::ParseAndSimplify("5→d", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+  Expression::ParseAndSimplify("d→c", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+  Expression::ParseAndSimplify("c+d+3→h(x)", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+  const char * equation10[] = {"h(x)=0", "c = -3", 0};
+  const char * variables10[] = {"c", "d", ""};
+  const char * solutions10[] = {"-3", "0"};
+  assert_equation_system_exact_solve_to(equation10, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables10, solutions10, 2, true);
+
+  const char * equation11[] = {"c+d=5", "c-d=1", 0};
+  const char * variables11[] = {"c", "d", ""};
+  const char * solutions11[] = {"3", "2"};
+  assert_equation_system_exact_solve_to(equation11, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables11, solutions11, 2, true);
+
 
   // Clean the storage
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("c.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("d.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
 }
 
 }

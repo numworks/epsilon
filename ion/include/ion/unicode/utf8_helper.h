@@ -20,10 +20,9 @@ bool HasCodePoint(const char * s, CodePoint c);
  * stopping at the null-terminating char or the start of string. */
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft = false, const char * initialPosition = nullptr);
 
-/* Copy src into dst while removing all code points c. Also update an index
- * that should be lower if code points where removed before it. Ensure null-
+/* Copy src into dst while removing all code points in codePoints. Ensure null-
  * termination of dst. */
-void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);
+bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodePoint * codePoints, int numberOfCodePoints);
 
 /* Remove all code points c. and update an index that should be lower if code
  * points where removed before it. Ensure null-termination of dst. */
@@ -69,10 +68,6 @@ const char * PerformAtCodePoints(
 
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);
-bool CodePointIsLetter(CodePoint c);
-bool CodePointIsLowerCaseLetter(CodePoint c);
-bool CodePointIsUpperCaseLetter(CodePoint c);
-bool CodePointIsNumber(CodePoint c);
 
 // Shift the buffer and return the number of bytes removed.
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c = nullptr);

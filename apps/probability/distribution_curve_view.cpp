@@ -18,7 +18,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   float upperBound = m_calculation->upperBound();
   ctx->fillRect(bounds(), k_backgroundColor);
   drawAxis(ctx, rect, Axis::Horizontal);
-  drawLabels(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
+  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   if (m_distribution->type() == Distribution::Type::Normal) {
     /* Special case for the normal distribution, which has always the same curve
      * We indicate the pixels from and to which we color under the curve, not
@@ -29,7 +29,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
     return;
   }
   if (m_distribution->isContinuous()) {
-    drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr, Palette::YellowDark, true, lowerBound, upperBound);
+    drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr, Palette::YellowDark, true, true, lowerBound, upperBound);
   } else {
     drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::GreyMiddle, Palette::YellowDark, lowerBound, upperBound+0.5f);
   }
@@ -59,7 +59,7 @@ void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, flo
   // Draw a centered reduced normal curve
   NormalDistribution n;
   constCastedThis->setCurveViewRange(&n);
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, pixelToFloat(Axis::Horizontal, colorLowerBoundPixel), pixelToFloat(Axis::Horizontal, colorUpperBoundPixel));
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, true, true, pixelToFloat(Axis::Horizontal, colorLowerBoundPixel), pixelToFloat(Axis::Horizontal, colorUpperBoundPixel));
 
   // Put back the previous curve view range
   constCastedThis->setCurveViewRange(previousRange);

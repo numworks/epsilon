@@ -3,6 +3,7 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
+#include <poincare/integer.h>
 
 namespace Poincare {
 
@@ -46,6 +47,7 @@ public:
 
   // Expression
   Expression shallowReduce(Context * context);
+  static Expression Reduce(const Integer & a, const Integer & b);
 };
 
 }

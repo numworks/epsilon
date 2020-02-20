@@ -18,10 +18,10 @@ public:
 
   /* CondensedSumLayout is only used in apps/shared/sum_graph_controller.cpp, in
    * a view with no cursor. */
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override { assert(false); }
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override { assert(false); }
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override { assert(false); }
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override { assert(false); }
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
+  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override { assert(false); }
+  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override { assert(false); }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     assert(false);
     return 0;
@@ -47,7 +47,7 @@ protected:
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
   LayoutNode * baseLayout() { return childAtIndex(0); }
   LayoutNode * subscriptLayout() { return childAtIndex(1); }
   LayoutNode * superscriptLayout() { return childAtIndex(2); }

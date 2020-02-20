@@ -27,6 +27,7 @@ Expression RealPartNode::shallowReduce(ReductionContext reductionContext) {
 Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

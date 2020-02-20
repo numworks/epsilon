@@ -3,6 +3,7 @@
 #include <kandinsky/point.h>
 #include <kandinsky/coordinate.h>
 #include <apps/i18n.h>
+#include <apps/global_preferences.h>
 
 namespace Code {
 
@@ -18,11 +19,11 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(Consol
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_font, textColor(m_line), isHighlighted()? Palette::Select : KDColorWhite);
+  ctx->drawString(m_line->text(), KDPointZero, GlobalPreferences::sharedGlobalPreferences()->font(), textColor(m_line), isHighlighted()? Palette::Select : KDColorWhite);
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {
-  return ConsoleController::k_font->stringSize(m_line->text());
+  return GlobalPreferences::sharedGlobalPreferences()->font()->stringSize(m_line->text());
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :
@@ -34,7 +35,7 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder 
 ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(ConsoleController::k_font, I18n::Message::ConsolePrompt, 0, 0.5),
+  m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(), I18n::Message::ConsolePrompt, 0, 0.5),
   m_scrollableView(this),
   m_line()
 {
@@ -77,16 +78,16 @@ View * ConsoleLineCell::subviewAtIndex(int index) {
   return &m_scrollableView;
 }
 
-void ConsoleLineCell::layoutSubviews() {
+void ConsoleLineCell::layoutSubviews(bool force) {
   if (m_line.isCommand()) {
-    KDSize promptSize = ConsoleController::k_font->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
-    m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()));
-    m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()));
+    KDSize promptSize = GlobalPreferences::sharedGlobalPreferences()->font()->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
+    m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()), force);
+    m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()), force);
     return;
   }
   assert(m_line.isResult());
-  m_promptView.setFrame(KDRectZero);
-  m_scrollableView.setFrame(bounds());
+  m_promptView.setFrame(KDRectZero, force);
+  m_scrollableView.setFrame(bounds(), force);
 }
 
 void ConsoleLineCell::didBecomeFirstResponder() {

@@ -5,6 +5,12 @@
 #include <poincare/serialization_helper.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/addition.h>
+#include <poincare/division.h>
+#include <poincare/division_quotient.h>
+#include <poincare/division_remainder.h>
+#include <poincare/equal.h>
+#include <poincare/multiplication.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -136,7 +142,20 @@ Integer::Integer(double_native_int_t i) {
   }
 }
 
-Integer::Integer(const char * digits, size_t length, bool negative) :
+int integerFromCharDigit(char c) {
+  assert(c >= '0');
+  if (c <= '9') {
+    return c - '0';
+  }
+  if (c <= 'F') {
+    assert(c >= 'A');
+    return c - 'A' + 10;
+  }
+  assert(c >= 'a' && c <= 'f');
+    return c - 'a' + 10;
+}
+
+Integer::Integer(const char * digits, size_t length, bool negative, Base b) :
   Integer(0)
 {
   if (digits != nullptr && UTF8Helper::CodePointIs(digits, '-')) {
@@ -145,10 +164,10 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
     length--;
   }
   if (digits != nullptr) {
-    Integer base(10);
+    Integer base((int)b);
     for (size_t i = 0; i < length; i++) {
       *this = Multiplication(*this, base);
-      *this = Addition(*this, Integer(*digits - '0'));
+      *this = Addition(*this, Integer(integerFromCharDigit(*digits)));
       digits++;
     }
   }
@@ -157,7 +176,19 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
 
 // Serialization
 
-int Integer::serialize(char * buffer, int bufferSize) const {
+char binaryCharacterForDigit(uint8_t d) {
+  assert(d == 0 || d == 1);
+  return d == 0 ? '0' : '1';
+}
+
+char hexadecimalCharacterForDigit(uint8_t d) {
+  if (d >= 10) {
+    return 'A' + d - 10;
+  }
+  return d + '0';
+}
+
+int Integer::serialize(char * buffer, int bufferSize, Base base) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -168,7 +199,18 @@ int Integer::serialize(char * buffer, int bufferSize) const {
   if (isOverflow()) {
     return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
   }
+  switch (base) {
+    case Base::Binary:
+      return serializeInBinaryBase(buffer, bufferSize, 1, 'b', binaryCharacterForDigit);
+    case Base::Decimal:
+      return serializeInDecimal(buffer, bufferSize);
+    default:
+      assert(base == Base::Hexadecimal);
+      return serializeInBinaryBase(buffer, bufferSize, 4, 'x', hexadecimalCharacterForDigit);
+  }
+}
 
+int Integer::serializeInDecimal(char * buffer, int bufferSize) const {
   Integer base(10);
   Integer abs = *this;
   abs.setNegative(false);
@@ -202,11 +244,65 @@ int Integer::serialize(char * buffer, int bufferSize) const {
   return length;
 }
 
+int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDigit, char symbol, CharacterForDigit charForDigit) const {
+  int currentChar = 0;
+  // Check that we can at least write "0x0"
+  if (bufferSize <= 4) {
+    return -1;
+  }
+  // Fill buffer with "0x"
+  buffer[currentChar++] = '0';
+  buffer[currentChar++] = symbol;
+
+  int nbOfDigits = numberOfDigits();
+  // Special case for 0
+  if (nbOfDigits == 0) {
+    buffer[currentChar++] = '0';
+    buffer[currentChar] = 0;
+    return currentChar;
+  }
+
+  // Compute the required bufferSize to print the integer
+  // TODO: share this code with exam mode new version
+  native_uint_t lastDigit = digit(nbOfDigits-1);
+  int minShift = 0;
+  int maxShift = 32;
+  while (maxShift > minShift+1) {
+    int shift = (minShift + maxShift)/2;
+    native_uint_t shifted = lastDigit >> shift;
+    if (shifted == 0) {
+      maxShift = shift;
+    } else {
+      minShift = shift;
+    }
+  }
+  int requiredBufferSize = ((nbOfDigits-1)*32+(maxShift+bitsPerDigit-1))/bitsPerDigit;
+  // Don't forget 0x prefix and the null termination
+  requiredBufferSize += 3;
+  if (requiredBufferSize > bufferSize) {
+    return -1;
+  }
+
+  currentChar = requiredBufferSize - 1;
+  buffer[currentChar--] = 0;
+  uint8_t first4bits = ((1 << bitsPerDigit) - 1);
+  for (int i = 0; i < nbOfDigits; i++) {
+    for (int j = 0; j < 32/bitsPerDigit; j++) {
+      char d = (digit(i) >> j*bitsPerDigit) & first4bits;
+      buffer[currentChar--] = charForDigit(d);
+      if (currentChar == 1) {
+        return requiredBufferSize-1;
+      }
+    }
+  }
+  return requiredBufferSize-1;
+}
+
 // Layout
 
-Layout Integer::createLayout() const {
+Layout Integer::createLayout(Base base) const {
   char buffer[k_maxNumberOfDigitsBase10];
-  int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10);
+  int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10, base);
   assert(numberOfChars >= 1);
   if ((int)UTF8Decoder::CharSizeOfCodePoint(buffer[0]) == numberOfChars) {
     UTF8Decoder decoder = UTF8Decoder(buffer);
@@ -590,6 +686,22 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     div.remainder = div.remainder.divideByPowerOf2(pow);
   }
   return div;
+}
+
+Expression Integer::CreateMixedFraction(const Integer & num, const Integer & denom) {
+  Expression quo = DivisionQuotient::Reduce(num, denom);
+  Expression rem = DivisionRemainder::Reduce(num, denom);
+  return Addition::Builder(quo, Division::Builder(rem, Rational::Builder(denom)));
+
+}
+
+Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer & denom) {
+  Expression quo = DivisionQuotient::Reduce(num, denom);
+  Expression rem = DivisionRemainder::Reduce(num, denom);
+  Expression e = Equal::Builder(Rational::Builder(num), Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
+  ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  e = e.deepBeautify(defaultReductionContext);
+  return e;
 }
 
 template float Integer::approximate<float>() const;

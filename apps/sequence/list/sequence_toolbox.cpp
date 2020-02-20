@@ -14,6 +14,9 @@ SequenceToolbox::SequenceToolbox() :
   m_addedCellLayout{},
   m_numberOfAddedCells(0)
 {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_addedCells[i].setParentResponder(&m_selectableTableView);
+  }
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
@@ -91,7 +94,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
 bool SequenceToolbox::selectAddedCell(int selectedRow){
   constexpr int bufferSize = 10;
   char buffer[bufferSize];
-  m_addedCellLayout[selectedRow].serializeParsedExpression(buffer, bufferSize);
+  m_addedCellLayout[selectedRow].serializeParsedExpression(buffer, bufferSize, nullptr); // No need of context here
   sender()->handleEventWithText(buffer);
   Container::activeApp()->dismissModalViewController();
   return true;

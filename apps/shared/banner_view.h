@@ -10,6 +10,7 @@ public:
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  KDCoordinate minimalHeightForOptimalDisplayGivenWidth(KDCoordinate width) const;
   void reload() { layoutSubviews(); }
   static constexpr const KDFont * Font() { return KDFont::SmallFont; }
   static constexpr KDColor TextColor() { return KDColorBlack; }
@@ -18,8 +19,8 @@ private:
   static constexpr KDCoordinate LineSpacing = 2;
   int numberOfSubviews() const override = 0;
   View * subviewAtIndex(int index) override = 0;
-  void layoutSubviews() override;
-  int numberOfLines() const;
+  void layoutSubviews(bool force = false) override;
+  int numberOfLinesGivenWidth(KDCoordinate width) const;
 };
 
 }

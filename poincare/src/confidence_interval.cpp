@@ -37,7 +37,7 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context * context, Pr
   T f = static_cast<Complex<T> &>(fInput).toScalar();
   T n = static_cast<Complex<T> &>(nInput).toScalar();
   if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   std::complex<T> operands[2];
   operands[0] = std::complex<T>(f - 1/std::sqrt(n));
@@ -56,6 +56,7 @@ int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Prefe
 Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

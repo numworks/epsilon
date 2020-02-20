@@ -11,7 +11,6 @@ app_shared_test_src = $(addprefix apps/shared/,\
   interactive_curve_view_range.cpp \
   memoized_curve_view_range.cpp \
   range_1D.cpp \
-  store_context.cpp \
 )
 
 app_shared_src = $(addprefix apps/shared/,\
@@ -19,6 +18,7 @@ app_shared_src = $(addprefix apps/shared/,\
   buffer_function_title_cell.cpp \
   buffer_text_view_with_text_field.cpp \
   button_with_separator.cpp \
+  dots.cpp \
   cursor_view.cpp \
   curve_view.cpp \
   curve_view_cursor.cpp \
@@ -55,8 +55,8 @@ app_shared_src = $(addprefix apps/shared/,\
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \
-  scrollable_exact_approximate_expressions_cell.cpp \
-  scrollable_exact_approximate_expressions_view.cpp \
+  scrollable_multiple_expressions_view.cpp \
+  scrollable_two_expressions_cell.cpp \
   separable.cpp \
   separator_even_odd_buffer_text_cell.cpp \
   simple_interactive_curve_view_controller.cpp \

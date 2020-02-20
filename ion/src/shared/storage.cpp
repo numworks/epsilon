@@ -114,7 +114,32 @@ void Storage::log() {
 #endif
 
 size_t Storage::availableSize() {
+  /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
+   * is needed after calling availableSize */
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
+}
+
+size_t Storage::putAvailableSpaceAtEndOfRecord(Storage::Record r) {
+  char * p = pointerOfRecord(r);
+  size_t previousRecordSize = sizeOfRecordStarting(p);
+  size_t availableStorageSize = availableSize();
+  char * nextRecord = p + previousRecordSize;
+  memmove(nextRecord + availableStorageSize,
+      nextRecord,
+      (m_buffer + k_storageSize - availableStorageSize) - nextRecord);
+  size_t newRecordSize = previousRecordSize + availableStorageSize;
+  overrideSizeAtPosition(p, (record_size_t)newRecordSize);
+  return newRecordSize;
+}
+
+void Storage::getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace) {
+  char * p = pointerOfRecord(r);
+  size_t previousRecordSize = sizeOfRecordStarting(p);
+  char * nextRecord = p + previousRecordSize;
+  memmove(nextRecord - recordAvailableSpace,
+      nextRecord,
+      m_buffer + k_storageSize - nextRecord);
+  overrideSizeAtPosition(p, (record_size_t)(previousRecordSize - recordAvailableSpace));
 }
 
 uint32_t Storage::checksum() {
@@ -243,30 +268,13 @@ Storage::Record Storage::recordBaseNamedWithExtension(const char * baseName, con
 }
 
 Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
-  size_t nameLength = strlen(baseName);
-  {
-    const char * lastRetrievedRecordFullName = fullNameOfRecordStarting(m_lastRecordRetrievedPointer);
-    if (m_lastRecordRetrievedPointer != nullptr && strncmp(baseName, lastRetrievedRecordFullName, nameLength) == 0) {
-      for (size_t i = 0; i < numberOfExtensions; i++) {
-        if (strcmp(lastRetrievedRecordFullName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
-          assert(UTF8Helper::CodePointIs(lastRetrievedRecordFullName + nameLength, '.'));
-          return m_lastRecordRetrieved;
-        }
-      }
-    }
-  }
-  for (char * p : *this) {
-    const char * currentName = fullNameOfRecordStarting(p);
-    if (strncmp(baseName, currentName, nameLength) == 0) {
-      for (size_t i = 0; i < numberOfExtensions; i++) {
-        if (strcmp(currentName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
-          assert(UTF8Helper::CodePointIs(currentName + nameLength, '.'));
-          return Record(currentName);
-        }
-      }
-    }
-  }
-  return Record();
+  return privateRecordAndExtensionOfRecordBaseNamedWithExtensions(baseName, extensions, numberOfExtensions);
+}
+
+const char * Storage::extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions) {
+  const char * result = nullptr;
+  privateRecordAndExtensionOfRecordBaseNamedWithExtensions(baseName, extensions, numberOfExtensions, &result, baseNameLength);
+  return result;
 }
 
 void Storage::destroyAllRecords() {
@@ -539,6 +547,42 @@ bool Storage::slideBuffer(char * position, int delta) {
   }
   memmove(position+delta, position, endBuffer()+sizeof(record_size_t)-position);
   return true;
+}
+
+Storage::Record Storage::privateRecordAndExtensionOfRecordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult, int baseNameLength) {
+  size_t nameLength = baseNameLength < 0 ? strlen(baseName) : baseNameLength;
+  {
+    const char * lastRetrievedRecordFullName = fullNameOfRecordStarting(m_lastRecordRetrievedPointer);
+    if (m_lastRecordRetrievedPointer != nullptr && strncmp(baseName, lastRetrievedRecordFullName, nameLength) == 0) {
+      for (size_t i = 0; i < numberOfExtensions; i++) {
+        if (strcmp(lastRetrievedRecordFullName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
+          assert(UTF8Helper::CodePointIs(lastRetrievedRecordFullName + nameLength, '.'));
+          if (extensionResult != nullptr) {
+            *extensionResult = extensions[i];
+          }
+          return m_lastRecordRetrieved;
+        }
+      }
+    }
+  }
+  for (char * p : *this) {
+    const char * currentName = fullNameOfRecordStarting(p);
+    if (strncmp(baseName, currentName, nameLength) == 0) {
+      for (size_t i = 0; i < numberOfExtensions; i++) {
+        if (strcmp(currentName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
+          assert(UTF8Helper::CodePointIs(currentName + nameLength, '.'));
+          if (extensionResult != nullptr) {
+            *extensionResult = extensions[i];
+          }
+          return Record(currentName);
+        }
+      }
+    }
+  }
+  if (extensionResult != nullptr) {
+    *extensionResult = nullptr;
+  }
+  return Record();
 }
 
 Storage::RecordIterator & Storage::RecordIterator::operator++() {

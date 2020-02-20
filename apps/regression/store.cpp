@@ -204,45 +204,53 @@ float Store::minValueOfColumn(int series, int i) const {
   return minColumn;
 }
 
-double Store::squaredValueSumOfColumn(int series, int i) const {
+double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const {
   double result = 0;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    result += m_data[series][i][k]*m_data[series][i][k];
+    if (lnOfSeries) {
+      result += log(m_data[series][i][k]) * log(m_data[series][i][k]);
+    } else {
+      result += m_data[series][i][k]*m_data[series][i][k];
+    }
   }
   return result;
 }
 
-double Store::columnProductSum(int series) const {
+double Store::columnProductSum(int series, bool lnOfSeries) const {
   double result = 0;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    result += m_data[series][0][k]*m_data[series][1][k];
+    if (lnOfSeries) {
+      result += log(m_data[series][0][k]) * log(m_data[series][1][k]);
+    } else {
+      result += m_data[series][0][k] * m_data[series][1][k];
+    }
   }
   return result;
 }
 
-double Store::meanOfColumn(int series, int i) const {
-  return numberOfPairsOfSeries(series) == 0 ? 0 : sumOfColumn(series, i)/numberOfPairsOfSeries(series);
+double Store::meanOfColumn(int series, int i, bool lnOfSeries) const {
+  return numberOfPairsOfSeries(series) == 0 ? 0 : sumOfColumn(series, i, lnOfSeries)/numberOfPairsOfSeries(series);
 }
 
-double Store::varianceOfColumn(int series, int i) const {
-  double mean = meanOfColumn(series, i);
-  return squaredValueSumOfColumn(series, i)/numberOfPairsOfSeries(series) - mean*mean;
+double Store::varianceOfColumn(int series, int i, bool lnOfSeries) const {
+  double mean = meanOfColumn(series, i, lnOfSeries);
+  return squaredValueSumOfColumn(series, i, lnOfSeries)/numberOfPairsOfSeries(series) - mean*mean;
 }
 
-double Store::standardDeviationOfColumn(int series, int i) const {
-  return std::sqrt(varianceOfColumn(series, i));
+double Store::standardDeviationOfColumn(int series, int i, bool lnOfSeries) const {
+  return std::sqrt(varianceOfColumn(series, i, lnOfSeries));
 }
 
-double Store::covariance(int series) const {
-  return columnProductSum(series)/numberOfPairsOfSeries(series) - meanOfColumn(series, 0)*meanOfColumn(series, 1);
+double Store::covariance(int series, bool lnOfSeries) const {
+  return columnProductSum(series, lnOfSeries)/numberOfPairsOfSeries(series) - meanOfColumn(series, 0, lnOfSeries)*meanOfColumn(series, 1, lnOfSeries);
 }
 
-double Store::slope(int series) const {
-  return LinearModelHelper::Slope(covariance(series), varianceOfColumn(series, 0));
+double Store::slope(int series, bool lnOfSeries) const {
+  return LinearModelHelper::Slope(covariance(series, lnOfSeries), varianceOfColumn(series, 0, lnOfSeries));
 }
 
-double Store::yIntercept(int series) const {
-  return LinearModelHelper::YIntercept(meanOfColumn(series, 1), meanOfColumn(series, 0), slope(series));
+double Store::yIntercept(int series, bool lnOfSeries) const {
+  return LinearModelHelper::YIntercept(meanOfColumn(series, 1, lnOfSeries), meanOfColumn(series, 0, lnOfSeries), slope(series, lnOfSeries));
 }
 
 double Store::yValueForXValue(int series, double x, Poincare::Context * globalContext) {

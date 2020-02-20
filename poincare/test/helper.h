@@ -8,6 +8,10 @@ const char * BigOverflowedIntegerString(); // OverflowedIntegerString with a 2 o
 constexpr Poincare::ExpressionNode::ReductionTarget SystemForApproximation = Poincare::ExpressionNode::ReductionTarget::SystemForApproximation;
 constexpr Poincare::ExpressionNode::ReductionTarget SystemForAnalysis = Poincare::ExpressionNode::ReductionTarget::SystemForAnalysis;
 constexpr Poincare::ExpressionNode::ReductionTarget User = Poincare::ExpressionNode::ReductionTarget::User;
+constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllDefinedSymbolsWithDefinition = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllSymbolsWithDefinitionsOrUndefined = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceDefinedFunctionsWithDefinitions = Poincare::ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
+constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits;
 constexpr Poincare::Preferences::AngleUnit Degree = Poincare::Preferences::AngleUnit::Degree;
 constexpr Poincare::Preferences::AngleUnit Radian = Poincare::Preferences::AngleUnit::Radian;
 constexpr Poincare::Preferences::AngleUnit Gradian = Poincare::Preferences::AngleUnit::Gradian;
@@ -21,19 +25,19 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode = Poincare::Pref
 void quiz_assert_print_if_failure(bool test, const char * information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
-typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, bool symbolicComputation);
+typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ExpressionNode::ReductionContext reductionContext);
 
-void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, bool symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ExpressionNode::SymbolicComputation symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
 
 // Parsing
 
-Poincare::Expression parse_expression(const char * expression, bool addParentheses);
+Poincare::Expression parse_expression(const char * expression, Poincare::Context * context, bool addParentheses);
 
 // Simplification
 
 void assert_simplify(const char * expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ExpressionNode::ReductionTarget target = User);
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = User, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, bool symbolicComputation = true);
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = User, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition);
 
 // Approximation
 

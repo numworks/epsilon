@@ -47,9 +47,9 @@ void LCDTimingTestController::ContentView::setStatus(bool success, int numberOfE
   m_lcdNumberGlyphFailuresView.setText(buffer);
 }
 
-void LCDTimingTestController::ContentView::layoutSubviews() {
-  m_lcdTimingStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-  m_lcdNumberGlyphFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20));
+void LCDTimingTestController::ContentView::layoutSubviews(bool force) {
+  m_lcdTimingStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), force);
+  m_lcdNumberGlyphFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20), force);
 }
 
 }

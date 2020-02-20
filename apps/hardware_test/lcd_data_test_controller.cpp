@@ -46,9 +46,9 @@ void LCDDataTestController::ContentView::setStatus(bool success, int numberOfErr
   m_lcdNumberPixelFailuresView.setText(buffer);
 }
 
-void LCDDataTestController::ContentView::layoutSubviews() {
-  m_lcdDataStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-  m_lcdNumberPixelFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20));
+void LCDDataTestController::ContentView::layoutSubviews(bool force) {
+  m_lcdDataStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), force);
+  m_lcdNumberPixelFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20), force);
 }
 
 }

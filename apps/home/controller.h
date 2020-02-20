@@ -14,7 +14,7 @@ public:
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void viewWillAppear() override;
+  TELEMETRY_ID("");
 
   virtual int numberOfRows() const override;
   virtual int numberOfColumns() const override;
@@ -36,7 +36,7 @@ private:
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     SelectableTableView m_selectableTableView;
   };
   static constexpr KDCoordinate k_sideMargin = 4;

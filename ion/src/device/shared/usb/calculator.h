@@ -115,6 +115,7 @@ public:
   {
   }
   uint32_t addressPointer() const { return m_dfuInterface.addressPointer(); }
+  bool isErasingAndWriting() const { return m_dfuInterface.isErasingAndWriting(); }
 protected:
   virtual Descriptor * descriptor(uint8_t type, uint8_t index) override;
   virtual void setActiveConfiguration(uint8_t configurationIndex) override {

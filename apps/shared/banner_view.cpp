@@ -17,10 +17,14 @@ void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, HeightGivenNumberOfLines(numberOfLines()));
+  return KDSize(Ion::Display::Width, minimalHeightForOptimalDisplayGivenWidth(Ion::Display::Width));
 }
 
-void BannerView::layoutSubviews() {
+KDCoordinate BannerView::minimalHeightForOptimalDisplayGivenWidth(KDCoordinate width) const {
+  return HeightGivenNumberOfLines(numberOfLinesGivenWidth(width));
+}
+
+void BannerView::layoutSubviews(bool force) {
   if (m_frame.isEmpty()) {
     /* If the frame has not been set yet, there is no point in layouting the
      * subviews.
@@ -48,7 +52,7 @@ void BannerView::layoutSubviews() {
         subviewPreviousLine = subviewAtIndex(j);
         KDCoordinate width = subviewPreviousLine->minimalSizeForOptimalDisplay().width() + remainingWidth/nbOfSubviewsOnLine + (j == i-1) * roundingError;
         KDCoordinate height = subviewPreviousLine->minimalSizeForOptimalDisplay().height();
-        subviewPreviousLine->setFrame(KDRect(x, y, width, height));
+        subviewPreviousLine->setFrame(KDRect(x, y, width, height), force);
         x += width;
       }
       // Next line
@@ -61,9 +65,9 @@ void BannerView::layoutSubviews() {
   }
 }
 
-int BannerView::numberOfLines() const {
+int BannerView::numberOfLinesGivenWidth(KDCoordinate width) const {
   int lineNumber = 1;
-  const KDCoordinate lineWidth = m_frame.width();
+  const KDCoordinate lineWidth = width;
   KDCoordinate remainingWidth = lineWidth;
   for (int i = 0; i < numberOfSubviews(); i++) {
     KDCoordinate subviewWidth = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i)->minimalSizeForOptimalDisplay().width();

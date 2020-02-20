@@ -1,10 +1,12 @@
 #include <escher/expression_table_cell.h>
+#include <escher/container.h>
 #include <escher/palette.h>
 #include <assert.h>
 
-ExpressionTableCell::ExpressionTableCell(Layout layout) :
+ExpressionTableCell::ExpressionTableCell(Responder * parentResponder, Layout layout) :
+  Responder(parentResponder),
   TableCell(layout),
-  m_labelExpressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite)
+  m_labelExpressionView(this, k_horizontalMargin, 0, 0.0f, 0.5f, KDColorBlack, KDColorWhite)
 {
 }
 
@@ -23,4 +25,8 @@ void ExpressionTableCell::setLayout(Poincare::Layout layout) {
   if (!layout.isUninitialized()) {
     layoutSubviews();
   }
+}
+
+void ExpressionTableCell::didBecomeFirstResponder() {
+  Container::activeApp()->setFirstResponder(&m_labelExpressionView);
 }

@@ -26,7 +26,7 @@ int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 template<typename T>
 Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
-    return Complex<T>::Undefined();
+    return Complex<T>::RealUndefined();
   }
   return Complex<T>::Builder(std::floor(c.real()));
 }
@@ -38,6 +38,7 @@ Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
 Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }

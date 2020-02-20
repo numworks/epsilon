@@ -261,6 +261,9 @@ Epsilon(Module);
     </script>
     <script>
 function screenshot() {
+  <!--toDataURL needs the canvas to be refreshed-->
+  Module._IonDisplayForceRefresh();
+
   var canvas = document.querySelector('.screen');
   var link = document.createElement('a');
   link.download = 'screenshot.png';

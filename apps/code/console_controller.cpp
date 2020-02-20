@@ -5,7 +5,9 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>
-#include "../apps_container.h"
+#include <apps/global_preferences.h>
+#include <apps/apps_container.h>
+#include <python/port/helpers.h>
 
 extern "C" {
 #include <stdlib.h>
@@ -27,13 +29,13 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   TextFieldDelegate(),
   MicroPython::ExecutionEnvironment(),
   m_pythonDelegate(pythonDelegate),
-  m_rowHeight(k_font->glyphSize().height()),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
   m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this, this),
-  m_inputRunLoopActive(false)
+  m_inputRunLoopActive(false),
+  m_preventEdition(false)
 #if EPSILON_GETOPT
   , m_locked(lockOnConsole)
 #endif
@@ -75,10 +77,21 @@ void ConsoleController::autoImport() {
 }
 
 void ConsoleController::runAndPrintForCommand(const char * command) {
-  m_consoleStore.pushCommand(command, strlen(command));
+  const char * storedCommand = m_consoleStore.pushCommand(command);
   assert(m_outputAccumulationBuffer[0] == '\0');
 
-  runCode(command);
+  // Draw the console before running the code
+  m_preventEdition = true;
+  m_editCell.setText("");
+  m_editCell.setPrompt("");
+  refreshPrintOutput();
+
+  runCode(storedCommand);
+
+  m_preventEdition = false;
+  m_editCell.setPrompt(sStandardPromptText);
+  m_editCell.setEditing(true);
+
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
 }
@@ -118,8 +131,29 @@ const char * ConsoleController::inputText(const char * prompt) {
     }
   }
 
+  const char * previousPrompt = m_editCell.promptText();
   m_editCell.setPrompt(promptText);
-  m_editCell.setText("");
+
+  /* The user will input some text that is stored in the edit cell. When the
+   * input is finished, we want to clear that cell and return the input text.
+   * We choose to shift the input in the edit cell and put a null char in first
+   * position, so that the cell seems cleared but we can still use it to store
+   * the input.
+   * To do so, we need to reduce the cell buffer size by one, so that the input
+   * can be shifted afterwards, even if it has maxSize.
+   *
+   * Illustration of a input sequence:
+   * | | | | | | | | |  <- the edit cell buffer
+   * |0| | | | | | |X|  <- clear and reduce the size
+   * |a|0| | | | | |X|  <- user input
+   * |a|b|0| | | | |X|  <- user input
+   * |a|b|c|0| | | |X|  <- user input
+   * |a|b|c|d|0| | |X|  <- last user input
+   * | |a|b|c|d|0| | |  <- increase the buffer size and shift the user input by one
+   * |0|a|b|c|d|0| | |  <- put a zero in first position: the edit cell seems empty
+   */
+
+   m_editCell.clearAndReduceSize();
 
   // Reload the history
   m_selectableTableView.reloadData();
@@ -132,20 +166,25 @@ const char * ConsoleController::inputText(const char * prompt) {
       return c->inputRunLoopActive();
   }, this);
 
-  // Handle the input text
+  // Print the prompt and the input text
   if (promptText != nullptr) {
     printText(promptText, s - promptText);
   }
   const char * text = m_editCell.text();
-  printText(text, strlen(text));
+  size_t textSize = strlen(text);
+  printText(text, textSize);
   flushOutputAccumulationBufferToStore();
 
-  m_editCell.setPrompt(sStandardPromptText);
+  // Clear the edit cell and return the input
+  text = m_editCell.shiftCurrentTextAndClear();
+  m_editCell.setPrompt(previousPrompt);
+  refreshPrintOutput();
 
   return text;
 }
 
 void ConsoleController::viewWillAppear() {
+  ViewController::viewWillAppear();
   loadPythonEnvironment();
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;
@@ -201,7 +240,7 @@ int ConsoleController::numberOfRows() const {
 }
 
 KDCoordinate ConsoleController::rowHeight(int j) {
-  return m_rowHeight;
+  return GlobalPreferences::sharedGlobalPreferences()->font()->glyphSize().height();
 }
 
 KDCoordinate ConsoleController::cumulatedHeightFromIndex(int j) {
@@ -305,6 +344,7 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
     m_inputRunLoopActive = false;
     return false;
   }
+  telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!sandboxIsDisplayed()) {
     m_selectableTableView.reloadData();
@@ -358,6 +398,15 @@ void ConsoleController::resetSandbox() {
   m_sandboxController.reset();
 }
 
+void ConsoleController::refreshPrintOutput() {
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  if (m_preventEdition) {
+    m_editCell.setEditing(false);
+  }
+  AppsContainer::sharedAppsContainer()->redrawWindow();
+}
+
 /* printText is called by the Python machine.
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
@@ -366,20 +415,26 @@ void ConsoleController::printText(const char * text, size_t length) {
     /* If there is no new line in text, just append it to the output
      * accumulation buffer. */
     appendTextToOutputAccumulationBuffer(text, length);
-    return;
+  } else {
+    if (textCutIndex < length - 1) {
+      /* If there is a new line in the middle of the text, we have to store at
+       * least two new console lines in the console store. */
+      printText(text, textCutIndex + 1);
+      printText(&text[textCutIndex+1], length - (textCutIndex + 1));
+      return;
+    }
+    /* There is a new line at the end of the text, we have to store the line in
+     * the console store. */
+    assert(textCutIndex == length - 1);
+    appendTextToOutputAccumulationBuffer(text, length-1);
+    flushOutputAccumulationBufferToStore();
+    micropython_port_vm_hook_refresh_print();
   }
-  if (textCutIndex < length - 1) {
-    /* If there is a new line in the middle of the text, we have to store at
-     * least two new console lines in the console store. */
-    printText(text, textCutIndex + 1);
-    printText(&text[textCutIndex+1], length - (textCutIndex + 1));
-    return;
-  }
-  /* There is a new line at the end of the text, we have to store the line in
-   * the console store. */
-  assert(textCutIndex == length - 1);
-  appendTextToOutputAccumulationBuffer(text, length-1);
-  flushOutputAccumulationBufferToStore();
+  /* micropython_port_vm_hook_loop is not enough to detect user interruptions,
+   * because it calls micropython_port_interrupt_if_needed every 20000
+   * operations, and a print operation is quite long. We thus explicitely call
+   * micropython_port_interrupt_if_needed here. */
+  micropython_port_interrupt_if_needed();
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {
@@ -423,7 +478,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
 }
 
 void ConsoleController::flushOutputAccumulationBufferToStore() {
-  m_consoleStore.pushResult(m_outputAccumulationBuffer, strlen(m_outputAccumulationBuffer));
+  m_consoleStore.pushResult(m_outputAccumulationBuffer);
   emptyOutputAccumulationBuffer();
 }
 

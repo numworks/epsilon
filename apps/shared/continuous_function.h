@@ -35,7 +35,7 @@ public:
     Parametric = 2
   };
   PlotType plotType() const;
-  void setPlotType(PlotType plotType, Poincare::Preferences::AngleUnit angleUnit);
+  void setPlotType(PlotType plotType, Poincare::Preferences::AngleUnit angleUnit, Poincare::Context * context);
   static I18n::Message ParameterMessageForPlotType(PlotType plotType);
 
   // Evaluation
@@ -106,9 +106,8 @@ private:
     //char m_expression[0];
   };
   class Model : public ExpressionModel {
-  public:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
   };
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }

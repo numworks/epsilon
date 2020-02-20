@@ -55,6 +55,7 @@ bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 void ZoomParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   m_contentView.curveView()->setOkView(nullptr);
   /* We need to change the curve range to keep the same visual aspect of the
    * view. */
@@ -102,10 +103,10 @@ View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
   return &m_legendView;
 }
 
-void ZoomParameterController::ContentView::layoutSubviews() {
+void ZoomParameterController::ContentView::layoutSubviews(bool force) {
   assert(bounds().height() == ZoomParameterController::k_standardViewHeight);
-  m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height() - k_legendHeight));
-  m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight));
+  m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height() - k_legendHeight), force);
+  m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), force);
 }
 
 CurveView * ZoomParameterController::ContentView::curveView() {
@@ -146,22 +147,22 @@ View * ZoomParameterController::ContentView::LegendView::subviewAtIndex(int inde
   return &m_legendPictograms[index-k_numberOfLegends];
 }
 
-void ZoomParameterController::ContentView::LegendView::layoutSubviews() {
+void ZoomParameterController::ContentView::LegendView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDCoordinate xOrigin = 0;
   KDCoordinate legendWidth = m_legends[0].minimalSizeForOptimalDisplay().width();
-  m_legends[0].setFrame(KDRect(xOrigin, 0, legendWidth, height));
+  m_legends[0].setFrame(KDRect(xOrigin, 0, legendWidth, height), force);
   xOrigin += legendWidth;
   for (int i = 0; i < k_numberOfTokens - 2; i++) {
-    m_legendPictograms[i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height));
+    m_legendPictograms[i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height), force);
     xOrigin += k_tokenWidth;
   }
   xOrigin = bounds().width()/2;
   for (int i = 1; i < k_numberOfLegends; i++) {
     KDCoordinate legendWidth = m_legends[i].minimalSizeForOptimalDisplay().width();
-    m_legends[i].setFrame(KDRect(xOrigin, 0, legendWidth, height));
+    m_legends[i].setFrame(KDRect(xOrigin, 0, legendWidth, height), force);
     xOrigin += legendWidth;
-    m_legendPictograms[k_numberOfTokens - 3 + i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height));
+    m_legendPictograms[k_numberOfTokens - 3 + i].setFrame(KDRect(xOrigin, 0, k_tokenWidth, height), force);
     xOrigin += k_tokenWidth;
   }
 }

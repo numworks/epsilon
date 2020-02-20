@@ -17,19 +17,19 @@ void TabViewController::ContentView::setActiveView(View * view) {
   markRectAsDirty(bounds());
 }
 
-void TabViewController::ContentView::layoutSubviews() {
+void TabViewController::ContentView::layoutSubviews(bool force) {
   KDRect tabViewFrame = KDRect(
       0, 0,
       m_frame.width(), Metric::TabHeight
       );
-  m_tabView.setFrame(tabViewFrame);
+  m_tabView.setFrame(tabViewFrame, force);
   if (m_activeView) {
     KDRect activeViewFrame = KDRect(
         0, Metric::TabHeight,
         m_frame.width(),
         m_frame.height() - Metric::TabHeight
         );
-    m_activeView->setFrame(activeViewFrame);
+    m_activeView->setFrame(activeViewFrame, force);
   }
 }
 

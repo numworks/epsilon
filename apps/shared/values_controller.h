@@ -20,6 +20,7 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  TELEMETRY_ID("Values");
 
   // Responder
   virtual bool handleEvent(Ion::Events::Event event) override;

@@ -19,15 +19,32 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 
 Event sLastEvent = Events::None;
 Keyboard::State sLastKeyboardState;
+bool sLastEventShift;
+bool sLastEventAlpha;
 bool sEventIsRepeating = 0;
+int sEventRepetitionCount = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
+constexpr int numberOfRepetitionsBeforeLongRepetition = 20;
 
 static bool canRepeatEvent(Event e) {
-  return (e == Events::Left || e == Events::Up || e == Events::Down || e == Events::Right || e == Events::Backspace);
+  return e == Events::Left
+    || e == Events::Up
+    || e == Events::Down
+    || e == Events::Right
+    || e == Events::Backspace
+    || e == Events::ShiftLeft
+    || e == Events::ShiftRight
+    || e == Events::ShiftUp
+    || e == Events::ShiftDown;
 }
 
 Event getPlatformEvent();
+
+void resetLongRepetition() {
+  sEventRepetitionCount = 0;
+  setLongRepetition(false);
+}
 
 Event getEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
@@ -47,13 +64,18 @@ Event getEvent(int * timeout) {
 
     if (keysSeenTransitionningFromUpToDown != 0) {
       sEventIsRepeating = false;
+      resetLongRepetition();
       /* The key that triggered the event corresponds to the first non-zero bit
        * in "match". This is a rather simple logic operation for the which many
        * processors have an instruction (ARM thumb uses CLZ).
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-      Event event(key, isShiftActive(), isAlphaActive());
+      bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
+      bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
+      Event event(key, shift, alpha);
+      sLastEventShift = shift;
+      sLastEventAlpha = alpha;
       updateModifiersFromEvent(event);
       sLastEvent = event;
       sLastKeyboardState = state;
@@ -62,17 +84,27 @@ Event getEvent(int * timeout) {
 
     if (sleepWithTimeout(10, timeout)) {
       // Timeout occured
+      resetLongRepetition();
       return Events::None;
     }
     time += 10;
 
     // At this point, we know that keysSeenTransitionningFromUpToDown has *always* been zero
     // In other words, no new key has been pressed
-    if (canRepeatEvent(sLastEvent) && (state == sLastKeyboardState)) {
+    if (canRepeatEvent(sLastEvent)
+        && state == sLastKeyboardState
+        && sLastEventShift == state.keyDown(Keyboard::Key::Shift)
+        && sLastEventAlpha == state.keyDown(Keyboard::Key::Alpha))
+    {
       int delay = (sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat);
       if (time >= delay) {
         sEventIsRepeating = true;
-        sLastKeyboardState = state;
+        if (sEventRepetitionCount < numberOfRepetitionsBeforeLongRepetition) {
+          sEventRepetitionCount++;
+          if (sEventRepetitionCount == numberOfRepetitionsBeforeLongRepetition) {
+            setLongRepetition(true);
+          }
+        }
         return sLastEvent;
       }
     }

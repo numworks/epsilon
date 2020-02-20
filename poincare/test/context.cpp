@@ -1,6 +1,3 @@
-#include <quiz.h>
-#include <ion.h>
-#include <assert.h>
 #include <apps/shared/global_context.h>
 #include <poincare/serialization_helper.h>
 #include "helper.h"
@@ -98,26 +95,16 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
-  // g: x → f(x)+1
-  assert_simplify("f(x)+1→g(x)");
-  assert_expression_approximates_to<double>("g(1)", Undefined::Name());
-  // f: x → x+1
-  assert_simplify("x+1→f(x)");
-  assert_expression_approximates_to<double>("g(1)", "3");
-  assert_expression_approximates_to<double>("f(1)", "2");
   // h: x → h(x)
   assert_simplify("h(x)→h(x)");
-  assert_expression_approximates_to<double>("f(1)", "2");
-  assert_expression_approximates_to<double>("g(1)", "3");
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
+  assert_simplify("1→f(x)");
   assert_simplify("f(x)→g(x)");
   assert_simplify("g(x)→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
@@ -129,6 +116,7 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
+  assert_simplify("1→f(x)");
   assert_simplify("f(x)→g(x)");
   assert_simplify("g(x)→h(x)");
   assert_simplify("h(x)→f(x)");
@@ -189,11 +177,11 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_
 
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char x[bufferSize];
-  Poincare::SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknownX);
+  Poincare::SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknown);
 
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknownX), Rational::Builder(2))), x, 5.0, 9.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(2))), x, 5.0, 9.0);
   // Approximate f(?-1)+f(?+1) with ? = 3
-  assert_parsed_expression_approximates_with_value_for_symbol(Addition::Builder(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknownX), Rational::Builder(1))), Function::Builder("f", 1, Addition::Builder(Symbol::Builder(UCodePointUnknownX), Rational::Builder(1)))), x, 3.0, 20.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(Addition::Builder(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))), Function::Builder("f", 1, Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))), x, 3.0, 20.0);
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -202,9 +190,9 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_
   assert_simplify("√(-1)×√(-1)→f(x)");
   // Approximate f(?) with ? = 5
   // Cartesian
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknownX)), x, 1.0, -1.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0, -1.0);
   // Real
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknownX)), x, 1.0, (double)NAN, Real);
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0, (double)NAN, Real);
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();

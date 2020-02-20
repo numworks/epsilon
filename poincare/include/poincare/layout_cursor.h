@@ -27,7 +27,7 @@ class LayoutCursor final {
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
-  enum class MoveDirection {
+  enum class Direction {
     Left,
     Right,
     Up,
@@ -57,7 +57,7 @@ public:
   bool isDefined() const { return !m_layout.isUninitialized(); }
 
   // Getters and setters
-  Layout layoutReference() { return m_layout; }
+  Layout layout() { return m_layout; }
 
   int layoutIdentifier() { return m_layout.identifier(); }
   void setLayout(Layout r) {
@@ -66,13 +66,13 @@ public:
     }
   }
   void setTo(LayoutCursor * other) {
-     m_layout = other->layoutReference();
+     m_layout = other->layout();
      m_position = other->position();
   }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
-  KDCoordinate cursorHeight();
-  KDCoordinate baseline();
+  KDCoordinate cursorHeightWithoutSelection();
+  KDCoordinate baselineWithoutSelection();
 
 
   /* Comparison */
@@ -82,22 +82,26 @@ public:
   KDPoint middleLeftPoint();
 
   /* Move */
-  void move(MoveDirection direction, bool * shouldRecomputeLayout);
-  void moveLeft(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorLeft(this, shouldRecomputeLayout);
+  void move(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
+  void moveLeft(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorLeft(this, shouldRecomputeLayout, forSelection);
   }
-  void moveRight(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorRight(this, shouldRecomputeLayout);
+  void moveRight(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorRight(this, shouldRecomputeLayout, forSelection);
   }
-  void moveAbove(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorUp(this, shouldRecomputeLayout);
+  void moveAbove(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorUp(this, shouldRecomputeLayout, false, forSelection);
   }
-  void moveUnder(bool * shouldRecomputeLayout) {
-    layoutNode()->moveCursorDown(this, shouldRecomputeLayout);
+  void moveUnder(bool * shouldRecomputeLayout, bool forSelection = false) {
+    layoutNode()->moveCursorDown(this, shouldRecomputeLayout, false, forSelection);
   }
-  LayoutCursor cursorAtDirection(MoveDirection direction, bool * shouldRecomputeLayout) {
+  LayoutCursor cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
+
+  /* Select */
+  void select(Direction direction, bool * shouldRecomputeLayout, Layout * selection);
+  LayoutCursor selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
     LayoutCursor result = clone();
-    result.move(direction, shouldRecomputeLayout);
+    result.select(direction, shouldRecomputeLayout, selection);
     return result;
   }
 
@@ -110,7 +114,7 @@ public:
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();
   void addXNTCodePointLayout();
-  void insertText(const char * text);
+  void insertText(const char * text, bool forceCursorRightOfText = false);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }
@@ -137,6 +141,8 @@ private:
   void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
+  void selectLeftRight(bool right, bool * shouldRecomputeLayout, Layout * selection);
+  void selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection);
   Layout m_layout;
   Position m_position;
 };

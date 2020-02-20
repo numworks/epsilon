@@ -1,12 +1,13 @@
 #ifndef ESCHER_LAYOUT_FIELD_DELEGATE_H
 #define ESCHER_LAYOUT_FIELD_DELEGATE_H
 
+#include <escher/context_provider.h>
 #include <ion/events.h>
 #include <poincare/layout.h>
 
 class LayoutField;
 
-class LayoutFieldDelegate {
+class LayoutFieldDelegate : public ContextProvider{
 public:
   virtual bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) = 0;

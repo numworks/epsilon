@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -29,7 +29,7 @@ void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   }
 }
 
-void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   // Case: Right of the operand. Move Right.
   if (cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Right)
@@ -81,7 +81,7 @@ KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child) {
       k_overlineWidth + k_overlineVerticalMargin);
 }
 
-void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   ctx->fillRect(
       KDRect(
         p.x() + Metric::FractionAndConjugateHorizontalMargin,

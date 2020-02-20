@@ -17,6 +17,7 @@ public:
   void reinitCalculation();
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
+  TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
@@ -28,10 +29,10 @@ private:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
+    ContentView(SelectableTableView * selectableTableView);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     MessageTextView * parameterDefinitionAtIndex(int index);
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     void setNumberOfParameters(int numberOfParameters);
   private:
     constexpr static KDCoordinate k_textMargin = 5;

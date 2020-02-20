@@ -135,21 +135,24 @@ FunctionStore * FunctionGraphController::functionStore() const {
 
 void FunctionGraphController::initCursorParameters() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
+  const int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
   int functionIndex = 0;
   Coordinate2D<double> xy;
   double t;
   do {
-    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex++);
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
     ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(record);
     t = defaultCursorT(record);
     xy = firstFunction->evaluateXYAtParameter(t, context);
-  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && functionIndex < functionStore()->numberOfActiveFunctions());
+  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && ++functionIndex < activeFunctionsCount);
+  if (functionIndex == activeFunctionsCount) {
+    functionIndex = 0;
+  }
   m_cursor->moveTo(t, xy.x1(), xy.x2());
-  functionIndex = (std::isnan(xy.x2()) || std::isinf(xy.x2())) ? 0 : functionIndex - 1;
-  selectFunctionWithCursor(functionIndex);
   if (interactiveCurveViewRange()->yAuto()) {
     interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   }
+  selectFunctionWithCursor(functionIndex);
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {

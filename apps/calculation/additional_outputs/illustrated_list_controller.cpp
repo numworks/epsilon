@@ -42,6 +42,10 @@ void IllustratedListController::viewDidDisappear() {
     Poincare::Symbol s = Poincare::Symbol::Builder(expressionSymbol());
     context->setExpressionForSymbolAbstract(m_savedExpression, s);
   }
+  // Reset cell memoization to avoid taking extra space in the pool
+  for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
+     m_additionalCalculationCells[i].resetMemoization();
+   }
 }
 
 int IllustratedListController::numberOfRows() const {

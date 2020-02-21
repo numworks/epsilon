@@ -1,9 +1,9 @@
-#ifndef SETTINGS_MESSAGE_TREE_H
-#define SETTINGS_MESSAGE_TREE_H
+#ifndef SHARED_SETTINGS_MESSAGE_TREE_H
+#define SHARED_SETTINGS_MESSAGE_TREE_H
 #include <escher/message_tree.h>
 #include <apps/i18n.h>
 
-namespace Settings {
+namespace Shared {
 
 class SettingsMessageTree : public MessageTree {
 public:

@@ -26,7 +26,7 @@ void IllustratedListController::didEnterResponderChain(Responder * previousFirst
 }
 
 void IllustratedListController::viewDidDisappear() {
-  StackViewController::viewDidDisappear();
+  ListController::viewDidDisappear();
   // Reset the context as it was before displaying the IllustratedListController
   Poincare::Context * context = App::app()->localContext();
   if (m_savedExpression.isUninitialized()) {

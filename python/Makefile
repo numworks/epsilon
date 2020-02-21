@@ -140,6 +140,8 @@ port_src += $(addprefix python/port/,\
   mod/turtle/modturtle_table.c \
   mod/turtle/turtle.cpp \
   mphalport.c \
+  mod/record/modrecord_table.c\
+  mod/record/modrecord.cpp\
 )
 
 # Workarounds

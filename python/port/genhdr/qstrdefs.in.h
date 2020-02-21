@@ -116,6 +116,15 @@ Q(time)
 Q(sleep)
 Q(monotonic)
 
+
+// record QSTRs
+Q(record)
+Q(istaken)
+Q(save)
+Q(getdata)
+Q(destroy)
+Q(listrecords)
+
 // MicroPython QSTRs
 Q()
 Q(*)

@@ -72,7 +72,7 @@ Number Number::DecimalNumber(T f) {
     return Undefined::Builder();
   }
   if (std::isinf(f)) {
-    return Infinity::Builder(f < 0.0);
+    return Infinity::Builder(f < (T)0.0);
   }
   return Decimal::Builder(f);
 }

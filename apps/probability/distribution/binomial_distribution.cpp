@@ -66,7 +66,7 @@ double BinomialDistribution::cumulativeDistributiveInverseForProbability(double 
 }
 
 double BinomialDistribution::rightIntegralInverseForProbability(double * probability) {
-  if (m_parameter1 == 0.0 && (m_parameter2 == 0.0 || m_parameter2 == 1.0)) {
+  if (m_parameter1 == 0.0f && (m_parameter2 == 0.0f || m_parameter2 == 1.0f)) {
     return NAN;
   }
   if (*probability <= 0.0) {

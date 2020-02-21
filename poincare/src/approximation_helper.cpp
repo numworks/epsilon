@@ -19,7 +19,7 @@ template < typename T> T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
   T absRealInput = std::fabs(c.real());
   T absImagInput = std::fabs(c.imag());
   // If the magnitude of one part is null, ignore it
-  if (absRealInput == 0.0 || (absImagInput > 0.0 && absImagInput < absRealInput)) {
+  if (absRealInput == (T)0.0 || (absImagInput > (T)0.0 && absImagInput < absRealInput)) {
     return absImagInput;
   }
   return absRealInput;
@@ -52,7 +52,7 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   }
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
-  T precision = 10.0*Expression::Epsilon<T>();
+  T precision = ((T)10.0)*Expression::Epsilon<T>();
   if (isNegligeable(result.imag(), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }

@@ -40,8 +40,8 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context * context, Pr
     return Complex<T>::RealUndefined();
   }
   std::complex<T> operands[2];
-  operands[0] = std::complex<T>(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
-  operands[1] = std::complex<T>(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  operands[0] = std::complex<T>(p - (T)1.96*std::sqrt(p*((T)1.0-p))/std::sqrt(n));
+  operands[1] = std::complex<T>(p + (T)1.96*std::sqrt(p*((T)1.0-p))/std::sqrt(n));
   return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 

@@ -95,6 +95,7 @@ public:
   // Additional Information
   AdditionalInformationType additionalInformationType(Poincare::Context * context);
 private:
+  static constexpr int maxWidth = Ion::Display::Width - (Metric::CommonSmallMargin * 2) - Metric::EllipsisCellWidth - 48; // 48 is the difference history_view_cell's width and calculation's
   static constexpr int k_numberOfExpressions = 4;
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";

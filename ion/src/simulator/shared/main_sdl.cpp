@@ -87,7 +87,7 @@ void init() {
 
   if (argument_screen_only) {
     sWindow = SDL_CreateWindow(
-      "Epsilon",
+      "Omega",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
       Ion::Display::Width, Ion::Display::Height,
@@ -99,7 +99,7 @@ void init() {
     );
   } else {
     sWindow = SDL_CreateWindow(
-      "Epsilon",
+      "Omega",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
       290, 555,

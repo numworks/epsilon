@@ -4,6 +4,7 @@
 #include <assert.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Settings {
 

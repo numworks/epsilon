@@ -172,6 +172,8 @@ public:
   void log(std::ostream & stream, bool recursive = true);
 #endif
 
+  static bool IsValidIdentifier(uint16_t id) { return id < NoNodeIdentifier; }
+
 protected:
   TreeNode() :
     m_identifier(NoNodeIdentifier),

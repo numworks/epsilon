@@ -14,7 +14,7 @@ namespace Poincare {
 TreePool * TreePool::SharedStaticPool = nullptr;
 
 void TreePool::freeIdentifier(uint16_t identifier) {
-  if (identifier >= 0 && identifier < MaxNumberOfNodes) {
+  if (TreeNode::IsValidIdentifier(identifier) && identifier < MaxNumberOfNodes) {
     m_nodeForIdentifierOffset[identifier] = UINT16_MAX;
     m_identifiers.push(identifier);
   }

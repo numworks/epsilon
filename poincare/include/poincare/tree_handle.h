@@ -128,7 +128,7 @@ protected:
   void setIdentifierAndRetain(uint16_t newId);
   void setTo(const TreeHandle & tr);
 
-  static bool hasNode(uint16_t identifier) { return identifier < TreeNode::NoNodeIdentifier; }
+  static bool hasNode(uint16_t identifier) { return TreeNode::IsValidIdentifier(identifier); }
 
   /* Hierarchy operations */
   // Add

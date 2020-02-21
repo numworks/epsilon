@@ -261,7 +261,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
-      if (determinant) { *determinant *= 0.0; }
+      if (determinant) { *determinant *= (T)0.0; }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -272,7 +272,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
           array[h*numberOfColumns+col] = temp;
         }
         // Update determinant: det *= -1
-        if (determinant) { *determinant *= -1.0; }
+        if (determinant) { *determinant *= (T)-1.0; }
       }
       // Set to 1 array[h][k] by linear combination
       T divisor = array[h*numberOfColumns+k];

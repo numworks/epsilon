@@ -48,13 +48,13 @@ Evaluation<T> NthRootNode::templatedApproximate(Context * context, Preferences::
      * correspond to the principale angle. */
     if (complexFormat == Preferences::ComplexFormat::Real) {
       // root(x, q) with q integer and x real
-      if (basec.imag() == 0.0 && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
+      if (basec.imag() == (T)0.0 && indexc.imag() == (T)0.0 && std::round(indexc.real()) == indexc.real()) {
         std::complex<T> absBasec = basec;
         absBasec.real(std::fabs(absBasec.real()));
         // compute root(|x|, q)
         Complex<T> absBasePowIndex = PowerNode::compute(absBasec, std::complex<T>(1.0)/(indexc), complexFormat);
         // q odd if (-1)^q = -1
-        if (std::pow((T)-1.0, (T)indexc.real()) < 0.0) {
+        if (std::pow((T)-1.0, (T)indexc.real()) < (T)0.0) {
           return basec.real() < 0 ? Complex<T>::Builder(-absBasePowIndex.stdComplex()) : absBasePowIndex;
         }
       }

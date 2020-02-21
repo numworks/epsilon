@@ -230,11 +230,11 @@ T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, Valu
   do {
     delta = std::fabs(*probability-p);
     p += evaluation(k++, context, complexFormat, angleUnit, context1, context2, context3);
-    if (p >= k_maxProbability && std::fabs(*probability-1.0) <= delta) {
+    if (p >= k_maxProbability && std::fabs(*probability-(T)1.0) <= delta) {
       *probability = (T)1.0;
       return (T)(k-1);
     }
-  } while (std::fabs(*probability-p) <= delta && k < k_maxNumberOfOperations && p < 1.0);
+  } while (std::fabs(*probability-p) <= delta && k < k_maxNumberOfOperations && p < (T)1.0);
   p -= evaluation(--k, context, complexFormat, angleUnit, context1, context2, context3);
   if (k == k_maxNumberOfOperations) {
     *probability = (T)1.0;

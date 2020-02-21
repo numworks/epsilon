@@ -26,7 +26,7 @@ ComplexNode<T>::ComplexNode(std::complex<T> c) :
   EvaluationNode<T>(),
   std::complex<T>(c.real(), c.imag())
 {
-  if (!std::isnan(c.imag()) && c.imag() != 0.0) {
+  if (!std::isnan(c.imag()) && c.imag() != (T)0.0) {
     Expression::SetEncounteredComplex(true);
   }
   if (this->real() == -0) {
@@ -39,7 +39,7 @@ ComplexNode<T>::ComplexNode(std::complex<T> c) :
 
 template<typename T>
 T ComplexNode<T>::toScalar() const {
-  if (this->imag() == 0.0) {
+  if (this->imag() == (T)0.0) {
     return this->real();
   }
   return NAN;
@@ -63,7 +63,7 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
       Number::DecimalNumber<T>(std::fabs(tb)),
       complexFormat,
       (std::isnan(this->real()) || std::isnan(this->imag())),
-      ra == 0.0, std::fabs(ra) == 1.0, tb == 0.0, std::fabs(tb) == 1.0, ra < 0.0, tb < 0.0
+      ra == (T)0.0, std::fabs(ra) == (T)1.0, tb == (T)0.0, std::fabs(tb) == (T)1.0, ra < (T)0.0, tb < (T)0.0
     );
 }
 

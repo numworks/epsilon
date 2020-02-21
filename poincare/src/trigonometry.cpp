@@ -399,7 +399,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
 template <typename T>
 std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   if (angleUnit != Preferences::AngleUnit::Radian) {
-    return c * std::complex<T>(M_PI/Trigonometry::PiInAngleUnit(angleUnit));
+    return c * std::complex<T>((T)M_PI/(T)Trigonometry::PiInAngleUnit(angleUnit));
   }
   return c;
 }
@@ -407,7 +407,7 @@ std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Preferenc
 template <typename T>
 std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   if (angleUnit != Preferences::AngleUnit::Radian) {
-    return c * std::complex<T>(Trigonometry::PiInAngleUnit(angleUnit)/M_PI);
+    return c * std::complex<T>((T)Trigonometry::PiInAngleUnit(angleUnit)/(T)M_PI);
   }
   return c;
 }
@@ -423,7 +423,7 @@ T Trigonometry::RoundToMeaningfulDigits(T result, T input) {
    * sin(1E-15)=1E-15.
    * We can't do that for all evaluation as the user can operate on values as
    * small as 1E-308 (in double) and most results still be correct. */
-  if (input == 0.0 || std::fabs(result/input) <= Expression::Epsilon<T>()) {
+  if (input == (T)0.0 || std::fabs(result/input) <= Expression::Epsilon<T>()) {
      T precision = 10*Expression::Epsilon<T>();
      result = std::round(result/precision)*precision;
   }

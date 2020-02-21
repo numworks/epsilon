@@ -33,7 +33,7 @@ template <typename T> std::complex<T> ApproximationHelper::TruncateRealOrImagina
   if (absMod<T>(arg, (T)M_PI) <= precision) {
     c.imag(0);
   }
-  if (absMod<T>(arg-(T)M_PI/2.0, (T)M_PI) <= precision) {
+  if (absMod<T>(arg-(T)M_PI_2, (T)M_PI) <= precision) {
     c.real(0);
   }
   return c;

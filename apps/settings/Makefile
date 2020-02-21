@@ -1,10 +1,6 @@
 apps += Settings::App
 app_headers += apps/settings/app.h
 
-app_settings_test_src  = $(addprefix apps/settings/,\
-  settings_message_tree.cpp \
-)
-
 app_settings_src = $(addprefix apps/settings/,\
   app.cpp \
   cell_with_separator.cpp \

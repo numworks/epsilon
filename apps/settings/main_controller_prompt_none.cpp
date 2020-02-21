@@ -2,6 +2,8 @@
 #include "../exam_mode_configuration.h"
 #include <apps/i18n.h>
 
+using namespace Shared;
+
 namespace Settings {
 
 constexpr SettingsMessageTree s_modelMenu[] =

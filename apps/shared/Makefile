@@ -59,6 +59,7 @@ app_shared_src = $(addprefix apps/shared/,\
   scrollable_two_expressions_cell.cpp \
   separable.cpp \
   separator_even_odd_buffer_text_cell.cpp \
+  settings_message_tree.cpp \
   simple_interactive_curve_view_controller.cpp \
   store_cell.cpp \
   store_controller.cpp \

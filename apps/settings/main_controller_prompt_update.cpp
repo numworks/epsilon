@@ -4,6 +4,8 @@
 
 namespace Settings {
 
+using namespace Shared;
+
 constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
     SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),

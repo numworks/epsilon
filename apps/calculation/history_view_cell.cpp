@@ -178,18 +178,22 @@ void HistoryViewCell::layoutSubviews(bool force) {
     m_ellipsis.setFrame(KDRectZero, force); // Required to mark previous rect as dirty
   }
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
+  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  int singleLine = outputSize.width() + inputSize.width() < Ion::Display::Width - (Metric::CommonSmallMargin * 2) - Metric::EllipsisCellWidth;
+  int inputHeight = (singleLine && inputSize.height() < outputSize.height()) ? (outputSize.height() - inputSize.height()) : 0;
   m_inputView.setFrame(KDRect(
-    0, 0,
+    0,
+    inputHeight,
     std::min(maxFrameWidth, inputSize.width()),
     inputSize.height()),
   force);
-  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  int outputHeight = singleLine ? std::max(0, inputSize.height() - outputSize.height()) / 2 + std::max(0, (inputSize.height() - outputSize.height()) / 2) + 1 : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
-    std::max(0, maxFrameWidth - outputSize.width()),
-    inputSize.height(),
-    std::min(maxFrameWidth, outputSize.width()),
-    outputSize.height()),
-  force);
+        std::max(0, maxFrameWidth - outputSize.width()),
+        outputHeight,
+        std::min(maxFrameWidth, outputSize.width()),
+        outputSize.height()),
+      force);
 }
 
 void HistoryViewCell::resetMemoization() {

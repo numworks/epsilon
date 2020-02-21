@@ -38,7 +38,7 @@ private:
   CalculationSelectableTableView * selectableTableView();
   bool calculationAtIndexToggles(int index);
   void historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY, SubviewType type, SubviewType previousType) override;
-  constexpr static int k_maxNumberOfDisplayedRows = 5;
+  constexpr static int k_maxNumberOfDisplayedRows = 8;
   CalculationSelectableTableView m_selectableTableView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore * m_calculationStore;

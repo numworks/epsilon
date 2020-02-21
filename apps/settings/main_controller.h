@@ -2,7 +2,7 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <escher.h>
-#include "settings_message_tree.h"
+#include <apps/shared/settings_message_tree.h>
 #include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"
 #include "sub_menu/display_mode_controller.h"
@@ -12,14 +12,14 @@
 
 namespace Settings {
 
-extern const SettingsMessageTree s_modelAngleChildren[3];
-extern const SettingsMessageTree s_modelEditionModeChildren[2];
-extern const SettingsMessageTree s_modelFloatDisplayModeChildren[4];
-extern const SettingsMessageTree s_modelComplexFormatChildren[3];
-extern const SettingsMessageTree s_modelFontChildren[2];
-extern const SettingsMessageTree s_modelExamChildren[2];
-extern const SettingsMessageTree s_modelAboutChildren[3];
-extern const SettingsMessageTree s_model;
+extern const Shared::SettingsMessageTree s_modelAngleChildren[3];
+extern const Shared::SettingsMessageTree s_modelEditionModeChildren[2];
+extern const Shared::SettingsMessageTree s_modelFloatDisplayModeChildren[4];
+extern const Shared::SettingsMessageTree s_modelComplexFormatChildren[3];
+extern const Shared::SettingsMessageTree s_modelFontChildren[2];
+extern const Shared::SettingsMessageTree s_modelExamChildren[2];
+extern const Shared::SettingsMessageTree s_modelAboutChildren[3];
+extern const Shared::SettingsMessageTree s_model;
 
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
@@ -52,7 +52,7 @@ private:
    * k_indexOfAboutCell) */
   constexpr static int k_indexOfPopUpCell = k_indexOfExamModeCell + 1;
   constexpr static int k_indexOfAboutCell = k_indexOfExamModeCell + 1;
-  static const SettingsMessageTree * model();
+  static const Shared::SettingsMessageTree * model();
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }

@@ -279,7 +279,7 @@ Expression Logarithm::simpleShallowReduce(Context * context, Preferences::Comple
       if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
         result = Undefined::Builder();
       }
-      isNegative = logDenominator.real() > 0.0;
+      isNegative = logDenominator.real() > 0.0f;
       result = result.isUninitialized() ? Infinity::Builder(isNegative) : result;
       replaceWithInPlace(result);
       return result;

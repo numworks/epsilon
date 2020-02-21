@@ -56,7 +56,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preference
   do {
     T currentError;
     T currentResult = riddersApproximation(context, complexFormat, angleUnit, evaluationArgument, h, &currentError);
-    h /= 10.0;
+    h /= (T)10.0;
     if (std::isnan(currentError) || currentError > error) {
       continue;
     }

@@ -53,7 +53,7 @@ public:
   }
   static int exponentBase10(T f) {
     static T k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
-    if (f == 0.0) {
+    if (f == (T)0.0) {
       return 0;
     }
     T exponentBase2 = exponent(f);
@@ -68,7 +68,7 @@ public:
      * in -0.31 < x < 1, we get:
      * e2 = [e1/log(10,2)]  or e2 = [e1/log(10,2)]-1 depending on m1. */
     int exponentBase10 = std::round(exponentBase2/k_log10base2);
-    if (std::pow(10.0, exponentBase10) > std::fabs(f)) {
+    if (std::pow((T)10.0, exponentBase10) > std::fabs(f)) {
       exponentBase10--;
     }
     return exponentBase10;

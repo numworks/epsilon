@@ -136,7 +136,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
    * where the principal root is real as these cases are handled generically
    * later (for instance 1232^(1/8) which has a real principal root is not
    * handled here). */
-  if (c.imag() == 0 && std::pow((T)-1.0, q) < 0.0) {
+  if (c.imag() == (T)0.0 && std::pow((T)-1.0, q) < (T)0.0) {
     /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
      * exist (which is not necessarily the principal root)!
      * For q even integer, a real root does not necessarily exist (example:
@@ -148,7 +148,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
     /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
      *                      = sign(c)^p         * |c|^(p/q)
      *                      = -|c|^(p/q) iff c < 0 and p odd */
-    return c.real() < 0 && std::pow((T)-1.0, p) < 0.0 ? Complex<T>::Builder(-absCPowD.stdComplex()) : absCPowD;
+    return c.real() < (T)0.0 && std::pow((T)-1.0, p) < (T)0.0 ? Complex<T>::Builder(-absCPowD.stdComplex()) : absCPowD;
   }
   return Complex<T>::Undefined();
 }
@@ -156,7 +156,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   std::complex<T> result;
-  if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() != 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {
+  if (c.imag() == (T)0.0 && d.imag() == (T)0.0 && c.real() != (T)0.0 && (c.real() > (T)0.0 || std::round(d.real()) == d.real())) {
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
      * pow: (R-, N) -> R+ ((-2)^3 = -8)
      * In these cases we rather use std::pow(double, double) because:

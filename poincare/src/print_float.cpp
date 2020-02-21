@@ -238,7 +238,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
 
   // Correct the number of digits in mantissa after rounding
   if (IEEE754<T>::exponentBase10(mantissa) >= numberOfSignificantDigits) {
-    mantissa = mantissa/10.0;
+    mantissa = mantissa / (T)10.0;
   }
 
   // Number of chars for the mantissa

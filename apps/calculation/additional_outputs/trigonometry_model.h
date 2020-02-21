@@ -18,7 +18,7 @@ public:
   float yMax() const override { return yCenter() + yHalfRange(); }
 
   void setAngle(float f) { m_angle = f; }
-  float angle() const { return m_angle*M_PI/Poincare::Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit()); }
+  float angle() const { return m_angle*(float)M_PI/(float)Poincare::Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit()); }
 private:
   constexpr static float k_xHalfRange = 2.1f;
   // We center the yRange around the semi-circle where the angle is

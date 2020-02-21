@@ -26,7 +26,7 @@ Expression ArcSineNode::shallowReduce(ReductionContext reductionContext) {
 template<typename T>
 Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result;
-  if (c.imag() == 0 && std::fabs(c.real()) <= 1.0) {
+  if (c.imag() == 0 && std::fabs(c.real()) <= (T)1.0) {
     /* asin: [-1;1] -> R
      * In these cases we rather use std::asin(double) because asin on complexes
      * is not as precise as asin on double in std library. For instance,

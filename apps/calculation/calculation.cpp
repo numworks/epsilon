@@ -197,7 +197,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
       
       if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact && !allExpressionsInline) {
-          result = (inputHeight >= approximateOutputHeight) ? inputHeight + singleMargin : approximateOutputHeight + singleMargin;
+        result = (inputHeight >= approximateOutputHeight) ? inputHeight + singleMargin : approximateOutputHeight + singleMargin;
       } else {
         if (allExpressionsInline) {
           KDCoordinate approximateOutputBaseline = approximateLayout.baseline();

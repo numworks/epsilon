@@ -208,7 +208,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
     return 0;
   }
   Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
-  return calculation->height(App::app()->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
+  return calculation->height(App::app()->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output);
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

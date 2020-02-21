@@ -12,6 +12,7 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
     SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
     SettingsMessageTree(I18n::Message::Brightness),
+    SettingsMessageTree(I18n::Message::ResultDisplay, s_modelResultDisplayChildren),
     SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),

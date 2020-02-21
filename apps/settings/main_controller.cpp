@@ -12,6 +12,7 @@ constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
 constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+constexpr SettingsMessageTree s_modelResultDisplayChildren[2] = {SettingsMessageTree(I18n::Message::DefaultResult), SettingsMessageTree(I18n::Message::CompactResult)};
 constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
 constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
@@ -188,6 +189,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       break;
     case k_indexOfComplexFormatCell:
       childIndex = (int)preferences->complexFormat();
+      break;
+    case k_indexOfResultDisplayCell:
+      childIndex = (int)preferences->resultDisplay();
       break;
     case k_indexOfFontCell:
       childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;

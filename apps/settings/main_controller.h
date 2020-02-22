@@ -44,8 +44,7 @@ private:
   constexpr static int k_indexOfEditionModeCell = k_indexOfDisplayModeCell + 1;
   constexpr static int k_indexOfComplexFormatCell = k_indexOfEditionModeCell + 1;
   constexpr static int k_indexOfBrightnessCell = k_indexOfComplexFormatCell + 1;
-  constexpr static int k_indexOfResultDisplayCell = k_indexOfBrightnessCell + 1;
-  constexpr static int k_indexOfFontCell = k_indexOfResultDisplayCell + 1;
+  constexpr static int k_indexOfFontCell = k_indexOfBrightnessCell + 1;
   constexpr static int k_indexOfLanguageCell = k_indexOfFontCell + 1;
   constexpr static int k_indexOfExamModeCell = k_indexOfLanguageCell + 1;
   /* Pop-up cell and About cell are located at the same index because pop-up
@@ -58,7 +57,7 @@ private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 8;
+  constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;

@@ -36,10 +36,6 @@ public:
     Radian = 1,
     Gradian = 2
   };
-  enum class ResultDisplay : uint8_t {
-    Default = 0,
-    Compact = 1
-  };
   Preferences();
   static Preferences * sharedPreferences();
   AngleUnit angleUnit() const { return m_angleUnit; }
@@ -52,15 +48,12 @@ public:
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
   uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
-  ResultDisplay resultDisplay() const { return m_resultDisplay; }
-  void setResultDisplay(ResultDisplay resultDisplay) { m_resultDisplay = resultDisplay; }
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
-  ResultDisplay m_resultDisplay;
 };
 
 }

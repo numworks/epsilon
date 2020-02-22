@@ -12,8 +12,7 @@ Preferences::Preferences() :
   m_displayMode(Preferences::PrintFloatMode::Decimal),
   m_editionMode(EditionMode::Edition2D),
   m_complexFormat(Preferences::ComplexFormat::Real),
-  m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits),
-  m_resultDisplay(Preferences::ResultDisplay::Default)
+  m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits)
 {}
 
 Preferences * Preferences::sharedPreferences() {

@@ -107,18 +107,6 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
         );
     }
 
-    // Result display
-    case I18n::Message::DefaultResult:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::CompactResult:
-    {
-      const char * text = "Beta";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-
     // Font size
     case I18n::Message::LargeFont:
     case I18n::Message::SmallFont:
@@ -163,8 +151,6 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
-  } else if (message == I18n::Message::ResultDisplay) {
-    preferences->setResultDisplay((Preferences::ResultDisplay)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
   }
@@ -184,9 +170,6 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
-  }
-  if (message == I18n::Message::ResultDisplay) {
-    return (int)preferences->resultDisplay();
   }
   if (message == I18n::Message::FontSizes) {
     return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;

@@ -57,7 +57,7 @@ public:
   void clearForOutTransactions(uint16_t wLength);
 
 private:
-  uint16_t receiveSomeData();
+  int receiveSomeData();
   uint16_t readPacket(void * buffer, uint16_t length);
   uint16_t writePacket(const void * buffer, uint16_t length);
 

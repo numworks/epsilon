@@ -259,7 +259,7 @@ void Endpoint0::clearForOutTransactions(uint16_t wLength) {
   setOutNAK(false);
 }
 
-uint16_t Endpoint0::receiveSomeData() {
+int Endpoint0::receiveSomeData() {
   // If it is the first chunk of data to be received, m_transferBufferLength is 0.
   uint16_t packetSize = MIN(k_maxPacketSize, m_request.wLength() - m_transferBufferLength);
   uint16_t sizeOfPacketRead = readPacket(m_largeBuffer + m_transferBufferLength, packetSize);

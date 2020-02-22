@@ -137,7 +137,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
   KDCoordinate inputHeight = inputLayout.layoutSize().height();
   KDCoordinate inputWidth = inputLayout.layoutSize().width();
   float singleMargin = 2 * Metric::CommonSmallMargin;
-  float doubleMargin = 2 * Metric::CommonSmallMargin;
+  float doubleMargin = 4 * Metric::CommonSmallMargin;
   bool singleLine = false;
   KDCoordinate inputBaseline = inputLayout.baseline();
 
@@ -169,7 +169,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
         KDCoordinate exactOutputBaseline = exactLayout.baseline();
         result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
       } else {
-        result = inputHeight+exactOutputHeight;
+        result = inputHeight + exactOutputHeight;
       }
     }
   } else {
@@ -197,13 +197,13 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
       
       if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact && !allExpressionsInline) {
-          result = (inputHeight >= approximateOutputHeight) ? inputHeight + singleMargin : approximateOutputHeight + singleMargin;
+        result = (inputHeight >= approximateOutputHeight) ? inputHeight + singleMargin : approximateOutputHeight + singleMargin;
       } else {
         if (allExpressionsInline) {
           KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-          result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + doubleMargin + singleMargin;
+          result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + doubleMargin;
         } else {
-          result = inputHeight+approximateOutputHeight+doubleMargin+singleMargin;
+          result = inputHeight + approximateOutputHeight + doubleMargin;
         }
       }
     } else {

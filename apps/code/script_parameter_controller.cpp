@@ -125,7 +125,6 @@ void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, in
     size[sizelen2+1] = 'o';
     myCell->setAccessoryText(size);
     myCell->setAccessoryFont(KDFont::SmallFont);
-    myCell->setTextColor(Palette::SecondaryText);
   }
 }
 

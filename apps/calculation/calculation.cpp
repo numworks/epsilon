@@ -170,7 +170,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
         KDCoordinate exactOutputBaseline = exactLayout.baseline();
         result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
       } else {
-        result = inputHeight + exactOutputHeight;
+        result = inputHeight + exactOutputHeight + doubleMargin;
       }
     }
   } else {

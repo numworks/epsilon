@@ -31,7 +31,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
 private:
-  constexpr static int k_totalNumberOfCell = 6;
+  constexpr static int k_totalNumberOfCell = 5;
   StackViewController * stackViewController();
   I18n::Message m_pageTitle;
   MessageTableCell m_executeScript;

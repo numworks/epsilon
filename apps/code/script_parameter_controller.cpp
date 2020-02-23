@@ -11,7 +11,6 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_renameScript(I18n::Message::Rename),
   m_autoImportScript(I18n::Message::AutoImportScript),
   m_deleteScript(I18n::Message::DeleteScript),
-  m_duplicateScript(I18n::Message::DuplicateScript),
   m_size(I18n::Message::ScriptSize),
   m_selectableTableView(this),
   m_script(Ion::Storage::Record()),
@@ -55,12 +54,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
         m_menuController->deleteScript(s);
         m_menuController->reloadConsole();
         return true;
-      case 4:
-        dismissScriptParameterController();
-        m_menuController->duplicateScript(s);
-        m_menuController->reloadConsole();
-        return true;
-      case 5:{
+      case 4:{
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if(m_sizedisplaypercent){
           char size[18];
@@ -108,7 +102,7 @@ void ScriptParameterController::didBecomeFirstResponder() {
 HighlightCell * ScriptParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript, &m_duplicateScript, &m_size};
+  HighlightCell * cells[] = {&m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript, &m_size};
   return cells[index];
 }
 

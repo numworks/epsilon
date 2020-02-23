@@ -2,7 +2,7 @@
 #define SETTINGS_GENERIC_SUB_CONTROLLER_H
 
 #include <escher.h>
-#include "../settings_message_tree.h"
+#include <apps/shared/settings_message_tree.h>
 
 namespace Settings {
 
@@ -18,7 +18,7 @@ public:
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  int typeAtLocation(int i, int j) override;
+  virtual int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setMessageTreeModel(const MessageTree * messageTreeModel);
   void viewDidDisappear() override;

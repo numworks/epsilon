@@ -4,6 +4,9 @@
 #include <apps/i18n.h>
 #include "global_preferences.h"
 #include <assert.h>
+#include <poincare/preferences.h>
+
+using namespace Poincare;
 
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
   ViewController(nullptr),

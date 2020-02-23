@@ -90,7 +90,7 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     setDistributionAccordingToIndex(selectedRow());
-    stack->push(m_parametersController, KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+    stack->push(m_parametersController, Palette::BannerFirstText, Palette::BannerFirstBackground, Palette::BannerFirstBorder);
     return true;
   }
   return false;

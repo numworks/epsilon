@@ -339,7 +339,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
             labelPosition,
             k_labelGraduationLength,
             1);
-      ctx->fillRect(graduation, KDColorBlack);
+      ctx->fillRect(graduation, Palette::PrimaryText);
     }
   }
 
@@ -381,7 +381,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
 
 DrawLabel:
     if (rect.intersects(KDRect(position, textSize))) {
-      ctx->drawString(labelI, position, k_font, KDColorBlack, backgroundColor);
+      ctx->drawString(labelI, position, k_font, Palette::PrimaryText, backgroundColor);
     }
   }
 }
@@ -445,8 +445,8 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
-  KDColor boldColor = Palette::GreyMiddle;
-  KDColor lightColor = Palette::GreyWhite;
+  KDColor boldColor = Palette::GridPrimaryLine;
+  KDColor lightColor = Palette::GridSecondaryLine;
   drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->xGridUnit(), boldColor, lightColor);
   drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->yGridUnit(), boldColor, lightColor);
 }
@@ -457,7 +457,7 @@ void CurveView::drawAxes(KDContext * ctx, KDRect rect) const {
 }
 
 void CurveView::drawAxis(KDContext * ctx, KDRect rect, Axis axis) const {
-  drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 1);
+  drawLine(ctx, rect, axis, 0.0f, Palette::PrimaryText, 1);
 }
 
 constexpr KDCoordinate thinCircleDiameter = 1;

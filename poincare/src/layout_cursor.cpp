@@ -11,6 +11,7 @@
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <stdio.h>
+#include <poincare/preferences.h>
 
 namespace Poincare {
 
@@ -132,8 +133,21 @@ void LayoutCursor::addEmptySquarePowerLayout() {
 
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
+  Preferences * preferences = Preferences::sharedPreferences();
+  int Symbol;
+  switch((int)preferences->symbolofMultiplication()){
+    case 1:
+      Symbol = UCodePointMiddleDot;
+      break;
+    case 2:
+      Symbol = UCodePointStar;
+      break;
+    default:
+      Symbol = UCodePointMultiplicationSign;
+      break;
+  }
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(UCodePointMultiplicationSign),
+      CodePointLayout::Builder(Symbol),
       CodePointLayout::Builder('1'),
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
@@ -153,6 +167,21 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
 
 void LayoutCursor::addXNTCodePointLayout() {
   m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTCodePoint()), true);
+}
+
+void LayoutCursor::addMultiplicationPointLayout(){
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch((int)preferences->symbolofMultiplication()){
+    case 1:
+      addLayoutAndMoveCursor(HorizontalLayout::Builder(CodePointLayout::Builder(UCodePointMiddleDot)));
+      break;
+    case 2:
+      addLayoutAndMoveCursor(HorizontalLayout::Builder(CodePointLayout::Builder(UCodePointStar)));
+      break;
+    default:
+      addLayoutAndMoveCursor(HorizontalLayout::Builder(CodePointLayout::Builder(UCodePointMultiplicationSign)));
+      break;
+  }
 }
 
 void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText) {

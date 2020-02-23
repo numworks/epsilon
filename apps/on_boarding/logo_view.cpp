@@ -11,7 +11,7 @@ LogoView::LogoView() :
 }
 
 void LogoView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::BackgroundHard);
 }
 
 int LogoView::numberOfSubviews() const {

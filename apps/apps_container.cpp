@@ -5,11 +5,14 @@
 #include <ion.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
+#include <ion/backlight.h>
+#include <poincare/preferences.h>
 
 extern "C" {
 #include <assert.h>
 }
 
+using namespace Poincare;
 using namespace Shared;
 
 AppsContainer * AppsContainer::sharedAppsContainer() {
@@ -147,6 +150,36 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
     }
   } else {
+    if (KDIonContext::sharedContext()->zoomEnabled) {
+      bool changedZoom = true;
+
+      if (event == Ion::Events::ShiftOne) {
+        KDIonContext::sharedContext()->zoomPosition = 0;
+      } else if (event == Ion::Events::ShiftTwo) {
+        KDIonContext::sharedContext()->zoomPosition = 1;
+      } else if (event == Ion::Events::ShiftThree) {
+        KDIonContext::sharedContext()->zoomPosition = 2;
+      } else if (event == Ion::Events::ShiftFour) {
+        KDIonContext::sharedContext()->zoomPosition = 3;
+      } else if (event == Ion::Events::ShiftFive) {
+        KDIonContext::sharedContext()->zoomPosition = 4;
+      } else if (event == Ion::Events::ShiftSix) {
+        KDIonContext::sharedContext()->zoomPosition = 5;
+      } else if (event == Ion::Events::ShiftSeven) {
+        KDIonContext::sharedContext()->zoomPosition = 6;
+      } else if (event == Ion::Events::ShiftEight) {
+        KDIonContext::sharedContext()->zoomPosition = 7;
+      } else if (event == Ion::Events::ShiftNine) {
+        KDIonContext::sharedContext()->zoomPosition = 8;
+      } else {
+        changedZoom = false;
+      }
+      if (changedZoom) {
+        KDIonContext::sharedContext()->updatePostProcessingEffects();
+        redrawWindow(true);
+        return true;
+      }
+    }
     didProcessEvent = Container::dispatchEvent(event);
   }
 
@@ -188,6 +221,11 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;
+  }
+  if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus) {
+      int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+      int direction = (event == Ion::Events::BrightnessPlus) ? Ion::Backlight::NumberOfStepsPerShortcut*delta : -delta*Ion::Backlight::NumberOfStepsPerShortcut;
+      GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
   }
   return false;
 }
@@ -321,14 +359,45 @@ OnBoarding::PopUpController * AppsContainer::promptController() {
   return &m_promptController;
 }
 
-void AppsContainer::redrawWindow() {
-  m_window.redraw();
+void AppsContainer::redrawWindow(bool force) {
+  m_window.redraw(force);
 }
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
   reset();
-  Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch ((int)preferences->colorOfLED()) {
+    case 0:
+      Ion::LED::setColor(KDColorRed);
+      break;
+    case 1:
+      Ion::LED::setColor(KDColorWhite);
+      break;
+    case 2:
+      Ion::LED::setColor(KDColorGreen);
+      break;
+    case 3:
+      Ion::LED::setColor(KDColorBlue);
+      break;
+    case 4:
+      Ion::LED::setColor(KDColorYellow);
+      break;
+    case 5:
+      Ion::LED::setColor(KDColorPurple);
+      break;
+    case 6:
+      Ion::LED::setColor(KDColorOrange);
+      break;
+  }
+  /* The Dutch exam mode LED is supposed to be orange but we can only make
+   * blink "pure" colors: with RGB leds on or off (as the PWM is used for
+   * blinking). The closest "pure" color is Yellow. Moreover, Orange LED is
+   * already used when the battery is charging. Using yellow, we can assert
+   * that the yellow LED only means that Dutch exam mode is on and avoid
+   * confusing states when the battery is charging and states when the Dutch
+   * exam mode is on. */
+  // Ion::LED::setColor(examMode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed);
   Ion::LED::setBlinking(1000, 0.1f);
 }
 

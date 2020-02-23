@@ -113,11 +113,18 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     selectLeftRight(event == Ion::Events::ShiftLeft, false);
     return true;
   }
-  if (event == Ion::Events::ShiftUp ||event == Ion::Events::ShiftDown) {
+  if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
     selectUpDown(event == Ion::Events::ShiftUp);
     return true;
-  }
-  if (event == Ion::Events::Left) {
+  } else if (event == Ion::Events::ShiftLeft) {
+    contentView()->moveCursorGeo(-INT_MAX/2, 0);
+  } else if (event == Ion::Events::ShiftRight) {
+    contentView()->moveCursorGeo(INT_MAX/2, 0);
+  } else if (event == Ion::Events::ShiftUp) {
+    contentView()->moveCursorGeo(0, -INT_MAX/2);
+  } else if (event == Ion::Events::ShiftDown) {
+    contentView()->moveCursorGeo(0, INT_MAX/2);
+  } else if (event == Ion::Events::Left) {
     if (contentView()->resetSelection()) {
       return true;
     }
@@ -167,12 +174,26 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Down) {
     contentView()->resetSelection();
     contentView()->moveCursorGeo(0, 1);
+  } else if (event == Ion::Events::Backspace) {
+    return removePreviousGlyph();
+  } else if (event == Ion::Events::EXE) {
+    return handleEventWithText("\n");
   } else if (event == Ion::Events::Clear) {
     if (!contentView()->selectionIsEmpty()) {
       deleteSelection();
       return true;
     } else if (!contentView()->removeEndOfLine()) {
       contentView()->removeStartOfLine();
+    }
+  } else if (event == Ion::Events::Paste) {
+    return handleEventWithText(Clipboard::sharedClipboard()->storedText());
+  } else if (event == Ion::Events::Percent) {
+    return removePreviousGlyph();
+  } else if (event.hasText()) {
+    if(event.text() == "%" && Ion::Events::isLockActive()){
+      return removePreviousGlyph();
+    } else {
+      return handleEventWithText(event.text());
     }
   } else {
     return false;

@@ -19,6 +19,7 @@ public:
   StackViewController * stackViewController();
   void willExitResponderChain(Responder * nextFirstResponder) override;
   void renameSelectedScript();
+  void duplicateScript(Script script);
   void deleteScript(Script script);
   void reloadConsole();
   void openConsoleWithScript(Script script);

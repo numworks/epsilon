@@ -1,5 +1,6 @@
 #include "calculation_store.h"
 #include "../shared/poincare_helpers.h"
+#include "../global_preferences.h"
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -97,7 +98,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     // Outputs hold exact output, approximate output and its duplicate
     constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
     Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    // SYMBOLIC COMPUTATION <= E12: PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()); // Symbolic computation
+    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic() ? Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition : Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     outputs[2] = outputs[1];
     int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
     for (int i = 0; i < numberOfOutputs; i++) {

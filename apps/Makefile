@@ -3,12 +3,12 @@ include apps/home/Makefile
 include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
 include apps/usb/Makefile
-apps =
 
+apps =
 # All selected apps are included. Each Makefile below is responsible for setting
 # the $apps variable (name of the app class) and the $app_headers
 # (path to the apps header).
-$(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
+$(foreach i,${apps_list},${eval include apps/$(i)/Makefile})
 
 app_src += $(addprefix apps/,\
   apps_container.cpp \
@@ -31,8 +31,8 @@ app_src += $(addprefix apps/,\
   variable_box_empty_controller.cpp \
 )
 
-tests_src += apps/exam_mode_configuration_official.cpp
-apps_official += apps/exam_mode_configuration_official.cpp
+tests_src += apps/exam_mode_configuration_non_official.cpp
+apps_official += apps/exam_mode_configuration_non_official.cpp
 apps_non_official += apps/exam_mode_configuration_non_official.cpp
 
 apps_launch_on_boarding_src += apps/apps_container_launch_on_boarding.cpp
@@ -47,9 +47,9 @@ snapshots_construction = $(foreach i,$(apps),,m_snapshot$(subst :,,$(i))Snapshot
 snapshots_list = $(foreach i,$(apps),,&m_snapshot$(subst :,,$(i))Snapshot)
 snapshots_count = $(words $(apps))
 snapshot_includes = $(foreach i,$(app_headers),-include $(i) )
-epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
+epsilon_app_names = '$(foreach i,${apps_list},"$(i)", )'
 
-$(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
+$(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names) -DUSERNAME="$(USERNAME)"
 
 # I18n file generation
 
@@ -63,17 +63,20 @@ i18n_files += $(addprefix apps/,\
   shared.es.i18n\
   shared.fr.i18n\
   shared.pt.i18n\
+  shared.hu.i18n\
   shared.universal.i18n\
   toolbox.de.i18n\
   toolbox.en.i18n\
   toolbox.es.i18n\
   toolbox.fr.i18n\
   toolbox.pt.i18n\
+  toolbox.hu.i18n\
   variables.de.i18n\
   variables.en.i18n\
   variables.es.i18n\
   variables.fr.i18n\
   variables.pt.i18n\
+  variables.hu.i18n\
 )
 
 $(eval $(call rule_for, \
@@ -82,6 +85,8 @@ $(eval $(call rule_for, \
   $(i18n_files), \
   $$(PYTHON) apps/i18n.py --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ \
 ))
+
+
 
 $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
@@ -99,6 +104,14 @@ apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_r
 apps_tests_src += $(addprefix apps/,\
   global_preferences.cpp \
 )
+
+
+$(foreach img,$(image_list), $(eval $(call rule_for, \
+  ICON, \
+  $(img), \
+  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
+  $$(PYTHON) themes/themes_manager.py -i $(OMEGA_THEME) $$@ $(BUILD_DIR)/ \
+)))
 
 # Configure variants
 apps_all_src = $(app_src)

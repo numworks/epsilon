@@ -2,6 +2,7 @@ SFLAGS += -Ikandinsky/include
 
 kandinsky_src += $(addprefix kandinsky/src/,\
   color.cpp \
+  context.cpp \
   context_line.cpp \
   context_pixel.cpp \
   context_rect.cpp \
@@ -11,6 +12,10 @@ kandinsky_src += $(addprefix kandinsky/src/,\
   framebuffer_context.cpp \
   ion_context.cpp \
   point.cpp \
+  postprocess_context.cpp \
+  postprocess_gamma_context.cpp \
+  postprocess_invert_context.cpp \
+  postprocess_zoom_context.cpp \
   rect.cpp \
 )
 

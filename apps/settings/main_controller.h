@@ -2,24 +2,33 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <escher.h>
-#include "settings_message_tree.h"
+#include <apps/shared/settings_message_tree.h>
 #include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"
-#include "sub_menu/display_mode_controller.h"
+#include "sub_menu/accessibility_controller.h"
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
+#include "sub_menu/math_options_controller.h"
 #include "sub_menu/preferences_controller.h"
 
 namespace Settings {
 
-extern const SettingsMessageTree s_modelAngleChildren[3];
-extern const SettingsMessageTree s_modelEditionModeChildren[2];
-extern const SettingsMessageTree s_modelFloatDisplayModeChildren[4];
-extern const SettingsMessageTree s_modelComplexFormatChildren[3];
-extern const SettingsMessageTree s_modelFontChildren[2];
-extern const SettingsMessageTree s_modelExamChildren[2];
-extern const SettingsMessageTree s_modelAboutChildren[3];
-extern const SettingsMessageTree s_model;
+extern const Shared::SettingsMessageTree s_modelAngleChildren[3];
+extern const Shared::SettingsMessageTree s_modelEditionModeChildren[2];
+extern const Shared::SettingsMessageTree s_modelFloatDisplayModeChildren[4];
+extern const Shared::SettingsMessageTree s_modelComplexFormatChildren[3];
+extern const Shared::SettingsMessageTree s_symbolChildren[4];
+extern const Shared::SettingsMessageTree s_modelResultDisplayChildren[2];
+extern const Shared::SettingsMessageTree s_modelMathOptionsChildren[6];
+extern const Shared::SettingsMessageTree s_modelFontChildren[2];
+extern const Shared::SettingsMessageTree s_accessibilityChildren[6];
+extern const Shared::SettingsMessageTree s_contributorsChildren[16];
+#ifdef USERNAME
+extern const Shared::SettingsMessageTree s_modelAboutChildren[8];
+#else
+extern const Shared::SettingsMessageTree s_modelAboutChildren[7];
+#endif
+extern const Shared::SettingsMessageTree s_model;
 
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
@@ -38,35 +47,33 @@ public:
   void viewWillAppear() override;
   TELEMETRY_ID("");
 private:
-  constexpr static int k_indexOfAngleUnitCell = 0;
-  constexpr static int k_indexOfDisplayModeCell = k_indexOfAngleUnitCell + 1;
-  constexpr static int k_indexOfEditionModeCell = k_indexOfDisplayModeCell + 1;
-  constexpr static int k_indexOfComplexFormatCell = k_indexOfEditionModeCell + 1;
-  constexpr static int k_indexOfBrightnessCell = k_indexOfComplexFormatCell + 1;
-  constexpr static int k_indexOfFontCell = k_indexOfBrightnessCell + 1;
-  constexpr static int k_indexOfLanguageCell = k_indexOfFontCell + 1;
+  constexpr static int k_indexOfMathOptionsChildren = 0;
+  constexpr static int k_indexOfBrightnessCell = k_indexOfMathOptionsChildren + 1;
+  constexpr static int k_indexOfLanguageCell = k_indexOfBrightnessCell + 1;
   constexpr static int k_indexOfExamModeCell = k_indexOfLanguageCell + 1;
+  constexpr static int k_indexOfFontCell = k_indexOfExamModeCell + 1;
   /* Pop-up cell and About cell are located at the same index because pop-up
    * cell is optional. We must always correct k_indexOfAboutCell with
    * hasPrompt() (TODO: make hasPrompt() constexpr and correct
    * k_indexOfAboutCell) */
-  constexpr static int k_indexOfPopUpCell = k_indexOfExamModeCell + 1;
-  constexpr static int k_indexOfAboutCell = k_indexOfExamModeCell + 1;
-  static const SettingsMessageTree * model();
+  constexpr static int k_indexOfPopUpCell = k_indexOfFontCell + 1;
+  constexpr static int k_indexOfAboutCell = k_indexOfFontCell + 1;
+  static const Shared::SettingsMessageTree * model();
+private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 7;
+  constexpr static int k_numberOfSimpleChevronCells = 9;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
   SelectableTableView m_selectableTableView;
-  PreferencesController m_preferencesController;
-  DisplayModeController m_displayModeController;
+  MathOptionsController m_mathOptionsController;
   LanguageController m_languageController;
+  AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
-
+  PreferencesController m_preferencesController;
 };
 
 }

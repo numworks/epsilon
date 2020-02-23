@@ -1,4 +1,4 @@
-package com.numworks.calculator;
+package io.github.omega.simulator;
 
 import java.util.Locale;
 
@@ -14,10 +14,7 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import org.libsdl.app.SDLActivity;
 
-public class EpsilonActivity extends SDLActivity {
-  private static GoogleAnalytics sAnalytics;
-  private static Tracker sTracker;
-
+public class OmegaActivity extends SDLActivity {
   protected String[] getLibraries() {
     return new String[] {
       "epsilon"
@@ -42,24 +39,4 @@ public class EpsilonActivity extends SDLActivity {
     }
     return bitmap;
   }
-
-  public void telemetryInit() {
-    sAnalytics = GoogleAnalytics.getInstance(this);
-    sTracker = sAnalytics.newTracker("UA-93775823-3");
-  }
-
-  public void telemetryScreen(String screenName) {
-    sTracker.setScreenName(screenName);
-    sTracker.send(new HitBuilders.ScreenViewBuilder().build());
-  }
-
-  public void telemetryEvent(String category, String action, String label) {
-    sTracker.send(new HitBuilders.EventBuilder()
-      .setCategory(category)
-      .setAction(action)
-      .setLabel(label)
-      .build()
-    );
-  }
-
 }

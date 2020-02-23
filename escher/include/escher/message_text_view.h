@@ -3,11 +3,12 @@
 
 #include <escher/text_view.h>
 #include <escher/i18n.h>
+#include <escher/palette.h>
 
 class MessageTextView : public TextView {
 public:
   MessageTextView(const KDFont * font = KDFont::LargeFont, I18n::Message message = (I18n::Message)0, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
-    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+    KDColor textColor = Palette::PrimaryText, KDColor backgroundColor = Palette::ListCellBackground);
   void setText(const char * text) override;
   void setMessage(I18n::Message message);
   const char * text() const override;

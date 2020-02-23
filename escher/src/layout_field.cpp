@@ -12,7 +12,7 @@ static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
-  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite, &m_selectionStart, &m_selectionEnd),
+  m_expressionView(0.0f, 0.5f, Palette::PrimaryText, Palette::BackgroundHard, &m_selectionStart, &m_selectionEnd),
   m_cursorView(),
   m_selectionStart(),
   m_selectionEnd(),
@@ -350,6 +350,8 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     m_contentView.cursor()->addEmptyTenPowerLayout();
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
     m_contentView.cursor()->addEmptyMatrixLayout();
+  } else if((strcmp(text, Ion::Events::Multiplication.text())) == 0){
+    m_contentView.cursor()->addMultiplicationPointLayout();
   } else {
     Expression resultExpression = Expression::Parse(text, nullptr);
     if (resultExpression.isUninitialized()) {
@@ -474,7 +476,11 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
       setEditing(true);
     }
     if (event.hasText()) {
-      handleEventWithText(event.text());
+      if(event.text() == "%" && Ion::Events::isLockActive() ){
+        m_contentView.cursor()->performBackspace();
+      } else {
+        handleEventWithText(event.text());
+      }
     } else if (event == Ion::Events::Paste) {
       handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
     } else {

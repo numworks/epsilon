@@ -78,6 +78,15 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     return true;
   }
 
+  if(event.hasText()){
+    if(event.text() == "%" && Ion::Events::isLockActive() ){
+      return textArea->removePreviousGlyph();
+    } else {
+      return textArea->handleEventWithText(event.text(), true, false);
+    }
+  }
+
+  
   if (event == Ion::Events::Backspace && textArea->selectionIsEmpty()) {
     /* If the cursor is on the left of the text of a line, backspace one
      * indentation space at a time. */

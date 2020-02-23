@@ -9,8 +9,8 @@ using namespace Poincare;
 
 TitleBarView::TitleBarView() :
   View(),
-  m_titleView(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
-  m_preferenceView(KDFont::SmallFont, 1.0f, 0.5, KDColorWhite, Palette::YellowDark)
+  m_titleView(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, Palette::ToolbarText, Palette::Toolbar),
+  m_preferenceView(KDFont::SmallFont, 1.0f, 0.5, Palette::ToolbarText, Palette::Toolbar)
 {
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
@@ -18,7 +18,7 @@ TitleBarView::TitleBarView() :
 void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
   /* As we cheated to layout the title view, we have to fill a very thin
    * rectangle at the top with the background color. */
-  ctx->fillRect(KDRect(0, 0, bounds().width(), 2), Palette::YellowDark);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), 2), Palette::Toolbar);
 }
 
 void TitleBarView::setTitle(I18n::Message title) {
@@ -72,12 +72,17 @@ void TitleBarView::layoutSubviews(bool force) {
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize), force);
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight), force);
+    m_examModeIconView.setFrame(KDRect(bounds().width() - batterySize.width() - k_examIconWidth - k_alphaRightMargin - Metric::TitleBarExternHorizontalMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight), force);
   } else {
     m_examModeIconView.setFrame(KDRectZero, force);
   }
   KDSize shiftAlphaLockSize = m_shiftAlphaLockView.minimalSizeForOptimalDisplay();
-  m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize), force);
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+   // The Shift/Alpha frame is shifted when examination mode is active
+    m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-k_examIconWidth-Metric::TitleBarExternHorizontalMargin-2*k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize), force);
+  } else {
+    m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize), force);
+  }
 }
 
 void TitleBarView::refreshPreferences() {
@@ -85,6 +90,14 @@ void TitleBarView::refreshPreferences() {
   char buffer[bufferSize];
   int numberOfChar = 0;
   Preferences * preferences = Preferences::sharedPreferences();
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()) {
+    // Display "cas" if in exam mode with symbolic computation enabled
+      numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Sym), bufferSize - numberOfChar);
+      assert(numberOfChar < bufferSize-1);
+      assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
+      buffer[numberOfChar++] = '/';
+  }
+  assert(numberOfChar <= bufferSize);
   {
     // Display Sci/ or Eng/ if the print float mode is not decimal
     const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
@@ -93,7 +106,7 @@ void TitleBarView::refreshPreferences() {
       assert(printFloatMode == Preferences::PrintFloatMode::Scientific
           || printFloatMode == Preferences::PrintFloatMode::Engineering);
       I18n::Message printMessage = printFloatMode == Preferences::PrintFloatMode::Scientific ? I18n::Message::Sci : I18n::Message::Eng;
-      numberOfChar += strlcpy(buffer, I18n::translate(printMessage), bufferSize);
+      numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(printMessage), bufferSize - numberOfChar);
       assert(numberOfChar < bufferSize-1);
       assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
       buffer[numberOfChar++] = '/';
@@ -108,6 +121,7 @@ void TitleBarView::refreshPreferences() {
         (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(angleMessage), bufferSize - numberOfChar);
   }
+  
   m_preferenceView.setText(buffer);
   // Layout the exam mode icon if needed
   layoutSubviews();

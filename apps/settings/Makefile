@@ -1,20 +1,19 @@
 apps += Settings::App
 app_headers += apps/settings/app.h
 
-app_settings_test_src  = $(addprefix apps/settings/,\
-  settings_message_tree.cpp \
-)
-
 app_settings_src = $(addprefix apps/settings/,\
   app.cpp \
   cell_with_separator.cpp \
   main_controller.cpp \
   sub_menu/about_controller.cpp \
+  sub_menu/accessibility_controller.cpp \
   sub_menu/display_mode_controller.cpp \
   sub_menu/exam_mode_controller.cpp \
   sub_menu/generic_sub_controller.cpp \
   sub_menu/language_controller.cpp \
   sub_menu/preferences_controller.cpp \
+	sub_menu/contributors_controller.cpp \
+	sub_menu/math_options_controller.cpp \
   sub_menu/selectable_view_with_messages.cpp \
 )
 
@@ -44,6 +43,7 @@ i18n_files += $(addprefix apps/settings/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.hu.i18n\
 )
 
 $(eval $(call depends_on_image,apps/settings/app.cpp,apps/settings/settings_icon.png))

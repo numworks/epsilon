@@ -22,7 +22,7 @@ void ListController::InnerListController::didBecomeFirstResponder() {
 /* List Controller */
 
 ListController::ListController(Responder * parentResponder, EditExpressionController * editExpressionController, SelectableTableViewDelegate * delegate) :
-  StackViewController(parentResponder, &m_listController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
+  StackViewController(parentResponder, &m_listController, Palette::ToolboxHeaderText, Palette::ToolboxHeaderBackground, Palette::ToolboxHeaderBorder),
   m_listController(this, delegate),
   m_editExpressionController(editExpressionController)
 {

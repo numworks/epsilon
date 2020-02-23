@@ -5,6 +5,10 @@ extern "C" {
 #include <assert.h>
 }
 
+int App::Descriptor::examinationLevel() {
+  return App::Descriptor::NoExaminationLevel;
+}
+
 void App::Snapshot::pack(App * app) {
   tidy();
   app->~App();

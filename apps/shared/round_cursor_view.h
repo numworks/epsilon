@@ -10,7 +10,7 @@ namespace Shared {
 
 class RoundCursorView : public CursorView {
 public:
-  RoundCursorView(KDColor color = KDColorBlack) :
+  RoundCursorView(KDColor color = Palette::PrimaryText) :
     m_color(color)
 #ifdef GRAPH_CURSOR_SPEEDUP
   , m_underneathPixelBufferLoaded(false)

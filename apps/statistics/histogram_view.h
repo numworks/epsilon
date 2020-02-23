@@ -13,7 +13,7 @@ class HistogramController;
 
 class HistogramView : public Shared::CurveView {
 public:
-  HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView, KDColor selectedHistogramColor = Palette::Select, KDColor notSelectedHistogramColor = Palette::GreyMiddle, KDColor selectedBarColor = Palette::YellowDark);
+  HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView, KDColor selectedHistogramColor = Palette::StatisticsSelected, KDColor notSelectedHistogramColor = Palette::StatisticsNotSelected, KDColor selectedBarColor = Palette::StatisticsSelected);
   int series() const { return m_series; }
   void reload() override;
   void reloadSelectedBar();

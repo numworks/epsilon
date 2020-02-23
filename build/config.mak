@@ -7,11 +7,15 @@ include build/defaults.mak
 include build/platform.$(PLATFORM).mak
 
 EPSILON_VERSION ?= 13.0.0
-EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
-EPSILON_I18N ?= en fr es de pt
+EPSILON_CUSTOM_VERSION ?= 1.20.0
+# USERNAME ?= N/A
+EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings external omega
+EPSILON_I18N ?= en fr es de pt hu
+# EPSILON_I18N ?= en fr es de pt hu
 EPSILON_GETOPT ?= 0
 EPSILON_TELEMETRY ?= 0
 ESCHER_LOG_EVENTS_BINARY ?= 0
+OMEGA_THEME ?= omega_light
 
 ifndef USE_LIBA
   $(error platform.mak should define USE_LIBA)
@@ -22,6 +26,9 @@ endif
 include build/toolchain.$(TOOLCHAIN).mak
 
 SFLAGS += -DDEBUG=$(DEBUG)
+ifdef USERNAME
+  SFLAGS += -DUSERNAME="$(USERNAME)"
+endif
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)
 SFLAGS += -DEPSILON_TELEMETRY=$(EPSILON_TELEMETRY)
 SFLAGS += -DESCHER_LOG_EVENTS_BINARY=$(ESCHER_LOG_EVENTS_BINARY)

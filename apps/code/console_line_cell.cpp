@@ -18,7 +18,7 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(Consol
 }
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::CodeBackground);
   ctx->drawString(m_line->text(), KDPointZero, GlobalPreferences::sharedGlobalPreferences()->font(), textColor(m_line), isHighlighted()? Palette::Select : KDColorWhite);
 }
 

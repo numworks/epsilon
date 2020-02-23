@@ -1,0 +1,26 @@
+image: gcc
+
+stages:
+  - build
+
+job:build:
+    stage: build
+    before_script:
+        - "echo 'deb http://httpredir.debian.org/debian jessie main contrib \n deb-src http://httpredir.debian.org/debian jessie main contrib \n deb http://httpredir.debian.org/debian jessie-updates main contrib \n deb-src http://httpredir.debian.org/debian jessie-updates main contrib \n deb http://security.debian.org/ jessie/updates main contrib \n deb-src http://security.debian.org/ jessie/updates main contrib ' > /etc/apt/source.list"
+        - "apt-get update"
+        - "apt -y install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config fltk1.3-dev gcc-arm-none-eabi nodejs npm"
+        - "git submodule update --init --recursive"
+        - "git clone https://github.com/RedGl0w/omega-auto-increment"
+        - "cd omega-auto-increment"
+        - "npm i request exeq"
+        - "PrivateToken=$PrivateToken node index.js"
+        - "cd .."
+    script:
+        - make clean
+        - make MODEL=n0100 epsilon.bin
+    artifacts:
+        paths:
+            - output/release/device/n0100/epsilon.bin
+            - omega-auto-increment/version.txt
+        name: artifact:build:simulator
+        

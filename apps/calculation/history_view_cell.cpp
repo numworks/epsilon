@@ -78,7 +78,7 @@ void HistoryViewCell::reloadSubviewHighlight() {
   m_ellipsis.setHighlighted(false);
   if (isHighlighted()) {
     if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
-      m_inputView.setExpressionBackgroundColor(Palette::Select);
+      m_inputView.setExpressionBackgroundColor(Palette::ListCellBackgroundSelected);
     } else if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Output) {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
     } else {
@@ -139,7 +139,7 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor background = m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd;
   return background;
 }
 
@@ -185,12 +185,19 @@ void HistoryViewCell::layoutSubviews(bool force) {
     inputSize.height()),
   force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  int outputY = (oneLine() && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? maxCoordinate(0, inputSize.height() - outputSize.height()) / 2 : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
     maxCoordinate(0, maxFrameWidth - outputSize.width()),
-    inputSize.height(),
+    outputY,
     minCoordinate(maxFrameWidth, outputSize.width()),
-    outputSize.height()),
+    oneLine() ? outputSize.height() : (bounds().height() - inputSize.height())),
   force);
+}
+
+bool HistoryViewCell::oneLine() {
+  KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
+  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  return outputSize.width() + inputSize.width() < bounds().width() - 6;
 }
 
 void HistoryViewCell::resetMemoization() {

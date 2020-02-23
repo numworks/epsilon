@@ -41,9 +41,9 @@ void TextField::ContentView::setTextColor(KDColor textColor) {
 
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backgroundColor = m_backgroundColor;
-  if (m_isEditing) {
-    backgroundColor = KDColorWhite;
-  }
+  /*if (m_isEditing) {
+    backgroundColor = Palette::BackgroundHard;
+  }*/
   ctx->fillRect(bounds(), backgroundColor);
   if (selectionIsEmpty()) {
     ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor);
@@ -414,6 +414,11 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
+  if(event.hasText()){
+    if(event.text() == "%" && Ion::Events::isLockActive() ){
+      return removePreviousGlyph();
+    }
+  }
   assert(m_delegate != nullptr);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;

@@ -2,6 +2,7 @@
 #include <apps/global_preferences.h>
 #include <poincare/integer.h>
 #include <escher/app.h>
+#include <poincare/preferences.h>
 
 namespace Code {
 
@@ -89,7 +90,7 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
 
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
   int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * m_font->glyphSize().width(), 0);
+  return KDSize(2 * k_margin + numberOfChars * Poincare::Preferences::sharedPreferences()->KDPythonFont()->glyphSize().width(), 0);
 }
 
 }

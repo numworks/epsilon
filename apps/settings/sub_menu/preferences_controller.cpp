@@ -107,6 +107,94 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
         );
     }
 
+    // LED placeholders
+    case I18n::Message::ColorRed:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ColorWhite:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ColorBlue:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ColorGreen:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ColorYellow:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ColorPurple:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ColorOrange:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+
+    // Exam mode modes
+    case I18n::Message::ExamModeModeStandard:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeNoSym:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeNoSymNoText:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::ExamModeModeDutch:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+
+
+    // Symbol controller
+    case I18n::Message::SymbolMultiplicationCross: // × and · aren't single characters, so they cannot be constructed into codepoints..?
+    {
+      const char * text = "×";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::SymbolMultiplicationMiddleDot:
+    {
+      const char * text = "·";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::SymbolMultiplicationStar:
+      return CodePointLayout::Builder('*', k_layoutFont);
+    case I18n::Message::SymbolMultiplicationAutoSymbol:
+      return CodePointLayout::Builder(' ', k_layoutFont);
+    
+    // Result display
+    case I18n::Message::DefaultResult:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::CompactResult:
+    {
+      const char * text = "Beta";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+
     // Font size
     case I18n::Message::LargeFont:
     case I18n::Message::SmallFont:
@@ -151,6 +239,14 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+  } else if (message == I18n::Message::LEDColor) {
+    preferences->setColorOfLED((Preferences::LEDColor)valueIndex);
+  } else if (message == I18n::Message::ExamModeMode) {
+    GlobalPreferences::sharedGlobalPreferences()->setTempExamMode((GlobalPreferences::ExamMode)((uint8_t)valueIndex + 1));
+  } else if (message == I18n::Message::SymbolMultiplication) {
+    preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
+  } else if (message == I18n::Message::ResultDisplay) {
+    preferences->setResultDisplay((Preferences::ResultDisplay)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
   }
@@ -170,6 +266,15 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
+  }
+  if (message == I18n::Message::LEDColor) {
+    return (int)preferences->colorOfLED();
+  }
+  if (message == I18n::Message::SymbolMultiplication) {
+    return (int)preferences->symbolofMultiplication();
+  }
+  if (message == I18n::Message::ResultDisplay) {
+    return (int)preferences->resultDisplay();
   }
   if (message == I18n::Message::FontSizes) {
     return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;

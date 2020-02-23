@@ -46,7 +46,7 @@ public:
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PopUpController * promptController();
-  void redrawWindow();
+  void redrawWindow(bool force = false);
   void activateExamMode(GlobalPreferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;

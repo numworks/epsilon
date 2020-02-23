@@ -13,7 +13,7 @@ Controller::ContentView::ContentView(Controller * controller, SelectableTableVie
 {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
-  m_selectableTableView.setBackgroundColor(KDColorWhite);
+  m_selectableTableView.setBackgroundColor(Palette::HomeBackground);
   static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->verticalBar()->setMargin(k_indicatorMargin);
 }
 
@@ -22,7 +22,7 @@ SelectableTableView * Controller::ContentView::selectableTableView() {
 }
 
 void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::HomeBackground);
 }
 
 void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons, int numberOfColumns) {
@@ -59,7 +59,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1);
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch && selectedSnapshot->descriptor()->name() == I18n::Message::CodeApp) {
+    if (((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText) && selectedSnapshot->descriptor()->examinationLevel() < 2) ||
+      ((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Standard || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) && selectedSnapshot->descriptor()->examinationLevel() < 1)) {
       App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
     } else {
       bool switched = container->switchTo(selectedSnapshot);
@@ -88,6 +89,16 @@ void Controller::didBecomeFirstResponder() {
     selectionDataSource()->selectCellAtLocation(0, 0);
   }
   Container::activeApp()->setFirstResponder(m_view.selectableTableView());
+}
+
+void Controller::viewWillAppear() {
+  KDIonContext::sharedContext()->zoomInhibit = true;
+  KDIonContext::sharedContext()->updatePostProcessingEffects();
+}
+
+void Controller::viewDidDisappear() {
+  KDIonContext::sharedContext()->zoomInhibit = false;
+  KDIonContext::sharedContext()->updatePostProcessingEffects();
 }
 
 View * Controller::view() {

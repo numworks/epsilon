@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <python/port/port.h>
+#include <poincare/preferences.h>
 
 #include "console_edit_cell.h"
 #include "console_line_cell.h"

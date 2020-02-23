@@ -17,7 +17,7 @@ public:
 
 class AlternateEmptyViewDefaultDelegate : public AlternateEmptyViewDelegate {
 public:
-  AlternateEmptyViewDefaultDelegate() : m_message(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen) {}
+  AlternateEmptyViewDefaultDelegate() : m_message(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::PrimaryText, Palette::BackgroundApps) {}
   virtual I18n::Message emptyMessage() = 0;
   View * emptyView() override {
     m_message.setMessage(emptyMessage());

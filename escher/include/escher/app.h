@@ -29,7 +29,12 @@ public:
   public:
     virtual I18n::Message name() { return (I18n::Message)0; }
     virtual I18n::Message upperName() { return (I18n::Message)0; }
+    virtual int examinationLevel();
     virtual const Image * icon() { return nullptr; }
+
+    const int NoExaminationLevel = 0;
+    const int BasicExaminationLevel = 1;
+    const int StrictExaminationLevel = 2;
   };
   class Snapshot {
   public:
@@ -66,9 +71,6 @@ public:
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }
-#if EPSILON_TELEMETRY
-  virtual const char * telemetryId() const { return nullptr; }
-#endif
 protected:
   App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0) :
     Responder(nullptr),

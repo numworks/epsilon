@@ -16,7 +16,7 @@ public:
   KDCoordinate rowHeight(int j) override;
   TELEMETRY_ID("Other");
 protected:
-  constexpr static int k_totalNumberOfCell = 3;
+  constexpr static int k_totalNumberOfCell = 7;
   int initialSelectedRow() const override { return valueIndexForPreference(m_messageTreeModel->label()); }
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;

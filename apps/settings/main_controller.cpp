@@ -2,8 +2,10 @@
 #include "../global_preferences.h"
 #include <apps/i18n.h>
 #include <assert.h>
+#include <ion/backlight.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Settings {
 
@@ -11,19 +13,29 @@ constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
 constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
+constexpr SettingsMessageTree s_modelResultDisplayChildren[2] = {SettingsMessageTree(I18n::Message::DefaultResult), SettingsMessageTree(I18n::Message::CompactResult)};
+constexpr SettingsMessageTree s_modelMathOptionsChildren[6] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren), SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren), SettingsMessageTree(I18n::Message::ResultDisplay, s_modelResultDisplayChildren)};
 constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
-constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
+constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
+constexpr SettingsMessageTree s_contributorsChildren[16] = {SettingsMessageTree(I18n::Message::Developers), SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::DannySimmons), SettingsMessageTree(I18n::Message::JoachimLeFournis), SettingsMessageTree(I18n::Message::JeanBaptisteBoric), SettingsMessageTree(I18n::Message::MaximeFriess), SettingsMessageTree(I18n::Message::David), SettingsMessageTree(I18n::Message::DamienNicolet), SettingsMessageTree(I18n::Message::EvannDreumont), SettingsMessageTree(I18n::Message::SzaboLevente), SettingsMessageTree(I18n::Message::VenceslasDuet), SettingsMessageTree(I18n::Message::BetaTesters), SettingsMessageTree(I18n::Message::CyprienMejat), SettingsMessageTree(I18n::Message::TimeoArnouts), SettingsMessageTree(I18n::Message::LouisC), SettingsMessageTree(I18n::Message::LelahelHideux)};
+#ifdef USERNAME
+constexpr SettingsMessageTree s_modelAboutChildren[8] = {SettingsMessageTree(I18n::Message::Username), SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::MemUse), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren)};
+#else
+constexpr SettingsMessageTree s_modelAboutChildren[7] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::MicroPythonVersion), SettingsMessageTree(I18n::Message::MemUse), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId), SettingsMessageTree(I18n::Message::Contributors, s_contributorsChildren)};
+#endif
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   ViewController(parentResponder),
   m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
-  m_preferencesController(this),
-  m_displayModeController(this, inputEventHandlerDelegate),
+  m_mathOptionsController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
+  m_accessibilityController(this),
   m_examModeController(this),
-  m_aboutController(this)
+  m_aboutController(this),
+  m_preferencesController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -43,6 +55,13 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus){
+    int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+    int direction = (event == Ion::Events::BrightnessPlus) ? Ion::Backlight::NumberOfStepsPerShortcut*delta : -delta*Ion::Backlight::NumberOfStepsPerShortcut;
+    GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
+    m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), 1);
+    return true;
+  }
   if (model()->children(selectedRow())->numberOfChildren() == 0) {
     if (model()->children(selectedRow())->label() == promptMessage()) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -72,15 +91,17 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-    int rowIndex = selectedRow();
-    if (rowIndex == k_indexOfDisplayModeCell) {
-      subController = &m_displayModeController;
-    } else if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
+    I18n::Message title = model()->children(selectedRow())->label();
+    if (title == I18n::Message::Brightness || title == I18n::Message::Language) {
       assert(false);
-    } else if (rowIndex == k_indexOfExamModeCell) {
+    } else if (title == I18n::Message::ExamMode) {
       subController = &m_examModeController;
-    } else if (rowIndex == k_indexOfAboutCell + hasPrompt()) {
+    } else if (title == I18n::Message::About) {
       subController = &m_aboutController;
+    } else if (title == I18n::Message::Accessibility) {
+      subController = &m_accessibilityController;
+    } else if (title == I18n::Message::MathOptions) {
+      subController = &m_mathOptionsController;
     } else {
       subController = &m_preferencesController;
     }
@@ -97,7 +118,7 @@ int MainController::numberOfRows() const {
 };
 
 KDCoordinate MainController::rowHeight(int j) {
-  if (j == k_indexOfBrightnessCell) {
+  if (model()->children(j)->label() == I18n::Message::Brightness) {
     return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
   }
   return Metric::ParameterCellHeight;
@@ -140,10 +161,10 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == k_indexOfBrightnessCell) {
+  if (model()->children(j)->label() == I18n::Message::Brightness) {
     return 1;
   }
-  if (hasPrompt() && j == k_indexOfPopUpCell) {
+  if (model()->children(j)->label() == I18n::Message::UpdatePopUp || model()->children(j)->label() == I18n::Message::BetaPopUp) {
     return 2;
   }
   return 0;
@@ -151,9 +172,8 @@ int MainController::typeAtLocation(int i, int j) {
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  Preferences * preferences = Preferences::sharedPreferences();
   I18n::Message title = model()->children(index)->label();
-  if (index == k_indexOfBrightnessCell) {
+  if (model()->children(index)->label() == I18n::Message::Brightness) {
     MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
@@ -162,12 +182,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(title);
-  if (index == k_indexOfLanguageCell) {
+  if (model()->children(index)->label() == I18n::Message::Language) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-  if (hasPrompt() && index == k_indexOfPopUpCell) {
+  if (model()->children(index)->label() == I18n::Message::UpdatePopUp || model()->children(index)->label() == I18n::Message::BetaPopUp) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -175,21 +195,11 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
-  switch (index) {
-    case k_indexOfAngleUnitCell:
-      childIndex = (int)preferences->angleUnit();
-      break;
-    case k_indexOfDisplayModeCell:
-      childIndex = (int)preferences->displayMode();
-      break;
-    case k_indexOfEditionModeCell:
-      childIndex = (int)preferences->editionMode();
-      break;
-    case k_indexOfComplexFormatCell:
-      childIndex = (int)preferences->complexFormat();
-      break;
-    case k_indexOfFontCell:
+  switch (model()->children(index)->label()) {
+    case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
+      break;
+    default:
       break;
   }
   I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;

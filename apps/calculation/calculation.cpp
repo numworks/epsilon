@@ -164,7 +164,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     singleLine = exactOutputWidth + inputWidth < maxWidth - 40;
     if (singleLine && !allExpressionsInline) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
+      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
     } else {
       if (allExpressionsInline) {
         KDCoordinate exactOutputBaseline = exactLayout.baseline();

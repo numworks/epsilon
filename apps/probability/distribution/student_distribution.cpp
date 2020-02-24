@@ -55,7 +55,7 @@ double StudentDistribution::cumulativeDistributiveInverseForProbability(double *
 
 float StudentDistribution::lnCoefficient() const {
   const float k = m_parameter1;
-  return std::lgamma((k+1.0f)/2.0f) - std::lgamma(k/2.0f) - (M_PI+k)/2.0f;
+  return std::lgamma((k+1.0f)/2.0f) - std::lgamma(k/2.0f) - ((float)M_PI+k)/2.0f;
 }
 
 }

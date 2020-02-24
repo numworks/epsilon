@@ -64,6 +64,12 @@ namespace Ion {
 namespace Events {
 
 static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
+  /* If an event is detected, we want to remove the Shift modifier to mimic the
+   * device behaviour. If no event was detected, we restore the previous
+   * ShiftAlphaStatus. */
+  Ion::Events::ShiftAlphaStatus previousShiftAlphaStatus = Ion::Events::shiftAlphaStatus();
+  Ion::Events::removeShift();
+
   if (event.keysym.mod & KMOD_CTRL) {
     switch (event.keysym.sym) {
       case SDLK_BACKSPACE:
@@ -156,6 +162,8 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
     case SDLK_AC_BACK:
       return Termination;
   }
+  // No event was detected, restore the previous ShiftAlphaStatus.
+  Ion::Events::setShiftAlphaStatus(previousShiftAlphaStatus);
   return None;
 }
 
@@ -180,6 +188,14 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
   }
   char character = event.text[0];
   if (character >= 32 && character < 127) {
+#if EPSILON_SDL_SCREEN_ONLY
+    /* We remove the shift, otherwise it might stay activated when it shouldn't.
+     * For instance on a French keyboard, to input "1", we first press "Shift"
+     * (which activates the Shift modifier on the calculator), then we press
+     * "&", transformed by eventFromSDLTextInputEvent into the text "1". If we
+     * do not remove the Shift here, it would still be pressed afterwards. */
+    Ion::Events::removeShift();
+#endif
     return sEventForASCIICharAbove32[character-32];
   }
   return None;

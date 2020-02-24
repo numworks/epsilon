@@ -48,6 +48,7 @@
 #undef asin
 #undef asinh
 #undef atan
+#undef atan2
 #undef atanh
 #undef ceil
 #undef copysign
@@ -67,6 +68,7 @@
 #undef log1p
 #undef log10
 #undef log
+#undef logb
 #undef pow
 #undef round
 #undef scalbn
@@ -89,6 +91,8 @@ static inline double asinh(double x) { return __builtin_asinh(x); }
 static inline float asinh(float x) { return __builtin_asinhf(x); }
 static inline double atan(double x) { return __builtin_atan(x); }
 static inline float atan(float x) { return __builtin_atanf(x); }
+static inline double atan2(double y, double x) { return __builtin_atan2(y, x); }
+static inline float atan2(float y, float x) { return __builtin_atan2f(y, x); }
 static inline double atanh(double x) { return __builtin_atanh(x); }
 static inline float atanh(float x) { return __builtin_atanhf(x); }
 static inline double ceil(double x) { return __builtin_ceil(x); }
@@ -114,7 +118,7 @@ static inline float fmod(float x, float y) { return __builtin_fmodf(x, y); }
 static inline int fpclassify(double x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
 static inline int fpclassify(float x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
 static inline double hypot(double x, double y) { return __builtin_hypot(x, y); }
-static inline float hypotf(float x, float y) { return __builtin_hypotf(x, y); }
+static inline float hypot(float x, float y) { return __builtin_hypotf(x, y); }
 static inline bool isfinite(double x) { return __builtin_isfinite(x); }
 static inline bool isfinite(float x) { return __builtin_isfinite(x); }
 static inline bool isinf(double x) { return __builtin_isinf(x); }
@@ -129,10 +133,14 @@ static inline double log10(double x) { return __builtin_log10(x); }
 static inline float log10(float x) { return __builtin_log10f(x); }
 static inline double log(double x) { return __builtin_log(x); }
 static inline float log(float x) { return __builtin_logf(x); }
+static inline double logb(double x) { return __builtin_logb(x); }
+static inline float logb(float x) { return __builtin_logbf(x); }
 static inline double pow(double x, double y) { return __builtin_pow(x, y); }
 static inline float pow(float x, float y) { return __builtin_powf(x, y); }
 static inline double round(double x) { return __builtin_round(x); }
 static inline float round(float x) { return __builtin_roundf(x); }
+static inline double scalbn(double a, int e) { return __builtin_scalbn(a, e); }
+static inline float scalbn(float a, int e) { return __builtin_scalbnf(a, e); }
 static inline double sin(double x) { return __builtin_sin(x); }
 static inline float sin(float x) { return __builtin_sinf(x); }
 static inline double sinh(double x) { return __builtin_sinh(x); }

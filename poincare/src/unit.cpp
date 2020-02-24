@@ -127,13 +127,8 @@ Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseU
       factor = factor.childAtIndex(0);
     }
 
-    // FIXME Remove this once this case may not occur anymore
-    // The leading factors may not be of Unit type
-    if (factor.type() != ExpressionNode::Type::Unit) {
-      continue;
-    }
-
     // Fill the vector with the unit's exponent
+    assert(factor.type() == ExpressionNode::Type::Unit);
     const ptrdiff_t indexInTable = static_cast<UnitNode *>(factor.node())->dimension() - Unit::DimensionTable;
     assert(0 <= indexInTable && indexInTable < NumberOfBaseUnits);
     vector.setCoefficientAtIndex(indexInTable, exponent);

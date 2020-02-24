@@ -109,15 +109,17 @@ Unit::Dimension::Vector<int8_t>::Metrics UnitNode::Dimension::Vector<int8_t>::me
 template<>
 Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseUnits(const Expression baseUnits) {
   Vector<Integer> vector;
-  // Make sure the provided Expression is a Multiplication
-  Expression u = baseUnits;
-  if (u.type() == ExpressionNode::Type::Unit || u.type() == ExpressionNode::Type::Power) {
-    u = Multiplication::Builder(u.clone());
+  int numberOfFactors;
+  int factorIndex = 0;
+  Expression factor;
+  if (baseUnits.type() == ExpressionNode::Type::Multiplication) {
+    numberOfFactors = baseUnits.numberOfChildren();
+    factor = baseUnits.childAtIndex(0);
+  } else {
+    numberOfFactors = 1;
+    factor = baseUnits;
   }
-  const int numberOfChildren = u.numberOfChildren();
-  for (int i = 0; i < numberOfChildren; i++) {
-    Expression factor = u.childAtIndex(i);
-
+  do {
     // Get the unit's exponent
     Integer exponent(1);
     if (factor.type() == ExpressionNode::Type::Power) {
@@ -126,13 +128,16 @@ Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseU
       exponent = static_cast<Rational &>(exp).signedIntegerNumerator();
       factor = factor.childAtIndex(0);
     }
-
     // Fill the vector with the unit's exponent
     assert(factor.type() == ExpressionNode::Type::Unit);
     const ptrdiff_t indexInTable = static_cast<UnitNode *>(factor.node())->dimension() - Unit::DimensionTable;
     assert(0 <= indexInTable && indexInTable < NumberOfBaseUnits);
     vector.setCoefficientAtIndex(indexInTable, exponent);
-  }
+    if (++factorIndex >= numberOfFactors) {
+      break;
+    }
+    factor = baseUnits.childAtIndex(factorIndex);
+  } while (true);
   return vector;
 }
 

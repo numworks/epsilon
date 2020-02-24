@@ -42,7 +42,7 @@ const char * HistogramController::title() {
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
   assert(selectedSeriesIndex() >= 0);
-  if (event == Ion::Events::OK) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     stackController()->push(histogramParameterController());
     return true;
   }

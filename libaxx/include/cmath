@@ -104,7 +104,9 @@ static inline float cos(float x) { return __builtin_cosf(x); }
 static inline double cosh(double x) { return __builtin_cosh(x); }
 static inline float cosh(float x) { return __builtin_coshf(x); }
 static inline double erf(double x) { return __builtin_erf(x); }
+static inline float erf(float x) { return __builtin_erff(x); }
 static inline double erfc(double x) { return __builtin_erfc(x); }
+static inline float erfc(float x) { return __builtin_erfcf(x); }
 static inline double exp(double x) { return __builtin_exp(x); }
 static inline float exp(float x) { return __builtin_expf(x); }
 static inline double fabs(double x) { return __builtin_fabs(x); }

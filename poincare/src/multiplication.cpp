@@ -306,7 +306,7 @@ static bool CanSimplifyUnitProduct(
     const Unit::Dimension::Vector<Integer> &unitsExponents, Unit::Dimension::Vector<Integer>::Metrics &unitsMetrics,
     const Unit::Dimension::Vector<Integer> &entryUnitExponents, const Integer entryUnitNorm, const Expression entryUnit,
     Integer (*operationOnExponents)(const Integer & unitsExponent, const Integer & entryUnitExponent),
-    Expression & bestUnit, Integer & bestUnitNorm, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
+    Expression & bestUnit, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' Integer array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
@@ -325,7 +325,6 @@ static bool CanSimplifyUnitProduct(
      candidateMetrics.norm.isLowerThan(unitsMetrics.norm));
   if (isSimpler) {
     bestUnit = entryUnit;
-    bestUnitNorm = entryUnitNorm;
     bestRemainderExponents = simplifiedExponents;
     bestRemainderMetrics = simplifiedMetrics;
     unitsMetrics = candidateMetrics;
@@ -370,7 +369,6 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     Unit::Dimension::Vector<Integer>::Metrics bestRemainderMetrics;
     while (unitsMetrics.supportSize > 1) {
       Expression bestUnit;
-      Integer bestUnitNorm(0);
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
         Unit::Dimension::Vector<Integer> entryUnitExponents = Unit::Dimension::Vector<Integer>::FromBaseUnits(entryUnit.clone().shallowReduce(reductionContext));
@@ -379,14 +377,14 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
             unitsExponents, unitsMetrics,
             entryUnitExponents, entryUnitNorm, entryUnit,
             Integer::Subtraction,
-            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderMetrics
+            bestUnit, bestRemainderExponents, bestRemainderMetrics
             )
         ||
         CanSimplifyUnitProduct(
             unitsExponents, unitsMetrics,
             entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)),
             Integer::Addition,
-            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderMetrics
+            bestUnit, bestRemainderExponents, bestRemainderMetrics
             );
       }
       if (bestUnit.isUninitialized()) {

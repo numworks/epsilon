@@ -108,18 +108,21 @@ public:
       T luminuousIntensity;
     };
     template <size_t N>
-    constexpr Dimension(const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
+    constexpr Dimension(Vector<int8_t> vector, const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
+      m_vector(vector),
       m_representatives(representatives),
       m_representativesUpperBound(representatives + N),
       m_stdRepresentativePrefix(stdRepresentativePrefix)
     {
     }
+    const Vector<int8_t> * vector() const { return &m_vector; }
     const Representative * stdRepresentative() const { return m_representatives; }
     const Representative * representativesUpperBound() const { return m_representativesUpperBound; }
     const Prefix * stdRepresentativePrefix() const { return m_stdRepresentativePrefix; }
     bool canParse(const char * symbol, size_t length,
         const Representative * * representative, const Prefix * * prefix) const;
   private:
+    Vector<int8_t> m_vector;
     const Representative * m_representatives;
     const Representative * m_representativesUpperBound;
     const Prefix * m_stdRepresentativePrefix;
@@ -416,94 +419,301 @@ public:
      * The order determines the behavior of simplification.
      */
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         TimeRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 1,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         DistanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         MassRepresentatives,
         &KiloPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         CurrentRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 1,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         TemperatureRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 1,
+          .luminuousIntensity = 0,
+        },
         AmountOfSubstanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 1,
+        },
         LuminousIntensityRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         FrequencyRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 1,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ForceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           =-1,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         PressureRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 2,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         EnergyRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-3,
+          .distance           = 2,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         PowerRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricChargeRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-3,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricPotentialRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 4,
+          .distance           =-2,
+          .mass               =-1,
+          .current            = 2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricCapacitanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-3,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricResistanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 3,
+          .distance           =-2,
+          .mass               =-1,
+          .current            = 2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricConductanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         MagneticFluxRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 0,
+          .mass               = 1,
+          .current            =-1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         MagneticFieldRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         InductanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 1,
+          .luminuousIntensity = 0,
+        },
         CatalyticActivityRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 2,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         SurfaceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 3,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         VolumeRepresentatives,
         &EmptyPrefix
         ),

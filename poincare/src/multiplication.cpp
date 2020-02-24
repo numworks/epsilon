@@ -304,7 +304,7 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
 
 static bool CanSimplifyUnitProduct(
     const Unit::Dimension::Vector<Integer> &unitsExponents, Unit::Dimension::Vector<Integer>::Metrics &unitsMetrics,
-    const Unit::Dimension::Vector<Integer> &entryUnitExponents, const Integer entryUnitNorm, const Expression entryUnit,
+    const Unit::Dimension::Vector<int8_t> *entryUnitExponents, int8_t entryUnitNorm, const Expression entryUnit,
     Integer (*operationOnExponents)(const Integer & unitsExponent, const Integer & entryUnitExponent),
     Expression & bestUnit, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
   /* This function tries to simplify a Unit product (given as the
@@ -313,7 +313,7 @@ static bool CanSimplifyUnitProduct(
    * 'bestRemainder' are updated accordingly. */
   Unit::Dimension::Vector<Integer> simplifiedExponents;
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
-    simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents.coefficientAtIndex(i)));
+    simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents->coefficientAtIndex(i)));
   }
   Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = simplifiedExponents.metrics();
   Unit::Dimension::Vector<Integer>::Metrics candidateMetrics = {
@@ -371,8 +371,8 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       Expression bestUnit;
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
-        Unit::Dimension::Vector<Integer> entryUnitExponents = Unit::Dimension::Vector<Integer>::FromBaseUnits(entryUnit.clone().shallowReduce(reductionContext));
-        Integer entryUnitNorm = entryUnitExponents.metrics().norm;
+        const Unit::Dimension::Vector<int8_t> * entryUnitExponents = dim->vector();
+        int8_t entryUnitNorm = entryUnitExponents->metrics().norm;
         CanSimplifyUnitProduct(
             unitsExponents, unitsMetrics,
             entryUnitExponents, entryUnitNorm, entryUnit,

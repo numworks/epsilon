@@ -92,6 +92,21 @@ Unit::Dimension::Vector<Integer>::Metrics UnitNode::Dimension::Vector<Integer>::
 }
 
 template<>
+Unit::Dimension::Vector<int8_t>::Metrics UnitNode::Dimension::Vector<int8_t>::metrics() const {
+  size_t supportSize = 0;
+  int8_t norm = 0;
+  for (const int8_t * i = reinterpret_cast<const int8_t*>(this); i < reinterpret_cast<const int8_t*>(this) + NumberOfBaseUnits; i++) {
+    int8_t coefficient = *i;
+    if (coefficient == 0) {
+      continue;
+    }
+    supportSize++;
+    norm += coefficient > 0 ? coefficient : -coefficient;
+  }
+  return {.supportSize = supportSize, .norm = norm};
+}
+
+template<>
 Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseUnits(const Expression baseUnits) {
   Vector<Integer> vector;
   // Make sure the provided Expression is a Multiplication

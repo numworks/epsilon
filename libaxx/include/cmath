@@ -114,6 +114,8 @@ inline constexpr float ceil(float x) { return __builtin_ceilf(x); }
 inline constexpr float copysign(float x, float y) { return __builtin_copysignf(x, y); }
 inline constexpr float cos(float x) { return __builtin_cosf(x); }
 inline constexpr float cosh(float x) { return __builtin_coshf(x); }
+inline constexpr float erf(float x) { return __builtin_erff(x); }
+inline constexpr float erfc(float x) { return __builtin_erfcf(x); }
 inline constexpr float exp(float x) { return __builtin_expf(x); }
 inline constexpr float expm1(float x) { return __builtin_expm1f(x); }
 inline constexpr float fabs(float x) { return __builtin_fabsf(x); }

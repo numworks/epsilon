@@ -17,6 +17,7 @@ void IonSimulatorKeyboardKeyUp(int keyNumber) {
   Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
   sKeyboardState.clearKey(key);
 }
+#endif
 
 namespace Ion {
 namespace Keyboard {
@@ -49,22 +50,6 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
 
 constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);
 
-}
-}
-
-bool IonSimulatorSDLKeyDetectedByScan(SDL_Scancode key) {
-  for (int i = 0; i < Ion::Keyboard::sNumberOfKeyPairs; i++) {
-    if (key == Ion::Keyboard::sKeyPairs[i].SDLKey()) {
-      return true;
-    }
-  }
-  return false;
-}
-#endif
-
-namespace Ion {
-namespace Keyboard {
-
 State scan() {
   // We need to tell SDL to get new state from the host OS
   SDL_PumpEvents();
@@ -75,22 +60,12 @@ State scan() {
   // Grab this opportunity to refresh the display if needed
   Simulator::Main::refresh();
 
-#if EPSILON_SDL_SCREEN_ONLY
-  /* In this case, keyboard states will be sent over another channel, but we
-   * still need to catch the physical keyboard events */
-  const uint8_t * SDLstate = SDL_GetKeyboardState(NULL);
-  State state = sKeyboardState;
-  for (int i = 0; i < sNumberOfKeyPairs; i++) {
-    KeySDLKeyPair pair = sKeyPairs[i];
-    if (SDLstate[pair.SDLKey()]) {
-      state.setKey(pair.key());
-    }
-  }
-  return state;
-#else
   // Start with a "clean" state
   State state;
-
+#if EPSILON_SDL_SCREEN_ONLY
+  // In this case, keyboard states are sent over another channel.
+  state = sKeyboardState;
+#else
   // Register a key for the mouse, if any
   SDL_Point p;
   Uint32 mouseState = SDL_GetMouseState(&p.x, &p.y);
@@ -98,10 +73,27 @@ State scan() {
     Key k = Simulator::Layout::keyAt(&p);
     state.setKey(k);
   }
-
-  return state;
 #endif
+
+  // Catch the physical keyboard events
+  const uint8_t * SDLstate = SDL_GetKeyboardState(NULL);
+  for (int i = 0; i < sNumberOfKeyPairs; i++) {
+    KeySDLKeyPair pair = sKeyPairs[i];
+    if (SDLstate[pair.SDLKey()]) {
+      state.setKey(pair.key());
+    }
+  }
+  return state;
 }
 
 }
+}
+
+bool IonSimulatorSDLKeyDetectedByScan(SDL_Scancode key) {
+  for (int i = 0; i < Ion::Keyboard::sNumberOfKeyPairs; i++) {
+    if (key == Ion::Keyboard::sKeyPairs[i].SDLKey()) {
+      return true;
+    }
+  }
+  return false;
 }

@@ -368,10 +368,9 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     Unit::Dimension::Vector<Integer> bestRemainderExponents;
     Unit::Dimension::Vector<Integer>::Metrics bestRemainderMetrics;
     while (unitsMetrics.supportSize > 1) {
-      Expression bestUnit;
+      const Unit::Dimension * bestDim = nullptr;
       int8_t bestUnitExponent = 0;
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
-        Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
         const Unit::Dimension::Vector<int8_t> * entryUnitExponents = dim->vector();
         int8_t entryUnitNorm = entryUnitExponents->metrics().norm;
         if (CanSimplifyUnitProduct(
@@ -386,18 +385,19 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
               bestUnitExponent, bestRemainderExponents, bestRemainderMetrics
               ))
         {
-          bestUnit = entryUnit;
+          bestDim = dim;
         }
       }
-      if (bestUnit.isUninitialized()) {
+      if (bestDim == nullptr) {
         break;
       }
+      Expression derivedUnit = Unit::Builder(bestDim, bestDim->stdRepresentative(), bestDim->stdRepresentativePrefix());
       assert(bestUnitExponent == 1 || bestUnitExponent == -1);
       if (bestUnitExponent == -1) {
-        bestUnit = Power::Builder(bestUnit, Rational::Builder(-1));
+        derivedUnit = Power::Builder(derivedUnit, Rational::Builder(-1));
       }
       const int position = unitsAccu.numberOfChildren();
-      unitsAccu.addChildAtIndexInPlace(bestUnit, position, position);
+      unitsAccu.addChildAtIndexInPlace(derivedUnit, position, position);
       unitsExponents = bestRemainderExponents;
       unitsMetrics = bestRemainderMetrics;
     }

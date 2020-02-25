@@ -525,9 +525,16 @@ const ToolboxMessageTree chemistry[] = {
   ToolboxMessageTree::Node(I18n::Message::MolarMassesByAlpha, chemistryMolarMassesByAlpha)
 };
 
-const ToolboxMessageTree UnitOfMesurement[] = {
+const ToolboxMessageTree SpeedsOfSound[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSound0Tag, I18n::Message::SpeedOfSound0, false, I18n::Message::SpeedOfSound0),
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSoundWaterTag, I18n::Message::SpeedOfSoundWater, false, I18n::Message::SpeedOfSoundWater),
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSoundGlassTag, I18n::Message::SpeedOfSoundGlass, false, I18n::Message::SpeedOfSoundGlass),
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSoundSteelTag, I18n::Message::SpeedOfSoundSteel, false, I18n::Message::SpeedOfSoundSteel)
+};
+
+const ToolboxMessageTree Speed[] = {
   ToolboxMessageTree::Leaf(I18n::Message::SpeedOfLightTag, I18n::Message::SpeedOfLight, false, I18n::Message::SpeedOfLight),
-  ToolboxMessageTree::Leaf(I18n::Message::YearLightTag, I18n::Message::YearLight, false, I18n::Message::YearLight)
+  ToolboxMessageTree::Node(I18n::Message::SpeedOfSound, SpeedsOfSound)
 };
 
 const ToolboxMessageTree Thermodynamics[] =  {
@@ -553,7 +560,7 @@ const ToolboxMessageTree Gravitation[] = {
 };
 
 const ToolboxMessageTree Physics[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitOfMesurement, UnitOfMesurement),
+  ToolboxMessageTree::Node(I18n::Message::Speed, Speed),
   ToolboxMessageTree::Node(I18n::Message::Thermodynamics, Thermodynamics),
   ToolboxMessageTree::Node(I18n::Message::Electromagnetism, Electromagnetism),
   ToolboxMessageTree::Node(I18n::Message::Gravitation, Gravitation)

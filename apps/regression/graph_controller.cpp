@@ -84,7 +84,7 @@ void GraphController::viewWillAppear() {
 
   /* Since *m_selectedDotIndex is altered by initCursorParameters(),
    * the following must absolutely come at the end. */
-  setRoundCrossCursorView(*m_selectedDotIndex < 0);
+  setRoundCrossCursorView();
 }
 
 // Private
@@ -319,7 +319,7 @@ bool GraphController::moveCursorVertically(int direction) {
     // Select the regression
     *m_selectedSeriesIndex = closestRegressionSeries;
     *m_selectedDotIndex = -1;
-    setRoundCrossCursorView(true);
+    setRoundCrossCursorView();
     m_cursor->moveTo(x, x, yValue(*m_selectedSeriesIndex, x, context));
     return true;
   }
@@ -328,7 +328,7 @@ bool GraphController::moveCursorVertically(int direction) {
     // Select the dot
     *m_selectedSeriesIndex = closestDotSeries;
     *m_selectedDotIndex = dotSelected;
-    setRoundCrossCursorView(false);
+    setRoundCrossCursorView();
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       // Select the mean dot
       double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
@@ -396,9 +396,10 @@ InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Interact
   return range;
 }
 
-void GraphController::setRoundCrossCursorView(bool round) {
+void GraphController::setRoundCrossCursorView() {
   /* At this point, the model (selected series and dot indices) should be up
    * to date. */
+  bool round = *m_selectedDotIndex < 0;
   if (round) {
     // Set the color although the cursor view stays round
     m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);

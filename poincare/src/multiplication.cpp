@@ -304,14 +304,14 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
 
 static bool CanSimplifyUnitProduct(
     const Unit::Dimension::Vector<Integer> &unitsExponents, Unit::Dimension::Vector<Integer>::Metrics &unitsMetrics,
-    const Unit::Dimension::Vector<int8_t> *entryUnitExponents, int8_t entryUnitNorm, const Expression entryUnit,
-    Integer (*operationOnExponents)(const Integer & unitsExponent, const Integer & entryUnitExponent),
-    Expression & bestUnit, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
+    const Unit::Dimension::Vector<int8_t> *entryUnitExponents, int8_t entryUnitNorm, const Expression entryUnit, int8_t entryUnitExponent,
+    Expression & bestUnit, int8_t & bestUnitExponent, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' Integer array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
   Unit::Dimension::Vector<Integer> simplifiedExponents;
+  Integer (*operationOnExponents)(const Integer &, const Integer &) = entryUnitExponent == -1 ? Integer::Addition : Integer::Subtraction;
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
     simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents->coefficientAtIndex(i)));
   }
@@ -325,6 +325,7 @@ static bool CanSimplifyUnitProduct(
      candidateMetrics.norm.isLowerThan(unitsMetrics.norm));
   if (isSimpler) {
     bestUnit = entryUnit;
+    bestUnitExponent = entryUnitExponent;
     bestRemainderExponents = simplifiedExponents;
     bestRemainderMetrics = simplifiedMetrics;
     unitsMetrics = candidateMetrics;
@@ -369,22 +370,21 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     Unit::Dimension::Vector<Integer>::Metrics bestRemainderMetrics;
     while (unitsMetrics.supportSize > 1) {
       Expression bestUnit;
+      int8_t bestUnitExponent = 0;
       for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
         const Unit::Dimension::Vector<int8_t> * entryUnitExponents = dim->vector();
         int8_t entryUnitNorm = entryUnitExponents->metrics().norm;
         CanSimplifyUnitProduct(
             unitsExponents, unitsMetrics,
-            entryUnitExponents, entryUnitNorm, entryUnit,
-            Integer::Subtraction,
-            bestUnit, bestRemainderExponents, bestRemainderMetrics
+            entryUnitExponents, entryUnitNorm, entryUnit, 1,
+            bestUnit, bestUnitExponent, bestRemainderExponents, bestRemainderMetrics
             )
         ||
         CanSimplifyUnitProduct(
             unitsExponents, unitsMetrics,
-            entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)),
-            Integer::Addition,
-            bestUnit, bestRemainderExponents, bestRemainderMetrics
+            entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)), -1,
+            bestUnit, bestUnitExponent, bestRemainderExponents, bestRemainderMetrics
             );
       }
       if (bestUnit.isUninitialized()) {

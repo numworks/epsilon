@@ -383,12 +383,16 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
         ||
         CanSimplifyUnitProduct(
             unitsExponents, unitsMetrics,
-            entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)), -1,
+            entryUnitExponents, entryUnitNorm, entryUnit, -1,
             bestUnit, bestUnitExponent, bestRemainderExponents, bestRemainderMetrics
             );
       }
       if (bestUnit.isUninitialized()) {
         break;
+      }
+      assert(bestUnitExponent == 1 || bestUnitExponent == -1);
+      if (bestUnitExponent == -1) {
+        bestUnit = Power::Builder(bestUnit, Rational::Builder(-1));
       }
       const int position = unitsAccu.numberOfChildren();
       unitsAccu.addChildAtIndexInPlace(bestUnit, position, position);

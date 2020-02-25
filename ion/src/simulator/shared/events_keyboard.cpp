@@ -72,8 +72,6 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
 
   if (event.keysym.mod & KMOD_CTRL) {
     switch (event.keysym.sym) {
-      case SDLK_BACKSPACE:
-        return Clear;
       case SDLK_x:
         return Cut;
       case SDLK_c:
@@ -94,14 +92,8 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
       }
     }
     switch (event.keysym.sym) {
-      case SDLK_ESCAPE:
-        return Home;
-      case SDLK_RETURN:
-        return OK;
       case SDLK_v:
         return Var;
-      case SDLK_BACKSPACE:
-        return Clear;
       case SDLK_x:
         return Exp;
       case SDLK_n:
@@ -130,35 +122,7 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return Ans;
     }
   }
-  if (event.keysym.mod & KMOD_SHIFT) {
-    switch(event.keysym.sym) {
-      case SDLK_UP:
-        return ShiftUp;
-      case SDLK_DOWN:
-        return ShiftDown;
-      case SDLK_LEFT:
-        return ShiftLeft;
-      case SDLK_RIGHT:
-        return ShiftRight;
-    }
-  }
   switch(event.keysym.sym) {
-    case SDLK_UP:
-      return Up;
-    case SDLK_DOWN:
-      return Down;
-    case SDLK_LEFT:
-      return Left;
-    case SDLK_RIGHT:
-      return Right;
-    case SDLK_RETURN:
-      return EXE;
-    case SDLK_ESCAPE:
-      return Back;
-    case SDLK_TAB:
-      return Toolbox;
-    case SDLK_BACKSPACE:
-      return Backspace;
     case SDLK_AC_BACK:
       return Termination;
   }

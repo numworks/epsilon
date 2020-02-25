@@ -153,6 +153,8 @@ QUIZ_CASE(poincare_approximation_power) {
 
   assert_expression_approximates_to<float>("(-10)^0.00000001", "unreal", Radian, Real);
   assert_expression_approximates_to<float>("(-10)^0.00000001", "1+3.141593ᴇ-8×𝐢", Radian, Cartesian);
+  assert_expression_simplifies_approximates_to<float>("3.5^2.0000001", "12.25");
+  assert_expression_simplifies_approximates_to<float>("3.7^2.0000001", "13.69");
 }
 
 QUIZ_CASE(poincare_approximation_subtraction) {

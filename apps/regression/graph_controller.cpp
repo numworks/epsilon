@@ -84,11 +84,7 @@ void GraphController::viewWillAppear() {
 
   /* Since *m_selectedDotIndex is altered by initCursorParameters(),
    * the following must absolutely come at the end. */
-  if (*m_selectedDotIndex >= 0) {
-    setRoundCrossCursorView(false);
-  } else {
-    setRoundCrossCursorView(true);
-  }
+  setRoundCrossCursorView(*m_selectedDotIndex < 0);
 }
 
 void GraphController::selectRegressionCurve() {

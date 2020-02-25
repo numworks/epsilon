@@ -25,6 +25,10 @@ tests_src += $(addprefix kandinsky/test/,\
   rect.cpp\
 )
 
+code_points += $(addprefix kandinsky/fonts/, \
+  code_points.h \
+)
+
 RASTERIZER_CFLAGS := -std=c99 $(shell pkg-config freetype2 --cflags)
 RASTERIZER_LDFLAGS := $(shell pkg-config freetype2 --libs)
 

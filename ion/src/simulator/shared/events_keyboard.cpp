@@ -188,14 +188,12 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
   }
   char character = event.text[0];
   if (character >= 32 && character < 127) {
-#if EPSILON_SDL_SCREEN_ONLY
     /* We remove the shift, otherwise it might stay activated when it shouldn't.
      * For instance on a French keyboard, to input "1", we first press "Shift"
      * (which activates the Shift modifier on the calculator), then we press
      * "&", transformed by eventFromSDLTextInputEvent into the text "1". If we
      * do not remove the Shift here, it would still be pressed afterwards. */
     Ion::Events::removeShift();
-#endif
     return sEventForASCIICharAbove32[character-32];
   }
   return None;
@@ -220,11 +218,9 @@ Event getPlatformEvent() {
       return Termination;
     }
     if (event.type == SDL_KEYDOWN) {
-#if EPSILON_SDL_SCREEN_ONLY
       if (IonSimulatorSDLKeyDetectedByScan(event.key.keysym.scancode)) {
         continue;
       }
-#endif
       return eventFromSDLKeyboardEvent(event.key);
     }
     if (event.type == SDL_TEXTINPUT) {

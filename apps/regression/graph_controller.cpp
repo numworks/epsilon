@@ -321,7 +321,8 @@ bool GraphController::moveCursorVertically(int direction) {
   if (validRegression) {
     // Select the regression
     *m_selectedSeriesIndex = closestRegressionSeries;
-    selectRegressionCurve();
+    *m_selectedDotIndex = -1;
+    setRoundCrossCursorView(true);
     m_cursor->moveTo(x, x, yValue(*m_selectedSeriesIndex, x, context));
     return true;
   }

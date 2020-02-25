@@ -267,9 +267,11 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
   }
+#if LEDS_CHOICE
   if (message == I18n::Message::LEDColor) {
     return (int)preferences->colorOfLED();
   }
+#endif
   if (message == I18n::Message::SymbolMultiplication) {
     return (int)preferences->symbolofMultiplication();
   }

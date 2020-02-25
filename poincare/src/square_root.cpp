@@ -35,8 +35,12 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
    * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
    * weird results as sqrt(-1) = 6E-16+i, we compute the argument of the result
    * of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary part and
-   * if arg ~ Pi/2 [Pi], we discard the residual real part.*/
-  return Complex<T>::Builder(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
+   * if arg ~ Pi/2 [Pi], we discard the residual real part.
+   * Let's determine when the arg [Pi] (or arg [Pi/2]) is negligeable:
+   * With c = r*e^(iθ), so arg(sqrt(c)) = θ/2.
+   * We consider that arg[Pi] is negligeable if it is negligeable compared to
+   * θ. */
+  return Complex<T>::Builder(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result, std::arg(c)));
 }
 
 Expression SquareRootNode::shallowReduce(ReductionContext reductionContext) {

@@ -21,7 +21,7 @@ public:
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
-  void selectRegressionCurve();
+  void selectRegressionCurve() { *m_selectedDotIndex = -1; }
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
 
   // moveCursorHorizontally and Vertically are public to be used in tests

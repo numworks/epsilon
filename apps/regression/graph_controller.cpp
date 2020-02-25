@@ -87,10 +87,6 @@ void GraphController::viewWillAppear() {
   setRoundCrossCursorView(*m_selectedDotIndex < 0);
 }
 
-void GraphController::selectRegressionCurve() {
-  *m_selectedDotIndex = -1;
-}
-
 // Private
 
 Poincare::Context * GraphController::globalContext() {

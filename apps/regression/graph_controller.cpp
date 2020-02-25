@@ -89,7 +89,6 @@ void GraphController::viewWillAppear() {
 
 void GraphController::selectRegressionCurve() {
   *m_selectedDotIndex = -1;
-  setRoundCrossCursorView(true);
 }
 
 // Private

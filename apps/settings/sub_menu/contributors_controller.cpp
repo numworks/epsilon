@@ -28,7 +28,7 @@ int ContributorsController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-constexpr static int s_numberOfDevelopers = 10;
+constexpr static int s_numberOfDevelopers = 11;
 
 constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PQuentinGuidee,
@@ -41,6 +41,7 @@ constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PEvannDreumont,
   I18n::Message::PSzaboLevente,
   I18n::Message::PVenceslasDuet,
+  I18n::Message::PCharlotteThomas,
 };
 
 constexpr static int s_numberOfBetaTesters = 4;

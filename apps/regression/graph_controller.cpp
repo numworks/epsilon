@@ -88,14 +88,12 @@ void GraphController::viewWillAppear() {
     setRoundCrossCursorView(false);
   } else {
     setRoundCrossCursorView(true);
-    m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
   }
 }
 
 void GraphController::selectRegressionCurve() {
   *m_selectedDotIndex = -1;
   setRoundCrossCursorView(true);
-  m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
 // Private
@@ -405,7 +403,12 @@ InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Interact
 }
 
 void GraphController::setRoundCrossCursorView(bool round) {
+  if (round) {
+    // Set the color although the cursor view stays round
+    m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
+  }
   CursorView * nextCursorView = round ? static_cast<Shared::CursorView *>(&m_roundCursorView) : static_cast<Shared::CursorView *>(&m_crossCursorView);
+  // Escape if the cursor view stays the same
   if (m_view.cursorView() == nextCursorView) {
     return;
   }

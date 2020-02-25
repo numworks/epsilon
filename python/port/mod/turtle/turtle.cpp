@@ -377,7 +377,7 @@ void Turtle::drawPaw(PawType type, PawPosition pos) {
   assert(m_underneathPixelBuffer != nullptr);
   KDCoordinate pawOffset = 5;
   constexpr float crawlOffset = 0.6f;
-  constexpr float angles[] = {M_PI_2/2, M_PI_2+M_PI_2/2, -M_PI_2-M_PI_2/2, -M_PI_2/2};
+  constexpr float angles[] = {M_PI_4, 3*M_PI_4, -3*M_PI_4, -M_PI_4};
 
   // Compute the paw offset from the turtle center
   float currentAngle = angles[(int) type];

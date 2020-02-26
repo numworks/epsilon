@@ -837,11 +837,12 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("√(-1)", "unreal", Radian, Real);
   assert_expression_approximates_to<double>("√(-1)×√(-1)", "unreal", Radian, Real);
   assert_expression_approximates_to<double>("ln(-2)", "unreal", Radian, Real);
-  assert_expression_approximates_to<double>("(-8)^(1/3)", "unreal", Radian, Real); // Power always approximates to the principal root (even if unreal)
+  // Power/Root approximates to the first REAL root in Real mode
+  assert_expression_simplifies_approximates_to<double>("(-8)^(1/3)", "-2", Radian, Real); // Power have to be simplified first in order to spot the right form c^(p/q) with p, q integers
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian, Real); // Root approximates to the first REAL root in Real mode
   assert_expression_approximates_to<double>("8^(1/3)", "2", Radian, Real);
-  assert_expression_approximates_to<float>("(-8)^(2/3)", "unreal", Radian, Real); // Power always approximates to the principal root (even if unreal)
-  assert_expression_approximates_to<float>("root(-8, 3)^2", "4", Radian, Real); // Root approximates to the first REAL root in Real mode
+  assert_expression_simplifies_approximates_to<float>("(-8)^(2/3)", "4", Radian, Real); // Power have to be simplified first (cf previous comment)
+  assert_expression_approximates_to<float>("root(-8, 3)^2", "4", Radian, Real);
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian, Real);
 
   // Cartesian

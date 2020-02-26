@@ -1003,7 +1003,7 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
         return expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression1->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit, expression);
   Coordinate2D<double> result(resultAbscissa, approximateWithValueForSymbol(symbol, resultAbscissa, context, complexFormat, angleUnit));
-  if (std::fabs(result.x2()) < step*k_solverPrecision) {
+  if (std::fabs(result.x2()) < std::fabs(step)*k_solverPrecision) {
     result.setX2(0.0);
   }
   return result;

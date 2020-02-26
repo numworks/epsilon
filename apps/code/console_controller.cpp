@@ -400,6 +400,9 @@ void ConsoleController::resetSandbox() {
 }
 
 void ConsoleController::refreshPrintOutput() {
+  if (sandboxIsDisplayed()) {
+    return;
+  }
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   if (m_preventEdition) {

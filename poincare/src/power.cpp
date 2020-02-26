@@ -290,12 +290,14 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
     std::complex<T> c = static_cast<Complex<T> &>(base).stdComplex();
     T p = NAN;
     T q = NAN;
+    // If the power has been reduced, we look for a rational index
     if (childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
       const RationalNode * r = static_cast<const RationalNode *>(childAtIndex(1));
       p = r->signedNumerator().approximate<T>();
       q = r->denominator().approximate<T>();
     }
-    // Spot form p/q with p, q integers
+    /* If the power has been simplified (reduced + beautified), we look for an
+     * index of the for Division(Rational,Rational). */
     if (childAtIndex(1)->type() == ExpressionNode::Type::Division && childAtIndex(1)->childAtIndex(0)->type() == ExpressionNode::Type::Rational && childAtIndex(1)->childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
       const RationalNode * pRat = static_cast<const RationalNode *>(childAtIndex(1)->childAtIndex(0));
       const RationalNode * qRat = static_cast<const RationalNode *>(childAtIndex(1)->childAtIndex(1));
@@ -305,6 +307,9 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
       p = pRat->signedNumerator().approximate<T>();
       q = qRat->signedNumerator().approximate<T>();
     }
+    /* We don't handle power that haven't been reduced or simplified as the
+     * index can take to many forms and still be equivalent to p/q,
+     * with p, q integers. */
     if (std::isnan(p) || std::isnan(q)) {
       goto defaultApproximation;
     }

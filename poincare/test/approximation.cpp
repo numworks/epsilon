@@ -580,7 +580,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Key values
   assert_expression_approximates_to<double>("asin(0)", "0", Degree);
   assert_expression_approximates_to<double>("asin(0)", "0", Gradian);
-  assert_expression_approximates_to<float>("asin(-1)", "-90", Degree);
+  assert_expression_approximates_to<float>("asin(-1)", "-90", Degree, Cartesian, 6);
   assert_expression_approximates_to<float>("asin(-1)", "-100", Gradian, Cartesian, 3);
   assert_expression_approximates_to<double>("asin(1)", "90", Degree);
   assert_expression_approximates_to<double>("asin(1)", "100", Gradian, Cartesian, 3);

@@ -1,4 +1,5 @@
 /output/
+/build/artifacts/
 build/device/**/*.pyc
 epsilon.elf
 .vscode

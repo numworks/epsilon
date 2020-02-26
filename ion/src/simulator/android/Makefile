@@ -34,10 +34,15 @@ $(BUILD_DIR)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
 
 .PHONY: force_remake
 
-$(BUILD_DIR)/app/libs/%/libepsilon.so: force_remake $$(@D)/.
-	$(Q) echo "MAKE    NDK_ABI=$*"
-	$(Q) $(MAKE) NDK_ABI=$* epsilon.so
-	$(Q) cp $(BUILD_DIR)/$*/epsilon.so $@
+define rule_for_libepsilon
+$$(BUILD_DIR)/app/libs/%/lib$(1): force_remake $$$$(@D)/.
+	$(Q) echo "MAKE    NDK_ABI=$$*"
+	$(Q) $$(MAKE) NDK_ABI=$$* $(1)
+	$(Q) cp $$(BUILD_DIR)/$$*/$(1) $$@
+endef
+
+$(eval $(call rule_for_libepsilon,epsilon.so))
+$(eval $(call rule_for_libepsilon,epsilon.official.so))
 
 # If NDK_ABI is not defined, we will re-trigger a build for each avaialble ABI.
 # This is used to build APKs, which needs to embbed a binary for each ABI.
@@ -46,22 +51,28 @@ ifndef NDK_ABI
 
 NDK_ABIS = armeabi-v7a arm64-v8a x86 x86_64
 
-epsilon_apk_deps = $(patsubst %,$(BUILD_DIR)/app/libs/%/libepsilon.so,$(NDK_ABIS))
-epsilon_apk_deps += $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
+epsilon_apk_deps = $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
 epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
 
-.PHONY: gradle_%
-gradle_%: $(epsilon_apk_deps)
+define rule_for_gradle
+.PHONY: gradle_$1_$2
+gradle_$1_$2: $$(epsilon_apk_deps) $$(patsubst %,$$(BUILD_DIR)/app/libs/%/libepsilon$2so,$(NDK_ABIS))
 	@echo "GRADLE ion/src/simulator/android/build.gradle"
-	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle $*
+	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle $1
+endef
+
+$(eval $(call rule_for_gradle,assembleCodesigned,.))
+$(eval $(call rule_for_gradle,assembleRelease,.))
+$(eval $(call rule_for_gradle,assembleCodesigned,.official.))
+$(eval $(call rule_for_gradle,assembleRelease,.official.))
 
 DEFAULT = epsilon.apk
 
-.PHONY: epsilon.apk
+.PHONY: epsilon%apk
 ifdef ANDROID_SIGNING_STORE_FILE
-epsilon.apk: gradle_assembleCodesigned
+epsilon%apk: gradle_assembleCodesigned_%
 else
-epsilon.apk: gradle_assembleRelease
+epsilon%apk: gradle_assembleRelease_%
 	$(warning Building without code signing. Define ANDROID_SIGNING_STORE_FILE, ANDROID_SIGNING_STORE_PASSWORD, ANDROID_SIGNING_KEY_ALIAS and  ANDROID_SIGNING_KEY_PASSWORD for a signed build.)
 endif
 

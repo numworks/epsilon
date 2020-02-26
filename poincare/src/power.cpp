@@ -128,6 +128,22 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const Expression & child, int c
 // Private
 
 template<typename T>
+Complex<T> PowerNode::computeRealRootOfRationalPow(const std::complex<T> c, T p, T q) {
+  // Compute real root of c^(p/q) with p, q integers if it has a real root
+  if (c.imag() == 0 && std::pow((T)-1.0, q) < 0.0) {
+    /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
+     * exist (which is not necessarily the principal root)! */
+    std::complex<T> absc = c;
+    absc.real(std::fabs(absc.real()));
+    // compute |c|^(p/q) which is a real
+    Complex<T> absCPowD = PowerNode::compute(absc, std::complex<T>(p/q), Preferences::ComplexFormat::Real);
+    // c^(p/q) = (sign(c)^p)*|c|^(p/q) = -|c|^(p/q) iff c < 0 and p odd
+    return c.real() < 0 && std::pow((T)-1.0, p) < 0.0 ? Complex<T>::Builder(-absCPowD.stdComplex()) : absCPowD;
+  }
+  return Complex<T>::Undefined();
+}
+
+template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   std::complex<T> result;
   if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() != 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {
@@ -260,6 +276,45 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
 
 template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   return MatrixComplex<T>::Undefined();
+}
+
+template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  /* Special case: c^(p/q) with p, q integers
+   * In real mode, c^(p/q) might have a real root which is not the principal
+   * root. We return this value in that case to avoid returning "unreal". */
+  if (complexFormat == Preferences::ComplexFormat::Real) {
+    Evaluation<T> base = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+    if (base.type() != EvaluationNode<T>::Type::Complex) {
+      goto defaultApproximation;
+    }
+    std::complex<T> c = static_cast<Complex<T> &>(base).stdComplex();
+    T p = NAN;
+    T q = NAN;
+    if (childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
+      const RationalNode * r = static_cast<const RationalNode *>(childAtIndex(1));
+      p = r->signedNumerator().approximate<T>();
+      q = r->denominator().approximate<T>();
+    }
+    // Spot form p/q with p, q integers
+    if (childAtIndex(1)->type() == ExpressionNode::Type::Division && childAtIndex(1)->childAtIndex(0)->type() == ExpressionNode::Type::Rational && childAtIndex(1)->childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
+      const RationalNode * pRat = static_cast<const RationalNode *>(childAtIndex(1)->childAtIndex(0));
+      const RationalNode * qRat = static_cast<const RationalNode *>(childAtIndex(1)->childAtIndex(1));
+      if (!pRat->denominator().isOne() || !qRat->denominator().isOne()) {
+        goto defaultApproximation;
+      }
+      p = pRat->signedNumerator().approximate<T>();
+      q = qRat->signedNumerator().approximate<T>();
+    }
+    if (std::isnan(p) || std::isnan(q)) {
+      goto defaultApproximation;
+    }
+    Complex<T> result = computeRealRootOfRationalPow(c, p, q);
+    if (!result.isUndefined()) {
+      return result;
+    }
+  }
+defaultApproximation:
+  return ApproximationHelper::MapReduce<T>(this, context, complexFormat, angleUnit, compute<T>, computeOnComplexAndMatrix<T>, computeOnMatrixAndComplex<T>, computeOnMatrices<T>);
 }
 
 // Power
@@ -897,20 +952,6 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
       return result;
     }
     Expression result = NthRoot::Builder(childAtIndex(0), Rational::Builder(index));
-    replaceWithInPlace(result);
-    return result;
-  }
-
-  /* Optional Step 3: if the ReductionTarget is the SystemForApproximation or
-   * SystemForAnalysis, turn a^(p/q) into (root(a, q))^p
-   * Indeed, root(a, q) can have a real root which is not the principale angle
-   * but that we want to return in real complex format. This special case is
-   * handled in NthRoot approximation but not in Power approximation. */
-  if (reductionContext.target() != ExpressionNode::ReductionTarget::User && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
-    Integer p = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
-    Integer q = childAtIndex(1).convert<Rational>().integerDenominator();
-    Expression nthRoot = q.isOne() ? childAtIndex(0) : NthRoot::Builder(childAtIndex(0), Rational::Builder(q));
-    Expression result = p.isOne() ? nthRoot : Power::Builder(nthRoot, Rational::Builder(p));
     replaceWithInPlace(result);
     return result;
   }

@@ -133,7 +133,7 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
     double xm = 0.5*(c-b);
     if (std::fabs(xm) <= tol1 || fb == 0.0) {
       double fbcMiddle = evaluation(0.5*(b+c), context, complexFormat, angleUnit, context1, context2, context3);
-      double isContinuous = (fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb);
+      bool isContinuous = (fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb);
       if (isContinuous) {
         return b;
       }

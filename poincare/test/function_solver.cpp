@@ -3,7 +3,7 @@
 
 using namespace Poincare;
 
-enum class ExtremumType : uint8_t {
+enum class PointOfInterestType {
   Maximum,
   Minimum,
   Root
@@ -20,10 +20,10 @@ bool doubles_are_approximately_equal(double d1, double d2) {
   return std::abs(d1-d2) < 0.00001;
 }
 
-void assert_next_extrema_are(
-    ExtremumType extremumType,
-    int numberOfExtrema,
-    Coordinate2D<double> * extrema,
+void assert_points_of_interest_are(
+    PointOfInterestType type,
+    int numberOfPointsOfInterest,
+    Coordinate2D<double> * pointsOfInterest,
     const char * expression,
     const char * symbol,
     double start,
@@ -34,21 +34,21 @@ void assert_next_extrema_are(
 {
   Shared::GlobalContext context;
   Poincare::Expression e = parse_expression(expression, &context, false);
-  for (int i = 0; i < numberOfExtrema; i++) {
+  for (int i = 0; i < numberOfPointsOfInterest; i++) {
     quiz_assert_log_if_failure(!std::isnan(start), e);
-    Coordinate2D<double> nextExtrema;
-    if (extremumType == ExtremumType::Maximum) {
-      nextExtrema = e.nextMaximum(symbol, start, step, max, &context, complexFormat, angleUnit);
-    } else if (extremumType == ExtremumType::Minimum) {
-      nextExtrema = e.nextMinimum(symbol, start, step, max, &context, complexFormat, angleUnit);
-    } else if (extremumType == ExtremumType::Root) {
-      nextExtrema = Coordinate2D<double>(e.nextRoot(symbol, start, step, max, &context, complexFormat, angleUnit), 0.0);
+    Coordinate2D<double> nextPointOfInterest;
+    if (type == PointOfInterestType::Maximum) {
+      nextPointOfInterest = e.nextMaximum(symbol, start, step, max, &context, complexFormat, angleUnit);
+    } else if (type == PointOfInterestType::Minimum) {
+      nextPointOfInterest = e.nextMinimum(symbol, start, step, max, &context, complexFormat, angleUnit);
+    } else if (type == PointOfInterestType::Root) {
+      nextPointOfInterest = Coordinate2D<double>(e.nextRoot(symbol, start, step, max, &context, complexFormat, angleUnit), 0.0);
     }
     quiz_assert_log_if_failure(
-        (doubles_are_approximately_equal(extrema[i].x1(), nextExtrema.x1()))
-        && (doubles_are_approximately_equal(extrema[i].x2(), nextExtrema.x2())),
+        doubles_are_approximately_equal(pointsOfInterest[i].x1(), nextPointOfInterest.x1()) &&
+        doubles_are_approximately_equal(pointsOfInterest[i].x2(), nextPointOfInterest.x2()),
         e);
-    start = nextExtrema.x1() + step;
+    start = nextPointOfInterest.x1() + step;
   }
 }
 
@@ -60,13 +60,13 @@ QUIZ_CASE(poincare_function_extremum) {
         Coordinate2D<double>(0.0, 1.0),
         Coordinate2D<double>(360.0, 1.0),
         Coordinate2D<double>(NAN, NAN)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "cos(a)", "a", -1.0, 0.1, 500.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "cos(a)", "a", -1.0, 0.1, 500.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(180.0, -1.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "cos(a)", "a", 0.0, 0.1, 300.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "cos(a)", "a", 0.0, 0.1, 300.0);
     }
   }
   {
@@ -74,13 +74,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, NAN)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "a^2", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "a^2", "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(0.0, 0.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "a^2", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "a^2", "a", -1.0, 0.1, 100.0);
     }
   }
   {
@@ -88,13 +88,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "3", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "3", "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "3", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "3", "a", -1.0, 0.1, 100.0);
     }
   }
   {
@@ -102,13 +102,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "0", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "0", "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "0", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "0", "a", -1.0, 0.1, 100.0);
     }
   }
 }
@@ -120,32 +120,32 @@ QUIZ_CASE(poincare_function_root) {
       Coordinate2D<double>(90.0, 0.0),
       Coordinate2D<double>(270.0, 0.0),
       Coordinate2D<double>(450.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "cos(a)", "a", 0.0, 0.1, 500.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "cos(a)", "a", 0.0, 0.1, 500.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(0.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2", "a", -1.0, 0.1, 100.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "a^2", "a", -1.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 2;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-2.0, 0.0),
       Coordinate2D<double>(2.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2-4", "a", -5.0, 0.1, 100.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "a^2-4", "a", -5.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(NAN, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "3", "a", -1.0, 0.1, 100.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "3", "a", -1.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-0.9, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "0", "a", -1.0, 0.1, 100.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "0", "a", -1.0, 0.1, 100.0);
   }
 }
 

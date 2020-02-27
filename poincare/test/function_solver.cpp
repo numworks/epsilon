@@ -26,9 +26,9 @@ void assert_next_extrema_are(
     Coordinate2D<double> * extrema,
     const char * expression,
     const char * symbol,
-    double start = -1.0,
-    double step = 0.1,
-    double max = 100.0,
+    double start,
+    double step,
+    double max,
     Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Real,
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree)
 {
@@ -75,13 +75,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, NAN)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "a^2", "a");
+      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "a^2", "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(0.0, 0.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "a^2", "a");
+      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "a^2", "a", -1.0, 0.1, 100.0);
     }
   }
   {
@@ -89,13 +89,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "3", "a");
+      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "3", "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "3", "a");
+      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "3", "a", -1.0, 0.1, 100.0);
     }
   }
   {
@@ -103,13 +103,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "0", "a");
+      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "0", "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "0", "a");
+      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "0", "a", -1.0, 0.1, 100.0);
     }
   }
 }
@@ -127,26 +127,26 @@ QUIZ_CASE(poincare_function_root) {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(0.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2", "a");
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2", "a", -1.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 2;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-2.0, 0.0),
       Coordinate2D<double>(2.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2-4", "a", -5.0);
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2-4", "a", -5.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(NAN, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "3", "a");
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "3", "a", -1.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-0.9, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "0", "a");
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "0", "a", -1.0, 0.1, 100.0);
   }
 }
 
@@ -156,9 +156,9 @@ void assert_next_intersections_are(
     Coordinate2D<double> * intersections,
     const char * expression,
     const char * symbol,
-    double start = -1.0,
-    double step = 0.1,
-    double max = 500.0,
+    double start,
+    double step,
+    double max,
     Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Real,
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree)
 {
@@ -182,14 +182,14 @@ QUIZ_CASE(poincare_function_intersection) {
     constexpr int numberOfIntersections = 1;
     Coordinate2D<double> intersections[numberOfIntersections] = {
       Coordinate2D<double>(NAN, NAN)};
-    assert_next_intersections_are("2", numberOfIntersections, intersections, "cos(a)", "a");
+    assert_next_intersections_are("2", numberOfIntersections, intersections, "cos(a)", "a", -1.0, 0.1, 500.0);
   }
   {
     constexpr int numberOfIntersections = 2;
     Coordinate2D<double> intersections[numberOfIntersections] = {
       Coordinate2D<double>(0.0, 1.0),
       Coordinate2D<double>(360.0, 1.0)};
-    assert_next_intersections_are("1", numberOfIntersections, intersections, "cos(a)", "a");
+    assert_next_intersections_are("1", numberOfIntersections, intersections, "cos(a)", "a", -1.0, 0.1, 500.0);
   }
   {
     constexpr int numberOfIntersections = 3;
@@ -197,6 +197,6 @@ QUIZ_CASE(poincare_function_intersection) {
       Coordinate2D<double>(90.0, 0.0),
       Coordinate2D<double>(270.0, 0.0),
       Coordinate2D<double>(450.0, 0.0)};
-    assert_next_intersections_are("0", numberOfIntersections, intersections, "cos(a)", "a");
+    assert_next_intersections_are("0", numberOfIntersections, intersections, "cos(a)", "a", -1.0, 0.1, 500.0);
   }
 }

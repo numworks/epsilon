@@ -1025,10 +1025,10 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→u(n+1)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→v(n)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→v(n+1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→u_{n}", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→u_{n+1}", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→v_{n}", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→v_{n+1}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u{n}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u{n+1}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v{n}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v{n+1}", Undefined::Name());
   assert_parsed_expression_simplify_to("1→inf", Undefined::Name());
   assert_parsed_expression_simplify_to("1→undef", Undefined::Name());
   assert_parsed_expression_simplify_to("1→π", Undefined::Name());

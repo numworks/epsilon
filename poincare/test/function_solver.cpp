@@ -34,22 +34,21 @@ void assert_next_extrema_are(
 {
   Shared::GlobalContext context;
   Poincare::Expression e = parse_expression(expression, &context, false);
-  double currentStart = start;
   for (int i = 0; i < numberOfExtrema; i++) {
-    quiz_assert_log_if_failure(!std::isnan(currentStart), e);
+    quiz_assert_log_if_failure(!std::isnan(start), e);
     Coordinate2D<double> nextExtrema;
     if (extremumType == ExtremumType::Maximum) {
-      nextExtrema = e.nextMaximum(symbol, currentStart, step, max, &context, complexFormat, angleUnit);
+      nextExtrema = e.nextMaximum(symbol, start, step, max, &context, complexFormat, angleUnit);
     } else if (extremumType == ExtremumType::Minimum) {
-      nextExtrema = e.nextMinimum(symbol, currentStart, step, max, &context, complexFormat, angleUnit);
+      nextExtrema = e.nextMinimum(symbol, start, step, max, &context, complexFormat, angleUnit);
     } else if (extremumType == ExtremumType::Root) {
-      nextExtrema = Coordinate2D<double>(e.nextRoot(symbol, currentStart, step, max, &context, complexFormat, angleUnit), 0.0 );
+      nextExtrema = Coordinate2D<double>(e.nextRoot(symbol, start, step, max, &context, complexFormat, angleUnit), 0.0);
     }
-    currentStart = nextExtrema.x1() + step;
     quiz_assert_log_if_failure(
         (doubles_are_approximately_equal(extrema[i].x1(), nextExtrema.x1()))
         && (doubles_are_approximately_equal(extrema[i].x2(), nextExtrema.x2())),
         e);
+    start = nextExtrema.x1() + step;
   }
 }
 
@@ -165,15 +164,14 @@ void assert_next_intersections_are(
   Shared::GlobalContext context;
   Poincare::Expression e = parse_expression(expression, &context, false);
   Poincare::Expression other = parse_expression(otherExpression, &context, false);
-  double currentStart = start;
   for (int i = 0; i < numberOfIntersections; i++) {
-    quiz_assert_log_if_failure(!std::isnan(currentStart), e);
-    Coordinate2D<double> nextIntersection = e.nextIntersection(symbol, currentStart, step, max, &context, complexFormat, angleUnit, other);
-    currentStart = nextIntersection.x1() + step;
+    quiz_assert_log_if_failure(!std::isnan(start), e);
+    Coordinate2D<double> nextIntersection = e.nextIntersection(symbol, start, step, max, &context, complexFormat, angleUnit, other);
     quiz_assert_log_if_failure(
         (doubles_are_approximately_equal(intersections[i].x1(), nextIntersection.x1()))
         && (doubles_are_approximately_equal(intersections[i].x2(), nextIntersection.x2())),
         e);
+    start = nextIntersection.x1() + step;
   }
 }
 

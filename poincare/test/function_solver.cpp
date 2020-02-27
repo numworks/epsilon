@@ -1,5 +1,4 @@
 #include <apps/shared/global_context.h>
-#include <poincare/expression.h>
 #include "helper.h"
 
 using namespace Poincare;
@@ -25,7 +24,7 @@ void assert_next_extrema_are(
     ExtremumType extremumType,
     int numberOfExtrema,
     Coordinate2D<double> * extrema,
-    Expression e,
+    const char * expression,
     const char * symbol,
     double start = -1.0,
     double step = 0.1,
@@ -34,6 +33,7 @@ void assert_next_extrema_are(
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree)
 {
   Shared::GlobalContext context;
+  Poincare::Expression e = parse_expression(expression, &context, false);
   double currentStart = start;
   for (int i = 0; i < numberOfExtrema; i++) {
     quiz_assert_log_if_failure(!std::isnan(currentStart), e);
@@ -54,133 +54,107 @@ void assert_next_extrema_are(
 }
 
 QUIZ_CASE(poincare_function_extremum) {
-  const char * symbol = "a";
-  int symbolLength = strlen(symbol);
   {
-    // cos
-    Expression e = Cosine::Builder(Symbol::Builder(symbol, symbolLength));
     {
       constexpr int numberOfMaxima = 3;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(0.0, 1.0),
         Coordinate2D<double>(360.0, 1.0),
         Coordinate2D<double>(NAN, NAN)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, e, symbol, -1.0, 0.1, 500.0);
+      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "cos(a)", "a", -1.0, 0.1, 500.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(180.0, -1.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, e, symbol, 0.0, 0.1, 300.0);
+      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "cos(a)", "a", 0.0, 0.1, 300.0);
     }
   }
   {
-    // x^2
-    Expression e = Power::Builder(Symbol::Builder(symbol, symbolLength), Rational::Builder(2));
     {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, NAN)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, e, symbol);
+      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "a^2", "a");
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(0.0, 0.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, e, symbol);
+      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "a^2", "a");
     }
   }
-
   {
-    // 3
-    Expression e = Rational::Builder(3);
     {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, e, symbol);
+      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "3", "a");
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, e, symbol);
+      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "3", "a");
     }
   }
-
   {
-    // 0
-    Expression e = Rational::Builder(0);
     {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, e, symbol);
+      assert_next_extrema_are(ExtremumType::Maximum, numberOfMaxima, maxima, "0", "a");
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, e, symbol);
+      assert_next_extrema_are(ExtremumType::Minimum, numberOfMinima, minima, "0", "a");
     }
   }
 }
 
 QUIZ_CASE(poincare_function_root) {
-  const char * symbol = "a";
-  int symbolLength = strlen(symbol);
   {
-    // cos
-    Expression e = Cosine::Builder(Symbol::Builder(symbol, symbolLength));
     constexpr int numberOfRoots = 3;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(90.0, 0.0),
       Coordinate2D<double>(270.0, 0.0),
       Coordinate2D<double>(450.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, e, symbol, 0.0, 0.1, 500.0);
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "cos(a)", "a", 0.0, 0.1, 500.0);
   }
   {
-    // x^2
-    Expression e = Power::Builder(Symbol::Builder(symbol, symbolLength), Rational::Builder(2));
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(0.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, e, symbol);
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2", "a");
   }
   {
-    // x^2-4
-    Expression e = Subtraction::Builder(Power::Builder(Symbol::Builder(symbol, symbolLength), Rational::Builder(2)), Rational::Builder(4));
     constexpr int numberOfRoots = 2;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-2.0, 0.0),
       Coordinate2D<double>(2.0, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, e, symbol, -5.0);
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "a^2-4", "a", -5.0);
   }
   {
-    // 3
-    Expression e = Rational::Builder(3);
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(NAN, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, e, symbol);
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "3", "a");
   }
-
   {
-    // 0
-    Expression e = Rational::Builder(0);
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-0.9, 0.0)};
-    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, e, symbol);
+    assert_next_extrema_are(ExtremumType::Root, numberOfRoots, roots, "0", "a");
   }
-
 }
 
 void assert_next_intersections_are(
-    Expression otherExpression,
+    const char * otherExpression,
     int numberOfIntersections,
     Coordinate2D<double> * intersections,
-    Expression e,
+    const char * expression,
     const char * symbol,
     double start = -1.0,
     double step = 0.1,
@@ -189,10 +163,12 @@ void assert_next_intersections_are(
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree)
 {
   Shared::GlobalContext context;
+  Poincare::Expression e = parse_expression(expression, &context, false);
+  Poincare::Expression other = parse_expression(otherExpression, &context, false);
   double currentStart = start;
   for (int i = 0; i < numberOfIntersections; i++) {
     quiz_assert_log_if_failure(!std::isnan(currentStart), e);
-    Coordinate2D<double> nextIntersection = e.nextIntersection(symbol, currentStart, step, max, &context, complexFormat, angleUnit, otherExpression);
+    Coordinate2D<double> nextIntersection = e.nextIntersection(symbol, currentStart, step, max, &context, complexFormat, angleUnit, other);
     currentStart = nextIntersection.x1() + step;
     quiz_assert_log_if_failure(
         (doubles_are_approximately_equal(intersections[i].x1(), nextIntersection.x1()))
@@ -200,38 +176,27 @@ void assert_next_intersections_are(
         e);
   }
 }
-QUIZ_CASE(poincare_function_intersection) {
-  const char * symbol = "a";
-  int symbolLength = strlen(symbol);
-  Expression e = Cosine::Builder(Symbol::Builder(symbol, symbolLength));
 
+QUIZ_CASE(poincare_function_intersection) {
   {
-    // cos with y=2
-    Expression otherExpression = Rational::Builder(2);
     constexpr int numberOfIntersections = 1;
     Coordinate2D<double> intersections[numberOfIntersections] = {
       Coordinate2D<double>(NAN, NAN)};
-    assert_next_intersections_are(otherExpression, numberOfIntersections, intersections, e, symbol);
+    assert_next_intersections_are("2", numberOfIntersections, intersections, "cos(a)", "a");
   }
-
   {
-    // cos with y=1
-    Expression otherExpression = Rational::Builder(1);
     constexpr int numberOfIntersections = 2;
     Coordinate2D<double> intersections[numberOfIntersections] = {
       Coordinate2D<double>(0.0, 1.0),
       Coordinate2D<double>(360.0, 1.0)};
-    assert_next_intersections_are(otherExpression, numberOfIntersections, intersections, e, symbol);
+    assert_next_intersections_are("1", numberOfIntersections, intersections, "cos(a)", "a");
   }
-
   {
-    // cos with y=0
-    Expression otherExpression = Rational::Builder(0);
     constexpr int numberOfIntersections = 3;
     Coordinate2D<double> intersections[numberOfIntersections] = {
       Coordinate2D<double>(90.0, 0.0),
       Coordinate2D<double>(270.0, 0.0),
       Coordinate2D<double>(450.0, 0.0)};
-    assert_next_intersections_are(otherExpression, numberOfIntersections, intersections, e, symbol);
+    assert_next_intersections_are("0", numberOfIntersections, intersections, "cos(a)", "a");
   }
 }

@@ -1,6 +1,6 @@
 #include "exam_mode_configuration.h"
 
-constexpr Settings::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[] = {Settings::SettingsMessageTree(I18n::Message::ActivateExamMode), Settings::SettingsMessageTree(I18n::Message::Default)};
+constexpr Shared::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[] = {Shared::SettingsMessageTree(I18n::Message::ActivateExamMode), Shared::SettingsMessageTree(I18n::Message::Default)};
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
   return 1;

@@ -26,7 +26,7 @@ endif
 
 DEFAULT = $(BUILD_DIR)/simulator.zip
 
-$(BUILD_DIR)/simulator.zip: $(BUILD_DIR)/epsilon.packed.js
+$(BUILD_DIR)/simulator%zip: $(BUILD_DIR)/epsilon%packed.js
 	@rm -rf $(basename $@)
 	@mkdir -p $(basename $@)
 	@cp $^ $(basename $@)/epsilon.js

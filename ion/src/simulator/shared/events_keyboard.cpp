@@ -171,6 +171,7 @@ Event getPlatformEvent() {
   }
 #endif
   SDL_Event event;
+  Event result = None;
   while (SDL_PollEvent(&event)) {
     // The while is important: it'll do a fast-pass over all useless SDL events
     if (event.type == SDL_WINDOWEVENT) {
@@ -179,19 +180,35 @@ Event getPlatformEvent() {
       }
     }
     if (event.type == SDL_QUIT) {
-      return Termination;
+      result = Termination;
+      break;
     }
     if (event.type == SDL_KEYDOWN) {
       if (IonSimulatorSDLKeyDetectedByScan(event.key.keysym.scancode)) {
         continue;
       }
-      return eventFromSDLKeyboardEvent(event.key);
+      result = eventFromSDLKeyboardEvent(event.key);
+      break;
     }
     if (event.type == SDL_TEXTINPUT) {
-      return eventFromSDLTextInputEvent(event.text);
+      result = eventFromSDLTextInputEvent(event.text);
+      break;
     }
   }
-  return None;
+  if (result != None) {
+    /* When events are not being processed - for instance when a Python script
+     * is being executed - SDL puts all ingoing events in a queue.
+     * When events processing goes back to normal, all the queued events are
+     * processed, which can result in weird behaviours (for instance, really
+     * fast navigation in the calculator, "instantanate" text input, ...).
+     * These behaviours are even more visible if the script contains an infinite
+     * loop.
+     * To prevent that, we flush all queued events after encountering a non-null
+     * event -> the first event from the queue will still be processed, but not
+     * the subsequent ones. */
+    SDL_FlushEvents(0, UINT32_MAX);
+  }
+  return result;
 }
 
 }

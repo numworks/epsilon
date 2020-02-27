@@ -6,7 +6,11 @@ extern "C" {
 #include <kandinsky.h>
 #include "port.h"
 
-static KDColor ColorForTuple(mp_obj_t tuple) {
+static KDColor GetColor(mp_obj_t tuple) {
+  if(mp_obj_is_int(tuple)){
+    int color = mp_obj_get_int(tuple);
+    return KDColor::RGB24(color);
+  } else {
     size_t len;
     mp_obj_t * elem;
 
@@ -20,6 +24,7 @@ static KDColor ColorForTuple(mp_obj_t tuple) {
       mp_obj_get_int(elem[1]),
       mp_obj_get_int(elem[2])
     );
+  }
 }
 
 static mp_obj_t TupleForRGB(uint8_t r, uint8_t g, uint8_t b) {
@@ -58,7 +63,7 @@ mp_obj_t modkandinsky_get_pixel(mp_obj_t x, mp_obj_t y) {
 
 mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t color) {
   KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
-  KDColor kdColor = ColorForTuple(color);
+  KDColor kdColor = GetColor(color);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->setPixel(point, kdColor);
   return mp_const_none;
@@ -67,8 +72,8 @@ mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t color) {
 mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   const char * text = mp_obj_str_get_str(args[0]);
   KDPoint point(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]));
-  KDColor textColor = (n_args >= 4) ? ColorForTuple(args[3]) : KDColorBlack;
-  KDColor backgroundColor = (n_args >= 5) ? ColorForTuple(args[4]) : KDColorWhite;
+  KDColor textColor = (n_args >= 4) ? GetColor(args[3]) : KDColorBlack;
+  KDColor backgroundColor = (n_args >= 5) ? GetColor(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->drawString(text, point, KDFont::LargeFont, textColor, backgroundColor);
   /* Before and after execution of "modkandinsky_draw_string",
@@ -98,7 +103,7 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
     y = y - height;
   }
   KDRect rect(x, y, width, height);
-  KDColor color = ColorForTuple(args[4]);
+  KDColor color = GetColor(args[4]);
 
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->fillRect(rect, color);

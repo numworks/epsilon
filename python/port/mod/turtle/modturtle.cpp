@@ -146,14 +146,19 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
       size_t l;
       sTurtle.setColor(mp_obj_str_get_data(args[0], &l));
     } else {
-      // pencolor((r, g, b))
-      mp_obj_t * rgb;
-      mp_obj_get_array_fixed_n(args[0], 3, &rgb);
-      sTurtle.setColor(
+      if(mp_obj_is_int(args[0])){
+        sTurtle.setColor(KDColor::RGB24(mp_obj_get_int(args[0])));
+      } else {
+        // pencolor((r, g, b))
+        mp_obj_t * rgb;
+        mp_obj_get_array_fixed_n(args[0], 3, &rgb);
+        sTurtle.setColor(
           KDColor::RGB888(
             mp_obj_get_int(rgb[0]),
             mp_obj_get_int(rgb[1]),
             mp_obj_get_int(rgb[2])));
+      }
+
     }
   } else if (n_args == 3) {
     // pencolor(r, g, b)

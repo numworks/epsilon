@@ -370,6 +370,25 @@ void Parser::parseUnit(Expression & leftHandSide, Token::Type stoppingType) {
 
 void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
   const char * name = (**functionHelper).name();
+
+  if (strcmp(name, "log") == 0 && popTokenIfType(Token::LeftBrace)) {
+    // Special case for the log function (e.g. "log{2}(8)")
+    Expression base = parseUntil(Token::RightBrace);
+    if (m_status != Status::Progress) {
+    } else if (!popTokenIfType(Token::RightBrace)) {
+      m_status = Status::Error; // Right brace missing.
+    } else {
+      Expression parameter = parseFunctionParameters();
+      if (m_status != Status::Progress) {
+      } else if (parameter.numberOfChildren() != 1) {
+        m_status = Status::Error; // Unexpected number of many parameters.
+      } else {
+        leftHandSide = Logarithm::Builder(parameter.childAtIndex(0), base);
+      }
+    }
+    return;
+  }
+
   Expression parameters = parseFunctionParameters();
   if (m_status != Status::Progress) {
     return;
@@ -393,10 +412,12 @@ void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::
   }
 }
 
-void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter) {
-  if (!popTokenIfType(leftDelimiter)) {
+void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2) {
+  bool delimiterTypeIsOne = popTokenIfType(leftDelimiter1);
+  if (!delimiterTypeIsOne && !popTokenIfType(leftDelimiter2)) {
     m_status = Status::Error; // Left delimiter missing.
   } else {
+    Token::Type rightDelimiter = delimiterTypeIsOne ? rightDelimiter1 : rightDelimiter2;
     Expression rank = parseUntil(rightDelimiter);
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(rightDelimiter)) {
@@ -424,32 +445,14 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
     leftHandSide = Undefined::Builder();
   } else if (m_currentToken.compareTo(Unreal::Name()) == 0) {
     leftHandSide = Unreal::Builder();
-  } else if (m_currentToken.compareTo("u_") == 0 || m_currentToken.compareTo("v_") == 0 || m_currentToken.compareTo("w_") == 0) { // Special case for sequences (e.g. "u_{n}")
-    /* We now that m_currentToken.text()[0] is either 'u' or 'v', so we do not
-     * need to pass a code point to parseSequence. */
-    parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftBrace, Token::RightBrace);
-  } else if (m_currentToken.compareTo("u") == 0 || m_currentToken.compareTo("v") == 0|| m_currentToken.compareTo("w") == 0) { // Special case for sequences (e.g. "u(n)")
-    /* We now that m_currentToken.text()[0] is either 'u' or 'v', so we do not
-     * need to pass a code point to parseSequence. */
-    parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftParenthesis, Token::RightParenthesis);
-  } else if (m_currentToken.compareTo("log_") == 0) { // Special case for the log function (e.g. "log_{2}(8)")
-    if (!popTokenIfType(Token::LeftBrace)) {
-      m_status = Status::Error; // Left brace missing.
-    } else {
-      Expression base = parseUntil(Token::RightBrace);
-      if (m_status != Status::Progress) {
-      } else if (!popTokenIfType(Token::RightBrace)) {
-        m_status = Status::Error; // Right brace missing.
-      } else {
-        Expression parameter = parseFunctionParameters();
-        if (m_status != Status::Progress) {
-        } else if (parameter.numberOfChildren() != 1) {
-          m_status = Status::Error; // Unexpected number of many parameters.
-        } else {
-          leftHandSide = Logarithm::Builder(parameter.childAtIndex(0), base);
-        }
-      }
-    }
+  } else if (m_currentToken.compareTo("u") == 0
+      || m_currentToken.compareTo("v") == 0
+      || m_currentToken.compareTo("w") == 0)
+  {
+    /* Special case for sequences (e.g. "u(n)", "u{n}", ...)
+     * We know that m_currentToken.text()[0] is either 'u', 'v' or 'w', so we do
+     * not need to pass a code point to parseSequence. */
+    parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftParenthesis, Token::RightParenthesis, Token::LeftBrace, Token::RightBrace);
   }
 }
 

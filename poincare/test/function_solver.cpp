@@ -6,7 +6,8 @@ using namespace Poincare;
 enum class PointOfInterestType {
   Maximum,
   Minimum,
-  Root
+  Root,
+  Intersection,
 };
 
 bool doubles_are_approximately_equal(double d1, double d2) {
@@ -24,7 +25,8 @@ void assert_points_of_interest_are(
     PointOfInterestType type,
     int numberOfPointsOfInterest,
     Coordinate2D<double> * pointsOfInterest,
-    const char * expression,
+    const char * expression1,
+    const char * expression2,
     const char * symbol,
     double start,
     double step,
@@ -33,21 +35,28 @@ void assert_points_of_interest_are(
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree)
 {
   Shared::GlobalContext context;
-  Poincare::Expression e = parse_expression(expression, &context, false);
+  Poincare::Expression e1 = parse_expression(expression1, &context, false);
+  Poincare::Expression e2;
+  if (expression2) {
+    assert(type == PointOfInterestType::Intersection);
+    e2 = parse_expression(expression2, &context, false);
+  }
   for (int i = 0; i < numberOfPointsOfInterest; i++) {
-    quiz_assert_log_if_failure(!std::isnan(start), e);
+    quiz_assert_log_if_failure(!std::isnan(start), e1);
     Coordinate2D<double> nextPointOfInterest;
     if (type == PointOfInterestType::Maximum) {
-      nextPointOfInterest = e.nextMaximum(symbol, start, step, max, &context, complexFormat, angleUnit);
+      nextPointOfInterest = e1.nextMaximum(symbol, start, step, max, &context, complexFormat, angleUnit);
     } else if (type == PointOfInterestType::Minimum) {
-      nextPointOfInterest = e.nextMinimum(symbol, start, step, max, &context, complexFormat, angleUnit);
+      nextPointOfInterest = e1.nextMinimum(symbol, start, step, max, &context, complexFormat, angleUnit);
     } else if (type == PointOfInterestType::Root) {
-      nextPointOfInterest = Coordinate2D<double>(e.nextRoot(symbol, start, step, max, &context, complexFormat, angleUnit), 0.0);
+      nextPointOfInterest = Coordinate2D<double>(e1.nextRoot(symbol, start, step, max, &context, complexFormat, angleUnit), 0.0);
+    } else if (type == PointOfInterestType::Intersection) {
+      nextPointOfInterest = e1.nextIntersection(symbol, start, step, max, &context, complexFormat, angleUnit, e2);
     }
     quiz_assert_log_if_failure(
         doubles_are_approximately_equal(pointsOfInterest[i].x1(), nextPointOfInterest.x1()) &&
         doubles_are_approximately_equal(pointsOfInterest[i].x2(), nextPointOfInterest.x2()),
-        e);
+        e1);
     start = nextPointOfInterest.x1() + step;
   }
 }
@@ -60,13 +69,13 @@ QUIZ_CASE(poincare_function_extremum) {
         Coordinate2D<double>(0.0, 1.0),
         Coordinate2D<double>(360.0, 1.0),
         Coordinate2D<double>(NAN, NAN)};
-      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "cos(a)", "a", -1.0, 0.1, 500.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "cos(a)", nullptr, "a", -1.0, 0.1, 500.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(180.0, -1.0)};
-      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "cos(a)", "a", 0.0, 0.1, 300.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "cos(a)", nullptr, "a", 0.0, 0.1, 300.0);
     }
   }
   {
@@ -74,13 +83,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, NAN)};
-      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "a^2", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "a^2", nullptr, "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(0.0, 0.0)};
-      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "a^2", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "a^2", nullptr, "a", -1.0, 0.1, 100.0);
     }
   }
   {
@@ -88,13 +97,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "3", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "3", nullptr, "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 3.0)};
-      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "3", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "3", nullptr, "a", -1.0, 0.1, 100.0);
     }
   }
   {
@@ -102,13 +111,13 @@ QUIZ_CASE(poincare_function_extremum) {
       constexpr int numberOfMaxima = 1;
       Coordinate2D<double> maxima[numberOfMaxima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "0", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Maximum, numberOfMaxima, maxima, "0", nullptr, "a", -1.0, 0.1, 100.0);
     }
     {
       constexpr int numberOfMinima = 1;
       Coordinate2D<double> minima[numberOfMinima] = {
         Coordinate2D<double>(NAN, 0.0)};
-      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "0", "a", -1.0, 0.1, 100.0);
+      assert_points_of_interest_are(PointOfInterestType::Minimum, numberOfMinima, minima, "0", nullptr, "a", -1.0, 0.1, 100.0);
     }
   }
 }
@@ -120,58 +129,32 @@ QUIZ_CASE(poincare_function_root) {
       Coordinate2D<double>(90.0, 0.0),
       Coordinate2D<double>(270.0, 0.0),
       Coordinate2D<double>(450.0, 0.0)};
-    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "cos(a)", "a", 0.0, 0.1, 500.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "cos(a)", nullptr, "a", 0.0, 0.1, 500.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(0.0, 0.0)};
-    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "a^2", "a", -1.0, 0.1, 100.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "a^2", nullptr, "a", -1.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 2;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-2.0, 0.0),
       Coordinate2D<double>(2.0, 0.0)};
-    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "a^2-4", "a", -5.0, 0.1, 100.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "a^2-4", nullptr, "a", -5.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(NAN, 0.0)};
-    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "3", "a", -1.0, 0.1, 100.0);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "3", nullptr, "a", -1.0, 0.1, 100.0);
   }
   {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(-0.9, 0.0)};
-    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "0", "a", -1.0, 0.1, 100.0);
-  }
-}
-
-void assert_next_intersections_are(
-    const char * otherExpression,
-    int numberOfIntersections,
-    Coordinate2D<double> * intersections,
-    const char * expression,
-    const char * symbol,
-    double start,
-    double step,
-    double max,
-    Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Real,
-    Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree)
-{
-  Shared::GlobalContext context;
-  Poincare::Expression e = parse_expression(expression, &context, false);
-  Poincare::Expression other = parse_expression(otherExpression, &context, false);
-  for (int i = 0; i < numberOfIntersections; i++) {
-    quiz_assert_log_if_failure(!std::isnan(start), e);
-    Coordinate2D<double> nextIntersection = e.nextIntersection(symbol, start, step, max, &context, complexFormat, angleUnit, other);
-    quiz_assert_log_if_failure(
-        (doubles_are_approximately_equal(intersections[i].x1(), nextIntersection.x1()))
-        && (doubles_are_approximately_equal(intersections[i].x2(), nextIntersection.x2())),
-        e);
-    start = nextIntersection.x1() + step;
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "0", nullptr, "a", -1.0, 0.1, 100.0);
   }
 }
 
@@ -180,14 +163,14 @@ QUIZ_CASE(poincare_function_intersection) {
     constexpr int numberOfIntersections = 1;
     Coordinate2D<double> intersections[numberOfIntersections] = {
       Coordinate2D<double>(NAN, NAN)};
-    assert_next_intersections_are("2", numberOfIntersections, intersections, "cos(a)", "a", -1.0, 0.1, 500.0);
+    assert_points_of_interest_are(PointOfInterestType::Intersection, numberOfIntersections, intersections, "cos(a)", "2", "a", -1.0, 0.1, 500.0);
   }
   {
     constexpr int numberOfIntersections = 2;
     Coordinate2D<double> intersections[numberOfIntersections] = {
       Coordinate2D<double>(0.0, 1.0),
       Coordinate2D<double>(360.0, 1.0)};
-    assert_next_intersections_are("1", numberOfIntersections, intersections, "cos(a)", "a", -1.0, 0.1, 500.0);
+    assert_points_of_interest_are(PointOfInterestType::Intersection, numberOfIntersections, intersections, "cos(a)", "1", "a", -1.0, 0.1, 500.0);
   }
   {
     constexpr int numberOfIntersections = 3;
@@ -195,6 +178,6 @@ QUIZ_CASE(poincare_function_intersection) {
       Coordinate2D<double>(90.0, 0.0),
       Coordinate2D<double>(270.0, 0.0),
       Coordinate2D<double>(450.0, 0.0)};
-    assert_next_intersections_are("0", numberOfIntersections, intersections, "cos(a)", "a", -1.0, 0.1, 500.0);
+    assert_points_of_interest_are(PointOfInterestType::Intersection, numberOfIntersections, intersections, "cos(a)", "0", "a", -1.0, 0.1, 500.0);
   }
 }

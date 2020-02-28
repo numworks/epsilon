@@ -69,7 +69,6 @@ private:
     void layoutSubviews(bool force = false) override;
     void layoutSubviews(Step step, bool force);
     ExpressionView m_sum;
-    Poincare::Layout m_sumLayout;
     MessageTextView m_legend;
     TextField m_editableZone;
     char m_textBuffer[k_editableZoneBufferSize];

@@ -150,7 +150,7 @@ void SumGraphController::reloadBannerView() {
     m_legendView.setEditableZone(m_cursor->x());
     result = NAN;
   }
-  m_legendView.setSumSymbol(m_step, m_startSum, endSum, result, functionLayout);
+  m_legendView.setSumLayout(m_step, m_startSum, endSum, result, functionLayout);
 }
 
 /* Legend View */
@@ -185,7 +185,7 @@ void SumGraphController::LegendView::setEditableZone(double d) {
   m_editableZone.setText(buffer);
 }
 
-void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, Layout functionLayout) {
+void SumGraphController::LegendView::setSumLayout(Step step, double start, double end, double result, Layout functionLayout) {
   assert(step == Step::Result || functionLayout.isUninitialized());
   constexpr int sigmaLength = 2;
   const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};

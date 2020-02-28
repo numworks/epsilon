@@ -190,34 +190,30 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
   constexpr int sigmaLength = 2;
   const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};
   Poincare::Layout sumLayout = LayoutHelper::CodePointString(sigma, sigmaLength);
-  if (step == Step::FirstParameter) {
-  } else if (step == Step::SecondParameter) {
+  if (step != Step::FirstParameter) {
     constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
+    Layout endLayout;
+    if (step == Step::SecondParameter) {
+      endLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false);
+    } else {
+      PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(end, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+      endLayout = LayoutHelper::String(buffer, strlen(buffer), k_font);
+    }
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(start, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     sumLayout = CondensedSumLayout::Builder(
         sumLayout,
         LayoutHelper::String(buffer, strlen(buffer), k_font),
-        EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
-  } else {
-    constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
-    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
-    char buffer[bufferSize];
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(start, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-    Layout start = LayoutHelper::String(buffer, strlen(buffer), k_font);
-    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(end, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-    Layout end = LayoutHelper::String(buffer, strlen(buffer), k_font);
-    sumLayout = CondensedSumLayout::Builder(
-        sumLayout,
-        start,
-        end);
-    PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize, precision);
-    sumLayout = HorizontalLayout::Builder(
-        sumLayout,
-        functionLayout,
-        LayoutHelper::String("= ", 2, k_font),
-        LayoutHelper::String(buffer, strlen(buffer), k_font));
+        endLayout);
+    if (step == Step::Result) {
+      PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize, precision);
+      sumLayout = HorizontalLayout::Builder(
+          sumLayout,
+          functionLayout,
+          LayoutHelper::String("= ", 2, k_font),
+          LayoutHelper::String(buffer, strlen(buffer), k_font));
+    }
   }
   m_sum.setLayout(sumLayout);
   m_sum.setAlignment(0.5f * (step == Step::Result), 0.5f);

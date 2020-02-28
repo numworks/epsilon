@@ -55,7 +55,7 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setLegendMessage(I18n::Message message, Step step);
     void setEditableZone(double d);
-    void setSumSymbol(Step step, double start, double end, double result, Poincare::Layout functionLayout);
+    void setSumLayout(Step step, double start, double end, double result, Poincare::Layout functionLayout);
   private:
     constexpr static KDCoordinate k_editableZoneBufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
     constexpr static KDCoordinate k_legendHeight = 35;

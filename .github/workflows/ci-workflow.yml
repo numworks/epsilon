@@ -68,7 +68,6 @@ jobs:
           name: epsilon-simulator-web.zip
           path: output/release/simulator/web/simulator.zip
       - run: make -j2 PLATFORM=simulator TARGET=web test.headless.js
-      - run: node output/release/simulator/web/test.headless.js
   build-simulator-linux:
     runs-on: ubuntu-latest
     steps:
@@ -82,4 +81,3 @@ jobs:
           name: epsilon-simulator-linux.bin
           path: output/release/simulator/linux/epsilon.bin
       - run: make -j2 PLATFORM=simulator test.headless.bin
-      - run: output/release/simulator/linux/test.headless.bin

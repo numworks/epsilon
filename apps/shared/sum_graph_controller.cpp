@@ -189,16 +189,15 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
   assert(step == Step::Result || functionLayout.isUninitialized());
   constexpr int sigmaLength = 2;
   const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};
-  Poincare::Layout sumLayout;
+  Poincare::Layout sumLayout = LayoutHelper::CodePointString(sigma, sigmaLength);
   if (step == Step::FirstParameter) {
-    sumLayout = LayoutHelper::CodePointString(sigma, sigmaLength);
   } else if (step == Step::SecondParameter) {
     constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(start, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     sumLayout = CondensedSumLayout::Builder(
-        LayoutHelper::CodePointString(sigma, sigmaLength),
+        sumLayout,
         LayoutHelper::String(buffer, strlen(buffer), k_font),
         EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
   } else {
@@ -211,7 +210,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(end, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     Layout end = LayoutHelper::String(buffer, strlen(buffer), k_font);
     sumLayout = CondensedSumLayout::Builder(
-        LayoutHelper::CodePointString(sigma, sigmaLength),
+        sumLayout,
         start,
         end);
     strlcpy(buffer, "= ", 3);

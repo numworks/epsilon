@@ -106,11 +106,11 @@ void CurveView::setOkView(View * okView) {
  *       m_frame.height() - 1            yMin()
  */
 
-const float CurveView::pixelWidth() const {
+float CurveView::pixelWidth() const {
   return (m_curveViewRange->xMax() - m_curveViewRange->xMin()) / (m_frame.width() - 1);
 }
 
-const float CurveView::pixelHeight() const {
+float CurveView::pixelHeight() const {
   return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
 }
 

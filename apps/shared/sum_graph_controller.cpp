@@ -222,11 +222,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
         LayoutHelper::String(buffer, strlen(buffer), k_font));
   }
   m_sum.setLayout(sumLayout);
-  if (step == Step::Result) {
-    m_sum.setAlignment(0.5f, 0.5f);
-  } else {
-    m_sum.setAlignment(0.0f, 0.5f);
-  }
+  m_sum.setAlignment(0.5f * (step == Step::Result), 0.5f);
   layoutSubviews(step, false);
 }
 

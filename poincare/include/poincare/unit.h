@@ -29,7 +29,7 @@ public:
       m_exponent(exponent)
     {}
     const char * symbol() const { return m_symbol; }
-    const int8_t exponent() const { return m_exponent; }
+    int8_t exponent() const { return m_exponent; }
     int serialize(char * buffer, int bufferSize) const;
   private:
     const char * m_symbol;

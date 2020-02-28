@@ -201,7 +201,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
         LayoutHelper::String(buffer, strlen(buffer), k_font),
         EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
   } else {
-    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int precision = Preferences::MediumNumberOfSignificantDigits;
     constexpr int sizeForPrecision = PrintFloat::charSizeForFloatsWithPrecision(precision);
     constexpr int bufferSize = 2 + sizeForPrecision;
     char buffer[bufferSize];

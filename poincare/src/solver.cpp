@@ -133,12 +133,12 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
     double xm = 0.5*(c-b);
     if (std::fabs(xm) <= tol1 || fb == 0.0) {
       double fbcMiddle = evaluation(0.5*(b+c), context, complexFormat, angleUnit, context1, context2, context3);
-      double isContinuous = (fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb);
+      bool isContinuous = (fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb);
       if (isContinuous) {
         return b;
       }
     }
-    if (std::fabs(e) >= tol1 && std::fabs(fa) > std::fabs(b)) {
+    if (std::fabs(e) >= tol1 && std::fabs(fa) > std::fabs(fb)) {
       double s = fb/fa;
       double p = 2.0*xm*s;
       double q = 1.0-s;
@@ -168,7 +168,7 @@ double Solver::BrentRoot(double ax, double bx, double precision, ValueAtAbscissa
     if (std::fabs(d) > tol1) {
       b += d;
     } else {
-      b += xm > 0.0 ? tol1 : tol1;
+      b += xm > 0.0 ? tol1 : -tol1;
     }
     fb = evaluation(b, context, complexFormat, angleUnit, context1, context2, context3);
   }

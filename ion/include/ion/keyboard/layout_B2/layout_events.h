@@ -30,7 +30,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   TL(), TL(), TL(), TL(), TL(), U(),
   TL(), TL(), TL(), TL(), U(), U(),
 // Alpha
-  U(), U(), U(), U(), U(), U(),
+  TL(), TL(), TL(), TL(), U(), U(),
   U(), U(), U(), U(), U(), U(),
   U(), U(), T(":"), T(";"), T("\""), T("%"),
   T("a"), T("b"), T("c"), T("d"), T("e"), T("f"),
@@ -75,7 +75,7 @@ static constexpr const char * s_nameForEvent[255] = {
   nullptr, nullptr, nullptr, "BrightnessPlus", "BrightnessMinus", nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   //Alpha,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  "AlphaLeft", "AlphaUp", "AlphaDown", "AlphaRight", nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, "Colon", "SemiColon", "DoubleQuotes", "Percent",
   "LowerA", "LowerB", "LowerC", "LowerD", "LowerE", "LowerF",

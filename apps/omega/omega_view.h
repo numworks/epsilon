@@ -14,7 +14,8 @@ public:
   View * subviewAtIndex(int index) override;
 private:
   void layoutSubviews(bool force = false) override;
-  BufferTextView m_bufferTextView;
+  MessageTextView m_omegaTextView;
+  MessageTextView m_urlTextView;
 };
 
 }

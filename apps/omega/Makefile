@@ -16,6 +16,7 @@ i18n_files += $(addprefix apps/omega/,\
 	base.fr.i18n\
 	base.pt.i18n\
 	base.hu.i18n\
+	base.universal.i18n\
 )
 
 $(eval $(call depends_on_image,apps/omega/app.cpp,apps/omega/omega_icon.png))

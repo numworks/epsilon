@@ -5,9 +5,9 @@ namespace Omega {
 
 OmegaView::OmegaView() :
   View(),
-  m_bufferTextView(KDFont::LargeFont, 0.5, 0.5, Palette::PrimaryText)
+  m_omegaTextView(KDFont::LargeFont, I18n::Message::OmegaApp, 0.5, 0.1, Palette::Toolbar, Palette::BackgroundApps),
+  m_urlTextView(KDFont::SmallFont, I18n::Message::OmegaURL, 0.5, 0.2, Palette::SecondaryText, Palette::BackgroundApps)
 {
-  m_bufferTextView.setText(I18n::translate(I18n::Message::OmegaApp));
 }
 
 void OmegaView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -19,16 +19,24 @@ void OmegaView::reload() {
 }
 
 int OmegaView::numberOfSubviews() const {
-  return 1;
+  return 3;
 }
 
 View * OmegaView::subviewAtIndex(int index) {
-  assert(index == 0);
-  return &m_bufferTextView;
+  assert(index >= 0 && index <= 2);
+  switch (index)
+  {
+    case 1:
+      return &m_urlTextView;
+    default:
+      return &m_omegaTextView;
+  }
 }
 
 void OmegaView::layoutSubviews(bool force) {
-  m_bufferTextView.setFrame(KDRect(0, 0, bounds().width(), bounds().height()), force);
+  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  m_omegaTextView.setFrame(KDRect(0, 30, bounds().width(), textHeight + 12), force);
+  m_urlTextView.setFrame(KDRect(0, 55, bounds().width(), textHeight), force);
 }
 
 }

@@ -19,7 +19,7 @@ void OmegaView::reload() {
 }
 
 int OmegaView::numberOfSubviews() const {
-  return 3;
+  return 2;
 }
 
 View * OmegaView::subviewAtIndex(int index) {

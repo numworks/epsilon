@@ -196,7 +196,9 @@ bool LayoutField::ContentView::selectionIsEmpty() const {
 }
 
 void LayoutField::ContentView::deleteSelection() {
-  assert(!selectionIsEmpty());
+  if (selectionIsEmpty()) {
+    return;
+  }
   Layout selectionParent = m_selectionStart.parent();
 
   /* If the selected layout is the upmost layout, it must be an horizontal
@@ -318,9 +320,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
    * - the result of a copy-paste. */
 
   // Delete the selected layouts if needed
-  if (!m_contentView.selectionIsEmpty()) {
-    deleteSelection();
-  }
+  deleteSelection();
 
   if (text[0] == 0) {
     // The text is empty
@@ -493,8 +493,11 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Copy && isEditing()) {
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) && isEditing()) {
     m_contentView.copySelection(context());
+    if (event == Ion::Events::Cut) {
+      m_contentView.deleteSelection();
+    }
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {

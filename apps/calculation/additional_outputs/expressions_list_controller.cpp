@@ -24,6 +24,14 @@ int ExpressionsListController::reusableCellCount(int type) {
   return k_maxNumberOfCells;
 }
 
+void ExpressionsListController::viewDidDisappear() {
+  ListController::viewDidDisappear();
+  // Reset cell memoization to avoid taking extra space in the pool
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    m_cells[i].setLayout(Layout());
+  }
+}
+
 HighlightCell * ExpressionsListController::reusableCell(int index, int type) {
   return &m_cells[index];
 }

@@ -2,7 +2,7 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <escher.h>
-#include "settings_message_tree.h"
+#include <apps/shared/settings_message_tree.h>
 #include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"
 #include "sub_menu/accessibility_controller.h"
@@ -13,22 +13,22 @@
 
 namespace Settings {
 
-extern const SettingsMessageTree s_modelAngleChildren[3];
-extern const SettingsMessageTree s_modelEditionModeChildren[2];
-extern const SettingsMessageTree s_modelFloatDisplayModeChildren[4];
-extern const SettingsMessageTree s_modelComplexFormatChildren[3];
-extern const SettingsMessageTree s_symbolChildren[4];
-extern const SettingsMessageTree s_modelMathOptionsChildren[5];
-extern const SettingsMessageTree s_modelResultDisplayChildren[2];
-extern const SettingsMessageTree s_modelFontChildren[2];
-extern const SettingsMessageTree s_accessibilityChildren[6];
-extern const SettingsMessageTree s_contributorsChildren[16];
+extern const Shared::SettingsMessageTree s_modelAngleChildren[3];
+extern const Shared::SettingsMessageTree s_modelEditionModeChildren[2];
+extern const Shared::SettingsMessageTree s_modelFloatDisplayModeChildren[4];
+extern const Shared::SettingsMessageTree s_modelComplexFormatChildren[3];
+extern const Shared::SettingsMessageTree s_symbolChildren[4];
+extern const Shared::SettingsMessageTree s_modelMathOptionsChildren[5];
+extern const Shared::SettingsMessageTree s_modelResultDisplayChildren[2];
+extern const Shared::SettingsMessageTree s_modelFontChildren[2];
+extern const Shared::SettingsMessageTree s_accessibilityChildren[6];
+extern const Shared::SettingsMessageTree s_contributorsChildren[16];
 #ifdef USERNAME
-extern const SettingsMessageTree s_modelAboutChildren[8];
+extern const Shared::SettingsMessageTree s_modelAboutChildren[8];
 #else
-extern const SettingsMessageTree s_modelAboutChildren[7];
+extern const Shared::SettingsMessageTree s_modelAboutChildren[7];
 #endif
-extern const SettingsMessageTree s_model;
+extern const Shared::SettingsMessageTree s_model;
 
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
@@ -59,7 +59,7 @@ private:
    * k_indexOfAboutCell) */
   constexpr static int k_indexOfPopUpCell = k_indexOfFontCell + 1;
   constexpr static int k_indexOfAboutCell = k_indexOfFontCell + 1;
-  static const SettingsMessageTree * model();
+  static const Shared::SettingsMessageTree * model();
 private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;

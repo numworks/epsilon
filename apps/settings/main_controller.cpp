@@ -5,6 +5,7 @@
 #include <ion/backlight.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Settings {
 

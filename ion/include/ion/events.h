@@ -182,6 +182,11 @@ constexpr Event ShiftThree = Event::ShiftKey(Keyboard::Key::Three);
 
 // Alpha
 
+constexpr Event AlphaLeft  = Event::AlphaKey(Keyboard::Key::Left);
+constexpr Event AlphaRight = Event::AlphaKey(Keyboard::Key::Right);
+constexpr Event AlphaUp    = Event::AlphaKey(Keyboard::Key::Up);
+constexpr Event AlphaDown  = Event::AlphaKey(Keyboard::Key::Down);
+
 constexpr Event Colon = Event::AlphaKey(Keyboard::Key::XNT);
 constexpr Event SemiColon = Event::AlphaKey(Keyboard::Key::Var);
 constexpr Event DoubleQuotes = Event::AlphaKey(Keyboard::Key::Toolbox);

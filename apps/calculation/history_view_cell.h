@@ -42,6 +42,7 @@ public:
   }
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override;
+  void resetMemoization();
   void setCalculation(Calculation * calculation, bool expanded);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
@@ -51,7 +52,6 @@ public:
   Shared::ScrollableTwoExpressionsView * outputView();
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
-  bool oneLine();
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);

@@ -33,6 +33,10 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
   assert(sCurrentExecutionEnvironment == nullptr);
   sCurrentExecutionEnvironment = this;
 
+  /* Set the user interruption now, as it is needed for the normal execution and
+   * for the exception handling (because of print). */
+  mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::Back);
+
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
@@ -41,9 +45,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     // TODO: add a parameter when other input types (file, eval) are required
     mp_parse_tree_t pt = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
     mp_obj_t module_fun = mp_compile(&pt, lex->source_name, MP_EMIT_OPT_NONE, true);
-    mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::Back);
     mp_call_function_0(module_fun);
-    mp_hal_set_interrupt_char(-1); // Disable interrupt
     nlr_pop();
   } else { // Uncaught exception
     /* mp_obj_print_exception is supposed to handle error printing. However,
@@ -80,6 +82,9 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     mp_print_str(&mp_plat_print, "\n");
     /* End of mp_obj_print_exception. */
   }
+
+  // Disable the user interruption
+  mp_hal_set_interrupt_char(-1);
 
   assert(sCurrentExecutionEnvironment == this);
   sCurrentExecutionEnvironment = nullptr;

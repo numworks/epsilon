@@ -49,6 +49,7 @@ info:
 	@echo "BUILD_DIR = $(BUILD_DIR)"
 	@echo "PLATFORM" = $(PLATFORM)
 	@echo "DEBUG" = $(DEBUG)
+	@echo "LEDS_CHOICE" = $(LEDS_CHOICE)
 	@echo "EPSILON_GETOPT" = $(EPSILON_GETOPT)
 	@echo "ESCHER_LOG_EVENTS_BINARY" = $(ESCHER_LOG_EVENTS_BINARY)
 	@echo "QUIZ_USE_CONSOLE" = $(QUIZ_USE_CONSOLE)
@@ -125,8 +126,7 @@ include build/struct_layout/Makefile
 include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-all_src = $(apps_all_src) $(escher_src) $(ion_all_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(epsilon_src) $(runner_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(ion_target_device_bench_src) $(tests_src)
-
+all_src = $(apps_all_src) $(escher_src) $(ion_all_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(ion_target_device_bench_src) $(tests_src)
 # Make palette.h a dep for every source-file.
 # This ensures that the theming engine works correctly.
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/escher/palette.h

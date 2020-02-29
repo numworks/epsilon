@@ -2,6 +2,7 @@
 
 PLATFORM ?= device
 DEBUG ?= 0
+LEDS_CHOICE ?= 0
 
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak
@@ -26,6 +27,7 @@ endif
 include build/toolchain.$(TOOLCHAIN).mak
 
 SFLAGS += -DDEBUG=$(DEBUG)
+SFLAGS += -DLEDS_CHOICE=$(LEDS_CHOICE)
 ifdef USERNAME
   SFLAGS += -DUSERNAME="$(USERNAME)"
 endif

@@ -185,19 +185,22 @@ void HistoryViewCell::layoutSubviews(bool force) {
     inputSize.height()),
   force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  int outputY = (oneLine() && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? maxCoordinate(0, inputSize.height() - outputSize.height()) / 2 : inputSize.height();
+  int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6;
+  int outputHeight = (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? (maxCoordinate(0, inputSize.height() - outputSize.height()) / 2) + maxCoordinate(0, (inputSize.height() - outputSize.height()) / 2) : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
     maxCoordinate(0, maxFrameWidth - outputSize.width()),
-    outputY,
+    outputHeight,
     minCoordinate(maxFrameWidth, outputSize.width()),
-    oneLine() ? outputSize.height() : (bounds().height() - inputSize.height())),
+    outputSize.height()),
   force);
 }
 
-bool HistoryViewCell::oneLine() {
-  KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
-  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  return outputSize.width() + inputSize.width() < bounds().width() - 6;
+void HistoryViewCell::resetMemoization() {
+  // Clean the layouts to make room in the pool
+  // TODO: maybe do this only when the layout won't change to avoid blinking
+  m_inputView.setLayout(Poincare::Layout());
+  m_scrollableOutputView.setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
+  m_calculationCRC32 = 0;
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
@@ -207,10 +210,8 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   }
   Poincare::Context * context = App::app()->localContext();
 
-  // Clean the layouts to make room in the pool
   // TODO: maybe do this only when the layout won't change to avoid blinking
-  m_inputView.setLayout(Poincare::Layout());
-  m_scrollableOutputView.setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
+  resetMemoization();
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
@@ -303,9 +304,6 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
       otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
     }
     m_dataSource->setSelectedSubviewType(otherSubviewType, true);
-    CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
-    tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
-    Container::activeApp()->setFirstResponder(this);
     return true;
   }
   return false;

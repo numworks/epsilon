@@ -18,11 +18,13 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
   constexpr static int k_numberOfCells = 2;
   OmegaView m_omegaView;
   SelectableTableView m_selectableTableView;
-  MessageTableCell m_cells[k_numberOfCells];
+  MessageTableCellWithChevron m_contributorsCell;
+  MessageTableCellWithBuffer m_versionCell;
 };
 
 }

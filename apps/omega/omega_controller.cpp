@@ -1,17 +1,21 @@
 #include "omega_controller.h"
 #include <assert.h>
+#include "apps/i18n.h"
 
 namespace Omega {
 
 OmegaController::OmegaController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_selectableTableView(parentResponder, this, this, this),
-  m_cells{}
+  SelectableTableViewDataSource(),
+  m_omegaView(&m_selectableTableView),
+  m_selectableTableView(this),
+  m_contributorsCell(),
+  m_versionCell()
 {
-  for (int i = 0; i < k_numberOfCells; i++) {
-    //m_cells[i].setParentResponder(&m_selectableTableView);
-    //m_cells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-  }
+  m_contributorsCell.setMessageFont(KDFont::LargeFont);
+  m_versionCell.setMessageFont(KDFont::LargeFont);
+  m_versionCell.setAccessoryFont(KDFont::SmallFont);
+  m_versionCell.setAccessoryText(Ion::customSoftwareVersion());
 }
 
 View * OmegaController::view() {
@@ -22,9 +26,11 @@ void OmegaController::didBecomeFirstResponder() {
 }
 
 bool OmegaController::handleEvent(Ion::Events::Event event) {
-  /* if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    StackViewController * stack = (StackViewController *)parentResponder();
+    // stack->push(&m_contributorsController, Palette::BannerFirstText, Palette::BannerFirstBackground, Palette::BannerFirstBorder);
     return true;
-  } */
+  }
   return false;
 }
 
@@ -38,15 +44,27 @@ KDCoordinate OmegaController::rowHeight(int j) {
 
 HighlightCell * OmegaController::reusableCell(int index, int type) {
   assert(index >= 0 && index <= 1);
-  return &m_cells[index];
+  switch (index)
+  {
+    case 1:
+      return &m_versionCell;
+    default:
+      return &m_contributorsCell;
+  }
 }
 
 int OmegaController::reusableCellCount(int type) {
-  return 1;
+  return 2;
 }
 
 int OmegaController::typeAtLocation(int i, int j) {
   return 0;
+}
+
+void OmegaController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  MessageTableCell * myCell = (MessageTableCell *)cell;
+  I18n::Message titles[2] = {I18n::Message::OmegaContributors, I18n::Message::OmegaVersion};
+  myCell->setMessage(titles[index]);
 }
 
 }

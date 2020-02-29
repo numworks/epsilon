@@ -7,8 +7,8 @@
 #include <string.h>
 #include <new>
 #if POINCARE_TREE_LOG
-#include <iostream>
 #include <ostream>
+#include <iostream>
 #endif
 
 namespace Poincare {

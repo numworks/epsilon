@@ -4,8 +4,14 @@
 namespace Omega {
 
 OmegaController::OmegaController(Responder * parentResponder) :
-  ViewController(parentResponder)
+  ViewController(parentResponder),
+  m_selectableTableView(parentResponder, this, this, this),
+  m_cells{}
 {
+  for (int i = 0; i < k_numberOfCells; i++) {
+    //m_cells[i].setParentResponder(&m_selectableTableView);
+    //m_cells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
+  }
 }
 
 View * OmegaController::view() {
@@ -20,6 +26,27 @@ bool OmegaController::handleEvent(Ion::Events::Event event) {
     return true;
   } */
   return false;
+}
+
+int OmegaController::numberOfRows() const {
+  return 2;
+}
+
+KDCoordinate OmegaController::rowHeight(int j) {
+  return Metric::ParameterCellHeight;
+}
+
+HighlightCell * OmegaController::reusableCell(int index, int type) {
+  assert(index >= 0 && index <= 1);
+  return &m_cells[index];
+}
+
+int OmegaController::reusableCellCount(int type) {
+  return 1;
+}
+
+int OmegaController::typeAtLocation(int i, int j) {
+  return 0;
 }
 
 }

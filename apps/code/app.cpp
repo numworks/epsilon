@@ -49,8 +49,10 @@ bool App::Snapshot::lockOnConsole() const {
 }
 
 void App::Snapshot::setOpt(const char * name, const char * value) {
-  if (strcmp(name, "script") == 0) {
+  if (strcmp(name, "wipe") == 0) {
     m_scriptStore.deleteAllScripts();
+  }
+  if (strcmp(name, "script") == 0) {
     char * separator = const_cast<char *>(UTF8Helper::CodePointSearch(value, ':'));
     if (*separator == 0) {
       return;

@@ -23,6 +23,8 @@
 
 namespace Poincare {
 
+
+
 /* Multiplication Node */
 
 ExpressionNode::Sign MultiplicationNode::sign(Context * context) const {
@@ -322,15 +324,15 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   return privateShallowReduce(reductionContext, true, true);
 }
 
-static void ExponentsCopy(Integer (&dst)[7], const Integer (&src)[7]) {
-  for (int i = 0; i < 7; i++) {
+static void ExponentsCopy(Integer (&dst)[8], const Integer (&src)[8]) {
+  for (int i = 0; i < 8; i++) {
     dst[i] = src[i];
   }
 }
 
-static void ExponentsMetrics(const Integer (&exponents)[7], size_t & supportSize, Integer & norm) {
+static void ExponentsMetrics(const Integer (&exponents)[8], size_t & supportSize, Integer & norm) {
   assert(supportSize == 0 && norm.isZero());
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 8; i++) {
     Integer unsignedExponent = exponents[i];
     unsignedExponent.setNegative(false);
     if (!unsignedExponent.isZero()) {
@@ -340,7 +342,7 @@ static void ExponentsMetrics(const Integer (&exponents)[7], size_t & supportSize
   }
 }
 
-static void ExponentsOfBaseUnits(const Expression units, Integer (&exponents)[7]) {
+static void ExponentsOfBaseUnits(const Expression units, Integer (&exponents)[8]) {
   // Make sure the provided Expression is a Multiplication
   Expression u = units;
   if (u.type() == ExpressionNode::Type::Unit || u.type() == ExpressionNode::Type::Power) {
@@ -366,20 +368,21 @@ static void ExponentsOfBaseUnits(const Expression units, Integer (&exponents)[7]
 
     // Fill the exponents array with the unit's exponent
     const int indexInTable = static_cast<Unit &>(factor).dimension() - Unit::DimensionTable;
-    assert(0 <= indexInTable && indexInTable < 7);
+    assert(0 <= indexInTable && indexInTable < 8);
     exponents[indexInTable] = exponent;
   }
 }
 
 static bool CanSimplifyUnitProduct(
-    const Integer (&unitsExponents)[7], const Integer (&entryUnitExponents)[7], const Integer entryUnitNorm, const Expression entryUnit,
+    const Integer (&unitsExponents)[8], const Integer (&entryUnitExponents)[8], const Integer entryUnitNorm, const Expression entryUnit,
     Integer (*operationOnExponents)(const Integer & unitsExponent, const Integer & entryUnitExponent),
-    Expression & bestUnit, Integer & bestUnitNorm, Integer (&bestRemainderExponents)[7], size_t & bestRemainderSupportSize, Integer & bestRemainderNorm) {
+    Expression & bestUnit, Integer & bestUnitNorm, Integer (&bestRemainderExponents)[8], size_t & bestRemainderSupportSize, Integer & bestRemainderNorm) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' Integer array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
-  Integer simplifiedExponents[7] = {
+  Integer simplifiedExponents[8] = {
+    Integer(0),
     Integer(0),
     Integer(0),
     Integer(0),
@@ -388,7 +391,7 @@ static bool CanSimplifyUnitProduct(
     Integer(0),
     Integer(0),
   };
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 8; i++) {
     simplifiedExponents[i] = operationOnExponents(unitsExponents[i], entryUnitExponents[i]);
   }
   size_t simplifiedSupportSize = 0;
@@ -438,7 +441,8 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      * - Repeat those steps until no more simplification is possible.
      */
     Multiplication unitsAccu = Multiplication::Builder();
-    Integer unitsExponents[7] = {
+    Integer unitsExponents[8] = {
+      Integer(0),
       Integer(0),
       Integer(0),
       Integer(0),
@@ -451,7 +455,8 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     size_t unitsSupportSize = 0;
     Integer unitsNorm(0);
     ExponentsMetrics(unitsExponents, unitsSupportSize, unitsNorm);
-    Integer bestRemainderExponents[7] = {
+    Integer bestRemainderExponents[8] = {
+      Integer(0),
       Integer(0),
       Integer(0),
       Integer(0),
@@ -465,9 +470,10 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       Integer bestUnitNorm(0);
       size_t bestRemainderSupportSize = unitsSupportSize - 1;
       Integer bestRemainderNorm = unitsNorm;
-      for (const Unit::Dimension * dim = Unit::DimensionTable + 7; dim < Unit::DimensionTableUpperBound; dim++) {
+      for (const Unit::Dimension * dim = Unit::DimensionTable + 8; dim < Unit::DimensionTableUpperBound; dim++) {
         Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
-        Integer entryUnitExponents[7] = {
+        Integer entryUnitExponents[8] = {
+          Integer(0),
           Integer(0),
           Integer(0),
           Integer(0),
@@ -789,7 +795,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     i++;
   }
 
-   /* Step 7: If the first child is zero, the multiplication result is zero. We
+   /* Step 8: If the first child is zero, the multiplication result is zero. We
     * do this after merging the rational children, because the merge takes care
     * of turning 0*inf into undef. We still have to check that no other child
     * involves an inifity expression to avoid reducing 0*e^(inf) to 0.

@@ -256,6 +256,13 @@ public:
             Representative::Prefixable::No,
             NoPrefix),
         },
+
+    SolideAngleRepresentatives[] = {
+        Representative("sr", nullptr, Representative::Prefixable::No, NoPrefix),
+    },
+
+
+
     MassRepresentatives[] = {
         Representative("g",   nullptr,
             Representative::Prefixable::Yes,
@@ -292,6 +299,15 @@ public:
             Representative::Prefixable::Yes,
             PositiveLongScalePrefixes),
         },
+
+    LuminousFluxRepresentatives[] = {
+        Representative("lm", "_cd*_sr", Representative::Prefixable::No, NoPrefix),
+        },
+
+    IlluminanceRepresentatives[] = {
+        Representative("lx", "_cd*_sr*_m^(-2)", Representative::Prefixable::No, NoPrefix),
+        },
+
     ForceRepresentatives[] = {
         Representative("N",   "_kg*_m*_s^-2",
             Representative::Prefixable::Yes,
@@ -389,6 +405,10 @@ public:
         &EmptyPrefix
         ),
     Dimension(
+        SolideAngleRepresentatives,
+        &EmptyPrefix
+    ),
+    Dimension(
         MassRepresentatives,
         &KiloPrefix
         ),
@@ -412,6 +432,14 @@ public:
         FrequencyRepresentatives,
         &EmptyPrefix
         ),
+    Dimension(
+        LuminousFluxRepresentatives,
+        &EmptyPrefix
+    ),
+    Dimension(
+        IlluminanceRepresentatives,
+        &EmptyPrefix
+    ),
     Dimension(
         ForceRepresentatives,
         &EmptyPrefix

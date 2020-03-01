@@ -389,7 +389,8 @@ const ToolboxMessageTree catalogChildren[] = {
 
 const ToolboxMessageTree functionsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDefWithArg, I18n::Message::Default, false, I18n::Message::PythonCommandDef),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReturn, I18n::Message::Default)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReturn, I18n::Message::Default),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLambdaWithArg, I18n::Message::Default, false, I18n::Message::PythonCommandLambda) 
 };
 
 const ToolboxMessageTree menu[] = {

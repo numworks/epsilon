@@ -29,8 +29,7 @@ int TangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 template<typename T>
 Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
-  std::complex<T> res = std::tan(angleInput);
-  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
+  return Complex<T>::Builder(std::tan(angleInput));
 }
 
 Expression TangentNode::shallowReduce(ReductionContext reductionContext) {

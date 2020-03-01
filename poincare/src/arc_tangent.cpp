@@ -40,7 +40,6 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
       result.real(-result.real()); // other side of the cut
     }
   }
-  result = Trigonometry::RoundToMeaningfulDigits(result, c);
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 

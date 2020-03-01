@@ -73,13 +73,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preference
   {
     return Complex<T>::RealUndefined();
   }
-  static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
-  if (std::fabs(error) < min) {
-    return Complex<T>::Builder(result);
-  }
-  // Round the result according to the error
-  error = std::pow((T)10, IEEE754<T>::exponentBase10(error)+2);
-  return Complex<T>::Builder(std::round(result/error)*error);
+  return Complex<T>::Builder(result);
 }
 
 template<typename T>

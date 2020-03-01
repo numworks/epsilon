@@ -27,18 +27,6 @@ template <typename T> int ApproximationHelper::PositiveIntegerApproximationIfPos
   return absInt((int)scalar);
 }
 
-template <typename T> std::complex<T> ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(std::complex<T> c) {
-  T arg = std::arg(c);
-  T precision = 10*Expression::Epsilon<T>();
-  if (absMod<T>(arg, (T)M_PI) <= precision) {
-    c.imag(0);
-  }
-  if (absMod<T>(arg-(T)M_PI/2.0, (T)M_PI) <= precision) {
-    c.real(0);
-  }
-  return c;
-}
-
 template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
   assert(expression->numberOfChildren() == 1);
   Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
@@ -106,8 +94,6 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
 
 template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
 template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
-template std::complex<float> Poincare::ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument<float>(std::complex<float>);
-template std::complex<double> Poincare::ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument<double>(std::complex<double>);
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexCompute<float> compute);
 template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexCompute<double> compute);
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<float> computeOnMatrices);

@@ -20,6 +20,15 @@ namespace Poincare {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
+bool MatrixNode::hasMatrixChild(Context * context) const {
+  for (ExpressionNode * c : children()) {
+    if (Expression(c).deepIsMatrix(context)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
   setNumberOfRows(1);
   setNumberOfColumns(newNumberOfChildren);
@@ -30,7 +39,7 @@ int MatrixNode::polynomialDegree(Context * context, const char * symbolName) con
 }
 
 Expression MatrixNode::shallowReduce(ReductionContext reductionContext) {
-  return Matrix(this).shallowReduce();
+  return Matrix(this).shallowReduce(reductionContext.context());
 }
 
 Layout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -390,13 +399,16 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
   return result;
 }
 
-Expression Matrix::shallowReduce() {
+Expression Matrix::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     e = e.defaultHandleUnitsInChildren();
     if (e.isUndefined()) {
       return e;
     }
+  }
+  if (node()->hasMatrixChild(context)) {
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }

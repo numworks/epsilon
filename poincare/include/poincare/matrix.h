@@ -11,7 +11,7 @@ public:
     m_numberOfRows(0),
     m_numberOfColumns(0) {}
 
-
+  bool hasMatrixChild(Context * context) const;
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
   virtual void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
@@ -87,7 +87,7 @@ public:
   static constexpr int k_maxNumberOfCoefficients = 100;
 
   // Expression
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
 
 private:
   MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }

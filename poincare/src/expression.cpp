@@ -684,7 +684,6 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to
    * beautify them with the right complex format. */
   if (e.type() == ExpressionNode::Type::Matrix) {
-    // TODO: this method enables to take the complex format into account when the result is a matrix of scalar. It won't work for nested matrices... Find a more elegant and general solution?
     Matrix m = static_cast<Matrix &>(e);
     *simplifiedExpression = Matrix::Builder();
     if (approximateExpression) {
@@ -694,6 +693,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       Expression simplifiedChild;
       Expression approximateChild = approximateExpression ? Expression() : nullptr;
       e.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, &approximateChild, userReductionContext, context, complexFormat, angleUnit);
+      assert(!simplifiedChild.deepIsMatrix(context));
       static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
       if (approximateExpression) {
         static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild, i, i);
@@ -770,7 +770,7 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
   }
   matrix.setDimensions(static_cast<Matrix &>(c).numberOfRows(), static_cast<Matrix &>(c).numberOfColumns());
   replaceWithInPlace(matrix);
-  return matrix.shallowReduce();
+  return matrix.shallowReduce(reductionContext.context());
 }
 
 Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {

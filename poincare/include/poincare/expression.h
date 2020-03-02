@@ -112,6 +112,7 @@ class Expression : public TreeHandle {
   friend class IntegralNode;
   template<int T>
   friend class LogarithmNode;
+  friend class MatrixNode;
   friend class NaperianLogarithmNode;
   friend class NAryExpressionNode;
   friend class StoreNode;

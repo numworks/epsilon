@@ -112,7 +112,7 @@ private:
   public:
     SequenceModel() : Shared::ExpressionModel(), m_name() {}
     void tidyName() { m_name = Poincare::Layout(); }
-    virtual Poincare::Layout name(Sequence * sequence);
+    Poincare::Layout name(Sequence * sequence);
   protected:
     virtual void buildName(Sequence * sequence) = 0;
     Poincare::Layout m_name;

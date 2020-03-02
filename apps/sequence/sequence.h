@@ -24,8 +24,9 @@ public:
     DoubleRecurrence = 2
   };
   Sequence(Ion::Storage::Record record = Record()) :
-    Function(record),
-    m_nameLayout() {}
+    Function(record)
+  {
+  }
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return 'n'; }
   void tidy() override;
@@ -153,7 +154,6 @@ private:
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;
   SecondInitialConditionModel m_secondInitialCondition;
-  Poincare::Layout m_nameLayout;
 };
 
 }

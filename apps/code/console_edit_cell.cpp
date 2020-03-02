@@ -7,6 +7,8 @@
 
 namespace Code {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
   HighlightCell(),
   Responder(parentResponder),
@@ -65,9 +67,12 @@ void ConsoleEditCell::clearAndReduceSize() {
 const char * ConsoleEditCell::shiftCurrentTextAndClear() {
   size_t previousBufferSize = m_textField.draftTextBufferSize();
   m_textField.setDraftTextBufferSize(previousBufferSize + 1);
-  char * textFieldBuffer = m_textField.draftTextBuffer();
+  char * textFieldBuffer = const_cast<char *>(m_textField.text());
   char * newTextPosition = textFieldBuffer + 1;
-  strlcpy(newTextPosition, textFieldBuffer, previousBufferSize);
+  assert(previousBufferSize > 0);
+  size_t copyLength = minInt(previousBufferSize - 1, strlen(textFieldBuffer));
+  memmove(newTextPosition, textFieldBuffer, copyLength);
+  newTextPosition[copyLength] = 0;
   textFieldBuffer[0] = 0;
   return newTextPosition;
 }

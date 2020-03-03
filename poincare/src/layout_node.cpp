@@ -39,16 +39,6 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCol
   }
 }
 
-KDPoint LayoutNode::origin() {
-  LayoutNode * p = parent();
-  if (p == nullptr) {
-    return absoluteOrigin();
-  } else {
-    return KDPoint(absoluteOrigin().x() - p->absoluteOrigin().x(),
-        absoluteOrigin().y() - p->absoluteOrigin().y());
-  }
-}
-
 KDPoint LayoutNode::absoluteOrigin() {
   LayoutNode * p = parent();
   if (!m_positioned) {

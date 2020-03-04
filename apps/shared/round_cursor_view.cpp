@@ -49,6 +49,10 @@ void RoundCursorView::setCursorFrame(KDRect f, bool force) {
   CursorView::setCursorFrame(f, force);
 }
 
+void RoundCursorView::markRectAsDirty(KDRect rect) {
+  View::markRectAsDirty(rect);
+}
+
 #ifdef GRAPH_CURSOR_SPEEDUP
 bool RoundCursorView::eraseCursorIfPossible() {
   if (!m_underneathPixelBufferLoaded) {

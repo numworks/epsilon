@@ -50,21 +50,21 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   }
   // |x| = ±x if x is real
   if (c.isReal(reductionContext.context())) {
-    float app = c.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
-    if (!std::isnan(app) &&
-        ((c.isNumber() && app >= 0) || app >= Expression::Epsilon<float>())) {
-      /* abs(a) = a with a >= 0
-       * To check that a > 0, if a is a number we can use float comparison;
-       * in other cases, we are more conservative and rather check that
-       * a > epsilon ~ 1E-7 to avoid potential error due to float precision. */
-      replaceWithInPlace(c);
-      return c;
-    } else if (!std::isnan(app) &&
-               ((c.isNumber() && app < 0.0f) || app <= -Expression::Epsilon<float>())) {
-      // abs(a) = -a with a < 0 (same comment as above to check that a < 0)
-      Multiplication m = Multiplication::Builder(Rational::Builder(-1), c);
-      replaceWithInPlace(m);
-      return m.shallowReduce(reductionContext);
+    double app = c.node()->approximate(double(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
+    if (!std::isnan(app)) {
+      if ((c.isNumber() && app >= 0) || app >= Expression::Epsilon<double>()) {
+        /* abs(a) = a with a >= 0
+         * To check that a > 0, if a is a number we can use float comparison;
+         * in other cases, we are more conservative and rather check that
+         * a > epsilon ~ 1E-7 to avoid potential error due to float precision. */
+        replaceWithInPlace(c);
+        return c;
+      } else if ((c.isNumber() && app < 0.0f) || app <= -Expression::Epsilon<double>()) {
+        // abs(a) = -a with a < 0 (same comment as above to check that a < 0)
+        Multiplication m = Multiplication::Builder(Rational::Builder(-1), c);
+        replaceWithInPlace(m);
+        return m.shallowReduce(reductionContext);
+      }
     }
   }
   // |a+ib| = sqrt(a^2+b^2)

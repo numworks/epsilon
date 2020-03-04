@@ -2,6 +2,7 @@
 #define SHARED_FUNCTION_APP_H
 
 #include "expression_field_delegate_app.h"
+#include "function_graph_controller.h"
 #include "function_store.h"
 #include "curve_view_cursor.h"
 #include "values_controller.h"
@@ -12,7 +13,6 @@ class FunctionApp : public ExpressionFieldDelegateApp {
 public:
   class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:
-    static constexpr size_t sNumberOfMemoizedModelVersions = 5;
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
     uint32_t * modelVersion() { return &m_modelVersion; }
@@ -28,7 +28,7 @@ public:
   private:
     int m_indexFunctionSelectedByCursor;
     uint32_t m_modelVersion;
-    uint32_t m_previousModelsVersions[sNumberOfMemoizedModelVersions];
+    uint32_t m_previousModelsVersions[FunctionGraphController::sNumberOfMemoizedModelVersions];
     uint32_t m_rangeVersion;
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
   };

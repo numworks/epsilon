@@ -21,7 +21,6 @@ public:
   };
   class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:
-    static constexpr size_t sNumberOfMemoizedModelVersions = 5; // TODO LEA factorize with Shared::FunctionApp
     Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
@@ -39,7 +38,7 @@ public:
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     uint32_t m_modelVersion;
-    uint32_t m_previousModelsVersions[sNumberOfMemoizedModelVersions];
+    uint32_t m_previousModelsVersions[GraphController::sNumberOfMemoizedModelVersions];
     uint32_t m_rangeVersion;
     int m_selectedSeriesIndex;
   };

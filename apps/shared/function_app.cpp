@@ -17,7 +17,8 @@ FunctionApp::Snapshot::Snapshot() :
 void FunctionApp::Snapshot::reset() {
   m_indexFunctionSelectedByCursor = 0;
   m_modelVersion = 0;
-  memset(m_previousModelsVersions, 0, sizeof(m_previousModelsVersions[0])*sNumberOfMemoizedModelVersions);
+  assert(sizeof(m_previousModelsVersions) == sizeof(uint32_t) * FunctionGraphController::sNumberOfMemoizedModelVersions);
+  memset(m_previousModelsVersions, 0, sizeof(m_previousModelsVersions));
   m_rangeVersion = 0;
   setActiveTab(0);
 }

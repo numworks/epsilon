@@ -183,6 +183,10 @@ uint32_t FunctionGraphController::modelVersion() {
   return functionStore()->storeChecksum();
 }
 
+uint32_t FunctionGraphController::modelVersionAtIndex(size_t i) {
+  return functionStore()->storeChecksumAtIndex(i);
+}
+
 uint32_t FunctionGraphController::rangeVersion() {
   return interactiveCurveViewRange()->rangeChecksum();
 }

@@ -16,6 +16,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
+  static constexpr size_t sNumberOfMemoizedModelVersions = Store::k_numberOfSeries;
   GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
@@ -43,7 +44,9 @@ private:
   // InteractiveCurveViewController
   void initCursorParameters() override;
   uint32_t modelVersion() override;
+  uint32_t modelVersionAtIndex(size_t i) override;
   uint32_t rangeVersion() override;
+  size_t numberOfMemoizedVersions() const override { return sNumberOfMemoizedModelVersions; }
   int selectedCurveIndex() const override { return *m_selectedSeriesIndex; }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double x, Poincare::Context * context) const override;

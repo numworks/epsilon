@@ -13,6 +13,7 @@ class FunctionStore : public ExpressionModelStore {
 public:
   FunctionStore() : ExpressionModelStore() {}
   uint32_t storeChecksum();
+  uint32_t storeChecksumAtIndex(size_t i);
   int numberOfActiveFunctions() const {
     return numberOfModelsSatisfyingTest(&isFunctionActive, nullptr);
   }

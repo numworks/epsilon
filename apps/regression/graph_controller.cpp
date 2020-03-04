@@ -351,6 +351,10 @@ uint32_t GraphController::modelVersion() {
   return m_store->storeChecksum();
 }
 
+uint32_t GraphController::modelVersionAtIndex(size_t i) {
+  return m_store->seriesChecksumAtIndex(i);
+}
+
 uint32_t GraphController::rangeVersion() {
   return m_store->rangeChecksum();
 }

@@ -35,6 +35,10 @@ public:
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
     return regressionModel((int)m_regressionTypes[series]);
   }
+  uint32_t seriesChecksumAtIndex(size_t i) {
+    assert(i < k_numberOfSeries);
+    return m_seriesChecksum[i];
+  }
 
   // Dots
   /* Return the closest dot to abscissa x above the regression curve if

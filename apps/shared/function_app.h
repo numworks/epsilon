@@ -12,9 +12,11 @@ class FunctionApp : public ExpressionFieldDelegateApp {
 public:
   class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:
+    static constexpr size_t sNumberOfMemoizedModelVersions = 5;
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
     uint32_t * modelVersion() { return &m_modelVersion; }
+    uint32_t * previousModelsVersions() { return m_previousModelsVersions; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
     Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
     virtual FunctionStore * functionStore() = 0;
@@ -26,6 +28,7 @@ public:
   private:
     int m_indexFunctionSelectedByCursor;
     uint32_t m_modelVersion;
+    uint32_t m_previousModelsVersions[sNumberOfMemoizedModelVersions];
     uint32_t m_rangeVersion;
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
   };

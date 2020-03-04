@@ -12,7 +12,7 @@ namespace Shared {
 
 class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public ButtonRowDelegate, public AlternateEmptyViewDefaultDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
+  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion);
 
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -67,6 +67,7 @@ private:
 
   virtual bool shouldSetDefaultOnModelChange() const { return false; }
   uint32_t * m_modelVersion;
+  uint32_t * m_previousModelsVersions;
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
   ZoomParameterController m_zoomParameterController;

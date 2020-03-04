@@ -27,6 +27,7 @@ App::Snapshot::Snapshot() :
   m_rangeVersion(0),
   m_selectedSeriesIndex(-1)
 {
+  assert(m_previousModelsVersions[0] == 0);
 }
 
 App * App::Snapshot::unpack(Container * container) {
@@ -36,6 +37,7 @@ App * App::Snapshot::unpack(Container * container) {
 void App::Snapshot::reset() {
   m_store.deleteAllPairs();
   m_modelVersion = 0;
+  memset(m_previousModelsVersions, 0, sizeof(m_previousModelsVersions[0])*sNumberOfMemoizedModelVersions);
   m_rangeVersion = 0;
   setActiveTab(0);
 }
@@ -55,7 +57,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
+  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->modelVersion(), snapshot->previousModelsVersions(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),

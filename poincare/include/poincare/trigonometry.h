@@ -23,9 +23,6 @@ public:
   static Expression table(const Expression e, ExpressionNode::Type type,  ExpressionNode::ReductionContext reductionContext); // , Function f, bool inverse
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit);
-  template <typename T> static std::complex<T> RoundToMeaningfulDigits(const std::complex<T> result, const std::complex<T> input);
-private:
-  template <typename T> static T RoundToMeaningfulDigits(T result, T input);
 };
 
 }

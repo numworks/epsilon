@@ -118,11 +118,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     int focusRow = selectedRow();
     SubviewType subviewType = selectedSubviewType();
     m_selectableTableView.deselectTable();
-    EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_calculationStore->deleteCalculationAtIndex(storeIndex(focusRow));
     reload();
     if (numberOfRows()== 0) {
-      Container::activeApp()->setFirstResponder(editController);
+      Container::activeApp()->setFirstResponder(parentResponder());
       return true;
     }
     if (focusRow > 0) {
@@ -146,9 +145,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Back) {
-    EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_selectableTableView.deselectTable();
-    Container::activeApp()->setFirstResponder(editController);
+    Container::activeApp()->setFirstResponder(parentResponder());
     return true;
   }
   return false;

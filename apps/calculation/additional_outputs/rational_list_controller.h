@@ -8,7 +8,7 @@ namespace Calculation {
 class RationalListController : public ExpressionsListController {
 public:
   RationalListController(EditExpressionController * editExpressionController) :
-    ExpressionsListController(nullptr, editExpressionController) {}
+    ExpressionsListController(editExpressionController) {}
 
   //ListViewDataSource
   int numberOfRows() const override;

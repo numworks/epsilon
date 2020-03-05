@@ -10,7 +10,7 @@ class EditExpressionController;
 
 class ListController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ListController(Responder * parentResponder, EditExpressionController * editExpressionController, SelectableTableViewDelegate * delegate = nullptr);
+  ListController(EditExpressionController * editExpressionController, SelectableTableViewDelegate * delegate = nullptr);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

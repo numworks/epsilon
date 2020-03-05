@@ -8,7 +8,7 @@ namespace Calculation {
 class IntegerListController : public ExpressionsListController {
 public:
   IntegerListController(EditExpressionController * editExpressionController) :
-    ExpressionsListController(nullptr, editExpressionController) {}
+    ExpressionsListController(editExpressionController) {}
 
   //ListViewDataSource
   int numberOfRows() const override;

@@ -11,7 +11,7 @@ namespace Calculation {
 
 class IllustratedListController : public ListController, public SelectableTableViewDelegate {
 public:
-  IllustratedListController(Responder * parentResponder, EditExpressionController * editExpressionController);
+  IllustratedListController(EditExpressionController * editExpressionController);
 
   // Responder
   void viewDidDisappear() override;

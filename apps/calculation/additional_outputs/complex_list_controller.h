@@ -10,7 +10,7 @@ namespace Calculation {
 class ComplexListController : public IllustratedListController {
 public:
   ComplexListController(EditExpressionController * editExpressionController) :
-    IllustratedListController(nullptr, editExpressionController),
+    IllustratedListController(editExpressionController),
     m_complexGraphCell(&m_model) {}
 
   // ViewController

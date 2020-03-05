@@ -10,7 +10,7 @@ namespace Calculation {
 
 class ExpressionsListController : public ListController {
 public:
-  ExpressionsListController(Responder * parentResponder, EditExpressionController * editExpressionController);
+  ExpressionsListController(EditExpressionController * editExpressionController);
 
   // Responder
   void viewDidDisappear() override;

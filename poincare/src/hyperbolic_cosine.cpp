@@ -16,7 +16,7 @@ int HyperbolicCosineNode::serialize(char * buffer, int bufferSize, Preferences::
 
 template<typename T>
 Complex<T> HyperbolicCosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(std::cosh(c), c));
+  return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::cosh(c), c));
 }
 
 template Complex<float> Poincare::HyperbolicCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);

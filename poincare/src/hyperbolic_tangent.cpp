@@ -16,7 +16,7 @@ int HyperbolicTangentNode::serialize(char * buffer, int bufferSize, Preferences:
 
 template<typename T>
 Complex<T> HyperbolicTangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(std::tanh(c), c));
+  return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::tanh(c), c));
 }
 
 template Complex<float> Poincare::HyperbolicTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);

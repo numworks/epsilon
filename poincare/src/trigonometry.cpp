@@ -412,34 +412,9 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   return c;
 }
 
-template<typename T>
-T Trigonometry::RoundToMeaningfulDigits(T result, T input) {
-  /* Cheat: openbsd trigonometric functions are numerical implementation and
-   * thus are approximative.
-   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
-   * weird results as acos(1) = 6E-17 or cos(π/2) = 4E-17, we round the result
-   * to its 1E-6 or 1E-14 precision when its ratio with the argument (π/2 in the
-   * example) is smaller than epsilon. This way, we have sin(π) ~ 0 and
-   * sin(1E-15)=1E-15.
-   * We can't do that for all evaluation as the user can operate on values as
-   * small as 1E-308 (in double) and most results still be correct. */
-  if (input == 0.0 || std::fabs(result/input) <= Expression::Epsilon<T>()) {
-     T precision = 10*Expression::Epsilon<T>();
-     result = std::round(result/precision)*precision;
-  }
-  return result;
-}
-
-template <typename T>
-std::complex<T> Trigonometry::RoundToMeaningfulDigits(const std::complex<T> result, const std::complex<T> input) {
-  return std::complex<T>(RoundToMeaningfulDigits(result.real(), std::abs(input)), RoundToMeaningfulDigits(result.imag(), std::abs(input)));
-}
-
 template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Preferences::AngleUnit);
 template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Preferences::AngleUnit);
 template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Preferences::AngleUnit);
 template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Preferences::AngleUnit);
-template std::complex<float> Trigonometry::RoundToMeaningfulDigits<float>(std::complex<float>, std::complex<float>);
-template std::complex<double> Trigonometry::RoundToMeaningfulDigits<double>(std::complex<double>, std::complex<double>);
 
 }

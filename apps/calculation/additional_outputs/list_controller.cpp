@@ -38,7 +38,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
      * insertTextBody. */
     Container::activeApp()->dismissModalViewController();
     m_editExpressionController->insertTextBody(buffer);
-    Container::activeApp()->setFirstResponder(m_editExpressionController);
     return true;
   }
   return false;

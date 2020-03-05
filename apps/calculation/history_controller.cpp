@@ -78,11 +78,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     if (subviewType == SubviewType::Input) {
       m_selectableTableView.deselectTable();
-      Container::activeApp()->setFirstResponder(editController);
       editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
     } else if (subviewType == SubviewType::Output) {
       m_selectableTableView.deselectTable();
-      Container::activeApp()->setFirstResponder(editController);
       Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
       ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right

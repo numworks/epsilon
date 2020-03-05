@@ -48,6 +48,7 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
+  Container::activeApp()->setFirstResponder(this);
   m_contentView.expressionField()->handleEventWithText(text, false, true);
 }
 

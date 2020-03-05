@@ -173,7 +173,7 @@ Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, 
    * so arg(c^d) = y*ln(r)+xθ.
    * We consider that arg[π] is negligeable if it is negligeable compared to
    * norm(d) = sqrt(x^2+y^2) and ln(r) = ln(norm(c)).*/
-  return Complex<T>::Builder(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result, std::log(std::abs(c)), std::abs(d)));
+  return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c, d));
 }
 
 // Layout

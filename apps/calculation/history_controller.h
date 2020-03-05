@@ -9,6 +9,7 @@
 #include "additional_outputs/integer_list_controller.h"
 #include "additional_outputs/rational_list_controller.h"
 #include "additional_outputs/trigonometry_list_controller.h"
+#include "additional_outputs/unit_list_controller.h"
 
 namespace Calculation {
 
@@ -45,6 +46,7 @@ private:
   IntegerListController m_integerController;
   RationalListController m_rationalController;
   TrigonometryListController m_trigonometryController;
+  UnitListController m_unitController;
 };
 
 }

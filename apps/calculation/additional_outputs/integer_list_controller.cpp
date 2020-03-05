@@ -28,9 +28,6 @@ Integer::Base baseAtIndex(int index) {
 }
 
 void IntegerListController::computeLayoutAtIndex(int index) {
-  if (!m_layouts[index].isUninitialized()) {
-    return;
-  }
   assert(m_expression.type() == ExpressionNode::Type::BasedInteger);
   // For index = k_indexOfFactorExpression, the layout is assumed to be alreday memoized because it is needed to compute the numberOfRows
   assert(index < k_indexOfFactorExpression);
@@ -65,6 +62,6 @@ bool IntegerListController::factorExpressionIsComputable() const {
   }
   m_layouts[k_indexOfFactorExpression] = EmptyLayout::Builder();
   return false;
-
 }
+
 }

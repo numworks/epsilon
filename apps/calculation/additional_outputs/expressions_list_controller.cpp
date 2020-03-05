@@ -38,9 +38,7 @@ HighlightCell * ExpressionsListController::reusableCell(int index, int type) {
 
 KDCoordinate ExpressionsListController::rowHeight(int j) {
   Layout l = layoutAtIndex(j);
-  if (l.isUninitialized()) {
-    return 0;
-  }
+  assert(!l.isUninitialized());
   return l.layoutSize().height() + 2 * Metric::CommonSmallMargin + Metric::CellSeparatorThickness;
 }
 

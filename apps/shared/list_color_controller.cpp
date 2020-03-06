@@ -4,9 +4,6 @@
 #include <escher.h>
 #include <apps/i18n.h>
 
-
-using namespace Poincare;
-
 namespace Shared {
 
 static I18n::Message colorMessages[] = {
@@ -52,7 +49,7 @@ void ColorParameterController::didBecomeFirstResponder() {
 
 bool ColorParameterController::handleEvent(Ion::Events::Event event) {
   StackViewController * stack = (StackViewController *)(parentResponder());
-  if (event == Ion::Events::Back) {
+  if (event == Ion::Events::Back || event == Ion::Events::Left) {
     stack->pop();
     return true;
   }

@@ -3,9 +3,7 @@
 #include <assert.h>
 #include <escher.h>
 #include <apps/i18n.h>
-#include <poincare/layout_helper.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/vertical_offset_layout.h>
+
 
 using namespace Poincare;
 

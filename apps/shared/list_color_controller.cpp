@@ -10,15 +10,27 @@ using namespace Poincare;
 namespace Shared {
 
 static I18n::Message colorMessages[] = {
-  I18n::Message::Axis,
-  I18n::Message::Axis,
-  I18n::Message::Axis,
-  I18n::Message::Axis,
-  I18n::Message::Axis,
-  I18n::Message::Axis,
-  I18n::Message::Axis,
-  I18n::Message::Axis
+  I18n::Message::ColorRed,
+  I18n::Message::ColorBlue,
+  I18n::Message::ColorGreen,
+  I18n::Message::ColorYellow,
+  I18n::Message::ColorMangenta,
+  I18n::Message::ColorTurquise,
+  I18n::Message::ColorPink,
+  I18n::Message::ColorOrange
 };
+
+/*
+ * Color = "Color"
+ColorRed = "Red"
+ColorBlue = "Blue"
+ColorGreen = "Green"
+ColorYellow = "Yellow"
+ColorMangenta = "Mangenta"
+ColorTurquise = "Turquoise"
+ColorPink = "Pink"
+ColorOrange = "Orange"
+ */
 
 ColorParameterController::ColorParameterController(Responder * parentResponder):
   ViewController(parentResponder),
@@ -28,7 +40,7 @@ ColorParameterController::ColorParameterController(Responder * parentResponder):
 }
 
 const char * ColorParameterController::title() {
-  return "TODO";
+  return I18n::translate(I18n::Message::Color);
 }
 
 View * ColorParameterController::view() {

@@ -46,8 +46,9 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return handleEnterOnRow(selectedRow());
+  int selectedR = selectedRow();
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedR == 3)) {
+    return handleEnterOnRow(selectedR);
   }
   return false;
 }

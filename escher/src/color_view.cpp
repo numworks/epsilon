@@ -3,12 +3,16 @@
 
 
 ColorView::ColorView() :
-  m_selectedColor(-1),
+  m_selectedColor(0),
   m_backgroundColor(KDColorWhite)
 {
 }
 
-int ColorView::color() {
+KDColor ColorView::color() {
+  return Palette::DataColor[m_selectedColor];
+}
+
+int ColorView::colorIndex() {
   return m_selectedColor;
 }
 

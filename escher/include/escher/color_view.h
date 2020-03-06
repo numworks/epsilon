@@ -6,7 +6,8 @@
 class ColorView : public TransparentView {
 public:
   ColorView();
-  int color();
+  KDColor color();
+  int colorIndex();
   void setColor(int color);
   void setBackgroundColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;

@@ -31,6 +31,7 @@ void ListParameterController::viewWillAppear() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   m_selectableTableView.reloadData();
+  ((ColorView *)m_colorCell.accessoryView())->setColor(0);
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -46,23 +47,8 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  int selectedR = selectedRow();
-  if (selectedR == 3) {
-    ColorView * colorView = (ColorView *)m_colorCell.accessoryView();
-    if (event == Ion::Events::Right) {
-      colorView->setColor(colorView->color() + 1);
-      return true;
-    }
-    if (event == Ion::Events::Left) {
-      colorView->setColor(colorView->color() - 1);
-      return true;
-    }
-
-  } 
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return handleEnterOnRow(selectedR);
-  }
-  return false;
+  int selectedR = selectedRow(); 
+  return handleEventOnRow(selectedR, event);
 }
 
 KDCoordinate ListParameterController::cumulatedHeightFromIndex(int j) {
@@ -84,23 +70,43 @@ int ListParameterController::typeAtLocation(int i, int j) {
   return j;
 }
 
-bool ListParameterController::handleEnterOnRow(int rowIndex) {
+bool ListParameterController::handleEventOnRow(int rowIndex, Ion::Events::Event event) {
   StackViewController * stack = (StackViewController *)(parentResponder());
   switch (rowIndex) {
     case 0:
-      return true;
+    {
+      ColorView * colorView = (ColorView *)m_colorCell.accessoryView();
+      if (event == Ion::Events::Right) {
+        colorView->setColor(colorView->colorIndex() + 1);
+        return true;
+      }
+      if (event == Ion::Events::Left) {
+        colorView->setColor(colorView->colorIndex() - 1);
+        return true;
+      }
+      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+        function()->setColor(colorView->color());
+	stack->pop();
+        return true;
+      }
+      return false;
+    }
     case 1:
-      function()->setActive(!function()->isActive());
-      m_selectableTableView.reloadData();
-      return true;
+      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+        function()->setActive(!function()->isActive());
+        m_selectableTableView.reloadData();
+        return true;
+      }
+      return false;
     case 2:
-      {
+      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         assert(functionStore()->numberOfModels() > 0);
         functionStore()->removeModel(m_record);
         setRecord(Ion::Storage::Record());
         stack->pop();
         return true;
       }
+      return false;
     default:
       return false;
   }

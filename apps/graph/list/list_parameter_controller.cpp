@@ -36,17 +36,11 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (Shared::ListParameterController::handleEvent(event)) {
+  int selectedR = selectedRow();
+  if (Shared::ListParameterController::handleEventOnRow(selectedR - 3, event)) {
     return true;
   }
-  if (event == Ion::Events::Right) {
-    int selectedR = selectedRow();
-    if (selectedR == 0 || selectedR == 1) {
-      // Go in the submenu
-      return handleEnterOnRow(selectedR);
-    }
-  }
-  return false;
+  return handleEventOnRow(selectedR, event);
 }
 
 char intervalBracket(double value, bool opening) {
@@ -98,23 +92,25 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-bool ListParameterController::handleEnterOnRow(int rowIndex) {
+bool ListParameterController::handleEventOnRow(int rowIndex, Ion::Events::Event event) {
   StackViewController * stack = (StackViewController *)(parentResponder());
-  switch (rowIndex) {
-  case 0:
-    m_typeParameterController.setRecord(m_record);
-    stack->push(&m_typeParameterController);
-    return true;
-  case 1:
-    m_domainParameterController.setRecord(m_record);
-    stack->push(&m_domainParameterController);
-    return true;
-  case 2:
-    renameFunction();
-    return true;
-  default:
-    return Shared::ListParameterController::handleEnterOnRow(rowIndex - 3);
+  
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (rowIndex == 0 || rowIndex == 1))) {    
+    switch (rowIndex) {
+      case 0:
+        m_typeParameterController.setRecord(m_record);
+        stack->push(&m_typeParameterController);
+        return true;
+      case 1:
+        m_domainParameterController.setRecord(m_record);
+        stack->push(&m_domainParameterController);
+        return true;
+      case 2:
+        renameFunction();
+        return true;
+    }
   }
+  return false;
 }
 
 void ListParameterController::renameFunction() {

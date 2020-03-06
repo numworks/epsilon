@@ -23,26 +23,17 @@ const char * ListParameterController::title() {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   bool hasAdditionalRow = hasInitialRankRow();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0) || (event == Ion::Events::Right && selectedRow() == 1+hasAdditionalRow)) {
-    int selectedRowIndex = selectedRow(); 
+  int selectedRowIndex = selectedRow();
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
     if (selectedRowIndex == 0) {
       StackViewController * stack = (StackViewController *)(parentResponder());
       m_typeParameterController.setRecord(m_record);
       stack->push(&m_typeParameterController);
       return true;
     }
-    if (selectedRowIndex == 1+hasAdditionalRow) {
-      return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
-    }
-    if (selectedRowIndex == 2+hasAdditionalRow) {
-      return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
-    }
-    if (selectedRowIndex == 3+hasAdditionalRow) {
-      App::app()->localContext()->resetCache();
-      return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
-    }
   }
-  return false;
+  return handleEventOnRow(selectedRowIndex-hasAdditionalRow-1, event);
+  App::app()->localContext()->resetCache();
 }
 
 bool ListParameterController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {

@@ -30,7 +30,7 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
-  virtual bool handleEnterOnRow(int rowIndex);
+  virtual bool handleEventOnRow(int rowIndex, Ion::Events::Event event);
   virtual int totalNumberOfCells() const {
     return 3;
   }

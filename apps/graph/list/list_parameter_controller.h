@@ -17,7 +17,7 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
-  bool handleEnterOnRow(int rowIndex) override;
+  bool handleEventOnRow(int rowIndex, Ion::Events::Event event) override;
 private:
   int totalNumberOfCells() const override {
     return Shared::ListParameterController::totalNumberOfCells() + 2;

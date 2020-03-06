@@ -63,9 +63,13 @@ void ColorParameterController::didBecomeFirstResponder() {
 }
 
 bool ColorParameterController::handleEvent(Ion::Events::Event event) {
+  StackViewController * stack = (StackViewController *)(parentResponder());
+  if (event == Ion::Events::Back) {
+    stack->pop();
+    return true;
+  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
      function()->setColor(Palette::DataColor[selectedRow()]);
-     StackViewController * stack = (StackViewController *)(parentResponder());
      stack->pop();
      return true;
   }

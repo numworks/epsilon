@@ -20,18 +20,6 @@ static I18n::Message colorMessages[] = {
   I18n::Message::ColorOrange
 };
 
-/*
- * Color = "Color"
-ColorRed = "Red"
-ColorBlue = "Blue"
-ColorGreen = "Green"
-ColorYellow = "Yellow"
-ColorMangenta = "Mangenta"
-ColorTurquise = "Turquoise"
-ColorPink = "Pink"
-ColorOrange = "Orange"
- */
-
 ColorParameterController::ColorParameterController(Responder * parentResponder):
   ViewController(parentResponder),
   m_selectableTableView(this),

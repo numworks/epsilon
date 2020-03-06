@@ -40,7 +40,7 @@ protected:
   Ion::Storage::Record m_record;
 private:
   ColorParameterController m_colorParameterController;
-  MessageTableCellWithChevron m_colorCell;
+  MessageTableCellWithColor m_colorCell;
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;
 };

@@ -47,7 +47,19 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   int selectedR = selectedRow();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedR == 3)) {
+  if (selectedR == 3) {
+    ColorView * colorView = (ColorView *)m_colorCell.accessoryView();
+    if (event == Ion::Events::Right) {
+      colorView->setColor(colorView->color() + 1);
+      return true;
+    }
+    if (event == Ion::Events::Left) {
+      colorView->setColor(colorView->color() - 1);
+      return true;
+    }
+
+  } 
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     return handleEnterOnRow(selectedR);
   }
   return false;
@@ -76,8 +88,6 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
   StackViewController * stack = (StackViewController *)(parentResponder());
   switch (rowIndex) {
     case 0:
-      m_colorParameterController.setRecord(m_record);
-      stack->push(&m_colorParameterController);
       return true;
     case 1:
       function()->setActive(!function()->isActive());
@@ -88,7 +98,6 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
         assert(functionStore()->numberOfModels() > 0);
         functionStore()->removeModel(m_record);
         setRecord(Ion::Storage::Record());
-        StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;
       }

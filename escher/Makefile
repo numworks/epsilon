@@ -27,6 +27,7 @@ escher_src += $(addprefix escher/src/,\
   highlight_cell.cpp \
   gauge_view.cpp \
   image_view.cpp \
+  color_view.cpp \
   input_event_handler.cpp \
   invocation.cpp \
   input_view_controller.cpp \
@@ -42,6 +43,7 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_editable_text.cpp \
   message_table_cell_with_expression.cpp \
   message_table_cell_with_gauge.cpp \
+  message_table_cell_with_color.cpp \
   message_table_cell_with_message.cpp \
   message_table_cell_with_switch.cpp \
   message_text_view.cpp \

@@ -25,6 +25,7 @@
 #include <escher/expression_table_cell_with_expression.h>
 #include <escher/expression_view.h>
 #include <escher/gauge_view.h>
+#include <escher/color_view.h>
 #include <escher/highlight_cell.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
@@ -45,6 +46,7 @@
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/message_table_cell_with_gauge.h>
+#include <escher/message_table_cell_with_color.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/message_table_cell_with_switch.h>
 #include <escher/message_text_view.h>

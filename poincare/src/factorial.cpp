@@ -1,111 +1,131 @@
 #include <poincare/factorial.h>
-#include "layout/string_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/code_point_layout.h>
+#include <poincare/constant.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/parenthesis.h>
 #include <poincare/rational.h>
-#include <poincare/undefined.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
-#include <ion.h>
-extern "C" {
-#include <assert.h>
-}
+#include <poincare/undefined.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
-Factorial::Factorial(const Expression * argument, bool clone) :
-  StaticHierarchy<1>(&argument, clone)
-{
+// Property
+
+Expression FactorialNode::setSign(Sign s, ReductionContext reductionContext) {
+  assert(s == Sign::Positive);
+  return Factorial(this);
 }
 
-Expression::Type Factorial::type() const {
-  return Type::Factorial;
+bool FactorialNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
+    return true;
+  }
+  if (child.type() == Type::Conjugate) {
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
+  }
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Addition};
+  return child.isOfType(types, 4);
 }
 
-Expression * Factorial::clone() const {
-  Factorial * a = new Factorial(m_operands[0], true);
-  return a;
+// Layout
+
+bool FactorialNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
+  /*  2
+   * --- ! ---> [2/3]!
+   *  3
+   */
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
+    return true;
+  }
+  Type types[] = {Type::Division, Type::Power};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 2);
 }
 
-Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  if (operand(0)->type() == Type::Rational) {
-    Rational * r = static_cast<Rational *>(editableOperand(0));
-    if (!r->denominator().isOne()) {
-      return replaceWith(new Undefined(), true);
-    }
-    if (Integer(k_maxOperandValue).isLowerThan(r->numerator())) {
-      return this;
-    }
-    Rational * fact = new Rational(Integer::Factorial(r->numerator()));
-    return replaceWith(fact, true);
-  }
-  if (operand(0)->type() == Type::Symbol) {
-    Symbol * s = static_cast<Symbol *>(editableOperand(0));
-    if (s->name() == Ion::Charset::SmallPi || s->name() == Ion::Charset::Exponential) {
-      return replaceWith(new Undefined(), true);
-    }
-  }
-  return this;
+// Simplification
+
+Expression FactorialNode::shallowReduce(ReductionContext reductionContext) {
+  return Factorial(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  T n = c.a();
-  if (c.b() != 0 || std::isnan(n) || n != (int)n || n < 0) {
-    return Complex<T>::Float(NAN);
+Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  T n = c.real();
+  if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
+    return Complex<T>::RealUndefined();
   }
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {
     result *= (T)i;
     if (std::isinf(result)) {
-      return Complex<T>::Float(result);
+      return Complex<T>::Builder(result);
     }
   }
-  return Complex<T>::Float(std::round(result));
+  return Complex<T>::Builder(std::round(result));
 }
 
-ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
-  childrenLayouts[1] = new StringLayout("!", 1);
-  return new HorizontalLayout(childrenLayouts, 2);
+Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  HorizontalLayout result = HorizontalLayout::Builder();
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  int childrenCount = result.numberOfChildren();
+  result.addChildAtIndex(CodePointLayout::Builder('!'), childrenCount, childrenCount, nullptr);
+  return std::move(result);
 }
 
-int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  int numberOfChar = operand(0)->writeTextInBuffer(buffer, bufferSize);
-  if (numberOfChar >= bufferSize-1) {
+int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  int numberOfChar = SerializationHelper::SerializeChild(childAtIndex(0), this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  if ((numberOfChar < 0) || (numberOfChar >= bufferSize-1)) {
     return numberOfChar;
   }
-  buffer[numberOfChar++] = '!';
-  buffer[numberOfChar] = 0;
+  numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '!');
   return numberOfChar;
+}
+
+
+Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
+  }
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = c.convert<Rational>();
+    if (!r.isInteger() || r.sign() == ExpressionNode::Sign::Negative) {
+      return replaceWithUndefinedInPlace();
+    }
+    if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {
+      return *this;
+    }
+    Rational fact = Rational::Builder(Integer::Factorial(r.unsignedIntegerNumerator()));
+    assert(!fact.numeratorOrDenominatorIsInfinity()); // because fact < k_maxOperandValue!
+    replaceWithInPlace(fact);
+    return std::move(fact);
+  }
+  if (c.type() == ExpressionNode::Type::Constant) {
+    // e! = undef, i! = undef, pi! = undef
+    return replaceWithUndefinedInPlace();
+  }
+  return *this;
 }
 
 #if 0
 int Factorial::simplificationOrderGreaterType(const Expression * e) const {
-  if (SimplificationOrder(operand(0),e) == 0) {
+  if (SimplificationOrder(childAtIndex(0),e) == 0) {
     return 1;
   }
-  return SimplificationOrder(operand(0), e);
+  return SimplificationOrder(childAtIndex(0), e);
 }
 
 int Factorial::simplificationOrderSameType(const Expression * e) const {
-  return SimplificationOrder(operand(0), e->operand(0));
+  return SimplificationOrder(childAtIndex(0), e->childAtIndex(0));
 }
 #endif
 

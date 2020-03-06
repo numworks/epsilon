@@ -10,7 +10,7 @@ public:
 private:
   constexpr static KDCoordinate k_margin = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 };
 
 #endif

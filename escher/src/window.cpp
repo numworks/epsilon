@@ -4,11 +4,6 @@ extern "C" {
 #include <assert.h>
 }
 
-Window::Window() :
-  m_contentView(nullptr)
-{
-}
-
 void Window::redraw(bool force) {
   if (force) {
     markRectAsDirty(bounds());
@@ -36,9 +31,9 @@ View * Window::subviewAtIndex(int index) {
   return m_contentView;
 }
 
-void Window::layoutSubviews() {
+void Window::layoutSubviews(bool force) {
   if (m_contentView != nullptr) {
-    m_contentView->setFrame(bounds());
+    m_contentView->setFrame(bounds(), force);
   }
 }
 

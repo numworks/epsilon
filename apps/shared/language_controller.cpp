@@ -1,16 +1,18 @@
 #include "language_controller.h"
 #include "../global_preferences.h"
 #include "../apps_container.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 
 LanguageController::LanguageController(Responder * parentResponder, KDCoordinate topMargin) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, topMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this)
+  m_selectableTableView(this, this, this)
 {
+  m_selectableTableView.setTopMargin(topMargin);
+  m_selectableTableView.setBottomMargin(0);
   for (int i = 0; i < I18n::NumberOfLanguages; i++) {
-    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+    m_cells[i].setMessageFont(KDFont::LargeFont);
   }
 }
 
@@ -29,22 +31,26 @@ View * LanguageController::view() {
 }
 
 void LanguageController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void LanguageController::viewWillAppear() {
+  ViewController::viewWillAppear();
   resetSelection();
 }
 
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(selectedRow()+1));
+    /* We need to reload the whole title bar in order to translate both the
+     * "Settings" title and the degree preference. */
+    AppsContainer::sharedAppsContainer()->reloadTitleBarView();
     return true;
   }
   return false;
 }
 
-int LanguageController::numberOfRows() {
+int LanguageController::numberOfRows() const {
   return I18n::NumberOfLanguages;
 }
 
@@ -56,7 +62,7 @@ HighlightCell * LanguageController::reusableCell(int index) {
   return &m_cells[index];
 }
 
-int LanguageController::reusableCellCount() {
+int LanguageController::reusableCellCount() const {
   return I18n::NumberOfLanguages;
 }
 

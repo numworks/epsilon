@@ -25,10 +25,12 @@
 #undef expf
 #undef expm1f
 #undef fabsf
+#undef fmaxf
 #undef floorf
 #undef fmodf
 #undef frexpf
 #undef ldexpf
+#undef hypotf
 #undef lgammaf
 #undef lgammaf_r
 #undef log1pf
@@ -63,9 +65,11 @@
 #undef exp
 #undef expm1
 #undef fabs
+#undef fmax
 #undef floor
 #undef fmod
 #undef frexp
+#undef hypot
 #undef ldexp
 #undef lgamma
 #undef lgamma_r
@@ -115,6 +119,7 @@ inline constexpr float exp(float x) { return __builtin_expf(x); }
 inline constexpr float expm1(float x) { return __builtin_expm1f(x); }
 inline constexpr float fabs(float x) { return __builtin_fabsf(x); }
 inline constexpr float floor(float x) { return __builtin_floorf(x); }
+inline constexpr float fmax(float x, float y) { return __builtin_fmaxf(x, y); }
 inline constexpr float fmod(float x, float y) { return __builtin_fmodf(x, y); }
 inline constexpr float frexp(float x, int *exp) { return __builtin_frexpf(x, exp); }
 inline constexpr float ldexp(float x, int exp) { return __builtin_ldexpf(x, exp); }
@@ -161,8 +166,10 @@ inline constexpr double exp(double x) { return __builtin_exp(x); }
 inline constexpr double expm1(double x) { return __builtin_expm1(x); }
 inline constexpr double fabs(double x) { return __builtin_fabs(x); }
 inline constexpr double floor(double x) { return __builtin_floor(x); }
-inline constexpr double fmod(double x, double y) { return __builtin_fmod(x, y); }
+inline constexpr double fmax(double x, double y) { return __builtin_fmax(x, y); }
+inline constexpr double fmod(double x, double y) { return __builtin_ (x, y); }
 inline constexpr double frexp(double x, int *exp) { return __builtin_frexp(x, exp); }
+inline constexpr double hypot(double x, double y) { return __builtin_hypot(x, y); }
 inline constexpr double ldexp(double x, int exp) { return __builtin_scalbn(x, exp); }
 inline constexpr double lgamma(double x) { return __builtin_lgamma(x); }
 inline constexpr double lgamma_r(double x, int *signgamp) { return __builtin_lgamma_r(x, signgamp); }

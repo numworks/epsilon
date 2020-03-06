@@ -4,18 +4,18 @@
 #include "helpers.h"
 
 QUIZ_CASE(liba_stdint_size) {
-  assert(sizeof(uint8_t) == 1);
-  assert(sizeof(uint16_t) == 2);
-  assert(sizeof(uint32_t) == 4);
-  assert(sizeof(uint64_t) == 8);
+  quiz_assert(sizeof(uint8_t) == 1);
+  quiz_assert(sizeof(uint16_t) == 2);
+  quiz_assert(sizeof(uint32_t) == 4);
+  quiz_assert(sizeof(uint64_t) == 8);
 
-  assert(sizeof(int8_t) == 1);
-  assert(sizeof(int16_t) == 2);
-  assert(sizeof(int32_t) == 4);
-  assert(sizeof(int64_t) == 8);
+  quiz_assert(sizeof(int8_t) == 1);
+  quiz_assert(sizeof(int16_t) == 2);
+  quiz_assert(sizeof(int32_t) == 4);
+  quiz_assert(sizeof(int64_t) == 8);
 
-  assert(sizeof(uintptr_t) == sizeof(void *));
-  assert(sizeof(intptr_t) == sizeof(void *));
+  quiz_assert(sizeof(uintptr_t) == sizeof(void *));
+  quiz_assert(sizeof(intptr_t) == sizeof(void *));
 }
 
 QUIZ_CASE(liba_stdint_signedness) {

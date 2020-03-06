@@ -1,44 +1,41 @@
 #include <poincare/variable_context.h>
 #include <poincare/preferences.h>
-#include <assert.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
+
 #include <cmath>
 
 namespace Poincare {
 
 template<typename T>
-VariableContext<T>::VariableContext(char name, Context * parentContext) :
-  m_name(name),
-  m_value(Complex<T>::Float(NAN)),
-  m_parentContext(parentContext)
-{
+void VariableContext::setApproximationForVariable(T value) {
+  m_value = Float<T>::Builder(value);
 }
 
-template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
-  if (symbol->name() == m_name) {
-    if (expression == nullptr) {
+void VariableContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
+  if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
+    assert(symbol.type() == ExpressionNode::Type::Symbol);
+    if (expression.isUninitialized()) {
       return;
     }
-    if (expression->type() == Expression::Type::Complex) {
-      m_value = Complex<T>::Float(static_cast<const Complex<T> *>(expression)->toScalar());
-    } else {
-      m_value = Complex<T>::Float(NAN);
+    m_value = expression.clone();
+  } else {
+    return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
+  }
+}
+
+const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
+  if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
+    if (symbol.type() == ExpressionNode::Type::Symbol) {
+      return clone ? m_value.clone() : m_value;
     }
+    return Undefined::Builder();
   } else {
-    m_parentContext->setExpressionForSymbolName(expression, symbol, context);
+    return ContextWithParent::expressionForSymbolAbstract(symbol, clone);
   }
 }
 
-template<typename T>
-const Expression * VariableContext<T>::expressionForSymbol(const Symbol * symbol) {
-  if (symbol->name() == m_name) {
-    return &m_value;
-  } else {
-    return m_parentContext->expressionForSymbol(symbol);
-  }
-}
-
-template class Poincare::VariableContext<float>;
-template class Poincare::VariableContext<double>;
+template void VariableContext::setApproximationForVariable(float);
+template void VariableContext::setApproximationForVariable(double);
 
 }

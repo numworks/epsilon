@@ -1,50 +1,39 @@
 #include <poincare/naperian_logarithm.h>
-#include <poincare/symbol.h>
+#include <poincare/constant.h>
 #include <poincare/logarithm.h>
-#include <poincare/simplification_engine.h>
-extern "C" {
-#include <assert.h>
-#include <stdlib.h>
-}
-#include <ion.h>
-#include <cmath>
-#include "layout/horizontal_layout.h"
-#include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+
 
 namespace Poincare {
 
-Expression::Type NaperianLogarithm::type() const {
-  return Type::NaperianLogarithm;
+constexpr Expression::FunctionHelper NaperianLogarithm::s_functionHelper;
+
+int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::s_functionHelper.numberOfChildren(); }
+
+Layout NaperianLogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
+}
+int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
 }
 
-Expression * NaperianLogarithm::clone() const {
-  NaperianLogarithm * a = new NaperianLogarithm(m_operands, true);
-  return a;
+Expression NaperianLogarithmNode::shallowReduce(ReductionContext reductionContext) {
+  return NaperianLogarithm(this).shallowReduce(reductionContext);
 }
 
-Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  const Expression * logOperands[2] = {operand(0)->clone(), new Symbol(Ion::Charset::Exponential)};
-  Logarithm * l = new Logarithm(logOperands, 2, false);
-  replaceWith(l, true);
-  return l->shallowReduce(context, angleUnit);
-}
 
-template<typename T>
-Complex<T> NaperianLogarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+Expression NaperianLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
   }
-  return Complex<T>::Float(std::log(c.a()));
+  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder(UCodePointScriptSmallE));
+  replaceWithInPlace(l);
+  return l.shallowReduce(reductionContext);
 }
 
 }

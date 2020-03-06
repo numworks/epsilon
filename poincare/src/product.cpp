@@ -1,6 +1,8 @@
 #include <poincare/product.h>
 #include <poincare/multiplication.h>
-#include "layout/product_layout.h"
+#include <poincare/product_layout.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -9,45 +11,43 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Product::type() const {
-  return Type::Product;
+constexpr Expression::FunctionHelper Product::s_functionHelper;
+
+Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
+  return ProductLayout::Builder(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
 }
 
-Expression * Product::clone() const {
-  Product * a = new Product(m_operands, true);
-  return a;
-}
-
-const char * Product::name() const {
-  return "product";
-}
-
-int Product::emptySequenceValue() const {
-  return 1;
-}
-
-ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
-  return new ProductLayout(subscriptLayout, superscriptLayout, argumentLayout);
+int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::s_functionHelper.name());
 }
 
 template<typename T>
-Expression * Product::templatedApproximateWithNextTerm(Expression * a, Expression * b) const {
-  if (a->type() == Type::Complex && b->type() == Type::Complex) {
-    Complex<T> * c = static_cast<Complex<T> *>(a);
-    Complex<T> * d = static_cast<Complex<T> *>(b);
-    return new Complex<T>(Multiplication::compute(*c, *d));
+Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const {
+  if (a.type() == EvaluationNode<T>::Type::Complex && b.type() == EvaluationNode<T>::Type::Complex) {
+    Complex<T> c = static_cast<Complex<T>&>(a);
+    Complex<T> d = static_cast<Complex<T>&>(b);
+    return Complex<T>::Builder(c.stdComplex()*d.stdComplex());
   }
-  if (a->type() == Type::Complex) {
-    Complex<T> * c = static_cast<Complex<T> *>(a);
-    assert(b->type() == Type::Matrix);
-    Matrix * m = static_cast<Matrix *>(b);
-    return Multiplication::computeOnComplexAndMatrix(c, m);
+  if (a.type() == EvaluationNode<T>::Type::Complex) {
+    Complex<T> c = static_cast<Complex<T> &>(a);
+    assert(b.type() == EvaluationNode<T>::Type::MatrixComplex);
+    MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(b);
+    return MultiplicationNode::computeOnComplexAndMatrix(c.stdComplex(), m, complexFormat);
   }
-  assert(a->type() == Type::Matrix);
-  assert(b->type() == Type::Matrix);
-  Matrix * m = static_cast<Matrix *>(a);
-  Matrix * n = static_cast<Matrix *>(b);
-  return Multiplication::computeOnMatrices<T>(m, n);
+  assert(a.type() == EvaluationNode<T>::Type::MatrixComplex);
+  assert(b.type() == EvaluationNode<T>::Type::MatrixComplex);
+  MatrixComplex<T> m = static_cast<MatrixComplex<T>&>(a);
+  MatrixComplex<T> n = static_cast<MatrixComplex<T>&>(b);
+  return MultiplicationNode::computeOnMatrices<T>(m, n, complexFormat);
+}
+
+Expression Product::UntypedBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::Matrix);
+  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+    // Second parameter must be a Symbol.
+    return Expression();
+  }
+  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
 }

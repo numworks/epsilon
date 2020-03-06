@@ -1,234 +1,391 @@
 #include <poincare/logarithm.h>
-#include <poincare/division.h>
-#include <poincare/undefined.h>
-#include <poincare/rational.h>
 #include <poincare/addition.h>
-#include <poincare/multiplication.h>
-#include <poincare/symbol.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
-#include <poincare/power.h>
+#include <poincare/constant.h>
+#include <poincare/division.h>
+#include <poincare/infinity.h>
+#include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
-#include <poincare/approximation_engine.h>
-#include <poincare/simplification_engine.h>
-#include <cmath>
+#include <poincare/power.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/undefined.h>
+#include <poincare/unreal.h>
 #include <ion.h>
-extern "C" {
 #include <assert.h>
+#include <cmath>
 #include <stdlib.h>
-}
-#include "layout/baseline_relative_layout.h"
-#include "layout/horizontal_layout.h"
-#include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
+#include <utility>
 
 namespace Poincare {
 
-Expression::Type Logarithm::type() const {
-  return Type::Logarithm;
+constexpr Expression::FunctionHelper Logarithm::s_functionHelper;
+
+constexpr Expression::FunctionHelper CommonLogarithm::s_functionHelper;
+
+template<>
+int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::s_functionHelper.numberOfChildren(); }
+
+template<>
+int LogarithmNode<2>::numberOfChildren() const { return Logarithm::s_functionHelper.numberOfChildren(); }
+
+template<>
+Layout LogarithmNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, CommonLogarithm::s_functionHelper.name());
 }
 
-Expression * Logarithm::clone() const {
-  return new Logarithm(operands(), numberOfOperands(), true);
+template<>
+Layout LogarithmNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Logarithm(
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-template<typename T>
-Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
-  }
-  return Complex<T>::Float(std::log10(c.a()));
+template<int T>
+int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, T == 1 ? CommonLogarithm::s_functionHelper.name() : Logarithm::s_functionHelper.name());
 }
 
-Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
+template<>
+void LogarithmNode<2>::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  Logarithm(this).deepReduceChildren(reductionContext);
+}
+
+template<>
+void LogarithmNode<1>::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  return Expression(this).defaultDeepReduceChildren(reductionContext);
+}
+
+template<>
+Expression LogarithmNode<1>::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  return CommonLogarithm(this).shallowReduce(reductionContext);
+}
+
+template<>
+Expression LogarithmNode<2>::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  return Logarithm(this).shallowReduce(reductionContext);
+}
+
+template<>
+Expression LogarithmNode<1>::shallowBeautify(ReductionContext reductionContext) {
+  return CommonLogarithm(this);
+}
+
+template<>
+Expression LogarithmNode<2>::shallowBeautify(ReductionContext reductionContext) {
+  return Logarithm(this).shallowBeautify();
+}
+
+template<>
+template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return ApproximationHelper::Map(this, context, complexFormat, angleUnit, computeOnComplex<U>);
+}
+
+template<>
+template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<U> x = childAtIndex(0)->approximate(U(), context, complexFormat, angleUnit);
+  Evaluation<U> n = childAtIndex(1)->approximate(U(), context, complexFormat, angleUnit);
+  std::complex<U> result = std::complex<U>(NAN, NAN);
+  if (x.type() == EvaluationNode<U>::Type::Complex && n.type() == EvaluationNode<U>::Type::Complex) {
+    std::complex<U> xc = (static_cast<Complex<U>&>(x)).stdComplex();
+    std::complex<U> nc = (static_cast<Complex<U>&>(n)).stdComplex();
+    result = DivisionNode::compute<U>(computeOnComplex(xc, complexFormat, angleUnit).stdComplex(), computeOnComplex(nc, complexFormat, angleUnit).stdComplex(), complexFormat).stdComplex();
   }
-  Expression * op = editableOperand(0);
-#if MATRIX_EXACT_REDUCING
-  if (numberOfOperands() == 1 && op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+  return Complex<U>::Builder(result);
+}
+
+void Logarithm::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  /* We reduce the base first because of the case log(x1^y, x2) with x1 == x2.
+   * When reducing x1^y, we want to be able to compare x1 of x2 so x2 need to be
+   * reduced first. */
+  childAtIndex(1).deepReduce(reductionContext);
+  childAtIndex(0).deepReduce(reductionContext);
+}
+
+Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
   }
-  if (numberOfOperands() == 2 && (op->type() == Type::Matrix || operand(1)->type() == Type::Matrix)) {
-    return replaceWith(new Undefined(), true);
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
   }
-#endif
-  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
-    return replaceWith(new Undefined(), true);
+  Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
+  replaceWithInPlace(log);
+  return log.shallowReduce(reductionContext);
+}
+
+Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
   }
-  // log(x,x)->1
-  if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
-    return replaceWith(new Rational(1), true);
+
+  if (childAtIndex(1).deepIsMatrix(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
   }
-  /* We do not apply some rules if the parent node is a power of b. In this
-   * case there is a simplication of form e^ln(3^(1/2))->3^(1/2) */
+
+  Expression c = childAtIndex(0);
+  if (c.sign(reductionContext.context()) == ExpressionNode::Sign::Negative
+      || childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative)
+  {
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      Expression result = Unreal::Builder();
+      replaceWithInPlace(result);
+      return result;
+    }
+    return *this;
+  }
+  Expression f = simpleShallowReduce(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  if (f.type() != ExpressionNode::Type::Logarithm) {
+    return f;
+  }
+
+  /* We do not apply some rules if:
+   * - the parent node is a power of b. In this case there is a simplication of
+   *   form e^ln(3^(1/2))->3^(1/2).
+   * - the reduction is being BottomUp. In this case, we do not yet have any
+   *   information on the parent which could later be a power of b.
+   */
   bool letLogAtRoot = parentIsAPowerOfSameBase();
+  if (letLogAtRoot) {
+    return *this;
+  }
+
+  // log(+inf, a) ?
+  if (c.type() == ExpressionNode::Type::Infinity && c.sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+    Expression base = childAtIndex(1);
+    // log(+inf, a) --> ±inf with a rational and a > 0
+    if (base.type() == ExpressionNode::Type::Rational && !static_cast<Rational&>(base).isNegative() && !static_cast<Rational&>(base).isZero()) {
+      // log(+inf,a) with a < 1 --> -inf
+      // log(+inf,a) with a > 1 --> inf
+      if (static_cast<Rational&>(base).signedIntegerNumerator().isLowerThan(static_cast<Rational&>(base).integerDenominator())) {
+        c = c.setSign(ExpressionNode::Sign::Negative, reductionContext);
+      }
+      replaceWithInPlace(c);
+      return c;
+    } else if (base.type() == ExpressionNode::Type::Constant && (static_cast<Constant &>(base).isExponential() || static_cast<Constant &>(base).isPi())) {
+      replaceWithInPlace(c);
+      return c;
+    }
+  }
+
   // log(x^y, b)->y*log(x, b) if x>0
-  if (!letLogAtRoot && op->type() == Type::Power && op->operand(0)->sign() == Sign::Positive) {
-    Power * p = static_cast<Power *>(op);
-    Expression * x = p->editableOperand(0);
-    Expression * y = p->editableOperand(1);
-    p->detachOperands();
-    replaceOperand(p, x, true);
-    Expression * newLog = shallowReduce(context, angleUnit);
-    newLog = newLog->replaceWith(new Multiplication(y, newLog->clone(), false), true);
-    return newLog->shallowReduce(context, angleUnit);
+  if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+    Power p = static_cast<Power &>(c);
+    Expression x = p.childAtIndex(0);
+    Expression y = p.childAtIndex(1);
+    replaceChildInPlace(p, x);
+    Multiplication mult = Multiplication::Builder(y);
+    replaceWithInPlace(mult);
+    mult.addChildAtIndexInPlace(*this, 1, 1); // --> y*log(x,b)
+    shallowReduce(reductionContext); // reduce log (ie log(e, e) = 1)
+    return mult.shallowReduce(reductionContext);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
-  if (!letLogAtRoot && op->type() == Type::Multiplication) {
-    Addition * a = new Addition();
-    for (int i = 0; i<op->numberOfOperands()-1; i++) {
-      Expression * factor = op->editableOperand(i);
-      if (factor->sign() == Sign::Positive) {
-        Expression * newLog = clone();
-        static_cast<Multiplication *>(op)->removeOperand(factor, false);
-        newLog->replaceOperand(newLog->editableOperand(0), factor, true);
-        a->addOperand(newLog);
-        newLog->shallowReduce(context, angleUnit);
+  if (c.type() == ExpressionNode::Type::Multiplication) {
+    Addition a = Addition::Builder();
+    for (int i = 0; i < c.numberOfChildren()-1; i++) {
+      Expression factor = c.childAtIndex(i);
+      if (factor.sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+        Expression newLog = clone();
+        static_cast<Multiplication &>(c).removeChildInPlace(factor, factor.numberOfChildren());
+        newLog.replaceChildAtIndexInPlace(0, factor);
+        a.addChildAtIndexInPlace(newLog, a.numberOfChildren(), a.numberOfChildren());
+        newLog.shallowReduce(reductionContext);
       }
     }
-    if (a->numberOfOperands() > 0) {
-      op->shallowReduce(context, angleUnit);
-      Expression * reducedLastLog = shallowReduce(context, angleUnit);
-      reducedLastLog->replaceWith(a, false);
-      a->addOperand(reducedLastLog);
-      return a->shallowReduce(context, angleUnit);
-    } else {
-      delete a;
+    if (a.numberOfChildren() > 0) {
+      c.shallowReduce(reductionContext);
+      Expression reducedLastLog = shallowReduce(reductionContext);
+      reducedLastLog.replaceWithInPlace(a);
+      a.addChildAtIndexInPlace(reducedLastLog, a.numberOfChildren(), a.numberOfChildren());
+      return a.shallowReduce(reductionContext);
     }
   }
-
-  if (op->type() == Type::Rational) {
-    const Rational * r = static_cast<const Rational *>(operand(0));
-    // log(0) = undef
-    if (r->isZero()) {
-      return replaceWith(new Undefined(), true);
-    }
-    // log(1) = 0;
-    if (r->isOne()) {
-      return replaceWith(new Rational(0), true);
-    }
-    // log(10) ->1
-    if (numberOfOperands() == 1 && r->isTen()) {
-      return replaceWith(new Rational(1), true);
+  // log(r) with r Rational
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = static_cast<Rational &>(c);
+    Addition a = Addition::Builder();
+    // if the log base is Integer: log_b(r) = c + log_b(r') with r = b^c*r'
+    if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isInteger()) {
+      Integer b = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
+      Integer newNumerator = simplifyLogarithmIntegerBaseInteger(r.signedIntegerNumerator(), b, a, false);
+      Integer newDenomitor = simplifyLogarithmIntegerBaseInteger(r.integerDenominator(), b, a, true);
+      r = Rational::Builder(newNumerator, newDenomitor);
     }
     // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
-    if (!letLogAtRoot) {
-      Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
-      Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
-      Addition * a = new Addition(n, d, false);
-      replaceWith(a, true);
-      return a->shallowReduce(context, angleUnit);
+    a.addChildAtIndexInPlace(splitLogarithmInteger(r.signedIntegerNumerator(), false, reductionContext), a.numberOfChildren(), a.numberOfChildren());
+    a.addChildAtIndexInPlace(splitLogarithmInteger(r.integerDenominator(), true, reductionContext), a.numberOfChildren(), a.numberOfChildren());
+    replaceWithInPlace(a);
+    return a.shallowReduce(reductionContext);
+  }
+
+  // log(m) with m Matrix
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
+  }
+
+  return *this;
+}
+
+Expression Logarithm::simpleShallowReduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression c = childAtIndex(0);
+  Expression b = childAtIndex(1);
+  // log(0,0)->Undefined
+  if (c.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero() && static_cast<Rational &>(c).isZero()) {
+    return replaceWithUndefinedInPlace();
+  }
+  // log(x,1)->Undefined
+  if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isOne()) {
+    return replaceWithUndefinedInPlace();
+  }
+  bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, context);
+  // log(x,x)->1 with x != inf and log(inf,inf) = undef
+  if (c.isIdenticalTo(b)) {
+    Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(1).convert<Expression>();
+    replaceWithInPlace(result);
+    return result;
+  }
+  // log(x,0)->0 with x != inf and log(inf,0) = undef
+  if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero()) {
+    Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(0).convert<Expression>();
+    replaceWithInPlace(result);
+    return result;
+  }
+
+  if (c.type() == ExpressionNode::Type::Rational) {
+    const Rational r = static_cast<Rational &>(c);
+    // log(0, x) = -inf if x > 1 && x != inf || inf x < 1 || undef if x < 0
+    if (r.isZero()) {
+      bool infiniteBase = b.recursivelyMatches(Expression::IsInfinity, context);
+      // Special case: log(0,inf) -> undef
+      if (infiniteBase) {
+        return replaceWithUndefinedInPlace();
+      }
+      bool isNegative = true;
+      Expression result;
+      Evaluation<float> baseApproximation = b.node()->approximate(1.0f, context, complexFormat, angleUnit);
+      std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
+      if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
+        result = Undefined::Builder();
+      }
+      isNegative = logDenominator.real() > 0.0;
+      result = result.isUninitialized() ? Infinity::Builder(isNegative) : result;
+      replaceWithInPlace(result);
+      return result;
+    }
+    // log(1) = 0;
+    if (r.isOne()) {
+      Expression result = Rational::Builder(0);
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  return this;
+  return *this;
 }
 
 bool Logarithm::parentIsAPowerOfSameBase() const {
   // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
-  const Expression * parentExpression = parent();
-  bool thisIsPowerExponent = parentExpression->type() == Type::Power ? parentExpression->operand(1) == this : false;
-  if (parentExpression->type() == Type::Parenthesis) {
-    const Expression * parentParentExpression = parentExpression->parent();
-    if (parentExpression == nullptr) {
-      return false;
-    }
-    thisIsPowerExponent = parentParentExpression->type() == Type::Power ? parentParentExpression->operand(1) == parentExpression : false;
-    parentExpression = parentParentExpression;
+  Expression parentExpression = parent();
+  Expression logGroup = *this;
+  if (!parentExpression.isUninitialized() && parentExpression.type() == ExpressionNode::Type::Parenthesis) {
+    logGroup = parentExpression;
+    parentExpression = parentExpression.parent();
   }
+  if (parentExpression.isUninitialized()) {
+    return false;
+  }
+  bool thisIsPowerExponent = parentExpression.type() == ExpressionNode::Type::Power ? parentExpression.childAtIndex(1) == logGroup : false;
   if (thisIsPowerExponent) {
-    const Expression * powerOperand0 = parentExpression->operand(0);
-    if (numberOfOperands() == 1) {
-      if (powerOperand0->type() == Type::Rational && static_cast<const Rational *>(powerOperand0)->isTen()) {
-        return true;
-      }
-    }
-    if (numberOfOperands() == 2) {
-      if (powerOperand0->isIdenticalTo(operand(1))){
-        return true;
-      }
+    Expression powerOperand0 = parentExpression.childAtIndex(0);
+    // powerOperand0 has already been reduced so can be compared to childAtIndex(1)
+    if (powerOperand0.isIdenticalTo(childAtIndex(1))) {
+      return true;
     }
   }
   return false;
 }
 
-Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit) {
+Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator) {
+  // log_b(i) = c+ log_b(i') with i = b^c*i'
+  assert(!i.isNegative() && !base.isNegative());
+  assert(!i.isZero() && !base.isZero() && !base.isOne());
+  IntegerDivision div = Integer::Division(i, base);
+  while (!div.quotient.isOverflow() && div.remainder.isZero()) {
+    i = div.quotient;
+    a.addChildAtIndexInPlace(isDenominator ? Rational::Builder(-1) : Rational::Builder(1), a.numberOfChildren(), a.numberOfChildren()); // a++
+    div = Integer::Division(i, base);
+  }
+  return i;
+}
+
+Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext) {
   assert(!i.isZero());
   assert(!i.isNegative());
-  if (i.isOne()) {
-    return new Rational(0);
+  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
+  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
+  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  if (numberOfPrimeFactors == 0) {
+    return Rational::Builder(0);
   }
-  assert(!i.isOne());
-  if (Arithmetic::k_primorial32.isLowerThan(i)) {
-    /* We do not want to break i in prime factor because it might be take too
-     * many factors... More than k_maxNumberOfPrimeFactors. */
-    Expression * e = clone();
-    e->replaceOperand(e->operand(0), new Rational(i), true);
+  if (numberOfPrimeFactors < 0) {
+    /* We could not break i in prime factor (either it might take too many
+     * factors or too much time). */
+    Expression e = clone();
+    e.replaceChildAtIndexInPlace(0, Rational::Builder(i));
     if (!isDenominator) {
       return e;
     }
-    Multiplication * m = new Multiplication(new Rational(-1), e, false);
-    return m;
+    Multiplication m = Multiplication::Builder(Rational::Builder(-1), e);
+    return std::move(m);
   }
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  Addition * a = new Addition();
-  int index = 0;
-  while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
+  Addition a = Addition::Builder();
+  for (int index = 0; index < numberOfPrimeFactors; index++) {
     if (isDenominator) {
       coefficients[index].setNegative(true);
     }
-    Expression * e = clone();
-    e->replaceOperand(e->operand(0), new Rational(factors[index]), true);
-    Multiplication * m = new Multiplication(new Rational(coefficients[index]), e, false);
-    a->addOperand(m);
-    m->shallowReduce(context, angleUnit);
-    index++;
+    Logarithm e = clone().convert<Logarithm>();
+    e.replaceChildAtIndexInPlace(0, Rational::Builder(factors[index]));
+    Multiplication m = Multiplication::Builder(Rational::Builder(coefficients[index]), e);
+    e.simpleShallowReduce(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+    m.shallowReduce(reductionContext);
   }
-  return a;
+  return std::move(a);
 }
 
-Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) {
-  Symbol e = Symbol(Ion::Charset::Exponential);
-  const Expression * op = operand(0);
-  Rational one(1);
-  if (numberOfOperands() == 2 && (operand(1)->isIdenticalTo(&e) || operand(1)->isIdenticalTo(&one))) {
-    detachOperand(op);
-    Expression * nl = operand(1)->isIdenticalTo(&e) ? static_cast<Expression *>(new NaperianLogarithm(op, false)) : static_cast<Expression *> (new Logarithm(op, false));
-    return replaceWith(nl, true);
+Expression Logarithm::shallowBeautify() {
+  assert(numberOfChildren() == 2);
+  Constant e = Constant::Builder(UCodePointScriptSmallE);
+  if (childAtIndex(1).isIdenticalTo(e)) {
+    NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
+    replaceWithInPlace(np);
+    return std::move(np);
   }
-  return this;
+  Rational ten = Rational::Builder(10);
+  if (childAtIndex(1).isIdenticalTo(ten)) {
+    CommonLogarithm l = CommonLogarithm::Builder(childAtIndex(0));
+    replaceWithInPlace(l);
+    return std::move(l);
+  }
+  return *this;
 }
 
-template<typename T>
-Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  if (numberOfOperands() == 1) {
-    return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
-  }
-  Expression * x = operand(0)->approximate<T>(context, angleUnit);
-  Expression * n = operand(1)->approximate<T>(context, angleUnit);
-  Complex<T> result = Complex<T>::Float(NAN);
-  if (x->type() == Type::Complex && n->type() == Type::Complex) {
-    Complex<T> * xc = static_cast<Complex<T> *>(x);
-    Complex<T> * nc = static_cast<Complex<T> *>(n);
-    result = Division::compute<T>(computeOnComplex(*nc, angleUnit), computeOnComplex(*xc, angleUnit));
-  }
-  delete x;
-  delete n;
-  return new Complex<T>(result);
-}
-
-ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  if (numberOfOperands() == 1) {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
-  }
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout("log", strlen("log")), operand(1)->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[1] = new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
-  return new HorizontalLayout(childrenLayouts, 2);
-}
+template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template int LogarithmNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+template int LogarithmNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 
 }

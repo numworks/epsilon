@@ -20,8 +20,12 @@ public:
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
+  const char * text() const override { return m_scriptNodeView.text(); }
 
+  static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
+  constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
+
 protected:
   class ScriptNodeView : public HighlightCell {
   public:
@@ -30,8 +34,11 @@ protected:
     void setScriptStore(ScriptStore * scriptStore);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     virtual KDSize minimalSizeForOptimalDisplay() const override;
+    const char * text() const override {
+      return m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName();
+    }
   private:
-    constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Small;
+    constexpr static const KDFont * k_font = KDFont::SmallFont;
     constexpr static KDCoordinate k_verticalMargin = 7;
     ScriptNode * m_scriptNode;
     ScriptStore * m_scriptStore;

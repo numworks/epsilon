@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "keyboard_view.h"
-#include "screen_test_controller.h"
 
 namespace HardwareTest {
 
@@ -15,7 +14,6 @@ public:
   void viewWillAppear() override;
 private:
   KeyboardView m_keyboardView;
-  ScreenTestController m_screenTestController;
 };
 
 }

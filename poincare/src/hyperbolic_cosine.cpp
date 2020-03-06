@@ -1,50 +1,25 @@
 #include <poincare/hyperbolic_cosine.h>
-#include <poincare/complex.h>
-#include <poincare/addition.h>
-#include <poincare/power.h>
-#include <poincare/division.h>
-#include <poincare/opposite.h>
-#include <poincare/simplification_engine.h>
-extern "C" {
-#include <assert.h>
-}
-#include <cmath>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-Expression::Type HyperbolicCosine::type() const {
-  return Type::HyperbolicCosine;
+constexpr Expression::FunctionHelper HyperbolicCosine::s_functionHelper;
+
+Layout HyperbolicCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(HyperbolicCosine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicCosine::s_functionHelper.name());
 }
 
-Expression * HyperbolicCosine::clone() const {
-  HyperbolicCosine * a = new HyperbolicCosine(m_operands, true);
-  return a;
-}
-
-Expression * HyperbolicCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  return this;
+int HyperbolicCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicCosine::s_functionHelper.name());
 }
 
 template<typename T>
-Complex<T> HyperbolicCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() == 0) {
-    return Complex<T>::Float(std::cosh(c.a()));
-  }
-  Complex<T> e = Complex<T>::Float(M_E);
-  Complex<T> exp1 = Power::compute(e, c);
-  Complex<T> exp2 = Power::compute(e, Complex<T>::Cartesian(-c.a(), -c.b()));
-  Complex<T> sum = Addition::compute(exp1, exp2);
-  return Division::compute(sum, Complex<T>::Float(2));
+Complex<T> HyperbolicCosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(std::cosh(c), c));
 }
+
+template Complex<float> Poincare::HyperbolicCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Complex<double> Poincare::HyperbolicCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

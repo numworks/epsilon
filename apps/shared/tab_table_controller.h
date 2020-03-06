@@ -8,22 +8,18 @@ namespace Shared {
 /* Tab table controller is a controller whose view is a selectable table view
  * and whose one ancestor is a tab */
 
-class TabTableController : public DynamicViewController, public SelectableTableViewDelegate, public SelectableTableViewDataSource {
+class TabTableController : public ViewController, public SelectableTableViewDataSource {
 public:
-  TabTableController(Responder * parentResponder, TableViewDataSource * dataSource);
+  TabTableController(Responder * parentResponder);
+  View * view() override { return selectableTableView(); }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
-  SelectableTableView * selectableTableView();
-  virtual View * loadView() override;
-  void unloadView(View * view) override;
+  virtual SelectableTableView * selectableTableView() = 0;
   virtual Responder * tabController() const = 0;
-private:
-  TableViewDataSource * m_dataSource;
 };
 
 }
 
 #endif
-

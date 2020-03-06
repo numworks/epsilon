@@ -1,30 +1,34 @@
-objs += $(addprefix ion/src/blackbox/, \
-  boot.o \
-  ion.o \
-  display.o \
-  events.o \
+ion_src += $(addprefix ion/src/blackbox/, \
+  boot.cpp \
+  ion.cpp \
+  display.cpp \
+  events.cpp \
 )
 
-objs += $(addprefix ion/src/shared/, \
-  console_line.o \
-  console_stdio.o \
-  crc32.o \
-  events.o \
-  power.o \
-  dummy/backlight.o \
-  dummy/battery.o \
-  dummy/events_modifier.o \
-  dummy/fcc_id.o \
-  dummy/led.o \
-  dummy/keyboard.o \
-  dummy/serial_number.o \
-  dummy/usb.o \
+ion_src += $(addprefix ion/src/shared/, \
+  console_line.cpp \
+  console_stdio.cpp \
+  crc32.cpp \
+  events.cpp \
+  power.cpp \
+  random.cpp \
+  timing.cpp \
+  dummy/backlight.cpp \
+  dummy/battery.cpp \
+  dummy/display.cpp \
+  dummy/events_modifier.cpp \
+  dummy/exam_mode.cpp \
+  dummy/fcc_id.cpp \
+  dummy/led.cpp \
+  dummy/keyboard.cpp \
+  dummy/serial_number.cpp \
+  dummy/stack.cpp \
+  dummy/usb.cpp \
 )
 
-ion/src/shared/log_printf.o: SFLAGS=-Iion/include
-ion/src/shared/console_stdio.o: SFLAGS=-Iion/include
-ion/src/shared/events_stdin.o: SFLAGS=-Iion/include
-ion/src/shared/random.o: SFLAGS=-Iion/include
+$(call object_for,ion/src/shared/log_printf.cpp): SFLAGS=-Iion/include
+$(call object_for,ion/src/shared/console_stdio.cpp): SFLAGS=-Iion/include
+$(call object_for,ion/src/shared/events_stdin.cpp): SFLAGS=-Iion/include
 
 SFLAGS += `libpng-config --cflags`
 LDFLAGS += `libpng-config --ldflags`

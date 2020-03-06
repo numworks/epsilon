@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -39,5 +39,7 @@ const mp_obj_module_t mp_module_array = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t*)&mp_module_array_globals,
 };
+
+MP_REGISTER_MODULE(MP_QSTR_array, mp_module_array, MICROPY_PY_ARRAY);
 
 #endif

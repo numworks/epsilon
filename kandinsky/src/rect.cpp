@@ -1,5 +1,8 @@
 #include <kandinsky/rect.h>
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 KDRect::KDRect(KDPoint p, KDSize s) :
   m_x(p.x()), m_y(p.y()),
   m_width(s.width()), m_height(s.height())
@@ -35,10 +38,10 @@ KDRect KDRect::intersectedWith(const KDRect & other) const {
     return KDRectZero;
   }
 
-  KDCoordinate intersectionLeft = max(left(), other.left());
-  KDCoordinate intersectionRight = min(right(), other.right());
-  KDCoordinate intersectionTop = max(top(), other.top());
-  KDCoordinate intersectionBottom = min(bottom(), other.bottom());
+  KDCoordinate intersectionLeft = maxCoordinate(left(), other.left());
+  KDCoordinate intersectionRight = minCoordinate(right(), other.right());
+  KDCoordinate intersectionTop = maxCoordinate(top(), other.top());
+  KDCoordinate intersectionBottom = minCoordinate(bottom(), other.bottom());
 
   return KDRect(
       intersectionLeft,
@@ -54,8 +57,8 @@ void computeUnionBound(KDCoordinate size1, KDCoordinate size2,
 {
   if (size1 != 0) {
     if (size2 != 0) {
-      *outputMin = min(min1, min2);
-      *outputMax = max(max1, max2);
+      *outputMin = minCoordinate(min1, min2);
+      *outputMax = maxCoordinate(max1, max2);
     } else {
       *outputMin = min1;
       *outputMax = max1;
@@ -101,8 +104,67 @@ KDRect KDRect::unionedWith(const KDRect & other) const {
     );
 }
 
+KDRect KDRect::differencedWith(const KDRect & other) const {
+  if (this->isEmpty() || other.isEmpty()) {
+    return *this;
+  }
+
+  KDRect intersection = intersectedWith(other);
+  if (intersection.isEmpty()) {
+    return *this;
+  }
+
+  if (intersection == *this) {
+    return KDRectZero;
+  }
+
+  KDCoordinate resultLeft = left();
+  KDCoordinate resultTop = top();
+  KDCoordinate resultRight = right();
+  KDCoordinate resultBottom = bottom();
+
+  if (intersection.height() == height()) {
+    if (intersection.left() == left()) {
+      resultLeft = intersection.right() + 1;
+    } else if (intersection.right() == right()) {
+      resultRight = intersection.left() - 1;
+    }
+  } else if (intersection.width() == width()) {
+    if (intersection.top() == top()) {
+      resultTop = intersection.bottom() + 1;
+    } else if (intersection.bottom() == bottom()) {
+      resultBottom = intersection.top() - 1;
+    }
+  }
+
+  return KDRect(
+    resultLeft,
+    resultTop,
+    resultRight-resultLeft+1,
+    resultBottom-resultTop+1
+    );
+}
+
 bool KDRect::contains(KDPoint p) const {
   return (p.x() >= x() && p.x() <= right() && p.y() >= y() && p.y() <= bottom());
+}
+
+bool KDRect::containsRect(const KDRect & other) const {
+  if (other.isEmpty()) {
+    return true;
+  }
+  if (isEmpty()) {
+    return false;
+  }
+  return contains(other.topLeft()) && contains(other.bottomRight());
+}
+
+bool KDRect::isAbove(KDPoint p) const {
+  return (p.y() >= y());
+}
+
+bool KDRect::isUnder(KDPoint p) const {
+  return (p.y() <= bottom());
 }
 
 KDRect KDRect::translatedBy(KDPoint p) const {

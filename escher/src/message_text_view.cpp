@@ -1,9 +1,9 @@
 #include <escher/message_text_view.h>
 #include <assert.h>
 
-MessageTextView::MessageTextView(KDText::FontSize size, I18n::Message message, float horizontalAlignment, float verticalAlignment,
+MessageTextView::MessageTextView(const KDFont * font, I18n::Message message, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  TextView(size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_message(message)
 {
 }
@@ -24,5 +24,5 @@ void MessageTextView::setMessage(I18n::Message message) {
 }
 
 KDSize MessageTextView::minimalSizeForOptimalDisplay() const  {
-  return KDText::stringSize(text(), m_fontSize);
+  return m_font->stringSize(text());
 }

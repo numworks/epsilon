@@ -1,7 +1,7 @@
 #include "command.h"
 #include <ion.h>
-#include <poincare.h>
-#include <ion/src/device/led.h>
+#include <poincare/print_float.h>
+#include <ion/src/device/shared/drivers/led.h>
 
 namespace Ion {
 namespace Device {
@@ -15,9 +15,10 @@ void ADC(const char * input) {
   }
   float result = Ion::Battery::voltage();
   constexpr int precision = 8;
-  constexpr int bufferSize = Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(precision);
+  constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+  constexpr int glyphLength = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(precision);
   char responseBuffer[bufferSize+4] = {'A', 'D', 'C', '='}; // ADC=
-  Poincare::Complex<float>::convertFloatToText(result, responseBuffer+4, bufferSize, precision);
+  Poincare::PrintFloat::ConvertFloatToText<float>(result, responseBuffer+4, bufferSize, glyphLength, precision, Poincare::Preferences::PrintFloatMode::Decimal);
   reply(responseBuffer);
 }
 

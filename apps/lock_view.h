@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class LockView : public View {
+class LockView : public TransparentView {
 public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

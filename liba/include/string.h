@@ -13,7 +13,9 @@ void * memset(void * b, int c, size_t len);
 
 char * strchr(const char * s, int c);
 int strcmp(const char * s1, const char * s2);
-size_t strlcpy(char * dst, const char * src, size_t len);
+int strncmp(const char * s1, const char * s2, size_t n);
+size_t strlcat(char * dst, const char * src, size_t dstSize);
+size_t strlcpy(char * dst, const char * src, size_t dstSize);
 size_t strlen(const char * s);
 
 LIBA_END_DECLS

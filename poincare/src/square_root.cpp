@@ -1,58 +1,63 @@
 #include <poincare/square_root.h>
-#include <poincare/complex.h>
+#include <poincare/addition.h>
+#include <poincare/division.h>
+#include <poincare/layout_helper.h>
+#include <poincare/nth_root_layout.h>
 #include <poincare/power.h>
-#include <poincare/simplification_engine.h>
-#include "layout/nth_root_layout.h"
-extern "C" {
+#include <poincare/serialization_helper.h>
+#include <poincare/sign_function.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
+
 #include <assert.h>
-}
 #include <cmath>
 #include <ion.h>
 
 namespace Poincare {
 
-Expression::Type SquareRoot::type() const {
-  return Type::SquareRoot;
+constexpr Expression::FunctionHelper SquareRoot::s_functionHelper;
+
+int SquareRootNode::numberOfChildren() const { return SquareRoot::s_functionHelper.numberOfChildren(); }
+
+Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return NthRootLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression * SquareRoot::clone() const {
-  SquareRoot * a = new SquareRoot(m_operands, true);
-  return a;
-}
-
-static_assert('\x90' == Ion::Charset::Root, "Unicode error");
-int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "\x90");
+int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name());
 }
 
 template<typename T>
-Complex<T> SquareRoot::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() == 0 && c.a() >= 0) {
-    return Complex<T>::Float(std::sqrt(c.a()));
-  }
-  return Power::compute(c, Complex<T>::Float(0.5));
+Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  std::complex<T> result = std::sqrt(c);
+  /* Openbsd trigonometric functions are numerical implementation and thus are
+   * approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
+   * weird results as sqrt(-1) = 6E-16+i, we compute the argument of the result
+   * of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary part and
+   * if arg ~ Pi/2 [Pi], we discard the residual real part.*/
+  return Complex<T>::Builder(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
-Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  Power * p = new Power(operand(0), new Rational(1, 2), false);
-  detachOperands();
-  replaceWith(p, true);
-  return p->shallowReduce(context, angleUnit);
+Expression SquareRootNode::shallowReduce(ReductionContext reductionContext) {
+  return SquareRoot(this).shallowReduce(reductionContext);
 }
 
-ExpressionLayout * SquareRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat),nullptr);
+Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  Expression c = childAtIndex(0);
+  if (c.deepIsMatrix(reductionContext.context())) {
+    return replaceWithUndefinedInPlace();
+  }
+  Power p = Power::Builder(c, Rational::Builder(1, 2));
+  replaceWithInPlace(p);
+  return p.shallowReduce(reductionContext);
 }
 
 }

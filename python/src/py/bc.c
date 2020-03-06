@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -29,13 +29,11 @@
 #include <string.h>
 #include <assert.h>
 
-#include "py/nlr.h"
-#include "py/objfun.h"
-#include "py/runtime0.h"
+#include "py/runtime.h"
 #include "py/bc0.h"
 #include "py/bc.h"
 
-#if 0 // print debugging info
+#if MICROPY_DEBUG_VERBOSE // print debugging info
 #define DEBUG_PRINT (1)
 #else // don't print debugging info
 #define DEBUG_PRINT (0)
@@ -294,7 +292,7 @@ continue2:;
 //     MP_BC_MAKE_CLOSURE_DEFARGS
 //     MP_BC_RAISE_VARARGS
 // There are 4 special opcodes that have an extra byte only when
-// MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE is enabled:
+// MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE is enabled (and they take a qstr):
 //     MP_BC_LOAD_NAME
 //     MP_BC_LOAD_GLOBAL
 //     MP_BC_LOAD_ATTR
@@ -323,7 +321,7 @@ STATIC const byte opcode_format_table[64] = {
     OC4(O, O, U, U), // 0x38-0x3b
     OC4(U, O, B, O), // 0x3c-0x3f
     OC4(O, B, B, O), // 0x40-0x43
-    OC4(B, B, O, U), // 0x44-0x47
+    OC4(O, U, O, B), // 0x44-0x47
     OC4(U, U, U, U), // 0x48-0x4b
     OC4(U, U, U, U), // 0x4c-0x4f
     OC4(V, V, U, V), // 0x50-0x53
@@ -363,7 +361,7 @@ STATIC const byte opcode_format_table[64] = {
     OC4(B, B, B, B), // 0xcc-0xcf
 
     OC4(B, B, B, B), // 0xd0-0xd3
-    OC4(B, B, B, B), // 0xd4-0xd7
+    OC4(U, U, U, B), // 0xd4-0xd7
     OC4(B, B, B, B), // 0xd8-0xdb
     OC4(B, B, B, B), // 0xdc-0xdf
 
@@ -374,7 +372,7 @@ STATIC const byte opcode_format_table[64] = {
 
     OC4(B, B, B, B), // 0xf0-0xf3
     OC4(B, B, B, B), // 0xf4-0xf7
-    OC4(B, B, B, U), // 0xf8-0xfb
+    OC4(U, U, U, U), // 0xf8-0xfb
     OC4(U, U, U, U), // 0xfc-0xff
 };
 #undef OC4
@@ -384,26 +382,30 @@ STATIC const byte opcode_format_table[64] = {
 #undef V
 #undef O
 
-uint mp_opcode_format(const byte *ip, size_t *opcode_size) {
+uint mp_opcode_format(const byte *ip, size_t *opcode_size, bool count_var_uint) {
     uint f = (opcode_format_table[*ip >> 2] >> (2 * (*ip & 3))) & 3;
     const byte *ip_start = ip;
     if (f == MP_OPCODE_QSTR) {
+        if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE_DYNAMIC) {
+            if (*ip == MP_BC_LOAD_NAME
+                || *ip == MP_BC_LOAD_GLOBAL
+                || *ip == MP_BC_LOAD_ATTR
+                || *ip == MP_BC_STORE_ATTR) {
+                ip += 1;
+            }
+        }
         ip += 3;
     } else {
         int extra_byte = (
             *ip == MP_BC_RAISE_VARARGS
             || *ip == MP_BC_MAKE_CLOSURE
             || *ip == MP_BC_MAKE_CLOSURE_DEFARGS
-            #if MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE
-            || *ip == MP_BC_LOAD_NAME
-            || *ip == MP_BC_LOAD_GLOBAL
-            || *ip == MP_BC_LOAD_ATTR
-            || *ip == MP_BC_STORE_ATTR
-            #endif
         );
         ip += 1;
         if (f == MP_OPCODE_VAR_UINT) {
-            while ((*ip++ & 0x80) != 0) {
+            if (count_var_uint) {
+                while ((*ip++ & 0x80) != 0) {
+                }
             }
         } else if (f == MP_OPCODE_OFFSET) {
             ip += 2;

@@ -1,55 +1,79 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/static_hierarchy.h>
+#include <poincare/symbol_abstract.h>
 
 namespace Poincare {
 
-class Symbol : public StaticHierarchy<0> {
+class SymbolNode final : public SymbolAbstractNode {
 public:
-  enum SpecialSymbols : char {
-    /* We can use characters from 1 to 31 as they do not correspond to usual
-     * characters but events as 'end of text', 'backspace'... */
-    Ans = 1,
-    un = 2,
-    un1 = 3,
-    vn = 4,
-    vn1 = 5,
-    wn = 6,
-    wn1 = 7,
-    M0 = 8,
-    M1 = 9,
-    M2,
-    M3,
-    M4,
-    M5,
-    M6,
-    M7,
-    M8,
-    M9 = 17
-  };
-  static SpecialSymbols matrixSymbol(char index);
-  Symbol(char name);
-  Symbol(Symbol&& other); // C++11 move constructor
-  Symbol(const Symbol& other); // C++11 copy constructor
-  char name() const;
-  Type type() const override;
-  Expression * clone() const override;
-  Sign sign() const override;
-  bool isMatrixSymbol() const;
-  bool isScalarSymbol() const;
-private:
-  const char * textForSpecialSymbols(char name) const;
-  /* Comparison */
-  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
+  SymbolNode(const char * newName, int length);
+
+  const char * name() const override { return m_name; }
+
+  // TreeNode
+  int numberOfChildren() const override { return 0; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Symbol";
+  }
+#endif
+
+  // Expression Properties
+  Type type() const override { return Type::Symbol; }
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
+  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
+  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
+  /* getUnit returns Undefined, because the symbol would have
+   * already been replaced if it should have been.*/
+
   /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
-  const char m_name;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+
+  /* Simplification */
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) override;
+  LayoutShape leftLayoutShape() const override;
+
+  /* Approximation */
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+
+  bool isUnknown() const;
+private:
+  char m_name[0]; // MUST be the last member variable
+
+  size_t nodeSize() const override { return sizeof(SymbolNode); }
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+};
+
+class Symbol final : public SymbolAbstract {
+  friend class Expression;
+  friend class SymbolNode;
+public:
+  static constexpr int k_ansLength = 3;
+  static constexpr char k_ans[k_ansLength+1] = "ans";
+  Symbol(const SymbolNode * node = nullptr) : SymbolAbstract(node) {}
+  static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
+  static Symbol Builder(CodePoint name);
+  static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
+
+  // Symbol properties
+  bool isSystemSymbol() const { return node()->isUnknown(); }
+  const char * name() const { return node()->name(); }
+  // IsVariable tests
+  static bool isSeriesSymbol(const char * c, Poincare::Context * context);
+  static bool isRegressionSymbol(const char * c, Poincare::Context * context);
+
+  // Expression
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
+private:
+  SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };
 
 }

@@ -3,7 +3,7 @@ extern "C" {
 }
 #include <escher/tab_view_controller.h>
 #include <escher/metric.h>
-#include <escher/app.h>
+#include <escher/container.h>
 
 TabViewController::ContentView::ContentView() :
   View(),
@@ -17,19 +17,19 @@ void TabViewController::ContentView::setActiveView(View * view) {
   markRectAsDirty(bounds());
 }
 
-void TabViewController::ContentView::layoutSubviews() {
+void TabViewController::ContentView::layoutSubviews(bool force) {
   KDRect tabViewFrame = KDRect(
       0, 0,
       m_frame.width(), Metric::TabHeight
       );
-  m_tabView.setFrame(tabViewFrame);
+  m_tabView.setFrame(tabViewFrame, force);
   if (m_activeView) {
     KDRect activeViewFrame = KDRect(
         0, Metric::TabHeight,
         m_frame.width(),
         m_frame.height() - Metric::TabHeight
         );
-    m_activeView->setFrame(activeViewFrame);
+    m_activeView->setFrame(activeViewFrame, force);
   }
 }
 
@@ -75,14 +75,12 @@ int TabViewController::activeTab() const {
 }
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back) {
-    if (app()->firstResponder() != this) {
-      app()->setFirstResponder(this);
+  App * app = Container::activeApp();
+  if (app->firstResponder() != this) {
+    if (event == Ion::Events::Back) {
+      app->setFirstResponder(this);
       return true;
     }
-    return false;
-  }
-  if (app()->firstResponder() != this) {
     return false;
   }
   if (event == Ion::Events::Left) {
@@ -116,7 +114,7 @@ void TabViewController::setActiveTab(int8_t i) {
     m_children[i]->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);
   }
-  app()->setFirstResponder(activeVC);
+  Container::activeApp()->setFirstResponder(activeVC);
   if (i  != m_dataSource->activeTab()) {
     m_children[m_dataSource->activeTab()]->viewDidDisappear();
     m_dataSource->setActiveTab(i);
@@ -132,7 +130,7 @@ void TabViewController::setSelectedTab(int8_t i) {
 }
 
 void TabViewController::didEnterResponderChain(Responder * previousResponder) {
-  app()->setFirstResponder(activeViewController());
+  Container::activeApp()->setFirstResponder(activeViewController());
 }
 
 void TabViewController::didBecomeFirstResponder() {
@@ -156,12 +154,14 @@ const char * TabViewController::tabName(uint8_t index) {
   return m_children[index]->title();
 }
 
-void TabViewController::viewWillAppear() {
-  if (m_view.m_tabView.numberOfTabs() != m_numberOfChildren) {
-    for (int i=0; i<m_numberOfChildren; i++) {
-      m_view.m_tabView.addTab(m_children[i]);
-    }
+void TabViewController::initView() {
+  for (int i=0; i<m_numberOfChildren; i++) {
+    m_view.m_tabView.addTab(m_children[i]);
+    m_children[i]->initView();
   }
+}
+
+void TabViewController::viewWillAppear() {
   if (m_dataSource->activeTab() < 0) {
     m_dataSource->setActiveTab(0);
   }

@@ -21,11 +21,16 @@ public:
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
-
+  Responder * responder() override {
+    return this;
+  }
+  const char * text() const override {
+    return m_line.text();
+  }
   /* View */
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
 
   /* Responder */
   void didBecomeFirstResponder() override;
@@ -43,7 +48,6 @@ private:
     };
 
     ScrollableConsoleLineView(Responder * parentResponder);
-    KDSize minimalSizeForOptimalDisplay() const override;
     ConsoleLineView * consoleLineView() { return &m_consoleLineView; }
   private:
     ConsoleLineView m_consoleLineView;

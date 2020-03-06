@@ -1,0 +1,32 @@
+#ifndef LIBAXX_LIBCXX_CMATH
+#define LIBAXX_LIBCXX_CMATH
+
+#include_next <cmath>
+
+#include "type_traits"
+
+namespace std {
+
+template <class _A1> inline constexpr typename enable_if<is_floating_point<_A1>::value, bool>::type __libcpp_isnan_or_builtin(_A1 __lcpp_x) noexcept {
+  return __builtin_isnan(__lcpp_x);
+}
+
+template <class _A1> inline constexpr typename enable_if<is_floating_point<_A1>::value, bool>::type __libcpp_isinf_or_builtin(_A1 __lcpp_x) noexcept {
+  return __builtin_isinf(__lcpp_x);
+}
+
+template <class _A1> inline constexpr typename enable_if<is_floating_point<_A1>::value, bool>::type __libcpp_isfinite_or_builtin(_A1 __lcpp_x) noexcept {
+  return __builtin_isfinite(__lcpp_x);
+}
+
+inline float abs(float __lcpp_x) noexcept {
+  return fabsf(__lcpp_x);
+}
+
+inline double abs(double __lcpp_x) noexcept {
+  return fabs(__lcpp_x);
+}
+
+}
+
+#endif

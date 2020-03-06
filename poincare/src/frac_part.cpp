@@ -1,49 +1,59 @@
 #include <poincare/frac_part.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+
 #include <poincare/rational.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type FracPart::type() const {
-  return Type::FracPart;
+constexpr Expression::FunctionHelper FracPart::s_functionHelper;
+
+int FracPartNode::numberOfChildren() const { return FracPart::s_functionHelper.numberOfChildren(); }
+
+Layout FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
-Expression * FracPart::clone() const {
-  FracPart * c = new FracPart(m_operands, true);
-  return c;
+int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
-Expression * FracPart::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  Expression * op = editableOperand(0);
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  if (op->type() != Type::Rational) {
-    return this;
-  }
-  Rational * r = static_cast<Rational *>(op);
-  IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-  return replaceWith(new Rational(div.remainder, r->denominator()), true);
+Expression FracPartNode::shallowReduce(ReductionContext reductionContext) {
+  return FracPart(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Complex<T> FracPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  if (c.imag() != 0) {
+    return Complex<T>::RealUndefined();
   }
-  return Complex<T>::Float(c.a()-std::floor(c.a()));
+  return Complex<T>::Builder(c.real()-std::floor(c.real()));
+}
+
+
+Expression FracPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
+  }
+  if (c.type() != ExpressionNode::Type::Rational) {
+    return *this;
+  }
+  Rational r = static_cast<Rational &>(c);
+  IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+  assert(!div.remainder.isOverflow());
+  Integer rDenominator = r.integerDenominator();
+  Expression result = Rational::Builder(div.remainder, rDenominator);
+  replaceWithInPlace(result);
+  return result;
 }
 
 }
-
-

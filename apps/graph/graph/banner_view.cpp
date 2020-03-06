@@ -1,33 +1,30 @@
 #include "banner_view.h"
+#include <assert.h>
+#include <apps/i18n.h>
 
 namespace Graph {
 
-BannerView::BannerView() :
-  m_abscissaView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_functionView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_derivativeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_displayDerivative(false)
+BannerView::BannerView(
+  Responder * parentResponder,
+  InputEventHandlerDelegate * inputEventHandlerDelegate,
+  TextFieldDelegate * textFieldDelegate
+) :
+  Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
+  m_derivativeView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_tangentEquationView(Font(), I18n::Message::LinearRegressionFormula, 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_aView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_bView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_numberOfSubviews(Shared::XYBannerView::k_numberOfSubviews)
 {
 }
 
-void BannerView::setDisplayDerivative(bool displayDerivative) {
-  m_displayDerivative = displayDerivative;
-}
-
-bool BannerView::displayDerivative() {
-  return m_displayDerivative;
-}
-
-int BannerView::numberOfSubviews() const {
-  if (m_displayDerivative) {
-    return 3;
+View * BannerView::subviewAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
+  if (index < Shared::XYBannerView::k_numberOfSubviews) {
+    return Shared::XYBannerView::subviewAtIndex(index);
   }
-  return 2;
-}
-
-TextView * BannerView::textViewAtIndex(int i) const {
-  const TextView * textViews[3] = {&m_abscissaView, &m_functionView, &m_derivativeView};
-  return (TextView *)textViews[i];
+  View * subviews[] = {&m_derivativeView, &m_tangentEquationView, &m_aView, &m_bView};
+  return subviews[index - Shared::XYBannerView::k_numberOfSubviews];
 }
 
 }

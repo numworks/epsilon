@@ -1,9 +1,8 @@
 #include "store_controller.h"
 #include "app.h"
+#include "regression_context.h"
 #include "../apps_container.h"
 #include "../constant.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -11,50 +10,42 @@ using namespace Shared;
 
 namespace Regression {
 
-StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
-  Shared::StoreController(parentResponder, store, header),
-  m_titleCells{}
+StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
+  Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
+  m_titleCells{},
+  m_regressionContext(store, parentContext),
+  m_storeParameterController(this, store, this)
 {
-  m_titleLayout[0] = new BaselineRelativeLayout(new StringLayout("X", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  m_titleLayout[1] = new BaselineRelativeLayout(new StringLayout("Y", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
 }
 
-StoreController::~StoreController() {
-  for (int i = 0; i < 2; i++) {
-    if (m_titleLayout[i]) {
-      delete m_titleLayout[i];
-      m_titleLayout[i] = nullptr;
-    }
-  }
+void StoreController::setFormulaLabel() {
+  int series = selectedColumn() / Store::k_numberOfColumnsPerSeries;
+  int isXColumn = selectedColumn() % Store::k_numberOfColumnsPerSeries == 0;
+  char text[] = {isXColumn ? 'X' : 'Y', static_cast<char>('1' + series), '=', 0};
+  static_cast<ContentView *>(view())->formulaInputView()->setBufferText(text);
+}
+
+bool StoreController::fillColumnWithFormula(Expression formula) {
+  return privateFillColumnWithFormula(formula, Symbol::isRegressionSymbol);
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   ::StoreController::willDisplayCellAtLocation(cell, i, j);
-  if (cellAtLocationIsEditable(i, j)) {
+  if (typeAtLocation(i, j) != k_titleCellType) {
     return;
   }
-  EvenOddExpressionCell * mytitleCell = (EvenOddExpressionCell *)cell;
-  mytitleCell->setExpression(m_titleLayout[i]);
+  Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
+  bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
+  mytitleCell->setSeparatorLeft(isValuesColumn && i > 0);
+  int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
+  mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GreyDark : Store::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GreyDark with graph/list_controller and statistics/store_controller
+  char name[] = {isValuesColumn ? 'X' : 'Y', static_cast<char>('1' + seriesIndex), 0};
+  mytitleCell->setText(name);
 }
 
 HighlightCell * StoreController::titleCells(int index) {
   assert(index >= 0 && index < k_numberOfTitleCells);
-  return m_titleCells[index];
-}
-
-View * StoreController::loadView() {
-  for (int i = 0; i < k_numberOfTitleCells; i++) {
-    m_titleCells[i] = new EvenOddExpressionCell(0.5f, 0.5f);
-  }
-  return Shared::StoreController::loadView();
-}
-
-void StoreController::unloadView(View * view) {
-  for (int i = 0; i < k_numberOfTitleCells; i++) {
-    delete m_titleCells[i];
-    m_titleCells[i] = nullptr;
-  }
-  Shared::StoreController::unloadView(view);
+  return &m_titleCells[index];
 }
 
 }

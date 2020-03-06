@@ -7,13 +7,13 @@ namespace Sequence {
 
 class CurveViewRange : public Shared::InteractiveCurveViewRange {
 public:
-  CurveViewRange(Shared::CurveViewCursor * cursor, Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
+  CurveViewRange(Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
   void roundAbscissa() override;
   void normalize() override;
   void setTrigonometric() override;
   void setDefault() override;
 private:
-  constexpr static float k_displayLeftMarginRatio = 0.05f;
+  constexpr static float k_displayLeftMarginRatio = 0.1f;
 };
 
 }

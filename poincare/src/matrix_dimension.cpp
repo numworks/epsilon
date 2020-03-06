@@ -1,59 +1,69 @@
 #include <poincare/matrix_dimension.h>
+#include <poincare/matrix_complex.h>
+#include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
-extern "C" {
-#include <assert.h>
-}
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
-Expression::Type MatrixDimension::type() const {
-  return Type::MatrixDimension;
+constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
+
+int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
+
+Expression MatrixDimensionNode::shallowReduce(ReductionContext reductionContext) {
+  return MatrixDimension(this).shallowReduce(reductionContext.context());
 }
 
-Expression * MatrixDimension::clone() const {
-  MatrixDimension * a = new MatrixDimension(m_operands, true);
-  return a;
+Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(MatrixDimension(this), floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
 }
 
-Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    Matrix * m = static_cast<Matrix *>(op);
-    const Expression * newOperands[2] = {new Rational(m->numberOfRows()), new Rational(m->numberOfColumns())};
-    return replaceWith(new Matrix(newOperands, 1, 2, false), true);
-  }
-  if (!op->recursivelyMatches(Expression::IsMatrix)) {
-    const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
-    return replaceWith(new Matrix(newOperands, 1, 2, false), true);
-  }
-  return this;
-#else
-  const Expression * newOperands[2] = {new Rational(1), new Rational(1)};
-  return replaceWith(new Matrix(newOperands, 1, 2, false), true);
-#endif
+int MatrixDimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
 }
 
 template<typename T>
-Expression * MatrixDimension::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->approximate<T>(context, angleUnit);
-  Expression * operands[2];
-  if (input->type() == Type::Matrix) {
-    operands[0] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfRows()));
-    operands[1] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfColumns()));
+Evaluation<T> MatrixDimensionNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  std::complex<T> operands[2];
+  if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
+    operands[0] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());
+    operands[1] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfColumns());
   } else {
-    operands[0] = new Complex<T>(Complex<T>::Float(1.0));
-    operands[1] = new Complex<T>(Complex<T>::Float(1.0));
+    operands[0] = std::complex<T>(1.0);
+    operands[1] = std::complex<T>(1.0);
   }
-  delete input;
-  return new Matrix(operands, 1, 2, false);
+  return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
 
+Expression MatrixDimension::shallowReduce(Context * context) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  Expression c = childAtIndex(0);
+  if (c.deepIsMatrix(context) && c.type() != ExpressionNode::Type::Matrix) {
+    return *this;
+  }
+  Matrix result = Matrix::Builder();
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    Matrix m = static_cast<Matrix &>(c);
+    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
+  } else {
+    result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
+  }
+  result.setDimensions(1, 2);
+  replaceWithInPlace(result);
+  return std::move(result);
 }
 
+}

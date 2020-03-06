@@ -2,32 +2,25 @@
 
 namespace Code {
 
-constexpr ScriptTemplate emptyScriptTemplate(".py", R"(from math import *
+constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01" R"(from math import *
 )");
 
-constexpr ScriptTemplate factorialScriptTemplate("factorial.py", R"(def factorial(n):
-  if n == 0:
-    return 1
-  else:
-    return n * factorial(n-1))");
+constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01" R"(from math import *
+from turtle import *
+def squares(angle=0.5):
+  reset()
+  L=330
+  speed(10)
+  penup()
+  goto(-L/2,-L/2)
+  pendown()
+  for i in range(660):
+    forward(L)
+    left(90+angle)
+    L=L-L*sin(angle*pi/180)
+  hideturtle())");
 
-constexpr ScriptTemplate fibonacciScriptTemplate("fibonacci.py", R"(def fibo(n):
-  a=0
-  b=1
-  for i in range(1,n+1):
-    c=a+b
-    a=b
-    b=c
-  return a
-
-def fibo2(n):
-  if n==0:
-    return 0
-  elif n==1 or n==2:
-    return 1
-  return fibo2(n-1)+fibo2(n-2))");
-
-constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", R"(# This script draws a Mandelbrot fractal set
+constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", "\x01" R"(# This script draws a Mandelbrot fractal set
 # N_iteration: degree of precision
 import kandinsky
 def mandelbrot(N_iteration):
@@ -47,7 +40,7 @@ def mandelbrot(N_iteration):
 # Draw a pixel colored in 'col' at position (x,y)
       kandinsky.set_pixel(x,y,col))");
 
-constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py", R"(from math import *
+constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py", "\x01" R"(from math import *
 # roots(a,b,c) computes the solutions of the equation a*x**2+b*x+c=0
 def roots(a,b,c):
   delta = b*b-4*a*c
@@ -64,12 +57,8 @@ const ScriptTemplate * ScriptTemplate::Empty() {
   return &emptyScriptTemplate;
 }
 
-const ScriptTemplate * ScriptTemplate::Factorial() {
-  return &factorialScriptTemplate;
-}
-
-const ScriptTemplate * ScriptTemplate::Fibonacci() {
-  return &fibonacciScriptTemplate;
+const ScriptTemplate * ScriptTemplate::Squares() {
+  return &squaresScriptTemplate;
 }
 
 const ScriptTemplate * ScriptTemplate::Mandelbrot() {
@@ -81,5 +70,3 @@ const ScriptTemplate * ScriptTemplate::Polynomial() {
 }
 
 }
-
-

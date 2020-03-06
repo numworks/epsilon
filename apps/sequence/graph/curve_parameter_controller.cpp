@@ -6,9 +6,9 @@ using namespace Shared;
 
 namespace Sequence {
 
-CurveParameterController::CurveParameterController(GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  FunctionCurveParameterController(graphRange, cursor),
-  m_goToParameterController(this, graphRange, cursor, I18n::Message::N),
+CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+  FunctionCurveParameterController(),
+  m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor),
   m_sumCell(I18n::Message::TermSum),
   m_graphController(graphController)
 {
@@ -37,7 +37,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int CurveParameterController::numberOfRows() {
+int CurveParameterController::numberOfRows() const {
   return k_totalNumberOfCells;
 };
 
@@ -48,7 +48,7 @@ HighlightCell * CurveParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int CurveParameterController::reusableCellCount() {
+int CurveParameterController::reusableCellCount() const {
   return k_totalNumberOfCells;
 }
 

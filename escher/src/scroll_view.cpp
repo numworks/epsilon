@@ -1,74 +1,54 @@
 #include <escher/scroll_view.h>
-
+#include <escher/palette.h>
+#include <new>
 extern "C" {
 #include <assert.h>
 }
 
-ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
-  KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
-  KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
-  KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
+ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
-  m_topMargin(topMargin),
   m_contentView(contentView),
   m_dataSource(dataSource),
-  m_verticalScrollIndicator(ScrollViewIndicator::Direction::Vertical, indicatorColor, backgroundIndicatorColor, indicatorMargin),
-  m_horizontalScrollIndicator(ScrollViewIndicator::Direction::Horizontal, indicatorColor, backgroundIndicatorColor, indicatorMargin),
-  m_rightMargin(rightMargin),
-  m_bottomMargin(bottomMargin),
-  m_leftMargin(leftMargin),
-  m_indicatorThickness(indicatorThickness),
-  m_showIndicators(showIndicators),
-  m_colorBackground(colorBackground),
-  m_backgroundColor(backgroundColor)
+  m_topMargin(0),
+  m_rightMargin(0),
+  m_bottomMargin(0),
+  m_leftMargin(0),
+  m_innerView(this),
+  m_decorators(),
+  m_backgroundColor(Palette::WallScreen)
 {
   assert(m_dataSource != nullptr);
+  setDecoratorType(Decorator::Type::Bars);
 }
 
-bool ScrollView::hasVerticalIndicator() const {
-  if (m_showIndicators) {
-    return m_verticalScrollIndicator.end() < 1 || m_verticalScrollIndicator.start() > 0;
-  }
-  return false;
+ScrollView::ScrollView(ScrollView&& other) :
+  m_contentView(other.m_contentView),
+  m_dataSource(other.m_dataSource),
+  m_topMargin(other.m_topMargin),
+  m_rightMargin(other.m_rightMargin),
+  m_bottomMargin(other.m_bottomMargin),
+  m_leftMargin(other.m_leftMargin),
+  m_innerView(this),
+  m_backgroundColor(other.m_backgroundColor)
+{
+  setDecoratorType(other.m_decoratorType);
 }
 
-bool ScrollView::hasHorizontalIndicator() const {
-  if (m_showIndicators) {
-    return m_horizontalScrollIndicator.end() < 1 || m_horizontalScrollIndicator.start() > 0;
-  }
-  return false;
+KDSize ScrollView::minimalSizeForOptimalDisplay() const {
+  KDSize contentSize = m_contentView->minimalSizeForOptimalDisplay();
+  return KDSize(
+    contentSize.width() + m_leftMargin + m_rightMargin,
+    contentSize.height() + m_topMargin + m_bottomMargin);
 }
 
-int ScrollView::numberOfSubviews() const {
-  return 1 + hasVerticalIndicator() + hasHorizontalIndicator();
-}
-
-View * ScrollView::subviewAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return m_contentView;
-    case 1:
-      return hasHorizontalIndicator() ? &m_horizontalScrollIndicator : &m_verticalScrollIndicator;
-    case 2:
-      return &m_verticalScrollIndicator;
-    }
-  return nullptr;
-}
-
-void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (!m_colorBackground) {
-    return;
-  }
-  KDCoordinate height = bounds().height();
-  KDCoordinate width = bounds().width();
-  KDCoordinate offsetX = contentOffset().x();
-  KDCoordinate offsetY = contentOffset().y();
-  KDCoordinate contentHeight = m_contentView->bounds().height();
-  KDCoordinate contentWidth = m_contentView->bounds().width();
-  ctx->fillRect(KDRect(0, 0, width, m_topMargin-offsetY), m_backgroundColor);
-  ctx->fillRect(KDRect(0, contentHeight+m_topMargin-offsetY, width, height - contentHeight - m_topMargin + offsetY), m_backgroundColor);
-  ctx->fillRect(KDRect(0, 0, m_leftMargin-offsetX, height), m_backgroundColor);
-  ctx->fillRect(KDRect(contentWidth + m_leftMargin - offsetX, 0, width - contentWidth - m_leftMargin + offsetX, height), m_backgroundColor);
+void ScrollView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) {
+  m_topMargin = top;
+  m_rightMargin = right;
+  m_bottomMargin = bottom;
+  m_leftMargin = left;
 }
 
 void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
@@ -94,21 +74,40 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
     setContentOffset(contentOffset().translatedBy(KDPoint(offsetX, offsetY)));
   }
 
-  /* Handle cases when the size of the view has decreased. */
-  KDCoordinate contentOffsetX = contentOffset().x();
-  KDCoordinate contentOffsetY = contentOffset().y();
-  if (maxContentHeightDisplayableWithoutScrolling() > contentSize().height()-contentOffsetY) {
-    contentOffsetY = contentSize().height() > maxContentHeightDisplayableWithoutScrolling() ? contentSize().height()-maxContentHeightDisplayableWithoutScrolling() : 0;
-  }
-  if (maxContentWidthDisplayableWithoutScrolling() > contentSize().width()-contentOffsetX) {
-    contentOffsetX = contentSize().width() > maxContentWidthDisplayableWithoutScrolling() ? contentSize().width()-maxContentWidthDisplayableWithoutScrolling() : 0;
-  }
-  setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
+  // Handle cases when the size of the view has decreased.
+  setContentOffset(KDPoint(
+    minCoordinate(contentOffset().x(), maxCoordinate(minimalSizeForOptimalDisplay().width() - bounds().width(), 0)),
+    minCoordinate(contentOffset().y(), maxCoordinate(minimalSizeForOptimalDisplay().height() - bounds().height(), 0))));
 }
 
 void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
-  scrollToContentPoint(rect.topLeft(), allowOverscroll);
-  scrollToContentPoint(rect.bottomRight(), allowOverscroll);
+  KDPoint tl  = rect.topLeft();
+  KDPoint br  = rect.bottomRight();
+  KDRect visibleRect = visibleContentRect();
+  /* We first check that we can display the whole rect. If we can't, we focus
+   * the croll to the closest part of the rect. */
+  if (visibleRect.height() < rect.height()) {
+    // The visible rect is too small to display 'rect'
+    if (rect.top() >= visibleRect.top()) {
+      // We scroll to display the top part of rect
+      br = KDPoint(br.x(), rect.top() + visibleRect.height());
+    } else {
+      // We scroll to display the bottom part of rect
+      tl = KDPoint(tl.x(), rect.bottom() - visibleRect.height());
+    }
+  }
+  if (visibleRect.width() < rect.width()) {
+    // The visible rect is too small to display 'rect'
+    if (rect.left() >= visibleRect.left()) {
+      // We scroll to display the left part of rect
+      br = KDPoint(rect.left() + visibleRect.width(), br.y());
+    } else {
+      // We scroll to display the right part of rect
+      tl = KDPoint(rect.right() - visibleRect.width(), tl.y());
+    }
+  }
+  scrollToContentPoint(tl, allowOverscroll);
+  scrollToContentPoint(br, allowOverscroll);
 }
 
 KDRect ScrollView::visibleContentRect() {
@@ -116,103 +115,155 @@ KDRect ScrollView::visibleContentRect() {
     contentOffset().x(),
     contentOffset().y(),
     m_frame.width() - m_leftMargin - m_rightMargin,
-    m_frame.height() - m_topMargin - m_bottomMargin
-  );
+    m_frame.height() - m_topMargin - m_bottomMargin);
 }
 
-void ScrollView::layoutSubviews() {
-  // Layout contentView
-  // We're only re-positionning the contentView, not modifying its size.
-  KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
-  KDRect contentFrame = KDRect(absoluteOffset, m_contentView->bounds().size());
-  m_contentView->setFrame(contentFrame);
-
-  // We recompute the size of the scroll indicator
-  updateScrollIndicator();
-
-  // Layout indicators
-  /* If the two indicators are visible, we leave an empty rectangle in the right
-   * bottom corner. Otherwise, the only indicator uses all the height/width. */
-  if (hasHorizontalIndicator() && hasVerticalIndicator()) {
-      KDRect verticalIndicatorFrame = KDRect(
-      m_frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, m_frame.height() - m_indicatorThickness
-    );
-    m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
-    KDRect horizontalIndicatorFrame = KDRect(
-      0, m_frame.height() - m_indicatorThickness,
-      m_frame.width() - m_indicatorThickness, m_indicatorThickness
-    );
-  m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
-  } else {
-    if (hasVerticalIndicator()) {
-      KDRect verticalIndicatorFrame = KDRect(
-      m_frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, m_frame.height()
-      );
-      m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
-    }
-    if (hasHorizontalIndicator()) {
-      KDRect horizontalIndicatorFrame = KDRect(
-      0, m_frame.height() - m_indicatorThickness,
-      m_frame.width(), m_indicatorThickness
-      );
-      m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
-    }
+void ScrollView::layoutSubviews(bool force) {
+  KDRect r1 = KDRectZero;
+  KDRect r2 = KDRectZero;
+  KDRect innerFrame = decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), bounds(), &r1, &r2, force);
+  if (!r1.isEmpty()) {
+    markRectAsDirty(r1);
   }
-}
-
-void ScrollView::updateScrollIndicator() {
-  if (m_showIndicators) {
-    float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
-    bool hadVerticalIndicator = hasVerticalIndicator();
-    float verticalStart = contentOffset().y();
-    float verticalEnd = contentOffset().y() + m_frame.height();
-    m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
-    m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
-    if (hadVerticalIndicator && !hasVerticalIndicator()) {
-      markRectAsDirty(m_verticalScrollIndicator.frame());
-    }
-    float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
-    bool hadHorizontalIndicator = hasHorizontalIndicator();
-    float horizontalStart = contentOffset().x();
-    float horizontalEnd = contentOffset().x() + m_frame.width();
-    m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
-    m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
-    if (hadHorizontalIndicator && !hasHorizontalIndicator()) {
-      markRectAsDirty(m_horizontalScrollIndicator.frame());
-    }
+  if (!r2.isEmpty()) {
+    markRectAsDirty(r2);
   }
+  m_innerView.setFrame(innerFrame, force);
+  KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin - innerFrame.x(), m_topMargin - innerFrame.y()));
+  KDRect contentFrame = KDRect(absoluteOffset, contentSize());
+  m_contentView->setFrame(contentFrame, force);
 }
 
-KDSize ScrollView::contentSize() {
-  return m_contentView->minimalSizeForOptimalDisplay();
-}
-
-void ScrollView::setContentOffset(KDPoint offset) {
-  if (m_dataSource->setOffset(offset)) {
+void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
+  if (m_dataSource->setOffset(offset) || forceRelayout) {
     layoutSubviews();
   }
 }
 
-KDPoint ScrollView::contentOffset() const {
-  return m_dataSource->offset();
+void ScrollView::InnerView::drawRect(KDContext * ctx, KDRect rect) const {
+  KDCoordinate height = bounds().height();
+  KDCoordinate width = bounds().width();
+  KDCoordinate offsetX = m_scrollView->contentOffset().x() + m_frame.x();
+  KDCoordinate offsetY = m_scrollView->contentOffset().y() + m_frame.y();
+  KDCoordinate contentHeight = m_scrollView->m_contentView->bounds().height();
+  KDCoordinate contentWidth = m_scrollView->m_contentView->bounds().width();
+  ctx->fillRect(KDRect(0, 0, width, m_scrollView->m_topMargin-offsetY), m_scrollView->m_backgroundColor);
+  ctx->fillRect(KDRect(0, contentHeight+m_scrollView->m_topMargin-offsetY, width, height - contentHeight - m_scrollView->m_topMargin + offsetY), m_scrollView->m_backgroundColor);
+  ctx->fillRect(KDRect(0, 0, m_scrollView->m_leftMargin-offsetX, height), m_scrollView->m_backgroundColor);
+  ctx->fillRect(KDRect(contentWidth + m_scrollView->m_leftMargin - offsetX, 0, width - contentWidth - m_scrollView->m_leftMargin + offsetX, height), m_scrollView->m_backgroundColor);
 }
 
-KDCoordinate ScrollView::topMargin() const {
-  return m_topMargin;
+View * ScrollView::BarDecorator::indicatorAtIndex(int index) {
+  if (index == 1) {
+    return &m_verticalBar;
+  }
+  assert(index == 2);
+  return &m_horizontalBar;
 }
 
-KDCoordinate ScrollView::leftMargin() const {
-  return m_leftMargin;
+KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) {
+  bool hBarWasVisible = m_horizontalBar.visible();
+  bool hBarIsVisible = m_horizontalBar.update(content.width(), offset.x(), frame.width());
+  bool vBarWasVisible = m_verticalBar.visible();
+  bool vBarIsVisible = m_verticalBar.update(content.height(), offset.y(), frame.height());
+
+  KDCoordinate hBarFrameBreadth = k_barsFrameBreadth * hBarIsVisible;
+  KDCoordinate vBarFrameBreadth = k_barsFrameBreadth * vBarIsVisible;
+
+  // Mark the vertical and horizontal rects as dirty id needed
+  *dirtyRect1 = hBarWasVisible == hBarIsVisible ? KDRectZero : KDRect(frame.width() - k_barsFrameBreadth, 0, k_barsFrameBreadth, frame.height());
+  *dirtyRect2 = vBarWasVisible == vBarIsVisible ? KDRectZero : KDRect(0, frame.height() - k_barsFrameBreadth, frame.width(), k_barsFrameBreadth);
+
+  /* If the two indicators are visible, we leave an empty rectangle in the right
+   * bottom corner. Otherwise, the only indicator uses all the height/width. */
+  m_verticalBar.setFrame(KDRect(
+        frame.width() - vBarFrameBreadth, 0,
+        vBarFrameBreadth, frame.height() - hBarFrameBreadth),
+      force);
+  m_horizontalBar.setFrame(KDRect(
+        0, frame.height() - hBarFrameBreadth,
+        frame.width() - vBarFrameBreadth, hBarFrameBreadth),
+      force);
+  return frame;
 }
 
-KDCoordinate ScrollView::maxContentWidthDisplayableWithoutScrolling() {
-  return m_frame.width() - m_leftMargin - m_rightMargin;
+View * ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
+  switch(index) {
+    case 1:
+      return &m_topArrow;
+    case 2:
+      return &m_rightArrow;
+    case 3:
+      return &m_bottomArrow;
+    default:
+      assert(index == 4);
+      return &m_leftArrow;
+  }
 }
 
-KDCoordinate ScrollView::maxContentHeightDisplayableWithoutScrolling() {
-  return m_frame.height() - m_topMargin - m_bottomMargin;
+KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) {
+  // There is no need to dirty the rects
+  KDSize arrowSize = KDFont::LargeFont->glyphSize();
+  KDCoordinate topArrowFrameBreadth = arrowSize.height() * m_topArrow.update(0 < offset.y());
+  KDCoordinate rightArrowFrameBreadth = arrowSize.width() * m_rightArrow.update(offset.x() + frame.width() < content.width());
+  KDCoordinate bottomArrowFrameBreadth = arrowSize.height() * m_bottomArrow.update(offset.y() + frame.height() < content.height());
+  KDCoordinate leftArrowFrameBreadth = arrowSize.width() * m_leftArrow.update(0 < offset.x());
+  m_topArrow.setFrame(KDRect(
+        0, 0,
+        frame.width(), topArrowFrameBreadth),
+      force);
+  m_rightArrow.setFrame(KDRect(
+        frame.width() - rightArrowFrameBreadth, 0,
+        rightArrowFrameBreadth, frame.height()),
+      force);
+  m_bottomArrow.setFrame(KDRect(
+        0, frame.height() - bottomArrowFrameBreadth,
+        frame.width(), bottomArrowFrameBreadth),
+      force);
+  m_leftArrow.setFrame(KDRect(
+        0, 0,
+        leftArrowFrameBreadth, frame.height()),
+      force);
+  return KDRect(
+    frame.x() + leftArrowFrameBreadth,
+    frame.y() + topArrowFrameBreadth,
+    frame.width() - leftArrowFrameBreadth - rightArrowFrameBreadth,
+    frame.height() - topArrowFrameBreadth - bottomArrowFrameBreadth
+  );
+}
+
+void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
+  const int indicatorsCount = numberOfIndicators();
+  for (int index = 1; index <= indicatorsCount; index++) {
+    static_cast<ScrollViewArrow *>(indicatorAtIndex(index))->setBackgroundColor(c);
+  }
+}
+
+ScrollView::Decorators::Decorators() {
+  /* We need to initiate the Union at construction to avoid destructing an
+   * uninitialized object when changing the decorator type. */
+  new (this) Decorator();
+}
+
+ScrollView::Decorators::~Decorators() {
+  activeDecorator()->~Decorator();
+}
+
+void ScrollView::Decorators::setActiveDecorator(Decorator::Type t) {
+  /* Decorator destructor is virtual so calling ~Decorator() on a Decorator
+   * pointer will call the appropriate destructor. */
+  activeDecorator()->~Decorator();
+  switch (t) {
+    case Decorator::Type::Bars:
+      new (&m_bars) BarDecorator();
+      break;
+    case Decorator::Type::Arrows:
+      new (&m_arrows) ArrowDecorator();
+      break;
+    default:
+      assert(t == Decorator::Type::None);
+      new (&m_none) Decorator();
+  }
 }
 
 #if ESCHER_VIEW_LOGGING

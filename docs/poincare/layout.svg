@@ -1,0 +1,135 @@
+<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1006 471">
+    <style>
+        .st0{fill:none;stroke:#000;stroke-width:.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10}.st1{fill:#f2f2f2}.st2{fill:gray}.st3{fill:#ccc}.st4{fill:#fff}.st5{fill:none;stroke:#ffb734;stroke-miterlimit:10}.st6{fill:#ffb734}.st7{fill:none;stroke:#ffb734;stroke-linecap:round;stroke-linejoin:round}.st8,.st9{stroke-miterlimit:10}.st8{fill:none;stroke:gray;stroke-width:3}.st9{stroke:#000;stroke-width:2}.st10,.st9{fill:none}.st11{font-family:&apos;SourceCodePro-Medium&apos;}.st12{font-size:21px}.st13{font-family:&apos;SourceSansPro-Light&apos;}.st14{font-family:&apos;SourceSansPro-Regular&apos;}.st15{font-size:20px}.st16{fill:none;stroke:#a3b3ce;stroke-linecap:round;stroke-linejoin:round}.st17{fill:#a3b3ce}.st18,.st19,.st20{fill:none;stroke-miterlimit:10}.st18{stroke-linecap:square;stroke:#ffb734}.st19,.st20{stroke:#000}.st20{stroke-width:2;stroke-dasharray:4,2}
+    </style>
+    <path class="st1" d="M683 179.8h113V245H683zM577 405.8h90V471h-90zM789 405.8h90V471h-90z"/>
+    <path class="st9" d="M87 27.5h39.2"/>
+    <path d="M122.2 30.9l3.4-3.4-3.4-3.4h2.9l3.4 3.4-3.4 3.4z"/>
+    <path class="st9" d="M451 27.5h39.2"/>
+    <path d="M486.2 30.9l3.4-3.4-3.4-3.4h2.9l3.4 3.4-3.4 3.4z"/>
+    <path class="st9" d="M818 27.5h39.2"/>
+    <path d="M853.2 30.9l3.4-3.4-3.4-3.4h2.9l3.4 3.4-3.4 3.4z"/>
+    <path class="st10" d="M145 .5h248v19H145z"/>
+    <text transform="translate(145 15.352)" class="st11 st12">
+        Expression
+    </text>
+    <path class="st10" d="M0 .5h64v19H0z"/>
+    <text transform="translate(0 15.352)" class="st11 st12">
+        Input
+    </text>
+    <path class="st1" d="M238 178.8h117V244H238z"/>
+    <path class="st3" d="M238 178.8h117v31.7H238z"/>
+    <path class="st10" d="M240 186h114v19H240z"/>
+    <text transform="translate(263.432 201.061)" class="st13 st12">
+        Division
+    </text>
+    <path class="st1" d="M236 66.8h117V132H236z"/>
+    <path class="st3" d="M236 66.8h117v31.7H236zM0 66.8h71v31.7H0zM871 66.8h87V120h-87z"/>
+    <path class="st10" d="M238 74h114v19H238z"/>
+    <text transform="translate(251.047 89.061)" class="st13 st12">
+        Logarithm
+    </text>
+    <path class="st10" d="M7 74h114v19H7z"/>
+    <text transform="translate(7 89.061)" class="st13 st12">
+        ln(2/3)
+    </text>
+    <path class="st10" d="M870 .5h130v19H870z"/>
+    <text transform="translate(870 15.352)" class="st11 st12">
+        Rendering
+    </text>
+    <path d="M918.9 86.5c4.4-4.5 6.6-7 6.6-9.3 0-1.7-.9-3-2.9-3-1.2 0-2.3.8-3.1 1.8l-.6-.6c1-1.1 2.2-2 3.8-2 2.4 0 3.8 1.5 3.8 3.8 0 2.7-2.4 5.2-6.2 9.2.7 0 1.5-.1 2.2-.1h4.6v.8h-8.2v-.6zM907.8 94.4c0-8 1-14.6 2.8-20.6l.6.7c-1.7 5.7-2.5 12.7-2.5 19.9s.9 14.2 2.5 19.9l-.6.7c-1.7-6.1-2.8-12.6-2.8-20.6zM938 94.4c0-8-.9-14.6-2.5-20.6l-.5.7c1.5 5.7 2.2 12.7 2.2 19.9s-.8 14.2-2.2 19.9l.5.7c1.6-6.1 2.5-12.6 2.5-20.6zM919.2 109.8c.8.9 1.9 1.7 3.7 1.7 1.8 0 3.1-1.2 3.1-3s-1.3-3.1-4.7-3.1v-.8c3.1 0 4.2-1.3 4.2-2.9 0-1.5-1.1-2.5-2.7-2.5-1.2 0-2.3.7-3.1 1.5l-.5-.6c.9-.9 2.1-1.6 3.6-1.6 2.1 0 3.7 1.2 3.7 3.2 0 1.8-1.1 2.8-2.6 3.3v.1c1.7.4 3 1.6 3 3.5 0 2.3-1.8 3.8-4.1 3.8-2.1 0-3.4-1-4.3-1.9l.7-.7z"/>
+    <path class="st1" d="M137 293.8h90V359h-90z"/>
+    <path class="st10" d="M136 336.2h91v23.3h-91z"/>
+    <text transform="translate(176.53 350.396)" class="st14 st15">
+        2
+    </text>
+    <path class="st3" d="M137 293.8h90v31.7h-90z"/>
+    <path class="st10" d="M121 303h121v19H121z"/>
+    <text transform="translate(145.77 318.061)" class="st13 st12">
+        Rational
+    </text>
+    <path class="st1" d="M346 293.8h90V359h-90z"/>
+    <path class="st10" d="M348 336.2h90v23.3h-90z"/>
+    <text transform="translate(388.03 350.396)" class="st14 st15">
+        3
+    </text>
+    <path class="st10" d="M577 448.2h90v23.3h-90z"/>
+    <text transform="translate(608.45 462.395)" class="st14 st15">
+        «2»
+    </text>
+    <path class="st10" d="M789 448.2h90v23.3h-90z"/>
+    <text transform="translate(820.45 462.395)" class="st14 st15">
+        «3»
+    </text>
+    <path class="st3" d="M346 293.8h90v31.7h-90z"/>
+    <path class="st10" d="M330 303h121v19H330z"/>
+    <text transform="translate(354.77 318.061)" class="st13 st12">
+        Rational
+    </text>
+    <path class="st7" d="M316.5 227.5l74 54.7"/>
+    <path class="st6" d="M385.4 283.5l-.1-1 4.9-.6-1-4.8 1-.2 1.1 5.9z"/>
+    <path class="st7" d="M274.5 227.5l-72.8 54.7"/>
+    <path class="st6" d="M201.9 276.9l1 .2-.9 4.8 4.9.5-.1 1-6-.6z"/>
+    <path class="st1" d="M678 293.8h117V359H678z"/>
+    <path class="st3" d="M577 405.8h90v31.7h-90z"/>
+    <path class="st10" d="M561 415h121v19H561z"/>
+    <text transform="translate(596.322 430.061)" class="st13 st12">
+        String
+    </text>
+    <path class="st3" d="M789 405.8h90v31.7h-90z"/>
+    <path class="st10" d="M773 415h121v19H773z"/>
+    <text transform="translate(808.322 430.061)" class="st13 st12">
+        String
+    </text>
+    <path class="st16" d="M758.5 342.5l74 54.7"/>
+    <path class="st17" d="M827.4 398.5l-.1-1 4.9-.6-1-4.8 1-.2 1.1 5.9z"/>
+    <path class="st16" d="M716.5 342.5l-72.8 54.7"/>
+    <path class="st17" d="M643.9 391.9l1 .2-.9 4.8 4.9.5-.1 1-6-.6z"/>
+    <path class="st7" d="M294.5 116v54.9"/>
+    <path class="st6" d="M290.4 167.6l.7-.7 3.4 3.6 3.4-3.6.7.7-4.1 4.4z"/>
+    <path class="st16" d="M739.5 227v56.9"/>
+    <path class="st17" d="M735.4 280.6l.7-.7 3.4 3.6 3.4-3.6.7.7-4.1 4.4z"/>
+    <path class="st10" d="M506 .5h248v19H506z"/>
+    <text transform="translate(506 15.352)" class="st11 st12">
+        Layout
+    </text>
+    <path class="st1" d="M597 66.8h117V132H597z"/>
+    <path class="st3" d="M597 66.8h117v31.7H597z"/>
+    <path class="st10" d="M599 74h114v19H599z"/>
+    <text transform="translate(611.491 89.061)" class="st13 st12">
+        Horizontal
+    </text>
+    <path class="st1" d="M499 179.8h90V245h-90z"/>
+    <path class="st10" d="M498 222.2h91v23.3h-91z"/>
+    <text transform="translate(526.9 236.395)" class="st14 st15">
+        «ln»
+    </text>
+    <path class="st3" d="M499 179.8h90v31.7h-90z"/>
+    <path class="st10" d="M483 189h121v19H483z"/>
+    <text transform="translate(518.322 204.061)" class="st13 st12">
+        String
+    </text>
+    <path class="st3" d="M683 179.8h113v31.7H683z"/>
+    <path class="st10" d="M679 189h121v19H679z"/>
+    <text transform="translate(689.606 204.061)" class="st13 st12">
+        Parenthesis
+    </text>
+    <path class="st3" d="M678 293.8h117v31.7H678z"/>
+    <path class="st10" d="M674 303h121v19H674z"/>
+    <text transform="translate(699.326 318.061)" class="st13 st12">
+        Fraction
+    </text>
+    <g>
+        <path class="st16" d="M676.5 116.5l74 54.7"/>
+        <path class="st17" d="M745.4 172.5l-.1-1 4.9-.6-1-4.8 1-.2 1.1 5.9z"/>
+    </g>
+    <g>
+        <path class="st16" d="M634.5 116.5l-72.8 54.7"/>
+        <path class="st17" d="M561.9 165.9l1 .2-.9 4.8 4.9.5-.1 1-6-.6z"/>
+    </g>
+    <path class="st19" d="M912 94h21"/>
+    <g>
+        <path d="M888.4 84h.9v13.9c0 .4.2.7.4.7h.4l.2.8c-.2.1-.4.1-.7.1-.8 0-1.2-.5-1.2-1.6V84zM893.4 89h.8l.1 1.6h.1c1-1 2.1-1.8 3.5-1.8 2.1 0 3 1.3 3 3.9v6.5h-.9v-6.3c0-2.1-.7-3.1-2.3-3.1-1.2 0-2.1.6-3.3 1.9v7.6h-.9V89z"/>
+    </g>
+    <path class="st20" d="M0 28.2h71M871 28h135M145 28.2h291M506 28.2h300"/>
+</svg>

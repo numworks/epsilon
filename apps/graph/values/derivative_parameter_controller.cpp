@@ -1,5 +1,6 @@
 #include "derivative_parameter_controller.h"
 #include "values_controller.h"
+#include "../app.h"
 #include <assert.h>
 
 namespace Graph {
@@ -10,21 +11,17 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
 #if COPY_COLUMN
   m_copyColumn(I18n::Message::CopyColumnInList),
 #endif
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_function(nullptr),
+  m_selectableTableView(this),
+  m_record(),
   m_valuesController(valuesController)
 {
 }
 
+void DerivativeParameterController::viewWillAppear() {
+  functionStore()->modelForRecord(m_record)->derivativeNameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle);
+}
+
 const char * DerivativeParameterController::title() {
-  strlcpy(m_pageTitle, I18n::translate(I18n::Message::DerivativeColumn), k_maxNumberOfCharsInTitle);
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
-    if (m_pageTitle[currentChar] == '(') {
-      m_pageTitle[currentChar-2] = *m_function->name();
-      break;
-    }
-  }
   return m_pageTitle;
 }
 
@@ -32,13 +29,9 @@ View * DerivativeParameterController::view() {
   return &m_selectableTableView;
 }
 
-void DerivativeParameterController::setFunction(CartesianFunction * function) {
-  m_function = function;
-}
-
 void DerivativeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
@@ -47,7 +40,7 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()-1, m_valuesController->selectedRow());
-        m_function->setDisplayDerivative(false);
+        functionStore()->modelForRecord(m_record)->setDisplayDerivative(false);
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;
@@ -65,7 +58,7 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int DerivativeParameterController::numberOfRows() {
+int DerivativeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
@@ -80,12 +73,16 @@ HighlightCell * DerivativeParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int DerivativeParameterController::reusableCellCount() {
+int DerivativeParameterController::reusableCellCount() const {
   return k_totalNumberOfCell;
 }
 
 KDCoordinate DerivativeParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
+}
+
+ContinuousFunctionStore * DerivativeParameterController::functionStore() {
+  return App::app()->functionStore();
 }
 
 }

@@ -4,22 +4,18 @@
 #include <apps/i18n.h>
 #include <escher.h>
 #include <ion/events.h>
-#include <kandinsky/text.h>
+#include <kandinsky/font.h>
 
 namespace Code {
 
 class PythonToolbox : public Toolbox {
 public:
-  typedef void (*Action)(void * sender, const char * text);
   PythonToolbox();
-  void setAction(Action action);
-
-  // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   KDCoordinate rowHeight(int j) override;
-  bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
-  const ToolboxMessageTree * rootModel() override;
+  bool selectLeaf(int selectedRow) override;
+  const ToolboxMessageTree * rootModel() const override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
@@ -27,10 +23,9 @@ protected:
   // 13 = minimal string height size
   // 3 = vertical margins
 private:
-  constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Small;
+  constexpr static const KDFont * k_font = KDFont::SmallFont;
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);
-  Action m_action;
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
 };

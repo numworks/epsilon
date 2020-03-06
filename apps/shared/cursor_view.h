@@ -7,8 +7,11 @@ namespace Shared {
 
 class CursorView : public View {
 public:
-  using View::View;
+  virtual void setCursorFrame(KDRect frame, bool force) { View::setFrame(frame, force); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override;
+private:
+  constexpr static KDCoordinate k_size = 19;
 };
 
 }

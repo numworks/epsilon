@@ -1,70 +1,78 @@
+#include <assert.h>
 #include <kandinsky/context.h>
-#include <kandinsky/text.h>
-#include "small_font.h"
-#include "large_font.h"
+#include <kandinsky/font.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/display.h>
 
-KDColor smallCharacterBuffer[BITMAP_SmallFont_CHARACTER_WIDTH*BITMAP_SmallFont_CHARACTER_HEIGHT];
-KDColor largeCharacterBuffer[BITMAP_LargeFont_CHARACTER_WIDTH*BITMAP_LargeFont_CHARACTER_HEIGHT];
+constexpr static int k_tabCharacterWidth = 4;
 
-KDPoint KDContext::drawString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength) {
-  return writeString(text, p, size, textColor, backgroundColor, maxLength, false);
+KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength) {
+  return pushOrPullString(text, p, font, textColor, backgroundColor, maxByteLength, true);
 }
 
-KDPoint KDContext::blendString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor) {
-  return writeString(text, p, size, textColor, KDColorWhite, -1, true);
+int KDContext::checkDrawnString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
+  int numberOfFailedPixels = 0;
+  pushOrPullString(text, p, font, textColor, backgroundColor, maxLength, false, &numberOfFailedPixels);
+  return numberOfFailedPixels;
 }
 
-KDPoint KDContext::writeString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength, bool transparentBackground) {
+KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength, bool push, int * result) {
   KDPoint position = p;
-  int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
-  int characterHeight = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_HEIGHT: BITMAP_SmallFont_CHARACTER_HEIGHT;
-  KDPoint characterSize(characterWidth, 0);
+  KDSize glyphSize = font->glyphSize();
+  KDFont::RenderPalette palette = font->renderPalette(textColor, backgroundColor);
+  KDFont::GlyphBuffer glyphBuffer;
 
-  const char * end = text+maxLength;
-  while(*text != 0 && text != end) {
-    writeChar(*text, position, size, textColor, backgroundColor, transparentBackground);
-    if (*text == '\n') {
-      position = KDPoint(0, position.y()+characterHeight);
-    } else if (*text == '\t') {
-      position = position.translatedBy(KDPoint(KDText::k_tabCharacterWidth*characterWidth, 0));
+  UTF8Decoder decoder(text);
+  const char * codePointPointer = decoder.stringPosition();
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != UCodePointNull && (maxByteLength < 0 || codePointPointer < text + maxByteLength)) {
+    codePointPointer = decoder.stringPosition();
+    if (codePoint == UCodePointLineFeed) {
+      position = KDPoint(0, position.y() + glyphSize.height());
+      codePoint = decoder.nextCodePoint();
+    } else if (codePoint == UCodePointTabulation) {
+      position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
+      codePoint = decoder.nextCodePoint();
     } else {
-      position = position.translatedBy(characterSize);
-    }
-    text++;
-  }
-  return position;
-}
-
-void KDContext::writeChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, bool transparentBackground) {
-  if (character == '\n' || character == '\t') {
-    return;
-  }
-  char firstCharacter = size == KDText::FontSize::Large ? BITMAP_LargeFont_FIRST_CHARACTER : BITMAP_SmallFont_FIRST_CHARACTER;
-  int characterHeight = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_HEIGHT : BITMAP_SmallFont_CHARACTER_HEIGHT;
-  int characterWidth = size == KDText::FontSize::Large ? BITMAP_LargeFont_CHARACTER_WIDTH : BITMAP_SmallFont_CHARACTER_WIDTH;
-
-  KDColor * characterBuffer = size == KDText::FontSize::Large ? largeCharacterBuffer : smallCharacterBuffer;
-
-  KDRect absoluteRect = absoluteFillRect(KDRect(p, characterWidth, characterHeight));
-  if (transparentBackground) {
-    pullRect(absoluteRect, characterBuffer);
-  }
-  KDCoordinate startingI = m_clippingRect.x() - p.translatedBy(m_origin).x();
-  KDCoordinate startingJ = m_clippingRect.y() - p.translatedBy(m_origin).y();
-  startingI = startingI < 0 ? 0 : startingI;
-  startingJ = startingJ < 0 ? 0 : startingJ;
-
-  for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
-    for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
-      KDColor * currentPixelAdress = characterBuffer + i + absoluteRect.width()*j;         uint8_t intensity = 0;
-      if (size == KDText::FontSize::Large) {
-        intensity = bitmapLargeFont[(uint8_t)character-(uint8_t)firstCharacter][j + startingJ][i +startingI];
-      } else {
-       intensity = bitmapSmallFont[(uint8_t)character-(uint8_t)firstCharacter][j + startingJ][i +startingI];
+      assert(!codePoint.isCombining());
+      font->setGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+      codePoint = decoder.nextCodePoint();
+      while (codePoint.isCombining()) {
+        font->accumulateGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+        codePointPointer = decoder.stringPosition();
+        codePoint = decoder.nextCodePoint();
       }
-      KDColor backColor = transparentBackground ? *currentPixelAdress : backgroundColor;
-      *currentPixelAdress = KDColor::blend(textColor, backColor, intensity);
+      font->colorizeGlyphBuffer(&palette, &glyphBuffer);
+      if (push) {
+        // Push the character on the screen
+        fillRectWithPixels(
+            KDRect(position, glyphSize),
+            glyphBuffer.colorBuffer(),
+            glyphBuffer.colorBuffer() // It's OK to trash the content of the color buffer since we'll re-fetch it for the next char anyway
+            );
+      } else {
+        // Pull and compare the character from the screen
+        assert(result != nullptr);
+        *result = 0;
+        KDFont::GlyphBuffer workingGlyphBuffer;
+        KDColor * workingColorBuffer = workingGlyphBuffer.colorBuffer();
+        KDColor * colorBuffer = glyphBuffer.colorBuffer();
+        for (int i = 0; i < glyphSize.height() * glyphSize.width(); i++) {
+          workingColorBuffer[i] = KDColorRed;
+        }
+        /* Caution: Unlike fillRectWithPixels, pullRect accesses outside (0, 0,
+         * Ion::Display::Width, Ion::Display::Height) might give weird data. */
+        Ion::Display::pullRect(KDRect(position, glyphSize), workingColorBuffer);
+        for (int k = 0; k < glyphSize.height() * glyphSize.width(); k++) {
+          if (colorBuffer[k] != workingColorBuffer[k]) {
+            *result = (*result)+1;
+            break;
+          }
+        }
+      }
+      position = position.translatedBy(KDPoint(glyphSize.width(), 0));
     }
   }
-  pushRect(absoluteRect, characterBuffer);
+
+  return position;
 }

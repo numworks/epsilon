@@ -34,7 +34,7 @@
 
 #include "py/mpthread.h"
 
-#if 0 // print debugging info
+#if MICROPY_DEBUG_VERBOSE // print debugging info
 #define DEBUG_PRINT (1)
 #define DEBUG_printf DEBUG_printf
 #else // don't print debugging info
@@ -165,6 +165,12 @@ STATIC void *thread_entry(void *args_in) {
     mp_stack_set_top(&ts + 1); // need to include ts in root-pointer scan
     mp_stack_set_limit(args->stack_size);
 
+    #if MICROPY_ENABLE_PYSTACK
+    // TODO threading and pystack is not fully supported, for now just make a small stack
+    mp_obj_t mini_pystack[128];
+    mp_pystack_init(mini_pystack, &mini_pystack[128]);
+    #endif
+
     // set locals and globals from the calling context
     mp_locals_set(args->dict_locals);
     mp_globals_set(args->dict_globals);
@@ -192,10 +198,10 @@ STATIC void *thread_entry(void *args_in) {
             // swallow exception silently
         } else {
             // print exception out
-            mp_printf(&mp_plat_print, "Unhandled exception in thread started by ");
-            mp_obj_print_helper(&mp_plat_print, args->fun, PRINT_REPR);
-            mp_printf(&mp_plat_print, "\n");
-            mp_obj_print_exception(&mp_plat_print, MP_OBJ_FROM_PTR(exc));
+            mp_printf(MICROPY_ERROR_PRINTER, "Unhandled exception in thread started by ");
+            mp_obj_print_helper(MICROPY_ERROR_PRINTER, args->fun, PRINT_REPR);
+            mp_printf(MICROPY_ERROR_PRINTER, "\n");
+            mp_obj_print_exception(MICROPY_ERROR_PRINTER, MP_OBJ_FROM_PTR(exc));
         }
     }
 
@@ -236,7 +242,7 @@ STATIC mp_obj_t mod_thread_start_new_thread(size_t n_args, const mp_obj_t *args)
         th_args->n_kw = map->used;
         // copy across the keyword arguments
         for (size_t i = 0, n = pos_args_len; i < map->alloc; ++i) {
-            if (MP_MAP_SLOT_IS_FILLED(map, i)) {
+            if (mp_map_slot_is_filled(map, i)) {
                 th_args->args[n++] = map->table[i].key;
                 th_args->args[n++] = map->table[i].value;
             }

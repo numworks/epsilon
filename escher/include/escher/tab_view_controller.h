@@ -19,6 +19,7 @@ public:
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousResponder) override;
   void willResignFirstResponder() override;
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
@@ -36,7 +37,7 @@ private:
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
 
     View * m_activeView;
   };

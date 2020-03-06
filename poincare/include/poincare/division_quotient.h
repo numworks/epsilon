@@ -1,35 +1,53 @@
 #ifndef POINCARE_DIVISION_QUOTIENT_H
 #define POINCARE_DIVISION_QUOTIENT_H
 
-#include <poincare/layout_engine.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/complex.h>
+#include <poincare/expression.h>
+#include <poincare/integer.h>
 
 namespace Poincare {
 
-class DivisionQuotient : public StaticHierarchy<2> {
-  using StaticHierarchy<2>::StaticHierarchy;
+class DivisionQuotientNode final : public ExpressionNode {
 public:
-  Type type() const override;
-  Expression * clone() const override;
+
+  // TreeNode
+  size_t size() const override { return sizeof(DivisionQuotientNode); }
+  int numberOfChildren() const override;
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "DivisionQuotient";
+  }
+#endif
+
+  // ExpressionNode
+  Type type() const override { return Type::DivisionQuotient; }
+
+  // Simplification
+  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
 private:
- /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
-  }
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
-  }
-  const char * name() const { return "quo"; }
-  /* Simplification */
-  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
-  /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Complex<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+};
+
+class DivisionQuotient final : public Expression {
+public:
+  DivisionQuotient(const DivisionQuotientNode * n) : Expression(n) {}
+  static DivisionQuotient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilderTwoChildren<DivisionQuotient>);
+
+  // Expression
+  Expression shallowReduce(Context * context);
+  static Expression Reduce(const Integer & a, const Integer & b);
 };
 
 }
 
 #endif
-

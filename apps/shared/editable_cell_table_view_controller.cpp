@@ -1,16 +1,17 @@
 #include "editable_cell_table_view_controller.h"
-#include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include "../constant.h"
-#include "text_field_delegate_app.h"
 #include <assert.h>
 #include <cmath>
 
 using namespace Poincare;
 
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
 namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
-  TabTableController(parentResponder, this)
+  TabTableController(parentResponder)
 {
 }
 
@@ -18,88 +19,77 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
      || (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
      || (event == Ion::Events::Up && selectedRow() > 0)
-     || (event == Ion::Events::Right && textField->cursorLocation() == textField->draftTextLength() && selectedColumn() < numberOfColumns()-1)
-     || (event == Ion::Events::Left && textField->cursorLocation() == 0 && selectedColumn() > 0);  }
+     || (event == Ion::Events::Right && (textField->cursorLocation() == textField->draftTextBuffer() + textField->draftTextLength()) && selectedColumn() < numberOfColumns()-1)
+     || (event == Ion::Events::Left && textField->cursorLocation() == textField->draftTextBuffer() && selectedColumn() > 0);
+}
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
+  // Save attributes for later use
+  int column = selectedColumn();
+  int previousRow = selectedRow();
+  int previousNumberOfElementsInColumn = numberOfElementsInColumn(column);
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  selectableTableView()->reloadData();
+  /* At this point, a new cell is selected depending on the event, before the
+   * data is reloaded, which means that the right cell is selected but the data
+   * may be incorrect. The data is reloaded afterwards. */
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
+    selectableTableView()->selectCellAtLocation(column, selectedRow()+1);
   } else {
     selectableTableView()->handleEvent(event);
+  }
+  didChangeCell(column, previousRow);
+  if (previousNumberOfElementsInColumn != numberOfElementsInColumn(column)) {
+    // Reload the whole table, if a value was appended.
+    selectableTableView()->reloadData();
+  } else {
+    // Reload the row, if an existing value was edited.
+    for (int i = 0; i < numberOfColumns(); i++) {
+      selectableTableView()->reloadCellAtLocation(i, previousRow);
+    }
   }
   return true;
 }
 
-void EditableCellTableViewController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
-    return;
+int EditableCellTableViewController::numberOfRows() const {
+  int numberOfModelElements = 0;
+  for (int i = 0; i < numberOfColumns(); i++) {
+    numberOfModelElements = maxInt(numberOfModelElements, numberOfElementsInColumn(i));
   }
-  if (cellAtLocationIsEditable(previousSelectedCellX, previousSelectedCellY)) {
-    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->editableTextCell()->textField()->setEditing(false);
-    if (app()->firstResponder() == myCell->editableTextCell()->textField()) {
-      app()->setFirstResponder(t);
-    }
-  }
-  if (cellAtLocationIsEditable(t->selectedColumn(), t->selectedRow())) {
-    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->selectedCell();
-    app()->setFirstResponder(myCell);
-  }
-}
-
-int EditableCellTableViewController::numberOfRows() {
-  int numberOfModelElements = numberOfElements();
-  if (numberOfModelElements >= maxNumberOfElements()) {
-    return 1 + numberOfModelElements;
-  }
-  return 2 + numberOfModelElements;
+  return 1 + numberOfModelElements + (numberOfModelElements < maxNumberOfElements());
 }
 
 KDCoordinate EditableCellTableViewController::rowHeight(int j) {
   return k_cellHeight;
 }
 
-void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Expression::FloatDisplayMode floatDisplayMode) {
-  EvenOddCell * myCell = (EvenOddCell *)cell;
-  /* We set the cell even or odd state only if the cell is not being edited.
+void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Preferences::PrintFloatMode floatDisplayMode) {
+  /* If the cell is editable, make sure it is not being edited.
    * Otherwise, the cell background is white whichever it is an odd or even cell
    * and we do not want to redraw the cell twice (in the even/odd color and
    * then in white) to avoid screen blinking. */
+  static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
+    const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
+    char buffer[bufferSize];
     // Special case 1: last row
-    if (j == numberOfRows() - 1) {
+    if (j == numberOfElementsInColumn(i) + 1) {
       /* Display an empty line only if there is enough space for a new element in
        * data */
-      if (numberOfElements() < maxNumberOfElements() && !myEditableValueCell->editableTextCell()->textField()->isEditing()) {
-        myCell->setEven(j%2 == 0);
-        buffer[0] = 0;
-        myEditableValueCell->editableTextCell()->textField()->setText(buffer);
-        return;
-      }
+      buffer[0] = 0;
+    } else {
+      PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(dataAtLocation(i, j), buffer, bufferSize, Preferences::LargeNumberOfSignificantDigits, floatDisplayMode);
     }
-    if (!myEditableValueCell->editableTextCell()->textField()->isEditing()) {
-      myCell->setEven(j%2 == 0);
-      Complex<double>::convertFloatToText(dataAtLocation(i, j), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
-      myEditableValueCell->editableTextCell()->textField()->setText(buffer);
-    }
-    return;
-  } else {
-    myCell->setEven(j%2 == 0);
+    myEditableValueCell->editableTextCell()->textField()->setText(buffer);
   }
 }
 
@@ -125,10 +115,6 @@ void EditableCellTableViewController::viewWillAppear() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
-}
-
-TextFieldDelegateApp * EditableCellTableViewController::textFieldDelegateApp() {
-  return (TextFieldDelegateApp *)app();
 }
 
 }

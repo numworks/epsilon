@@ -3,34 +3,42 @@
 
 #include <escher.h>
 #include "script.h"
+#include "editor_view.h"
+#include "variable_box_controller.h"
+#include "../shared/input_event_handler_delegate.h"
 
 namespace Code {
 
 class MenuController;
 class ScriptParameterController;
+class App;
 
-class EditorController : public ViewController, public TextAreaDelegate {
+class EditorController : public ViewController, public TextAreaDelegate, public Shared::InputEventHandlerDelegate {
 public:
-  EditorController(MenuController * menuController);
+  EditorController(MenuController * menuController, App * pythonDelegate);
   void setScript(Script script);
+  void willExitApp();
 
   /* ViewController */
-  View * view() override { return &m_textArea; }
+  View * view() override { return &m_editorView; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  TELEMETRY_ID("Editor");
 
   /* TextAreaDelegate */
-  bool textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) override;
   bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;
-  Toolbox * toolboxForTextArea(TextArea * textArea) override;
+
+  /* InputEventHandlerDelegate */
+  VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 
 private:
-  static constexpr int k_indentationSpacesNumber = 2;
+  void cleanStorageEmptySpace();
   StackViewController * stackController();
-  TextArea m_textArea;
+  EditorView m_editorView;
+  Script m_script;
   MenuController * m_menuController;
 };
 

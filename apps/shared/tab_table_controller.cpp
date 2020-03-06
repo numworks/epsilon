@@ -2,39 +2,26 @@
 
 namespace Shared {
 
-TabTableController::TabTableController(Responder * parentResponder, TableViewDataSource * dataSource) :
-  DynamicViewController(parentResponder),
-  m_dataSource(dataSource)
+TabTableController::TabTableController(Responder * parentResponder) :
+  ViewController(parentResponder)
 {
 }
 
 void TabTableController::didBecomeFirstResponder() {
-  app()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
 void TabTableController::viewWillAppear() {
-  DynamicViewController::viewWillAppear();
+  ViewController::viewWillAppear();
   selectableTableView()->reloadData();
 }
 
 void TabTableController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
     selectableTableView()->deselectTable();
     selectableTableView()->scrollToCell(0,0);
   }
 }
 
-SelectableTableView * TabTableController::selectableTableView() {
-  return (SelectableTableView *)view();
 }
-
-View * TabTableController::loadView() {
-  return new SelectableTableView(this, m_dataSource, 0, 0,  Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, this, true, true, Palette::WallScreenDark);
-}
-
-void TabTableController::unloadView(View * view) {
-  delete view;
-}
-
-}
-

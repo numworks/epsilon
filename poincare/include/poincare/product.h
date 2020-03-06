@@ -5,22 +5,39 @@
 
 namespace Poincare {
 
-class Product : public Sequence {
-  using Sequence::Sequence;
+class ProductNode final : public SequenceNode {
 public:
-  Type type() const override;
-  Expression * clone() const override;
+  // TreeNode
+  size_t size() const override { return sizeof(ProductNode); }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Product";
+  }
+#endif
+
+  Type type() const override { return Type::Product; }
+
 private:
-  const char * name() const override;
-  int emptySequenceValue() const override;
-  ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;
-  Expression * evaluateWithNextTerm(DoublePrecision p, Expression * a, Expression * b) const override {
-    return templatedApproximateWithNextTerm<double>(a, b);
+  float emptySequenceValue() const override { return 1.0f; }
+  Layout createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
+    return templatedApproximateWithNextTerm<double>(a, b, complexFormat);
   }
-  Expression * evaluateWithNextTerm(SinglePrecision p, Expression * a, Expression * b) const override {
-    return templatedApproximateWithNextTerm<float>(a, b);
+  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const override {
+    return templatedApproximateWithNextTerm<float>(a, b, complexFormat);
   }
-  template<typename T> Expression * templatedApproximateWithNextTerm(Expression * a, Expression * b) const;
+  template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const;
+};
+
+class Product final : public Sequence {
+friend class ProductNode;
+public:
+  Product(const ProductNode * n) : Sequence(n) {}
+  static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>(ArrayBuilder<TreeHandle>(child0, child1, child2, child3).array(), 4); }
+  static Expression UntypedBuilder(Expression children);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("product", 4, &UntypedBuilder);
 };
 
 }

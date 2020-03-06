@@ -1,9 +1,8 @@
-#ifndef ESCHER_ALTERNATE_EMPTY_VIEW_H
-#define ESCHER_ALTERNATE_EMPTY_VIEW_H
+#ifndef ESCHER_ALTERNATE_EMPTY_VIEW_CONTROLLER_H
+#define ESCHER_ALTERNATE_EMPTY_VIEW_CONTROLLER_H
 
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/i18n.h>
-#include <escher/message_text_view.h>
 #include <escher/view_controller.h>
 
 class AlternateEmptyViewController : public ViewController {
@@ -13,6 +12,7 @@ public:
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
@@ -21,11 +21,10 @@ private:
     ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate);
     ViewController * mainViewController() const;
     AlternateEmptyViewDelegate * alternateEmptyViewDelegate() const;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    MessageTextView m_message;
     ViewController * m_mainViewController;
     AlternateEmptyViewDelegate * m_delegate;
   };

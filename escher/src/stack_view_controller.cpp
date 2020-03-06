@@ -2,7 +2,8 @@ extern "C" {
 #include <assert.h>
 }
 #include <escher/stack_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
+#include <escher/metric.h>
 
 StackViewController::ControllerView::ControllerView() :
   View(),
@@ -35,20 +36,20 @@ void StackViewController::ControllerView::popStack() {
   m_numberOfStacks--;
 }
 
-void StackViewController::ControllerView::layoutSubviews() {
+void StackViewController::ControllerView::layoutSubviews(bool force) {
   KDCoordinate width = m_frame.width();
   if (m_displayStackHeaders) {
     for (int i=0; i<m_numberOfStacks; i++) {
-      m_stackViews[i].setFrame(KDRect(0, k_stackHeight*i, width, k_stackHeight + 1));
+      m_stackViews[i].setFrame(KDRect(0, Metric::StackTitleHeight*i, width, Metric::StackTitleHeight + 1), force);
     }
   }
   if (m_contentView) {
-    bool separatorHeight = m_numberOfStacks > 1;
-    KDRect contentViewFrame = KDRect( 0,
-        m_displayStackHeaders * (m_numberOfStacks * k_stackHeight + separatorHeight),
+    KDCoordinate separatorHeight = m_numberOfStacks > 0 ? 1 : 0;
+    KDRect contentViewFrame = KDRect(0,
+        m_displayStackHeaders * (m_numberOfStacks * Metric::StackTitleHeight + separatorHeight),
         width,
-        m_frame.height() - m_displayStackHeaders * m_numberOfStacks * k_stackHeight);
-    m_contentView->setFrame(contentViewFrame);
+        m_frame.height() - m_displayStackHeaders * m_numberOfStacks * Metric::StackTitleHeight);
+    m_contentView->setFrame(contentViewFrame, force);
   }
 }
 
@@ -95,6 +96,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
   /* Add the frame to the model */
   pushModel(frame);
+  frame.viewController()->initView();
   if (!m_isVisible) {
     return;
   }
@@ -135,12 +137,12 @@ void StackViewController::setupActiveViewController() {
   m_view.setContentView(vc->view());
   vc->viewWillAppear();
   vc->setParentResponder(this);
-  app()->setFirstResponder(vc);
+  Container::activeApp()->setFirstResponder(vc);
 }
 
 void StackViewController::didBecomeFirstResponder() {
   ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
-  app()->setFirstResponder(vc);
+  Container::activeApp()->setFirstResponder(vc);
 }
 
 bool StackViewController::handleEvent(Ion::Events::Event event) {
@@ -153,6 +155,10 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
 
 View * StackViewController::view() {
   return &m_view;
+}
+
+void StackViewController::initView() {
+  m_childrenFrame[0].viewController()->initView();
 }
 
 void StackViewController::viewWillAppear() {

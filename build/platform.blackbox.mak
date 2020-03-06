@@ -1,5 +1,9 @@
 TOOLCHAIN ?= host-gcc
 USE_LIBA ?= 0
+ION_KEYBOARD_LAYOUT = layout_B2
 EXE = bin
-OS_WITH_ONBOARDING_APP ?= 0
-OS_WITH_SOFTWARE_UPDATE_PROMPT ?= 0
+
+ifeq ($(DEBUG),1)
+else
+SFLAGS += -DNDEBUG
+endif

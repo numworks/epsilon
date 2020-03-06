@@ -2,7 +2,7 @@
 #define SHARED_LANGUAGE_CONTROLLER_H
 
 #include <escher.h>
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 
@@ -17,10 +17,10 @@ public:
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() const override;
 
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:

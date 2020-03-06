@@ -8,7 +8,7 @@ KDCoordinate ListViewDataSource::columnWidth(int i) {
   return cellWidth();
 }
 
-int ListViewDataSource::numberOfColumns() {
+int ListViewDataSource::numberOfColumns() const {
   return 1;
 }
 
@@ -20,6 +20,9 @@ void ListViewDataSource::willDisplayCellForIndex(HighlightCell * cell, int index
 }
 
 KDCoordinate ListViewDataSource::cumulatedWidthFromIndex(int i) {
+  if (i == 1) {
+    return cellWidth();
+  }
   return 0;
 }
 

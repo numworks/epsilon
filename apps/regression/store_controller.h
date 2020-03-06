@@ -3,25 +3,26 @@
 
 #include <escher.h>
 #include "store.h"
+#include "regression_context.h"
+#include "store_parameter_controller.h"
 #include "../shared/store_controller.h"
+#include "../shared/store_title_cell.h"
 
 namespace Regression {
 
 class StoreController : public Shared::StoreController {
 public:
-  StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
-  ~StoreController();
-  StoreController(const StoreController& other) = delete;
-  StoreController(StoreController&& other) = delete;
-  StoreController& operator=(const StoreController& other) = delete;
-  StoreController& operator=(StoreController&& other) = delete;
+  StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Poincare::Context * parentContext);
+  Shared::StoreContext * storeContext() override { return &m_regressionContext; }
+  void setFormulaLabel() override;
+  bool fillColumnWithFormula(Poincare::Expression formula) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
   HighlightCell * titleCells(int index) override;
-  View * loadView() override;
-  void unloadView(View * view) override;
-  EvenOddExpressionCell * m_titleCells[k_numberOfTitleCells];
-  Poincare::ExpressionLayout * m_titleLayout[2];
+  Shared::StoreParameterController * storeParameterController() override { return &m_storeParameterController; }
+  Shared::StoreTitleCell m_titleCells[k_numberOfTitleCells];
+  RegressionContext m_regressionContext;
+  StoreParameterController m_storeParameterController;
 };
 
 }

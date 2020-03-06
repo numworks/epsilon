@@ -21,7 +21,7 @@ private:
     constexpr static int k_maxNumberOfCharacters = 20;
     void setColor(KDColor color) override;
   private:
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     constexpr static int k_margin = 4;
@@ -29,7 +29,6 @@ private:
     BufferTextView m_batteryLevelView;
     BufferTextView m_batteryChargingView;
   };
-  constexpr static float k_batteryThreshold = 3.7f;
   constexpr static const char * k_batteryOKText = "BATTERY: OK";
   constexpr static const char * k_batteryNeedChargingText = "BATTERY: NEED RECHARGE";
   void updateBatteryState(float batteryLevel, bool batteryCharging);

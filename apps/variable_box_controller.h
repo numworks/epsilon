@@ -4,68 +4,62 @@
 #define MATRIX_VARIABLES 1
 
 #include <escher.h>
-#include <poincare.h>
-#include "variable_box_leaf_cell.h"
-#include "i18n.h"
+#include "variable_box_empty_controller.h"
+#include <apps/i18n.h>
 
-class VariableBoxController : public StackViewController {
+class VariableBoxController : public NestedMenuController {
 public:
-  VariableBoxController(Poincare::GlobalContext * context);
-  void didBecomeFirstResponder() override;
-  void setTextFieldCaller(TextField * textField);
+  VariableBoxController();
+
+  // View Controller
   void viewWillAppear() override;
   void viewDidDisappear() override;
-private:
-  class ContentViewController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
-  public:
-    ContentViewController(Responder * parentResponder, Poincare::GlobalContext * context);
-    View * view() override;
-    const char * title() override;
-    void didBecomeFirstResponder() override;
-    bool handleEvent(Ion::Events::Event event) override;
-    int numberOfRows() override;
-    HighlightCell * reusableCell(int index, int type) override;
-    int reusableCellCount(int type) override;
-    void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-    KDCoordinate rowHeight(int j) override;
-    KDCoordinate cumulatedHeightFromIndex(int j) override;
-    int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-    int typeAtLocation(int i, int j) override;
-    void setTextFieldCaller(TextField * textField);
-    void reloadData();
-    void resetPage();
-    void viewDidDisappear() override;
-  private:
-    enum class Page {
-      RootMenu,
-      Scalar,
-#if LIST_VARIABLES
-      List,
-#endif
-      Matrix
-    };
-    constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
-#if LIST_VARIABLES
-    constexpr static int k_numberOfMenuRows = 3;
-#else
-    constexpr static int k_numberOfMenuRows = 2;
-#endif
-    constexpr static KDCoordinate k_leafMargin = 10;
-    Page pageAtIndex(int index);
-    void putLabelAtIndexInBuffer(int index, char * buffer);
-    I18n::Message nodeLabelAtIndex(int index);
-    const Poincare::Expression * expressionForIndex(int index);
 
-    Poincare::GlobalContext * m_context;
-    TextField * m_textFieldCaller;
-    int m_firstSelectedRow;
-    int m_previousSelectedRow;
-    Page m_currentPage;
-    VariableBoxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
-    MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
-    SelectableTableView m_selectableTableView;
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
+
+  //ListViewDataSource
+  int numberOfRows() const override;
+  int reusableCellCount(int type) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  KDCoordinate rowHeight(int j) override;
+  int typeAtLocation(int i, int j) override;
+
+  // Menu
+  enum class Page {
+    RootMenu = 0,
+    Expression = 1,
+    Function = 2
   };
-  ContentViewController m_contentViewController;
+  void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
+private:
+ constexpr static int k_maxNumberOfDisplayedRows = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin - Metric::StackTitleHeight) / Metric::ToolboxRowHeight + 2; // (240 - 18 - 50 - 20) / 40  = 3.8; the 0.8 cell can be above and below so we add +2 to get 5
+  constexpr static int k_numberOfMenuRows = 2;
+  constexpr static KDCoordinate k_leafMargin = 20;
+  ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
+  MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
+  Page pageAtIndex(int index);
+  void setPage(Page page);
+  bool selectSubMenu(int selectedRow) override;
+  bool returnToPreviousMenu() override;
+  bool selectLeaf(int selectedRow) override;
+  I18n::Message nodeLabelAtIndex(int index);
+  Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
+  const char * extension() const;
+  Ion::Storage::Record recordAtIndex(int rowIndex);
+  bool displayEmptyController();
+  bool isDisplayingEmptyController() { return StackViewController::depth() == 2; }
+  void resetMemoization();
+  void destroyRecordAtRowIndex(int rowIndex);
+  Page m_currentPage;
+  Page m_lockPageDelete;
+  ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
+  MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
+  VariableBoxEmptyController m_emptyViewController;
+  // Layout memoization
+  // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and ExpressionModelStore code
+  int m_firstMemoizedLayoutIndex;
+  Poincare::Layout m_layouts[k_maxNumberOfDisplayedRows];
 };
 
 #endif

@@ -1,31 +1,41 @@
-objs += $(addprefix ion/src/simulator/, \
-  init.o\
-  led.o\
-  usb.o\
+# TODO
+ion_src += $(addprefix ion/src/shared/, \
+  crc32.cpp \
+  events.cpp \
+  events_keyboard.cpp \
+  events_modifier.cpp \
+  power.cpp \
+  random.cpp \
+  timing.cpp \
+  dummy/backlight.cpp \
+  dummy/battery.cpp \
+  dummy/display.cpp \
+  dummy/exam_mode.cpp \
+  dummy/fcc_id.cpp \
+  dummy/led.cpp \
+  dummy/serial_number.cpp \
+  dummy/stack.cpp \
+  dummy/usb.cpp \
 )
 
-objs += $(addprefix ion/src/simulator/boot/, main.o)
-objs += $(addprefix ion/src/simulator/display/, fltklcd.o)
-objs += $(addprefix ion/src/simulator/keyboard/, fltkkbd.o)
-
-objs += $(addprefix ion/src/shared/, \
-  crc32.o \
-  console_line.o \
-  console_stdio.o \
-  events_keyboard.o \
-  events_modifier.o \
-  power.o \
-  random.o \
-  dummy/backlight.o \
-  dummy/battery.o \
-  dummy/fcc_id.o \
+ion_simulator_sdl_src += $(addprefix ion/src/simulator/shared/, \
+  display.cpp \
+  events_keyboard.cpp \
+  framebuffer_base.cpp \
+  keyboard_sdl.cpp \
+  main_sdl.cpp \
+  layout.cpp \
 )
 
-SFLAGS += `fltk-config --cflags`
-LDFLAGS += `fltk-config --ldflags`
+ion_simulator_headless_src += $(addprefix ion/src/simulator/shared/, \
+  events_stdin.cpp \
+  framebuffer_base.cpp \
+  framebuffer_png.cpp \
+  keyboard_dummy.cpp \
+  main_headless.cpp \
+)
 
-.PHONY: %_memory_map
-%_memory_map:
-	@echo "========== MEMORY MAP ========="
-	@echo "No memory map on simulator."
-	@echo "==============================="
+ion_console_stdio_src = ion/src/simulator/shared/console_stdio.cpp
+
+include ion/src/simulator/$(TARGET)/Makefile
+include ion/src/simulator/external/Makefile

@@ -3,8 +3,8 @@
 
 extern "C" {
 #include <stdint.h>
-#include <kandinsky.h>
 }
+#include <kandinsky.h>
 
 #if ESCHER_VIEW_LOGGING
 #include <iostream>
@@ -20,29 +20,47 @@ extern "C" {
 
 class Window;
 
+namespace Shared {
+  class RoundCursorView;
+}
+
 class View {
   // We only want Window to be able to invoke View::redraw
   friend class Window;
+  friend class TransparentView;
+  friend class Shared::RoundCursorView;
 public:
-  View();
-  virtual ~View();
+  View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero) {}
+  virtual ~View() {
+    for (int i = 0; i < numberOfSubviews(); i++) {
+      View * subview = subviewAtIndex(i);
+      if (subview != nullptr) {
+        subview->m_superview = nullptr;
+      }
+    }
+  }
+  View(View&& other) = default;
   View(const View& other) = delete;
-  View(View&& other) = delete;
   View& operator=(const View& other) = delete;
   View& operator=(View&& other) = delete;
-  void resetSuperview();
+  void resetSuperview() {
+    m_superview = nullptr;
+  }
   /* The drawRect method should be implemented by each View subclass. In a
    * typical drawRect implementation, a subclass will make drawing calls to the
    * Kandinsky library using the provided context. */
-  virtual void drawRect(KDContext * ctx, KDRect rect) const;
+  virtual void drawRect(KDContext * ctx, KDRect rect) const {
+    // By default, a view doesn't do anything, it's transparent
+  }
 
   void setSize(KDSize size);
-  void setFrame(KDRect frame);
+  void setFrame(KDRect frame, bool force);
+  KDPoint pointFromPointInView(View * view, KDPoint point);
 
   KDRect bounds() const;
   View * subview(int index);
 
-  virtual KDSize minimalSizeForOptimalDisplay() const;
+  virtual KDSize minimalSizeForOptimalDisplay() const { return KDSizeZero; }
 
 #if ESCHER_VIEW_LOGGING
   friend std::ostream &operator<<(std::ostream &os, View &view);
@@ -57,16 +75,16 @@ protected:
    *  - Moving a cursor -> In that case, there's really a much more efficient way
    *  - ... and that's all I can think of.
    */
-  void markRectAsDirty(KDRect rect);
+  virtual void markRectAsDirty(KDRect rect);
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const;
   virtual void logAttributes(std::ostream &os) const;
 #endif
   KDRect m_frame;
 private:
-  virtual int numberOfSubviews() const;
-  virtual View * subviewAtIndex(int index);
-  virtual void layoutSubviews();
+  virtual int numberOfSubviews() const { return 0; }
+  virtual View * subviewAtIndex(int index) { return nullptr; }
+  virtual void layoutSubviews(bool force = false) {}
   virtual const Window * window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
   KDPoint absoluteOrigin() const;

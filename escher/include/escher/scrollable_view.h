@@ -1,19 +1,17 @@
 #ifndef ESCHER_SCROLLABLE_VIEW_H
 #define ESCHER_SCROLLABLE_VIEW_H
 
-#include <escher/scroll_view.h>
+#include <escher/palette.h>
 #include <escher/responder.h>
+#include <escher/scroll_view.h>
 
 class ScrollableView : public Responder, public ScrollView {
 public:
- ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource);
+  ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource);
   bool handleEvent(Ion::Events::Event event) override;
-  void reloadScroll();
+  void reloadScroll(bool forceRelayout = false);
 protected:
-  void layoutSubviews() override;
-  KDPoint m_manualScrollingOffset;
+  KDSize contentSize() const override;
 };
 
 #endif
-
-

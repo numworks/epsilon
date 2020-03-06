@@ -1,7 +1,7 @@
 #ifndef CODE_SCRIPT_STORE_H
 #define CODE_SCRIPT_STORE_H
 
-#include "accordion.h"
+#include <ion.h>
 #include "script.h"
 #include "script_template.h"
 #include <python/port/port.h>
@@ -13,24 +13,25 @@ namespace Code {
 
 class ScriptStore : public MicroPython::ScriptProvider {
 public:
-  enum class EditableZone {
-    None,
-    Name,
-    Content
-  };
+  static constexpr char k_scriptExtension[] = "py";
+  static constexpr size_t k_scriptExtensionLength = 2;
 
-  static constexpr char k_scriptExtension[] = ".py";
-  static constexpr char k_defaultScriptName[] = "script.py";
-  static constexpr int k_maxNumberOfScripts = 8;
+  // Storage information
+  static bool ScriptNameIsFree(const char * baseName);
 
   ScriptStore();
-  const Script scriptAtIndex(int index, EditableZone zone = EditableZone::None);
-  const Script scriptNamed(const char * name);
-  int numberOfScripts();
-  bool addNewScript();
-  bool renameScriptAtIndex(int index, const char * newName);
-  void switchAutoImportAtIndex(int index);
-  void deleteScriptAtIndex(int index);
+  Script scriptAtIndex(int index) {
+    return Script(Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(k_scriptExtension, index));
+  }
+  Script scriptNamed(const char * name) {
+    return Script(Ion::Storage::sharedStorage()->recordNamed(name));
+  }
+  int numberOfScripts() {
+    return Ion::Storage::sharedStorage()->numberOfRecordsWithExtension(k_scriptExtension);
+  }
+  Ion::Storage::Record::ErrorStatus addNewScript() {
+    return addScriptFromTemplate(ScriptTemplate::Empty());
+  }
   void deleteAllScripts();
   bool isFull();
 
@@ -41,23 +42,19 @@ public:
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
+  Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
 private:
-  static constexpr int k_fullFreeSpaceSizeLimit = 50;
-  // If m_accordion's free space has a size smaller than
-  // k_fullFreeSpaceSizeLimit, we consider the script store as full.
-  static constexpr size_t k_scriptDataSize = 4096;
+  /* If the storage available space has a smaller size than
+   * k_fullFreeSpaceSizeLimit, we consider the script store as full.
+   * To be able to add a new empty record, the available space should at least
+   * be able to store a Script with default name and its extension, the
+   * importation status (1 char), the default content "from math import *\n"
+   * (20 char) and 10 char of free space. */
+  static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10;
   static constexpr size_t k_fileInput2ParseNodeStructKind = 1;
   static constexpr size_t k_functionDefinitionParseNodeStructKind = 3;
   static constexpr size_t k_expressionStatementParseNodeStructKind = 5;
-  bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
-  bool copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate);
-  int accordionIndexOfScriptAtIndex(int index) const;
-  int accordionIndexOfMarkersOfScriptAtIndex(int index) const;
-  int accordionIndexOfNameOfScriptAtIndex(int index) const;
-  int accordionIndexOfContentOfScriptAtIndex(int index) const;
   const char * structID(mp_parse_node_struct_t *structNode);
-  char m_scriptData[k_scriptDataSize];
-  Accordion m_accordion;
 };
 
 }

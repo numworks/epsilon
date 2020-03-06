@@ -1,51 +1,67 @@
 #include <poincare/conjugate.h>
-#include <poincare/complex.h>
-#include <poincare/simplification_engine.h>
-#include "layout/conjugate_layout.h"
-
-extern "C" {
+#include <poincare/conjugate_layout.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <assert.h>
-}
 #include <cmath>
+#include <utility>
 
 namespace Poincare {
 
-Expression::Type Conjugate::type() const {
-  return Type::Conjugate;
+constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
+
+int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
+
+Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return ConjugateLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression * Conjugate::clone() const {
-  Conjugate * a = new Conjugate(m_operands, true);
-  return a;
+int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name());
 }
 
-ExpressionLayout * Conjugate::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
-}
-
-Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  Expression * op = editableOperand(0);
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  if (op->type() == Type::Rational) {
-    return replaceWith(op, true);
-  }
-  return this;
+Expression ConjugateNode::shallowReduce(ReductionContext reductionContext) {
+  return Conjugate(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Complex<T> Conjugate::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  return c.conjugate();
+Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  return Complex<T>::Builder(std::conj(c));
 }
 
+Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
+  }
+  if (c.isReal(reductionContext.context())) {
+    replaceWithInPlace(c);
+    return c;
+  }
+  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+    ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
+    Multiplication m = Multiplication::Builder(Rational::Builder(-1), complexChild.imag());
+    complexChild.replaceChildAtIndexInPlace(1, m);
+    m.shallowReduce(reductionContext);
+    replaceWithInPlace(complexChild);
+    return std::move(complexChild);
+  }
+  if (c.type() == ExpressionNode::Type::Rational) {
+    replaceWithInPlace(c);
+    return c;
+  }
+  return *this;
 }
 
+
+}

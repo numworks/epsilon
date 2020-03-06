@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -83,6 +83,8 @@ mp_obj_t mp_parse_num_integer(const char *restrict str_, size_t len, int base, m
         mp_uint_t dig = *str;
         if ('0' <= dig && dig <= '9') {
             dig -= '0';
+        } else if (dig == '_') {
+            continue;
         } else {
             dig |= 0x20; // make digit lower-case
             if ('a' <= dig && dig <= 'z') {
@@ -170,6 +172,25 @@ typedef enum {
 
 mp_obj_t mp_parse_num_decimal(const char *str, size_t len, bool allow_imag, bool force_complex, mp_lexer_t *lex) {
 #if MICROPY_PY_BUILTINS_FLOAT
+
+// DEC_VAL_MAX only needs to be rough and is used to retain precision while not overflowing
+// SMALL_NORMAL_VAL is the smallest power of 10 that is still a normal float
+// EXACT_POWER_OF_10 is the largest value of x so that 10^x can be stored exactly in a float
+//   Note: EXACT_POWER_OF_10 is at least floor(log_5(2^mantissa_length)). Indeed, 10^n = 2^n * 5^n
+//   so we only have to store the 5^n part in the mantissa (the 2^n part will go into the float's
+//   exponent).
+#if MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_FLOAT
+#define DEC_VAL_MAX 1e20F
+#define SMALL_NORMAL_VAL (1e-37F)
+#define SMALL_NORMAL_EXP (-37)
+#define EXACT_POWER_OF_10 (9)
+#elif MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_DOUBLE
+#define DEC_VAL_MAX 1e200
+#define SMALL_NORMAL_VAL (1e-307)
+#define SMALL_NORMAL_EXP (-307)
+#define EXACT_POWER_OF_10 (22)
+#endif
+
     const char *top = str + len;
     mp_float_t dec_val = 0;
     bool dec_neg = false;
@@ -214,20 +235,32 @@ mp_obj_t mp_parse_num_decimal(const char *str, size_t len, bool allow_imag, bool
         // string should be a decimal number
         parse_dec_in_t in = PARSE_DEC_IN_INTG;
         bool exp_neg = false;
-        mp_float_t frac_mult = 0.1;
-        mp_int_t exp_val = 0;
+        int exp_val = 0;
+        int exp_extra = 0;
         while (str < top) {
-            mp_uint_t dig = *str++;
+            unsigned int dig = *str++;
             if ('0' <= dig && dig <= '9') {
                 dig -= '0';
                 if (in == PARSE_DEC_IN_EXP) {
-                    exp_val = 10 * exp_val + dig;
+                    // don't overflow exp_val when adding next digit, instead just truncate
+                    // it and the resulting float will still be correct, either inf or 0.0
+                    // (use INT_MAX/2 to allow adding exp_extra at the end without overflow)
+                    if (exp_val < (INT_MAX / 2 - 9) / 10) {
+                        exp_val = 10 * exp_val + dig;
+                    }
                 } else {
-                    if (in == PARSE_DEC_IN_FRAC) {
-                        dec_val += dig * frac_mult;
-                        frac_mult *= MICROPY_FLOAT_CONST(0.1);
-                    } else {
+                    if (dec_val < DEC_VAL_MAX) {
+                        // dec_val won't overflow so keep accumulating
                         dec_val = 10 * dec_val + dig;
+                        if (in == PARSE_DEC_IN_FRAC) {
+                            --exp_extra;
+                        }
+                    } else {
+                        // dec_val might overflow and we anyway can't represent more digits
+                        // of precision, so ignore the digit and just adjust the exponent
+                        if (in == PARSE_DEC_IN_INTG) {
+                            ++exp_extra;
+                        }
                     }
                 }
             } else if (in == PARSE_DEC_IN_INTG && dig == '.') {
@@ -248,6 +281,8 @@ mp_obj_t mp_parse_num_decimal(const char *str, size_t len, bool allow_imag, bool
             } else if (allow_imag && (dig | 0x20) == 'j') {
                 imag = true;
                 break;
+            } else if (dig == '_') {
+                continue;
             } else {
                 // unknown character
                 str--;
@@ -260,8 +295,23 @@ mp_obj_t mp_parse_num_decimal(const char *str, size_t len, bool allow_imag, bool
             exp_val = -exp_val;
         }
 
-        // apply the exponent
-        dec_val *= MICROPY_FLOAT_C_FUN(pow)(10, exp_val);
+        // apply the exponent, making sure it's not a subnormal value
+        exp_val += exp_extra;
+        if (exp_val < SMALL_NORMAL_EXP) {
+            exp_val -= SMALL_NORMAL_EXP;
+            dec_val *= SMALL_NORMAL_VAL;
+        }
+
+        // At this point, we need to multiply the mantissa by its base 10 exponent. If possible,
+        // we would rather manipulate numbers that have an exact representation in IEEE754. It
+        // turns out small positive powers of 10 do, whereas small negative powers of 10 don't.
+        // So in that case, we'll yield a division of exact values rather than a multiplication
+        // of slightly erroneous values.
+        if (exp_val < 0 && exp_val >= -EXACT_POWER_OF_10) {
+            dec_val /= MICROPY_FLOAT_C_FUN(pow)(10, -exp_val);
+        } else {
+            dec_val *= MICROPY_FLOAT_C_FUN(pow)(10, exp_val);
+        }
     }
 
     // negate value if needed
@@ -289,11 +339,13 @@ mp_obj_t mp_parse_num_decimal(const char *str, size_t len, bool allow_imag, bool
         return mp_obj_new_complex(0, dec_val);
     } else if (force_complex) {
         return mp_obj_new_complex(dec_val, 0);
+    }
 #else
     if (imag || force_complex) {
         raise_exc(mp_obj_new_exception_msg(&mp_type_ValueError, "complex values not supported"), lex);
+    }
 #endif
-    } else {
+    else {
         return mp_obj_new_float(dec_val);
     }
 

@@ -1,8 +1,9 @@
 #ifndef SEQUENCE_SEQUENCE_STORE_H
 #define SEQUENCE_SEQUENCE_STORE_H
 
-#include "sequence.h"
 #include "../shared/function_store.h"
+#include "../shared/global_context.h"
+#include "sequence.h"
 #include <stdint.h>
 #include <escher.h>
 
@@ -11,26 +12,36 @@ namespace Sequence {
 class SequenceStore : public Shared::FunctionStore {
 public:
   using Shared::FunctionStore::FunctionStore;
-  uint32_t storeChecksum() override;
-  Sequence * functionAtIndex(int i) override;
-  Sequence * activeFunctionAtIndex(int i) override;
-  Sequence * definedFunctionAtIndex(int i) override;
-  Sequence * addEmptyFunction() override;
-  void removeFunction(Shared::Function * f) override;
-  int maxNumberOfFunctions() override;
-  const char * firstAvailableName() override;
-  char symbol() const override;
-  void removeAll() override;
-  static constexpr int k_maxNumberOfSequences = 2;
-  static constexpr const char * k_sequenceNames[k_maxNumberOfSequences] = {
-    "u", "v"//, "w"
+  /* Sequence Store hold all its Sequences in an array. The Sequence pointers
+   * return by modelForRecord are therefore non-expirable. We choose to return
+   * Sequence * instead of ExpiringPointer<Sequence>. */
+  Sequence * modelForRecord(Ion::Storage::Record record) const { return static_cast<Sequence *>(privateModelForRecord(record)); }
+  Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+  /* WARNING: after calling removeModel or removeAll, the sequence context
+   * need to invalidate its cache as the sequences evaluations might have
+   * changed */
+  int maxNumberOfModels() const override { return MaxNumberOfSequences; }
+
+  static int sequenceIndexForName(char name);
+  static const char * firstAvailableName(int * nameIndex = nullptr);
+  static constexpr const char * k_sequenceNames[MaxNumberOfSequences] = {
+    "u", "v", "w"
   };
+
 private:
-  const KDColor firstAvailableColor() override;
-  static constexpr KDColor k_defaultColors[k_maxNumberOfSequences] = {
-    Palette::Red, Palette::Blue//, Palette::YellowDark
-  };
-  Sequence m_sequences[k_maxNumberOfSequences];
+  const char * modelExtension() const override { return Ion::Storage::seqExtension; }
+  /* We don't use model memoization for two reasons:
+   * - the number of Sequence is capped so we keep enough Sequences to store them all.
+   * - evaluating sequences require to evaluate all of them at the same time
+   *   (as they might be co-dependent) which doesn't suit our ring memoization.
+   * To still make it work with the ExpressionModelStore, we force
+   * setMemoizedModelAtIndex to store u, v and w sequences in this order in
+   * m_sequences whatever the value of cacheIndex. We thus return a
+   * ExpressionModelHandle pointer after setting the model as it won't be the
+   * memoized model at cacheIndex. */
+  Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
+  mutable Sequence m_sequences[MaxNumberOfSequences];
 };
 
 }

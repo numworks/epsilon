@@ -1,59 +1,63 @@
 #include <poincare/tangent.h>
-#include <poincare/complex.h>
-#include <poincare/sine.h>
 #include <poincare/cosine.h>
 #include <poincare/division.h>
-#include <poincare/multiplication.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+
+#include <poincare/sine.h>
 #include <poincare/trigonometry.h>
-#include <poincare/hyperbolic_tangent.h>
-#include <poincare/simplification_engine.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type Tangent::type() const {
-  return Expression::Type::Tangent;
+constexpr Expression::FunctionHelper Tangent::s_functionHelper;
+
+int TangentNode::numberOfChildren() const { return Tangent::s_functionHelper.numberOfChildren(); }
+
+float TangentNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
+  return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }
 
-Expression * Tangent::clone() const {
-  Tangent * a = new Tangent(m_operands, true);
-  return a;
+Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.name());
 }
 
-Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  Expression * newExpression = Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
-  if (newExpression->type() == Type::Tangent) {
-    const Expression * op[1] = {newExpression->operand(0)};
-    Sine * s = new Sine(op, true);
-    Cosine * c = new Cosine(op, true);
-    Division * d = new Division(s, c, false);
-    newExpression = newExpression->replaceWith(d, true);
-    return newExpression->shallowReduce(context, angleUnit);
-  }
-  return newExpression;
+int TangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.name());
 }
 
 template<typename T>
-Complex<T> Tangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  Complex<T> result = Division::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));
-  if (!std::isnan(result.a()) && !std::isnan(result.b())) {
-    return result;
+Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
+  std::complex<T> res = std::tan(angleInput);
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
+}
+
+Expression TangentNode::shallowReduce(ReductionContext reductionContext) {
+  return Tangent(this).shallowReduce(reductionContext);
+}
+
+
+Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
   }
-  Complex<T> tanh = HyperbolicTangent::computeOnComplex(Multiplication::compute(Complex<T>::Cartesian(0, -1), c), angleUnit);
-  return Multiplication::compute(Complex<T>::Cartesian(0, 1), tanh);
+
+  Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
+  if (newExpression.type() == ExpressionNode::Type::Tangent) {
+    Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
+    Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
+    Division d = Division::Builder(s, c);
+    s.shallowReduce(reductionContext);
+    c.shallowReduce(reductionContext);
+    newExpression.replaceWithInPlace(d);
+    return d.shallowReduce(reductionContext);
+  }
+  return newExpression;
 }
 
 }

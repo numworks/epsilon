@@ -1,5 +1,7 @@
 #include "helpers.h"
 #include <string.h>
+#include <ion/unicode/code_point.h>
+#include <ion.h>
 
 namespace Code {
 namespace Helpers {
@@ -14,24 +16,19 @@ private:
   const char * m_text;
 };
 
+static_assert('\x11' == UCodePointEmpty, "Unicode error");
 static constexpr EventTextPair sEventTextMap[] = {
   EventTextPair(Ion::Events::XNT, "x"),
-  EventTextPair(Ion::Events::Exp, "exp()"),
-  EventTextPair(Ion::Events::Ln, "log()"),
-  EventTextPair(Ion::Events::Log, "log10()"),
-  EventTextPair(Ion::Events::Sine, "sin()"),
-  EventTextPair(Ion::Events::Cosine, "cos()"),
-  EventTextPair(Ion::Events::Tangent, "tan()"),
+  EventTextPair(Ion::Events::Exp, "exp(\x11)"),
+  EventTextPair(Ion::Events::Ln, "log(\x11)"),
+  EventTextPair(Ion::Events::Log, "log10(\x11)"),
   EventTextPair(Ion::Events::Imaginary, "1j"),
   EventTextPair(Ion::Events::Power, "**"),
   EventTextPair(Ion::Events::Pi, "pi"),
-  EventTextPair(Ion::Events::Sqrt, "sqrt()"),
+  EventTextPair(Ion::Events::Sqrt, "sqrt(\x11)"),
   EventTextPair(Ion::Events::Square, "**2"),
   EventTextPair(Ion::Events::Multiplication, "*"),
   EventTextPair(Ion::Events::EE, "e"),
-  EventTextPair(Ion::Events::Arcsine, "asin()"),
-  EventTextPair(Ion::Events::Arccosine, "acos()"),
-  EventTextPair(Ion::Events::Arctangent, "atan()")
 };
 
 const char * PythonTextForEvent(Ion::Events::Event event) {

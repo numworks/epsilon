@@ -3,31 +3,6 @@ extern "C" {
 }
 #include <escher/view.h>
 
-View::View() :
-  m_frame(KDRectZero),
-  m_superview(nullptr),
-  m_dirtyRect(KDRectZero)
-{
-}
-
-View::~View() {
-  for (int i = 0; i < numberOfSubviews(); i++) {
-    View * subview = subviewAtIndex(i);
-    if (subview != nullptr) {
-      subview->m_superview = nullptr;
-    }
-  }
-}
-
-void View::resetSuperview() {
-  m_superview = nullptr;
-}
-
-void View::drawRect(KDContext * ctx, KDRect rect) const {
-  // By default, a view doesn't do anything
-  // It's transparent!
-}
-
 const Window * View::window() const {
   if (m_superview == nullptr) {
     return nullptr;
@@ -118,24 +93,22 @@ View * View::subview(int index) {
 }
 
 void View::setSize(KDSize size) {
-  setFrame(KDRect(m_frame.origin(), size));
+  setFrame(KDRect(m_frame.origin(), size), false);
 }
 
-
-void View::setFrame(KDRect frame) {
-  if (frame == m_frame) {
+void View::setFrame(KDRect frame, bool force) {
+  if (frame == m_frame && !force) {
     return;
   }
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
    * calls without intermediate redraw() calls. */
 
-  // TODO: Return if frame is equal to m_frame
   if (m_superview != nullptr) {
     /* We will move this view. This will leave a blank spot in its superview
      * were it previously was.
-     * At this point, we know that the only area that really needs to be redrawn
-     * in the superview is the value of m_frame at the start of that method. */
-    m_superview->markRectAsDirty(m_frame);
+     * At this point, we know that the only area that needs to be redrawn in the
+     * superview is the old frame minus the part covered by the new frame.*/
+    m_superview->markRectAsDirty(m_frame.differencedWith(frame));
   }
 
   m_frame = frame;
@@ -147,7 +120,13 @@ void View::setFrame(KDRect frame) {
   markRectAsDirty(bounds());
   // FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is being shrinked)
 
-  layoutSubviews();
+  if (!m_frame.isEmpty()) {
+    layoutSubviews(force);
+  }
+}
+
+KDPoint View::pointFromPointInView(View * view, KDPoint point) {
+  return point.translatedBy(view->absoluteOrigin().translatedBy(absoluteOrigin().opposite()));
 }
 
 KDRect View::bounds() const {
@@ -175,23 +154,6 @@ KDRect View::absoluteVisibleFrame() const {
     return absoluteFrame.intersectedWith(parentDrawingArea);
   }
 }
-
-KDSize View::minimalSizeForOptimalDisplay() const  {
-  return KDSizeZero;
-}
-
-int View::numberOfSubviews() const {
-  return 0;
-}
-
-View * View::subviewAtIndex(int index) {
-  assert(false);
-  return nullptr;
-}
-
-void View::layoutSubviews() {
-}
-
 
 #if ESCHER_VIEW_LOGGING
 const char * View::className() const {

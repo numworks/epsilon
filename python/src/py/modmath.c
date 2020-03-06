@@ -1,9 +1,9 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2013-2017 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,22 +35,34 @@
 // And by defining our own we can ensure it uses the correct const format.
 #define MP_PI MICROPY_FLOAT_CONST(3.14159265358979323846)
 
-/// \module math - mathematical functions
-///
-/// The `math` module provides some basic mathematical funtions for
-/// working with floating-point numbers.
-
 STATIC NORETURN void math_error(void) {
     mp_raise_ValueError("math domain error");
 }
 
-#define MATH_FUN_1(py_name, c_name) \
-    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj) { return mp_obj_new_float(MICROPY_FLOAT_C_FUN(c_name)(mp_obj_get_float(x_obj))); } \
-    STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_## py_name ## _obj, mp_math_ ## py_name);
+STATIC mp_obj_t math_generic_1(mp_obj_t x_obj, mp_float_t (*f)(mp_float_t)) {
+    mp_float_t x = mp_obj_get_float(x_obj);
+    mp_float_t ans = f(x);
+    if ((isnan(ans) && !isnan(x)) || (isinf(ans) && !isinf(x))) {
+        math_error();
+    }
+    return mp_obj_new_float(ans);
+}
 
-#define MATH_FUN_2(py_name, c_name) \
-    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj, mp_obj_t y_obj) { return mp_obj_new_float(MICROPY_FLOAT_C_FUN(c_name)(mp_obj_get_float(x_obj), mp_obj_get_float(y_obj))); } \
-    STATIC MP_DEFINE_CONST_FUN_OBJ_2(mp_math_## py_name ## _obj, mp_math_ ## py_name);
+STATIC mp_obj_t math_generic_2(mp_obj_t x_obj, mp_obj_t y_obj, mp_float_t (*f)(mp_float_t, mp_float_t)) {
+    mp_float_t x = mp_obj_get_float(x_obj);
+    mp_float_t y = mp_obj_get_float(y_obj);
+    mp_float_t ans = f(x, y);
+    if ((isnan(ans) && !isnan(x) && !isnan(y)) || (isinf(ans) && !isinf(x))) {
+        math_error();
+    }
+    return mp_obj_new_float(ans);
+}
+
+#define MATH_FUN_1(py_name, c_name) \
+    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj) { \
+        return math_generic_1(x_obj, MICROPY_FLOAT_C_FUN(c_name)); \
+    } \
+    STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_## py_name ## _obj, mp_math_ ## py_name);
 
 #define MATH_FUN_1_TO_BOOL(py_name, c_name) \
     STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj) { return mp_obj_new_bool(c_name(mp_obj_get_float(x_obj))); } \
@@ -60,98 +72,104 @@ STATIC NORETURN void math_error(void) {
     STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj) { return mp_obj_new_int_from_float(MICROPY_FLOAT_C_FUN(c_name)(mp_obj_get_float(x_obj))); } \
     STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_## py_name ## _obj, mp_math_ ## py_name);
 
-#define MATH_FUN_1_ERRCOND(py_name, c_name, error_condition) \
-    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj) { \
-        mp_float_t x = mp_obj_get_float(x_obj); \
-        if (error_condition) { \
-            math_error(); \
-        } \
-        return mp_obj_new_float(MICROPY_FLOAT_C_FUN(c_name)(x)); \
+#define MATH_FUN_2(py_name, c_name) \
+    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj, mp_obj_t y_obj) { \
+        return math_generic_2(x_obj, y_obj, MICROPY_FLOAT_C_FUN(c_name)); \
     } \
-    STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_## py_name ## _obj, mp_math_ ## py_name);
+    STATIC MP_DEFINE_CONST_FUN_OBJ_2(mp_math_## py_name ## _obj, mp_math_ ## py_name);
+
+#define MATH_FUN_2_FLT_INT(py_name, c_name) \
+    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj, mp_obj_t y_obj) { \
+        return mp_obj_new_float(MICROPY_FLOAT_C_FUN(c_name)(mp_obj_get_float(x_obj), mp_obj_get_int(y_obj))); \
+    } \
+    STATIC MP_DEFINE_CONST_FUN_OBJ_2(mp_math_## py_name ## _obj, mp_math_ ## py_name);
 
 #if MP_NEED_LOG2
+#undef log2
+#undef log2f
 // 1.442695040888963407354163704 is 1/_M_LN2
-#define log2(x) (log(x) * 1.442695040888963407354163704)
+mp_float_t MICROPY_FLOAT_C_FUN(log2)(mp_float_t x) {
+    return MICROPY_FLOAT_C_FUN(log)(x) * MICROPY_FLOAT_CONST(1.442695040888963407354163704);
+}
 #endif
 
-/// \function sqrt(x)
-/// Returns the square root of `x`.
-MATH_FUN_1_ERRCOND(sqrt, sqrt, (x < (mp_float_t)0.0))
-/// \function pow(x, y)
-/// Returns `x` to the power of `y`.
+// sqrt(x): returns the square root of x
+MATH_FUN_1(sqrt, sqrt)
+// pow(x, y): returns x to the power of y
 MATH_FUN_2(pow, pow)
-/// \function exp(x)
+// exp(x)
 MATH_FUN_1(exp, exp)
 #if MICROPY_PY_MATH_SPECIAL_FUNCTIONS
-/// \function expm1(x)
+// expm1(x)
 MATH_FUN_1(expm1, expm1)
-/// \function log2(x)
-MATH_FUN_1_ERRCOND(log2, log2, (x <= (mp_float_t)0.0))
-/// \function log10(x)
-MATH_FUN_1_ERRCOND(log10, log10, (x <= (mp_float_t)0.0))
-/// \function cosh(x)
+// log2(x)
+MATH_FUN_1(log2, log2)
+// log10(x)
+MATH_FUN_1(log10, log10)
+// cosh(x)
 MATH_FUN_1(cosh, cosh)
-/// \function sinh(x)
+// sinh(x)
 MATH_FUN_1(sinh, sinh)
-/// \function tanh(x)
+// tanh(x)
 MATH_FUN_1(tanh, tanh)
-/// \function acosh(x)
+// acosh(x)
 MATH_FUN_1(acosh, acosh)
-/// \function asinh(x)
+// asinh(x)
 MATH_FUN_1(asinh, asinh)
-/// \function atanh(x)
+// atanh(x)
 MATH_FUN_1(atanh, atanh)
 #endif
-/// \function cos(x)
+// cos(x)
 MATH_FUN_1(cos, cos)
-/// \function sin(x)
+// sin(x)
 MATH_FUN_1(sin, sin)
-/// \function tan(x)
+// tan(x)
 MATH_FUN_1(tan, tan)
-/// \function acos(x)
+// acos(x)
 MATH_FUN_1(acos, acos)
-/// \function asin(x)
+// asin(x)
 MATH_FUN_1(asin, asin)
-/// \function atan(x)
+// atan(x)
 MATH_FUN_1(atan, atan)
-/// \function atan2(y, x)
+// atan2(y, x)
 MATH_FUN_2(atan2, atan2)
-/// \function ceil(x)
+// ceil(x)
 MATH_FUN_1_TO_INT(ceil, ceil)
-/// \function copysign(x, y)
-MATH_FUN_2(copysign, copysign)
-/// \function fabs(x)
-MATH_FUN_1(fabs, fabs)
-/// \function floor(x)
+// copysign(x, y)
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(copysign_func)(mp_float_t x, mp_float_t y) {
+    return MICROPY_FLOAT_C_FUN(copysign)(x, y);
+}
+MATH_FUN_2(copysign, copysign_func)
+// fabs(x)
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(fabs_func)(mp_float_t x) {
+    return MICROPY_FLOAT_C_FUN(fabs)(x);
+}
+MATH_FUN_1(fabs, fabs_func)
+// floor(x)
 MATH_FUN_1_TO_INT(floor, floor) //TODO: delegate to x.__floor__() if x is not a float
-/// \function fmod(x, y)
+// fmod(x, y)
 MATH_FUN_2(fmod, fmod)
-/// \function isfinite(x)
+// isfinite(x)
 MATH_FUN_1_TO_BOOL(isfinite, isfinite)
-/// \function isinf(x)
+// isinf(x)
 MATH_FUN_1_TO_BOOL(isinf, isinf)
-/// \function isnan(x)
+// isnan(x)
 MATH_FUN_1_TO_BOOL(isnan, isnan)
-/// \function trunc(x)
+// trunc(x)
 MATH_FUN_1_TO_INT(trunc, trunc)
-/// \function ldexp(x, exp)
-MATH_FUN_2(ldexp, ldexp)
+// ldexp(x, exp)
+MATH_FUN_2_FLT_INT(ldexp, ldexp)
 #if MICROPY_PY_MATH_SPECIAL_FUNCTIONS
-/// \function erf(x)
-/// Return the error function of `x`.
+// erf(x): return the error function of x
 MATH_FUN_1(erf, erf)
-/// \function erfc(x)
-/// Return the complementary error function of `x`.
+// erfc(x): return the complementary error function of x
 MATH_FUN_1(erfc, erfc)
-/// \function gamma(x)
-/// Return the gamma function of `x`.
+// gamma(x): return the gamma function of x
 MATH_FUN_1(gamma, tgamma)
-/// \function lgamma(x)
-/// return the natural logarithm of the gamma function of `x`.
+// lgamma(x): return the natural logarithm of the gamma function of x
 MATH_FUN_1(lgamma, lgamma)
 #endif
-//TODO: factorial, fsum
+//TODO: fsum
 
 // Function that takes a variable number of arguments
 
@@ -169,7 +187,7 @@ STATIC mp_obj_t mp_math_log(size_t n_args, const mp_obj_t *args) {
         if (base <= (mp_float_t)0.0) {
             math_error();
         } else if (base == (mp_float_t)1.0) {
-            mp_raise_msg(&mp_type_ZeroDivisionError, "division by zero");
+            mp_raise_msg(&mp_type_ZeroDivisionError, "divide by zero");
         }
         return mp_obj_new_float(l / MICROPY_FLOAT_C_FUN(log)(base));
     }
@@ -178,8 +196,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_math_log_obj, 1, 2, mp_math_log);
 
 // Functions that return a tuple
 
-/// \function frexp(x)
-/// Converts a floating-point number to fractional and integral components.
+// frexp(x): converts a floating-point number to fractional and integral components
 STATIC mp_obj_t mp_math_frexp(mp_obj_t x_obj) {
     int int_exponent = 0;
     mp_float_t significand = MICROPY_FLOAT_C_FUN(frexp)(mp_obj_get_float(x_obj), &int_exponent);
@@ -190,7 +207,7 @@ STATIC mp_obj_t mp_math_frexp(mp_obj_t x_obj) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_frexp_obj, mp_math_frexp);
 
-/// \function modf(x)
+// modf(x)
 STATIC mp_obj_t mp_math_modf(mp_obj_t x_obj) {
     mp_float_t int_part = 0.0;
     mp_float_t fractional_part = MICROPY_FLOAT_C_FUN(modf)(mp_obj_get_float(x_obj), &int_part);
@@ -203,17 +220,81 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_modf_obj, mp_math_modf);
 
 // Angular conversions
 
-/// \function radians(x)
+// radians(x)
 STATIC mp_obj_t mp_math_radians(mp_obj_t x_obj) {
     return mp_obj_new_float(mp_obj_get_float(x_obj) * (MP_PI / MICROPY_FLOAT_CONST(180.0)));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_radians_obj, mp_math_radians);
 
-/// \function degrees(x)
+// degrees(x)
 STATIC mp_obj_t mp_math_degrees(mp_obj_t x_obj) {
     return mp_obj_new_float(mp_obj_get_float(x_obj) * (MICROPY_FLOAT_CONST(180.0) / MP_PI));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_degrees_obj, mp_math_degrees);
+
+#if MICROPY_PY_MATH_FACTORIAL
+
+#if MICROPY_OPT_MATH_FACTORIAL
+
+// factorial(x): slightly efficient recursive implementation
+STATIC mp_obj_t mp_math_factorial_inner(mp_uint_t start, mp_uint_t end) {
+    if (start == end) {
+        return mp_obj_new_int(start);
+    } else if (end - start == 1) {
+        return mp_binary_op(MP_BINARY_OP_MULTIPLY, MP_OBJ_NEW_SMALL_INT(start), MP_OBJ_NEW_SMALL_INT(end));
+    } else if (end - start == 2) {
+        mp_obj_t left = MP_OBJ_NEW_SMALL_INT(start);
+        mp_obj_t middle = MP_OBJ_NEW_SMALL_INT(start + 1);
+        mp_obj_t right = MP_OBJ_NEW_SMALL_INT(end);
+        mp_obj_t tmp = mp_binary_op(MP_BINARY_OP_MULTIPLY, left, middle);
+        return mp_binary_op(MP_BINARY_OP_MULTIPLY, tmp, right);
+    } else {
+        mp_uint_t middle = start + ((end - start) >> 1);
+        mp_obj_t left = mp_math_factorial_inner(start, middle);
+        mp_obj_t right = mp_math_factorial_inner(middle + 1, end);
+        return mp_binary_op(MP_BINARY_OP_MULTIPLY, left, right);
+    }
+}
+STATIC mp_obj_t mp_math_factorial(mp_obj_t x_obj) {
+    mp_int_t max = mp_obj_get_int(x_obj);
+    if (max < 0) {
+        mp_raise_msg(&mp_type_ValueError, "negative factorial");
+    } else if (max == 0) {
+        return MP_OBJ_NEW_SMALL_INT(1);
+    }
+    return mp_math_factorial_inner(1, max);
+}
+
+#else
+
+// factorial(x): squared difference implementation
+// based on http://www.luschny.de/math/factorial/index.html
+STATIC mp_obj_t mp_math_factorial(mp_obj_t x_obj) {
+    mp_int_t max = mp_obj_get_int(x_obj);
+    if (max < 0) {
+        mp_raise_msg(&mp_type_ValueError, "negative factorial");
+    } else if (max <= 1) {
+        return MP_OBJ_NEW_SMALL_INT(1);
+    }
+    mp_int_t h = max >> 1;
+    mp_int_t q = h * h;
+    mp_int_t r = q << 1;
+    if (max & 1) {
+        r *= max;
+    }
+    mp_obj_t prod = MP_OBJ_NEW_SMALL_INT(r);
+    for (mp_int_t num = 1; num < max - 2; num += 2) {
+        q -= num;
+        prod = mp_binary_op(MP_BINARY_OP_MULTIPLY, prod, MP_OBJ_NEW_SMALL_INT(q));
+    }
+    return prod;
+}
+
+#endif
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_factorial_obj, mp_math_factorial);
+
+#endif
 
 STATIC const mp_rom_map_elem_t mp_module_math_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_math) },
@@ -257,6 +338,9 @@ STATIC const mp_rom_map_elem_t mp_module_math_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_trunc), MP_ROM_PTR(&mp_math_trunc_obj) },
     { MP_ROM_QSTR(MP_QSTR_radians), MP_ROM_PTR(&mp_math_radians_obj) },
     { MP_ROM_QSTR(MP_QSTR_degrees), MP_ROM_PTR(&mp_math_degrees_obj) },
+    #if MICROPY_PY_MATH_FACTORIAL
+    { MP_ROM_QSTR(MP_QSTR_factorial), MP_ROM_PTR(&mp_math_factorial_obj) },
+    #endif
     #if MICROPY_PY_MATH_SPECIAL_FUNCTIONS
     { MP_ROM_QSTR(MP_QSTR_erf), MP_ROM_PTR(&mp_math_erf_obj) },
     { MP_ROM_QSTR(MP_QSTR_erfc), MP_ROM_PTR(&mp_math_erfc_obj) },

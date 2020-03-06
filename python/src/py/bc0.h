@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -26,7 +26,7 @@
 #ifndef MICROPY_INCLUDED_PY_BC0_H
 #define MICROPY_INCLUDED_PY_BC0_H
 
-// Micro Python byte-codes.
+// MicroPython byte-codes.
 // The comment at the end of the line (if it exists) tells the arguments to the byte-code.
 
 #define MP_BC_LOAD_CONST_FALSE   (0x10)
@@ -77,8 +77,7 @@
 #define MP_BC_END_FINALLY        (0x41)
 #define MP_BC_GET_ITER           (0x42)
 #define MP_BC_FOR_ITER           (0x43) // rel byte code offset, 16-bit unsigned
-#define MP_BC_POP_BLOCK          (0x44)
-#define MP_BC_POP_EXCEPT         (0x45)
+#define MP_BC_POP_EXCEPT_JUMP    (0x44) // rel byte code offset, 16-bit unsigned
 #define MP_BC_UNWIND_JUMP        (0x46) // rel byte code offset, 16-bit signed, in excess; then a byte
 #define MP_BC_GET_ITER_STACK     (0x47)
 
@@ -113,7 +112,7 @@
 #define MP_BC_LOAD_CONST_SMALL_INT_MULTI (0x70) // + N(64)
 #define MP_BC_LOAD_FAST_MULTI            (0xb0) // + N(16)
 #define MP_BC_STORE_FAST_MULTI           (0xc0) // + N(16)
-#define MP_BC_UNARY_OP_MULTI             (0xd0) // + op(7)
-#define MP_BC_BINARY_OP_MULTI            (0xd7) // + op(36)
+#define MP_BC_UNARY_OP_MULTI             (0xd0) // + op(<MP_UNARY_OP_NUM_BYTECODE)
+#define MP_BC_BINARY_OP_MULTI            (0xd7) // + op(<MP_BINARY_OP_NUM_BYTECODE)
 
 #endif // MICROPY_INCLUDED_PY_BC0_H

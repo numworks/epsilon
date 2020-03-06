@@ -1,23 +1,28 @@
 #include <ion.h>
 
-constexpr uint32_t polynomial = 0x04C11DB7;
-
-static uint32_t crc32(uint32_t crc, uint8_t data) {
-    crc ^= data << 24;
-    for (int i=8; i--;) {
-      crc = crc & 0x80000000 ? ((crc<<1)^polynomial) : (crc << 1);
-    }
-    return crc;
-}
-
-uint32_t Ion::crc32(const uint32_t * data, size_t length) {
+uint32_t crc32Helper(const uint8_t * data, size_t length, bool wordAccess) {
+  size_t uint32ByteLength = sizeof(uint32_t)/sizeof(uint8_t);
   uint32_t crc = 0xFFFFFFFF;
-  for (size_t i=0; i<length; i++) {
+  size_t byteLength = (wordAccess ? length * uint32ByteLength : length);
+  size_t wordLength = byteLength / uint32ByteLength;
+
+  for (int i = 0; i < (int)wordLength; i++) {
     // FIXME: Assumes little-endian byte order!
-    crc = ::crc32(crc, (uint8_t)((data[i] >> 24) & 0xFF));
-    crc = ::crc32(crc, (uint8_t)((data[i] >> 16) & 0xFF));
-    crc = ::crc32(crc, (uint8_t)((data[i] >> 8) & 0xFF));
-    crc = ::crc32(crc, (uint8_t)(data[i] & 0xFF));
+    for (int j = uint32ByteLength-1; j >= 0; j--) {
+      // scan byte by byte to avoid alignment issue when building for emscripten platform
+      crc = Ion::crc32EatByte(crc, data[i*uint32ByteLength+j]);
+    }
+  }
+  for (int i = (int) wordLength * uint32ByteLength; i < byteLength; i++) {
+    crc = Ion::crc32EatByte(crc, data[i]);
   }
   return crc;
+}
+
+uint32_t Ion::crc32Word(const uint32_t * data, size_t length) {
+  return crc32Helper((const uint8_t *) data, length, true);
+}
+
+uint32_t Ion::crc32Byte(const uint8_t * data, size_t length) {
+  return crc32Helper(data, length, false);
 }

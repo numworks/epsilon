@@ -1,33 +1,44 @@
 #include "banner_view.h"
+#include <assert.h>
 
 namespace Regression {
 
-BannerView::BannerView() :
-  m_dotNameView(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_xView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_yView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_regressionTypeView(KDText::FontSize::Small, (I18n::Message)0, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_slopeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_yInterceptView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_rView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_r2View(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle)
+BannerView::BannerView(
+  Responder * parentResponder,
+  InputEventHandlerDelegate * inputEventHandlerDelegate,
+  TextFieldDelegate * textFieldDelegate
+) :
+  Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
+  m_dotNameView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_regressionTypeView(Font(), (I18n::Message)0, 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_subText0(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_subText1(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_subText2(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_subText3(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_subText4(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
 {
 }
 
-int BannerView::numberOfSubviews() const {
-  return 8;
+BufferTextView * BannerView::subTextAtIndex(int index) {
+  assert(0 <= index && index < numberOfsubTexts());
+  BufferTextView * subTexts[numberOfsubTexts()] = {&m_subText0, &m_subText1, &m_subText2, &m_subText3, &m_subText4};
+  return subTexts[index];
 }
 
-TextView * BannerView::textViewAtIndex(int i) const {
-  const TextView * textViews[8] = {&m_dotNameView, &m_xView, &m_yView, &m_regressionTypeView, &m_slopeView, &m_yInterceptView, &m_rView, &m_r2View};
-  return (TextView *)textViews[i];
-}
-
-MessageTextView * BannerView::messageTextViewAtIndex(int i) const {
-  if (i == 3) {
-    return (MessageTextView *)&m_regressionTypeView;
+View * BannerView::subviewAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
+  if (index == 0) {
+    return &m_dotNameView;
   }
-  return nullptr;
+  index--;
+  if (index < Shared::XYBannerView::k_numberOfSubviews) {
+    return Shared::XYBannerView::subviewAtIndex(index);
+  }
+  index -= Shared::XYBannerView::k_numberOfSubviews;
+  if (index == 0) {
+    return &m_regressionTypeView;
+  }
+  return subTextAtIndex(index - 1);
 }
 
 }

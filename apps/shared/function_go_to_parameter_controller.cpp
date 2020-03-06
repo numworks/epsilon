@@ -1,13 +1,13 @@
 #include "function_go_to_parameter_controller.h"
-#include "text_field_delegate_app.h"
+#include "function_app.h"
 #include <assert.h>
 #include <cmath>
 
 namespace Shared {
 
-FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
-  GoToParameterController(parentResponder, graphRange, cursor, symbol),
-  m_function(nullptr)
+FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+  GoToParameterController(parentResponder, inputEventHandlerDelegate, graphRange, cursor),
+  m_record()
 {
 }
 
@@ -17,29 +17,31 @@ const char * FunctionGoToParameterController::title() {
 
 double FunctionGoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
-  return m_cursor->x();
+  return m_cursor->t();
 }
 
 bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = m_function->evaluateAtAbscissa(f, myApp->localContext());
-  if (std::fabs(f) > k_maxDisplayableFloat || std::fabs(y) > k_maxDisplayableFloat) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
-  if (std::isnan(y) || std::isinf(y)) {
-    app()->displayWarning(I18n::Message::ValueNotReachedByFunction);
-    return false;
-  }
-  m_cursor->moveTo(f, y);
+  FunctionApp * myApp = FunctionApp::app();
+  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(f, myApp->localContext());
+  m_cursor->moveTo(f, xy.x1(), xy.x2());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
+  /* The range might have evolved to center around the cursor but we don't want
+   * to reinit the cursor position when displaying the graph controller. To
+   * prevent this, we update the snapshot range version in order to make the
+   * graph controller as if the range has not evolved since last appearance. */
+  uint32_t * snapshotRangeVersion = static_cast<FunctionApp::Snapshot *>(myApp->snapshot())->rangeVersion();
+  *snapshotRangeVersion = m_graphRange->rangeChecksum();
   return true;
 }
 
-void FunctionGoToParameterController::setFunction(Function * function) {
-  m_function = function;
+void FunctionGoToParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
+  FunctionApp * myApp = FunctionApp::app();
+  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  setParameterName(function->parameterMessageName());
 }
 
 }

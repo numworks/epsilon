@@ -11,7 +11,7 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   virtual HighlightCell * reusableCell(int index) = 0;
-  virtual int reusableCellCount() = 0;
+  virtual int reusableCellCount() const = 0;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;

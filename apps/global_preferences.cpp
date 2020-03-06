@@ -1,51 +1,30 @@
 #include "global_preferences.h"
 
-static GlobalPreferences s_globalPreferences;
-
-GlobalPreferences::GlobalPreferences() :
-  m_language(I18n::Language::EN),
-  m_examMode(ExamMode::Desactivate),
-  m_showUpdatePopUp(true),
-  m_brightnessLevel(Ion::Backlight::MaxBrightness)
-{
-}
-
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
-  return &s_globalPreferences;
-}
-
-I18n::Language GlobalPreferences::language() const {
-  return m_language;
-}
-
-void GlobalPreferences::setLanguage(I18n::Language language) {
-  if (language != m_language) {
-    m_language = language;
-  }
+  static GlobalPreferences globalPreferences;
+  return &globalPreferences;
 }
 
 GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
+  if (m_examMode == ExamMode::Unknown) {
+    uint8_t mode = Ion::ExamMode::FetchExamMode();
+    assert(mode >= 0 && mode < 3); // mode can be cast in ExamMode (Off, Standard or Dutch)
+    m_examMode = (ExamMode)mode;
+  }
   return m_examMode;
 }
 
-void GlobalPreferences::setExamMode(ExamMode examMode) {
-  if (examMode != m_examMode) {
-    m_examMode = examMode;
+void GlobalPreferences::setExamMode(ExamMode mode) {
+  ExamMode currentMode = examMode();
+  if (currentMode == mode) {
+    return;
   }
-}
-
-bool GlobalPreferences::showUpdatePopUp() const {
-  return m_showUpdatePopUp;
-}
-
-void GlobalPreferences::setShowUpdatePopUp(bool showUpdatePopUp) {
-  if (showUpdatePopUp != m_showUpdatePopUp) {
-    m_showUpdatePopUp = showUpdatePopUp;
-  }
-}
-
-int GlobalPreferences::brightnessLevel() const {
-  return m_brightnessLevel;
+  assert(mode != ExamMode::Unknown);
+  int8_t deltaMode = (int8_t)mode - (int8_t)currentMode;
+  deltaMode = deltaMode < 0 ? deltaMode + 3 : deltaMode;
+  assert(deltaMode > 0);
+  Ion::ExamMode::IncrementExamMode(deltaMode);
+  m_examMode = mode;
 }
 
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {

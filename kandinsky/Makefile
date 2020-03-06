@@ -1,61 +1,57 @@
 SFLAGS += -Ikandinsky/include
-objs += $(addprefix kandinsky/src/,\
-  color.o\
-  context.o\
-  context_line.o\
-  context_pixel.o\
-  context_rect.o\
-  context_text.o\
-  framebuffer.o\
-  framebuffer_context.o\
-  ion_context.o\
-  large_font.o\
-  point.o\
-  rect.o\
-  small_font.o\
-  text.o\
+
+kandinsky_src += $(addprefix kandinsky/src/,\
+  color.cpp \
+  context_line.cpp \
+  context_pixel.cpp \
+  context_rect.cpp \
+  context_text.cpp \
+  font.cpp \
+  framebuffer.cpp \
+  framebuffer_context.cpp \
+  ion_context.cpp \
+  point.cpp \
+  rect.cpp \
 )
-tests += $(addprefix kandinsky/test/,\
+
+kandinsky_src += $(addprefix kandinsky/fonts/, \
+  LargeFont.ttf \
+  SmallFont.ttf \
+)
+
+tests_src += $(addprefix kandinsky/test/,\
   color.cpp\
+  font.cpp\
   rect.cpp\
 )
 
-FREETYPE_PATH := /usr/local/Cellar/freetype/2.6.3
-# LIBPNG_PATH is optional. If LIBPNG_PATH is not defined, rasterizer will be
-# built w/o PNG support and simply won't output an image of the rasterization
-#LIBPNG_PATH := /usr/local/Cellar/libpng/1.6.21
+RASTERIZER_CFLAGS := -std=c99 $(shell pkg-config freetype2 --cflags)
+RASTERIZER_LDFLAGS := $(shell pkg-config freetype2 --libs)
 
-kandinsky/src/text.cpp: kandinsky/src/small_font.h kandinsky/src/large_font.h
-kandinsky/src/context_text.cpp: kandinsky/src/small_font.h kandinsky/src/large_font.h
-
-small_font_files = $(addprefix kandinsky/src/, small_font.h small_font.c)
-large_font_files = $(addprefix kandinsky/src/, large_font.h large_font.c)
-
-RASTERIZER_CFLAGS := -std=c99 `freetype-config --cflags`
-RASTERIZER_LDFLAGS := `freetype-config --libs`
-
-ifdef LIBPNG_PATH
-  small_font_files += kandinsky/src/small_font.png
-  large_font_files += kandinsky/src/large_font.png
-  RASTERIZER_CFLAGS += -I$(LIBPNG_PATH)/include -DGENERATE_PNG=1 -L$(LIBPNG_PATH)/lib -lpng
+HAS_LIBPNG := $(shell pkg-config libpng --exists && echo 1)
+ifeq ($(HAS_LIBPNG),1)
+  RASTERIZER_CFLAGS += $(shell pkg-config libpng --cflags) -DGENERATE_PNG=1
+  RASTERIZER_LDFLAGS += $(shell pkg-config libpng --libs)
 endif
 
-# Even though raster will generate both .c and .h files, we don't declare it as
-# such to make. If we did, "make -jN" with N>1 may call "raster" twice.
+$(eval $(call rule_for, \
+  HOSTCC, \
+  kandinsky/fonts/rasterizer, \
+  kandinsky/fonts/rasterizer.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
+  $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$^ $$(RASTERIZER_LDFLAGS) -o $$@ \
+))
 
-kandinsky/src/small_font.h: kandinsky/src/small_font.c
-kandinsky/src/small_font.c: kandinsky/fonts/rasterizer
-	@echo "RASTER  $(small_font_files)"
-	@$< kandinsky/fonts/SmallSourcePixel.ttf 12 12 SmallFont $(small_font_files)
+RASTERIZER := $(BUILD_DIR)/kandinsky/fonts/rasterizer
 
-kandinsky/src/large_font.h: kandinsky/src/large_font.c
-kandinsky/src/large_font.c: kandinsky/fonts/rasterizer
-	@echo "RASTER  $(large_font_files)"
-	@$< kandinsky/fonts/LargeSourcePixel.ttf 16 16 LargeFont $(large_font_files)
+# Define a rasterizing recipe. Parameters : font name, size, packed_width, packed_height
+define raster_font
+$(call rule_for, \
+  RASTER, \
+  kandinsky/fonts/$(1).cpp, \
+  kandinsky/fonts/$(1).ttf $$(RASTERIZER), \
+  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $(if $(HAS_LIBPNG),$$(basename $$@).png) \
+)
+endef
 
-kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c kandinsky/fonts/unicode_for_symbol.c
-	@echo "HOSTCC  $@"
-	@$(HOSTCC) $(RASTERIZER_CFLAGS) $^ $(RASTERIZER_LDFLAGS) -o $@
-
-products += $(small_font_files) $(large_font_files) kandinsky/fonts/rasterizer
-
+$(eval $(call raster_font,SmallFont,12,7,14))
+$(eval $(call raster_font,LargeFont,16,10,18))

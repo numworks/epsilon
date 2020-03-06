@@ -12,25 +12,25 @@
 
 namespace Code {
 
+class App;
+
 class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
-  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
+  ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
+#if EPSILON_GETOPT
+      , bool m_lockOnConsole
+#endif
+      );
 
-  ConsoleController(Responder * parentResponder, ScriptStore * scriptStore);
-  ~ConsoleController();
-  ConsoleController(const ConsoleController& other) = delete;
-  ConsoleController(ConsoleController&& other) = delete;
-  ConsoleController operator=(const ConsoleController& other) = delete;
-  ConsoleController& operator=(ConsoleController&& other) = delete;
-
-  bool loadPythonEnvironment(bool autoImportScripts = true);
+  bool loadPythonEnvironment();
   void unloadPythonEnvironment();
-  bool pythonEnvironmentIsLoaded();
 
+  void setAutoImport(bool autoImport) { m_autoImportScripts = autoImport; }
   void autoImport();
-  void autoImportScriptAtIndex(int index, bool force = false);
+  void autoImportScript(Script script, bool force = false);
   void runAndPrintForCommand(const char * command);
-  void removeExtensionIfAny(char * name);
+  bool inputRunLoopActive() const { return m_inputRunLoopActive; }
+  void terminateInputLoop();
 
   // ViewController
   View * view() override { return &m_selectableTableView; }
@@ -38,9 +38,10 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+  TELEMETRY_ID("Console");
 
   // ListViewDataSource
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
@@ -50,38 +51,47 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
-  Toolbox * toolboxForTextField(TextField * textField) override;
+  bool textFieldDidAbortEditing(TextField * textField) override;
 
   // MicroPython::ExecutionEnvironment
   void displaySandbox() override;
+  void hideSandbox() override;
+  void resetSandbox() override;
+  void refreshPrintOutput() override;
   void printText(const char * text, size_t length) override;
+  const char * inputText(const char * prompt) override;
 
+#if EPSILON_GETOPT
+  bool locked() const {
+    return m_locked;
+  }
+#endif
 private:
+  static constexpr const char * k_importCommand1 = "from ";
+  static constexpr const char * k_importCommand2 = " import *";
+  static constexpr size_t k_maxImportCommandSize = 5 + 9 + TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
-  static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
-  static constexpr int k_pythonHeapSize = 16384;
+  static constexpr int k_numberOfLineCells = (Ion::Display::Height - Metric::TitleBarHeight) / 14 + 2; // 14 = KDFont::SmallFont->glyphSize().height()
+  // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
   static constexpr int k_outputAccumulationBufferSize = 100;
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();
   size_t firstNewLineCharIndex(const char * text, size_t length);
   StackViewController * stackViewController();
-  bool copyCurrentLineToClipboard();
-  int m_rowHeight;
+  App * m_pythonDelegate;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
   SelectableTableView m_selectableTableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
-  char * m_pythonHeap;
   char m_outputAccumulationBuffer[k_outputAccumulationBufferSize];
   /* The Python machine might call printText several times to print a single
    * string. We thus use m_outputAccumulationBuffer to store and concatenate the
@@ -90,6 +100,12 @@ private:
    * ConsoleLine in the ConsoleStore and empty m_outputAccumulationBuffer. */
   ScriptStore * m_scriptStore;
   SandboxController m_sandboxController;
+  bool m_inputRunLoopActive;
+  bool m_autoImportScripts;
+  bool m_preventEdition;
+#if EPSILON_GETOPT
+  bool m_locked;
+#endif
 };
 }
 

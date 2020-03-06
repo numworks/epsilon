@@ -1,0 +1,7 @@
+USBConnected = "LA CALCULATRICE EST CONNECTÉE"
+ConnectedMessage1 = "Pour transférer des données, connectez-"
+ConnectedMessage2 = "vous depuis votre ordinateur sur le site"
+ConnectedMessage3 = "workshop.numworks.com"
+ConnectedMessage4 = "Appuyez sur la touche RETOUR de la"
+ConnectedMessage5 = "calculatrice ou débranchez-la pour la"
+ConnectedMessage6 = "déconnecter."

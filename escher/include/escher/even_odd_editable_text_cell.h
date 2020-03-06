@@ -7,15 +7,21 @@
 
 class EvenOddEditableTextCell : public EvenOddCell, public Responder {
 public:
-  EvenOddEditableTextCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr, char * draftTextBuffer = nullptr, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
+  EvenOddEditableTextCell(Responder * parentResponder = nullptr,InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,  TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   EditableTextCell * editableTextCell();
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;
+  virtual Responder * responder() override {
+    return this;
+  }
+  const char * text() const override {
+    return m_editableCell.text();
+  }
   void didBecomeFirstResponder() override;
 private:
+  int numberOfSubviews() const override;
+  View * subviewAtIndex(int index) override;
+  void layoutSubviews(bool force = false) override;
   EditableTextCell m_editableCell;
 };
 

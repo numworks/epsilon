@@ -1,38 +1,56 @@
 #ifndef POINCARE_COSINE_H
 #define POINCARE_COSINE_H
 
-#include <poincare/layout_engine.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/approximation_helper.h>
+#include <poincare/expression.h>
 #include <poincare/trigonometry.h>
 
 namespace Poincare {
 
-class Cosine : public StaticHierarchy<1>::StaticHierarchy  {
-  using StaticHierarchy<1>::StaticHierarchy;
-  friend class Tangent;
+class CosineNode final : public ExpressionNode  {
 public:
-  Type type() const override;
-  Expression * clone() const override;
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+
+  // TreeNode
+  size_t size() const override { return sizeof(CosineNode); }
+  int numberOfChildren() const override;
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Cosine";
+  }
+#endif
+
+  // Properties
+  Type type() const override { return Type::Cosine; }
+  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
+
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
+
 private:
-  /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Simplication
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
   }
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
   }
-  const char * name() const { return "cos"; }
-  /* Simplication */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
-  }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
-  }
+};
+
+class Cosine final : public Expression {
+public:
+  Cosine(const CosineNode * n) : Expression(n) {}
+  static Cosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<Cosine, CosineNode>(&child, 1); }
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cos", 1, &UntypedBuilderOneChild<Cosine>);
+
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

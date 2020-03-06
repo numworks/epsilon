@@ -1,35 +1,38 @@
 #include <poincare/undefined.h>
+#include <poincare/complex.h>
+#include <poincare/layout_helper.h>
+
 extern "C" {
 #include <math.h>
+#include <string.h>
 }
-#include "layout/string_layout.h"
 
 namespace Poincare {
 
-Expression::Type Undefined::type() const {
-  return Type::Undefined;
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
+int UndefinedNode::polynomialDegree(Context * context, const char * symbolName) const {
+  return -1;
 }
 
-Expression * Undefined::clone() const {
-  return new Undefined();
+Expression UndefinedNode::setSign(Sign s, ExpressionNode::ReductionContext reductionContext) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
+  return Undefined(this);
 }
 
-template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return new Complex<T>(Complex<T>::Float(NAN));
+Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::String(Undefined::Name(), Undefined::NameSize()-1);
 }
 
-ExpressionLayout * Undefined::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  char buffer[16];
-  int numberOfChars = Complex<float>::convertFloatToText(NAN, buffer, 16, 1, floatDisplayMode);
-  return new StringLayout(buffer, numberOfChars);
+int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return minInt(strlcpy(buffer, Undefined::Name(), bufferSize), bufferSize - 1);
 }
 
-int Undefined::writeTextInBuffer(char * buffer, int bufferSize) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  return strlcpy(buffer, "undef", bufferSize);
+template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {
+  return Complex<T>::Undefined();
 }
 
+template Evaluation<float> UndefinedNode::templatedApproximate() const;
+template Evaluation<double> UndefinedNode::templatedApproximate() const;
 }
 

@@ -3,17 +3,21 @@
 
 #include <escher.h>
 #include "../shared/banner_view.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Statistics {
 
 class BoxBannerView : public Shared::BannerView {
 public:
   BoxBannerView();
+  BufferTextView * seriesName() { return &m_seriesName; }
+  MessageTextView * calculationName() { return &m_calculationName; }
+  BufferTextView * calculationValue() { return &m_calculationValue; }
 private:
-  int numberOfSubviews() const override;
-  TextView * textViewAtIndex(int i) const override;
-  MessageTextView * messageTextViewAtIndex(int i) const override;
+  static constexpr int k_numberOfSubviews = 3;
+  int numberOfSubviews() const override { return k_numberOfSubviews; }
+  View * subviewAtIndex(int index) override;
+  BufferTextView m_seriesName;
   MessageTextView m_calculationName;
   BufferTextView m_calculationValue;
 };

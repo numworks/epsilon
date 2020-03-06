@@ -1,0 +1,70 @@
+def BUILD_DIR = '../../../../'+System.getenv('BUILD_DIR')+'/app'
+
+buildscript {
+  repositories {
+    jcenter()
+    google()
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.2.0'
+    classpath 'com.google.gms:google-services:4.2.0'
+  }
+}
+
+allprojects {
+  repositories {
+    jcenter()
+    google()
+  }
+  buildDir = BUILD_DIR
+}
+
+apply plugin: 'com.android.application'
+
+android {
+  compileSdkVersion 29
+  defaultConfig {
+    applicationId "com.numworks.calculator"
+    minSdkVersion 16
+    targetSdkVersion 28
+    def (major, minor, patch) = System.getenv('EPSILON_VERSION').toLowerCase().tokenize('.').collect{it.toInteger()}
+    versionCode major*1000000 + minor*10000 + patch * 100
+    versionName System.getenv('EPSILON_VERSION')
+  }
+  signingConfigs {
+    environment {
+      storeFile System.getenv('ANDROID_SIGNING_STORE_FILE') ? new File(System.getenv('RELEASE_STORE_FILE')) : null
+      storePassword System.getenv('ANDROID_SIGNING_STORE_PASSWORD')
+      keyAlias System.getenv('ANDROID_SIGNING_KEY_ALIAS')
+      keyPassword System.getenv('ANDROID_SIGNING_KEY_PASSWORD')
+    }
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt')
+    }
+    codesigned {
+      initWith buildTypes.release
+      signingConfig signingConfigs.environment
+    }
+  }
+  sourceSets{
+    main {
+      manifest.srcFile 'src/AndroidManifest.xml'
+      res.srcDir BUILD_DIR + '/res'
+      java.srcDir 'src'
+      jniLibs.srcDir BUILD_DIR + '/libs'
+      assets.srcDir '../assets'
+    }
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+  implementation "androidx.appcompat:appcompat:1.0.2"
+  implementation "com.google.android.gms:play-services-analytics:16.0.7"
+}

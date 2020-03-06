@@ -1,7 +1,8 @@
 #include "pop_up_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../apps_container.h"
 #include <assert.h>
+#include <escher/app.h>
 
 namespace HardwareTest {
 
@@ -34,19 +35,21 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
 PopUpController::ContentView::ContentView(Responder * parentResponder) :
   Responder(parentResponder),
   m_cancelButton(this, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
-    PopUpController::ContentView * view = (PopUpController::ContentView *)context;
-    view->app()->dismissModalViewController();
-  }, this), KDText::FontSize::Small),
+    Container::activeApp()->dismissModalViewController();
+    return true;
+  }, this), KDFont::SmallFont),
   m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {
-    PopUpController::ContentView * view = (PopUpController::ContentView *)context;
-    AppsContainer * appsContainer = (AppsContainer *)view->app()->container();
-    appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
-  }, this), KDText::FontSize::Small),
-  m_warningTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView1(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch1, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView2(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch2, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView3(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch3, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView4(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch4, 0.5, 0.5, KDColorWhite, KDColorBlack)
+    AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
+    bool switched = appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
+    assert(switched);
+    (void) switched; // Silence compilation warning about unused variable.
+    return true;
+  }, this), KDFont::SmallFont),
+  m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView1(KDFont::SmallFont, I18n::Message::HardwareTestLaunch1, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView2(KDFont::SmallFont, I18n::Message::HardwareTestLaunch2, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView3(KDFont::SmallFont, I18n::Message::HardwareTestLaunch3, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView4(KDFont::SmallFont, I18n::Message::HardwareTestLaunch4, 0.5, 0.5, KDColorWhite, KDColorBlack)
 {
 }
 
@@ -58,9 +61,9 @@ void PopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
   m_okButton.setHighlighted(selectedButton == 1);
   if (selectedButton == 0) {
-    app()->setFirstResponder(&m_cancelButton);
+    Container::activeApp()->setFirstResponder(&m_cancelButton);
   } else {
-    app()->setFirstResponder(&m_okButton);
+    Container::activeApp()->setFirstResponder(&m_okButton);
   }
 }
 
@@ -97,17 +100,17 @@ View * PopUpController::ContentView::subviewAtIndex(int index) {
   }
 }
 
-void PopUpController::ContentView::layoutSubviews() {
+void PopUpController::ContentView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
-  m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight));
-  m_messageTextView1.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+textHeight, width, textHeight));
-  m_messageTextView2.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+2*textHeight, width, textHeight));
-  m_messageTextView3.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+3*textHeight, width, textHeight));
-  m_messageTextView4.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+4*textHeight, width, textHeight));
-  m_cancelButton.setFrame(KDRect(k_buttonMargin, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight));
-  m_okButton.setFrame(KDRect(2*k_buttonMargin+(width-3*k_buttonMargin)/2, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight));
+  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight), force);
+  m_messageTextView1.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+textHeight, width, textHeight), force);
+  m_messageTextView2.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+2*textHeight, width, textHeight), force);
+  m_messageTextView3.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+3*textHeight, width, textHeight), force);
+  m_messageTextView4.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+4*textHeight, width, textHeight), force);
+  m_cancelButton.setFrame(KDRect(k_buttonMargin, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight), force);
+  m_okButton.setFrame(KDRect(2*k_buttonMargin+(width-3*k_buttonMargin)/2, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight), force);
 }
 
 }

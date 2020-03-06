@@ -1,12 +1,10 @@
 #include <escher/alternate_empty_view_controller.h>
-#include <escher/app.h>
-#include <escher/palette.h>
+#include <escher/container.h>
 #include <assert.h>
 
 /* ContentView */
 
 AlternateEmptyViewController::ContentView::ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
-  m_message(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_mainViewController(mainViewController),
   m_delegate(delegate)
 {
@@ -19,17 +17,16 @@ int AlternateEmptyViewController::ContentView::numberOfSubviews() const {
 View * AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   if (m_delegate->isEmpty()) {
-    m_message.setMessage(m_delegate->emptyMessage());
-    return &m_message;
+    return m_delegate->emptyView();
   }
   return m_mainViewController->view();
 }
 
-void AlternateEmptyViewController::ContentView::layoutSubviews() {
+void AlternateEmptyViewController::ContentView::layoutSubviews(bool force) {
   if (alternateEmptyViewDelegate()->isEmpty()) {
-    m_message.setFrame(bounds());
+    m_delegate->emptyView()->setFrame(bounds(), force);
   } else {
-    m_mainViewController->view()->setFrame(bounds());
+    m_mainViewController->view()->setFrame(bounds(), force);
   }
 }
 
@@ -60,7 +57,7 @@ const char * AlternateEmptyViewController::title() {
 bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
   if (m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     if (event != Ion::Events::Home && event != Ion::Events::OnOff) {
-      app()->setFirstResponder(m_contentView.alternateEmptyViewDelegate()->defaultController());
+      m_contentView.alternateEmptyViewDelegate()->defaultController()->handleEvent(Ion::Events::Back);
       return true;
     }
     return false;
@@ -70,8 +67,12 @@ bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
 
 void AlternateEmptyViewController::didBecomeFirstResponder() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
-    app()->setFirstResponder(m_contentView.mainViewController());
+    Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
   }
+}
+
+void AlternateEmptyViewController::initView() {
+  m_contentView.mainViewController()->initView();
 }
 
 void AlternateEmptyViewController::viewWillAppear() {

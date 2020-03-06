@@ -1,32 +1,52 @@
 #ifndef POINCARE_BINOMIAL_COEFFICIENT_H
 #define POINCARE_BINOMIAL_COEFFICIENT_H
 
-#include <poincare/layout_engine.h>
-#include <poincare/static_hierarchy.h>
+#include <poincare/approximation_helper.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class BinomialCoefficient : public StaticHierarchy<2> {
-  using StaticHierarchy<2>::StaticHierarchy;
+class BinomialCoefficientNode final : public ExpressionNode {
 public:
-  Type type() const override;
-  Expression * clone() const override;
+
+  // TreeNode
+  size_t size() const override { return sizeof(BinomialCoefficientNode); }
+  int numberOfChildren() const override;
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "BinomialCoefficient";
+  }
+#endif
+
+  // Properties
+  Type type() const override{ return Type::BinomialCoefficient; }
+  template<typename T> static T compute(T k, T n);
+private:
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
+
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  template<typename T> Complex<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+};
+
+class BinomialCoefficient final : public Expression {
+public:
+  BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}
+  static BinomialCoefficient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomial", 2, &UntypedBuilderTwoChildren<BinomialCoefficient>);
+
+  // Expression
+  Expression shallowReduce(Context * context);
 private:
   constexpr static int k_maxNValue = 300;
-  /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "binomial");
-  }
-  /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
 };
 
 }
 
 #endif
-

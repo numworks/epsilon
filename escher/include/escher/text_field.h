@@ -1,100 +1,107 @@
 #ifndef ESCHER_TEXT_FIELD_H
 #define ESCHER_TEXT_FIELD_H
 
-#include <escher/scrollable_view.h>
+#include <escher/editable_field.h>
+#include <escher/text_input.h>
 #include <escher/text_field_delegate.h>
-#include <escher/text_cursor_view.h>
 #include <string.h>
 
-class TextField : public ScrollableView, public ScrollViewDataSource {
+// See TODO in EditableField
+
+/* TODO: TextField currently uses using 2 buffers:
+ * - one to keep the displayed text
+ * - another one to edit the text while keeping the previous text in the first
+ *   buffer to be able to abort edition.
+ * We could actually use only one buffer if for all textfields we implement the
+ * delegate method 'textFieldDidAbortEdition' in the way that it reloads the
+ * previous text from the model instead of from the textfield buffer. */
+
+class TextField : public TextInput, public EditableField {
 public:
-  TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
-    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f,
-    float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
-  void setDelegate(TextFieldDelegate * delegate);
-  void setDraftTextBuffer(char * draftTextBuffer);
-  Toolbox * toolbox() override;
-  bool isEditing() const;
-  const char * text() const;
-  int draftTextLength() const;
-  int cursorLocation() const;
-  void setCursorLocation(int location);
-  void setText(const char * text);
-  void setBackgroundColor(KDColor backgroundColor);
-  KDColor backgroundColor() const;
+  TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
+    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate = nullptr,
+    const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
+    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
-  void setAlignment(float horizontalAlignment, float verticalAlignment);
-  virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
-  /* If the text to be appended is too long to be added without overflowing the
-   * buffer, nothing is done (not even adding few letters from the text to reach
-   * the maximum buffer capacity) and false is returned. */
-  bool insertTextAtLocation(const char * text, int location);
-  KDSize minimalSizeForOptimalDisplay() const override;
+  void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
+  void reinitDraftTextBuffer() { m_contentView.reinitDraftTextBuffer(); }
+  bool isEditing() const override;
+  char * draftTextBuffer() const { return const_cast<char *>(m_contentView.editedText()); }
+  void setDraftTextBufferSize(size_t size) { m_contentView.setDraftTextBufferSize(size); }
+  size_t draftTextBufferSize() const { return m_contentView.draftTextBufferSize(); }
+  size_t draftTextLength() const;
+  void setText(const char * text);
+  void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
+  CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
-  bool textFieldShouldFinishEditing(Ion::Events::Event event);
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
   }
+  void scrollToCursor() override;
+  // TODO: factorize with TextField (see TODO of EditableField)
+  bool shouldFinishEditing(Ion::Events::Event event) override;
+  const KDFont * font() const { return m_contentView.font(); }
 protected:
-  class ContentView : public View {
+
+  class ContentView : public TextInput::ContentView {
   public:
-    ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment = 0.0f,
-    float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
-    void setDraftTextBuffer(char * draftTextBuffer);
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    void reload();
-    bool isEditing() const { return m_isEditing; }
-    const char * text() const;
-    int draftTextLength() const;
-    int cursorLocation() const { return m_currentCursorLocation; }
-    char * textBuffer() { return m_textBuffer; }
-    char * draftTextBuffer() { return m_draftTextBuffer; }
-    int bufferSize() { return k_maxBufferSize; }
-    void setText(const char * text);
-    void setBackgroundColor(KDColor backgroundColor);
-    KDColor backgroundColor() const { return m_backgroundColor; }
-    void setTextColor(KDColor textColor);
-    void setAlignment(float horizontalAlignment, float verticalAlignment);
-    void setEditing(bool isEditing, bool reinitDraftBuffer);
-    void reinitDraftTextBuffer();
-    void setCursorLocation(int location);
-    bool insertTextAtLocation(const char * text, int location);
-    KDSize minimalSizeForOptimalDisplay() const override;
-    KDCoordinate textHeight() const;
-    KDCoordinate charWidth();
-    void deleteCharPrecedingCursor();
-    bool deleteEndOfLine();
-    KDRect cursorRect();
-    View * subviewAtIndex(int index) override { return &m_cursorView; }
     /* In some app (ie Calculation), text fields record expression results whose
      * lengths can reach 70 (ie
      * [[1.234567e-123*e^(1.234567e-123*i), 1.234567e-123*e^(1.234567e-123*i)]]).
      * In order to be able to record those output text, k_maxBufferSize must be
-     * over 70. */
-    constexpr static int k_maxBufferSize = 152;
+     * over 70.
+     * Furthermore, we want ot be able to write an adjacency matrix of size 10
+     * so we need at least 2 brackets + 10 * (2 brackets + 10 digits + 9 commas)
+     * = 212 characters. */
+    constexpr static int k_maxBufferSize = 220;
+
+    ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor);
+    void setBackgroundColor(KDColor backgroundColor);
+    KDColor backgroundColor() const { return m_backgroundColor; }
+    void setTextColor(KDColor textColor);
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+    bool isEditing() const { return m_isEditing; }
+    const char * text() const override;
+    const char * editedText() const override;
+    size_t editedTextLength() const override { return m_currentDraftTextLength; }
+    void setText(const char * text);
+    void setEditing(bool isEditing);
+    void reinitDraftTextBuffer();
+    void setDraftTextBufferSize(size_t size) { assert(size <= k_maxBufferSize); m_draftTextBufferSize = size; }
+    size_t draftTextBufferSize() const { return m_draftTextBufferSize; }
+    /* If the text to be appended is too long to be added without overflowing the
+     * buffer, nothing is done (not even adding few letters from the text to reach
+     * the maximum buffer capacity) and false is returned. */
+    bool insertTextAtLocation(const char * text, char * location) override;
+    KDSize minimalSizeForOptimalDisplay() const override;
+    bool removePreviousGlyph() override;
+    bool removeEndOfLine() override;
+    void willModifyTextBuffer();
+    void didModifyTextBuffer();
+    size_t deleteSelection() override;
   private:
-    int numberOfSubviews() const override { return 1; }
-    void layoutSubviews() override;
-    TextCursorView m_cursorView;
+    void layoutSubviews(bool force = false) override;
+    KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;
     bool m_isEditing;
     char * m_textBuffer;
-    char * m_draftTextBuffer;
-    size_t m_currentDraftTextLength;
-    size_t m_currentCursorLocation;
     size_t m_textBufferSize;
-    float m_horizontalAlignment;
-    float m_verticalAlignment;
+    size_t m_draftTextBufferSize;
+    size_t m_currentDraftTextLength;
     KDColor m_textColor;
     KDColor m_backgroundColor;
-    KDText::FontSize m_fontSize;
   };
+
+  const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;
+
 private:
   bool privateHandleEvent(Ion::Events::Event event);
-  void deleteCharPrecedingCursor();
-  bool deleteEndOfLine();
-  void scrollToCursor();
-  bool m_hasTwoBuffers;
+  bool privateHandleMoveEvent(Ion::Events::Event event);
+  bool privateHandleSelectEvent(Ion::Events::Event event);
+  virtual void removeWholeText();
+  bool storeInClipboard() const;
   TextFieldDelegate * m_delegate;
 };
 

@@ -1,74 +1,87 @@
 #include <poincare/opposite.h>
-#include <poincare/complex.h>
+#include <poincare/addition.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/constant.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
-#include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
-extern "C" {
+#include <poincare/serialization_helper.h>
 #include <assert.h>
-#include <stdlib.h>
-}
 #include <cmath>
-#include "layout/horizontal_layout.h"
-#include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
+#include <stdlib.h>
+#include <utility>
 
 namespace Poincare {
 
-Expression::Type Opposite::type() const {
-  return Type::Opposite;
+int OppositeNode::polynomialDegree(Context * context, const char * symbolName) const {
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-Expression * Opposite::clone() const {
-  Opposite * o = new Opposite(m_operands, true);
-  return o;
-}
-
-template<typename T>
-Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::Cartesian(-c.a(), -c.b());
-}
-
-Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
+ExpressionNode::Sign OppositeNode::sign(Context * context) const {
+  Sign child0Sign = childAtIndex(0)->sign(context);
+  if (child0Sign == Sign::Positive) {
+    return Sign::Negative;
   }
-  const Expression * op = operand(0);
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+  if (child0Sign == Sign::Negative) {
+    return Sign::Positive;
   }
-#endif
-  detachOperand(op);
-  Multiplication * m = new Multiplication(new Rational(-1), op, false);
-  replaceWith(m, true);
-  return m->shallowReduce(context, angleUnit);
+  return ExpressionNode::sign(context);
 }
 
-ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * children_layouts[2];
-  char string[2] = {'-', '\0'};
-  children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = operand(0)->type() == Type::Opposite ? new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat)) : operand(0)->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(children_layouts, 2);
+/* Layout */
+
+bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  assert(childIndex == 0);
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
+    return true;
+  }
+  if (child.type() == Type::Conjugate) {
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), 0);
+  }
+  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};
+  return child.isOfType(types, 3);
 }
 
-int Opposite::writeTextInBuffer(char * buffer, int bufferSize) const {
+Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  HorizontalLayout result = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
+  if (childAtIndex(0)->type() == Type::Opposite) {
+    result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
+  } else {
+    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
+  }
+  return std::move(result);
+}
+
+int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
   if (bufferSize == 1) { return 0; }
-  buffer[numberOfChar++] = '-';
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
-  buffer[numberOfChar] = 0;
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '-');
+  if (numberOfChar >= bufferSize - 1) {
+    return bufferSize - 1;
+  }
+  numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   return numberOfChar;
 }
 
+Expression OppositeNode::shallowReduce(ReductionContext reductionContext) {
+  return Opposite(this).shallowReduce(reductionContext);
 }
 
-template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>, AngleUnit angleUnit);
-template Poincare::Complex<double> Poincare::Opposite::compute<double>(Poincare::Complex<double>, AngleUnit angleUnit);
+/* Simplification */
+
+Expression Opposite::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  Expression result = Expression::defaultShallowReduce();
+  if (result.isUndefined()) {
+    return result;
+  }
+  Expression child = result.childAtIndex(0);
+  result = Multiplication::Builder(Rational::Builder(-1), child);
+  replaceWithInPlace(result);
+  return result.shallowReduce(reductionContext);
+}
+
+}

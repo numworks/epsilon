@@ -1,25 +1,29 @@
-snapshots += Code::App::Snapshot
-snapshot_headers += apps/code/app.h
+apps += Code::App
+app_headers += apps/code/app.h
 
-app_objs += $(addprefix apps/code/,\
-  app.o\
-  accordion.o\
-  console_controller.o\
-  console_edit_cell.o\
-  console_line_cell.o\
-  console_store.o\
-  editor_controller.o\
-  helpers.o\
-  menu_controller.o\
-  python_toolbox.o\
-  sandbox_controller.o\
-  script.o\
-  script_node_cell.o\
-  script_parameter_controller.o\
-  script_store.o\
-  script_template.o\
-  variable_box_controller.o\
+app_code_src = $(addprefix apps/code/,\
+  app.cpp \
+  console_controller.cpp \
+  console_edit_cell.cpp \
+  console_line_cell.cpp \
+  console_store.cpp \
+  editor_controller.cpp \
+  editor_view.cpp \
+  helpers.cpp \
+  menu_controller.cpp \
+  python_toolbox.cpp \
+  python_text_area.cpp \
+  sandbox_controller.cpp \
+  script.cpp \
+  script_name_cell.cpp \
+  script_node_cell.cpp \
+  script_parameter_controller.cpp \
+  script_store.cpp \
+  script_template.cpp \
+  variable_box_controller.cpp \
 )
+
+app_src += $(app_code_src)
 
 i18n_files += $(addprefix apps/code/,\
   base.de.i18n\
@@ -42,4 +46,4 @@ i18n_files += $(addprefix apps/code/,\
   toolbox.universal.i18n\
 )
 
-app_images += apps/code/code_icon.png
+$(eval $(call depends_on_image,apps/code/app.cpp,apps/code/code_icon.png))

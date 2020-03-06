@@ -5,7 +5,7 @@
 
 class Window : public View {
 public:
-  Window();
+  Window() : m_contentView(nullptr) {}
   void redraw(bool force = false);
   void setContentView(View * contentView);
 protected:
@@ -13,7 +13,7 @@ protected:
   const char * className() const override;
 #endif
   virtual int numberOfSubviews() const override;
-  virtual void layoutSubviews() override;
+  virtual void layoutSubviews(bool force = false) override;
   virtual View * subviewAtIndex(int index) override;
   View * m_contentView;
 private:

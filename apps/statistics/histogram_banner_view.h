@@ -3,17 +3,20 @@
 
 #include <escher.h>
 #include "../shared/banner_view.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Statistics {
 
 class HistogramBannerView : public Shared::BannerView {
 public:
   HistogramBannerView();
+  BufferTextView * intervalView() { return &m_intervalView; }
+  BufferTextView * sizeView() { return &m_sizeView; }
+  BufferTextView * frequencyView() { return &m_frequencyView; }
 private:
-  int numberOfSubviews() const override;
-  TextView * textViewAtIndex(int i) const override;
-  MessageTextView * messageTextViewAtIndex(int index) const override;
+  static constexpr int k_numberOfSubviews = 6;
+  int numberOfSubviews() const override { return k_numberOfSubviews; }
+  View * subviewAtIndex(int index) override;
   MessageTextView m_intervalLegendView;
   BufferTextView m_intervalView;
   MessageTextView m_sizeLegendView;

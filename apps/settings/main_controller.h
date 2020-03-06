@@ -2,24 +2,32 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <escher.h>
-#include "sub_controller.h"
-#include "settings_message_tree.h"
-#include "language_controller.h"
+#include <apps/shared/settings_message_tree.h>
+#include "message_table_cell_with_gauge_with_separator.h"
+#include "sub_menu/about_controller.h"
+#include "sub_menu/display_mode_controller.h"
+#include "sub_menu/exam_mode_controller.h"
+#include "sub_menu/language_controller.h"
+#include "sub_menu/preferences_controller.h"
 
 namespace Settings {
 
+extern const Shared::SettingsMessageTree s_modelAngleChildren[3];
+extern const Shared::SettingsMessageTree s_modelEditionModeChildren[2];
+extern const Shared::SettingsMessageTree s_modelFloatDisplayModeChildren[4];
+extern const Shared::SettingsMessageTree s_modelComplexFormatChildren[3];
+extern const Shared::SettingsMessageTree s_modelFontChildren[2];
+extern const Shared::SettingsMessageTree s_modelExamChildren[2];
+extern const Shared::SettingsMessageTree s_modelAboutChildren[3];
+extern const Shared::SettingsMessageTree s_model;
+
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  MainController(Responder * parentResponder);
-  ~MainController();
-  MainController(const MainController& other) = delete;
-  MainController(MainController&& other) = delete;
-  MainController& operator=(const MainController& other) = delete;
-  MainController& operator=(MainController&& other) = delete;
+  MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  int numberOfRows() override;
+  int numberOfRows() const override;
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
@@ -28,23 +36,37 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
+  TELEMETRY_ID("");
 private:
+  constexpr static int k_indexOfAngleUnitCell = 0;
+  constexpr static int k_indexOfDisplayModeCell = k_indexOfAngleUnitCell + 1;
+  constexpr static int k_indexOfEditionModeCell = k_indexOfDisplayModeCell + 1;
+  constexpr static int k_indexOfComplexFormatCell = k_indexOfEditionModeCell + 1;
+  constexpr static int k_indexOfBrightnessCell = k_indexOfComplexFormatCell + 1;
+  constexpr static int k_indexOfFontCell = k_indexOfBrightnessCell + 1;
+  constexpr static int k_indexOfLanguageCell = k_indexOfFontCell + 1;
+  constexpr static int k_indexOfExamModeCell = k_indexOfLanguageCell + 1;
+  /* Pop-up cell and About cell are located at the same index because pop-up
+   * cell is optional. We must always correct k_indexOfAboutCell with
+   * hasPrompt() (TODO: make hasPrompt() constexpr and correct
+   * k_indexOfAboutCell) */
+  constexpr static int k_indexOfPopUpCell = k_indexOfExamModeCell + 1;
+  constexpr static int k_indexOfAboutCell = k_indexOfExamModeCell + 1;
+  static const Shared::SettingsMessageTree * model();
   StackViewController * stackController() const;
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  constexpr static int k_totalNumberOfCell = 8;
-  MessageTableCellWithSwitch m_updateCell;
-#else
-  constexpr static int k_totalNumberOfCell = 7;
-#endif
-  constexpr static int k_numberOfSimpleChevronCells = 5;
+  I18n::Message promptMessage() const;
+  bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
+  constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
-  MessageTableCellWithChevronAndExpression m_complexFormatCell;
-  MessageTableCellWithGauge m_brightnessCell;
-  Poincare::ExpressionLayout * m_complexFormatLayout;
+  MessageTableCellWithGaugeWithSeparator m_brightnessCell;
+  MessageTableCellWithSwitch m_popUpCell;
   SelectableTableView m_selectableTableView;
-  MessageTree * m_messageTreeModel;
-  SubController m_subController;
+  PreferencesController m_preferencesController;
+  DisplayModeController m_displayModeController;
   LanguageController m_languageController;
+  ExamModeController m_examModeController;
+  AboutController m_aboutController;
+
 };
 
 }

@@ -7,8 +7,7 @@ namespace Sequence {
 
 class IntervalParameterController : public Shared::IntervalParameterController {
 public:
-  IntervalParameterController(Responder * parentResponder, Shared::Interval * interval);
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  using Shared::IntervalParameterController::IntervalParameterController;
   bool setParameterAtIndex(int parameterIndex, double f) override;
 };
 

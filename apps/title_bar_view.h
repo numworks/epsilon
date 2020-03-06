@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "battery_view.h"
 #include "shift_alpha_lock_view.h"
-#include "i18n.h"
+#include <apps/i18n.h>
 
 class TitleBarView : public View {
 public:
@@ -16,13 +16,14 @@ public:
   bool setIsPlugged(bool isPlugged);
   bool setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status);
   void refreshPreferences();
+  void reload();
 private:
   constexpr static KDCoordinate k_alphaRightMargin = 5;
   constexpr static KDCoordinate k_examIconWidth = 18;
   constexpr static KDCoordinate k_examIconHeight = 9;
   constexpr static KDCoordinate k_examIconMargin = 93;
   int numberOfSubviews() const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   View * subviewAtIndex(int index) override;
   MessageTextView m_titleView;
   BatteryView m_batteryView;

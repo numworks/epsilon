@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -76,8 +76,7 @@ static const void *const entry_table[256] = {
     [MP_BC_GET_ITER] = &&entry_MP_BC_GET_ITER,
     [MP_BC_GET_ITER_STACK] = &&entry_MP_BC_GET_ITER_STACK,
     [MP_BC_FOR_ITER] = &&entry_MP_BC_FOR_ITER,
-    [MP_BC_POP_BLOCK] = &&entry_MP_BC_POP_BLOCK,
-    [MP_BC_POP_EXCEPT] = &&entry_MP_BC_POP_EXCEPT,
+    [MP_BC_POP_EXCEPT_JUMP] = &&entry_MP_BC_POP_EXCEPT_JUMP,
     [MP_BC_BUILD_TUPLE] = &&entry_MP_BC_BUILD_TUPLE,
     [MP_BC_BUILD_LIST] = &&entry_MP_BC_BUILD_LIST,
     [MP_BC_BUILD_MAP] = &&entry_MP_BC_BUILD_MAP,
@@ -109,8 +108,8 @@ static const void *const entry_table[256] = {
     [MP_BC_LOAD_CONST_SMALL_INT_MULTI ... MP_BC_LOAD_CONST_SMALL_INT_MULTI + 63] = &&entry_MP_BC_LOAD_CONST_SMALL_INT_MULTI,
     [MP_BC_LOAD_FAST_MULTI ... MP_BC_LOAD_FAST_MULTI + 15] = &&entry_MP_BC_LOAD_FAST_MULTI,
     [MP_BC_STORE_FAST_MULTI ... MP_BC_STORE_FAST_MULTI + 15] = &&entry_MP_BC_STORE_FAST_MULTI,
-    [MP_BC_UNARY_OP_MULTI ... MP_BC_UNARY_OP_MULTI + 6] = &&entry_MP_BC_UNARY_OP_MULTI,
-    [MP_BC_BINARY_OP_MULTI ... MP_BC_BINARY_OP_MULTI + 35] = &&entry_MP_BC_BINARY_OP_MULTI,
+    [MP_BC_UNARY_OP_MULTI ... MP_BC_UNARY_OP_MULTI + MP_UNARY_OP_NUM_BYTECODE - 1] = &&entry_MP_BC_UNARY_OP_MULTI,
+    [MP_BC_BINARY_OP_MULTI ... MP_BC_BINARY_OP_MULTI + MP_BINARY_OP_NUM_BYTECODE - 1] = &&entry_MP_BC_BINARY_OP_MULTI,
 };
 
 #if __clang__

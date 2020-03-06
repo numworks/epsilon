@@ -3,14 +3,11 @@
 
 #include <escher.h>
 
-class AppsContainer;
-
 class BatteryTimer : public Timer {
 public:
-  BatteryTimer(AppsContainer * container);
+  BatteryTimer();
 private:
   bool fire() override;
-  AppsContainer * m_container;
 };
 
 #endif

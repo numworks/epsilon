@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -34,5 +34,7 @@ typedef struct _mp_obj_list_t {
     size_t len;
     mp_obj_t *items;
 } mp_obj_list_t;
+
+void mp_obj_list_init(mp_obj_list_t *o, size_t n);
 
 #endif // MICROPY_INCLUDED_PY_OBJLIST_H

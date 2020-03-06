@@ -21,16 +21,13 @@ const uint8_t tickMask[BatteryView::k_tickHeight][BatteryView::k_tickWidth] = {
 
 };
 
-
-BatteryView::BatteryView() :
-  View(),
-  m_chargeState(Ion::Battery::Charge::SOMEWHERE_INBETWEEN),
-  m_isCharging(false),
-  m_isPlugged(false)
-{
-}
-
 bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
+  /* There is no specific battery picto for 'empty' battery as the whole device
+   * shut down. Still, there might be a redrawing of the window before shutting
+   * down so we handle this case as the 'low' battery one. Plus, we avoid
+   * trigerring a redrawing by not marking anything as dirty when switching
+   * from 'low' to 'empty' battery. */
+  chargeState = chargeState == Ion::Battery::Charge::EMPTY ? Ion::Battery::Charge::LOW : chargeState;
   if (chargeState != m_chargeState) {
     m_chargeState = chargeState;
     markRectAsDirty(bounds());
@@ -61,30 +58,44 @@ KDColor s_flashWorkingBuffer[BatteryView::k_flashHeight*BatteryView::k_flashWidt
 KDColor s_tickWorkingBuffer[BatteryView::k_tickHeight*BatteryView::k_tickWidth];
 
 void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
+  assert(m_chargeState != Ion::Battery::Charge::EMPTY);
   /* We draw from left to right. The middle part representing the battery
    *'content' depends on the charge */
+
+  // Draw the left part
   ctx->fillRect(KDRect(0, 0, k_elementWidth, k_batteryHeight), KDColorWhite);
+
+  // Draw the middle part
+  constexpr KDCoordinate batteryInsideX = k_elementWidth+k_separatorThickness;
+  constexpr KDCoordinate batteryInsideWidth = k_batteryWidth-3*k_elementWidth-2*k_separatorThickness;
   if (m_isCharging) {
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, k_batteryWidth-3*k_elementWidth-2*k_separatorThickness, k_batteryHeight), Palette::YellowLight);
+    // Charging: Yellow background with flash
+    ctx->fillRect(KDRect(batteryInsideX, 0, batteryInsideWidth, k_batteryHeight), Palette::YellowLight);
     KDRect frame((k_batteryWidth-k_flashWidth)/2, 0, k_flashWidth, k_flashHeight);
     ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask, s_flashWorkingBuffer);
-  }
-  if (!m_isCharging && m_isPlugged && m_chargeState == Ion::Battery::Charge::FULL) {
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, k_batteryWidth-3*k_elementWidth-2*k_separatorThickness, k_batteryHeight), KDColorWhite);
-    KDRect frame((k_batteryWidth-k_tickWidth)/2, (k_batteryHeight-k_tickHeight)/2, k_tickWidth, k_tickHeight);
-    ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)tickMask, s_tickWorkingBuffer);
-  }
-  if (!m_isCharging && m_chargeState == Ion::Battery::Charge::LOW) {
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, 2*k_elementWidth, k_batteryHeight), Palette::LowBattery);
+  } else if (m_chargeState == Ion::Battery::Charge::LOW) {
+    assert(!m_isPlugged);
+    // Low: Quite empty battery
+    ctx->fillRect(KDRect(batteryInsideX, 0, 2*k_elementWidth, k_batteryHeight), Palette::LowBattery);
     ctx->fillRect(KDRect(3*k_elementWidth+k_separatorThickness, 0, k_batteryWidth-5*k_elementWidth-2*k_separatorThickness, k_batteryHeight), Palette::YellowLight);
+  } else if (m_chargeState == Ion::Battery::Charge::SOMEWHERE_INBETWEEN) {
+    assert(!m_isPlugged);
+    // Middle: Half full battery
+    constexpr KDCoordinate middleChargeWidth = batteryInsideWidth/2;
+    ctx->fillRect(KDRect(batteryInsideX, 0, middleChargeWidth, k_batteryHeight), KDColorWhite);
+    ctx->fillRect(KDRect(batteryInsideX+middleChargeWidth, 0, middleChargeWidth, k_batteryHeight), Palette::YellowLight);
+  } else {
+    assert(m_chargeState == Ion::Battery::Charge::FULL);
+    // Full but not plugged: Full battery
+    ctx->fillRect(KDRect(batteryInsideX, 0, batteryInsideWidth, k_batteryHeight), KDColorWhite);
+    if (m_isPlugged) {
+      // Plugged and full: Full battery with tick
+      KDRect frame((k_batteryWidth-k_tickWidth)/2, (k_batteryHeight-k_tickHeight)/2, k_tickWidth, k_tickHeight);
+      ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)tickMask, s_tickWorkingBuffer);
+    }
   }
-  if (!m_isCharging && m_chargeState == Ion::Battery::Charge::SOMEWHERE_INBETWEEN) {
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, (k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, k_batteryHeight), KDColorWhite);
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness+(k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, 0, (k_batteryWidth-3*k_elementWidth-2*k_separatorThickness)/2, k_batteryHeight), Palette::YellowLight);
-  }
-  if (!m_isCharging && !m_isPlugged && m_chargeState == Ion::Battery::Charge::FULL) {
-    ctx->fillRect(KDRect(k_elementWidth+k_separatorThickness, 0, k_batteryWidth-3*k_elementWidth-2*k_separatorThickness, k_batteryHeight), KDColorWhite);
-  }
+
+  // Draw the right part
   ctx->fillRect(KDRect(k_batteryWidth-2*k_elementWidth, 0, k_elementWidth, k_batteryHeight), KDColorWhite);
   ctx->fillRect(KDRect(k_batteryWidth-k_elementWidth, (k_batteryHeight-k_capHeight)/2, k_elementWidth, k_capHeight), KDColorWhite);
 }

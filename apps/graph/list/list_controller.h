@@ -2,36 +2,38 @@
 #define GRAPH_LIST_CONTROLLER_H
 
 #include <escher.h>
-#include "../function_title_cell.h"
-#include "../../shared/function_expression_cell.h"
-#include "../cartesian_function_store.h"
-#include "../../shared/new_function_cell.h"
-#include "../../shared/list_controller.h"
-#include "../../shared/list_parameter_controller.h"
+#include "list_parameter_controller.h"
+#include "text_field_function_title_cell.h"
+#include "../continuous_function_store.h"
+#include <apps/shared/function_expression_cell.h>
+#include <apps/shared/function_list_controller.h>
+#include <apps/shared/text_field_delegate.h>
 
 namespace Graph {
 
-class ListController : public Shared::ListController {
+class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate {
 public:
-  ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer);
+  ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, InputEventHandlerDelegate * inputEventHandlerDelegate);
   const char * title() override;
-  int numberOfRows() override;
-  KDCoordinate rowHeight(int j) override;
+  void renameSelectedFunction();
+  // TextFieldDelegate
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
-  void editExpression(Shared::Function * function, Ion::Events::Event event) override;
+  constexpr static int k_maxNumberOfDisplayableRows = 5;
   Shared::ListParameterController * parameterController() override;
-  int maxNumberOfRows() override;
-  HighlightCell * titleCells(int index) override;
+  int maxNumberOfDisplayableRows() override;
+  Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  bool removeFunctionRow(Shared::Function * function) override;
-  View * loadView() override;
-  void unloadView(View * view) override;
-  constexpr static int k_maxNumberOfRows = 5;
-  FunctionTitleCell * m_functionTitleCells[k_maxNumberOfRows];
-  Shared::FunctionExpressionCell * m_expressionCells[k_maxNumberOfRows];
-  Shared::ListParameterController m_parameterController;
+  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::ContinuousFunction> function, TextField * textField);
+  ContinuousFunctionStore * modelStore() override;
+  TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
+  Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
+  ListParameterController m_parameterController;
 };
 
 }

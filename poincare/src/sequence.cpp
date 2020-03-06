@@ -1,10 +1,7 @@
 #include <poincare/sequence.h>
-#include <poincare/symbol.h>
-#include <poincare/complex.h>
-#include <poincare/variable_context.h>
+#include <poincare/decimal.h>
 #include <poincare/undefined.h>
-#include "layout/string_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/variable_context.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -13,43 +10,59 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionLayout * Sequence::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = new StringLayout("n=", 2);
-  childrenLayouts[1] = operand(1)->createLayout(floatDisplayMode, complexFormat);
-  return createSequenceLayoutWithArgumentLayouts(new HorizontalLayout(childrenLayouts, 2), operand(2)->createLayout(floatDisplayMode, complexFormat), operand(0)->createLayout(floatDisplayMode, complexFormat));
+Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return createSequenceLayout(
+    childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+    childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+    childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+    childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits)
+  );
+}
+
+Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
+  return Sequence(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
-Expression * Sequence::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * aInput = operand(1)->approximate<T>(context, angleUnit);
-  Expression * bInput = operand(2)->approximate<T>(context, angleUnit);
-  T start = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
-  T end = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
-  delete aInput;
-  delete bInput;
+Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
+  T start = aInput.toScalar();
+  T end = bInput.toScalar();
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::Undefined();
   }
-  VariableContext<T> nContext = VariableContext<T>('n', &context);
-  Symbol nSymbol('n');
-  Expression * result = new Complex<T>(Complex<T>::Float(emptySequenceValue()));
+  VariableContext nContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), context);
+  Evaluation<T> result = Complex<T>::Builder((T)emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
-    if (shouldStopProcessing()) {
-      delete result;
-      return new Complex<T>(Complex<T>::Float(NAN));
+    if (Expression::ShouldStopProcessing()) {
+      return Complex<T>::Undefined();
     }
-    Complex<T> iExpression = Complex<T>::Float(i);
-    nContext.setExpressionForSymbolName(&iExpression, &nSymbol, nContext);
-    Expression * expression = operand(0)->approximate<T>(nContext, angleUnit);
-    Expression * newResult = evaluateWithNextTerm(T(), result, expression);
-    delete result;
-    delete expression;
-    result = newResult;
+    nContext.setApproximationForVariable<T>((T)i);
+    result = evaluateWithNextTerm(T(), result, childAtIndex(0)->approximate(T(), &nContext, complexFormat, angleUnit), complexFormat);
+    if (result.isUndefined()) {
+      return Complex<T>::Undefined();
+    }
   }
   return result;
 }
+
+Expression Sequence::shallowReduce(Context * context) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  assert(!childAtIndex(1).deepIsMatrix(context));
+  if (childAtIndex(2).deepIsMatrix(context) || childAtIndex(3).deepIsMatrix(context)) {
+    return replaceWithUndefinedInPlace();
+  }
+  return *this;
+}
+
+template Evaluation<float> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

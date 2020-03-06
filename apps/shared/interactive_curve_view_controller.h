@@ -1,25 +1,23 @@
 #ifndef SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 #define SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 
-#include <escher.h>
-#include "interactive_curve_view_range.h"
-#include "curve_view_cursor.h"
-#include "curve_view.h"
+#include "simple_interactive_curve_view_controller.h"
 #include "cursor_view.h"
 #include "ok_view.h"
-#include "banner_view.h"
 #include "range_parameter_controller.h"
 #include "zoom_parameter_controller.h"
+#include <poincare/coordinate_2D.h>
 
 namespace Shared {
 
-class InteractiveCurveViewController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
+class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public ButtonRowDelegate, public AlternateEmptyViewDefaultDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
-  View * view() override;
+  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
+
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  TELEMETRY_ID("Graph");
 
   ViewController * rangeParameterController();
   ViewController * zoomParameterController();
@@ -32,31 +30,42 @@ public:
 
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
-  constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
-  virtual BannerView * bannerView() = 0;
-  virtual bool handleEnter() = 0;
   Responder * tabController() const;
-  StackViewController * stackController() const;
-  virtual void reloadBannerView() = 0;
-  virtual void initRangeParameters() = 0;
+  virtual StackViewController * stackController() const;
   virtual void initCursorParameters() = 0;
-  /* the result of moveCursorVertically/Horizontally means:
-   * false -> the cursor cannot move in this direction
-   * true -> the cursor moved */
-  virtual bool moveCursorHorizontally(int direction) = 0;
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;
   virtual uint32_t rangeVersion() = 0;
-  virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
-  virtual CurveView * curveView() = 0;
-  virtual bool isCursorVisible() = 0;
-  CurveViewCursor * m_cursor;
-  CursorView m_cursorView;
+  bool isCursorVisible();
+
+  // Closest vertical curve helper
+  int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
+  virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const = 0;
+  virtual int selectedCurveIndex() const = 0;
+  virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context) const = 0;
+  virtual bool suitableYValue(double y) const { return true; }
+  virtual int numberOfCurves() const = 0;
+
+  // SimpleInteractiveCurveViewController
+  float cursorBottomMarginRatio() override;
+
   OkView m_okView;
 private:
+  /* The value 21 is the actual height of the ButtonRow, that is
+   * ButtonRowController::ContentView::k_plainStyleHeight + 1.
+   * That value is not public though. */
+  constexpr static float k_viewHeight = Ion::Display::Height - Metric::TitleBarHeight - Metric::TabHeight - 21;
+  float estimatedBannerHeight() const;
+  virtual int estimatedBannerNumberOfLines() const { return 1; }
+
+  // InteractiveCurveViewRangeDelegate
+  float addMargin(float x, float range, bool isVertical, bool isMin) override;
+
+  virtual bool shouldSetDefaultOnModelChange() const { return false; }
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;

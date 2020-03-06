@@ -1,9 +1,9 @@
 #include <escher/even_odd_message_text_cell.h>
 #include <assert.h>
 
-EvenOddMessageTextCell::EvenOddMessageTextCell(KDText::FontSize size) :
+EvenOddMessageTextCell::EvenOddMessageTextCell(const KDFont * font) :
   EvenOddCell(),
-  m_messageTextView(size, (I18n::Message)0, 0.5f, 0.5f)
+  m_messageTextView(font, (I18n::Message)0, 0.5f, 0.5f)
 {
 }
 
@@ -35,6 +35,7 @@ View * EvenOddMessageTextCell::subviewAtIndex(int index) {
   return &m_messageTextView;
 }
 
-void EvenOddMessageTextCell::layoutSubviews() {
-  m_messageTextView.setFrame(bounds());
+void EvenOddMessageTextCell::layoutSubviews(bool force) {
+  KDRect boundsThis = bounds();
+  m_messageTextView.setFrame(KDRect(k_horizontalMargin, 0, boundsThis.width() - 2*k_horizontalMargin, boundsThis.height()), force);
 }

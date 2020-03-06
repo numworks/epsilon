@@ -1,65 +1,61 @@
 #include <poincare/floor.h>
-#include "layout/floor_layout.h"
-#include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/decimal.h>
+#include <poincare/floor_layout.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+
+#include <poincare/symbol.h>
 #include <ion.h>
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type Floor::type() const {
-  return Type::Floor;
+constexpr Expression::FunctionHelper Floor::s_functionHelper;
+
+int FloorNode::numberOfChildren() const { return Floor::s_functionHelper.numberOfChildren(); }
+
+Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return FloorLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression * Floor::clone() const {
-  Floor * c = new Floor(m_operands, true);
-  return c;
-}
-
-Expression * Floor::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  Expression * op = editableOperand(0);
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  if (op->type() == Type::Symbol) {
-    Symbol * s = static_cast<Symbol *>(op);
-    if (s->name() == Ion::Charset::SmallPi) {
-      return replaceWith(new Rational(3), true);
-    }
-    if (s->name() == Ion::Charset::Exponential) {
-      return replaceWith(new Rational(2), true);
-    }
-  }
-  if (op->type() != Type::Rational) {
-    return this;
-  }
-  Rational * r = static_cast<Rational *>(op);
-  IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-  return replaceWith(new Rational(div.quotient), true);
+int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.name());
 }
 
 template<typename T>
-Complex<T> Floor::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  if (c.imag() != 0) {
+    return Complex<T>::RealUndefined();
   }
-  return Complex<T>::Float(std::floor(c.a()));
+  return Complex<T>::Builder(std::floor(c.real()));
 }
 
-ExpressionLayout * Floor::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new FloorLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat));
+Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
+  return Floor(this).shallowReduce(reductionContext);
+}
+
+Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
+  }
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = static_cast<Rational &>(c);
+    IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+    assert(!div.quotient.isOverflow());
+    Expression result = Rational::Builder(div.quotient);
+    replaceWithInPlace(result);
+    return result;
+  }
+  return shallowReduceUsingApproximation(reductionContext);
 }
 
 }

@@ -1,27 +1,32 @@
 #ifndef SHARED_TEXT_FIELD_DELEGATE_APP_H
 #define SHARED_TEXT_FIELD_DELEGATE_APP_H
 
-#include <poincare.h>
-#include <escher.h>
-#include "../i18n.h"
+#include <poincare/context.h>
+#include "input_event_handler_delegate_app.h"
+#include <escher/text_field_delegate.h>
+#include <apps/i18n.h>
 
-class AppsContainer;
+class EditableField;
 
 namespace Shared {
 
-class TextFieldDelegateApp : public ::App, public TextFieldDelegate {
+class TextFieldDelegateApp : public InputEventHandlerDelegateApp, public TextFieldDelegate {
 public:
   virtual ~TextFieldDelegateApp() = default;
-  virtual Poincare::Context * localContext();
-  AppsContainer * container();
-  virtual const char * XNT();
+  Poincare::Context * localContext() override;
+  virtual bool XNTCanBeOverriden() const { return true; }
+  virtual CodePoint XNT() { return 'x'; }
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  Toolbox * toolboxForTextField(TextField * textField) override;
+  bool isAcceptableText(const char * text);
+  template<typename T>
+  bool hasUndefinedValue(const char * text, T & value, bool enablePlusInfinity = false, bool enableMinusInfinity = false);
 protected:
-  TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
-private:
-  const char * privateXNT(TextField * textField);
+  TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
+  bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
+  bool isFinishingEvent(Ion::Events::Event event);
+  virtual bool isAcceptableExpression(const Poincare::Expression expression);
+  static bool ExpressionCanBeSerialized(const Poincare::Expression expression, bool replaceAns, Poincare::Expression ansExpression, Poincare::Context * context);
 };
 
 }

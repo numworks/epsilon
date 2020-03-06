@@ -1,13 +1,13 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <assert.h>
 
-EvenOddBufferTextCell::EvenOddBufferTextCell(KDText::FontSize size, float horizontalAlignment, float verticalAlignment) :
+EvenOddBufferTextCell::EvenOddBufferTextCell(const KDFont * font, float horizontalAlignment, float verticalAlignment) :
   EvenOddCell(),
-  m_bufferTextView(size, horizontalAlignment, verticalAlignment)
+  m_bufferTextView(font, horizontalAlignment, verticalAlignment)
 {
 }
 
-const char * EvenOddBufferTextCell::text() {
+const char * EvenOddBufferTextCell::text() const {
   return m_bufferTextView.text();
 }
 
@@ -38,6 +38,8 @@ View * EvenOddBufferTextCell::subviewAtIndex(int index) {
   return &m_bufferTextView;
 }
 
-void EvenOddBufferTextCell::layoutSubviews() {
-  m_bufferTextView.setFrame(bounds());
+void EvenOddBufferTextCell::layoutSubviews(bool force) {
+  KDRect boundsThis = bounds();
+  KDRect boundsBuffer = KDRect(boundsThis.left() + k_horizontalMargin, boundsThis.top(), boundsThis.width() - 2*k_horizontalMargin, boundsThis.height());
+  m_bufferTextView.setFrame(boundsBuffer, force);
 }

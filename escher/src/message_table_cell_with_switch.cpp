@@ -1,8 +1,8 @@
 #include <escher/message_table_cell_with_switch.h>
 #include <escher/palette.h>
 
-MessageTableCellWithSwitch::MessageTableCellWithSwitch(I18n::Message message, KDText::FontSize size) :
-  MessageTableCell(message, size),
+MessageTableCellWithSwitch::MessageTableCellWithSwitch(I18n::Message message, const KDFont * font) :
+  MessageTableCell(message, font),
   m_accessoryView()
 {
 }

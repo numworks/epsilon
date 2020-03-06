@@ -1,84 +1,90 @@
 #include "curve_view_range.h"
 #include <cmath>
 #include <ion.h>
-#include <poincare.h>
+#include <poincare/preferences.h>
 
 using namespace Shared;
 using namespace Poincare;
 
 namespace Sequence {
 
-CurveViewRange::CurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate) :
-  InteractiveCurveViewRange(cursor, delegate)
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+
+CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
+  InteractiveCurveViewRange(delegate)
 {
-  m_xMin = -k_displayLeftMarginRatio*m_xMax;
+  MemoizedCurveViewRange::protectedSetXMin(-k_displayLeftMarginRatio * xMax(), k_lowerMaxFloat, k_upperMaxFloat);
 }
 
 void CurveViewRange::roundAbscissa() {
-  float xMin = m_xMin;
-  float xMax = m_xMax;
-  float newXMin = clipped(std::round((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
-  float newXMax = clipped(std::round((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
+  int roundedXMean = std::round(xCenter());
+  float halfScreenWidth = ((float)Ion::Display::Width)/2.0f;
+  float newXMin = roundedXMean - halfScreenWidth;
+  float newXMax = roundedXMean + halfScreenWidth - 1.0f;
+  float interestingXMin = m_delegate->interestingXMin();
+  if (newXMin < interestingXMin) {
+    newXMin = interestingXMin - k_displayLeftMarginRatio * (float)Ion::Display::Width;
+    newXMax = newXMin + (float)Ion::Display::Width;
+  }
   if (std::isnan(newXMin) || std::isnan(newXMax)) {
     return;
   }
-  m_xMin = newXMin;
-  m_xMax = newXMax;
-  if (m_xMin < 0.0f) {
-    m_xMin = -k_displayLeftMarginRatio*(float)Ion::Display::Width;
-    m_xMax = m_xMin+(float)Ion::Display::Width;
-  }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-  if (m_delegate) {
-    m_delegate->didChangeRange(this);
-  }
+  m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+  setXMin(newXMin);
 }
 
 void CurveViewRange::normalize() {
-  float xMin = m_xMin;
-  float xMax = m_xMax;
-  float yMin = m_yMin;
-  float yMax = m_yMax;
-  float newXMin = clipped((xMin+xMax)/2 - 5.3f, false);
-  float newXMax = clipped((xMin+xMax)/2 + 5.3f, true);
+  float xMean = xCenter();
+  float yMean = yCenter();
+
+  const float unit = maxFloat(xGridUnit(), yGridUnit());
+
+  // Compute the X
+  const float newXHalfRange = NormalizedXHalfRange(unit);
+  float newXMin = xMean - newXHalfRange;
+  float newXMax = xMean + newXHalfRange;
+  float interestingXMin = m_delegate->interestingXMin();
+  if (newXMin < interestingXMin) {
+    newXMin = interestingXMin -k_displayLeftMarginRatio*2.0f*newXHalfRange;
+    newXMax = newXMin + 2.0f*newXHalfRange;
+  }
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
-    m_xMin = newXMin;
-    m_xMax = newXMax;
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   }
-  if (m_xMin < 0.0f) {
-    m_xMin = -k_displayLeftMarginRatio*2.0f*5.3f;
-    m_xMax = m_xMin + 2.0f*5.3f;
-  }
+
+  // Compute the Y
   m_yAuto = false;
-  float newYMin = clipped((yMin+yMax)/2 - 3.1f, false);
-  float newYMax = clipped((yMin+yMax)/2 + 3.1f, true);
+  const float newYHalfRange = NormalizedYHalfRange(unit);
+  float newYMin = yMean - newYHalfRange;
+  float newYMax = clipped(yMean + newYHalfRange, true);
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
-    m_yMin = newYMin;
-    m_yMax = newYMax;
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    m_yRange.setMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   }
 }
 
 void CurveViewRange::setTrigonometric() {
-  m_xMin = -k_displayLeftMarginRatio*21.0f;
-  m_xMax = 21.0f;
-  if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Degree) {
-    m_xMin = -k_displayLeftMarginRatio*1200;
-    m_xMax = 1200;
-  }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  float interestingXMin = m_delegate->interestingXMin();
+  float interestingXRange = Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Degree ? 1200.0f : 21.0f;
+  m_xRange.setMax(interestingXMin + interestingXRange, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMin(interestingXMin - k_displayLeftMarginRatio * interestingXRange, k_lowerMaxFloat, k_upperMaxFloat);
+
   m_yAuto = false;
-  m_yMin = -1.6f;
-  m_yMax = 1.6f;
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  constexpr float y = 1.6f;
+  m_yRange.setMax(y, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMin(-y, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
 void CurveViewRange::setDefault() {
-  m_xMax = 10.0f;
-  m_xMin = -k_displayLeftMarginRatio*m_xMax;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-  setYAuto(true);
+  if (m_delegate == nullptr) {
+    return;
+  }
+  m_yAuto = true;
+  float interestingXMin = m_delegate->interestingXMin();
+  float interestingXRange = m_delegate->interestingXHalfRange();
+  m_xRange.setMax(interestingXMin + interestingXRange, k_lowerMaxFloat, k_upperMaxFloat);
+  setXMin(interestingXMin - k_displayLeftMarginRatio * interestingXRange);
 }
 
 }

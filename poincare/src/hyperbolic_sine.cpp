@@ -1,50 +1,25 @@
 #include <poincare/hyperbolic_sine.h>
-#include <poincare/complex.h>
-#include <poincare/subtraction.h>
-#include <poincare/power.h>
-#include <poincare/division.h>
-#include <poincare/opposite.h>
-#include <poincare/simplification_engine.h>
-extern "C" {
-#include <assert.h>
-}
-#include <cmath>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-Expression::Type HyperbolicSine::type() const {
-  return Type::HyperbolicSine;
+constexpr Expression::FunctionHelper HyperbolicSine::s_functionHelper;
+
+Layout HyperbolicSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(HyperbolicSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicSine::s_functionHelper.name());
 }
 
-Expression * HyperbolicSine::clone() const {
-  HyperbolicSine * a = new HyperbolicSine(m_operands, true);
-  return a;
-}
-
-Expression * HyperbolicSine::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  return this;
+int HyperbolicSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicSine::s_functionHelper.name());
 }
 
 template<typename T>
-Complex<T> HyperbolicSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() == 0) {
-    return Complex<T>::Float(std::sinh(c.a()));
-  }
-  Complex<T> e = Complex<T>::Float(M_E);
-  Complex<T> exp1 = Power::compute(e, c);
-  Complex<T> exp2 = Power::compute(e, Complex<T>::Cartesian(-c.a(), -c.b()));
-  Complex<T> sub = Subtraction::compute(exp1, exp2);
-  return Division::compute(sub, Complex<T>::Float(2));
+Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(std::sinh(c), c));
 }
+
+template Complex<float> Poincare::HyperbolicSineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Complex<double> Poincare::HyperbolicSineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

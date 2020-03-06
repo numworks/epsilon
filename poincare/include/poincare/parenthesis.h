@@ -1,30 +1,48 @@
 #ifndef POINCARE_PARENTHESIS_H
 #define POINCARE_PARENTHESIS_H
 
-#include <poincare/static_hierarchy.h>
-#include <poincare/layout_engine.h>
+#include <poincare/expression.h>
+#include <poincare/complex_cartesian.h>
 
 namespace Poincare {
 
-class Parenthesis : public StaticHierarchy<1> {
+class ParenthesisNode /*final*/ : public ExpressionNode {
 public:
-  using StaticHierarchy<1>::StaticHierarchy;
-public:
-  Expression * clone() const override;
-  Type type() const override;
-private:
-  /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "");
-  }
-  /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
 
+  // TreeNode
+  size_t size() const override { return sizeof(ParenthesisNode); }
+  int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Parenthesis";
+  }
+#endif
+
+  // Properties
+  Type type() const override { return Type::Parenthesis; }
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
+
+  // Approximation
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+private:
+ template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+};
+
+class Parenthesis final : public Expression {
+public:
+  Parenthesis(const ParenthesisNode * n) : Expression(n) {}
+  static Parenthesis Builder(Expression child) { return TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(&child, 1); }
+  // Expression
+  Expression shallowReduce();
 };
 
 }

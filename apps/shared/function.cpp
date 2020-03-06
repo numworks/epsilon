@@ -1,4 +1,7 @@
 #include "function.h"
+#include "poincare_helpers.h"
+#include "poincare/src/parsing/parser.h"
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -7,126 +10,68 @@ using namespace Poincare;
 
 namespace Shared {
 
-Function::Function(const char * name, KDColor color) :
-  m_expression(nullptr),
-  m_text{0},
-  m_name(name),
-  m_color(color),
-  m_layout(nullptr),
-  m_active(true)
-{
-}
+Function::NameNotCompliantError Function::BaseNameCompliant(const char * baseName) {
+  assert(baseName[0] != 0);
 
-Function& Function::operator=(const Function& other) {
-  // Self-assignment is benign
-  m_color = other.m_color;
-  m_name = other.m_name;
-  m_active = other.m_active;
-  setContent(other.m_text);
-  return *this;
-}
-
-uint32_t Function::checksum() {
-  char data[k_dataLengthInBytes/sizeof(char)] = {};
-  strlcpy(data, m_text, TextField::maxBufferSize());
-  data[k_dataLengthInBytes-2] = m_name != nullptr ? m_name[0] : 0;
-  data[k_dataLengthInBytes-1] = m_active ? 1 : 0;
-  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes/sizeof(uint32_t));
-}
-
-void Function::setContent(const char * c) {
-  strlcpy(m_text, c, sizeof(m_text));
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
+  UTF8Decoder decoder(baseName);
+  CodePoint c = decoder.nextCodePoint();
+  if (c.isDecimalDigit()) {
+    return NameNotCompliantError::NameCannotStartWithNumber;
   }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
-}
 
-void Function::setColor(KDColor color) {
-  m_color = color;
-}
-
-Function::~Function() {
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
-  }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
-}
-
-const char * Function::text() const {
-  return m_text;
-}
-
-const char * Function::name() const {
-  return m_name;
-}
-
-Poincare::Expression * Function::expression(Poincare::Context * context) const {
-  if (m_expression == nullptr) {
-    m_expression = Expression::parse(m_text);
-    if (m_expression) {
-      Expression::Simplify(&m_expression, *context);
+  while (c != UCodePointNull) {
+    // FIXME '_' should be accepted but not as first character
+    // TODO Factor this piece of code with similar one in the Parser
+    if (!(c.isDecimalDigit() || c.isLatinLetter()) || c == '_') {
+      return NameNotCompliantError::CharacterNotAllowed;
     }
+    c = decoder.nextCodePoint();
   }
-  return m_expression;
-}
 
-Poincare::ExpressionLayout * Function::layout() {
-  if (m_layout == nullptr) {
-    Expression * nonSimplifiedExpression = Expression::parse(m_text);
-    if (nonSimplifiedExpression != nullptr) {
-      m_layout = nonSimplifiedExpression->createLayout(Expression::FloatDisplayMode::Decimal);
-      delete nonSimplifiedExpression;
-    }
+  if (Parser::IsReservedName(baseName, strlen(baseName))) {
+    return NameNotCompliantError::ReservedName;
   }
-  return m_layout;
+  return NameNotCompliantError::None;
 }
 
-bool Function::isDefined() {
-  return m_text[0] != 0;
+bool Function::isActive() const {
+  return recordData()->isActive();
 }
 
-bool Function::isActive() {
-  return m_active;
+KDColor Function::color() const {
+  return recordData()->color();
 }
 
 void Function::setActive(bool active) {
-  m_active = active;
+  recordData()->setActive(active);
 }
 
-bool Function::isEmpty() {
-  return m_text[0] == 0;
+int Function::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) {
+  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
 }
 
-template<typename T>
-T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
-  Poincare::VariableContext<T> variableContext = Poincare::VariableContext<T>(symbol(), context);
-  Poincare::Symbol xSymbol(symbol());
-  Poincare::Complex<T> e = Poincare::Complex<T>::Float(x);
-  variableContext.setExpressionForSymbolName(&e, &xSymbol, variableContext);
-  return expression(context)->approximateToScalar<T>(variableContext);
+int Function::name(char * buffer, size_t bufferSize) {
+  return SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
 }
 
-void Function::tidy() {
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
-  }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
+int Function::nameWithArgument(char * buffer, size_t bufferSize) {
+  int funcNameSize = name(buffer, bufferSize);
+  assert(funcNameSize > 0);
+  size_t result = funcNameSize;
+  assert(result <= bufferSize);
+  buffer[result++] = '(';
+  assert(result <= bufferSize);
+  assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
+  result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
+  assert(result <= bufferSize);
+  result += strlcpy(buffer+result, ")", bufferSize-result);
+  return result;
+}
+
+Function::RecordDataBuffer * Function::recordData() const {
+  assert(!isNull());
+  Ion::Storage::Record::Data d = value();
+  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 }
-
-template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*) const;
-template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*) const;

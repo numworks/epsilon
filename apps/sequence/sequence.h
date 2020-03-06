@@ -2,111 +2,158 @@
 #define SEQUENCE_SEQUENCE_H
 
 #include "../shared/function.h"
+#include "sequence_context.h"
 #include <assert.h>
+
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 namespace Sequence {
 
+/* WARNING: after calling setType, setInitialRank, setContent, setFirstInitialConditionContent
+ * or setSecondInitialConditionContent, the sequence context needs to
+ * invalidate the cache because the sequences evaluations might have changed. */
+
 class Sequence : public Shared::Function {
+friend class SequenceStore;
 public:
-  enum class Type {
-    Explicite = 0,
+  enum class Type : uint8_t {
+    Explicit = 0,
     SingleRecurrence = 1,
     DoubleRecurrence = 2
   };
-  Sequence(const char * text = nullptr, KDColor color = KDColorBlack);
-  ~Sequence();
-  Sequence& operator=(const Sequence& other);
-  Sequence& operator=(Sequence&& other) = delete;
-  Sequence(const Sequence& other) = delete;
-  Sequence(Sequence&& other) = delete;
-  uint32_t checksum() override;
-  Type type();
+  Sequence(Ion::Storage::Record record = Record()) :
+    Function(record),
+    m_nameLayout() {}
+  I18n::Message parameterMessageName() const override;
+  CodePoint symbol() const override { return 'n'; }
+  void tidy() override;
+  // MetaData getters
+  Type type() const;
+  int initialRank() const;
+  // MetaData setters
   void setType(Type type);
-  const char * firstInitialConditionText();
-  const char * secondInitialConditionText();
-  Poincare::Expression * firstInitialConditionExpression(Poincare::Context * context) const;
-  Poincare::Expression * secondInitialConditionExpression(Poincare::Context * context) const;
-  Poincare::ExpressionLayout * firstInitialConditionLayout();
-  Poincare::ExpressionLayout * secondInitialConditionLayout();
-  void setContent(const char * c) override;
-  void setFirstInitialConditionContent(const char * c);
-  void setSecondInitialConditionContent(const char * c);
-  int numberOfElements();
-  Poincare::ExpressionLayout * nameLayout();
-  Poincare::ExpressionLayout * definitionName();
-  Poincare::ExpressionLayout * firstInitialConditionName();
-  Poincare::ExpressionLayout * secondInitialConditionName();
+  void setInitialRank(int rank);
+  // Definition
+  Poincare::Layout definitionName() { return m_definition.name(this); }
+  // First initial condition
+  Poincare::Layout firstInitialConditionName() { return m_firstInitialCondition.name(this); }
+  void firstInitialConditionText(char * buffer, size_t bufferSize) const { return m_firstInitialCondition.text(this, buffer, bufferSize); }
+  Poincare::Expression firstInitialConditionExpressionReduced(Poincare::Context * context) const { return m_firstInitialCondition.expressionReduced(this, context); }
+  Poincare::Expression firstInitialConditionExpressionClone() const { return m_firstInitialCondition.expressionClone(this); }
+  Poincare::Layout firstInitialConditionLayout() { return m_firstInitialCondition.layout(this); }
+  Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(const char * c, Poincare::Context * context) { return m_firstInitialCondition.setContent(this, c, context); }
+  // Second initial condition
+  Poincare::Layout secondInitialConditionName() { return m_secondInitialCondition.name(this); }
+  void secondInitialConditionText(char * buffer, size_t bufferSize) const { return m_secondInitialCondition.text(this, buffer, bufferSize); }
+  Poincare::Expression secondInitialConditionExpressionReduced(Poincare::Context * context) const { return m_secondInitialCondition.expressionReduced(this, context); }
+  Poincare::Expression secondInitialConditionExpressionClone() const { return m_secondInitialCondition.expressionClone(this); }
+  Poincare::Layout secondInitialConditionLayout() { return m_secondInitialCondition.layout(this); }
+  Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(const char * c, Poincare::Context * context) { return m_secondInitialCondition.setContent(this, c, context); }
+
+  // Sequence properties
+  int numberOfElements() { return (int)type() + 1; }
+  Poincare::Layout nameLayout();
   bool isDefined() override;
   bool isEmpty() override;
-  float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, context);
+  // Approximation
+  Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context) const override {
+    return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
-  double evaluateAtAbscissa(double x, Poincare::Context * context) const override {
-    return templatedApproximateAtAbscissa(x, context);
+  Poincare::Coordinate2D<double> evaluateXYAtParameter(double x, Poincare::Context * context) const override {
+    return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
-  double sumOfTermsBetweenAbscissa(double start, double end, Poincare::Context * context);
-  void tidy() override;
+  template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx) const;
+
+  Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
+  constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
 private:
-  constexpr static int k_maxRecurrentRank = 10000;
-  constexpr static double k_maxNumberOfTermsInSum = 100000.0;
-  constexpr static size_t k_dataLengthInBytes = (3*TextField::maxBufferSize()+3)*sizeof(char)+1;
-  static_assert((k_dataLengthInBytes & 0x3) == 0, "The sequence data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
-  char symbol() const override;
-  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
-  Type m_type;
-  char m_firstInitialConditionText[TextField::maxBufferSize()];
-  char m_secondInitialConditionText[TextField::maxBufferSize()];
-  mutable Poincare::Expression * m_firstInitialConditionExpression;
-  mutable Poincare::Expression * m_secondInitialConditionExpression;
-  Poincare::ExpressionLayout * m_firstInitialConditionLayout;
-  Poincare::ExpressionLayout * m_secondInitialConditionLayout;
-  Poincare::ExpressionLayout * m_nameLayout;
-  Poincare::ExpressionLayout * m_definitionName;
-  Poincare::ExpressionLayout * m_firstInitialConditionName;
-  Poincare::ExpressionLayout * m_secondInitialConditionName;
-  /* In order to accelerate the computation of values of recurrent sequences,
-   * we memoize the last computed values of the sequence and their associated
-   * ranks (n and n+1 for instance). Thereby, when another evaluation at a
-   * superior rank k > n+1 is called, we avoid iterating from 0 but can start
-   * from n. */
-  constexpr static int k_maxRecurrenceDepth = 2;
-  mutable int m_indexBufferFloat[k_maxRecurrenceDepth];
-  mutable int m_indexBufferDouble[k_maxRecurrenceDepth];
-  mutable float m_bufferFloat[k_maxRecurrenceDepth];
-  mutable double m_bufferDouble[k_maxRecurrenceDepth];
-  void resetBuffer() const;
-  template<typename T> void setBufferValue(T value, int i) const {
-    assert(i >= 0 && i < k_maxRecurrentRank);
-    if (sizeof(T) == sizeof(float)) {
-      m_bufferFloat[i] = value;
-    } else {
-      m_bufferDouble[i] = value;
+  constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
+
+  /* RecordDataBuffer is the layout of the data buffer of Record
+   * representing a Sequence. See comment in
+   * Shared::Function::RecordDataBuffer about packing. */
+  class RecordDataBuffer : public Shared::Function::RecordDataBuffer {
+  public:
+    RecordDataBuffer(KDColor color) :
+      Shared::Function::RecordDataBuffer(color),
+      m_type(Type::Explicit),
+      m_initialRank(0),
+      m_initialConditionSizes{0,0}
+    {}
+    Type type() const { return m_type; }
+    void setType(Type type) { m_type = type; }
+    int initialRank() const { return m_initialRank; }
+    void setInitialRank(int initialRank) { m_initialRank = initialRank; }
+    size_t initialConditionSize(int conditionIndex) {
+      assert(conditionIndex >= 0 && conditionIndex < 2);
+      return m_initialConditionSizes[conditionIndex];
     }
-  }
-  template<typename T> void setBufferIndexValue(int index, int i) const {
-    assert(i >= 0 && i < k_maxRecurrentRank);
-    if (sizeof(T) == sizeof(float)) {
-      m_indexBufferFloat[i] = index;
-    } else {
-      m_indexBufferDouble[i] = index;
+    void setInitialConditionSize(uint16_t size, int conditionIndex) {
+      assert(conditionIndex >= 0 && conditionIndex < 2);
+      m_initialConditionSizes[conditionIndex] = size;
     }
-  }
-  template<typename T> T bufferValue(int i) const {
-    assert(i >= 0 && i < k_maxRecurrentRank);
-    if (sizeof(T) == sizeof(float)) {
-      return m_bufferFloat[i];
-    } else {
-      return m_bufferDouble[i];
-    }
-  }
-  template<typename T> int indexBuffer(int i) const {
-    assert(i >= 0 && i < k_maxRecurrentRank);
-    if (sizeof(T) == sizeof(float)) {
-      return m_indexBufferFloat[i];
-    } else {
-      return m_indexBufferDouble[i];
-    }
-  }
+  private:
+    static_assert((1 << 8*sizeof(uint16_t)) > Ion::Storage::k_storageSize, "Potential overflows of Sequence initial condition sizes");
+    Type m_type;
+    uint8_t m_initialRank;
+#if __EMSCRIPTEN__
+    // See comment about emscripten alignement in Shared::Function::RecordDataBuffer
+    static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
+    emscripten_align1_short m_initialConditionSizes[2] __attribute__((packed));
+#else
+    uint16_t m_initialConditionSizes[2] __attribute__((packed));
+#endif
+  };
+
+  class SequenceModel : public Shared::ExpressionModel {
+  public:
+    SequenceModel() : Shared::ExpressionModel(), m_name() {}
+    void tidyName() { m_name = Poincare::Layout(); }
+    virtual Poincare::Layout name(Sequence * sequence);
+  protected:
+    virtual void buildName(Sequence * sequence) = 0;
+    Poincare::Layout m_name;
+  private:
+    void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) override;
+    virtual void updateMetaData(const Ion::Storage::Record * record, size_t newSize) {}
+  };
+
+  class DefinitionModel : public SequenceModel {
+  private:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
+    size_t expressionSize(const Ion::Storage::Record * record) const override;
+    void buildName(Sequence * sequence) override;
+  };
+
+  class InitialConditionModel : public SequenceModel {
+  private:
+    void updateMetaData(const Ion::Storage::Record * record, size_t newSize) override;
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
+    size_t expressionSize(const Ion::Storage::Record * record) const override;
+    void buildName(Sequence * sequence) override;
+    virtual int conditionIndex() const = 0;
+  };
+
+  class FirstInitialConditionModel : public InitialConditionModel {
+  private:
+    int conditionIndex() const override { return 0; }
+  };
+
+  class SecondInitialConditionModel : public InitialConditionModel {
+  private:
+    int conditionIndex() const override { return 1; }
+  };
+
+  template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
+  size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
+  const Shared::ExpressionModel * model() const override { return &m_definition; }
+  RecordDataBuffer * recordData() const;
+  DefinitionModel m_definition;
+  FirstInitialConditionModel m_firstInitialCondition;
+  SecondInitialConditionModel m_secondInitialCondition;
+  Poincare::Layout m_nameLayout;
 };
 
 }

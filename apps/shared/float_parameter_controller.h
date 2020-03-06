@@ -2,7 +2,7 @@
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "text_field_delegate.h"
+#include "parameter_text_field_delegate.h"
 #include "button_with_separator.h"
 
 namespace Shared {
@@ -10,9 +10,11 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
+template<typename T>
+class FloatParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public ParameterTextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
+  View * view() override { return &m_selectableTableView; }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -27,24 +29,24 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
+  enum class InfinityTolerance {
+    None,
+    PlusInfinity,
+    MinusInfinity
+  };
   int activeCell();
   StackViewController * stackController();
-  virtual double parameterAtIndex(int index) = 0;
-  virtual SelectableTableView * selectableTableView();
-  View * loadView() override;
-  void unloadView(View * view) override;
+  virtual T parameterAtIndex(int index) = 0;
+  SelectableTableView m_selectableTableView;
+  ButtonWithSeparator m_okButton;
 private:
   constexpr static int k_buttonMargin = 6;
   virtual void buttonAction();
-  virtual I18n::Message okButtonText();
+  virtual InfinityTolerance infinityAllowanceForRow(int row) const { return InfinityTolerance::None; }
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
-  TextFieldDelegateApp * textFieldDelegateApp() override;
-  virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;
-  ButtonWithSeparator * m_okButton;
+  virtual bool setParameterAtIndex(int parameterIndex, T f) = 0;
 };
 
 }

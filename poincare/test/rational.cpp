@@ -1,54 +1,66 @@
-#include <quiz.h>
-#include <poincare.h>
-#include <assert.h>
 #include "helper.h"
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_rational_sign) {
-  assert(Rational(-2).sign() == Expression::Sign::Negative);
-  assert(Rational(-2, 3).sign() == Expression::Sign::Negative);
-  assert(Rational(2, 3).sign() == Expression::Sign::Positive);
+static inline void assert_equal(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) == 0);
+}
+static inline void assert_not_equal(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) != 0);
 }
 
-QUIZ_CASE(poincare_rational_compare) {
-  assert(Rational::NaturalOrder(Rational(123, 234),Rational(456, 567)) < 0);
-  assert(Rational::NaturalOrder(Rational(-123, 234),Rational(456, 567)) < 0);
-  assert(Rational::NaturalOrder(Rational(123, 234),Rational(-456, 567)) > 0);
-  assert(Rational::NaturalOrder(Rational(123, 234),Rational("123456789123456789", "12345678912345678910")) > 0);
+static inline void assert_lower(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) < 0);
 }
 
-QUIZ_CASE(poincare_rational_evaluate) {
-  Complex<float> a[1] = {Complex<float>::Float(0.333333333f)};
-  assert_parsed_expression_evaluates_to("1/3", a);
-  Complex<float> b[1] = {Complex<float>::Float(0.099999)};
-  assert_parsed_expression_evaluates_to("123456/1234567", b);
+static inline void assert_greater(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) > 0);
 }
 
-QUIZ_CASE(poincare_rational_simplify) {
-  assert_parsed_expression_simplify_to("-1/3", "-1/3");
-  assert_parsed_expression_simplify_to("22355/45325", "4471/9065");
-  assert_parsed_expression_simplify_to("0000.000000", "0");
-  assert_parsed_expression_simplify_to(".000000", "0");
-  assert_parsed_expression_simplify_to("0000", "0");
-  assert_parsed_expression_simplify_to("0.1234567", "1234567/10000000");
-  assert_parsed_expression_simplify_to("123.4567", "1234567/10000");
-  assert_parsed_expression_simplify_to("0.1234", "617/5000");
-  assert_parsed_expression_simplify_to("0.1234000", "617/5000");
-  assert_parsed_expression_simplify_to("001234000", "1234000");
-  assert_parsed_expression_simplify_to("001.234000E3", "1234");
-  assert_parsed_expression_simplify_to("001234000E-4", "617/5");
-  assert_parsed_expression_simplify_to("3/4+5/4-12+1/567", "-5669/567");
-  assert_parsed_expression_simplify_to("34/78+67^(-1)", "1178/2613");
-  assert_parsed_expression_simplify_to("12348/34564", "3087/8641");
-  assert_parsed_expression_simplify_to("1-0.3-0.7", "0");
-  assert_parsed_expression_simplify_to("123456789123456789+112233445566778899", "235690234690235688");
-  assert_parsed_expression_simplify_to("56^56", "79164324866862966607842406018063254671922245312646690223362402918484170424104310169552592050323456");
-  assert_parsed_expression_simplify_to("999^999", "999^999");
-  assert_parsed_expression_simplify_to("999^-999", "1/999^999");
-  assert_parsed_expression_simplify_to("0^0", "undef");
-  assert_parsed_expression_simplify_to("x^0", "1");
-  assert_parsed_expression_simplify_to("P^0", "1");
-  assert_parsed_expression_simplify_to("A^0", "1");
-  assert_parsed_expression_simplify_to("(-3)^0", "1");
+QUIZ_CASE(poincare_rational_order) {
+  assert_equal(Rational::Builder(123,324), Rational::Builder(41,108));
+  assert_not_equal(Rational::Builder(123,234), Rational::Builder(42, 108));
+  assert_lower(Rational::Builder(123,234), Rational::Builder(456,567));
+  assert_lower(Rational::Builder(-123, 234),Rational::Builder(456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder(-456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder("123456789123456789", "12345678912345678910"));
+}
+
+QUIZ_CASE(poincare_rational_specific_properties) {
+  quiz_assert(Rational::Builder(0).isZero());
+  quiz_assert(!Rational::Builder(231).isZero());
+  quiz_assert(Rational::Builder(1).isOne());
+  quiz_assert(!Rational::Builder(-1).isOne());
+  quiz_assert(!Rational::Builder(1).isMinusOne());
+  quiz_assert(Rational::Builder(-1).isMinusOne());
+  quiz_assert(Rational::Builder(1,2).isHalf());
+  quiz_assert(!Rational::Builder(-1).isHalf());
+  quiz_assert(Rational::Builder(-1,2).isMinusHalf());
+  quiz_assert(!Rational::Builder(3,2).isMinusHalf());
+  quiz_assert(Rational::Builder(10).isTen());
+  quiz_assert(!Rational::Builder(-1).isTen());
+  quiz_assert(Rational::Builder(-1).isInteger());
+  quiz_assert(Rational::Builder(9).isInteger());
+  quiz_assert(Rational::Builder(9,3).isInteger());
+  quiz_assert(Rational::Builder(-9,3).isInteger());
+  quiz_assert(!Rational::Builder(9,10).isInteger());
+}
+
+static inline void assert_add_to(const Rational i, const Rational j, const Rational k) {
+  quiz_assert(Rational::NaturalOrder(Rational::Addition(i, j), k) == 0);
+}
+
+QUIZ_CASE(poincare_rational_addition) {
+  assert_add_to(Rational::Builder(1,2), Rational::Builder(1), Rational::Builder(3,2));
+  assert_add_to(Rational::Builder("18446744073709551616","4294967296"), Rational::Builder(8,9), Rational::Builder("38654705672","9"));
+  assert_add_to(Rational::Builder("18446744073709551616","4294967296"), Rational::Builder(-8,9), Rational::Builder("38654705656","9"));
+}
+
+static inline void assert_pow_to(const Rational i,const Integer j, const Rational k) {
+  quiz_assert(Rational::NaturalOrder(Rational::IntegerPower(i, j), k) == 0);
+}
+
+QUIZ_CASE(poincare_rational_power) {
+  assert_pow_to(Rational::Builder(4,5), Rational::Builder(3).signedIntegerNumerator(), Rational::Builder(64,125));
+  assert_pow_to(Rational::Builder(4,5), Rational::Builder(-3).signedIntegerNumerator(), Rational::Builder(125,64));
 }

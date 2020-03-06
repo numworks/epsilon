@@ -31,6 +31,10 @@ void AppsWindow::refreshPreferences() {
   m_titleBarView.refreshPreferences();
 }
 
+void AppsWindow::reloadTitleBarView() {
+  m_titleBarView.reload();
+}
+
 bool AppsWindow::updateAlphaLock() {
   return m_titleBarView.setShiftAlphaLockStatus(Ion::Events::shiftAlphaStatus());
 }
@@ -54,11 +58,11 @@ View * AppsWindow::subviewAtIndex(int index) {
   return m_contentView;
 }
 
-void AppsWindow::layoutSubviews() {
+void AppsWindow::layoutSubviews(bool force) {
   KDCoordinate titleHeight = m_hideTitleBarView ? 0 : Metric::TitleBarHeight;
-  m_titleBarView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
+  m_titleBarView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   if (m_contentView != nullptr) {
-    m_contentView->setFrame(KDRect(0, titleHeight, bounds().width(), bounds().height()-titleHeight));
+    m_contentView->setFrame(KDRect(0, titleHeight, bounds().width(), bounds().height()-titleHeight), force);
   }
 }
 

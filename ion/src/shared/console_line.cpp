@@ -5,13 +5,18 @@ namespace Console {
 
 char readChar();
 void writeChar(char c);
+bool transmissionDone();
 
-void writeLine(const char * line) {
+void writeLine(const char * line, bool appendCRLF) {
   while (*line != 0) {
     writeChar(*line++);
   }
-  writeChar('\r');
-  writeChar('\n');
+  if (appendCRLF) {
+    writeChar('\r');
+    writeChar('\n');
+  }
+  while (!transmissionDone()) {
+  }
 }
 
 void readLine(char * line, int maxLineLength) {

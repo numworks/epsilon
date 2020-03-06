@@ -21,6 +21,7 @@ public:
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
@@ -54,10 +55,9 @@ private:
   const char * className() const override;
 #endif
   private:
-    static constexpr KDCoordinate k_stackHeight = 20;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
 
     StackView m_stackViews[kMaxNumberOfStacks];
     View * m_contentView;

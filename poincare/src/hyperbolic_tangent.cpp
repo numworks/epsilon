@@ -1,47 +1,25 @@
 #include <poincare/hyperbolic_tangent.h>
-#include <poincare/hyperbolic_cosine.h>
-#include <poincare/hyperbolic_sine.h>
-#include <poincare/complex.h>
-#include <poincare/division.h>
-#include <poincare/simplification_engine.h>
-extern "C" {
-#include <assert.h>
-}
-#include <cmath>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-Expression::Type HyperbolicTangent::type() const {
-  return Type::HyperbolicTangent;
+constexpr Expression::FunctionHelper HyperbolicTangent::s_functionHelper;
+
+Layout HyperbolicTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(HyperbolicTangent(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicTangent::s_functionHelper.name());
 }
 
-Expression * HyperbolicTangent::clone() const {
-  HyperbolicTangent * a = new HyperbolicTangent(m_operands, true);
-  return a;
-}
-
-Expression * HyperbolicTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  return this;
+int HyperbolicTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicTangent::s_functionHelper.name());
 }
 
 template<typename T>
-Complex<T> HyperbolicTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() == 0) {
-    return Complex<T>::Float(std::tanh(c.a()));
-  }
-  Complex<T> arg1 = HyperbolicSine::computeOnComplex(c, angleUnit);
-  Complex<T> arg2 = HyperbolicCosine::computeOnComplex(c, angleUnit);
-  return Division::compute(arg1, arg2);
+Complex<T> HyperbolicTangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(std::tanh(c), c));
 }
+
+template Complex<float> Poincare::HyperbolicTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Complex<double> Poincare::HyperbolicTangentNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

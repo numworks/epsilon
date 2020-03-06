@@ -1,21 +1,28 @@
 #ifndef POINCARE_VARIABLE_CONTEXT_H
 #define POINCARE_VARIABLE_CONTEXT_H
 
-#include <poincare/context.h>
-#include <poincare/complex.h>
+#include <poincare/context_with_parent.h>
+#include <poincare/float.h>
 
 namespace Poincare {
 
-template<typename T>
-class VariableContext : public Context {
+class VariableContext : public ContextWithParent {
 public:
-  VariableContext(char name, Context * parentContext = nullptr);
-  void setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) override;
-  const Expression * expressionForSymbol(const Symbol * symbol) override;
+  VariableContext(const char * name, Context * parentContext) :
+    ContextWithParent(parentContext),
+    m_name(name),
+    m_value()
+  {}
+  template<typename T>
+  void setApproximationForVariable(T value);
+
+  // Context
+  void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override;
+  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) override;
+
 private:
-  char m_name;
-  Complex<T> m_value;
-  Context * m_parentContext;
+  const char * m_name;
+  Expression m_value;
 };
 
 }

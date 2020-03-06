@@ -14,11 +14,6 @@ const uint8_t chevronMask[ChevronView::k_chevronHeight][ChevronView::k_chevronWi
   {0x0C, 0xE1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
-ChevronView::ChevronView() :
-  View()
-{
-}
-
 KDColor s_workingBuffer[ChevronView::k_chevronWidth*ChevronView::k_chevronHeight];
 
 void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {

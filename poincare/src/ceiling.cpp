@@ -1,68 +1,71 @@
 #include <poincare/ceiling.h>
-#include "layout/ceiling_layout.h"
+#include <poincare/constant.h>
+#include <poincare/ceiling_layout.h>
+#include <poincare/serialization_helper.h>
+
 #include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
-#include <ion.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
+#include <ion.h>
+#include <assert.h>
 
 namespace Poincare {
 
-Expression::Type Ceiling::type() const {
-  return Type::Ceiling;
+constexpr Expression::FunctionHelper Ceiling::s_functionHelper;
+
+int CeilingNode::numberOfChildren() const { return Ceiling::s_functionHelper.numberOfChildren(); }
+
+Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return CeilingLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression * Ceiling::clone() const {
-  Ceiling * c = new Ceiling(m_operands, true);
-  return c;
-}
-
-Expression * Ceiling::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  Expression * op = editableOperand(0);
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  if (op->type() == Type::Symbol) {
-    Symbol * s = static_cast<Symbol *>(op);
-    if (s->name() == Ion::Charset::SmallPi) {
-      return replaceWith(new Rational(4), true);
-    }
-    if (s->name() == Ion::Charset::Exponential) {
-      return replaceWith(new Rational(3), true);
-    }
-  }
-  if (op->type() != Type::Rational) {
-    return this;
-  }
-  Rational * r = static_cast<Rational *>(op);
-  IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-  if (div.remainder.isZero()) {
-    return replaceWith(new Rational(div.quotient), true);
-  }
-  return replaceWith(new Rational(Integer::Addition(div.quotient, Integer(1))), true);
+int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::s_functionHelper.name());
 }
 
 template<typename T>
-Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  if (c.imag() != 0) {
+    return Complex<T>::RealUndefined();
   }
-  return Complex<T>::Float(std::ceil(c.a()));
+  return Complex<T>::Builder(std::ceil(c.real()));
 }
 
-ExpressionLayout * Ceiling::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new CeilingLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat));
+Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
+  return Ceiling(this).shallowReduce(reductionContext);
+}
+
+
+Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
+  }
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = c.convert<Rational>();
+    IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+    assert(!div.remainder.isOverflow());
+    if (div.remainder.isZero()) {
+      Expression result = Rational::Builder(div.quotient);
+      replaceWithInPlace(result);
+      return result;
+    }
+    Integer result = Integer::Addition(div.quotient, Integer(1));
+    if (result.isOverflow()) {
+      return *this;
+    }
+    Expression rationalResult = Rational::Builder(result);
+    replaceWithInPlace(rationalResult);
+    return rationalResult;
+  }
+  return shallowReduceUsingApproximation(reductionContext);
 }
 
 }

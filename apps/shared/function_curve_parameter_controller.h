@@ -3,26 +3,24 @@
 
 #include <escher.h>
 #include "function_go_to_parameter_controller.h"
-#include "function.h"
-#include "curve_view_cursor.h"
-#include "interactive_curve_view_range.h"
 
 namespace Shared {
 
 class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
-  View * view() override;
+  FunctionCurveParameterController();
+  View * view() override { return &m_selectableTableView; }
+  TELEMETRY_ID("CurveParameter");
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
-  void setFunction(Function * function);
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   bool handleGotoSelection();
   MessageTableCellWithChevron m_goToCell;
   SelectableTableView m_selectableTableView;
+  Ion::Storage::Record m_record;
 private:
   virtual FunctionGoToParameterController * goToParameterController() = 0;
-  Function * m_function;
 };
 
 }

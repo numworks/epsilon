@@ -1,151 +1,189 @@
 SFLAGS += -Ipoincare/include
 
-#include poincare/src/simplify/Makefile
-#include poincare/src/simplification/Makefile
-
-objs += $(addprefix poincare/src/,\
-  absolute_value.o\
-  addition.o\
-  approximation_engine.o\
-  arc_cosine.o\
-  arc_sine.o\
-  arc_tangent.o\
-  arithmetic.o\
-  binomial_coefficient.o\
-  bounded_static_hierarchy.o\
-  ceiling.o\
-  complex.o\
-  complex_argument.o\
-  confidence_interval.o\
-  conjugate.o\
-  cosine.o\
-  decimal.o\
-  derivative.o\
-  determinant.o\
-  division_quotient.o\
-  division_remainder.o\
-  division.o\
-  dynamic_hierarchy.o\
-  expression_lexer.o\
-  expression_parser.o\
-  expression.o\
-  factorial.o\
-  floor.o\
-  frac_part.o\
-  global_context.o\
-  great_common_divisor.o\
-  hyperbolic_arc_cosine.o\
-  hyperbolic_arc_sine.o\
-  hyperbolic_arc_tangent.o\
-  hyperbolic_cosine.o\
-  hyperbolic_sine.o\
-  hyperbolic_tangent.o\
-  imaginary_part.o\
-  integer.o\
-  integral.o\
-  layout_engine.o\
-  list_data.o\
-  least_common_multiple.o\
-  logarithm.o\
-  matrix_data.o\
-  matrix_dimension.o\
-  matrix_inverse.o\
-  matrix_trace.o\
-  matrix_transpose.o\
-  matrix.o\
-  multiplication.o\
-  naperian_logarithm.o\
-  nth_root.o\
-  opposite.o\
-  parenthesis.o\
-  permute_coefficient.o\
-  power.o\
-  prediction_interval.o\
-  preferences.o\
-  product.o\
-  rational.o\
-  real_part.o\
-  round.o\
-  sequence.o\
-  simplification_engine.o\
-  sine.o\
-  square_root.o\
-  static_hierarchy.o\
-  store.o\
-  subtraction.o\
-  sum.o\
-  symbol.o\
-  tangent.o\
-  trigonometry.o\
-  undefined.o\
-  variable_context.o\
+poincare_src += $(addprefix poincare/src/,\
+  binomial_coefficient_layout.cpp \
+  bracket_layout.cpp \
+  bracket_pair_layout.cpp \
+  code_point_layout.cpp\
+  condensed_sum_layout.cpp \
+  conjugate_layout.cpp \
+  empty_layout.cpp \
+  fraction_layout.cpp \
+  grid_layout.cpp \
+  horizontal_layout.cpp \
+  integral_layout.cpp \
+  layout_cursor.cpp \
+  layout.cpp \
+  layout_node.cpp \
+  left_parenthesis_layout.cpp \
+  left_square_bracket_layout.cpp \
+  matrix_layout.cpp \
+  nth_root_layout.cpp \
+  parenthesis_layout.cpp \
+  product_layout.cpp \
+  right_parenthesis_layout.cpp \
+  right_square_bracket_layout.cpp \
+  sequence_layout.cpp \
+  sum_layout.cpp \
+  vertical_offset_layout.cpp \
 )
 
-objs += $(addprefix poincare/src/layout/,\
-  baseline_relative_layout.o\
-  bracket_layout.o\
-  condensed_sum_layout.o\
-  conjugate_layout.o\
-  expression_layout.o\
-  fraction_layout.o\
-  grid_layout.o\
-  horizontal_layout.o\
-  integral_layout.o\
-  nth_root_layout.o\
-  parenthesis_layout.o\
-  product_layout.o\
-  sequence_layout.o\
-  string_layout.o\
-  sum_layout.o\
+poincare_src += $(addprefix poincare/src/,\
+  init.cpp \
+  beta_function.cpp \
+  binomial_distribution.cpp \
+  erf_inv.cpp \
+  exception_checkpoint.cpp \
+  helpers.cpp \
+  normal_distribution.cpp \
+  regularized_incomplete_beta_function.cpp \
 )
 
-tests += $(addprefix poincare/test/,\
-  addition.cpp\
+poincare_src += $(addprefix poincare/src/,\
+  absolute_value.cpp \
+  addition.cpp \
+  approximation_helper.cpp \
+  arc_cosine.cpp \
+  arc_sine.cpp \
+  arc_tangent.cpp \
+  arithmetic.cpp \
+  based_integer.cpp \
+  binom_cdf.cpp \
+  binomial_coefficient.cpp \
+  binomial_distribution_function.cpp \
+  binom_pdf.cpp \
+  ceiling.cpp \
+  complex.cpp \
+  complex_argument.cpp \
+  complex_cartesian.cpp \
+  confidence_interval.cpp \
+  conjugate.cpp \
+  constant.cpp \
+  cosine.cpp \
+  decimal.cpp \
+  derivative.cpp \
+  determinant.cpp \
+  division.cpp \
+  division_quotient.cpp \
+  division_remainder.cpp \
+  empty_expression.cpp \
+  equal.cpp \
+  evaluation.cpp \
+  expression.cpp \
+  expression_node.cpp \
+  factor.cpp \
+  factorial.cpp \
+  float.cpp \
+  floor.cpp \
+  frac_part.cpp \
+  function.cpp \
+  great_common_divisor.cpp \
+  hyperbolic_arc_cosine.cpp \
+  hyperbolic_arc_sine.cpp \
+  hyperbolic_arc_tangent.cpp \
+  hyperbolic_cosine.cpp \
+  hyperbolic_sine.cpp \
+  hyperbolic_tangent.cpp \
+  hyperbolic_trigonometric_function.cpp \
+  imaginary_part.cpp \
+  infinity.cpp \
+  integer.cpp \
+  integral.cpp \
+  inv_binom.cpp \
+  inv_norm.cpp \
+  layout_helper.cpp \
+  least_common_multiple.cpp \
+  logarithm.cpp \
+  matrix.cpp \
+  matrix_complex.cpp \
+  matrix_dimension.cpp \
+  matrix_identity.cpp \
+  matrix_inverse.cpp \
+  matrix_trace.cpp \
+  matrix_transpose.cpp \
+  multiplication.cpp \
+  n_ary_expression.cpp \
+  naperian_logarithm.cpp \
+  norm_cdf.cpp \
+  norm_cdf2.cpp \
+  norm_pdf.cpp \
+  normal_distribution_function.cpp \
+  nth_root.cpp \
+  number.cpp \
+  opposite.cpp \
+  parametered_expression.cpp \
+  parenthesis.cpp \
+  permute_coefficient.cpp \
+  power.cpp \
+  prediction_interval.cpp \
+  preferences.cpp \
+  print_float.cpp \
+  print_int.cpp \
+  product.cpp \
+  randint.cpp \
+  random.cpp \
+  rational.cpp \
+  real_part.cpp \
+  rightwards_arrow_expression.cpp \
+  round.cpp \
+  sequence.cpp \
+  serialization_helper.cpp \
+  sign_function.cpp \
+  sine.cpp \
+  solver.cpp \
+  square_root.cpp \
+  store.cpp \
+  subtraction.cpp \
+  sum.cpp \
+  symbol.cpp \
+  symbol_abstract.cpp \
+  tangent.cpp \
+  tree_handle.cpp \
+  tree_node.cpp \
+  tree_pool.cpp \
+  trigonometry.cpp \
+  trigonometry_cheat_table.cpp \
+  undefined.cpp \
+  unit.cpp \
+  unit_convert.cpp \
+  unreal.cpp \
+  variable_context.cpp \
+)
+
+poincare_src += $(addprefix poincare/src/parsing/,\
+  parser.cpp \
+  tokenizer.cpp \
+)
+
+tests_src += $(addprefix poincare/test/,\
+  tree/tree_handle.cpp\
+  tree/helpers.cpp\
+  approximation.cpp\
   arithmetic.cpp\
-  complex.cpp\
-  convert_expression_to_text.cpp\
-  division.cpp\
-  factorial.cpp\
-  function.cpp\
+  context.cpp\
+  erf_inv.cpp \
+  expression.cpp\
+  expression_order.cpp\
+  expression_properties.cpp\
+  expression_serialization.cpp\
+  expression_to_layout.cpp\
+  function_solver.cpp\
   helper.cpp\
+  helpers.cpp\
+  ieee754.cpp\
   integer.cpp\
-  logarithm.cpp\
-  matrix.cpp\
-  multiplication.cpp\
-  parser.cpp\
-  power.cpp\
+  layout.cpp\
+  layout_cursor.cpp\
+  layout_serialization.cpp\
+  layout_to_expression.cpp\
+  parsing.cpp\
+  print_float.cpp\
+  print_int.cpp\
   rational.cpp\
-  simplify_mix.cpp\
-  subtraction.cpp\
-  symbol.cpp\
-  trigo.cpp\
+  regularized_incomplete_beta_function.cpp \
+  simplification.cpp\
 )
-#  simplify_utils.cpp\
 
-ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
-tests += poincare/src/expression_debug.o
-objs += poincare/src/expression_debug.o
-SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
+ifdef POINCARE_TREE_LOG
+SFLAGS += -DPOINCARE_TREE_LOG=1
 endif
-
-# Even though flex and bison will generate both implementation and headers at
-# once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may
-# call bison or flex twice.
-
-lexer_files = $(addprefix poincare/src/, expression_lexer.cpp expression_lexer.hpp)
-poincare/src/expression_lexer.hpp: poincare/src/expression_lexer.cpp
-poincare/src/expression_lexer.cpp: poincare/src/expression_lexer.l
-	@echo "FLEX    $(lexer_files)"
-	@flex -P poincare_expression_yy --header-file=poincare/src/expression_lexer.hpp -o poincare/src/expression_lexer.cpp $<
-
-poincare/src/expression_lexer.o: CXXFLAGS += -Wno-deprecated-register -Wno-unused-value -Wno-unused-function
-
-parser_files = $(addprefix poincare/src/, expression_parser.cpp expression_parser.hpp)
-poincare/src/expression_parser.hpp: poincare/src/expression_parser.cpp
-poincare/src/expression_parser.cpp: poincare/src/expression_parser.y
-	@echo "BISON   $(parser_files)"
-	@bison -d -p poincare_expression_yy -o poincare/src/expression_parser.cpp $<
-
-poincare/src/expression.cpp: $(lexer_files) $(parser_files)
-
-products += $(lexer_files) $(parser_files)

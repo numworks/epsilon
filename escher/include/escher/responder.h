@@ -1,25 +1,21 @@
 #ifndef ESCHER_RESPONDER_H
 #define ESCHER_RESPONDER_H
 
-#include <ion.h>
-
-class App;
-class Toolbox;
+#include <ion/events.h>
 
 class Responder {
 public:
-  Responder(Responder * parentResponder);
-  virtual bool handleEvent(Ion::Events::Event event); // Default implementation does nothing
-  virtual void didBecomeFirstResponder();
-  virtual void willResignFirstResponder();
-  virtual void didEnterResponderChain(Responder * previousFirstResponder);
-  virtual void willExitResponderChain(Responder * nextFirstResponder);
-  Responder * parentResponder() const;
+  Responder(Responder * parentResponder) : m_parentResponder(parentResponder) {}
+  virtual bool handleEvent(Ion::Events::Event event) { return false; }; // Default implementation does nothing
+  virtual void didBecomeFirstResponder() {}
+  virtual void willResignFirstResponder() {}
+  virtual void didEnterResponderChain(Responder * previousFirstResponder) {}
+  virtual void willExitResponderChain(Responder * nextFirstResponder) {}
+  Responder * parentResponder() const { return m_parentResponder; }
   Responder * commonAncestorWith(Responder * responder);
-  void setParentResponder(Responder * responder);
-  App * app();
-  virtual Toolbox * toolbox() { return nullptr; }
+  void setParentResponder(Responder * responder) { m_parentResponder = responder; }
 private:
+  bool hasAncestor(Responder * responder) const;
   Responder * m_parentResponder;
 };
 

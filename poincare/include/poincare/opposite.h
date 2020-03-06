@@ -1,31 +1,58 @@
 #ifndef POINCARE_OPPOSITE_H
 #define POINCARE_OPPOSITE_H
 
-#include <poincare/static_hierarchy.h>
-#include <poincare/layout_engine.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/expression.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
-class Opposite : public StaticHierarchy<1> {
-  using StaticHierarchy<1>::StaticHierarchy;
+class Opposite;
+
+class OppositeNode /*final*/ : public ExpressionNode {
 public:
-  Expression * clone() const override;
-  Type type() const override;
-  template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
-private:
-  /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<float>(this, context, angleUnit, compute<float>);
+  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>::Builder(-c); }
+
+
+  // TreeNode
+  size_t size() const override { return sizeof(OppositeNode); }
+  int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Opposite";
   }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<double>(this, context, angleUnit, compute<double>);
+#endif
+
+  // Properties
+  Type type() const override { return Type::Opposite; }
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  Sign sign(Context * context) const override;
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
+
+  // Approximation
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, compute<float>);
   }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, compute<double>);
+  }
+
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
+
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::OneLetter; };
+  LayoutShape rightLayoutShape() const override { return childAtIndex(0)->rightLayoutShape(); }
+};
+
+class Opposite final : public Expression {
+public:
+  Opposite(const OppositeNode * n) : Expression(n) {}
+  static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
+  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(&child, 1); }
+
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

@@ -6,7 +6,6 @@
 #include <escher/invocation.h>
 #include <escher/i18n.h>
 #include <escher/button.h>
-#include <escher/app.h>
 #include <assert.h>
 
 class ButtonRowDelegate;
@@ -32,6 +31,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int selectedButton();
   bool setSelectedButton(int selectedButton);
+  void setMessageOfButtonAtIndex(I18n::Message message, int index);
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController::DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
@@ -41,11 +42,12 @@ private:
     ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style, Size size);
     int numberOfButtons() const;
     Button * buttonAtIndex(int index) const;
+    void reload();
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
+    void layoutSubviews(bool force = false) override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    bool setSelectedButton(int selectedButton, App * app);
+    bool setSelectedButton(int selectedButton);
     int selectedButton() const { return m_selectedButton; }
     ViewController * mainViewController() const { return m_mainViewController; }
     ButtonRowDelegate * buttonRowDelegate() const { return m_delegate; }
@@ -55,8 +57,6 @@ private:
     constexpr static KDCoordinate k_embossedStyleHeightLarge = 52;
     constexpr static KDCoordinate k_embossedStyleHeightMarginSmall = 6;
     constexpr static KDCoordinate k_embossedStyleHeightMarginLarge = 8;
-    constexpr static KDColor k_separatorHeaderColor = KDColor::RGB24(0xDEE0E2);
-    constexpr static KDColor k_selectedBackgroundColor = KDColor::RGB24(0x426DA7);
     ViewController * m_mainViewController;
     int m_selectedButton;
     ButtonRowDelegate * m_delegate;

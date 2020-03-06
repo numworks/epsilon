@@ -57,9 +57,11 @@ float coshf(float x);
 float expf(float x);
 float expm1f(float x);
 float fabsf(float x);
+float fmaxf(float x, float y);
 float floorf(float x);
 float fmodf(float x, float y);
 float frexpf(float x, int *exp);
+float hypotf(float x, float y);
 float ldexpf(float x, int exp);
 float lgammaf(float x);
 float lgammaf_r(float x, int *signgamp);
@@ -94,9 +96,11 @@ double erfc(double x);
 double exp(double x);
 double expm1(double x);
 double fabs(double x);
+double fmax(double x, double y);
 double floor(double x);
 double fmod(double x, double y);
 double frexp(double x, int *exp);
+double hypot(double x, double y);
 double lgamma(double x);
 double lgamma_r(double x, int *signgamp);
 double log(double x);
@@ -195,7 +199,7 @@ extern int signgam;
 #define pow(x, y) __builtin_pow(x, y)
 #define rint(x) __builtin_rint(x)
 #define round(x) __builtin_round(x)
-#define scalb(x, exp) __builtin_scalb(x, exp)
+ #define scalb(x, exp) __builtin_scalb(x, exp)
 #define scalbn(x, exp) __builtin_scalbn(x, exp)
 #define sin(x) __builtin_sin(x)
 #define sinh(x) __builtin_sinh(x)

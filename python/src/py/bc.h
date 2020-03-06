@@ -1,9 +1,10 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
  * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2014 Paul Sokolovsky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +28,6 @@
 #define MICROPY_INCLUDED_PY_BC_H
 
 #include "py/runtime.h"
-#include "py/obj.h"
 #include "py/objfun.h"
 
 // bytecode layout:
@@ -115,7 +115,7 @@ const byte *mp_bytecode_print_str(const byte *ip);
 #define MP_OPCODE_VAR_UINT (2)
 #define MP_OPCODE_OFFSET (3)
 
-uint mp_opcode_format(const byte *ip, size_t *opcode_size);
+uint mp_opcode_format(const byte *ip, size_t *opcode_size, bool count_var_uint);
 
 #endif
 

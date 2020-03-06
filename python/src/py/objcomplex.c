@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -28,10 +28,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "py/nlr.h"
-#include "py/obj.h"
 #include "py/parsenum.h"
-#include "py/runtime0.h"
 #include "py/runtime.h"
 
 #if MICROPY_PY_BUILTINS_COMPLEX
@@ -82,12 +79,12 @@ STATIC mp_obj_t complex_make_new(const mp_obj_type_t *type_in, size_t n_args, si
             return mp_obj_new_complex(0, 0);
 
         case 1:
-            if (MP_OBJ_IS_STR(args[0])) {
+            if (mp_obj_is_str(args[0])) {
                 // a string, parse it
                 size_t l;
                 const char *s = mp_obj_str_get_data(args[0], &l);
                 return mp_parse_num_decimal(s, l, true, true, NULL);
-            } else if (MP_OBJ_IS_TYPE(args[0], &mp_type_complex)) {
+            } else if (mp_obj_is_type(args[0], &mp_type_complex)) {
                 // a complex, just return it
                 return args[0];
             } else {
@@ -98,13 +95,13 @@ STATIC mp_obj_t complex_make_new(const mp_obj_type_t *type_in, size_t n_args, si
         case 2:
         default: {
             mp_float_t real, imag;
-            if (MP_OBJ_IS_TYPE(args[0], &mp_type_complex)) {
+            if (mp_obj_is_type(args[0], &mp_type_complex)) {
                 mp_obj_complex_get(args[0], &real, &imag);
             } else {
                 real = mp_obj_get_float(args[0]);
                 imag = 0;
             }
-            if (MP_OBJ_IS_TYPE(args[1], &mp_type_complex)) {
+            if (mp_obj_is_type(args[1], &mp_type_complex)) {
                 mp_float_t real2, imag2;
                 mp_obj_complex_get(args[1], &real2, &imag2);
                 real -= imag2;
@@ -117,18 +114,20 @@ STATIC mp_obj_t complex_make_new(const mp_obj_type_t *type_in, size_t n_args, si
     }
 }
 
-STATIC mp_obj_t complex_unary_op(mp_uint_t op, mp_obj_t o_in) {
+STATIC mp_obj_t complex_unary_op(mp_unary_op_t op, mp_obj_t o_in) {
     mp_obj_complex_t *o = MP_OBJ_TO_PTR(o_in);
     switch (op) {
         case MP_UNARY_OP_BOOL: return mp_obj_new_bool(o->real != 0 || o->imag != 0);
         case MP_UNARY_OP_HASH: return MP_OBJ_NEW_SMALL_INT(mp_float_hash(o->real) ^ mp_float_hash(o->imag));
         case MP_UNARY_OP_POSITIVE: return o_in;
         case MP_UNARY_OP_NEGATIVE: return mp_obj_new_complex(-o->real, -o->imag);
+        case MP_UNARY_OP_ABS:
+            return mp_obj_new_float(MICROPY_FLOAT_C_FUN(sqrt)(o->real*o->real + o->imag*o->imag));
         default: return MP_OBJ_NULL; // op not supported
     }
 }
 
-STATIC mp_obj_t complex_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
+STATIC mp_obj_t complex_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
     mp_obj_complex_t *lhs = MP_OBJ_TO_PTR(lhs_in);
     return mp_obj_complex_binary_op(op, lhs->real, lhs->imag, rhs_in);
 }
@@ -165,13 +164,13 @@ mp_obj_t mp_obj_new_complex(mp_float_t real, mp_float_t imag) {
 }
 
 void mp_obj_complex_get(mp_obj_t self_in, mp_float_t *real, mp_float_t *imag) {
-    assert(MP_OBJ_IS_TYPE(self_in, &mp_type_complex));
+    assert(mp_obj_is_type(self_in, &mp_type_complex));
     mp_obj_complex_t *self = MP_OBJ_TO_PTR(self_in);
     *real = self->real;
     *imag = self->imag;
 }
 
-mp_obj_t mp_obj_complex_binary_op(mp_uint_t op, mp_float_t lhs_real, mp_float_t lhs_imag, mp_obj_t rhs_in) {
+mp_obj_t mp_obj_complex_binary_op(mp_binary_op_t op, mp_float_t lhs_real, mp_float_t lhs_imag, mp_obj_t rhs_in) {
     mp_float_t rhs_real, rhs_imag;
     mp_obj_get_complex(rhs_in, &rhs_real, &rhs_imag); // can be any type, this function will convert to float (if possible)
     switch (op) {
@@ -196,13 +195,13 @@ mp_obj_t mp_obj_complex_binary_op(mp_uint_t op, mp_float_t lhs_real, mp_float_t 
         }
         case MP_BINARY_OP_FLOOR_DIVIDE:
         case MP_BINARY_OP_INPLACE_FLOOR_DIVIDE:
-            mp_raise_TypeError("can't do truncated division of a complex number");
+            mp_raise_TypeError("can't truncate-divide a complex number");
 
         case MP_BINARY_OP_TRUE_DIVIDE:
         case MP_BINARY_OP_INPLACE_TRUE_DIVIDE:
             if (rhs_imag == 0) {
                 if (rhs_real == 0) {
-                    mp_raise_msg(&mp_type_ZeroDivisionError, "complex division by zero");
+                    mp_raise_msg(&mp_type_ZeroDivisionError, "complex divide by zero");
                 }
                 lhs_real /= rhs_real;
                 lhs_imag /= rhs_real;
@@ -229,7 +228,6 @@ mp_obj_t mp_obj_complex_binary_op(mp_uint_t op, mp_float_t lhs_real, mp_float_t 
             if (abs1 == 0) {
                 if (rhs_imag == 0 && rhs_real >= 0) {
                     lhs_real = (rhs_real == 0);
-                    rhs_real = 0;
                 } else {
                     mp_raise_msg(&mp_type_ZeroDivisionError, "0.0 to a complex power");
                 }

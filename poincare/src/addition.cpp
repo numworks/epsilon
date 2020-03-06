@@ -1,325 +1,494 @@
 #include <poincare/addition.h>
-#include <poincare/multiplication.h>
-#include <poincare/subtraction.h>
-#include <poincare/power.h>
-#include <poincare/opposite.h>
-#include <poincare/undefined.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
-extern "C" {
+#include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/power.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
 #include <assert.h>
-#include <stdlib.h>
-}
+#include <utility>
 
 namespace Poincare {
 
-Expression::Type Addition::type() const {
-  return Type::Addition;
+int AdditionNode::polynomialDegree(Context * context, const char * symbolName) const {
+  int degree = 0;
+  for (ExpressionNode * e : children()) {
+    int d = e->polynomialDegree(context, symbolName);
+    if (d < 0) {
+      return -1;
+    }
+    degree = d > degree ? d : degree;
+  }
+  return degree;
 }
 
-Expression * Addition::clone() const {
-  if (numberOfOperands() == 0) {
-    return new Addition();
-  }
-  return new Addition(operands(), numberOfOperands(), true);
+int AdditionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+  return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
-/* Simplication */
-
-Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  /* Step 1: Addition is associative, so let's start by merging children which
-   * also are additions themselves. */
-  int i = 0;
-  int initialNumberOfOperands = numberOfOperands();
-  while (i < initialNumberOfOperands) {
-    Expression * o = editableOperand(i);
-    if (o->type() == Type::Addition) {
-      mergeOperands(static_cast<Addition *>(o));
-      continue;
-    }
-    i++;
-  }
-
-  // Step 2: Sort the operands
-  sortOperands(Expression::SimplificationOrder, true);
-
-#if MATRIX_EXACT_REDUCING
-  /* Step 2bis: get rid of matrix */
-  int n = 1;
-  int m = 1;
-  /* All operands have been simplified so if any operand contains a matrix, it
-   * is at the root node of the operand. Moreover, thanks to the simplification
-   * order, all matrix operands (if any) are the last operands. */
-  Expression * lastOperand = editableOperand(numberOfOperands()-1);
-  if (lastOperand->type() == Type::Matrix) {
-    // Create in-place the matrix of addition M (in place of the last operand)
-    Matrix * resultMatrix = static_cast<Matrix *>(lastOperand);
-    n = resultMatrix->numberOfRows();
-    m = resultMatrix->numberOfColumns();
-    removeOperand(resultMatrix, false);
-    /* Scan (starting at the end) accross the addition operands to find any
-     * other matrix */
-    int i = numberOfOperands()-1;
-    while (i >= 0 && operand(i)->type() == Type::Matrix) {
-      Matrix * currentMatrix = static_cast<Matrix *>(editableOperand(i));
-      int on = currentMatrix->numberOfRows();
-      int om = currentMatrix->numberOfColumns();
-      if (on != n || om != m) {
-        return replaceWith(new Undefined(), true);
-      }
-      // Dispatch the current matrix operands in the created additions matrix
-      for (int j = 0; j < n*m; j++) {
-        Addition * a = new Addition();
-        Expression * resultMatrixEntryJ = resultMatrix->editableOperand(j);
-        resultMatrix->replaceOperand(resultMatrixEntryJ, a, false);
-        a->addOperand(currentMatrix->editableOperand(j));
-        a->addOperand(resultMatrixEntryJ);
-        a->shallowReduce(context, angleUnit);
-      }
-      currentMatrix->detachOperands();
-      removeOperand(currentMatrix, true);
-      i--;
-    }
-    // Distribute the remaining addition on matrix operands
-    for (int i = 0; i < n*m; i++) {
-      Addition * a = static_cast<Addition *>(clone());
-      Expression * entryI = resultMatrix->editableOperand(i);
-      resultMatrix->replaceOperand(entryI, a, false);
-      a->addOperand(entryI);
-      a->shallowReduce(context, angleUnit);
-    }
-    return replaceWith(resultMatrix, true)->shallowReduce(context, angleUnit);
-  }
-#endif
-
-  /* Step 3: Factorize like terms. Thanks to the simplification order, those are
-   * next to each other at this point. */
-  i = 0;
-  while (i < numberOfOperands()-1) {
-    Expression * o1 = editableOperand(i);
-    Expression * o2 = editableOperand(i+1);
-    if (o1->type() == Type::Rational && o2->type() == Type::Rational) {
-      Rational r1 = *static_cast<Rational *>(o1);
-      Rational r2 = *static_cast<Rational *>(o2);
-      Rational a = Rational::Addition(r1, r2);
-      replaceOperand(o1, new Rational(a), true);
-      removeOperand(o2, true);
-      continue;
-    }
-    if (TermsHaveIdenticalNonRationalFactors(o1, o2)) {
-      factorizeOperands(o1, o2, context, angleUnit);
-      continue;
-    }
-    i++;
-  }
-
-  /* Step 4: Let's remove zeroes if there's any. It's important to do this after
-   * having factorized because factorization can lead to new zeroes. For example
-   * pi+(-1)*pi. We don't remove the last zero if it's the only operand left
-   * though. */
-  i = 0;
-  while (i < numberOfOperands()) {
-    Expression * o = editableOperand(i);
-    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isZero() && numberOfOperands() > 1) {
-      removeOperand(o, true);
-      continue;
-    }
-    i++;
-  }
-
-  // Step 5: Let's remove the addition altogether if it has a single operand
-  Expression * result = squashUnaryHierarchy();
-
-  // Step 6: Last but not least, let's put everything under a common denominator
-  if (result == this && parent()->type() != Type::Addition) {
-    // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
-    result = factorizeOnCommonDenominator(context, angleUnit);
-  }
-
-  return result;
+Expression AdditionNode::getUnit() const {
+  // The expression is reduced, so we can just ask the unit of the first child
+  return childAtIndex(0)->getUnit();
 }
 
-Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit) {
-  // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
+// Layout
 
-  // Step 1: We want to compute the common denominator, b*d
-  Multiplication * commonDenominator = new Multiplication();
-  for (int i = 0; i < numberOfOperands(); i++) {
-    Expression * denominator = operand(i)->cloneDenominator(context, angleUnit);
-    if (denominator) {
-      // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
-      commonDenominator->addMissingFactors(denominator, context, angleUnit);
-      delete denominator;
+Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+");
+}
+
+int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "+");
+}
+
+// Simplication
+
+Expression AdditionNode::shallowReduce(ReductionContext reductionContext) {
+  return Addition(this).shallowReduce(reductionContext);
+}
+
+Expression AdditionNode::shallowBeautify(ReductionContext reductionContext) {
+  return Addition(this).shallowBeautify(reductionContext);
+}
+
+// Addition
+
+const Number Addition::NumeralFactor(const Expression & e) {
+  if (e.type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).isNumber()) {
+    Number result = e.childAtIndex(0).convert<Number>();
+    return result;
+  }
+  return Rational::Builder(1);
+}
+
+int Addition::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
+  int deg = polynomialDegree(context, symbolName);
+  if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
+    return -1;
+  }
+  for (int k = 0; k < deg+1; k++) {
+    coefficients[k] = Addition::Builder();
+  }
+  Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  for (int i = 0; i < numberOfChildren(); i++) {
+    int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients, symbolicComputation);
+    assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
+    for (int j = 0; j < d+1; j++) {
+      static_cast<Addition&>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
     }
   }
-  if (commonDenominator->numberOfOperands() == 0) {
-    delete commonDenominator;
-    // If commonDenominator is empty this means that no operand was a fraction.
-    return this;
-  }
-
-  // Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
-  // want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d
-  Addition * numerator = new Addition();
-  for (int i=0; i < numberOfOperands(); i++) {
-    Multiplication * m = new Multiplication(operand(i), commonDenominator, true);
-    numerator->addOperand(m);
-    m->privateShallowReduce(context, angleUnit, true, false);
-  }
-  // Step 3: Add the denominator
-  Power * inverseDenominator = new Power(commonDenominator, new Rational(-1), false);
-  Multiplication * result = new Multiplication(numerator, inverseDenominator, false);
-
-  // Step 4: Simplify the numerator to a*d + c*b + e*d
-  numerator->shallowReduce(context, angleUnit);
-
-  // Step 5: Simplify the denominator (in case it's a rational number)
-  commonDenominator->deepReduce(context, angleUnit);
-  inverseDenominator->shallowReduce(context, angleUnit);
-
-  /* Step 6: We simplify the resulting multiplication forbidding any
-   * distribution of multiplication on additions (to avoid an infinite loop). */
-  return static_cast<Multiplication *>(replaceWith(result, true))->privateShallowReduce(context, angleUnit, false, true);
+  return deg;
 }
 
-void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
-  /* This function factorizes two operands which only differ by a rational
-   * factor. For example, if this is Addition(2*pi, 3*pi), then 2*pi and 3*pi
-   * could be merged, and this turned into Addition(5*pi). */
-  assert(e1->parent() == this && e2->parent() == this);
-
-  // Step 1: Find the new rational factor
-  Rational * r = new Rational(Rational::Addition(RationalFactor(e1), RationalFactor(e2)));
-
-  // Step 2: Get rid of one of the operands
-  removeOperand(e2, true);
-
-  // Step 3: Use the new rational factor. Create a multiplication if needed
-  Multiplication * m = nullptr;
-  if (e1->type() == Type::Multiplication) {
-    m = static_cast<Multiplication *>(e1);
-  } else {
-    m = new Multiplication();
-    e1->replaceWith(m, false);
-    m->addOperand(e1);
-  }
-  if (m->operand(0)->type() == Type::Rational) {
-    m->replaceOperand(m->operand(0), r, true);
-  } else {
-    m->addOperand(r);
-  }
-
-  // Step 4: Reduce the multiplication (in case the new rational factor is zero)
-  m->shallowReduce(context, angleUnit);
-}
-
-const Rational Addition::RationalFactor(Expression * e) {
-  if (e->type() == Type::Multiplication && e->operand(0)->type() == Type::Rational) {
-    return *(static_cast<const Rational *>(e->operand(0)));
-  }
-  return Rational(1);
-}
-
-static inline int NumberOfNonRationalFactors(const Expression * e) {
-  if (e->type() != Expression::Type::Multiplication) {
-    return 1; // Or (e->type() != Type::Rational);
-  }
-  int result = e->numberOfOperands();
-  if (e->operand(0)->type() == Expression::Type::Rational) {
-    result--;
-  }
-  return result;
-}
-
-static inline const Expression * FirstNonRationalFactor(const Expression * e) {
-  if (e->type() != Expression::Type::Multiplication) {
-    return e;
-  }
-  if (e->operand(0)->type() == Expression::Type::Rational) {
-    return e->numberOfOperands() > 1 ? e->operand(1) : nullptr;
-  }
-  return e->operand(0);
-}
-
-bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2) {
-  /* Given two expressions, say wether they only differ by a rational factor.
-   * For example, 2*pi and pi do, 2*pi and 2*ln(2) don't. */
-
-  int numberOfNonRationalFactorsInE1 = NumberOfNonRationalFactors(e1);
-  int numberOfNonRationalFactorsInE2 = NumberOfNonRationalFactors(e2);
-
-  if (numberOfNonRationalFactorsInE1 != numberOfNonRationalFactorsInE2) {
-    return false;
-  }
-
-  int numberOfNonRationalFactors = numberOfNonRationalFactorsInE1;
-  if (numberOfNonRationalFactors == 1) {
-    return FirstNonRationalFactor(e1)->isIdenticalTo(FirstNonRationalFactor(e2));
-  } else {
-    assert(numberOfNonRationalFactors > 1);
-    return Multiplication::HaveSameNonRationalFactors(e1, e2);
-  }
-}
-
-Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
-  /* Beautifying Addition essentially consists in adding Subtractions if needed.
+Expression Addition::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+  /* Beautifying AdditionNode essentially consists in adding Subtractions if
+   * needed.
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
    * "a+(-r)*b" into "a-r*b" where r is a positive Rational.
    * Note: the process will slightly differ if the negative product occurs on
    * the first term: we want to turn "Addition(Multiplication(-1,b))" into
    * "Opposite(b)".
-   * Last but not least, special care must be taken when iterating over operands
+   * Last but not least, special care must be taken when iterating over children
    * since we may remove some during the process. */
 
-  for (int i=0; i<numberOfOperands(); i++) {
-    if (operand(i)->type() != Type::Multiplication || operand(i)->operand(0)->type() != Type::Rational || operand(i)->operand(0)->sign() != Sign::Negative) {
-      // Ignore terms which are not like "(-r)*a"
+  /* Sort children in decreasing order:
+   * 1+x+x^2 --> x^2+x+1
+   * 1+R(2) --> R(2)+1 */
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, reductionContext.context(), true);
+
+  int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    // Try to make the child i positive if any negative numeral factor is found
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(reductionContext);
+    if (subtractant.isUninitialized())
+    {
+      // if subtractant is not initialized, it means the child i had no negative numeral factor
+      // we ignore terms which are not like "(-r)*a"
       continue;
     }
 
-    Multiplication * m = static_cast<Multiplication *>(editableOperand(i));
-
-    if (static_cast<const Rational *>(m->operand(0))->isMinusOne()) {
-      m->removeOperand(m->operand(0), true);
-    } else {
-      m->editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
-    }
-    Expression * subtractant = m->squashUnaryHierarchy();
-
     if (i == 0) {
-      Opposite * o = new Opposite(subtractant, true);
-      replaceOperand(subtractant, o, true);
+      Opposite o = Opposite::Builder(subtractant);
+      replaceChildAtIndexInPlace(i, o);
     } else {
-      const Expression * op1 = operand(i-1);
-      removeOperand(op1, false);
-      Subtraction * s = new Subtraction(op1, subtractant, false);
-      replaceOperand(subtractant, s, false);
-      /* CAUTION: we removed an operand. So we need to decrement i to make sure
-       * the next iteration is actually on the next operand. */
+      Expression leftSibling = childAtIndex(i-1);
+      removeChildAtIndexInPlace(i-1);
+      /* CAUTION: we removed a child. So we need to decrement i to make sure
+       * the next iteration is actually on the next child. */
       i--;
+      nbChildren--;
+      Subtraction s = Subtraction::Builder(leftSibling, subtractant);
+      /* We stole subtractant from this which replaced it by a ghost. We thus
+       * need to put the subtraction at the previous index of subtractant, which
+       * is still i because we updated i after removing a child. */
+      replaceChildAtIndexInPlace(i, s);
     }
   }
 
-  return squashUnaryHierarchy();
+  Expression result = squashUnaryHierarchyInPlace();
+
+  return result;
 }
 
-/* Evaluation */
+Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
 
-template<typename T>
-Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
-  return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
+  // Step 0: Let's remove the addition if it has a single child
+  assert(numberOfChildren() > 0);
+  if (numberOfChildren() == 1) {
+    return squashUnaryHierarchyInPlace();
+  }
+
+  /* Step 1: Addition is associative, so let's start by merging children which
+   * are additions. */
+  int i = 0;
+  while (i < numberOfChildren()) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
+      mergeChildrenAtIndexInPlace(childAtIndex(i), i);
+      continue;
+    }
+    i++;
+  }
+
+  const int childrenCount = numberOfChildren();
+  assert(childrenCount > 1);
+
+  /* Step 2: Handle the units. All children should have the same unit, otherwise
+   * the result is not homogeneous. */
+  {
+    Expression unit = childAtIndex(0).getUnit();
+    for (int i = 1; i < childrenCount; i++) {
+      if (!unit.isIdenticalTo(childAtIndex(i).getUnit())) {
+        return replaceWithUndefinedInPlace();
+      }
+    }
+  }
+
+  // Step 3: Sort the children
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
+
+  /* Step 4: Handle matrices. We return undef for a scalar added to a matrix.
+   * Thanks to the simplification order, all matrix children (if any) are the
+   * last children. */
+  {
+    Expression lastChild = childAtIndex(childrenCount - 1);
+    if (lastChild.deepIsMatrix(reductionContext.context())) {
+      if (!childAtIndex(0).deepIsMatrix(reductionContext.context())) {
+        /* If there is a matrix in the children, the last child is a matrix. If
+         * there is a a scalar, the first child is a scalar. We forbid the
+         * addition of a matrix and a scalar. */
+        return replaceWithUndefinedInPlace();
+      }
+      if (lastChild.type() != ExpressionNode::Type::Matrix) {
+        /* All children are matrices that are not of type Matrix (for instance a
+         * ConfidenceInterval that cannot be reduced). We cannot reduce the
+         * addition more. */
+        return *this;
+      }
+      // Create the addition matrix (in place of the last child)
+      Matrix resultMatrix = static_cast<Matrix &>(lastChild);
+      int n = resultMatrix.numberOfRows();
+      int m = resultMatrix.numberOfColumns();
+      // Scan to add the other children, which are  matrices
+      for (int i = childrenCount - 2; i >= 0; i--) {
+        if (childAtIndex(i).type() != ExpressionNode::Type::Matrix) {
+          break;
+        }
+        Matrix currentMatrix = childAtIndex(i).convert<Matrix>();
+        int currentN = currentMatrix.numberOfRows();
+        int currentM = currentMatrix.numberOfColumns();
+        if (currentN != n || currentM != m) {
+          // Addition of matrices of different dimensions -> undef
+          return replaceWithUndefinedInPlace();
+        }
+        // Dispatch the current matrix children in the created addition matrix
+        for (int j = 0; j < n*m; j++) {
+          Expression resultEntryJ = resultMatrix.childAtIndex(j);
+          Expression currentEntryJ = currentMatrix.childAtIndex(j);
+          if (resultEntryJ.type() == ExpressionNode::Type::Addition) {
+            static_cast<Addition &>(resultEntryJ).addChildAtIndexInPlace(currentEntryJ, resultEntryJ.numberOfChildren(), resultEntryJ.numberOfChildren());
+          } else {
+            Addition a = Addition::Builder(resultEntryJ, currentEntryJ);
+            resultMatrix.replaceChildAtIndexInPlace(j, a);
+          }
+        }
+        removeChildInPlace(currentMatrix, currentMatrix.numberOfChildren());
+      }
+      for (int j = 0; j < n*m; j++) {
+        resultMatrix.childAtIndex(j).shallowReduce(reductionContext);
+      }
+      return squashUnaryHierarchyInPlace();
+    }
+  }
+
+  /* Step 5: Factorize like terms. Thanks to the simplification order, those are
+   * next to each other at this point. */
+  i = 0;
+  while (i < numberOfChildren()-1) {
+    Expression e1 = childAtIndex(i);
+    Expression e2 = childAtIndex(i+1);
+    if (e1.isNumber() && e2.isNumber()) {
+      Number r1 = static_cast<Number&>(e1);
+      Number r2 = static_cast<Number&>(e2);
+      Number a = Number::Addition(r1, r2);
+      replaceChildAtIndexInPlace(i, a);
+      removeChildAtIndexInPlace(i+1);
+      continue;
+    }
+    if (TermsHaveIdenticalNonNumeralFactors(e1, e2, reductionContext.context())) {
+      factorizeChildrenAtIndexesInPlace(i, i+1, reductionContext);
+      continue;
+    }
+    i++;
+  }
+
+  /* Step 6: Let's remove any zero. It's important to do this after having
+   * factorized because factorization can lead to new zeroes. For example
+   * pi+(-1)*pi. We don't remove the last zero if it's the only child left
+   * though. */
+  i = 0;
+  while (i < numberOfChildren()) {
+    Expression e = childAtIndex(i);
+    if (e.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(e).isZero() && numberOfChildren() > 1) {
+      removeChildAtIndexInPlace(i);
+      continue;
+    }
+    i++;
+  }
+
+  // Step 7: Let's remove the addition altogether if it has a single child
+  Expression result = squashUnaryHierarchyInPlace();
+  if (result != *this) {
+    return result;
+  }
+
+  /* Step 8: Let's bubble up the complex operator if possible
+   * 3 cases:
+   * - All children are real, we do nothing (allChildrenAreReal == 1)
+   * - One of the child is non-real and not a ComplexCartesian: it means a
+   *   complex expression could not be resolved as a ComplexCartesian, we cannot
+   *   do anything about it now (allChildrenAreReal == -1)
+   * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
+   *   We can bubble up ComplexCartesian nodes. */
+  if (allChildrenAreReal(reductionContext.context()) == 0) {
+    /* We turn (a+ib)+(c+id) into (a+c)+i(c+d)*/
+    Addition imag = Addition::Builder(); // we store all imaginary parts in 'imag'
+    Addition real = *this; // we store all real parts in 'real'
+    i = numberOfChildren() - 1;
+    while (i >= 0) {
+      Expression c = childAtIndex(i);
+      if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+        real.replaceChildAtIndexInPlace(i, c.childAtIndex(0));
+        imag.addChildAtIndexInPlace(c.childAtIndex(1), imag.numberOfChildren(), imag.numberOfChildren());
+      } else {
+        // the Addition is sorted so ComplexCartesian nodes are the last ones
+        break;
+      }
+      i--;
+    }
+    ComplexCartesian newComplexCartesian = ComplexCartesian::Builder();
+    replaceWithInPlace(newComplexCartesian);
+    newComplexCartesian.replaceChildAtIndexInPlace(0, real);
+    newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
+    real.shallowReduce(reductionContext);
+    imag.shallowReduce(reductionContext);
+    return newComplexCartesian.shallowReduce();
+  }
+
+  /* Step 9: Let's put everything under a common denominator.
+   * This step is done only for ReductionTarget::User if the parent expression
+   * is not an addition. */
+  Expression p = result.parent();
+  if (reductionContext.target() == ExpressionNode::ReductionTarget::User && result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
+    // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
+     result = factorizeOnCommonDenominator(reductionContext);
+  }
+  return result;
 }
 
-template Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
-template Complex<double> Poincare::Addition::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);
+int Addition::NumberOfNonNumeralFactors(const Expression & e) {
+  if (e.type() != ExpressionNode::Type::Multiplication) {
+    return 1; // Or (e->type() != Type::Rational);
+  }
+  int result = e.numberOfChildren();
+  if (e.childAtIndex(0).isNumber()) {
+    result--;
+  }
+  return result;
+}
 
-template Matrix* Addition::computeOnMatrices<float>(const Matrix*,const Matrix*);
-template Matrix* Addition::computeOnMatrices<double>(const Matrix*,const Matrix*);
+const Expression Addition::FirstNonNumeralFactor(const Expression & e) {
+  if (e.type() != ExpressionNode::Type::Multiplication) {
+    return e;
+  }
+  if (e.childAtIndex(0).isNumber()) {
+    return e.numberOfChildren() > 1 ? e.childAtIndex(1) : Expression();
+  }
+  return e.childAtIndex(0);
+}
 
-template Matrix* Addition::computeOnComplexAndMatrix<float>(Complex<float> const*, const Matrix*);
-template Matrix* Addition::computeOnComplexAndMatrix<double>(Complex<double> const*, const Matrix*);
+bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2, Context * context) {
+  /* Return true if two expressions differ only by a rational factor. For
+   * example, 2*pi and pi do, 2*pi and 2*ln(2) don't. We do not want to
+   * factorize random(). */
+
+  int numberOfNonNumeralFactorsInE1 = NumberOfNonNumeralFactors(e1);
+  int numberOfNonNumeralFactorsInE2 = NumberOfNonNumeralFactors(e2);
+
+  if (numberOfNonNumeralFactorsInE1 != numberOfNonNumeralFactorsInE2) {
+    return false;
+  }
+
+  int numberOfNonNumeralFactors = numberOfNonNumeralFactorsInE1;
+  if (numberOfNonNumeralFactors == 1) {
+    Expression nonNumeralFactor = FirstNonNumeralFactor(e1);
+    if (nonNumeralFactor.recursivelyMatches(Expression::IsRandom, context, true)) {
+      return false;
+    }
+    return FirstNonNumeralFactor(e1).isIdenticalTo(FirstNonNumeralFactor(e2));
+  } else {
+    assert(numberOfNonNumeralFactors > 1);
+    return Multiplication::HaveSameNonNumeralFactors(e1, e2);
+  }
+}
+
+Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionContext reductionContext) {
+  /* We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d), except if one of
+   * the denominators contains random, in which case the factors with random
+   * should stay appart. */
+
+  /* a will store the random factors, which should not be put to the same
+   * denominator. */
+  Addition a = Addition::Builder();
+
+  // Step 1: We want to compute the common denominator, b*d
+  Multiplication commonDenominator = Multiplication::Builder();
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression childI = childAtIndex(i);
+    Expression currentDenominator = childI.denominator(reductionContext);
+    if (!currentDenominator.isUninitialized()) {
+      if (currentDenominator.recursivelyMatches(Expression::IsRandom, reductionContext.context(), true)) {
+        // Remove "random" factors
+        removeChildInPlace(childI, childI.numberOfChildren());
+        a.addChildAtIndexInPlace(childI, a.numberOfChildren(), a.numberOfChildren());
+        i--;
+        continue;
+      }
+      // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
+      commonDenominator.addMissingFactors(currentDenominator, reductionContext);
+    }
+  }
+  if (commonDenominator.numberOfChildren() == 0) {
+    // If commonDenominator is empty this means that no child was a fraction.
+    while (a.numberOfChildren() > 0) {
+      // Put back the "random" children
+      addChildAtIndexInPlace(a.childAtIndex(0), numberOfChildren(), numberOfChildren());
+    }
+    return *this;
+  }
+
+  /* Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
+   * want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d = a*d + c*b + e*d */
+  assert(reductionContext.target() ==  ExpressionNode::ReductionTarget::User); // Else, before, the algorithm used User target -> put back ?
+  Addition numerator = Addition::Builder();
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Multiplication m = Multiplication::Builder(childAtIndex(i), commonDenominator.clone());
+    numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
+    m.privateShallowReduce(reductionContext, true, false);
+  }
+
+  // Step 3: Add the denominator
+  Power inverseDenominator = Power::Builder(commonDenominator, Rational::Builder(-1));
+  Multiplication result = Multiplication::Builder(numerator, inverseDenominator);
+
+  /* To simplify the numerator and the denominator, we allow symbolic
+   * computation: all unwanted symbols should have already disappeared by now,
+   * and if we checked again for symbols we might find "parameter" symbols
+   * disconnected from the parametered expression, which would be replaced with
+   * undef.
+   * Example: int((ℯ^(-x))-x^(0.5), x, 0, 3), when creating the common
+   * denominator for the integrand. */
+  ExpressionNode::ReductionContext contextWithSymbolicComputation = ExpressionNode::ReductionContext(
+      reductionContext.context(),
+      reductionContext.complexFormat(),
+      reductionContext.angleUnit(),
+      reductionContext.target(),
+      ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+
+  // Step 4: Simplify the numerator
+  numerator.shallowReduce(contextWithSymbolicComputation);
+
+  // Step 5: Simplify the denominator (in case it's a rational number)
+  inverseDenominator.deepReduce(contextWithSymbolicComputation);
+
+  /* Step 6: We simplify the resulting multiplication forbidding any
+   * distribution of multiplication on additions (to avoid an infinite loop).
+   * Handle the removed random factors. */
+  int aChildrenCount = a.numberOfChildren();
+  if (aChildrenCount == 0) {
+    replaceWithInPlace(result);
+    return result.privateShallowReduce(reductionContext, false, true);
+  }
+  a.addChildAtIndexInPlace(result, aChildrenCount, aChildrenCount);
+  result.privateShallowReduce(reductionContext, false, true);
+  replaceWithInPlace(a);
+  return std::move(a);
+}
+
+void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, ExpressionNode::ReductionContext reductionContext) {
+  /* This function factorizes two children which only differ by a rational
+   * factor. For example, if this is AdditionNode(2*pi, 3*pi), then 2*pi and 3*pi
+   * could be merged, and this turned into AdditionNode(5*pi). */
+  assert(index1 >= 0 && index1 < numberOfChildren());
+  assert(index2 >= 0 && index2 < numberOfChildren());
+
+  Expression e1 = childAtIndex(index1);
+  Expression e2 = childAtIndex(index2);
+
+  // Step 1: Compute the new numeral factor
+  Number r = Number::Addition(NumeralFactor(e1), NumeralFactor(e2));
+
+  // Step 2: Get rid of one of the children
+  removeChildAtIndexInPlace(index2);
+
+  // Step 3: Create a multiplication
+  Multiplication m = Multiplication::Builder();
+  if (e1.type() == ExpressionNode::Type::Multiplication) {
+    m = static_cast<Multiplication&>(e1);
+  } else {
+    replaceChildAtIndexInPlace(index1, m);
+    m.addChildAtIndexInPlace(e1, 0, 0);
+  }
+
+  // Step 4: Use the new rational factor
+  assert(m.numberOfChildren() > 0);
+  if (m.childAtIndex(0).isNumber()) {
+    /* The children were ordered before, so ant rational child of m would be on
+     * the first position */
+    m.replaceChildAtIndexInPlace(0, r);
+  } else {
+    m.addChildAtIndexInPlace(r, 0, m.numberOfChildren());
+  }
+
+  // Step 5: Reduce the multiplication (in case the new rational factor is zero)
+  m.shallowReduce(reductionContext);
+}
+
+template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
+template Complex<double> Poincare::AdditionNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
+
+template MatrixComplex<float> AdditionNode::computeOnMatrices<float>(const MatrixComplex<float>,const MatrixComplex<float>, Preferences::ComplexFormat complexFormat);
+template MatrixComplex<double> AdditionNode::computeOnMatrices<double>(const MatrixComplex<double>,const MatrixComplex<double>, Preferences::ComplexFormat complexFormat);
+
+template MatrixComplex<float> AdditionNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>, Preferences::ComplexFormat complexFormat);
+template MatrixComplex<double> AdditionNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>, Preferences::ComplexFormat complexFormat);
 
 }

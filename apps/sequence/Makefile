@@ -1,27 +1,32 @@
-snapshots += Sequence::App::Snapshot
-snapshot_headers += apps/sequence/app.h
+apps += Sequence::App
+app_headers += apps/sequence/app.h
 
-app_objs += $(addprefix apps/sequence/,\
-  app.o\
-  graph/banner_view.o\
-  graph/curve_parameter_controller.o\
-  graph/curve_view_range.o\
-  graph/go_to_parameter_controller.o\
-  graph/graph_controller.o\
-  graph/graph_view.o\
-  graph/term_sum_controller.o\
-  graph/vertical_cursor_view.o\
-  list/list_controller.o\
-  list/list_parameter_controller.o\
-  list/sequence_toolbox.o\
-  list/type_parameter_controller.o\
-  values/interval_parameter_controller.o\
-  values/values_controller.o\
-  local_context.o\
-  sequence.o\
-  sequence_store.o\
-  sequence_title_cell.o\
+app_sequence_test_src = $(addprefix apps/sequence/,\
+  cache_context.cpp \
+  sequence.cpp \
+  sequence_context.cpp \
+  sequence_store.cpp \
 )
+
+app_sequence_src = $(addprefix apps/sequence/,\
+  app.cpp \
+  graph/curve_parameter_controller.cpp \
+  graph/curve_view_range.cpp \
+  graph/go_to_parameter_controller.cpp \
+  graph/graph_controller.cpp \
+  graph/graph_view.cpp \
+  graph/term_sum_controller.cpp \
+  list/list_controller.cpp \
+  list/list_parameter_controller.cpp \
+  list/sequence_toolbox.cpp \
+  list/type_parameter_controller.cpp \
+  values/interval_parameter_controller.cpp \
+  values/values_controller.cpp \
+  sequence_title_cell.cpp \
+)
+
+app_sequence_src += $(app_sequence_test_src)
+app_src += $(app_sequence_src)
 
 i18n_files += $(addprefix apps/sequence/,\
   base.de.i18n\
@@ -31,4 +36,8 @@ i18n_files += $(addprefix apps/sequence/,\
   base.pt.i18n\
 )
 
-app_images += apps/sequence/sequence_icon.png
+tests_src += $(addprefix apps/sequence/test/,\
+  sequence.cpp\
+)
+
+$(eval $(call depends_on_image,apps/sequence/app.cpp,apps/sequence/sequence_icon.png))

@@ -17,25 +17,29 @@
 
 class Container : public RunLoop {
 public:
+  static App * activeApp() {
+    assert(s_activeApp);
+    return s_activeApp;
+  }
   Container();
   virtual ~Container();
   Container(const Container& other) = delete;
   Container(Container&& other) = delete;
   Container& operator=(const Container& other) = delete;
   Container& operator=(Container&& other) = delete;
+  virtual void * currentAppBuffer() = 0;
   virtual void run();
-  App * activeApp();
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  virtual void switchTo(App::Snapshot * snapshot);
+  virtual bool switchTo(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;
+  static App * s_activeApp;
 private:
   void step();
   int numberOfTimers() override;
   Timer * timerAtIndex(int i) override;
   virtual int numberOfContainerTimers();
   virtual Timer * containerTimerAtIndex(int i);
-  App * m_activeApp;
 };
 
 #endif

@@ -1,5 +1,5 @@
 #include "finite_integral_calculation.h"
-#include "../law/normal_law.h"
+#include "../distribution/normal_distribution.h"
 #include <assert.h>
 #include <ion.h>
 #include <cmath>
@@ -15,25 +15,10 @@ FiniteIntegralCalculation::FiniteIntegralCalculation() :
   compute(0);
 }
 
-Calculation::Type FiniteIntegralCalculation::type() {
-  return Type::FiniteIntegral;
-}
-
-int FiniteIntegralCalculation::numberOfParameters() {
-  return 3;
-}
-
-int FiniteIntegralCalculation::numberOfEditableParameters() {
-  if (m_law->type() == Law::Type::Normal) {
-    return 3;
-  }
-  return 2;
-}
-
 I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
-    return I18n::Message::RightIntegralFirstLegend;
+    return I18n::Message::FiniteIntegralFirstLegend;
   }
   if (index == 1) {
     return I18n::Message::FiniteIntegralLegend;
@@ -43,15 +28,14 @@ I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void FiniteIntegralCalculation::setParameterAtIndex(double f, int index) {
   assert(index >= 0 && index < 3);
-  double rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
-    m_lowerBound = rf;
+    m_lowerBound = f;
   }
   if (index == 1) {
-    m_upperBound = rf;
+    m_upperBound = f;
   }
   if (index == 2) {
-    m_result = rf;
+    m_result = f;
   }
   compute(index);
 }
@@ -68,28 +52,17 @@ double FiniteIntegralCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
-double FiniteIntegralCalculation::lowerBound() {
-  return m_lowerBound;
-}
-
-double FiniteIntegralCalculation::upperBound() {
-  return m_upperBound;
-}
-
 void FiniteIntegralCalculation::compute(int indexKnownElement) {
-  if (m_law == nullptr) {
+  if (m_distribution == nullptr) {
     return;
   }
   if (indexKnownElement == 2) {
-    assert(m_law->type() == Law::Type::Normal);
+    assert(m_distribution->type() == Distribution::Type::Normal);
     double p = (1.0+m_result)/2.0;
-    double a = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
-    m_lowerBound = std::round((2.0*m_law->parameterValueAtIndex(0)-a)/k_precision)*k_precision;
-    m_upperBound = std::round(a/k_precision)*k_precision;
+    m_upperBound = ((NormalDistribution *)m_distribution)->cumulativeDistributiveInverseForProbability(&p);
+    m_lowerBound = 2.0*m_distribution->parameterValueAtIndex(0)-m_upperBound;
   }
-  m_result = m_law->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
-  /* Results in probability application are rounder to 3 decimals */
-  m_result = std::round(m_result/k_precision)*k_precision;
+  m_result = m_distribution->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
 }
 
 }

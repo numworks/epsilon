@@ -7,8 +7,8 @@ class KDSize {
 public:
   constexpr KDSize(KDCoordinate width, KDCoordinate height) :
     m_width(width), m_height(height) {}
-  KDCoordinate width() const { return m_width; }
-  KDCoordinate height() const { return m_height; }
+  constexpr KDCoordinate width() const { return m_width; }
+  constexpr KDCoordinate height() const { return m_height; }
 private:
   KDCoordinate m_width;
   KDCoordinate m_height;

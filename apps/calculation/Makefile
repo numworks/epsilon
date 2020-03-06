@@ -1,20 +1,36 @@
-snapshots += Calculation::App::Snapshot
-snapshot_headers += apps/calculation/app.h
+apps += Calculation::App
+app_headers += apps/calculation/app.h
 
-app_objs += $(addprefix apps/calculation/,\
-  app.o\
-  calculation.o\
-  calculation_store.o\
-  edit_expression_controller.o\
-  history_view_cell.o\
-  history_controller.o\
-  local_context.o\
-  output_expressions_view.o\
-  scrollable_expression_view.o\
-  scrollable_output_expressions_view.o\
-  selectable_table_view.o\
-  text_field.o\
+app_calculation_test_src += $(addprefix apps/calculation/,\
+  calculation.cpp \
+  calculation_store.cpp \
 )
+
+app_calculation_src = $(addprefix apps/calculation/,\
+  additional_outputs/complex_graph_cell.cpp \
+  additional_outputs/complex_model.cpp \
+  additional_outputs/complex_list_controller.cpp \
+  additional_outputs/expression_with_equal_sign_view.cpp \
+  additional_outputs/expressions_list_controller.cpp \
+  additional_outputs/illustrated_list_controller.cpp \
+  additional_outputs/illustration_cell.cpp \
+  additional_outputs/integer_list_controller.cpp \
+  additional_outputs/scrollable_three_expressions_cell.cpp \
+  additional_outputs/list_controller.cpp \
+  additional_outputs/rational_list_controller.cpp \
+  additional_outputs/trigonometry_graph_cell.cpp \
+  additional_outputs/trigonometry_list_controller.cpp \
+  additional_outputs/trigonometry_model.cpp \
+  app.cpp \
+  edit_expression_controller.cpp \
+  expression_field.cpp \
+  history_view_cell.cpp \
+  history_controller.cpp \
+  selectable_table_view.cpp \
+)
+
+app_calculation_src += $(app_calculation_test_src)
+app_src += $(app_calculation_src)
 
 i18n_files += $(addprefix apps/calculation/,\
   base.de.i18n\
@@ -24,10 +40,8 @@ i18n_files += $(addprefix apps/calculation/,\
   base.pt.i18n\
 )
 
-tests += $(addprefix apps/calculation/test/,\
+tests_src += $(addprefix apps/calculation/test/,\
   calculation_store.cpp\
 )
-test_objs += $(addprefix apps/calculation/, calculation.o calculation_store.o)
 
-app_images += apps/calculation/calculation_icon.png
-
+$(eval $(call depends_on_image,apps/calculation/app.cpp,apps/calculation/calculation_icon.png))

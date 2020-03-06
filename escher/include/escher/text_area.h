@@ -1,44 +1,50 @@
 #ifndef ESCHER_TEXT_AREA_H
 #define ESCHER_TEXT_AREA_H
 
+#include <escher/text_input.h>
+#include <escher/input_event_handler.h>
+#include <escher/text_area_delegate.h>
 #include <assert.h>
 #include <string.h>
-#include <escher/scrollable_view.h>
-#include <escher/text_cursor_view.h>
-#include <escher/text_area_delegate.h>
 
-class TextArea : public ScrollableView, public ScrollViewDataSource {
+// See TODO in EditableField
+
+class TextArea : public TextInput, public InputEventHandler {
 public:
-  TextArea(Responder * parentResponder, char * textBuffer = nullptr, size_t textBufferSize = 0,
-    TextAreaDelegate * delegate = nullptr, KDText::FontSize fontSize = KDText::FontSize::Large,
-    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
-  Toolbox * toolbox() override;
+  static constexpr int k_indentationSpaces = 2;
+
+  TextArea(Responder * parentResponder, View * contentView, const KDFont * font = KDFont::LargeFont);
+  void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   void setText(char * textBuffer, size_t textBufferSize);
-  bool insertText(const char * textBuffer) { return m_contentView.insertText(textBuffer); }
-  bool insertTextWithIndentation(const char * textBuffer);
+
+protected:
   int indentationBeforeCursor() const;
-  void removeChar() { m_contentView.removeChar(); }
-  const char * text() const { return m_contentView.text(); }
-  int cursorLocation() const { return m_contentView.cursorLocation(); }
-  void moveCursor(int deltaX);
-private:
+
   class Text {
   public:
-    Text(char * buffer, size_t bufferSize);
-    void setText(char * buffer, size_t bufferSize);
-    const char * text() const { return const_cast<const char *>(m_buffer); }
+    Text(char * buffer, size_t bufferSize) :
+      m_buffer(buffer),
+      m_bufferSize(bufferSize)
+    {
+    }
+    void setText(char * buffer, size_t bufferSize) {
+      m_buffer = buffer;
+      m_bufferSize = bufferSize;
+    }
+    const char * text() const { return m_buffer; }
 
     class Line {
     public:
       Line(const char * text);
       const char * text() const { return m_text; }
-      size_t length() const { return m_length; }
+      size_t charLength() const { return m_charLength; }
+      KDCoordinate glyphWidth(const KDFont * const font) const;
       bool contains(const char * c) const;
     private:
       const char * m_text;
-      size_t m_length;
+      size_t m_charLength;
     };
 
     class LineIterator {
@@ -52,6 +58,9 @@ private:
     };
 
     class Position {
+    /* column and line correspond to the visual column and line. The glyph at
+     * the kth column is not the the glyph of kth code point, because of
+     * combining code points that do not fave a personnal glyph. */
     public:
       Position(int column, int line) : m_column(column), m_line(line) {}
       int column() const { return m_column; }
@@ -64,14 +73,17 @@ private:
     LineIterator begin() const { return LineIterator(m_buffer); };
     LineIterator end() const { return LineIterator(nullptr); };
 
-    Position span() const;
+    KDSize span(const KDFont * const font) const;
 
-    Position positionAtIndex(size_t index);
-    size_t indexAtPosition(Position p);
+    Position positionAtPointer(const char * pointer) const;
+    const char * pointerAtPosition(Position p);
 
-    void insertChar(char c, size_t index);
-    char removeChar(size_t index);
-    int removeRemainingLine(size_t index, int direction);
+    void insertText(const char * s, int textLength, char * location);
+    void insertSpacesAtLocation(int numberOfSpaces, char * location);
+
+    CodePoint removePreviousGlyph(char * * position);
+    size_t removeText(const char * start, const char * end);
+    size_t removeRemainingLine(const char * position, int direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
       return m_buffer[index];
@@ -87,38 +99,38 @@ private:
     size_t m_bufferSize;
   };
 
-  class ContentView : public View {
+  class ContentView : public TextInput::ContentView {
   public:
-    ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize size,
-      KDColor textColor, KDColor backgroundColor);
+    ContentView(const KDFont * font) :
+      TextInput::ContentView(font),
+      m_text(nullptr, 0)
+    {
+      m_cursorLocation = m_text.text();
+    }
     void drawRect(KDContext * ctx, KDRect rect) const override;
+    void drawStringAt(KDContext * ctx, int line, int column, const char * text, int length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor) const;
+    virtual void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const = 0;
+    virtual void clearRect(KDContext * ctx, KDRect rect) const = 0;
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
-    const char * text() const;
+    const char * text() const override { return m_text.text(); }
+    const char * editedText() const override { return m_text.text(); }
+    size_t editedTextLength() const override { return m_text.textLength(); }
     const Text * getText() const { return &m_text; }
-    int cursorLocation() const { return m_cursorIndex; }
-    bool insertText(const char * text);
-    void moveCursorIndex(int deltaX);
+    bool insertTextAtLocation(const char * text, char * location) override;
     void moveCursorGeo(int deltaX, int deltaY);
-    void removeChar();
-    bool removeEndOfLine();
-    void removeStartOfLine();
-    KDRect cursorRect();
-  private:
-    int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
-    KDRect characterFrameAtIndex(size_t index);
-    KDRect dirtyRectFromCursorPosition(size_t index, bool lineBreak);
-    TextCursorView m_cursorView;
-    size_t m_cursorIndex;
+    bool removePreviousGlyph() override;
+    bool removeEndOfLine() override;
+    bool removeStartOfLine();
+    size_t deleteSelection() override;
+  protected:
+    KDRect glyphFrameAtPosition(const char * text, const char * position) const override;
     Text m_text;
-    KDText::FontSize m_fontSize;
-    KDColor m_textColor;
-    KDColor m_backgroundColor;
   };
 
-  ContentView m_contentView;
+  ContentView * contentView() { return static_cast<ContentView *>(TextInput::contentView()); }
+private:
+  void selectUpDown(bool up);
   TextAreaDelegate * m_delegate;
 };
 

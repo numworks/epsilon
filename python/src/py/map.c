@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -31,8 +31,14 @@
 
 #include "py/mpconfig.h"
 #include "py/misc.h"
-#include "py/runtime0.h"
 #include "py/runtime.h"
+
+#if MICROPY_DEBUG_VERBOSE // print debugging info
+#define DEBUG_PRINT (1)
+#else // don't print debugging info
+#define DEBUG_PRINT (0)
+#define DEBUG_printf(...) (void)0
+#endif
 
 // Fixed empty map. Useful when need to call kw-receiving functions
 // without any keywords from C, etc.
@@ -93,23 +99,12 @@ void mp_map_init_fixed_table(mp_map_t *map, size_t n, const mp_obj_t *table) {
     map->table = (mp_map_elem_t*)table;
 }
 
-mp_map_t *mp_map_new(size_t n) {
-    mp_map_t *map = m_new(mp_map_t, 1);
-    mp_map_init(map, n);
-    return map;
-}
-
 // Differentiate from mp_map_clear() - semantics is different
 void mp_map_deinit(mp_map_t *map) {
     if (!map->is_fixed) {
         m_del(mp_map_elem_t, map->table, map->alloc);
     }
     map->used = map->alloc = 0;
-}
-
-void mp_map_free(mp_map_t *map) {
-    mp_map_deinit(map);
-    m_del_obj(mp_map_t, map);
 }
 
 void mp_map_clear(mp_map_t *map) {
@@ -126,6 +121,7 @@ void mp_map_clear(mp_map_t *map) {
 STATIC void mp_map_rehash(mp_map_t *map) {
     size_t old_alloc = map->alloc;
     size_t new_alloc = get_hash_alloc_greater_or_equal_to(map->alloc + 1);
+    DEBUG_printf("mp_map_rehash(%p): " UINT_FMT " -> " UINT_FMT "\n", map, old_alloc, new_alloc);
     mp_map_elem_t *old_table = map->table;
     mp_map_elem_t *new_table = m_new0(mp_map_elem_t, new_alloc);
     // If we reach this point, table resizing succeeded, now we can edit the old map.
@@ -148,18 +144,15 @@ STATIC void mp_map_rehash(mp_map_t *map) {
 // MP_MAP_LOOKUP_REMOVE_IF_FOUND behaviour:
 //  - returns NULL if not found, else the slot if was found in with key null and value non-null
 mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t lookup_kind) {
-
-    if (map->is_fixed && lookup_kind != MP_MAP_LOOKUP) {
-        // can't add/remove from a fixed array
-        return NULL;
-    }
+    // If the map is a fixed array then we must only be called for a lookup
+    assert(!map->is_fixed || lookup_kind == MP_MAP_LOOKUP);
 
     // Work out if we can compare just pointers
     bool compare_only_ptrs = map->all_keys_are_qstrs;
     if (compare_only_ptrs) {
-        if (MP_OBJ_IS_QSTR(index)) {
+        if (mp_obj_is_qstr(index)) {
             // Index is a qstr, so can just do ptr comparison.
-        } else if (MP_OBJ_IS_TYPE(index, &mp_type_str)) {
+        } else if (mp_obj_is_type(index, &mp_type_str)) {
             // Index is a non-interned string.
             // We can either intern the string, or force a full equality comparison.
             // We chose the latter, since interning costs time and potentially RAM,
@@ -177,6 +170,7 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
     if (map->is_ordered) {
         for (mp_map_elem_t *elem = &map->table[0], *top = &map->table[map->used]; elem < top; elem++) {
             if (elem->key == index || (!compare_only_ptrs && mp_obj_equal(elem->key, index))) {
+                #if MICROPY_PY_COLLECTIONS_ORDEREDDICT
                 if (MP_UNLIKELY(lookup_kind == MP_MAP_LOOKUP_REMOVE_IF_FOUND)) {
                     // remove the found element by moving the rest of the array down
                     mp_obj_t value = elem->value;
@@ -187,9 +181,11 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
                     elem->key = MP_OBJ_NULL;
                     elem->value = value;
                 }
+                #endif
                 return elem;
             }
         }
+        #if MICROPY_PY_COLLECTIONS_ORDEREDDICT
         if (MP_LIKELY(lookup_kind != MP_MAP_LOOKUP_ADD_IF_NOT_FOUND)) {
             return NULL;
         }
@@ -201,10 +197,13 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
         }
         mp_map_elem_t *elem = map->table + map->used++;
         elem->key = index;
-        if (!MP_OBJ_IS_QSTR(index)) {
+        if (!mp_obj_is_qstr(index)) {
             map->all_keys_are_qstrs = 0;
         }
         return elem;
+        #else
+        return NULL;
+        #endif
     }
 
     // map is a hash table (not an ordered array), so do a hash lookup
@@ -219,7 +218,7 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
 
     // get hash of index, with fast path for common case of qstr
     mp_uint_t hash;
-    if (MP_OBJ_IS_QSTR(index)) {
+    if (mp_obj_is_qstr(index)) {
         hash = qstr_hash(MP_OBJ_QSTR_VALUE(index));
     } else {
         hash = MP_OBJ_SMALL_INT_VALUE(mp_unary_op(MP_UNARY_OP_HASH, index));
@@ -239,7 +238,7 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
                 }
                 avail_slot->key = index;
                 avail_slot->value = MP_OBJ_NULL;
-                if (!MP_OBJ_IS_QSTR(index)) {
+                if (!mp_obj_is_qstr(index)) {
                     map->all_keys_are_qstrs = 0;
                 }
                 return avail_slot;
@@ -279,7 +278,7 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
                     map->used++;
                     avail_slot->key = index;
                     avail_slot->value = MP_OBJ_NULL;
-                    if (!MP_OBJ_IS_QSTR(index)) {
+                    if (!mp_obj_is_qstr(index)) {
                         map->all_keys_are_qstrs = 0;
                     }
                     return avail_slot;
@@ -396,7 +395,7 @@ mp_obj_t mp_set_lookup(mp_set_t *set, mp_obj_t index, mp_map_lookup_kind_t looku
 
 mp_obj_t mp_set_remove_first(mp_set_t *set) {
     for (size_t pos = 0; pos < set->alloc; pos++) {
-        if (MP_SET_SLOT_IS_FILLED(set, pos)) {
+        if (mp_set_slot_is_filled(set, pos)) {
             mp_obj_t elem = set->table[pos];
             // delete element
             set->used--;
@@ -424,13 +423,13 @@ void mp_set_clear(mp_set_t *set) {
 #if defined(DEBUG_PRINT) && DEBUG_PRINT
 void mp_map_dump(mp_map_t *map) {
     for (size_t i = 0; i < map->alloc; i++) {
-        if (map->table[i].key != NULL) {
+        if (map->table[i].key != MP_OBJ_NULL) {
             mp_obj_print(map->table[i].key, PRINT_REPR);
         } else {
-            printf("(nil)");
+            DEBUG_printf("(nil)");
         }
-        printf(": %p\n", map->table[i].value);
+        DEBUG_printf(": %p\n", map->table[i].value);
     }
-    printf("---\n");
+    DEBUG_printf("---\n");
 }
 #endif

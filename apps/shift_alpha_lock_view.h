@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "lock_view.h"
-#include "i18n.h"
+#include <apps/i18n.h>
 
 class ShiftAlphaLockView : public View {
 public:
@@ -14,7 +14,7 @@ public:
 private:
   constexpr static KDCoordinate k_lockRightMargin = 5;
   int numberOfSubviews() const override;
-  void layoutSubviews() override;
+  void layoutSubviews(bool force = false) override;
   View * subviewAtIndex(int index) override;
   LockView m_lockView;
   MessageTextView m_shiftAlphaView;

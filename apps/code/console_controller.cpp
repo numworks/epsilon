@@ -2,10 +2,12 @@
 #include "app.h"
 #include "script.h"
 #include "variable_box_controller.h"
-#include "helpers.h"
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include <apps/global_preferences.h>
+#include <apps/apps_container.h>
+#include <python/port/helpers.h>
 
 extern "C" {
 #include <stdlib.h>
@@ -13,85 +15,177 @@ extern "C" {
 
 namespace Code {
 
-ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore) :
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
+static const char * sStandardPromptText = ">>> ";
+
+ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
+#if EPSILON_GETOPT
+      , bool lockOnConsole
+#endif
+    ) :
   ViewController(parentResponder),
   SelectableTableViewDataSource(),
   TextFieldDelegate(),
   MicroPython::ExecutionEnvironment(),
-  m_rowHeight(KDText::charSize(k_fontSize).height()),
+  m_pythonDelegate(pythonDelegate),
   m_importScriptsWhenViewAppears(false),
-  m_selectableTableView(this, this, 0, 1, 0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin, this, this, true, true, KDColorWhite),
-  m_editCell(this, this),
-  m_pythonHeap(nullptr),
+  m_selectableTableView(this, this, this, this),
+  m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
-  m_sandboxController(this)
+  m_sandboxController(this, this),
+  m_inputRunLoopActive(false),
+  m_preventEdition(false)
+#if EPSILON_GETOPT
+  , m_locked(lockOnConsole)
+#endif
 {
+  m_selectableTableView.setMargins(0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin);
+  m_selectableTableView.setBackgroundColor(KDColorWhite);
+  m_editCell.setPrompt(sStandardPromptText);
   for (int i = 0; i < k_numberOfLineCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
   }
 }
 
-ConsoleController::~ConsoleController() {
-  unloadPythonEnvironment();
-}
-
-bool ConsoleController::loadPythonEnvironment(bool autoImportScripts) {
-  if(pythonEnvironmentIsLoaded()) {
+bool ConsoleController::loadPythonEnvironment() {
+  if (m_pythonDelegate->isPythonUser(this)) {
     return true;
   }
   emptyOutputAccumulationBuffer();
-  m_pythonHeap = (char *)malloc(k_pythonHeapSize);
-  if (m_pythonHeap == nullptr) {
-    // In DEBUG mode, the assert at the end of malloc would have already failed
-    // and the program crashed.
-    return false;
-  }
-  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+  m_pythonDelegate->initPythonWithUser(this);
   MicroPython::registerScriptProvider(m_scriptStore);
-  m_importScriptsWhenViewAppears = autoImportScripts;
+  m_importScriptsWhenViewAppears = m_autoImportScripts;
+  /* We load functions and variables names in the variable box before running
+   * any other python code to avoid failling to load functions and variables
+   * due to memory exhaustion. */
+  App::app()->variableBoxController()->loadFunctionsAndVariables();
   return true;
 }
 
 void ConsoleController::unloadPythonEnvironment() {
-  if (pythonEnvironmentIsLoaded()) {
+  if (!m_pythonDelegate->isPythonUser(nullptr)) {
     m_consoleStore.startNewSession();
-    MicroPython::deinit();
-    free(m_pythonHeap);
-    m_pythonHeap = nullptr;
+    m_pythonDelegate->deinitPython();
   }
-}
-
-bool ConsoleController::pythonEnvironmentIsLoaded() {
-  return (m_pythonHeap != nullptr);
 }
 
 void ConsoleController::autoImport() {
   for (int i = 0; i < m_scriptStore->numberOfScripts(); i++) {
-    autoImportScriptAtIndex(i);
+    autoImportScript(m_scriptStore->scriptAtIndex(i));
   }
 }
 
 void ConsoleController::runAndPrintForCommand(const char * command) {
-  m_consoleStore.pushCommand(command, strlen(command));
+  const char * storedCommand = m_consoleStore.pushCommand(command);
   assert(m_outputAccumulationBuffer[0] == '\0');
-  runCode(command);
+
+  // Draw the console before running the code
+  m_preventEdition = true;
+  m_editCell.setText("");
+  m_editCell.setPrompt("");
+  refreshPrintOutput();
+
+  runCode(storedCommand);
+
+  m_preventEdition = false;
+  m_editCell.setPrompt(sStandardPromptText);
+  m_editCell.setEditing(true);
+
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
 }
 
-void ConsoleController::removeExtensionIfAny(char * name) {
-  int nameLength = strlen(name);
-  if (nameLength<4) {
-    return;
+void ConsoleController::terminateInputLoop() {
+  assert(m_inputRunLoopActive);
+  m_inputRunLoopActive = false;
+  interrupt();
+}
+
+const char * ConsoleController::inputText(const char * prompt) {
+  AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
+  m_inputRunLoopActive = true;
+
+  // Hide the sandbox if it is displayed
+  if (sandboxIsDisplayed()) {
+    hideSandbox();
   }
-  if (strcmp(&name[nameLength-3], ScriptStore::k_scriptExtension) == 0) {
-    name[nameLength-3] = 0;
+
+  const char * promptText = prompt;
+  char * s = const_cast<char *>(prompt);
+
+  if (promptText != nullptr) {
+    /* Set the prompt text. If the prompt text has a '\n', put the prompt text in
+     * the history until the last '\n', and put the remaining prompt text in the
+     * edit cell's prompt. */
+    char * lastCarriageReturn = nullptr;
+    while (*s != 0) {
+      if (*s == '\n') {
+        lastCarriageReturn = s;
+      }
+      s++;
+    }
+    if (lastCarriageReturn != nullptr) {
+      printText(prompt, lastCarriageReturn-prompt+1);
+      promptText = lastCarriageReturn+1;
+    }
   }
+
+  const char * previousPrompt = m_editCell.promptText();
+  m_editCell.setPrompt(promptText);
+
+  /* The user will input some text that is stored in the edit cell. When the
+   * input is finished, we want to clear that cell and return the input text.
+   * We choose to shift the input in the edit cell and put a null char in first
+   * position, so that the cell seems cleared but we can still use it to store
+   * the input.
+   * To do so, we need to reduce the cell buffer size by one, so that the input
+   * can be shifted afterwards, even if it has maxSize.
+   *
+   * Illustration of a input sequence:
+   * | | | | | | | | |  <- the edit cell buffer
+   * |0| | | | | | |X|  <- clear and reduce the size
+   * |a|0| | | | | |X|  <- user input
+   * |a|b|0| | | | |X|  <- user input
+   * |a|b|c|0| | | |X|  <- user input
+   * |a|b|c|d|0| | |X|  <- last user input
+   * | |a|b|c|d|0| | |  <- increase the buffer size and shift the user input by one
+   * |0|a|b|c|d|0| | |  <- put a zero in first position: the edit cell seems empty
+   */
+
+   m_editCell.clearAndReduceSize();
+
+  // Reload the history
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  appsContainer->redrawWindow();
+
+  // Launch a new input loop
+  appsContainer->runWhile([](void * a){
+      ConsoleController * c = static_cast<ConsoleController *>(a);
+      return c->inputRunLoopActive();
+  }, this);
+
+  // Print the prompt and the input text
+  if (promptText != nullptr) {
+    printText(promptText, s - promptText);
+  }
+  const char * text = m_editCell.text();
+  size_t textSize = strlen(text);
+  printText(text, textSize);
+  flushOutputAccumulationBufferToStore();
+
+  // Clear the edit cell and return the input
+  text = m_editCell.shiftCurrentTextAndClear();
+  m_editCell.setPrompt(previousPrompt);
+  refreshPrintOutput();
+
+  return text;
 }
 
 void ConsoleController::viewWillAppear() {
-  assert(pythonEnvironmentIsLoaded());
-  m_sandboxIsDisplayed = false;
+  ViewController::viewWillAppear();
+  loadPythonEnvironment();
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;
     autoImport();
@@ -103,26 +197,18 @@ void ConsoleController::viewWillAppear() {
 }
 
 void ConsoleController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_editCell);
+  Container::activeApp()->setFirstResponder(&m_editCell);
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up) {
-    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
-      m_editCell.setEditing(false);
-      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
-      return true;
-    }
-  } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
       const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();
       m_editCell.setEditing(true);
       m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-      app()->setFirstResponder(&m_editCell);
+      Container::activeApp()->setFirstResponder(&m_editCell);
       return m_editCell.insertText(text);
     }
-  } else if (event == Ion::Events::Copy) {
-    return copyCurrentLineToClipboard();
   } else if (event == Ion::Events::Clear) {
     m_selectableTableView.deselectTable();
     m_consoleStore.clear();
@@ -138,15 +224,23 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.selectCellAtLocation(0, firstDeletedLineIndex);
     return true;
   }
+#if EPSILON_GETOPT
+  if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) {
+    if (m_inputRunLoopActive) {
+      terminateInputLoop();
+    }
+    return true;
+  }
+#endif
   return false;
 }
 
-int ConsoleController::numberOfRows() {
+int ConsoleController::numberOfRows() const {
   return m_consoleStore.numberOfLines()+1;
 }
 
 KDCoordinate ConsoleController::rowHeight(int j) {
-  return m_rowHeight;
+  return GlobalPreferences::sharedGlobalPreferences()->font()->glyphSize().height();
 }
 
 KDCoordinate ConsoleController::cumulatedHeightFromIndex(int j) {
@@ -195,21 +289,26 @@ void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, i
   }
 }
 
-void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
   if (t->selectedRow() == m_consoleStore.numberOfLines()) {
     m_editCell.setEditing(true);
-    app()->setFirstResponder(&m_editCell);
     return;
   }
   if (t->selectedRow()>-1) {
     if (previousSelectedCellY > -1 && previousSelectedCellY < m_consoleStore.numberOfLines()) {
       // Reset the scroll of the previous cell
       ConsoleLineCell * previousCell = (ConsoleLineCell *)(t->cellAtLocation(previousSelectedCellX, previousSelectedCellY));
-      previousCell->reloadCell();
+      if (previousCell) {
+        previousCell->reloadCell();
+      }
     }
     ConsoleLineCell * selectedCell = (ConsoleLineCell *)(t->selectedCell());
-    app()->setFirstResponder(selectedCell);
-    selectedCell->reloadCell();
+    if (selectedCell) {
+      selectedCell->reloadCell();
+    }
   }
 }
 
@@ -220,105 +319,175 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    if (!textField->isEditing()) {
-      textField->setEditing(true);
-    }
-    VariableBoxController * varBoxController = (static_cast<App *>(textField->app()))->scriptsVariableBoxController();
-    varBoxController->setTextFieldCaller(textField);
-    textField->app()->displayModalViewController(varBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+  if (m_inputRunLoopActive
+      && (event == Ion::Events::Up
+        || event == Ion::Events::OK
+        || event == Ion::Events::EXE))
+  {
+    m_inputRunLoopActive = false;
+    /* We need to return true here because we want to actually exit from the
+     * input run loop, which requires ending a dispatchEvent cycle. */
     return true;
   }
-  const char * pythonText = Helpers::PythonTextForEvent(event);
-  if (pythonText == nullptr) {
-    return false;
-  }
-  if (textField->insertTextAtLocation(pythonText, textField->cursorLocation())) {
-    textField->setCursorLocation(textField->cursorLocation()+strlen(pythonText));
-    if (pythonText[strlen(pythonText)-1] == ')') {
-      textField->setCursorLocation(textField->cursorLocation()-1);
+  if (event == Ion::Events::Up) {
+    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
+      m_editCell.setEditing(false);
+      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
+      return true;
     }
   }
-  return true;
+  return App::app()->textInputDidReceiveEvent(textField, event);
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  runAndPrintForCommand(text);
-  if (m_sandboxIsDisplayed) {
-    return true;
+  if (m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
+    return false;
   }
-  m_selectableTableView.reloadData();
-  m_editCell.setEditing(true);
-  textField->setText("");
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  telemetryReportEvent("Console", text);
+  runAndPrintForCommand(text);
+  if (!sandboxIsDisplayed()) {
+    m_selectableTableView.reloadData();
+    m_editCell.setEditing(true);
+    textField->setText("");
+    m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  }
   return true;
 }
 
-bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const char * text) {
-  stackViewController()->pop();
+bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
+  if (m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
+  } else {
+#if EPSILON_GETOPT
+    /* In order to lock the console controller, we disable poping controllers
+     * below the console controller included. The stack should only hold:
+     * - the menu controller
+     * - the console controller
+     * The depth of the stack controller must always be above or equal to 2. */
+    if (!m_locked || stackViewController()->depth() > 2) {
+#endif
+      stackViewController()->pop();
+#if EPSILON_GETOPT
+    } else {
+      textField->setEditing(true);
+    }
+#endif
+  }
   return true;
-}
-
-Toolbox * ConsoleController::toolboxForTextField(TextField * textField) {
-  Code::App * codeApp = static_cast<Code::App *>(app());
-  codeApp->pythonToolbox()->setAction(codeApp->toolboxActionForTextField());
-  return codeApp->pythonToolbox();
 }
 
 void ConsoleController::displaySandbox() {
-  if (m_sandboxIsDisplayed) {
+  if (sandboxIsDisplayed()) {
     return;
   }
-  m_sandboxIsDisplayed = true;
   stackViewController()->push(&m_sandboxController);
+}
+
+void ConsoleController::hideSandbox() {
+  if (!sandboxIsDisplayed()) {
+    return;
+  }
+  m_sandboxController.hide();
+}
+
+void ConsoleController::resetSandbox() {
+  if (!sandboxIsDisplayed()) {
+    return;
+  }
+  m_sandboxController.reset();
+}
+
+void ConsoleController::refreshPrintOutput() {
+  if (sandboxIsDisplayed()) {
+    return;
+  }
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  if (m_preventEdition) {
+    m_editCell.setEditing(false);
+  }
+  AppsContainer::sharedAppsContainer()->redrawWindow();
 }
 
 /* printText is called by the Python machine.
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
   size_t textCutIndex = firstNewLineCharIndex(text, length);
-  // If there is no new line in text, just append it to the output accumulation
-  // buffer.
   if (textCutIndex >= length) {
+    /* If there is no new line in text, just append it to the output
+     * accumulation buffer. */
     appendTextToOutputAccumulationBuffer(text, length);
-    return;
-  }
-  // If there is a new line in the middle of the text, we have to store at least
-  // two new console lines in the console store.
-  if (textCutIndex < length - 1) {
-    printText(text, textCutIndex + 1);
-    printText(&text[textCutIndex+1], length - (textCutIndex + 1));
-    return;
-  }
-  // If there is a new line at the end of the text, we have to store the line in
-  // the console store.
-  if (textCutIndex == length - 1) {
+  } else {
+    if (textCutIndex < length - 1) {
+      /* If there is a new line in the middle of the text, we have to store at
+       * least two new console lines in the console store. */
+      printText(text, textCutIndex + 1);
+      printText(&text[textCutIndex+1], length - (textCutIndex + 1));
+      return;
+    }
+    /* There is a new line at the end of the text, we have to store the line in
+     * the console store. */
+    assert(textCutIndex == length - 1);
     appendTextToOutputAccumulationBuffer(text, length-1);
     flushOutputAccumulationBufferToStore();
+    micropython_port_vm_hook_refresh_print();
   }
+#if __EMSCRIPTEN__
+  /* If we called micropython_port_interrupt_if_needed here, we would need to
+   * put in the WHITELIST all the methods that call
+   * ConsoleController::printText, which means all the MicroPython methods that
+   * call print... This is a lot of work + might reduce the performance as
+   * emterpreted code is slower.
+   *
+   * We thus do not allow print interruption on the web simulator. It would be
+   * better to allow it, but the biggest problem was on the device anyways
+   * -> It is much quicker to interrupt Python on the web simulator than on the
+   * device.
+   *
+   * TODO: Allow print interrpution on emscripten -> maybe by using WASM=1 ? */
+#else
+  /* micropython_port_vm_hook_loop is not enough to detect user interruptions,
+   * because it calls micropython_port_interrupt_if_needed every 20000
+   * operations, and a print operation is quite long. We thus explicitely call
+   * micropython_port_interrupt_if_needed here. */
+  micropython_port_interrupt_if_needed();
+#endif
 }
 
-void ConsoleController::autoImportScriptAtIndex(int index, bool force) {
-  const char * importCommand1 = "from ";
-  const char * importCommand2 = " import *";
-  int lenImportCommand1 = strlen(importCommand1);
-  int lenImportCommand2 = strlen(importCommand2);
-  Script script = m_scriptStore->scriptAtIndex(index);
-  if (script.autoImport() || force) {
-    // Remove the name extension ".py" if there is one.
-    int scriptOriginalNameLength = strlen(script.name());
-    char scriptNewName[scriptOriginalNameLength];
-    memcpy(scriptNewName, script.name(), scriptOriginalNameLength + 1);
-    removeExtensionIfAny(scriptNewName);
-    int scriptNewNameLength = strlen(scriptNewName);
-    // Create the command "from scriptName import *".
-    char command[lenImportCommand1 + scriptNewNameLength + lenImportCommand2 + 1];
-    memcpy(command, importCommand1, lenImportCommand1);
-    memcpy(&command[lenImportCommand1], scriptNewName, scriptNewNameLength);
-    memcpy(&command[lenImportCommand1 + scriptNewNameLength], importCommand2, lenImportCommand2 + 1);
+void ConsoleController::autoImportScript(Script script, bool force) {
+  if (sandboxIsDisplayed()) {
+    /* The sandbox might be displayed, for instance if we are auto-importing
+     * several scripts that draw at importation. In this case, we want to remove
+     * the sandbox. */
+    hideSandbox();
+  }
+  if (script.importationStatus() || force) {
+    // Step 1 - Create the command "from scriptName import *".
+
+    assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
+    char command[k_maxImportCommandSize];
+
+    // Copy "from "
+    size_t currentChar = strlcpy(command, k_importCommand1, k_maxImportCommandSize);
+    const char * scriptName = script.fullName();
+
+    /* Copy the script name without the extension ".py". The '.' is overwritten
+     * by the null terminating char. */
+    int copySizeWithNullTerminatingZero = minInt(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
+    assert(copySizeWithNullTerminatingZero >= 0);
+    assert(copySizeWithNullTerminatingZero <= k_maxImportCommandSize - currentChar);
+    strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);
+    currentChar += copySizeWithNullTerminatingZero-1;
+
+    // Copy " import *"
+    assert(k_maxImportCommandSize >= currentChar);
+    strlcpy(command+currentChar, k_importCommand2, k_maxImportCommandSize - currentChar);
+
+    // Step 2 - Run the command
     runAndPrintForCommand(command);
   }
-  if (force) {
+  if (!sandboxIsDisplayed() && force) {
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
     m_editCell.setEditing(true);
@@ -327,7 +496,7 @@ void ConsoleController::autoImportScriptAtIndex(int index, bool force) {
 }
 
 void ConsoleController::flushOutputAccumulationBufferToStore() {
-  m_consoleStore.pushResult(m_outputAccumulationBuffer, strlen(m_outputAccumulationBuffer));
+  m_consoleStore.pushResult(m_outputAccumulationBuffer);
   emptyOutputAccumulationBuffer();
 }
 
@@ -338,11 +507,24 @@ void ConsoleController::appendTextToOutputAccumulationBuffer(const char * text, 
     memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, length);
     return;
   }
-  memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, spaceLeft-1);
+  /* The text to append is too long for the buffer. We need to split it in
+   * chunks. We take special care not to break in the middle of code points! */
+  int maxAppendedTextLength = spaceLeft-1; // we keep the last char to null-terminate the buffer
+  int appendedTextLength = 0;
+  UTF8Decoder decoder(text);
+  while (decoder.stringPosition() - text <= maxAppendedTextLength) {
+    appendedTextLength = decoder.stringPosition() - text;
+    decoder.nextCodePoint();
+  }
+  memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, appendedTextLength);
+  // The last char of m_outputAccumulationBuffer is kept to 0 to ensure a null-terminated text.
+  assert(endOfAccumulatedText+appendedTextLength < k_outputAccumulationBufferSize);
+  m_outputAccumulationBuffer[endOfAccumulatedText+appendedTextLength] = 0;
   flushOutputAccumulationBufferToStore();
-  appendTextToOutputAccumulationBuffer(&text[spaceLeft-1], length - (spaceLeft - 1));
+  appendTextToOutputAccumulationBuffer(&text[appendedTextLength], length - appendedTextLength);
 }
 
+// TODO: is it really needed? Maybe discard to optimize?
 void ConsoleController::emptyOutputAccumulationBuffer() {
   for (int i = 0; i < k_outputAccumulationBufferSize; i++) {
     m_outputAccumulationBuffer[i] = 0;
@@ -362,15 +544,6 @@ size_t ConsoleController::firstNewLineCharIndex(const char * text, size_t length
 
 StackViewController * ConsoleController::stackViewController() {
  return static_cast<StackViewController *>(parentResponder());
-}
-
-bool ConsoleController::copyCurrentLineToClipboard() {
-  int row = m_selectableTableView.selectedRow();
-  if (row < m_consoleStore.numberOfLines()) {
-    Clipboard::sharedClipboard()->store(m_consoleStore.lineAtIndex(row).text());
-    return true;
-  }
-  return false;
 }
 
 }

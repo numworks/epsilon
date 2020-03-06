@@ -1,9 +1,9 @@
 #ifndef ESCHER_KEY_VIEW_H
 #define ESCHER_KEY_VIEW_H
 
-#include <escher/view.h>
+#include <escher/transparent_view.h>
 
-class KeyView : public View {
+class KeyView : public TransparentView {
 public:
   enum class Type {
     Up,

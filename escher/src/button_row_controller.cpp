@@ -1,4 +1,5 @@
 #include <escher/button_row_controller.h>
+#include <escher/container.h>
 #include <escher/palette.h>
 #include <cmath>
 
@@ -27,6 +28,10 @@ Button * ButtonRowController::ContentView::buttonAtIndex(int index) const {
   return m_delegate->buttonAtIndex(index, m_position);
 }
 
+void ButtonRowController::ContentView::reload() {
+  markRectAsDirty(bounds());
+}
+
 int ButtonRowController::ContentView::numberOfSubviews() const {
   return numberOfButtons() + 1;
 }
@@ -44,12 +49,12 @@ View * ButtonRowController::ContentView::subviewAtIndex(int index) {
   }
 }
 
-void ButtonRowController::ContentView::layoutSubviews() {
+void ButtonRowController::ContentView::layoutSubviews(bool force) {
   /* Position the main view */
   if (numberOfButtons() == 0) {
     KDCoordinate margin = m_position == Position::Top ? 1 : 0;
     KDRect mainViewFrame(0, margin, bounds().width(), bounds().height()-margin);
-    m_mainViewController->view()->setFrame(mainViewFrame);
+    m_mainViewController->view()->setFrame(mainViewFrame, force);
     return;
   }
   KDCoordinate rowHeight;
@@ -60,7 +65,7 @@ void ButtonRowController::ContentView::layoutSubviews() {
   }
   KDCoordinate frameOrigin = m_position == Position::Top ? rowHeight+1 : 0;
   KDRect mainViewFrame(0, frameOrigin, bounds().width(), bounds().height() - rowHeight - 1);
-    m_mainViewController->view()->setFrame(mainViewFrame);
+    m_mainViewController->view()->setFrame(mainViewFrame, force);
 
   /* Position buttons */
   int nbOfButtons = numberOfButtons();
@@ -83,7 +88,7 @@ void ButtonRowController::ContentView::layoutSubviews() {
     Button * button = buttonAtIndex(i);
     KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
     KDRect buttonFrame(currentXOrigin, yOrigin, buttonWidth, buttonHeight);
-    button->setFrame(buttonFrame);
+    button->setFrame(buttonFrame, force);
     currentXOrigin += buttonWidth + widthMargin;
   }
 }
@@ -137,7 +142,7 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   }
 }
 
-bool ButtonRowController::ContentView::setSelectedButton(int selectedButton, App * application) {
+bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {
   if (selectedButton < -1 || selectedButton >= numberOfButtons() || selectedButton == m_selectedButton) {
     return false;
   }
@@ -149,7 +154,7 @@ bool ButtonRowController::ContentView::setSelectedButton(int selectedButton, App
   if (m_selectedButton >= 0) {
     Button * button = buttonAtIndex(selectedButton);
     button->setHighlighted(true);
-    application->setFirstResponder(button);
+    Container::activeApp()->setFirstResponder(button);
     return true;
   }
   return false;
@@ -166,7 +171,7 @@ const char * ButtonRowController::title() {
 }
 
 void ButtonRowController::didBecomeFirstResponder(){
-  app()->setFirstResponder(m_contentView.mainViewController());
+  Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
 }
 
 int ButtonRowController::selectedButton() {
@@ -174,8 +179,15 @@ int ButtonRowController::selectedButton() {
 }
 
 bool ButtonRowController::setSelectedButton(int selectedButton) {
-  App * application = app();
-  return m_contentView.setSelectedButton(selectedButton, application);
+  return m_contentView.setSelectedButton(selectedButton);
+}
+
+void ButtonRowController::setMessageOfButtonAtIndex(I18n::Message message, int index) {
+  if (m_contentView.numberOfButtons() > index) {
+    m_contentView.buttonAtIndex(0)->setMessage(message);
+    m_contentView.layoutSubviews();
+    m_contentView.reload();
+  }
 }
 
 bool ButtonRowController::handleEvent(Ion::Events::Event event) {
@@ -197,6 +209,10 @@ bool ButtonRowController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+void ButtonRowController::initView() {
+  m_contentView.mainViewController()->initView();
 }
 
 void ButtonRowController::viewWillAppear() {

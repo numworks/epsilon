@@ -2,12 +2,12 @@
 #define GRAPH_APP_H
 
 #include <escher.h>
-#include <poincare.h>
-#include "cartesian_function_store.h"
+#include "continuous_function_store.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/function_app.h"
+#include "../shared/interval.h"
 
 namespace Graph {
 
@@ -25,23 +25,39 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    CartesianFunctionStore * functionStore();
-    Shared::InteractiveCurveViewRange * graphRange();
+    ContinuousFunctionStore * functionStore() override { return &m_functionStore; }
+    Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
+    Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
+      return m_interval + static_cast<size_t>(plotType);
+    }
   private:
     void tidy() override;
-    CartesianFunctionStore m_functionStore;
+    ContinuousFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
+    Shared::Interval m_interval[Shared::ContinuousFunction::k_numberOfPlotTypes];
   };
-  InputViewController * inputViewController() override;
-  /* This local context can parse x. However, it always stores NAN
-   * as x value. When we need to evaluate expression with a specific x value, we
-   * use a temporary local context (on the stack). That way, we avoid keeping
-   * weird x values after drawing curves or displaying the value table. */
-  Poincare::Context * localContext() override;
-  const char * XNT() override;
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
+  Snapshot * snapshot() const {
+    return static_cast<Snapshot *>(::App::snapshot());
+  }
+  TELEMETRY_ID("Graph");
+  bool XNTCanBeOverriden() const override { return false; }
+  CodePoint XNT() override;
+  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
+  ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
+  Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
+    return snapshot()->intervalForType(plotType);
+  }
+  ValuesController * valuesController() override {
+    return &m_valuesController;
+  }
+  InputViewController * inputViewController() override {
+    return &m_inputViewController;
+  }
 private:
-  App(Container * container, Snapshot * snapshot);
-  Poincare::VariableContext<float> m_xContext;
+  App(Snapshot * snapshot);
   ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;

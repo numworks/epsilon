@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -401,14 +401,9 @@ const byte *mp_bytecode_print_str(const byte *ip) {
             printf("FOR_ITER " UINT_FMT, (mp_uint_t)(ip + unum - mp_showbc_code_start));
             break;
 
-        case MP_BC_POP_BLOCK:
-            // pops block and restores the stack
-            printf("POP_BLOCK");
-            break;
-
-        case MP_BC_POP_EXCEPT:
-            // pops block, checks it's an exception block, and restores the stack, saving the 3 exception values to local threadstate
-            printf("POP_EXCEPT");
+        case MP_BC_POP_EXCEPT_JUMP:
+            DECODE_ULABEL; // these labels are always forward
+            printf("POP_EXCEPT_JUMP " UINT_FMT, (mp_uint_t)(ip + unum - mp_showbc_code_start));
             break;
 
         case MP_BC_BUILD_TUPLE:
@@ -539,9 +534,9 @@ const byte *mp_bytecode_print_str(const byte *ip) {
                 printf("LOAD_FAST " UINT_FMT, (mp_uint_t)ip[-1] - MP_BC_LOAD_FAST_MULTI);
             } else if (ip[-1] < MP_BC_STORE_FAST_MULTI + 16) {
                 printf("STORE_FAST " UINT_FMT, (mp_uint_t)ip[-1] - MP_BC_STORE_FAST_MULTI);
-            } else if (ip[-1] < MP_BC_UNARY_OP_MULTI + 7) {
+            } else if (ip[-1] < MP_BC_UNARY_OP_MULTI + MP_UNARY_OP_NUM_BYTECODE) {
                 printf("UNARY_OP " UINT_FMT, (mp_uint_t)ip[-1] - MP_BC_UNARY_OP_MULTI);
-            } else if (ip[-1] < MP_BC_BINARY_OP_MULTI + 36) {
+            } else if (ip[-1] < MP_BC_BINARY_OP_MULTI + MP_BINARY_OP_NUM_BYTECODE) {
                 mp_uint_t op = ip[-1] - MP_BC_BINARY_OP_MULTI;
                 printf("BINARY_OP " UINT_FMT " %s", op, qstr_str(mp_binary_op_method_name[op]));
             } else {

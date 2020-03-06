@@ -1,49 +1,112 @@
 #ifndef POINCARE_DECIMAL_H
 #define POINCARE_DECIMAL_H
 
-#include <poincare/static_hierarchy.h>
 #include <poincare/integer.h>
+#include <poincare/number.h>
 
 namespace Poincare {
 
-/* A decimal as 0.01234 is stored that way:
- *  - m_mantissa = 1234
- *  - m_exponent = -2
+/* The decimal 0.01234 is stored as:
+ *  - bool m_negative = false
+ *  - int m_exponent = -2
+ *  - int m_numberOfDigitsInMantissa = 1
+ *  - native_uint_t m_mantissa[] = { 1234 }
  */
 
-class Decimal : public StaticHierarchy<0> {
-public:
-  static int exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
-  static Integer mantissa(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative);
-  Decimal(Integer mantissa, int exponent);
-  Decimal(double f);
-  int exponent() const { return m_exponent; }
-  Integer mantissa() const { return m_mantissa; }
-  // Expression subclassing
-  Type type() const override;
-  Expression * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
-  Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
-private:
-  constexpr static int k_doublePrecision = 15;
-  constexpr static double k_biggestMantissaFromDouble = 999999999999999;
-  constexpr static int k_maxDoubleExponent = 308;
-  int numberOfDigitsInMantissaWithoutSign() const;
-  /* Comparison */
-  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
-  /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;
-  /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Expression * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;
+class Decimal;
 
-  constexpr static int k_maxLength = 15;
-  Integer m_mantissa;
+class DecimalNode final : public NumberNode {
+  friend class Decimal;
+public:
+  DecimalNode(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative);
+
+  Integer signedMantissa() const;
+  Integer unsignedMantissa() const;
+  int exponent() const { return m_exponent; }
+
+  // TreeNode
+  size_t size() const override;
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Decimal";
+  }
+  virtual void logAttributes(std::ostream & stream) const override {
+    stream << " negative=\"" << m_negative << "\"";
+    stream << " mantissa=\"";
+    this->signedMantissa().logInteger(stream);
+    stream << "\"";
+    stream << " exponent=\"" << m_exponent << "\"";
+  }
+#endif
+
+  // Properties
+  Type type() const override { return Type::Decimal; }
+  Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
+
+  // Approximation
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return Complex<float>::Builder(templatedApproximate<float>());
+  }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return Complex<double>::Builder(templatedApproximate<double>());
+  }
+
+  // Comparison
+  /* Warning: Decimal(mantissa: 1000, exponent: 3) and Decimal(mantissa: 1, exponent: 3)
+   * are strictly ordered with the SimplificationOrder although they are equal
+   * with the usual math order (1.000E3 == 1E3). */
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::Decimal; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::Decimal; }
+
+  // Serialization
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
+
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+private:
+  // Worst case is -1.2345678901234E-1000
+  constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+1+1+4+1;
+  int convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const;
+  template<typename T> T templatedApproximate() const;
+  void setNegative(bool negative) { m_negative = negative; }
+  bool m_negative;
   int m_exponent;
+  uint8_t m_numberOfDigitsInMantissa;
+  native_uint_t m_mantissa[0];
+};
+
+class Decimal final : public Number {
+friend class Number;
+friend class Expression;
+friend class DecimalNode;
+template<typename T>
+friend class ComplexNode;
+public:
+  Decimal(DecimalNode * node) : Number(node) {}
+  static Decimal Builder(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
+  static Decimal Builder(Integer m, int e);
+  template <typename T> static Decimal Builder(T f);
+  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentIsNegative = false);
+
+  /* k_maxExponentLength caps the string length we parse to create the exponent.
+   * It prevents m_exponent (int32_t) from overflowing and giving wrong results. */
+  constexpr static int k_maxExponentLength = 8;
+  /* Decimal numbers have a capped exponent. */
+  constexpr static int k_maxExponent = 1000;
+private:
+  constexpr static int k_maxMantissaLength = 20;
+  DecimalNode * node() const { return static_cast<DecimalNode *>(Number::node()); }
+  static Decimal Builder(size_t size, const Integer & m, int e);
+  Expression setSign(ExpressionNode::Sign s);
+  // Simplification
+  Expression shallowReduce();
+  Expression shallowBeautify();
 };
 
 }

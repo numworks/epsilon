@@ -1,59 +1,49 @@
 #include <poincare/sine.h>
-#include <poincare/trigonometry.h>
-#include <poincare/hyperbolic_sine.h>
 #include <poincare/complex.h>
-#include <poincare/multiplication.h>
-#include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
-#include <ion.h>
-extern "C" {
-#include <assert.h>
-}
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type Sine::type() const {
-  return Expression::Type::Sine;
-}
+constexpr Expression::FunctionHelper Sine::s_functionHelper;
 
-Expression * Sine::clone() const {
-  Sine * a = new Sine(m_operands, true);
-  return a;
-}
+int SineNode::numberOfChildren() const { return Sine::s_functionHelper.numberOfChildren(); }
 
-Expression * Sine::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
+float SineNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
+  return Trigonometry::characteristicXRange(Sine(this), context, angleUnit);
 }
 
 template<typename T>
-Complex<T> Sine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() == 0) {
-    T input = c.a();
-    if (angleUnit == AngleUnit::Degree) {
-      input *= M_PI/180;
+Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+  std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
+  std::complex<T> res = std::sin(angleInput);
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
+}
+
+Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
+}
+
+int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
+}
+
+Expression SineNode::shallowReduce(ReductionContext reductionContext) {
+  return Sine(this).shallowReduce(reductionContext);
+}
+
+
+Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
     }
-    T result = std::sin(input);
-    /* Cheat: see comment in cosine.cpp
-     * We cheat to avoid returning sin(Pi) = epsilon */
-    if (input !=  0 && std::fabs(result/input) <= epsilon<T>()) {
-      return Complex<T>::Float(0);
-    }
-    return Complex<T>::Float(result);
   }
-  Complex<T> arg = Complex<T>::Cartesian(-c.b(), c.a());
-  Complex<T> sinh = HyperbolicSine::computeOnComplex(arg, angleUnit);
-  return Multiplication::compute(Complex<T>::Cartesian(0, -1), sinh);
+  return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
 }

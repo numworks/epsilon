@@ -1,30 +1,54 @@
 #include <poincare/integer.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/ieee754.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
+#include <poincare/addition.h>
+#include <poincare/division.h>
+#include <poincare/division_quotient.h>
+#include <poincare/division_remainder.h>
+#include <poincare/equal.h>
+#include <poincare/multiplication.h>
+#include <cmath>
+#include <utility>
 extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 }
-#include <cmath>
-#include <poincare/complex.h>
-#include "layout/string_layout.h"
-#include <utility>
-
+#if POINCARE_INTEGER_LOG
+#include<iostream>
+#endif
 namespace Poincare {
 
-static inline int max(int x, int y) { return (x>y ? x : y); }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
-uint8_t log2(Integer::native_uint_t v) {
-  constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(Integer::native_uint_t);
+/* To compute operations between Integers, we need an array where to store the
+ * result digits. Instead of allocating it on the stack which would eventually
+ * lead to a stack overflow, we keep a static working buffer. We actually need
+ * two of them because division involves inner multiplications and additions
+ * (which would override the division digits if there were using the same
+ * buffer). */
+// TODO: we might want to go back to allocating the native_uint_t arrays on the stack once we increase the stack size from 32k to?
+
+static native_uint_t s_workingBuffer[Integer::k_maxNumberOfDigits + 1];
+static native_uint_t s_workingBufferDivision[Integer::k_maxNumberOfDigits + 1];
+
+uint8_t log2(native_uint_t v) {
+  constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(native_uint_t);
   static_assert(nativeUnsignedIntegerBitCount < 256, "uint8_t cannot contain the log2 of a native_uint_t");
   for (uint8_t i=0; i<nativeUnsignedIntegerBitCount; i++) {
-    if (v < ((Integer::native_uint_t)1<<i)) {
+    if (v < ((native_uint_t)1<<i)) {
       return i;
     }
   }
   return 32;
 }
 
-static inline char char_from_digit(Integer::native_uint_t digit) {
+static inline char char_from_digit(native_uint_t digit) {
   return '0'+digit;
 }
 
@@ -32,178 +56,346 @@ static inline int8_t sign(bool negative) {
   return 1 - 2*(int8_t)negative;
 }
 
-// Constructors
+IntegerNode::IntegerNode(const native_uint_t * digits, uint8_t numberOfDigits) :
+  m_numberOfDigits(numberOfDigits)
+{
+  memcpy(m_digits, digits, numberOfDigits*sizeof(native_uint_t));
+}
 
-static_assert(sizeof(Integer::double_native_int_t) == 2*sizeof(Integer::native_int_t), "double_native_int_t type has not the right size compared to native_int_t");
-static_assert(sizeof(Integer::native_int_t) == sizeof(Integer::native_uint_t), "native_int_t type has not the right size compared to native_uint_t");
+static size_t IntegerSize(uint8_t numberOfDigits) {
+  return sizeof(IntegerNode) + sizeof(native_uint_t)*(numberOfDigits);
+}
 
-Integer::Integer(double_native_int_t i) {
-  double_native_uint_t j = i < 0 ? -i : i;
-  native_uint_t * digits = (native_uint_t *)&j;
-  native_uint_t leastSignificantDigit = *digits;
-  native_uint_t mostSignificantDigit = *(digits+1);
-  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
-  if (m_numberOfDigits == 1) {
-    m_digit = leastSignificantDigit;
-  } else {
-    native_uint_t * digits = new native_uint_t [2];
-    digits[0] = leastSignificantDigit;
-    digits[1] = mostSignificantDigit;
-    m_digits = digits;
+size_t IntegerNode::size() const {
+  return IntegerSize(m_numberOfDigits);
+}
+
+#if POINCARE_TREE_LOG
+
+void IntegerNode::logAttributes(std::ostream & stream) const {
+  stream << " value=\"";
+  log(stream);
+  stream << "\"";
+}
+
+void IntegerNode::log(std::ostream & stream) const {
+  if (m_numberOfDigits > Integer::k_maxNumberOfDigits) {
+    stream << "overflow";
+    return;
   }
+  double d = 0.0;
+  double base = 1.0;
+  for (int i = 0; i < m_numberOfDigits; i++) {
+    d += m_digits[i]*base;
+    base *= std::pow(2.0,32.0);
+  }
+  stream << d;
+}
+
+#endif
+
+// Constructor
+
+Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) {
+  if ((!digits || !enableOverflow) && numberOfDigits >= k_maxNumberOfDigits+1) {
+    return Overflow(negative);
+  }
+  // 0 can't be negative
+  negative = numberOfDigits == 0 ? false : negative;
+  if (numberOfDigits <= 1) {
+    Integer i(TreeNode::NoNodeIdentifier, negative);
+    i.m_digit = numberOfDigits == 0 ? 0 : digits[0];
+    return i;
+  }
+  return Integer(digits, numberOfDigits, negative);
+}
+
+// Private constructor
+
+Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) {
+  void * bufferNode = TreePool::sharedPool()->alloc(IntegerSize(numberOfDigits));
+  IntegerNode * node = new (bufferNode) IntegerNode(digits, numberOfDigits);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  /* Integer is a TreeHandle that keeps an extra integer. We cannot just cast
+   * the TreeHandle in Integer, we have to build a new Integer. To do so, we
+   * pilfer the TreeHandle identifier. */
+  new (this) Integer(h.identifier(), negative);
+}
+
+Integer::Integer(native_int_t i) : TreeHandle(TreeNode::NoNodeIdentifier) {
+  m_digit = i > 0 ? i : -i;
   m_negative = i < 0;
 }
 
-/* Caution: string is NOT guaranteed to be NULL-terminated! */
-Integer::Integer(const char * digits, bool negative) :
+Integer::Integer(double_native_int_t i) {
+  double_native_uint_t j = i < 0 ? -i : i;
+  native_uint_t * d = (native_uint_t *)&j;
+  native_uint_t leastSignificantDigit = *d;
+  native_uint_t mostSignificantDigit = *(d+1);
+  uint8_t numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
+  if (numberOfDigits == 1) {
+    m_identifier = TreeNode::NoNodeIdentifier;
+    m_negative = i < 0;
+    m_digit = leastSignificantDigit;
+  } else {
+    new (this) Integer(d, 2, i < 0);
+  }
+}
+
+int integerFromCharDigit(char c) {
+  assert(c >= '0');
+  if (c <= '9') {
+    return c - '0';
+  }
+  if (c <= 'F') {
+    assert(c >= 'A');
+    return c - 'A' + 10;
+  }
+  assert(c >= 'a' && c <= 'f');
+    return c - 'a' + 10;
+}
+
+Integer::Integer(const char * digits, size_t length, bool negative, Base b) :
   Integer(0)
 {
-  if (digits != nullptr && digits[0] == '-') {
+  if (digits != nullptr && UTF8Helper::CodePointIs(digits, '-')) {
     negative = true;
     digits++;
+    length--;
   }
-
-  Integer result = Integer(0);
-
   if (digits != nullptr) {
-    Integer base = Integer(10);
-    while (*digits >= '0' && *digits <= '9') {
-      result = Multiplication(result, base);
-      result = Addition(result, Integer(*digits-'0'));
+    Integer base((int)b);
+    for (size_t i = 0; i < length; i++) {
+      *this = Multiplication(*this, base);
+      *this = Addition(*this, Integer(integerFromCharDigit(*digits)));
       digits++;
     }
   }
+  setNegative(isZero() ? false : negative);
+}
 
-  *this = std::move(result);
+// Serialization
 
+char binaryCharacterForDigit(uint8_t d) {
+  assert(d == 0 || d == 1);
+  return d == 0 ? '0' : '1';
+}
+
+char hexadecimalCharacterForDigit(uint8_t d) {
+  if (d >= 10) {
+    return 'A' + d - 10;
+  }
+  return d + '0';
+}
+
+int Integer::serialize(char * buffer, int bufferSize, Base base) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  if (bufferSize == 1) {
+    return 0;
+  }
+  if (isOverflow()) {
+    return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
+  }
+  switch (base) {
+    case Base::Binary:
+      return serializeInBinaryBase(buffer, bufferSize, 1, 'b', binaryCharacterForDigit);
+    case Base::Decimal:
+      return serializeInDecimal(buffer, bufferSize);
+    default:
+      assert(base == Base::Hexadecimal);
+      return serializeInBinaryBase(buffer, bufferSize, 4, 'x', hexadecimalCharacterForDigit);
+  }
+}
+
+int Integer::serializeInDecimal(char * buffer, int bufferSize) const {
+  Integer base(10);
+  Integer abs = *this;
+  abs.setNegative(false);
+  IntegerDivision d = udiv(abs, base);
+
+  int length = 0;
   if (isZero()) {
-    negative = false;
+    length += SerializationHelper::CodePoint(buffer + length, bufferSize - length, '0');
+  } else if (isNegative()) {
+    length += SerializationHelper::CodePoint(buffer + length, bufferSize - length, '-');
   }
-  m_negative = negative;
-}
 
-Integer Integer::exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
-  Integer base = Integer(10);
-  Integer power = Integer(0);
-  for (int i = 0; i < exponentLength; i++) {
-    power = Multiplication(power, base);
-    power = Addition(power, Integer(*exponent-'0'));
-    exponent++;
-  }
-  if (exponentNegative) {
-    power.setNegative(true);
-  }
-  return Subtraction(Integer(fractionalPartLength), power);
-}
-
-Integer Integer::numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent) {
-  Integer base = Integer(10);
-  Integer numerator = Integer(integralPart, negative);
-  for (int i = 0; i < fractionalPartLength; i++) {
-    numerator = Multiplication(numerator, base);
-    numerator = Addition(numerator, Integer(*fractionalPart-'0'));
-    fractionalPart++;
-  }
-  if (exponent->isNegative()) {
-    while (!exponent->isEqualTo(Integer(0))) {
-      numerator = Multiplication(numerator, base);
-      *exponent = Addition(*exponent, Integer(1));
+  while (!(d.remainder.isZero() &&
+        d.quotient.isZero())) {
+    char c = char_from_digit(d.remainder.isZero() ? 0 : d.remainder.digit(0));
+    if (length >= bufferSize-1) {
+      return PrintFloat::ConvertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
     }
+    length += SerializationHelper::CodePoint(buffer + length, bufferSize - length, c);
+    d = udiv(d.quotient, base);
   }
-  return numerator;
-}
+  assert(length <= bufferSize - 1);
+  buffer[length] = 0;
 
-Integer Integer::denominator(Integer * exponent) {
-  Integer base = Integer(10);
-  Integer denominator = Integer(1);
-  if (!exponent->isNegative()) {
-    while (!exponent->isEqualTo(Integer(0))) {
-      denominator = Multiplication(denominator, base);
-      *exponent = Subtraction(*exponent, Integer(1));
-    }
+  // Flip the string
+  for (int i = m_negative, j=length-1 ; i < j ; i++, j--) {
+    char c = buffer[i];
+    buffer[i] = buffer[j];
+    buffer[j] = c;
   }
-  return denominator;
+  return length;
 }
 
-Integer::~Integer() {
-  releaseDynamicIvars();
-}
-
-Integer::Integer(Integer && other) {
-  // Pilfer other's data
-  if (other.usesImmediateDigit()) {
-    m_digit = other.m_digit;
-  } else {
-    m_digits = other.m_digits;
+int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDigit, char symbol, CharacterForDigit charForDigit) const {
+  int currentChar = 0;
+  // Check that we can at least write "0x0"
+  if (bufferSize <= 4) {
+    return -1;
   }
-  m_numberOfDigits = other.m_numberOfDigits;
-  m_negative = other.m_negative;
+  // Fill buffer with "0x"
+  buffer[currentChar++] = '0';
+  buffer[currentChar++] = symbol;
 
-  // Reset other
-  other.m_digit = 0;
-  other.m_numberOfDigits = 1;
-  other.m_negative = 0;
-}
-
-Integer::Integer(const Integer& other) {
-  // Copy other's data
-  if (other.usesImmediateDigit()) {
-    m_digit = other.m_digit;
-  } else {
-    native_uint_t * digits = new native_uint_t [other.m_numberOfDigits];
-    for (int i=0; i<other.m_numberOfDigits; i++) {
-      digits[i] = other.m_digits[i];
-    }
-    m_digits = digits;
+  int nbOfDigits = numberOfDigits();
+  // Special case for 0
+  if (nbOfDigits == 0) {
+    buffer[currentChar++] = '0';
+    buffer[currentChar] = 0;
+    return currentChar;
   }
-  m_numberOfDigits = other.m_numberOfDigits;
-  m_negative = other.m_negative;
-}
 
-Integer& Integer::operator=(Integer && other) {
-  if (this != &other) {
-    releaseDynamicIvars();
-    // Pilfer other's ivars
-    if (other.usesImmediateDigit()) {
-      m_digit = other.m_digit;
+  // Compute the required bufferSize to print the integer
+  // TODO: share this code with exam mode new version
+  native_uint_t lastDigit = digit(nbOfDigits-1);
+  int minShift = 0;
+  int maxShift = 32;
+  while (maxShift > minShift+1) {
+    int shift = (minShift + maxShift)/2;
+    native_uint_t shifted = lastDigit >> shift;
+    if (shifted == 0) {
+      maxShift = shift;
     } else {
-      m_digits = other.m_digits;
+      minShift = shift;
     }
-    m_numberOfDigits = other.m_numberOfDigits;
-    m_negative = other.m_negative;
-
-    // Reset other
-    other.m_digit = 0;
-    other.m_numberOfDigits = 1;
-    other.m_negative = 0;
   }
-  return *this;
-}
+  int requiredBufferSize = ((nbOfDigits-1)*32+(maxShift+bitsPerDigit-1))/bitsPerDigit;
+  // Don't forget 0x prefix and the null termination
+  requiredBufferSize += 3;
+  if (requiredBufferSize > bufferSize) {
+    return -1;
+  }
 
-Integer& Integer::operator=(const Integer& other) {
-  if (this != &other) {
-    releaseDynamicIvars();
-    // Copy other's ivars
-    if (other.usesImmediateDigit()) {
-      m_digit = other.m_digit;
-    } else {
-      native_uint_t * digits = new native_uint_t [other.m_numberOfDigits];
-      for (int i=0; i<other.m_numberOfDigits; i++) {
-        digits[i] = other.m_digits[i];
+  currentChar = requiredBufferSize - 1;
+  buffer[currentChar--] = 0;
+  uint8_t first4bits = ((1 << bitsPerDigit) - 1);
+  for (int i = 0; i < nbOfDigits; i++) {
+    for (int j = 0; j < 32/bitsPerDigit; j++) {
+      char d = (digit(i) >> j*bitsPerDigit) & first4bits;
+      buffer[currentChar--] = charForDigit(d);
+      if (currentChar == 1) {
+        return requiredBufferSize-1;
       }
-      m_digits = digits;
     }
-    m_numberOfDigits = other.m_numberOfDigits;
-    m_negative = other.m_negative;
   }
-  return *this;
+  return requiredBufferSize-1;
 }
 
-void Integer::setNegative(bool negative) {
-  if (isZero()) { // Zero cannot be negative
-    return;
+// Layout
+
+Layout Integer::createLayout(Base base) const {
+  char buffer[k_maxNumberOfDigitsBase10];
+  int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10, base);
+  assert(numberOfChars >= 1);
+  if ((int)UTF8Decoder::CharSizeOfCodePoint(buffer[0]) == numberOfChars) {
+    UTF8Decoder decoder = UTF8Decoder(buffer);
+    return CodePointLayout::Builder(decoder.nextCodePoint());
   }
-  m_negative = negative;
+  return LayoutHelper::String(buffer, numberOfChars);
+}
+
+// Approximation
+
+template<typename T>
+T Integer::approximate() const {
+  if (numberOfDigits() == 0) {
+    /* This special case for 0 is needed, because the current algorithm assumes
+     * that the big integer is non zero, thus puts the exponent to 126 (integer
+     * area), the issue is that when the mantissa is 0, a "shadow bit" is
+     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
+     */
+    return (T)0.0;
+  }
+  assert(sizeof(T) == 4 || sizeof(T) == 8);
+  /* We're generating an IEEE 754 compliant float(double).
+  * We can tell that:
+  * - the sign depends on m_negative
+  * - the exponent is the length of our BigInt, in bits - 1 + 127 (-1+1023);
+  * - the mantissa is the beginning of our BigInt, discarding the first bit
+  */
+
+  if (isOverflow()) {
+    return m_negative ? -INFINITY : INFINITY;
+  }
+
+  assert(numberOfDigits() > 0);
+  native_uint_t lastDigit = digit(numberOfDigits()-1);
+  uint8_t numberOfBitsInLastDigit = log2(lastDigit);
+
+  bool sign = m_negative;
+  uint16_t exponent = IEEE754<T>::exponentOffset();
+  /* Escape case if the exponent is too big to be stored */
+  assert(numberOfDigits() > 0);
+  if (((int)numberOfDigits()-1)*32+numberOfBitsInLastDigit-1> IEEE754<T>::maxExponent()-IEEE754<T>::exponentOffset()) {
+    return  m_negative ? -INFINITY : INFINITY;
+  }
+  exponent += (numberOfDigits()-1)*32;
+  exponent += numberOfBitsInLastDigit-1;
+
+  uint64_t mantissa = 0;
+  /* Shift the most significant int to the left of the mantissa. The most
+   * significant 1 will be ignore at the end when inserting the mantissa in
+   * the resulting uint64_t (as required by IEEE754). */
+  assert(IEEE754<T>::size()-numberOfBitsInLastDigit >= 0 && IEEE754<T>::size()-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
+  mantissa |= ((uint64_t)lastDigit << (IEEE754<T>::size()-numberOfBitsInLastDigit));
+  uint8_t digitIndex = 2;
+  int numberOfBits = numberOfBitsInLastDigit;
+  /* Complete the mantissa by inserting, from left to right, every digit of the
+   * Integer from the most significant one to the last from. We break when
+   * the mantissa is complete to avoid undefined right shifting (Shift operator
+   * behavior is undefined if the right operand is negative, or greater than or
+   * equal to the length in bits of the promoted left operand). */
+  while (numberOfDigits() >= digitIndex && numberOfBits < IEEE754<T>::size()) {
+    lastDigit = digit(numberOfDigits()-digitIndex);
+    numberOfBits += 32;
+    if (IEEE754<T>::size() > numberOfBits) {
+      assert(IEEE754<T>::size()-numberOfBits > 0 && IEEE754<T>::size()-numberOfBits < 64);
+      mantissa |= ((uint64_t)lastDigit << (IEEE754<T>::size()-numberOfBits));
+    } else {
+      mantissa |= ((uint64_t)lastDigit >> (numberOfBits-IEEE754<T>::size()));
+    }
+    digitIndex++;
+  }
+
+  T result = IEEE754<T>::buildFloat(sign, exponent, mantissa);
+
+  /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
+   * representable float. */
+  if (exponent == IEEE754<T>::maxExponent() && std::isnan(result)) {
+    return INFINITY;
+  }
+  return result;
+}
+
+// Properties
+
+int Integer::NumberOfBase10DigitsWithoutSign(const Integer & i) {
+  assert(!i.isOverflow());
+  int numberOfDigits = 1;
+  Integer base(10);
+  IntegerDivision d = udiv(i, base);
+  while (!d.quotient.isZero()) {
+    d = udiv(d.quotient, base);
+    numberOfDigits++;
+  }
+  return numberOfDigits;
 }
 
 // Comparison
@@ -218,147 +410,134 @@ int Integer::NaturalOrder(const Integer & i, const Integer & j) {
   return ::Poincare::sign(i.isNegative())*ucmp(i, j);
 }
 
-bool Integer::isEqualTo(const Integer & other) const {
-  return (NaturalOrder(*this, other) == 0);
-}
-
-bool Integer::isLowerThan(const Integer & other) const {
-  return (NaturalOrder(*this, other) < 0);
-}
-
 // Arithmetic
 
-Integer Integer::Addition(const Integer & a, const Integer & b) {
-  return addition(a, b, false);
-}
-
-Integer Integer::Subtraction(const Integer & a, const Integer & b) {
-  return addition(a, b, true);
-}
-
-Integer Integer::Multiplication(const Integer & a, const Integer & b) {
-  assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t));
-  uint16_t productSize = a.m_numberOfDigits + b.m_numberOfDigits;
-  native_uint_t * digits = new native_uint_t [productSize];
-  memset(digits, 0, productSize*sizeof(native_uint_t));
-
-  double_native_uint_t carry = 0;
-  for (uint16_t i=0; i<a.m_numberOfDigits; i++) {
-    double_native_uint_t aDigit = a.digit(i);
-    carry = 0;
-    for (uint16_t j=0; j<b.m_numberOfDigits; j++) {
-      double_native_uint_t bDigit = b.digit(j);
-      /* The fact that aDigit and bDigit are double_native is very important,
-       * otherwise the product might end up being computed on single_native size
-       * and then zero-padded. */
-      double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
-      native_uint_t * l = (native_uint_t *)&p;
-      digits[i+j] = l[0];
-      carry = l[1];
-    }
-    digits[i+b.m_numberOfDigits] += carry;
-  }
-
-  while (digits[productSize-1] == 0 && productSize>1) {
-    productSize--;
-    /* At this point we could realloc m_digits to a smaller size. */
-  }
-
-  return Integer(digits, productSize, a.m_negative != b.m_negative);
-}
-
-Integer Integer::Factorial(const Integer & i) {
-  Integer j = Integer(2);
-  Integer result = Integer(1);
-  while (!i.isLowerThan(j)) {
-    result = Multiplication(j, result);
-    j = Addition(j, Integer(1));
-  }
-  return result;
-}
-
 IntegerDivision Integer::Division(const Integer & numerator, const Integer & denominator) {
+  IntegerDivision ud = udiv(numerator, denominator);
   if (!numerator.isNegative() && !denominator.isNegative()) {
-    return udiv(numerator, denominator);
+    return ud;
   }
-  Integer absNumerator = numerator;
-  absNumerator.setNegative(false);
-  Integer absDenominator = denominator;
-  absDenominator.setNegative(false);
-  IntegerDivision usignedDiv = udiv(absNumerator, absDenominator);
-  if (usignedDiv.remainder.isEqualTo(Integer(0))) {
-    if (!numerator.isNegative() || !denominator.isNegative()) {
-      usignedDiv.quotient.setNegative(true);
-    }
-    return usignedDiv;
+  if (!ud.remainder.isZero() && numerator.isNegative()) {
+    ud.quotient = usum(ud.quotient, Integer(1), false);
+    ud.remainder = usum(denominator, ud.remainder, true); // |denominator|-remainder
   }
-  if (numerator.isNegative()) {
-    if (denominator.isNegative()) {
-      usignedDiv.remainder.setNegative(true);
-      usignedDiv.quotient = Addition(usignedDiv.quotient, Integer(1));
-      usignedDiv.remainder = Integer::Subtraction(usignedDiv.remainder, denominator);
-   } else {
-      usignedDiv.quotient.setNegative(true);
-      usignedDiv.quotient = Subtraction(usignedDiv.quotient, Integer(1));
-      usignedDiv.remainder = Integer::Subtraction(denominator, usignedDiv.remainder);
-    }
-  } else {
-    assert(denominator.isNegative());
-    usignedDiv.quotient.setNegative(true);
-  }
-  return usignedDiv;
+  ud.quotient.setNegative((numerator.isNegative() && !denominator.isNegative()) || (!numerator.isNegative() && denominator.isNegative()));
+  return ud;
 }
 
 Integer Integer::Power(const Integer & i, const Integer & j) {
   // TODO: optimize with dichotomia
   assert(!j.isNegative());
-  Integer index = j;
-  Integer result = Integer(1);
-  while (!index.isEqualTo(Integer(0))) {
+  if (j.isOverflow()) {
+    return Overflow(false);
+  }
+  Integer index(j);
+  Integer result(1);
+  while (!index.isZero()) {
     result = Multiplication(result, i);
-    index = Subtraction(index, Integer(1));
+    index = usum(index, Integer(1), true);
   }
   return result;
 }
 
-// Private methods
+Integer Integer::Factorial(const Integer & i) {
+  assert(!i.isNegative());
+  if (i.isOverflow()) {
+    return Overflow(false);
+  }
+  Integer j(2);
+  Integer result(1);
+  while (ucmp(i,j) >= 0) {
+    result = Multiplication(j, result);
+    j = usum(j, Integer(1), false);
+  }
+  return result;
+}
 
-  /* WARNING: This constructor takes ownership of the digits array! */
-Integer::Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
-    m_numberOfDigits(numberOfDigits),
-    m_negative(negative)
-{
-  assert(digits != nullptr);
-  if (numberOfDigits == 1) {
-    m_digit = digits[0];
-    delete[] digits;
-    if (isZero()) {
-      // Normalize zero
-      m_negative = false;
-    }
+Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative, bool oneDigitOverflow) {
+  bool bNegative = (inverseBNegative ? !b.m_negative : b.m_negative);
+  if (a.m_negative == bNegative) {
+    Integer us = usum(a, b, false, oneDigitOverflow);
+    us.setNegative(a.m_negative);
+    return us;
   } else {
-    assert(numberOfDigits > 1);
-    m_digits = digits;
+    /* The signs are different, this is in fact a subtraction
+     * s = a+b = (abs(a)-abs(b) OR abs(b)-abs(a))
+     * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
+     * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
+     * sign? sign of the greater! */
+    if (ucmp(a, b) >= 0) {
+      Integer us = usum(a, b, true, oneDigitOverflow);
+      us.setNegative(a.m_negative);
+      return us;
+    } else {
+      Integer us = usum(b, a, true, oneDigitOverflow);
+      us.setNegative(bNegative);
+      return us;
+    }
   }
 }
 
-void Integer::releaseDynamicIvars() {
-  if (!usesImmediateDigit()) {
-    assert(m_digits != nullptr);
-    delete[] m_digits;
+Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDigitOverflow) {
+  if (a.isOverflow() || b.isOverflow()) {
+    return Integer::Overflow(a.m_negative != b.m_negative);
   }
+
+  uint8_t size = minInt(a.numberOfDigits() + b.numberOfDigits(), k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
+
+  memset(s_workingBuffer, 0, size*sizeof(native_uint_t));
+
+  double_native_uint_t carry = 0;
+  for (uint8_t i = 0; i < a.numberOfDigits(); i++) {
+    double_native_uint_t aDigit = a.digit(i);
+    carry = 0;
+    for (uint8_t j = 0; j < b.numberOfDigits(); j++) {
+      double_native_uint_t bDigit = b.digit(j);
+      /* The fact that aDigit and bDigit are double_native is very important,
+       * otherwise the product might end up being computed on single_native size
+       * and then zero-padded. */
+      double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(s_workingBuffer[i+j]); // TODO: Prove it cannot overflow double_native type
+      native_uint_t * l = (native_uint_t *)&p;
+      if (i+j < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
+        s_workingBuffer[i+j] = l[0];
+      } else {
+        if (l[0] != 0) {
+          // Overflow the largest Integer
+          return Integer::Overflow(a.m_negative != b.m_negative);
+        }
+      }
+      carry = l[1];
+    }
+    if (i+b.numberOfDigits() < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
+      s_workingBuffer[i+b.numberOfDigits()] += carry;
+    } else {
+      if (carry != 0) {
+        // Overflow the largest Integer
+        return Integer::Overflow(a.m_negative != b.m_negative);
+      }
+    }
+  }
+  while (size>0 && s_workingBuffer[size-1] == 0) {
+    size--;
+  }
+  return BuildInteger(s_workingBuffer, size, a.m_negative != b.m_negative, oneDigitOverflow);
 }
 
 int8_t Integer::ucmp(const Integer & a, const Integer & b) {
-  if (a.m_numberOfDigits < b.m_numberOfDigits) {
+  if (a.numberOfDigits() < b.numberOfDigits()) {
     return -1;
-  } else if (a.m_numberOfDigits > b.m_numberOfDigits) {
+  } else if (a.numberOfDigits() > b.numberOfDigits()) {
     return 1;
   }
-  for (uint16_t i = 0; i < a.m_numberOfDigits; i++) {
+  if (a.isOverflow() && b.isOverflow()) {
+    return 0;
+  }
+  assert(!a.isOverflow());
+  assert(!b.isOverflow());
+  for (uint16_t i = 0; i < a.numberOfDigits(); i++) {
     // Digits are stored most-significant last
-    native_uint_t aDigit = a.digit(a.m_numberOfDigits-i-1);
-    native_uint_t bDigit = b.digit(b.m_numberOfDigits-i-1);
+    native_uint_t aDigit = a.digit(a.numberOfDigits()-i-1);
+    native_uint_t bDigit = b.digit(b.numberOfDigits()-i-1);
     if (aDigit < bDigit) {
       return -1;
     } else if (aDigit > bDigit) {
@@ -368,260 +547,164 @@ int8_t Integer::ucmp(const Integer & a, const Integer & b) {
   return 0;
 }
 
-Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative) {
-  uint16_t size = max(a.m_numberOfDigits, b.m_numberOfDigits);
+Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool oneDigitOverflow) {
+  if (a.isOverflow() || b.isOverflow()) {
+    return Overflow(a.m_negative != b.m_negative);
+  }
+
+  uint8_t size = maxInt(a.numberOfDigits(), b.numberOfDigits());
   if (!subtract) {
     // Addition can overflow
-    size += 1;
+    size++;
   }
-  native_uint_t * digits = new native_uint_t [size];
   bool carry = false;
-  for (uint16_t i = 0; i<size; i++) {
-    native_uint_t aDigit = (i >= a.m_numberOfDigits ? 0 : a.digit(i));
-    native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
+  for (uint8_t i = 0; i < size; i++) {
+    native_uint_t aDigit = (i >= a.numberOfDigits() ? 0 : a.digit(i));
+    native_uint_t bDigit = (i >= b.numberOfDigits() ? 0 : b.digit(i));
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
-    digits[i] = result;
+    if (i < (uint8_t) (k_maxNumberOfDigits + oneDigitOverflow)) {
+      s_workingBuffer[i] = result;
+    } else {
+      if (result != 0) {
+        // Overflow the largest Integer
+        return Overflow(false);
+      }
+    }
     if (subtract) {
       carry = (aDigit < result) || (carry && aDigit == result); // There's been an underflow
     } else {
       carry = (aDigit > result) || (bDigit > result); // There's been an overflow
     }
   }
-  while (digits[size-1] == 0 && size>1) {
+  size = minInt(size, k_maxNumberOfDigits+oneDigitOverflow);
+  while (size>0 && s_workingBuffer[size-1] == 0) {
     size--;
-    // We could realloc digits to a smaller size. Probably not worth the trouble.
   }
-  return Integer(digits, size, outputNegative);
+  return BuildInteger(s_workingBuffer, size, false, oneDigitOverflow);
 }
 
-
-Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative) {
-  bool bNegative = (inverseBNegative ? !b.m_negative : b.m_negative);
-  if (a.m_negative == bNegative) {
-    return usum(a, b, false, a.m_negative);
-  } else {
-    /* The signs are different, this is in fact a subtraction
-     * s = a+b = (abs(a)-abs(b) OR abs(b)-abs(a))
-     * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
-     * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
-     * sign? sign of the greater! */
-    if (ucmp(a, b) >= 0) {
-      return usum(a, b, true, a.m_negative);
-    } else {
-      return usum(b, a, true, bNegative);
-    }
+Integer Integer::multiplyByPowerOf2(uint8_t pow) const {
+  assert(pow < 32);
+  native_uint_t carry = 0;
+  for (uint8_t i = 0; i < numberOfDigits(); i++) {
+    s_workingBuffer[i] = digit(i) << pow | carry;
+    carry = pow == 0 ? 0 : digit(i) >> (32-pow);
   }
+  s_workingBuffer[numberOfDigits()] = carry;
+  return BuildInteger(s_workingBuffer, carry ? numberOfDigits() + 1 : numberOfDigits(), false, true);
 }
 
-Integer Integer::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
-  assert(halfDigit != 0);
-  half_native_uint_t * digits = (half_native_uint_t *)new native_uint_t [(index+1)/2];
-  memset(digits, 0, (index+1)/2*sizeof(native_uint_t));
-  digits[index-1] = halfDigit;
-  int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
-  return Integer((native_uint_t *)digits, indexInBase32, false);
+Integer Integer::divideByPowerOf2(uint8_t pow) const {
+  assert(pow < 32);
+  native_uint_t carry = 0;
+  for (int i = numberOfDigits() - 1; i >= 0; i--) {
+    s_workingBuffer[i] = digit(i) >> pow | carry;
+    carry = pow == 0 ? 0 : digit(i) << (32-pow);
+  }
+  return BuildInteger(s_workingBuffer, s_workingBuffer[numberOfDigits()-1] > 0 ? numberOfDigits() : numberOfDigits()-1, false, true);
+}
+
+// return this*(2^16)^pow
+Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
+  int nbOfHalfDigits = numberOfHalfDigits();
+  half_native_uint_t * digits = reinterpret_cast<half_native_uint_t *>(s_workingBuffer);
+  /* The number of half digits of the built integer is nbOfHalfDigits+pow.
+   * Still, we set an extra half digit to 0 to easily convert half digits to
+   * digits. */
+  memset(digits, 0, sizeof(half_native_uint_t)*(nbOfHalfDigits+pow+1));
+  for (uint8_t i = 0; i < nbOfHalfDigits; i++) {
+    digits[i+pow] = halfDigit(i);
+  }
+  nbOfHalfDigits += pow;
+  return BuildInteger((native_uint_t *)digits, nbOfHalfDigits%2 == 1 ? nbOfHalfDigits/2+1 : nbOfHalfDigits/2, false, true);
 }
 
 IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
+  if (denominator.isOverflow()) {
+    return {.quotient = Overflow(false), .remainder = Integer::Overflow(false)};
+  }
+  if (numerator.isOverflow()) {
+    return {.quotient = Overflow(false), .remainder = Integer::Overflow(false)};
+  }
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */
   assert(!denominator.isZero());
-  if (numerator.isLowerThan(denominator)) {
-    IntegerDivision div = {.quotient = 0, .remainder = numerator};
+  if (ucmp(numerator,denominator) < 0) {
+    IntegerDivision div = {.quotient = Integer(0), .remainder = Integer(numerator)};
     return div;
   }
+  /* Let's call beta = 1 << 16 */
+  /* Normalize numerator & denominator:
+   * Find A = 2^k*numerator & B = 2^k*denominator such as B > beta/2
+   * if A = B*Q+R (R < B) then numerator = denominator*Q + R/2^k. */
+  half_native_uint_t b = denominator.halfDigit(denominator.numberOfHalfDigits()-1);
+  half_native_uint_t halfBase = 1 << (16-1);
+  int pow = 0;
+  assert(b != 0);
+  while (!(b & halfBase)) {
+    b = b << 1;
+    pow++;
+  }
+  Integer A = numerator.multiplyByPowerOf2(pow);
+  Integer B = denominator.multiplyByPowerOf2(pow);
 
-  Integer A = numerator;
-  Integer B = denominator;
-  native_int_t base = 1 << 16;
-  // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
-  native_int_t d = base/(native_int_t)(B.halfDigit(B.numberOfHalfDigits()-1)+1);
-  A = Multiplication(Integer(d), A);
-  B = Multiplication(Integer(d), B);
-
+  /* A = a[0] + a[1]*beta + ... + a[n+m-1]*beta^(n+m-1)
+   * B = b[0] + b[1]*beta + ... + b[n-1]*beta^(n-1) */
   int n = B.numberOfHalfDigits();
   int m = A.numberOfHalfDigits()-n;
-  half_native_uint_t * qDigits = (half_native_uint_t *)new native_uint_t [m/2+1];
-  memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
-  Integer betam = IntegerWithHalfDigitAtIndex(1, m+1);
-  Integer betaMB = Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
-  if (!A.isLowerThan(betaMB)) {
-    qDigits[m] = 1;
-    A = Subtraction(A, betaMB);
+  // qDigits is a half_native_uint_t array and enable one digit overflow
+  half_native_uint_t * qDigits = reinterpret_cast<half_native_uint_t *>(s_workingBufferDivision);
+  // The quotient q has at maximum m+1 half digits but we set an extra half digit to 0 to enable to easily convert it from half digits to digits
+  memset(qDigits, 0, maxInt(m+1+1,2*k_maxNumberOfDigits)*sizeof(half_native_uint_t));
+  // betaMB = B*beta^m
+  Integer betaMB = B.multiplyByPowerOfBase(m);
+  if (Integer::NaturalOrder(A,betaMB) >= 0) { // A >= B*beta^m
+    qDigits[m] = 1; // q[m] = 1
+    A = usum(A, betaMB, true, true); // A-B*beta^m
   }
+  native_int_t base = 1 << 16;
   for (int j = m-1; j >= 0; j--) {
-    native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1);
-    half_native_uint_t baseMinus1 = (1 << 16) -1;
-    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
-    Integer factor = qDigits[j] > 0 ? IntegerWithHalfDigitAtIndex(qDigits[j], j+1) : Integer(0);
-    A = Subtraction(A, Multiplication(factor, B));
-    Integer m = Multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B);
-    while (A.isLowerThan(Integer(0))) {
-      qDigits[j] = qDigits[j]-1;
-      A = Addition(A, m);
+    native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1); // (a[n+j]*beta+a[n+j-1])/b[n-1]
+    half_native_uint_t baseMinus1 = (1 << 16) -1; // beta-1
+    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // minInt(qj2, beta -1)
+    A = Integer::addition(A, multiplication(qDigits[j], B.multiplyByPowerOfBase(j), true), true, true); // A-q[j]*beta^j*B
+    if (A.isNegative()) {
+      Integer betaJM = B.multiplyByPowerOfBase(j); // betaJM = B*beta^j
+      while (A.isNegative()) {
+        qDigits[j] = qDigits[j]-1; // q[j] = q[j]-1
+        A = addition(A, betaJM, false, true); // A = B*beta^j+A
+      }
     }
   }
   int qNumberOfDigits = m+1;
   while (qDigits[qNumberOfDigits-1] == 0 && qNumberOfDigits > 1) {
     qNumberOfDigits--;
-    // We could realloc digits to a smaller size. Probably not worth the trouble.
   }
   int qNumberOfDigitsInBase32 = qNumberOfDigits%2 == 1 ? qNumberOfDigits/2+1 : qNumberOfDigits/2;
-  IntegerDivision div = {.quotient = Integer((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
-  if (d != 1 && !div.remainder.isZero()) {
-    div.remainder = udiv(div.remainder, Integer(d)).quotient;
+  IntegerDivision div = {.quotient = BuildInteger((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
+  if (pow > 0 && !div.remainder.isZero()) {
+    div.remainder = div.remainder.divideByPowerOf2(pow);
   }
   return div;
 }
 
-template<typename T>
-T Integer::approximate() const {
-  if (isZero()) {
-    /* This special case for 0 is needed, because the current algorithm assumes
-     * that the big integer is non zero, thus puts the exponent to 126 (integer
-     * area), the issue is that when the mantissa is 0, a "shadow bit" is
-     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
-     */
-    T result = m_negative ? -0.0 : 0.0;
-    return result;
-  }
-  union {
-    uint64_t uint_result;
-    T float_result;
-  } u;
-  assert(sizeof(T) == 4 || sizeof(T) == 8);
-  /* We're generating an IEEE 754 compliant float(double).
-  * Theses numbers are 32(64)-bit values, stored as follow:
-  * sign: 1 bit (1 bit)
-  * exponent: 8 bits (11 bits)
-  * mantissa: 23 bits (52 bits)
-  *
-  * We can tell that:
-  * - the sign is going to be 0 for now, we only handle positive numbers
-  * - the exponent is the length of our BigInt, in bits - 1 + 127 (-1+1023);
-  * - the mantissa is the beginning of our BigInt, discarding the first bit
-  */
+Expression Integer::CreateMixedFraction(const Integer & num, const Integer & denom) {
+  Expression quo = DivisionQuotient::Reduce(num, denom);
+  Expression rem = DivisionRemainder::Reduce(num, denom);
+  return Addition::Builder(quo, Division::Builder(rem, Rational::Builder(denom)));
 
-  native_uint_t lastDigit = digit(m_numberOfDigits-1);
-  uint8_t numberOfBitsInLastDigit = log2(lastDigit);
-
-  bool sign = m_negative;
-
-  int signNbBit = 1;
-  int exponentNbBit = sizeof(T) == sizeof(float) ? 8 : 11;
-  int mantissaNbBit = sizeof(T) == sizeof(float) ? 23 : 52;
-  int totalNumberOfBits = signNbBit + exponentNbBit + mantissaNbBit;
-  uint16_t exponent = (1 << (exponentNbBit-1)) -2;
-  /* if the exponent is bigger then 255 (2047), it cannot be stored as a
-   * uint8(uint11). Also, the integer whose 2-exponent is bigger than 255(2047)
-   * cannot be stored as a float (IEEE 754 floating(double) point). The
-   * approximation is thus INFINITY. */
-  int maxExponent = (1 << exponentNbBit) -1;
-  if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> maxExponent) {
-    return INFINITY;
-  }
-  exponent += (m_numberOfDigits-1)*32;
-  exponent += numberOfBitsInLastDigit;
-
-  uint64_t mantissa = 0;
-  /* Shift the most significant int to the left of the mantissa. The most
-   * significant 1 will be ignore at the end when inserting the mantissa in
-   * the resulting uint64_t (as required by IEEE754). */
-  assert(totalNumberOfBits-numberOfBitsInLastDigit >= 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
-  mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
-  int digitIndex = 2;
-  int numberOfBits = numberOfBitsInLastDigit;
-  /* Complete the mantissa by inserting, from left to right, every digit of the
-   * Integer from the most significant one to the last from. We break when
-   * the mantissa is complete to avoid undefined right shifting (Shift operator
-   * behavior is undefined if the right operand is negative, or greater than or
-   * equal to the length in bits of the promoted left operand). */
-  while (m_numberOfDigits >= digitIndex) {
-    lastDigit = digit(m_numberOfDigits-digitIndex);
-    numberOfBits += 32;
-    if (numberOfBits-totalNumberOfBits >= 64) {
-      break;
-    }
-    if (totalNumberOfBits > numberOfBits) {
-      assert(totalNumberOfBits-numberOfBits > 0 && totalNumberOfBits-numberOfBits < 64);
-      mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBits));
-    } else {
-      mantissa |= ((uint64_t)lastDigit >> (numberOfBits-totalNumberOfBits));
-    }
-    digitIndex++;
-  }
-  // TODO: Here, we just cast the Integer in float(double). We should round it
-  // to the closest float(double). To do so, we should keep a additional bit
-  // at the end of the mantissa and add it to the mantissa; do not forget to
-  // shift the mantissa if the rounding increase the length in bits of the
-  // mantissa.
-
-  u.uint_result = 0;
-  u.uint_result |= ((uint64_t)sign << (totalNumberOfBits-1));
-  u.uint_result |= ((uint64_t)exponent << mantissaNbBit);
-  uint64_t oneOnMantissaBits = mantissaNbBit == 23 ? 0x7FFFFF : 0xFFFFFFFFFFFFF;
-  u.uint_result |= ((uint64_t)mantissa >> (totalNumberOfBits-mantissaNbBit-1) & oneOnMantissaBits);
-
-  /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
-   * representable float. */
-  if (exponent == maxExponent && std::isnan(u.float_result)) {
-    return INFINITY;
-  }
-  return u.float_result;
 }
 
-int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  /* If the integer is too long, this method may be too slow.
-   * Experimentally, we can display at most integer whose number of digits is
-   * around 25. */
-  if (m_numberOfDigits > 25) {
-    return strlcpy(buffer, "inf", 4);
-  }
-
-  Integer base = Integer(10);
-  Integer abs = *this;
-  abs.setNegative(false);
-  IntegerDivision d = udiv(abs, base);
-  int size = 0;
-  if (bufferSize == 1) {
-    return 0;
-  }
-  if (isEqualTo(Integer(0))) {
-    buffer[size++] = '0';
-  } else if (isNegative()) {
-    buffer[size++] = '-';
-  }
-  while (!(d.remainder.isEqualTo(Integer(0)) &&
-        d.quotient.isEqualTo(Integer(0)))) {
-    char c = char_from_digit(d.remainder.digit(0));
-    if (size >= bufferSize-1) {
-      return strlcpy(buffer, "inf", bufferSize);
-    }
-    buffer[size++] = c;
-    d = Division(d.quotient, base);
-  }
-  buffer[size] = 0;
-
-  // Flip the string
-  for (int i=m_negative, j=size-1 ; i < j ; i++, j--) {
-    char c = buffer[i];
-    buffer[i] = buffer[j];
-    buffer[j] = c;
-  }
-  return size;
+Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer & denom) {
+  Expression quo = DivisionQuotient::Reduce(num, denom);
+  Expression rem = DivisionRemainder::Reduce(num, denom);
+  Expression e = Equal::Builder(Rational::Builder(num), Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
+  ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  e = e.deepBeautify(defaultReductionContext);
+  return e;
 }
 
-ExpressionLayout * Integer::createLayout() const {
-  char buffer[255];
-  int numberOfChars = writeTextInBuffer(buffer, 255);
-  return new StringLayout(buffer, numberOfChars);
-}
-
-template float Poincare::Integer::approximate<float>() const;
-template double Poincare::Integer::approximate<double>() const;
+template float Integer::approximate<float>() const;
+template double Integer::approximate<double>() const;
 
 }

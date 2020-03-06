@@ -3,14 +3,18 @@
 
 #include <ion/backlight.h>
 #include <ion/battery.h>
-#include <ion/charset.h>
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
+#include <ion/exam_mode.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
+#include <ion/storage.h>
+#include <ion/timing.h>
 #include <ion/usb.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -18,29 +22,31 @@
  * will take care of configuring the whole environment for you. In POSIX terms,
  * ION will implement the "main" function.
  * Don't worry though, once all its initialization will be performed, ION will
- * jump to your code at ion_app, which you have to implement yourself. */
+ * jump to your code at ion_main, which you have to implement yourself. */
 
-void ion_app();
+void ion_main(int argc, const char * const argv[]);
 
 namespace Ion {
-
-void msleep(long ms);
-void usleep(long us);
 
 const char * serialNumber();
 const char * softwareVersion();
 const char * patchLevel();
 const char * fccId();
 
-/* CAUTION: This is a complete reset! */
-void reset();
-
 // CRC32 : non xor-ed, non reversed, direct, polynomial 4C11DB7
-// Only accepts whole 32bit values
-uint32_t crc32(const uint32_t * data, size_t length);
+uint32_t crc32Word(const uint32_t * data, size_t length); // Only accepts whole 32bit values
+uint32_t crc32Byte(const uint8_t * data, size_t length);
+uint32_t crc32EatByte(uint32_t previousCRC, uint8_t data);
+
 
 // Provides a true random number
 uint32_t random();
+
+// Decompress data
+void decompress(const uint8_t * src, uint8_t * dst, int srcSize, int dstSize);
+
+// Tells whether the stack pointer is within acceptable bounds
+bool stackSafe();
 
 }
 

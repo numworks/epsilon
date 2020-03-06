@@ -1,214 +1,445 @@
 #include <poincare/trigonometry.h>
-#include <poincare/hyperbolic_cosine.h>
-#include <poincare/complex.h>
-#include <poincare/symbol.h>
-#include <poincare/undefined.h>
-#include <poincare/rational.h>
+#include <poincare/addition.h>
+#include <poincare/constant.h>
+#include <poincare/decimal.h>
+#include <poincare/derivative.h>
+#include <poincare/float.h>
 #include <poincare/multiplication.h>
+#include <poincare/power.h>
+#include <poincare/preferences.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
+#include <poincare/symbol.h>
+#include <poincare/trigonometry_cheat_table.h>
+#include <poincare/undefined.h>
 #include <ion.h>
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
+#include <float.h>
 
 namespace Poincare {
 
-Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
-  assert(e->type() == Expression::Type::Sine || e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent);
-  Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
-  if (lookup != nullptr) {
-    return e->replaceWith(lookup, true);
+/* The values must be in the order defined in poincare/preferences:
+ * Degrees / Radians / Gradians */
+
+static constexpr int s_piDivisor[] {
+  180,
+  1,
+  200
+};
+
+
+static Expression piExpression(Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Radian) {
+    return static_cast<Expression>(Constant::Builder(UCodePointGreekSmallLetterPi));
   }
-  Expression::Type correspondingType = e->type() == Expression::Type::Cosine ? Expression::Type::ArcCosine : (e->type() == Expression::Type::Sine ? Expression::Type::ArcSine : Expression::Type::ArcTangent);
-  if (e->operand(0)->type() == correspondingType) {
-    float trigoOp = e->operand(0)->operand(0)->approximateToScalar<float>(context, angleUnit);
-    if (e->type() == Expression::Type::Tangent || (trigoOp >= -1.0f && trigoOp <= 1.0f)) {
-      return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
-    }
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    return static_cast<Expression>(Rational::Builder(180));
   }
-  if (e->operand(0)->sign() == Expression::Sign::Negative) {
-    Expression * op = e->editableOperand(0);
-    Expression * newOp = op->setSign(Expression::Sign::Positive, context, angleUnit);
-    newOp->shallowReduce(context, angleUnit);
-    if (e->type() == Expression::Type::Cosine) {
-      return e->shallowReduce(context, angleUnit);
-    } else {
-      Multiplication * m = new Multiplication(new Rational(-1), e->clone(), false);
-      m->editableOperand(1)->shallowReduce(context, angleUnit);
-      return e->replaceWith(m, true)->shallowReduce(context, angleUnit);
-    }
-  }
-  if ((angleUnit == Expression::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Expression::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
-    Rational * r = angleUnit == Expression::AngleUnit::Radian ? static_cast<Rational *>(e->editableOperand(0)->editableOperand(0)) : static_cast<Rational *>(e->editableOperand(0));
-    int unaryCoefficient = 1; // store 1 or -1
-    // Replace argument in [0, Pi/2[ or [0, 90[
-    Integer divisor = angleUnit == Expression::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(90));
-    Integer dividand = angleUnit == Expression::AngleUnit::Radian ? Integer::Addition(r->numerator(), r->numerator()) : r->numerator();
-    if (divisor.isLowerThan(dividand)) {
-      Integer piDivisor = angleUnit == Expression::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(180));
-      IntegerDivision div = Integer::Division(r->numerator(), piDivisor);
-      dividand = angleUnit == Expression::AngleUnit::Radian ? Integer::Addition(div.remainder, div.remainder) : div.remainder;
-      if (divisor.isLowerThan(dividand)) {
-        div.remainder = Integer::Subtraction(piDivisor, div.remainder);
-        if (e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent) {
-          unaryCoefficient *= -1;
-        }
-      }
-      Rational * newR = new Rational(div.remainder, r->denominator());
-      Expression * rationalParent = angleUnit == Expression::AngleUnit::Radian ? e->editableOperand(0) : e;
-      rationalParent->replaceOperand(r, newR, true);
-      e->editableOperand(0)->shallowReduce(context, angleUnit);
-      if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e->type() != Expression::Type::Tangent) {
-        unaryCoefficient *= -1;
-      }
-      Expression * simplifiedCosine = e->shallowReduce(context, angleUnit); // recursive
-      Multiplication * m = new Multiplication(new Rational(unaryCoefficient), simplifiedCosine->clone(), false);
-      return simplifiedCosine->replaceWith(m, true)->shallowReduce(context, angleUnit);
-    }
-    assert(r->sign() == Expression::Sign::Positive);
-    assert(!divisor.isLowerThan(dividand));
-  }
-  return e;
+  assert(angleUnit == Preferences::AngleUnit::Gradian);
+  return static_cast<Expression>(Rational::Builder(200));
 }
 
-bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
-  assert(Expression::Type::Power < Expression::Type::Sine);
-  if (e->type() == Expression::Type::Multiplication && e->operand(1)->type() == Expression::Type::Sine && e->operand(0)->type() == Expression::Type::Power && e->operand(0)->operand(0)->type() == Expression::Type::Cosine && e->operand(0)->operand(1)->type() == Expression::Type::Rational && static_cast<const Rational *>(e->operand(0)->operand(1))->isMinusOne()) {
+double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    return 180.0;
+  }
+  if (angleUnit == Preferences::AngleUnit::Radian) {
+    return M_PI;
+  }
+  assert(angleUnit == Preferences::AngleUnit::Gradian);
+  return 200.0;
+}
+
+float Trigonometry::characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit) {
+  assert(e.numberOfChildren() == 1);
+
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char x[bufferSize];
+  SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknown);
+
+  int d = e.childAtIndex(0).polynomialDegree(context, x);
+  if (d < 0 || d > 1) {
+    // child(0) is not linear so we cannot easily find an interesting range
+    return e.childAtIndex(0).characteristicXRange(context, angleUnit);
+  }
+  // The expression e is x-independent
+  if (d == 0) {
+    return 0.0f;
+  }
+  // e has the form cos/sin/tan(ax+b) so it is periodic of period 2*π/a
+  assert(d == 1);
+  /* To compute a, the slope of the expression child(0), we compute the
+   * derivative of child(0) for any x value. */
+  Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol::Builder(x, 1), Float<float>::Builder(1.0f));
+  double a = derivative.node()->approximate(double(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
+  double pi = PiInAngleUnit(angleUnit);
+  return std::fabs(a) < Expression::Epsilon<double>() ? NAN : 2.0*pi/std::fabs(a);
+}
+
+bool Trigonometry::isDirectTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::Cosine
+    || e.type() == ExpressionNode::Type::Sine
+    || e.type() == ExpressionNode::Type::Tangent;
+}
+
+bool Trigonometry::isInverseTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::ArcCosine
+    || e.type() == ExpressionNode::Type::ArcSine
+    || e.type() == ExpressionNode::Type::ArcTangent;
+}
+
+bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction) {
+  if (!isDirectTrigonometryFunction(directFunction)) {
+    return false;
+  }
+  ExpressionNode::Type correspondingType;
+  switch (directFunction.type()) {
+    case ExpressionNode::Type::Cosine:
+      correspondingType = ExpressionNode::Type::ArcCosine;
+      break;
+    case ExpressionNode::Type::Sine:
+      correspondingType = ExpressionNode::Type::ArcSine;
+      break;
+    default:
+      assert(directFunction.type() == ExpressionNode::Type::Tangent);
+      correspondingType = ExpressionNode::Type::ArcTangent;
+      break;
+  }
+  return inverseFunction.type() == correspondingType;
+}
+
+bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
+  // We look for (cos^-1 * sin)
+  assert(ExpressionNode::Type::Power < ExpressionNode::Type::Sine);
+  if (e.type() == ExpressionNode::Type::Multiplication
+      && e.childAtIndex(1).type() == ExpressionNode::Type::Sine
+      && e.childAtIndex(0).type() == ExpressionNode::Type::Power
+      && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Cosine
+      && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational
+      && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
     return true;
   }
   return false;
 }
 
-Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
-  assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
-  if (e->type() != Expression::Type::ArcTangent) {
-    float approxOp = e->operand(0)->approximateToScalar<float>(context, angleUnit);
-    if (approxOp > 1.0f || approxOp < -1.0f) {
-      return e->replaceWith(new Undefined(), true);
+Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+  assert(isDirectTrigonometryFunction(e));
+
+  // Step 0. Map on matrix child if possible
+  {
+    if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+      return e.mapOnMatrixFirstChild(reductionContext);
     }
   }
-  Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : (e->type() == Expression::Type::ArcSine ? Expression::Type::Sine : Expression::Type::Tangent);
-  float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
-  if (e->operand(0)->type() == correspondingType) {
-    float trigoOp = e->operand(0)->operand(0)->approximateToScalar<float>(context, angleUnit);
-    if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
-        (e->type() == Expression::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
-        (e->type() == Expression::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
-      return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
+
+  // Step 1. Try finding an easy standard calculation reduction
+  Expression lookup = TrigonometryCheatTable::Table()->simplify(e.childAtIndex(0), e.type(), reductionContext);
+  if (!lookup.isUninitialized()) {
+    e.replaceWithInPlace(lookup);
+    return lookup;
+  }
+
+  // Step 2. Look for an expression of type "cos(acos(x))", return x
+  if (AreInverseFunctions(e, e.childAtIndex(0))) {
+    Expression result = e.childAtIndex(0).childAtIndex(0);
+    e.replaceWithInPlace(result);
+    return result;
+  }
+
+  // Step 3. Look for an expression of type "cos(asin(x))" or "sin(acos(x)), return sqrt(1-x^2)
+  // These equalities are true on complexes
+  if ((e.type() == ExpressionNode::Type::Cosine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcSine)
+      || (e.type() == ExpressionNode::Type::Sine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcCosine))
+  {
+    Expression sqrt =
+      Power::Builder(
+        Addition::Builder(
+          Rational::Builder(1),
+          Multiplication::Builder(
+            Rational::Builder(-1),
+            Power::Builder(e.childAtIndex(0).childAtIndex(0), Rational::Builder(2))
+          )
+        ),
+        Rational::Builder(1,2)
+      );
+    // reduce x^2
+    sqrt.childAtIndex(0).childAtIndex(1).childAtIndex(1).shallowReduce(reductionContext);
+    // reduce -1*x^2
+    sqrt.childAtIndex(0).childAtIndex(1).shallowReduce(reductionContext);
+    // reduce 1-1*x^2
+    sqrt.childAtIndex(0).shallowReduce(reductionContext);
+    e.replaceWithInPlace(sqrt);
+    // reduce sqrt(1+(-1)*x^2)
+    return sqrt.shallowReduce(reductionContext);
+  }
+
+  // Step 4. Look for an expression of type "cos(atan(x))" or "sin(atan(x))"
+  // cos(atan(x)) --> 1/sqrt(1+x^2)
+  // sin(atan(x)) --> x/sqrt(1+x^2)
+  // These equalities are true on complexes
+  if ((e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine)
+      && e.childAtIndex(0).type() == ExpressionNode::Type::ArcTangent)
+  {
+    Expression x = e.childAtIndex(0).childAtIndex(0);
+    // Build 1/sqrt(1+x^2)
+    Expression res =
+      Power::Builder(
+        Addition::Builder(
+          Rational::Builder(1),
+          Power::Builder(
+            e.type() == ExpressionNode::Type::Cosine ? x : x.clone(),
+            Rational::Builder(2))
+        ),
+        Rational::Builder(-1,2)
+      );
+
+    // reduce x^2
+    res.childAtIndex(0).childAtIndex(1).shallowReduce(reductionContext);
+    // reduce 1+x^2
+    res.childAtIndex(0).shallowReduce(reductionContext);
+    if (e.type() == ExpressionNode::Type::Sine) {
+      res = Multiplication::Builder(x, res);
+      // reduce (1+x^2)^(-1/2)
+      res.childAtIndex(1).shallowReduce(reductionContext);
+    }
+    e.replaceWithInPlace(res);
+    // reduce (1+x^2)^(-1/2) or x*(1+x^2)^(-1/2)
+    return res.shallowReduce(reductionContext);
+  }
+
+  // Step 5. Look for an expression of type "cos(-a)", return "+/-cos(a)"
+  Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(reductionContext);
+  if (!positiveArg.isUninitialized()) {
+    // The argument was of form cos(-a)
+    if (e.type() == ExpressionNode::Type::Cosine) {
+      // cos(-a) = cos(a)
+      return e.shallowReduce(reductionContext);
+    } else {
+      // sin(-a) = -sin(a) or tan(-a) = -tan(a)
+      Multiplication m = Multiplication::Builder(Rational::Builder(-1));
+      e.replaceWithInPlace(m);
+      m.addChildAtIndexInPlace(e, 1, 1);
+      e.shallowReduce(reductionContext);
+      return m.shallowReduce(reductionContext);
     }
   }
-  // Special case for arctan(sin(x)/cos(x))
-  if (e->type() == Expression::Type::ArcTangent && ExpressionIsEquivalentToTangent(e->operand(0))) {
-    float trigoOp = e->operand(0)->operand(1)->operand(0)->approximateToScalar<float>(context, angleUnit);
+
+  /* Step 6. Look for an expression of type "cos(p/q * π)" in radians or
+   * "cos(p/q)" in degrees, put the argument in [0, π/2[ or [0, 90[ and
+   * multiply the cos/sin/tan by -1 if needed.
+   * We know thanks to Step 3 that p/q > 0. */
+  const Preferences::AngleUnit angleUnit = reductionContext.angleUnit();
+  if ((angleUnit == Preferences::AngleUnit::Radian
+        && e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
+        && e.childAtIndex(0).numberOfChildren() == 2
+        && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Constant
+        && e.childAtIndex(0).childAtIndex(1).convert<Constant>().isPi()
+        && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational)
+      || ((angleUnit == Preferences::AngleUnit::Degree || angleUnit == Preferences::AngleUnit::Gradian)
+        && e.childAtIndex(0).type() == ExpressionNode::Type::Rational))
+  {
+    Rational r = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0).childAtIndex(0).convert<Rational>() : e.childAtIndex(0).convert<Rational>();
+    /* Step 4.1. In radians:
+     * We first check if p/q * π is already in the right quadrant:
+     * p/q * π < π/2 => p/q < 2 => 2p < q */
+    Integer dividand = Integer::Addition(r.unsignedIntegerNumerator(), r.unsignedIntegerNumerator());
+    Integer divisor = Integer::Multiplication(r.integerDenominator(), Integer(s_piDivisor[(int)angleUnit]));
+    if (divisor.isLowerThan(dividand)) {
+      /* Step 4.2. p/q * π is not in the wanted trigonometrical quadrant.
+       * We could subtract n*π to p/q with n an integer.
+       * Given p/q = (q'*q+r')/q, we have
+       * (p/q * π - q'*π) < π/2 => r'/q < 1/2 => 2*r'<q
+       * (q' is the theoretical n).*/
+      int unaryCoefficient = 1; // store 1 or -1 for the final result.
+      Integer piDivisor = Integer::Multiplication(r.integerDenominator(), Integer(s_piDivisor[(int)angleUnit]));
+      IntegerDivision div = Integer::Division(r.unsignedIntegerNumerator(), piDivisor);
+      dividand = Integer::Addition(div.remainder, div.remainder);
+      if (divisor.isLowerThan(dividand)) {
+        /* Step 4.3. r'/q * π is not in the wanted trigonometrical quadrant,
+         * and because r'<q (as r' is the remainder of an euclidian division
+         * by q), we know that r'/q*π is in [π/2; π[.
+         * So we can take the new angle π - r'/q*π, which changes cosinus or
+         * tangent, but not sinus. The new rational is 1-r'/q = (q-r')/q. */
+        div.remainder = Integer::Subtraction(piDivisor, div.remainder);
+        if (e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Tangent) {
+          unaryCoefficient *= -1;
+        }
+      }
+      if (div.remainder.isOverflow()) {
+        return e;
+      }
+      // Step 4.5. Build the new result.
+      Integer rDenominator = r.integerDenominator();
+      Expression newR = Rational::Builder(div.remainder, rDenominator);
+      Expression rationalParent = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0) : e;
+      rationalParent.replaceChildAtIndexInPlace(0, newR);
+      newR.shallowReduce(reductionContext);
+      if (angleUnit == Preferences::AngleUnit::Radian) {
+        e.childAtIndex(0).shallowReduce(reductionContext);
+      }
+      if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e.type() != ExpressionNode::Type::Tangent) {
+        /* Step 4.6. If we subtracted an odd number of π in 4.2, we need to
+         * multiply the result by -1 (because cos((2k+1)π + x) = -cos(x) */
+        unaryCoefficient *= -1;
+      }
+      Expression simplifiedCosine = e.shallowReduce(reductionContext); // recursive
+      Multiplication m = Multiplication::Builder(Rational::Builder(unaryCoefficient));
+      simplifiedCosine.replaceWithInPlace(m);
+      m.addChildAtIndexInPlace(simplifiedCosine, 1, 1);
+      return m.shallowReduce(reductionContext);
+    }
+    assert(r.sign() == ExpressionNode::Sign::Positive);
+  }
+  return e;
+}
+
+Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  ExpressionNode::ReductionContext reductionContext) {
+  assert(isInverseTrigonometryFunction(e));
+  // Step 0. Map on matrix child if possible
+  {
+    if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+      return e.mapOnMatrixFirstChild(reductionContext);
+    }
+  }
+
+  const Preferences::AngleUnit angleUnit = reductionContext.angleUnit();
+  float pi = PiInAngleUnit(angleUnit);
+
+  // Step 1. Look for an expression of type "acos(cos(x))", return x
+  if (AreInverseFunctions(e.childAtIndex(0), e)) {
+    float trigoOp = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit).toScalar();
+    if ((e.type() == ExpressionNode::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
+        (e.type() == ExpressionNode::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
+        (e.type() == ExpressionNode::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
+      Expression result = e.childAtIndex(0).childAtIndex(0);
+      e.replaceWithInPlace(result);
+      return result;
+    }
+  }
+
+  // Step 2. Special case for atan(sin(x)/cos(x))
+  if (e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0))) {
+    float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), angleUnit).toScalar();
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
-      return e->replaceWith(e->editableOperand(0)->editableOperand(1)->editableOperand(0), true);
+      Expression result = e.childAtIndex(0).childAtIndex(1).childAtIndex(0);
+      e.replaceWithInPlace(result);
+      return result;
     }
   }
-  Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
-  if (lookup != nullptr) {
-    return e->replaceWith(lookup, true);
-  }
-  // arccos(-x) = Pi-arcos(x), arcsin(-x) = -arcsin(x), arctan(-x)=-arctan(x)
-  if (e->operand(0)->sign() == Expression::Sign::Negative || (e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->operand(0)->type() == Expression::Type::Rational && static_cast<const Rational *>(e->operand(0)->operand(0))->isMinusOne())) {
-    Expression * op = e->editableOperand(0);
-    if (e->operand(0)->sign() == Expression::Sign::Negative) {
-      Expression * newOp = op->setSign(Expression::Sign::Positive, context, angleUnit);
-      newOp->shallowReduce(context, angleUnit);
-    } else {
-      ((Multiplication *)op)->removeOperand(op->editableOperand(0), true);
-      op->shallowReduce(context, angleUnit);
+
+  // Step 3. Look for an expression of type "atan(1/x), return sign(x)*π/2-atan(x)
+  if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
+    Expression x = e.childAtIndex(0).childAtIndex(0);
+    /* This equality is not true if x = 0. We apply it under certain conditions:
+     * - the reduction target is the user
+     * - x is numeral (which means that x != 0 otherwise 0^(-1) would have been
+     *   reduced to undef) */
+    if (reductionContext.target() == ExpressionNode::ReductionTarget::User || x.isNumber()) {
+      Expression sign = SignFunction::Builder(x.clone());
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(UCodePointGreekSmallLetterPi));
+      sign.shallowReduce(reductionContext);
+      e.replaceChildAtIndexInPlace(0, x);
+      Addition a = Addition::Builder(m0);
+      e.replaceWithInPlace(a);
+      Multiplication m1 = Multiplication::Builder(Rational::Builder(-1), e);
+      e.shallowReduce(reductionContext);
+      a.addChildAtIndexInPlace(m1, 1, 1);
+      return a.shallowReduce(reductionContext);
     }
-    if (e->type() == Expression::Type::ArcCosine) {
-      Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(180));
-      Subtraction * s = new Subtraction(pi, e->clone(), false);
-      s->editableOperand(1)->shallowReduce(context, angleUnit);
-      return e->replaceWith(s, true)->shallowReduce(context, angleUnit);
-    } else {
-      Multiplication * m = new Multiplication(new Rational(-1), e->clone(), false);
-      m->editableOperand(1)->shallowReduce(context, angleUnit);
-      return e->replaceWith(m, true)->shallowReduce(context, angleUnit);
+  }
+
+  // Step 4. Try finding an easy standard calculation reduction
+  Expression lookup = TrigonometryCheatTable::Table()->simplify(e.childAtIndex(0), e.type(), reductionContext);
+  if (!lookup.isUninitialized()) {
+    e.replaceWithInPlace(lookup);
+    return lookup;
+  }
+
+  /* We do not apply some rules if:
+   * - the parent node is a cosine, a sine or a tangent. In this case there is a simplication of
+   *   form f(g(x)) with f cos, sin or tan and g acos, asin or atan.
+   * - the reduction is being BottomUp. In this case, we do not yet have any
+   *   information on the parent which could later be a cosine, a sine or a tangent.
+   */
+  Expression p = e.parent();
+  bool letArcFunctionAtRoot = !p.isUninitialized() && isDirectTrigonometryFunction(p);
+  /* Step 5. Handle opposite argument: acos(-x) = π-acos(x),
+   * asin(-x) = -asin(x), atan(-x)= -atan(x) *
+   */
+  if (!letArcFunctionAtRoot) {
+    Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(reductionContext);
+    if (!positiveArg.isUninitialized()) {
+      // The argument was made positive
+      // acos(-x) = π-acos(x)
+      if (e.type() == ExpressionNode::Type::ArcCosine) {
+        Expression pi = piExpression(angleUnit);
+        Subtraction s = Subtraction::Builder();
+        e.replaceWithInPlace(s);
+        s.replaceChildAtIndexInPlace(0, pi);
+        s.replaceChildAtIndexInPlace(1, e);
+        e.shallowReduce(reductionContext);
+        return s.shallowReduce(reductionContext);
+      } else {
+        // asin(-x) = -asin(x) or atan(-x) = -atan(x)
+        Multiplication m = Multiplication::Builder(Rational::Builder(-1));
+        e.replaceWithInPlace(m);
+        m.addChildAtIndexInPlace(e, 1, 1);
+        e.shallowReduce(reductionContext);
+        return m.shallowReduce(reductionContext);
+      }
     }
   }
 
   return e;
 }
 
-static_assert('\x89' == Ion::Charset::SmallPi, "Unicode error");
-constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][5] =
-{{"-90",    "\x89*(-2)^(-1)",    "",                                   "-1",                                 "undef"},
- {"-75",    "\x89*(-5)*12^(-1)", "",                                   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "-(3^(1/2)+2)"},
- {"-72",    "\x89*2*(-5)^(-1)",  "",                                   "-(5/8+5^(1/2)/8)^(1/2)",             "-(5+2*5^(1/2))^(1/2)"},
- {"-135/2", "\x89*(-3)*8^(-1)",  "",                                   "-(2+2^(1/2))^(1/2)*2^(-1)",          "-1-2^(1/2)"},
- {"-60",    "\x89*(-3)^(-1)",    "",                                   "-3^(1/2)*2^(-1)",                    "-3^(1/2)"},
- {"-54",    "\x89*(-3)*10^(-1)", "",                                   "4^(-1)*(-1-5^(1/2))",                "-(1+2*5^(-1/2))^(1/2)"},
- {"-45",    "\x89*(-4)^(-1)",    "",                                   "(-1)*(2^(-1/2))",                    "-1"},
- {"-36",    "\x89*(-5)^(-1)",    "",                                   "-(5/8-5^(1/2)/8)^(1/2)",             "-(5-2*5^(1/2))^(1/2)"},
- {"-30",    "\x89*(-6)^(-1)",    "",                                   "-0.5",                               "-3^(-1/2)"},
- {"-45/2",  "\x89*(-8)^(-1)",    "",                                   "(2-2^(1/2))^(1/2)*(-2)^(-1)",        "1-2^(1/2)"},
- {"-18",    "\x89*(-10)^(-1)",   "",                                   "4^(-1)*(1-5^(1/2))",                 "-(1-2*5^(-1/2))^(1/2)"},
- {"-15",    "\x89*(-12)^(-1)",   "",                                   "-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",     "3^(1/2)-2"},
- {"0",      "0",                 "1",                                  "0",                                  "0"},
- {"15",     "\x89*12^(-1)",      "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",      "6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",   "-(3^(1/2)-2)"},
- {"18",     "\x89*10^(-1)",      "(5/8+5^(1/2)/8)^(1/2)",              "4^(-1)*(5^(1/2)-1)",                 "(1-2*5^(-1/2))^(1/2)"},
- {"45/2",   "\x89*8^(-1)",       "(2+2^(1/2))^(1/2)*2^(-1)",           "(2-2^(1/2))^(1/2)*2^(-1)",           "2^(1/2)-1"},
- {"30",     "\x89*6^(-1)",       "3^(1/2)*2^(-1)",                     "0.5",                                "3^(-1/2)"},
- {"36",     "\x89*5^(-1)",       "(5^(1/2)+1)*4^(-1)",                 "(5/8-5^(1/2)/8)^(1/2)",              "(5-2*5^(1/2))^(1/2)"},
- {"45",     "\x89*4^(-1)",       "2^(-1/2)",                           "2^(-1/2)",                           "1"},
- {"54",     "\x89*3*10^(-1)",    "(5/8-5^(1/2)/8)^(1/2)",              "4^(-1)*(5^(1/2)+1)",                 "(1+2*5^(-1/2))^(1/2)"},
- {"60",     "\x89*3^(-1)",       "0.5",                                "3^(1/2)*2^(-1)",                     "3^(1/2)"},
- {"135/2",  "\x89*3*8^(-1)",     "(2-2^(1/2))^(1/2)*2^(-1)",           "(2+2^(1/2))^(1/2)*2^(-1)",           "1+2^(1/2)"},
- {"72",     "\x89*2*5^(-1)",     "(5^(1/2)-1)*4^(-1)",                 "(5/8+5^(1/2)/8)^(1/2)",              "(5+2*5^(1/2))^(1/2)"},
- {"75",     "\x89*5*12^(-1)",    "6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",   "6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",      "3^(1/2)+2"},
- {"90",     "\x89*2^(-1)",       "0",                                  "1",                                  "undef"},
- {"105",    "\x89*7*12^(-1)",    "-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",     "",                                   ""},
- {"108",    "\x89*3*5^(-1)",     "(1-5^(1/2))*4^(-1)",                 "",                                   ""},
- {"225/2",  "\x89*5*8^(-1)",     "(2-2^(1/2))^(1/2)*(-2)^(-1)",        "",                                   ""},
- {"120",    "\x89*2*3^(-1)",     "-0.5",                               "",                                   ""},
- {"126",    "\x89*7*10^(-1)",    "-(5*8^(-1)-5^(1/2)*8^(-1))^(1/2)",   "",                                   ""},
- {"135",    "\x89*3*4^(-1)",     "(-1)*(2^(-1/2))",                    "",                                   ""},
- {"144",    "\x89*4*5^(-1)",     "(-5^(1/2)-1)*4^(-1)",                "",                                   ""},
- {"150",    "\x89*5*6^(-1)",     "-3^(1/2)*2^(-1)",                    "",                                   ""},
- {"315/2",  "\x89*7*8^(-1)",     "-(2+2^(1/2))^(1/2)*2^(-1)",          "",                                   ""},
- {"162",    "\x89*9*10^(-1)",    "-(5*8^(-1)+5^(1/2)*8^(-1))^(1/2)",   "",                                   ""},
- {"165",    "\x89*11*12^(-1)",   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "",                                   ""},
- {"180",    "\x89",              "-1",                                 "0",                                  "0"}};
-
-Expression * Trigonometry::table(const Expression * e, Expression::Type type, Context & context, Expression::AngleUnit angleUnit) {
-  assert(type == Expression::Type::Sine || type == Expression::Type::Cosine || type == Expression::Type::Tangent || type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent);
-  int angleUnitIndex = angleUnit == Expression::AngleUnit::Radian ? 1 : 0;
-  int trigonometricFunctionIndex = type == Expression::Type::Cosine || type == Expression::Type::ArcCosine ? 2 : (type == Expression::Type::Sine || type == Expression::Type::ArcSine ? 3 : 4);
-  int inputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? trigonometricFunctionIndex : angleUnitIndex;
-  int outputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? angleUnitIndex : trigonometricFunctionIndex;
-
-  /* Avoid looping if we can exclude quickly that the e is in the table */
-  if (inputIndex == 0 && e->type() != Expression::Type::Rational) {
-    return nullptr;
+template <typename T>
+std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  if (angleUnit != Preferences::AngleUnit::Radian) {
+    return c * std::complex<T>(M_PI/Trigonometry::PiInAngleUnit(angleUnit));
   }
-  if (inputIndex == 1 && e->type() != Expression::Type::Rational && e->type() != Expression::Type::Multiplication && e->type() != Expression::Type::Symbol) {
-    return nullptr;
-  }
-  if (inputIndex >1 && e->type() != Expression::Type::Rational && e->type() != Expression::Type::Multiplication && e->type() != Expression::Type::Power && e->type() != Expression::Type::Addition) {
-    return nullptr;
-  }
-  for (int i = 0; i < k_numberOfEntries; i++) {
-    Expression * input = Expression::parse(cheatTable[i][inputIndex]);
-    if (input == nullptr) {
-      continue;
-    }
-    Expression::Reduce(&input, context, angleUnit);
-    bool rightInput = input->isIdenticalTo(e);
-    delete input;
-    if (rightInput) {
-      Expression * output = Expression::parse(cheatTable[i][outputIndex]);
-      if (output == nullptr) {
-        return nullptr;
-      }
-      Expression::Reduce(&output, context, angleUnit);
-      return output;
-    }
-  }
-  return nullptr;
+  return c;
 }
+
+template <typename T>
+std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  if (angleUnit != Preferences::AngleUnit::Radian) {
+    return c * std::complex<T>(Trigonometry::PiInAngleUnit(angleUnit)/M_PI);
+  }
+  return c;
+}
+
+template<typename T>
+T Trigonometry::RoundToMeaningfulDigits(T result, T input) {
+  /* Cheat: openbsd trigonometric functions are numerical implementation and
+   * thus are approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
+   * weird results as acos(1) = 6E-17 or cos(π/2) = 4E-17, we round the result
+   * to its 1E-6 or 1E-14 precision when its ratio with the argument (π/2 in the
+   * example) is smaller than epsilon. This way, we have sin(π) ~ 0 and
+   * sin(1E-15)=1E-15.
+   * We can't do that for all evaluation as the user can operate on values as
+   * small as 1E-308 (in double) and most results still be correct. */
+  if (input == 0.0 || std::fabs(result/input) <= Expression::Epsilon<T>()) {
+     T precision = 10*Expression::Epsilon<T>();
+     result = std::round(result/precision)*precision;
+  }
+  return result;
+}
+
+template <typename T>
+std::complex<T> Trigonometry::RoundToMeaningfulDigits(const std::complex<T> result, const std::complex<T> input) {
+  return std::complex<T>(RoundToMeaningfulDigits(result.real(), std::abs(input)), RoundToMeaningfulDigits(result.imag(), std::abs(input)));
+}
+
+template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Preferences::AngleUnit);
+template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Preferences::AngleUnit);
+template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Preferences::AngleUnit);
+template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Preferences::AngleUnit);
+template std::complex<float> Trigonometry::RoundToMeaningfulDigits<float>(std::complex<float>, std::complex<float>);
+template std::complex<double> Trigonometry::RoundToMeaningfulDigits<double>(std::complex<double>, std::complex<double>);
 
 }

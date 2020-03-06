@@ -1,23 +1,34 @@
 #include <escher/expression_view.h>
+#include <escher/palette.h>
+
 using namespace Poincare;
 
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
-    KDColor textColor, KDColor backgroundColor) :
-  m_expressionLayout(nullptr),
+    KDColor textColor, KDColor backgroundColor, Poincare::Layout * selectionStart, Poincare::Layout * selectionEnd ) :
+  m_layout(),
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor),
+  m_selectionStart(selectionStart),
+  m_selectionEnd(selectionEnd),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
-  m_textColor(textColor),
-  m_backgroundColor(backgroundColor)
+  m_horizontalMargin(0)
 {
 }
 
-ExpressionLayout * ExpressionView::expressionLayout() const {
-  return m_expressionLayout;
-}
-
-void ExpressionView::setExpression(ExpressionLayout * expressionLayout) {
-  m_expressionLayout = expressionLayout;
+bool ExpressionView::setLayout(Layout layoutR) {
+  /* TODO: this would avoid some useless redrawing. However, when we call
+   * setLayout after raising an Exception that led to erase all
+   * Poincare::TreePool, accessing m_layout will result in an ACCESS ERROR.
+   * How do we avoid that? */
+  /*if (m_layout.isIdenticalTo(layoutR)) {
+    return false;
+  }*/
+  m_layout = layoutR;
   markRectAsDirty(bounds());
+  return true;
 }
 
 void ExpressionView::setBackgroundColor(KDColor backgroundColor) {
@@ -40,20 +51,30 @@ void ExpressionView::setAlignment(float horizontalAlignment, float verticalAlign
   markRectAsDirty(bounds());
 }
 
+int ExpressionView::numberOfLayouts() const {
+  return m_layout.numberOfDescendants(true);
+}
+
 KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
-  if (m_expressionLayout ==  nullptr) {
+  if (m_layout.isUninitialized()) {
     return KDSizeZero;
   }
-  return m_expressionLayout->size();
+  KDSize expressionSize = m_layout.layoutSize();
+  return KDSize(expressionSize.width() + 2*m_horizontalMargin, expressionSize.height());
+}
+
+KDPoint ExpressionView::drawingOrigin() const {
+  KDSize expressionSize = m_layout.layoutSize();
+  return KDPoint(m_horizontalMargin + m_horizontalAlignment*(m_frame.width() - 2*m_horizontalMargin - expressionSize.width()), maxCoordinate(0, m_verticalAlignment*(m_frame.height() - expressionSize.height())));
+}
+
+KDPoint ExpressionView::absoluteDrawingOrigin() const {
+  return drawingOrigin().translatedBy(m_frame.topLeft());
 }
 
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
-  if (m_expressionLayout != nullptr) {
-    //Position the origin of expression
-    KDSize expressionSize = m_expressionLayout->size();
-    KDPoint origin(m_horizontalAlignment*(m_frame.width() - expressionSize.width()),
-      0.5f*(m_frame.height() - expressionSize.height()));
-    m_expressionLayout->draw(ctx, origin, m_textColor, m_backgroundColor);
+  if (!m_layout.isUninitialized()) {
+    m_layout.draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor, m_selectionStart, m_selectionEnd, Palette::Select);
   }
 }

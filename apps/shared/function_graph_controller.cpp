@@ -1,5 +1,7 @@
 #include "function_graph_controller.h"
-#include "text_field_delegate_app.h"
+#include "function_app.h"
+#include "../apps_container.h"
+#include <poincare/coordinate_2D.h>
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -8,11 +10,16 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion) :
-  InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
-  m_indexFunctionSelectedByCursor(0),
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+static inline double minDouble(double x, double y) { return x < y ? x : y; }
+static inline double maxDouble(double x, double y) { return x > y ? x : y; }
+
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
   m_initialisationParameterController(this, interactiveRange),
-  m_angleUnitVersion(angleUnitVersion)
+  m_angleUnitVersion(angleUnitVersion),
+  m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }
 
@@ -27,12 +34,24 @@ ViewController * FunctionGraphController::initialisationParameterController() {
   return &m_initialisationParameterController;
 }
 
-void FunctionGraphController::viewWillAppear() {
-  if (functionGraphView()->context() == nullptr) {
-    TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-    functionGraphView()->setContext(myApp->localContext());
+void FunctionGraphController::didBecomeFirstResponder() {
+  if (curveView()->isMainViewSelected()) {
+    bannerView()->abscissaValue()->setParentResponder(this);
+    bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
+  } else {
+    InteractiveCurveViewController::didBecomeFirstResponder();
   }
-  Expression::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
+}
+
+void FunctionGraphController::viewWillAppear() {
+  functionGraphView()->setBannerView(bannerView());
+  functionGraphView()->setAreaHighlight(NAN,NAN);
+
+  if (functionGraphView()->context() == nullptr) {
+    functionGraphView()->setContext(textFieldDelegateApp()->localContext());
+  }
+  Preferences::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
   if (*m_angleUnitVersion != newAngleUnitVersion) {
     *m_angleUnitVersion = newAngleUnitVersion;
     initCursorParameters();
@@ -41,68 +60,62 @@ void FunctionGraphController::viewWillAppear() {
 }
 
 bool FunctionGraphController::handleEnter() {
-  Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  curveParameterController()->setFunction(f);
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  curveParameterController()->setRecord(record);
   StackViewController * stack = stackController();
   stack->push(curveParameterController());
   return true;
 }
 
-void FunctionGraphController::reloadBannerView() {
-  char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * legend = "0=";
-  int legendLength = strlen(legend);
-  int numberOfChar = 0;
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-  buffer[0] = functionStore()->symbol();
-  numberOfChar += Complex<float>::convertFloatToText(m_cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "   ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  bannerView()->setLegendAtIndex(buffer, 0);
+void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
+  *m_indexFunctionSelectedByCursor = functionIndex;
+}
 
-  numberOfChar = 0;
-  legend = "0(x)=";
-  legendLength = strlen(legend);
-  numberOfChar += legendLength;
-  strlcpy(buffer, legend, legendLength+1);
-  buffer[2] = functionStore()->symbol();
-  if (functionStore()->numberOfActiveFunctions() == 0) {
-    return;
-  }
-  assert(m_indexFunctionSelectedByCursor < functionStore()->numberOfActiveFunctions());
-  Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  buffer[0] = f->name()[0];
-  numberOfChar += Complex<float>::convertFloatToText(m_cursor->y(), buffer+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "   ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  bannerView()->setLegendAtIndex(buffer, 1);
+void FunctionGraphController::reloadBannerView() {
+  assert(functionStore()->numberOfActiveFunctions() > 0);
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
   float min = FLT_MAX;
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
   float xMax = interactiveCurveViewRange->xMax();
-  float step = (xMax - xMin)/curveView()->resolution();
-  if (functionStore()->numberOfActiveFunctions() <= 0) {
-    InteractiveCurveViewRangeDelegate::Range range;
-    range.min = xMin;
-    range.max = xMax;
-    return range;
-  }
-  for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
-    Function * f = functionStore()->activeFunctionAtIndex(i);
-    float y = 0.0f;
-    for (int i = 0; i <= curveView()->resolution(); i++) {
-      float x = xMin + i*step;
-      y = f->evaluateAtAbscissa(x, myApp->localContext());
-      if (!std::isnan(y) && !std::isinf(y)) {
-        min = min < y ? min : y;
-        max = max > y ? max : y;
+  assert(functionStore()->numberOfActiveFunctions() > 0);
+  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    /* Scan x-range from the middle to the extrema in order to get balanced
+     * y-range for even functions (y = 1/x). */
+    double tMin = f->tMin();
+    if (std::isnan(tMin)) {
+      tMin = xMin;
+    } else if (f->shouldClipTRangeToXRange()) {
+      tMin = maxFloat(tMin, xMin);
+    }
+    double tMax = f->tMax();
+    if (std::isnan(tMax)) {
+      tMax = xMax;
+    } else if (f->shouldClipTRangeToXRange()) {
+      tMax = minFloat(tMax, xMax);
+    }
+  /* In practice, a step smaller than a pixel's width is needed for sampling
+   * the values of a function. Otherwise some relevant extremal values may be
+   * missed. */
+    float rangeStep = f->rangeStep();
+    const float step = std::isnan(rangeStep) ? curveView()->pixelWidth() / 2.0f : rangeStep;
+    const int balancedBound = std::floor((tMax-tMin)/2/step);
+    for (int j = -balancedBound; j <= balancedBound ; j++) {
+      float t = (tMin+tMax)/2 + step * j;
+      Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
+      float x = xy.x1();
+      if (!std::isnan(x) && !std::isinf(x) && x >= xMin && x <= xMax) {
+        float y = xy.x2();
+        if (!std::isnan(y) && !std::isinf(y)) {
+          min = minFloat(min, y);
+          max = maxFloat(max, y);
+        }
       }
     }
   }
@@ -112,38 +125,53 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   return range;
 }
 
-float FunctionGraphController::addMargin(float x, float range, bool isMin) {
-  float ratio = isMin ? -k_displayBottomMarginRatio : k_displayTopMarginRatio;
-  return x+ratio*range;
+double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
+  return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
 }
 
-void FunctionGraphController::initRangeParameters() {
-  interactiveCurveViewRange()->setDefault();
-  initCursorParameters();
-  m_indexFunctionSelectedByCursor = 0;
+FunctionStore * FunctionGraphController::functionStore() const {
+  return FunctionApp::app()->functionStore();
+}
+
+void FunctionGraphController::initCursorParameters() {
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  const int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
+  int functionIndex = 0;
+  Coordinate2D<double> xy;
+  double t;
+  do {
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
+    ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(record);
+    t = defaultCursorT(record);
+    xy = firstFunction->evaluateXYAtParameter(t, context);
+  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && ++functionIndex < activeFunctionsCount);
+  if (functionIndex == activeFunctionsCount) {
+    functionIndex = 0;
+  }
+  m_cursor->moveTo(t, xy.x1(), xy.x2());
+  if (interactiveCurveViewRange()->yAuto()) {
+    interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  }
+  selectFunctionWithCursor(functionIndex);
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
-  Function * actualFunction = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  double y = actualFunction->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-  Function * nextFunction = actualFunction;
-  double nextY = direction > 0 ? DBL_MAX : -DBL_MAX;
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    Function * f = functionStore()->activeFunctionAtIndex(i);
-    double newY = f->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-    bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
-    if (isNextFunction) {
-      m_indexFunctionSelectedByCursor = i;
-      nextY = newY;
-      nextFunction = f;
-    }
-  }
-  if (nextFunction == actualFunction) {
+  int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context);
+  if (nextActiveFunctionIndex < 0) {
     return false;
   }
-  m_cursor->moveTo(m_cursor->x(), nextY);
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  // Clip the current t to the domain of the next function
+  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
+  double clippedT = m_cursor->t();
+  if (!std::isnan(f->tMin())) {
+    assert(!std::isnan(f->tMax()));
+    clippedT = minDouble(f->tMax(), maxDouble(f->tMin(), clippedT));
+  }
+  Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context);
+  m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
+  selectFunctionWithCursor(nextActiveFunctionIndex);
   return true;
 }
 
@@ -159,8 +187,16 @@ uint32_t FunctionGraphController::rangeVersion() {
   return interactiveCurveViewRange()->rangeChecksum();
 }
 
-bool FunctionGraphController::isCursorVisible() {
-  return interactiveCurveViewRange()->isCursorVisible(k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+bool FunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
+  return newIndex != currentIndex;
+}
+
+Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t, Poincare::Context * context) const {
+  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateXYAtParameter(t, context);
+}
+
+int FunctionGraphController::numberOfCurves() const {
+  return functionStore()->numberOfActiveFunctions();
 }
 
 }

@@ -3,31 +3,26 @@
 
 namespace Shared {
 
-FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+FunctionCurveParameterController::FunctionCurveParameterController() :
   ViewController(nullptr),
   m_goToCell(I18n::Message::Goto),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_function(nullptr)
+  m_selectableTableView(this, this, this),
+  m_record()
 {
-}
-
-View * FunctionCurveParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void FunctionCurveParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool FunctionCurveParameterController::handleGotoSelection() {
-  if (m_function == nullptr) {
+  if (m_record.isNull()) {
     return false;
   }
-  goToParameterController()->setFunction(m_function);
+  goToParameterController()->setRecord(m_record);
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->push(goToParameterController());
   return true;
@@ -35,10 +30,6 @@ bool FunctionCurveParameterController::handleGotoSelection() {
 
 KDCoordinate FunctionCurveParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
-}
-
-void FunctionCurveParameterController::setFunction(Function * function) {
-  m_function = function;
 }
 
 }

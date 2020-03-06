@@ -1,41 +1,81 @@
 #include "toolbox_helpers.h"
+#include <apps/i18n.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
+#include <assert.h>
 
 namespace Shared {
 namespace ToolboxHelpers {
 
-int CursorIndexInCommand(const char * text) {
-  for (size_t i = 0; i < strlen(text); i++) {
-    if (text[i] == '(') {
-      return i + 1;
+int CursorIndexInCommandText(const char * text) {
+  UTF8Decoder decoder(text);
+  size_t index = 0;
+  const char * currentPointer = text;
+  CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
+  while (codePoint != UCodePointNull) {
+    if (codePoint == '(' || codePoint == '\'') {
+      return index + 1;
     }
+    if (codePoint == '[') {
+      return index;
+    }
+    index+= nextPointer - currentPointer;
+    currentPointer = nextPointer;
+    codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
   }
-  return strlen(text);
+  return index;
 }
 
-void TextToInsertForCommandMessage(I18n::Message message, char * buffer) {
-  const char * messageText = I18n::translate(message);
-  TextToInsertForCommandText(messageText, buffer);
+void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
+  TextToInsertForCommandText(I18n::translate(message), buffer, bufferSize, replaceArgsWithEmptyChar);
 }
 
-void TextToInsertForCommandText(const char * command, char * buffer) {
-  int currentNewTextIndex = 0;
+void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
+  int index = 0;
+  int numberOfOpenParentheses = 0;
   int numberOfOpenBrackets = 0;
-  size_t commandLength = strlen(command);
-  for (size_t i = 0; i < commandLength; i++) {
-    if (command[i] == ')') {
+  bool insideQuote = false;
+  bool argumentAlreadyReplaced = false;
+
+  UTF8Decoder decoder(command);
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != UCodePointNull) {
+    if (codePoint == ')') {
+      numberOfOpenParentheses--;
+    } else if (codePoint == ']') {
       numberOfOpenBrackets--;
     }
-    if (numberOfOpenBrackets == 0 || command[i] == ',')
+    if ((!insideQuote || codePoint == '\'')
+        && ((numberOfOpenParentheses == 0 && numberOfOpenBrackets == 0)
+          || codePoint == ','
+          || (numberOfOpenBrackets > 0
+            && (codePoint == ','
+              || codePoint == '['
+              || codePoint == ']'))))
     {
-      buffer[currentNewTextIndex] = command[i];
-      buffer[currentNewTextIndex + 1] = 0;
-      currentNewTextIndex++;
+      assert(index < bufferSize);
+      if (argumentAlreadyReplaced) {
+        argumentAlreadyReplaced = false;
+      }
+      index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
+    } else {
+      if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
+        index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
+        argumentAlreadyReplaced = true;
+      }
     }
-    if (command[i] == '(') {
+    if (codePoint == '(') {
+      numberOfOpenParentheses++;
+    } else if (codePoint == '[') {
       numberOfOpenBrackets++;
+    } else if (codePoint == '\'') {
+      insideQuote = !insideQuote;
     }
+    codePoint = decoder.nextCodePoint();
   }
+  buffer[index] = 0;
 }
 
 }

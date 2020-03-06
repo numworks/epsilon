@@ -1,5 +1,5 @@
 #include <escher/modal_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <assert.h>
 
 ModalViewController::ContentView::ContentView() :
@@ -23,18 +23,12 @@ void ModalViewController::ContentView::setMainView(View * regularView) {
 }
 
 int ModalViewController::ContentView::numberOfSubviews() const {
-  KDRect regularFrame = bounds();
-  KDRect modalFrame = frame();
-  bool shouldDrawTheRegularViewBehind = !modalFrame.contains(regularFrame.topLeft()) || !modalFrame.contains(regularFrame.bottomRight());
-  return 1 + (m_isDisplayingModal && shouldDrawTheRegularViewBehind);
+  return 1 + m_isDisplayingModal;
 }
 
 View * ModalViewController::ContentView::subviewAtIndex(int index) {
   switch (index) {
     case 0:
-      if (m_isDisplayingModal && numberOfSubviews() == 1) {
-        return m_currentModalView;
-      }
       return m_regularView;
     case 1:
       if (numberOfSubviews() == 2) {
@@ -49,7 +43,7 @@ View * ModalViewController::ContentView::subviewAtIndex(int index) {
   }
 }
 
-KDRect ModalViewController::ContentView::frame() const {
+KDRect ModalViewController::ContentView::modalViewFrame() const {
   KDSize modalSize = m_isDisplayingModal ? m_currentModalView->minimalSizeForOptimalDisplay() : KDSize(0,0);
   KDCoordinate modalHeight = modalSize.height();
   modalHeight = modalHeight == 0 ? bounds().height()-m_topMargin-m_bottomMargin : modalHeight;
@@ -60,12 +54,16 @@ KDRect ModalViewController::ContentView::frame() const {
   return modalViewFrame;
 }
 
-void ModalViewController::ContentView::layoutSubviews() {
+void ModalViewController::ContentView::layoutSubviews(bool force) {
   assert(m_regularView != nullptr);
-  m_regularView->setFrame(bounds());
+  m_regularView->setFrame(bounds(), force);
   if (m_isDisplayingModal) {
     assert(m_currentModalView != nullptr);
-    m_currentModalView->setFrame(frame());
+    m_currentModalView->setFrame(modalViewFrame(), force);
+  } else {
+    if (m_currentModalView) {
+      m_currentModalView->setFrame(KDRectZero, force);
+    }
   }
 }
 
@@ -79,20 +77,25 @@ void ModalViewController::ContentView::presentModalView(View * modalView, float 
   m_leftMargin = leftMargin;
   m_bottomMargin = bottomMargin;
   m_rightMargin = rightMargin;
-  markRectAsDirty(frame());
   layoutSubviews();
 }
 
-void ModalViewController::ContentView::dismissModalView() {
+void ModalViewController::ContentView::dismissModalView(bool willExitApp) {
   m_isDisplayingModal = false;
-  markRectAsDirty(frame());
+  if (!willExitApp) {
+    layoutSubviews();
+  }
   m_currentModalView->resetSuperview();
   m_currentModalView = nullptr;
-  layoutSubviews();
 }
 
 bool ModalViewController::ContentView::isDisplayingModal() const {
   return m_isDisplayingModal;
+}
+
+void ModalViewController::ContentView::reload() {
+  markRectAsDirty(bounds());
+  layoutSubviews();
 }
 
 ModalViewController::ModalViewController(Responder * parentResponder, ViewController * child) :
@@ -116,24 +119,30 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
-  m_previousResponder = app()->firstResponder();
+  m_previousResponder = Container::activeApp()->firstResponder();
+  m_currentModalViewController->initView();
   m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
   m_currentModalViewController->viewWillAppear();
-  app()->setFirstResponder(vc);
+  Container::activeApp()->setFirstResponder(vc);
 }
 
-void ModalViewController::dismissModalViewController() {
+void ModalViewController::reloadModalViewController() {
+  m_contentView.layoutSubviews();
+}
+
+void ModalViewController::dismissModalViewController(bool willExitApp) {
   m_currentModalViewController->viewDidDisappear();
-  app()->setFirstResponder(m_previousResponder);
-  m_contentView.dismissModalView();
+  if (!willExitApp) {
+    Container::activeApp()->setFirstResponder(m_previousResponder);
+  }
+  m_contentView.dismissModalView(willExitApp);
   m_currentModalViewController = nullptr;
 }
 
 void ModalViewController::didBecomeFirstResponder() {
-  if (m_contentView.isDisplayingModal()) {
-    app()->setFirstResponder(m_currentModalViewController);
-  }
-  app()->setFirstResponder(m_regularViewController);
+  Container::activeApp()->setFirstResponder(
+    isDisplayingModal() ? m_currentModalViewController : m_regularViewController
+  );
 }
 
 bool ModalViewController::handleEvent(Ion::Events::Event event) {
@@ -147,8 +156,12 @@ bool ModalViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ModalViewController::viewWillAppear() {
+void ModalViewController::initView() {
   m_contentView.setMainView(m_regularViewController->view());
+  m_regularViewController->initView();
+}
+
+void ModalViewController::viewWillAppear() {
   m_contentView.layoutSubviews();
   if (m_contentView.isDisplayingModal()) {
     m_currentModalViewController->viewWillAppear();
@@ -161,4 +174,8 @@ void ModalViewController::viewDidDisappear() {
     m_currentModalViewController->viewDidDisappear();
   }
   m_regularViewController->viewDidDisappear();
+}
+
+void ModalViewController::reloadView() {
+  m_contentView.reload();
 }

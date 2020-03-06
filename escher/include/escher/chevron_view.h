@@ -1,11 +1,10 @@
 #ifndef ESCHER_CHEVRON_VIEW_H
 #define ESCHER_CHEVRON_VIEW_H
 
-#include <escher/view.h>
+#include <escher/transparent_view.h>
 
-class ChevronView : public View {
+class ChevronView : public TransparentView {
 public:
-  ChevronView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   /* k_chevronHeight and k_chevronWidth are the dimensions of the chevron. */

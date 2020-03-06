@@ -1,61 +1,33 @@
 #include "main_controller.h"
 #include "../global_preferences.h"
-#include "../i18n.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
+#include <apps/i18n.h>
 #include <assert.h>
-#include <poincare.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Settings {
 
-const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message::Degres), SettingsMessageTree(I18n::Message::Radian)};
-const SettingsMessageTree FloatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Auto), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
-const SettingsMessageTree complexFormatChildren[2] = {SettingsMessageTree(I18n::Message::Default), SettingsMessageTree(I18n::Message::Default)};
-const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
-const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
+constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18n::Message::Degrees), SettingsMessageTree(I18n::Message::Radian), SettingsMessageTree(I18n::Message::Gradians)};
+constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
+constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
+constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
+constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-const SettingsMessageTree menu[8] =
-#else
-const SettingsMessageTree menu[7] =
-#endif
-  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2), SettingsMessageTree(I18n::Message::DisplayMode, FloatDisplayModeChildren, 3), SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsMessageTree(I18n::Message::Brightness), SettingsMessageTree(I18n::Message::Language), SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  SettingsMessageTree(I18n::Message::UpdatePopUp),
-#endif
-  SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
-#else
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 7);
-#endif
-
-MainController::MainController(Responder * parentResponder) :
+MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   ViewController(parentResponder),
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
-#endif
-  m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
-  m_brightnessCell(I18n::Message::Default, KDText::FontSize::Large),
-  m_complexFormatLayout(nullptr),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_messageTreeModel((MessageTree *)&model),
-  m_subController(this),
-  m_languageController(this, 13)
+  m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
+  m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
+  m_selectableTableView(this),
+  m_preferencesController(this),
+  m_displayModeController(this, inputEventHandlerDelegate),
+  m_languageController(this, 13),
+  m_examModeController(this),
+  m_aboutController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
-    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
-  }
-}
-
-MainController::~MainController() {
-  if (m_complexFormatLayout) {
-    delete m_complexFormatLayout;
-    m_complexFormatLayout = nullptr;
+    m_cells[i].setMessageFont(KDFont::LargeFont);
   }
 }
 
@@ -67,32 +39,31 @@ void MainController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  if (m_messageTreeModel->children(selectedRow())->numberOfChildren() == 0) {
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  if (model()->children(selectedRow())->numberOfChildren() == 0) {
+    if (model()->children(selectedRow())->label() == promptMessage()) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-        GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
+        globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         return true;
       }
       return false;
     }
-#endif
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Brightness) {
+    if (model()->children(selectedRow())->label() == I18n::Message::Brightness) {
       if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
         int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
         int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
-        GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
+        globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel()+direction);
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         return true;
       }
       return false;
     }
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Language) {
+    if (model()->children(selectedRow())->label() == I18n::Message::Language) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
         stackController()->push(&m_languageController);
         return true;
@@ -101,28 +72,51 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    m_subController.setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+    GenericSubController * subController = nullptr;
+    int rowIndex = selectedRow();
+    if (rowIndex == k_indexOfDisplayModeCell) {
+      subController = &m_displayModeController;
+    } else if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
+      assert(false);
+    } else if (rowIndex == k_indexOfExamModeCell) {
+      subController = &m_examModeController;
+    } else if (rowIndex == k_indexOfAboutCell + hasPrompt()) {
+      subController = &m_aboutController;
+    } else {
+      subController = &m_preferencesController;
+    }
+    subController->setMessageTreeModel(model()->children(selectedRow()));
     StackViewController * stack = stackController();
-    stack->push(&m_subController);
+    stack->push(subController);
     return true;
   }
   return false;
 }
 
-int MainController::numberOfRows() {
-  return m_messageTreeModel->numberOfChildren();
+int MainController::numberOfRows() const {
+  return model()->numberOfChildren();
 };
 
 KDCoordinate MainController::rowHeight(int j) {
+  if (j == k_indexOfBrightnessCell) {
+    return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
+  }
   return Metric::ParameterCellHeight;
 }
 
 KDCoordinate MainController::cumulatedHeightFromIndex(int j) {
-  return j*rowHeight(0);
+  KDCoordinate height = j * rowHeight(0);
+  if (j > k_indexOfBrightnessCell) {
+    height += CellWithSeparator::k_margin;
+  }
+  return height;
 }
 
 int MainController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return offsetY/rowHeight(0);
+  if (offsetY < rowHeight(0)*k_indexOfBrightnessCell + CellWithSeparator::k_margin) {
+    return offsetY/rowHeight(0);
+  }
+  return (offsetY - CellWithSeparator::k_margin)/rowHeight(0);
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {
@@ -133,14 +127,10 @@ HighlightCell * MainController::reusableCell(int index, int type) {
   }
   assert(index == 0);
   if (type == 2) {
-    return &m_brightnessCell;
+    return &m_popUpCell;
   }
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  if (type == 3) {
-    return &m_updateCell;
-  }
-#endif
-  return &m_complexFormatCell;
+  assert(type == 1);
+  return &m_brightnessCell;
 }
 
 int MainController::reusableCellCount(int type) {
@@ -151,76 +141,69 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 2) {
+  if (j == k_indexOfBrightnessCell) {
     return 1;
   }
-  if (j == 3) {
+  if (hasPrompt() && j == k_indexOfPopUpCell) {
     return 2;
   }
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  if (j == 6) {
-    return 3;
-  }
-#endif
   return 0;
 }
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
-  myCell->setMessage(m_messageTreeModel->children(index)->label());
-
-  if (index == 2) {
-    if (m_complexFormatLayout) {
-      delete m_complexFormatLayout;
-      m_complexFormatLayout = nullptr;
-    }
-    if (Preferences::sharedPreferences()->complexFormat() == Expression::ComplexFormat::Cartesian) {
-      const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
-      m_complexFormatLayout = new StringLayout(text, sizeof(text), KDText::FontSize::Small);
-    } else {
-      const char base[] = {'r', Ion::Charset::Exponential};
-      const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
-      m_complexFormatLayout = new BaselineRelativeLayout(new StringLayout(base, sizeof(base), KDText::FontSize::Small), new StringLayout(superscript, sizeof(superscript), KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
-    }
-    MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
-    myExpCell->setExpression(m_complexFormatLayout);
-    return;
-  }
-  if (index == 3) {
-    MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  Preferences * preferences = Preferences::sharedPreferences();
+  I18n::Message title = model()->children(index)->label();
+  if (index == k_indexOfBrightnessCell) {
+    MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
+    myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
-    myGauge->setLevel((float)GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
+    myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  if (index == 4) {
-    int index = (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
+  MessageTableCell * myCell = (MessageTableCell *)cell;
+  myCell->setMessage(title);
+  if (index == k_indexOfLanguageCell) {
+    int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  if (index == 6) {
+  if (hasPrompt() && index == k_indexOfPopUpCell) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
+    mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
-#endif
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
+  int childIndex = -1;
   switch (index) {
-    case 0:
-      myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->angleUnit())->label());
+    case k_indexOfAngleUnitCell:
+      childIndex = (int)preferences->angleUnit();
       break;
-    case 1:
-      myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->displayMode())->label());
+    case k_indexOfDisplayModeCell:
+      childIndex = (int)preferences->displayMode();
       break;
-    default:
-      myTextCell->setSubtitle(I18n::Message::Default);
+    case k_indexOfEditionModeCell:
+      childIndex = (int)preferences->editionMode();
+      break;
+    case k_indexOfComplexFormatCell:
+      childIndex = (int)preferences->complexFormat();
+      break;
+    case k_indexOfFontCell:
+      childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
       break;
   }
+  I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
+  myTextCell->setSubtitle(message);
 }
 
 void MainController::viewWillAppear() {
+  ViewController::viewWillAppear();
   m_selectableTableView.reloadData();
+}
+
+const SettingsMessageTree * MainController::model() {
+  return &s_model;
 }
 
 StackViewController * MainController::stackController() const {

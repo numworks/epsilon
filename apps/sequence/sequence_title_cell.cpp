@@ -6,14 +6,26 @@ using namespace Poincare;
 
 namespace Sequence {
 
-SequenceTitleCell::SequenceTitleCell(Orientation orientation) :
-  Shared::FunctionTitleCell(orientation),
-  m_titleTextView(0.5f, 0.5f)
+SequenceTitleCell::SequenceTitleCell() :
+  Shared::FunctionTitleCell(Orientation::VerticalIndicator),
+  m_titleTextView(k_verticalOrientationHorizontalAlignment, k_horizontalOrientationAlignment)
 {
+  m_titleTextView.setRightMargin(3);
 }
 
-void SequenceTitleCell::setExpression(Poincare::ExpressionLayout * expressionLayout) {
-  m_titleTextView.setExpression(expressionLayout);
+void SequenceTitleCell::setOrientation(Orientation orientation) {
+  if (orientation == Orientation::VerticalIndicator) {
+    /* We do not care here about the vertical alignment, it will be set properly
+     * in layoutSubviews */
+    m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, k_verticalOrientationHorizontalAlignment);
+  } else {
+    m_titleTextView.setAlignment(k_horizontalOrientationAlignment, k_horizontalOrientationAlignment);
+  }
+  FunctionTitleCell::setOrientation(orientation);
+}
+
+void SequenceTitleCell::setLayout(Poincare::Layout layout) {
+  m_titleTextView.setLayout(layout);
 }
 
 void SequenceTitleCell::setHighlighted(bool highlight) {
@@ -40,12 +52,17 @@ View * SequenceTitleCell::subviewAtIndex(int index) {
   return &m_titleTextView;
 }
 
-void SequenceTitleCell::layoutSubviews() {
-  KDRect textFrame(0, k_colorIndicatorThickness, bounds().width(), bounds().height() - k_colorIndicatorThickness);
-  if (m_orientation == Orientation::VerticalIndicator){
-    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness, bounds().height()-k_separatorThickness);
+void SequenceTitleCell::layoutSubviews(bool force) {
+  if (m_orientation == Orientation::VerticalIndicator) {
+    m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, verticalAlignment());
   }
-  m_titleTextView.setFrame(textFrame);
+  m_titleTextView.setFrame(subviewFrame(), force);
+}
+
+float SequenceTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
+  assert(m_orientation == Orientation::VerticalIndicator);
+  Layout l = layout();
+  return ((float)(expressionBaseline - l.baseline()))/((float)rowHeight-l.layoutSize().height());
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -49,12 +49,15 @@ STATIC mp_obj_t object___init__(mp_obj_t self) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(object___init___obj, object___init__);
 
 STATIC mp_obj_t object___new__(mp_obj_t cls) {
-    if (!MP_OBJ_IS_TYPE(cls, &mp_type_type) || !mp_obj_is_instance_type((mp_obj_type_t*)MP_OBJ_TO_PTR(cls))) {
+    if (!mp_obj_is_type(cls, &mp_type_type) || !mp_obj_is_instance_type((mp_obj_type_t*)MP_OBJ_TO_PTR(cls))) {
         mp_raise_TypeError("__new__ arg must be a user-type");
     }
-    mp_obj_t o = MP_OBJ_SENTINEL;
-    mp_obj_t res = mp_obj_instance_make_new(MP_OBJ_TO_PTR(cls), 1, 0, &o);
-    return res;
+    // This executes only "__new__" part of instance creation.
+    // TODO: This won't work well for classes with native bases.
+    // TODO: This is a hack, should be resolved along the lines of
+    // https://github.com/micropython/micropython/issues/606#issuecomment-43685883
+    const mp_obj_type_t *native_base;
+    return MP_OBJ_FROM_PTR(mp_obj_new_instance(MP_OBJ_TO_PTR(cls), &native_base));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(object___new___fun_obj, object___new__);
 STATIC MP_DEFINE_CONST_STATICMETHOD_OBJ(object___new___obj, MP_ROM_PTR(&object___new___fun_obj));

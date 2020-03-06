@@ -14,6 +14,7 @@ float32_t f64_to_f32(float64_t x);
 float64_t f32_to_f64(float32_t x);
 float64_t i32_to_f64(int32_t i);
 float64_t ui32_to_f64(uint32_t i);
+float64_t ui64_to_f64(uint64_t i);
 int_fast32_t f64_to_i32_r_minMag(float64_t x, bool exact);
 bool f64_eq(float64_t x, float64_t y);
 bool f64_le(float64_t x, float64_t y);

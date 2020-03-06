@@ -1,60 +1,65 @@
-extern "C" {
-#include <assert.h>
-#include <stdlib.h>
-}
-
 #include <poincare/subtraction.h>
-#include <poincare/multiplication.h>
-#include <poincare/rational.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/addition.h>
+#include <poincare/multiplication.h>
 #include <poincare/opposite.h>
-#include <poincare/matrix.h>
-#include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
-#include "layout/parenthesis_layout.h"
+#include <poincare/rational.h>
+#include <assert.h>
 
 namespace Poincare {
 
-Expression::Type Subtraction::type() const {
-  return Expression::Type::Subtraction;
-}
-
-Expression * Subtraction::clone() const {
-  return new Subtraction(m_operands, true);
-}
-
-template<typename T>
-Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
-  return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());
-}
-
-template<typename T> Matrix * Subtraction::computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
-  Matrix * opposite = computeOnMatrixAndComplex(m, c);
-  if (opposite == nullptr) {
-    return nullptr;
+int SubtractionNode::polynomialDegree(Context * context, const char * symbolName) const {
+  int degree = 0;
+  for (ExpressionNode * e : children()) {
+    int d = e->polynomialDegree(context, symbolName);
+    if (d < 0) {
+      return -1;
+    }
+    degree = d > degree ? d : degree;
   }
-  Expression ** operands = new Expression * [opposite->numberOfRows() * opposite->numberOfColumns()];
-  for (int i = 0; i < opposite->numberOfOperands(); i++) {
-    const Complex<T> * entry = static_cast<const Complex<T> *>(opposite->operand(i));
-    operands[i] = new Complex<T>(Complex<T>::Cartesian(-entry->a(), -entry->b()));
-  }
-  Matrix * result = new Matrix(operands, m->numberOfRows(), m->numberOfColumns(), false);
-  delete[] operands;
-  delete opposite;
-  return result;
+  return degree;
 }
 
-Expression * Subtraction::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
+// Private
+
+bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  if (childIndex == 0) {
+    // First operand of a subtraction never requires parentheses
+    return false;
+  }
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
+    return true;
+  }
+  if (child.type() == Type::Conjugate) {
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
+  }
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
+  return child.isOfType(types, 3);
+}
+
+Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Infix(Subtraction(this), floatDisplayMode, numberOfSignificantDigits, "-");
+}
+
+int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "-");
+}
+
+Expression SubtractionNode::shallowReduce(ReductionContext reductionContext) {
+  return Subtraction(this).shallowReduce(reductionContext);
+}
+
+Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  Expression e = Expression::defaultShallowReduce();
+  if (e.isUndefined()) {
     return e;
   }
-  Multiplication * m = new Multiplication(new Rational(-1), operand(1), false);
-  Addition * a = new Addition(operand(0), m, false);
-  detachOperands();
-  m->shallowReduce(context, angleUnit);
-  replaceWith(a, true);
-  return a->shallowReduce(context, angleUnit);
+  Expression m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
+  Addition a = Addition::Builder(childAtIndex(0), m);
+  m = m.shallowReduce(reductionContext);
+  replaceWithInPlace(a);
+  return a.shallowReduce(reductionContext);
 }
 
 }

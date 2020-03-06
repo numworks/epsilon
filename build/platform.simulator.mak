@@ -1,9 +1,20 @@
-TOOLCHAIN ?= host-gcc
-ifeq ($(OS),Windows_NT)
-  TOOLCHAIN = mingw
-endif
 USE_LIBA = 0
-EXE = elf
-OS_WITH_ONBOARDING_APP ?= 0
-OS_WITH_SOFTWARE_UPDATE_PROMPT ?= 0
-SFLAGS = -fPIE
+ION_KEYBOARD_LAYOUT = layout_B2
+EPSILON_GETOPT = 1
+
+SFLAGS += -fPIE
+
+TARGET ?= $(HOST)
+
+BUILD_DIR := $(BUILD_DIR)/$(TARGET)
+
+EPSILON_SIMULATOR_HAS_LIBPNG ?= 0
+
+include build/platform.simulator.$(TARGET).mak
+
+SFLAGS += -DEPSILON_SIMULATOR_HAS_LIBPNG=$(EPSILON_SIMULATOR_HAS_LIBPNG)
+
+ifeq ($(EPSILON_SIMULATOR_HAS_LIBPNG),1)
+SFLAGS += `libpng-config --cflags`
+LDFLAGS += `libpng-config --ldflags`
+endif

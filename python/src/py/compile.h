@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -29,15 +29,6 @@
 #include "py/lexer.h"
 #include "py/parse.h"
 #include "py/emitglue.h"
-
-// These must fit in 8 bits; see scope.h
-enum {
-    MP_EMIT_OPT_NONE,
-    MP_EMIT_OPT_BYTECODE,
-    MP_EMIT_OPT_NATIVE_PYTHON,
-    MP_EMIT_OPT_VIPER,
-    MP_EMIT_OPT_ASM,
-};
 
 // the compiler will raise an exception if an error occurred
 // the compiler will clear the parse tree before it returns

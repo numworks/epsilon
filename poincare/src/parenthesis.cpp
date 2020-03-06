@@ -1,39 +1,39 @@
-extern "C" {
-#include <assert.h>
-#include <stdlib.h>
-}
 #include <poincare/parenthesis.h>
-#include "layout/parenthesis_layout.h"
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-
-Expression::Type Parenthesis::type() const {
-  return Type::Parenthesis;
+int ParenthesisNode::polynomialDegree(Context * context, const char * symbolName) const {
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-Expression * Parenthesis::clone() const {
-  Parenthesis * o = new Parenthesis(m_operands, true);
-  return o;
+Layout ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
-ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
+int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
-Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  return replaceWith(editableOperand(0), true);
+Expression ParenthesisNode::shallowReduce(ReductionContext reductionContext) {
+  return Parenthesis(this).shallowReduce();
 }
 
 template<typename T>
-Expression * Parenthesis::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return operand(0)->approximate<T>(context, angleUnit);
+Evaluation<T> ParenthesisNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+}
+
+
+Expression Parenthesis::shallowReduce() {
+  Expression e = Expression::defaultShallowReduce();
+  if (e.isUndefined()) {
+    return e;
+  }
+  Expression c = childAtIndex(0);
+  replaceWithInPlace(c);
+  return c;
 }
 
 }

@@ -8,6 +8,10 @@ int __aeabi_d2iz(aeabi_double_t x) {
   return f64_to_i32_r_minMag(f64(x), 0);
 }
 
+unsigned int __aeabi_d2uiz(aeabi_double_t x) {
+  return f64_to_i32_r_minMag(f64(x), 0);
+}
+
 aeabi_double_t __aeabi_i2d(int i) {
   return d(i32_to_f64(i));
 }

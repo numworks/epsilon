@@ -5,17 +5,16 @@
 
 namespace Probability {
 
-class DiscreteCalculation : public Calculation {
+class DiscreteCalculation final : public Calculation {
 public:
   DiscreteCalculation();
-  Type type() override;
-  int numberOfParameters() override;
-  int numberOfEditableParameters() override;
+  Type type() override { return Type::Discrete; }
+  int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
-  double lowerBound() override;
-  double upperBound() override;
+  double lowerBound() override { return m_abscissa; }
+  double upperBound() override { return m_abscissa; }
 private:
   void compute(int indexKnownElement) override;
   double m_abscissa;

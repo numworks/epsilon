@@ -2,7 +2,7 @@
 
 ShiftAlphaLockView::ShiftAlphaLockView() :
   View(),
-  m_shiftAlphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
+  m_shiftAlphaView(KDFont::SmallFont, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
   m_status(Ion::Events::ShiftAlphaStatus::Default)
 {
 }
@@ -37,7 +37,7 @@ bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
 }
 
 KDSize ShiftAlphaLockView::minimalSizeForOptimalDisplay() const {
-  KDSize modifierSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha), KDText::FontSize::Small);
+  KDSize modifierSize = KDFont::SmallFont->stringSize(I18n::translate(I18n::Message::Alpha));
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();
   KDCoordinate height = lockSize.height() > modifierSize.height() ? lockSize.height() : modifierSize.height();
   return KDSize(modifierSize.width() + lockSize.width() + k_lockRightMargin, height);
@@ -65,10 +65,10 @@ View * ShiftAlphaLockView::subviewAtIndex(int index) {
   return &m_lockView;
 }
 
-void ShiftAlphaLockView::layoutSubviews() {
-  KDSize modifierSize = KDText::stringSize(I18n::translate(I18n::Message::Alpha), KDText::FontSize::Small);
-  m_shiftAlphaView.setFrame(KDRect(bounds().width() - modifierSize.width(), (bounds().height()- modifierSize.height())/2, modifierSize));
+void ShiftAlphaLockView::layoutSubviews(bool force) {
+  KDSize modifierSize = KDFont::SmallFont->stringSize(I18n::translate(I18n::Message::Alpha));
+  m_shiftAlphaView.setFrame(KDRect(bounds().width() - modifierSize.width(), (bounds().height()- modifierSize.height())/2, modifierSize), force);
 
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();
-  m_lockView.setFrame(KDRect(bounds().width() - modifierSize.width() - lockSize.width() - k_lockRightMargin, (bounds().height()- lockSize.height())/2, lockSize));
+  m_lockView.setFrame(KDRect(bounds().width() - modifierSize.width() - lockSize.width() - k_lockRightMargin, (bounds().height()- lockSize.height())/2, lockSize), force);
 }

@@ -1,44 +1,52 @@
 #include <poincare/real_part.h>
-#include <poincare/complex.h>
-#include <poincare/simplification_engine.h>
-extern "C" {
+#include <poincare/complex_cartesian.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type RealPart::type() const {
-  return Type::RealPart;
+constexpr Expression::FunctionHelper RealPart::s_functionHelper;
+
+int RealPartNode::numberOfChildren() const { return RealPart::s_functionHelper.numberOfChildren(); }
+
+Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
-Expression * RealPart::clone() const {
-  RealPart * a = new RealPart(m_operands, true);
-  return a;
+int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
-Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
+Expression RealPartNode::shallowReduce(ReductionContext reductionContext) {
+  return RealPart(this).shallowReduce(reductionContext);
+}
+
+Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    e = e.defaultHandleUnitsInChildren();
+    if (e.isUndefined()) {
+      return e;
+    }
   }
-  Expression * op = editableOperand(0);
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixFirstChild(reductionContext);
   }
-#endif
-  if (op->type() == Type::Rational) {
-    return replaceWith(op, true);
+  if (c.isReal(reductionContext.context())) {
+    replaceWithInPlace(c);
+    return c;
   }
-  return this;
+  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+    ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
+    Expression r = complexChild.real();
+    replaceWithInPlace(r);
+    return r.shallowReduce(reductionContext);
+  }
+  return *this;
 }
 
-template<typename T>
-Complex<T> RealPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::Float(c.a());
 }
-
-}
-
-

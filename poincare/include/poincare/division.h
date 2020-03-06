@@ -1,43 +1,72 @@
 #ifndef POINCARE_DIVISION_H
 #define POINCARE_DIVISION_H
 
-#include <poincare/static_hierarchy.h>
-#include <poincare/approximation_engine.h>
-#include <poincare/layout_engine.h>
+#include <poincare/expression.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
-class Division : public StaticHierarchy<2> {
-  using StaticHierarchy<2>::StaticHierarchy;
-  friend class Multiplication;
-  friend class Power;
-public:
-  Type type() const override;
-  Expression * clone() const override;
-  template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
-private:
-  /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "/", [](const Expression * e) {
-      return e->type() == Type::Division || e->type() == Type::Multiplication || e->type() == Type::Addition || e->type() == Type::Subtraction || e->type() == Type::Opposite || (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne());
-    });
-  }
-  /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  /* Evaluation */
-  template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
-    return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
-  }
-  template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n);
-  template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n);
+class Division;
 
-  virtual Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+class DivisionNode /*final*/ : public ExpressionNode {
+template<int T>
+  friend class LogarithmNode;
+public:
+
+  // TreeNode
+  size_t size() const override { return sizeof(DivisionNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Division";
   }
-  virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+#endif
+
+  // Properties
+  Type type() const override { return Type::Division; }
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+
+  // Approximation
+  virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::MapReduce<float>(
+        this, context, complexFormat, angleUnit, compute<float>,
+        computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>,
+        computeOnMatrices<float>);
   }
+  virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::MapReduce<double>(
+        this, context, complexFormat, angleUnit, compute<double>,
+        computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>,
+        computeOnMatrices<double>);
+  }
+
+  // Layout
+  bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Fraction; };
+
+private:
+  // Approximation
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
+  template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
+  }
+  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
+  template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
+};
+
+class Division final : public Expression {
+public:
+  Division(const DivisionNode * n) : Expression(n) {}
+  static Division Builder() { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(); }
+  static Division Builder(Expression numerator, Expression denominator) { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(ArrayBuilder<TreeHandle>(numerator, denominator).array(), 2); }
+
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

@@ -13,18 +13,6 @@ DiscreteCalculation::DiscreteCalculation() :
   compute(0);
 }
 
-Calculation::Type DiscreteCalculation::type() {
-  return Type::Discrete;
-}
-
-int DiscreteCalculation::numberOfParameters() {
-  return 2;
-}
-
-int DiscreteCalculation::numberOfEditableParameters() {
-  return 1;
-}
-
 I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -49,21 +37,11 @@ double DiscreteCalculation::parameterAtIndex(int index) {
   return m_result;
 }
 
-double DiscreteCalculation::lowerBound() {
-  return m_abscissa;
-}
-
-double DiscreteCalculation::upperBound() {
-  return m_abscissa;
-}
-
 void DiscreteCalculation::compute(int indexKnownElement) {
-  if (m_law == nullptr) {
+  if (m_distribution == nullptr) {
     return;
   }
-  m_result = m_law->evaluateAtDiscreteAbscissa(m_abscissa);
-  /* Results in probability application are rounder to 3 decimals */
-  m_result = std::round(m_result/k_precision)*k_precision;
+  m_result = m_distribution->evaluateAtDiscreteAbscissa(m_abscissa);
 }
 
 }

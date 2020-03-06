@@ -1,100 +1,124 @@
-#include <quiz.h>
-#include <poincare.h>
-#include <string.h>
-#include <ion.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <cmath>
-#if POINCARE_TESTS_PRINT_EXPRESSIONS
-#include "../src/expression_debug.h"
-#include <iostream>
-using namespace std;
-#endif
+#include "helper.h"
+#include <apps/shared/global_context.h>
+#include <poincare/src/parsing/parser.h>
 
 using namespace Poincare;
 
-void translate_in_special_chars(char * expression) {
-  for (char *c = expression; *c; c++) {
-    switch (*c) {
-      case 'E': *c = Ion::Charset::Exponent; break;
-      case 'X': *c = Ion::Charset::Exponential; break;
-      case 'I': *c = Ion::Charset::IComplex; break;
-      case 'R': *c = Ion::Charset::Root; break;
-      case 'P': *c = Ion::Charset::SmallPi; break;
-      case '*': *c = Ion::Charset::MultiplicationSign; break;
-    }
-  }
+const char * MaxIntegerString() {
+  static const char * s = "179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137215"; // (2^32)^k_maxNumberOfDigits-1
+  return s;
 }
 
-void translate_in_ASCII_chars(char * expression) {
-  for (char *c = expression; *c; c++) {
-    switch (*c) {
-      case Ion::Charset::Exponent: *c = 'E'; break;
-      case Ion::Charset::Exponential: *c = 'X'; break;
-      case Ion::Charset::IComplex: *c = 'I'; break;
-      case Ion::Charset::Root: *c = 'R'; break;
-      case Ion::Charset::SmallPi: *c = 'P'; break;
-      case Ion::Charset::MultiplicationSign: *c = '*'; break;
-    }
-  }
+const char * OverflowedIntegerString() {
+  static const char * s = "179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216"; // (2^32)^k_maxNumberOfDigits
+  return s;
 }
 
-Expression * parse_expression(const char * expression) {
-  quiz_print(expression);
-  char buffer[200];
-  strlcpy(buffer, expression, sizeof(buffer));
-  translate_in_special_chars(buffer);
-  Expression * result = Expression::parse(buffer);
-  assert(result);
+const char * BigOverflowedIntegerString() {
+  static const char * s = "279769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216"; // OverflowedIntegerString() with a 2 on first digit
+  return s;
+}
+
+void quiz_assert_print_if_failure(bool test, const char * information) {
+  if (!test) {
+    quiz_print("TEST FAILURE WHILE TESTING:");
+    quiz_print(information);
+  }
+  quiz_assert(test);
+}
+
+void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
+#if POINCARE_TREE_LOG
+  if (!test) {
+    quiz_print("TEST FAILURE WHILE TESTING:");
+    tree.log();
+  }
+#endif
+  quiz_assert(test);
+}
+
+void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
+  Expression m = process(e, ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target, symbolicComputation));
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
+  const bool test = strcmp(buffer, result) == 0;
+  char information[bufferSize] = "";
+  if (!test) {
+    char * position = information;
+    size_t remainingLength = bufferSize;
+    static constexpr size_t numberOfPieces = 6;
+    const char * piecesOfInformation[numberOfPieces] = {
+      "  ",
+      expression,
+      "\n  processed to\n  ",
+      buffer,
+      "\n  instead of\n  ",
+      result,
+    };
+    for (size_t piece = 0; piece < numberOfPieces; piece++) {
+      const size_t length = strlcpy(position, piecesOfInformation[piece], remainingLength);
+      if (length > remainingLength) {
+        break;
+      }
+      remainingLength -= length;
+      position += length;
+    }
+  }
+  quiz_assert_print_if_failure(test, information);
+}
+
+Poincare::Expression parse_expression(const char * expression, Context * context, bool addParentheses) {
+  Expression result = Expression::Parse(expression, context, addParentheses);
+  quiz_assert(!result.isUninitialized());
   return result;
 }
 
-void assert_parsed_expression_type(const char * expression, Poincare::Expression::Type type) {
-  Expression * e = parse_expression(expression);
-  assert(e->type() == type);
-  delete e;
+void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
+  quiz_assert_print_if_failure(!e.isUninitialized(), expression);
+  e = e.simplify(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
+  quiz_assert_print_if_failure(!(e.isUninitialized()), expression);
+}
+
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, symbolicComputation, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+      Expression copy = e.clone();
+      if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+        copy.simplifyAndApproximate(&copy, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.symbolicComputation());
+      } else {
+        copy = copy.simplify(reductionContext);
+      }
+      if (copy.isUninitialized()) {
+        return e;
+      }
+      return copy;
+    });
 }
 
 template<typename T>
-void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {
-  GlobalContext globalContext;
-  Expression * a = parse_expression(expression);
-  Expression * m = a->approximate<T>(globalContext, angleUnit);
-  assert(m);
-  assert(m->numberOfOperands() == 0 || m->numberOfOperands() == numberOfRows*numberOfColumns);
-  if (m->type() == Expression::Type::Matrix) {
-    assert(static_cast<Matrix *>(m)->numberOfRows() == numberOfRows);
-    assert(static_cast<Matrix *>(m)->numberOfColumns() == numberOfColumns);
-    for (int i = 0; i < m->numberOfOperands(); i++) {
-      assert(std::fabs(static_cast<const Complex<T> *>(m->operand(i))->a() - results[i].a()) < 0.0001f);
-      assert(std::fabs(static_cast<const Complex<T> *>(m->operand(i))->b() - results[i].b()) < 0.0001f);
-    }
-  } else {
-    assert(std::fabs(static_cast<const Complex<T> *>(m)->a() - results[0].a()) < 0.0001f);
-    assert(std::fabs(static_cast<const Complex<T> *>(m)->b() - results[0].b()) < 0.0001f);
-  }
-  delete a;
-  delete m;
+void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+  int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
+  numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+      return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    }, numberOfDigits);
 }
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Expression::AngleUnit angleUnit) {
-  GlobalContext globalContext;
-  Expression * e = parse_expression(expression);
-#if POINCARE_TESTS_PRINT_EXPRESSIONS
-  cout << "---- Simplify: " << expression << "----"  << endl;
-#endif
-  Expression::Simplify(&e, globalContext, angleUnit);
-  char buffer[200];
-  e->writeTextInBuffer(buffer, sizeof(buffer));
-  translate_in_ASCII_chars(buffer);
-#if POINCARE_TESTS_PRINT_EXPRESSIONS
-  print_expression(e, 0);
-  cout << "---- serialize to: " << buffer << " ----"  << endl;
-  cout << "----- compared to: " << simplifiedExpression << " ----\n"  << endl;
-#endif
-  assert(strcmp(buffer, simplifiedExpression) == 0);
-  delete e;
+void assert_layout_serialize_to(Poincare::Layout layout, const char * serialization) {
+  constexpr int bufferSize = 255;
+  char buffer[bufferSize];
+  layout.serializeForParsing(buffer, bufferSize);
+  quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0, serialization);
 }
 
-template void assert_parsed_expression_evaluates_to<float>(char const*, Poincare::Complex<float>*, int, int, Poincare::Expression::AngleUnit);
-template void assert_parsed_expression_evaluates_to<double>(char const*, Poincare::Complex<double>*, int, int, Poincare::Expression::AngleUnit);
+void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout) {
+  Layout l = expression.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  quiz_assert(l.isIdenticalTo(layout));
+}
+
+template void assert_expression_approximates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+template void assert_expression_approximates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);

@@ -1,6 +1,7 @@
 #include "app.h"
 #include "regression_icon.h"
-#include "../i18n.h"
+#include "../apps_container.h"
+#include <apps/i18n.h>
 
 using namespace Shared;
 
@@ -23,17 +24,17 @@ App::Snapshot::Snapshot() :
   m_cursor(),
   m_graphSelectedDotIndex(-1),
   m_modelVersion(0),
-  m_rangeVersion(0)
+  m_rangeVersion(0),
+  m_selectedSeriesIndex(-1)
 {
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new App(container, this);
+  return new (container->currentAppBuffer()) App(this, static_cast<AppsContainer *>(container)->globalContext());
 }
 
 void App::Snapshot::reset() {
   m_store.deleteAllPairs();
-  m_store.setDefault();
   m_modelVersion = 0;
   m_rangeVersion = 0;
   setActiveTab(0);
@@ -44,39 +45,25 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-Store * App::Snapshot::store() {
-  return &m_store;
+void App::Snapshot::tidy() {
+  m_store.setDelegate(nullptr);
+  m_store.tidy();
 }
 
-CurveViewCursor * App::Snapshot::cursor() {
-  return &m_cursor;
-}
-
-int * App::Snapshot::graphSelectedDotIndex() {
-  return &m_graphSelectedDotIndex;
-}
-
-uint32_t * App::Snapshot::modelVersion() {
-  return &m_modelVersion;
-}
-
-uint32_t * App::Snapshot::rangeVersion() {
-  return &m_rangeVersion;
-}
-
-App::App(Container * container, Snapshot * snapshot) :
-  TextFieldDelegateApp(container, snapshot, &m_tabViewController),
+App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
+  TextFieldDelegateApp(snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex()),
+  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),
-  m_storeController(&m_storeHeader, snapshot->store(), &m_storeHeader),
+  m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader, parentContext),
   m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
   m_storeStackViewController(&m_tabViewController, &m_storeHeader),
-  m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader)
+  m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader),
+  m_regressionController(nullptr, snapshot->store())
 {
 }
 

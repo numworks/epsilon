@@ -1,51 +1,62 @@
-EPSILON_I18N_LANGUAGES ?= en fr es de pt
-EPSILON_APPS ?= calculation graph sequence settings statistics probability regression code
-
 include apps/shared/Makefile
 include apps/home/Makefile
 include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
-snapshots =
+include apps/usb/Makefile
+apps =
 
 # All selected apps are included. Each Makefile below is responsible for setting
-# the $snapshots variable (name of the snapshot class) and the $snapshot_headers
-# (path to the snapshot header).
+# the $apps variable (name of the app class) and the $app_headers
+# (path to the apps header).
 $(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
 
-app_objs += $(addprefix apps/,\
-  apps_container.o\
-  apps_container_storage.o\
-  apps_window.o\
-  battery_timer.o\
-  battery_view.o\
-  constant.o\
-  backlight_dimming_timer.o\
-  empty_battery_window.o\
-  exam_pop_up_controller.o\
-  global_preferences.o\
-  i18n.o\
-  led_timer.o\
-  lock_view.o\
-  main.o\
-  math_toolbox.o\
-  shift_alpha_lock_view.o\
-  suspend_timer.o\
-  title_bar_view.o\
-  usb_timer.o\
-  variable_box_controller.o\
-  variable_box_leaf_cell.o\
+app_src += $(addprefix apps/,\
+  apps_container.cpp \
+  apps_container_storage.cpp \
+  apps_window.cpp \
+  backlight_dimming_timer.cpp \
+  battery_timer.cpp \
+  battery_view.cpp \
+  empty_battery_window.cpp \
+  exam_pop_up_controller.cpp \
+  global_preferences.cpp \
+  i18n.py \
+  lock_view.cpp \
+  main.cpp \
+  math_toolbox.cpp \
+  shift_alpha_lock_view.cpp \
+  suspend_timer.cpp \
+  title_bar_view.cpp \
+  variable_box_controller.cpp \
+  variable_box_empty_controller.cpp \
 )
 
-snapshots_declaration = $(foreach i,$(snapshots),$(i) m_snapshot$(subst :,,$(i));)
-snapshots_construction = $(foreach i,$(snapshots),,m_snapshot$(subst :,,$(i))())
-snapshots_list = $(foreach i,$(snapshots),,&m_snapshot$(subst :,,$(i)))
-snapshots_count = $(words $(snapshots))
-snapshot_includes = $(foreach i,$(snapshot_headers),-include $(i) )
+tests_src += apps/exam_mode_configuration_official.cpp
+apps_official += apps/exam_mode_configuration_official.cpp
+apps_non_official += apps/exam_mode_configuration_non_official.cpp
 
-apps/apps_container_storage.o apps/main.o: CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count)
+apps_launch_on_boarding_src += apps/apps_container_launch_on_boarding.cpp
+apps_launch_default_src += apps/apps_container_launch_default.cpp
+apps_prompt_none_src += apps/apps_container_prompt_none.cpp
+apps_prompt_beta_src += apps/apps_container_prompt_beta.cpp
+apps_prompt_update_src += apps/apps_container_prompt_update.cpp
 
+snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
+apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)
+snapshots_construction = $(foreach i,$(apps),,m_snapshot$(subst :,,$(i))Snapshot())
+snapshots_list = $(foreach i,$(apps),,&m_snapshot$(subst :,,$(i))Snapshot)
+snapshots_count = $(words $(apps))
+snapshot_includes = $(foreach i,$(app_headers),-include $(i) )
+epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
 
-i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N_LANGUAGES)))
+$(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
+
+# I18n file generation
+
+# The header is refered to as <apps/i18n.h> so make sure it's findable this way
+SFLAGS += -I$(BUILD_DIR)
+
+i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))
 i18n_files += $(addprefix apps/,\
   shared.de.i18n\
   shared.en.i18n\
@@ -65,27 +76,41 @@ i18n_files += $(addprefix apps/,\
   variables.pt.i18n\
 )
 
-apps/i18n.h: apps/i18n.cpp
-apps/i18n.cpp: $(i18n_files)
-	@echo "I18N    $@"
-	@python apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N_LANGUAGES) --files $^
+$(eval $(call rule_for, \
+  I18N, \
+  apps/i18n.cpp, \
+  $(i18n_files), \
+  $$(PYTHON) apps/i18n.py --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ \
+))
 
-$(app_objs): apps/i18n.h
+$(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
-products += apps/i18n.h apps/i18n.cpp
+# Handle PNG files
 
-app_images += apps/exam_icon.png
+$(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
-# Tracking which source file uses which image is painful. But we need to ensure
-# that a .png file has been inlined before building any source file that uses
-# said image (because it will expect the ".h" file to be there).
-# As a shortcut, we simply say that every app file depends on every image. In
-# practice, this forces all the images to be before the app.
+all_app_src = $(app_src)(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src) $(apps_official) $(apps_non_official) $(tests_src)
 
-app_image_objs := $(app_images:.png=.o)
-.SECONDARY: $(app_images:.png=.cpp)
-$(app_objs): $(app_image_objs)
+$(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
+$(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
-app.$(EXE): $(app_objs) $(app_image_objs)
+apps_tests_src = $(app_calculation_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
 
-products += app.$(EXE) $(app_objs) $(call INLINER_PRODUCTS,$(app_images))
+apps_tests_src += $(addprefix apps/,\
+  global_preferences.cpp \
+)
+
+# Configure variants
+apps_all_src = $(app_src)
+apps_all_src += $(apps_official) $(apps_non_official)
+apps_all_src += $(apps_launch_default_src) $(apps_launch_on_boarding_src)
+apps_all_src += $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src)
+
+apps_default_src = $(app_src) $(apps_non_official) $(apps_launch_default_src) $(apps_prompt_none_src)
+apps_official_default_src = $(app_src) $(apps_official) $(apps_launch_default_src) $(apps_prompt_none_src)
+apps_onboarding_src = $(app_src) $(apps_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
+apps_official_onboarding_src = $(app_src) $(apps_official) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
+apps_onboarding_update_src = $(app_src) $(apps_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
+apps_official_onboarding_update_src = $(app_src) $(apps_official) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
+apps_onboarding_beta_src = $(app_src) $(apps_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)
+apps_official_onboarding_beta_src = $(app_src) $(apps_official) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)

@@ -4,7 +4,6 @@
 #include <escher.h>
 #include "language_controller.h"
 #include "logo_controller.h"
-#include "update_controller.h"
 
 namespace OnBoarding {
 
@@ -20,7 +19,8 @@ public:
   bool processEvent(Ion::Events::Event) override;
   void didBecomeActive(Window * window) override;
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
+  void reinitOnBoarding();
   LanguageController m_languageController;
   LogoController m_logoController;
 };

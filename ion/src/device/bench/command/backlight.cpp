@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/src/device/backlight.h>
+#include <ion/src/device/shared/drivers/backlight.h>
 
 namespace Ion {
 namespace Device {
@@ -10,12 +10,12 @@ namespace Command {
 void Backlight(const char * input) {
   // Input must be of the form "0xAA" or "ON" or "OFF"
   if (strcmp(input, sON) == 0) {
-    Ion::Backlight::Device::init();
+    Ion::Device::Backlight::init();
     reply(sOK);
     return;
   }
   if (strcmp(input, sOFF) == 0) {
-    Ion::Backlight::Device::shutdown();
+    Ion::Device::Backlight::shutdown();
     reply(sOK);
     return;
   }

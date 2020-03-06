@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -24,9 +24,6 @@
  * THE SOFTWARE.
  */
 
-#include "py/mpstate.h"
-#include "py/nlr.h"
-#include "py/obj.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
 
@@ -51,14 +48,9 @@ void mp_stack_set_limit(mp_uint_t limit) {
     MP_STATE_THREAD(stack_limit) = limit;
 }
 
-void mp_exc_recursion_depth(void) {
-    nlr_raise(mp_obj_new_exception_arg1(&mp_type_RuntimeError,
-        MP_OBJ_NEW_QSTR(MP_QSTR_maximum_space_recursion_space_depth_space_exceeded)));
-}
-
 void mp_stack_check(void) {
     if (mp_stack_usage() >= MP_STATE_THREAD(stack_limit)) {
-        mp_exc_recursion_depth();
+        mp_raise_recursion_depth();
     }
 }
 

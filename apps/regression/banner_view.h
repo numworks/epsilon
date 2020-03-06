@@ -1,26 +1,32 @@
 #ifndef REGRESSION_BANNER_VIEW_H
 #define REGRESSION_BANNER_VIEW_H
 
-#include <escher.h>
-#include "../shared/banner_view.h"
+#include "../shared/xy_banner_view.h"
 
 namespace Regression {
 
-class BannerView : public Shared::BannerView {
+class BannerView : public Shared::XYBannerView {
 public:
-  BannerView();
+  BannerView(
+    Responder * parentResponder,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * textFieldDelegate
+  );
+  BufferTextView * dotNameView() { return &m_dotNameView; }
+  MessageTextView * regressionTypeView() { return &m_regressionTypeView; }
+  BufferTextView * subTextAtIndex(int index);
+  static constexpr int numberOfsubTexts() { return 5; }
 private:
-  int numberOfSubviews() const override;
-  TextView * textViewAtIndex(int i) const override;
-  MessageTextView * messageTextViewAtIndex(int i) const override;
+  static constexpr int k_numberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 7;
+  int numberOfSubviews() const override { return k_numberOfSubviews; }
+  View * subviewAtIndex(int index) override;
   BufferTextView m_dotNameView;
-  BufferTextView m_xView;
-  BufferTextView m_yView;
   MessageTextView m_regressionTypeView;
-  BufferTextView m_slopeView;
-  BufferTextView m_yInterceptView;
-  BufferTextView m_rView;
-  BufferTextView m_r2View;
+  BufferTextView m_subText0;
+  BufferTextView m_subText1;
+  BufferTextView m_subText2;
+  BufferTextView m_subText3;
+  BufferTextView m_subText4;
 };
 
 }

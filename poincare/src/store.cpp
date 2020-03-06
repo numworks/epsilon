@@ -1,48 +1,60 @@
-extern "C" {
-#include <assert.h>
-#include <stdlib.h>
-#include <math.h>
-}
 #include <poincare/store.h>
-#include <ion.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
-#include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
+#include <assert.h>
+#include <math.h>
+#include <stdlib.h>
 
 namespace Poincare {
 
-Expression::Type Store::type() const {
-  return Type::Store;
-}
-
-Expression * Store::clone() const {
-  return new Store(operands(), true);
-}
-
-static_assert('\x8F' == Ion::Charset::Sto, "Incorrect");
-int Store::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "\x8F");
-}
-
-ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[3];
-  childrenLayouts[0] = value()->createLayout(floatDisplayMode, complexFormat);
-  const char stoSymbol[2] = {Ion::Charset::Sto, 0};
-  childrenLayouts[1] = new StringLayout(stoSymbol, 1);
-  childrenLayouts[2] = symbol()->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(childrenLayouts, 3);
+Expression StoreNode::shallowReduce(ReductionContext reductionContext) {
+  return Store(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Expression * Store::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  context.setExpressionForSymbolName(value(), symbol(), context);
-  if (context.expressionForSymbol(symbol()) != nullptr) {
-    return context.expressionForSymbol(symbol())->approximate<T>(context, angleUnit);
+Evaluation<T> StoreNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  /* If we are here, it means that the store node was not shallowReduced.
+   * Otherwise, it would have been replaced by its symbol. We thus have to
+   * setExpressionForSymbolAbstract. */
+  Expression storedExpression = Store(this).storeValueForSymbol(context, complexFormat, angleUnit);
+  assert(!storedExpression.isUninitialized());
+  return storedExpression.node()->approximate(T(), context, complexFormat, angleUnit);
+}
+
+Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  // Store the expression.
+  Expression storedExpression = storeValueForSymbol(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+
+  if (symbol().type() == ExpressionNode::Type::Symbol) {
+    /* If the symbol is not a function, we want to replace the store with its
+     * reduced left side. If the simplification of the left side failed, just
+     * replace with the left side of the store without simplifying it.
+     * The simplification fails for [1+2]->a for instance, because we do not
+     * have exact simplification of matrices yet. */
+    bool interruptedSimplification = SimplificationHasBeenInterrupted();
+    Expression reducedE = storedExpression.clone().deepReduce(reductionContext);
+    if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
+      storedExpression = reducedE;
+    }
+    // Restore the previous interruption flag
+    SetInterruption(interruptedSimplification);
   }
-  return new Complex<T>(Complex<T>::Float(NAN));
+
+  replaceWithInPlace(storedExpression);
+  return storedExpression;
+}
+
+Expression Store::storeValueForSymbol(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  assert(!value().isUninitialized());
+  context->setExpressionForSymbolAbstract(value(), symbol());
+  Expression storedExpression = context->expressionForSymbolAbstract(symbol(), false);
+
+  if (storedExpression.isUninitialized()) {
+    return Undefined::Builder();
+  }
+  return storedExpression;
 }
 
 }

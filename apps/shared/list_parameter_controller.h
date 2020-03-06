@@ -1,6 +1,7 @@
 #ifndef SHARED_LIST_PARAM_CONTROLLER_H
 #define SHARED_LIST_PARAM_CONTROLLER_H
 
+#include "list_color_controller.h"
 #include <escher.h>
 #include "function_store.h"
 #include <apps/i18n.h>
@@ -38,6 +39,7 @@ protected:
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
+  ColorParameterController m_colorParameterController;
   MessageTableCellWithChevron m_colorCell;
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;

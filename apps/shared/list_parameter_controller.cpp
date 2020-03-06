@@ -8,6 +8,7 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
   ViewController(parentResponder),
   m_selectableTableView(this, this, this, tableDelegate),
   m_record(),
+  m_colorParameterController(this),
   m_colorCell(functionColorMessage),
   m_enableCell(I18n::Message::ActivateDeactivate),
   m_deleteCell(deleteFunctionMessage)
@@ -71,9 +72,11 @@ int ListParameterController::typeAtLocation(int i, int j) {
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
+  StackViewController * stack = (StackViewController *)(parentResponder());
   switch (rowIndex) {
     case 0:
-    /* TODO: implement function color choice */
+      m_colorParameterController.setRecord(m_record);
+      stack->push(&m_colorParameterController);
       return true;
     case 1:
       function()->setActive(!function()->isActive());

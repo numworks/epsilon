@@ -11,7 +11,7 @@ extern "C" {
 namespace Poincare {
 
 template <typename T> bool isNegligeable(T x, T precision, T norm1, T norm2) {
-  return x <= precision && x/norm1 <= precision && x/norm2 <= precision;
+  return x <= 10.0*precision && x/norm1 <= precision && x/norm2 <= precision;
 }
 
 template < typename T> T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
@@ -47,7 +47,7 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
    * small as 1E-308 (in double) and most results still be correct. */
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
-  T precision = 100.0*Expression::Epsilon<T>();
+  T precision = 10.0*Expression::Epsilon<T>();
   if (isNegligeable(std::fabs(result.imag()), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }

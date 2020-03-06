@@ -702,7 +702,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       }
     }
     replaceWithInPlace(resultMatrix);
-    return resultMatrix.shallowReduce();
+    return resultMatrix.shallowReduce(reductionContext.context());
   }
 
   /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to

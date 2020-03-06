@@ -112,6 +112,7 @@ class Expression : public TreeHandle {
   friend class IntegralNode;
   template<int T>
   friend class LogarithmNode;
+  friend class MatrixNode;
   friend class NaperianLogarithmNode;
   friend class NAryExpressionNode;
   friend class StoreNode;
@@ -274,7 +275,7 @@ public:
       m_numberOfChildren(numberOfChildren),
       m_untypedBuilder(builder) {}
     const char * name() const { return m_name; }
-    const int numberOfChildren() const { return m_numberOfChildren; }
+    int numberOfChildren() const { return m_numberOfChildren; }
     Expression build(Expression children) const { return (*m_untypedBuilder)(children); }
   private:
     const char * m_name;

@@ -29,7 +29,7 @@ public:
       m_exponent(exponent)
     {}
     const char * symbol() const { return m_symbol; }
-    const int8_t exponent() const { return m_exponent; }
+    int8_t exponent() const { return m_exponent; }
     int serialize(char * buffer, int bufferSize) const;
   private:
     const char * m_symbol;
@@ -235,7 +235,7 @@ public:
         Representative("week", "7*24*60*60*_s",
             Representative::Prefixable::No,
             NoPrefix),
-        Representative("month", "30*7*24*60*60*_s",
+        Representative("month", "365.25/12*24*60*60*_s",
             Representative::Prefixable::No,
             NoPrefix),
         Representative("year", "365.25*24*60*60*_s",

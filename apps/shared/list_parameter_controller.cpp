@@ -8,7 +8,6 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
   ViewController(parentResponder),
   m_selectableTableView(this, this, this, tableDelegate),
   m_record(),
-  m_colorParameterController(this),
   m_colorCell(functionColorMessage),
   m_enableCell(I18n::Message::ActivateDeactivate),
   m_deleteCell(deleteFunctionMessage)

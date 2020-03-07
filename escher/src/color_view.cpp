@@ -4,7 +4,8 @@
 
 ColorView::ColorView() :
   m_selectedColor(0),
-  m_backgroundColor(KDColorWhite)
+  m_backgroundColor(KDColorWhite),
+  m_active(false)
 {
 }
 
@@ -32,6 +33,13 @@ void ColorView::setBackgroundColor(KDColor color) {
   }
 }
 
+void ColorView::setActive(bool active) {
+  if (m_active != active) {
+    m_active = active;
+    markRectAsDirty(bounds());
+  }
+}
+
 void ColorView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), m_backgroundColor);
   
@@ -40,10 +48,11 @@ void ColorView::drawRect(KDContext * ctx, KDRect rect) const {
   scrol = k_colorBoxSize * m_numColors - scrol < bounds().width() ? k_colorBoxSize * m_numColors - bounds().width() : scrol; 
   
   for (int i=0; i < m_numColors; i++) {
-    if (i == m_selectedColor) {
-      ctx->fillRect(KDRect(k_colorBoxSize * i - scrol, ((bounds().height() - k_colorBoxSize - 4) / 2) - 2, k_colorBoxSize, k_colorBoxSize), Palette::SelectDark);
+    if (m_active && i == m_selectedColor) {
+      ctx->fillRect(KDRect(k_colorBoxSize * i - scrol, ((bounds().height() - k_colorBoxSize - 4) / 2) - 2, k_colorBoxSize, k_colorBoxSize), Palette::DataColor[i]);
+    } else {
+      ctx->fillRect(KDRect(k_colorBoxSize * i - scrol + 2, (bounds().height() - k_colorBoxSize - 4) / 2, k_colorBoxSize-4, k_colorBoxSize-4), Palette::DataColor[i]);
     }
-    ctx->fillRect(KDRect(k_colorBoxSize * i - scrol + 2, (bounds().height() - k_colorBoxSize - 4) / 2, k_colorBoxSize-4, k_colorBoxSize-4), Palette::DataColor[i]);
   }
 }
 

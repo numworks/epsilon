@@ -10,6 +10,7 @@ public:
   int colorIndex();
   void setColor(int color);
   void setBackgroundColor(KDColor color);
+  void setActive(bool active);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
@@ -17,6 +18,7 @@ private:
   int m_numColors = 8;
   constexpr static KDCoordinate k_colorBoxSize = 18;
   KDColor m_backgroundColor;
+  bool m_active;
 };
 
 #endif

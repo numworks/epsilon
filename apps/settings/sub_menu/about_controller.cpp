@@ -50,13 +50,13 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
         myCell->setAccessoryText(Ion::patchLevel());
         return true;
       }
-      if (childLabel == I18n::Message::CustomSoftwareVersion) {
+      if (childLabel == I18n::Message::OmegaVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-        if (strcmp(myCell->accessoryText(), Ion::customSoftwareVersion()) == 0) {
+        if (strcmp(myCell->accessoryText(), Ion::omegaVersion()) == 0) {
           myCell->setAccessoryText("Dev"); //Change for public/dev
           return true;
         }
-        myCell->setAccessoryText(Ion::customSoftwareVersion());
+        myCell->setAccessoryText(Ion::omegaVersion());
         return true;
       }
       if (childLabel == I18n::Message::MemUse) {
@@ -146,7 +146,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       Ion::username(),
 #endif
       Ion::softwareVersion(),
-      Ion::customSoftwareVersion(),
+      Ion::omegaVersion(),
       mpVersion,
       "",
       Ion::serialNumber(),

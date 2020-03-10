@@ -15,7 +15,7 @@ OmegaController::OmegaController(Responder * parentResponder) :
   m_contributorsCell.setMessageFont(KDFont::LargeFont);
   m_versionCell.setMessageFont(KDFont::LargeFont);
   m_versionCell.setAccessoryFont(KDFont::SmallFont);
-  m_versionCell.setAccessoryText(Ion::customSoftwareVersion());
+  m_versionCell.setAccessoryText(Ion::omegaVersion());
 }
 
 View * OmegaController::view() {

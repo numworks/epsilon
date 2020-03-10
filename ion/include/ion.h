@@ -33,7 +33,7 @@ const char * serialNumber();
 const char * username();
 #endif
 const char * softwareVersion();
-const char * customSoftwareVersion();
+const char * omegaVersion();
 const char * patchLevel();
 const char * fccId();
 

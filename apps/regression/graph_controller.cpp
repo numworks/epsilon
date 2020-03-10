@@ -352,7 +352,8 @@ uint32_t GraphController::modelVersion() {
 }
 
 uint32_t GraphController::modelVersionAtIndex(size_t i) {
-  return m_store->seriesChecksumAtIndex(i);
+  assert(i < numberOfMemoizedVersions());
+  return *(m_store->seriesChecksum() + i);
 }
 
 uint32_t GraphController::rangeVersion() {

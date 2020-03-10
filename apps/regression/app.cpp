@@ -27,7 +27,6 @@ App::Snapshot::Snapshot() :
   m_rangeVersion(0),
   m_selectedSeriesIndex(-1)
 {
-  assert(m_previousModelsVersions[0] == 0);
 }
 
 App * App::Snapshot::unpack(Container * container) {
@@ -35,10 +34,8 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  m_store.deleteAllPairs();
+  m_store.reset();
   m_modelVersion = 0;
-  assert(sizeof(m_previousModelsVersions) == sizeof(uint32_t) * GraphController::sNumberOfMemoizedModelVersions);
-  memset(m_previousModelsVersions, 0, sizeof(m_previousModelsVersions));
   m_rangeVersion = 0;
   setActiveTab(0);
 }

@@ -1,5 +1,5 @@
 ---
-title: Poincare
+title: Poincaré
 ---
 # Poincaré
 
@@ -9,7 +9,7 @@ Poincare takes text input such as `1+2*3` and turns it into a tree structure, th
 
 Each node of a tree represents either an operator or a value. All nodes have a type (`Type::Addition`, `Type::Multiplication`...) and some also store a value (ie `Type::Rational`).
 
-![A example expression tree of Epsilon software](<%= p "expression_tree.svg" %>){:class="img-right"}
+![A example expression tree of Epsilon software](<%= p "expression-tree.svg" %>){:class="img-right"}
 According to their types, expressions are childless (`Type::Rational`) or store pointers to their children (we call those children operands). To ease tree traversal, each node also keeps a pointer to its parent: that information is somewhat redundant but makes dealing with the expression tree much easier. `Multiplication` and `Addition` are the only type that can hold an infinite number of operands. Other expressions have a fixed number of operands: for instance, an `AbsoluteValue` will only ever have one child.
 
 ## RTTI: Run-time type information
@@ -42,7 +42,6 @@ To sort those operands, we defined an order on expressions with the following fe
 * The order is total on types and values: `Rational(-2/3)` < `Rational(0)` < `...` < `Multiplication` < `Power` < `Addition` < `...`
 * The order relationship is depth-first recursive: if two expressions are equal in type and values, we compare their operands starting with the last.
 * To compare two expressions, we first sort their commutative children to ensure the unicity of expression representations. This guarantees that the order is total on expressions.
-
 
 ![Order relationship on expressions](<%= p "order.svg" %>){:class="img-responsive"}
 In the example, both root nodes are r so we compare their last operands. Both are equal to $$\pi$$ so we compare the next operands. As 3 > 2, we can conclude on the order relation between the expressions.

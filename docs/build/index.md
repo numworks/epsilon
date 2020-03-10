@@ -54,7 +54,7 @@ git clone https://github.com/numworks/epsilon.git
 
 ## Run Epsilon on your computer
 
-Once the SDK has been installed, just open your terminal (Msys2, Terminal.app, xterm, etc...) and type the following commands:
+Once the SDK has been installed, just open your terminal (Msys2, Terminal.app, xterm…) and type the following commands:
 
 ```
 make PLATFORM=simulator clean

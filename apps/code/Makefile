@@ -34,6 +34,7 @@ i18n_files += $(addprefix apps/code/,\
   base.en.i18n\
   base.es.i18n\
   base.fr.i18n\
+  base.it.i18n\
   base.nl.i18n\
   base.pt.i18n\
   base.universal.i18n\
@@ -41,6 +42,7 @@ i18n_files += $(addprefix apps/code/,\
   catalog.en.i18n\
   catalog.es.i18n\
   catalog.fr.i18n\
+  catalog.it.i18n\
   catalog.nl.i18n\
   catalog.pt.i18n\
   catalog.universal.i18n\
@@ -48,6 +50,7 @@ i18n_files += $(addprefix apps/code/,\
   toolbox.en.i18n\
   toolbox.es.i18n\
   toolbox.fr.i18n\
+  toolbox.it.i18n\
   toolbox.nl.i18n\
   toolbox.pt.i18n\
   toolbox.universal.i18n\

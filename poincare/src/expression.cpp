@@ -604,7 +604,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 
 Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
   sSimplificationHasBeenInterrupted = false;
-  Expression e = deepReduce(reductionContext);
+  Expression e = reduce(reductionContext);
   if (!sSimplificationHasBeenInterrupted) {
     e = e.deepBeautify(reductionContext);
   }
@@ -679,11 +679,11 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   // Step 1: we reduce the expression
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation);
   const bool isUnitConvert = type() == ExpressionNode::Type::UnitConvert;
-  Expression e = clone().deepReduce(userReductionContext);
+  Expression e = clone().reduce(userReductionContext);
   if (sSimplificationHasBeenInterrupted) {
     sSimplificationHasBeenInterrupted = false;
     ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation);
-    e = deepReduce(systemReductionContext);
+    e = reduce(systemReductionContext);
   }
   *simplifiedExpression = Expression();
   if (sSimplificationHasBeenInterrupted) {

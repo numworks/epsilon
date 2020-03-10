@@ -30,7 +30,7 @@ public:
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     uint32_t * modelVersion() { return &m_modelVersion; }
-    uint32_t * previousModelsVersions() { return m_previousModelsVersions; }
+    uint32_t * previousModelsVersions() { return m_store.seriesChecksum(); }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
   private:
     void tidy() override;
@@ -38,7 +38,6 @@ public:
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     uint32_t m_modelVersion;
-    uint32_t m_previousModelsVersions[GraphController::sNumberOfMemoizedModelVersions];
     uint32_t m_rangeVersion;
     int m_selectedSeriesIndex;
   };

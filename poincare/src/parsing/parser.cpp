@@ -444,10 +444,10 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
     leftHandSide = Undefined::Builder();
   } else if (m_currentToken.compareTo(Unreal::Name()) == 0) {
     leftHandSide = Unreal::Builder();
-  } else if (m_currentToken.compareTo("u") == 0
-      || m_currentToken.compareTo("v") == 0
-      || m_currentToken.compareTo("w") == 0)
-  {
+  } else {
+    assert(m_currentToken.compareTo("u") == 0
+        || m_currentToken.compareTo("v") == 0
+        || m_currentToken.compareTo("w") == 0);
     /* Special case for sequences (e.g. "u(n)", "u{n}", ...)
      * We know that m_currentToken.text()[0] is either 'u', 'v' or 'w', so we do
      * not need to pass a code point to parseSequence. */

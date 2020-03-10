@@ -12,7 +12,6 @@ public:
   TrigonometryGraphView(TrigonometryModel * model);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  char * label(Axis axis, int index) const override { return nullptr; }
   TrigonometryModel * m_model;
 };
 

@@ -6,7 +6,7 @@ using namespace Poincare;
 namespace Calculation {
 
 ComplexGraphView::ComplexGraphView(ComplexModel * complexModel) :
-  CurveView(complexModel),
+  LabeledCurveView(complexModel),
   m_complex(complexModel)
 {
 }

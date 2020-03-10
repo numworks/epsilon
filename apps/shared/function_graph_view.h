@@ -2,14 +2,14 @@
 #define SHARED_FUNCTION_GRAPH_VIEW_H
 
 #include <escher.h>
-#include "curve_view.h"
+#include "labeled_curve_view.h"
 #include "function.h"
 #include "../constant.h"
 #include "interactive_curve_view_range.h"
 
 namespace Shared {
 
-class FunctionGraphView : public CurveView {
+class FunctionGraphView : public LabeledCurveView {
 public:
   FunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor,
     BannerView * bannerView, CursorView * cursorView);
@@ -26,9 +26,6 @@ protected:
   float m_highlightedEnd;
   bool m_shouldColorHighlighted;
 private:
-  char * label(Axis axis, int index) const override;
-  char m_xLabels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
-  char m_yLabels[k_maxNumberOfYLabels][k_labelBufferMaxSize];
   Poincare::Context * m_context;
 };
 

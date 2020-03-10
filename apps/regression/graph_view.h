@@ -3,19 +3,16 @@
 
 #include "store.h"
 #include "../constant.h"
-#include "../shared/curve_view.h"
+#include "../shared/labeled_curve_view.h"
 
 namespace Regression {
 
-class GraphView : public Shared::CurveView {
+class GraphView : public Shared::LabeledCurveView {
 public:
   GraphView(Store * store, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  char * label(Axis axis, int index) const override;
   Store * m_store;
-  char m_xLabels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
-  char m_yLabels[k_maxNumberOfYLabels][k_labelBufferMaxSize];
 };
 
 }

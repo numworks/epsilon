@@ -9,10 +9,8 @@ using namespace Shared;
 namespace Regression {
 
 GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, Shared::CursorView * cursorView) :
-  CurveView(store, cursor, bannerView, cursorView),
-  m_store(store),
-  m_xLabels{},
-  m_yLabels{}
+  LabeledCurveView(store, cursor, bannerView, cursorView),
+  m_store(store)
 {
 }
 
@@ -39,15 +37,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), KDColorWhite);
     }
   }
-}
-
-char * GraphView::label(Axis axis, int index) const {
-  if (axis == Axis::Vertical) {
-    assert(index < k_maxNumberOfXLabels);
-    return (char *)m_yLabels[index];
-  }
-  assert(index < k_maxNumberOfYLabels);
-  return (char *)m_xLabels[index];
 }
 
 }

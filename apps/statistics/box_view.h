@@ -37,7 +37,6 @@ private:
   static constexpr KDCoordinate k_quantileBarWidth = 2;
   KDCoordinate boxLowerBoundPixel() const;
   KDCoordinate boxUpperBoundPixel() const;
-  char * label(Axis axis, int index) const override { return nullptr; }
   Store * m_store;
   BoxRange m_boxRange;
   int m_series;

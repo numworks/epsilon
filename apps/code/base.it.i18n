@@ -1,0 +1,8 @@
+Console = "Console d'exécution"
+AddScript = "Ajouter un script"
+ScriptOptions = "Options de script"
+ExecuteScript = "Exécuter le script"
+AutoImportScript = "Importation auto dans la console"
+DeleteScript = "Supprimer le script"
+FunctionsAndVariables = "Fonctions et variables"
+AllowedCharactersaz09 = "Caractères autorisés : a-z, 0-9, _"

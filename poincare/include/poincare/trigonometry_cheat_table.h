@@ -51,8 +51,8 @@ private:
     };
     // END OF PAIR CLASS
 
-    constexpr Row(Pair angleInRadians, Pair angleInGradians, Pair angleInDegrees, Pair sine, Pair cosine, Pair tangent) :
-      m_pairs{angleInRadians, angleInGradians, angleInDegrees, sine, cosine, tangent} {}
+    constexpr Row(Pair angleInDegrees, Pair angleInRadians, Pair angleInGradians, Pair sine, Pair cosine, Pair tangent) :
+      m_pairs{angleInDegrees, angleInRadians, angleInGradians, sine, cosine, tangent} {}
     float floatForType(Type t) const {
       assert(((int) t) >= 0 && ((int) t) < k_numberOfPairs);
       return m_pairs[(int)t].value();

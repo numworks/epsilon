@@ -3,24 +3,21 @@
 
 #include "box_range.h"
 #include "store.h"
-#include "../shared/curve_view.h"
+#include "../shared/labeled_curve_view.h"
 #include "../constant.h"
 #include <poincare/print_float.h>
 
 namespace Statistics {
 
-class BoxAxisView : public Shared::CurveView {
+class BoxAxisView : public Shared::HorizontallyLabeledCurveView {
 public:
   BoxAxisView(Store * store) :
-    CurveView(&m_boxRange),
-    m_labels{},
+    HorizontallyLabeledCurveView(&m_boxRange),
     m_boxRange(BoxRange(store))
   {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_axisMargin = 3;
-  char * label(Axis axis, int index) const override;
-  char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   BoxRange m_boxRange;
 };
 

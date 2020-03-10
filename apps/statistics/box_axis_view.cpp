@@ -12,8 +12,4 @@ void BoxAxisView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, true, k_axisMargin);
 }
 
-char * BoxAxisView::label(Axis axis, int index) const {
-  return axis == Axis::Vertical ? nullptr : (char *)m_labels[index];
-}
-
 }

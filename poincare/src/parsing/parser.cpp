@@ -51,8 +51,7 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
     Token::CompareNonNullTerminatedName(name, nameLength, "w_")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "v")               == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "w")               == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "log_")            == 0
+    Token::CompareNonNullTerminatedName(name, nameLength, "w")               == 0
   );
 }
 

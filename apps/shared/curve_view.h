@@ -65,6 +65,10 @@ protected:
   void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;
+  void drawSegment2(KDContext * ctx, KDRect rect,
+    float x, float y, float u, float v,
+    KDColor color, bool thick = true
+  ) const; // FIXME: Name conflict? This one seems better though...
   enum class Size : uint8_t {
     Small,
     Medium,

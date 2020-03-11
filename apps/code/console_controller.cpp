@@ -194,10 +194,13 @@ void ConsoleController::viewWillAppear() {
     m_importScriptsWhenViewAppears = false;
     autoImport();
   }
+
+  Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
   m_editCell.setText("");
+  Container::activeApp()->setFirstResponder(firstResponder); // FIXME
 }
 
 void ConsoleController::didBecomeFirstResponder() {
@@ -495,10 +498,12 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     runAndPrintForCommand(command);
   }
   if (!sandboxIsDisplayed() && force) {
+    Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
     m_editCell.setEditing(true);
     m_editCell.setText("");
+    Container::activeApp()->setFirstResponder(firstResponder); // FIXME
   }
 }
 

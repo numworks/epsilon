@@ -26,11 +26,35 @@ public:
     KDColor m_color;
   };
 
-  // TODO: Use an iterator here. It will be a lot faster
-  Dot dotAtIndex(int i);
-  int numberOfDots();
+  class DotIterator {
+  public:
+    static DotIterator Begin(mp_obj_t dots);
+    static DotIterator End(mp_obj_t dots);
+    Dot operator*();
+    bool operator!=(const DotIterator & it) const;
+    DotIterator & operator++();
+  private:
+    void loadValues();
+    mp_obj_t * m_tuples;
+    size_t m_numberOfTuples;
+    size_t m_tupleIndex;
+    mp_obj_t * m_xValues;
+    mp_obj_t * m_yValues;
+    size_t m_numberOfValues;
+    size_t m_valueIndex;
+  };
+
+  class Dots {
+  public:
+    Dots(mp_obj_t dots) : m_dots(dots) {}
+    DotIterator begin() const { return DotIterator::Begin(m_dots); }
+    DotIterator end() const { return DotIterator::End(m_dots); }
+  private:
+    mp_obj_t m_dots;
+  };
 
   void addDots(mp_obj_t x, mp_obj_t y);
+  Dots dots() { return Dots(m_dots); }
 
   void setGrid(bool grid) { m_grid = grid; }
   bool grid() { return m_grid; }

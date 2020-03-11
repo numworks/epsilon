@@ -417,6 +417,14 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   }
 }
 
+void CurveView::drawSegment2(KDContext * ctx, KDRect rect, float x, float y, float u, float v, KDColor color, bool thick) const {
+  float pxf = floatToPixel(Axis::Horizontal, x);
+  float pyf = floatToPixel(Axis::Vertical, y);
+  float puf = floatToPixel(Axis::Horizontal, u);
+  float pvf = floatToPixel(Axis::Vertical, v);
+  straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
+}
+
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size) const {
   KDCoordinate diameter = 0;
   const uint8_t * mask = nullptr;

@@ -73,6 +73,12 @@ Q(fill_rect)
 Q(get_pixel)
 Q(set_pixel)
 
+// Matplotlib QSTRs
+Q(plot)
+Q(pyplot)
+Q(show)
+
+
 // Turtle QSTRs
 Q(turtle)
 Q(forward)

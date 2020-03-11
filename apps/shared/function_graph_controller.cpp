@@ -15,8 +15,8 @@ static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 static inline double minDouble(double x, double y) { return x < y ? x : y; }
 static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, previousModelsVersions, rangeVersion),
   m_initialisationParameterController(this, interactiveRange),
   m_angleUnitVersion(angleUnitVersion),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
@@ -181,6 +181,10 @@ CurveView * FunctionGraphController::curveView() {
 
 uint32_t FunctionGraphController::modelVersion() {
   return functionStore()->storeChecksum();
+}
+
+uint32_t FunctionGraphController::modelVersionAtIndex(size_t i) {
+  return functionStore()->storeChecksumAtIndex(i);
 }
 
 uint32_t FunctionGraphController::rangeVersion() {

@@ -4,12 +4,16 @@ namespace Matplotlib {
 
 void PlotView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
-  if (m_store->grid()) {
+
+  if (m_store->gridRequested()) {
     drawGrid(ctx, rect);
   }
-  drawAxes(ctx, rect);
-  drawLabelsAndGraduations(ctx, rect, Axis::Vertical, true);
-  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
+
+  if (m_store->axesRequested()) {
+    drawAxes(ctx, rect);
+    drawLabelsAndGraduations(ctx, rect, Axis::Vertical, true);
+    drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
+  }
 
   for (PlotStore::Dot dot : m_store->dots()) {
     drawDot(ctx, rect, dot.x(), dot.y(), dot.color());
@@ -32,7 +36,6 @@ void PlotView::drawRect(KDContext * ctx, KDRect rect) const {
       segment.color()
     );
   }
-
 }
 
 }

@@ -75,6 +75,7 @@ Q(set_pixel)
 
 // Matplotlib QSTRs
 Q(axis)
+Q(grid)
 Q(plot)
 Q(pyplot)
 Q(scatter)

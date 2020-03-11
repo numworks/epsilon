@@ -3,7 +3,8 @@
 namespace Matplotlib {
 
 PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(),
- m_grid(false)
+  m_axesRequested(true),
+  m_gridRequested(false)
 {
   flush();
 }

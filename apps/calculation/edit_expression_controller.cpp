@@ -54,7 +54,7 @@ void EditExpressionController::insertTextBody(const char * text) {
 
 void EditExpressionController::didBecomeFirstResponder() {
   int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
-  m_historyController->scrollToCell(0, lastRow);
+  m_contentView.mainView()->scrollToCell(0, lastRow);
   m_contentView.expressionField()->setEditing(true, false);
   Container::activeApp()->setFirstResponder(m_contentView.expressionField());
 }

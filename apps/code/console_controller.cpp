@@ -183,6 +183,11 @@ const char * ConsoleController::inputText(const char * prompt) {
   return text;
 }
 
+void ConsoleController::displayViewController(ViewController * controller) {
+  stackViewController()->push(controller);
+  Container::activeApp()->setFirstResponder(controller); // FIXME: Shouldn't this be in Escher?
+}
+
 void ConsoleController::viewWillAppear() {
   ViewController::viewWillAppear();
   loadPythonEnvironment();

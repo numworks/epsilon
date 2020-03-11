@@ -41,7 +41,7 @@ else
         DISPLAY_OS = Linux
     endif
     ifeq ($(UNAME_S),Darwin)
-        DISPLAY_OS = Max OSX
+        DISPLAY_OS = macOS
     endif
     UNAME_P := $(shell uname -m)
     ifeq ($(UNAME_P),x86_64)

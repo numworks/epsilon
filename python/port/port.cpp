@@ -20,6 +20,7 @@ extern "C" {
 #include "py/stackctrl.h"
 #include "mphalport.h"
 #include "mod/turtle/modturtle.h"
+#include "mod/matplotlib/modpyplot.h"
 }
 
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
@@ -176,6 +177,7 @@ void gc_collect(void) {
   gc_collect_start();
 
   modturtle_gc_collect();
+  modpyplot_gc_collect();
 
   /* get the registers.
    * regs is the also the last object on the stack so the stack is bound by

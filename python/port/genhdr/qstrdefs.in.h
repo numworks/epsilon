@@ -74,10 +74,10 @@ Q(get_pixel)
 Q(set_pixel)
 
 // Matplotlib QSTRs
+Q(axis)
 Q(plot)
 Q(pyplot)
 Q(show)
-
 
 // Turtle QSTRs
 Q(turtle)

@@ -31,7 +31,6 @@ public:
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
-  void scrollToCell(int i, int j);
 private:
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);

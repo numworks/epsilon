@@ -223,10 +223,6 @@ int HistoryController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-void HistoryController::scrollToCell(int i, int j) {
-  m_selectableTableView.scrollToCell(i, j);
-}
-
 bool HistoryController::calculationAtIndexToggles(int index) {
   Context * context = App::app()->localContext();
   return index >= 0 && index < m_calculationStore->numberOfCalculations() && calculationAtIndex(index)->displayOutput(context) == Calculation::DisplayOutput::ExactAndApproximateToggle;

@@ -4,6 +4,7 @@
 extern "C" {
 #include <stddef.h>
 }
+#include <escher/view_controller.h>
 
 namespace MicroPython {
 
@@ -21,6 +22,7 @@ public:
   virtual void displaySandbox() {}
   virtual void hideSandbox() {}
   virtual void resetSandbox() {}
+  virtual void displayViewController(ViewController * controller) {}
   virtual void printText(const char * text, size_t length) {}
   virtual void refreshPrintOutput() {}
   void interrupt();

@@ -2,11 +2,13 @@ extern "C" {
 #include "modpyplot.h"
 }
 #include <assert.h>
+#include <escher/palette.h>
 #include "port.h"
 #include "plot_controller.h"
 
 Matplotlib::PlotStore * sPlotStore = nullptr;
 Matplotlib::PlotController * sPlotController = nullptr;
+static int paletteIndex = 0; // FIXME: Needs to be reset at some point
 
 // Internal functions
 
@@ -67,10 +69,24 @@ mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
   mp_obj_get_array(x, &xLength, &xItems);
   mp_obj_get_array(y, &yLength, &yItems);
   if (xLength != yLength) {
-    mp_raise_msg(&mp_type_ValueError, "x and y must have same dimension");
+    mp_raise_ValueError("x and y must have same dimension");
   }
 
-  sPlotStore->addDots(x, y);
+  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  for (size_t i=0; i<xLength; i++) {
+    sPlotStore->addDot(xItems[i], yItems[i], color);
+  }
+
+  return mp_const_none;
+}
+
+mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s) {
+  // Input parameter validation
+  mp_obj_get_float(x);
+  mp_obj_get_float(y);
+  mp_obj_str_get_str(s);
+
+  sPlotStore->addText(x, y, s);
 
   return mp_const_none;
 }

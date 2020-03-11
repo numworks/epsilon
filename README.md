@@ -126,9 +126,7 @@ To contribute, please refer to the [Wiki](https://github.com/Omega-Numworks/Omeg
 * [Omega Website](https://github.com/Omega-Numworks/Omega-Website)
 * [Omega RPN `APP`](https://github.com/Omega-Numworks/Omega-RPN)
 * [Omega Atom `APP`](https://github.com/Omega-Numworks/Omega-Atom)
-* [Omega Converter `APP`](https://github.com/Omega-Numworks/Omega-Converter)
 * [Omega Design](https://github.com/Omega-Numworks/Omega-Design)
-* [Omega CLI Installer `BETA`](https://github.com/Omega-Numworks/Omega-CLI-Installer)
 * [Omega App Template `BETA`](https://github.com/Omega-Numworks/Omega-App-Template)
 
 ## About Epsilon

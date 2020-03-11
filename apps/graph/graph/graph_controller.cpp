@@ -11,8 +11,8 @@ static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 static inline double minDouble(double x, double y) { return x < y ? x : y; }
 static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
-GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
+GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, previousModelsVersions, rangeVersion, angleUnitVersion),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),

@@ -62,7 +62,6 @@ public:
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = Palette::PrimaryText, KDColor backgroundColor = Palette::BackgroundHard, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed);
-  KDPoint origin();
   KDPoint absoluteOrigin();
   KDSize layoutSize();
   KDCoordinate baseline();

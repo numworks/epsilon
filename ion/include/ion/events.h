@@ -53,6 +53,7 @@ Event getEvent(int * timeout);
 
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
+void removeShift();
 bool isShiftActive();
 bool isAlphaActive();
 bool isLockActive();

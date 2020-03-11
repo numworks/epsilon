@@ -100,7 +100,7 @@ private:
   float min(Axis axis) const;
   float max(Axis axis) const;
   float gridUnit(Axis axis) const;
-  virtual char * label(Axis axis, int index) const = 0;
+  virtual char * label(Axis axis, int index) const { return nullptr; }
   virtual size_t labelMaxGlyphLengthSize() const { return k_labelBufferMaxGlyphLength; }
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the

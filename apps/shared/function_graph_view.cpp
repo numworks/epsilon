@@ -8,13 +8,11 @@ namespace Shared {
 
 FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
-  CurveView(graphRange, cursor, bannerView, cursorView),
+  LabeledCurveView(graphRange, cursor, bannerView, cursorView),
   m_selectedRecord(),
   m_highlightedStart(NAN),
   m_highlightedEnd(NAN),
   m_shouldColorHighlighted(false),
-  m_xLabels{},
-  m_yLabels{},
   m_context(nullptr)
 {
 }
@@ -65,10 +63,6 @@ void FunctionGraphView::setAreaHighlightColor(bool highlightColor) {
     reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
     m_shouldColorHighlighted = highlightColor;
   }
-}
-
-char * FunctionGraphView::label(Axis axis, int index) const {
-  return (axis == Axis::Horizontal ? (char *)m_xLabels[index] : (char *)m_yLabels[index]);
 }
 
 void FunctionGraphView::reloadBetweenBounds(float start, float end) {

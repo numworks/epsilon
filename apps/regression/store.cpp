@@ -19,13 +19,14 @@ static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regressio
 Store::Store() :
   InteractiveCurveViewRange(),
   DoublePairStore(),
-  m_seriesChecksum{0, 0, 0},
   m_angleUnit(Poincare::Preferences::AngleUnit::Degree)
 {
-  for (int i = 0; i < k_numberOfSeries; i++) {
-    m_regressionTypes[i] = Model::Type::Linear;
-    m_regressionChanged[i] = false;
-  }
+  resetMemoization();
+}
+
+void Store::reset() {
+  deleteAllPairs();
+  resetMemoization();
 }
 
 void Store::tidy() {
@@ -186,6 +187,13 @@ double * Store::coefficientsForSeries(int series, Poincare::Context * globalCont
 
 double Store::doubleCastedNumberOfPairsOfSeries(int series) const {
   return DoublePairStore::numberOfPairsOfSeries(series);
+}
+
+void Store::resetMemoization() {
+  assert(((int)Model::Type::Linear) == 0);
+  memset(m_seriesChecksum, 0, sizeof(m_seriesChecksum));
+  memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
+  memset(m_regressionChanged, 0, sizeof(m_regressionChanged));
 }
 
 float Store::maxValueOfColumn(int series, int i) const {

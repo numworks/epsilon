@@ -19,6 +19,7 @@ constexpr KDColor KeywordColor = KDColor::RGB24(0xFF000C);
 // constexpr KDColor BuiltinColor = KDColor::RGB24(0x0086B3);
 constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
+constexpr KDColor AutocompleteColor = KDColorRed;
 constexpr KDColor BackgroundColor = KDColorWhite;
 constexpr KDColor HighlightColor = Palette::Select;
 
@@ -159,6 +160,27 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
     mp_lexer_free(lex);
     nlr_pop();
+  }
+
+  // Redraw the autocompleted word in the right color
+  const char * autocompleteStart = m_cursorLocation;
+  assert(autocompleteStart != text);
+  if (m_autocomplete && autocompleteStart > text && autocompleteStart < text + byteLength) {
+    const char * autocompleteEnd = cursorLocation();
+    while (*autocompleteEnd != ' ' && autocompleteEnd < text + byteLength) {
+      autocompleteEnd++;
+    }
+    drawStringAt(
+        ctx,
+        line,
+        UTF8Helper::GlyphOffsetAtCodePoint(text, autocompleteStart),
+        autocompleteStart,
+        minPointer(text + byteLength, autocompleteEnd) - autocompleteStart,
+        AutocompleteColor,
+        BackgroundColor,
+        nullptr,
+        nullptr,
+        HighlightColor);
   }
 }
 

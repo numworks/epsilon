@@ -21,7 +21,8 @@ protected:
   public:
     ContentView(App * pythonDelegate, const KDFont * font) :
       TextArea::ContentView(font),
-      m_pythonDelegate(pythonDelegate)
+      m_pythonDelegate(pythonDelegate),
+      m_autocomplete(false)
     {
     }
     void loadSyntaxHighlighter();
@@ -31,6 +32,7 @@ protected:
     KDRect dirtyRectFromPosition(const char * position, bool includeFollowingLines) const override;
   private:
     App * m_pythonDelegate;
+    bool m_autocomplete;
   };
 private:
   const ContentView * nonEditableContentView() const override { return &m_contentView; }

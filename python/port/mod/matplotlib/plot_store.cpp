@@ -16,9 +16,6 @@ void PlotStore::addDots(mp_obj_t x, mp_obj_t y) {
   mp_obj_t items[2] = {x, y};
   mp_obj_t tuple = mp_obj_new_tuple(2, items);
   mp_obj_list_append(m_dots, tuple);
-
-  //mp_obj_tuple_t * t = static_cast<mp_obj_tuple_t *>(MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL)));
-  //t->items[0] = MP_OBJ_NEW_SMALL_INT(r);
 }
 
 PlotStore::Dot PlotStore::dotAtIndex(int i) {

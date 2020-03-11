@@ -14,9 +14,38 @@ public:
   PlotStore();
   void flush();
 
+  // Iterators
+
+  template <class T>
+  class ListIterator {
+  public:
+    static ListIterator Begin(mp_obj_t list);
+    static ListIterator End(mp_obj_t list);
+    T operator*();
+    ListIterator & operator++();
+    bool operator!=(const ListIterator & it) const;
+  private:
+    ListIterator() : m_tupleIndex(0) {}
+    mp_obj_t * m_tuples;
+    size_t m_numberOfTuples;
+    size_t m_tupleIndex;
+  };
+
+  template <class T>
+  class Iterable {
+  public:
+    Iterable(mp_obj_t list) : m_list(list) {}
+    T begin() const { return T::Begin(m_list); }
+    T end() const { return T::End(m_list); }
+  private:
+    mp_obj_t m_list;
+  };
+
+  // Dots
+
   class Dot {
   public:
-    Dot(float x, float y, KDColor color) : m_x(x), m_y(y), m_color(color) {}
+    Dot(mp_obj_t tuple);
     float x() const { return m_x; }
     float y() const { return m_y; }
     KDColor color() const { return m_color; }
@@ -26,52 +55,35 @@ public:
     KDColor m_color;
   };
 
-  class DotIterator {
+  void addDot(mp_obj_t x, mp_obj_t y, KDColor c);
+  Iterable<ListIterator<Dot>> dots() { return Iterable<ListIterator<Dot>>(m_dots); }
+
+  // Texts
+
+  class Text {
   public:
-    static DotIterator Begin(mp_obj_t dots);
-    static DotIterator End(mp_obj_t dots);
-    Dot operator*();
-    bool operator!=(const DotIterator & it) const;
-    DotIterator & operator++();
+    Text(mp_obj_t tuple);
+    float x() const { return m_x; }
+    float y() const { return m_y; }
+    const char * string() const { return m_string; }
   private:
-    void loadValues();
-    mp_obj_t * m_tuples;
-    size_t m_numberOfTuples;
-    size_t m_tupleIndex;
-    mp_obj_t * m_xValues;
-    mp_obj_t * m_yValues;
-    size_t m_numberOfValues;
-    size_t m_valueIndex;
+    float m_x;
+    float m_y;
+    const char * m_string;
   };
 
-  class Dots {
-  public:
-    Dots(mp_obj_t dots) : m_dots(dots) {}
-    DotIterator begin() const { return DotIterator::Begin(m_dots); }
-    DotIterator end() const { return DotIterator::End(m_dots); }
-  private:
-    mp_obj_t m_dots;
-  };
-
-  void addDots(mp_obj_t x, mp_obj_t y);
-  Dots dots() { return Dots(m_dots); }
+  void addText(mp_obj_t x, mp_obj_t y, mp_obj_t string);
+  Iterable<ListIterator<Text>> texts() { return Iterable<ListIterator<Text>>(m_texts); }
 
   void setGrid(bool grid) { m_grid = grid; }
   bool grid() { return m_grid; }
 private:
-  mp_obj_t m_dots; // A list of (x,y), where x and y are lists of numbers
-  bool m_grid;
-
-  /*
-  mp_obj_array_t * m_plots;
-  mp_obj_array_t * m_arrows;
-  mp_obj_array_t * m_scatters;
-  mp_obj_array_t * m_texts;
-  mp_obj_array_t * m_rects;
+  mp_obj_t m_dots; // List of (x, y, color)
+  mp_obj_t m_texts; // List of (x, y, string)
+  mp_obj_t m_rects; // List of (x, y, w, h, color)
+  mp_obj_t m_segments; // List of (x, y, dx, dy, style, color)
 
   bool m_grid;
-  */
-
 };
 
 }

@@ -11,99 +11,79 @@ PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(),
 
 void PlotStore::flush() {
   m_dots = mp_obj_new_list(0, nullptr);
+  m_texts = mp_obj_new_list(0, nullptr);
 }
 
-void PlotStore::addDots(mp_obj_t x, mp_obj_t y) {
-  mp_obj_t items[2] = {x, y};
-  mp_obj_t tuple = mp_obj_new_tuple(2, items);
-  mp_obj_list_append(m_dots, tuple);
-}
+// Iterators
 
-PlotStore::DotIterator PlotStore::DotIterator::Begin(mp_obj_t dots) {
-  DotIterator it;
-  mp_obj_list_get(dots, &(it.m_numberOfTuples), &(it.m_tuples));
-  if (it.m_numberOfTuples > 0) {
-    it.m_tupleIndex = 0;
-    it.loadValues();
-  }
+template <class T>
+PlotStore::ListIterator<T> PlotStore::ListIterator<T>::Begin(mp_obj_t list) {
+  ListIterator<T> it;
+  mp_obj_list_get(list, &(it.m_numberOfTuples), &(it.m_tuples));
   return it;
 }
 
-PlotStore::DotIterator PlotStore::DotIterator::End(mp_obj_t dots) {
-  DotIterator it;
-  mp_obj_list_get(dots, &(it.m_numberOfTuples), &(it.m_tuples));
+template <class T>
+PlotStore::ListIterator<T> PlotStore::ListIterator<T>::End(mp_obj_t list) {
+  ListIterator<T> it;
+  mp_obj_list_get(list, &(it.m_numberOfTuples), &(it.m_tuples));
   if (it.m_numberOfTuples > 0) {
     it.m_tupleIndex = it.m_numberOfTuples;
-    it.m_valueIndex = 0;
   }
   return it;
 }
 
-PlotStore::Dot PlotStore::DotIterator::operator*() {
-  return PlotStore::Dot(
-    mp_obj_get_float(m_xValues[m_valueIndex]),
-    mp_obj_get_float(m_yValues[m_valueIndex]),
-    Palette::DataColor[m_tupleIndex] // FIXME: Share the "looping" routing
-  );
-};
-
-bool PlotStore::DotIterator::operator!=(const DotIterator & it) const {
-  return (m_tupleIndex != it.m_tupleIndex || m_valueIndex != it.m_valueIndex);
-};
-
-PlotStore::DotIterator & PlotStore::DotIterator::operator++() {
-  if (m_valueIndex < m_numberOfValues - 1) {
-    m_valueIndex++;
-  } else if (m_tupleIndex < m_numberOfTuples - 1) {
+template <class T>
+PlotStore::ListIterator<T> & PlotStore::ListIterator<T>::operator++() {
+  if (m_tupleIndex < m_numberOfTuples) {
     m_tupleIndex++;
-    loadValues();
-  } else {
-    m_tupleIndex = m_numberOfTuples;
-    m_valueIndex = 0;
   }
-
   return *this;
 }
 
+template <class T>
+bool PlotStore::ListIterator<T>::operator!=(const PlotStore::ListIterator<T> & it) const {
+  return m_tupleIndex != it.m_tupleIndex;
+};
 
-void PlotStore::DotIterator::loadValues() {
-  mp_obj_t tuple = m_tuples[m_tupleIndex];
+template <class T>
+T PlotStore::ListIterator<T>::operator*() {
+  return T(m_tuples[m_tupleIndex]);
+};
 
-  mp_obj_t * coordinates;
-  mp_obj_get_array_fixed_n(tuple, 2, &coordinates);
+// Dots
 
-  mp_obj_get_array(coordinates[0], &m_numberOfValues, &m_xValues);
-  mp_obj_get_array(coordinates[1], &m_numberOfValues, &m_yValues);
+template class PlotStore::ListIterator<PlotStore::Dot>;
 
-  m_valueIndex = 0;
+PlotStore::Dot::Dot(mp_obj_t tuple) {
+  mp_obj_t * elements;
+  mp_obj_get_array_fixed_n(tuple, 3, &elements);
+  m_x = mp_obj_get_float(elements[0]);
+  m_y = mp_obj_get_float(elements[1]);
+  m_color = KDColor::RGB16(mp_obj_get_int(elements[2]));
 }
 
-void PlotStore::forEachDot(PlotStore::DotCallback callback) {
-  size_t numberOfTuples;
-  mp_obj_t * tuples;
-  mp_obj_list_get(m_dots, &numberOfTuples, &tuples);
+void PlotStore::addDot(mp_obj_t x, mp_obj_t y, KDColor c) {
+  mp_obj_t color = mp_obj_new_int(c);
+  mp_obj_t items[3] = {x, y, color};
+  mp_obj_t tuple = mp_obj_new_tuple(3, items);
+  mp_obj_list_append(m_dots, tuple);
+}
 
-  for (size_t t=0; t<numberOfTuples; t++) {
-    mp_obj_t tuple = tuples[t];
-    mp_obj_t * coordinates;
-    mp_obj_get_array_fixed_n(tuple, 2, &coordinates);
+// Text
 
-    size_t xLength, yLength;
-    mp_obj_t * xItems, * yItems;
-    mp_obj_get_array(coordinates[0], &xLength, &xItems);
-    mp_obj_get_array(coordinates[1], &yLength, &yItems);
-    assert(xLength == yLength); // Checked in modpyplot_plot
+PlotStore::Text::Text(mp_obj_t tuple) {
+  mp_obj_t * elements;
+  mp_obj_get_array_fixed_n(tuple, 3, &elements);
+  m_x = mp_obj_get_float(elements[0]);
+  m_y = mp_obj_get_float(elements[1]);
+  m_string = mp_obj_str_get_str(elements[2]);
+}
 
-    for (size_t i=0; i<xLength; i++) {
-      PlotStore::Dot dot(
-        mp_obj_get_float(xItems[i]),
-        mp_obj_get_float(yItems[i]),
-        Palette::DataColor[t]
-      );
-
-      callback(&dot);
-    }
-  }
+void PlotStore::addText(mp_obj_t x, mp_obj_t y, mp_obj_t string) {
+  mp_obj_t items[3] = {x, y, string};
+  mp_obj_t tuple = mp_obj_new_tuple(3, items);
+  mp_obj_list_append(m_texts, tuple);
 }
 
 }

@@ -78,6 +78,7 @@ Q(axis)
 Q(plot)
 Q(pyplot)
 Q(show)
+Q(text)
 
 // Turtle QSTRs
 Q(turtle)

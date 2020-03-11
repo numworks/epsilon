@@ -63,11 +63,11 @@ mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
 
   // Input parameter validation
   size_t xLength, yLength;
-  mp_obj_t * xItems, yItems;
+  mp_obj_t * xItems, * yItems;
   mp_obj_get_array(x, &xLength, &xItems);
   mp_obj_get_array(y, &yLength, &yItems);
   if (xLength != yLength) {
-    mp_raise_msg_varg(&mp_type_ValueError, "x and y must have same dimension");
+    mp_raise_msg(&mp_type_ValueError, "x and y must have same dimension");
   }
 
   sPlotStore->addDots(x, y);

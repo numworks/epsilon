@@ -11,8 +11,7 @@ void PlotView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabelsAndGraduations(ctx, rect, Axis::Vertical, true);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
 
-  for (int i=0; i<m_store->numberOfDots(); i++) {
-    PlotStore::Dot dot = m_store->dotAtIndex(i);
+  for (PlotStore::Dot dot : m_store->dots()) {
     drawDot(ctx, rect, dot.x(), dot.y(), dot.color());
   }
 }

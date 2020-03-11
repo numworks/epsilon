@@ -75,23 +75,7 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t byteLength, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const {
   LOG_DRAW("Drawing \"%.*s\"\n", byteLength, text);
 
-  if (!m_pythonDelegate->isPythonUser(this)) {
-    const char * lineStart = UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
-    const char * lineEnd = UTF8Helper::CodePointAtGlyphOffset(text, toColumn);
-    drawStringAt(
-      ctx,
-      line,
-      fromColumn,
-      lineStart,
-      std::min(text + byteLength, lineEnd) - lineStart,
-      StringColor,
-      BackgroundColor,
-      selectionStart,
-      selectionEnd,
-      HighlightColor
-    );
-    return;
-  }
+  assert(m_pythonDelegate->isPythonUser(this));
 
   /* We're using the MicroPython lexer to do syntax highlighting on a per-line
    * basis. This can work, however the MicroPython lexer won't accept a line

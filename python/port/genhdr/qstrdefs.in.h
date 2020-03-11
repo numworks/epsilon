@@ -77,6 +77,7 @@ Q(set_pixel)
 Q(axis)
 Q(plot)
 Q(pyplot)
+Q(scatter)
 Q(show)
 Q(text)
 

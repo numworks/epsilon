@@ -60,7 +60,7 @@ mp_obj_t modpyplot_axis(mp_obj_t arg) {
   return mp_obj_new_tuple(4, coords);
 }
 
-mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
+mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   assert(sPlotStore != nullptr);
 
   // Input parameter validation
@@ -80,13 +80,36 @@ mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
   return mp_const_none;
 }
 
+mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
+  assert(sPlotStore != nullptr);
+  assert(sPlotStore != nullptr);
+
+  // Input parameter validation
+  size_t xLength, yLength;
+  mp_obj_t * xItems, * yItems;
+  mp_obj_get_array(x, &xLength, &xItems);
+  mp_obj_get_array(y, &yLength, &yItems);
+  if (xLength != yLength) {
+    mp_raise_ValueError("x and y must have same dimension");
+  }
+
+  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  for (size_t i=0; i<xLength-1; i++) {
+    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);
+  }
+
+  return mp_const_none;
+}
+
 mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s) {
+  assert(sPlotStore != nullptr);
+
   // Input parameter validation
   mp_obj_get_float(x);
   mp_obj_get_float(y);
   mp_obj_str_get_str(s);
 
-  sPlotStore->addText(x, y, s);
+  sPlotStore->addLabel(x, y, s);
 
   return mp_const_none;
 }

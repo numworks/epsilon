@@ -8,8 +8,10 @@ namespace Matplotlib {
 
 class PlotView : public Shared::LabeledCurveView {
 public:
-  PlotView(PlotStore * s) : Shared::LabeledCurveView(s) {}
+  PlotView(PlotStore * s) : Shared::LabeledCurveView(s), m_store(s) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
+private:
+  PlotStore * m_store;
 };
 
 }

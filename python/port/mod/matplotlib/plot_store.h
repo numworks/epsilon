@@ -41,7 +41,7 @@ public:
     mp_obj_t m_list;
   };
 
-  // Dots
+  // Dot
 
   class Dot {
   public:
@@ -58,11 +58,32 @@ public:
   void addDot(mp_obj_t x, mp_obj_t y, KDColor c);
   Iterable<ListIterator<Dot>> dots() { return Iterable<ListIterator<Dot>>(m_dots); }
 
-  // Texts
+  // Segment
 
-  class Text {
+  class Segment {
   public:
-    Text(mp_obj_t tuple);
+    Segment(mp_obj_t tuple);
+    float xStart() const { return m_xStart; }
+    float yStart() const { return m_yStart; }
+    float xEnd() const { return m_xEnd; }
+    float yEnd() const { return m_yEnd; }
+    KDColor color() const { return m_color; }
+  private:
+    float m_xStart;
+    float m_yStart;
+    float m_xEnd;
+    float m_yEnd;
+    KDColor m_color;
+  };
+
+  void addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c);
+  Iterable<ListIterator<Segment>> segments() { return Iterable<ListIterator<Segment>>(m_segments); }
+
+  // Label
+
+  class Label {
+  public:
+    Label(mp_obj_t tuple);
     float x() const { return m_x; }
     float y() const { return m_y; }
     const char * string() const { return m_string; }
@@ -72,16 +93,16 @@ public:
     const char * m_string;
   };
 
-  void addText(mp_obj_t x, mp_obj_t y, mp_obj_t string);
-  Iterable<ListIterator<Text>> texts() { return Iterable<ListIterator<Text>>(m_texts); }
+  void addLabel(mp_obj_t x, mp_obj_t y, mp_obj_t string);
+  Iterable<ListIterator<Label>> labels() { return Iterable<ListIterator<Label>>(m_labels); }
 
   void setGrid(bool grid) { m_grid = grid; }
   bool grid() { return m_grid; }
 private:
   mp_obj_t m_dots; // List of (x, y, color)
-  mp_obj_t m_texts; // List of (x, y, string)
-  mp_obj_t m_rects; // List of (x, y, w, h, color)
+  mp_obj_t m_labels; // List of (x, y, string)
   mp_obj_t m_segments; // List of (x, y, dx, dy, style, color)
+  mp_obj_t m_rects; // List of (x, y, w, h, color)
 
   bool m_grid;
 };

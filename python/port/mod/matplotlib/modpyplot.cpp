@@ -8,7 +8,7 @@ extern "C" {
 
 Matplotlib::PlotStore * sPlotStore = nullptr;
 Matplotlib::PlotController * sPlotController = nullptr;
-static int paletteIndex = 0; // FIXME: Needs to be reset at some point
+static int paletteIndex = 0;
 
 // Internal functions
 
@@ -18,6 +18,7 @@ mp_obj_t modpyplot___init__() {
   sPlotStore = &plotStore;
   sPlotController = &plotController;
   sPlotStore->flush();
+  paletteIndex = 0;
   return mp_const_none;
 }
 
@@ -41,7 +42,7 @@ mp_obj_t modpyplot_axis(mp_obj_t arg) {
 
 #warning Use mp_obj_is_bool when upgrading uPy
   if (mp_obj_is_type(arg, &mp_type_bool)) {
-    sPlotStore->setGrid(mp_obj_is_true(arg));
+    sPlotStore->setAxesRequested(mp_obj_is_true(arg));
   } else {
     mp_obj_t * items;
     mp_obj_get_array_fixed_n(arg, 4, &items);
@@ -58,6 +59,15 @@ mp_obj_t modpyplot_axis(mp_obj_t arg) {
   coords[2] = mp_obj_new_float(sPlotStore->yMin());
   coords[3] = mp_obj_new_float(sPlotStore->yMax());
   return mp_obj_new_tuple(4, coords);
+}
+
+mp_obj_t modpyplot_grid(mp_obj_t b) {
+  if (mp_obj_is_type(b, &mp_type_bool)) {
+    sPlotStore->setGridRequested(mp_obj_is_true(b));
+  } else {
+    sPlotStore->setGridRequested(!sPlotStore->gridRequested());
+  }
+  return mp_const_none;
 }
 
 mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {

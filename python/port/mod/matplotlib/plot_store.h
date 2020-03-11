@@ -96,15 +96,18 @@ public:
   void addLabel(mp_obj_t x, mp_obj_t y, mp_obj_t string);
   Iterable<ListIterator<Label>> labels() { return Iterable<ListIterator<Label>>(m_labels); }
 
-  void setGrid(bool grid) { m_grid = grid; }
-  bool grid() { return m_grid; }
+  void setAxesRequested(bool b) { m_axesRequested = b; }
+  bool axesRequested() const { return m_axesRequested; }
+
+  void setGridRequested(bool b) { m_gridRequested = b; }
+  bool gridRequested() const { return m_gridRequested; }
 private:
   mp_obj_t m_dots; // List of (x, y, color)
   mp_obj_t m_labels; // List of (x, y, string)
   mp_obj_t m_segments; // List of (x, y, dx, dy, style, color)
   mp_obj_t m_rects; // List of (x, y, w, h, color)
-
-  bool m_grid;
+  bool m_axesRequested;
+  bool m_gridRequested;
 };
 
 }

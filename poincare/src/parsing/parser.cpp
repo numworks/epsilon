@@ -46,9 +46,6 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
     Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Unreal::Name())    == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "u_")              == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "v_")              == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "w_")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "v")               == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "w")               == 0

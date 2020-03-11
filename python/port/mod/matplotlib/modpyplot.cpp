@@ -35,7 +35,8 @@ void modpyplot_gc_collect() {
  * Returns : xmin, xmax, ymin, ymax : float */
 
 mp_obj_t modpyplot_axis(mp_obj_t arg) {
-  mp_obj_is_type(arg, &mp_type_enumerate);
+  assert(sPlotStore != nullptr);
+
 #warning Use mp_obj_is_bool when upgrading uPy
   if (mp_obj_is_type(arg, &mp_type_bool)) {
     sPlotStore->setGrid(mp_obj_is_true(arg));
@@ -59,9 +60,18 @@ mp_obj_t modpyplot_axis(mp_obj_t arg) {
 
 mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
   assert(sPlotStore != nullptr);
+
+  // Input parameter validation
+  size_t xLength, yLength;
+  mp_obj_t * xItems, yItems;
+  mp_obj_get_array(x, &xLength, &xItems);
+  mp_obj_get_array(y, &yLength, &yItems);
+  if (xLength != yLength) {
+    mp_raise_msg_varg(&mp_type_ValueError, "x and y must have same dimension");
+  }
+
   sPlotStore->addDots(x, y);
-  // Ensure x and y are arrays
-  // "Push" x and y on bigger arrays
+
   return mp_const_none;
 }
 

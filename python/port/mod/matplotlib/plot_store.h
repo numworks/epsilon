@@ -35,7 +35,7 @@ public:
   void setGrid(bool grid) { m_grid = grid; }
   bool grid() { return m_grid; }
 private:
-  mp_obj_t m_dots;
+  mp_obj_t m_dots; // A list of (x,y), where x and y are lists of numbers
   bool m_grid;
 
   /*

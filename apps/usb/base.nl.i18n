@@ -1,0 +1,7 @@
+USBConnected = "THE CALCULATOR IS CONNECTED"
+ConnectedMessage1 = "To transfer data, browse"
+ConnectedMessage2 = "our page from your computer"
+ConnectedMessage3 = "workshop.numworks.com"
+ConnectedMessage4 = "Press the BACK key of your"
+ConnectedMessage5 = "calculator or unplug it to"
+ConnectedMessage6 = "disconnect it."

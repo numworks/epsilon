@@ -34,6 +34,7 @@ i18n_files += $(addprefix apps/statistics/,\
   base.en.i18n\
   base.es.i18n\
   base.fr.i18n\
+  base.nl.i18n\
   base.pt.i18n\
 )
 

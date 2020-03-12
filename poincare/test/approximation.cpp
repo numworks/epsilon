@@ -938,6 +938,9 @@ QUIZ_CASE(poincare_approximation_mix) {
   assert_expression_approximates_to<double>("sin(3)2(4+2)", "1.6934400967184", Radian);
   assert_expression_approximates_to<float>("4/2×(2+3)", "10");
   assert_expression_approximates_to<double>("4/2×(2+3)", "10");
+
+  assert_expression_simplifies_and_approximates_to("1.0092^(20)", "1.2010050593402");
+  assert_expression_simplifies_and_approximates_to("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1");
 }
 
 

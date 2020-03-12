@@ -19,9 +19,10 @@ template < typename T> T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
   T absRealInput = std::fabs(c.real());
   T absImagInput = std::fabs(c.imag());
   // If the magnitude of one part is null, ignore it
-  absRealInput = absRealInput > 0.0 ? absRealInput : absImagInput;
-  absImagInput = absImagInput > 0.0 ? absImagInput : absRealInput;
-  return absRealInput > absImagInput ? absImagInput : absRealInput;
+  if (absRealInput == 0.0 || (absImagInput > 0.0 && absImagInput < absRealInput)) {
+    return absImagInput;
+  }
+  return absRealInput;
 }
 
 static inline int absInt(int x) { return x < 0 ? -x : x; }

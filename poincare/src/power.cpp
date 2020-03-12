@@ -128,16 +128,24 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const Expression & child, int c
 // Private
 
 template<typename T>
-Complex<T> PowerNode::computeRealRootOfRationalPow(const std::complex<T> c, T p, T q) {
-  // Compute real root of c^(p/q) with p, q integers if it has a real root
+Complex<T> PowerNode::tryComputeRealRootOfRationalPow(const std::complex<T> c, T p, T q) {
+  // Assert p and q are in fact integers
+  assert(std::round(p) == p);
+  assert(std::round(q) == q);
+  /* Try to find a real root of c^(p/q) with p, q integers. If none is found
+   * easily, return undefined -> this does not mean there is no real root. */
   if (c.imag() == 0 && std::pow((T)-1.0, q) < 0.0) {
     /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
-     * exist (which is not necessarily the principal root)! */
+     * exist (which is not necessarily the principal root)!
+     * For q even integer, a real root does not necessarily exist (example:
+     * -2 ^(1/2)). */
     std::complex<T> absc = c;
     absc.real(std::fabs(absc.real()));
     // compute |c|^(p/q) which is a real
     Complex<T> absCPowD = PowerNode::compute(absc, std::complex<T>(p/q), Preferences::ComplexFormat::Real);
-    // c^(p/q) = (sign(c)^p)*|c|^(p/q) = -|c|^(p/q) iff c < 0 and p odd
+    /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
+     *                      = sign(c)^p         * |c|^(p/q)
+     *                      = -|c|^(p/q) iff c < 0 and p odd */
     return c.real() < 0 && std::pow((T)-1.0, p) < 0.0 ? Complex<T>::Builder(-absCPowD.stdComplex()) : absCPowD;
   }
   return Complex<T>::Undefined();
@@ -313,7 +321,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
     if (std::isnan(p) || std::isnan(q)) {
       goto defaultApproximation;
     }
-    Complex<T> result = computeRealRootOfRationalPow(c, p, q);
+    Complex<T> result = tryComputeRealRootOfRationalPow(c, p, q);
     if (!result.isUndefined()) {
       return result;
     }

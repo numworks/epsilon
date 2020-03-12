@@ -34,7 +34,7 @@ public:
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
 
-  template<typename T> static Complex<T> computeRealRootOfRationalPow(const std::complex<T> c, T p, T q);
+  template<typename T> static Complex<T> tryComputeRealRootOfRationalPow(const std::complex<T> c, T p, T q);
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
 
 private:

@@ -7,6 +7,9 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
   if (a.isZero() || b.isZero()) {
     return Integer(0);
   }
+  if (a.isEqualTo(b)) {
+    return a;
+  }
   Integer signResult = Integer::Division(Integer::Multiplication(a, b), GCD(a, b)).quotient;
   signResult.setNegative(false);
   return signResult;
@@ -16,7 +19,9 @@ Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
   if (a.isOverflow() || b.isOverflow()) {
     return Integer::Overflow(false);
   }
-
+  if (a.isEqualTo(b)) {
+    return a;
+  }
   Integer i = a;
   Integer j = b;
   i.setNegative(false);

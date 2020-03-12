@@ -65,17 +65,20 @@ i18n_files += $(addprefix apps/,\
   shared.en.i18n\
   shared.es.i18n\
   shared.fr.i18n\
+  shared.nl.i18n\
   shared.pt.i18n\
   shared.universal.i18n\
   toolbox.de.i18n\
   toolbox.en.i18n\
   toolbox.es.i18n\
   toolbox.fr.i18n\
+  toolbox.nl.i18n\
   toolbox.pt.i18n\
   variables.de.i18n\
   variables.en.i18n\
   variables.es.i18n\
   variables.fr.i18n\
+  variables.nl.i18n\
   variables.pt.i18n\
 )
 

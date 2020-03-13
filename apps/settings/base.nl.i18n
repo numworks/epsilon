@@ -11,7 +11,7 @@ ExamModeActive = "Reactivate exam mode"
 ToDeactivateExamMode1 = "To deactivate the exam mode,"
 ToDeactivateExamMode2 = "plug the calculator to a computer"
 ToDeactivateExamMode3 = "or to a power socket."
-# --------------------- Please do not edit these messages ---------------------
+# --------------------- Please do not edit these messages - Discuss with Leo (remove this later) ---------------------
 ExamModeWarning1 = "Caution: compliance of this"
 ExamModeWarning2 = "unofficial software's exam mode"
 ExamModeWarning3 = "is not guaranteed by NumWorks."

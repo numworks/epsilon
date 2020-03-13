@@ -204,6 +204,7 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
         || event == Ion::Events::ShiftRight
         || event == Ion::Events::OK)
     {
+      m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
       acceptAutocompletion(event != Ion::Events::ShiftRight);
       if (event != Ion::Events::ShiftRight) {
         // Do not process the event more
@@ -212,6 +213,7 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
       }
     } else {
       removeAutocompletion();
+      m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
     }
   }
   return TextArea::handleEvent(event);

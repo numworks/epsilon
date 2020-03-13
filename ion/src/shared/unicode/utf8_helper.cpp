@@ -363,4 +363,14 @@ size_t StringGlyphLength(const char * s, int maxSize) {
   return glyphIndex;
 }
 
+const char * EndOfWord(const char * word) {
+  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
+  assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
+  const char * result = word;
+  while (*result != ' ' && *result != '\n' && *result != UCodePointNull) {
+    result++;
+  }
+  return result;
+}
+
 }

@@ -66,8 +66,10 @@ const char * PerformAtCodePoints(
     const char * initialPosition = nullptr,
     const char * stoppingPosition = nullptr);
 
+CodePoint PreviousCodePoint(const char * buffer, const char * location); // returns 0 if location == buffer
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);
+bool CodePointIsEndOfWord(CodePoint c);
 
 // Shift the buffer and return the number of bytes removed.
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c = nullptr);

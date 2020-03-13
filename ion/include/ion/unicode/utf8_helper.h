@@ -81,6 +81,9 @@ size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position);
  * For instance, strlen("∑") = 3 but StringGlyphLength("∑") = 1 */
 size_t StringGlyphLength(const char * s, int maxSize = -1);
 
+// Returns the position of the first char between ' ', '\n' and 0.
+const char * EndOfWord(const char * word);
+
 };
 
 #endif

@@ -16,6 +16,7 @@ public:
   }
   void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
 protected:
   class ContentView : public TextArea::ContentView {
   public:
@@ -25,6 +26,8 @@ protected:
       m_autocomplete(false)
     {
     }
+    void setAutocompleting(bool autocomplete) { m_autocomplete = autocomplete; }
+    bool isAutocompleting() const { return m_autocomplete; }
     void loadSyntaxHighlighter();
     void unloadSyntaxHighlighter();
     void clearRect(KDContext * ctx, KDRect rect) const override;
@@ -35,6 +38,8 @@ protected:
     bool m_autocomplete;
   };
 private:
+  void removeAutocompletion();
+  void addAutocompletion();
   const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;
 };

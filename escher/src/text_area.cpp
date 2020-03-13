@@ -521,9 +521,13 @@ bool TextArea::ContentView::removeStartOfLine() {
   return false;
 }
 
+size_t TextArea::ContentView::removeText(const char * start, const char * end) {
+  return m_text.removeText(start, end);
+}
+
 size_t TextArea::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
-  size_t removedLength = m_text.removeText(m_selectionStart, m_selectionEnd);
+  size_t removedLength = removeText(m_selectionStart, m_selectionEnd);
   /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd
    * are invalid */
   m_selectionStart = nullptr;

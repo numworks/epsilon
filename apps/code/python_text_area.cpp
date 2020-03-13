@@ -196,6 +196,27 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position,
   );
 }
 
+bool PythonTextArea::handleEvent(Ion::Events::Event event) {
+  if (m_contentView.isAutocompleting()) {
+    // Handle event with autocompletion
+    if (event == Ion::Events::Toolbox || event == Ion::Events::Var) {
+    } else if (event == Ion::Events::Right
+        || event == Ion::Events::ShiftRight
+        || event == Ion::Events::OK)
+    {
+      acceptAutocompletion(event != Ion::Events::ShiftRight);
+      if (event != Ion::Events::ShiftRight) {
+        // Do not process the event more
+        scrollToCursor();
+        return true;
+      }
+    } else {
+      removeAutocompletion();
+    }
+  }
+  return TextArea::handleEvent(event);
+}
+
 bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   if (*text == 0) {
     return false;
@@ -227,6 +248,16 @@ void PythonTextArea::addAutocompletion() {
   // Try to insert the text (this might fail if the buffer is full)
   if (textToInsert && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(cursorLocation()))) {
     m_contentView.setAutocompleting(true);
+  }
+}
+
+void PythonTextArea::acceptAutocompletion(bool moveCursorToEndOfAutocompletion) {
+  assert(m_contentView.isAutocompleting());
+  m_contentView.setAutocompleting(false);
+  if (moveCursorToEndOfAutocompletion) {
+    const char * autocompleteEnd = UTF8Helper::EndOfWord(m_contentView.cursorLocation());
+    setCursorLocation(autocompleteEnd);
+    addAutocompletion();
   }
 }
 

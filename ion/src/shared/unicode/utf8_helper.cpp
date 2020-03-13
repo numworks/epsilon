@@ -257,13 +257,20 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
   return codePointPointer;
 }
 
+CodePoint PreviousCodePoint(const char * buffer, const char * location) {
+  if (location == buffer) {
+    return UCodePointNull;
+  }
+  UTF8Decoder decoder(buffer, location);
+  return decoder.previousCodePoint();
+}
+
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c) {
   assert(location > buffer);
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     return *(location -1) == c;
   }
-  UTF8Decoder decoder(buffer, location);
-  return decoder.previousCodePoint() == c;
+  return PreviousCodePoint(buffer, location) == c;
 }
 
 bool CodePointIs(const char * location, CodePoint c) {
@@ -272,6 +279,10 @@ bool CodePointIs(const char * location, CodePoint c) {
   }
   UTF8Decoder decoder(location);
   return decoder.nextCodePoint() == c;
+}
+
+bool CodePointIsEndOfWord(CodePoint c) {
+  return c == '\n' || c == ' ' || c == UCodePointNull;
 }
 
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
@@ -364,11 +375,12 @@ size_t StringGlyphLength(const char * s, int maxSize) {
 }
 
 const char * EndOfWord(const char * word) {
-  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-  assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
+  UTF8Decoder decoder(word);
+  CodePoint codePoint = decoder.nextCodePoint();
   const char * result = word;
-  while (*result != ' ' && *result != '\n' && *result != UCodePointNull) {
-    result++;
+  while (!CodePointIsEndOfWord(codePoint)) {
+    result = decoder.stringPosition();
+    codePoint = decoder.nextCodePoint();
   }
   return result;
 }

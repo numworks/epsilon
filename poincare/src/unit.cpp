@@ -214,10 +214,6 @@ Expression UnitNode::shallowReduce(ReductionContext reductionContext) {
   return Unit(this).shallowReduce(reductionContext);
 }
 
-Expression UnitNode::shallowBeautify(ReductionContext reductionContext) {
-  return Unit(this).shallowBeautify(reductionContext);
-}
-
 constexpr const Unit::Prefix
   Unit::PicoPrefix,
   Unit::NanoPrefix,
@@ -315,32 +311,6 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   }
   replaceWithInPlace(result);
   return result;
-}
-
-Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
-  Expression ancestor = parent();
-  if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Power) {
-    ancestor = ancestor.parent();
-  }
-  /* Check homogeneity: at this point, ancestor must be
-   *  - either uninitialized
-   *  - or a Multiplication whose parent is uninitialized.
-   */
-  if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Multiplication) {
-    ancestor = ancestor.parent();
-  }
-  if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Opposite) {
-    ancestor = ancestor.parent();
-  }
-  if (ancestor.isUninitialized()) {
-    return *this;
-  }
-  /* If the latter checks are not successfully passed, then the function
-   * returns replaceWithUndefinedInPlace.
-   * TODO Something else should be returned in order to report a more
-   * specific error. For instance: inhomogeneous expression.
-   */
-  return replaceWithUndefinedInPlace();
 }
 
 void Unit::chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext) {

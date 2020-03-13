@@ -165,7 +165,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   // Redraw the autocompleted word in the right color
   const char * autocompleteStart = m_cursorLocation;
   assert(!m_autocomplete || autocompleteStart != text);
- if (m_autocomplete && autocompleteStart > text && autocompleteStart < text + byteLength) {
+  if (m_autocomplete && autocompleteStart > text && autocompleteStart < text + byteLength) {
     const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
     drawStringAt(
         ctx,
@@ -241,12 +241,19 @@ void PythonTextArea::removeAutocompletion() {
 void PythonTextArea::addAutocompletion() {
   assert(!m_contentView.isAutocompleting());
 
-  // Compute the text to insert
-  // TODO LEA
-  const char * textToInsert = "test";
+  const char * autocompletionLocation = const_cast<char *>(cursorLocation());
+  const char * textToInsert = nullptr;
+  CodePoint prevCodePoint = UTF8Helper::PreviousCodePoint(m_contentView.editedText(), autocompletionLocation);
+  if (!UTF8Helper::CodePointIsEndOfWord(prevCodePoint)) {
+    /* The previous code point is neither the beginning of the text, nor a
+     * space, nor a \n.
+     * Compute the text to insert */
+    // TODO LEA
+    textToInsert = "test";
+  }
 
   // Try to insert the text (this might fail if the buffer is full)
-  if (textToInsert && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(cursorLocation()))) {
+  if (textToInsert && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation))) {
     m_contentView.setAutocompleting(true);
   }
 }

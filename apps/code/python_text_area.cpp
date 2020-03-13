@@ -164,8 +164,8 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
   // Redraw the autocompleted word in the right color
   const char * autocompleteStart = m_cursorLocation;
-  assert(autocompleteStart != text);
-  if (m_autocomplete && autocompleteStart > text && autocompleteStart < text + byteLength) {
+  assert(!m_autocomplete || autocompleteStart != text);
+ if (m_autocomplete && autocompleteStart > text && autocompleteStart < text + byteLength) {
     const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
     drawStringAt(
         ctx,

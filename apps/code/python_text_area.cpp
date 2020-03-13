@@ -166,10 +166,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   const char * autocompleteStart = m_cursorLocation;
   assert(autocompleteStart != text);
   if (m_autocomplete && autocompleteStart > text && autocompleteStart < text + byteLength) {
-    const char * autocompleteEnd = cursorLocation();
-    while (*autocompleteEnd != ' ' && autocompleteEnd < text + byteLength) {
-      autocompleteEnd++;
-    }
+    const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
     drawStringAt(
         ctx,
         line,

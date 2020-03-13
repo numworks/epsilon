@@ -196,4 +196,38 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position,
   );
 }
 
+bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+  if (*text == 0) {
+    return false;
+  }
+  if (m_contentView.isAutocompleting()) {
+    removeAutocompletion();
+  }
+  bool result = TextArea::handleEventWithText(text, indentation, forceCursorRightOfText);
+  addAutocompletion();
+  return result;
+}
+
+void PythonTextArea::removeAutocompletion() {
+  assert(m_contentView.isAutocompleting());
+  const char * autocompleteStart = m_contentView.cursorLocation();
+  const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
+  assert(autocompleteEnd > autocompleteStart);
+  m_contentView.removeText(autocompleteStart, autocompleteEnd);
+  m_contentView.setAutocompleting(false);
+}
+
+void PythonTextArea::addAutocompletion() {
+  assert(!m_contentView.isAutocompleting());
+
+  // Compute the text to insert
+  // TODO LEA
+  const char * textToInsert = "test";
+
+  // Try to insert the text (this might fail if the buffer is full)
+  if (textToInsert && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(cursorLocation()))) {
+    m_contentView.setAutocompleting(true);
+  }
+}
+
 }

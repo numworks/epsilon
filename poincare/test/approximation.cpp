@@ -941,6 +941,14 @@ QUIZ_CASE(poincare_approximation_mix) {
 
   assert_expression_simplifies_and_approximates_to("1.0092^(20)", "1.2010050593402");
   assert_expression_simplifies_and_approximates_to("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1");
+  assert_expression_approximates_to<double>("1.0092^(20)", "1.2010050593402");
+  assert_expression_approximates_to<double>("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1");
+  assert_expression_simplifies_approximates_to<double>("1.0092^(20)", "1.2010050593402");
+  assert_expression_simplifies_approximates_to<double>("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1");
+  //assert_expression_approximates_to<float>("1.0092^(20)", "1.201005"); TODO does not work
+  assert_expression_approximates_to<float>("1.0092^(50)×ln(3/2)", "0.6409366");
+  //assert_expression_simplifies_approximates_to<float>("1.0092^(20)", "1.2010050593402"); TODO does not work
+  //assert_expression_simplifies_approximates_to<float>("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1"); TODO does not work
 }
 
 

@@ -1,4 +1,4 @@
-Apps = "Applications"
-AppsCapital = "APPLICATIONS"
-ForbidenAppInExamMode1 = "This application is"
-ForbidenAppInExamMode2 = "forbidden in exam mode"
+Apps = "Applicaties"
+AppsCapital = "APPLICATIES"
+ForbidenAppInExamMode1 = "Deze applicatie is"
+ForbidenAppInExamMode2 = "uitgesloten in examenstand"

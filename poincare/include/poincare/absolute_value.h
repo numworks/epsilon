@@ -33,7 +33,6 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
   }
-  Expression getUnit() const override;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

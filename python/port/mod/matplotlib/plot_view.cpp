@@ -16,26 +16,49 @@ void PlotView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 
   for (PlotStore::Dot dot : m_store->dots()) {
-    drawDot(ctx, rect, dot.x(), dot.y(), dot.color());
+    traceDot(ctx, rect, dot);
   }
 
   for (PlotStore::Label label : m_store->labels()) {
-    drawLabel(ctx, rect,
-      label.x(), label.y(), label.string(),
-      KDColorBlack,
-      CurveView::RelativePosition::Before,
-      CurveView::RelativePosition::None
-    );
+    traceLabel(ctx, rect, label);
   }
 
   for (PlotStore::Segment segment : m_store->segments()) {
-    drawSegment2(
-      ctx, rect,
-      segment.xStart(), segment.yStart(),
-      segment.xEnd(), segment.yEnd(),
-      segment.color()
-    );
+    traceSegment(ctx, rect, segment);
   }
 }
+
+void PlotView::traceDot(KDContext * ctx, KDRect r, PlotStore::Dot dot) const {
+  drawDot(ctx, r, dot.x(), dot.y(), dot.color());
+}
+
+void PlotView::traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segment) const {
+  drawSegment2(
+    ctx, r,
+    segment.xStart(), segment.yStart(),
+    segment.xEnd(), segment.yEnd(),
+    segment.color()
+  );
+}
+
+void PlotView::traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const {
+  KDRect pixelRect(
+    floatToPixel(Axis::Horizontal, rect.x()),
+    floatToPixel(Axis::Vertical, rect.y()),
+    rect.width() / pixelWidth(),
+    rect.height() / pixelHeight()
+  );
+  ctx->fillRect(pixelRect, rect.color());
+}
+
+void PlotView::traceLabel(KDContext * ctx, KDRect r, PlotStore::Label label) const {
+  drawLabel(ctx, r,
+    label.x(), label.y(), label.string(),
+    KDColorBlack,
+    RelativePosition::Before,
+    RelativePosition::None
+  );
+}
+
 
 }

@@ -79,6 +79,27 @@ public:
   void addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c);
   Iterable<ListIterator<Segment>> segments() { return Iterable<ListIterator<Segment>>(m_segments); }
 
+  // Rect
+
+  class Rect {
+  public:
+    Rect(mp_obj_t tuple);
+    float x() const { return m_x; }
+    float y() const { return m_y; }
+    float width() const { return m_width; }
+    float height() const { return m_height; }
+    KDColor color() const { return m_color; }
+  private:
+    float m_x;
+    float m_y;
+    float m_width;
+    float m_height;
+    KDColor m_color;
+  };
+
+  void addRect(mp_obj_t x, mp_obj_t y, mp_obj_t width, mp_obj_t height, KDColor c);
+  Iterable<ListIterator<Rect>> rects() { return Iterable<ListIterator<Rect>>(m_segments); }
+
   // Label
 
   class Label {

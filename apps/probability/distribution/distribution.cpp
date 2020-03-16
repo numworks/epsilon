@@ -103,6 +103,7 @@ double Distribution::rightIntegralInverseForProbability(double * probability) {
 }
 
 double Distribution::evaluateAtDiscreteAbscissa(int k) const {
+  assert(isContinuous()); // Discrete distributions override this method
   return 0.0;
 }
 

@@ -29,11 +29,6 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
   return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
-Expression AdditionNode::getUnit() const {
-  // The expression is reduced, so we can just ask the unit of the first child
-  return childAtIndex(0)->getUnit();
-}
-
 // Layout
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

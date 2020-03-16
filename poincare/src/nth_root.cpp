@@ -48,7 +48,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context * context, Preferences::
      * correspond to the principale angle. */
     if (complexFormat == Preferences::ComplexFormat::Real && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
       // root(x, q) with q integer and x real
-      Complex<T> result = PowerNode::tryComputeRealRootOfRationalPow(basec, (T)1.0, indexc.real());
+      Complex<T> result = PowerNode::computeNotPrincipalRealRootOfRationalPow(basec, (T)1.0, indexc.real());
        if (!result.isUndefined()) {
          return result;
        }

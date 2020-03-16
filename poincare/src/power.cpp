@@ -128,12 +128,14 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const Expression & child, int c
 // Private
 
 template<typename T>
-Complex<T> PowerNode::tryComputeRealRootOfRationalPow(const std::complex<T> c, T p, T q) {
+Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::complex<T> c, T p, T q) {
   // Assert p and q are in fact integers
   assert(std::round(p) == p);
   assert(std::round(q) == q);
-  /* Try to find a real root of c^(p/q) with p, q integers. If none is found
-   * easily, return undefined -> this does not mean there is no real root. */
+  /* Try to find a real root of c^(p/q) with p, q integers. We ignore cases
+   * where the principal root is real as these cases are handled generically
+   * later (for instance 1232^(1/8) which has a real principal root is not
+   * handled here). */
   if (c.imag() == 0 && std::pow((T)-1.0, q) < 0.0) {
     /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
      * exist (which is not necessarily the principal root)!
@@ -321,7 +323,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
     if (std::isnan(p) || std::isnan(q)) {
       goto defaultApproximation;
     }
-    Complex<T> result = tryComputeRealRootOfRationalPow(c, p, q);
+    Complex<T> result = computeNotPrincipalRealRootOfRationalPow(c, p, q);
     if (!result.isUndefined()) {
       return result;
     }

@@ -25,8 +25,11 @@ double Distribution::rightIntegralFromAbscissa(double x) const {
 }
 
 double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
-  if (b <= a) {
+  if (b < a) {
     return 0.0;
+  }
+  if (a == b) {
+    return evaluateAtDiscreteAbscissa(a);
   }
   if (isContinuous()) {
     return cumulativeDistributiveFunctionAtAbscissa(b) - cumulativeDistributiveFunctionAtAbscissa(a);

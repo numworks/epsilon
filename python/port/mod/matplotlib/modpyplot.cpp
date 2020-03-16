@@ -61,6 +61,12 @@ mp_obj_t modpyplot_axis(mp_obj_t arg) {
   return mp_obj_new_tuple(4, coords);
 }
 
+mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height) {
+  assert(sPlotStore != nullptr);
+
+
+}
+
 mp_obj_t modpyplot_grid(mp_obj_t b) {
   if (mp_obj_is_type(b, &mp_type_bool)) {
     sPlotStore->setGridRequested(mp_obj_is_true(b));

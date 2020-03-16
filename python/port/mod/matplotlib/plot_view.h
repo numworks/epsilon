@@ -11,6 +11,10 @@ public:
   PlotView(PlotStore * s) : Shared::LabeledCurveView(s), m_store(s) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  void traceDot(KDContext * ctx, KDRect r, PlotStore::Dot dot) const;
+  void traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segment) const;
+  void traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const;
+  void traceLabel(KDContext * ctx, KDRect r, PlotStore::Label label) const;
   PlotStore * m_store;
 };
 

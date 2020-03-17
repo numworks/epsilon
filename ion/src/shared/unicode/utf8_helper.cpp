@@ -265,6 +265,11 @@ CodePoint PreviousCodePoint(const char * buffer, const char * location) {
   return decoder.previousCodePoint();
 }
 
+CodePoint CodePointAtLocation(const char * location) {
+  UTF8Decoder decoder(location);
+  return decoder.nextCodePoint();
+}
+
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c) {
   assert(location > buffer);
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
@@ -277,8 +282,7 @@ bool CodePointIs(const char * location, CodePoint c) {
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     return *(location) == c;
   }
-  UTF8Decoder decoder(location);
-  return decoder.nextCodePoint() == c;
+  return CodePointAtLocation(location) == c;
 }
 
 bool CodePointIsEndOfWord(CodePoint c) {

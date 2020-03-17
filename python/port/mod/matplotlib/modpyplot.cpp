@@ -102,6 +102,90 @@ mp_obj_t modpyplot_grid(mp_obj_t b) {
   return mp_const_none;
 }
 
+// Dichotomia to find which bin a value belongs to
+size_t belongs_to_bin_of_index(mp_float_t v, mp_obj_t * binsEdges, size_t minIndex, size_t maxIndex) {
+  assert(mp_obj_get_float(binsEdges[minIndex]) <= v && v <= mp_obj_get_float(binsEdges[maxIndex]));
+  if (maxIndex - minIndex < 2) {
+    return minIndex;
+  }
+  size_t index = (minIndex+maxIndex)/2;
+  mp_float_t pivot = mp_obj_get_float(binsEdges[index]);
+  if (pivot == v) {
+    return index;
+  } else if (pivot < v) {
+    return belongs_to_bin_of_index(v, binsEdges, index, maxIndex);
+  } else {
+    assert(pivot > v);
+    return belongs_to_bin_of_index(v, binsEdges, minIndex, index);
+  }
+}
+
+mp_obj_t modpyplot_hist(mp_obj_t x) {
+  // Create a list of bins
+  // TODO: the number of bins can be given as input
+  size_t nBins = 10;
+  // TODO: the list of bins can be given as input
+  // TODO: skip the following computation if so,
+  // `bins` must increase monotonically, when an array'
+  mp_obj_t binsEdges = mp_obj_new_list(nBins+1, nullptr);
+
+  // Sort data to easily get the minimal and maximal value and count bin sizes
+  mp_obj_t * xItems;
+  size_t xLength;
+  mp_obj_get_array(x, &xLength, &xItems);
+  mp_obj_t xList = mp_obj_new_list(xLength, xItems);
+  mp_obj_list_sort(1, &xList, (mp_map_t*)&mp_const_empty_map);
+  mp_obj_list_get(xList, &xLength, &xItems);
+  mp_float_t min = mp_obj_get_float(xItems[0]);
+  mp_float_t max = mp_obj_get_float(xItems[xLength - 1]);
+
+  // Fill the bin edges list
+  // TODO: skip if the binEdges were given as input
+  mp_float_t binWidth = (max-min)/nBins;
+  for (int i = 0; i < nBins+1; i++) {
+    mp_obj_list_store(binsEdges, mp_obj_new_int(i), mp_obj_new_float(min+i*binWidth));
+  }
+
+  // Initialize bins list
+  mp_obj_t bins = mp_obj_new_list(nBins, nullptr);
+  for (size_t i=0; i<nBins; i++) {
+    mp_obj_list_store(bins, mp_obj_new_int(i), mp_obj_new_int(0));
+  }
+
+  mp_obj_t * binItems;
+  mp_obj_list_get(bins, &nBins, &binItems);
+
+  mp_obj_t * edgeItems;
+  size_t nEdges;
+  mp_obj_list_get(binsEdges, &nEdges, &edgeItems);
+  assert(nEdges == nBins + 1);
+
+  // Fill bins list by linearly scanning the x and incrementing the bin count
+  // Linearity is enabled thanks to sorting
+  size_t binIndex = 0;
+  size_t xIndex = 0;
+  while (xIndex < xLength) {
+    assert(binIndex < nBins);
+    mp_float_t upperBound = mp_obj_get_float(edgeItems[binIndex+1]);
+    while (mp_obj_get_float(xItems[xIndex]) < upperBound || (binIndex == nBins - 1 && mp_obj_get_float(xItems[xIndex]) == upperBound)) {
+      // Increment the bin count
+      binItems[binIndex] = mp_obj_new_int(mp_obj_get_int(binItems[binIndex]) + 1);
+      xIndex++;
+      if (xIndex == xLength) {
+        break;
+      }
+    }
+    binIndex++;
+  }
+
+  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  for (size_t i=0; i<nBins; i++) {
+    mp_float_t width = mp_obj_get_float(edgeItems[i+1]) - mp_obj_get_float(edgeItems[i]);
+    sPlotStore->addRect(edgeItems[i], binItems[i], mp_obj_new_float(width), binItems[i], color);
+  }
+  return mp_const_none;
+}
+
 mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   assert(sPlotStore != nullptr);
 

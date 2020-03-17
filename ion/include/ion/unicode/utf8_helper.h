@@ -67,6 +67,7 @@ const char * PerformAtCodePoints(
     const char * stoppingPosition = nullptr);
 
 CodePoint PreviousCodePoint(const char * buffer, const char * location); // returns 0 if location == buffer
+CodePoint CodePointAtLocation(const char * location);
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);
 bool CodePointIsEndOfWord(CodePoint c);

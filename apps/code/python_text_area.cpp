@@ -246,9 +246,11 @@ void PythonTextArea::addAutocompletion() {
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());
   const char * textToInsert = nullptr;
   CodePoint prevCodePoint = UTF8Helper::PreviousCodePoint(m_contentView.editedText(), autocompletionLocation);
-  if (!UTF8Helper::CodePointIsEndOfWord(prevCodePoint)) {
+  if (!UTF8Helper::CodePointIsEndOfWord(prevCodePoint)
+      && UTF8Helper::CodePointIsEndOfWord(UTF8Helper::CodePointAtLocation(autocompletionLocation)))
+  {
     /* The previous code point is neither the beginning of the text, nor a
-     * space, nor a \n.
+     * space, nor a \n, and the next code point is the end of the word.
      * Compute the text to insert */
     // TODO LEA
     textToInsert = "test";

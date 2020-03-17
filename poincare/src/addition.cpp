@@ -160,8 +160,12 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * the result is not homogeneous. */
   {
     Expression unit = childAtIndex(0).getUnit();
+    const bool hasUnit = !unit.isUninitialized();
     for (int i = 1; i < childrenCount; i++) {
-      if (!unit.isIdenticalTo(childAtIndex(i).getUnit())) {
+      Expression otherUnit = childAtIndex(i).getUnit();
+      if (hasUnit == otherUnit.isUninitialized() ||
+          (hasUnit && !unit.isIdenticalTo(otherUnit)))
+      {
         return replaceWithUndefinedInPlace();
       }
     }

@@ -107,7 +107,6 @@ mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
 
 mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
   assert(sPlotStore != nullptr);
-  assert(sPlotStore != nullptr);
 
   // Input parameter validation
   mp_obj_t * xItems, * yItems;

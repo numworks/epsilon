@@ -10,6 +10,20 @@ Matplotlib::PlotStore * sPlotStore = nullptr;
 Matplotlib::PlotController * sPlotController = nullptr;
 static int paletteIndex = 0;
 
+// Private helper
+
+
+static size_t extract_and_validate_plot_input(mp_obj_t x, mp_obj_t y, mp_obj_t ** xItems, mp_obj_t ** yItems) {
+  // Input parameter validation
+  size_t xLength, yLength;
+  mp_obj_get_array(x, &xLength, xItems);
+  mp_obj_get_array(y, &yLength, yItems);
+  if (xLength != yLength) {
+    mp_raise_ValueError("x and y must have same dimension");
+  }
+  return xLength;
+}
+
 // Internal functions
 
 mp_obj_t modpyplot___init__() {
@@ -80,16 +94,11 @@ mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   assert(sPlotStore != nullptr);
 
   // Input parameter validation
-  size_t xLength, yLength;
   mp_obj_t * xItems, * yItems;
-  mp_obj_get_array(x, &xLength, &xItems);
-  mp_obj_get_array(y, &yLength, &yItems);
-  if (xLength != yLength) {
-    mp_raise_ValueError("x and y must have same dimension");
-  }
+  size_t length = extract_and_validate_plot_input(x, y, &xItems, &yItems);
 
   KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
-  for (size_t i=0; i<xLength; i++) {
+  for (size_t i=0; i<length; i++) {
     sPlotStore->addDot(xItems[i], yItems[i], color);
   }
 
@@ -101,16 +110,11 @@ mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
   assert(sPlotStore != nullptr);
 
   // Input parameter validation
-  size_t xLength, yLength;
   mp_obj_t * xItems, * yItems;
-  mp_obj_get_array(x, &xLength, &xItems);
-  mp_obj_get_array(y, &yLength, &yItems);
-  if (xLength != yLength) {
-    mp_raise_ValueError("x and y must have same dimension");
-  }
+  size_t length = extract_and_validate_plot_input(x, y, &xItems, &yItems);
 
   KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
-  for (size_t i=0; i<xLength-1; i++) {
+  for (size_t i=0; i<length-1; i++) {
     sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);
   }
 

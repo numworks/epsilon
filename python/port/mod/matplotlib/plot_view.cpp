@@ -26,6 +26,10 @@ void PlotView::drawRect(KDContext * ctx, KDRect rect) const {
   for (PlotStore::Segment segment : m_store->segments()) {
     traceSegment(ctx, rect, segment);
   }
+
+  for (PlotStore::Rect rectangle : m_store->rects()) {
+    traceRect(ctx, rect, rectangle);
+  }
 }
 
 void PlotView::traceDot(KDContext * ctx, KDRect r, PlotStore::Dot dot) const {

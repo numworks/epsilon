@@ -12,6 +12,7 @@ PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(),
 void PlotStore::flush() {
   m_dots = mp_obj_new_list(0, nullptr);
   m_segments = mp_obj_new_list(0, nullptr);
+  m_rects = mp_obj_new_list(0, nullptr);
   m_labels = mp_obj_new_list(0, nullptr);
 }
 
@@ -90,6 +91,27 @@ void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_o
   mp_obj_t items[5] = {xStart, yStart, xEnd, yEnd, color};
   mp_obj_t tuple = mp_obj_new_tuple(5, items);
   mp_obj_list_append(m_segments, tuple);
+}
+
+// Rect
+
+template class PlotStore::ListIterator<PlotStore::Rect>;
+
+PlotStore::Rect::Rect(mp_obj_t tuple) {
+  mp_obj_t * elements;
+  mp_obj_get_array_fixed_n(tuple, 5, &elements);
+  m_x = mp_obj_get_float(elements[0]);
+  m_y = mp_obj_get_float(elements[1]);
+  m_width = mp_obj_get_float(elements[2]);
+  m_height = mp_obj_get_float(elements[3]);
+  m_color = KDColor::RGB16(mp_obj_get_int(elements[4]));
+}
+
+void PlotStore::addRect(mp_obj_t x, mp_obj_t y, mp_obj_t width, mp_obj_t height, KDColor c) {
+  mp_obj_t color = mp_obj_new_int(c);
+  mp_obj_t items[5] = {x, y, width, height, color};
+  mp_obj_t tuple = mp_obj_new_tuple(5, items);
+  mp_obj_list_append(m_rects, tuple);
 }
 
 // Label

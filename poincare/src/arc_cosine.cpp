@@ -44,7 +44,7 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
       result.imag(-result.imag()); // other side of the cut
     }
   }
-  result = Trigonometry::RoundToMeaningfulDigits(result, c);
+  result = ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c);
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 

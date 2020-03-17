@@ -149,6 +149,12 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to_scalar<float>("2^3", 8.0f);
   assert_expression_approximates_to_scalar<double>("(3+𝐢)^(4+𝐢)", NAN);
   assert_expression_approximates_to_scalar<float>("[[1,2][3,4]]^2", NAN);
+
+
+  assert_expression_approximates_to<float>("(-10)^0.00000001", "unreal", Radian, Real);
+  assert_expression_approximates_to<float>("(-10)^0.00000001", "1+3.141593ᴇ-8×𝐢", Radian, Cartesian);
+  assert_expression_simplifies_approximates_to<float>("3.5^2.0000001", "12.25");
+  assert_expression_simplifies_approximates_to<float>("3.7^2.0000001", "13.69");
 }
 
 QUIZ_CASE(poincare_approximation_subtraction) {
@@ -772,6 +778,13 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("atanh(𝐢-4)", "-0.238878+1.50862×𝐢", Radian, Cartesian, 6);
   assert_expression_approximates_to<float>("atanh(𝐢-4)", "-0.238878+1.50862×𝐢", Degree, Cartesian, 6);
 
+  // Check that the complex part is not neglected
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-26×𝐢)", "13.01+5ᴇ-16×𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-60×𝐢)", "13.01+5ᴇ-50×𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-150×𝐢)", "13.01+5ᴇ-140×𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-250×𝐢)", "13.01+5ᴇ-240×𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-300×𝐢)", "13.01+5ᴇ-290×𝐢", Radian, Cartesian, 4);
+
   // WARNING: evaluate on branch cut can be multivalued
   assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×𝐢", Radian);
   assert_expression_approximates_to<double>("acos(2)", "75.456129290217×𝐢", Degree);
@@ -831,11 +844,12 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("√(-1)", "unreal", Radian, Real);
   assert_expression_approximates_to<double>("√(-1)×√(-1)", "unreal", Radian, Real);
   assert_expression_approximates_to<double>("ln(-2)", "unreal", Radian, Real);
-  assert_expression_approximates_to<double>("(-8)^(1/3)", "unreal", Radian, Real); // Power always approximates to the principal root (even if unreal)
+  // Power/Root approximates to the first REAL root in Real mode
+  assert_expression_simplifies_approximates_to<double>("(-8)^(1/3)", "-2", Radian, Real); // Power have to be simplified first in order to spot the right form c^(p/q) with p, q integers
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian, Real); // Root approximates to the first REAL root in Real mode
   assert_expression_approximates_to<double>("8^(1/3)", "2", Radian, Real);
-  assert_expression_approximates_to<float>("(-8)^(2/3)", "unreal", Radian, Real); // Power always approximates to the principal root (even if unreal)
-  assert_expression_approximates_to<float>("root(-8, 3)^2", "4", Radian, Real); // Root approximates to the first REAL root in Real mode
+  assert_expression_simplifies_approximates_to<float>("(-8)^(2/3)", "4", Radian, Real); // Power have to be simplified first (cf previous comment)
+  assert_expression_approximates_to<float>("root(-8, 3)^2", "4", Radian, Real);
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian, Real);
 
   // Cartesian
@@ -924,6 +938,19 @@ QUIZ_CASE(poincare_approximation_mix) {
   assert_expression_approximates_to<double>("sin(3)2(4+2)", "1.6934400967184", Radian);
   assert_expression_approximates_to<float>("4/2×(2+3)", "10");
   assert_expression_approximates_to<double>("4/2×(2+3)", "10");
+
+  assert_expression_simplifies_and_approximates_to("1.0092^(20)", "1.2010050593402");
+  assert_expression_simplifies_and_approximates_to("1.0092^(50)×ln(3/2)", "0.6409373488899", Degree, Cartesian, 13);
+  assert_expression_simplifies_and_approximates_to("1.0092^(50)×ln(1.0092)", "1.447637354655ᴇ-2", Degree, Cartesian, 13);
+  assert_expression_approximates_to<double>("1.0092^(20)", "1.2010050593402");
+  assert_expression_approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899", Degree, Cartesian, 13);
+  assert_expression_approximates_to<double>("1.0092^(50)×ln(1.0092)", "1.447637354655ᴇ-2", Degree, Cartesian, 13);
+  assert_expression_simplifies_approximates_to<double>("1.0092^(20)", "1.2010050593402");
+  assert_expression_simplifies_approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899", Degree, Cartesian, 13);
+  //assert_expression_approximates_to<float>("1.0092^(20)", "1.201005"); TODO does not work
+  assert_expression_approximates_to<float>("1.0092^(50)×ln(3/2)", "0.6409366");
+  //assert_expression_simplifies_approximates_to<float>("1.0092^(20)", "1.2010050593402"); TODO does not work
+  //assert_expression_simplifies_approximates_to<float>("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1"); TODO does not work
 }
 
 

@@ -137,7 +137,7 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
 }
 
 Expression ExpressionNode::getUnit() const {
-  return Undefined::Builder();
+  return Expression();
 }
 
 void ExpressionNode::setChildrenInPlace(Expression other) {

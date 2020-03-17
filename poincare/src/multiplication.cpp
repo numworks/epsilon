@@ -264,13 +264,13 @@ Expression Multiplication::getUnit() const {
   int resultChildrenCount = 0;
   for (int i = 0; i < childrenCount; i++) {
     Expression currentUnit = childAtIndex(i).getUnit();
-    if (!currentUnit.isUndefined()) {
+    if (!currentUnit.isUninitialized()) {
       result.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
       resultChildrenCount++;
     }
   }
   if (resultChildrenCount == 0) {
-    return Undefined::Builder();
+    return Expression();
   }
   return std::move(result);
 }

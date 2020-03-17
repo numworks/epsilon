@@ -42,7 +42,7 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
         reductionContext.target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits);
     Expression unit = childAtIndex(1).clone().reduce(reductionContextWithUnits).getUnit();
-    if (unit.isUndefined()) {
+    if (unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
     }

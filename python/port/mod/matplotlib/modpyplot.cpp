@@ -78,7 +78,19 @@ mp_obj_t modpyplot_axis(mp_obj_t arg) {
 mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height) {
   assert(sPlotStore != nullptr);
 
+  // Input parameter validation
+  mp_obj_t * xItems, * hItems;
+  size_t length = extract_and_validate_plot_input(x, height, &xItems, &hItems);
+  mp_float_t w = 0.8; // TODO: w should be an optional parameter
 
+  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  for (size_t i=0; i<length; i++) {
+    mp_float_t rectX = mp_obj_get_float(xItems[i])-w/2.0;
+    mp_float_t h = mp_obj_get_float(hItems[i]);
+    mp_float_t rectY = h < 0.0 ? 0.0 : h;
+    sPlotStore->addRect(mp_obj_new_float(rectX), mp_obj_new_float(rectY), mp_obj_new_float(w), mp_obj_new_float(std::fabs(h)), color);
+  }
+  return mp_const_none;
 }
 
 mp_obj_t modpyplot_grid(mp_obj_t b) {

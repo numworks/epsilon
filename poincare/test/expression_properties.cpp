@@ -371,13 +371,13 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
 
 void assert_reduced_expression_unit(const char * expression, const char * unit, ExpressionNode::SymbolicComputation symbolicComutation) {
   Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext redContext = ExpressionNode::ReductionContext(&globalContext, Real, Degree, SystemForApproximation, symbolicComutation);
+  ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, SystemForApproximation, symbolicComutation);
   Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(redContext);
   Expression u1 = e.getUnit();
-  u1 = u1.reduce(redContext);
   Expression u2 = parse_expression(unit, &globalContext, false);
   u2 = u2.reduce(redContext);
+  u2 = u2.getUnit();
   quiz_assert_print_if_failure(u1.isIdenticalTo(u2), expression);
 }
 

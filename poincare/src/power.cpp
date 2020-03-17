@@ -987,7 +987,7 @@ Expression Power::getUnit() const {
     return clone();
   }
   Expression baseUnit = childAtIndex(0).getUnit();
-  if (baseUnit.isUndefined()) {
+  if (baseUnit.isUninitialized()) {
     return baseUnit;
   }
   return Power::Builder(baseUnit, childAtIndex(1).clone());

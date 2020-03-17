@@ -378,7 +378,7 @@ void assert_reduced_expression_unit(const char * expression, const char * unit, 
   Expression u2 = parse_expression(unit, &globalContext, false);
   u2 = u2.reduce(redContext);
   u2 = u2.getUnit();
-  quiz_assert_print_if_failure(u1.isIdenticalTo(u2), expression);
+  quiz_assert_print_if_failure(u1.isUninitialized() == u2.isUninitialized() && (u1.isUninitialized() || u1.isIdenticalTo(u2)), expression);
 }
 
 QUIZ_CASE(poincare_properties_get_unit) {

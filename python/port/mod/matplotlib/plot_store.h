@@ -98,7 +98,7 @@ public:
   };
 
   void addRect(mp_obj_t x, mp_obj_t y, mp_obj_t width, mp_obj_t height, KDColor c);
-  Iterable<ListIterator<Rect>> rects() { return Iterable<ListIterator<Rect>>(m_segments); }
+  Iterable<ListIterator<Rect>> rects() { return Iterable<ListIterator<Rect>>(m_rects); }
 
   // Label
 

@@ -109,13 +109,28 @@ const ToolboxMessageTree unitDistanceMeterChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterPicoSymbol, I18n::Message::UnitDistanceMeterPico),
 };
 
+const ToolboxMessageTree unitDistanceImperialChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceInchSymbol, I18n::Message::UnitDistanceInch),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceFootSymbol, I18n::Message::UnitDistanceFoot),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceYardSymbol, I18n::Message::UnitDistanceYard),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMileSymbol, I18n::Message::UnitDistanceMile),
+};
+
 const ToolboxMessageTree unitDistanceChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMeterMenu, unitDistanceMeterChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitDistanceImperialMenu, unitDistanceImperialChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceAstronomicalUnitSymbol, I18n::Message::UnitDistanceAstronomicalUnit),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceLightYearSymbol, I18n::Message::UnitDistanceLightYear),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceParsecSymbol, I18n::Message::UnitDistanceParsec)};
 
+const ToolboxMessageTree unitMassImperialChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassPoundSymbol, I18n::Message::UnitMassPound),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassOunceSymbol, I18n::Message::UnitMassOunce),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonSymbol, I18n::Message::UnitMassTon),
+};
+
 const ToolboxMessageTree unitMassChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitMassImperialMenu, unitMassImperialChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramKiloSymbol, I18n::Message::UnitMassGramKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramSymbol, I18n::Message::UnitMassGram),

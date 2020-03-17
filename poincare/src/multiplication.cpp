@@ -607,8 +607,10 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * which also are multiplications themselves. */
   mergeMultiplicationChildrenInPlace();
 
+  Context * context = reductionContext.context();
+
   // Step 2: Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
 
   // Step 3: Handle matrices
   /* Thanks to the simplification order, all matrix children (if any) are the
@@ -683,7 +685,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
      * interval). */
 
     if (multiplicationChildIndex >= 0) {
-      if (childAtIndex(multiplicationChildIndex).deepIsMatrix(reductionContext.context())) {
+      if (childAtIndex(multiplicationChildIndex).deepIsMatrix(context)) {
         return *this;
       }
       removeChildInPlace(resultMatrix, resultMatrix.numberOfChildren());
@@ -696,7 +698,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       }
     }
     replaceWithInPlace(resultMatrix);
-    return resultMatrix.shallowReduce(reductionContext.context());
+    return resultMatrix.shallowReduce(context);
   }
 
   /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
@@ -706,7 +708,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   while (i < numberOfChildren()-1) {
     Expression oi = childAtIndex(i);
     Expression oi1 = childAtIndex(i+1);
-    if (oi.recursivelyMatches(Expression::IsRandom, reductionContext.context(), true)) {
+    if (oi.recursivelyMatches(Expression::IsRandom, context, true)) {
       // Do not factorize random or randint
       i++;
       continue;
@@ -754,7 +756,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     /* Replacing sin/cos by tan factors may have mixed factors and factors are
      * guaranteed to be sorted (according ot SimplificationOrder) at the end of
      * shallowReduce */
-    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
+    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
   }
 
   /* Step 6: We remove rational children that appeared in the middle of sorted
@@ -777,6 +779,14 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       if (childAtIndex(0).isNumber()) {
         Number o0 = childAtIndex(0).convert<Rational>();
         Number m = Number::Multiplication(o0, static_cast<Number &>(o));
+        if ((IsInfinity(m, context) || m.isUndefined())
+            && !IsInfinity(o0, context) && !o0.isUndefined()
+            && !IsInfinity(o, context) && !o.isUndefined())
+        {
+          // Stop the reduction due to a multiplication overflow
+          SetInterruption(true);
+          return *this;
+        }
         replaceChildAtIndexInPlace(0, m);
         removeChildAtIndexInPlace(i);
       } else {
@@ -798,7 +808,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     const Expression c = childAtIndex(0);
     if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isZero()) {
       // Check that other children don't match inf or unit
-      bool infiniteOrUnitFactor = recursivelyMatches([](const Expression e, Context * context) { return Expression::IsInfinity(e,context) || e.type() == ExpressionNode::Type::Unit; }, reductionContext.context());
+      bool infiniteOrUnitFactor = recursivelyMatches([](const Expression e, Context * context) { return Expression::IsInfinity(e,context) || e.type() == ExpressionNode::Type::Unit; }, context);
       if (!infiniteOrUnitFactor) {
         replaceWithInPlace(c);
         return c;
@@ -817,7 +827,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
    * If there is a random somewhere, do not expand. */
   Expression p = parent();
-  bool hasRandom = recursivelyMatches(Expression::IsRandom, reductionContext.context(), true);
+  bool hasRandom = recursivelyMatches(Expression::IsRandom, context, true);
   if (shouldExpand
       && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)
       && !hasRandom)
@@ -844,7 +854,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
    *   We can bubble up ComplexCartesian nodes.
    * Do not simplify if there are randoms !*/
-  if (!hasRandom && allChildrenAreReal(reductionContext.context()) == 0) {
+  if (!hasRandom && allChildrenAreReal(context) == 0) {
     int nbChildren = numberOfChildren();
     int i = nbChildren-1;
     // Children are sorted so ComplexCartesian nodes are at the end

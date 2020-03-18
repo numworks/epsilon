@@ -164,7 +164,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     singleLine = exactOutputWidth + inputWidth < maxWidth - 40;
     if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact && !allExpressionsInline) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleLine;
+      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
     } else {
       if (allExpressionsInline) {
         KDCoordinate exactOutputBaseline = exactLayout.baseline();

@@ -66,11 +66,6 @@ bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test,
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
-  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits
-    || symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits)
-  {
-    return Undefined::Builder();
-  }
   bool shouldNotReplaceSymbols = symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
   if (symbol.type() == ExpressionNode::Type::Symbol && shouldNotReplaceSymbols) {
     return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);

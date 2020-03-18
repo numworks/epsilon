@@ -27,6 +27,7 @@ protected:
       m_autocomplete(false)
     {
     }
+    App * pythonDelegate() { return m_pythonDelegate; }
     void setAutocompleting(bool autocomplete) { m_autocomplete = autocomplete; }
     bool isAutocompleting() const { return m_autocomplete; }
     void loadSyntaxHighlighter();

@@ -251,9 +251,12 @@ void PythonTextArea::addAutocompletion() {
   {
     /* The previous code point is neither the beginning of the text, nor a
      * space, nor a \n, and the next code point is the end of the word.
-     * Compute the text to insert */
-    // TODO LEA
-    textToInsert = "test";
+     * Compute the text to insert:
+     * Look first in the current script variables and functions, then in the
+     * builtins, then in the imported modules/scripts. */
+    VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
+    const char * beginningOfWord = UTF8Helper::BeginningOfWord(m_contentView.editedText(), autocompletionLocation);
+    textToInsert = varBox->autocompletionForText(beginningOfWord);
   }
 
   // Try to insert the text (this might fail if the buffer is full)

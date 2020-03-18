@@ -187,6 +187,10 @@ void VariableBoxController::loadFunctionsAndVariables() {
 #endif
 }
 
+const char * VariableBoxController::autocompletionForText(const char * text) const {
+  return nullptr;
+}
+
 HighlightCell * VariableBoxController::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];

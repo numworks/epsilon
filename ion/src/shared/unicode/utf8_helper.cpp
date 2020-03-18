@@ -378,6 +378,23 @@ size_t StringGlyphLength(const char * s, int maxSize) {
   return glyphIndex;
 }
 
+const char * BeginningOfWord(const char * text, const char * word) {
+  if (text == word) {
+    return text;
+  }
+  UTF8Decoder decoder(text, word);
+  const char * codePointPointer = decoder.stringPosition();
+  CodePoint codePoint = decoder.previousCodePoint();
+  while (!CodePointIsEndOfWord(codePoint)) {
+    codePointPointer = decoder.stringPosition();
+    if (codePointPointer == text) {
+      break;
+    }
+    codePoint = decoder.previousCodePoint();
+  }
+  return codePointPointer;
+}
+
 const char * EndOfWord(const char * word) {
   UTF8Decoder decoder(word);
   CodePoint codePoint = decoder.nextCodePoint();

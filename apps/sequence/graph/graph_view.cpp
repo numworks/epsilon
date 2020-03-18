@@ -32,9 +32,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       if (x >= m_highlightedStart && x <= m_highlightedEnd && record == m_selectedRecord) {
         KDColor color = m_shouldColorHighlighted ? s->color() : KDColorBlack;
         if (y >= 0.0f) {
-          drawSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);
+          drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);
         } else {
-          drawSegment(ctx, rect, Axis::Vertical, x, y, 0.0f, color, 1);
+          drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, y, 0.0f, color, 1);
         }
       }
     }

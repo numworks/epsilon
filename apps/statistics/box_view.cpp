@@ -73,8 +73,8 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the horizontal lines linking the box to the extreme bounds
   KDColor horizontalColor = isMainViewSelected() ? m_selectedHistogramColor : Palette::GreyDark;
   float segmentOrd = (lowBound + upBound)/ 2.0f;
-  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, horizontalColor);
-  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, horizontalColor);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, horizontalColor);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, horizontalColor);
 
   double calculations[5] = {minVal, firstQuart, m_store->median(m_series), thirdQuart, maxVal};
   /* We then draw all the vertical lines of the box and then recolor the
@@ -83,10 +83,10 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
    * lines. This solution could hide the highlighted line by coloring the next
    * quantile if it has the same value. */
   for (int k = 0; k < 5; k++) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, k_quantileBarWidth);
+    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, k_quantileBarWidth);
   }
   if (isMainViewSelected()) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, k_quantileBarWidth);
+    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, k_quantileBarWidth);
   }
 }
 

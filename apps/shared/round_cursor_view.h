@@ -24,6 +24,7 @@ public:
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
 #endif
 private:
+  void markRectAsDirty(KDRect rect) override;
 #ifdef GRAPH_CURSOR_SPEEDUP
   bool eraseCursorIfPossible();
 #endif

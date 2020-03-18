@@ -22,6 +22,7 @@ class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePai
 public:
   Store();
 
+  void reset();
   // Clean pool
   void tidy();
 
@@ -35,6 +36,7 @@ public:
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
     return regressionModel((int)m_regressionTypes[series]);
   }
+  uint32_t * seriesChecksum() { return m_seriesChecksum; }
 
   // Dots
   /* Return the closest dot to abscissa x above the regression curve if
@@ -70,6 +72,7 @@ public:
   double squaredCorrelationCoefficient(int series) const;
 private:
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;
+  void resetMemoization();
   float maxValueOfColumn(int series, int i) const; //TODO LEA why float ?
   float minValueOfColumn(int series, int i) const; //TODO LEA why float ?
   Model * regressionModel(int index);

@@ -12,7 +12,7 @@ namespace Shared {
 
 class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public ButtonRowDelegate, public AlternateEmptyViewDefaultDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
+  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion);
 
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -28,6 +28,8 @@ public:
 
   Responder * defaultController() override;
 
+  bool previousModelsWereAllDeleted();
+
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -39,6 +41,7 @@ protected:
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;
+  virtual uint32_t modelVersionAtIndex(size_t i) = 0;
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
 
@@ -66,7 +69,9 @@ private:
   float addMargin(float x, float range, bool isVertical, bool isMin) override;
 
   virtual bool shouldSetDefaultOnModelChange() const { return false; }
+  virtual size_t numberOfMemoizedVersions() const = 0;
   uint32_t * m_modelVersion;
+  uint32_t * m_previousModelsVersions;
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
   ZoomParameterController m_zoomParameterController;

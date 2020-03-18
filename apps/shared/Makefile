@@ -45,6 +45,7 @@ app_shared_src = $(addprefix apps/shared/,\
   interactive_curve_view_controller.cpp \
   interval.cpp \
   interval_parameter_controller.cpp \
+  labeled_curve_view.cpp \
   language_controller.cpp \
   layout_field_delegate.cpp \
   list_parameter_controller.cpp \

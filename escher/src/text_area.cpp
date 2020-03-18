@@ -116,14 +116,18 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
     selectUpDown(event == Ion::Events::ShiftUp);
     return true;
-  } else if (event == Ion::Events::ShiftLeft) {
+  } else if (event == Ion::Events::AlphaLeft) {
     contentView()->moveCursorGeo(-INT_MAX/2, 0);
-  } else if (event == Ion::Events::ShiftRight) {
+    TextInput::scrollToCursor();
+  } else if (event == Ion::Events::AlphaRight) {
     contentView()->moveCursorGeo(INT_MAX/2, 0);
-  } else if (event == Ion::Events::ShiftUp) {
+    TextInput::scrollToCursor();
+  } else if (event == Ion::Events::AlphaUp) {
     contentView()->moveCursorGeo(0, -INT_MAX/2);
-  } else if (event == Ion::Events::ShiftDown) {
+    TextInput::scrollToCursor();
+  } else if (event == Ion::Events::AlphaDown) {
     contentView()->moveCursorGeo(0, INT_MAX/2);
+    TextInput::scrollToCursor();
   } else if (event == Ion::Events::Left) {
     if (contentView()->resetSelection()) {
       return true;

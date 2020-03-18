@@ -684,7 +684,6 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to
    * beautify them with the right complex format. */
   if (e.type() == ExpressionNode::Type::Matrix) {
-    // TODO: this method enables to take the complex format into account when the result is a matrix of scalar. It won't work for nested matrices... Find a more elegant and general solution?
     Matrix m = static_cast<Matrix &>(e);
     *simplifiedExpression = Matrix::Builder();
     if (approximateExpression) {
@@ -694,6 +693,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       Expression simplifiedChild;
       Expression approximateChild = approximateExpression ? Expression() : nullptr;
       e.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, &approximateChild, userReductionContext, context, complexFormat, angleUnit);
+      assert(!simplifiedChild.deepIsMatrix(context));
       static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
       if (approximateExpression) {
         static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild, i, i);
@@ -770,7 +770,7 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
   }
   matrix.setDimensions(static_cast<Matrix &>(c).numberOfRows(), static_cast<Matrix &>(c).numberOfColumns());
   replaceWithInPlace(matrix);
-  return matrix.shallowReduce();
+  return matrix.shallowReduce(reductionContext.context());
 }
 
 Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
@@ -1003,7 +1003,7 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
         return expression0->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression1->approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit, expression);
   Coordinate2D<double> result(resultAbscissa, approximateWithValueForSymbol(symbol, resultAbscissa, context, complexFormat, angleUnit));
-  if (std::fabs(result.x2()) < step*k_solverPrecision) {
+  if (std::fabs(result.x2()) < std::fabs(step)*k_solverPrecision) {
     result.setX2(0.0);
   }
   return result;
@@ -1019,7 +1019,7 @@ Coordinate2D<double> Expression::nextMinimumOfExpression(const char * symbol, do
   bool endCondition = false;
   do {
     bracketMinimum(symbol, x, step, max, bracket, evaluate, context, complexFormat, angleUnit, expression);
-    result = brentMinimum(symbol, bracket[0], bracket[2], evaluate, context, complexFormat, angleUnit, expression);
+    result = Solver::BrentMinimum(bracket[0], bracket[2], evaluate, context, complexFormat, angleUnit, this, symbol, &expression);
     x = bracket[1];
     // Because of float approximation, exact zero is never reached
     if (std::fabs(result.x1()) < std::fabs(step)*k_solverPrecision) {
@@ -1077,19 +1077,6 @@ void Expression::bracketMinimum(const char * symbol, double start, double step, 
   result[2] = NAN;
 }
 
-Coordinate2D<double> Expression::brentMinimum(const char * symbol, double ax, double bx, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  return Solver::BrentMinimum(
-      ax,
-      bx,
-      evaluation,
-      context,
-      complexFormat,
-      angleUnit,
-      this,
-      symbol,
-      &expression);
-}
-
 double Expression::nextIntersectionWithExpression(const char * symbol, double start, double step, double max, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
   if (start == max || step == 0.0) {
     return NAN;
@@ -1100,7 +1087,7 @@ double Expression::nextIntersectionWithExpression(const char * symbol, double st
   double x = start+step;
   do {
     bracketRoot(symbol, x, step, max, bracket, evaluation, context, complexFormat, angleUnit, expression);
-    result = brentRoot(symbol, bracket[0], bracket[1], std::fabs(step/precisionByGradUnit), evaluation, context, complexFormat, angleUnit, expression);
+    result = Solver::BrentRoot(bracket[0], bracket[1], std::fabs(step/precisionByGradUnit), evaluation, context, complexFormat, angleUnit, this, symbol, &expression);
     x = bracket[1];
   } while (std::isnan(result) && (step > 0.0 ? x <= max : x >= max));
 
@@ -1147,20 +1134,6 @@ void Expression::bracketRoot(const char * symbol, double start, double step, dou
   }
   result[0] = NAN;
   result[1] = NAN;
-}
-
-double Expression::brentRoot(const char * symbol, double ax, double bx, double precision, Solver::ValueAtAbscissa evaluation, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  return Solver::BrentRoot(
-      ax,
-      bx,
-      precision,
-      evaluation,
-      context,
-      complexFormat,
-      angleUnit,
-      this,
-      symbol,
-      &expression);
 }
 
 template float Expression::Epsilon<float>();

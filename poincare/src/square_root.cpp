@@ -30,13 +30,7 @@ int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 template<typename T>
 Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::sqrt(c);
-  /* Openbsd trigonometric functions are numerical implementation and thus are
-   * approximative.
-   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
-   * weird results as sqrt(-1) = 6E-16+i, we compute the argument of the result
-   * of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary part and
-   * if arg ~ Pi/2 [Pi], we discard the residual real part.*/
-  return Complex<T>::Builder(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
+  return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, std::complex<T>(std::log(std::abs(c)), std::arg(c))));
 }
 
 Expression SquareRootNode::shallowReduce(ReductionContext reductionContext) {

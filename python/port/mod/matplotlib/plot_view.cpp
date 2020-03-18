@@ -43,6 +43,11 @@ void PlotView::traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segmen
     segment.xEnd(), segment.yEnd(),
     segment.color()
   );
+  if (segment.isArrow()) {
+    float dx = segment.xEnd() - segment.xStart();
+    float dy = segment.yEnd() - segment.yStart();
+    drawArrow(ctx, r, segment.xEnd(), segment.yEnd(), dx, dy, segment.color());
+  }
 }
 
 void PlotView::traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const {

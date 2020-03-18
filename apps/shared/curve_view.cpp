@@ -452,6 +452,47 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
 }
 
+
+void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowLength, float angle) const {
+  /* Let's call the following variables L and l:
+   *
+   *            /                  |
+   *          /                    |
+   *        /                      l
+   *      /                        |
+   *    /                          |
+   *  <--------------------------------------------------
+   *    \
+   *      \
+   *        \
+   *          \
+   *            \
+   *
+   * ----- L -----
+   *
+   **/
+  assert(angle >= 0.0f);
+  /* We compute the arrow segments in pixels in order to correctly size the
+   * arrow without depending on the displayed range.
+   * Warning: the computed values are relative so we need to add/subtract the
+   * pixel position of 0s. */
+  float x0Pixel = floatToPixel(Axis::Horizontal, 0.0f);
+  float y0Pixel = floatToPixel(Axis::Vertical, 0.0f);
+  float dxPixel = floatToPixel(Axis::Horizontal, dx) - x0Pixel;
+  float dyPixel = y0Pixel - floatToPixel(Axis::Vertical, dy);
+  float dx2dy2 = std::sqrt(dxPixel*dxPixel+dyPixel*dyPixel);
+  float L = pixelArrowLength;
+  float l = angle*L;
+
+  float arrow1dx = pixelToFloat(Axis::Horizontal, x0Pixel + L*dxPixel/dx2dy2 + l*dyPixel/dx2dy2);
+  float arrow1dy = pixelToFloat(Axis::Vertical, y0Pixel - (L*dyPixel/dx2dy2 - l*dxPixel/dx2dy2));
+  drawSegment(ctx, rect, x, y, x - arrow1dx, y - arrow1dy, color, false);
+
+  float arrow2dx =  pixelToFloat(Axis::Horizontal, x0Pixel + L*dxPixel/dx2dy2 - l*dyPixel/dx2dy2);
+  float arrow2dy = pixelToFloat(Axis::Vertical, y0Pixel - (L*dyPixel/dx2dy2 + l*dxPixel/dx2dy2));
+  drawSegment(ctx, rect, x, y, x - arrow2dx, y - arrow2dy, color, false);
+}
+
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
   KDColor boldColor = Palette::GreyMiddle;
   KDColor lightColor = Palette::GreyWhite;

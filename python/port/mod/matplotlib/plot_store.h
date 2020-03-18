@@ -67,16 +67,18 @@ public:
     float yStart() const { return m_yStart; }
     float xEnd() const { return m_xEnd; }
     float yEnd() const { return m_yEnd; }
+    bool isArrow() const { return m_arrow; }
     KDColor color() const { return m_color; }
   private:
     float m_xStart;
     float m_yStart;
     float m_xEnd;
     float m_yEnd;
+    bool m_arrow;
     KDColor m_color;
   };
 
-  void addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c);
+  void addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, bool arrowEdge);
   Iterable<ListIterator<Segment>> segments() { return Iterable<ListIterator<Segment>>(m_segments); }
 
   // Rect

@@ -78,18 +78,19 @@ template class PlotStore::ListIterator<PlotStore::Segment>;
 
 PlotStore::Segment::Segment(mp_obj_t tuple) {
   mp_obj_t * elements;
-  mp_obj_get_array_fixed_n(tuple, 5, &elements);
+  mp_obj_get_array_fixed_n(tuple, 6 , &elements);
   m_xStart = mp_obj_get_float(elements[0]);
   m_yStart = mp_obj_get_float(elements[1]);
   m_xEnd = mp_obj_get_float(elements[2]);
   m_yEnd = mp_obj_get_float(elements[3]);
   m_color = KDColor::RGB16(mp_obj_get_int(elements[4]));
+  m_arrow = elements[5] == mp_const_true;
 }
 
-void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c) {
+void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, bool arrowEdge) {
   mp_obj_t color = mp_obj_new_int(c);
-  mp_obj_t items[5] = {xStart, yStart, xEnd, yEnd, color};
-  mp_obj_t tuple = mp_obj_new_tuple(5, items);
+  mp_obj_t items[6] = {xStart, yStart, xEnd, yEnd, color, arrowEdge ? mp_const_true : mp_const_false};
+  mp_obj_t tuple = mp_obj_new_tuple(6, items);
   mp_obj_list_append(m_segments, tuple);
 }
 

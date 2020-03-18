@@ -386,7 +386,7 @@ DrawLabel:
   }
 }
 
-void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
+void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
   KDCoordinate min = (axis == Axis::Horizontal) ? rect.x() : rect.y();
   KDCoordinate max = (axis == Axis::Horizontal) ? rect.x() + rect.width() : rect.y() + rect.height();
   KDCoordinate start = std::isinf(lowerBound) ? min : std::round(floatToPixel(axis, lowerBound));
@@ -417,7 +417,7 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   }
 }
 
-void CurveView::drawSegment2(KDContext * ctx, KDRect rect, float x, float y, float u, float v, KDColor color, bool thick) const {
+void CurveView::drawSegment(KDContext * ctx, KDRect rect, float x, float y, float u, float v, KDColor color, bool thick) const {
   float pxf = floatToPixel(Axis::Horizontal, x);
   float pyf = floatToPixel(Axis::Vertical, y);
   float puf = floatToPixel(Axis::Horizontal, u);
@@ -545,7 +545,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     x = xy.x1();
     y = xy.x2();
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
-      drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
+      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
     joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations);
   } while (true);

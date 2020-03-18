@@ -59,16 +59,16 @@ protected:
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const {
-    return drawSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
+    return drawHorizontalOrVerticalSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
         thickness, dashSize);
   }
-  void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
+  void drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;
-  void drawSegment2(KDContext * ctx, KDRect rect,
+  void drawSegment(KDContext * ctx, KDRect rect,
     float x, float y, float u, float v,
     KDColor color, bool thick = true
-  ) const; // FIXME: Name conflict? This one seems better though...
+  ) const;
   enum class Size : uint8_t {
     Small,
     Medium,

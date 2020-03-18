@@ -46,6 +46,16 @@ void modpyplot_gc_collect() {
   );
 }
 
+mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
+  assert(n_args == 4);
+  assert(sPlotStore != nullptr);
+
+  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0])+mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1])+mp_obj_get_float(args[3])), color);
+
+  return mp_const_none;
+}
+
 /* axis(arg)
  *  - arg = [xmin, xmax, ymin, ymax]
  *  - arg = True, False

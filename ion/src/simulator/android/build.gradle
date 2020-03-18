@@ -1,5 +1,15 @@
 def BUILD_DIR = '../../../../'+System.getenv('BUILD_DIR')+'/app'
 
+def projectVariable(name) {
+  /* This function retrieves a variable from the environment and falls back
+   * to the Gradle projects's properties (e.g. ~/.gradle/gradle.properties) */
+  return System.getenv('ANDROID_'+name) ?: project.findProperty('EPSILON_'+name)
+}
+
+def fileIfPath(path) {
+  return path ? new File(path) : null
+}
+
 buildscript {
   repositories {
     jcenter()
@@ -33,10 +43,10 @@ android {
   }
   signingConfigs {
     environment {
-      storeFile System.getenv('ANDROID_SIGNING_STORE_FILE') ? new File(System.getenv('RELEASE_STORE_FILE')) : null
-      storePassword System.getenv('ANDROID_SIGNING_STORE_PASSWORD')
-      keyAlias System.getenv('ANDROID_SIGNING_KEY_ALIAS')
-      keyPassword System.getenv('ANDROID_SIGNING_KEY_PASSWORD')
+      storeFile fileIfPath(projectVariable('SIGNING_STORE_FILE'))
+      storePassword projectVariable('SIGNING_STORE_PASSWORD')
+      keyAlias projectVariable('SIGNING_KEY_ALIAS')
+      keyPassword projectVariable('SIGNING_KEY_PASSWORD')
     }
   }
   buildTypes {

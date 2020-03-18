@@ -1,6 +1,5 @@
 #include <poincare/unit.h>
 #include <poincare/division.h>
-#include <poincare/float.h>
 #include <poincare/ieee754.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -310,19 +309,16 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
     Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier)).shallowReduce(reductionContext);
     result = Multiplication::Builder(multiplier, result).shallowReduce(reductionContext);
   }
+  if (parent().isUninitialized() && result.type() == ExpressionNode::Type::Unit) {
+    // A Unit must not be orphan
+    result = Multiplication::Builder(Rational::Builder(1), result);
+  }
   replaceWithInPlace(result);
   return result;
 }
 
 Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression ancestor = parent();
-  // Force Float(1) in front of an orphan Unit
-  if (ancestor.isUninitialized()) {
-    Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
-    replaceWithInPlace(m);
-    m.addChildAtIndexInPlace(*this, 1, 1);
-    return std::move(m);
-  }
   if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Power) {
     ancestor = ancestor.parent();
   }

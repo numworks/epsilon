@@ -5,7 +5,6 @@
 #include <poincare/constant.h>
 #include <poincare/cosine.h>
 #include <poincare/division.h>
-#include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/infinity.h>
 #include <poincare/matrix.h>
@@ -397,6 +396,10 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       if (index.type() != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
         // The exponent must be an Integer
         return replaceWithUndefinedInPlace();
+      }
+      if (parent().isUninitialized() && base.type() == ExpressionNode::Type::Unit) {
+        // A Power of Unit must not be orphan
+        return Multiplication::Builder(Rational::Builder(1), *this);
       }
     }
   }
@@ -979,15 +982,6 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
     replaceWithInPlace(result);
     return result;
   }
-
-  // Step 4: Force Float(1) in front of an orphan Power of Unit
-  if (parent().isUninitialized() && childAtIndex(0).type() == ExpressionNode::Type::Unit) {
-    Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
-    replaceWithInPlace(m);
-    m.addChildAtIndexInPlace(*this, 1, 1);
-    return std::move(m);
-  }
-
   return *this;
 }
 

@@ -24,13 +24,8 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   float imag = m_complex->imag();
 
   assert(!std::isnan(real) && !std::isnan(imag) && !std::isinf(real) && !std::isinf(imag));
-  /* Draw the segment from the origin to the dot (real, imag) of equation
-   * x(t) = t*real and y(t) = t*imag with t in [0,1] */
-  drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
-      [](float t, void * model, void * context) {
-        ComplexModel * complexModel = (ComplexModel *)model;
-        return Poincare::Coordinate2D<float>(complexModel->real()*t, complexModel->imag()*t);
-      }, m_complex, nullptr, false, Palette::GreyDark, false);
+  // Draw the segment from the origin to the dot (real, imag)
+  drawSegment(ctx, rect, 0.0f, 0.0f, m_complex->real(), m_complex->imag(), Palette::GreyDark, false);
 
   /* Draw the partial ellipse indicating the angle θ
    * - the ellipse parameters are a = |real|/5 and b = |imag|/5,

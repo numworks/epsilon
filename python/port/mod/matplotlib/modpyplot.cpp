@@ -51,7 +51,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
   KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
-  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0])+mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1])+mp_obj_get_float(args[3])), color);
+  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0])+mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1])+mp_obj_get_float(args[3])), color, true);
 
   return mp_const_none;
 }
@@ -220,7 +220,7 @@ mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
 
   KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
   for (size_t i=0; i<length-1; i++) {
-    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);
+    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color, false);
   }
 
   return mp_const_none;

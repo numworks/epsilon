@@ -66,8 +66,8 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }, &parameters, &th, false, Palette::GreyDark, false);
 
   // Draw dashed segment to indicate real and imaginary
-  drawSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);
-  drawSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
 
   // Draw complex position on the plan
   drawDot(ctx, rect, real, imag, Palette::Red, Size::Large);

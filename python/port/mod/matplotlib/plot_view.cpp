@@ -37,7 +37,7 @@ void PlotView::traceDot(KDContext * ctx, KDRect r, PlotStore::Dot dot) const {
 }
 
 void PlotView::traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segment) const {
-  drawSegment2(
+  drawSegment(
     ctx, r,
     segment.xStart(), segment.yStart(),
     segment.xEnd(), segment.yEnd(),

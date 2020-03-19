@@ -87,10 +87,10 @@ simulator_app_deps += $(call simulator_app_resource,$(1), \
   launch.storyboardc \
 )
 
-$(BUILD_DIR)/app/epsilon%ipa: $(subst ..,.,$(call simulator_app_deps,Epsilon$*))
+$(BUILD_DIR)/app/epsilon%ipa: $$(subst ..,.,$$(call simulator_app_deps,Epsilon$$*))
 ifdef IOS_PROVISIONNING_PROFILE
 	$(call rule_label,SIGN)
-	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "Apple Distribution: NumWorks" $(BUILD_DIR)/app/Payload/Epsilon.app
+	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "Apple Distribution: NumWorks" $(BUILD_DIR)/app/Payload/Epsilon$*app
 endif
 	$(call rule_label,ZIP)
 	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload

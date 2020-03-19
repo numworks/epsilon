@@ -103,7 +103,6 @@ private:
   SandboxController m_sandboxController;
   bool m_inputRunLoopActive;
   bool m_autoImportScripts;
-  bool m_preventEdition;
 #if EPSILON_GETOPT
   bool m_locked;
 #endif

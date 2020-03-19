@@ -831,7 +831,7 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Expressi
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
   if (p.type() == ExpressionNode::Type::Multiplication) {
-    mergeMultiplicationChildrenInPlace();
+    mergeChildrenAtIndexInPlace(p, i);
   }
 }
 
@@ -852,7 +852,7 @@ void Multiplication::factorizeExponent(int i, int j, ExpressionNode::ReductionCo
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
   if (p.type() == ExpressionNode::Type::Multiplication) {
-    mergeMultiplicationChildrenInPlace();
+    mergeChildrenAtIndexInPlace(p, i);
   }
 }
 

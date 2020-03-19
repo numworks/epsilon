@@ -53,6 +53,10 @@ static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
   return lex->column - lex->tok_column;
 }
 
+const char * PythonTextArea::ContentView::textToAutocomplete() const {
+  return UTF8Helper::BeginningOfWord(editedText(), cursorLocation());
+}
+
 void PythonTextArea::ContentView::loadSyntaxHighlighter() {
   m_pythonDelegate->initPythonWithUser(this);
 }
@@ -231,6 +235,13 @@ bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bo
   return result;
 }
 
+const char * PythonTextArea::textToAutocomplete() const {
+  if (!m_contentView.isAutocompleting()) {
+    return nullptr;
+  }
+  return m_contentView.textToAutocomplete();
+}
+
 void PythonTextArea::removeAutocompletion() {
   assert(m_contentView.isAutocompleting());
   const char * autocompleteStart = m_contentView.cursorLocation();
@@ -255,8 +266,8 @@ void PythonTextArea::addAutocompletion() {
      * Look first in the current script variables and functions, then in the
      * builtins, then in the imported modules/scripts. */
     VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
-    const char * beginningOfWord = UTF8Helper::BeginningOfWord(m_contentView.editedText(), autocompletionLocation);
-    textToInsert = varBox->autocompletionForText(beginningOfWord);
+    const char * beginningOfWord = m_contentView.textToAutocomplete();
+    textToInsert = varBox->autocompletionForText(m_contentView.pythonDelegate()->menuController()->editedScriptIndex(), beginningOfWord);
   }
 
   // Try to insert the text (this might fail if the buffer is full)

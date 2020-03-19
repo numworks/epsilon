@@ -13,13 +13,15 @@ EditorController::EditorController(MenuController * menuController, App * python
   ViewController(nullptr),
   m_editorView(this, pythonDelegate),
   m_script(Ion::Storage::Record()),
+  m_scriptIndex(-1),
   m_menuController(menuController)
 {
   m_editorView.setTextAreaDelegates(this, this);
 }
 
-void EditorController::setScript(Script script) {
+void EditorController::setScript(Script script, int scriptIndex) {
   m_script = script;
+  m_scriptIndex = scriptIndex;
 
   /* We edit the script direclty in the storage buffer. We thus put all the
    * storage available space at the end of the current edited script and we set
@@ -122,7 +124,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
-  varBox->loadFunctionsAndVariables();
+  varBox->loadFunctionsAndVariables(m_scriptIndex, m_editorView.textToAutocomplete());
   return varBox;
 }
 

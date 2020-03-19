@@ -26,8 +26,8 @@ public:
   int typeAtLocation(int i, int j) override { return 0; }
 
   /* VariableBoxController */
-  void loadFunctionsAndVariables();
-  const char * autocompletionForText(const char * text);
+  void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete);
+  const char * autocompletionForText(int scriptIndex, const char * text);
 private:
   constexpr static int k_maxScriptObjectNameSize = 100;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40

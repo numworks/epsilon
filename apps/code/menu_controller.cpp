@@ -372,7 +372,7 @@ void MenuController::configureScript() {
 void MenuController::editScriptAtIndex(int scriptIndex) {
   assert(scriptIndex >=0 && scriptIndex < m_scriptStore->numberOfScripts());
   Script script = m_scriptStore->scriptAtIndex(scriptIndex);
-  m_editorController.setScript(script);
+  m_editorController.setScript(script, scriptIndex);
   stackViewController()->push(&m_editorController);
 }
 

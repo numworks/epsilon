@@ -97,6 +97,21 @@ int NAryExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e,
   return 0;
 }
 
+void NAryExpression::mergeSameTypeChildrenInPlace() {
+  // Multiplication is associative: a*(b*c)->a*b*c
+  // The same goes for Addition
+  ExpressionNode::Type parentType = type();
+  int i = 0;
+  while (i < numberOfChildren()) {
+    Expression c = childAtIndex(i);
+    if (c.type() != parentType) {
+      i++;
+    } else {
+      mergeChildrenAtIndexInPlace(c, i);
+    }
+  }
+}
+
 int NAryExpression::allChildrenAreReal(Context * context) const {
   int i = 0;
   int result = 1;

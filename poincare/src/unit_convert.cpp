@@ -71,7 +71,7 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
     return Undefined::Builder();
   }
   division = Multiplication::Builder(Float<double>::Builder(floatValue), finalUnit);
-  static_cast<Multiplication &>(division).mergeMultiplicationChildrenInPlace();
+  static_cast<Multiplication &>(division).mergeSameTypeChildrenInPlace();
   replaceWithInPlace(division);
   return division;
 }

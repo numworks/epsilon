@@ -63,10 +63,8 @@ private:
 };
 
 class Multiplication : public NAryExpression {
-  friend class AdditionNode;
   friend class Addition;
   friend class Power;
-  friend class UnitConvert;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   static Multiplication Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(convert(children)); }
@@ -92,7 +90,6 @@ public:
 private:
   // Simplification
   Expression privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool expand, bool canBeInterrupted);
-  void mergeMultiplicationChildrenInPlace();
   void factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext);
   void mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext);
   void factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext);

@@ -676,8 +676,8 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
     if (o.isNumber()) {
       if (childAtIndex(0).isNumber()) {
-        Number o0 = childAtIndex(0).convert<Rational>();
-        Number m = Number::Multiplication(o0, static_cast<Number &>(o));
+        Expression o0 = childAtIndex(0);
+        Number m = Number::Multiplication(static_cast<Number &>(o0), static_cast<Number &>(o));
         if ((IsInfinity(m, context) || m.isUndefined())
             && !IsInfinity(o0, context) && !o0.isUndefined()
             && !IsInfinity(o, context) && !o.isUndefined())

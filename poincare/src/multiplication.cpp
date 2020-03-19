@@ -481,7 +481,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       }
       // Build final Expression
       result = Multiplication::Builder(resultWithoutUnit, units);
-      static_cast<Multiplication &>(result).mergeMultiplicationChildrenInPlace();
+      static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
     }
   }
 
@@ -505,7 +505,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
 
   /* Step 1: MultiplicationNode is associative, so let's start by merging children
    * which also are multiplications themselves. */
-  mergeMultiplicationChildrenInPlace();
+  mergeSameTypeChildrenInPlace();
 
   Context * context = reductionContext.context();
 
@@ -788,19 +788,6 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   }
 
   return result;
-}
-
-void Multiplication::mergeMultiplicationChildrenInPlace() {
-  // Multiplication is associative: a*(b*c)->a*b*c
-  int i = 0;
-  while (i < numberOfChildren()) {
-    Expression c = childAtIndex(i);
-    if (c.type() == ExpressionNode::Type::Multiplication) {
-      mergeChildrenAtIndexInPlace(c, i);
-      continue;
-    }
-    i++;
-  }
 }
 
 void Multiplication::factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext) {

@@ -60,7 +60,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   myCell->setScriptNode(scriptNodeAtIndex(index));
 }
 
-void VariableBoxController::loadFunctionsAndVariables() {
+void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete) {
   //TODO LEA Prune these + add modules
   //TODO LEA load buitins only once
   int index = 0;
@@ -187,9 +187,9 @@ void VariableBoxController::loadFunctionsAndVariables() {
 #endif
 }
 
-const char * VariableBoxController::autocompletionForText(const char * text) {
+const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * text) {
   // TODO LEA Accelerate
-  loadFunctionsAndVariables();
+  loadFunctionsAndVariables(scriptIndex, text);
   const char * endOfText = UTF8Helper::EndOfWord(text);
   const int textLength = endOfText - text;
   assert(textLength >= 1);

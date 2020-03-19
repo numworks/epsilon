@@ -50,6 +50,7 @@ public:
   }
   StackViewController * stackViewController() { return &m_codeStackViewController; }
   ConsoleController * consoleController() { return &m_consoleController; }
+  MenuController * menuController() { return &m_menuController; }
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;

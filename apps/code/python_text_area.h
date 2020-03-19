@@ -18,6 +18,7 @@ public:
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  const char * textToAutocomplete() const;
 protected:
   class ContentView : public TextArea::ContentView {
   public:
@@ -30,6 +31,7 @@ protected:
     App * pythonDelegate() { return m_pythonDelegate; }
     void setAutocompleting(bool autocomplete) { m_autocomplete = autocomplete; }
     bool isAutocompleting() const { return m_autocomplete; }
+    const char * textToAutocomplete() const;
     void loadSyntaxHighlighter();
     void unloadSyntaxHighlighter();
     void clearRect(KDContext * ctx, KDRect rect) const override;

@@ -796,7 +796,7 @@ void Multiplication::mergeMultiplicationChildrenInPlace() {
   while (i < numberOfChildren()) {
     Expression c = childAtIndex(i);
     if (c.type() == ExpressionNode::Type::Multiplication) {
-      mergeChildrenAtIndexInPlace(c, i); // TODO: ensure that matrix children are not swapped to implement MATRIX_EXACT_REDUCING
+      mergeChildrenAtIndexInPlace(c, i);
       continue;
     }
     i++;

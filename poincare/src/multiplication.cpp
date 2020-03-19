@@ -613,10 +613,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     Expression oi1 = childAtIndex(i+1);
     if (oi.recursivelyMatches(Expression::IsRandom, context, true)) {
       // Do not factorize random or randint
-      i++;
-      continue;
-    }
-    if (TermsHaveIdenticalBase(oi, oi1)) {
+    } else if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
       if (TermHasNumeralBase(oi)) {
         /* Combining powers of a given rational isn't straightforward. Indeed,
@@ -669,8 +666,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * i*i -> -1
    * 2^(1/2)*2^(1/2) -> 2
    * sin(x)*cos(x) -> 1*tan(x)
-   * Last, we remove the only rational child if it is one and not the only
-   * child. */
+   */
   i = 1;
   while (i < numberOfChildren()) {
     Expression o = childAtIndex(i);
@@ -709,15 +705,15 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);
-    if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isZero()) {
+    if (c.type() != ExpressionNode::Type::Rational) {
+    } else if (static_cast<const Rational &>(c).isZero()) {
       // Check that other children don't match inf or unit
       bool infiniteOrUnitFactor = recursivelyMatches([](const Expression e, Context * context) { return Expression::IsInfinity(e,context) || e.type() == ExpressionNode::Type::Unit; }, context);
       if (!infiniteOrUnitFactor) {
         replaceWithInPlace(c);
         return c;
       }
-    }
-    if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
+    } else if (static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
       removeChildAtIndexInPlace(0);
     }
   }
@@ -764,17 +760,18 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     assert(childAtIndex(i).type() == ExpressionNode::Type::ComplexCartesian);
     // First, we merge all ComplexCartesian children into one
     ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
-    removeChildAtIndexInPlace(i);
-    i--;
-    while (i >= 0) {
+    while (true) {
+      removeChildAtIndexInPlace(i);
+      i--;
+      if (i < 0) {
+        break;
+      }
       Expression e = childAtIndex(i);
       if (e.type() != ExpressionNode::Type::ComplexCartesian) {
         // the Multiplication is sorted so ComplexCartesian nodes are the last ones
         break;
       }
       child = child.multiply(static_cast<ComplexCartesian &>(e), reductionContext);
-      removeChildAtIndexInPlace(i);
-      i--;
     }
     // The real children are both factors of the real and the imaginary multiplication
     Multiplication real = *this;

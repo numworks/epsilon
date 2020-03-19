@@ -34,8 +34,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this, this),
-  m_inputRunLoopActive(false),
-  m_preventEdition(false)
+  m_inputRunLoopActive(false)
 #if EPSILON_GETOPT
   , m_locked(lockOnConsole)
 #endif
@@ -81,14 +80,12 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   assert(m_outputAccumulationBuffer[0] == '\0');
 
   // Draw the console before running the code
-  m_preventEdition = true;
   m_editCell.setText("");
   m_editCell.setPrompt("");
   refreshPrintOutput();
 
   runCode(storedCommand);
 
-  m_preventEdition = false;
   m_editCell.setPrompt(sStandardPromptText);
   m_editCell.setEditing(true);
 
@@ -413,9 +410,7 @@ void ConsoleController::refreshPrintOutput() {
   }
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  if (m_preventEdition) {
-    m_editCell.setEditing(false);
-  }
+  m_editCell.setEditing(false);
   AppsContainer::sharedAppsContainer()->redrawWindow();
 }
 

@@ -169,7 +169,6 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
     return false;
   }
   for (int i = 0; i < numberOfChildren(); i++) {
-    Layout child = childAtIndex(i);
     if (!childAtIndex(i)->isIdenticalTo(l.childAtIndex(i))) {
       return false;
     }

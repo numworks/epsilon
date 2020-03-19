@@ -187,7 +187,19 @@ void VariableBoxController::loadFunctionsAndVariables() {
 #endif
 }
 
-const char * VariableBoxController::autocompletionForText(const char * text) const {
+const char * VariableBoxController::autocompletionForText(const char * text) {
+  // TODO LEA Accelerate
+  loadFunctionsAndVariables();
+  const char * endOfText = UTF8Helper::EndOfWord(text);
+  const int textLength = endOfText - text;
+  assert(textLength >= 1);
+  for (int i = 0; i < numberOfRows(); i++) {
+    const char * currentName = scriptNodeAtIndex(i)->name();
+    if (strncmp(text, currentName, textLength) == 0 && *(currentName + textLength)
+        != 0) {
+      return currentName + textLength;
+    }
+  }
   return nullptr;
 }
 

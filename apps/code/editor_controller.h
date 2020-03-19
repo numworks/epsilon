@@ -16,7 +16,8 @@ class App;
 class EditorController : public ViewController, public TextAreaDelegate, public Shared::InputEventHandlerDelegate {
 public:
   EditorController(MenuController * menuController, App * pythonDelegate);
-  void setScript(Script script);
+  void setScript(Script script, int scriptIndex);
+  int scriptIndex() const { return m_scriptIndex; }
   void willExitApp();
 
   /* ViewController */
@@ -39,6 +40,7 @@ private:
   StackViewController * stackController();
   EditorView m_editorView;
   Script m_script;
+  int m_scriptIndex;
   MenuController * m_menuController;
 };
 

@@ -144,14 +144,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 
   /* Step 1: Addition is associative, so let's start by merging children which
    * are additions. */
-  int i = 0;
-  while (i < numberOfChildren()) {
-    if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
-      mergeChildrenAtIndexInPlace(childAtIndex(i), i);
-      continue;
-    }
-    i++;
-  }
+  mergeSameTypeChildrenInPlace();
 
   const int childrenCount = numberOfChildren();
   assert(childrenCount > 1);
@@ -230,7 +223,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 
   /* Step 5: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
-  i = 0;
+  int i = 0;
   while (i < numberOfChildren()-1) {
     Expression e1 = childAtIndex(i);
     Expression e2 = childAtIndex(i+1);

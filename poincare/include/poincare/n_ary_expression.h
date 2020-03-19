@@ -52,6 +52,7 @@ public:
   Expression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }
+  void mergeSameTypeChildrenInPlace();
   /* allChildrenAreReal returns:
    * - 1 if all children are real
    * - 0 if all non real children are ComplexCartesian

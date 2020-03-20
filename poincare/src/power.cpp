@@ -387,9 +387,18 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
 
-  // Step 1: There should be no unit in the index!
-  if (index.hasUnit()) {
-    return replaceWithUndefinedInPlace();
+  // Step 1: Handle the units
+  {
+    if (index.hasUnit()) {
+      // There must be no unit in the exponent
+      return replaceWithUndefinedInPlace();
+    }
+    if (base.hasUnit()) {
+      if (index.type() != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
+        // The exponent must be an Integer
+        return replaceWithUndefinedInPlace();
+      }
+    }
   }
 
   // Step 2: Handle matrices

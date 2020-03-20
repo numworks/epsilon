@@ -323,12 +323,7 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
     m.addChildAtIndexInPlace(*this, 1, 1);
     return std::move(m);
   }
-  // Check that the exponent, if any, of a Unit is an integer
   if (!ancestor.isUninitialized() && ancestor.type() == ExpressionNode::Type::Power) {
-    Expression exponent = ancestor.childAtIndex(1);
-    if (!(exponent.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exponent).isInteger())) {
-      goto UnitCheckUnsuccessful;
-    }
     ancestor = ancestor.parent();
   }
   /* Check homogeneity: at this point, ancestor must be
@@ -344,7 +339,6 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
   if (ancestor.isUninitialized()) {
     return *this;
   }
-  UnitCheckUnsuccessful:
   /* If the latter checks are not successfully passed, then the function
    * returns replaceWithUndefinedInPlace.
    * TODO Something else should be returned in order to report a more

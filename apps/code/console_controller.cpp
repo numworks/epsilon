@@ -378,6 +378,7 @@ void ConsoleController::displayViewController(ViewController * controller) {
   if (m_displayedViewController == controller) {
     return;
   }
+  hideAnyDisplayedViewController();
   stackViewController()->push(controller);
 }
 

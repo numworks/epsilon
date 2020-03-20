@@ -986,9 +986,6 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
 }
 
 Expression Power::getUnit() const {
-  if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
-    return clone();
-  }
   Expression baseUnit = childAtIndex(0).getUnit();
   if (baseUnit.isUninitialized()) {
     return baseUnit;

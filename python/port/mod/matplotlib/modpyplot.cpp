@@ -28,7 +28,7 @@ static size_t extract_and_validate_plot_input(mp_obj_t x, mp_obj_t y, mp_obj_t *
 
 mp_obj_t modpyplot___init__() {
   static Matplotlib::PlotStore plotStore;
-  static Matplotlib::PlotController plotController(&plotStore);
+  static Matplotlib::PlotController plotController(&plotStore, MicroPython::ExecutionEnvironment::currentExecutionEnvironment());
   sPlotStore = &plotStore;
   sPlotController = &plotController;
   sPlotStore->flush();

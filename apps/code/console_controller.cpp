@@ -104,9 +104,7 @@ const char * ConsoleController::inputText(const char * prompt) {
   m_inputRunLoopActive = true;
 
   // Hide the sandbox if it is displayed
-  if (sandboxIsDisplayed()) {
-    hideSandbox();
-  }
+  hideAnyDisplayedViewController();
 
   const char * promptText = prompt;
   char * s = const_cast<char *>(prompt);
@@ -180,10 +178,6 @@ const char * ConsoleController::inputText(const char * prompt) {
   return text;
 }
 
-void ConsoleController::displayViewController(ViewController * controller) {
-  stackViewController()->push(controller);
-}
-
 void ConsoleController::viewWillAppear() {
   ViewController::viewWillAppear();
   loadPythonEnvironment();
@@ -192,12 +186,12 @@ void ConsoleController::viewWillAppear() {
     autoImport();
   }
 
-  Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
+  //Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
   m_editCell.setText("");
-  Container::activeApp()->setFirstResponder(firstResponder); // FIXME
+  //Container::activeApp()->setFirstResponder(firstResponder); // FIXME
 }
 
 void ConsoleController::didBecomeFirstResponder() {
@@ -350,14 +344,15 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
   }
   telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
-  Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
-  if (!sandboxIsDisplayed()) {
+  //Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
+  if (viewControllerIsDisplayed(nullptr)) {
+    // TODO factorize
     m_selectableTableView.reloadData();
     m_editCell.setEditing(true);
     textField->setText("");
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   }
-  Container::activeApp()->setFirstResponder(firstResponder); // FIXME
+  //Container::activeApp()->setFirstResponder(firstResponder); // FIXME
   return true;
 }
 
@@ -383,29 +378,29 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
   return true;
 }
 
-void ConsoleController::displaySandbox() {
-  if (sandboxIsDisplayed()) {
-    return;
-  }
-  stackViewController()->push(&m_sandboxController);
-}
-
-void ConsoleController::hideSandbox() {
-  if (!sandboxIsDisplayed()) {
-    return;
-  }
-  m_sandboxController.hide();
-}
-
 void ConsoleController::resetSandbox() {
-  if (!sandboxIsDisplayed()) {
+  if (!viewControllerIsDisplayed(sandbox())) {
     return;
   }
   m_sandboxController.reset();
 }
 
+void ConsoleController::displayViewController(ViewController * controller) {
+  if (m_displayedViewController == controller) {
+    return;
+  }
+  stackViewController()->push(controller);
+}
+
+void ConsoleController::hideAnyDisplayedViewController() {
+  if (m_displayedViewController == nullptr) {
+    return;
+  }
+  stackViewController()->pop();
+}
+
 void ConsoleController::refreshPrintOutput() {
-  if (sandboxIsDisplayed()) {
+  if (!viewControllerIsDisplayed(nullptr)) { // Displaying a controller
     return;
   }
   m_selectableTableView.reloadData();
@@ -461,12 +456,11 @@ void ConsoleController::printText(const char * text, size_t length) {
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {
-  if (sandboxIsDisplayed()) {
-    /* The sandbox might be displayed, for instance if we are auto-importing
-     * several scripts that draw at importation. In this case, we want to remove
-     * the sandbox. */
-    hideSandbox();
-  }
+  /* The sandbox might be displayed, for instance if we are auto-importing
+   * several scripts that draw at importation. In this case, we want to remove
+   * the sandbox. */
+  hideAnyDisplayedViewController();
+
   if (script.importationStatus() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
@@ -492,13 +486,13 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     // Step 2 - Run the command
     runAndPrintForCommand(command);
   }
-  if (!sandboxIsDisplayed() && force) {
-    Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
+  if (viewControllerIsDisplayed(nullptr) && force) {
+    //Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
     m_editCell.setEditing(true);
     m_editCell.setText("");
-    Container::activeApp()->setFirstResponder(firstResponder); // FIXME
+    //Container::activeApp()->setFirstResponder(firstResponder); // FIXME
   }
 }
 

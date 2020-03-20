@@ -256,12 +256,9 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
 }
 
 Expression Multiplication::getUnit() const {
-  const int childrenCount = numberOfChildren();
-  if (childrenCount == 1) {
-    return childAtIndex(0).getUnit();
-  }
   Multiplication result = Multiplication::Builder();
   int resultChildrenCount = 0;
+  const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     Expression currentUnit = childAtIndex(i).getUnit();
     if (!currentUnit.isUninitialized()) {
@@ -272,7 +269,7 @@ Expression Multiplication::getUnit() const {
   if (resultChildrenCount == 0) {
     return Expression();
   }
-  return std::move(result);
+  return result.squashUnaryHierarchyInPlace();
 }
 
 template<typename T>

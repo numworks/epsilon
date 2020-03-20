@@ -9,24 +9,22 @@
 
 namespace Code {
 
-class SandboxController : public ViewController {
+class SandboxController : public ViewController, public MicroPython::ExecutionViewControllerHelper {
 public:
   SandboxController(Responder * parentResponder, MicroPython::ExecutionEnvironment * executionEnvironment);
   StackViewController * stackViewController();
   void reset();
-  void hide();
 
   // ViewController
   View * view() override { return &m_solidColorView; }
   void viewWillAppear() override;
-  void viewDidDisappear() override;
+  void viewDidDisappear() override { MicroPython::ExecutionViewControllerHelper::viewDidDisappear(this); }
   bool handleEvent(Ion::Events::Event event) override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
 
 private:
   void redrawWindow();
   SolidColorView m_solidColorView;
-  MicroPython::ExecutionEnvironment * m_executionEnvironment;
 };
 }
 

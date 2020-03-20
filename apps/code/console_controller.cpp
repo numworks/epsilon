@@ -151,9 +151,9 @@ const char * ConsoleController::inputText(const char * prompt) {
    m_editCell.clearAndReduceSize();
 
   // Reload the history
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  appsContainer->redrawWindow();
+  if (reloadData(true)) {
+    appsContainer->redrawWindow();
+  }
 
   // Launch a new input loop
   appsContainer->runWhile([](void * a){
@@ -186,12 +186,7 @@ void ConsoleController::viewWillAppear() {
     autoImport();
   }
 
-  //Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  m_editCell.setEditing(true);
-  m_editCell.setText("");
-  //Container::activeApp()->setFirstResponder(firstResponder); // FIXME
+  reloadData(true);
 }
 
 void ConsoleController::didBecomeFirstResponder() {
@@ -344,15 +339,9 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
   }
   telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
-  //Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
   if (viewControllerIsDisplayed(nullptr)) {
-    // TODO factorize
-    m_selectableTableView.reloadData();
-    m_editCell.setEditing(true);
-    textField->setText("");
-    m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+    reloadData(true);
   }
-  //Container::activeApp()->setFirstResponder(firstResponder); // FIXME
   return true;
 }
 
@@ -400,13 +389,21 @@ void ConsoleController::hideAnyDisplayedViewController() {
 }
 
 void ConsoleController::refreshPrintOutput() {
-  if (!viewControllerIsDisplayed(nullptr)) { // Displaying a controller
-    return;
+  if (viewControllerIsDisplayed(nullptr) && reloadData(false)) {
+    AppsContainer::sharedAppsContainer()->redrawWindow();
   }
+}
+
+bool ConsoleController::reloadData(bool isEditing) {
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  m_editCell.setEditing(false);
-  AppsContainer::sharedAppsContainer()->redrawWindow();
+  if (isEditing) {
+    m_editCell.setEditing(true);
+    m_editCell.setText("");
+  } else {
+    m_editCell.setEditing(false);
+  }
+  return true;
 }
 
 /* printText is called by the Python machine.
@@ -487,12 +484,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     runAndPrintForCommand(command);
   }
   if (viewControllerIsDisplayed(nullptr) && force) {
-    //Responder * firstResponder = Container::activeApp()->firstResponder(); // FIXME
-    m_selectableTableView.reloadData();
-    m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-    m_editCell.setEditing(true);
-    m_editCell.setText("");
-    //Container::activeApp()->setFirstResponder(firstResponder); // FIXME
+    reloadData(true);
   }
 }
 

@@ -60,13 +60,13 @@ public:
   bool textFieldDidAbortEditing(TextField * textField) override;
 
   // MicroPython::ExecutionEnvironment
-  void displaySandbox() override;
-  void hideSandbox() override;
+  ViewController * sandbox() override { return &m_sandboxController; }
   void resetSandbox() override;
+  void displayViewController(ViewController * controller) override;
+  void hideAnyDisplayedViewController() override;
   void refreshPrintOutput() override;
   void printText(const char * text, size_t length) override;
   const char * inputText(const char * prompt) override;
-  void displayViewController(ViewController * controller) override;
 
 #if EPSILON_GETOPT
   bool locked() const {

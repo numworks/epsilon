@@ -3,14 +3,18 @@
 
 #include <apps/shared/simple_interactive_curve_view_controller.h>
 #include <apps/shared/curve_view_cursor.h>
+#include <python/port/port.h>
 #include "plot_view.h"
 #include "plot_store.h"
 
 namespace Matplotlib {
 
-class PlotController : public Shared::SimpleInteractiveCurveViewController {
+class PlotController : public Shared::SimpleInteractiveCurveViewController, public MicroPython::ExecutionViewControllerHelper {
 public:
-  PlotController(PlotStore * store) : Shared::SimpleInteractiveCurveViewController(nullptr, &m_cursor), m_store(store), m_view(m_store) {}
+  PlotController(PlotStore * store, MicroPython::ExecutionEnvironment * executiveEnvironment) : Shared::SimpleInteractiveCurveViewController(nullptr, &m_cursor), ExecutionViewControllerHelper(executiveEnvironment), m_store(store), m_view(m_store) {}
+
+  void viewWillAppear() override { MicroPython::ExecutionViewControllerHelper::viewWillAppear(this); }
+  void viewDidDisappear() override { MicroPython::ExecutionViewControllerHelper::viewDidDisappear(this); }
 
   float cursorBottomMarginRatio() override {
     return 0.0f;
@@ -32,6 +36,5 @@ private:
 };
 
 }
-
 
 #endif

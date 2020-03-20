@@ -95,11 +95,21 @@ void MicroPython::ExecutionEnvironment::interrupt() {
   mp_keyboard_interrupt();
 }
 
-void MicroPython::ExecutionEnvironment::setSandboxIsDisplayed(bool display) {
-  if (m_sandboxIsDisplayed && !display) {
+void MicroPython::ExecutionEnvironment::viewControllerDidDisappear(ViewController * vc) {
+  if (vc == sandbox()) {
     modturtle_view_did_disappear();
   }
-  m_sandboxIsDisplayed = display;
+  m_displayedViewController = nullptr;
+}
+
+void MicroPython::ExecutionViewControllerHelper::viewWillAppear(ViewController * vc) {
+  assert(m_executionEnvironment != nullptr);
+  m_executionEnvironment->viewControllerWillAppear(vc);
+}
+
+void MicroPython::ExecutionViewControllerHelper::viewDidDisappear(ViewController * vc) {
+  assert(m_executionEnvironment != nullptr);
+  m_executionEnvironment->viewControllerDidDisappear(vc);
 }
 
 extern "C" {

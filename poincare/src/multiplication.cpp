@@ -360,6 +360,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   if (!denom.isUninitialized()) {
     result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
   }
+  assert(!result.isUninitialized());
 
   /* Step 3: Handle the units
    */
@@ -427,18 +428,15 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       Expression unitsNumer, unitsDenom, unitsUnits;
       static_cast<Multiplication&>(units).splitIntoNormalForm(unitsNumer, unitsDenom, unitsUnits, reductionContext);
       if (!unitsNumer.isUninitialized()) {
-        result = result.isUninitialized() ? unitsNumer : Multiplication::Builder(result, unitsNumer);
+        result = Multiplication::Builder(result, unitsNumer);
       }
       if (!unitsDenom.isUninitialized()) {
-        result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, unitsDenom);
+        result = Division::Builder(result, unitsDenom);
       }
       units = unitsUnits;
     }
 
-    double value = 1.0;
-    if (!result.isUninitialized()) {
-      value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
-    }
+    double value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (std::isnan(value)) {
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();
@@ -701,11 +699,15 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);
-    if (c.type() != ExpressionNode::Type::Rational) {
+    if (hasUnit()) {
+      // Make sure a Multiplication is not made of (Power of) Units only
+      if (!c.isNumber()) {
+        addChildAtIndexInPlace(Rational::Builder(1), 0, numberOfChildren());
+      }
+    } else if (c.type() != ExpressionNode::Type::Rational) {
     } else if (static_cast<const Rational &>(c).isZero()) {
       // Check that other children don't match inf or unit
-      bool infiniteOrUnitFactor = recursivelyMatches([](const Expression e, Context * context) { return Expression::IsInfinity(e,context) || e.type() == ExpressionNode::Type::Unit; }, context);
-      if (!infiniteOrUnitFactor) {
+      if (!recursivelyMatches(IsInfinity, context)) {
         replaceWithInPlace(c);
         return c;
       }

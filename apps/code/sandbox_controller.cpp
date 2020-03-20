@@ -5,8 +5,8 @@ namespace Code {
 
 SandboxController::SandboxController(Responder * parentResponder, MicroPython::ExecutionEnvironment * executionEnvironment) :
   ViewController(parentResponder),
-  m_solidColorView(KDColorWhite),
-  m_executionEnvironment(executionEnvironment)
+  ExecutionViewControllerHelper(executionEnvironment),
+  m_solidColorView(KDColorWhite)
 {
   assert(executionEnvironment != nullptr);
 }
@@ -20,19 +20,9 @@ void SandboxController::reset() {
   redrawWindow();
 }
 
-void SandboxController::hide() {
-  stackViewController()->pop();
-}
-
 void SandboxController::viewWillAppear() {
-  assert(m_executionEnvironment != nullptr);
-  m_executionEnvironment->setSandboxIsDisplayed(true);
+  ExecutionViewControllerHelper::viewWillAppear(this);
   redrawWindow();
-}
-
-void SandboxController::viewDidDisappear() {
-  assert(m_executionEnvironment != nullptr);
-  m_executionEnvironment->setSandboxIsDisplayed(false);
 }
 
 bool SandboxController::handleEvent(Ion::Events::Event event) {

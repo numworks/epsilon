@@ -68,14 +68,13 @@ $(eval $(call rule_for_gradle,assembleRelease,.official.))
 
 DEFAULT = epsilon.apk
 
-.PHONY: epsilon%apk
-ifdef ANDROID_SIGNING_STORE_FILE
-epsilon%apk: gradle_assembleCodesigned_%
-else
-epsilon%apk: gradle_assembleRelease_%
-	$(warning Building without code signing. Define ANDROID_SIGNING_STORE_FILE, ANDROID_SIGNING_STORE_PASSWORD, ANDROID_SIGNING_KEY_ALIAS and  ANDROID_SIGNING_KEY_PASSWORD for a signed build.)
-endif
+.PHONY: epsilon%signed.apk
+epsilon%signed.apk: gradle_assembleCodesigned_%
+	$(warning This is a signed build.)
 
+.PHONY: epsilon%apk
+epsilon%apk: gradle_assembleRelease_%
+	$(warning Building without code signing. Build epsilon$*signed.apk to generate a signed version.)
 
 .PHONY: epsilon_run
 epsilon_run: gradle_installDebug

@@ -296,6 +296,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   } else {
     m_displayOutput = DisplayOutput::ExactAndApproximate;
   }
+  if (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0) {
+    m_displayOutput = DisplayOutput::ExactOnly;
+  }
   return m_displayOutput;
 }
 

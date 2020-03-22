@@ -24,9 +24,9 @@ ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
-DEFAULT = $(BUILD_DIR)/simulator.zip
+DEFAULT = epsilon.zip
 
-$(BUILD_DIR)/simulator%zip: $(BUILD_DIR)/epsilon%packed.js $(BUILD_DIR)/ion/src/simulator/web/simulator.html
+$(BUILD_DIR)/epsilon%zip: $(BUILD_DIR)/epsilon%packed.js $(BUILD_DIR)/ion/src/simulator/web/simulator.html
 	@rm -rf $(basename $@)
 	@mkdir -p $(basename $@)
 	@cp $< $(basename $@)/epsilon.js

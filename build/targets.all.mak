@@ -41,8 +41,8 @@ all_official:
 	$(Q) cp output/release/device/n0100/epsilon.official.onboarding.dfu output/all_official/epsilon.device.n0100.dfu
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	$(Q) $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web output/release/simulator/web/simulator.official.zip
-	$(Q) cp output/release/simulator/web/simulator.official.zip output/all_official/simulator.web.zip
+	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web output/release/simulator/web/epsilon.official.zip
+	$(Q) cp output/release/simulator/web/epsilon.official.zip output/all_official/simulator.web.zip
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
 	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web epsilon.official.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.js

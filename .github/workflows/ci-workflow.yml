@@ -71,7 +71,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-simulator-web.zip
-          path: output/release/simulator/web/simulator.zip
+          path: output/release/simulator/web/epsilon.zip
       - run: make -j2 PLATFORM=simulator TARGET=web test.headless.js
       - run: node output/release/simulator/web/test.headless.js
   build-simulator-linux:

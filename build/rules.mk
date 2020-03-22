@@ -31,6 +31,11 @@ $(eval $(call rule_for, \
   $$(CXX) $$(CXXFLAGS) $$(SFLAGS) -c $$< -o $$@ \
 ))
 
+$(eval $(call rule_for, \
+  CPP, %, %.inc, \
+  $$(CPP) -P $$< $$@ \
+))
+
 ifeq ($(OS),Windows_NT)
 # Work around command-line length limit
 # On Msys2 the max command line is 32 000 characters. Our standard LD command

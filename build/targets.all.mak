@@ -40,16 +40,16 @@ all_official:
 	$(Q) $(MAKE) MODEL=n0100 epsilon.official.onboarding.dfu
 	$(Q) cp output/release/device/n0100/epsilon.official.onboarding.dfu output/all_official/epsilon.device.n0100.dfu
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
-	$(Q) $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web output/release/simulator/web/epsilon.official.zip
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=web clean
+	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.zip
 	$(Q) cp output/release/simulator/web/epsilon.official.zip output/all_official/simulator.web.zip
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
-	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web epsilon.official.js
+	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js.mem output/all_official/epsilon.js.mem
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
-	$(Q) $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=web clean
+	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.python.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js.mem output/all_official/epsilon.python.js.mem
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR ANDROID"

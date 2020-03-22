@@ -1,3 +1,5 @@
+HANDY_TARGETS_EXTENSIONS += zip
+
 $(BUILD_DIR)/epsilon%packed.js: EMSCRIPTEN_INIT_FILE = 0
 
 $(BUILD_DIR)/test.headless.js: EMSCRIPTEN_MODULARIZE = 0

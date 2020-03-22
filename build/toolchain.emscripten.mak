@@ -1,6 +1,7 @@
 CC = emcc
 CXX = emcc
 LD = emcc
+CPP = cpp
 
 EMSCRIPTEN_ASYNC_SYMBOLS = \
 SAFE_HEAP_LOAD \

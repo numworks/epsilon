@@ -1,4 +1,5 @@
 #include <escher/palette.h>
+#include <assert.h>
 
 constexpr KDColor Palette::YellowDark;
 constexpr KDColor Palette::YellowLight;
@@ -29,3 +30,11 @@ constexpr KDColor Palette::Brown;
 constexpr KDColor Palette::Purple;
 constexpr KDColor Palette::DataColor[];
 constexpr KDColor Palette::DataColorLight[];
+
+KDColor Palette::nextDataColor(int * colorIndex) {
+  size_t nbOfColors = numberOfDataColors();
+  assert(*colorIndex < nbOfColors);
+  KDColor c = DataColor[*colorIndex];
+  *colorIndex = (*colorIndex + 1) % nbOfColors;
+  return c;
+}

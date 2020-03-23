@@ -37,11 +37,11 @@ mp_obj_t modpyplot___init__() {
 }
 
 void modpyplot_gc_collect() {
-  if (sPlotStore != nullptr) {
+  if (sPlotStore == nullptr) {
     return;
   }
   MicroPython::collectRootsAtAddress(
-    reinterpret_cast<char *>(&sPlotStore),
+    reinterpret_cast<char *>(sPlotStore),
     sizeof(Matplotlib::PlotStore)
   );
 }

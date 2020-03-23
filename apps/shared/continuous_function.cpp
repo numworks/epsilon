@@ -57,8 +57,7 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   static int s_colorIndex = 0;
   // Create the record
   char nameBuffer[SymbolAbstract::k_maxNameSize];
-  int numberOfColors = sizeof(Palette::DataColor)/sizeof(KDColor);
-  RecordDataBuffer data(Palette::DataColor[s_colorIndex++ % numberOfColors]);
+  RecordDataBuffer data(Palette::nextDataColor(&s_colorIndex));
   if (baseName == nullptr) {
     DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
     baseName = nameBuffer;

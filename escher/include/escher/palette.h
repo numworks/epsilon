@@ -2,6 +2,7 @@
 #define ESCHER_PALETTE_H
 
 #include <kandinsky/color.h>
+#include <stddef.h>
 
 class Palette {
 public:
@@ -34,6 +35,10 @@ public:
   constexpr static KDColor Purple = KDColor::RGB24(0x6e2d79);
   constexpr static KDColor DataColor[] = {Red, Blue, Green, YellowDark, Magenta, Turquoise, Pink, Orange};
   constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight, YellowLight};
+
+  constexpr static size_t numberOfDataColors() { return sizeof(DataColor)/sizeof(KDColor); }
+  constexpr static size_t numberOfLightDataColors() { return sizeof(DataColorLight)/sizeof(KDColor); }
+  static KDColor nextDataColor(int * colorIndex);
 };
 
 #endif

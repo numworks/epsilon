@@ -50,7 +50,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(n_args == 4);
   assert(sPlotStore != nullptr);
 
-  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  KDColor color = Palette::nextDataColor(&paletteIndex);
   sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0])+mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1])+mp_obj_get_float(args[3])), color, true);
 
   return mp_const_none;
@@ -93,7 +93,7 @@ mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height) {
   size_t length = extractAndValidatePlotInput(x, height, &xItems, &hItems);
   mp_float_t w = 0.8; // TODO: w should be an optional parameter
 
-  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<length; i++) {
     mp_float_t rectX = mp_obj_get_float(xItems[i])-w/2.0;
     mp_float_t h = mp_obj_get_float(hItems[i]);
@@ -188,7 +188,7 @@ mp_obj_t modpyplot_hist(mp_obj_t x) {
     binIndex++;
   }
 
-  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<nBins; i++) {
     mp_float_t width = mp_obj_get_float(edgeItems[i+1]) - mp_obj_get_float(edgeItems[i]);
     sPlotStore->addRect(edgeItems[i], binItems[i], mp_obj_new_float(width), binItems[i], color);
@@ -203,7 +203,7 @@ mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   mp_obj_t * xItems, * yItems;
   size_t length = extractAndValidatePlotInput(x, y, &xItems, &yItems);
 
-  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<length; i++) {
     sPlotStore->addDot(xItems[i], yItems[i], color);
   }
@@ -218,7 +218,7 @@ mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
   mp_obj_t * xItems, * yItems;
   size_t length = extractAndValidatePlotInput(x, y, &xItems, &yItems);
 
-  KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
+  KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<length-1; i++) {
     sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color, false);
   }

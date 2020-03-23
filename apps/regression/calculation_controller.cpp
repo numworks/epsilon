@@ -168,6 +168,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setFirstText(buffer);
     buffer[0] = 'Y';
     myCell->setSecondText(buffer);
+    assert(seriesNumber < Palette::numberOfDataColors());
     myCell->setColor(Palette::DataColor[seriesNumber]);
     return;
   }

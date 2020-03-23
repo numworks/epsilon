@@ -13,7 +13,7 @@ static int paletteIndex = 0;
 // Private helper
 
 
-static size_t extract_and_validate_plot_input(mp_obj_t x, mp_obj_t y, mp_obj_t ** xItems, mp_obj_t ** yItems) {
+static size_t extractAndValidatePlotInput(mp_obj_t x, mp_obj_t y, mp_obj_t ** xItems, mp_obj_t ** yItems) {
   // Input parameter validation
   size_t xLength, yLength;
   mp_obj_get_array(x, &xLength, xItems);
@@ -90,7 +90,7 @@ mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height) {
 
   // Input parameter validation
   mp_obj_t * xItems, * hItems;
-  size_t length = extract_and_validate_plot_input(x, height, &xItems, &hItems);
+  size_t length = extractAndValidatePlotInput(x, height, &xItems, &hItems);
   mp_float_t w = 0.8; // TODO: w should be an optional parameter
 
   KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
@@ -201,7 +201,7 @@ mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
 
   // Input parameter validation
   mp_obj_t * xItems, * yItems;
-  size_t length = extract_and_validate_plot_input(x, y, &xItems, &yItems);
+  size_t length = extractAndValidatePlotInput(x, y, &xItems, &yItems);
 
   KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
   for (size_t i=0; i<length; i++) {
@@ -216,7 +216,7 @@ mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
 
   // Input parameter validation
   mp_obj_t * xItems, * yItems;
-  size_t length = extract_and_validate_plot_input(x, y, &xItems, &yItems);
+  size_t length = extractAndValidatePlotInput(x, y, &xItems, &yItems);
 
   KDColor color = Palette::DataColor[paletteIndex++]; // FIXME: Share overflow routine
   for (size_t i=0; i<length-1; i++) {

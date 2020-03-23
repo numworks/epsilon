@@ -7,7 +7,7 @@ LEDS_CHOICE ?= 0
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak
 
-EPSILON_VERSION ?= 13.0.0
+EPSILON_VERSION ?= 13.1.0
 OMEGA_VERSION ?= 1.20.0
 # USERNAME ?= N/A
 EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings external omega

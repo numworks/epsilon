@@ -30,7 +30,6 @@ protected:
   MessageTextView m_defaultBannerView;
   bool m_isActive;
 private:
-  bool handleZoom(Ion::Events::Event event) override { return false; }
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction, bool fast = false) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }

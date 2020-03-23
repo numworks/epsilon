@@ -1,21 +1,17 @@
 #ifndef SHARED_SIMPLE_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 #define SHARED_SIMPLE_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 
-#include <escher/view_controller.h>
 #include "text_field_delegate.h"
-#include "interactive_curve_view_range.h"
-#include "curve_view_cursor.h"
-#include "curve_view.h"
+#include "zoom_curve_view_controller.h"
 
 namespace Shared {
 
 /* SimpleInteractiveCurveViewController is a View controller with a cursor that
  * can handles zoom in/out and left and right events. */
 
-class SimpleInteractiveCurveViewController : public ViewController, public TextFieldDelegate {
+class SimpleInteractiveCurveViewController : public ZoomCurveViewController, public TextFieldDelegate {
 public:
-  SimpleInteractiveCurveViewController(Responder * parentResponder, CurveViewCursor * cursor);
-  View * view() override;
+  SimpleInteractiveCurveViewController(Responder * parentResponder, CurveViewCursor * cursor) : ZoomCurveViewController(parentResponder), m_cursor(cursor) {}
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
@@ -24,15 +20,15 @@ protected:
   virtual float cursorTopMarginRatio() { return 0.07f; }   // (cursorHeight/2)/(graphViewHeight-1)
   virtual float cursorBottomMarginRatio() = 0;             // (cursorHeight/2+bannerHeight)/(graphViewHeight-1)
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
-  virtual bool handleZoom(Ion::Events::Event event);
+  // ZoomCurveViewController
+  float xFocus() override { return m_cursor->x(); }
+  float yFocus() override { return m_cursor->y(); }
   virtual bool handleLeftRightEvent(Ion::Events::Event event);
   virtual void reloadBannerView() = 0;
   /* the result of moveCursorVertically/Horizontally means:
    * false -> the cursor cannot move in this direction
    * true -> the cursor moved */
   virtual bool moveCursorHorizontally(int direction, bool fast = false) { return false; }
-  virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
-  virtual CurveView * curveView() = 0;
   virtual bool handleEnter() = 0;
   CurveViewCursor * m_cursor;
 };

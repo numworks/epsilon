@@ -78,6 +78,7 @@ app_shared_src = $(addprefix apps/shared/,\
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
   xy_banner_view.cpp\
+  zoom_curve_view_controller.cpp \
   zoom_parameter_controller.cpp \
 )
 

@@ -62,4 +62,13 @@ public class EpsilonActivity extends SDLActivity {
     );
   }
 
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    /* This is done to hide the status bar and the bottom navigation buttons.
+     * TODO: This was not needed for v12 of Epsilon, find out why and make a
+     * proper fix? */
+    super.onCreate(savedInstanceState);
+    setWindowStyle(true);
+  }
+
 }

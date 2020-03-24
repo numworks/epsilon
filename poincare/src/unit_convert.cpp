@@ -41,7 +41,7 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
         reductionContext.angleUnit(),
         reductionContext.target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits);
-    Expression unit = childAtIndex(1).clone().reduce(reductionContextWithUnits).getUnit();
+    Expression unit = childAtIndex(1).clone().reduce(reductionContextWithUnits).extractUnits();
     if (unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
@@ -54,7 +54,7 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
       reductionContext.angleUnit(),
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  Expression finalUnit = childAtIndex(1).reduce(reductionContextWithoutUnits).getUnit();
+  Expression finalUnit = childAtIndex(1).reduce(reductionContextWithoutUnits).extractUnits();
 
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), finalUnit.clone());

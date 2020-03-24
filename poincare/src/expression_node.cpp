@@ -136,7 +136,7 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
-Expression ExpressionNode::getUnit() const {
+Expression ExpressionNode::extractUnits() {
   return Expression();
 }
 

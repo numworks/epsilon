@@ -190,7 +190,16 @@ void ConsoleController::viewWillAppear() {
 }
 
 void ConsoleController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_editCell);
+  if (viewControllerIsDisplayed(nullptr)) {
+    Container::activeApp()->setFirstResponder(&m_editCell);
+  } else {
+    /* A view controller might be displayed: for example, when pushing the
+     * console on the stack controller, we auto-import scripts during the
+     * 'viewWillAppear' and then we set the console as first responder. The
+     * sandbox or the matplotlib controller might have been pushed in the
+     * auto-import. */
+    Container::activeApp()->setFirstResponder(m_displayedViewController);
+  }
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {

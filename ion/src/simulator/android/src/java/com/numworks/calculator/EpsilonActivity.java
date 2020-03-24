@@ -20,7 +20,7 @@ public class EpsilonActivity extends SDLActivity {
 
   protected String[] getLibraries() {
     return new String[] {
-      "epsilon"
+      BuildConfig.LIBEPSILON_NAME
     };
   }
 

@@ -2,7 +2,10 @@
 
 .PHONY: official_authorization
 official_authorization:
-	@echo "CAUTION: You are about to build an official NumWorks firmware. Distribution of such firmware by a third party is prohibited. Are you sure you want to proceed? Please type "yes" to confirm." && read ans && [ $${ans:-no} = yes ]
+	@echo "CAUTION: You are trying to build an official NumWorks firmware."
+	@echo "Distribution of such firmware by a third party is prohibited."
+	@echo "Please set the ACCEPT_OFFICIAL_TOS environment variable to proceed."
+	@exit $(if $(filter ACCEPT_OFFICIAL_TOS,1),0,-1)
 
 $(eval $(call rule_for, \
   AS, %.o, %.s, \

@@ -504,7 +504,10 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   }
 
   /* Step 1: MultiplicationNode is associative, so let's start by merging children
-   * which also are multiplications themselves. */
+   * which also are multiplications themselves.
+   * TODO If the parent Expression is a Multiplication, one should perhaps
+   * return now and let the parent do the reduction.
+   */
   mergeSameTypeChildrenInPlace();
 
   Context * context = reductionContext.context();

@@ -143,7 +143,10 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
 
   /* Step 1: Addition is associative, so let's start by merging children which
-   * are additions. */
+   * are additions.
+   * TODO If the parent Expression is an Addition, one should perhaps
+   * return now and let the parent do the reduction.
+   */
   mergeSameTypeChildrenInPlace();
 
   const int childrenCount = numberOfChildren();

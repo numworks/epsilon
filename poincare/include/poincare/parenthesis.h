@@ -21,7 +21,7 @@ public:
   // Properties
   Type type() const override { return Type::Parenthesis; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+  Expression extractUnits() override { assert(false); return ExpressionNode::extractUnits(); }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

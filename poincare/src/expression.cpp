@@ -321,18 +321,22 @@ void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext redu
 
 Expression Expression::defaultShallowReduce() {
   Expression result;
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    /* The reduction is shortcut if one child is unreal or undefined:
-     * - the result is unreal if at least one child is unreal
-     * - the result is undefined if at least one child is undefined but no child
-     *   is unreal */
-    ExpressionNode::Type childIType = childAtIndex(i).type();
-    if (childIType == ExpressionNode::Type::Unreal) {
-      result = Unreal::Builder();
-      break;
-    } else if (childIType == ExpressionNode::Type::Undefined) {
-      result = Undefined::Builder();
+  if (sSimplificationHasBeenInterrupted) {
+    result = Undefined::Builder();
+  } else {
+    const int childrenCount = numberOfChildren();
+    for (int i = 0; i < childrenCount; i++) {
+      /* The reduction is shortcut if one child is unreal or undefined:
+       * - the result is unreal if at least one child is unreal
+       * - the result is undefined if at least one child is undefined but no child
+       *   is unreal */
+      ExpressionNode::Type childIType = childAtIndex(i).type();
+      if (childIType == ExpressionNode::Type::Unreal) {
+        result = Unreal::Builder();
+        break;
+      } else if (childIType == ExpressionNode::Type::Undefined) {
+        result = Undefined::Builder();
+      }
     }
   }
   if (!result.isUninitialized()) {

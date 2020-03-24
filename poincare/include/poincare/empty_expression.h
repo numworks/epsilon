@@ -22,7 +22,7 @@ public:
   // Properties
   Type type() const override { return Type::EmptyExpression; }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+  Expression extractUnits() override { assert(false); return ExpressionNode::extractUnits(); }
 
   // Simplification
   LayoutShape leftLayoutShape() const override {

@@ -33,10 +33,10 @@ int CountOccurrences(const char * s, CodePoint c) {
   return count;
 }
 
-const char * CodePointSearch(const char * s, CodePoint c) {
+const char * CodePointSearch(const char * s, CodePoint c, const char * stoppingPosition) {
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     const char * result = s;
-    while (*result != 0 && *result != c) {
+    while (*result != 0 && *result != c && (stoppingPosition == nullptr || result != stoppingPosition)) {
       result++;
     }
     return result;
@@ -45,7 +45,7 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   const char * currentPointer = s;
   CodePoint codePoint = decoder.nextCodePoint();
   const char * nextPointer = decoder.stringPosition();
-  while (codePoint != UCodePointNull && codePoint != c) {
+  while (codePoint != UCodePointNull && codePoint != c && (stoppingPosition == nullptr || currentPointer < stoppingPosition)) {
     currentPointer = nextPointer;
     codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();
@@ -53,9 +53,10 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   return currentPointer;
 }
 
-bool HasCodePoint(const char * s, CodePoint c) {
+bool HasCodePoint(const char * s, CodePoint c, const char * stoppingPosition) {
   assert(c != 0);
-  return *CodePointSearch(s, c) != 0;
+  const char * resultPosition = CodePointSearch(s, c, stoppingPosition);
+  return *resultPosition != 0 && (stoppingPosition == nullptr || resultPosition < stoppingPosition);
 }
 
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition) {

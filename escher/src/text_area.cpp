@@ -458,26 +458,19 @@ void TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
   m_cursorLocation = text();
 }
 
-bool TextArea::ContentView::insertTextAtLocation(const char * text, char * location) {
-  int textSize = strlen(text);
-  if (m_text.textLength() + textSize >= m_text.bufferSize() || textSize == 0) {
+bool TextArea::ContentView::insertTextAtLocation(const char * text, char * location, int textLength) {
+  int textLen = textLength < 0 ? strlen(text) : textLength;
+  assert(textLen < 0 || textLen <= strlen(text));
+  if (m_text.textLength() + textLen >= m_text.bufferSize() || textLen == 0) {
     return false;
   }
-  bool lineBreak = false;
 
-  // Scan for \n and 0
-  const char * nullLocation = UTF8Helper::PerformAtCodePoints(
-      text, '\n',
-      [](int codePointOffset, void * lineBreak, int context1, int context2) {
-        *((bool *)lineBreak) = true;
-      },
-      [](int c1, void * c2, int c3, int c4) { },
-      &lineBreak, 0);
+  // Scan for \n
+  bool lineBreak = UTF8Helper::HasCodePoint(text, '\n', text + textLen);
 
-  assert(UTF8Helper::CodePointIs(nullLocation, 0));
-  m_text.insertText(text, nullLocation - text, location);
+  m_text.insertText(text, textLen, location);
   // Replace System parentheses (used to keep layout tree structure) by normal parentheses
-  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(location, nullLocation - text);
+  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(location, textLen);
   reloadRectFromPosition(location, lineBreak);
   return true;
 }

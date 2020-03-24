@@ -11,10 +11,10 @@ int CountOccurrences(const char * s, CodePoint c);
 
 /* Returns the first occurence of a code point in a string, the position of the
  * null terminating char otherwise. */
-const char * CodePointSearch(const char * s, CodePoint c);
+const char * CodePointSearch(const char * s, CodePoint c, const char * stoppingPosition = nullptr);
 
 // Returns true if the text had the code point
-bool HasCodePoint(const char * s, CodePoint c);
+bool HasCodePoint(const char * s, CodePoint c, const char * stoppingPosition = nullptr);
 
 /* Returns the first occurence of a code point that is not c in a string,
  * stopping at the null-terminating char or the start of string. */

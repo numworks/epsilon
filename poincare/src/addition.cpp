@@ -155,15 +155,32 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   /* Step 2: Handle the units. All children should have the same unit, otherwise
    * the result is not homogeneous. */
   {
-    Expression unit = childAtIndex(0).getUnit();
+    Expression unit = childAtIndex(0).extractUnits();
     const bool hasUnit = !unit.isUninitialized();
     for (int i = 1; i < childrenCount; i++) {
-      Expression otherUnit = childAtIndex(i).getUnit();
+      Expression otherUnit = childAtIndex(i).extractUnits();
       if (hasUnit == otherUnit.isUninitialized() ||
           (hasUnit && !unit.isIdenticalTo(otherUnit)))
       {
         return replaceWithUndefinedInPlace();
       }
+    }
+    if (hasUnit) {
+      for (int i = 0; i < childrenCount; i++) {
+        /* Any unary hierarchy must be squashed here since it has not been
+         * done in extractUnits.
+         */
+        Expression child = childAtIndex(i);
+        if (child.type() == ExpressionNode::Type::Multiplication) {
+          static_cast<Multiplication &>(child).squashUnaryHierarchyInPlace();
+        }
+      }
+      Expression addition = shallowReduce(reductionContext);
+      Multiplication result = Multiplication::Builder(unit);
+      result.mergeSameTypeChildrenInPlace();
+      addition.replaceWithInPlace(result);
+      result.addChildAtIndexInPlace(addition, 0, 1);
+      return std::move(result);
     }
   }
 

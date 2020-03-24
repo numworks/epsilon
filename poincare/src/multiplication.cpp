@@ -63,8 +63,8 @@ bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & chi
   return child.isOfType(types, 2);
 }
 
-Expression MultiplicationNode::getUnit() const {
-  return Multiplication(this).getUnit();
+Expression MultiplicationNode::extractUnits() {
+  return Multiplication(this).extractUnits();
 }
 
 template<typename T>
@@ -255,20 +255,30 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
   return deg;
 }
 
-Expression Multiplication::getUnit() const {
+Expression Multiplication::extractUnits() {
   Multiplication result = Multiplication::Builder();
   int resultChildrenCount = 0;
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    Expression currentUnit = childAtIndex(i).getUnit();
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression currentUnit = childAtIndex(i).extractUnits();
     if (!currentUnit.isUninitialized()) {
+      assert(childAtIndex(i) == currentUnit);
       result.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
       resultChildrenCount++;
+      removeChildAtIndexInPlace(i--);
     }
   }
   if (resultChildrenCount == 0) {
     return Expression();
   }
+  /* squashUnaryHierarchyInPlace();
+   * That would make 'this' invalid, so we would rather keep any unary
+   * hierarchy as it is and handle it later.
+   * TODO ?
+   * A possible solution would be that the extractUnits method becomes
+   *   Expression extractUnits(Expression & units)
+   * returning the Expression that is left after extracting the units
+   * and setting the units reference instead of returning the units.
+   */
   return result.squashUnaryHierarchyInPlace();
 }
 

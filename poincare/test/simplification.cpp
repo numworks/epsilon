@@ -414,6 +414,7 @@ QUIZ_CASE(poincare_simplification_units) {
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
   assert_parsed_expression_simplify_to("cos(1_s/1_s)", "cos(1)");
+  assert_parsed_expression_simplify_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
 }
 
 QUIZ_CASE(poincare_simplification_power) {

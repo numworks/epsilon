@@ -164,8 +164,8 @@ ExpressionNode::Sign UnitNode::sign(Context * context) const {
   return Sign::Positive;
 }
 
-Expression UnitNode::getUnit() const {
-  return Unit(this).getUnit();
+Expression UnitNode::extractUnits() {
+  return Unit(this);
 }
 
 int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {

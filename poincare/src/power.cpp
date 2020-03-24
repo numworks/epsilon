@@ -81,8 +81,12 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
   return -1;
 }
 
-Expression PowerNode::getUnit() const {
-  return Power(this).getUnit();
+Expression PowerNode::extractUnits() {
+  if (!childAtIndex(0)->extractUnits().isUninitialized()) {
+    assert(childAtIndex(0)->type() == ExpressionNode::Type::Unit);
+    return Power(this);
+  }
+  return ExpressionNode::extractUnits();
 }
 
 int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
@@ -983,14 +987,6 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
     return result;
   }
   return *this;
-}
-
-Expression Power::getUnit() const {
-  Expression baseUnit = childAtIndex(0).getUnit();
-  if (baseUnit.isUninitialized()) {
-    return baseUnit;
-  }
-  return Power::Builder(baseUnit, childAtIndex(1).clone());
 }
 
 // Private

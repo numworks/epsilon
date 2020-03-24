@@ -225,10 +225,12 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
         bool alreadyInVarBox = false;
 
         // TODO Look also in imported nodes
-        //TODO LEA speed this up with alphabetical search
-        for (int i = 0; i < k_builtinNodesCount; i++) {
-          const char * nodeName = m_builtinNodes[i].name();
-          int nodeNameLength = m_builtinNodes[i].nameLength();
+        // TODO LEA speed this up with alphabetical search
+        // TODO LEA use numberOfRows() and scriptNodeAtIndex ?
+        for (int i = 0; i < k_builtinNodesCount + m_currentScriptNodesCount; i++) {
+         ScriptNode * matchingNode = i < k_builtinNodesCount ? &m_builtinNodes[i] : &m_currentScriptNodes[i - k_builtinNodesCount];
+          const char * nodeName = matchingNode->name();
+          int nodeNameLength = matchingNode->nameLength();
           if ((nodeNameLength < 0 || nodeNameLength == nameLength) && strncmp(nodeName, name, nameLength) == 0) {
             alreadyInVarBox = true;
             break;

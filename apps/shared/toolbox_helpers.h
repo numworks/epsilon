@@ -14,7 +14,7 @@ int CursorIndexInCommandText(const char * text);
 
 
 void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar = false);
-void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar = false);
+void TextToInsertForCommandText(const char * command, int commandLength, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar = false);
 /* Removes the arguments from a command:
  *  - Removes text between parentheses or brackets, except commas */
 

@@ -36,9 +36,9 @@ private:
   HighlightCell * leafCellAtIndex(int index) override;
   HighlightCell * nodeCellAtIndex(int index) override { return nullptr; }
   bool selectLeaf(int rowIndex) override;
-  void insertTextInCaller(const char * text);
-  void addFunctionAtIndex(const char * functionName, int scriptIndex);
-  void addVariableAtIndex(const char * variableName, int scriptIndex);
+  void insertTextInCaller(const char * text, int textLength = -1);
+  void addFunctionAtIndex(const char * functionName, int nameLength, int scriptIndex);
+  void addVariableAtIndex(const char * variableName, int nameLength, int scriptIndex);
   ScriptNode * scriptNodeAtIndex(int index);
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_builtinNodesCount];

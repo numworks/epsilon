@@ -9,6 +9,12 @@
 #include <ion/unicode/utf8_helper.h>
 #include <string.h>
 
+extern "C" {
+#include "py/lexer.h"
+#include "py/nlr.h"
+}
+
+
 namespace Code {
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
@@ -60,115 +66,251 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   myCell->setScriptNode(scriptNodeAtIndex(index));
 }
 
+
+/*TODO LEA very dirty
+ * This is done to get the lexer position during lexing. As the _mp_reader_mem_t
+ * struct is private and declared in python/src/py/reader.c, we copy-paste it
+ * here to be able to use it. */
+typedef struct _mp_reader_mem_t {
+    size_t free_len; // if >0 mem is freed on close by: m_free(beg, free_len)
+    const byte *beg;
+    const byte *cur;
+    const byte *end;
+} mp_reader_mem_t;
+/* TODO end*/
+
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete) {
   //TODO LEA Prune these + add modules
-  //TODO LEA load buitins only once
+  //TODO LEA Load according to textToAutocomplete
   int index = 0;
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_abs), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_all), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_and), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_any), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_as), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_ascii), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_assert), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bin), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bool), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_break), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_breakpoint), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bytearray), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bytes), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_callable), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_chr), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_class), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_classmethod), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_compile), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_complex), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_continue), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_def), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_del), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_delattr), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_dict), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_dir), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_divmod), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_elif), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_else), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_enumerate), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_eval), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_except), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_exec), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_False), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_filter), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_finally), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_float), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_for), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_format), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_from), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_frozenset), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_getattr), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_global), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_globals), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_hasattr), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_hash), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_help), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_hex), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_id), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_if), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_import), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_in), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_input), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_int), 0);
- // m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_is), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_isinstance), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_issubclass), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_iter), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_lambda), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_len), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_list), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_locals), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_map), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_max), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_memoryview), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_min), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_next), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_None), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_nonlocal), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_not), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_object), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_oct), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_open), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_or), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_ord), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_pass), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_pow), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_print), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_property), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_raise), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_range), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_repr), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_return), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_reversed), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_round), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_set), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_setattr), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_slice), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_sorted), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_staticmethod), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_str), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_sum), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_super), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_True), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_try), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_tuple), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_type), 0);
-  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_vars), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_while), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_with), 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_yield), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_zip), 0);
-  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR___import__), 0); //TODO LEA alphabetical order?
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_abs), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_all), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_and), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_any), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_as), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_ascii), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_assert), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bin), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bool), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_break), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_breakpoint), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bytearray), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_bytes), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_callable), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_chr), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_class), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_classmethod), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_compile), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_complex), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_continue), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_def), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_del), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_delattr), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_dict), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_dir), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_divmod), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_elif), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_else), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_enumerate), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_eval), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_except), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_exec), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_False), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_filter), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_finally), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_float), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_for), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_format), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_from), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_frozenset), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_getattr), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_global), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_globals), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_hasattr), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_hash), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_help), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_hex), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_id), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_if), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_import), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_in), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_input), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_int), -1, 0);
+ // m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_is), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_isinstance), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_issubclass), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_iter), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_lambda), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_len), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_list), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_locals), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_map), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_max), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_memoryview), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_min), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_next), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_None), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_nonlocal), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_not), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_object), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_oct), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_open), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_or), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_ord), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_pass), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_pow), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_print), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_property), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_raise), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_range), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_repr), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_return), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_reversed), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_round), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_set), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_setattr), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_slice), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_sorted), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_staticmethod), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_str), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_sum), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_super), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_True), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_try), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_tuple), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_type), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_vars), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_while), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_with), -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_yield), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_zip), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR___import__), -1, 0); //TODO LEA alphabetical order?
   assert(index == k_builtinNodesCount);
 
-#if 0
+
+  // Load the imported variables and functions
+  //TODO LEA
+
+#if 1
+  if (scriptIndex < 0) {
+    //TODO LEA
+    return;
+  }
+  const char * script = m_scriptStore->scriptAtIndex(scriptIndex).scriptContent();
+
+  /* To find variable and funtion names:
+   * 1) We lex the script
+   * 2) We detect patterns on a line per line basis, a line being ended by '\n'
+   *    or by ';', but continued by '\'. */
+
+#if 1
+  m_currentScriptNodesCount = 0;
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+
+    // 1) Lex the script
+    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, script, strlen(script), false);
+    bool defToken = false;
+
+    // This is a trick to get the token position in the text.
+    const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
+
+    while (lex->tok_kind != MP_TOKEN_END) {
+      /* 2) Detect MP_TOKEN_NAME that are not in the builtins. Keep track of DEF
+       *  tokens to differentiate between variables and functions. */
+      if (lex->tok_kind == MP_TOKEN_NAME) {
+        const char * name = lex->vstr.buf;
+        int nameLength = lex->vstr.len;
+        // Check if this token is already int the var box
+        bool alreadyInVarBox = false;
+
+        // TODO Look also in imported nodes
+        //TODO LEA speed this up with alphabetical search
+        for (int i = 0; i < k_builtinNodesCount; i++) {
+          const char * nodeName = m_builtinNodes[i].name();
+          int nodeNameLength = m_builtinNodes[i].nameLength();
+          if ((nodeNameLength < 0 || nodeNameLength == nameLength) && strncmp(nodeName, name, nameLength) == 0) {
+            alreadyInVarBox = true;
+            break;
+          }
+        }
+
+        if (!alreadyInVarBox) {
+          tokenInText -= 2;
+          if (defToken) {
+            addFunctionAtIndex(tokenInText, nameLength, scriptIndex);
+          } else {
+            addVariableAtIndex(tokenInText, nameLength, scriptIndex);
+          }
+        }
+      }
+      defToken = lex->tok_kind == MP_TOKEN_KW_DEF;
+
+      /* This is a trick to get the token position in the text. The -1 and -2
+       * were found from stepping in the code and trying. */
+      tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
+      if (lex->tok_kind <= MP_TOKEN_ELLIPSIS || lex->tok_kind >= MP_TOKEN_OP_PLUS) {
+        tokenInText--;
+      }
+
+      mp_lexer_to_next(lex);
+    }
+
+    mp_lexer_free(lex);
+    nlr_pop();
+  }
+
+#else
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+    // 1) Lex the script
+    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, script0, strlen(script0), false);
+    while (lex->tok_kind != MP_TOKEN_END) {
+      // 2) Detect patterns on a line per line basis
+      while (lex->tok_kind == MP_TOKEN_INDENT || lex->tok_kind == MP_TOKEN_DEDENT) {
+        mp_lexer_to_next(lex);
+      }
+      if (lex->tok_kind == MP_TOKEN_NAME) {
+        // Look for variable definition "name ="
+        const char * name = lex->vstr.buf;
+        size_t len = lex->vstr.len;
+        mp_lexer_to_next(lex);
+        if (lex->tok_kind == MP_TOKEN_DEL_EQUAL) {
+          addVariableAtIndex(name, len, 0);
+        }
+      } else if (lex->tok_kind != MP_TOKEN_KW_DEF) {
+        // Look for function definition "def name1(name2, name3 = ...):"
+        mp_lexer_to_next(lex);
+        if (lex->tok_kind == MP_TOKEN_NAME) {
+          const char * name = lex->vstr.buf;
+          size_t len = lex->vstr.len;
+          addFunctionAtIndex(name, len, 0);
+          mp_lexer_to_next(lex);
+          if (lex->tok_kind == MP_TOKEN_DEL_PAREN_OPEN) {
+
+          }
+    MP_TOKEN_DEL_PAREN_CLOSE,
+        }
+
+
+      }
+
+      // Forward until the end of the line
+      while (lex->tok_kind != MP_TOKEN_END
+          && lex->tok_kind != MP_TOKEN_DEL_SEMICOLON
+          && lex->tok_kind != MP_TOKEN_NEWLINE)
+      {
+        mp_lexer_to_next(lex);
+      }
+      if (lex->tok_kind != MP_TOKEN_END) {
+        mp_lexer_to_next(lex);
+      }
+    }
+    mp_lexer_free(lex);
+    nlr_pop();
+  }
+#endif
+#else
   m_scriptNodesCount = 1;
   m_scriptStore->scanScriptsForFunctionsAndVariables(
     this,
@@ -194,9 +336,10 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
   const int textLength = endOfText - text;
   assert(textLength >= 1);
   for (int i = 0; i < numberOfRows(); i++) {
-    const char * currentName = scriptNodeAtIndex(i)->name();
-    if (strncmp(text, currentName, textLength) == 0 && *(currentName + textLength)
-        != 0) {
+    ScriptNode * node = scriptNodeAtIndex(i);
+    const char * currentName = node->name();
+    int currentNameLength = node->nameLength();
+    if ((currentNameLength < 0 || currentNameLength != textLength) && strncmp(text, currentName, textLength) == 0) {
       return currentName + textLength;
     }
   }
@@ -214,7 +357,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(m_importedNodesCount <= k_maxScriptNodesCount);
   m_selectableTableView.deselectTable();
   ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex);
-  insertTextInCaller(selectedScriptNode->name());
+  insertTextInCaller(selectedScriptNode->name(), selectedScriptNode->nameLength());
   if (selectedScriptNode->type() == ScriptNode::Type::Function) {
     insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
   }
@@ -222,29 +365,29 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   return true;
 }
 
-void VariableBoxController::insertTextInCaller(const char * text) {
+void VariableBoxController::insertTextInCaller(const char * text, int textLength) {
   int commandBufferMaxSize = strlen(text)+1;
   char commandBuffer[k_maxScriptObjectNameSize];
   assert(commandBufferMaxSize <= k_maxScriptObjectNameSize);
-  Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer, commandBufferMaxSize, true);
+  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLength, commandBuffer, commandBufferMaxSize, true);
   sender()->handleEventWithText(commandBuffer);
 }
 
 // TODO LEA remane method (index)
-void VariableBoxController::addFunctionAtIndex(const char * functionName, int scriptIndex) {
+void VariableBoxController::addFunctionAtIndex(const char * functionName, int nameLength, int scriptIndex) {
   // TODO LEA check if current script or imported
   if (m_currentScriptNodesCount < k_maxScriptNodesCount) {
-    m_currentScriptNodes[m_currentScriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
+    m_currentScriptNodes[m_currentScriptNodesCount] = ScriptNode::FunctionNode(functionName, nameLength, scriptIndex);
     m_currentScriptNodesCount++;
   }
 }
 
 // TODO LEA remane method (index)
 // + factorize with addFunctionAtIndex?
-void VariableBoxController::addVariableAtIndex(const char * variableName, int scriptIndex) {
+void VariableBoxController::addVariableAtIndex(const char * variableName, int nameLength, int scriptIndex) {
   // TODO LEA check if current script or imported
   if (m_currentScriptNodesCount < k_maxScriptNodesCount) {
-    m_currentScriptNodes[m_currentScriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
+    m_currentScriptNodes[m_currentScriptNodesCount] = ScriptNode::VariableNode(variableName, nameLength, scriptIndex);
     m_currentScriptNodesCount++;
   }
 }

@@ -58,6 +58,9 @@ android {
       initWith buildTypes.release
       signingConfig signingConfigs.environment
     }
+    buildTypes.each {
+      it.buildConfigField "String", "LIBEPSILON_NAME", "\"${System.getenv('LIBEPSILON_NAME')}\""
+    }
   }
   sourceSets{
     main {

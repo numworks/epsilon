@@ -60,15 +60,15 @@ epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mip
 
 define rule_for_gradle
 .PHONY: gradle_$1_$2
-gradle_$1_$2: $$(epsilon_apk_deps) $$(patsubst %,$$(BUILD_DIR)/app/libs/%/libepsilon$2so,$(NDK_ABIS))
+gradle_$1_$2.: $$(epsilon_apk_deps) $$(patsubst %,$$(BUILD_DIR)/app/libs/%/libepsilon$2.so,$(NDK_ABIS))
 	@echo "GRADLE ion/src/simulator/android/build.gradle"
-	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle $1
+	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) LIBEPSILON_NAME="epsilon$2" ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle $1
 endef
 
-$(eval $(call rule_for_gradle,assembleCodesigned,.))
-$(eval $(call rule_for_gradle,assembleRelease,.))
-$(eval $(call rule_for_gradle,assembleCodesigned,.official.))
-$(eval $(call rule_for_gradle,assembleRelease,.official.))
+$(eval $(call rule_for_gradle,assembleCodesigned,))
+$(eval $(call rule_for_gradle,assembleRelease,))
+$(eval $(call rule_for_gradle,assembleCodesigned,.official))
+$(eval $(call rule_for_gradle,assembleRelease,.official))
 
 DEFAULT = epsilon.apk
 

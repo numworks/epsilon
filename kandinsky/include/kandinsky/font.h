@@ -33,8 +33,8 @@ public:
   static constexpr const KDFont * LargeFont = &privateLargeFont;
   static constexpr const KDFont * SmallFont = &privateSmallFont;
 
-  KDSize stringSize(const char * text) const {
-    return stringSizeUntil(text, nullptr);
+  KDSize stringSize(const char * text, int textLength = -1) const {
+    return stringSizeUntil(text, textLength < 0 ? nullptr : text + textLength);
   }
   KDSize stringSizeUntil(const char * text, const char * limit) const;
 

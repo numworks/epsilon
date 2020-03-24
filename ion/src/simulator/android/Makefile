@@ -40,27 +40,25 @@ $(BUILD_DIR)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
 
 define rule_for_libepsilon
 $$(BUILD_DIR)/app/libs/%/lib$(1): force_remake $$$$(@D)/.
-	$(Q) echo "MAKE    NDK_ABI=$$*"
-	$(Q) $$(MAKE) NDK_ABI=$$* $(1)
+	$(Q) echo "MAKE    ARCH=$$*"
+	$(Q) $$(MAKE) ARCH=$$* $(1)
 	$(Q) cp $$(BUILD_DIR)/$$*/$(1) $$@
 endef
 
 $(eval $(call rule_for_libepsilon,epsilon.so))
 $(eval $(call rule_for_libepsilon,epsilon.official.so))
 
-# If NDK_ABI is not defined, we will re-trigger a build for each avaialble ABI.
+# If ARCH is not defined, we will re-trigger a build for each avaialble ABI.
 # This is used to build APKs, which needs to embbed a binary for each ABI.
 
-ifndef NDK_ABI
-
-NDK_ABIS = armeabi-v7a arm64-v8a x86 x86_64
+ifndef ARCH
 
 epsilon_apk_deps = $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
 epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
 
 define rule_for_gradle
 .PHONY: gradle_%_$1
-gradle_%_$1.: $$(epsilon_apk_deps) $$(patsubst %,$$(BUILD_DIR)/app/libs/%/libepsilon$1.so,$(NDK_ABIS))
+gradle_%_$1.: $$(epsilon_apk_deps) $$(patsubst %,$$(BUILD_DIR)/app/libs/%/libepsilon$1.so,$(ARCHS))
 	@echo "GRADLE ion/src/simulator/android/build.gradle"
 	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) LIBEPSILON_NAME="epsilon$1" ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle $$*
 endef

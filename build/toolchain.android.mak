@@ -13,16 +13,16 @@ NDK_TOOLCHAIN_PATH = $(NDK_PATH)/toolchains/llvm/prebuilt/$(NDK_HOST_TAG)/bin
 # is no toolchain for those archs on those API levels. Let's enforce NDK_VERSION
 # at 21 for these archs, and 16 for the others.
 
-ifeq ($(NDK_ABI),armeabi-v7a)
+ifeq ($(ARCH),armeabi-v7a)
   NDK_TARGET = armv7a-linux-androideabi
   NDK_VERSION = 16
-else ifeq ($(NDK_ABI),arm64-v8a)
+else ifeq ($(ARCH),arm64-v8a)
   NDK_TARGET = aarch64-linux-android
   NDK_VERSION = 21
-else ifeq ($(NDK_ABI),x86)
+else ifeq ($(ARCH),x86)
   NDK_TARGET = i686-linux-android
   NDK_VERSION = 16
-else ifeq ($(NDK_ABI),x86_64)
+else ifeq ($(ARCH),x86_64)
   NDK_TARGET = x86_64-linux-android
   NDK_VERSION = 21
 endif

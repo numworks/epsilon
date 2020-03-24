@@ -13,7 +13,7 @@ public:
   PlotController(PlotStore * store, MicroPython::ExecutionEnvironment * executiveEnvironment) : Shared::ZoomAndPanCurveViewController(nullptr), ExecutionViewControllerHelper(executiveEnvironment), m_store(store), m_view(m_store) {}
 
   void viewWillAppear() override { MicroPython::ExecutionViewControllerHelper::viewWillAppear(this); }
-  void viewDidDisappear() override { MicroPython::ExecutionViewControllerHelper::viewDidDisappear(this); }
+  void viewDidDisappear() override;
 
 protected:
   Shared::CurveView * curveView() override { return &m_view; }

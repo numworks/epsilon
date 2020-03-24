@@ -25,7 +25,7 @@ public:
   // Properties
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+  Expression extractUnits() override { assert(false); return ExpressionNode::extractUnits(); }
 
   // Approximation
   virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {

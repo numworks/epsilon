@@ -199,7 +199,7 @@ public:
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Units */
-  Expression getUnit() const { return node()->getUnit(); }
+  Expression extractUnits() { return node()->extractUnits(); }
   bool hasUnit() const;
 
   /* Complex */

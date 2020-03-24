@@ -49,7 +49,7 @@ protected:
 
     // Virtual text get/add/remove
     virtual const char * text() const = 0;
-    virtual bool insertTextAtLocation(const char * text, char * location) = 0;
+    virtual bool insertTextAtLocation(const char * text, char * location, int textLength = -1) = 0;
     virtual bool removePreviousGlyph() = 0;
     virtual bool removeEndOfLine() = 0;
 

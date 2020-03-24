@@ -119,10 +119,10 @@ void TextField::ContentView::reinitDraftTextBuffer() {
   setCursorLocation(s_draftTextBuffer);
 }
 
-bool TextField::ContentView::insertTextAtLocation(const char * text, char * location) {
+bool TextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
   assert(m_isEditing);
 
-  int textLength = strlen(text);
+  int textLength = textLen < 0 ? strlen(text) : textLen;
   if (m_currentDraftTextLength + textLength >= m_draftTextBufferSize || textLength == 0) {
     return false;
   }
@@ -130,12 +130,12 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   memmove(location + textLength, location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
   // Caution! One byte will be overridden by the null-terminating char of strlcpy
-  char * overridenByteLocation = location + textLength;
+  size_t copySize = std::min(textLength, (s_draftTextBuffer + m_draftTextBufferSize) - location);
+  char * overridenByteLocation = location + copySize;
   char overridenByte = *overridenByteLocation;
-  strlcpy(location, text, (s_draftTextBuffer + m_draftTextBufferSize) - location);
-  assert(overridenByteLocation < s_draftTextBuffer + m_draftTextBufferSize);
+  strlcpy(location, text, copySize);
   *overridenByteLocation = overridenByte;
-  m_currentDraftTextLength += textLength;
+  m_currentDraftTextLength += copySize;
 
   reloadRectFromPosition(m_horizontalAlignment == 0.0f ? location : s_draftTextBuffer);
   return true;

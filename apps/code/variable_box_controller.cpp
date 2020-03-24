@@ -331,7 +331,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
 #endif
 }
 
-const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * text) {
+const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * text, int * textToInsertLength) {
   // TODO LEA Accelerate
   loadFunctionsAndVariables(scriptIndex, text);
   const char * endOfText = UTF8Helper::EndOfWord(text);
@@ -342,6 +342,7 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
     const char * currentName = node->name();
     int currentNameLength = node->nameLength();
     if ((currentNameLength < 0 || currentNameLength != textLength) && strncmp(text, currentName, textLength) == 0) {
+      *textToInsertLength = currentNameLength - textLength;
       return currentName + textLength;
     }
   }

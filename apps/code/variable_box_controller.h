@@ -27,7 +27,7 @@ public:
 
   /* VariableBoxController */
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete);
-  const char * autocompletionForText(int scriptIndex, const char * text);
+  const char * autocompletionForText(int scriptIndex, const char * text, int * textToInsertLength);
 private:
   constexpr static int k_maxScriptObjectNameSize = 100;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40

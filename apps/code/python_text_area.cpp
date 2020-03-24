@@ -256,6 +256,7 @@ void PythonTextArea::addAutocompletion() {
 
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());
   const char * textToInsert = nullptr;
+  int textToInsertLength = 0;
   CodePoint prevCodePoint = UTF8Helper::PreviousCodePoint(m_contentView.editedText(), autocompletionLocation);
   if (!UTF8Helper::CodePointIsEndOfWord(prevCodePoint)
       && UTF8Helper::CodePointIsEndOfWord(UTF8Helper::CodePointAtLocation(autocompletionLocation)))
@@ -267,11 +268,11 @@ void PythonTextArea::addAutocompletion() {
      * builtins, then in the imported modules/scripts. */
     VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
     const char * beginningOfWord = m_contentView.textToAutocomplete();
-    textToInsert = varBox->autocompletionForText(m_contentView.pythonDelegate()->menuController()->editedScriptIndex(), beginningOfWord);
+    textToInsert = varBox->autocompletionForText(m_contentView.pythonDelegate()->menuController()->editedScriptIndex(), beginningOfWord, &textToInsertLength);
   }
 
   // Try to insert the text (this might fail if the buffer is full)
-  if (textToInsert && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation))) {
+  if (textToInsert && textToInsertLength > 0 && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation), textToInsertLength)) {
     m_contentView.setAutocompleting(true);
   }
 }

@@ -37,8 +37,6 @@ $(BUILD_DIR)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 
-
-
 # This rule allow us to build any executable (%) for a specified ARCH ($1)
 # We depend on a phony target to make sure this rule is always executed
 

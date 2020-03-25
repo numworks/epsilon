@@ -14,8 +14,9 @@ extern "C" {
 #include "py/nlr.h"
 }
 
-
 namespace Code {
+
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   NestedMenuController(nullptr, I18n::Message::FunctionsAndVariables),
@@ -369,10 +370,10 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
 }
 
 void VariableBoxController::insertTextInCaller(const char * text, int textLength) {
-  int commandBufferMaxSize = strlen(text)+1;
+  int textLen = textLength < 0 ? strlen(text) : textLength;
+  int commandBufferMaxSize = minInt(k_maxScriptObjectNameSize, textLen + 1);
   char commandBuffer[k_maxScriptObjectNameSize];
-  assert(commandBufferMaxSize <= k_maxScriptObjectNameSize);
-  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLength, commandBuffer, commandBufferMaxSize, true);
+  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);
   sender()->handleEventWithText(commandBuffer);
 }
 

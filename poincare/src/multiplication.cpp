@@ -411,7 +411,25 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     }
     if (unitsAccu.numberOfChildren() > 0) {
       units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
-      units = Multiplication::Builder(unitsAccu, units).shallowReduce(reductionContext);
+      units = Multiplication::Builder(units);
+      static_cast<Multiplication &>(units).mergeSameTypeChildrenInPlace();
+      {
+        Expression unitsNumer, unitsDenom, unitsUnits;
+        static_cast<Multiplication&>(units).splitIntoNormalForm(unitsNumer, unitsDenom, unitsUnits, reductionContext);
+        if (!unitsNumer.isUninitialized()) {
+          result = Multiplication::Builder(result, unitsNumer);
+        }
+        if (!unitsDenom.isUninitialized()) {
+          result = Division::Builder(result, unitsDenom);
+        }
+        units = unitsUnits;
+      }
+      if (units.isUninitialized()) {
+        units = unitsAccu;
+      } else {
+        units = Multiplication::Builder(unitsAccu, units);
+        static_cast<Multiplication &>(units).mergeSameTypeChildrenInPlace();
+      }
     }
 
     /* Turn into 'Float x units'.
@@ -421,20 +439,6 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      * we focus on one single factor. The first Unit factor is certainly the
      * most relevant.
      */
-    if (units.type() == ExpressionNode::Type::Multiplication) {
-      /* First, as step 2 might have introduced non Unit factors in 'units',
-       * 'units' must be split again.
-       */
-      Expression unitsNumer, unitsDenom, unitsUnits;
-      static_cast<Multiplication&>(units).splitIntoNormalForm(unitsNumer, unitsDenom, unitsUnits, reductionContext);
-      if (!unitsNumer.isUninitialized()) {
-        result = Multiplication::Builder(result, unitsNumer);
-      }
-      if (!unitsDenom.isUninitialized()) {
-        result = Division::Builder(result, unitsDenom);
-      }
-      units = unitsUnits;
-    }
 
     double value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (std::isnan(value)) {

@@ -62,6 +62,7 @@ void TextToInsertForCommandText(const char * command, int commandLength, char * 
       index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
+        assert(index < bufferSize);
         index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
         argumentAlreadyReplaced = true;
       }

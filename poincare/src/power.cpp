@@ -392,7 +392,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   // Step 1: Handle the units
   {
-    if (index.hasUnit()) {
+    if (!index.extractUnits().isUninitialized()) {
       // There must be no unit in the exponent
       return replaceWithUndefinedInPlace();
     }

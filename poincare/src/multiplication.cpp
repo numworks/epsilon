@@ -711,6 +711,8 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   {
     const Expression c = childAtIndex(0);
     if (hasUnit()) {
+      // Do not expand Multiplication in presence of units
+      shouldExpand = false;
       // Make sure a Multiplication is not made of (Power of) Units only
       if (!c.isNumber()) {
         addChildAtIndexInPlace(Rational::Builder(1), 0, numberOfChildren());

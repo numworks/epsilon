@@ -22,12 +22,22 @@ var Module;
   var spans = document.querySelectorAll('#keyboard span');
   for (var i=0; i< spans.length; i++) {
     var span = spans[i];
-    span.addEventListener('mousedown', function(e) {
-      Module._IonSimulatorKeyboardKeyDown(this.getAttribute('data-key'));
-    });
-    span.addEventListener('mouseup', function(e) {
-      Module._IonSimulatorKeyboardKeyUp(this.getAttribute('data-key'));
-    });
+    if (window.PointerEvent) {
+      span.addEventListener('pointerdown', function(e) {
+        Module._IonSimulatorKeyboardKeyDown(this.getAttribute('data-key'));
+      });
+      span.addEventListener('pointerup', function(e) {
+        Module._IonSimulatorKeyboardKeyUp(this.getAttribute('data-key'));
+      });
+    } else {
+      // If pointer events are not supported
+      span.addEventListener('mousedown', function(e) {
+        Module._IonSimulatorKeyboardKeyDown(this.getAttribute('data-key'));
+      });
+      span.addEventListener('mouseup', function(e) {
+        Module._IonSimulatorKeyboardKeyUp(this.getAttribute('data-key'));
+      });
+    }
   }
 }());
 

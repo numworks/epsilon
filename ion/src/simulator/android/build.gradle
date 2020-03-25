@@ -67,7 +67,7 @@ android {
       manifest.srcFile 'src/AndroidManifest.xml'
       res.srcDir BUILD_DIR + '/res'
       java.srcDir 'src'
-      jniLibs.srcDir BUILD_DIR + '/libs'
+      jniLibs.srcDir BUILD_DIR + '/libs/' + System.getenv('EPSILON_VARIANT')
       assets.srcDir '../assets'
     }
   }

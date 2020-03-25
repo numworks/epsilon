@@ -61,9 +61,5 @@ function screenshot() {
   var link = document.createElement('a');
   link.download = 'screenshot.png';
   link.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-  // TODO: Fixme???
-  /* The following used to be "link.click()" but this doesn't work on Firefox.
-   * See https://stackoverflow.com/questions/32225904/programmatical-click-on-a-tag-not-working-in-firefox */
-  //  link.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
   link.click();
 }

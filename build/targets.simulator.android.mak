@@ -1,0 +1,3 @@
+ifndef ARCH
+HANDY_TARGETS_EXTENSIONS += apk
+endif

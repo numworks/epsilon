@@ -15,6 +15,12 @@ $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_F
 
 LDFLAGS += -ljnigraphics -llog
 
+
+# If ARCH is not defined, we will re-trigger a build for each avaialble ARCH.
+# This is used to build APKs, which needs to embbed a binary for each ARCH.
+
+ifndef ARCH
+
 # Android resources
 # Some android resources needs to be filtered through ImageMagick. Others are
 # simply copied over.
@@ -31,52 +37,52 @@ $(BUILD_DIR)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 
-# Cross-ABI libepsilon.so
-# This file is loaded is loaded only once, which prevents us from tracking
-# dependencies across ABIs. As a shortcut, we simply force a re-make of
-# libepsilon.so for each ABI.
+
+
+# This rule allow us to build any executable (%) for a specified ARCH ($1)
+# We depend on a phony target to make sure this rule is always executed
 
 .PHONY: force_remake
-
-define rule_for_libepsilon
-$$(BUILD_DIR)/app/libs/%/lib$(1): force_remake $$$$(@D)/.
-	$(Q) echo "MAKE    ARCH=$$*"
-	$(Q) $$(MAKE) ARCH=$$* $(1)
-	$(Q) cp $$(BUILD_DIR)/$$*/$(1) $$@
+define rule_for_arch_executable
+.PRECIOUS: $$(BUILD_DIR)/$(1)/%.so
+$$(BUILD_DIR)/$(1)/%.so: force_remake
+	$(Q) echo "MAKE ARCH=$(1) $$*.so"
+	$(Q) $$(MAKE) ARCH=$(1) --silent $$*.so
 endef
 
-$(eval $(call rule_for_libepsilon,epsilon.so))
-$(eval $(call rule_for_libepsilon,epsilon.official.so))
+# We need to put the .so files somewhere Gradle can pick them up.
+# We decided to use the location "app/libs/$EXECUTABLE/$ARCH/libepsilon.so"
+# This way it's easy to import the shared object from Java code (it's always
+# named libepsilon.so), and it's easy to make Gradle use a given executable by
+# simply using the jniLibs.src directive.
+define path_for_arch_jni_lib
+$$(BUILD_DIR)/app/libs/%/$(1)/libepsilon.so
+endef
 
-# If ARCH is not defined, we will re-trigger a build for each avaialble ABI.
-# This is used to build APKs, which needs to embbed a binary for each ABI.
+define rule_for_arch_jni_lib
+$(call path_for_arch_jni_lib,$(1)): $$(BUILD_DIR)/$(1)/%.so | $$$$(@D)/.
+	$(Q) cp $$< $$@
+endef
 
-ifndef ARCH
+$(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_executable,$(ARCH))))
+$(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_jni_lib,$(ARCH))))
 
-epsilon_apk_deps = $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
-epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
+apk_deps = $(foreach ARCH,$(ARCHS),$(call path_for_arch_jni_lib,$(ARCH)))
+apk_deps += $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
+apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
 
-define rule_for_gradle
-.PHONY: gradle_%_$1
-gradle_%_$1.: $$(epsilon_apk_deps) $$(patsubst %,$$(BUILD_DIR)/app/libs/%/libepsilon$1.so,$(ARCHS))
+.PRECIOUS: $(apk_deps)
+
+$(BUILD_DIR)/%.apk: $(apk_deps)
 	@echo "GRADLE ion/src/simulator/android/build.gradle"
-	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) LIBEPSILON_NAME="epsilon$1" ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle $$*
-endef
-
-$(eval $(call rule_for_gradle,))
-$(eval $(call rule_for_gradle,.official))
+	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
+	$(Q) cp $(BUILD_DIR)/app/outputs/apk/release/android-release*.apk $@
 
 DEFAULT = epsilon.apk
 
-.PHONY: epsilon%signed.apk
-epsilon%signed.apk: gradle_assembleCodesigned_%
-	$(warning This is a signed build.)
-
-.PHONY: epsilon%apk
-epsilon%apk: gradle_assembleRelease_%
-	$(warning Building without code signing. Build epsilon$*signed.apk to generate a signed version.)
-
-.PHONY: epsilon_run
-epsilon_run: gradle_installDebug
+.PHONY: %_run
+%_run: $(BUILD_DIR)/%.apk
+	@echo "ADB     $*.apk"
+	$(Q) adb install $<
 
 endif

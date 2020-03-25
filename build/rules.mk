@@ -43,6 +43,7 @@ $(eval $(call rule_for, \
   $$(CPP) -P $$< $$@ \
 ))
 
+ifdef EXE
 ifeq ($(OS),Windows_NT)
 # Work around command-line length limit
 # On Msys2 the max command line is 32 000 characters. Our standard LD command
@@ -58,6 +59,7 @@ $(eval $(call rule_for, \
   LD, %.$$(EXE), , \
   $$(LD) $$^ $$(LDFLAGS) -o $$@ \
 ))
+endif
 endif
 
 $(eval $(call rule_for, \

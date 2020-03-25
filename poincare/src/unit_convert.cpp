@@ -59,7 +59,7 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), finalUnit.clone());
   division = division.reduce(reductionContext);
-  if (division.hasUnit()) {
+  if (!division.extractUnits().isUninitialized()) {
     // The left and right members are not homogeneous
     return replaceWithUndefinedInPlace();
   }

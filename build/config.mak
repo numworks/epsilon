@@ -16,9 +16,6 @@ ESCHER_LOG_EVENTS_BINARY ?= 0
 ifndef USE_LIBA
   $(error platform.mak should define USE_LIBA)
 endif
-ifndef EXE
-  $(error platform.mak should define EXE, the extension for executables)
-endif
 include build/toolchain.$(TOOLCHAIN).mak
 
 SFLAGS += -DDEBUG=$(DEBUG)

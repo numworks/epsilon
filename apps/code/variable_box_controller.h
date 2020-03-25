@@ -32,7 +32,7 @@ private:
   constexpr static int k_maxScriptObjectNameSize = 100;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40
   constexpr static int k_maxScriptNodesCount = 32;
-  constexpr static int k_builtinNodesCount = 61;
+  constexpr static int k_builtinNodesCount = 64;
   HighlightCell * leafCellAtIndex(int index) override;
   HighlightCell * nodeCellAtIndex(int index) override { return nullptr; }
   bool selectLeaf(int rowIndex) override;

@@ -343,7 +343,7 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
     const char * currentName = node->name();
     int currentNameLength = node->nameLength();
     if ((currentNameLength < 0 || currentNameLength != textLength) && strncmp(text, currentName, textLength) == 0) {
-      *textToInsertLength = currentNameLength - textLength;
+      *textToInsertLength = (currentNameLength < 0 ? strlen(currentName) : currentNameLength) - textLength;
       return currentName + textLength;
     }
   }

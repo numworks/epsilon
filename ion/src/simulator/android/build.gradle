@@ -53,13 +53,9 @@ android {
     release {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt')
-    }
-    codesigned {
-      initWith buildTypes.release
-      signingConfig signingConfigs.environment
-    }
-    buildTypes.each {
-      it.buildConfigField "String", "LIBEPSILON_NAME", "\"${System.getenv('LIBEPSILON_NAME')}\""
+      if (projectVariable('SIGNING_STORE_FILE')) {
+        signingConfig signingConfigs.environment
+      }
     }
   }
   sourceSets{

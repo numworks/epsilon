@@ -80,6 +80,8 @@ typedef struct _mp_reader_mem_t {
 } mp_reader_mem_t;
 /* TODO end*/
 
+// TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[]
+// from python/lexer.c
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete) {
   //TODO LEA Prune these + add modules
   //TODO LEA Load according to textToAutocomplete
@@ -104,13 +106,13 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_compile), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_complex), -1, 0);
   //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_continue), -1, 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_def), -1, 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_del), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::VariableNode("def", -1, 0);
+  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR___del__), -1, 0);
   //m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_delattr), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_dict), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_dir), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_divmod), -1, 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_elif), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::VariableNode("elif", -1, 0);
   //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_else), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_enumerate), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_eval), -1, 0);
@@ -122,7 +124,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_float), -1, 0);
   //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_for), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_format), -1, 0);
-  //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_from), -1, 0);
+  m_builtinNodes[index++] = ScriptNode::VariableNode("from", -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_frozenset), -1, 0);
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_getattr), -1, 0);
   //m_builtinNodes[index++] = ScriptNode::VariableNode(qstr_str(MP_QSTR_global), -1, 0);

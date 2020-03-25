@@ -350,7 +350,7 @@ Expression Expression::defaultHandleUnitsInChildren() {
   // Generically, an Expression does not accept any Unit in its children.
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndex(i).hasUnit()) {
+    if (!childAtIndex(i).extractUnits().isUninitialized()) {
       return replaceWithUndefinedInPlace();
     }
   }

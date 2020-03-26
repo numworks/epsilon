@@ -343,8 +343,8 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Recognize derived units in the product of units
-   * - Creating a Division if there's either a term with a power of -1 (a.b^(-1)
-   *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
+   * - Creating a Division if relevant
+   */
 
   // Step 1: Turn -n*A into -(n*A)
   Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(reductionContext);
@@ -356,23 +356,13 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     return std::move(o);
   }
 
-  Expression numer, denom, units;
-  splitIntoNormalForm(numer, denom, units, reductionContext);
+  Expression result = *this;
+  Expression units = extractUnits();
 
-  // Step 2: Create a Division if relevant
-  Expression result;
-  if (!numer.isUninitialized()) {
-    result = numer;
-  }
-  if (!denom.isUninitialized()) {
-    result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
-  }
-  assert(!result.isUninitialized());
-
-  /* Step 3: Handle the units
-   */
   if (!units.isUninitialized()) {
-    /* Recognize derived units
+    /* Step 2: Handle the units
+     *
+     * Recognize derived units
      * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
      * - If an entry is found, simplify 'units' and add the corresponding unit or its inverse in 'unitsAccu'.
      * - Repeat those steps until no more simplification is possible.
@@ -418,23 +408,12 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     }
     if (unitsAccu.numberOfChildren() > 0) {
       units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
-      units = Multiplication::Builder(units);
-      static_cast<Multiplication &>(units).mergeSameTypeChildrenInPlace();
-      {
-        Expression unitsNumer, unitsDenom, unitsUnits;
-        static_cast<Multiplication&>(units).splitIntoNormalForm(unitsNumer, unitsDenom, unitsUnits, reductionContext);
-        if (!unitsNumer.isUninitialized()) {
-          result = Multiplication::Builder(result, unitsNumer);
-        }
-        if (!unitsDenom.isUninitialized()) {
-          result = Division::Builder(result, unitsDenom);
-        }
-        units = unitsUnits;
-      }
-      if (units.isUninitialized()) {
+      Expression newUnits = units.extractUnits();
+      result = Multiplication::Builder(result, units);
+      if (newUnits.isUninitialized()) {
         units = unitsAccu;
       } else {
-        units = Multiplication::Builder(unitsAccu, units);
+        units = Multiplication::Builder(unitsAccu, newUnits);
         static_cast<Multiplication &>(units).mergeSameTypeChildrenInPlace();
       }
     }
@@ -488,6 +467,17 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       result = Multiplication::Builder(resultWithoutUnit, units);
       static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
     }
+
+  } else {
+  // Step 3: Create a Division if relevant
+    Expression numer, denom;
+    splitIntoNormalForm(numer, denom, reductionContext);
+    if (!numer.isUninitialized()) {
+      result = numer;
+    }
+    if (!denom.isUninitialized()) {
+      result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
+    }
   }
 
   replaceWithInPlace(result);
@@ -495,8 +485,13 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
 }
 
 Expression Multiplication::denominator(ExpressionNode::ReductionContext reductionContext) const {
-  Expression numer, denom, units;
-  splitIntoNormalForm(numer, denom, units, reductionContext);
+  /* TODO ?
+   * Turn the denominator const method into an extractDenominator method
+   * (non const) in the same same way as extractUnits.
+   * Then remove splitIntoNormalForm.
+   */
+  Expression numer, denom;
+  splitIntoNormalForm(numer, denom, reductionContext);
   return denom;
 }
 
@@ -1010,20 +1005,18 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
   return false;
 }
 
-void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, Expression & units, ExpressionNode::ReductionContext reductionContext) const {
+void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {
+  assert(const_cast<Multiplication*>(this)->extractUnits().isUninitialized());
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
-  Multiplication mUnits = Multiplication::Builder();
   int numberOfFactorsInNumerator = 0;
   int numberOfFactorsInDenominator = 0;
-  int numberOfFactorsInUnits = 0;
   const int numberOfFactors = numberOfChildren();
   for (int i = 0; i < numberOfFactors; i++) {
     Expression factor = childAtIndex(i).clone();
     ExpressionNode::Type factorType = factor.type();
     Expression factorsNumerator;
     Expression factorsDenominator;
-    Expression factorsUnit;
     if (factorType == ExpressionNode::Type::Rational) {
       Rational r = static_cast<Rational &>(factor);
       if (r.isRationalOne()) {
@@ -1042,16 +1035,10 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
     } else if (factorType == ExpressionNode::Type::Power) {
       Expression fd = factor.denominator(reductionContext);
       if (fd.isUninitialized()) {
-        if (factor.childAtIndex(0).type() == ExpressionNode::Type::Unit) {
-          factorsUnit = factor;
-        } else {
-          factorsNumerator = factor;
-        }
+        factorsNumerator = factor;
       } else {
         factorsDenominator = fd;
       }
-    } else if (factorType == ExpressionNode::Type::Unit) {
-      factorsUnit = factor;
     } else {
       factorsNumerator = factor;
     }
@@ -1063,19 +1050,12 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
       mDenominator.addChildAtIndexInPlace(factorsDenominator, numberOfFactorsInDenominator, numberOfFactorsInDenominator);
       numberOfFactorsInDenominator++;
     }
-    if (!factorsUnit.isUninitialized()) {
-      mUnits.addChildAtIndexInPlace(factorsUnit, numberOfFactorsInUnits, numberOfFactorsInUnits);
-      numberOfFactorsInUnits++;
-    }
   }
   if (numberOfFactorsInNumerator) {
     numerator = mNumerator.squashUnaryHierarchyInPlace();
   }
   if (numberOfFactorsInDenominator) {
     denominator = mDenominator.squashUnaryHierarchyInPlace();
-  }
-  if (numberOfFactorsInUnits) {
-    units = mUnits.squashUnaryHierarchyInPlace();
   }
 }
 

@@ -103,7 +103,7 @@ private:
   static bool TermHasNumeralExponent(const Expression & e);
   static const Expression CreateExponent(Expression e);
   static inline const Expression Base(const Expression e);
-  void splitIntoNormalForm(Expression & numerator, Expression & denominator, Expression & units, ExpressionNode::ReductionContext reductionContext) const;
+  void splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const;
 };
 
 }

@@ -2,10 +2,11 @@
 
 mp_obj_t modpyplot___init__();
 void modpyplot_gc_collect();
+void modpyplot_flush_used_heap();
 
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args);
-mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height);
+mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_hist(mp_obj_t x);
 mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y);

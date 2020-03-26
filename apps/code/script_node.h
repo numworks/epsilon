@@ -12,25 +12,21 @@ public:
     Function,
     Variable
   };
-  ScriptNode() :
-    m_type(Type::Function), m_name(nullptr), m_scriptIndex(0), m_nameLength(0) {}
-  static ScriptNode FunctionNode(const char * name, int nameLength, uint16_t scriptIndex) {
-    return ScriptNode(Type::Function, name, scriptIndex, nameLength);
-  }
-  static ScriptNode VariableNode(const char * name, int nameLength, uint16_t scriptIndex) {
-    return ScriptNode(Type::Variable, name, scriptIndex, nameLength);
-  }
+  ScriptNode(Type type = Type::Variable, const char * name = nullptr, int nameLength = 0, uint16_t scriptIndex = 0) :
+    m_type(type),
+    m_name(name),
+    m_scriptIndex(scriptIndex),
+    m_nameLength(nameLength)
+  {}
   Type type() const { return m_type; }
   const char * name() const { return m_name; }
   int nameLength() const { return m_nameLength; }
   uint16_t scriptIndex() const { return m_scriptIndex; }
 private:
-  ScriptNode(Type type, const char * name, uint16_t scriptIndex, int nameLength) :
-    m_type(type), m_name(name), m_scriptIndex(scriptIndex), m_nameLength(nameLength) {}
   Type m_type;
   const char * m_name;
-  uint16_t m_scriptIndex;
-  int m_nameLength;
+  uint16_t m_scriptIndex; // TODO LEA smaller type ?
+  int m_nameLength; // TODO LEA smaller type ?
 };
 
 }

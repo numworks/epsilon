@@ -198,8 +198,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   };
   assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
   for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
-    // TODO remove those two constructors
-    ScriptNode node = builtinNames[i].type == ScriptNode::Type::Function ? ScriptNode::FunctionNode( builtinNames[i].name, -1, 0) : ScriptNode::VariableNode(builtinNames[i].name, -1, 0);
+    ScriptNode node = ScriptNode(builtinNames[i].type, builtinNames[i].name, -1, 0);
     int startsWith = textToAutocomplete == nullptr ? 0 : NodeNameStartsWith(&node, textToAutocomplete, textToAutocompleteLength);
     if (startsWith == 0) {
       m_builtinNodes[m_builtinNodesCount++] = node;
@@ -454,9 +453,7 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
     nodes[i+1] = nodes[i];
   }
   // Add the node
-  nodes[insertionIndex] = type == ScriptNode::Type::Variable ?
-    ScriptNode::VariableNode(name, nameLength, scriptIndex) :
-    ScriptNode::FunctionNode(name, nameLength, scriptIndex);
+  nodes[insertionIndex] = ScriptNode(type, name, nameLength, scriptIndex);
   // Increase the node count
   *currentNodeCount = *currentNodeCount + 1;
 }

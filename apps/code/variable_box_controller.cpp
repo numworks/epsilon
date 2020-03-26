@@ -224,16 +224,23 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
         int nameLength = lex->vstr.len;
         // Check if this token is already in the var box
         bool alreadyInVarBox = false;
-
-        // TODO Look also in imported nodes
-        // TODO LEA speed this up with alphabetical search
-        // TODO LEA use numberOfRows() and scriptNodeAtIndex ?
-        for (int i = 0; i < k_builtinNodesCount + m_currentScriptNodesCount; i++) {
-         ScriptNode * matchingNode = i < k_builtinNodesCount ? &m_builtinNodes[i] : &m_currentScriptNodes[i - k_builtinNodesCount];
-          const char * nodeName = matchingNode->name();
-          int nodeNameLength = matchingNode->nameLength();
-          if ((nodeNameLength < 0 || nodeNameLength == nameLength) && strncmp(nodeName, name, nameLength) == 0) {
-            alreadyInVarBox = true;
+        // TODO LEA speed this up with dichotomia?
+        NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+        for (NodeOrigin origin : origins) {
+          const int nodesCount = nodesCountForOrigin(origin);
+          ScriptNode * nodes = nodesForOrigin(origin);
+          for (int i = 0; i < nodesCount; i++) {
+            ScriptNode * matchingNode = nodes + i;
+            int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
+            if (comparisonResult == 0) {
+              alreadyInVarBox = true;
+              break;
+            }
+            if (comparisonResult > 0) {
+              break;
+            }
+          }
+          if (alreadyInVarBox) {
             break;
           }
         }
@@ -375,7 +382,7 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
 
 void VariableBoxController::addNode(NodeType type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex) {
   assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
-  int * currentNodeCount = nodesCountForOrigin(origin);
+  int * currentNodeCount = nodesCountPointerForOrigin(origin);
   if (*currentNodeCount >= MaxNodesCountForOrigin(origin)) {
     // There is no room to add another node
     return;
@@ -411,7 +418,7 @@ int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {
   return k_maxScriptNodesCount;
 }
 
-int * VariableBoxController::nodesCountForOrigin(NodeOrigin origin) {
+int * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
   if (origin == NodeOrigin::CurrentScript) {
     return &m_currentScriptNodesCount;
   }
@@ -419,6 +426,26 @@ int * VariableBoxController::nodesCountForOrigin(NodeOrigin origin) {
   return &m_importedNodesCount;
 }
 
+int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
+  if (origin == NodeOrigin::Builtins) {
+    return k_builtinNodesCount;
+  }
+  return *(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin));
+}
+
+ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
+  switch(origin) {
+    case NodeOrigin::CurrentScript:
+      return m_currentScriptNodes;
+    case NodeOrigin::Builtins:
+      return m_builtinNodes;
+    case NodeOrigin::Importation:
+      return m_importedNodes;
+  }
+  assert(false);
+}
+
+//TODO LEA CLEAN
 ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
   assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);

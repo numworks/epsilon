@@ -242,11 +242,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
 
         if (!alreadyInVarBox) {
           tokenInText -= 2;
-          if (defToken) {
-            addFunctionAtIndex(tokenInText, nameLength, scriptIndex);
-          } else {
-            addVariableAtIndex(tokenInText, nameLength, scriptIndex);
-          }
+          addNode(defToken ? NodeType::Function : NodeType::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
         }
       }
       defToken = lex->tok_kind == MP_TOKEN_KW_DEF;
@@ -379,23 +375,50 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
   sender()->handleEventWithText(commandBuffer);
 }
 
-// TODO LEA remane method (index)
-void VariableBoxController::addFunctionAtIndex(const char * functionName, int nameLength, int scriptIndex) {
-  // TODO LEA check if current script or imported
-  if (m_currentScriptNodesCount < k_maxScriptNodesCount) {
-    m_currentScriptNodes[m_currentScriptNodesCount] = ScriptNode::FunctionNode(functionName, nameLength, scriptIndex);
-    m_currentScriptNodesCount++;
+void VariableBoxController::addNode(NodeType type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex) {
+  assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
+  int * currentNodeCount = nodesCountForOrigin(origin);
+  if (*currentNodeCount >= MaxNodesCountForOrigin(origin)) {
+    // There is no room to add another node
+    return;
   }
+  /* We want to insert the node in alphabetical order, so we look for the
+   * insertion index. */
+  ScriptNode * nodes = origin == NodeOrigin::CurrentScript ? m_currentScriptNodes : m_importedNodes;
+  int insertionIndex = 0;
+  while (insertionIndex < *currentNodeCount) {
+    ScriptNode * node = nodes + insertionIndex;
+    int nameComparison = NodeNameCompare(node, name, nameLength);
+    assert(nameComparison != 0); // We already checked that the name is not present already
+    if (nameComparison > 0) {
+      break;
+    }
+    insertionIndex++;
+  }
+
+  // Shift all the following nodes
+  for (int i = *currentNodeCount; i >= insertionIndex; i--) {
+    nodes[i+1] = nodes[i];
+  }
+  // Add the node
+  nodes[insertionIndex] = type == NodeType::Variable ?
+    ScriptNode::VariableNode(name, nameLength, scriptIndex) :
+    ScriptNode::FunctionNode(name, nameLength, scriptIndex);
+  // Increase the node count
+  *currentNodeCount = *currentNodeCount + 1;
 }
 
-// TODO LEA remane method (index)
-// + factorize with addFunctionAtIndex?
-void VariableBoxController::addVariableAtIndex(const char * variableName, int nameLength, int scriptIndex) {
-  // TODO LEA check if current script or imported
-  if (m_currentScriptNodesCount < k_maxScriptNodesCount) {
-    m_currentScriptNodes[m_currentScriptNodesCount] = ScriptNode::VariableNode(variableName, nameLength, scriptIndex);
-    m_currentScriptNodesCount++;
+int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {
+  assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
+  return k_maxScriptNodesCount;
+}
+
+int * VariableBoxController::nodesCountForOrigin(NodeOrigin origin) {
+  if (origin == NodeOrigin::CurrentScript) {
+    return &m_currentScriptNodesCount;
   }
+  assert(origin == NodeOrigin::Importation);
+  return &m_importedNodesCount;
 }
 
 ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
@@ -411,6 +434,20 @@ ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
     node = m_importedNodes + (index - m_currentScriptNodesCount - k_builtinNodesCount);
   }
   return node;
+}
+
+int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength) {
+  const char * nodeName = node->name();
+  const int nodeNameLength = node->nameLength();
+  const int comparisonLength = minInt(nameLength, nodeNameLength);
+  int result = strncmp(nodeName, name, comparisonLength);
+  if (result != 0) {
+    return result;
+  }
+  if (nodeNameLength == nameLength) {
+    return 0;
+  }
+  return comparisonLength == nodeNameLength ? -1 : 1;
 }
 
 }

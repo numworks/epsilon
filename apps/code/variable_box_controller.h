@@ -37,8 +37,23 @@ private:
   HighlightCell * nodeCellAtIndex(int index) override { return nullptr; }
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
-  void addFunctionAtIndex(const char * functionName, int nameLength, int scriptIndex);
-  void addVariableAtIndex(const char * variableName, int nameLength, int scriptIndex);
+  enum class NodeOrigin : uint8_t {
+    CurrentScript,
+    Builtins,
+    Importation
+  };
+  enum class NodeType : uint8_t {
+    Variable,
+    Function
+  };
+  void addNode(NodeType type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
+  static int MaxNodesCountForOrigin(NodeOrigin origin);
+  int * nodesCountForOrigin(NodeOrigin origin);
+
+  /* Return a negative int if the node name is before name in alphabetical
+   * order, 0 if they are equal, a positive int if it is after in alphabetical
+   * order. */
+  static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength);
   ScriptNode * scriptNodeAtIndex(int index);
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_builtinNodesCount];

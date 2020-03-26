@@ -3,7 +3,7 @@
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modpyplot___init___obj, modpyplot___init__);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_arrow_obj, 4, 4, modpyplot_arrow);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_axis_obj, 0, 1, modpyplot_axis);
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(modpyplot_bar_obj, modpyplot_bar);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_bar_obj, 2, 4, modpyplot_bar);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_grid_obj, 0, 1, modpyplot_grid);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(modpyplot_hist_obj, modpyplot_hist);
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(modpyplot_plot_obj, modpyplot_plot);

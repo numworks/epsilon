@@ -57,24 +57,41 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
 }
 
 /* axis(arg)
- *  - arg = [xmin, xmax, ymin, ymax]
+ *  - arg = "on", "off", "auto"
  *  - arg = True, False
- * Returns : xmin, xmax, ymin, ymax : float */
+ *  - arg = [xmin, xmax, ymin, ymax], (xmin, xmax, ymin, ymax)
+ * Returns : (xmin, xmax, ymin, ymax) : float */
 
-mp_obj_t modpyplot_axis(mp_obj_t arg) {
+mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
+  if (n_args == 1) {
+    mp_obj_t arg = args[0];
+    if (mp_obj_is_str(arg)) {
+      if (mp_obj_str_equal(arg, mp_obj_new_str("on", 2))) {
+        sPlotStore->setAxesRequested(true);
+      } else if (mp_obj_str_equal(arg, mp_obj_new_str("off", 3))) {
+        sPlotStore->setAxesRequested(false);
+      } else if (mp_obj_str_equal(arg, mp_obj_new_str("auto", 4))) {
+        sPlotStore->setAxesRequested(true);
+        sPlotStore->setAxesAuto(true);
+      } else {
+        mp_raise_ValueError("Unrecognized string given to axis; try 'on', 'off' or 'auto'");
+      }
 #warning Use mp_obj_is_bool when upgrading uPy
-  if (mp_obj_is_type(arg, &mp_type_bool)) {
-    sPlotStore->setAxesRequested(mp_obj_is_true(arg));
-  } else {
-    mp_obj_t * items;
-    mp_obj_get_array_fixed_n(arg, 4, &items);
-    sPlotStore->setXMin(mp_obj_get_float(items[0]));
-    sPlotStore->setXMax(mp_obj_get_float(items[1]));
-    sPlotStore->setYMin(mp_obj_get_float(items[2]));
-    sPlotStore->setYMax(mp_obj_get_float(items[3]));
-    sPlotStore->setAxesAuto(false);
+    } else if (mp_obj_is_type(arg, &mp_type_bool)) {
+      sPlotStore->setAxesRequested(mp_obj_is_true(arg));
+    } else if (mp_obj_is_type(arg, &mp_type_tuple) || mp_obj_is_type(arg, &mp_type_list)) {
+      mp_obj_t * items;
+      mp_obj_get_array_fixed_n(arg, 4, &items);
+      sPlotStore->setXMin(mp_obj_get_float(items[0]));
+      sPlotStore->setXMax(mp_obj_get_float(items[1]));
+      sPlotStore->setYMin(mp_obj_get_float(items[2]));
+      sPlotStore->setYMax(mp_obj_get_float(items[3]));
+      sPlotStore->setAxesAuto(false);
+    } else {
+      mp_raise_TypeError("the first argument to axis() must be an interable of the form [xmin, xmax, ymin, ymax]");
+    }
   }
 
   // Build the return value

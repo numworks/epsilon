@@ -308,9 +308,10 @@ int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {
   return k_maxScriptNodesCount;
 }
 
-int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength) {
+int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLengthMaybe) {
   const char * nodeName = node->name();
-  const int nodeNameLength = node->nameLength();
+  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
+  const int nameLength = nameLengthMaybe < 0 ? strlen(name) : nameLengthMaybe;
   const int comparisonLength = minInt(nameLength, nodeNameLength);
   int result = strncmp(nodeName, name, comparisonLength);
   if (result != 0) {

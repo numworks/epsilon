@@ -121,6 +121,7 @@ public:
 
   void setAxesRequested(bool b) { m_axesRequested = b; }
   bool axesRequested() const { return m_axesRequested; }
+  void initRange();
 
   void setGridRequested(bool b) { m_gridRequested = b; }
   bool gridRequested() const { return m_gridRequested; }
@@ -130,6 +131,7 @@ private:
   mp_obj_t m_segments; // List of (x, y, dx, dy, style, color)
   mp_obj_t m_rects; // List of (x, y, w, h, color)
   bool m_axesRequested;
+  bool m_axesAuto;
   bool m_gridRequested;
 };
 

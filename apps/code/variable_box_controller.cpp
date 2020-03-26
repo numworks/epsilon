@@ -18,6 +18,18 @@ namespace Code {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
+//TODO LEA use this
+static bool shouldAddObject(const char * name, int maxLength) {
+  if (strlen(name)+1 > (size_t)maxLength) {
+    return false;
+  }
+  assert(name != nullptr);
+  if (UTF8Helper::CodePointIs(name, '_')) {
+    return false;
+  }
+  return true;
+}
+
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   NestedMenuController(nullptr, I18n::Message::FunctionsAndVariables),
   m_scriptStore(scriptStore),
@@ -44,17 +56,6 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
   assert(App::app()->pythonIsInited());
 }
 
-static bool shouldAddObject(const char * name, int maxLength) {
-  if (strlen(name)+1 > (size_t)maxLength) {
-    return false;
-  }
-  assert(name != nullptr);
-  if (UTF8Helper::CodePointIs(name, '_')) {
-    return false;
-  }
-  return true;
-}
-
 int VariableBoxController::numberOfRows() const {
   assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
   assert(m_importedNodesCount <= k_maxScriptNodesCount);
@@ -66,7 +67,6 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
   myCell->setScriptNode(scriptNodeAtIndex(index));
 }
-
 
 /*TODO LEA very dirty
  * This is done to get the lexer position during lexing. As the _mp_reader_mem_t
@@ -80,10 +80,10 @@ typedef struct _mp_reader_mem_t {
 } mp_reader_mem_t;
 /* TODO end*/
 
-// TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[]
-// from python/lexer.c
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete) {
-  //TODO LEA Prune these + add modules
+  //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
+  //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
+  //TODO LEA add modules
   //TODO LEA Load according to textToAutocomplete
   int index = 0;
   m_builtinNodes[index++] = ScriptNode::FunctionNode(qstr_str(MP_QSTR_abs), -1, 0);
@@ -204,7 +204,6 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   /* To find variable and funtion names: we lex the script and keep all
    * MP_TOKEN_NAME that are not already in the builtins or imported scripts. */
 
-#if 1
   m_currentScriptNodesCount = 0;
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
@@ -217,12 +216,12 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
 
     while (lex->tok_kind != MP_TOKEN_END) {
-      /* 2) Detect MP_TOKEN_NAME that are not already in the variable box. Keep
-       * track of DEF  tokens to differentiate between variables and functions. */
       if (lex->tok_kind == MP_TOKEN_NAME) {
+        /* 2) Detect MP_TOKEN_NAME that are not already in the variable box.
+         * Keep track of DEF tokens to differentiate between variables and
+         * functions. */
         const char * name = lex->vstr.buf;
         int nameLength = lex->vstr.len;
-        // Check if this token is already in the var box
         bool alreadyInVarBox = false;
         // TODO LEA speed this up with dichotomia?
         NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
@@ -246,14 +245,16 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
         }
 
         if (!alreadyInVarBox) {
+          /* This is a trick to get the token position in the text. The -2 was
+           * found from stepping in the code and trying. */
           tokenInText -= 2;
           addNode(defToken ? NodeType::Function : NodeType::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
         }
       }
       defToken = lex->tok_kind == MP_TOKEN_KW_DEF;
 
-      /* This is a trick to get the token position in the text. The -1 and -2
-       * were found from stepping in the code and trying. */
+      /* This is a trick to get the token position in the text. The -1 was found
+       *  from stepping in the code and trying. */
       tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
       if (lex->tok_kind <= MP_TOKEN_ELLIPSIS || lex->tok_kind >= MP_TOKEN_OP_PLUS) {
         tokenInText--;
@@ -265,57 +266,6 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     mp_lexer_free(lex);
     nlr_pop();
   }
-
-#else
-  nlr_buf_t nlr;
-  if (nlr_push(&nlr) == 0) {
-    // 1) Lex the script
-    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, script0, strlen(script0), false);
-    while (lex->tok_kind != MP_TOKEN_END) {
-      // 2) Detect patterns on a line per line basis
-      while (lex->tok_kind == MP_TOKEN_INDENT || lex->tok_kind == MP_TOKEN_DEDENT) {
-        mp_lexer_to_next(lex);
-      }
-      if (lex->tok_kind == MP_TOKEN_NAME) {
-        // Look for variable definition "name ="
-        const char * name = lex->vstr.buf;
-        size_t len = lex->vstr.len;
-        mp_lexer_to_next(lex);
-        if (lex->tok_kind == MP_TOKEN_DEL_EQUAL) {
-          addVariableAtIndex(name, len, 0);
-        }
-      } else if (lex->tok_kind != MP_TOKEN_KW_DEF) {
-        // Look for function definition "def name1(name2, name3 = ...):"
-        mp_lexer_to_next(lex);
-        if (lex->tok_kind == MP_TOKEN_NAME) {
-          const char * name = lex->vstr.buf;
-          size_t len = lex->vstr.len;
-          addFunctionAtIndex(name, len, 0);
-          mp_lexer_to_next(lex);
-          if (lex->tok_kind == MP_TOKEN_DEL_PAREN_OPEN) {
-
-          }
-    MP_TOKEN_DEL_PAREN_CLOSE,
-        }
-
-
-      }
-
-      // Forward until the end of the line
-      while (lex->tok_kind != MP_TOKEN_END
-          && lex->tok_kind != MP_TOKEN_DEL_SEMICOLON
-          && lex->tok_kind != MP_TOKEN_NEWLINE)
-      {
-        mp_lexer_to_next(lex);
-      }
-      if (lex->tok_kind != MP_TOKEN_END) {
-        mp_lexer_to_next(lex);
-      }
-    }
-    mp_lexer_free(lex);
-    nlr_pop();
-  }
-#endif
 #else
   m_scriptNodesCount = 1;
   m_scriptStore->scanScriptsForFunctionsAndVariables(
@@ -353,9 +303,66 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
   return nullptr;
 }
 
-HighlightCell * VariableBoxController::leafCellAtIndex(int index) {
-  assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
-  return &m_leafCells[index];
+int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {
+  assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
+  return k_maxScriptNodesCount;
+}
+
+int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength) {
+  const char * nodeName = node->name();
+  const int nodeNameLength = node->nameLength();
+  const int comparisonLength = minInt(nameLength, nodeNameLength);
+  int result = strncmp(nodeName, name, comparisonLength);
+  if (result != 0) {
+    return result;
+  }
+  if (nodeNameLength == nameLength) {
+    return 0;
+  }
+  return comparisonLength == nodeNameLength ? -1 : 1;
+}
+
+int * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
+  if (origin == NodeOrigin::CurrentScript) {
+    return &m_currentScriptNodesCount;
+  }
+  assert(origin == NodeOrigin::Importation);
+  return &m_importedNodesCount;
+}
+
+int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
+  if (origin == NodeOrigin::Builtins) {
+    return k_builtinNodesCount;
+  }
+  return *(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin));
+}
+
+ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
+  switch(origin) {
+    case NodeOrigin::CurrentScript:
+      return m_currentScriptNodes;
+    case NodeOrigin::Builtins:
+      return m_builtinNodes;
+    default:
+      assert(origin == NodeOrigin::Importation);
+      return m_importedNodes;
+  }
+}
+
+ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
+  assert(index >= 0 && index < numberOfRows());
+  assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
+  assert(m_importedNodesCount <= k_maxScriptNodesCount);
+  NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    const int nodesCount = nodesCountForOrigin(origin);
+    if (index < nodesCount) {
+      return nodesForOrigin(origin) + index;
+    }
+    index -= nodesCount;
+  }
+  assert(false);
+  return nullptr;
 }
 
 bool VariableBoxController::selectLeaf(int rowIndex) {
@@ -411,68 +418,6 @@ void VariableBoxController::addNode(NodeType type, NodeOrigin origin, const char
     ScriptNode::FunctionNode(name, nameLength, scriptIndex);
   // Increase the node count
   *currentNodeCount = *currentNodeCount + 1;
-}
-
-int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {
-  assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
-  return k_maxScriptNodesCount;
-}
-
-int * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
-  if (origin == NodeOrigin::CurrentScript) {
-    return &m_currentScriptNodesCount;
-  }
-  assert(origin == NodeOrigin::Importation);
-  return &m_importedNodesCount;
-}
-
-int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
-  if (origin == NodeOrigin::Builtins) {
-    return k_builtinNodesCount;
-  }
-  return *(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin));
-}
-
-ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
-  switch(origin) {
-    case NodeOrigin::CurrentScript:
-      return m_currentScriptNodes;
-    case NodeOrigin::Builtins:
-      return m_builtinNodes;
-    default:
-      assert(origin == NodeOrigin::Importation);
-      return m_importedNodes;
-  }
-}
-
-ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
-  assert(index >= 0 && index < numberOfRows());
-  assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
-  assert(m_importedNodesCount <= k_maxScriptNodesCount);
-  NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
-  for (NodeOrigin origin : origins) {
-    const int nodesCount = nodesCountForOrigin(origin);
-    if (index < nodesCount) {
-      return nodesForOrigin(origin) + index;
-    }
-    index -= nodesCount;
-  }
-  assert(false);
-  return nullptr;
-}
-
-int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength) {
-  const char * nodeName = node->name();
-  const int nodeNameLength = node->nameLength();
-  const int comparisonLength = minInt(nameLength, nodeNameLength);
-  int result = strncmp(nodeName, name, comparisonLength);
-  if (result != 0) {
-    return result;
-  }
-  if (nodeNameLength == nameLength) {
-    return 0;
-  }
-  return comparisonLength == nodeNameLength ? -1 : 1;
 }
 
 }

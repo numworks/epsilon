@@ -439,10 +439,10 @@ ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
       return m_currentScriptNodes;
     case NodeOrigin::Builtins:
       return m_builtinNodes;
-    case NodeOrigin::Importation:
+    default:
+      assert(origin == NodeOrigin::Importation);
       return m_importedNodes;
   }
-  assert(false);
 }
 
 ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {

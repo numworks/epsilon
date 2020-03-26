@@ -176,24 +176,6 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
-// Dichotomia to find which bin a value belongs to
-size_t belongs_to_bin_of_index(mp_float_t v, mp_obj_t * binsEdges, size_t minIndex, size_t maxIndex) {
-  assert(mp_obj_get_float(binsEdges[minIndex]) <= v && v <= mp_obj_get_float(binsEdges[maxIndex]));
-  if (maxIndex - minIndex < 2) {
-    return minIndex;
-  }
-  size_t index = (minIndex+maxIndex)/2;
-  mp_float_t pivot = mp_obj_get_float(binsEdges[index]);
-  if (pivot == v) {
-    return index;
-  } else if (pivot < v) {
-    return belongs_to_bin_of_index(v, binsEdges, index, maxIndex);
-  } else {
-    assert(pivot > v);
-    return belongs_to_bin_of_index(v, binsEdges, minIndex, index);
-  }
-}
-
 mp_obj_t modpyplot_hist(mp_obj_t x) {
   // Create a list of bins
   // TODO: the number of bins can be given as input

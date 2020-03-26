@@ -218,7 +218,8 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   const char * script = m_scriptStore->scriptAtIndex(scriptIndex).scriptContent();
 
   /* To find variable and funtion names: we lex the script and keep all
-   * MP_TOKEN_NAME that are not already in the builtins or imported scripts. */
+   * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
+   * the builtins or imported scripts. */
 
   m_currentScriptNodesCount = 0;
   nlr_buf_t nlr;
@@ -226,55 +227,71 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
 
     // 1) Lex the script
     _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, script, strlen(script), false);
-    bool defToken = false;
 
     // This is a trick to get the token position in the text.
     const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
+    // Keep track of DEF tokens to differentiate between variables and functions
+    bool defToken = false;
+
+    if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
+      textToAutocompleteLength = strlen(textToAutocomplete);
+    }
 
     while (lex->tok_kind != MP_TOKEN_END) {
+      // Keep only MP_TOKEN_NAME tokens
       if (lex->tok_kind == MP_TOKEN_NAME) {
-        /* 2) Detect MP_TOKEN_NAME that are not already in the variable box.
-         * Keep track of DEF tokens to differentiate between variables and
-         * functions. */
+
         const char * name = lex->vstr.buf;
         int nameLength = lex->vstr.len;
-        bool alreadyInVarBox = false;
-        // TODO LEA speed this up with dichotomia?
-        NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
-        for (NodeOrigin origin : origins) {
-          const int nodesCount = nodesCountForOrigin(origin);
-          ScriptNode * nodes = nodesForOrigin(origin);
-          for (int i = 0; i < nodesCount; i++) {
-            ScriptNode * matchingNode = nodes + i;
-            int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
-            if (comparisonResult == 0) {
-              alreadyInVarBox = true;
-              break;
-            }
-            if (comparisonResult > 0) {
-              break;
-            }
-          }
-          if (alreadyInVarBox) {
-            break;
+
+        // Check if the token completes the text to autocomplete
+        bool canKeepChecking = textToAutocomplete == nullptr;
+        if (!canKeepChecking) {
+          if (textToAutocompleteLength < nameLength && strncmp(name, textToAutocomplete, textToAutocompleteLength) == 0) {
+            canKeepChecking = true;
           }
         }
 
-        if (!alreadyInVarBox) {
-          /* This is a trick to get the token position in the text. The -2 was
-           * found from stepping in the code and trying. */
-          // TODO LEA FIXME
-          tokenInText -= lex->chr1 == -1 ? (lex->chr2 == -1 ? 0 : 1): 2;
-          if (strncmp(tokenInText, name, nameLength) != 0) {
-            tokenInText--;
+        if (canKeepChecking) {
+          bool alreadyInVarBox = false;
+          // TODO LEA speed this up with dichotomia?
+          NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+          for (NodeOrigin origin : origins) {
+            const int nodesCount = nodesCountForOrigin(origin);
+            ScriptNode * nodes = nodesForOrigin(origin);
+            for (int i = 0; i < nodesCount; i++) {
+              ScriptNode * matchingNode = nodes + i;
+              int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
+              if (comparisonResult == 0) {
+                alreadyInVarBox = true;
+                break;
+              }
+              if (comparisonResult > 0) {
+                break;
+              }
+            }
+            if (alreadyInVarBox) {
+              break;
+            }
           }
-          if (strncmp(tokenInText, name, nameLength) != 0) {
-            tokenInText--;
+
+          if (!alreadyInVarBox) {
+            /* This is a trick to get the token position in the text. The -2 was
+             * found from stepping in the code and trying. */
+            // TODO LEA FIXME
+            tokenInText -= lex->chr1 == -1 ? (lex->chr2 == -1 ? 0 : 1): 2;
+            if (strncmp(tokenInText, name, nameLength) != 0) {
+              tokenInText--;
+            }
+            if (strncmp(tokenInText, name, nameLength) != 0) {
+              tokenInText--;
+            }
+            assert(strncmp(tokenInText, name, nameLength) == 0);
+            addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
           }
-          assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
         }
       }
+
       defToken = lex->tok_kind == MP_TOKEN_KW_DEF;
 
       /* This is a trick to get the token position in the text. The -1 was found

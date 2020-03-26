@@ -33,7 +33,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_selectableTableView(this, this, this, this),
   m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
-  m_sandboxController(this, this),
+  m_sandboxController(this),
   m_inputRunLoopActive(false)
 #if EPSILON_GETOPT
   , m_locked(lockOnConsole)
@@ -190,7 +190,7 @@ void ConsoleController::viewWillAppear() {
 }
 
 void ConsoleController::didBecomeFirstResponder() {
-  if (viewControllerIsDisplayed(nullptr)) {
+  if (!isDisplayingViewController()) {
     Container::activeApp()->setFirstResponder(&m_editCell);
   } else {
     /* A view controller might be displayed: for example, when pushing the
@@ -198,7 +198,7 @@ void ConsoleController::didBecomeFirstResponder() {
      * 'viewWillAppear' and then we set the console as first responder. The
      * sandbox or the matplotlib controller might have been pushed in the
      * auto-import. */
-    Container::activeApp()->setFirstResponder(m_displayedViewController);
+    Container::activeApp()->setFirstResponder(stackViewController()->topViewController());
   }
 }
 
@@ -348,7 +348,7 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
   }
   telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
-  if (viewControllerIsDisplayed(nullptr)) {
+  if (!isDisplayingViewController()) {
     reloadData(true);
   }
   return true;
@@ -377,14 +377,14 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 }
 
 void ConsoleController::resetSandbox() {
-  if (!viewControllerIsDisplayed(sandbox())) {
+  if (stackViewController()->topViewController() != sandbox()) {
     return;
   }
   m_sandboxController.reset();
 }
 
 void ConsoleController::displayViewController(ViewController * controller) {
-  if (m_displayedViewController == controller) {
+  if (stackViewController()->topViewController() == controller) {
     return;
   }
   hideAnyDisplayedViewController();
@@ -392,14 +392,23 @@ void ConsoleController::displayViewController(ViewController * controller) {
 }
 
 void ConsoleController::hideAnyDisplayedViewController() {
-  if (m_displayedViewController == nullptr) {
+  if (!isDisplayingViewController()) {
     return;
   }
   stackViewController()->pop();
 }
 
+bool ConsoleController::isDisplayingViewController() {
+  /* The StackViewController model state is the best way to know wether the
+   * console is displaying a View Controller (Sandbox or Matplotlib). Indeed,
+   * keeping a boolean or a pointer raises the issue of when updating it - when
+   * 'viewWillAppear' or when 'didEnterResponderChain' - in both cases, the
+   * state would be wrong at some point... */
+  return stackViewController()->depth() > 2;
+}
+
 void ConsoleController::refreshPrintOutput() {
-  if (viewControllerIsDisplayed(nullptr) && reloadData(false)) {
+  if (!isDisplayingViewController() && reloadData(false)) {
     AppsContainer::sharedAppsContainer()->redrawWindow();
   }
 }
@@ -493,7 +502,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     // Step 2 - Run the command
     runAndPrintForCommand(command);
   }
-  if (viewControllerIsDisplayed(nullptr) && force) {
+  if (!isDisplayingViewController() && force) {
     reloadData(true);
   }
 }

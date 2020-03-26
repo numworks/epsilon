@@ -76,6 +76,7 @@ private:
   int m_currentScriptNodesCount;
   int m_builtinNodesCount;
   int m_importedNodesCount;
+  int m_shortenResultBytesCount; // This is used to send only the completing text when we are autocompleting
 };
 
 }

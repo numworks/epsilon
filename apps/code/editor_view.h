@@ -10,6 +10,7 @@ class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
   EditorView(Responder * parentResponder, App * pythonDelegate);
 
+  bool isAutocompleting() const;
   /* Returns the beginning of the text to autocomplete, and loads its length in
    * the method parameter length */
   const char *  textToAutocomplete(int * length) const;

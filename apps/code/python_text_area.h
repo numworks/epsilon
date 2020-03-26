@@ -19,6 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   const char * textToAutocomplete(int * length = nullptr) const;
+  bool isAutocompleting() const { return m_contentView.isAutocompleting(); }
 protected:
   class ContentView : public TextArea::ContentView {
   public:

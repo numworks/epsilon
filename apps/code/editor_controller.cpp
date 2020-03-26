@@ -124,9 +124,10 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
-  int length = 0;
-  const char * text = m_editorView.textToAutocomplete(&length);
-  varBox->loadFunctionsAndVariables(m_scriptIndex, text, length);
+  // If the editor is autocompleting, the variable box has already been loaded
+  if (!m_editorView.isAutocompleting()) {
+    varBox->loadFunctionsAndVariables(m_scriptIndex, nullptr, 0);
+  }
   return varBox;
 }
 

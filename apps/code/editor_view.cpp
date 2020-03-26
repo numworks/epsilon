@@ -20,6 +20,10 @@ const char * EditorView::textToAutocomplete(int * length) const {
   return m_textArea.textToAutocomplete(length);
 }
 
+bool EditorView::isAutocompleting() const {
+  return m_textArea.isAutocompleting();
+}
+
 void EditorView::resetSelection() {
   m_textArea.resetSelection();
 }

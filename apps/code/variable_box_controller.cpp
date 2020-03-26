@@ -247,7 +247,15 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
         if (!alreadyInVarBox) {
           /* This is a trick to get the token position in the text. The -2 was
            * found from stepping in the code and trying. */
-          tokenInText -= 2;
+          // TODO LEA FIXME
+          tokenInText -= lex->chr1 == -1 ? (lex->chr2 == -1 ? 0 : 1): 2;
+          if (strncmp(tokenInText, name, nameLength) != 0) {
+            tokenInText--;
+          }
+          if (strncmp(tokenInText, name, nameLength) != 0) {
+            tokenInText--;
+          }
+          assert(strncmp(tokenInText, name, nameLength) == 0);
           addNode(defToken ? NodeType::Function : NodeType::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
         }
       }

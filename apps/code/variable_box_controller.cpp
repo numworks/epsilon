@@ -90,6 +90,11 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   m_builtinNodesCount = 0;
   m_importedNodesCount = 0;
 
+  if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
+    textToAutocompleteLength = strlen(textToAutocomplete);
+  }
+  m_shortenResultBytesCount = textToAutocomplete == nullptr ? 0 : textToAutocompleteLength;
+
   // Add buitin nodes
   static const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
     {qstr_str(MP_QSTR_abs), ScriptNode::Type::Function},
@@ -238,10 +243,6 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
     // Keep track of DEF tokens to differentiate between variables and functions
     bool defToken = false;
-
-    if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
-      textToAutocompleteLength = strlen(textToAutocomplete);
-    }
 
     while (lex->tok_kind != MP_TOKEN_END) {
       // Keep only MP_TOKEN_NAME tokens
@@ -435,7 +436,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(m_importedNodesCount <= k_maxScriptNodesCount);
   m_selectableTableView.deselectTable();
   ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex);
-  insertTextInCaller(selectedScriptNode->name(), selectedScriptNode->nameLength());
+  insertTextInCaller(selectedScriptNode->name() + m_shortenResultBytesCount, selectedScriptNode->nameLength() - m_shortenResultBytesCount);
   if (selectedScriptNode->type() == ScriptNode::Type::Function) {
     insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
   }

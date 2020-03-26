@@ -33,10 +33,6 @@ private:
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40
   constexpr static int k_maxScriptNodesCount = 32;
   constexpr static int k_builtinNodesCount = 64;
-  HighlightCell * leafCellAtIndex(int index) override;
-  HighlightCell * nodeCellAtIndex(int index) override { return nullptr; }
-  bool selectLeaf(int rowIndex) override;
-  void insertTextInCaller(const char * text, int textLength = -1);
   enum class NodeOrigin : uint8_t {
     CurrentScript,
     Builtins,
@@ -46,17 +42,25 @@ private:
     Variable,
     Function
   };
-  void addNode(NodeType type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
   static int MaxNodesCountForOrigin(NodeOrigin origin);
-  int * nodesCountPointerForOrigin(NodeOrigin origin);
-  int nodesCountForOrigin(NodeOrigin origin) const;
-  ScriptNode * nodesForOrigin(NodeOrigin origin);
-
   /* Return a negative int if the node name is before name in alphabetical
    * order, 0 if they are equal, a positive int if it is after in alphabetical
    * order. */
   static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength);
+  int * nodesCountPointerForOrigin(NodeOrigin origin);
+  int nodesCountForOrigin(NodeOrigin origin) const;
+  ScriptNode * nodesForOrigin(NodeOrigin origin);
   ScriptNode * scriptNodeAtIndex(int index);
+  HighlightCell * leafCellAtIndex(int index) override {
+    assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
+    return &m_leafCells[index];
+  }
+  HighlightCell * nodeCellAtIndex(int index) override { return nullptr; }
+
+  bool selectLeaf(int rowIndex) override;
+  void insertTextInCaller(const char * text, int textLength = -1);
+  void addNode(NodeType type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
+
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_builtinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];

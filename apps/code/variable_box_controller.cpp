@@ -201,10 +201,8 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   }
   const char * script = m_scriptStore->scriptAtIndex(scriptIndex).scriptContent();
 
-  /* To find variable and funtion names:
-   * 1) We lex the script
-   * 2) We detect patterns on a line per line basis, a line being ended by '\n'
-   *    or by ';', but continued by '\'. */
+  /* To find variable and funtion names: we lex the script and keep all
+   * MP_TOKEN_NAME that are not already in the builtins or imported scripts. */
 
 #if 1
   m_currentScriptNodesCount = 0;
@@ -219,12 +217,12 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
 
     while (lex->tok_kind != MP_TOKEN_END) {
-      /* 2) Detect MP_TOKEN_NAME that are not in the builtins. Keep track of DEF
-       *  tokens to differentiate between variables and functions. */
+      /* 2) Detect MP_TOKEN_NAME that are not already in the variable box. Keep
+       * track of DEF  tokens to differentiate between variables and functions. */
       if (lex->tok_kind == MP_TOKEN_NAME) {
         const char * name = lex->vstr.buf;
         int nameLength = lex->vstr.len;
-        // Check if this token is already int the var box
+        // Check if this token is already in the var box
         bool alreadyInVarBox = false;
 
         // TODO Look also in imported nodes

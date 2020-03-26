@@ -29,6 +29,9 @@ app_calculation_src = $(addprefix apps/calculation/,\
   selectable_table_view.cpp \
 )
 
+app_calculation_src += apps/calculation/history_view_cell_custom_none.cpp
+#app_calculation_src += apps/calculation/history_view_cell_custom_foolish.cpp
+
 app_calculation_src += $(app_calculation_test_src)
 app_src += $(app_calculation_src)
 

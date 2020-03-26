@@ -51,6 +51,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableTwoExpressionsView * outputView();
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
+  void customizeForIndex(int i);
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();

@@ -445,20 +445,20 @@ ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
   assert(false);
 }
 
-//TODO LEA CLEAN
 ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
   assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
   assert(m_importedNodesCount <= k_maxScriptNodesCount);
-  ScriptNode * node = nullptr;
-  if (index < m_currentScriptNodesCount) {
-    node = m_currentScriptNodes + index;
-  } else if (index < m_currentScriptNodesCount + k_builtinNodesCount) {
-    node = m_builtinNodes + (index - m_currentScriptNodesCount);
-  } else {
-    node = m_importedNodes + (index - m_currentScriptNodesCount - k_builtinNodesCount);
+  NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    const int nodesCount = nodesCountForOrigin(origin);
+    if (index < nodesCount) {
+      return nodesForOrigin(origin) + index;
+    }
+    index -= nodesCount;
   }
-  return node;
+  assert(false);
+  return nullptr;
 }
 
 int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength) {

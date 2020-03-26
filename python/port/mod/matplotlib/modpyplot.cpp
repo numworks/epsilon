@@ -74,6 +74,7 @@ mp_obj_t modpyplot_axis(mp_obj_t arg) {
     sPlotStore->setXMax(mp_obj_get_float(items[1]));
     sPlotStore->setYMin(mp_obj_get_float(items[2]));
     sPlotStore->setYMax(mp_obj_get_float(items[3]));
+    sPlotStore->setAxesAuto(false);
   }
 
   // Build the return value

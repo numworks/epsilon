@@ -183,7 +183,7 @@ void PlotStore::initRange() {
       float x = rectangle.x();
       float y = rectangle.y();
       updateRange(&xMin, &xMax, &yMin, &yMax, x, y);
-      updateRange(&xMin, &xMax, &yMin, &yMax, x + rectangle.width(), y + rectangle.height());
+      updateRange(&xMin, &xMax, &yMin, &yMax, x + rectangle.width(), y - rectangle.height());
     }
     checkPositiveRangeAndAddMargin(&xMin, &xMax);
     checkPositiveRangeAndAddMargin(&yMin, &yMax);

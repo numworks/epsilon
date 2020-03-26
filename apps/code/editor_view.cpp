@@ -16,10 +16,6 @@ EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   m_textArea.setScrollViewDelegate(this);
 }
 
-const char * EditorView::textToAutocomplete(int * length) const {
-  return m_textArea.textToAutocomplete(length);
-}
-
 bool EditorView::isAutocompleting() const {
   return m_textArea.isAutocompleting();
 }

@@ -121,6 +121,7 @@ public:
 
   void setAxesRequested(bool b) { m_axesRequested = b; }
   bool axesRequested() const { return m_axesRequested; }
+  void setAxesAuto(bool b) { m_axesAuto = b; }
   void initRange();
 
   void setGridRequested(bool b) { m_gridRequested = b; }

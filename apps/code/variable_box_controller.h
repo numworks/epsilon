@@ -26,27 +26,37 @@ public:
   int typeAtLocation(int i, int j) override { return 0; }
 
   /* VariableBoxController */
-  void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete);
+  void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
   const char * autocompletionForText(int scriptIndex, const char * text, int * textToInsertLength);
 private:
   constexpr static int k_maxScriptObjectNameSize = 100;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40
   constexpr static int k_maxScriptNodesCount = 32;
-  constexpr static int k_builtinNodesCount = 64;
+  constexpr static int k_totalBuiltinNodesCount = 94;
   enum class NodeOrigin : uint8_t {
     CurrentScript,
     Builtins,
     Importation
   };
-  enum class NodeType : uint8_t {
+  enum class NodeType : bool {
     Variable,
     Function
   };
   static int MaxNodesCountForOrigin(NodeOrigin origin);
-  /* Return a negative int if the node name is before name in alphabetical
-   * order, 0 if they are equal, a positive int if it is after in alphabetical
-   * order. */
-  static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength);
+  /* Returns:
+   * - a negative int if the node name is before name in alphabetical
+   * order
+   * - 0 if they are equal
+   * - a positive int if it is after in alphabetical order.
+   * strictlyStartsWith is set to True if the node name starts with name but
+   * they are not equal.*/
+  static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith = nullptr);
+  /* Returns:
+   * - a negative int if the node name is before name in alphabetical
+   * order or equal to name
+   * - 0 if node name strictly starts with name
+   * - a positive int if node name is after name in alphabetical order. */
+  static int NodeNameStartsWith(ScriptNode * node, const char * name, int nameLength);
   int * nodesCountPointerForOrigin(NodeOrigin origin);
   int nodesCountForOrigin(NodeOrigin origin) const;
   ScriptNode * nodesForOrigin(NodeOrigin origin);
@@ -62,11 +72,13 @@ private:
   void addNode(NodeType type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
 
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
-  ScriptNode m_builtinNodes[k_builtinNodesCount];
+  ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_leafCells[k_maxNumberOfDisplayedRows];
   ScriptStore * m_scriptStore;
+  // TODO LEA Put these in an array?
   int m_currentScriptNodesCount;
+  int m_builtinNodesCount;
   int m_importedNodesCount;
 };
 

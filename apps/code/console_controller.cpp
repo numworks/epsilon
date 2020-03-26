@@ -57,7 +57,7 @@ bool ConsoleController::loadPythonEnvironment() {
   /* We load functions and variables names in the variable box before running
    * any other python code to avoid failling to load functions and variables
    * due to memory exhaustion. */
-  App::app()->variableBoxController()->loadFunctionsAndVariables(-1, nullptr);
+  App::app()->variableBoxController()->loadFunctionsAndVariables(-1, nullptr, -1);
   return true;
 }
 

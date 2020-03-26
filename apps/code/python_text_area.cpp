@@ -53,13 +53,8 @@ static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
   return lex->column - lex->tok_column;
 }
 
-const char * PythonTextArea::ContentView::textToAutocomplete(int * length) const {
-  const char * result = UTF8Helper::BeginningOfWord(editedText(), cursorLocation());
-  if (length != nullptr) {
-    *length = cursorLocation() - result;
-    assert(*length > 0);
-  }
-  return result;
+const char * PythonTextArea::ContentView::textToAutocomplete() const {
+  return UTF8Helper::BeginningOfWord(editedText(), cursorLocation());
 }
 
 void PythonTextArea::ContentView::loadSyntaxHighlighter() {
@@ -238,13 +233,6 @@ bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bo
   bool result = TextArea::handleEventWithText(text, indentation, forceCursorRightOfText);
   addAutocompletion();
   return result;
-}
-
-const char * PythonTextArea::textToAutocomplete(int * length) const {
-  if (!m_contentView.isAutocompleting()) {
-    return nullptr;
-  }
-  return m_contentView.textToAutocomplete(length);
 }
 
 void PythonTextArea::removeAutocompletion() {

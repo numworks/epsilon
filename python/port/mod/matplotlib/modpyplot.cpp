@@ -121,11 +121,14 @@ mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height) {
   return mp_const_none;
 }
 
-mp_obj_t modpyplot_grid(mp_obj_t b) {
-  if (mp_obj_is_type(b, &mp_type_bool)) {
-    sPlotStore->setGridRequested(mp_obj_is_true(b));
-  } else {
+mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
+  assert(sPlotStore != nullptr);
+
+  if (n_args == 0) {
+    // Toggle the grid visibility
     sPlotStore->setGridRequested(!sPlotStore->gridRequested());
+  } else {
+    sPlotStore->setGridRequested(mp_obj_is_true(args[0]));
   }
   return mp_const_none;
 }

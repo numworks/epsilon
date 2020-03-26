@@ -3,6 +3,7 @@
 namespace Matplotlib {
 
 void PlotController::viewWillAppear() {
+  m_store->initRange();
   curveView()->reload();
 }
 

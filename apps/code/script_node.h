@@ -8,9 +8,9 @@ namespace Code {
 
 class ScriptNode {
 public:
-  enum class Type {
-    Function = 0,
-    Variable = 1
+  enum class Type : bool {
+    Function,
+    Variable
   };
   ScriptNode() :
     m_type(Type::Function), m_name(nullptr), m_scriptIndex(0), m_nameLength(0) {}

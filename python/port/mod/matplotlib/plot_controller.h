@@ -2,15 +2,14 @@
 #define PYTHON_MATPLOTLIB_PLOT_CONTROLLER_H
 
 #include <apps/shared/zoom_and_pan_curve_view_controller.h>
-#include <python/port/port.h>
 #include "plot_view.h"
 #include "plot_store.h"
 
 namespace Matplotlib {
 
-class PlotController : public Shared::ZoomAndPanCurveViewController, public MicroPython::ExecutionViewControllerHelper {
+class PlotController : public Shared::ZoomAndPanCurveViewController {
 public:
-  PlotController(PlotStore * store, MicroPython::ExecutionEnvironment * executiveEnvironment) : Shared::ZoomAndPanCurveViewController(nullptr), ExecutionViewControllerHelper(executiveEnvironment), m_store(store), m_view(m_store) {}
+  PlotController(PlotStore * store) : Shared::ZoomAndPanCurveViewController(nullptr), m_store(store), m_view(m_store) {}
 
   void viewWillAppear() override;
   void viewDidDisappear() override;

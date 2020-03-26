@@ -48,7 +48,9 @@ private:
   };
   void addNode(NodeType type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
   static int MaxNodesCountForOrigin(NodeOrigin origin);
-  int * nodesCountForOrigin(NodeOrigin origin);
+  int * nodesCountPointerForOrigin(NodeOrigin origin);
+  int nodesCountForOrigin(NodeOrigin origin) const;
+  ScriptNode * nodesForOrigin(NodeOrigin origin);
 
   /* Return a negative int if the node name is before name in alphabetical
    * order, 0 if they are equal, a positive int if it is after in alphabetical

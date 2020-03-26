@@ -103,20 +103,63 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
   return mp_obj_new_tuple(4, coords);
 }
 
-mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height) {
+/* bar(x, height, width, bottom)
+ * 'height', 'width' and 'bottom' can either be a scalar or an array/tuple of
+ * scalar.
+ * 'width' default value is 0.8
+ * 'bottom' default value is None
+ * */
+
+// TODO: accept keyword args?
+
+void extract_argument(mp_obj_t arg, size_t length, mp_obj_t ** items, float * item) {
+  if (mp_obj_is_type(arg, &mp_type_tuple) || mp_obj_is_type(arg, &mp_type_list)) {
+    size_t itemLength;
+    mp_obj_get_array(arg, &itemLength, items);
+    if (itemLength != length) {
+      mp_raise_ValueError("Shape mismatch");
+    }
+  } else {
+    *item = mp_obj_get_float(arg);
+  }
+}
+
+mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
-  // Input parameter validation
-  mp_obj_t * xItems, * hItems;
-  size_t length = extractAndValidatePlotInput(x, height, &xItems, &hItems);
-  mp_float_t w = 0.8; // TODO: w should be an optional parameter
+  mp_obj_t * xItems;
+  mp_obj_t * hItems = nullptr;
+  float h;
+  mp_obj_t * wItems = nullptr;
+  float w = 0.8f;
+  mp_obj_t * bItems = nullptr;
+  float b = 0.0f;
+
+  // x arg
+  size_t xLength;
+  mp_obj_get_array(args[0], &xLength, &xItems);
+
+  // height arg
+  extract_argument(args[1], xLength, &hItems, &h);
+
+  // width arg
+  if (n_args >= 3) {
+    extract_argument(args[2], xLength, &wItems, &w);
+  }
+
+  // bottom arg
+  if (n_args >= 4) {
+    extract_argument(args[3], xLength, &bItems, &b);
+  }
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
-  for (size_t i=0; i<length; i++) {
-    mp_float_t rectX = mp_obj_get_float(xItems[i])-w/2.0;
-    mp_float_t h = mp_obj_get_float(hItems[i]);
-    mp_float_t rectY = h < 0.0 ? 0.0 : h;
-    sPlotStore->addRect(mp_obj_new_float(rectX), mp_obj_new_float(rectY), mp_obj_new_float(w), mp_obj_new_float(std::fabs(h)), color);
+  for (size_t i=0; i<xLength; i++) {
+    mp_float_t iH = hItems ? mp_obj_get_float(hItems[i]) : h;
+    mp_float_t iW = wItems ? mp_obj_get_float(wItems[i]) : w;
+    mp_float_t iB = bItems ? mp_obj_get_float(bItems[i]) : b;
+    mp_float_t iX = mp_obj_get_float(xItems[i])-iW/2.0;
+    mp_float_t iY = iH < 0.0 ? iB : iB + iH;
+    sPlotStore->addRect(mp_obj_new_float(iX), mp_obj_new_float(iY), mp_obj_new_float(iW), mp_obj_new_float(std::fabs(iH)), color);
   }
   return mp_const_none;
 }

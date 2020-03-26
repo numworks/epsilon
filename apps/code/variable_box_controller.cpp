@@ -331,17 +331,18 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
   const int textLength = endOfText - text;
   assert(textLength >= 1);
   loadFunctionsAndVariables(scriptIndex, text, textLength);
-  // TODO LEA Accelerate
-  for (int i = 0; i < numberOfRows(); i++) {
-    ScriptNode * node = scriptNodeAtIndex(i);
-    const char * currentName = node->name();
-    int currentNameLength = node->nameLength();
-    if ((currentNameLength < 0 || currentNameLength != textLength) && strncmp(text, currentName, textLength) == 0) {
-      *textToInsertLength = (currentNameLength < 0 ? strlen(currentName) : currentNameLength) - textLength;
-      return currentName + textLength;
-    }
+  if (numberOfRows() == 0) {
+    return nullptr;
   }
-  return nullptr;
+  ScriptNode * node = scriptNodeAtIndex(0);
+  const char * currentName = node->name();
+  int currentNameLength = node->nameLength();
+  if (currentNameLength < 0) {
+    currentNameLength = strlen(currentName);
+  }
+  assert(currentNameLength != textLength && strncmp(text, currentName, textLength) == 0);
+  *textToInsertLength = currentNameLength - textLength;
+  return currentName + textLength;
 }
 
 int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {

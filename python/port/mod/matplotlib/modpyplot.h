@@ -4,7 +4,7 @@ mp_obj_t modpyplot___init__();
 void modpyplot_gc_collect();
 
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args);
-mp_obj_t modpyplot_axis(mp_obj_t arg);
+mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_bar(mp_obj_t x, mp_obj_t height);
 mp_obj_t modpyplot_grid(mp_obj_t b);
 mp_obj_t modpyplot_hist(mp_obj_t x);

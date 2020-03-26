@@ -352,12 +352,19 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   Expression numer, denom, units;
   splitIntoNormalForm(numer, denom, units, reductionContext);
 
-  /* Step 2: Recognize derived units
-   * The reason why 'units' is handled before 'numer' and 'denom' is that this
-   * step is likely to alter the latter Expressions.
+  // Step 2: Create a Division if relevant
+  Expression result;
+  if (!numer.isUninitialized()) {
+    result = numer;
+  }
+  if (!denom.isUninitialized()) {
+    result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
+  }
+
+  /* Step 3: Handle the units
    */
   if (!units.isUninitialized()) {
-    /* In the following:
+    /* Recognize derived units
      * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
      * - If an entry is found, simplify 'units' and add the corresponding unit or its inverse in 'unitsAccu'.
      * - Repeat those steps until no more simplification is possible.
@@ -405,21 +412,10 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
       units = Multiplication::Builder(unitsAccu, units).shallowReduce(reductionContext);
     }
-  }
 
-  // Step 3: Create a Division if relevant
-  Expression result;
-  if (!numer.isUninitialized()) {
-    result = numer;
-  }
-  if (!denom.isUninitialized()) {
-    result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
-  }
-
-  // Step 4: Turn into 'Float x units' and choose a unit multiple adequate for
-  // the numerical value
-  if (!units.isUninitialized()) {
-    /* An exhaustive exploration of all possible multiples would have
+    /* Turn into 'Float x units'.
+     * Choose a unit multiple adequate for the numerical value.
+     * An exhaustive exploration of all possible multiples would have
      * exponential complexity with respect to the number of factors. Instead,
      * we focus on one single factor. The first Unit factor is certainly the
      * most relevant.

@@ -18,6 +18,7 @@ public:
 
   int depth();
   View * view() override;
+  ViewController * topViewController();
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

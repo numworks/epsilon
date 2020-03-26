@@ -84,7 +84,6 @@ typedef struct _mp_reader_mem_t {
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
   //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
   //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
-  //TODO LEA add modules
 
   // Reset the node counts
   m_currentScriptNodesCount = 0;
@@ -110,6 +109,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     {qstr_str(MP_QSTR_chr), ScriptNode::Type::Function},
     {"class", ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_classmethod), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_cmath), ScriptNode::Type::Variable},
     //{qstr_str(MP_QSTR_compile), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_complex), ScriptNode::Type::Function},
     {"continue", ScriptNode::Type::Variable},
@@ -146,15 +146,18 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     {"in", ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_input), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_int), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_ion), ScriptNode::Type::Variable},
     {"is", ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_isinstance), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_issubclass), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_iter), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_kandinsky), ScriptNode::Type::Variable},
     {"lambda", ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_len), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_list), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_locals), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_map), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_math), ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_max), ScriptNode::Type::Function},
     //{qstr_str(MP_QSTR_memoryview), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_min), ScriptNode::Type::Function},
@@ -172,6 +175,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     {qstr_str(MP_QSTR_print), ScriptNode::Type::Function},
     //{qstr_str(MP_QSTR_property), ScriptNode::Type::Function},
     {"raise", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_random), ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_range), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_repr), ScriptNode::Type::Function},
     {"return", ScriptNode::Type::Variable},
@@ -185,9 +189,11 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     {qstr_str(MP_QSTR_str), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_sum), ScriptNode::Type::Function},
     {qstr_str(MP_QSTR_super), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_time), ScriptNode::Type::Variable},
     {"True", ScriptNode::Type::Variable},
     {"try", ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_tuple), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_turtle), ScriptNode::Type::Variable},
     {qstr_str(MP_QSTR_type), ScriptNode::Type::Function},
     //{qstr_str(MP_QSTR_vars), ScriptNode::Type::Function},
     {"while", ScriptNode::Type::Variable},

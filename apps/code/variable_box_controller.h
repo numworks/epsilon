@@ -32,7 +32,7 @@ private:
   constexpr static int k_maxScriptObjectNameSize = 100;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40
   constexpr static int k_maxScriptNodesCount = 32;
-  constexpr static int k_totalBuiltinNodesCount = 94;
+  constexpr static int k_totalBuiltinNodesCount = 101;
   enum class NodeOrigin : uint8_t {
     CurrentScript,
     Builtins,

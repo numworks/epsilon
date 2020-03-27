@@ -53,10 +53,9 @@ android {
     release {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt')
-    }
-    codesigned {
-      initWith buildTypes.release
-      signingConfig signingConfigs.environment
+      if (projectVariable('SIGNING_STORE_FILE')) {
+        signingConfig signingConfigs.environment
+      }
     }
   }
   sourceSets{
@@ -64,12 +63,13 @@ android {
       manifest.srcFile 'src/AndroidManifest.xml'
       res.srcDir BUILD_DIR + '/res'
       java.srcDir 'src'
-      jniLibs.srcDir BUILD_DIR + '/libs'
+      jniLibs.srcDir BUILD_DIR + '/libs/' + System.getenv('EPSILON_VARIANT')
       assets.srcDir '../assets'
     }
   }
   lintOptions {
     abortOnError false
+    checkReleaseBuilds false
   }
 }
 

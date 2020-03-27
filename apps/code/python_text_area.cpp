@@ -22,6 +22,7 @@ constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor AutocompleteColor = KDColorRed;
 constexpr KDColor BackgroundColor = KDColorWhite;
 constexpr KDColor HighlightColor = Palette::Select;
+constexpr KDColor DefaultColor = KDColorBlack;
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
@@ -39,7 +40,7 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind >= MP_TOKEN_DEL_EQUAL && tokenKind <= MP_TOKEN_DEL_MINUS_MORE) {
     return OperatorColor;
   }
-  return KDColorBlack;
+  return DefaultColor;
 }
 
 static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
@@ -106,6 +107,8 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     return;
   }
 
+  const char * autocompleteStart = m_autocomplete ? m_cursorLocation : nullptr;
+
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     mp_lexer_t * lex = mp_lexer_new_from_str_len(0, firstNonSpace, byteLength - (firstNonSpace - text), 0);
@@ -132,12 +135,16 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       }
       tokenLength = TokenLength(lex, tokenFrom);
       tokenEnd = tokenFrom + tokenLength;
+
+      // If the token is being autocompleted, use DefaultColor
+      KDColor color = (tokenFrom <= autocompleteStart && autocompleteStart < tokenEnd) ? DefaultColor : TokenColor(lex->tok_kind);
+
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
         UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
         tokenFrom,
         tokenLength,
-        TokenColor(lex->tok_kind),
+        color,
         BackgroundColor,
         selectionStart,
         selectionEnd,
@@ -149,6 +156,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
     tokenFrom += tokenLength;
 
+    // Even if the token is being autocompleted, use CommentColor
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
       drawStringAt(ctx, line,
@@ -167,9 +175,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   }
 
   // Redraw the autocompleted word in the right color
-  const char * autocompleteStart = m_cursorLocation;
-  assert(!m_autocomplete || autocompleteStart != text);
-  if (m_autocomplete && autocompleteStart > text && autocompleteStart < text + byteLength) {
+  if (m_autocomplete && autocompleteStart >= text && autocompleteStart < text + byteLength) {
     const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
     drawStringAt(
         ctx,

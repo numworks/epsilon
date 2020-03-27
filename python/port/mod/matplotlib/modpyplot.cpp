@@ -269,12 +269,28 @@ mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   return mp_const_none;
 }
 
-mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y) {
+/* plot(x, y) plots the curve (x, y)
+ * plot(y) plots the curve x as index array ([0,1,2...],y)
+ * */
+
+mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
-  // Input parameter validation
   mp_obj_t * xItems, * yItems;
-  size_t length = extractAndValidatePlotInput(x, y, &xItems, &yItems);
+  size_t length;
+  if (n_args == 1) {
+    mp_obj_get_array(args[0], &length, &yItems);
+
+    // Create the default xItems: [0, 1, 2,...]
+    mp_obj_t x = mp_obj_new_list(length, nullptr);
+    for (int i = 0; i < length; i++) {
+      mp_obj_list_store(x, mp_obj_new_int(i), mp_obj_new_float((float)i));
+    }
+    mp_obj_get_array(x, &length, &xItems);
+  } else {
+    assert(n_args == 2);
+    length = extractAndValidatePlotInput(args[0], args[1], &xItems, &yItems);
+  }
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<length-1; i++) {

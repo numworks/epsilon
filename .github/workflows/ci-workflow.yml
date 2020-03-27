@@ -23,7 +23,6 @@ jobs:
           submodules: true
       - run: make -j2 MODEL=n0100 epsilon.dfu
       - run: make -j2 MODEL=n0100 epsilon.onboarding.dfu
-      - run: make -j2 MODEL=n0100 epsilon.official.onboarding.dfu
       - run: make -j2 MODEL=n0100 epsilon.onboarding.update.dfu
       - run: make -j2 MODEL=n0100 epsilon.onboarding.beta.dfu
       - run: make -j2 MODEL=n0100 flasher.light.dfu
@@ -43,7 +42,6 @@ jobs:
           submodules: true
       - run: make -j2 epsilon.dfu
       - run: make -j2 epsilon.onboarding.dfu
-      - run: make -j2 epsilon.official.onboarding.dfu
       - run: make -j2 epsilon.onboarding.update.dfu
       - run: make -j2 epsilon.onboarding.beta.dfu
       - run: make -j2 flasher.light.dfu
@@ -65,7 +63,6 @@ jobs:
         with:
           submodules: true
       - run: make -j2 PLATFORM=simulator TARGET=web
-      - run: make -j2 PLATFORM=simulator TARGET=web epsilon.official.js
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-simulator-web.zip

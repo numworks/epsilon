@@ -72,14 +72,13 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
 
 Poincare::Expression parse_expression(const char * expression, Context * context, bool addParentheses) {
   Expression result = Expression::Parse(expression, context, addParentheses);
-  quiz_assert(!result.isUninitialized());
+  quiz_assert_print_if_failure(!result.isUninitialized(), expression);
   return result;
 }
 
 void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  quiz_assert_print_if_failure(!e.isUninitialized(), expression);
   e = e.simplify(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
   quiz_assert_print_if_failure(!(e.isUninitialized()), expression);
 }

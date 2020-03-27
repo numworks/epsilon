@@ -176,31 +176,48 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
-mp_obj_t modpyplot_hist(mp_obj_t x) {
-  // Create a list of bins
-  // TODO: the number of bins can be given as input
-  size_t nBins = 10;
-  // TODO: the list of bins can be given as input
-  // TODO: skip the following computation if so,
-  // `bins` must increase monotonically, when an array'
-  mp_obj_t binsEdges = mp_obj_new_list(nBins+1, nullptr);
+/* hist(x, bins)
+ * 'x' array
+ * 'bins': (default value 10)
+ *    - int (number of bins)
+ *    - sequence of bins
+ * */
+
+mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
+  assert(sPlotStore != nullptr);
 
   // Sort data to easily get the minimal and maximal value and count bin sizes
   mp_obj_t * xItems;
   size_t xLength;
-  mp_obj_get_array(x, &xLength, &xItems);
+  mp_obj_get_array(args[0], &xLength, &xItems);
   mp_obj_t xList = mp_obj_new_list(xLength, xItems);
   mp_obj_list_sort(1, &xList, (mp_map_t*)&mp_const_empty_map);
   mp_obj_list_get(xList, &xLength, &xItems);
   mp_float_t min = mp_obj_get_float(xItems[0]);
   mp_float_t max = mp_obj_get_float(xItems[xLength - 1]);
 
-  // Fill the bin edges list
-  // TODO: skip if the binEdges were given as input
-  mp_float_t binWidth = (max-min)/nBins;
-  for (int i = 0; i < nBins+1; i++) {
-    mp_obj_list_store(binsEdges, mp_obj_new_int(i), mp_obj_new_float(min+i*binWidth));
+  mp_obj_t binsEdges;
+  size_t nBins = 10;
+  // bin arg
+  if (n_args >= 2 && (mp_obj_is_type(args[1], &mp_type_tuple) || mp_obj_is_type(args[1], &mp_type_list))) {
+    binsEdges = args[1];
+  } else {
+    if (n_args >= 2) {
+      nBins = mp_obj_get_int(args[1]);
+    }
+    // Create a list of bins
+    binsEdges = mp_obj_new_list(nBins+1, nullptr);
+
+    // Fill the bin edges list
+    mp_float_t binWidth = (max-min)/nBins;
+    for (int i = 0; i < nBins+1; i++) {
+      mp_obj_list_store(binsEdges, mp_obj_new_int(i), mp_obj_new_float(min+i*binWidth));
+    }
   }
+  mp_obj_t * edgeItems;
+  size_t nEdges;
+  mp_obj_list_get(binsEdges, &nEdges, &edgeItems);
+  nBins = nEdges - 1;
 
   // Initialize bins list
   mp_obj_t bins = mp_obj_new_list(nBins, nullptr);
@@ -210,11 +227,6 @@ mp_obj_t modpyplot_hist(mp_obj_t x) {
 
   mp_obj_t * binItems;
   mp_obj_list_get(bins, &nBins, &binItems);
-
-  mp_obj_t * edgeItems;
-  size_t nEdges;
-  mp_obj_list_get(binsEdges, &nEdges, &edgeItems);
-  assert(nEdges == nBins + 1);
 
   // Fill bins list by linearly scanning the x and incrementing the bin count
   // Linearity is enabled thanks to sorting

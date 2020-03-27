@@ -209,8 +209,7 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position,
 bool PythonTextArea::handleEvent(Ion::Events::Event event) {
   if (m_contentView.isAutocompleting()) {
     // Handle event with autocompletion
-    if (event == Ion::Events::Toolbox || event == Ion::Events::Var) {
-    } else if (event == Ion::Events::Right
+    if (event == Ion::Events::Right
         || event == Ion::Events::ShiftRight
         || event == Ion::Events::OK)
     {
@@ -221,12 +220,26 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
         scrollToCursor();
         return true;
       }
+    } else if (event == Ion::Events::Toolbox
+        || event == Ion::Events::Var
+        || event == Ion::Events::Shift
+        || event == Ion::Events::Alpha
+        || event == Ion::Events::OnOff)
+    {
     } else {
       removeAutocompletion();
       m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
+      if (event == Ion::Events::Back) {
+        // Do not process the event more
+        return true;
+      }
     }
   }
-  return TextArea::handleEvent(event);
+  bool result = TextArea::handleEvent(event);
+  if (event == Ion::Events::Backspace) {
+    addAutocompletion();
+  }
+  return result;
 }
 
 bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {

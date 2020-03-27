@@ -57,6 +57,16 @@ T PlotStore::ListIterator<T>::operator*() {
   return T(m_tuples[m_tupleIndex]);
 };
 
+void checkFloatType(mp_obj_t * elements, size_t nbOfElements) {
+  for (int i = 0; i < nbOfElements; i++) {
+    // TODO: we don't take advantage of the fact that we extracted the value at the sametime... Maybe change the way things are done, build the c objects in addItem instead of allocating them on the python heap? Or use float array in python?
+    mp_float_t value;
+    if (!mp_obj_get_float_maybe(elements[i], &value)) {
+      mp_raise_TypeError("argument should be a number");
+    }
+  }
+}
+
 // Dot
 
 template class PlotStore::ListIterator<PlotStore::Dot>;
@@ -72,6 +82,7 @@ PlotStore::Dot::Dot(mp_obj_t tuple) {
 void PlotStore::addDot(mp_obj_t x, mp_obj_t y, KDColor c) {
   mp_obj_t color = mp_obj_new_int(c);
   mp_obj_t items[3] = {x, y, color};
+  checkFloatType(items, 2);
   mp_obj_t tuple = mp_obj_new_tuple(3, items);
   mp_obj_list_append(m_dots, tuple);
 }
@@ -94,6 +105,7 @@ PlotStore::Segment::Segment(mp_obj_t tuple) {
 void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, bool arrowEdge) {
   mp_obj_t color = mp_obj_new_int(c);
   mp_obj_t items[6] = {xStart, yStart, xEnd, yEnd, color, arrowEdge ? mp_const_true : mp_const_false};
+  checkFloatType(items, 4);
   mp_obj_t tuple = mp_obj_new_tuple(6, items);
   mp_obj_list_append(m_segments, tuple);
 }
@@ -115,6 +127,7 @@ PlotStore::Rect::Rect(mp_obj_t tuple) {
 void PlotStore::addRect(mp_obj_t x, mp_obj_t y, mp_obj_t width, mp_obj_t height, KDColor c) {
   mp_obj_t color = mp_obj_new_int(c);
   mp_obj_t items[5] = {x, y, width, height, color};
+  checkFloatType(items, 4);
   mp_obj_t tuple = mp_obj_new_tuple(5, items);
   mp_obj_list_append(m_rects, tuple);
 }
@@ -133,6 +146,10 @@ PlotStore::Label::Label(mp_obj_t tuple) {
 
 void PlotStore::addLabel(mp_obj_t x, mp_obj_t y, mp_obj_t string) {
   mp_obj_t items[3] = {x, y, string};
+  checkFloatType(items, 2);
+  if (!mp_obj_is_str(string)) {
+    mp_raise_TypeError("argument should be a string");
+  }
   mp_obj_t tuple = mp_obj_new_tuple(3, items);
   mp_obj_list_append(m_labels, tuple);
 }

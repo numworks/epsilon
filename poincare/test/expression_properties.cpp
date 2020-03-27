@@ -328,7 +328,6 @@ void assert_reduced_expression_has_polynomial_coefficient(const char * expressio
   int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, &globalContext, complexFormat, Radian, symbolicComputation);
   for (int i = 0; i <= d; i++) {
     Expression f = parse_expression(coefficients[i], &globalContext, false);
-    quiz_assert(!f.isUninitialized());
     coefficientBuffer[i] = coefficientBuffer[i].reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, SystemForAnalysis, symbolicComputation));
     f = f.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, SystemForAnalysis, symbolicComputation));
     quiz_assert_print_if_failure(coefficientBuffer[i].isIdenticalTo(f), expression);

@@ -1,3 +1,5 @@
+#define KEYBOARD #keyboard
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -65,7 +67,7 @@ a.action svg {
     max-height: 92.0vh;
     max-width: 100%;
     display: block; }
-  .calculator .screen {
+  .calculator #canvas {
     position: absolute;
     top: 8.5%;
     left: 16.25%;
@@ -84,84 +86,84 @@ a.action svg {
     display: inline-block;
     margin-right: 10px;
   }
-  .calculator .keyboard {
+  KEYBOARD {
     position: absolute;
     top: 38.5%;
     left: 10%;
     width: 81%;
     bottom: 5%; }
-    .calculator .keyboard span {
+    KEYBOARD span {
       cursor: pointer;
       border-radius: 40%;
       display: block;
       float: left; }
-    .calculator .keyboard span:hover {
+    KEYBOARD span:hover {
       background-color: rgba(0, 0, 0, 0.1); }
-    .calculator .keyboard span:active {
+    KEYBOARD span:active {
       background-color: rgba(0, 0, 0, 0.2); }
-    .calculator .keyboard .nav {
+    KEYBOARD .nav {
       position: absolute;
       top: 0;
       height: 27%;
       width: 100%; }
-      .calculator .keyboard .nav span {
+      KEYBOARD .nav span {
         position: absolute; }
-      .calculator .keyboard .nav .left {
+      KEYBOARD .nav .left {
         top: 36%;
         left: 2%;
         width: 15%;
         height: 28%; }
-      .calculator .keyboard .nav .right {
+      KEYBOARD .nav .right {
         top: 36%;
         left: 17%;
         width: 15%;
         height: 28%; }
-      .calculator .keyboard .nav .top {
+      KEYBOARD .nav .top {
         top: 7%;
         left: 12%;
         width: 10%;
         height: 40%; }
-      .calculator .keyboard .nav .bottom {
+      KEYBOARD .nav .bottom {
         top: 53%;
         left: 12%;
         width: 10%;
         height: 40%; }
-      .calculator .keyboard .nav .home {
+      KEYBOARD .nav .home {
         top: 15%;
         left: 41%;
         width: 16%;
         height: 33%; }
-      .calculator .keyboard .nav .power {
+      KEYBOARD .nav .power {
         top: 54%;
         left: 42%;
         width: 16%;
         height: 33%; }
-      .calculator .keyboard .nav .ok {
+      KEYBOARD .nav .ok {
         top: 31%;
         left: 67%;
         width: 13%;
         height: 38%; }
-      .calculator .keyboard .nav .back {
+      KEYBOARD .nav .back {
         top: 31%;
         left: 84%;
         width: 13%;
         height: 38%; }
-    .calculator .keyboard .functions {
+    KEYBOARD .functions {
       position: absolute;
       top: 26.75%;
       left: 0.5%;
       width: 98%; }
-      .calculator .keyboard .functions span {
+      KEYBOARD .functions span {
         margin: 1.7% 1%;
         width: 14.65%;
         height: 0;
         padding-top: 10%; }
-    .calculator .keyboard .digits {
+    KEYBOARD .digits {
       position: absolute;
       top: 56.5%;
       left: 0.5%;
       width: 98%; }
-      .calculator .keyboard .digits span {
+      KEYBOARD .digits span {
         margin: 1.8% 2%;
         width: 16%;
         height: 0;
@@ -173,61 +175,8 @@ a.action svg {
       <div class="col-calculator">
         <div class="calculator">
           <img src="background.jpg" alt="NumWorks Calculator">
-          <canvas id="screen" class="screen" oncontextmenu="event.preventDefault()"></canvas>
-          <div class="keyboard">
-            <div class="nav">
-              <span class="left" data-key="0"></span>
-              <span class="top" data-key="1"></span>
-              <span class="bottom" data-key="2"></span>
-              <span class="right" data-key="3"></span>
-              <span class="ok" data-key="4"></span>
-              <span class="back" data-key="5"></span>
-              <span class="home" data-key="6"></span>
-              <span class="power" data-key="7"></span>
-            </div>
-            <div class="functions">
-              <span data-key="12"></span>
-              <span data-key="13"></span>
-              <span data-key="14"></span>
-              <span data-key="15"></span>
-              <span data-key="16"></span>
-              <span data-key="17"></span>
-              <span data-key="18"></span>
-              <span data-key="19"></span>
-              <span data-key="20"></span>
-              <span data-key="21"></span>
-              <span data-key="22"></span>
-              <span data-key="23"></span>
-              <span data-key="24"></span>
-              <span data-key="25"></span>
-              <span data-key="26"></span>
-              <span data-key="27"></span>
-              <span data-key="28"></span>
-              <span data-key="29"></span>
-            </div>
-            <div class="digits">
-              <span data-key="30"></span>
-              <span data-key="31"></span>
-              <span data-key="32"></span>
-              <span data-key="33"></span>
-              <span data-key="34"></span>
-              <span data-key="36"></span>
-              <span data-key="37"></span>
-              <span data-key="38"></span>
-              <span data-key="39"></span>
-              <span data-key="40"></span>
-              <span data-key="42"></span>
-              <span data-key="43"></span>
-              <span data-key="44"></span>
-              <span data-key="45"></span>
-              <span data-key="46"></span>
-              <span data-key="48"></span>
-              <span data-key="49"></span>
-              <span data-key="50"></span>
-              <span data-key="51"></span>
-              <span data-key="52"></span>
-            </div>
-          </div>
+          <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+#include "simulator-keyboard.html"
           <div class="actions">
             <a id="action-fullscreen" class="action">
               <svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g fill="#434343"><path d="M5.075,6.95 L6.918,5.088 L3.938,2.062 L5.955,0.018 L0.052,0.018 L0.052,6.004 L2.098,3.928 L5.075,6.95 Z" class="si-glyph-fill"></path><path d="M16.0034788,9.916 L13.832,12.013 L10.799,8.96 L8.918,10.841 L11.957,13.897 L9.961,15.9813842 L16.0034788,15.9813842 L16.0034788,9.916 Z"></path></g></g></svg>
@@ -239,46 +188,14 @@ a.action svg {
         </div>
       </div>
       <div class="col-fullscreen">
-        <canvas class="screen-magnified" width="320" height="240"></canvas>
+        <canvas id="secondary-canvas" width="320" height="240"></canvas>
       </div>
     </div>
     <script src="epsilon.js"></script>
     <script>
-var mainCanvas = document.querySelector(".calculator .screen");
-var secondaryCanvasContext = document.querySelector(".screen-magnified").getContext("2d");
-var Module = {
-  arguments: ["--language", window.navigator.language.split('-')[0]],
-  canvas: mainCanvas,
-  onDisplayRefresh: function() {
-    secondaryCanvasContext.drawImage(mainCanvas, 0, 0);
-  }
-};
-
-Epsilon(Module);
+#include "simulator-setup.js"
     </script>
     <script>
-function screenshot() {
-  <!--toDataURL needs the canvas to be refreshed-->
-  Module._IonDisplayForceRefresh();
-
-  var canvas = document.querySelector('.screen');
-  var link = document.createElement('a');
-  link.download = 'screenshot.png';
-  link.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-  link.click();
-}
-
-var spans = document.querySelectorAll(".calculator .keyboard span");
-for (var i=0; i< spans.length; i++) {
-  var span = spans[i];
-  span.addEventListener("mousedown", function(e) {
-    Module._IonSimulatorKeyboardKeyDown(this.getAttribute("data-key"));
-  });
-  span.addEventListener("mouseup", function(e) {
-    Module._IonSimulatorKeyboardKeyUp(this.getAttribute("data-key"));
-  });
-}
-
 document.getElementById("action-fullscreen").addEventListener("click", function(e){
   if (document.body.className == "fullscreen") {
     document.body.className = "";

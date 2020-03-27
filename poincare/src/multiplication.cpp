@@ -1032,20 +1032,7 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
       Expression fd = factor.denominator(reductionContext);
       if (fd.isUninitialized()) {
         if (factor.childAtIndex(0).type() == ExpressionNode::Type::Unit) {
-          /* A Unit should only have integer exponents, otherwise
-           * simplification returns Undefined. That will be handled later in
-           * Unit::shallowBeautify: since an Expression is beautified from
-           * children to parent, the children of the current Multiplication are
-           * not beautified yet and the exponent of a Unit is not guaranted at
-           * this point to be an integer. Until then, any Unit with non-integer
-           * exponent, is flushed into the numerator instead of units.
-           */
-          Expression exponent = factor.childAtIndex(1);
-          if (exponent.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(exponent).isInteger()) {
-            factorsUnit = factor;
-          } else {
-            factorsNumerator = factor;
-          }
+          factorsUnit = factor;
         } else {
           factorsNumerator = factor;
         }

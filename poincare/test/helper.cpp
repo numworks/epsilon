@@ -79,7 +79,7 @@ Poincare::Expression parse_expression(const char * expression, Context * context
 void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  e = e.simplify(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
+  e = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
   quiz_assert_print_if_failure(!(e.isUninitialized()), expression);
 }
 

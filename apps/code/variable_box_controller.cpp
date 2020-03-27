@@ -17,6 +17,16 @@ extern "C" {
 namespace Code {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
+  // Got these in python/py/src/compile.cpp compiled file
+constexpr static uint PN_import_name = 14; // import math // import math as m // import math, cmath // import math as m, cmath as cm
+constexpr static uint PN_import_from = 15; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage
+constexpr static uint PN_import_stmt = 92; // ?
+constexpr static uint PN_import_from_2 = 93; // ?
+constexpr static uint PN_import_from_2b = 94; // "from .foo import"
+constexpr static uint PN_import_from_3 = 95; // ?
+constexpr static uint PN_import_as_names_paren = 96; // ?
+constexpr static uint PN_import_as_name = 99; //  sin as stew
+constexpr static uint PN_import_as_names = 102; // ... import sin as stew, cos as cabbage
 
 //TODO LEA use this
 static bool shouldAddObject(const char * name, int maxLength) {
@@ -80,6 +90,33 @@ typedef struct _mp_reader_mem_t {
     const byte *end;
 } mp_reader_mem_t;
 /* TODO end*/
+
+
+void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode) {
+
+  uint structKind = (uint) MP_PARSE_NODE_STRUCT_KIND(parseNode);
+  if (structKind != PN_import_name
+      && structKind != PN_import_from
+      && structKind != PN_import_as_names
+      && structKind != PN_import_as_name)
+  {
+    return;
+  }
+
+  // TODO from ScriptStore
+  size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(parseNode);
+  for (int i = 0; i < childNodesCount; i++) {
+    mp_parse_node_t child = parseNode->nodes[i];
+    if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
+      uintptr_t arg = MP_PARSE_NODE_LEAF_ARG(child);
+      const char * id = qstr_str(arg);
+      // TODO LEA check if not already present
+      addNode(ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
+    } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
+      addNodesFromImportMaybe((mp_parse_node_struct_t *)child);
+    }
+  }
+}
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
   //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
@@ -219,7 +256,47 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   }
 
   // Load the imported variables and functions
-  //TODO LEA
+// TODO TODO TODO LEA
+
+#if 1
+  if (scriptIndex < 0) {
+    //TODO LEA load imported in console
+  } else {
+    nlr_buf_t nlr;
+    if (nlr_push(&nlr) == 0) {
+      const char * parseStart = m_scriptStore->scriptAtIndex(scriptIndex).scriptContent();
+      while (*parseStart == '\n' && *parseStart != 0) {
+        parseStart++;
+      }
+      //TODO LEA also look for ";" ? But what if in string?
+      const char * parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
+
+      while (parseStart != parseEnd) {
+        mp_lexer_t *lex = mp_lexer_new_from_str_len(0, parseStart, parseEnd - parseStart, 0);
+        mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
+        mp_parse_node_t pn = parseTree.root;
+
+        if (MP_PARSE_NODE_IS_STRUCT(pn)) {
+          addNodesFromImportMaybe((mp_parse_node_struct_t *) pn);
+        }
+
+        mp_parse_tree_clear(&parseTree);
+
+        if (*parseEnd == 0) {
+          nlr_pop();
+          goto importCurrent;
+        }
+        parseStart = parseEnd + 1; // Go after the \n
+        while (*parseStart == '\n' && *parseStart != 0) {
+          parseStart++;
+        }
+        parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
+      }
+    }
+  }
+importCurrent:
+
+#endif
 
 #if 1
   if (scriptIndex < 0) {
@@ -286,12 +363,12 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
             /* This is a trick to get the token position in the text. The -2 was
              * found from stepping in the code and trying. */
             // TODO LEA FIXME
-            tokenInText -= lex->chr1 == -1 ? (lex->chr2 == -1 ? 0 : 1): 2;
-            if (strncmp(tokenInText, name, nameLength) != 0) {
-              tokenInText--;
-            }
-            if (strncmp(tokenInText, name, nameLength) != 0) {
-              tokenInText--;
+            for (int i = 0; i < 3; i++) {
+              if (strncmp(tokenInText, name, nameLength) != 0) {
+                tokenInText--;
+              } else {
+                break;
+              }
             }
             assert(strncmp(tokenInText, name, nameLength) == 0);
             addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);

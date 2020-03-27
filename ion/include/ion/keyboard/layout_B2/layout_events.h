@@ -21,7 +21,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T("0"), T("."), T("ᴇ"), TL(), TL(), U(),
 // Shift
   TL(), TL(), TL(), TL(), U(), U(),
-  U(), U(), U(), U(), U(), U(),
+  TL(), U(), U(), U(), U(), U(),
   U(), U(), TL(), TL(), TL(), TL(),
   T("["), T("]"), T("{"), T("}"), T("_"), T("→"),
   T("asin(\x11)"), T("acos(\x11)"), T("atan(\x11)"), T("="), T("<"), T(">"),
@@ -66,7 +66,7 @@ static constexpr const char * s_nameForEvent[255] = {
   "Zero", "Dot", "EE", "Ans", "EXE", nullptr,
   //Shift,
   "ShiftLeft", "ShiftUp", "ShiftDown", "ShiftRight", nullptr, nullptr,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  "ShiftHome", nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, "AlphaLock", "Cut", "Copy", "Paste", "Clear",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Underscore", "Sto",
   "Arcsine", "Arccosine", "Arctangent", "Equal", "Lower", "Greater",

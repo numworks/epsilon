@@ -218,6 +218,10 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     switchTo(appSnapshotAtIndex(0));
     return true;
   }
+  if (event == Ion::Events::ShiftHome) {
+    switchTo(appSnapshotAtIndex(1));
+    return true;
+  }
   if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;

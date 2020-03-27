@@ -10,6 +10,9 @@ SFLAGS += -Iion/src/simulator/web/include
 # Only render the screen, not the whole calculator which will be drawn in HTML
 SFLAGS += -DEPSILON_SDL_SCREEN_ONLY=1
 
+# Enable to set environment variables for a module
+LDFLAGS += --pre-js ion/src/simulator/web/preamble_env.js
+
 ion_src += $(addprefix ion/src/simulator/web/, \
   callback.cpp \
   helpers.cpp \

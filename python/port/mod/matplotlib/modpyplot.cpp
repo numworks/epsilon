@@ -12,16 +12,42 @@ static int paletteIndex = 0;
 
 // Private helper
 
+// Method to populate items with a scalar or an array argument
 
-static size_t extractAndValidatePlotInput(mp_obj_t x, mp_obj_t y, mp_obj_t ** xItems, mp_obj_t ** yItems) {
-  // Input parameter validation
-  size_t xLength, yLength;
-  mp_obj_get_array(x, &xLength, xItems);
-  mp_obj_get_array(y, &yLength, yItems);
+static size_t extractArgument(mp_obj_t arg, mp_obj_t ** items) {
+  size_t itemLength;
+  if (mp_obj_is_type(arg, &mp_type_tuple) || mp_obj_is_type(arg, &mp_type_list)) {
+    mp_obj_get_array(arg, &itemLength, items);
+  } else {
+    itemLength = 1;
+    *items = m_new(mp_obj_t, 1);
+    (*items)[0] = arg;
+  }
+  return itemLength;
+}
+
+// Extract two scalar or array arguments and check for their strickly equal dimension
+
+static size_t extractArgumentsAndCheckEqualSize(mp_obj_t x, mp_obj_t y, mp_obj_t ** xItems, mp_obj_t ** yItems) {
+  size_t xLength = extractArgument(x, xItems);
+  size_t yLength = extractArgument(y, yItems);
   if (xLength != yLength) {
-    mp_raise_ValueError("x and y must have same dimension");
+    mp_raise_ValueError("x and y must be the same size");
   }
   return xLength;
+}
+
+/* Extract one scalar or array arguments and check that it is either:
+ * - of size 1
+ * - of the required size
+*/
+
+size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength, mp_obj_t ** items) {
+  size_t itemLength = extractArgument(arg, items);
+  if (itemLength > 1 && requiredlength > 1 && itemLength != requiredlength) {
+    mp_raise_ValueError("shape mismatch");
+  }
+  return itemLength;
 }
 
 // Internal functions
@@ -51,7 +77,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
-  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0])+mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1])+mp_obj_get_float(args[3])), color, true);
+  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0])+mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1])+mp_obj_get_float(args[3])), color, true); // TODO: use float_binary_op
 
   return mp_const_none;
 }
@@ -104,7 +130,7 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
 }
 
 /* bar(x, height, width, bottom)
- * 'height', 'width' and 'bottom' can either be a scalar or an array/tuple of
+ * 'x', 'height', 'width' and 'bottom' can either be a scalar or an array/tuple of
  * scalar.
  * 'width' default value is 0.8
  * 'bottom' default value is None
@@ -112,51 +138,43 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
 
 // TODO: accept keyword args?
 
-void extract_argument(mp_obj_t arg, size_t length, mp_obj_t ** items, float * item) {
-  if (mp_obj_is_type(arg, &mp_type_tuple) || mp_obj_is_type(arg, &mp_type_list)) {
-    size_t itemLength;
-    mp_obj_get_array(arg, &itemLength, items);
-    if (itemLength != length) {
-      mp_raise_ValueError("Shape mismatch");
-    }
-  } else {
-    *item = mp_obj_get_float(arg);
-  }
-}
-
 mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
   mp_obj_t * xItems;
-  mp_obj_t * hItems = nullptr;
-  float h;
-  mp_obj_t * wItems = nullptr;
-  float w = 0.8f;
-  mp_obj_t * bItems = nullptr;
-  float b = 0.0f;
+  mp_obj_t * hItems;
+  mp_obj_t * wItems;
+  mp_obj_t * bItems;
 
   // x arg
-  size_t xLength;
-  mp_obj_get_array(args[0], &xLength, &xItems);
+  size_t xLength = extractArgument(args[0], &xItems);
 
   // height arg
-  extract_argument(args[1], xLength, &hItems, &h);
+  size_t hLength = extractArgumentAndValidateSize(args[1], xLength, &hItems);
 
   // width arg
+  size_t wLength = 1;
   if (n_args >= 3) {
-    extract_argument(args[2], xLength, &wItems, &w);
+    wLength = extractArgumentAndValidateSize(args[2], xLength, &wItems);
+  } else {
+    wItems = m_new(mp_obj_t, 1);
+    wItems[0] = mp_obj_new_float(0.8f);
   }
 
   // bottom arg
+  size_t bLength = 1;
   if (n_args >= 4) {
-    extract_argument(args[3], xLength, &bItems, &b);
+    bLength = extractArgumentAndValidateSize(args[3], xLength, &bItems);
+  } else {
+    bItems = m_new(mp_obj_t, 1);
+    bItems[0] = mp_obj_new_float(0.0f);
   }
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<xLength; i++) {
-    mp_float_t iH = hItems ? mp_obj_get_float(hItems[i]) : h;
-    mp_float_t iW = wItems ? mp_obj_get_float(wItems[i]) : w;
-    mp_float_t iB = bItems ? mp_obj_get_float(bItems[i]) : b;
+    mp_float_t iH = mp_obj_get_float(hItems[hLength > 1 ? i : 0]);
+    mp_float_t iW = mp_obj_get_float(wItems[wLength > 1 ? i : 0]);
+    mp_float_t iB = mp_obj_get_float(bItems[bLength > 1 ? i : 0]);
     mp_float_t iX = mp_obj_get_float(xItems[i])-iW/2.0;
     mp_float_t iY = iH < 0.0 ? iB : iB + iH;
     sPlotStore->addRect(mp_obj_new_float(iX), mp_obj_new_float(iY), mp_obj_new_float(iW), mp_obj_new_float(std::fabs(iH)), color);
@@ -188,45 +206,40 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
 
   // Sort data to easily get the minimal and maximal value and count bin sizes
   mp_obj_t * xItems;
-  size_t xLength;
-  mp_obj_get_array(args[0], &xLength, &xItems);
+  size_t xLength = extractArgument(args[0], &xItems);
   mp_obj_t xList = mp_obj_new_list(xLength, xItems);
   mp_obj_list_sort(1, &xList, (mp_map_t*)&mp_const_empty_map);
   mp_obj_list_get(xList, &xLength, &xItems);
   mp_float_t min = mp_obj_get_float(xItems[0]);
   mp_float_t max = mp_obj_get_float(xItems[xLength - 1]);
 
-  mp_obj_t binsEdges;
-  size_t nBins = 10;
+  mp_obj_t * edgeItems;
+  size_t nBins;
   // bin arg
   if (n_args >= 2 && (mp_obj_is_type(args[1], &mp_type_tuple) || mp_obj_is_type(args[1], &mp_type_list))) {
-    binsEdges = args[1];
+    size_t nEdges;
+    mp_obj_get_array(args[1], &nEdges, &edgeItems);
+    nBins = nEdges -1;
   } else {
+    nBins = 10;
     if (n_args >= 2) {
       nBins = mp_obj_get_int(args[1]);
     }
-    // Create a list of bins
-    binsEdges = mp_obj_new_list(nBins+1, nullptr);
+    // Create a array of bins
+    edgeItems = m_new(mp_obj_t, nBins + 1);
 
     // Fill the bin edges list
     mp_float_t binWidth = (max-min)/nBins;
     for (int i = 0; i < nBins+1; i++) {
-      mp_obj_list_store(binsEdges, mp_obj_new_int(i), mp_obj_new_float(min+i*binWidth));
+      edgeItems[i] = mp_obj_new_float(min+i*binWidth);
     }
   }
-  mp_obj_t * edgeItems;
-  size_t nEdges;
-  mp_obj_list_get(binsEdges, &nEdges, &edgeItems);
-  nBins = nEdges - 1;
 
   // Initialize bins list
-  mp_obj_t bins = mp_obj_new_list(nBins, nullptr);
+  mp_obj_t * binItems = m_new(mp_obj_t, nBins);
   for (size_t i=0; i<nBins; i++) {
-    mp_obj_list_store(bins, mp_obj_new_int(i), mp_obj_new_int(0));
+    binItems[i] = mp_obj_new_int(0);
   }
-
-  mp_obj_t * binItems;
-  mp_obj_list_get(bins, &nBins, &binItems);
 
   // Fill bins list by linearly scanning the x and incrementing the bin count
   // Linearity is enabled thanks to sorting
@@ -237,7 +250,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
     mp_float_t upperBound = mp_obj_get_float(edgeItems[binIndex+1]);
     while (mp_obj_get_float(xItems[xIndex]) < upperBound || (binIndex == nBins - 1 && mp_obj_get_float(xItems[xIndex]) == upperBound)) {
       // Increment the bin count
-      binItems[binIndex] = mp_obj_new_int(mp_obj_get_int(binItems[binIndex]) + 1);
+      binItems[binIndex] = mp_obj_new_int(mp_obj_get_int(binItems[binIndex]) + 1); // TODO: better way?
       xIndex++;
       if (xIndex == xLength) {
         break;
@@ -254,12 +267,16 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
+/* scatter(x, y)
+ * - x, y: list
+ * - x, y: scalar
+ * */
+
 mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   assert(sPlotStore != nullptr);
 
-  // Input parameter validation
   mp_obj_t * xItems, * yItems;
-  size_t length = extractAndValidatePlotInput(x, y, &xItems, &yItems);
+  size_t length = extractArgumentsAndCheckEqualSize(x, y, &xItems, &yItems);
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<length; i++) {
@@ -279,17 +296,16 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
   mp_obj_t * xItems, * yItems;
   size_t length;
   if (n_args == 1) {
-    mp_obj_get_array(args[0], &length, &yItems);
+    length = extractArgument(args[0], &yItems);
 
     // Create the default xItems: [0, 1, 2,...]
-    mp_obj_t x = mp_obj_new_list(length, nullptr);
+    xItems = m_new(mp_obj_t, length);
     for (int i = 0; i < length; i++) {
-      mp_obj_list_store(x, mp_obj_new_int(i), mp_obj_new_float((float)i));
+      xItems[i] = mp_obj_new_float((float)i);
     }
-    mp_obj_get_array(x, &length, &xItems);
   } else {
     assert(n_args == 2);
-    length = extractAndValidatePlotInput(args[0], args[1], &xItems, &yItems);
+    length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
   }
 
   KDColor color = Palette::nextDataColor(&paletteIndex);

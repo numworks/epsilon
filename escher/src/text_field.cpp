@@ -130,8 +130,8 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   memmove(location + textLength, location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
   // Caution! One byte will be overridden by the null-terminating char of strlcpy
-  size_t copySize = std::min(textLength, (s_draftTextBuffer + m_draftTextBufferSize) - location);
-  char * overridenByteLocation = location + copySize;
+  size_t copySize = std::min(textLength + 1, (s_draftTextBuffer + m_draftTextBufferSize) - location);
+  char * overridenByteLocation = location + copySize - 1;
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);
   *overridenByteLocation = overridenByte;

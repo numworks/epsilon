@@ -8,7 +8,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args);
-mp_obj_t modpyplot_hist(mp_obj_t x);
+mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args);
 mp_obj_t modpyplot_plot(mp_obj_t x, mp_obj_t y);
 mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y);
 mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s);

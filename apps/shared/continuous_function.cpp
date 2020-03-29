@@ -350,7 +350,9 @@ Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double e
    * the derivative table. */
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template Coordinate2D<float> ContinuousFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;
+#endif
 template Coordinate2D<double> ContinuousFunction::templatedApproximateAtParameter<double>(double, Poincare::Context *) const;
 
 }

@@ -8,7 +8,11 @@
 
 namespace Probability {
 
+#if POINCARE_FLOAT_SUPPORT
 class ParametersController : public Shared::FloatParameterController<float> {
+#else
+class ParametersController : public Shared::FloatParameterController<double> {
+#endif
 public:
   ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;
@@ -24,8 +28,13 @@ private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   void buttonAction() override;
+#if POINCARE_FLOAT_SUPPORT
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
+#else
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
+#endif
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   class ContentView : public View {
   public:

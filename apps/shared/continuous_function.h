@@ -42,9 +42,11 @@ public:
   Poincare::Coordinate2D<double> evaluate2DAtParameter(double t, Poincare::Context * context) const {
     return templatedApproximateAtParameter(t, context);
   }
+#if POINCARE_FLOAT_SUPPORT
   Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const override {
     return privateEvaluateXYAtParameter<float>(t, context);
   }
+#endif
   Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const override {
     return privateEvaluateXYAtParameter<double>(t, context);
   }

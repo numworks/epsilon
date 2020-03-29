@@ -9,7 +9,11 @@
 
 namespace Graph {
 
+#if POINCARE_FLOAT_SUPPORT
 class DomainParameterController : public Shared::FloatParameterController<float> {
+#else
+class DomainParameterController : public Shared::FloatParameterController<double> {
+#endif
 public:
   DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
 
@@ -27,8 +31,13 @@ private:
   int reusableParameterCellCount(int type) override;
   HighlightCell * reusableParameterCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
+#if POINCARE_FLOAT_SUPPORT
   bool setParameterAtIndex(int parameterIndex, float f) override;
   float parameterAtIndex(int index) override;
+#else
+  bool setParameterAtIndex(int parameterIndex, double f) override;
+  double parameterAtIndex(int index) override;
+#endif
   void buttonAction() override;
   InfinityTolerance infinityAllowanceForRow(int row) const override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;

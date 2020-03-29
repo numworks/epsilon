@@ -28,12 +28,14 @@ public:
   Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
 
   // Approximation
+#if POINCARE_FLOAT_SUPPORT
   virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<float>(
         this, context, complexFormat, angleUnit, compute<float>,
         computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>,
         computeOnMatrices<float>);
   }
+#endif
   virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<double>(
         this, context, complexFormat, angleUnit, compute<double>,

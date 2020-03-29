@@ -137,11 +137,19 @@ int ParametersController::reusableParameterCellCount(int type) {
   return m_distribution->numberOfParameter();
 }
 
+#if POINCARE_FLOAT_SUPPORT
 float ParametersController::parameterAtIndex(int index) {
+#else
+double ParametersController::parameterAtIndex(int index) {
+#endif
   return m_distribution->parameterValueAtIndex(index);
 }
 
+#if POINCARE_FLOAT_SUPPORT
 bool ParametersController::setParameterAtIndex(int parameterIndex, float f) {
+#else
+bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
+#endif
   if (!m_distribution->authorizedValueAtIndex(f, parameterIndex)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;

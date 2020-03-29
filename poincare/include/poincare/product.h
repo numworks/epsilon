@@ -24,9 +24,11 @@ private:
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
     return templatedApproximateWithNextTerm<double>(a, b, complexFormat);
   }
+#if POINCARE_FLOAT_SUPPORT
   Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const override {
     return templatedApproximateWithNextTerm<float>(a, b, complexFormat);
   }
+#endif
   template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const;
 };
 

@@ -49,10 +49,14 @@ Float<T> Float<T>::Builder(T value) {
   return static_cast<Float &>(h);
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template class FloatNode<float>;
+#endif
 template class FloatNode<double>;
 
+#if POINCARE_FLOAT_SUPPORT
 template Float<float> Float<float>::Builder(float value);
+#endif
 template Float<double> Float<double>::Builder(double value);
 
 }

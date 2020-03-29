@@ -59,13 +59,22 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
   }
 
   // Approximate e to quickly compare it to cheat table entries
+#if POINCARE_FLOAT_SUPPORT
   float eValue = e.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
+#else
+  double eValue = e.node()->approximate(double(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
+#endif
   if (std::isnan(eValue) || std::isinf(eValue)) {
     return Expression();
   }
   for (int i = 0; i < k_numberOfEntries; i++) {
+#if POINCARE_FLOAT_SUPPORT
     float inputValue = floatForTypeAtIndex(inputType, i);
     if (std::isnan(inputValue) || std::fabs(inputValue - eValue) > Expression::Epsilon<float>()) {
+#else
+    double inputValue = floatForTypeAtIndex(inputType, i);
+    if (std::isnan(inputValue) || std::fabs(inputValue - eValue) > Expression::Epsilon<double>()) {
+#endif
       continue;
     }
     /* e's approximation matches a table entry, check that both expressions are

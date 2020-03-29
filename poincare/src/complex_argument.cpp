@@ -51,13 +51,22 @@ Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reduc
   }
   bool real = c.isReal(reductionContext.context());
   if (real) {
+#if POINCARE_FLOAT_SUPPORT
     float app = c.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
     if (!std::isnan(app) && app >= Expression::Epsilon<float>()) {
+#else
+    double app = c.node()->approximate(double(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
+    if (!std::isnan(app) && app >= Expression::Epsilon<double>()) {
+#endif
       // arg(x) = 0 if x > 0
       Expression result = Rational::Builder(0);
       replaceWithInPlace(result);
       return result;
+#if POINCARE_FLOAT_SUPPORT
     } else if (!std::isnan(app) && app <= -Expression::Epsilon<float>()) {
+#else
+    } else if (!std::isnan(app) && app <= -Expression::Epsilon<double>()) {
+#endif
       // arg(x) = Pi if x < 0
       Expression result = Constant::Builder(UCodePointGreekSmallLetterPi);
       replaceWithInPlace(result);

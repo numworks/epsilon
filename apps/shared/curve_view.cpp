@@ -533,7 +533,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     }
     previousX = x;
     previousY = y;
+#if POINCARE_FLOAT_SUPPORT
     Coordinate2D<float> xy = xyEvaluation(t, model, context);
+#else
+    Coordinate2D<double> xy = xyEvaluation(t, model, context);
+#endif
     x = xy.x1();
     y = xy.x2();
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
@@ -623,7 +627,11 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForParameter xy
   }
   // Middle point
   float ct = (t + s)/2.0f;
+#if POINCARE_FLOAT_SUPPORT
   Coordinate2D<float> cxy = xyEvaluation(ct, model, context);
+#else
+  Coordinate2D<double> cxy = xyEvaluation(ct, model, context);
+#endif
   float cx = cxy.x1();
   float cy = cxy.x2();
   if ((drawStraightLinesEarly || maxNumberOfRecursion == 0) && isRightDotValid && isLeftDotValid &&

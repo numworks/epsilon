@@ -37,7 +37,9 @@ class SequenceContext : public Poincare::ContextWithParent {
 public:
   SequenceContext(Poincare::Context * parentContext, SequenceStore * sequenceStore) :
     ContextWithParent(parentContext),
+#if POINCARE_FLOAT_SUPPORT
     m_floatSequenceContext(),
+#endif
     m_doubleSequenceContext(),
     m_sequenceStore(sequenceStore) {}
   /* expressionForSymbolAbstract & setExpressionForSymbolAbstractName directly call the parent
@@ -45,23 +47,31 @@ public:
    * v(n), v(n+1) are taken into accound only when evaluating sequences which
    * is done in another context. */
   template<typename T> T valueOfSequenceAtPreviousRank(int sequenceIndex, int rank) const {
+#if POINCARE_FLOAT_SUPPORT
     if (sizeof(T) == sizeof(float)) {
       return m_floatSequenceContext.valueOfSequenceAtPreviousRank(sequenceIndex, rank);
     }
+#endif
     return m_doubleSequenceContext.valueOfSequenceAtPreviousRank(sequenceIndex, rank);
   }
   void resetCache() {
+#if POINCARE_FLOAT_SUPPORT
     m_floatSequenceContext.resetCache();
+#endif
     m_doubleSequenceContext.resetCache();
   }
   template<typename T> bool iterateUntilRank(int n) {
+#if POINCARE_FLOAT_SUPPORT
     if (sizeof(T) == sizeof(float)) {
       return m_floatSequenceContext.iterateUntilRank(n, m_sequenceStore, this);
     }
+#endif
     return m_doubleSequenceContext.iterateUntilRank(n, m_sequenceStore, this);
   }
 private:
+#if POINCARE_FLOAT_SUPPORT
   TemplatedSequenceContext<float> m_floatSequenceContext;
+#endif
   TemplatedSequenceContext<double> m_doubleSequenceContext;
   SequenceStore * m_sequenceStore;
 };

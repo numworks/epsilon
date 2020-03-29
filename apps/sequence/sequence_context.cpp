@@ -71,7 +71,9 @@ void TemplatedSequenceContext<T>::step(SequenceStore * sequenceStore, SequenceCo
   }
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template class TemplatedSequenceContext<float>;
+#endif
 template class TemplatedSequenceContext<double>;
 
 }

@@ -164,10 +164,14 @@ void MatrixComplex<T>::addChildAtIndexInPlace(Evaluation<T> t, int index, int cu
   Evaluation<T>::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template class MatrixComplexNode<float>;
+#endif
 template class MatrixComplexNode<double>;
 
+#if POINCARE_FLOAT_SUPPORT
 template class MatrixComplex<float>;
+#endif
 template class MatrixComplex<double>;
 
 }

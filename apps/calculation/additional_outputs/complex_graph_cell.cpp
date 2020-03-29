@@ -29,7 +29,11 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
       [](float t, void * model, void * context) {
         ComplexModel * complexModel = (ComplexModel *)model;
+#if POINCARE_FLOAT_SUPPORT
         return Poincare::Coordinate2D<float>(complexModel->real()*t, complexModel->imag()*t);
+#else
+        return Poincare::Coordinate2D<double>(complexModel->real()*t, complexModel->imag()*t);
+#endif
       }, m_complex, nullptr, false, Palette::GreyDark, false);
 
   /* Draw the partial ellipse indicating the angle θ
@@ -62,7 +66,11 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float th = *(float *)context;
         float a = parameters.real();
         float b = parameters.imag();
+#if POINCARE_FLOAT_SUPPORT
         return Poincare::Coordinate2D<float>(a*std::cos(t*th), b*std::sin(t*th));
+#else
+        return Poincare::Coordinate2D<double>(a*std::cos(t*th), b*std::sin(t*th));
+#endif
     }, &parameters, &th, false, Palette::GreyDark, false);
 
   // Draw dashed segment to indicate real and imaginary

@@ -19,7 +19,9 @@ Complex<T> HyperbolicTangentNode::computeOnComplex(const std::complex<T> c, Pref
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::tanh(c), c));
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template Complex<float> Poincare::HyperbolicTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+#endif
 template Complex<double> Poincare::HyperbolicTangentNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

@@ -59,9 +59,11 @@ public:
   bool isDefined() override;
   bool isEmpty() override;
   // Approximation
+#if POINCARE_FLOAT_SUPPORT
   Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context) const override {
     return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
+#endif
   Poincare::Coordinate2D<double> evaluateXYAtParameter(double x, Poincare::Context * context) const override {
     return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }

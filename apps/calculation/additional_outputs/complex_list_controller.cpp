@@ -33,9 +33,14 @@ void ComplexListController::setExpression(Poincare::Expression e) {
 
   // Set Complex illustration
   // Compute a and b as in Expression::hasDefinedComplexApproximation to ensure the same defined result
+#if POINCARE_FLOAT_SUPPORT
   float a = Shared::PoincareHelpers::ApproximateToScalar<float>(RealPart::Builder(e.clone()), context);
   float b = Shared::PoincareHelpers::ApproximateToScalar<float>(ImaginaryPart::Builder(e.clone()), context);
-  m_model.setComplex(std::complex<float>(a,b));
+#else
+  double a = Shared::PoincareHelpers::ApproximateToScalar<double>(RealPart::Builder(e.clone()), context);
+  double b = Shared::PoincareHelpers::ApproximateToScalar<double>(ImaginaryPart::Builder(e.clone()), context);
+#endif
+  m_model.setComplex(std::complex<float>((float)a, (float)b));
 
   // Reset complex format as before
   preferences->setComplexFormat(currentComplexFormat);

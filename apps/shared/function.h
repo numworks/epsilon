@@ -50,7 +50,9 @@ public:
   virtual I18n::Message parameterMessageName() const = 0;
 
   // Evaluation
+#if POINCARE_FLOAT_SUPPORT
   virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const = 0;
+#endif
   virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const = 0;
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:

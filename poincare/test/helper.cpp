@@ -140,7 +140,11 @@ void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Lay
   quiz_assert(l.isIdenticalTo(layout));
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template void assert_expression_approximates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+#endif
 template void assert_expression_approximates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+#if POINCARE_FLOAT_SUPPORT
 template void assert_expression_simplifies_approximates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+#endif
 template void assert_expression_simplifies_approximates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);

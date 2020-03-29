@@ -69,9 +69,11 @@ Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool *
   return Function(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
 }
 
+#if POINCARE_FLOAT_SUPPORT
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return templatedApproximate<float>(context, complexFormat, angleUnit);
 }
+#endif
 
 Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return templatedApproximate<double>(context, complexFormat, angleUnit);

@@ -28,8 +28,13 @@ public:
 protected:
   char * label(Axis axis, int index) const override;
 private:
+#if POINCARE_FLOAT_SUPPORT
   static float EvaluateAtAbscissa(float abscissa, void * model, void * context);
   static Poincare::Coordinate2D<float> EvaluateXYAtAbscissa(float abscissa, void * model, void * context);
+#else
+  static double EvaluateAtAbscissa(float abscissa, void * model, void * context);
+  static Poincare::Coordinate2D<double> EvaluateXYAtAbscissa(float abscissa, void * model, void * context);
+#endif
   static constexpr KDColor k_backgroundColor = Palette::WallScreen;
   void drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const;
   char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];

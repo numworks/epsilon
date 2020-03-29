@@ -169,7 +169,11 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   ArrayRowCanonize(operands, dim, 2*dim);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
+#if POINCARE_FLOAT_SUPPORT
     if (std::abs(operands[i*2*dim+i] - (T)1.0) > Expression::Epsilon<float>()) {
+#else
+    if (std::abs(operands[i*2*dim+i] - (T)1.0) > Expression::Epsilon<double>()) {
+#endif
       return -2;
     }
   }
@@ -476,11 +480,17 @@ Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, Expressi
 }
 
 
+#if POINCARE_FLOAT_SUPPORT
 template int Matrix::ArrayInverse<float>(float *, int, int);
+#endif
 template int Matrix::ArrayInverse<double>(double *, int, int);
+#if POINCARE_FLOAT_SUPPORT
 template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float> *, int, int);
+#endif
 template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double> *, int, int);
+#if POINCARE_FLOAT_SUPPORT
 template void Matrix::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*);
+#endif
 template void Matrix::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*);
 
 }

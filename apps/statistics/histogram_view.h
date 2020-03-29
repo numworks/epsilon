@@ -23,7 +23,11 @@ public:
 private:
   HistogramController * m_controller;
   Store * m_store;
+#if POINCARE_FLOAT_SUPPORT
   static float EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context);
+#else
+  static double EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context);
+#endif
   float m_highlightedBarStart;
   float m_highlightedBarEnd;
   int m_series;

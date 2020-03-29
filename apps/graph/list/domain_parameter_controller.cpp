@@ -8,7 +8,11 @@ using namespace Shared;
 namespace Graph {
 
 DomainParameterController::DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
+#if POINCARE_FLOAT_SUPPORT
   FloatParameterController<float>(parentResponder),
+#else
+  FloatParameterController<double>(parentResponder),
+#endif
   m_domainCells{},
   m_record()
 {
@@ -73,11 +77,19 @@ bool DomainParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+#if POINCARE_FLOAT_SUPPORT
 float DomainParameterController::parameterAtIndex(int index) {
+#else
+double DomainParameterController::parameterAtIndex(int index) {
+#endif
   return index == 0 ? function()->tMin() : function()->tMax();
 }
 
+#if POINCARE_FLOAT_SUPPORT
 bool DomainParameterController::setParameterAtIndex(int parameterIndex, float f) {
+#else
+bool DomainParameterController::setParameterAtIndex(int parameterIndex, double f) {
+#endif
   // TODO: what to do if the xmin > xmax?
   parameterIndex == 0 ? function()->setTMin(f) : function()->setTMax(f);
   return true;
@@ -95,6 +107,7 @@ Shared::ExpiringPointer<Shared::ContinuousFunction> DomainParameterController::f
   return myApp->functionStore()->modelForRecord(m_record);
 }
 
+#if POINCARE_FLOAT_SUPPORT
 FloatParameterController<float>::InfinityTolerance DomainParameterController::infinityAllowanceForRow(int row) const {
   Shared::ContinuousFunction::PlotType plotType = function()->plotType();
   if (plotType == Shared::ContinuousFunction::PlotType::Cartesian) {
@@ -102,5 +115,14 @@ FloatParameterController<float>::InfinityTolerance DomainParameterController::in
   }
   return FloatParameterController<float>::InfinityTolerance::None;
 }
+#else
+FloatParameterController<double>::InfinityTolerance DomainParameterController::infinityAllowanceForRow(int row) const {
+  Shared::ContinuousFunction::PlotType plotType = function()->plotType();
+  if (plotType == Shared::ContinuousFunction::PlotType::Cartesian) {
+    return row == 0 ? FloatParameterController<double>::InfinityTolerance::MinusInfinity : FloatParameterController<double>::InfinityTolerance::PlusInfinity;
+  }
+  return FloatParameterController<double>::InfinityTolerance::None;
+}
+#endif
 
 }

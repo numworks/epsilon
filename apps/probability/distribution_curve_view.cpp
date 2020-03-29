@@ -42,14 +42,24 @@ char * DistributionCurveView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
+#if POINCARE_FLOAT_SUPPORT
 float DistributionCurveView::EvaluateAtAbscissa(float abscissa, void * model, void * context) {
+#else
+double DistributionCurveView::EvaluateAtAbscissa(float abscissa, void * model, void * context) {
+#endif
   Distribution * distribution = (Distribution *)model;
   return distribution->evaluateAtAbscissa(abscissa);
 }
 
+#if POINCARE_FLOAT_SUPPORT
 Poincare::Coordinate2D<float> DistributionCurveView::EvaluateXYAtAbscissa(float abscissa, void * model, void * context) {
   return Poincare::Coordinate2D<float>(abscissa, EvaluateAtAbscissa(abscissa, model, context));
 }
+#else
+Poincare::Coordinate2D<double> DistributionCurveView::EvaluateXYAtAbscissa(float abscissa, void * model, void * context) {
+  return Poincare::Coordinate2D<double>(abscissa, EvaluateAtAbscissa(abscissa, model, context));
+}
+#endif
 
 void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBoundPixel, float colorUpperBoundPixel) const {
   // Save the previous curve view range

@@ -19,7 +19,9 @@ Complex<T> HyperbolicCosineNode::computeOnComplex(const std::complex<T> c, Prefe
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::cosh(c), c));
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template Complex<float> Poincare::HyperbolicCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+#endif
 template Complex<double> Poincare::HyperbolicCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

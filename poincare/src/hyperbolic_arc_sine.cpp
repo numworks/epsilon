@@ -30,7 +30,9 @@ Complex<T> HyperbolicArcSineNode::computeOnComplex(const std::complex<T> c, Pref
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c));
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template Complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+#endif
 template Complex<double> Poincare::HyperbolicArcSineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

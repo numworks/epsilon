@@ -6,7 +6,11 @@ using namespace Poincare;
 namespace Shared {
 
 RangeParameterController::RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
+#if POINCARE_FLOAT_SUPPORT
   FloatParameterController<float>(parentResponder),
+#else
+  FloatParameterController<double>(parentResponder),
+#endif
   m_interactiveRange(interactiveRange),
   m_xRangeCells{},
   m_yRangeCells{},
@@ -79,14 +83,22 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   return FloatParameterController::handleEvent(event);
 }
 
+#if POINCARE_FLOAT_SUPPORT
 float RangeParameterController::parameterAtIndex(int parameterIndex) {
+#else
+double RangeParameterController::parameterAtIndex(int parameterIndex) {
+#endif
   ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
     &InteractiveCurveViewRange::xMax, &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
   return (m_interactiveRange->*getters[index])();
 }
 
+#if POINCARE_FLOAT_SUPPORT
 bool RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
+#else
+bool RangeParameterController::setParameterAtIndex(int parameterIndex, double f) {
+#endif
   ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
     &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;

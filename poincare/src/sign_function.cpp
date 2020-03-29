@@ -71,9 +71,15 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   if (s == ExpressionNode::Sign::Negative) {
     resultSign = Rational::Builder(-1);
   } else {
+#if POINCARE_FLOAT_SUPPORT
     Evaluation<float> childApproximated = child.node()->approximate(1.0f, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
+#else
+    Evaluation<double> childApproximated = child.node()->approximate(1.0, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    assert(childApproximated.type() == EvaluationNode<double>::Type::Complex);
+    Complex<double> c = static_cast<Complex<double>&>(childApproximated);
+#endif
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       // c's approximation has no sign (c is complex or NAN)
       if (reductionContext.target() == ExpressionNode::ReductionTarget::User && s == ExpressionNode::Sign::Positive) {

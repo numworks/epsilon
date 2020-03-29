@@ -50,7 +50,9 @@ int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
   return 1;
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template class CacheContext<float>;
+#endif
 template class CacheContext<double>;
 
 }

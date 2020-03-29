@@ -62,7 +62,11 @@ void HistogramView::setHighlight(float start, float end) {
   }
 }
 
+#if POINCARE_FLOAT_SUPPORT
 float HistogramView::EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context) {
+#else
+double HistogramView::EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context) {
+#endif
   Store * store = (Store *)model;
   float totalSize = ((float *)context)[0];
   int series = ((float *)context)[1];

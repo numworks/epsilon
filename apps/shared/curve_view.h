@@ -16,8 +16,13 @@ public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
   static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
+#if POINCARE_FLOAT_SUPPORT
   typedef Poincare::Coordinate2D<float> (*EvaluateXYForParameter)(float t, void * model, void * context);
   typedef float (*EvaluateYForX)(float x, void * model, void * context);
+#else
+  typedef Poincare::Coordinate2D<double> (*EvaluateXYForParameter)(float t, void * model, void * context);
+  typedef double (*EvaluateYForX)(float x, void * model, void * context);
+#endif
   enum class Axis {
     Horizontal = 0,
     Vertical = 1

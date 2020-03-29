@@ -291,9 +291,13 @@ void Sequence::InitialConditionModel::buildName(Sequence * sequence) {
       VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Position::Subscript));
 }
 
-template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;
+#if POINCARE_FLOAT_SUPPORT
 template float Sequence::templatedApproximateAtAbscissa<float>(float, SequenceContext*) const;
-template double Sequence::approximateToNextRank<double>(int, SequenceContext*) const;
+#endif
+template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;
+#if POINCARE_FLOAT_SUPPORT
 template float Sequence::approximateToNextRank<float>(int, SequenceContext*) const;
+#endif
+template double Sequence::approximateToNextRank<double>(int, SequenceContext*) const;
 
 }

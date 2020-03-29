@@ -249,7 +249,11 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 bool Expression::isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   ExpressionNode::Type t = type();
   if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {
+#if POINCARE_FLOAT_SUPPORT
     float r = childAtIndex(0).approximateToScalar<float>(context, complexFormat, angleUnit);
+#else
+    double r = childAtIndex(0).approximateToScalar<double>(context, complexFormat, angleUnit);
+#endif
     if (!std::isnan(r)) {
       return true;
     }
@@ -272,12 +276,20 @@ bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::
   /* We return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
   Expression imag = ImaginaryPart::Builder(*this);
+#if POINCARE_FLOAT_SUPPORT
   float b = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
+#else
+  double b = imag.approximateToScalar<double>(context, complexFormat, angleUnit);
+#endif
   if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
     return false;
   }
   Expression real = RealPart::Builder(*this);
+#if POINCARE_FLOAT_SUPPORT
   float a = real.approximateToScalar<float>(context, complexFormat, angleUnit);
+#else
+  double a = real.approximateToScalar<double>(context, complexFormat, angleUnit);
+#endif
   if (std::isinf(a) || std::isnan(a)) {
     return false;
   }
@@ -1140,22 +1152,34 @@ void Expression::bracketRoot(const char * symbol, double start, double step, dou
   result[1] = NAN;
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template float Expression::Epsilon<float>();
+#endif
 template double Expression::Epsilon<double>();
 
+#if POINCARE_FLOAT_SUPPORT
 template Expression Expression::approximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+#endif
 template Expression Expression::approximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
+#if POINCARE_FLOAT_SUPPORT
 template float Expression::approximateToScalar(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
+#endif
 template double Expression::approximateToScalar(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 
+#if POINCARE_FLOAT_SUPPORT
 template float Expression::ApproximateToScalar<float>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation);
+#endif
 template double Expression::ApproximateToScalar<double>(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation);
 
+#if POINCARE_FLOAT_SUPPORT
 template Evaluation<float> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
+#endif
 template Evaluation<double> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 
+#if POINCARE_FLOAT_SUPPORT
 template float Expression::approximateWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+#endif
 template double Expression::approximateWithValueForSymbol(const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

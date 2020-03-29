@@ -741,7 +741,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * - (a^b)^(-1) has to be reduced to avoid infinite loop discussed above;
      * - if a^b is unreal, a^(-b) also. */
     if (!cMinusOne && reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+#if POINCARE_FLOAT_SUPPORT
       Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+#else
+      Expression approximation = powerBase.approximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+#endif
       if (approximation.type() == ExpressionNode::Type::Unreal) {
         // The inner power is unreal, return "unreal"
         replaceWithInPlace(approximation);
@@ -1413,7 +1417,9 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
 }
 
 
+#if POINCARE_FLOAT_SUPPORT
 template Complex<float> PowerNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
+#endif
 template Complex<double> PowerNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
 
 }

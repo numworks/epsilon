@@ -274,8 +274,13 @@ Expression Logarithm::simpleShallowReduce(Context * context, Preferences::Comple
       }
       bool isNegative = true;
       Expression result;
+#if POINCARE_FLOAT_SUPPORT
       Evaluation<float> baseApproximation = b.node()->approximate(1.0f, context, complexFormat, angleUnit);
       std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
+#else
+      Evaluation<double> baseApproximation = b.node()->approximate(1.0, context, complexFormat, angleUnit);
+      std::complex<double> logDenominator = std::log10(static_cast<Complex<double>&>(baseApproximation).stdComplex());
+#endif
       if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
         result = Undefined::Builder();
       }
@@ -381,9 +386,13 @@ Expression Logarithm::shallowBeautify() {
   return *this;
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+#endif
 template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+#if POINCARE_FLOAT_SUPPORT
 template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+#endif
 template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context *, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
 template int LogarithmNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 template int LogarithmNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;

@@ -13,7 +13,11 @@ public:
     Sine = 1,
   };
   static double PiInAngleUnit(Preferences::AngleUnit angleUnit);
+#if POINCARE_FLOAT_SUPPORT
   static float characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit);
+#else
+  static double characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit);
+#endif
   static bool isDirectTrigonometryFunction(const Expression & e);
   static bool isInverseTrigonometryFunction(const Expression & e);
   static bool AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction);

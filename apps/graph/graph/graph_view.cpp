@@ -65,7 +65,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
         drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, [](float t, void * model, void * context) {
               float * tangent = (float *)model;
+#if POINCARE_FLOAT_SUPPORT
               return Poincare::Coordinate2D<float>(t, tangent[0]*t+tangent[1]);
+#else
+              return Poincare::Coordinate2D<double>(t, tangent[0]*t+tangent[1]);
+#endif
             }, tangentParameter, nullptr, Palette::GreyVeryDark);
       }
       continue;

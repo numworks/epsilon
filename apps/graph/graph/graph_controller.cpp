@@ -48,7 +48,11 @@ void GraphController::interestingFunctionRange(ExpiringPointer<ContinuousFunctio
   const int balancedBound = std::floor((tMax-tMin)/2/step);
   for (int j = -balancedBound; j <= balancedBound ; j++) {
     float t = (tMin+tMax)/2 + step * j;
+#if POINCARE_FLOAT_SUPPORT
     Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
+#else
+    Coordinate2D<double> xy = f->evaluateXYAtParameter(t, context);
+#endif
     float x = xy.x1();
     float y = xy.x2();
     if (!std::isnan(x) && !std::isinf(x) && !std::isnan(y) && !std::isinf(y)) {

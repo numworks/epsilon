@@ -108,6 +108,7 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     const int balancedBound = std::floor((tMax-tMin)/2/step);
     for (int j = -balancedBound; j <= balancedBound ; j++) {
       float t = (tMin+tMax)/2 + step * j;
+#if POINCARE_FLOAT_SUPPORT
       Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
       float x = xy.x1();
       if (!std::isnan(x) && !std::isinf(x) && x >= xMin && x <= xMax) {
@@ -117,6 +118,17 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
           max = maxFloat(max, y);
         }
       }
+#else
+      Coordinate2D<double> xy = f->evaluateXYAtParameter(t, context);
+      double x = xy.x1();
+      if (!std::isnan(x) && !std::isinf(x) && x >= xMin && x <= xMax) {
+        double y = xy.x2();
+        if (!std::isnan(y) && !std::isinf(y)) {
+          min = minDouble(min, y);
+          max = maxDouble(max, y);
+        }
+      }
+#endif
     }
   }
   InteractiveCurveViewRangeDelegate::Range range;

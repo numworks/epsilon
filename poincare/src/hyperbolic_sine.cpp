@@ -19,7 +19,9 @@ Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Prefere
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::sinh(c), c));
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template Complex<float> Poincare::HyperbolicSineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+#endif
 template Complex<double> Poincare::HyperbolicSineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

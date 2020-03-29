@@ -62,7 +62,9 @@ Expression Sequence::shallowReduce(Context * context) {
   return *this;
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template Evaluation<float> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+#endif
 template Evaluation<double> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

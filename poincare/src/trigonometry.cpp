@@ -53,7 +53,11 @@ double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   return 200.0;
 }
 
+#if POINCARE_FLOAT_SUPPORT
 float Trigonometry::characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit) {
+#else
+double Trigonometry::characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit) {
+#endif
   assert(e.numberOfChildren() == 1);
 
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
@@ -73,7 +77,11 @@ float Trigonometry::characteristicXRange(const Expression & e, Context * context
   assert(d == 1);
   /* To compute a, the slope of the expression child(0), we compute the
    * derivative of child(0) for any x value. */
+#if POINCARE_FLOAT_SUPPORT
   Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol::Builder(x, 1), Float<float>::Builder(1.0f));
+#else
+  Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol::Builder(x, 1), Float<double>::Builder(1.0f));
+#endif
   double a = derivative.node()->approximate(double(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
   double pi = PiInAngleUnit(angleUnit);
   return std::fabs(a) < Expression::Epsilon<double>() ? NAN : 2.0*pi/std::fabs(a);
@@ -412,9 +420,13 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   return c;
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Preferences::AngleUnit);
+#endif
 template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Preferences::AngleUnit);
+#if POINCARE_FLOAT_SUPPORT
 template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Preferences::AngleUnit);
+#endif
 template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Preferences::AngleUnit);
 
 }

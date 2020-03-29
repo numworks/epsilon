@@ -175,7 +175,9 @@ void FloatParameterController<T>::buttonAction() {
   stack->pop();
 }
 
+#if POINCARE_FLOAT_SUPPORT
 template class FloatParameterController<float>;
+#endif
 template class FloatParameterController<double>;
 
 }

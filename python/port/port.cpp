@@ -20,7 +20,7 @@ extern "C" {
 #include "py/stackctrl.h"
 #include "mphalport.h"
 #include "mod/turtle/modturtle.h"
-#include "mod/matplotlib/modpyplot.h"
+#include "mod/matplotlib/pyplot/modpyplot.h"
 }
 
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;

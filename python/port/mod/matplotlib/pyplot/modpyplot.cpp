@@ -182,8 +182,9 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
     mp_float_t iW = mp_obj_get_float(wItems[wLength > 1 ? i : 0]);
     mp_float_t iB = mp_obj_get_float(bItems[bLength > 1 ? i : 0]);
     mp_float_t iX = mp_obj_get_float(xItems[i])-iW/2.0;
-    mp_float_t iY = iH < 0.0 ? iB : iB + iH;
-    sPlotStore->addRect(mp_obj_new_float(iX), mp_obj_new_float(iY), mp_obj_new_float(iW), mp_obj_new_float(std::fabs(iH)), color);
+    mp_float_t iYStart = iH < 0.0 ? iB : iB + iH;
+    mp_float_t iYEnd = iH < 0.0 ? iB + iH : iB;
+    sPlotStore->addRect(mp_obj_new_float(iX), mp_obj_new_float(iX+iW), mp_obj_new_float(iYStart), mp_obj_new_float(iYEnd), color); // TODO: use float_binary_op?
   }
   return mp_const_none;
 }
@@ -262,7 +263,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
     mp_float_t upperBound = mp_obj_get_float(edgeItems[binIndex+1]);
     while (mp_obj_get_float(xItems[xIndex]) < upperBound || (binIndex == nBins - 1 && mp_obj_get_float(xItems[xIndex]) == upperBound)) {
       // Increment the bin count
-      binItems[binIndex] = mp_obj_new_int(mp_obj_get_int(binItems[binIndex]) + 1); // TODO: better way?
+      binItems[binIndex] = mp_obj_new_int(mp_obj_get_int(binItems[binIndex]) + 1); // TODO: better way? Use int_unary_op?
       xIndex++;
       if (xIndex == xLength) {
         break;
@@ -273,8 +274,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<nBins; i++) {
-    mp_float_t width = mp_obj_get_float(edgeItems[i+1]) - mp_obj_get_float(edgeItems[i]);
-    sPlotStore->addRect(edgeItems[i], binItems[i], mp_obj_new_float(width), binItems[i], color);
+    sPlotStore->addRect(edgeItems[i], edgeItems[i+1], binItems[i], mp_obj_new_float(0.0), color);
   }
   return mp_const_none;
 }

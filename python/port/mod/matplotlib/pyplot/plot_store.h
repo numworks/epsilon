@@ -87,16 +87,16 @@ public:
   class Rect {
   public:
     Rect(mp_obj_t tuple);
-    float x() const { return m_x; }
-    float y() const { return m_y; }
-    float width() const { return m_width; }
-    float height() const { return m_height; }
+    float left() const { return m_left; }
+    float right() const { return m_right; }
+    float top() const { return m_top; }
+    float bottom() const { return m_bottom; }
     KDColor color() const { return m_color; }
   private:
-    float m_x;
-    float m_y;
-    float m_width;
-    float m_height;
+    float m_left;
+    float m_right;
+    float m_top;
+    float m_bottom;
     KDColor m_color;
   };
 

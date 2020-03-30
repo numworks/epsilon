@@ -54,13 +54,15 @@ void PlotView::traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segmen
 
 static inline KDCoordinate maxKDCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 void PlotView::traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const {
+  KDCoordinate left = std::round(floatToPixel(Axis::Horizontal, rect.left()));
+  KDCoordinate right = std::round(floatToPixel(Axis::Horizontal, rect.right()));
+  KDCoordinate top = std::round(floatToPixel(Axis::Vertical, rect.top()));
+  KDCoordinate bottom = std::round(floatToPixel(Axis::Vertical, rect.bottom()));
   KDRect pixelRect(
-    std::round(floatToPixel(Axis::Horizontal, rect.x())),
-    std::round(floatToPixel(Axis::Vertical, rect.y())),
-    // Use std::ceil instead of std::round to avoid empty pixel line between bars and horizontal axis line
-    // TODO: change stored rectangles to keep all summits?
-    maxKDCoordinate(std::ceil(rect.width() / pixelWidth()), 1), // Rectangle should at least be visible
-    std::ceil(rect.height() / pixelHeight())
+    left,
+    top,
+    maxKDCoordinate(right - left, 1), // Rectangle should at least be visible
+    bottom - top
   );
   ctx->fillRect(pixelRect, rect.color());
 }

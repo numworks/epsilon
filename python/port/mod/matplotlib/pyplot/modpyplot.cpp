@@ -342,6 +342,9 @@ mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s) {
 }
 
 mp_obj_t modpyplot_show() {
+  if (sPlotStore->isEmpty()) {
+    return mp_const_none;
+  }
   MicroPython::ExecutionEnvironment * env = MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
   env->displayViewController(sPlotController);
   return mp_const_none;

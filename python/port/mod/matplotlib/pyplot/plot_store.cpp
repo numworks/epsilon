@@ -121,16 +121,16 @@ template class PlotStore::ListIterator<PlotStore::Rect>;
 PlotStore::Rect::Rect(mp_obj_t tuple) {
   mp_obj_t * elements;
   mp_obj_get_array_fixed_n(tuple, 5, &elements);
-  m_x = mp_obj_get_float(elements[0]);
-  m_y = mp_obj_get_float(elements[1]);
-  m_width = mp_obj_get_float(elements[2]);
-  m_height = mp_obj_get_float(elements[3]);
+  m_left = mp_obj_get_float(elements[0]);
+  m_right = mp_obj_get_float(elements[1]);
+  m_top = mp_obj_get_float(elements[2]);
+  m_bottom = mp_obj_get_float(elements[3]);
   m_color = KDColor::RGB16(mp_obj_get_int(elements[4]));
 }
 
-void PlotStore::addRect(mp_obj_t x, mp_obj_t y, mp_obj_t width, mp_obj_t height, KDColor c) {
+void PlotStore::addRect(mp_obj_t left, mp_obj_t right, mp_obj_t top, mp_obj_t bottom, KDColor c) {
   mp_obj_t color = mp_obj_new_int(c);
-  mp_obj_t items[5] = {x, y, width, height, color};
+  mp_obj_t items[5] = {left, right, top, bottom, color};
   checkFloatType(items, 4);
   mp_obj_t tuple = mp_obj_new_tuple(5, items);
   mp_obj_list_append(m_rects, tuple);
@@ -204,10 +204,8 @@ void PlotStore::initRange() {
       updateRange(&xMin, &xMax, &yMin, &yMax, segment.xEnd(), segment.yEnd());
     }
     for (PlotStore::Rect rectangle : rects()) {
-      float x = rectangle.x();
-      float y = rectangle.y();
-      updateRange(&xMin, &xMax, &yMin, &yMax, x, y);
-      updateRange(&xMin, &xMax, &yMin, &yMax, x + rectangle.width(), y - rectangle.height());
+      updateRange(&xMin, &xMax, &yMin, &yMax, rectangle.left(), rectangle.top());
+      updateRange(&xMin, &xMax, &yMin, &yMax, rectangle.right(), rectangle.bottom());
     }
     checkPositiveRangeAndAddMargin(&xMin, &xMax);
     checkPositiveRangeAndAddMargin(&yMin, &yMax);

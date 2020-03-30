@@ -176,6 +176,9 @@ void checkPositiveRangeAndAddMargin(float * min, float * max) {
   }
   // Add margins
   float margin = (*max - *min)/10.0f;
+  if (margin < FLT_EPSILON) {
+    margin = 1.0f;
+  }
   *min -= margin;
   *max += margin;
 }

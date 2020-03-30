@@ -55,10 +55,10 @@ void PlotView::traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segmen
 static inline KDCoordinate maxKDCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 void PlotView::traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const {
   KDRect pixelRect(
-    floatToPixel(Axis::Horizontal, rect.x()),
-    floatToPixel(Axis::Vertical, rect.y()),
-    maxKDCoordinate(rect.width() / pixelWidth(), 1), // Rectangle should at least be visible
-    rect.height() / pixelHeight()
+    std::round(floatToPixel(Axis::Horizontal, rect.x())),
+    std::round(floatToPixel(Axis::Vertical, rect.y())),
+    maxKDCoordinate(std::round(rect.width() / pixelWidth()), 1), // Rectangle should at least be visible
+    std::round(rect.height() / pixelHeight())
   );
   ctx->fillRect(pixelRect, rect.color());
 }

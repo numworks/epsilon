@@ -113,7 +113,7 @@ const ToolboxMessageTree MatplotlibPyplotModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMatplotlibPyplot, I18n::Message::PythonImportMatplotlibPyplot, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMatplotlibPyplotFunction, I18n::Message::PythonMatplotlibPyplotFunction, false, I18n::Message::PythonCommandMatplotlibPyplotFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandArrow, I18n::Message::PythonArrow),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandAxis, I18n::Message::PythonAxis), //TODO LEA ?
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandAxis, I18n::Message::PythonAxis, false, I18n::Message::PythonCommandAxisWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBar, I18n::Message::PythonBar),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGrid, I18n::Message::PythonGrid),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandHist, I18n::Message::PythonHist),

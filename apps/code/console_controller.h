@@ -83,7 +83,7 @@ private:
   // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
   static constexpr int k_outputAccumulationBufferSize = 100;
   bool isDisplayingViewController();
-  bool reloadData(bool isEditing);
+  void reloadData(bool isEditing);
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();

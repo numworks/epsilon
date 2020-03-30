@@ -9,6 +9,8 @@ void PlotView::drawRect(KDContext * ctx, KDRect rect) const {
     drawGrid(ctx, rect);
   }
 
+  // Draw labels below all figures because they're drawn on a white rectangle.
+  // TODO: we could blend them in the background by adding a parameter to drawLabelsAndGraduations.
   if (m_store->axesRequested()) {
     drawAxes(ctx, rect);
     drawLabelsAndGraduations(ctx, rect, Axis::Vertical, true);

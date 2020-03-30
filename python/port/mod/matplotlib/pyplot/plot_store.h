@@ -13,6 +13,7 @@ class PlotStore : public Shared::InteractiveCurveViewRange {
 public:
   PlotStore();
   void flush();
+  bool isEmpty();
 
   // Iterators
 

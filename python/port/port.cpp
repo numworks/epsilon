@@ -82,6 +82,10 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     mp_obj_print_helper(&mp_plat_print, (mp_obj_t)nlr.ret_val, PRINT_EXC);
     mp_print_str(&mp_plat_print, "\n");
     /* End of mp_obj_print_exception. */
+
+    // Flush the store if an error is encountered to avoid being stuck with a full memory
+    modpyplot_flush_used_heap();
+    // TODO: do the same for other modules?
   }
 
   // Disable the user interruption

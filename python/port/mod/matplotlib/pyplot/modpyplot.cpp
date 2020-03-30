@@ -72,6 +72,12 @@ void modpyplot_gc_collect() {
   );
 }
 
+void modpyplot_flush_used_heap() {
+  if (sPlotStore) {
+    // Clean the store object
+    sPlotStore->flush();
+  }
+}
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(n_args == 4);
   assert(sPlotStore != nullptr);

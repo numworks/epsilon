@@ -71,8 +71,8 @@ void PlotView::traceLabel(KDContext * ctx, KDRect r, PlotStore::Label label) con
   drawLabel(ctx, r,
     label.x(), label.y(), label.string(),
     KDColorBlack,
-    RelativePosition::None,
-    RelativePosition::None
+    RelativePosition::After,
+    RelativePosition::After
   );
 }
 

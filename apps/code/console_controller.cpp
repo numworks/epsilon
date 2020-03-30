@@ -446,8 +446,7 @@ void ConsoleController::printText(const char * text, size_t length) {
     assert(textCutIndex == length - 1);
     appendTextToOutputAccumulationBuffer(text, length-1);
     flushOutputAccumulationBufferToStore();
-    // FIXME: This needs to be done *only* if the console is active!
-    //micropython_port_vm_hook_refresh_print();
+    micropython_port_vm_hook_refresh_print();
   }
 #if __EMSCRIPTEN__
   /* If we called micropython_port_interrupt_if_needed here, we would need to

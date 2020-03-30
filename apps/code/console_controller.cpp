@@ -151,9 +151,8 @@ const char * ConsoleController::inputText(const char * prompt) {
    m_editCell.clearAndReduceSize();
 
   // Reload the history
-  if (reloadData(true)) {
-    appsContainer->redrawWindow();
-  }
+  reloadData(true);
+  appsContainer->redrawWindow();
 
   // Launch a new input loop
   appsContainer->runWhile([](void * a){
@@ -408,12 +407,13 @@ bool ConsoleController::isDisplayingViewController() {
 }
 
 void ConsoleController::refreshPrintOutput() {
-  if (!isDisplayingViewController() && reloadData(false)) {
+  if (!isDisplayingViewController()) {
+    reloadData(false);
     AppsContainer::sharedAppsContainer()->redrawWindow();
   }
 }
 
-bool ConsoleController::reloadData(bool isEditing) {
+void ConsoleController::reloadData(bool isEditing) {
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   if (isEditing) {
@@ -422,7 +422,6 @@ bool ConsoleController::reloadData(bool isEditing) {
   } else {
     m_editCell.setEditing(false);
   }
-  return true;
 }
 
 /* printText is called by the Python machine.

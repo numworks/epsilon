@@ -122,7 +122,7 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
       sPlotStore->setYMax(mp_obj_get_float(items[3]));
       sPlotStore->setAxesAuto(false);
     } else {
-      mp_raise_TypeError("the first argument to axis() must be an interable of the form [xmin, xmax, ymin, ymax]");
+      mp_raise_TypeError("the first argument to axis() must be an iterable of the form [xmin, xmax, ymin, ymax]");
     }
   }
 

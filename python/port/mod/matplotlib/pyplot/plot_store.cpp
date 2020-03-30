@@ -20,6 +20,10 @@ void PlotStore::flush() {
   m_gridRequested = false;
 }
 
+bool PlotStore::isEmpty() {
+  return MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_dots)) == 0 && MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_segments)) == 0 && MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_rects)) == 0 && MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_labels)) == 0;
+}
+
 // Iterators
 
 template <class T>

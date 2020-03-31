@@ -21,11 +21,9 @@ int ParameteredExpressionNode::getVariables(Context * context, isVariableTest is
   }
   /* Remove the parameter symbol from the list of variable if it was added at
    * the previous line */
-  // Get the parameter symbol
-  assert(childAtIndex(ParameteredExpression::ParameterChildIndex())->type() == ExpressionNode::Type::Symbol);
-  SymbolNode * parameterChild = static_cast<SymbolNode *>(childAtIndex(ParameteredExpression::ParameterChildIndex()));
+  const char * parameterName = ParameteredExpression(this).parameter().name();
   for (int i = nextVariableIndex; i < numberOfVariables; i++) {
-    if (strcmp(parameterChild->name(), &variables[i]) == 0) {
+    if (strcmp(parameterName, &variables[i]) == 0) {
       variables[i] = 0;
       numberOfVariables--;
       break;
@@ -46,11 +44,9 @@ int ParameteredExpressionNode::getVariables(Context * context, isVariableTest is
 }
 
 Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
-  Expression c = childAtIndex(ParameterChildIndex());
-  assert(c.type() == ExpressionNode::Type::Symbol);
-  Symbol& parameterChild = static_cast<Symbol &>(c);
-  if (symbol.type() != ExpressionNode::Type::Symbol ||
-      strcmp(symbol.name(), parameterChild.name()) != 0) {
+  if (symbol.type() != ExpressionNode::Type::Symbol
+      || !parameter().hasSameNameAs(static_cast<Symbol&>(symbol)))
+  {
     // If the symbol is not the parameter, replace normally
     return defaultReplaceSymbolWithExpression(symbol, expression);
   }

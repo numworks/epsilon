@@ -92,16 +92,20 @@ typedef struct _mp_reader_mem_t {
 /* TODO end*/
 
 
-void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode) {
+void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength) {
 
   uint structKind = (uint) MP_PARSE_NODE_STRUCT_KIND(parseNode);
-  if (structKind != PN_import_name
+  bool structKindIsImportWithoutFrom = structKind == PN_import_name;
+
+  if (!structKindIsImportWithoutFrom
       && structKind != PN_import_from
       && structKind != PN_import_as_names
       && structKind != PN_import_as_name)
   {
     return;
   }
+
+  bool loadModuleContent = structKindIsImportWithoutFrom;
 
   // TODO from ScriptStore
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(parseNode);
@@ -110,11 +114,27 @@ void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
     if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
       uintptr_t arg = MP_PARSE_NODE_LEAF_ARG(child);
       const char * id = qstr_str(arg);
-      // TODO LEA check if not already present
-      addNode(ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
+      if ((strncmp(textToAutocomplete, id, textToAutocompleteLength) == 0)
+          && (*(id + textToAutocompleteLength) != 0))
+      {
+        // TODO LEA check if not already present
+        addNode(ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
+      }
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
-      addNodesFromImportMaybe((mp_parse_node_struct_t *)child);
+      addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength);
+    } else if (MP_PARSE_NODE_IS_TOKEN(child) && MP_PARSE_NODE_IS_TOKEN_KIND(child, MP_TOKEN_OP_STAR)) {
+      /* Parsing something like from math import *
+       * -> Load all the module content */
+      loadModuleContent = true;
     }
+  }
+
+  if (loadModuleContent) {
+    assert(childNodesCount > 0);
+    mp_parse_node_t moduleName = parseNode->nodes[0];
+    assert(MP_PARSE_NODE_IS_LEAF(moduleName) && MP_PARSE_NODE_LEAF_KIND(moduleName) == MP_PARSE_NODE_ID);
+    
+
   }
 }
 
@@ -277,7 +297,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
         mp_parse_node_t pn = parseTree.root;
 
         if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-          addNodesFromImportMaybe((mp_parse_node_struct_t *) pn);
+          addNodesFromImportMaybe((mp_parse_node_struct_t *) pn, textToAutocomplete, textToAutocompleteLength);
         }
 
         mp_parse_tree_clear(&parseTree);

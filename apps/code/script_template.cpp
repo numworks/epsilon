@@ -6,7 +6,9 @@ constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01" R"(from math import *
 )");
 
 constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01" R"(
-from math import sin as stew, cos as cabbage)");
+#from math import sin as stew, cos as cabbage
+from math import *
+)");
 
 /*constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01" R"(
 import math

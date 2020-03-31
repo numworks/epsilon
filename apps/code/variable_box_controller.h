@@ -65,7 +65,7 @@ private:
 
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
-  void addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode);
+  void addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength);
   void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
 
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];

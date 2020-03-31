@@ -173,13 +173,10 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
           // The symbol is a paremetered expression's parameter
           return *this;
         }
-        if (index == ParameteredExpression::ParameteredChildIndex()) {
-          assert(p.childAtIndex(ParameteredExpression::ParameterChildIndex()).type() == ExpressionNode::Type::Symbol);
-          Expression untypedParameter = p.childAtIndex(ParameteredExpression::ParameterChildIndex());
-          Symbol parameter = static_cast<Symbol &>(untypedParameter);
-          if (strcmp(parameter.name(), name()) == 0) {
-            return *this;
-          }
+        if (index == ParameteredExpression::ParameteredChildIndex()
+            && hasSameNameAs(static_cast<ParameteredExpression&>(p).parameter()))
+        {
+          return *this;
         }
       }
       current = p;

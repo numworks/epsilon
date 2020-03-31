@@ -34,7 +34,7 @@ public:
 
   /* Simplification */
   Expression shallowReduce(ReductionContext reductionContext) override;
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) override;
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) override;
   LayoutShape leftLayoutShape() const override;
 
   /* Approximation */
@@ -71,7 +71,7 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };

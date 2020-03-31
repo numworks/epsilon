@@ -94,8 +94,8 @@ Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
-  return Symbol(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
+Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  return Symbol(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
 }
 
 ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
@@ -132,6 +132,10 @@ Symbol Symbol::Builder(CodePoint name) {
   assert(codePointLength < bufferSize);
   buffer[codePointLength] = 0;
   return Symbol::Builder(buffer, codePointLength);
+}
+
+bool Symbol::hasSameNameAs(Symbol & other) const {
+  return (strcmp(other.name(), name()) == 0);
 }
 
 bool Symbol::isSeriesSymbol(const char * c, Poincare::Context * context) {
@@ -218,10 +222,25 @@ int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
+Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
   if (replaceFunctionsOnly || isSystemSymbol()) {
     return *this;
   }
+
+  // Check that this is not a parameter in a parametered expression
+  Expression ancestor = *this;
+  while (parameteredAncestorsCount > 0) {
+    ancestor = ancestor.parent();
+    assert(!ancestor.isUninitialized());
+    if (ancestor.isParameteredExpression()) {
+      parameteredAncestorsCount--;
+      Symbol ancestorParameter = static_cast<ParameteredExpression&>(ancestor).parameter();
+      if (hasSameNameAs(ancestorParameter)) {
+        return *this;
+      }
+    }
+  }
+
   Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     return *this;

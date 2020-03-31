@@ -9,6 +9,10 @@ Expression ParameteredExpressionNode::replaceSymbolWithExpression(const SymbolAb
   return ParameteredExpression(this).replaceSymbolWithExpression(symbol, expression);
 }
 
+Expression ParameteredExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  return ParameteredExpression(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+}
+
 int ParameteredExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
   int numberOfVariables = childAtIndex(ParameteredExpression::ParameteredChildIndex())->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
   // Handle exception
@@ -60,6 +64,33 @@ Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstra
     childAtIndex(i).replaceSymbolWithExpression(symbol, expression);
   }
   return *this;
+}
+
+Expression ParameteredExpression::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  /* All children replaceable symbols should be replaced apart from symbols that
+   * are parameters in parametered expressions.*/
+  int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    if (i == ParameterChildIndex()) {
+      // Do not replace symbols in the parameter child
+      continue;
+    }
+    /* In the parametered child, increase the parametered ancestors count so
+     * that when replacing symbols, the expressions check that the symbols are
+     * not the parametered symbols. */
+    bool shouldIncreaseParameteredAncestorsCount = i == ParameteredChildIndex();
+    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount + (shouldIncreaseParameteredAncestorsCount ? 1 : 0));
+    if (c.isUninitialized()) { // the expression is circularly defined, escape
+      return Expression();
+    }
+  }
+  return *this;
+}
+
+Symbol ParameteredExpression::parameter() {
+  Expression e = childAtIndex(ParameteredExpression::ParameterChildIndex());
+  assert(e.type() == ExpressionNode::Type::Symbol);
+  return static_cast<Symbol&>(e);
 }
 
 }

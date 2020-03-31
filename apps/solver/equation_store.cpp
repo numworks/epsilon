@@ -211,7 +211,16 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     // Step 3. Polynomial & Monovariable?
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context, replaceFunctionsButNotSymbols).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, context, updatedComplexFormat(context), preferences->angleUnit(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context, replaceFunctionsButNotSymbols)
+      .getPolynomialReducedCoefficients(
+          m_variables[0],
+          polynomialCoefficients,
+          context,
+          updatedComplexFormat(context),
+          preferences->angleUnit(),
+          replaceFunctionsButNotSymbols ?
+            ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions :
+            ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
     if (degree == 2) {
       // Polynomial degree <= 2
       m_type = Type::PolynomialMonovariable;
@@ -262,7 +271,9 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   // n unknown variables
   int n = 0;
-  while (m_variables[n][0] != 0) { n++; }
+  while (n < Expression::k_maxNumberOfVariables && m_variables[n][0] != 0) {
+    n++;
+  }
   int m = numberOfDefinedModels(); // m equations
   /* Create the matrix (A | b) for the equation Ax=b */
   Matrix Ab = Matrix::Builder();

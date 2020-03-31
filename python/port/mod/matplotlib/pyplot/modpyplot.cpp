@@ -332,7 +332,7 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
   }
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
-  for (size_t i=0; i<length-1; i++) {
+  for (int i=0; i<(int)length-1; i++) {
     sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color, false);
   }
 

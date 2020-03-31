@@ -6,7 +6,7 @@ DEBUG ?= 0
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak
 
-EPSILON_VERSION ?= 13.1.1
+EPSILON_VERSION ?= 13.2.0
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
 EPSILON_I18N ?= en fr es de pt
 EPSILON_GETOPT ?= 0

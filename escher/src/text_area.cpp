@@ -237,11 +237,16 @@ void TextArea::Text::insertText(const char * s, int textLength, char * location)
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location < m_buffer + m_bufferSize - 1);
   assert(strlen(m_buffer) + textLength < m_bufferSize);
+  // assert the text to insert does not overlap the location where to insert
+  assert(s >= location || s + textLength < location);
 
+  /* The text to insert might be located after the insertion location, in which
+   * case we cannot simply do a memmove, as s will be shifted by the copy. */
+  bool noShift = (s + textLength < location) || (s > m_buffer + m_bufferSize);
   size_t sizeToMove = strlen(location) + 1;
   assert(location + textLength + sizeToMove <= m_buffer + m_bufferSize);
   memmove(location + textLength, location, sizeToMove);
-  memmove(location, s, textLength);
+  memmove(location, s + (noShift ? 0 : textLength), textLength);
 }
 
 void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces, char * location) {

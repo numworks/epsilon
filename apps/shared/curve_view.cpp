@@ -374,7 +374,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
       position = positionLabel(horizontalCoordinate, labelPosition, textSize, RelativePosition::Before, RelativePosition::None);
       if (floatingLabels == FloatingPosition::Min) {
         position = KDPoint(k_labelMargin, position.y());
-      } else if (floatingLabels == FloatingPosition::Min) {
+      } else if (floatingLabels == FloatingPosition::Max) {
         position = KDPoint(Ion::Display::Width - textSize.width() - k_labelMargin, position.y());
       }
     }

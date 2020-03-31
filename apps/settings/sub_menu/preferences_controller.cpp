@@ -191,7 +191,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     }
     case I18n::Message::CompactResult:
     {
-      const char * text = "Beta";
+      const char * text = " ";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
 

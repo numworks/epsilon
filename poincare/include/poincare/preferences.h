@@ -53,8 +53,8 @@ public:
     Auto = 3
   };
   enum class ResultDisplay : uint8_t {
-    Default = 0,
-    Compact = 1
+    Compact = 0,
+    Default = 1
   };
   enum class PythonFont : uint8_t {
     Large = 0,

@@ -172,7 +172,7 @@ public:
   /*!*/ virtual Expression setSign(Sign s, ReductionContext reductionContext);
   virtual int polynomialDegree(Context * context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
-  /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
+  /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const;
   virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;

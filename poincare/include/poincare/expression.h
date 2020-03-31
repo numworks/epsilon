@@ -76,6 +76,7 @@ class Expression : public TreeHandle {
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
+  friend class ParameteredExpression;
   friend class Parenthesis;
   friend class PermuteCoefficient;
   friend class Power;
@@ -347,8 +348,8 @@ protected:
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
    * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
 
   /* Simplification */
   void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);

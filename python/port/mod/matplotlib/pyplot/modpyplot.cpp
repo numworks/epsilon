@@ -219,9 +219,13 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
   // Sort data to easily get the minimal and maximal value and count bin sizes
   mp_obj_t * xItems;
   size_t xLength = extractArgument(args[0], &xItems);
+  if (xLength == 0) {
+    return mp_const_none;
+  }
   mp_obj_t xList = mp_obj_new_list(xLength, xItems);
   mp_obj_list_sort(1, &xList, (mp_map_t*)&mp_const_empty_map);
   mp_obj_list_get(xList, &xLength, &xItems);
+  assert(xLength > 0);
   mp_float_t min = mp_obj_get_float(xItems[0]);
   mp_float_t max = mp_obj_get_float(xItems[xLength - 1]);
 

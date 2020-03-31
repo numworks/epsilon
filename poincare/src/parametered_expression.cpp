@@ -44,9 +44,7 @@ int ParameteredExpressionNode::getVariables(Context * context, isVariableTest is
 }
 
 Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
-  if (symbol.type() != ExpressionNode::Type::Symbol
-      || !parameter().hasSameNameAs(static_cast<Symbol&>(symbol)))
-  {
+  if (symbol.type() != ExpressionNode::Type::Symbol || !parameter().hasSameNameAs(symbol)) {
     // If the symbol is not the parameter, replace normally
     return defaultReplaceSymbolWithExpression(symbol, expression);
   }

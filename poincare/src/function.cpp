@@ -102,7 +102,7 @@ Function Function::Builder(const char * name, size_t length, Expression child) {
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   // Replace the symbol in the child
   childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
-  if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
+  if (symbol.type() == ExpressionNode::Type::Function && hasSameNameAs(symbol)) {
     Expression value = expression.clone();
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {

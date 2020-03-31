@@ -62,7 +62,6 @@ public:
 
   // Symbol properties
   bool isSystemSymbol() const { return node()->isUnknown(); }
-  bool hasSameNameAs(Symbol & other) const;
   const char * name() const { return node()->name(); }
   // IsVariable tests
   static bool isSeriesSymbol(const char * c, Poincare::Context * context);

@@ -53,6 +53,10 @@ T SymbolAbstract::Builder(const char * name, int length) {
   return static_cast<T &>(h);
 }
 
+bool SymbolAbstract::hasSameNameAs(const SymbolAbstract & other) const {
+  return strcmp(other.name(), name()) == 0;
+}
+
 size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t len) {
   return UTF8Helper::CopyUntilCodePoint(dst, len, src, '.');
 }

@@ -251,23 +251,25 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
   // Initialize bins list
   mp_obj_t * binItems = m_new(mp_obj_t, nBins);
   for (size_t i=0; i<nBins; i++) {
-    binItems[i] = mp_obj_new_int(0);
+    binItems[i] = MP_OBJ_NEW_SMALL_INT(0);
   }
 
   // Fill bins list by linearly scanning the x and incrementing the bin count
   // Linearity is enabled thanks to sorting
   size_t binIndex = 0;
   size_t xIndex = 0;
-  while (xIndex < xLength) {
-    assert(binIndex < nBins);
-    mp_float_t upperBound = mp_obj_get_float(edgeItems[binIndex+1]);
-    while (mp_obj_get_float(xItems[xIndex]) < upperBound || (binIndex == nBins - 1 && mp_obj_get_float(xItems[xIndex]) == upperBound)) {
-      // Increment the bin count
-      binItems[binIndex] = mp_obj_new_int(mp_obj_get_int(binItems[binIndex]) + 1); // TODO: better way? Use int_unary_op?
+  while (binIndex < nBins) {
+    mp_float_t lowerBound = mp_obj_get_float(edgeItems[binIndex]);
+    // Skip xItem if below the lower bound
+    while (xIndex < xLength && mp_obj_get_float(xItems[xIndex]) < lowerBound) {
       xIndex++;
-      if (xIndex == xLength) {
-        break;
-      }
+    }
+    mp_float_t upperBound = mp_obj_get_float(edgeItems[binIndex+1]);
+    while (xIndex < xLength && (mp_obj_get_float(xItems[xIndex]) < upperBound || (binIndex == nBins - 1 && mp_obj_get_float(xItems[xIndex]) == upperBound))) {
+      assert(mp_obj_get_float(xItems[xIndex]) >= lowerBound);
+      // Increment the bin count
+      binItems[binIndex] = MP_OBJ_NEW_SMALL_INT(MP_OBJ_SMALL_INT_VALUE(binItems[binIndex]) + 1);
+      xIndex++;
     }
     binIndex++;
   }

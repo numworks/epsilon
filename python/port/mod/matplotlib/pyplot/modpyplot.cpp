@@ -78,6 +78,11 @@ void modpyplot_flush_used_heap() {
     sPlotStore->flush();
   }
 }
+
+/* arrow(x,y,dx,dy)
+ * x, y, dx, dy scalars
+ * */
+
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(n_args == 4);
   assert(sPlotStore != nullptr);

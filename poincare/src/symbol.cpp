@@ -134,10 +134,6 @@ Symbol Symbol::Builder(CodePoint name) {
   return Symbol::Builder(buffer, codePointLength);
 }
 
-bool Symbol::hasSameNameAs(Symbol & other) const {
-  return (strcmp(other.name(), name()) == 0);
-}
-
 bool Symbol::isSeriesSymbol(const char * c, Poincare::Context * context) {
   // [NV][1-3]
   if (c[2] == 0 && (c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {
@@ -197,7 +193,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
 }
 
 Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
-  if (symbol.type() == ExpressionNode::Type::Symbol && strcmp(name(), symbol.name()) == 0) {
+  if (symbol.type() == ExpressionNode::Type::Symbol && hasSameNameAs(symbol)) {
     Expression value = expression.clone();
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {

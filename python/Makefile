@@ -189,7 +189,7 @@ $(eval $(call rule_for, \
 $(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
 tests_src += $(addprefix python/test/,\
+  basics.cpp \
   execution_environment.cpp \
-  mandelbrot.cpp \
   matplotlib.cpp \
 )

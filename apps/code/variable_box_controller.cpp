@@ -1,4 +1,5 @@
 #include "variable_box_controller.h"
+#include "python_toolbox.h"
 #include "script.h"
 #include "app.h"
 #include "../shared/toolbox_helpers.h"
@@ -130,11 +131,29 @@ void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   }
 
   if (loadModuleContent) {
+    // We fetch variables and functions imported from a module or a script
     assert(childNodesCount > 0);
-    mp_parse_node_t moduleName = parseNode->nodes[0];
-    assert(MP_PARSE_NODE_IS_LEAF(moduleName) && MP_PARSE_NODE_LEAF_KIND(moduleName) == MP_PARSE_NODE_ID);
-    
-
+    mp_parse_node_t importationSource = parseNode->nodes[0];
+    assert(MP_PARSE_NODE_IS_LEAF(importationSource) && MP_PARSE_NODE_LEAF_KIND(importationSource) == MP_PARSE_NODE_ID);
+    const char * importationSourceName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSource));
+    int numberOfChildren = 0;
+    const ToolboxMessageTree * moduleChildren = static_cast<PythonToolbox *>(App::app()->toolboxForInputEventHandler(nullptr))->moduleChildren(importationSourceName, &numberOfChildren);
+    if (moduleChildren != nullptr) {
+      /* If the importation source is a module, get the nodes from the toolbox
+       * We skip the 3 forst nodes, which are "import ...", "from ... import *"
+       * and "....function". */
+      constexpr int numberOfNodesToSkip = 3;
+      assert(numberOfChildren > numberOfNodesToSkip);
+      for (int i = 3; i < numberOfChildren; i++) {
+        // TODO LEA check if not already present
+        const ToolboxMessageTree * currentTree = moduleChildren + i;
+        const char * name = I18n::translate(currentTree->label());
+        addNode(ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
+      }
+    } else if (false) {
+      //TODO LEA
+      // else, try fetching the nodes from a script
+    }
   }
 }
 

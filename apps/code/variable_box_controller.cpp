@@ -368,50 +368,30 @@ importCurrent:
         int nameLength = lex->vstr.len;
 
         // Check if the token completes the text to autocomplete
-        bool canKeepChecking = textToAutocomplete == nullptr;
-        if (!canKeepChecking) {
+        bool tokenAutocompletesText = textToAutocomplete == nullptr;
+        if (!tokenAutocompletesText) {
+          // TODO LEA Caution with aprentheses (when comparing rect and rect(r)
           if (textToAutocompleteLength < nameLength && strncmp(name, textToAutocomplete, textToAutocompleteLength) == 0) {
-            canKeepChecking = true;
+            tokenAutocompletesText = true;
           }
         }
 
-        if (canKeepChecking) {
-          bool alreadyInVarBox = false;
-          // TODO LEA speed this up with dichotomia?
-          NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
-          for (NodeOrigin origin : origins) {
-            const int nodesCount = nodesCountForOrigin(origin);
-            ScriptNode * nodes = nodesForOrigin(origin);
-            for (int i = 0; i < nodesCount; i++) {
-              ScriptNode * matchingNode = nodes + i;
-              int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
-              if (comparisonResult == 0) {
-                alreadyInVarBox = true;
-                break;
-              }
-              if (comparisonResult > 0) {
-                break;
-              }
-            }
-            if (alreadyInVarBox) {
+        if (tokenAutocompletesText && !contains(name, nameLength)) {
+          /* If the token autocompletes the text and it is not already in the
+           * variable box, add it. */
+
+          /* This is a trick to get the token position in the text. The -2 was
+           * found from stepping in the code and trying. */
+          // TODO LEA FIXME
+          for (int i = 0; i < 3; i++) {
+            if (strncmp(tokenInText, name, nameLength) != 0) {
+              tokenInText--;
+            } else {
               break;
             }
           }
-
-          if (!alreadyInVarBox) {
-            /* This is a trick to get the token position in the text. The -2 was
-             * found from stepping in the code and trying. */
-            // TODO LEA FIXME
-            for (int i = 0; i < 3; i++) {
-              if (strncmp(tokenInText, name, nameLength) != 0) {
-                tokenInText--;
-              } else {
-                break;
-              }
-            }
-            assert(strncmp(tokenInText, name, nameLength) == 0);
-            addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
-          }
+          assert(strncmp(tokenInText, name, nameLength) == 0);
+          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
         }
       }
 
@@ -474,6 +454,7 @@ int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {
 }
 
 int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLengthMaybe, bool * strictlyStartsWith) {
+  // TODO LEA compare until parenthesis
   assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
   const char * nodeName = node->name();
   const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
@@ -597,6 +578,31 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   nodes[insertionIndex] = ScriptNode(type, name, nameLength, scriptIndex);
   // Increase the node count
   *currentNodeCount = *currentNodeCount + 1;
+}
+
+bool VariableBoxController::contains(const char * name, int nameLength) {
+  bool alreadyInVarBox = false;
+  // TODO LEA speed this up with dichotomia?
+  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    const int nodesCount = nodesCountForOrigin(origin);
+    ScriptNode * nodes = nodesForOrigin(origin);
+    for (int i = 0; i < nodesCount; i++) {
+      ScriptNode * matchingNode = nodes + i;
+      int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
+      if (comparisonResult == 0) {
+        alreadyInVarBox = true;
+        break;
+      }
+      if (comparisonResult > 0) {
+        break;
+      }
+    }
+    if (alreadyInVarBox) {
+      break;
+    }
+  }
+  return alreadyInVarBox;
 }
 
 }

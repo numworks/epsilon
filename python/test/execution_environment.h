@@ -15,10 +15,10 @@ private:
   size_t m_printTextIndex;
 };
 
-
-// TODO: this will be obsolete when runCode will take a parameter to choose the input type
-void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script);
+TestExecutionEnvironment init_environement();
+void deinit_environment();
 
 void assert_script_execution_succeeds(const char * script, const char * outputText = nullptr);
 void assert_script_execution_fails(const char * script);
-void assert_command_execution_succeeds(const char * line, const char * outputText = nullptr);
+void assert_command_execution_succeeds(TestExecutionEnvironment env, const char * line, const char * outputText = nullptr);
+void assert_command_execution_fails(TestExecutionEnvironment env, const char * line);

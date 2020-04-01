@@ -2,7 +2,9 @@
 #include "execution_environment.h"
 
 QUIZ_CASE(python_basics) {
-  assert_command_execution_succeeds("2+3","5\n");
+  TestExecutionEnvironment env = init_environement();
+  assert_command_execution_succeeds(env, "2+3","5\n");
+  deinit_environment();
 }
 
 QUIZ_CASE(python_template) {

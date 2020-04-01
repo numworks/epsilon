@@ -36,31 +36,51 @@ void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script
   *bufferChar = 0;
 }
 
-bool execute_input(const char * input, bool singleCommandLine, const char * outputText = nullptr) {
-  constexpr size_t bufferSize = 500;
+bool execute_input(TestExecutionEnvironment env, bool singleCommandLine, const char * input, const char * outputText = nullptr) {
+  constexpr size_t bufferSize = 1000;
   char buffer[bufferSize];
   if (!singleCommandLine) {
     inlineToBeSingleInput(buffer, bufferSize, input);
     input = buffer;
   }
-  MicroPython::init(TestExecutionEnvironment::s_pythonHeap, TestExecutionEnvironment::s_pythonHeap + TestExecutionEnvironment::s_pythonHeapSize);
-  TestExecutionEnvironment env;
   bool executionResult = env.runCode(input);
-  MicroPython::deinit();
   if (outputText) {
     quiz_assert(strcmp(outputText, env.lastPrintedText()) == 0);
   }
   return executionResult;
 }
 
+TestExecutionEnvironment init_environement() {
+  MicroPython::init(TestExecutionEnvironment::s_pythonHeap, TestExecutionEnvironment::s_pythonHeap + TestExecutionEnvironment::s_pythonHeapSize);
+ return TestExecutionEnvironment();
+}
+
+void deinit_environment() {
+  MicroPython::deinit();
+}
+
+void assert_script_execution_result(bool expectedResult, const char * script, const char * outputText = nullptr) {
+  TestExecutionEnvironment env = init_environement();
+  quiz_assert(expectedResult == execute_input(env, false, script, outputText));
+  deinit_environment();
+}
+
 void assert_script_execution_succeeds(const char * script, const char * outputText) {
-  quiz_assert(execute_input(script, false, outputText));
+  assert_script_execution_result(true, script, outputText);
 }
 
 void assert_script_execution_fails(const char * script) {
-  quiz_assert(!execute_input(script, false));
+  assert_script_execution_result(false, script);
 }
 
-void assert_command_execution_succeeds(const char * line, const char * outputText) {
-  quiz_assert(execute_input(line, true, outputText));
+void assert_command_execution_result(bool expectedResult, TestExecutionEnvironment env, const char * line, const char * outputText = nullptr) {
+  quiz_assert(execute_input(env, true,line, outputText) == expectedResult);
+}
+
+void assert_command_execution_succeeds(TestExecutionEnvironment env, const char * line, const char * outputText) {
+  assert_command_execution_result(true, env, line, outputText);
+}
+
+void assert_command_execution_fails(TestExecutionEnvironment env, const char * line) {
+  assert_command_execution_result(false, env, line);
 }

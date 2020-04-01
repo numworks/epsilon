@@ -472,6 +472,10 @@ void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float 
    *
    **/
   assert(angle >= 0.0f);
+  if (std::fabs(dx) < FLT_EPSILON && std::fabs(dy) < FLT_EPSILON) {
+    // We can't draw an arrow without any orientation
+    return;
+  }
   /* We compute the arrow segments in pixels in order to correctly size the
    * arrow without depending on the displayed range.
    * Warning: the computed values are relative so we need to add/subtract the

@@ -61,9 +61,10 @@ public:
   bool textFieldDidAbortEditing(TextField * textField) override;
 
   // MicroPython::ExecutionEnvironment
-  void displaySandbox() override;
-  void hideSandbox() override;
+  ViewController * sandbox() override { return &m_sandboxController; }
   void resetSandbox() override;
+  void displayViewController(ViewController * controller) override;
+  void hideAnyDisplayedViewController() override;
   void refreshPrintOutput() override;
   void printText(const char * text, size_t length) override;
   const char * inputText(const char * prompt) override;
@@ -82,6 +83,8 @@ private:
   static constexpr int k_numberOfLineCells = (Ion::Display::Height - Metric::TitleBarHeight) / 14 + 2; // 14 = KDFont::SmallFont->glyphSize().height()
   // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
   static constexpr int k_outputAccumulationBufferSize = 100;
+  bool isDisplayingViewController();
+  void reloadData(bool isEditing);
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();
@@ -103,7 +106,6 @@ private:
   SandboxController m_sandboxController;
   bool m_inputRunLoopActive;
   bool m_autoImportScripts;
-  bool m_preventEdition;
 #if EPSILON_GETOPT
   bool m_locked;
 #endif

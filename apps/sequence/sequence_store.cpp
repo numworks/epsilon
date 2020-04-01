@@ -31,6 +31,7 @@ Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   const char * name = firstAvailableName(&nameIndex);
   assert(name);
   // Choose the corresponding color
+  assert(nameIndex < Palette::numberOfDataColors());
   KDColor color = Palette::DataColor[nameIndex];
   Sequence::RecordDataBuffer data(color);
   // m_sequences

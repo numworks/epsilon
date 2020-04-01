@@ -67,6 +67,8 @@ private:
   void insertTextInCaller(const char * text, int textLength = -1);
   void addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength);
   void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
+  bool contains(const char * name, int nameLength);
+
 
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];

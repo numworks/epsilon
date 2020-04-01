@@ -143,17 +143,18 @@ void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
         const char * name = I18n::translate(currentTree->label());
         checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
       }
-    } else if (false) {
-      //TODO LEA
-      // else, try fetching the nodes from a script
+    } else {
+      // Try fetching the nodes from a script
+      Script importedScript = m_scriptStore->scriptNamed(importationSourceName);
+      if (!importedScript.isNull()) {
+        //TODO LEA
+
+      }
     }
   }
 }
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
-  //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
-  //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
-
   // Reset the node counts
   m_currentScriptNodesCount = 0;
   m_builtinNodesCount = 0;
@@ -163,6 +164,19 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
     textToAutocompleteLength = strlen(textToAutocomplete);
   }
   m_shortenResultBytesCount = textToAutocomplete == nullptr ? 0 : textToAutocompleteLength;
+
+  loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
+
+  if (scriptIndex < 0) {
+    //TODO LEA load imported in console
+  } else {
+    loadCurrentAndImportedVariableInScript(m_scriptStore->scriptAtIndex(scriptIndex), textToAutocomplete, textToAutocompleteLength);
+  }
+}
+
+void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
+  //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
+  //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
 
   // Add buitin nodes
   static const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
@@ -286,17 +300,14 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
       break;
     }
   }
+}
 
-  // Load the imported variables and functions
-// TODO TODO TODO LEA
-
-#if 1
-  if (scriptIndex < 0) {
-    //TODO LEA load imported in console
-  } else {
+void VariableBoxController::loadCurrentAndImportedVariableInScript(Script script, const char * textToAutocomplete, int textToAutocompleteLength) {
+  {
+    // Load the imported variables and functions
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
-      const char * parseStart = m_scriptStore->scriptAtIndex(scriptIndex).scriptContent();
+      const char * parseStart = script.scriptContent();
       while (*parseStart == '\n' && *parseStart != 0) {
         parseStart++;
       }
@@ -326,16 +337,10 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
       }
     }
   }
+
 importCurrent:
-
-#endif
-
-#if 1
-  if (scriptIndex < 0) {
-    //TODO LEA
-    return;
-  }
-  const char * script = m_scriptStore->scriptAtIndex(scriptIndex).scriptContent();
+  // Load the variables and functions from the current script
+  const char * scriptContent = script.scriptContent();
 
   /* To find variable and funtion names: we lex the script and keep all
    * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
@@ -346,7 +351,7 @@ importCurrent:
   if (nlr_push(&nlr) == 0) {
 
     // 1) Lex the script
-    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, script, strlen(script), false);
+    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
 
     // This is a trick to get the token position in the text.
     const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
@@ -362,7 +367,7 @@ importCurrent:
 
         /* If the token autocompletes the text and it is not already in the
          * variable box, add it. */
-       if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength)) {
+        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength)) {
           /* This is a trick to get the token position in the text, as name and
            * nameLength are temporary variables that will be overriden when the
            * lexer continues lexing or is destroyed.
@@ -376,7 +381,7 @@ importCurrent:
             }
           }
           assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, scriptIndex);
+          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, 1/* TODO LEA*/);
         }
       }
 
@@ -395,23 +400,6 @@ importCurrent:
     mp_lexer_free(lex);
     nlr_pop();
   }
-#else
-  m_scriptNodesCount = 1;
-  m_scriptStore->scanScriptsForFunctionsAndVariables(
-    this,
-    [](void * context, const char * functionName, int scriptIndex) {
-      if (!shouldAddObject(functionName, k_maxScriptObjectNameSize)) {
-        return;
-      }
-      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
-      cvc->addFunctionAtIndex(functionName, scriptIndex);},
-    [](void * context, const char * variableName, int scriptIndex) {
-      if (!shouldAddObject(variableName, k_maxScriptObjectNameSize)) {
-        return;
-      }
-      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
-      cvc->addVariableAtIndex(variableName, scriptIndex);});
-#endif
 }
 
 const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * text, int * textToInsertLength) {

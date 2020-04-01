@@ -65,6 +65,9 @@ private:
 
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
+
+  void loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength);
+  void loadCurrentAndImportedVariableInScript(Script script, const char * textToAutocomplete, int textToAutocompleteLength);
   void addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength);
   /* Add a node if it completes the text to autocomplete and if it is not
    * already contained in the variable box. */

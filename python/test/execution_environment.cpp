@@ -6,7 +6,9 @@
 char TestExecutionEnvironment::s_pythonHeap[TestExecutionEnvironment::s_pythonHeapSize];
 
 void TestExecutionEnvironment::printText(const char * text, size_t length) {
-  quiz_print(text);
+  assert(m_printTextIndex + length < k_maxPrintedTextSize);
+  m_printTextIndex += strlcpy(m_printTextBuffer + m_printTextIndex, text, length + 1);
+  m_printTextBuffer[m_printTextIndex] = 0;
 }
 
 // TODO: this will be obsolete when runCode will take a parameter to choose the input type
@@ -34,12 +36,24 @@ void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script
   *bufferChar = 0;
 }
 
-void assert_script_execution_succeeds(const char * script) {
+bool execute_script(const char * script, const char * outputText = nullptr) {
   constexpr size_t bufferSize = 500;
   char buffer[bufferSize];
   inlineToBeSingleInput(buffer, bufferSize, script);
   MicroPython::init(TestExecutionEnvironment::s_pythonHeap, TestExecutionEnvironment::s_pythonHeap + TestExecutionEnvironment::s_pythonHeapSize);
   TestExecutionEnvironment env;
-  env.runCode(buffer);
+  bool executionResult = env.runCode(buffer);
   MicroPython::deinit();
+  if (outputText) {
+    quiz_assert(strcmp(outputText, env.lastPrintedText()) == 0);
+  }
+  return executionResult;
+}
+
+void assert_script_execution_succeeds(const char * script, const char * outputText) {
+  quiz_assert(execute_script(script, outputText));
+}
+
+void assert_script_execution_fails(const char * script) {
+  quiz_assert(!execute_script(script));
 }

@@ -30,7 +30,7 @@ MicroPython::ExecutionEnvironment * MicroPython::ExecutionEnvironment::currentEx
   return sCurrentExecutionEnvironment;
 }
 
-void MicroPython::ExecutionEnvironment::runCode(const char * str) {
+bool MicroPython::ExecutionEnvironment::runCode(const char * str) {
   assert(sCurrentExecutionEnvironment == nullptr);
   sCurrentExecutionEnvironment = this;
 
@@ -38,6 +38,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
    * for the exception handling (because of print). */
   mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::Back);
 
+  bool runSucceeded = true;
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
@@ -49,6 +50,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     mp_call_function_0(module_fun);
     nlr_pop();
   } else { // Uncaught exception
+    runSucceeded = false;
     /* mp_obj_print_exception is supposed to handle error printing. However,
      * because we want to print custom information, we copied and modified the
      * content of mp_obj_print_exception instead of calling it. */
@@ -93,6 +95,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
 
   assert(sCurrentExecutionEnvironment == this);
   sCurrentExecutionEnvironment = nullptr;
+  return runSucceeded;
 }
 
 void MicroPython::ExecutionEnvironment::interrupt() {

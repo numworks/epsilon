@@ -21,3 +21,4 @@ void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script
 
 void assert_script_execution_succeeds(const char * script, const char * outputText = nullptr);
 void assert_script_execution_fails(const char * script);
+void assert_command_execution_succeeds(const char * line, const char * outputText = nullptr);

@@ -22,7 +22,7 @@ void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script
   bufferChar += strlcpy(buffer, openExec, bufferSize);
   const char * scriptChar = script;
   while (*scriptChar != 0) {
-    assert(bufferChar - buffer + 2 < bufferSize - 1);
+    assert(bufferChar - buffer + 2 < (int)bufferSize - 1);
     if (*scriptChar == '\n') {
       // Turn carriage return in {'\', 'n'} to be processed by exec
       *bufferChar++ = '\\';
@@ -33,7 +33,7 @@ void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script
     scriptChar++;
   }
   bufferChar += strlcpy(bufferChar, closeExec, buffer + bufferSize - bufferChar);
-  assert(bufferChar - buffer < bufferSize);
+  assert(bufferChar - buffer < (int)bufferSize);
   *bufferChar = 0;
 }
 

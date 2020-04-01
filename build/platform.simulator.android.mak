@@ -1,8 +1,10 @@
 TOOLCHAIN = android
-EXE = so
 
 EPSILON_TELEMETRY ?= 1
 
-ifdef NDK_ABI
-BUILD_DIR := $(BUILD_DIR)/$(NDK_ABI)
+ARCHS = armeabi-v7a arm64-v8a x86 x86_64
+
+ifdef ARCH
+EXE = so
+BUILD_DIR := $(BUILD_DIR)/$(ARCH)
 endif

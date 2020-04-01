@@ -60,13 +60,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd);
       /* Draw tangent */
       if (m_tangent && record == m_selectedRecord) {
-        float tangentParameter[2];
-        tangentParameter[0] = f->approximateDerivative(m_curveViewCursor->x(), context());
-        tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
-        drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, [](float t, void * model, void * context) {
-              float * tangent = (float *)model;
-              return Poincare::Coordinate2D<float>(t, tangent[0]*t+tangent[1]);
-            }, tangentParameter, nullptr, Palette::GraphTangent);
+        float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
+        float tangentParameterB = -tangentParameterA*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context()).x2();
+        // To represent the tangent, we draw segment from and to abscissas at the extremity of the drawn rect
+        float minAbscissa = pixelToFloat(Axis::Horizontal, rect.left());
+        float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());
+        drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GraphTangent, false);
       }
       continue;
     }

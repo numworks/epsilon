@@ -7,8 +7,8 @@ LEDS_CHOICE ?= 0
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak
 
-EPSILON_VERSION ?= 13.0.0
-EPSILON_CUSTOM_VERSION ?= 1.19.1
+EPSILON_VERSION ?= 13.2.0
+EPSILON_CUSTOM_VERSION ?= 1.19.2
 # USERNAME ?= N/A
 EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings external
 EPSILON_I18N ?= en fr es de pt hu
@@ -20,9 +20,6 @@ OMEGA_THEME ?= omega_light
 
 ifndef USE_LIBA
   $(error platform.mak should define USE_LIBA)
-endif
-ifndef EXE
-  $(error platform.mak should define EXE, the extension for executables)
 endif
 include build/toolchain.$(TOOLCHAIN).mak
 

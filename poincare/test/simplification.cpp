@@ -1025,10 +1025,10 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→u(n+1)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→v(n)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→v(n+1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→u_{n}", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→u_{n+1}", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→v_{n}", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→v_{n+1}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u{n}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→u{n+1}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v{n}", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→v{n+1}", Undefined::Name());
   assert_parsed_expression_simplify_to("1→inf", Undefined::Name());
   assert_parsed_expression_simplify_to("1→undef", Undefined::Name());
   assert_parsed_expression_simplify_to("1→π", Undefined::Name());
@@ -1231,8 +1231,8 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("(1+x)/(1+x)", "1", User);
 
   // Apply rule x^(2/3) --> root(x,3)^2 for ReductionTarget = System
-  assert_parsed_expression_simplify_to("x^(2/3)", "root(x,3)^2", SystemForApproximation);
-  assert_parsed_expression_simplify_to("x^(2/3)", "root(x,3)^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^(2/3)", "x^\u00122/3\u0013", SystemForApproximation);
+  assert_parsed_expression_simplify_to("x^(2/3)", "x^\u00122/3\u0013", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(2/3)", "x^\u00122/3\u0013", User);
   assert_parsed_expression_simplify_to("x^(1/3)", "root(x,3)", SystemForApproximation);
   assert_parsed_expression_simplify_to("x^(1/3)", "root(x,3)", SystemForAnalysis);
@@ -1317,6 +1317,8 @@ QUIZ_CASE(poincare_simplification_mix) {
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)×log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)
   assert_parsed_expression_simplify_to("(((√(6)-√(2))/4)/((√(6)+√(2))/4))+1", "-√(3)+3");
   assert_parsed_expression_simplify_to("1/√(𝐢) × (√(2)-𝐢×√(2))", "-2×𝐢"); // TODO: get rid of complex at denominator?
+
+  assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.7027409010183ᴇ62");
 }
 
 QUIZ_CASE(poincare_hyperbolic_trigonometry) {

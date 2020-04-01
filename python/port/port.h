@@ -4,6 +4,7 @@
 extern "C" {
 #include <stddef.h>
 }
+#include <escher/view_controller.h>
 
 namespace MicroPython {
 
@@ -14,21 +15,23 @@ public:
 
 class ExecutionEnvironment {
 public:
-  ExecutionEnvironment() : m_sandboxIsDisplayed(false) {}
+  ExecutionEnvironment() {}
   static ExecutionEnvironment * currentExecutionEnvironment();
   void runCode(const char * );
   virtual const char * inputText(const char * prompt) { return nullptr; }
-  virtual void displaySandbox() {}
-  virtual void hideSandbox() {}
+
+  // Sandbox
+  void displaySandbox() { displayViewController(sandbox()); }
+  virtual ViewController * sandbox() { return nullptr; }
   virtual void resetSandbox() {}
+
+  // Generic View Controller
+  virtual void displayViewController(ViewController * controller) {}
+  virtual void hideAnyDisplayedViewController() {}
+
   virtual void printText(const char * text, size_t length) {}
   virtual void refreshPrintOutput() {}
   void interrupt();
-  void setSandboxIsDisplayed(bool display);
-protected:
-  bool sandboxIsDisplayed() const { return m_sandboxIsDisplayed; }
-private:
-  bool m_sandboxIsDisplayed;
 };
 
 void init(void * heapStart, void * heapEnd);
@@ -36,6 +39,6 @@ void deinit();
 void registerScriptProvider(ScriptProvider * s);
 void collectRootsAtAddress(char * address, int len);
 
-};
+}
 
 #endif

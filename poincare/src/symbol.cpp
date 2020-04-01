@@ -94,8 +94,8 @@ Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
-  return Symbol(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
+Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  return Symbol(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
 }
 
 ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
@@ -169,13 +169,10 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
           // The symbol is a paremetered expression's parameter
           return *this;
         }
-        if (index == ParameteredExpression::ParameteredChildIndex()) {
-          assert(p.childAtIndex(ParameteredExpression::ParameterChildIndex()).type() == ExpressionNode::Type::Symbol);
-          Expression untypedParameter = p.childAtIndex(ParameteredExpression::ParameterChildIndex());
-          Symbol parameter = static_cast<Symbol &>(untypedParameter);
-          if (strcmp(parameter.name(), name()) == 0) {
-            return *this;
-          }
+        if (index == ParameteredExpression::ParameteredChildIndex()
+            && hasSameNameAs(static_cast<ParameteredExpression&>(p).parameter()))
+        {
+          return *this;
         }
       }
       current = p;
@@ -196,7 +193,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
 }
 
 Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
-  if (symbol.type() == ExpressionNode::Type::Symbol && strcmp(name(), symbol.name()) == 0) {
+  if (symbol.type() == ExpressionNode::Type::Symbol && hasSameNameAs(symbol)) {
     Expression value = expression.clone();
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {
@@ -218,10 +215,25 @@ int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
+Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
   if (replaceFunctionsOnly || isSystemSymbol()) {
     return *this;
   }
+
+  // Check that this is not a parameter in a parametered expression
+  Expression ancestor = *this;
+  while (parameteredAncestorsCount > 0) {
+    ancestor = ancestor.parent();
+    assert(!ancestor.isUninitialized());
+    if (ancestor.isParameteredExpression()) {
+      parameteredAncestorsCount--;
+      Symbol ancestorParameter = static_cast<ParameteredExpression&>(ancestor).parameter();
+      if (hasSameNameAs(ancestorParameter)) {
+        return *this;
+      }
+    }
+  }
+
   Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     return *this;

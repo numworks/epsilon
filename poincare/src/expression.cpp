@@ -321,18 +321,22 @@ void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext redu
 
 Expression Expression::defaultShallowReduce() {
   Expression result;
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    /* The reduction is shortcut if one child is unreal or undefined:
-     * - the result is unreal if at least one child is unreal
-     * - the result is undefined if at least one child is undefined but no child
-     *   is unreal */
-    ExpressionNode::Type childIType = childAtIndex(i).type();
-    if (childIType == ExpressionNode::Type::Unreal) {
-      result = Unreal::Builder();
-      break;
-    } else if (childIType == ExpressionNode::Type::Undefined) {
-      result = Undefined::Builder();
+  if (sSimplificationHasBeenInterrupted) {
+    result = Undefined::Builder();
+  } else {
+    const int childrenCount = numberOfChildren();
+    for (int i = 0; i < childrenCount; i++) {
+      /* The reduction is shortcut if one child is unreal or undefined:
+       * - the result is unreal if at least one child is unreal
+       * - the result is undefined if at least one child is undefined but no child
+       *   is unreal */
+      ExpressionNode::Type childIType = childAtIndex(i).type();
+      if (childIType == ExpressionNode::Type::Unreal) {
+        result = Unreal::Builder();
+        break;
+      } else if (childIType == ExpressionNode::Type::Undefined) {
+        result = Undefined::Builder();
+      }
     }
   }
   if (!result.isUninitialized()) {
@@ -390,10 +394,10 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
+    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
     if (c.isUninitialized()) { // the expression is circularly defined, escape
       return Expression();
     }
@@ -684,7 +688,6 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to
    * beautify them with the right complex format. */
   if (e.type() == ExpressionNode::Type::Matrix) {
-    // TODO: this method enables to take the complex format into account when the result is a matrix of scalar. It won't work for nested matrices... Find a more elegant and general solution?
     Matrix m = static_cast<Matrix &>(e);
     *simplifiedExpression = Matrix::Builder();
     if (approximateExpression) {
@@ -694,6 +697,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       Expression simplifiedChild;
       Expression approximateChild = approximateExpression ? Expression() : nullptr;
       e.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, &approximateChild, userReductionContext, context, complexFormat, angleUnit);
+      assert(!simplifiedChild.deepIsMatrix(context));
       static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
       if (approximateExpression) {
         static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild, i, i);
@@ -742,7 +746,7 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context,
       break;
     }
     didReplace = false;
-    e = e.deepReplaceReplaceableSymbols(context, &didReplace, replaceFunctionsOnly);
+    e = e.deepReplaceReplaceableSymbols(context, &didReplace, replaceFunctionsOnly, 0);
     if (e.isUninitialized()) { // the expression is circularly defined, escape
       replacementCount = k_maxSymbolReplacementsCount;
     }
@@ -770,7 +774,7 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
   }
   matrix.setDimensions(static_cast<Matrix &>(c).numberOfRows(), static_cast<Matrix &>(c).numberOfColumns());
   replaceWithInPlace(matrix);
-  return matrix.shallowReduce();
+  return matrix.shallowReduce(reductionContext.context());
 }
 
 Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {

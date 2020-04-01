@@ -31,6 +31,7 @@ public:
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     uint32_t * modelVersion() { return &m_modelVersion; }
+    uint32_t * previousModelsVersions() { return m_store.seriesChecksum(); }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
   private:
     void tidy() override;

@@ -38,8 +38,8 @@ public:
   void setBannerView(View * bannerView);
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
-  const float pixelWidth() const;
-  const float pixelHeight() const;
+  float pixelWidth() const;
+  float pixelHeight() const;
 protected:
   CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
@@ -59,18 +59,47 @@ protected:
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const {
-    return drawSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
+    return drawHorizontalOrVerticalSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
         thickness, dashSize);
   }
-  void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
+  void drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;
+  void drawSegment(KDContext * ctx, KDRect rect,
+    float x, float y, float u, float v,
+    KDColor color, bool thick = true
+  ) const;
   enum class Size : uint8_t {
     Small,
     Medium,
     Large
   };
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
+  /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
+   * orientation (dx,dy).
+   * The parameters defining the shape of the arrow are the length in pixel of
+   * the projection of the arrow on the segment -'pixelArrowLength'- and the
+   * tangent of the angle between the segment and each wing of the arrow called
+   * 'angle'.
+   *
+   *            /                  |
+   *          /                    |
+   *        /                      L
+   *      /                        |
+   *    /                          |
+   *  <--------------------------------------------------
+   *    \
+   *      \
+   *        \
+   *          \
+   *            \
+   *
+   *  <--- pl --->
+   *
+   *  pl = pixelArrowLength
+   *  tan(angle) = L/pl
+   */
+  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowLength = 10, float angle = 0.4f) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
@@ -100,7 +129,7 @@ private:
   float min(Axis axis) const;
   float max(Axis axis) const;
   float gridUnit(Axis axis) const;
-  virtual char * label(Axis axis, int index) const = 0;
+  virtual char * label(Axis axis, int index) const { return nullptr; }
   virtual size_t labelMaxGlyphLengthSize() const { return k_labelBufferMaxGlyphLength; }
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the

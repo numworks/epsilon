@@ -55,9 +55,11 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setLegendMessage(I18n::Message message, Step step);
     void setEditableZone(double d);
-    void setSumSymbol(Step step, double start, double end, double result, Poincare::Layout functionLayout);
+    void setSumLayout(Step step, double start, double end, double result, Poincare::Layout functionLayout);
   private:
-    constexpr static KDCoordinate k_editableZoneBufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
+    constexpr static size_t k_editableZoneBufferSize = Poincare::PrintFloat::k_maxFloatCharSize;
+    constexpr static int k_valuesPrecision = Poincare::Preferences::MediumNumberOfSignificantDigits;
+    constexpr static int k_valuesBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_valuesPrecision);
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static const KDFont * k_font = KDFont::SmallFont;
     static KDCoordinate editableZoneWidth() { return 12*k_font->glyphSize().width(); }
@@ -69,7 +71,6 @@ private:
     void layoutSubviews(bool force = false) override;
     void layoutSubviews(Step step, bool force);
     ExpressionView m_sum;
-    Poincare::Layout m_sumLayout;
     MessageTextView m_legend;
     TextField m_editableZone;
     char m_textBuffer[k_editableZoneBufferSize];

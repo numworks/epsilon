@@ -1,25 +1,23 @@
 #ifndef SHARED_ZOOM_PARAMETER_CONTROLLER_H
 #define SHARED_ZOOM_PARAMETER_CONTROLLER_H
 
-#include <escher.h>
-#include "interactive_curve_view_range.h"
-#include "curve_view.h"
+#include "zoom_and_pan_curve_view_controller.h"
 #include <apps/i18n.h>
 
 namespace Shared {
 
-class ZoomParameterController : public ViewController {
+class ZoomParameterController : public ZoomAndPanCurveViewController {
 public:
   ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
   const char * title() override;
-  View * view() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  View * view() override { return &m_contentView; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("Zoom");
 private:
   constexpr static KDCoordinate k_standardViewHeight = 175;
+
   class ContentView : public View {
   public:
     constexpr static KDCoordinate k_legendHeight = 30;
@@ -46,7 +44,13 @@ private:
     CurveView * m_curveView;
     LegendView m_legendView;
   };
+
   void adaptCurveRange(bool viewWillAppear);
+
+  // ZoomAndPanCurveViewController
+  InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_interactiveRange; }
+  CurveView * curveView() override { return m_contentView.curveView(); }
+
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;
 };

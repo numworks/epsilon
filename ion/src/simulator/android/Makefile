@@ -11,6 +11,12 @@ $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_F
 
 LDFLAGS += -ljnigraphics -llog
 
+
+# If ARCH is not defined, we will re-trigger a build for each avaialble ARCH.
+# This is used to build APKs, which needs to embbed a binary for each ARCH.
+
+ifndef ARCH
+
 # Android resources
 # Some android resources needs to be filtered through ImageMagick. Others are
 # simply copied over.
@@ -27,57 +33,50 @@ $(BUILD_DIR)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 
-# Cross-ABI libepsilon.so
-# This file is loaded is loaded only once, which prevents us from tracking
-# dependencies across ABIs. As a shortcut, we simply force a re-make of
-# libepsilon.so for each ABI.
+# This rule allow us to build any executable (%) for a specified ARCH ($1)
+# We depend on a phony target to make sure this rule is always executed
 
 .PHONY: force_remake
-
-define rule_for_libepsilon
-$$(BUILD_DIR)/app/libs/%/lib$(1): force_remake $$$$(@D)/.
-	$(Q) echo "MAKE    NDK_ABI=$$*"
-	$(Q) $$(MAKE) NDK_ABI=$$* $(1)
-	$(Q) cp $$(BUILD_DIR)/$$*/$(1) $$@
+define rule_for_arch_executable
+.PRECIOUS: $$(BUILD_DIR)/$(1)/%.so
+$$(BUILD_DIR)/$(1)/%.so: force_remake
+	$(Q) echo "MAKE ARCH=$(1) $$*.so"
+	$(Q) $$(MAKE) ARCH=$(1) --silent $$*.so
 endef
 
-$(eval $(call rule_for_libepsilon,epsilon.so))
-$(eval $(call rule_for_libepsilon,epsilon.official.so))
+# We need to put the .so files somewhere Gradle can pick them up.
+# We decided to use the location "app/libs/$EXECUTABLE/$ARCH/libepsilon.so"
+# This way it's easy to import the shared object from Java code (it's always
+# named libepsilon.so), and it's easy to make Gradle use a given executable by
+# simply using the jniLibs.src directive.
+define path_for_arch_jni_lib
+$$(BUILD_DIR)/app/libs/%/$(1)/libepsilon.so
+endef
 
-# If NDK_ABI is not defined, we will re-trigger a build for each avaialble ABI.
-# This is used to build APKs, which needs to embbed a binary for each ABI.
+define rule_for_arch_jni_lib
+$(call path_for_arch_jni_lib,$(1)): $$(BUILD_DIR)/$(1)/%.so | $$$$(@D)/.
+	$(Q) cp $$< $$@
+endef
 
-ifndef NDK_ABI
+$(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_executable,$(ARCH))))
+$(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_jni_lib,$(ARCH))))
 
-NDK_ABIS = armeabi-v7a arm64-v8a x86 x86_64
+apk_deps = $(foreach ARCH,$(ARCHS),$(call path_for_arch_jni_lib,$(ARCH)))
+apk_deps += $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
+apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
 
-epsilon_apk_deps = $(subst ion/src/simulator/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
-epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
+.PRECIOUS: $(apk_deps)
 
-define rule_for_gradle
-.PHONY: gradle_$1_$2
-gradle_$1_$2: $$(epsilon_apk_deps) $$(patsubst %,$$(BUILD_DIR)/app/libs/%/libepsilon$2so,$(NDK_ABIS))
+$(BUILD_DIR)/%.apk: $(apk_deps)
 	@echo "GRADLE ion/src/simulator/android/build.gradle"
-	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle $1
-endef
-
-$(eval $(call rule_for_gradle,assembleCodesigned,.))
-$(eval $(call rule_for_gradle,assembleRelease,.))
-$(eval $(call rule_for_gradle,assembleCodesigned,.official.))
-$(eval $(call rule_for_gradle,assembleRelease,.official.))
+	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
+	$(Q) cp $(BUILD_DIR)/app/outputs/apk/release/android-release*.apk $@
 
 DEFAULT = epsilon.apk
 
-.PHONY: epsilon%apk
-ifdef ANDROID_SIGNING_STORE_FILE
-epsilon%apk: gradle_assembleCodesigned_%
-else
-epsilon%apk: gradle_assembleRelease_%
-	$(warning Building without code signing. Define ANDROID_SIGNING_STORE_FILE, ANDROID_SIGNING_STORE_PASSWORD, ANDROID_SIGNING_KEY_ALIAS and  ANDROID_SIGNING_KEY_PASSWORD for a signed build.)
-endif
-
-
-.PHONY: epsilon_run
-epsilon_run: gradle_installDebug
+.PHONY: %_run
+%_run: $(BUILD_DIR)/%.apk
+	@echo "ADB     $*.apk"
+	$(Q) adb install $<
 
 endif

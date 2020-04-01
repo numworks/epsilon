@@ -10,9 +10,19 @@ extern "C" {
 
 namespace Poincare {
 
-template <typename T> T absMod(T a, T b) {
-  T result = std::fmod(std::fabs(a), b);
-  return result > b/2 ? b-result : result;
+template <typename T> bool isNegligeable(T x, T precision, T norm1, T norm2) {
+  T absX = std::fabs(x);
+  return absX <= 10.0*precision && absX/norm1 <= precision && absX/norm2 <= precision;
+}
+
+template < typename T> T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
+  T absRealInput = std::fabs(c.real());
+  T absImagInput = std::fabs(c.imag());
+  // If the magnitude of one part is null, ignore it
+  if (absRealInput == 0.0 || (absImagInput > 0.0 && absImagInput < absRealInput)) {
+    return absImagInput;
+  }
+  return absRealInput;
 }
 
 static inline int absInt(int x) { return x < 0 ? -x : x; }
@@ -27,16 +37,29 @@ template <typename T> int ApproximationHelper::PositiveIntegerApproximationIfPos
   return absInt((int)scalar);
 }
 
-template <typename T> std::complex<T> ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(std::complex<T> c) {
-  T arg = std::arg(c);
-  T precision = 10*Expression::Epsilon<T>();
-  if (absMod<T>(arg, (T)M_PI) <= precision) {
-    c.imag(0);
+template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::complex<T> result, std::complex<T> input1, std::complex<T> input2, bool enableNullResult) {
+  /* Cheat: openbsd  functions (cos, sin, tan, cosh, acos, pow...) are
+   * numerical implementation and thus are approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
+   * weird results as acos(1) = 6E-17 or cos(π/2) = 4E-17, we round the result
+   * to its 1E-6 or 1E-14 precision when its ratio with the argument (π/2 in the
+   * example) is smaller than epsilon. This way, we have sin(π) ~ 0 and
+   * sin(1E-15)=1E-15.
+   * We can't do that for all evaluation as the user can operate on values as
+   * small as 1E-308 (in double) and most results still be correct. */
+  if (!enableNullResult && (result.imag() == 0.0 || result.real() == 0.0)) {
+    return result;
   }
-  if (absMod<T>(arg-(T)M_PI/2.0, (T)M_PI) <= precision) {
-    c.real(0);
+  T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
+  T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
+  T precision = 10.0*Expression::Epsilon<T>();
+  if (isNegligeable(result.imag(), precision, magnitude1, magnitude2)) {
+    result.imag(0);
   }
-  return c;
+  if (isNegligeable(result.real(), precision, magnitude1, magnitude2)) {
+    result.real(0);
+  }
+  return result;
 }
 
 template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
@@ -106,8 +129,8 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
 
 template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
 template int Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, Poincare::Context*, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
-template std::complex<float> Poincare::ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument<float>(std::complex<float>);
-template std::complex<double> Poincare::ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument<double>(std::complex<double>);
+template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
+template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexCompute<float> compute);
 template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexCompute<double> compute);
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, Poincare::Context * context, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<float> computeOnMatrices);

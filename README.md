@@ -16,7 +16,7 @@ Omega is a fork of Numworks' Epsilon, the OS that runs on their calculator, whic
 - An app for RPN
 - A periodic table app + all of the molar masses for the elements in the toolbox
 - More steps for brightness (16 instead of 5)
-- 32 KB Python heap instead of 16 KB
+- ~~32 KB Python heap instead of 16 KB~~ Now available on Epsilon `>=13.2.0`!
 - And more...
 
 The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Main-features), and the complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog).

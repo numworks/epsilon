@@ -29,32 +29,32 @@ all_official:
 	$(call file_check,$(ANDROID_GRADLE_PROPERTIES))
 	$(call file_check,$(IOS_MOBILE_PROVISION))
 	$(call command_check,$(EMCC))
-	$(Q) rm -rf output/stable_release
-	$(Q) mkdir -p output/stable_release
+	$(Q) rm -rf output/all_official
+	$(Q) mkdir -p output/all_official
 	$(Q) echo "BUILD_FIRMWARE    DEVICE N0110"
 	$(Q) $(MAKE) clean
 	$(Q) $(MAKE) epsilon.official.onboarding.dfu
-	$(Q) cp output/release/device/n0110/epsilon.official.onboarding.dfu output/stable_release/epsilon.device.n0110.dfu
+	$(Q) cp output/release/device/n0110/epsilon.official.onboarding.dfu output/all_official/epsilon.device.n0110.dfu
 	$(Q) echo "BUILD_FIRMWARE    DEVICE N0100"
 	$(Q) $(MAKE) MODEL=n0100 clean
 	$(Q) $(MAKE) MODEL=n0100 epsilon.official.onboarding.dfu
-	$(Q) cp output/release/device/n0100/epsilon.official.onboarding.dfu output/stable_release/epsilon.device.n0100.dfu
+	$(Q) cp output/release/device/n0100/epsilon.official.onboarding.dfu output/all_official/epsilon.device.n0100.dfu
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
-	$(Q) $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web output/release/simulator/web/simulator.official.zip
-	$(Q) cp output/release/simulator/web/simulator.official.zip output/stable_release/simulator.web.zip
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=web clean
+	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.zip
+	$(Q) cp output/release/simulator/web/epsilon.official.zip output/all_official/simulator.web.zip
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
-	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web epsilon.official.js
-	$(Q) cp output/release/simulator/web/epsilon.official.js output/stable_release/epsilon.js
+	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.js
+	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.js
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
-	$(Q) $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); $(MAKE) DEBUG=0 PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
-	$(Q) cp output/release/simulator/web/epsilon.official.js output/stable_release/epsilon.python.js
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=web clean
+	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
+	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.python.js
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR ANDROID"
 	$(Q) $(MAKE) PLATFORM=simulator TARGET=android clean
-	$(Q) $(MAKE) PLATFORM=simulator TARGET=android epsilon.official.apk
-	$(Q) cp output/release/simulator/android/app/outputs/apk/release/android-release-unsigned.apk output/stable_release/epsilon.apk
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=android epsilon.official.signed.apk
+	$(Q) cp output/release/simulator/android/app/outputs/apk/codesigned/android-codesigned.apk output/all_official/epsilon.official.apk
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR IOS"
 	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios clean
-	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE="~/Downloads/NumWorks_Graphing_Calculator_Distribution.mobileprovision" output/release/simulator/ios/app/epsilon.official.ipa
-	$(Q) cp output/release/simulator/ios/app/epsilon.official.ipa output/stable_release/epsilon.ipa
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE=$(IOS_MOBILE_PROVISION) output/release/simulator/ios/app/epsilon.official.ipa
+	$(Q) cp output/release/simulator/ios/app/epsilon.official.ipa output/all_official/epsilon.ipa

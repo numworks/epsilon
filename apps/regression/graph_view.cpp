@@ -9,10 +9,8 @@ using namespace Shared;
 namespace Regression {
 
 GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, Shared::CursorView * cursorView) :
-  CurveView(store, cursor, bannerView, cursorView),
-  m_store(store),
-  m_xLabels{},
-  m_yLabels{}
+  LabeledCurveView(store, cursor, bannerView, cursorView),
+  m_store(store)
 {
 }
 
@@ -24,6 +22,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     if (!m_store->seriesIsEmpty(series)) {
+      assert(series < Palette::numberOfDataColors());
       KDColor color = Palette::DataColor[series];
       Model * seriesModel = m_store->modelForSeries(series);
       drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, [](float abscissa, void * model, void * context) {
@@ -39,15 +38,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), Palette::BackgroundHard);
     }
   }
-}
-
-char * GraphView::label(Axis axis, int index) const {
-  if (axis == Axis::Vertical) {
-    assert(index < k_maxNumberOfXLabels);
-    return (char *)m_yLabels[index];
-  }
-  assert(index < k_maxNumberOfYLabels);
-  return (char *)m_xLabels[index];
 }
 
 }

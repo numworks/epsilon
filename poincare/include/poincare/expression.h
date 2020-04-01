@@ -76,6 +76,7 @@ class Expression : public TreeHandle {
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
+  friend class ParameteredExpression;
   friend class Parenthesis;
   friend class PermuteCoefficient;
   friend class Power;
@@ -112,6 +113,7 @@ class Expression : public TreeHandle {
   friend class IntegralNode;
   template<int T>
   friend class LogarithmNode;
+  friend class MatrixNode;
   friend class NaperianLogarithmNode;
   friend class NAryExpressionNode;
   friend class StoreNode;
@@ -274,7 +276,7 @@ public:
       m_numberOfChildren(numberOfChildren),
       m_untypedBuilder(builder) {}
     const char * name() const { return m_name; }
-    const int numberOfChildren() const { return m_numberOfChildren; }
+    int numberOfChildren() const { return m_numberOfChildren; }
     Expression build(Expression children) const { return (*m_untypedBuilder)(children); }
   private:
     const char * m_name;
@@ -346,8 +348,8 @@ protected:
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   /* 'deepReplaceReplaceableSymbols' returns an uninitialized expression if it
    * is circularly defined. Same convention as for 'ExpressionWithoutSymbols'.*/
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly);
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) { return node()->deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
 
   /* Simplification */
   void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);

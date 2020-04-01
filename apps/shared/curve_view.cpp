@@ -106,11 +106,11 @@ void CurveView::setOkView(View * okView) {
  *       m_frame.height() - 1            yMin()
  */
 
-const float CurveView::pixelWidth() const {
+float CurveView::pixelWidth() const {
   return (m_curveViewRange->xMax() - m_curveViewRange->xMin()) / (m_frame.width() - 1);
 }
 
-const float CurveView::pixelHeight() const {
+float CurveView::pixelHeight() const {
   return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
 }
 
@@ -374,7 +374,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
       position = positionLabel(horizontalCoordinate, labelPosition, textSize, RelativePosition::Before, RelativePosition::None);
       if (floatingLabels == FloatingPosition::Min) {
         position = KDPoint(k_labelMargin, position.y());
-      } else if (floatingLabels == FloatingPosition::Min) {
+      } else if (floatingLabels == FloatingPosition::Max) {
         position = KDPoint(Ion::Display::Width - textSize.width() - k_labelMargin, position.y());
       }
     }
@@ -386,7 +386,7 @@ DrawLabel:
   }
 }
 
-void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
+void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
   KDCoordinate min = (axis == Axis::Horizontal) ? rect.x() : rect.y();
   KDCoordinate max = (axis == Axis::Horizontal) ? rect.x() + rect.width() : rect.y() + rect.height();
   KDCoordinate start = std::isinf(lowerBound) ? min : std::round(floatToPixel(axis, lowerBound));
@@ -417,6 +417,14 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   }
 }
 
+void CurveView::drawSegment(KDContext * ctx, KDRect rect, float x, float y, float u, float v, KDColor color, bool thick) const {
+  float pxf = floatToPixel(Axis::Horizontal, x);
+  float pyf = floatToPixel(Axis::Vertical, y);
+  float puf = floatToPixel(Axis::Horizontal, u);
+  float pvf = floatToPixel(Axis::Vertical, v);
+  straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
+}
+
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size) const {
   KDCoordinate diameter = 0;
   const uint8_t * mask = nullptr;
@@ -442,6 +450,47 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   }
   KDColor workingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiameter];
   ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
+}
+
+
+void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowLength, float angle) const {
+  /* Let's call the following variables L and l:
+   *
+   *            /                  |
+   *          /                    |
+   *        /                      l
+   *      /                        |
+   *    /                          |
+   *  <--------------------------------------------------
+   *    \
+   *      \
+   *        \
+   *          \
+   *            \
+   *
+   * ----- L -----
+   *
+   **/
+  assert(angle >= 0.0f);
+  /* We compute the arrow segments in pixels in order to correctly size the
+   * arrow without depending on the displayed range.
+   * Warning: the computed values are relative so we need to add/subtract the
+   * pixel position of 0s. */
+  float x0Pixel = floatToPixel(Axis::Horizontal, 0.0f);
+  float y0Pixel = floatToPixel(Axis::Vertical, 0.0f);
+  float dxPixel = floatToPixel(Axis::Horizontal, dx) - x0Pixel;
+  float dyPixel = y0Pixel - floatToPixel(Axis::Vertical, dy);
+  float dx2dy2 = std::sqrt(dxPixel*dxPixel+dyPixel*dyPixel);
+  float L = pixelArrowLength;
+  float l = angle*L;
+
+  float arrow1dx = pixelToFloat(Axis::Horizontal, x0Pixel + L*dxPixel/dx2dy2 + l*dyPixel/dx2dy2);
+  float arrow1dy = pixelToFloat(Axis::Vertical, y0Pixel - (L*dyPixel/dx2dy2 - l*dxPixel/dx2dy2));
+  drawSegment(ctx, rect, x, y, x - arrow1dx, y - arrow1dy, color, false);
+
+  float arrow2dx =  pixelToFloat(Axis::Horizontal, x0Pixel + L*dxPixel/dx2dy2 - l*dyPixel/dx2dy2);
+  float arrow2dy = pixelToFloat(Axis::Vertical, y0Pixel - (L*dyPixel/dx2dy2 + l*dxPixel/dx2dy2));
+  drawSegment(ctx, rect, x, y, x - arrow2dx, y - arrow2dy, color, false);
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
@@ -537,7 +586,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     x = xy.x1();
     y = xy.x2();
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
-      drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
+      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
     joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations);
   } while (true);

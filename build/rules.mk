@@ -1,8 +1,15 @@
 # Define standard compilation rules
 
 .PHONY: official_authorization
+ifeq ($(ACCEPT_OFFICIAL_TOS),1)
 official_authorization:
-	@echo "CAUTION: You are about to build an official NumWorks firmware. Distribution of such firmware by a third party is prohibited. Are you sure you want to proceed? Please type "yes" to confirm." && read ans && [ $${ans:-no} = yes ]
+else
+official_authorization:
+	@echo "CAUTION: You are trying to build an official NumWorks firmware."
+	@echo "Distribution of such firmware by a third party is prohibited."
+	@echo "Please set the ACCEPT_OFFICIAL_TOS environment variable to proceed."
+	@exit -1
+endif
 
 $(eval $(call rule_for, \
   AS, %.o, %.s, \
@@ -31,6 +38,12 @@ $(eval $(call rule_for, \
   $$(CXX) $$(CXXFLAGS) $$(SFLAGS) -c $$< -o $$@ \
 ))
 
+$(eval $(call rule_for, \
+  CPP, %, %.inc, \
+  $$(CPP) -P $$< $$@ \
+))
+
+ifdef EXE
 ifeq ($(OS),Windows_NT)
 # Work around command-line length limit
 # On Msys2 the max command line is 32 000 characters. Our standard LD command
@@ -46,6 +59,7 @@ $(eval $(call rule_for, \
   LD, %.$$(EXE), , \
   $$(LD) $$^ $$(LDFLAGS) -o $$@ \
 ))
+endif
 endif
 
 $(eval $(call rule_for, \

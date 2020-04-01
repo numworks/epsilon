@@ -36,13 +36,16 @@ void inlineToBeSingleInput(char * buffer, size_t bufferSize, const char * script
   *bufferChar = 0;
 }
 
-bool execute_script(const char * script, const char * outputText = nullptr) {
+bool execute_input(const char * input, bool singleCommandLine, const char * outputText = nullptr) {
   constexpr size_t bufferSize = 500;
   char buffer[bufferSize];
-  inlineToBeSingleInput(buffer, bufferSize, script);
+  if (!singleCommandLine) {
+    inlineToBeSingleInput(buffer, bufferSize, input);
+    input = buffer;
+  }
   MicroPython::init(TestExecutionEnvironment::s_pythonHeap, TestExecutionEnvironment::s_pythonHeap + TestExecutionEnvironment::s_pythonHeapSize);
   TestExecutionEnvironment env;
-  bool executionResult = env.runCode(buffer);
+  bool executionResult = env.runCode(input);
   MicroPython::deinit();
   if (outputText) {
     quiz_assert(strcmp(outputText, env.lastPrintedText()) == 0);
@@ -51,9 +54,13 @@ bool execute_script(const char * script, const char * outputText = nullptr) {
 }
 
 void assert_script_execution_succeeds(const char * script, const char * outputText) {
-  quiz_assert(execute_script(script, outputText));
+  quiz_assert(execute_input(script, false, outputText));
 }
 
 void assert_script_execution_fails(const char * script) {
-  quiz_assert(!execute_script(script));
+  quiz_assert(!execute_input(script, false));
+}
+
+void assert_command_execution_succeeds(const char * line, const char * outputText) {
+  quiz_assert(execute_input(line, true, outputText));
 }

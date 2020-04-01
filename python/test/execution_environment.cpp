@@ -7,7 +7,8 @@ char TestExecutionEnvironment::s_pythonHeap[TestExecutionEnvironment::s_pythonHe
 
 void TestExecutionEnvironment::printText(const char * text, size_t length) {
   assert(m_printTextIndex + length < k_maxPrintedTextSize);
-  m_printTextIndex += strlcpy(m_printTextBuffer + m_printTextIndex, text, length + 1);
+  strlcpy(m_printTextBuffer + m_printTextIndex, text, length + 1);
+  m_printTextIndex += length;
   m_printTextBuffer[m_printTextIndex] = 0;
 }
 

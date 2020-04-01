@@ -165,6 +165,15 @@ QUIZ_CASE(equation_solve) {
   const char * solutions22[] = {"\u0012\u0012-π-20\u0013/\u00128\u0013\u0013", "\u0012\u0012π+20\u0013/\u00128\u0013\u0013", "\u0012\u0012π\u0013/\u00124\u0013\u0013", "3", "-8", "5"}; // (-π-20)/8, (π+20)/8, π/4, 3, 5, -8
   assert_equation_system_exact_solve_to(equations22,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesxyzabc, solutions22, 6);
 
+  /* This test case needs the user defined variable. Indeed, in the equation
+   * store, m_variables is just before m_userVariables, so bad fetching in
+   * m_variables might fetch into m_userVariables and create problems. */
+  assert_simplify("0→x");
+  const char * variablesbDeyzt[] = {"b", "D", "e", "y", "z", "t"};
+  const char * equations23[] = {"b=0", "D=0", "e=0", "", "x+y+z+t=0", 0};
+  assert_equation_system_exact_solve_to(equations23,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesbDeyzt, nullptr, INT_MAX);
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+
   // Monovariable non-polynomial equation
   double solutions15[] = {-90.0, 90.0};
   assert_equation_approximate_solve_to("cos(x)=0", -100.0, 100.0, "x", solutions15, 2, false);

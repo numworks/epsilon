@@ -14,7 +14,6 @@ def mandelbrot(N_iteration):
       rgb = int(255*i/N_iteration)
       col = (int(rgb),int(rgb*0.75),int(rgb*0.25))
 mandelbrot(2)
-print('ok')
 )";
 
 QUIZ_CASE(python_mandelbrot) {

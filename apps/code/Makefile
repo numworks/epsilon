@@ -1,6 +1,10 @@
 apps += Code::App
 app_headers += apps/code/app.h
 
+app_code_test_src = $(addprefix apps/code/,\
+  script_template.cpp \
+)
+
 app_code_src = $(addprefix apps/code/,\
   app.cpp \
   console_controller.cpp \
@@ -19,10 +23,10 @@ app_code_src = $(addprefix apps/code/,\
   script_node_cell.cpp \
   script_parameter_controller.cpp \
   script_store.cpp \
-  script_template.cpp \
   variable_box_controller.cpp \
 )
 
+app_code_src += $(app_code_test_src)
 app_src += $(app_code_src)
 
 i18n_files += $(addprefix apps/code/,\

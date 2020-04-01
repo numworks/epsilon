@@ -134,6 +134,13 @@ port_src += $(addprefix python/port/,\
   mod/ion/modion_table.cpp \
   mod/kandinsky/modkandinsky.cpp \
   mod/kandinsky/modkandinsky_table.c \
+  mod/matplotlib/modmatplotlib.cpp \
+  mod/matplotlib/modmatplotlib_table.c \
+  mod/matplotlib/pyplot/modpyplot.cpp \
+  mod/matplotlib/pyplot/modpyplot_table.c \
+  mod/matplotlib/pyplot/plot_controller.cpp \
+  mod/matplotlib/pyplot/plot_store.cpp \
+  mod/matplotlib/pyplot/plot_view.cpp \
   mod/time/modtime.c \
   mod/time/modtime_table.c \
   mod/turtle/modturtle.cpp \

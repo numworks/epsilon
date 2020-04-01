@@ -20,6 +20,7 @@ extern "C" {
 #include "py/stackctrl.h"
 #include "mphalport.h"
 #include "mod/turtle/modturtle.h"
+#include "mod/matplotlib/pyplot/modpyplot.h"
 }
 
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
@@ -81,6 +82,10 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
     mp_obj_print_helper(&mp_plat_print, (mp_obj_t)nlr.ret_val, PRINT_EXC);
     mp_print_str(&mp_plat_print, "\n");
     /* End of mp_obj_print_exception. */
+
+    // Flush the store if an error is encountered to avoid being stuck with a full memory
+    modpyplot_flush_used_heap();
+    // TODO: do the same for other modules?
   }
 
   // Disable the user interruption
@@ -92,13 +97,6 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
 
 void MicroPython::ExecutionEnvironment::interrupt() {
   mp_keyboard_interrupt();
-}
-
-void MicroPython::ExecutionEnvironment::setSandboxIsDisplayed(bool display) {
-  if (m_sandboxIsDisplayed && !display) {
-    modturtle_view_did_disappear();
-  }
-  m_sandboxIsDisplayed = display;
 }
 
 extern "C" {
@@ -176,6 +174,7 @@ void gc_collect(void) {
   gc_collect_start();
 
   modturtle_gc_collect();
+  modpyplot_gc_collect();
 
   /* get the registers.
    * regs is the also the last object on the stack so the stack is bound by

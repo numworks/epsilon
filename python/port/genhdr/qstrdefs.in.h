@@ -130,6 +130,21 @@ Q(EE)
 Q(Ans)
 Q(EXE)
 
+// Matplotlib QSTRs
+Q(arrow)
+Q(axis)
+Q(bar)
+Q(grid)
+Q(grid)
+Q(hist)
+Q(plot)
+Q(matplotlib)
+Q(matplotlib.pyplot)
+Q(pyplot)
+Q(scatter)
+Q(show)
+Q(text)
+
 // Turtle QSTRs
 Q(turtle)
 Q(forward)

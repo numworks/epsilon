@@ -5,7 +5,7 @@
 namespace Shared {
 
 ZoomParameterController::ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
-  ViewController(parentResponder),
+  ZoomAndPanCurveViewController(parentResponder),
   m_contentView(curveView),
   m_interactiveRange(interactiveRange)
 {
@@ -13,45 +13,6 @@ ZoomParameterController::ZoomParameterController(Responder * parentResponder, In
 
 const char * ZoomParameterController::title() {
   return I18n::translate(I18n::Message::Zoom);
-}
-
-View * ZoomParameterController::view() {
-  return &m_contentView;
-}
-
-bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Plus) {
-    m_interactiveRange->zoom(2.0f/3.0f, m_interactiveRange->xCenter(), m_interactiveRange->yCenter());
-    m_contentView.curveView()->reload();
-    return true;
-  }
-  if (event == Ion::Events::Minus) {
-    m_interactiveRange->zoom(3.0f/2.0f, m_interactiveRange->xCenter(), m_interactiveRange->yCenter());
-    m_contentView.curveView()->reload();
-    return true;
-  }
-  if (event == Ion::Events::Up) {
-    m_interactiveRange->panWithVector(0.0f, m_interactiveRange->yGridUnit());
-    m_contentView.curveView()->reload();
-    return true;
-  }
-  if (event == Ion::Events::Down) {
-    m_interactiveRange->panWithVector(0.0f, -m_interactiveRange->yGridUnit());
-    m_contentView.curveView()->reload();
-    return true;
-  }
-  if (event == Ion::Events::Left) {
-    m_interactiveRange->panWithVector(-m_interactiveRange->xGridUnit(), 0.0f);
-    m_contentView.curveView()->reload();
-    return true;
-  }
-  if (event == Ion::Events::Right) {
-    m_interactiveRange->panWithVector(m_interactiveRange->xGridUnit(), 0.0f);
-    m_contentView.curveView()->reload();
-    return true;
-  }
-
-  return false;
 }
 
 void ZoomParameterController::viewWillAppear() {

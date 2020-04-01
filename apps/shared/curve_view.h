@@ -59,18 +59,47 @@ protected:
   float floatToPixel(Axis axis, float f) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const {
-    return drawSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
+    return drawHorizontalOrVerticalSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
         thickness, dashSize);
   }
-  void drawSegment(KDContext * ctx, KDRect rect, Axis axis,
+  void drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const;
+  void drawSegment(KDContext * ctx, KDRect rect,
+    float x, float y, float u, float v,
+    KDColor color, bool thick = true
+  ) const;
   enum class Size : uint8_t {
     Small,
     Medium,
     Large
   };
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
+  /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
+   * orientation (dx,dy).
+   * The parameters defining the shape of the arrow are the length in pixel of
+   * the projection of the arrow on the segment -'pixelArrowLength'- and the
+   * tangent of the angle between the segment and each wing of the arrow called
+   * 'angle'.
+   *
+   *            /                  |
+   *          /                    |
+   *        /                      L
+   *      /                        |
+   *    /                          |
+   *  <--------------------------------------------------
+   *    \
+   *      \
+   *        \
+   *          \
+   *            \
+   *
+   *  <--- pl --->
+   *
+   *  pl = pixelArrowLength
+   *  tan(angle) = L/pl
+   */
+  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowLength = 10, float angle = 0.4f) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;

@@ -1,4 +1,5 @@
 #include <escher/palette.h>
+#include <assert.h>
 
 constexpr KDColor Palette::PrimaryText;
 constexpr KDColor Palette::SecondaryText; // =GREYDARK
@@ -142,3 +143,11 @@ constexpr KDColor Palette::AtomReactiveNonmetal;
 constexpr KDColor Palette::AtomNobleGas;
 constexpr KDColor Palette::AtomTableLines;
 constexpr KDColor Palette::AtomColor[];
+
+KDColor Palette::nextDataColor(int * colorIndex) {
+  size_t nbOfColors = numberOfDataColors();
+  assert(*colorIndex < nbOfColors);
+  KDColor c = DataColor[*colorIndex];
+  *colorIndex = (*colorIndex + 1) % nbOfColors;
+  return c;
+}

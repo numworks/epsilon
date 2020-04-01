@@ -437,6 +437,18 @@ PythonToolbox::PythonToolbox() :
 {
 }
 
+const ToolboxMessageTree * PythonToolbox::moduleChildren(const char * name, int * numberOfNodes) const {
+  assert(numberOfNodes != nullptr);
+  for (ToolboxMessageTree t : modulesChildren) {
+    if (strcmp(I18n::translate(t.label()), name)) {
+      *numberOfNodes = t.numberOfChildren();
+      assert(*numberOfNodes > 0);
+      return static_cast<const ToolboxMessageTree *>(t.children(0));
+    }
+  }
+  return nullptr;
+}
+
 bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;

@@ -113,14 +113,8 @@ void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   for (int i = 0; i < childNodesCount; i++) {
     mp_parse_node_t child = parseNode->nodes[i];
     if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
-      uintptr_t arg = MP_PARSE_NODE_LEAF_ARG(child);
-      const char * id = qstr_str(arg);
-      if ((strncmp(textToAutocomplete, id, textToAutocompleteLength) == 0)
-          && (*(id + textToAutocompleteLength) != 0))
-      {
-        // TODO LEA check if not already present
-        addNode(ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
-      }
+      const char * id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
+      checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength);
     } else if (MP_PARSE_NODE_IS_TOKEN(child) && MP_PARSE_NODE_IS_TOKEN_KIND(child, MP_TOKEN_OP_STAR)) {
@@ -145,10 +139,9 @@ void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       constexpr int numberOfNodesToSkip = 3;
       assert(numberOfChildren > numberOfNodesToSkip);
       for (int i = 3; i < numberOfChildren; i++) {
-        // TODO LEA check if not already present
         const ToolboxMessageTree * currentTree = moduleChildren + i;
         const char * name = I18n::translate(currentTree->label());
-        addNode(ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
+        checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
       }
     } else if (false) {
       //TODO LEA
@@ -367,21 +360,13 @@ importCurrent:
         const char * name = lex->vstr.buf;
         int nameLength = lex->vstr.len;
 
-        // Check if the token completes the text to autocomplete
-        bool tokenAutocompletesText = textToAutocomplete == nullptr;
-        if (!tokenAutocompletesText) {
-          // TODO LEA Caution with aprentheses (when comparing rect and rect(r)
-          if (textToAutocompleteLength < nameLength && strncmp(name, textToAutocomplete, textToAutocompleteLength) == 0) {
-            tokenAutocompletesText = true;
-          }
-        }
-
-        if (tokenAutocompletesText && !contains(name, nameLength)) {
-          /* If the token autocompletes the text and it is not already in the
-           * variable box, add it. */
-
-          /* This is a trick to get the token position in the text. The -2 was
-           * found from stepping in the code and trying. */
+        /* If the token autocompletes the text and it is not already in the
+         * variable box, add it. */
+       if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength)) {
+          /* This is a trick to get the token position in the text, as name and
+           * nameLength are temporary variables that will be overriden when the
+           * lexer continues lexing or is destroyed.
+           * The -2 was found from stepping in the code and trying. */
           // TODO LEA FIXME
           for (int i = 0; i < 3; i++) {
             if (strncmp(tokenInText, name, nameLength) != 0) {
@@ -457,7 +442,7 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
   // TODO LEA compare until parenthesis
   assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
   const char * nodeName = node->name();
-  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
+  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength(); //TODO LEA needed ?
   const int nameLength = nameLengthMaybe < 0 ? strlen(name) : nameLengthMaybe;
   const int comparisonLength = minInt(nameLength, nodeNameLength);
   int result = strncmp(nodeName, name, comparisonLength);
@@ -549,6 +534,37 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
   sender()->handleEventWithText(commandBuffer);
 }
 
+bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * nodeName, int nodeNameLength) {
+  if (textToAutocomplete != nullptr) {
+    /* Check that nodeName autocompletes the text to autocomplete
+     *  - The start of nodeName must be equal to the text to autocomplete */
+    if (strncmp(textToAutocomplete, nodeName, textToAutocompleteLength) != 0) {
+      return false;
+    }
+    /*  - nodeName should be longer than the text to autocomplete. Beware of the
+     *  case where nodeName is textToAutocompleteLength(parameters), which we do
+     *  not want to accept. */
+    char firstCharAfterAutocompletion = *(nodeName + textToAutocompleteLength);
+    if (firstCharAfterAutocompletion == 0 || firstCharAfterAutocompletion == '(') {
+      return false;
+    }
+  }
+
+  // Check that node name is not already present in the variable box.
+  if (contains(nodeName, nodeNameLength)) {
+    return false;
+  }
+
+  return true;
+}
+
+void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength, int scriptIndex) {
+  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength)) {
+    // Add the node in alphabetical order
+    addNode(type, origin, nodeName, nodeNameLength, scriptIndex);
+  }
+}
+
 void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex) {
   assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
   int * currentNodeCount = nodesCountPointerForOrigin(origin);
@@ -580,8 +596,9 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   *currentNodeCount = *currentNodeCount + 1;
 }
 
-bool VariableBoxController::contains(const char * name, int nameLength) {
+bool VariableBoxController::contains(const char * name, int nameLengthMaybe) {
   bool alreadyInVarBox = false;
+  const int nameLength = nameLengthMaybe < 0 ? strlen(name) : nameLengthMaybe;
   // TODO LEA speed this up with dichotomia?
   NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
   for (NodeOrigin origin : origins) {

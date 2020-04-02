@@ -17,7 +17,9 @@ public:
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
   /* ListViewDataSource */
-  int numberOfRows() const override;
+  int numberOfRows() const override {
+    return m_currentScriptNodesCount + m_builtinNodesCount + m_importedNodesCount;
+  }
   int reusableCellCount(int type) override {
     assert(type == 0);
     return k_maxNumberOfDisplayedRows;
@@ -27,18 +29,23 @@ public:
 
   /* VariableBoxController */
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
-  const char * autocompletionForText(int scriptIndex, const char * text, int * textToInsertLength);
+  const char * autocompletionForText(int scriptIndex, const char * textToAutocomplete, int * textToInsertLength);
+
 private:
-  constexpr static int k_maxScriptObjectNameSize = 100;
+  //TODO LEA use size_t
+  constexpr static int k_maxScriptObjectNameSize = 100; //TODO LEA
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40
-  constexpr static int k_maxScriptNodesCount = 32;
+  constexpr static int k_maxScriptNodesCount = 32; //TODO LEA
   constexpr static int k_totalBuiltinNodesCount = 101;
   enum class NodeOrigin : uint8_t {
     CurrentScript,
     Builtins,
     Importation
   };
-  static int MaxNodesCountForOrigin(NodeOrigin origin);
+  static int MaxNodesCountForOrigin(NodeOrigin origin) {
+    assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
+    return k_maxScriptNodesCount;
+  }
   /* Returns:
    * - a negative int if the node name is before name in alphabetical
    * order
@@ -87,7 +94,7 @@ private:
   int m_currentScriptNodesCount;
   int m_builtinNodesCount;
   int m_importedNodesCount;
-  int m_shortenResultBytesCount; // This is used to send only the completing text when we are autocompleting
+  int m_shortenResultCharCount; // This is used to send only the completing text when we are autocompleting
 };
 
 }

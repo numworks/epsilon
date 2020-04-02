@@ -65,6 +65,94 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
   return NestedMenuController::handleEvent(event);
 }
 
+void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index >= 0 && index < numberOfRows());
+  ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
+  myCell->setScriptNode(scriptNodeAtIndex(index));
+}
+
+void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
+  // Reset the node counts
+  m_currentScriptNodesCount = 0;
+  m_builtinNodesCount = 0;
+  m_importedNodesCount = 0;
+
+  if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
+    textToAutocompleteLength = strlen(textToAutocomplete);
+  }
+  /* If we are autocompleting a text, we want the returned text to not include
+   * the beginning that is equal to the text to autocomplete.
+   * For instance, if we are displaying the variable box with the text "for" to
+   * autocomplete, when the user selects "forward", we want to insert the text
+   * "ward" only.
+   * While loading the functions and variables, we thus set
+   * m_shortenResultCharCount, the number of chars to cut from the text
+   * returned. */
+  m_shortenResultCharCount = textToAutocomplete == nullptr ? 0 : textToAutocompleteLength;
+
+  // Always load the builtin functions and variables
+  loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
+
+  if (scriptIndex < 0) {
+    //TODO LEA load imported in console
+  } else {
+    loadCurrentAndImportedVariableInScript(m_scriptStore->scriptAtIndex(scriptIndex), textToAutocomplete, textToAutocompleteLength);
+  }
+}
+
+const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * textToAutocomplete, int * textToInsertLength) {
+  /* The text to autocomplete will most probably not be null-terminated. We thus
+   * say that the end of the text to autocomplete is the end if the current word,
+   * determined by the next space char or the next null char.*/
+  const char * endOfText = UTF8Helper::EndOfWord(textToAutocomplete);
+  const int textLength = endOfText - textToAutocomplete;
+  assert(textLength >= 1);
+
+  // First load variables and functions that complete the textToAutocomplete
+  loadFunctionsAndVariables(scriptIndex, textToAutocomplete, textLength);
+  if (numberOfRows() == 0) {
+    return nullptr;
+  }
+
+  // Return the first node
+  ScriptNode * node = scriptNodeAtIndex(0);
+  const char * currentName = node->name();
+  int currentNameLength = node->nameLength();
+  if (currentNameLength < 0) {
+    currentNameLength = strlen(currentName);
+  }
+  // Assert the text we return does indeed autocomplete the text to autocomplete
+  assert(currentNameLength != textLength && strncmp(textToAutocomplete, currentName, textLength) == 0);
+  // Return the text without the beginning that matches the text to autocomplete
+  *textToInsertLength = currentNameLength - textLength;
+  return currentName + textLength;
+}
+
+// PRIVATE METHODS
+
+int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLengthMaybe, bool * strictlyStartsWith) {
+  // TODO LEA compare until parenthesis
+  assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
+  const char * nodeName = node->name();
+  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength(); //TODO LEA needed ?
+  const int nameLength = nameLengthMaybe < 0 ? strlen(name) : nameLengthMaybe;
+  const int comparisonLength = minInt(nameLength, nodeNameLength);
+  int result = strncmp(nodeName, name, comparisonLength);
+  if (result != 0) {
+    return result;
+  }
+  if (nodeNameLength == nameLength) {
+    return 0;
+  }
+  bool nodeNameLengthStartsWithName = comparisonLength == nameLength;
+  if (strictlyStartsWith != nullptr && nodeNameLengthStartsWithName) {
+    *strictlyStartsWith = true;
+  }
+  return nodeNameLengthStartsWithName ? -1 : 1;
+}
+
+
+
 void VariableBoxController::didEnterResponderChain(Responder * previousFirstResponder) {
   /* This Code::VariableBoxController should always be called from an
    * environment where Python has already been inited. This way, we do not
@@ -73,17 +161,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
   assert(App::app()->pythonIsInited());
 }
 
-int VariableBoxController::numberOfRows() const {
-  assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
-  assert(m_importedNodesCount <= k_maxScriptNodesCount);
-  return m_currentScriptNodesCount + m_builtinNodesCount + m_importedNodesCount;
-}
 
-void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(index >= 0 && index < numberOfRows());
-  ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
-  myCell->setScriptNode(scriptNodeAtIndex(index));
-}
 
 /*TODO LEA very dirty
  * This is done to get the lexer position during lexing. As the _mp_reader_mem_t
@@ -190,26 +268,6 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
     }
   }
   return true;
-}
-
-void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
-  // Reset the node counts
-  m_currentScriptNodesCount = 0;
-  m_builtinNodesCount = 0;
-  m_importedNodesCount = 0;
-
-  if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
-    textToAutocompleteLength = strlen(textToAutocomplete);
-  }
-  m_shortenResultBytesCount = textToAutocomplete == nullptr ? 0 : textToAutocompleteLength;
-
-  loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
-
-  if (scriptIndex < 0) {
-    //TODO LEA load imported in console
-  } else {
-    loadCurrentAndImportedVariableInScript(m_scriptStore->scriptAtIndex(scriptIndex), textToAutocomplete, textToAutocompleteLength);
-  }
 }
 
 void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
@@ -510,51 +568,6 @@ void VariableBoxController::loadGlobalAndImportedVariableInScriptAsImported(Scri
   }
 }
 
-const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * text, int * textToInsertLength) {
-  const char * endOfText = UTF8Helper::EndOfWord(text);
-  const int textLength = endOfText - text;
-  assert(textLength >= 1);
-  loadFunctionsAndVariables(scriptIndex, text, textLength);
-  if (numberOfRows() == 0) {
-    return nullptr;
-  }
-  ScriptNode * node = scriptNodeAtIndex(0);
-  const char * currentName = node->name();
-  int currentNameLength = node->nameLength();
-  if (currentNameLength < 0) {
-    currentNameLength = strlen(currentName);
-  }
-  assert(currentNameLength != textLength && strncmp(text, currentName, textLength) == 0);
-  *textToInsertLength = currentNameLength - textLength;
-  return currentName + textLength;
-}
-
-int VariableBoxController::MaxNodesCountForOrigin(NodeOrigin origin) {
-  assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
-  return k_maxScriptNodesCount;
-}
-
-int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLengthMaybe, bool * strictlyStartsWith) {
-  // TODO LEA compare until parenthesis
-  assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
-  const char * nodeName = node->name();
-  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength(); //TODO LEA needed ?
-  const int nameLength = nameLengthMaybe < 0 ? strlen(name) : nameLengthMaybe;
-  const int comparisonLength = minInt(nameLength, nodeNameLength);
-  int result = strncmp(nodeName, name, comparisonLength);
-  if (result != 0) {
-    return result;
-  }
-  if (nodeNameLength == nameLength) {
-    return 0;
-  }
-  bool nodeNameLengthStartsWithName = comparisonLength == nameLength;
-  if (strictlyStartsWith != nullptr && nodeNameLengthStartsWithName) {
-    *strictlyStartsWith = true;
-  }
-  return nodeNameLengthStartsWithName ? -1 : 1;
-}
-
 int VariableBoxController::NodeNameStartsWith(ScriptNode * node, const char * name, int nameLength) {
   bool strictlyStartsWith = false;
   int result = NodeNameCompare(node, name, nameLength, &strictlyStartsWith);
@@ -614,7 +627,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(m_importedNodesCount <= k_maxScriptNodesCount);
   m_selectableTableView.deselectTable();
   ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex);
-  insertTextInCaller(selectedScriptNode->name() + m_shortenResultBytesCount, selectedScriptNode->nameLength() - m_shortenResultBytesCount);
+  insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
   if (selectedScriptNode->type() == ScriptNode::Type::Function) {
     insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
   }

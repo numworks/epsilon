@@ -346,7 +346,6 @@ importCurrent:
    * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
    * the builtins or imported scripts. */
 
-  m_currentScriptNodesCount = 0;
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
 
@@ -575,7 +574,7 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   }
 
   // Shift all the following nodes
-  for (int i = *currentNodeCount; i >= insertionIndex; i--) {
+  for (int i = *currentNodeCount - 1; i >= insertionIndex; i--) {
     nodes[i+1] = nodes[i];
   }
   // Add the node

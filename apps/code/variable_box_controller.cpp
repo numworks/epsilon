@@ -18,12 +18,13 @@ extern "C" {
 namespace Code {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
-  // Got these in python/py/src/compile.cpp compiled file
+
+// Got these in python/py/src/compile.cpp compiled file
 constexpr static uint PN_file_input_2 = 1;
 constexpr static uint PN_funcdef = 3;
 constexpr static uint PN_expr_stmt = 5;
 constexpr static uint PN_import_name = 14; // import math // import math as m // import math, cmath // import math as m, cmath as cm
-constexpr static uint PN_import_from = 15; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage
+constexpr static uint PN_import_from = 15; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage // from a.b import *
 constexpr static uint PN_import_stmt = 92; // ?
 constexpr static uint PN_import_from_2 = 93; // ?
 constexpr static uint PN_import_from_2b = 94; // "from .foo import"
@@ -31,6 +32,7 @@ constexpr static uint PN_import_from_3 = 95; // ?
 constexpr static uint PN_import_as_names_paren = 96; // ?
 constexpr static uint PN_import_as_name = 99; //  sin as stew
 constexpr static uint PN_import_as_names = 102; // ... import sin as stew, cos as cabbage
+constexpr static uint PN_dotted_name = 104;
 
 //TODO LEA use this
 static bool shouldAddObject(const char * name, int maxLength) {
@@ -116,9 +118,11 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   for (int i = 0; i < childNodesCount; i++) {
     mp_parse_node_t child = parseNode->nodes[i];
     if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
+      // Parsing something like import math
       const char * id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
       checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
+      // Parsing something like from math import sin
       addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength);
     } else if (MP_PARSE_NODE_IS_TOKEN(child) && MP_PARSE_NODE_IS_TOKEN_KIND(child, MP_TOKEN_OP_STAR)) {
       /* Parsing something like from math import *
@@ -131,8 +135,40 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
     // We fetch variables and functions imported from a module or a script
     assert(childNodesCount > 0);
     mp_parse_node_t importationSource = parseNode->nodes[0];
-    assert(MP_PARSE_NODE_IS_LEAF(importationSource) && MP_PARSE_NODE_LEAF_KIND(importationSource) == MP_PARSE_NODE_ID);
-    const char * importationSourceName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSource));
+    const char * importationSourceName = nullptr;
+    if (MP_PARSE_NODE_IS_LEAF(importationSource) && MP_PARSE_NODE_LEAF_KIND(importationSource) == MP_PARSE_NODE_ID) {
+      // The importation source is "simple", for instance: from math import *
+      importationSourceName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSource));
+    } else if (MP_PARSE_NODE_IS_STRUCT(importationSource)) {
+      mp_parse_node_struct_t * importationSourcePNS = (mp_parse_node_struct_t *)importationSource;
+      uint importationSourceStructKind = MP_PARSE_NODE_STRUCT_KIND(importationSourcePNS);
+      if (importationSourceStructKind == PN_dotted_name) {
+        /* The importation source is "complex", for instance:
+         * from matplotlib.pyplot import *
+         * FIXME The solution would be to build a single qstr for this name,
+         * such as in python/src/compile.c, function do_import_name, from line
+         * 1117 (found by searching PN_dotted_name).
+         * We might do this later, for now the only dotted name we might want to
+         * find is matplolib.pyplot, so we do a very specific search. */
+        int numberOfSplitNames = MP_PARSE_NODE_STRUCT_NUM_NODES(importationSourcePNS);
+        if (numberOfSplitNames != 2) {
+          return true;
+        }
+        const char * importationSourceSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSourcePNS->nodes[0]));
+        if (strcmp(importationSourceSubName, "matplotlib") != 0) { //TODO LEA once rebased
+
+          return true;
+        }
+        importationSourceSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSourcePNS->nodes[1]));
+        if (strcmp(importationSourceSubName, "pyplot") != 0) { //TODO LEA once rebased
+
+          return true;
+        }
+        importationSourceName = "matplotlib.pyplot"; //TODO LEA once rebased
+      } else {
+        assert(false); //TODO LEA can we indeed assert?
+      }
+    }
     int numberOfChildren = 0;
     const ToolboxMessageTree * moduleChildren = static_cast<PythonToolbox *>(App::app()->toolboxForInputEventHandler(nullptr))->moduleChildren(importationSourceName, &numberOfChildren);
     if (moduleChildren != nullptr) {

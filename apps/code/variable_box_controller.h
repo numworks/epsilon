@@ -42,10 +42,7 @@ private:
     Builtins,
     Importation
   };
-  static int MaxNodesCountForOrigin(NodeOrigin origin) {
-    assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
-    return k_maxScriptNodesCount;
-  }
+
   /* Returns:
    * - a negative int if the node name is before name in alphabetical
    * order
@@ -60,22 +57,33 @@ private:
    * - 0 if node name strictly starts with name
    * - a positive int if node name is after name in alphabetical order. */
   static int NodeNameStartsWith(ScriptNode * node, const char * name, int nameLength);
-  int * nodesCountPointerForOrigin(NodeOrigin origin);
+
+  // Nodes and nodes count
+  static int MaxNodesCountForOrigin(NodeOrigin origin) {
+    assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
+    return k_maxScriptNodesCount;
+  }
   int nodesCountForOrigin(NodeOrigin origin) const;
+  int * nodesCountPointerForOrigin(NodeOrigin origin);
   ScriptNode * nodesForOrigin(NodeOrigin origin);
   ScriptNode * scriptNodeAtIndex(int index);
+
+  // Cell getters
   HighlightCell * leafCellAtIndex(int index) override {
     assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
     return &m_leafCells[index];
   }
   HighlightCell * nodeCellAtIndex(int index) override { return nullptr; }
 
+  // NestedMenuController
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
 
+  // Loading
   void loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength);
-  void loadCurrentAndImportedVariableInScript(Script script, const char * textToAutocomplete, int textToAutocompleteLength);
-  void loadGlobalAndImportedVariableInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength);
+  void loadImportedVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength);
+  void loadCurrentVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength);
+  void loadGlobalAndImportedVariablesInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength);
   bool addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength); // Returns true if this was an import structure
   /* Add a node if it completes the text to autocomplete and if it is not
    * already contained in the variable box. */

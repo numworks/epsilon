@@ -65,6 +65,14 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
   return NestedMenuController::handleEvent(event);
 }
 
+void VariableBoxController::didEnterResponderChain(Responder * previousFirstResponder) {
+  /* Code::VariableBoxController should always be called from an environment
+   * where Python has already been inited. This way, we do not deinit Python
+   * when leaving the VariableBoxController, so we do not lose the environment
+   * that was loaded when entering the VariableBoxController. */
+  assert(App::app()->pythonIsInited());
+}
+
 void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < numberOfRows());
   ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
@@ -96,7 +104,12 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   if (scriptIndex < 0) {
     //TODO LEA load imported in console
   } else {
-    loadCurrentAndImportedVariableInScript(m_scriptStore->scriptAtIndex(scriptIndex), textToAutocomplete, textToAutocompleteLength);
+    Script script = m_scriptStore->scriptAtIndex(scriptIndex);
+    assert(!script.isNull());
+    const char * scriptContent = script.scriptContent();
+    assert(scriptContent != nullptr);
+    loadImportedVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
+    loadCurrentVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
   }
 }
 
@@ -130,12 +143,12 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
 
 // PRIVATE METHODS
 
-int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLengthMaybe, bool * strictlyStartsWith) {
+int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith) {
   // TODO LEA compare until parenthesis
   assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
+  assert(nameLength > 0);
   const char * nodeName = node->name();
-  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength(); //TODO LEA needed ?
-  const int nameLength = nameLengthMaybe < 0 ? strlen(name) : nameLengthMaybe;
+  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
   const int comparisonLength = minInt(nameLength, nodeNameLength);
   int result = strncmp(nodeName, name, comparisonLength);
   if (result != 0) {
@@ -144,24 +157,213 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
   if (nodeNameLength == nameLength) {
     return 0;
   }
-  bool nodeNameLengthStartsWithName = comparisonLength == nameLength;
+  bool nodeNameLengthStartsWithName = nodeNameLength > nameLength;
   if (strictlyStartsWith != nullptr && nodeNameLengthStartsWithName) {
     *strictlyStartsWith = true;
   }
-  return nodeNameLengthStartsWithName ? -1 : 1;
+  return nodeNameLengthStartsWithName ? 1 : -1;
 }
 
-
-
-void VariableBoxController::didEnterResponderChain(Responder * previousFirstResponder) {
-  /* This Code::VariableBoxController should always be called from an
-   * environment where Python has already been inited. This way, we do not
-   * deinit Python when leaving the VariableBoxController, so we do not lose the
-   * environment that was loaded when entering the VariableBoxController. */
-  assert(App::app()->pythonIsInited());
+int VariableBoxController::NodeNameStartsWith(ScriptNode * node, const char * name, int nameLength) {
+  bool strictlyStartsWith = false;
+  int result = NodeNameCompare(node, name, nameLength, &strictlyStartsWith);
+  if (strictlyStartsWith) {
+    return 0;
+  }
+  return result <= 0 ? -1 : 1;
 }
 
+int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
+  if (origin == NodeOrigin::Builtins) {
+    return m_builtinNodesCount;
+  }
+  return *(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin));
+}
 
+int * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
+  if (origin == NodeOrigin::CurrentScript) {
+    return &m_currentScriptNodesCount;
+  }
+  assert(origin == NodeOrigin::Importation);
+  return &m_importedNodesCount;
+}
+
+ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
+  switch(origin) {
+    case NodeOrigin::CurrentScript:
+      return m_currentScriptNodes;
+    case NodeOrigin::Builtins:
+      return m_builtinNodes;
+    default:
+      assert(origin == NodeOrigin::Importation);
+      return m_importedNodes;
+  }
+}
+
+ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
+  assert(index >= 0 && index < numberOfRows());
+  assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
+  assert(m_builtinNodesCount <= k_totalBuiltinNodesCount);
+  assert(m_importedNodesCount <= k_maxScriptNodesCount);
+
+  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    const int nodesCount = nodesCountForOrigin(origin);
+    if (index < nodesCount) {
+      return nodesForOrigin(origin) + index;
+    }
+    index -= nodesCount;
+  }
+  assert(false);
+  return nullptr;
+}
+
+bool VariableBoxController::selectLeaf(int rowIndex) {
+  assert(rowIndex >= 0 && rowIndex < numberOfRows());
+  m_selectableTableView.deselectTable();
+  ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex);
+  insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
+  if (selectedScriptNode->type() == ScriptNode::Type::Function) {
+    insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
+  }
+  Container::activeApp()->dismissModalViewController();
+  return true;
+}
+
+void VariableBoxController::insertTextInCaller(const char * text, int textLength) {
+  int textLen = textLength < 0 ? strlen(text) : textLength;
+  int commandBufferMaxSize = minInt(k_maxScriptObjectNameSize, textLen + 1);
+  char commandBuffer[k_maxScriptObjectNameSize];
+  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);
+  sender()->handleEventWithText(commandBuffer);
+}
+
+void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
+  //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
+  //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
+  //TODO LEA add matplotlib.pyplot
+  static const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
+    {"False", ScriptNode::Type::Variable},
+    {"None", ScriptNode::Type::Variable},
+    {"True", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR___import__), ScriptNode::Type::Function},
+    {"__del__", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_abs), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_all), ScriptNode::Type::Function},
+    {"and", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_any), ScriptNode::Type::Function},
+    {"as", ScriptNode::Type::Variable},
+    //{qstr_str(MP_QSTR_ascii), ScriptNode::Type::Function},
+    {"assert", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_bin), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_bool), ScriptNode::Type::Function},
+    {"break", ScriptNode::Type::Variable},
+    //{qstr_str(MP_QSTR_breakpoint), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_bytearray), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_bytes), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_callable), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_chr), ScriptNode::Type::Function},
+    {"class", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_classmethod), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_cmath), ScriptNode::Type::Variable},
+    //{qstr_str(MP_QSTR_compile), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_complex), ScriptNode::Type::Function},
+    {"continue", ScriptNode::Type::Variable},
+    {"def", ScriptNode::Type::Variable},
+    //{qstr_str(MP_QSTR_delattr), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_dict), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_dir), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_divmod), ScriptNode::Type::Function},
+    {"elif", ScriptNode::Type::Variable},
+    {"else", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_enumerate), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_eval), ScriptNode::Type::Function},
+    {"except", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_exec), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_filter), ScriptNode::Type::Function},
+    {"finally", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_float), ScriptNode::Type::Function},
+    {"for", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_format), ScriptNode::Type::Function},
+    {"from", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_frozenset), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_getattr), ScriptNode::Type::Function},
+    {"global", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_globals), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_hasattr), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_hash), ScriptNode::Type::Function},
+    //{qstr_str(MP_QSTR_help), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_hex), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_id), ScriptNode::Type::Function},
+    {"if", ScriptNode::Type::Variable},
+    {"import", ScriptNode::Type::Variable},
+    {"in", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_input), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_int), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_ion), ScriptNode::Type::Variable},
+    {"is", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_isinstance), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_issubclass), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_iter), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_kandinsky), ScriptNode::Type::Variable},
+    {"lambda", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_len), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_list), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_locals), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_map), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_math), ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_max), ScriptNode::Type::Function},
+    //{qstr_str(MP_QSTR_memoryview), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_min), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_next), ScriptNode::Type::Function},
+    {"nonlocal", ScriptNode::Type::Variable},
+    {"not", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_object), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_oct), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_open), ScriptNode::Type::Function},
+    {"or", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_ord), ScriptNode::Type::Function},
+    {"pass", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_pow), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_print), ScriptNode::Type::Function},
+    //{qstr_str(MP_QSTR_property), ScriptNode::Type::Function},
+    {"raise", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_random), ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_range), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_repr), ScriptNode::Type::Function},
+    {"return", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_reversed), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_round), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_set), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_setattr), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_slice), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_sorted), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_staticmethod), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_str), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_sum), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_super), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_time), ScriptNode::Type::Variable},
+    {"try", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_tuple), ScriptNode::Type::Function},
+    {qstr_str(MP_QSTR_turtle), ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_type), ScriptNode::Type::Function},
+    //{qstr_str(MP_QSTR_vars), ScriptNode::Type::Function},
+    {"while", ScriptNode::Type::Variable},
+    {"with", ScriptNode::Type::Variable},
+    {"yield", ScriptNode::Type::Variable},
+    {qstr_str(MP_QSTR_zip), ScriptNode::Type::Function}
+  };
+  assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
+  for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
+    ScriptNode node = ScriptNode(builtinNames[i].type, builtinNames[i].name, -1, 0);
+    int startsWith = textToAutocomplete == nullptr ? 0 : NodeNameStartsWith(&node, textToAutocomplete, textToAutocompleteLength);
+    if (startsWith == 0) {
+      m_builtinNodes[m_builtinNodesCount++] = node;
+    } else if (startsWith > 0) {
+      break;
+    }
+  }
+}
 
 /*TODO LEA very dirty
  * This is done to get the lexer position during lexing. As the _mp_reader_mem_t
@@ -173,7 +375,120 @@ typedef struct _mp_reader_mem_t {
     const byte *cur;
     const byte *end;
 } mp_reader_mem_t;
-/* TODO end*/
+
+void VariableBoxController::loadImportedVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
+  /* Load the imported variables and functions: lex and the parse on a line per
+   * line basis untils parsing fails, while detecting import structures. */
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+    const char * parseStart = scriptContent;
+    // Skip new lines at the beginning of the script
+    while (*parseStart == '\n' && *parseStart != 0) {
+      parseStart++;
+    }
+    //TODO LEA also look for ";" ? But what if in string?
+    const char * parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
+
+    while (parseStart != parseEnd) {
+      mp_lexer_t *lex = mp_lexer_new_from_str_len(0, parseStart, parseEnd - parseStart, 0);
+      mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
+      mp_parse_node_t pn = parseTree.root;
+
+      if (MP_PARSE_NODE_IS_STRUCT(pn)) {
+        addNodesFromImportMaybe((mp_parse_node_struct_t *) pn, textToAutocomplete, textToAutocompleteLength);
+      }
+
+      mp_parse_tree_clear(&parseTree);
+
+      if (*parseEnd == 0) {
+        // End of file
+        nlr_pop();
+        return;
+      }
+
+      parseStart = parseEnd;
+      // Skip the following \n
+      while (*parseStart == '\n' && *parseStart != 0) {
+        parseStart++;
+      }
+      parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
+    }
+    nlr_pop();
+  }
+}
+
+void VariableBoxController::loadCurrentVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
+  /* To find variable and funtion names: we lex the script and keep all
+   * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
+   * the builtins or imported scripts. */
+
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+
+    // 1) Lex the script
+    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
+
+    // This is a trick to get the token position in the text.
+    const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
+    // Keep track of DEF tokens to differentiate between variables and functions
+    bool defToken = false;
+
+    while (lex->tok_kind != MP_TOKEN_END) {
+      // Keep only MP_TOKEN_NAME tokens
+      if (lex->tok_kind == MP_TOKEN_NAME) {
+
+        const char * name = lex->vstr.buf;
+        int nameLength = lex->vstr.len;
+
+        /* If the token autocompletes the text and it is not already in the
+         * variable box, add it. */
+        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength)) {
+          /* This is a trick to get the token position in the text, as name and
+           * nameLength are temporary variables that will be overriden when the
+           * lexer continues lexing or is destroyed.
+           * The -2 was found from stepping in the code and trying. */
+          // TODO LEA FIXME
+          for (int i = 0; i < 3; i++) {
+            if (strncmp(tokenInText, name, nameLength) != 0) {
+              tokenInText--;
+            } else {
+              break;
+            }
+          }
+          assert(strncmp(tokenInText, name, nameLength) == 0);
+          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, 1/* TODO LEA*/);
+        }
+      }
+
+      defToken = lex->tok_kind == MP_TOKEN_KW_DEF;
+
+      /* This is a trick to get the token position in the text. The -1 was found
+       *  from stepping in the code and trying. */
+      tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
+      if (lex->tok_kind <= MP_TOKEN_ELLIPSIS || lex->tok_kind >= MP_TOKEN_OP_PLUS) {
+        tokenInText--;
+      }
+
+      mp_lexer_to_next(lex);
+    }
+
+    mp_lexer_free(lex);
+    nlr_pop();
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength) {
@@ -263,238 +578,11 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       // Try fetching the nodes from a script
       Script importedScript = ScriptStore::ScriptBaseNamed(importationSourceName);
       if (!importedScript.isNull()) {
-        loadGlobalAndImportedVariableInScriptAsImported(importedScript, textToAutocomplete, textToAutocompleteLength);
+        loadGlobalAndImportedVariablesInScriptAsImported(importedScript, textToAutocomplete, textToAutocompleteLength);
       }
     }
   }
   return true;
-}
-
-void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
-  //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
-  //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
-
-  // Add buitin nodes
-  static const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
-    {qstr_str(MP_QSTR_abs), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_all), ScriptNode::Type::Function},
-    {"and", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_any), ScriptNode::Type::Function},
-    {"as", ScriptNode::Type::Variable},
-    //{qstr_str(MP_QSTR_ascii), ScriptNode::Type::Function},
-    {"assert", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_bin), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_bool), ScriptNode::Type::Function},
-    {"break", ScriptNode::Type::Variable},
-    //{qstr_str(MP_QSTR_breakpoint), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_bytearray), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_bytes), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_callable), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_chr), ScriptNode::Type::Function},
-    {"class", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_classmethod), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_cmath), ScriptNode::Type::Variable},
-    //{qstr_str(MP_QSTR_compile), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_complex), ScriptNode::Type::Function},
-    {"continue", ScriptNode::Type::Variable},
-    {"def", ScriptNode::Type::Variable},
-    {"__del__", ScriptNode::Type::Variable},
-    //{qstr_str(MP_QSTR_delattr), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_dict), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_dir), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_divmod), ScriptNode::Type::Function},
-    {"elif", ScriptNode::Type::Variable},
-    {"else", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_enumerate), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_eval), ScriptNode::Type::Function},
-    {"except", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_exec), ScriptNode::Type::Function},
-    {"False", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_filter), ScriptNode::Type::Function},
-    {"finally", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_float), ScriptNode::Type::Function},
-    {"for", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_format), ScriptNode::Type::Function},
-    {"from", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_frozenset), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_getattr), ScriptNode::Type::Function},
-    {"global", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_globals), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_hasattr), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_hash), ScriptNode::Type::Function},
-    //{qstr_str(MP_QSTR_help), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_hex), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_id), ScriptNode::Type::Function},
-    {"if", ScriptNode::Type::Variable},
-    {"import", ScriptNode::Type::Variable},
-    {"in", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_input), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_int), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_ion), ScriptNode::Type::Variable},
-    {"is", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_isinstance), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_issubclass), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_iter), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_kandinsky), ScriptNode::Type::Variable},
-    {"lambda", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_len), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_list), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_locals), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_map), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_math), ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_max), ScriptNode::Type::Function},
-    //{qstr_str(MP_QSTR_memoryview), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_min), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_next), ScriptNode::Type::Function},
-    {"None", ScriptNode::Type::Variable},
-    {"nonlocal", ScriptNode::Type::Variable},
-    {"not", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_object), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_oct), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_open), ScriptNode::Type::Function},
-    {"or", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_ord), ScriptNode::Type::Function},
-    {"pass", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_pow), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_print), ScriptNode::Type::Function},
-    //{qstr_str(MP_QSTR_property), ScriptNode::Type::Function},
-    {"raise", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_random), ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_range), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_repr), ScriptNode::Type::Function},
-    {"return", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_reversed), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_round), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_set), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_setattr), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_slice), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_sorted), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_staticmethod), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_str), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_sum), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_super), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_time), ScriptNode::Type::Variable},
-    {"True", ScriptNode::Type::Variable},
-    {"try", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_tuple), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR_turtle), ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_type), ScriptNode::Type::Function},
-    //{qstr_str(MP_QSTR_vars), ScriptNode::Type::Function},
-    {"while", ScriptNode::Type::Variable},
-    {"with", ScriptNode::Type::Variable},
-    {"yield", ScriptNode::Type::Variable},
-    {qstr_str(MP_QSTR_zip), ScriptNode::Type::Function},
-    {qstr_str(MP_QSTR___import__), ScriptNode::Type::Function} //TODO LEA alphabetical order?
-  };
-  assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
-  for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
-    ScriptNode node = ScriptNode(builtinNames[i].type, builtinNames[i].name, -1, 0);
-    int startsWith = textToAutocomplete == nullptr ? 0 : NodeNameStartsWith(&node, textToAutocomplete, textToAutocompleteLength);
-    if (startsWith == 0) {
-      m_builtinNodes[m_builtinNodesCount++] = node;
-    } else if (startsWith > 0) {
-      break;
-    }
-  }
-}
-
-void VariableBoxController::loadCurrentAndImportedVariableInScript(Script script, const char * textToAutocomplete, int textToAutocompleteLength) {
-  {
-    // Load the imported variables and functions
-    nlr_buf_t nlr;
-    if (nlr_push(&nlr) == 0) {
-      const char * parseStart = script.scriptContent();
-      while (*parseStart == '\n' && *parseStart != 0) {
-        parseStart++;
-      }
-      //TODO LEA also look for ";" ? But what if in string?
-      const char * parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
-
-      while (parseStart != parseEnd) {
-        mp_lexer_t *lex = mp_lexer_new_from_str_len(0, parseStart, parseEnd - parseStart, 0);
-        mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
-        mp_parse_node_t pn = parseTree.root;
-
-        if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-          addNodesFromImportMaybe((mp_parse_node_struct_t *) pn, textToAutocomplete, textToAutocompleteLength);
-        }
-
-        mp_parse_tree_clear(&parseTree);
-
-        if (*parseEnd == 0) {
-          nlr_pop();
-          goto importCurrent;
-        }
-        parseStart = parseEnd + 1; // Go after the \n
-        while (*parseStart == '\n' && *parseStart != 0) {
-          parseStart++;
-        }
-        parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
-      }
-    }
-  }
-
-importCurrent:
-  // Load the variables and functions from the current script
-  const char * scriptContent = script.scriptContent();
-
-  /* To find variable and funtion names: we lex the script and keep all
-   * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
-   * the builtins or imported scripts. */
-
-  nlr_buf_t nlr;
-  if (nlr_push(&nlr) == 0) {
-
-    // 1) Lex the script
-    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
-
-    // This is a trick to get the token position in the text.
-    const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
-    // Keep track of DEF tokens to differentiate between variables and functions
-    bool defToken = false;
-
-    while (lex->tok_kind != MP_TOKEN_END) {
-      // Keep only MP_TOKEN_NAME tokens
-      if (lex->tok_kind == MP_TOKEN_NAME) {
-
-        const char * name = lex->vstr.buf;
-        int nameLength = lex->vstr.len;
-
-        /* If the token autocompletes the text and it is not already in the
-         * variable box, add it. */
-        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength)) {
-          /* This is a trick to get the token position in the text, as name and
-           * nameLength are temporary variables that will be overriden when the
-           * lexer continues lexing or is destroyed.
-           * The -2 was found from stepping in the code and trying. */
-          // TODO LEA FIXME
-          for (int i = 0; i < 3; i++) {
-            if (strncmp(tokenInText, name, nameLength) != 0) {
-              tokenInText--;
-            } else {
-              break;
-            }
-          }
-          assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, 1/* TODO LEA*/);
-        }
-      }
-
-      defToken = lex->tok_kind == MP_TOKEN_KW_DEF;
-
-      /* This is a trick to get the token position in the text. The -1 was found
-       *  from stepping in the code and trying. */
-      tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
-      if (lex->tok_kind <= MP_TOKEN_ELLIPSIS || lex->tok_kind >= MP_TOKEN_OP_PLUS) {
-        tokenInText--;
-      }
-
-      mp_lexer_to_next(lex);
-    }
-
-    mp_lexer_free(lex);
-    nlr_pop();
-  }
 }
 
 const char * structID(mp_parse_node_struct_t *structNode) {
@@ -524,7 +612,7 @@ void VariableBoxController::storeImportedStruct(mp_parse_node_struct_t * pns, ui
   checkAndAddNode(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
 }
 
-void VariableBoxController::loadGlobalAndImportedVariableInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength) {
   assert(!script.isNull());
   const char * scriptContent = script.scriptContent();
   assert(scriptContent != nullptr);
@@ -568,81 +656,6 @@ void VariableBoxController::loadGlobalAndImportedVariableInScriptAsImported(Scri
   }
 }
 
-int VariableBoxController::NodeNameStartsWith(ScriptNode * node, const char * name, int nameLength) {
-  bool strictlyStartsWith = false;
-  int result = NodeNameCompare(node, name, nameLength, &strictlyStartsWith);
-  if (strictlyStartsWith) {
-    return 0;
-  }
-  return result <= 0 ? -1 : 1;
-}
-
-int * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
-  if (origin == NodeOrigin::CurrentScript) {
-    return &m_currentScriptNodesCount;
-  }
-  assert(origin == NodeOrigin::Importation);
-  return &m_importedNodesCount;
-}
-
-int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
-  if (origin == NodeOrigin::Builtins) {
-    return m_builtinNodesCount;
-  }
-  return *(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin));
-}
-
-ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
-  switch(origin) {
-    case NodeOrigin::CurrentScript:
-      return m_currentScriptNodes;
-    case NodeOrigin::Builtins:
-      return m_builtinNodes;
-    default:
-      assert(origin == NodeOrigin::Importation);
-      return m_importedNodes;
-  }
-}
-
-ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
-  assert(index >= 0 && index < numberOfRows());
-  assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
-  assert(m_builtinNodesCount <= k_totalBuiltinNodesCount);
-  assert(m_importedNodesCount <= k_maxScriptNodesCount);
-  NodeOrigin origins[] = { NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
-  for (NodeOrigin origin : origins) {
-    const int nodesCount = nodesCountForOrigin(origin);
-    if (index < nodesCount) {
-      return nodesForOrigin(origin) + index;
-    }
-    index -= nodesCount;
-  }
-  assert(false);
-  return nullptr;
-}
-
-bool VariableBoxController::selectLeaf(int rowIndex) {
-  assert(rowIndex >= 0 && rowIndex < numberOfRows());
-  assert(m_currentScriptNodesCount <= k_maxScriptNodesCount);
-  assert(m_importedNodesCount <= k_maxScriptNodesCount);
-  m_selectableTableView.deselectTable();
-  ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex);
-  insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
-  if (selectedScriptNode->type() == ScriptNode::Type::Function) {
-    insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
-  }
-  Container::activeApp()->dismissModalViewController();
-  return true;
-}
-
-void VariableBoxController::insertTextInCaller(const char * text, int textLength) {
-  int textLen = textLength < 0 ? strlen(text) : textLength;
-  int commandBufferMaxSize = minInt(k_maxScriptObjectNameSize, textLen + 1);
-  char commandBuffer[k_maxScriptObjectNameSize];
-  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);
-  sender()->handleEventWithText(commandBuffer);
-}
-
 bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * nodeName, int nodeNameLength) {
   if (textToAutocomplete != nullptr) {
     /* Check that nodeName autocompletes the text to autocomplete
@@ -668,6 +681,9 @@ bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int t
 }
 
 void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength, int scriptIndex) {
+  if (nodeNameLength < 0) {
+    nodeNameLength = strlen(nodeName);
+  }
   if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength)) {
     // Add the node in alphabetical order
     addNode(type, origin, nodeName, nodeNameLength, scriptIndex);
@@ -705,9 +721,9 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   *currentNodeCount = *currentNodeCount + 1;
 }
 
-bool VariableBoxController::contains(const char * name, int nameLengthMaybe) {
+bool VariableBoxController::contains(const char * name, int nameLength) {
+  assert(nameLength > 0);
   bool alreadyInVarBox = false;
-  const int nameLength = nameLengthMaybe < 0 ? strlen(name) : nameLengthMaybe;
   // TODO LEA speed this up with dichotomia?
   NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
   for (NodeOrigin origin : origins) {

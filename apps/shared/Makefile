@@ -84,4 +84,4 @@ app_shared_src = $(addprefix apps/shared/,\
 )
 
 app_shared_src += $(app_shared_test_src)
-app_src += $(app_shared_src)
+apps_src += $(app_shared_src)

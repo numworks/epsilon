@@ -113,7 +113,6 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
 
   bool loadModuleContent = structKindIsImportWithoutFrom;
 
-  // TODO from ScriptStore
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(parseNode);
   for (int i = 0; i < childNodesCount; i++) {
     mp_parse_node_t child = parseNode->nodes[i];

@@ -37,6 +37,7 @@ private:
   constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40
   constexpr static int k_maxScriptNodesCount = 32; //TODO LEA
   constexpr static int k_totalBuiltinNodesCount = 98;
+  constexpr static uint8_t k_scriptOriginsCount = 3;
   enum class NodeOrigin : uint8_t {
     CurrentScript,
     Builtins,
@@ -98,6 +99,7 @@ private:
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_leafCells[k_maxNumberOfDisplayedRows];
+  EvenOddMessageTextCell m_subtitleCells[k_scriptOriginsCount];
   ScriptStore * m_scriptStore;
   // TODO LEA Put these in an array?
   int m_currentScriptNodesCount;

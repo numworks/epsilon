@@ -56,6 +56,16 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setScriptStore(scriptStore);
   }
+  I18n::Message subtitleMessages[k_scriptOriginsCount] = {
+    I18n::Message::CurrentScript,
+    I18n::Message::BuiltinFunctionsAndKeyWords,
+    I18n::Message::ImportedModulesAndScripts
+  };
+  for (int i = 0; i < k_scriptOriginsCount; i++) {
+    m_subtitleCells[i].setEven(true);
+    m_subtitleCells[i].setAlignment(0.0f, 0.5f);
+    m_subtitleCells[i].setMessage(subtitleMessages[i], Palette::BlueishGrey);
+  }
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {

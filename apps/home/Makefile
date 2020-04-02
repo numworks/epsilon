@@ -4,7 +4,7 @@ app_home_src = $(addprefix apps/home/,\
   controller.cpp \
 )
 
-app_src += $(app_home_src)
+apps_src += $(app_home_src)
 
 i18n_files += $(addprefix apps/home/,\
   base.de.i18n \

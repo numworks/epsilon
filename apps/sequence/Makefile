@@ -26,7 +26,7 @@ app_sequence_src = $(addprefix apps/sequence/,\
 )
 
 app_sequence_src += $(app_sequence_test_src)
-app_src += $(app_sequence_src)
+apps_src += $(app_sequence_src)
 
 i18n_files += $(addprefix apps/sequence/,\
   base.de.i18n\

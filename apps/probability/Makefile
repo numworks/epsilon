@@ -38,7 +38,7 @@ app_probability_src = $(addprefix apps/probability/,\
 )
 
 app_probability_src += $(app_probability_test_src)
-app_src += $(app_probability_src)
+apps_src += $(app_probability_src)
 
 i18n_files += $(addprefix apps/probability/,\
   base.de.i18n\

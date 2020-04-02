@@ -7,7 +7,7 @@ app_on_boarding_src = $(addprefix apps/on_boarding/,\
   power_on_self_test.cpp \
 )
 
-app_src += $(app_on_boarding_src)
+apps_src += $(app_on_boarding_src)
 
 i18n_files += $(addprefix apps/on_boarding/,\
   base.de.i18n\

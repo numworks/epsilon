@@ -10,8 +10,14 @@ apps =
 # (path to the apps header).
 $(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
 
-app_src += $(addprefix apps/,\
+apps_src += $(addprefix apps/,\
   apps_container.cpp \
+  apps_container_launch_default.cpp:-onboarding \
+  apps_container_launch_on_boarding.cpp:+onboarding \
+  apps_container_prompt_beta.cpp:+beta \
+  apps_container_prompt_none.cpp:-beta \
+  apps_container_prompt_none.cpp:-update \
+  apps_container_prompt_update.cpp:+update \
   apps_container_storage.cpp \
   apps_window.cpp \
   backlight_dimming_timer.cpp \
@@ -19,6 +25,8 @@ app_src += $(addprefix apps/,\
   battery_view.cpp \
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
+  exam_mode_configuration_official.cpp:+official \
+  exam_mode_configuration_non_official.cpp:-official \
   global_preferences.cpp \
   i18n.py \
   lock_view.cpp \
@@ -32,14 +40,6 @@ app_src += $(addprefix apps/,\
 )
 
 tests_src += apps/exam_mode_configuration_official.cpp
-apps_official += apps/exam_mode_configuration_official.cpp
-apps_non_official += apps/exam_mode_configuration_non_official.cpp
-
-apps_launch_on_boarding_src += apps/apps_container_launch_on_boarding.cpp
-apps_launch_default_src += apps/apps_container_launch_default.cpp
-apps_prompt_none_src += apps/apps_container_prompt_none.cpp
-apps_prompt_beta_src += apps/apps_container_prompt_beta.cpp
-apps_prompt_update_src += apps/apps_container_prompt_update.cpp
 
 snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
 apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)
@@ -89,28 +89,11 @@ $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
-all_app_src = $(app_src)(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src) $(apps_official) $(apps_non_official) $(tests_src)
-
-$(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
-$(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
+$(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/apps/i18n.h
+$(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
 apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
 
 apps_tests_src += $(addprefix apps/,\
   global_preferences.cpp \
 )
-
-# Configure variants
-apps_all_src = $(app_src)
-apps_all_src += $(apps_official) $(apps_non_official)
-apps_all_src += $(apps_launch_default_src) $(apps_launch_on_boarding_src)
-apps_all_src += $(apps_prompt_none_src) $(apps_prompt_update_src) $(apps_prompt_beta_src)
-
-apps_default_src = $(app_src) $(apps_non_official) $(apps_launch_default_src) $(apps_prompt_none_src)
-apps_official_default_src = $(app_src) $(apps_official) $(apps_launch_default_src) $(apps_prompt_none_src)
-apps_onboarding_src = $(app_src) $(apps_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
-apps_official_onboarding_src = $(app_src) $(apps_official) $(apps_launch_on_boarding_src) $(apps_prompt_none_src)
-apps_onboarding_update_src = $(app_src) $(apps_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
-apps_official_onboarding_update_src = $(app_src) $(apps_official) $(apps_launch_on_boarding_src) $(apps_prompt_update_src)
-apps_onboarding_beta_src = $(app_src) $(apps_non_official) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)
-apps_official_onboarding_beta_src = $(app_src) $(apps_official) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src)

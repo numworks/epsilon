@@ -27,7 +27,7 @@ app_code_src = $(addprefix apps/code/,\
 )
 
 app_code_src += $(app_code_test_src)
-app_src += $(app_code_src)
+apps_src += $(app_code_src)
 
 i18n_files += $(addprefix apps/code/,\
   base.de.i18n\

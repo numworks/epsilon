@@ -30,7 +30,7 @@ app_calculation_src = $(addprefix apps/calculation/,\
 )
 
 app_calculation_src += $(app_calculation_test_src)
-app_src += $(app_calculation_src)
+apps_src += $(app_calculation_src)
 
 i18n_files += $(addprefix apps/calculation/,\
   base.de.i18n\

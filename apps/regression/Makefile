@@ -37,7 +37,7 @@ app_regression_src = $(addprefix apps/regression/,\
 )
 
 app_regression_src += $(app_regression_test_src)
-app_src += $(app_regression_src)
+apps_src += $(app_regression_src)
 
 i18n_files += $(addprefix apps/regression/,\
   base.de.i18n\

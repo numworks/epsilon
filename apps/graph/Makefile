@@ -31,7 +31,7 @@ app_graph_src = $(addprefix apps/graph/,\
   values/values_controller.cpp \
 )
 
-app_src += $(app_graph_src)
+apps_src += $(app_graph_src)
 
 i18n_files += $(addprefix apps/graph/,\
   base.de.i18n\

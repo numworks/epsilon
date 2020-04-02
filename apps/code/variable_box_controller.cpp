@@ -561,7 +561,7 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   }
   /* We want to insert the node in alphabetical order, so we look for the
    * insertion index. */
-  ScriptNode * nodes = origin == NodeOrigin::CurrentScript ? m_currentScriptNodes : m_importedNodes;
+  ScriptNode * nodes = nodesForOrigin(origin);
   int insertionIndex = 0;
   while (insertionIndex < *currentNodeCount) {
     ScriptNode * node = nodes + insertionIndex;

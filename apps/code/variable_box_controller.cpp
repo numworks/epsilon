@@ -477,58 +477,90 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
   }
 }
 
+void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
 
+    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
+    mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_FILE_INPUT);
+    mp_parse_node_t pn = parseTree.root;
 
-
-
-
-
-
-
-
-
-
-
-
+    if (MP_PARSE_NODE_IS_STRUCT(pn)) {
+      mp_parse_node_struct_t * pns = (mp_parse_node_struct_t *)pn;
+      uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(pns);
+      if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
+        // The script is only a single function or variable definition
+        addImportStruct(pns, structKind, textToAutocomplete, textToAutocompleteLength);
+      } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength)) {
+        // The script is is only an import, handled in addNodesFromImportMaybe
+      } else if (structKind == PN_file_input_2) {
+        /* At this point, if the script node is not of type "file_input_2", it
+         * will not have main structures of the wanted type.
+         * We look for structures at first level (not inside nested scopes) that
+         * are either dunction definitions, variables statements or imports. */
+        size_t n = MP_PARSE_NODE_STRUCT_NUM_NODES(pns);
+        for (size_t i = 0; i < n; i++) {
+          mp_parse_node_t child = pns->nodes[i];
+          if (MP_PARSE_NODE_IS_STRUCT(child)) {
+            mp_parse_node_struct_t *child_pns = (mp_parse_node_struct_t*)(child);
+            structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
+            if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
+              addImportStruct(child_pns, structKind, textToAutocomplete, textToAutocompleteLength);
+            } else {
+              addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength);
+            }
+          }
+        }
+      }
+    }
+    mp_parse_tree_clear(&parseTree);
+    nlr_pop();
+  }
+}
 
 bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength) {
-
+  // Determine if the node is an import structure
   uint structKind = (uint) MP_PARSE_NODE_STRUCT_KIND(parseNode);
   bool structKindIsImportWithoutFrom = structKind == PN_import_name;
-
   if (!structKindIsImportWithoutFrom
       && structKind != PN_import_from
       && structKind != PN_import_as_names
       && structKind != PN_import_as_name)
   {
+    // This was not an import structure
     return false;
   }
 
-  bool loadModuleContent = structKindIsImportWithoutFrom;
+  /* loadAllModuleContent will be True if the struct imports all the content
+   * from a script / module (for instance, "import math"), instead of single
+   * items (for instance, "from math import sin"). */
+  bool loadAllContent = structKindIsImportWithoutFrom;
 
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(parseNode);
   for (int i = 0; i < childNodesCount; i++) {
     mp_parse_node_t child = parseNode->nodes[i];
     if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
-      // Parsing something like import math
+      // Parsing something like "import math"
       const char * id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
       checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
-      // Parsing something like from math import sin
+      // Parsing something like "from math import sin"
       addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength);
     } else if (MP_PARSE_NODE_IS_TOKEN(child) && MP_PARSE_NODE_IS_TOKEN_KIND(child, MP_TOKEN_OP_STAR)) {
-      /* Parsing something like from math import *
+      /* Parsing something like "from math import *"
        * -> Load all the module content */
-      loadModuleContent = true;
+      loadAllContent = true;
     }
   }
 
-  if (loadModuleContent) {
-    // We fetch variables and functions imported from a module or a script
+  // Fetch a script / module content if needed
+  if (loadAllContent) {
     assert(childNodesCount > 0);
     mp_parse_node_t importationSource = parseNode->nodes[0];
     const char * importationSourceName = nullptr;
-    if (MP_PARSE_NODE_IS_LEAF(importationSource) && MP_PARSE_NODE_LEAF_KIND(importationSource) == MP_PARSE_NODE_ID) {
+    if (MP_PARSE_NODE_IS_LEAF(importationSource)
+        && MP_PARSE_NODE_LEAF_KIND(importationSource) == MP_PARSE_NODE_ID)
+    {
       // The importation source is "simple", for instance: from math import *
       importationSourceName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSource));
     } else if (MP_PARSE_NODE_IS_STRUCT(importationSource)) {
@@ -565,27 +597,28 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
     const ToolboxMessageTree * moduleChildren = static_cast<PythonToolbox *>(App::app()->toolboxForInputEventHandler(nullptr))->moduleChildren(importationSourceName, &numberOfChildren);
     if (moduleChildren != nullptr) {
       /* If the importation source is a module, get the nodes from the toolbox
-       * We skip the 3 forst nodes, which are "import ...", "from ... import *"
+       * We skip the 3 first nodes, which are "import ...", "from ... import *"
        * and "....function". */
       constexpr int numberOfNodesToSkip = 3;
       assert(numberOfChildren > numberOfNodesToSkip);
       for (int i = 3; i < numberOfChildren; i++) {
-        const ToolboxMessageTree * currentTree = moduleChildren + i;
-        const char * name = I18n::translate(currentTree->label());
+        const char * name = I18n::translate((moduleChildren + i)->label());
         checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
       }
     } else {
       // Try fetching the nodes from a script
       Script importedScript = ScriptStore::ScriptBaseNamed(importationSourceName);
       if (!importedScript.isNull()) {
-        loadGlobalAndImportedVariablesInScriptAsImported(importedScript, textToAutocomplete, textToAutocompleteLength);
+        const char * scriptContent = importedScript.scriptContent();
+        assert(scriptContent != nullptr);
+        loadGlobalAndImportedVariablesInScriptAsImported(scriptContent, textToAutocomplete, textToAutocompleteLength);
       }
     }
   }
   return true;
 }
 
-const char * structID(mp_parse_node_struct_t *structNode) {
+const char * structName(mp_parse_node_struct_t * structNode) {
   // Find the id child node, which stores the struct's name
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(structNode);
   if (childNodesCount < 1) {
@@ -601,58 +634,23 @@ const char * structID(mp_parse_node_struct_t *structNode) {
   return nullptr;
 }
 
-
-void VariableBoxController::storeImportedStruct(mp_parse_node_struct_t * pns, uint structKind, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::addImportStruct(mp_parse_node_struct_t * pns, uint structKind, const char * textToAutocomplete, int textToAutocompleteLength) {
   assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
   // Find the id child node, which stores the struct's name
-  const char * id = structID(pns);
-  if (id == nullptr) {
+  const char * name = structName(pns);
+  if (name == nullptr) {
     return;
   }
-  checkAndAddNode(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
+  checkAndAddNode(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
 }
 
-void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength) {
-  assert(!script.isNull());
-  const char * scriptContent = script.scriptContent();
-  assert(scriptContent != nullptr);
-
-  // Handle lexer or parser errors with nlr.
-  nlr_buf_t nlr;
-  if (nlr_push(&nlr) == 0) {
-
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
-    mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_FILE_INPUT);
-    mp_parse_node_t pn = parseTree.root;
-
-    if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-      mp_parse_node_struct_t * pns = (mp_parse_node_struct_t *)pn;
-      uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(pns);
-      if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
-        // The script is only a single function or variable definition
-        storeImportedStruct(pns, structKind, textToAutocomplete, textToAutocompleteLength);
-      } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength)) {
-      } else if (structKind == PN_file_input_2) {
-        /* At this point, if the script node is not of type "file_input_2", it
-         * will not have main structures of the wanted type. */
-        // Count the number of structs in child nodes.
-        size_t n = MP_PARSE_NODE_STRUCT_NUM_NODES(pns);
-        for (size_t i = 0; i < n; i++) {
-          mp_parse_node_t child = pns->nodes[i];
-          if (MP_PARSE_NODE_IS_STRUCT(child)) {
-            mp_parse_node_struct_t *child_pns = (mp_parse_node_struct_t*)(child);
-            structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
-            if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
-              storeImportedStruct(child_pns, structKind, textToAutocomplete, textToAutocompleteLength);
-            } else {
-              addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength);
-            }
-          }
-        }
-      }
-    }
-    mp_parse_tree_clear(&parseTree);
-    nlr_pop();
+void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength, int scriptIndex) {
+  if (nodeNameLength < 0) {
+    nodeNameLength = strlen(nodeName);
+  }
+  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength)) {
+    // Add the node in alphabetical order
+    addNode(type, origin, nodeName, nodeNameLength, scriptIndex);
   }
 }
 
@@ -680,14 +678,30 @@ bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int t
   return true;
 }
 
-void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength, int scriptIndex) {
-  if (nodeNameLength < 0) {
-    nodeNameLength = strlen(nodeName);
+bool VariableBoxController::contains(const char * name, int nameLength) {
+  assert(nameLength > 0);
+  bool alreadyInVarBox = false;
+  // TODO LEA speed this up with dichotomia?
+  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    const int nodesCount = nodesCountForOrigin(origin);
+    ScriptNode * nodes = nodesForOrigin(origin);
+    for (int i = 0; i < nodesCount; i++) {
+      ScriptNode * matchingNode = nodes + i;
+      int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
+      if (comparisonResult == 0) {
+        alreadyInVarBox = true;
+        break;
+      }
+      if (comparisonResult > 0) {
+        break;
+      }
+    }
+    if (alreadyInVarBox) {
+      break;
+    }
   }
-  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength)) {
-    // Add the node in alphabetical order
-    addNode(type, origin, nodeName, nodeNameLength, scriptIndex);
-  }
+  return alreadyInVarBox;
 }
 
 void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex) {
@@ -719,32 +733,6 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   nodes[insertionIndex] = ScriptNode(type, name, nameLength, scriptIndex);
   // Increase the node count
   *currentNodeCount = *currentNodeCount + 1;
-}
-
-bool VariableBoxController::contains(const char * name, int nameLength) {
-  assert(nameLength > 0);
-  bool alreadyInVarBox = false;
-  // TODO LEA speed this up with dichotomia?
-  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
-  for (NodeOrigin origin : origins) {
-    const int nodesCount = nodesCountForOrigin(origin);
-    ScriptNode * nodes = nodesForOrigin(origin);
-    for (int i = 0; i < nodesCount; i++) {
-      ScriptNode * matchingNode = nodes + i;
-      int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
-      if (comparisonResult == 0) {
-        alreadyInVarBox = true;
-        break;
-      }
-      if (comparisonResult > 0) {
-        break;
-      }
-    }
-    if (alreadyInVarBox) {
-      break;
-    }
-  }
-  return alreadyInVarBox;
 }
 
 }

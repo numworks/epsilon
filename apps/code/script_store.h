@@ -38,10 +38,6 @@ public:
   void deleteAllScripts();
   bool isFull();
 
-  /* Provide scripts content information */
-  typedef void (* ScanCallback)(void * context, const char * p, int n);
-  void scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction,ScanCallback storeVariable);
-
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
@@ -54,10 +50,6 @@ private:
    * importation status (1 char), the default content "from math import *\n"
    * (20 char) and 10 char of free space. */
   static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10;
-  static constexpr size_t k_fileInput2ParseNodeStructKind = 1;
-  static constexpr size_t k_functionDefinitionParseNodeStructKind = 3;
-  static constexpr size_t k_expressionStatementParseNodeStructKind = 5;
-  const char * structID(mp_parse_node_struct_t *structNode);
 };
 
 }

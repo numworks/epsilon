@@ -23,8 +23,11 @@ public:
   Script scriptAtIndex(int index) {
     return Script(Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(k_scriptExtension, index));
   }
-  Script scriptNamed(const char * name) {
-    return Script(Ion::Storage::sharedStorage()->recordNamed(name));
+  static Script ScriptNamed(const char * fullName) {
+    return Script(Ion::Storage::sharedStorage()->recordNamed(fullName));
+  }
+  static Script ScriptBaseNamed(const char * baseName) {
+    return Script(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_scriptExtension));
   }
   int numberOfScripts() {
     return Ion::Storage::sharedStorage()->numberOfRecordsWithExtension(k_scriptExtension);

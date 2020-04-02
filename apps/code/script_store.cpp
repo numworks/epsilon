@@ -13,7 +13,7 @@ constexpr char ScriptStore::k_scriptExtension[];
 
 
 bool ScriptStore::ScriptNameIsFree(const char * baseName) {
-  return Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_scriptExtension).isNull();
+  return ScriptBaseNamed(baseName).isNull();
 }
 
 ScriptStore::ScriptStore()
@@ -123,7 +123,7 @@ void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallba
 }
 
 const char * ScriptStore::contentOfScript(const char * name) {
-  Script script = scriptNamed(name);
+  Script script = ScriptNamed(name);
   if (script.isNull()) {
     return nullptr;
   }

@@ -148,7 +148,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       }
     } else {
       // Try fetching the nodes from a script
-      Script importedScript = m_scriptStore->scriptNamed("polynomial.py"); //TODO LEA
+      Script importedScript = ScriptStore::ScriptBaseNamed(importationSourceName);
       if (!importedScript.isNull()) {
         loadGlobalAndImportedVariableInScriptAsImported(importedScript, textToAutocomplete, textToAutocompleteLength);
       }

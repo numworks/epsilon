@@ -19,6 +19,9 @@ namespace Code {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
   // Got these in python/py/src/compile.cpp compiled file
+constexpr static uint PN_file_input_2 = 1;
+constexpr static uint PN_funcdef = 3;
+constexpr static uint PN_expr_stmt = 5;
 constexpr static uint PN_import_name = 14; // import math // import math as m // import math, cmath // import math as m, cmath as cm
 constexpr static uint PN_import_from = 15; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage
 constexpr static uint PN_import_stmt = 92; // ?
@@ -93,7 +96,7 @@ typedef struct _mp_reader_mem_t {
 /* TODO end*/
 
 
-void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength) {
+bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength) {
 
   uint structKind = (uint) MP_PARSE_NODE_STRUCT_KIND(parseNode);
   bool structKindIsImportWithoutFrom = structKind == PN_import_name;
@@ -103,7 +106,7 @@ void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       && structKind != PN_import_as_names
       && structKind != PN_import_as_name)
   {
-    return;
+    return false;
   }
 
   bool loadModuleContent = structKindIsImportWithoutFrom;
@@ -145,13 +148,13 @@ void VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       }
     } else {
       // Try fetching the nodes from a script
-      Script importedScript = m_scriptStore->scriptNamed(importationSourceName);
+      Script importedScript = m_scriptStore->scriptNamed("polynomial.py"); //TODO LEA
       if (!importedScript.isNull()) {
-        //TODO LEA
-
+        loadGlobalAndImportedVariableInScriptAsImported(importedScript, textToAutocomplete, textToAutocompleteLength);
       }
     }
   }
+  return true;
 }
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
@@ -397,6 +400,77 @@ importCurrent:
     }
 
     mp_lexer_free(lex);
+    nlr_pop();
+  }
+}
+
+const char * structID(mp_parse_node_struct_t *structNode) {
+  // Find the id child node, which stores the struct's name
+  size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(structNode);
+  if (childNodesCount < 1) {
+    return nullptr;
+  }
+  mp_parse_node_t child = structNode->nodes[0];
+  if (MP_PARSE_NODE_IS_LEAF(child)
+      && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID)
+  {
+    uintptr_t arg = MP_PARSE_NODE_LEAF_ARG(child);
+    return qstr_str(arg);
+  }
+  return nullptr;
+}
+
+
+void VariableBoxController::storeImportedStruct(mp_parse_node_struct_t * pns, uint structKind, const char * textToAutocomplete, int textToAutocompleteLength) {
+  assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
+  // Find the id child node, which stores the struct's name
+  const char * id = structID(pns);
+  if (id == nullptr) {
+    return;
+  }
+  checkAndAddNode(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
+}
+
+void VariableBoxController::loadGlobalAndImportedVariableInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength) {
+  assert(!script.isNull());
+  const char * scriptContent = script.scriptContent();
+  assert(scriptContent != nullptr);
+
+  // Handle lexer or parser errors with nlr.
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+
+    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
+    mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_FILE_INPUT);
+    mp_parse_node_t pn = parseTree.root;
+
+    if (MP_PARSE_NODE_IS_STRUCT(pn)) {
+      mp_parse_node_struct_t * pns = (mp_parse_node_struct_t *)pn;
+      uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(pns);
+      if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
+        // The script is only a single function or variable definition
+        storeImportedStruct(pns, structKind, textToAutocomplete, textToAutocompleteLength);
+      } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength)) {
+      } else if (structKind == PN_file_input_2) {
+        /* At this point, if the script node is not of type "file_input_2", it
+         * will not have main structures of the wanted type. */
+        // Count the number of structs in child nodes.
+        size_t n = MP_PARSE_NODE_STRUCT_NUM_NODES(pns);
+        for (size_t i = 0; i < n; i++) {
+          mp_parse_node_t child = pns->nodes[i];
+          if (MP_PARSE_NODE_IS_STRUCT(child)) {
+            mp_parse_node_struct_t *child_pns = (mp_parse_node_struct_t*)(child);
+            structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
+            if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
+              storeImportedStruct(child_pns, structKind, textToAutocomplete, textToAutocompleteLength);
+            } else {
+              addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength);
+            }
+          }
+        }
+      }
+    }
+    mp_parse_tree_clear(&parseTree);
     nlr_pop();
   }
 }

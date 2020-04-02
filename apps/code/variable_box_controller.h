@@ -68,14 +68,15 @@ private:
 
   void loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength);
   void loadCurrentAndImportedVariableInScript(Script script, const char * textToAutocomplete, int textToAutocompleteLength);
-  void addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength);
+  void loadGlobalAndImportedVariableInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength);
+  bool addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength); // Returns true if this was an import structure
   /* Add a node if it completes the text to autocomplete and if it is not
    * already contained in the variable box. */
   bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength);
   void checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
   void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex = 0);
   bool contains(const char * name, int nameLength);
-
+  void storeImportedStruct(mp_parse_node_struct_t * pns, uint structKind, const char * textToAutocomplete, int textToAutocompleteLength);
 
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];

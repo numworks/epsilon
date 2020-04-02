@@ -71,7 +71,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // 're(z)' label
   drawLabel(ctx, rect, real, 0.0f, "re(z)", Palette::Red, CurveView::RelativePosition::None, imag >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
   // 'im(z)' label
-  drawLabel(ctx, rect, 0.0f, imag, "im(θ)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
+  drawLabel(ctx, rect, 0.0f, imag, "im(z)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
   // '|z|' label, the relative horizontal position of this label depends on the quadrant
   CurveView::RelativePosition verticalPosition = real*imag < 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After;
   if (real == 0.0f) {

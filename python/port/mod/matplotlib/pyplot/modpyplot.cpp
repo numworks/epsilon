@@ -238,6 +238,8 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
   mp_float_t min = mp_obj_get_float(xItems[0]);
   mp_float_t max = mp_obj_get_float(xItems[xLength - 1]);
 
+  // TODO: memory optimization
+  // Don't create a list of edges, compute the edge on the go if not present?
   mp_obj_t * edgeItems;
   size_t nBins;
   // bin arg

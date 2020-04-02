@@ -1,5 +1,5 @@
-SolverApp = "Vergelijkingen"
-SolverAppCapital = "VERGELIJKINGEN"
+SolverApp = "Vergelijking"
+SolverAppCapital = "VERGELIJKING"
 AddEquation = "Vergelijking toevoegen"
 ResolveEquation = "Vergelijking oplossen"
 ResolveSystem = "Stelsel oplossen"

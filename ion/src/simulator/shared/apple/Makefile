@@ -2,37 +2,31 @@
 # The only things that have to be customized per platform are the icons and the
 # Info.plist.
 
-SIMULATOR_APP_PATH = $(BUILD_DIR)/app/Payload
+SIMULATOR_APP_PATH = $(BUILD_DIR)
 
-simulator_app_binary = $(addprefix $(SIMULATOR_APP_PATH)/$(1).app/$(SIMULATOR_APP_BINARY_PATH),$(2))
-simulator_app_resource = $(addprefix $(SIMULATOR_APP_PATH)/$(1).app/$(SIMULATOR_APP_RESOURCE_PATH),$(2))
-simulator_app_plist = $(addprefix $(SIMULATOR_APP_PATH)/$(1).app/$(SIMULATOR_APP_PLIST_PATH),$(2))
+simulator_app_binary = $(SIMULATOR_APP_PATH)/%.app/$(SIMULATOR_APP_BINARY_PATH)Epsilon
+simulator_app_resource = $(SIMULATOR_APP_PATH)/%.app/$(SIMULATOR_APP_RESOURCE_PATH)$(1)
+simulator_app_plist = $(SIMULATOR_APP_PATH)/%.app/$(SIMULATOR_APP_PLIST_PATH)$(1)
 
 # Epsilon binary
 
 .PHONY: force_remake
-
-define rule_for_epsilon
-$$(BUILD_DIR)/%/$(1): force_remake
-	$(Q) echo "MAKE    ARCH=$$*"
-	$(Q) $$(MAKE) ARCH=$$* $(1)
+define rule_for_arch_executable
+.PRECIOUS: $$(BUILD_DIR)/$(1)/%.bin
+$$(BUILD_DIR)/$(1)/%.bin: force_remake
+	$(Q) echo "MAKE    ARCH=$(1)"
+	$(Q) $$(MAKE) ARCH=$(1) --silent $$*.bin
 endef
 
-$(eval $(call rule_for_epsilon,epsilon.bin))
-$(eval $(call rule_for_epsilon,epsilon.official.bin))
+$(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_executable,$(ARCH))))
 
-define rule_for_lipo
-$$(call simulator_app_binary,$1,Epsilon): $$(patsubst %,$(BUILD_DIR)/%/$2.bin,$$(ARCHS)) | $$$$(@D)/.
-	$$(call rule_label,LIPO)
-	$(Q) $$(LIPO) -create $$^ -output $$@
-endef
-
-$(eval $(call rule_for_lipo,Epsilon,epsilon))
-$(eval $(call rule_for_lipo,Epsilon.official,epsilon.official))
+$(simulator_app_binary): $(foreach arch,$(ARCHS),$(BUILD_DIR)/$(arch)/%.bin) | $$(@D)/.
+	$(call rule_label,LIPO)
+	$(Q) $(LIPO) -create $^ -output $@
 
 # Background image
 
-$(call simulator_app_resource,%,background.jpg): ion/src/simulator/assets/background.jpg | $$(@D)/.
+$(call simulator_app_resource,background.jpg): ion/src/simulator/assets/background.jpg | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
 
@@ -54,6 +48,6 @@ $(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logo.svg
 
 # Export simulator app dependencies
 
-simulator_app_deps += $(call simulator_app_binary,$(1),Epsilon)
-simulator_app_deps += $(call simulator_app_plist,$(1),Info.plist)
-simulator_app_deps += $(call simulator_app_resource,$(1),background.jpg)
+simulator_app_deps += $(simulator_app_binary)
+simulator_app_deps += $(call simulator_app_plist,Info.plist)
+simulator_app_deps += $(call simulator_app_resource,background.jpg)

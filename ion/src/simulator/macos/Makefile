@@ -43,6 +43,4 @@ simulator_app_deps += $(call simulator_app_resource,app.icns)
 
 include ion/src/simulator/shared/apple/targets.mak
 
-DEFAULT = epsilon.app
-
 endif

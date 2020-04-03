@@ -13,8 +13,12 @@ public:
   void setMessage(I18n::Message message);
   virtual void setTextColor(KDColor color);
   void setMessageFont(const KDFont * font);
+  void setBackgroundColor(KDColor color);
+protected:
+  KDColor backgroundColor() const override { return m_backgroundColor; }
 private:
   MessageTextView m_messageTextView;
+  KDColor m_backgroundColor;
 };
 
 #endif

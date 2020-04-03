@@ -57,9 +57,8 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
     m_itemCells[i].setScriptStore(scriptStore);
   }
   for (int i = 0; i < k_scriptOriginsCount; i++) {
-    m_subtitleCells[i].setEven(false);
-    m_subtitleCells[i].setAlignment(0.0f, 0.5f);
-    m_subtitleCells[i].setMessageFont(KDFont::SmallFont);
+    m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
+    m_subtitleCells[i].setTextColor(Palette::BlueishGrey);
   }
 }
 
@@ -131,7 +130,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
     I18n::Message::BuiltinFunctionsAndKeyWords,
     I18n::Message::ImportedModulesAndScripts
   };
-  static_cast<EvenOddMessageTextCell *>(cell)->setMessage(subtitleMessages[(int)cellOrigin], Palette::BlueishGrey);
+  static_cast<MessageTableCell *>(cell)->setMessage(subtitleMessages[(int)cellOrigin]);
 }
 
 int VariableBoxController::typeAtLocation(int i, int j) {
@@ -549,7 +548,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
             }
           }
           assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, 1/* TODO LEA*/);
+          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, ScriptNode::CurrentScriptIndex);
         }
       }
 

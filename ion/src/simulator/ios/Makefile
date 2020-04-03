@@ -89,6 +89,4 @@ simulator_app_deps += $(call simulator_app_resource,launch.storyboardc)
 
 include ion/src/simulator/shared/apple/targets.mak
 
-DEFAULT = epsilon.ipa
-
 endif

@@ -63,6 +63,4 @@ $(BUILD_DIR)/%.apk: $(apk_deps)
 	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
 	$(Q) cp $(BUILD_DIR)/app/outputs/apk/release/android-release*.apk $@
 
-DEFAULT = epsilon.apk
-
 endif

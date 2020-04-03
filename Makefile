@@ -99,8 +99,7 @@ all_objs = $(call object_for,$(all_src))
 include build/targets.mak
 
 # Fill in the default recipe
-DEFAULT ?= $(BUILD_DIR)/epsilon.$(EXE)
-default: $(DEFAULT)
+default: $(firstword $(HANDY_TARGETS)).$(firstword $(HANDY_TARGETS_EXTENSIONS))
 
 # Load standard build rules
 include build/rules.mk

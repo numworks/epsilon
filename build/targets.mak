@@ -2,13 +2,8 @@
 # Those can be built easily by simply invoking "make target.ext". The named file
 # will be built in $(BUILD_DIR).
 
-HANDY_TARGETS +=
-HANDY_TARGETS_EXTENSIONS += $(EXE)
-
-define handy_target_rule
-.PHONY: $(1).$(2)
-$(1).$(2): $$(BUILD_DIR)/$(1).$(2)
-endef
+HANDY_TARGETS ?=
+HANDY_TARGETS_EXTENSIONS ?=
 
 # Epsilon base target
 
@@ -74,6 +69,17 @@ HANDY_TARGETS += test
 -include build/targets.$(PLATFORM).mak
 
 # Generate handy targets rules
+# Define handy targets
+# Those can be built easily by simply invoking "make target.ext". The named file
+# will be built in $(BUILD_DIR).
+
+HANDY_TARGETS_EXTENSIONS += $(EXE)
+
+define handy_target_rule
+.PHONY: $(1).$(2)
+$(1).$(2): $$(BUILD_DIR)/$(1).$(2)
+endef
+
 $(foreach extension,$(HANDY_TARGETS_EXTENSIONS),$(foreach executable,$(HANDY_TARGETS),$(eval $(call handy_target_rule,$(executable),$(extension)))))
 
 include build/targets.all.mak

@@ -35,7 +35,7 @@ SIMULATOR_ICON_SIZES = 20x20 29x29 40x40 40x40 40x40 58x58 58x58 60x60 76x76 \
 SIMULATOR_ASSETS_PATH = $(BUILD_DIR)/app/assets/Assets.xcassets
 SIMULATOR_ICONSET = $(SIMULATOR_ASSETS_PATH)/AppIcon.appiconset
 
-include ion/src/simulator/shared/apple/Makefile
+include ion/src/simulator/shared/apple/app.mak
 
 $(call simulator_app_plist,Info.plist): ion/src/simulator/ios/Info.plist $(call simulator_app_resource,Assets.car)
 	$(call rule_label,PLUTIL)

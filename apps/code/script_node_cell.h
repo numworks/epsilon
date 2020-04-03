@@ -14,7 +14,7 @@ public:
     TableCell(),
     m_scriptNodeView()
   {}
-  void setScriptNode(ScriptNode * node) { m_scriptNode = scriptNode; }
+  void setScriptNode(ScriptNode * node);
   void setScriptStore(ScriptStore * scriptStore) { m_scriptNodeView.setScriptStore(scriptStore); }
 
   /* TableCell */
@@ -37,7 +37,7 @@ protected:
       m_scriptNode(nullptr),
       m_scriptStore(nullptr)
     {}
-    void setScriptNode(ScriptNode * node) { m_scriptNode = scriptNode; }
+    void setScriptNode(ScriptNode * node) { m_scriptNode = node; }
     void setScriptStore(ScriptStore * scriptStore) { m_scriptStore = scriptStore; }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     virtual KDSize minimalSizeForOptimalDisplay() const override;

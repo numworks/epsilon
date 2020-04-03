@@ -23,6 +23,7 @@ public:
   virtual View * subAccessoryView() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
+  virtual KDColor backgroundColor() const { return KDColorWhite; }
   virtual KDCoordinate labelMargin() const { return Metric::TableCellHorizontalMargin; }
   virtual KDCoordinate accessoryMargin() const { return Metric::TableCellHorizontalMargin; }
   int numberOfSubviews() const override;

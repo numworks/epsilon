@@ -103,10 +103,4 @@ endif
 
 DEFAULT = epsilon.ipa
 
-ifeq ($(APPLE_PLATFORM),ios-simulator)
-.PHONY: %_run
-%_run: $(BUILD_DIR)/%.app
-	xcrun simctl install booted $^
-endif
-
 endif

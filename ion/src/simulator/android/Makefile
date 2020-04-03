@@ -71,15 +71,10 @@ apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/
 .PRECIOUS: $(apk_deps)
 
 $(BUILD_DIR)/%.apk: $(apk_deps)
-	@echo "GRADLE ion/src/simulator/android/build.gradle"
+	$(call rule_label,GRADLE)
 	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
 	$(Q) cp $(BUILD_DIR)/app/outputs/apk/release/android-release*.apk $@
 
 DEFAULT = epsilon.apk
-
-.PHONY: %_run
-%_run: $(BUILD_DIR)/%.apk
-	@echo "ADB     $*.apk"
-	$(Q) adb install $<
 
 endif

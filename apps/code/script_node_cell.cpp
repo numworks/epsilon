@@ -7,21 +7,6 @@ namespace Code {
 constexpr char ScriptNodeCell::k_parentheses[];
 constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
 
-ScriptNodeCell::ScriptNodeView::ScriptNodeView() :
-  HighlightCell(),
-  m_scriptNode(nullptr),
-  m_scriptStore(nullptr)
-{
-}
-
-void ScriptNodeCell::ScriptNodeView::setScriptNode(ScriptNode * scriptNode) {
-  m_scriptNode = scriptNode;
-}
-
-void ScriptNodeCell::ScriptNodeView::setScriptStore(ScriptStore * scriptStore) {
-  m_scriptStore = scriptStore;
-}
-
 void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->drawString(m_scriptNode->name(), KDPoint(0, Metric::TableCellVerticalMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite, m_scriptNode->nameLength());
   KDSize nameSize = k_font->stringSize(m_scriptNode->name(), m_scriptNode->nameLength());
@@ -44,19 +29,9 @@ KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
   return KDSize(size1.width() + size3.width() > size2.width() ? size1.width() + size3.width() : size2.width(), Metric::TableCellVerticalMargin + size1.width() + k_verticalMargin + size2.width());
 }
 
-ScriptNodeCell::ScriptNodeCell() :
-  TableCell(),
-  m_scriptNodeView()
-{
-}
-
 void ScriptNodeCell::setScriptNode(ScriptNode * scriptNode) {
   m_scriptNodeView.setScriptNode(scriptNode);
   reloadCell();
-}
-
-void ScriptNodeCell::setScriptStore(ScriptStore * scriptStore) {
-  m_scriptNodeView.setScriptStore(scriptStore);
 }
 
 void ScriptNodeCell::setHighlighted(bool highlight) {

@@ -10,9 +10,12 @@ namespace Code {
 
 class ScriptNodeCell : public TableCell {
 public:
-  ScriptNodeCell();
-  void setScriptNode(ScriptNode * node);
-  void setScriptStore(ScriptStore * scriptStore);
+  ScriptNodeCell() :
+    TableCell(),
+    m_scriptNodeView()
+  {}
+  void setScriptNode(ScriptNode * node) { m_scriptNode = scriptNode; }
+  void setScriptStore(ScriptStore * scriptStore) { m_scriptNodeView.setScriptStore(scriptStore); }
 
   /* TableCell */
   View * labelView() const override { return const_cast<View *>(static_cast<const View *>(&m_scriptNodeView)); }
@@ -29,9 +32,13 @@ public:
 protected:
   class ScriptNodeView : public HighlightCell {
   public:
-    ScriptNodeView();
-    void setScriptNode(ScriptNode * scriptNode);
-    void setScriptStore(ScriptStore * scriptStore);
+    ScriptNodeView() :
+      HighlightCell(),
+      m_scriptNode(nullptr),
+      m_scriptStore(nullptr)
+    {}
+    void setScriptNode(ScriptNode * node) { m_scriptNode = scriptNode; }
+    void setScriptStore(ScriptStore * scriptStore) { m_scriptStore = scriptStore; }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     virtual KDSize minimalSizeForOptimalDisplay() const override;
     const char * text() const override {

@@ -22,7 +22,7 @@ SIMULATOR_APP_RESOURCE_PATH = Contents/Resources/
 SIMULATOR_APP_PLIST_PATH = Contents/
 SIMULATOR_ICONSET = $(BUILD_DIR)/app/assets/app.iconset
 
-include ion/src/simulator/shared/apple/Makefile
+include ion/src/simulator/shared/apple/app.mak
 
 $(call simulator_app_plist,Info.plist): ion/src/simulator/macos/Info.plist | $$(@D)/.
 	$(call rule_label,PLUTIL)

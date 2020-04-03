@@ -23,6 +23,10 @@ View * OmegaController::view() {
 }
 
 void OmegaController::didBecomeFirstResponder() {
+  if (selectedRow() < 0) {
+    selectCellAtLocation(0, 0);
+  }
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool OmegaController::handleEvent(Ion::Events::Event event) {

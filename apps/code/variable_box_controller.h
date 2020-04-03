@@ -73,7 +73,7 @@ private:
   ScriptNode * scriptNodeAtIndex(int index);
 
   // Cell getters
-  int typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin) const;
+  int typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin = nullptr, int * cumulatedOriginsCount = nullptr) const;
 
   // NestedMenuController
   HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }

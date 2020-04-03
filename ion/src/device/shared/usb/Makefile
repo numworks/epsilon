@@ -48,7 +48,7 @@ ion_device_dfu_src += $(addprefix ion/src/device/shared/drivers/, \
   battery.cpp \
   base64.cpp \
   board.cpp \
-  console.cpp \
+  console_uart.cpp \
   crc32.cpp \
   display.cpp \
   events_keyboard_platform.cpp \

@@ -100,7 +100,7 @@ private:
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedRows];
-  EvenOddMessageTextCell m_subtitleCells[k_scriptOriginsCount];
+  MessageTableCell m_subtitleCells[k_scriptOriginsCount];
   ScriptStore * m_scriptStore;
   // TODO LEA Put these in an array?
   int m_currentScriptNodesCount;

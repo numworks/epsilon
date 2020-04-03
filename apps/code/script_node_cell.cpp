@@ -8,12 +8,22 @@ constexpr char ScriptNodeCell::k_parentheses[];
 constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
 
 void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->drawString(m_scriptNode->name(), KDPoint(0, Metric::TableCellVerticalMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite, m_scriptNode->nameLength());
-  KDSize nameSize = k_font->stringSize(m_scriptNode->name(), m_scriptNode->nameLength());
+  const KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+
+  // Draw the node name
+  const char * nodeName = m_scriptNode->name();
+  const int nodeNameLength = m_scriptNode->nameLength();
+  const KDSize nameSize = k_font->stringSize(nodeName, nodeNameLength);
+  const KDCoordinate nodeNameY = (rect.height() - nameSize.height()) / 2;
+  ctx->drawString(nodeName, KDPoint(0, nodeNameY), k_font, KDColorBlack, backgroundColor, nodeNameLength);
+
+  // If it is a function, draw the parentheses
   if (m_scriptNode->type() == ScriptNode::Type::Function) {
-    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), Metric::TableCellVerticalMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite);
+    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), nodeNameY), k_font, KDColorBlack, backgroundColor);
   }
-  ctx->drawString(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName(), KDPoint(0, Metric::TableCellVerticalMargin + nameSize.height() + k_verticalMargin), k_font, Palette::GreyDark, isHighlighted()? Palette::Select : KDColorWhite);
+  if (m_scriptNode->scriptIndex() != ScriptNode::CurrentScriptIndex) {
+    ctx->drawString(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName(), KDPoint(0, Metric::TableCellVerticalMargin + nameSize.height() + k_verticalMargin), k_font, Palette::GreyDark, backgroundColor);
+  }
 }
 
 KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
@@ -21,7 +31,7 @@ KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
     return KDSizeZero;
   }
   KDSize size1 = k_font->stringSize(m_scriptNode->name(), m_scriptNode->nameLength());
-  KDSize size2 = k_font->stringSize(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName());
+  KDSize size2 = m_scriptNode->scriptIndex() == ScriptNode::CurrentScriptIndex ? KDSizeZero : k_font->stringSize(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName());
   KDSize size3 = KDSizeZero;
   if (m_scriptNode->type() == ScriptNode::Type::Function) {
     size3 = k_font->stringSize(ScriptNodeCell::k_parentheses);

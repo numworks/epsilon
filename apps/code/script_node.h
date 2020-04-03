@@ -8,6 +8,7 @@ namespace Code {
 
 class ScriptNode {
 public:
+  constexpr static uint16_t CurrentScriptIndex = -1;
   enum class Type : bool {
     Function,
     Variable
@@ -15,7 +16,7 @@ public:
   ScriptNode(Type type = Type::Variable, const char * name = nullptr, int nameLength = 0, uint16_t scriptIndex = 0) :
     m_type(type),
     m_name(name),
-    m_scriptIndex(scriptIndex),
+    m_scriptIndex(-1),
     m_nameLength(nameLength)
   {}
   Type type() const { return m_type; }

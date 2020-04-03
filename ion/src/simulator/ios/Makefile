@@ -35,7 +35,7 @@ SIMULATOR_ICON_SIZES = 20x20 29x29 40x40 40x40 40x40 58x58 58x58 60x60 76x76 \
 SIMULATOR_ASSETS_PATH = $(BUILD_DIR)/app/assets/Assets.xcassets
 SIMULATOR_ICONSET = $(SIMULATOR_ASSETS_PATH)/AppIcon.appiconset
 
-include ion/src/simulator/shared/apple/app.mak
+include ion/src/simulator/shared/apple/helpers.mak
 
 $(call simulator_app_plist,Info.plist): ion/src/simulator/ios/Info.plist $(call simulator_app_resource,Assets.car)
 	$(call rule_label,PLUTIL)
@@ -87,19 +87,7 @@ $(call simulator_app_resource,Assets.car): $(SIMULATOR_ICONSET)/Contents.json | 
 simulator_app_deps += $(call simulator_app_resource,Assets.car)
 simulator_app_deps += $(call simulator_app_resource,launch.storyboardc)
 
-.PRECIOUS: $(simulator_app_deps)
-
-.PRECIOUS: $(BUILD_DIR)/%.app
-.PHONY: $(BUILD_DIR)/%.app
-$(BUILD_DIR)/%.app: $(simulator_app_deps)
-
-$(BUILD_DIR)/%.ipa: $(BUILD_DIR)/%.app
-ifdef IOS_PROVISIONNING_PROFILE
-	$(call rule_label,SIGN)
-	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "Apple Distribution: NumWorks" $(BUILD_DIR)/$*.app
-endif
-	$(call rule_label,ZIP)
-	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) $*.app
+include ion/src/simulator/shared/apple/targets.mak
 
 DEFAULT = epsilon.ipa
 

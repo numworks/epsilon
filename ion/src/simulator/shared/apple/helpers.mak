@@ -10,16 +10,6 @@ simulator_app_plist = $(SIMULATOR_APP_PATH)/%.app/$(SIMULATOR_APP_PLIST_PATH)$(1
 
 # Epsilon binary
 
-.PHONY: force_remake
-define rule_for_arch_executable
-.PRECIOUS: $$(BUILD_DIR)/$(1)/%.bin
-$$(BUILD_DIR)/$(1)/%.bin: force_remake
-	$(Q) echo "MAKE    ARCH=$(1)"
-	$(Q) $$(MAKE) ARCH=$(1) --silent $$*.bin
-endef
-
-$(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_executable,$(ARCH))))
-
 $(simulator_app_binary): $(foreach arch,$(ARCHS),$(BUILD_DIR)/$(arch)/%.bin) | $$(@D)/.
 	$(call rule_label,LIPO)
 	$(Q) $(LIPO) -create $^ -output $@

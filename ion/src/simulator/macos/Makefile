@@ -22,7 +22,7 @@ SIMULATOR_APP_RESOURCE_PATH = Contents/Resources/
 SIMULATOR_APP_PLIST_PATH = Contents/
 SIMULATOR_ICONSET = $(BUILD_DIR)/app/assets/app.iconset
 
-include ion/src/simulator/shared/apple/app.mak
+include ion/src/simulator/shared/apple/helpers.mak
 
 $(call simulator_app_plist,Info.plist): ion/src/simulator/macos/Info.plist | $$(@D)/.
 	$(call rule_label,PLUTIL)
@@ -41,14 +41,7 @@ $(call simulator_app_resource,app.icns): $(SIMULATOR_ICONS) | $$(@D)/.
 
 simulator_app_deps += $(call simulator_app_resource,app.icns)
 
-.PRECIOUS: $(simulator_app_deps)
-
-$(BUILD_DIR)/%.app: $(simulator_app_deps)
-	$(Q) echo "DONE"
-
-#.PHONY: Epsilon.app Epsilon.official.app
-#Epsilon.app: $(simulator_app_deps_unofficial)
-#Epsilon.official.app: $(simulator_app_deps_official)
+include ion/src/simulator/shared/apple/targets.mak
 
 DEFAULT = epsilon.app
 

@@ -114,6 +114,7 @@ jobs:
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.official.ipa
       - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 test.ipa
+      - run: make -j2 PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-ios.ipa

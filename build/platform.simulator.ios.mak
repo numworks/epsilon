@@ -1,4 +1,5 @@
 TOOLCHAIN = apple
+EXE = bin
 
 APPLE_PLATFORM ?= ios
 APPLE_PLATFORM_MIN_VERSION = 8.0
@@ -14,8 +15,7 @@ endif
 BUILD_DIR := $(subst $(TARGET),$(APPLE_PLATFORM),$(BUILD_DIR))
 
 ifdef ARCH
-EXE = bin
 BUILD_DIR := $(BUILD_DIR)/$(ARCH)
 else
-HANDY_TARGETS_EXTENSIONS = ipa
+HANDY_TARGETS_EXTENSIONS = ipa app
 endif

@@ -1,7 +1,3 @@
-ifndef ARCH
-HANDY_TARGETS_EXTENSIONS += apk
-endif
-
 ifeq ($(APPLE_PLATFORM),ios-simulator)
 .PHONY: %_run
 %_run: $(BUILD_DIR)/%.app

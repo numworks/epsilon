@@ -79,7 +79,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
 }
 
 KDCoordinate VariableBoxController::rowHeight(int j) {
-  int cellType = typeAndOriginAtLocation(j, nullptr);
+  int cellType = typeAndOriginAtLocation(j);
   if (cellType == k_itemCellType) {
     return k_simpleItemRowHeight; // TODO LEA
   }
@@ -119,9 +119,10 @@ int VariableBoxController::reusableCellCount(int type) {
 void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < numberOfRows());
   NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
-  int cellType = typeAndOriginAtLocation(index, &cellOrigin);
+  int cumulatedOriginsCount = 0;
+  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index));
+    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index - cumulatedOriginsCount)); // Remove the number of subtitle cells from the index
     return;
   }
   assert(cellType == k_subtitleCellType);
@@ -135,7 +136,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
 
 int VariableBoxController::typeAtLocation(int i, int j) {
   assert(i == 0);
-  return typeAndOriginAtLocation(j, nullptr);
+  return typeAndOriginAtLocation(j);
 }
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
@@ -277,24 +278,31 @@ ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
   return nullptr;
 }
 
-int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin) const {
+int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin, int * cumulatedOriginsCount) const {
   int cellIndex = 0;
+  int originsCount = 0;
   NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
   for (NodeOrigin origin : origins) {
     int nodeCount = nodesCountForOrigin(origin);
     if (nodeCount > 0) {
+      originsCount++;
+      int result = -1;
       if (i == cellIndex) {
+        result = k_subtitleCellType;
+      } else {
+        cellIndex += nodeCount + 1; // 1 for the subtitle cell
+        if (i < cellIndex) {
+          result = k_itemCellType;
+        }
+      }
+      if (result != -1) {
         if (resultOrigin != nullptr) {
           *resultOrigin = origin;
         }
-        return k_subtitleCellType;
-      }
-      cellIndex += nodeCount + 1; // 1 for the subtitle cell
-      if (i < cellIndex) {
-       if (resultOrigin != nullptr) {
-         *resultOrigin = origin;
-       }
-       return k_itemCellType;
+        if (cumulatedOriginsCount != nullptr) {
+          *cumulatedOriginsCount = originsCount;
+        }
+        return result;
       }
     }
   }

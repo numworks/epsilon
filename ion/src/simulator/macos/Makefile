@@ -12,6 +12,8 @@ ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
+ifndef ARCH
+
 # App resources
 
 SIMULATOR_ICON_SIZES = 16x16 32x32 64x64 128x128 256x256 512x512 1024x1024
@@ -22,7 +24,7 @@ SIMULATOR_ICONSET = $(BUILD_DIR)/app/assets/app.iconset
 
 include ion/src/simulator/shared/apple/Makefile
 
-$(call simulator_app_plist,%,Info.plist): ion/src/simulator/macos/Info.plist
+$(call simulator_app_plist,Info.plist): ion/src/simulator/macos/Info.plist | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	$(Q) cp $< $@
 	$(Q) plutil -insert "LSMinimumSystemVersion" -string "$(MACOS_MIN_VERSION)" $@
@@ -33,19 +35,21 @@ $(call simulator_app_plist,%,Info.plist): ion/src/simulator/macos/Info.plist
 
 .SECONDARY: $(SIMULATOR_ICONS) | $$(@D)/.
 
-$(call simulator_app_resource,%,app.icns): $(SIMULATOR_ICONS) | $$(@D)/.
+$(call simulator_app_resource,app.icns): $(SIMULATOR_ICONS) | $$(@D)/.
 	$(call rule_label,ICNUTIL)
 	$(Q) iconutil --convert icns --output $@ $(SIMULATOR_ICONSET)
 
-simulator_app_deps += $(call simulator_app_resource,$(1),app.icns)
+simulator_app_deps += $(call simulator_app_resource,app.icns)
 
-simulator_app_deps_unofficial = $(call simulator_app_deps,Epsilon)
-simulator_app_deps_official = $(call simulator_app_deps,Epsilon.official)
+.PRECIOUS: $(simulator_app_deps)
 
-.PHONY: Epsilon.app Epsilon.official.app
-Epsilon.app: $(simulator_app_deps_unofficial)
-Epsilon.official.app: $(simulator_app_deps_official)
+$(BUILD_DIR)/%.app: $(simulator_app_deps)
+	$(Q) echo "DONE"
 
-ifndef ARCH
-DEFAULT := Epsilon.app
+#.PHONY: Epsilon.app Epsilon.official.app
+#Epsilon.app: $(simulator_app_deps_unofficial)
+#Epsilon.official.app: $(simulator_app_deps_official)
+
+DEFAULT = epsilon.app
+
 endif

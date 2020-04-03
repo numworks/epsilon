@@ -54,17 +54,12 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   m_importedNodesCount(0)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setScriptStore(scriptStore);
+    m_itemCells[i].setScriptStore(scriptStore);
   }
-  I18n::Message subtitleMessages[k_scriptOriginsCount] = {
-    I18n::Message::CurrentScript,
-    I18n::Message::BuiltinFunctionsAndKeyWords,
-    I18n::Message::ImportedModulesAndScripts
-  };
   for (int i = 0; i < k_scriptOriginsCount; i++) {
-    m_subtitleCells[i].setEven(true);
+    m_subtitleCells[i].setEven(false);
     m_subtitleCells[i].setAlignment(0.0f, 0.5f);
-    m_subtitleCells[i].setMessage(subtitleMessages[i], Palette::BlueishGrey);
+    m_subtitleCells[i].setMessageFont(KDFont::SmallFont);
   }
 }
 
@@ -83,10 +78,64 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
   assert(App::app()->pythonIsInited());
 }
 
+KDCoordinate VariableBoxController::rowHeight(int j) {
+  int cellType = typeAndOriginAtLocation(j, nullptr);
+  if (cellType == k_itemCellType) {
+    return k_simpleItemRowHeight; // TODO LEA
+  }
+  assert(cellType == k_subtitleCellType);
+  return k_subtitleRowHeight;
+}
+
+int VariableBoxController::numberOfRows() const {
+  int result = 0;
+  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    int nodeCount = nodesCountForOrigin(origin);
+    if (nodeCount > 0) {
+      result += nodeCount + 1; // 1 for the subtitle cell
+    }
+  }
+  return result;
+}
+
+HighlightCell * VariableBoxController::reusableCell(int index, int type) {
+  assert(index >= 0 && index < reusableCellCount(type));
+  if (type == k_itemCellType) {
+    return m_itemCells + index;
+  }
+  assert(type == k_subtitleCellType);
+  return m_subtitleCells + index;
+}
+
+int VariableBoxController::reusableCellCount(int type) {
+  if (type == k_subtitleCellType) {
+    return k_scriptOriginsCount;
+  }
+  assert(type == k_itemCellType);
+  return k_maxNumberOfDisplayedRows;
+}
+
 void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < numberOfRows());
-  ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
-  myCell->setScriptNode(scriptNodeAtIndex(index));
+  NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
+  int cellType = typeAndOriginAtLocation(index, &cellOrigin);
+  if (cellType == k_itemCellType) {
+    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index));
+    return;
+  }
+  assert(cellType == k_subtitleCellType);
+  I18n::Message subtitleMessages[k_scriptOriginsCount] = {
+    I18n::Message::CurrentScript,
+    I18n::Message::BuiltinFunctionsAndKeyWords,
+    I18n::Message::ImportedModulesAndScripts
+  };
+  static_cast<EvenOddMessageTextCell *>(cell)->setMessage(subtitleMessages[(int)cellOrigin], Palette::BlueishGrey);
+}
+
+int VariableBoxController::typeAtLocation(int i, int j) {
+  assert(i == 0);
+  return typeAndOriginAtLocation(j, nullptr);
 }
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
@@ -226,6 +275,32 @@ ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
   }
   assert(false);
   return nullptr;
+}
+
+int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin) const {
+  int cellIndex = 0;
+  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    int nodeCount = nodesCountForOrigin(origin);
+    if (nodeCount > 0) {
+      if (i == cellIndex) {
+        if (resultOrigin != nullptr) {
+          *resultOrigin = origin;
+        }
+        return k_subtitleCellType;
+      }
+      cellIndex += nodeCount + 1; // 1 for the subtitle cell
+      if (i < cellIndex) {
+       if (resultOrigin != nullptr) {
+         *resultOrigin = origin;
+       }
+       return k_itemCellType;
+      }
+    }
+  }
+  assert(false);
+  return k_itemCellType;
+
 }
 
 bool VariableBoxController::selectLeaf(int rowIndex) {

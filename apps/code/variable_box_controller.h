@@ -16,16 +16,14 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
+  /* TableViewDataSource */
+  KDCoordinate rowHeight(int j) override;
+  int numberOfRows() const override;
+  HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override;
+  int typeAtLocation(int i, int j) override;
   /* ListViewDataSource */
-  int numberOfRows() const override {
-    return m_currentScriptNodesCount + m_builtinNodesCount + m_importedNodesCount;
-  }
-  int reusableCellCount(int type) override {
-    assert(type == 0);
-    return k_maxNumberOfDisplayedRows;
-  }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  int typeAtLocation(int i, int j) override { return 0; }
 
   /* VariableBoxController */
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
@@ -34,14 +32,19 @@ public:
 private:
   //TODO LEA use size_t
   constexpr static int k_maxScriptObjectNameSize = 100; //TODO LEA
-  constexpr static int k_maxNumberOfDisplayedRows = 6; // 240/40
+  constexpr static int k_maxNumberOfDisplayedRows = 8; // (240 - titlebar - margin)/27 //TODO LEA
   constexpr static int k_maxScriptNodesCount = 32; //TODO LEA
   constexpr static int k_totalBuiltinNodesCount = 98;
   constexpr static uint8_t k_scriptOriginsCount = 3;
+  constexpr static uint8_t k_subtitleCellType = 0;
+  constexpr static uint8_t k_itemCellType = 1;
+  constexpr static KDCoordinate k_subtitleRowHeight = 23;
+  constexpr static KDCoordinate k_simpleItemRowHeight = 27;
+  constexpr static KDCoordinate k_complexItemRowHeight = 44;
   enum class NodeOrigin : uint8_t {
-    CurrentScript,
-    Builtins,
-    Importation
+    CurrentScript = 0,
+    Builtins = 1,
+    Importation = 2
   };
 
   /* Returns:
@@ -70,13 +73,11 @@ private:
   ScriptNode * scriptNodeAtIndex(int index);
 
   // Cell getters
-  HighlightCell * leafCellAtIndex(int index) override {
-    assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
-    return &m_leafCells[index];
-  }
-  HighlightCell * nodeCellAtIndex(int index) override { return nullptr; }
+  int typeAndOriginAtLocation(int i, NodeOrigin * resultOrigin) const;
 
   // NestedMenuController
+  HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }
+  HighlightCell * nodeCellAtIndex(int index) override { assert(false); return nullptr; }
   bool selectLeaf(int rowIndex) override;
   void insertTextInCaller(const char * text, int textLength = -1);
 
@@ -98,7 +99,7 @@ private:
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];
-  ScriptNodeCell m_leafCells[k_maxNumberOfDisplayedRows];
+  ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedRows];
   EvenOddMessageTextCell m_subtitleCells[k_scriptOriginsCount];
   ScriptStore * m_scriptStore;
   // TODO LEA Put these in an array?

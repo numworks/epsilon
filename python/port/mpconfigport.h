@@ -119,8 +119,6 @@ typedef uintptr_t mp_uint_t; // must be pointer size
 
 typedef long mp_off_t;
 
-#define SEEK_CUR 1
-
 // extra built in names to add to the global namespace
 #define MICROPY_PORT_BUILTINS \
     { MP_OBJ_NEW_QSTR(MP_QSTR_open), (mp_obj_t)&mp_builtin_open_obj }, \

@@ -55,9 +55,9 @@ all:
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.python.js
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR ANDROID"
 	$(Q) $(MAKE) PLATFORM=simulator TARGET=android clean
-	$(Q) $(MAKE) PLATFORM=simulator TARGET=android epsilon.official.signed.apk
-	$(Q) cp output/release/simulator/android/app/outputs/apk/codesigned/android-codesigned.apk output/all_official/epsilon.official.apk
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=android epsilon.official.apk
+	$(Q) cp output/release/simulator/android/epsilon.official.apk output/all_official/epsilon.official.apk
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR IOS"
 	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios clean
-	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE=$(IOS_MOBILE_PROVISION) output/release/simulator/ios/app/epsilon.official.ipa
-	$(Q) cp output/release/simulator/ios/app/epsilon.official.ipa output/all_official/epsilon.ipa
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=ios IOS_PROVISIONNING_PROFILE=$(IOS_MOBILE_PROVISION) epsilon.official.ipa
+	$(Q) cp output/release/simulator/ios/epsilon.official.ipa output/all_official/epsilon.ipa

@@ -81,5 +81,3 @@ $(1).$(2): $$(BUILD_DIR)/$(1).$(2)
 endef
 
 $(foreach extension,$(HANDY_TARGETS_EXTENSIONS),$(foreach executable,$(HANDY_TARGETS),$(eval $(call handy_target_rule,$(executable),$(extension)))))
-
-include build/targets.all.mak

@@ -1,3 +1,6 @@
+# This is a standalone Makefile
+# Invoke using "make -f build/all.mak"
+
 ANDROID_GRADLE_KEYSTORE ?= ~/.gradle/google-play-upload.keystore
 ANDROID_GRADLE_PROPERTIES ?= ~/.gradle/gradle.properties
 IOS_MOBILE_PROVISION ?= build/artifacts/NumWorks_Graphing_Calculator_Distribution.mobileprovision
@@ -23,8 +26,8 @@ define command_check
 fi
 endef
 
-.PHONY: all_official
-all_official:
+.PHONY: all
+all:
 	$(call file_check,$(ANDROID_GRADLE_KEYSTORE))
 	$(call file_check,$(ANDROID_GRADLE_PROPERTIES))
 	$(call file_check,$(IOS_MOBILE_PROVISION))

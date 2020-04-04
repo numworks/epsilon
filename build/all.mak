@@ -6,10 +6,6 @@ ANDROID_GRADLE_PROPERTIES ?= ~/.gradle/gradle.properties
 IOS_MOBILE_PROVISION ?= build/artifacts/NumWorks_Graphing_Calculator_Distribution.mobileprovision
 EMCC ?= emcc
 
-define source_emsdk
-source ~/emsdk/emsdk_env.sh > /dev/null
-endef
-
 define file_check
 @ if test ! -f $(1); \
   then \
@@ -44,14 +40,14 @@ all:
 	$(Q) cp output/release/device/n0100/epsilon.official.onboarding.dfu output/all_official/epsilon.device.n0100.dfu
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	$(Q) $(MAKE) PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.zip
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.zip
 	$(Q) cp output/release/simulator/web/epsilon.official.zip output/all_official/simulator.web.zip
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
-	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.js
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=web epsilon.official.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.js
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
 	$(Q) $(MAKE) PLATFORM=simulator TARGET=web clean
-	$(Q) $(call source_emsdk); $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
+	$(Q) $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
 	$(Q) cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.python.js
 	$(Q) echo "BUILD_FIRMWARE    SIMULATOR ANDROID"
 	$(Q) $(MAKE) PLATFORM=simulator TARGET=android clean

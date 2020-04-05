@@ -1,4 +1,4 @@
 Apps = "Applications"
 AppsCapital = "APPLICATIONS"
-ForbidenAppInExamMode1 = "This application is"
-ForbidenAppInExamMode2 = "forbidden in exam mode"
+ForbidenAppInExamMode1 = "Cette application n'est"
+ForbidenAppInExamMode2 = "pas autorisée en mode examen."

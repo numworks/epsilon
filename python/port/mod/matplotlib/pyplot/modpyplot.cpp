@@ -252,7 +252,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
     }
 
     // Fill the bin edges list
-    for (int i = 0; i < nBins+1; i++) {
+    for (size_t i = 0; i < nBins+1; i++) {
       edgeItems[i] = mp_obj_new_float(min+i*binWidth);
     }
   }
@@ -323,7 +323,7 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
 
     // Create the default xItems: [0, 1, 2,...]
     xItems = m_new(mp_obj_t, length);
-    for (int i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
       xItems[i] = mp_obj_new_float((float)i);
     }
   } else {

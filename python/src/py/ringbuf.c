@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2019 Jim Mussared
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,23 +23,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef MICROPY_INCLUDED_PY_COMPILE_H
-#define MICROPY_INCLUDED_PY_COMPILE_H
+#include "ringbuf.h"
 
-#include "py/lexer.h"
-#include "py/parse.h"
-#include "py/emitglue.h"
+int ringbuf_get16(ringbuf_t *r) {
+    int v = ringbuf_peek16(r);
+    if (v == -1) {
+        return v;
+    }
+    r->iget += 2;
+    if (r->iget >= r->size) {
+        r->iget -= r->size;
+    }
+    return v;
+}
 
-// the compiler will raise an exception if an error occurred
-// the compiler will clear the parse tree before it returns
-mp_obj_t mp_compile(mp_parse_tree_t *parse_tree, qstr source_file, bool is_repl);
+int ringbuf_peek16(ringbuf_t *r) {
+    if (r->iget == r->iput) {
+        return -1;
+    }
+    uint32_t iget_a = r->iget + 1;
+    if (iget_a == r->size) {
+        iget_a = 0;
+    }
+    if (iget_a == r->iput) {
+        return -1;
+    }
+    return (r->buf[r->iget] << 8) | (r->buf[iget_a]);
+}
 
-#if MICROPY_PERSISTENT_CODE_SAVE
-// this has the same semantics as mp_compile
-mp_raw_code_t *mp_compile_to_raw_code(mp_parse_tree_t *parse_tree, qstr source_file, bool is_repl);
-#endif
-
-// this is implemented in runtime.c
-mp_obj_t mp_parse_compile_execute(mp_lexer_t *lex, mp_parse_input_kind_t parse_input_kind, mp_obj_dict_t *globals, mp_obj_dict_t *locals);
-
-#endif // MICROPY_INCLUDED_PY_COMPILE_H
+int ringbuf_put16(ringbuf_t *r, uint16_t v) {
+    uint32_t iput_a = r->iput + 1;
+    if (iput_a == r->size) {
+        iput_a = 0;
+    }
+    if (iput_a == r->iget) {
+        return -1;
+    }
+    uint32_t iput_b = iput_a + 1;
+    if (iput_b == r->size) {
+        iput_b = 0;
+    }
+    if (iput_b == r->iget) {
+        return -1;
+    }
+    r->buf[r->iput] = (v >> 8) & 0xff;
+    r->buf[iput_a] = v & 0xff;
+    r->iput = iput_b;
+    return 0;
+}

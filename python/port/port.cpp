@@ -46,7 +46,7 @@ bool MicroPython::ExecutionEnvironment::runCode(const char * str) {
      * to be fed lines and not files. */
     // TODO: add a parameter when other input types (file, eval) are required
     mp_parse_tree_t pt = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
-    mp_obj_t module_fun = mp_compile(&pt, lex->source_name, MP_EMIT_OPT_NONE, true);
+    mp_obj_t module_fun = mp_compile(&pt, lex->source_name, true);
     mp_call_function_0(module_fun);
     nlr_pop();
   } else { // Uncaught exception
@@ -71,7 +71,7 @@ bool MicroPython::ExecutionEnvironment::runCode(const char * str) {
 #endif
                   // the block name can be NULL if it's unknown
                   qstr block = values[i + 2];
-                  if (block == MP_QSTR_NULL) {
+                  if (block == MP_QSTRnull) {
                     mp_print_str(&mp_plat_print, "\n");
                   } else {
                     mp_printf(&mp_plat_print, ", in %q\n", block);

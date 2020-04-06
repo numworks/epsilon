@@ -13,6 +13,7 @@ py_src = $(addprefix python/src/py/,\
   nlrx86.c \
   nlrx64.c \
   nlrthumb.c \
+  nlrpowerpc.c \
   nlrxtensa.c \
   nlrsetjmp.c \
   malloc.c \
@@ -43,6 +44,7 @@ py_src = $(addprefix python/src/py/,\
   asmxtensa.c \
   emitnxtensa.c \
   emitinlinextensa.c \
+  emitnxtensawin.c \
   formatfloat.c \
   parsenumbase.c \
   parsenum.c \
@@ -52,9 +54,12 @@ py_src = $(addprefix python/src/py/,\
   runtime_utils.c \
   scheduler.c \
   nativeglue.c \
+  pairheap.c \
+  ringbuf.c \
   stackctrl.c \
   argcheck.c \
   warning.c \
+  profile.c \
   map.c \
   obj.c \
   objarray.c \

@@ -89,7 +89,7 @@ MP_DECLARE_CONST_FUN_OBJ_2(mp_op_delitem_obj);
 
 extern const mp_obj_module_t mp_module___main__;
 extern const mp_obj_module_t mp_module_builtins;
-extern const mp_obj_module_t mp_module_array;
+extern const mp_obj_module_t mp_module_uarray;
 extern const mp_obj_module_t mp_module_collections;
 extern const mp_obj_module_t mp_module_io;
 extern const mp_obj_module_t mp_module_math;
@@ -103,6 +103,7 @@ extern const mp_obj_module_t mp_module_thread;
 extern const mp_obj_dict_t mp_module_builtins_globals;
 
 // extmod modules
+extern const mp_obj_module_t mp_module_uasyncio;
 extern const mp_obj_module_t mp_module_uerrno;
 extern const mp_obj_module_t mp_module_uctypes;
 extern const mp_obj_module_t mp_module_uzlib;
@@ -122,6 +123,7 @@ extern const mp_obj_module_t mp_module_uwebsocket;
 extern const mp_obj_module_t mp_module_webrepl;
 extern const mp_obj_module_t mp_module_framebuf;
 extern const mp_obj_module_t mp_module_btree;
+extern const mp_obj_module_t mp_module_ubluetooth;
 
 extern const char MICROPY_PY_BUILTINS_HELP_TEXT[];
 

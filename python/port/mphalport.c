@@ -12,8 +12,4 @@ void mp_hal_set_interrupt_char(int c) {
   mp_interrupt_char = c;
 }
 
-void mp_keyboard_interrupt(void) {
-  MP_STATE_VM(mp_pending_exception) = MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception));
-}
-
 #endif

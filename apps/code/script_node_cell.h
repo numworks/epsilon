@@ -15,7 +15,6 @@ public:
     m_scriptNodeView()
   {}
   void setScriptNode(ScriptNode * node);
-  void setScriptStore(ScriptStore * scriptStore) { m_scriptNodeView.setScriptStore(scriptStore); }
 
   /* TableCell */
   View * labelView() const override { return const_cast<View *>(static_cast<const View *>(&m_scriptNodeView)); }
@@ -34,21 +33,19 @@ protected:
   public:
     ScriptNodeView() :
       HighlightCell(),
-      m_scriptNode(nullptr),
-      m_scriptStore(nullptr)
+      m_scriptNode(nullptr)
     {}
     void setScriptNode(ScriptNode * node) { m_scriptNode = node; }
-    void setScriptStore(ScriptStore * scriptStore) { m_scriptStore = scriptStore; }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     virtual KDSize minimalSizeForOptimalDisplay() const override;
     const char * text() const override {
-      return m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName();
+      return m_scriptNode->description();
     }
   private:
     constexpr static const KDFont * k_font = KDFont::SmallFont;
+    constexpr static KDCoordinate k_topBottomMargin = Metric::TableCellVerticalMargin;
     constexpr static KDCoordinate k_verticalMargin = 7;
     ScriptNode * m_scriptNode;
-    ScriptStore * m_scriptStore;
   };
   ScriptNodeView m_scriptNodeView;
 };

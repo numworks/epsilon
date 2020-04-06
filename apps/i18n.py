@@ -95,8 +95,10 @@ def print_header(data, path, locales):
 
     # Languages enumeration
     f.write("enum class Language : uint16_t {\n")
+    index = 0
     for locale in locales:
-        f.write("  " + locale.upper() + ",\n")
+        f.write("  " + locale.upper() + (" = 0" if (index < 1) else "") +",\n")
+        index = index + 1
     f.write("};\n\n")
 
     # Language names

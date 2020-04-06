@@ -8,15 +8,20 @@ define rule_label
 @ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(BUILD_DIR)/%=%)"
 endef
 
+# rule_for can define both global and local rules
+#  - use local if the source can be an intermediate file
+#  - use global if the source can be in the main tree
 define rule_for
-ifeq ($(strip $(5)),with_local_version)
+ifneq ($(filter global,$(5)),)
+$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
+	$(Q) $(4)
+endif
+ifneq ($(filter local,$(5)),)
 $(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(addprefix $$(BUILD_DIR)/,$(strip $(3)))
 	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
 	$(Q) $(4)
 endif
-$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
-	$(Q) $(4)
 endef
 
 # Helper functions to work with variants

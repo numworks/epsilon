@@ -183,7 +183,8 @@ $(eval $(call rule_for, \
   QSTRDAT, \
   python/port/genhdr/qstrdefs.generated.h, \
   python/port/genhdr/qstrdefs.in.h, \
-  $$(PYTHON) python/src/py/makeqstrdata.py $$< > $$@ \
+  $$(PYTHON) python/src/py/makeqstrdata.py $$< > $$@, \
+  global \
 ))
 
 $(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h

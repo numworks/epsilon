@@ -8,25 +8,27 @@ namespace Code {
 
 class ScriptNode {
 public:
-  constexpr static uint16_t CurrentScriptIndex = -1;
   enum class Type : bool {
     Function,
     Variable
   };
-  ScriptNode(Type type = Type::Variable, const char * name = nullptr, int nameLength = 0, uint16_t scriptIndex = 0) :
+  ScriptNode(Type type = Type::Variable, const char * name = nullptr, int nameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr) :
     m_type(type),
     m_name(name),
-    m_scriptIndex(-1),
+    m_nodeSourceName(nodeSourceName),
+    m_description(description),
     m_nameLength(nameLength)
   {}
   Type type() const { return m_type; }
   const char * name() const { return m_name; }
   int nameLength() const { return m_nameLength; }
-  uint16_t scriptIndex() const { return m_scriptIndex; }
+  const char * nodeSourceName() const { return m_nodeSourceName; }
+  const char * description() const { return m_description; }
 private:
   Type m_type;
   const char * m_name;
-  uint16_t m_scriptIndex; // TODO LEA smaller type ?
+  const char * m_nodeSourceName;
+  const char * m_description;
   int m_nameLength; // TODO LEA smaller type ?
 };
 

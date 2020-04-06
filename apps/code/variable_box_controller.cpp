@@ -53,9 +53,6 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   m_builtinNodesCount(0),
   m_importedNodesCount(0)
 {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_itemCells[i].setScriptStore(scriptStore);
-  }
   for (int i = 0; i < k_scriptOriginsCount; i++) {
     m_subtitleCells[i].setBackgroundColor(Palette::WallScreen);
     m_subtitleCells[i].setTextColor(Palette::BlueishGrey);
@@ -447,7 +444,7 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
   };
   assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
   for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
-    ScriptNode node = ScriptNode(builtinNames[i].type, builtinNames[i].name, -1, 0);
+    ScriptNode node = ScriptNode(builtinNames[i].type, builtinNames[i].name);
     int startsWith = textToAutocomplete == nullptr ? 0 : NodeNameStartsWith(&node, textToAutocomplete, textToAutocompleteLength);
     if (startsWith == 0) {
       m_builtinNodes[m_builtinNodesCount++] = node;
@@ -548,7 +545,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
             }
           }
           assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength, ScriptNode::CurrentScriptIndex);
+          addNode(defToken ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::CurrentScript, tokenInText, nameLength);
         }
       }
 
@@ -569,7 +566,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
   }
 }
 
-void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(const char * scriptName, const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
 
@@ -582,7 +579,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
       uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(pns);
       if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
         // The script is only a single function or variable definition
-        addImportStruct(pns, structKind, textToAutocomplete, textToAutocompleteLength);
+        addImportStruct(pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
       } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength)) {
         // The script is is only an import, handled in addNodesFromImportMaybe
       } else if (structKind == PN_file_input_2) {
@@ -597,7 +594,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
             mp_parse_node_struct_t *child_pns = (mp_parse_node_struct_t*)(child);
             structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
             if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
-              addImportStruct(child_pns, structKind, textToAutocomplete, textToAutocompleteLength);
+              addImportStruct(child_pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
             } else {
               addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength);
             }
@@ -634,7 +631,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
     if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
       // Parsing something like "import math"
       const char * id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
-      checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, 1/*TODO LEA*/);
+      checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, id, -1, "math", "desc" /*TODO LEA*/);
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       // Parsing something like "from math import sin"
       addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength);
@@ -695,7 +692,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       assert(numberOfChildren > numberOfNodesToSkip);
       for (int i = 3; i < numberOfChildren; i++) {
         const char * name = I18n::translate((moduleChildren + i)->label());
-        checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
+        checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()) /*TODO LEA text or label?*/);
       }
     } else {
       // Try fetching the nodes from a script
@@ -703,7 +700,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       if (!importedScript.isNull()) {
         const char * scriptContent = importedScript.scriptContent();
         assert(scriptContent != nullptr);
-        loadGlobalAndImportedVariablesInScriptAsImported(scriptContent, textToAutocomplete, textToAutocompleteLength);
+        loadGlobalAndImportedVariablesInScriptAsImported(importationSourceName, scriptContent, textToAutocomplete, textToAutocompleteLength);
       }
     }
   }
@@ -726,23 +723,23 @@ const char * structName(mp_parse_node_struct_t * structNode) {
   return nullptr;
 }
 
-void VariableBoxController::addImportStruct(mp_parse_node_struct_t * pns, uint structKind, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::addImportStruct(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength) {
   assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
   // Find the id child node, which stores the struct's name
   const char * name = structName(pns);
   if (name == nullptr) {
     return;
   }
-  checkAndAddNode(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, 1/*TODO LEA*/);
+  checkAndAddNode(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::Function : ScriptNode::Type::Variable, NodeOrigin::Importation, name, -1, scriptName);
 }
 
-void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength, int scriptIndex) {
+void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength, const char * nodeSourceName, const char * description) {
   if (nodeNameLength < 0) {
     nodeNameLength = strlen(nodeName);
   }
   if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength)) {
     // Add the node in alphabetical order
-    addNode(type, origin, nodeName, nodeNameLength, scriptIndex);
+    addNode(type, origin, nodeName, nodeNameLength, nodeSourceName, description);
   }
 }
 
@@ -796,7 +793,7 @@ bool VariableBoxController::contains(const char * name, int nameLength) {
   return alreadyInVarBox;
 }
 
-void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, int scriptIndex) {
+void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName, const char * description) {
   assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
   int * currentNodeCount = nodesCountPointerForOrigin(origin);
   if (*currentNodeCount >= MaxNodesCountForOrigin(origin)) {
@@ -822,7 +819,7 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
     nodes[i+1] = nodes[i];
   }
   // Add the node
-  nodes[insertionIndex] = ScriptNode(type, name, nameLength, scriptIndex);
+  nodes[insertionIndex] = ScriptNode(type, name, nameLength, nodeSourceName, description);
   // Increase the node count
   *currentNodeCount = *currentNodeCount + 1;
 }

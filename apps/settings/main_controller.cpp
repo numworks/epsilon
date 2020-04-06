@@ -164,7 +164,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(title);
   if (index == k_indexOfLanguageCell) {
-    int index = (int)globalPreferences->language()-1;
+    int index = (int)(globalPreferences->language());
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }

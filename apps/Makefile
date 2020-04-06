@@ -80,7 +80,8 @@ $(eval $(call rule_for, \
   I18N, \
   apps/i18n.cpp, \
   $(i18n_files), \
-  $$(PYTHON) apps/i18n.py --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ \
+  $$(PYTHON) apps/i18n.py --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^, \
+  global \
 ))
 
 $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp

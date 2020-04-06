@@ -36,6 +36,12 @@ bool ScriptStore::isFull() {
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
   for (int scriptIndex = 0; scriptIndex < numberOfScripts(); scriptIndex++) {
+    
+    //Don't scan not loaded script
+    if (!scriptAtIndex(scriptIndex).importationStatus()){
+      continue;
+    }
+
     // Handle lexer or parser errors with nlr.
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {

@@ -12,6 +12,19 @@ import unicodedata
 import argparse
 import io
 
+
+parser = argparse.ArgumentParser(description="Process some i18n files.")
+parser.add_argument('--header', help='the .h file to generate')
+parser.add_argument('--implementation', help='the .cpp file to generate')
+parser.add_argument('--locales', nargs='+', help='locale to actually generate')
+parser.add_argument('--codepoints', help='the code_points.h file')
+parser.add_argument('--files', nargs='+', help='an i18n file')
+
+args = parser.parse_args()
+
+def has_glyph(glyph):
+    return glyph in codepoints
+
 def source_definition(i18n_string):
     s = unicodedata.normalize("NFKD", i18n_string)
     result = u"\""
@@ -29,6 +42,9 @@ def source_definition(i18n_string):
             # Remove the uppercase characters with combining chars
             checkForCombining = s[i].isupper()
             result = result + s[i]
+        if not has_glyph(s[i]):
+            sys.stderr.write(s[i] + " (" + str(hex(ord(s[i]))) + ") is not a character present in " + args.codepoints + " . Exiting !\n")
+            sys.exit(-1)
         i = i+1
     result = result + u"\""
     return result.encode("utf-8")
@@ -72,6 +88,27 @@ def parse_files(files):
                     messages.add(name)
                 data[locale][name] = definition
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
+
+def parse_codepoints(file):
+    codepoints = []
+    with io.open(file, "r", encoding='utf-8') as file:
+        IsCodePoint = False
+        for line in file:
+            if "};" in line:
+                IsCodePoint = False
+            if IsCodePoint:
+                start = line.find('0x')
+                stop = line.find(',')
+                if not (start == -1 or stop == -1):
+                    hexstring = line[start:stop]
+                    value = int(hexstring, 16)
+                    char = chr(value)
+                    codepoints.append(char)
+            if "CodePoints[]" in line:
+                IsCodePoint = True
+    return codepoints
+
+codepoints = parse_codepoints(args.codepoints)
 
 def print_header(data, path, locales):
     f = open(path, "w")
@@ -175,13 +212,6 @@ def print_implementation(data, path, locales):
     f.write("}\n")
     f.close()
 
-parser = argparse.ArgumentParser(description="Process some i18n files.")
-parser.add_argument('--header', help='the .h file to generate')
-parser.add_argument('--implementation', help='the .cpp file to generate')
-parser.add_argument('--locales', nargs='+', help='locale to actually generate')
-parser.add_argument('--files', nargs='+', help='an i18n file')
-
-args = parser.parse_args()
 data = parse_files(args.files)
 if args.header:
     print_header(data, args.header, args.locales)

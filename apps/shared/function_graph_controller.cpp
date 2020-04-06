@@ -183,7 +183,7 @@ uint32_t FunctionGraphController::modelVersion() {
   return functionStore()->storeChecksum();
 }
 
-uint32_t FunctionGraphController::modelVersionAtIndex(size_t i) {
+uint32_t FunctionGraphController::modelVersionAtIndex(int i) {
   return functionStore()->storeChecksumAtIndex(i);
 }
 

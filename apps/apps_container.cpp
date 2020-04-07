@@ -186,6 +186,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::ShiftHome) {
+    switchTo(appSnapshotAtIndex(0)); // fixes phantom "shift" text
     switchTo(appSnapshotAtIndex(1));
     return true;
   }

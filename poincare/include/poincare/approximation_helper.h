@@ -10,7 +10,7 @@ namespace Poincare {
 
 namespace ApproximationHelper {
   template <typename T> int PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  template <typename T> std::complex<T> TruncateRealOrImaginaryPartAccordingToArgument(std::complex<T> c);
+  template <typename T> std::complex<T> NeglectRealOrImaginaryPartIfNeglectable(std::complex<T> result, std::complex<T> input1, std::complex<T> input2 = 1.0, bool enableNullResult = true);
 
   template <typename T> using ComplexCompute = Complex<T>(*)(const std::complex<T>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   template<typename T> Evaluation<T> Map(const ExpressionNode * expression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute);

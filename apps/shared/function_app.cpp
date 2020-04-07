@@ -11,11 +11,14 @@ FunctionApp::Snapshot::Snapshot() :
   m_rangeVersion(0),
   m_angleUnitVersion(Preferences::AngleUnit::Radian)
 {
+  assert(m_previousModelsVersions[0] == 0);
 }
 
 void FunctionApp::Snapshot::reset() {
   m_indexFunctionSelectedByCursor = 0;
   m_modelVersion = 0;
+  assert(sizeof(m_previousModelsVersions) == sizeof(uint32_t) * FunctionGraphController::sNumberOfMemoizedModelVersions);
+  memset(m_previousModelsVersions, 0, sizeof(m_previousModelsVersions));
   m_rangeVersion = 0;
   setActiveTab(0);
 }

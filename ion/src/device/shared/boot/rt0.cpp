@@ -119,5 +119,7 @@ void __attribute__((noinline)) start() {
 }
 
 void __attribute__((interrupt, noinline)) isr_systick() {
-  Ion::Device::Timing::MillisElapsed++;
+  auto t = Ion::Device::Timing::MillisElapsed;
+  t++;
+  Ion::Device::Timing::MillisElapsed = t;
 }

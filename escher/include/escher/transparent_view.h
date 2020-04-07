@@ -4,7 +4,7 @@
 #include <escher/view.h>
 
 class TransparentView : public View {
-public:
+protected:
   void markRectAsDirty(KDRect rect) override;
 };
 

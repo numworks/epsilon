@@ -11,6 +11,16 @@ ShiftAlphaStatus shiftAlphaStatus() {
   return sShiftAlphaStatus;
 }
 
+void removeShift() {
+  if (sShiftAlphaStatus == ShiftAlphaStatus::Shift) {
+    sShiftAlphaStatus = ShiftAlphaStatus::Default;
+  } else if (sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha ) {
+    sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+  } else if (sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
+    sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+  }
+}
+
 bool isShiftActive() {
   return sShiftAlphaStatus == ShiftAlphaStatus::Shift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }

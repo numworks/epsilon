@@ -24,8 +24,9 @@ public:
     DoubleRecurrence = 2
   };
   Sequence(Ion::Storage::Record record = Record()) :
-    Function(record),
-    m_nameLayout() {}
+    Function(record)
+  {
+  }
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return 'n'; }
   void tidy() override;
@@ -111,7 +112,7 @@ private:
   public:
     SequenceModel() : Shared::ExpressionModel(), m_name() {}
     void tidyName() { m_name = Poincare::Layout(); }
-    virtual Poincare::Layout name(Sequence * sequence);
+    Poincare::Layout name(Sequence * sequence);
   protected:
     virtual void buildName(Sequence * sequence) = 0;
     Poincare::Layout m_name;
@@ -153,7 +154,6 @@ private:
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;
   SecondInitialConditionModel m_secondInitialCondition;
-  Poincare::Layout m_nameLayout;
 };
 
 }

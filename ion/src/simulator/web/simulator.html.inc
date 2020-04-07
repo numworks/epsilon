@@ -1,0 +1,213 @@
+#define KEYBOARD #keyboard
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NumWorks graphing calculator</title>
+<style>
+body {
+  background: #C2C2C2;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.col-fullscreen {
+  display: none;
+  width: 60%;
+  float: left;
+}
+
+.col-fullscreen canvas {
+  margin-top: 7%;
+  width: 100%;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+body.fullscreen .col-fullscreen {
+  display: block;
+}
+
+body.fullscreen .col-calculator {
+  width: 35%;
+  float: left;
+}
+
+a.action {
+  display: block;
+  width: 4%;
+  padding: 1.5% 3%;
+  border: 1px solid black;
+  border-radius: 100px;
+  cursor: pointer;
+  opacity: 0.65;
+}
+
+a.action:hover {
+  opacity: 1.0;
+  background-color: rgba(0,0,0,0.125);
+}
+
+a.action svg {
+  display: block;
+}
+
+.calculator {
+  margin: 0 auto;
+  position: relative;
+  display: inline-block;
+  text-align: left; }
+  .calculator > img {
+    /* Rely on the img content to set the dimensions */
+    max-height: 92.0vh;
+    max-width: 100%;
+    display: block; }
+  .calculator #canvas {
+    position: absolute;
+    top: 8.5%;
+    left: 16.25%;
+    width: 67.5%;
+    height: 26.3%;
+    border: 0 none; }
+  .calculator .actions {
+    position: absolute;
+    top: 94.0vh;
+    text-align: center;
+    left: 0;
+    right: 0;
+    margin-left: 20px; /* Center the buttons - compensate the 10px margin below */
+  }
+  .calculator .actions a {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  KEYBOARD {
+    position: absolute;
+    top: 38.5%;
+    left: 10%;
+    width: 81%;
+    bottom: 5%; }
+    KEYBOARD span {
+      cursor: pointer;
+      border-radius: 40%;
+      display: block;
+      float: left; }
+    KEYBOARD span:hover {
+      background-color: rgba(0, 0, 0, 0.1); }
+    KEYBOARD span:active {
+      background-color: rgba(0, 0, 0, 0.2); }
+    KEYBOARD .nav {
+      position: absolute;
+      top: 0;
+      height: 27%;
+      width: 100%; }
+      KEYBOARD .nav span {
+        position: absolute; }
+      KEYBOARD .nav .left {
+        top: 36%;
+        left: 2%;
+        width: 15%;
+        height: 28%; }
+      KEYBOARD .nav .right {
+        top: 36%;
+        left: 17%;
+        width: 15%;
+        height: 28%; }
+      KEYBOARD .nav .top {
+        top: 7%;
+        left: 12%;
+        width: 10%;
+        height: 40%; }
+      KEYBOARD .nav .bottom {
+        top: 53%;
+        left: 12%;
+        width: 10%;
+        height: 40%; }
+      KEYBOARD .nav .home {
+        top: 15%;
+        left: 41%;
+        width: 16%;
+        height: 33%; }
+      KEYBOARD .nav .power {
+        top: 54%;
+        left: 42%;
+        width: 16%;
+        height: 33%; }
+      KEYBOARD .nav .ok {
+        top: 31%;
+        left: 67%;
+        width: 13%;
+        height: 38%; }
+      KEYBOARD .nav .back {
+        top: 31%;
+        left: 84%;
+        width: 13%;
+        height: 38%; }
+    KEYBOARD .functions {
+      position: absolute;
+      top: 26.75%;
+      left: 0.5%;
+      width: 98%; }
+      KEYBOARD .functions span {
+        margin: 1.7% 1%;
+        width: 14.65%;
+        height: 0;
+        padding-top: 10%; }
+    KEYBOARD .digits {
+      position: absolute;
+      top: 56.5%;
+      left: 0.5%;
+      width: 98%; }
+      KEYBOARD .digits span {
+        margin: 1.8% 2%;
+        width: 16%;
+        height: 0;
+        padding-top: 11.3%; }
+</style>
+  </head>
+  <body>
+    <div class="row">
+      <div class="col-calculator">
+        <div class="calculator">
+          <img src="background.jpg" alt="NumWorks Calculator">
+          <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+#include "simulator-keyboard.html"
+          <div class="actions">
+            <a id="action-fullscreen" class="action">
+              <svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g fill="#434343"><path d="M5.075,6.95 L6.918,5.088 L3.938,2.062 L5.955,0.018 L0.052,0.018 L0.052,6.004 L2.098,3.928 L5.075,6.95 Z" class="si-glyph-fill"></path><path d="M16.0034788,9.916 L13.832,12.013 L10.799,8.96 L8.918,10.841 L11.957,13.897 L9.961,15.9813842 L16.0034788,15.9813842 L16.0034788,9.916 Z"></path></g></g></svg>
+            </a>
+            <a id="action-screenshot" class="action">
+              <svg viewBox="0 1.5 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>871</title><defs></defs><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(0.995000, 2.980000)" fill="#434343"><circle cx="7.958" cy="6.958" r="2.958" class="si-glyph-fill"></circle><path d="M14.666,2.042 L10.953,2.042 L9.937,0.031 L6,0.031 L5,2.042 L1.333,2.042 C0.597,2.042 0,2.639 0,3.375 L0,10.625 C0,11.361 0.597,11.959 1.333,11.959 L14.666,11.959 C15.402,11.959 16,11.361 16,10.625 L16,3.375 C16,2.639 15.402,2.042 14.666,2.042 L14.666,2.042 Z M6.953,0.969 L9.047,0.969 L9.047,2.031 L6.953,2.031 L6.953,0.969 L6.953,0.969 Z M8.002,11.033 C5.764,11.033 3.947,9.221 3.947,6.985 C3.947,4.749 5.763,2.937 8.002,2.937 C10.242,2.937 12.057,4.749 12.057,6.985 C12.057,9.221 10.242,11.033 8.002,11.033 L8.002,11.033 Z M14,4.031 L11.953,4.031 L11.953,2.969 L14,2.969 L14,4.031 L14,4.031 Z" class="si-glyph-fill"></path></g></g></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-fullscreen">
+        <canvas id="secondary-canvas" width="320" height="240"></canvas>
+      </div>
+    </div>
+    <script src="epsilon.js"></script>
+    <script>
+#include "simulator-setup.js"
+    </script>
+    <script>
+document.getElementById("action-fullscreen").addEventListener("click", function(e){
+  if (document.body.className == "fullscreen") {
+    document.body.className = "";
+  } else {
+    document.body.className = "fullscreen";
+  }
+});
+
+document.getElementById("action-screenshot").addEventListener("click", function(e) {
+  screenshot();
+});
+    </script>
+    <script async src="https://www.numworks.com/simulator/update.js"></script>
+  </body>
+</html>

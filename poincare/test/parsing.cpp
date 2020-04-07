@@ -385,7 +385,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("ln(1)", NaperianLogarithm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("log(1)", CommonLogarithm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("log(1,2)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
-  assert_parsed_expression_is("log_{2}(1)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("log{2}(1)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("permute(2,1)", PermuteCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
   assert_parsed_expression_is("prediction95(1,2)", PredictionInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("prediction(1,2)", SimplePredictionInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));

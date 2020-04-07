@@ -65,8 +65,8 @@ Expression FunctionNode::shallowReduce(ReductionContext reductionContext) {
   return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
 }
 
-Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
-  return Function(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
+Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  return Function(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
@@ -102,7 +102,7 @@ Function Function::Builder(const char * name, size_t length, Expression child) {
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   // Replace the symbol in the child
   childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
-  if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
+  if (symbol.type() == ExpressionNode::Type::Function && hasSameNameAs(symbol)) {
     Expression value = expression.clone();
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {
@@ -133,13 +133,15 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result.deepReduce(reductionContext);
 }
 
-Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly) {
-  // Replace replaceable symbols in child
-  Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly);
-  if (self.isUninitialized()) { // if the child is circularly defined, escape
-    return self;
+Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  {
+    // Replace replaceable symbols in child
+    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly ,parameteredAncestorsCount);
+    if (self.isUninitialized()) { // if the child is circularly defined, escape
+      return self;
+    }
+    assert(*this == self);
   }
-  assert(*this == self);
   Expression e = context->expressionForSymbolAbstract(*this, false);
   if (e.isUninitialized()) {
     return *this;

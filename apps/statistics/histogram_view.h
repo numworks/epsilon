@@ -5,13 +5,13 @@
 #include <poincare/print_float.h>
 #include "store.h"
 #include "../constant.h"
-#include "../shared/curve_view.h"
+#include "../shared/labeled_curve_view.h"
 
 namespace Statistics {
 
 class HistogramController;
 
-class HistogramView : public Shared::CurveView {
+class HistogramView : public Shared::HorizontallyLabeledCurveView {
 public:
   HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView, KDColor selectedHistogramColor = Palette::Select, KDColor notSelectedHistogramColor = Palette::GreyMiddle, KDColor selectedBarColor = Palette::YellowDark);
   int series() const { return m_series; }
@@ -21,10 +21,8 @@ public:
   void setHighlight(float start, float end);
   void setDisplayLabels(bool display) { m_displayLabels = display; }
 private:
-  char * label(Axis axis, int index) const override;
   HistogramController * m_controller;
   Store * m_store;
-  char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   static float EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context);
   float m_highlightedBarStart;
   float m_highlightedBarEnd;

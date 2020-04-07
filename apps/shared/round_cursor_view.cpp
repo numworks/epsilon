@@ -49,6 +49,14 @@ void RoundCursorView::setCursorFrame(KDRect f, bool force) {
   CursorView::setCursorFrame(f, force);
 }
 
+void RoundCursorView::markRectAsDirty(KDRect rect) {
+  /* The CursorView class inherits from TransparentView, so does
+   * RoundCursorView. The method markRectAsDirty is thus overriden to avoid
+   * marking as dirty the background of the RoundCursorView in its superview.
+   */
+  View::markRectAsDirty(rect);
+}
+
 #ifdef GRAPH_CURSOR_SPEEDUP
 bool RoundCursorView::eraseCursorIfPossible() {
   if (!m_underneathPixelBufferLoaded) {

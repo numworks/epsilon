@@ -46,18 +46,12 @@ Evaluation<T> NthRootNode::templatedApproximate(Context * context, Preferences::
     /* If the complexFormat is Real, we look for nthroot of form root(x,q) with
      * x real and q integer because they might have a real form which does not
      * correspond to the principale angle. */
-    if (complexFormat == Preferences::ComplexFormat::Real) {
+    if (complexFormat == Preferences::ComplexFormat::Real && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
       // root(x, q) with q integer and x real
-      if (basec.imag() == 0.0 && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
-        std::complex<T> absBasec = basec;
-        absBasec.real(std::fabs(absBasec.real()));
-        // compute root(|x|, q)
-        Complex<T> absBasePowIndex = PowerNode::compute(absBasec, std::complex<T>(1.0)/(indexc), complexFormat);
-        // q odd if (-1)^q = -1
-        if (std::pow((T)-1.0, (T)indexc.real()) < 0.0) {
-          return basec.real() < 0 ? Complex<T>::Builder(-absBasePowIndex.stdComplex()) : absBasePowIndex;
-        }
-      }
+      Complex<T> result = PowerNode::computeNotPrincipalRealRootOfRationalPow(basec, (T)1.0, indexc.real());
+       if (!result.isUndefined()) {
+         return std::move(result);
+       }
     }
     result = PowerNode::compute(basec, std::complex<T>(1.0)/(indexc), complexFormat);
   }

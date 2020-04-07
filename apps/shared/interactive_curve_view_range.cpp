@@ -131,9 +131,9 @@ void InteractiveCurveViewRange::setDefault() {
     return;
   }
   if (!m_delegate->defautRangeIsNormalized()) {
+    m_yAuto = true;
     m_xRange.setMax(m_delegate->interestingXHalfRange(), k_lowerMaxFloat, k_upperMaxFloat);
     setXMin(-xMax());
-    m_yAuto = true;
     return;
   }
 

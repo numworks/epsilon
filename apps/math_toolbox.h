@@ -8,11 +8,11 @@ class MathToolbox : public Toolbox {
 public:
   MathToolbox();
 protected:
-  bool selectLeaf(int selectedRow) override;
-  const ToolboxMessageTree * rootModel() const override;
-  MessageTableCellWithMessage * leafCellAtIndex(int index) override;
-  MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
-  int maxNumberOfDisplayedRows() override;
+  virtual bool selectLeaf(int selectedRow) override;
+  virtual const ToolboxMessageTree * rootModel() const override;
+  virtual MessageTableCellWithMessage * leafCellAtIndex(int index) override;
+  virtual MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
+  virtual int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // = 240/40
 private:
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];

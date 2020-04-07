@@ -109,6 +109,11 @@ clean:
 	@echo "CLEAN"
 	$(Q) rm -rf $(BUILD_DIR)
 
+.PHONY: cleanall
+cleanall:
+	@echo "CLEANALL"
+	$(Q) rm -rf output
+
 .PHONY: cowsay_%
 cowsay_%:
 	@echo " -------"
@@ -122,4 +127,12 @@ cowsay_%:
 
 .PHONY: clena
 clena: cowsay_CLENA clean
+
+.PHONY: clenall
+clenall: cowsay_CLENALL cleanall
+
+.PHONY: epsilon_run
+epsilon_run:
+	@echo "INFO Starting output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)"
+	@$(Q) output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)
 

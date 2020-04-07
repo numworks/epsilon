@@ -18,6 +18,7 @@ public:
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
 
   uint8_t id() const { return m_id; }
+  constexpr explicit operator uint8_t() const { return m_id; }
 #if DEBUG
   const char * name() const;
 #endif

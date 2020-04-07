@@ -22,6 +22,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     if (!m_store->seriesIsEmpty(series)) {
+      assert(series < Palette::numberOfDataColors());
       KDColor color = Palette::DataColor[series];
       Model * seriesModel = m_store->modelForSeries(series);
       drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, [](float abscissa, void * model, void * context) {

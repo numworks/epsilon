@@ -325,7 +325,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
     }
     Complex<T> result = computeNotPrincipalRealRootOfRationalPow(c, p, q);
     if (!result.isUndefined()) {
-      return result;
+      return std::move(result);
     }
   }
 defaultApproximation:

@@ -351,7 +351,7 @@ uint32_t GraphController::modelVersion() {
   return m_store->storeChecksum();
 }
 
-uint32_t GraphController::modelVersionAtIndex(size_t i) {
+uint32_t GraphController::modelVersionAtIndex(int i) {
   assert(i < numberOfMemoizedVersions());
   return *(m_store->seriesChecksum() + i);
 }
@@ -407,6 +407,7 @@ void GraphController::setRoundCrossCursorView() {
   bool round = *m_selectedDotIndex < 0;
   if (round) {
     // Set the color although the cursor view stays round
+    assert(*m_selectedSeriesIndex < Palette::numberOfDataColors());
     m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
   }
   CursorView * nextCursorView = round ? static_cast<Shared::CursorView *>(&m_roundCursorView) : static_cast<Shared::CursorView *>(&m_crossCursorView);

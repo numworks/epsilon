@@ -11,10 +11,9 @@ namespace Code {
 
 class SandboxController : public ViewController {
 public:
-  SandboxController(Responder * parentResponder, MicroPython::ExecutionEnvironment * executionEnvironment);
+  SandboxController(Responder * parentResponder);
   StackViewController * stackViewController();
   void reset();
-  void hide();
 
   // ViewController
   View * view() override { return &m_solidColorView; }
@@ -26,7 +25,6 @@ public:
 private:
   void redrawWindow();
   SolidColorView m_solidColorView;
-  MicroPython::ExecutionEnvironment * m_executionEnvironment;
 };
 }
 

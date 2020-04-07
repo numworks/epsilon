@@ -24,13 +24,8 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   float imag = m_complex->imag();
 
   assert(!std::isnan(real) && !std::isnan(imag) && !std::isinf(real) && !std::isinf(imag));
-  /* Draw the segment from the origin to the dot (real, imag) of equation
-   * x(t) = t*real and y(t) = t*imag with t in [0,1] */
-  drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
-      [](float t, void * model, void * context) {
-        ComplexModel * complexModel = (ComplexModel *)model;
-        return Poincare::Coordinate2D<float>(complexModel->real()*t, complexModel->imag()*t);
-      }, m_complex, nullptr, false, Palette::GreyDark, false);
+  // Draw the segment from the origin to the dot (real, imag)
+  drawSegment(ctx, rect, 0.0f, 0.0f, m_complex->real(), m_complex->imag(), Palette::GreyDark, false);
 
   /* Draw the partial ellipse indicating the angle θ
    * - the ellipse parameters are a = |real|/5 and b = |imag|/5,
@@ -66,8 +61,8 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }, &parameters, &th, false, Palette::GreyDark, false);
 
   // Draw dashed segment to indicate real and imaginary
-  drawSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);
-  drawSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
 
   // Draw complex position on the plan
   drawDot(ctx, rect, real, imag, Palette::Red, Size::Large);
@@ -76,7 +71,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // 're(z)' label
   drawLabel(ctx, rect, real, 0.0f, "re(z)", Palette::Red, CurveView::RelativePosition::None, imag >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
   // 'im(z)' label
-  drawLabel(ctx, rect, 0.0f, imag, "im(θ)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
+  drawLabel(ctx, rect, 0.0f, imag, "im(z)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
   // '|z|' label, the relative horizontal position of this label depends on the quadrant
   CurveView::RelativePosition verticalPosition = real*imag < 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After;
   if (real == 0.0f) {

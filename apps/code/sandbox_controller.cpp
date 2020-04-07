@@ -1,14 +1,16 @@
 #include "sandbox_controller.h"
 #include <apps/apps_container.h>
 
+extern "C" {
+#include <python/port/mod/turtle/modturtle.h>
+}
+
 namespace Code {
 
-SandboxController::SandboxController(Responder * parentResponder, MicroPython::ExecutionEnvironment * executionEnvironment) :
+SandboxController::SandboxController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_solidColorView(KDColorWhite),
-  m_executionEnvironment(executionEnvironment)
+  m_solidColorView(KDColorWhite)
 {
-  assert(executionEnvironment != nullptr);
 }
 
 StackViewController * SandboxController::stackViewController() {
@@ -20,19 +22,12 @@ void SandboxController::reset() {
   redrawWindow();
 }
 
-void SandboxController::hide() {
-  stackViewController()->pop();
-}
-
 void SandboxController::viewWillAppear() {
-  assert(m_executionEnvironment != nullptr);
-  m_executionEnvironment->setSandboxIsDisplayed(true);
   redrawWindow();
 }
 
 void SandboxController::viewDidDisappear() {
-  assert(m_executionEnvironment != nullptr);
-  m_executionEnvironment->setSandboxIsDisplayed(false);
+  modturtle_view_did_disappear();
 }
 
 bool SandboxController::handleEvent(Ion::Events::Event event) {

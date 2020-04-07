@@ -9,8 +9,6 @@ jobs:
         with:
           submodules: true
       - run: make -j2 PLATFORM=simulator TARGET=android
-      - run: make -j2 PLATFORM=simulator TARGET=android epsilon.official.apk
-      - run: make -j2 PLATFORM=simulator TARGET=android test.apk
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
@@ -29,7 +27,6 @@ jobs:
       - run: make -j2 MODEL=n0100 epsilon.onboarding.beta.dfu
       - run: make -j2 MODEL=n0100 flasher.light.dfu
       - run: make -j2 MODEL=n0100 flasher.verbose.dfu
-      - run: make -j2 MODEL=n0100 test.elf
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-n0100.dfu
@@ -50,7 +47,6 @@ jobs:
       - run: make -j2 flasher.verbose.dfu
       - run: make -j2 bench.ram.dfu
       - run: make -j2 bench.flash.dfu
-      - run: make -j2 test.elf
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-n0110.dfu
@@ -77,9 +73,6 @@ jobs:
         with:
           submodules: true
       - run: make -j2 PLATFORM=simulator
-      - run: make -j2 PLATFORM=simulator epsilon.official.bin
-      - run: make -j2 PLATFORM=simulator test.headless.bin
-      - run: output/release/simulator/linux/test.headless.bin
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-linux.bin

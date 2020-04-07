@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "omega_view.h"
+#include "contributors_controller.h"
 
 namespace Omega {
 
@@ -20,11 +21,13 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
+  StackViewController * stackController() const;
   constexpr static int k_numberOfCells = 2;
   OmegaView m_omegaView;
   SelectableTableView m_selectableTableView;
   MessageTableCellWithChevron m_contributorsCell;
   MessageTableCellWithBuffer m_versionCell;
+  ContributorsController m_contributorsController;
 };
 
 }

@@ -5,6 +5,8 @@ app_src += $(addprefix apps/omega/,\
   app.cpp \
   omega_controller.cpp \
   omega_view.cpp \
+  contributors_controller.cpp \
+  contributors_view.cpp \
 )
 
 app_images += apps/omega/omega_icon.png

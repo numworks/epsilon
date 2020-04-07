@@ -185,7 +185,7 @@ void HistoryViewCell::layoutSubviews(bool force) {
     inputSize.height()),
   force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6;
+  int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6 - Metric::EllipsisCellWidth;
   int outputHeight = (singleLine) ? (maxCoordinate(0, inputSize.height() - outputSize.height()) / 2) + maxCoordinate(0, (inputSize.height() - outputSize.height()) / 2) + 1 : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
     maxCoordinate(0, maxFrameWidth - outputSize.width()),

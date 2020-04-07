@@ -51,7 +51,7 @@ define rule_for_arch_executable
 .PRECIOUS: $$(BUILD_DIR)/$(1)/%.$$(EXE)
 $$(BUILD_DIR)/$(1)/%.$$(EXE): force_remake
 	$(Q) echo "MAKE    ARCH=$(1)"
-	$(Q) $$(MAKE) ARCH=$(1) --silent $$*.$$(EXE)
+	$(Q) $$(MAKE) ARCH=$(1)  $$*.$$(EXE)
 endef
 
 $(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_executable,$(ARCH))))

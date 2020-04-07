@@ -1,8 +1,9 @@
 #include "suspend_timer.h"
 #include "apps_container.h"
+#include "global_preferences.h"
 
 SuspendTimer::SuspendTimer() :
-  Timer(k_idleBeforeSuspendDuration/Timer::TickDuration)
+  Timer(GlobalPreferences::sharedGlobalPreferences()->idleBeforeSuspendSeconds()*1000/Timer::TickDuration)
 {
 }
 

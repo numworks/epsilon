@@ -7,6 +7,7 @@
 #include "sub_menu/about_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
+#include "sub_menu/brightness_controller.h"
 #include "sub_menu/language_controller.h"
 #include "sub_menu/preferences_controller.h"
 
@@ -16,6 +17,7 @@ extern const Shared::SettingsMessageTree s_modelAngleChildren[3];
 extern const Shared::SettingsMessageTree s_modelEditionModeChildren[2];
 extern const Shared::SettingsMessageTree s_modelFloatDisplayModeChildren[4];
 extern const Shared::SettingsMessageTree s_modelComplexFormatChildren[3];
+extern const Shared::SettingsMessageTree s_modelBrightnessChildren[4]; 
 extern const Shared::SettingsMessageTree s_modelFontChildren[2];
 extern const Shared::SettingsMessageTree s_modelExamChildren[2];
 extern const Shared::SettingsMessageTree s_modelAboutChildren[3];
@@ -56,13 +58,13 @@ private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 7;
+  constexpr static int k_numberOfSimpleChevronCells = 8;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
-  MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
   SelectableTableView m_selectableTableView;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
+  BrightnessController m_brightnessController;
   LanguageController m_languageController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;

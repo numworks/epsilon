@@ -27,7 +27,7 @@ app_statistics_src = $(addprefix apps/statistics/,\
 )
 
 app_statistics_src += $(app_statistics_test_src)
-app_src += $(app_statistics_src)
+apps_src += $(app_statistics_src)
 
 i18n_files += $(addprefix apps/statistics/,\
   base.de.i18n\

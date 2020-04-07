@@ -18,7 +18,7 @@ else
 	include $(EXTAPP_PATH)/sources.mak
 endif
 
-app_src += $(app_external_src)
+apps_src += $(app_external_src)
 
 i18n_files += $(addprefix apps/external/,\
   base.de.i18n\

@@ -94,14 +94,16 @@ $(eval $(call rule_for, \
   HOSTCC, \
   escher/image/inliner, \
   escher/image/inliner.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
-  $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@ \
+  $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@, \
+  global \
 ))
 
 $(eval $(call rule_for, \
   THEME, \
   escher/palette.h, \
   $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
-  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@ \
+  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@, \
+  global \
 ))
 
 INLINER := $(BUILD_DIR)/escher/image/inliner
@@ -111,7 +113,8 @@ $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \
   $(BUILD_DIR)/%.png $$(INLINER), \
-  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp \
+  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp, \
+  global \
 ))
 
 # Mark a .cpp file as depending on a .png one

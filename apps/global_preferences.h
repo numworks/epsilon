@@ -30,8 +30,9 @@ public:
   void setFont(const KDFont * font) { m_font = font; }
   constexpr static int NumberOfBrightnessStates = 15;
 private:
+  static_assert(I18n::NumberOfLanguages > 0, "I18n::NumberOfLanguages is not superior to 0"); // There should already have be an error when processing an empty EPSILON_I18N flag
   GlobalPreferences() :
-    m_language(I18n::Language::EN),
+    m_language((I18n::Language)0),
     m_examMode(ExamMode::Unknown),
     m_tempExamMode(ExamMode::Standard),
     m_showPopUp(true),

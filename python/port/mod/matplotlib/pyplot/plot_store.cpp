@@ -62,7 +62,7 @@ T PlotStore::ListIterator<T>::operator*() {
 };
 
 void checkFloatType(mp_obj_t * elements, size_t nbOfElements) {
-  for (int i = 0; i < nbOfElements; i++) {
+  for (size_t i = 0; i < nbOfElements; i++) {
     // TODO: we don't take advantage of the fact that we extracted the value at the sametime... Maybe change the way things are done, build the c objects in addItem instead of allocating them on the python heap? Or use float array in python?
     mp_float_t value;
     if (!mp_obj_get_float_maybe(elements[i], &value)) {

@@ -180,13 +180,15 @@ void HistoryViewCell::layoutSubviews(bool force) {
     m_ellipsis.setFrame(KDRectZero, force); // Required to mark previous rect as dirty
   }
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
+  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6 - Metric::EllipsisCellWidth;
+  int inputHeight = (singleLine && inputSize.height() < outputSize.height()) ? (outputSize.height() - inputSize.height()) : 0;
   m_inputView.setFrame(KDRect(
-    0, 0,
+    0,
+    inputHeight,
     minCoordinate(maxFrameWidth, inputSize.width()),
     inputSize.height()),
   force);
-  KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6 - Metric::EllipsisCellWidth;
   int outputHeight = (singleLine) ? (maxCoordinate(0, inputSize.height() - outputSize.height()) / 2) + maxCoordinate(0, (inputSize.height() - outputSize.height()) / 2) + 1 : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
     maxCoordinate(0, maxFrameWidth - outputSize.width()),

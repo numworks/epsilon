@@ -1,5 +1,13 @@
 SFLAGS += -Iescher/include
 
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
+  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@, \
+  global \
+))
+
 escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
   app.cpp \
@@ -95,14 +103,6 @@ $(eval $(call rule_for, \
   escher/image/inliner, \
   escher/image/inliner.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
   $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@, \
-  global \
-))
-
-$(eval $(call rule_for, \
-  THEME, \
-  escher/palette.h, \
-  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
-  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@, \
   global \
 ))
 

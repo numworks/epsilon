@@ -414,6 +414,9 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Percent && Ion::Events::isAlphaLockActive()) {
+    event = Ion::Events::Backspace;
+  }
   assert(m_delegate != nullptr);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;

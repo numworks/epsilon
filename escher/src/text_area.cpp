@@ -130,6 +130,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return TextInput::moveCursorRight();
   }
 
+  if (event == Ion::Events::Percent && Ion::Events::isAlphaLockActive()) {
+    event = Ion::Events::Backspace;
+  }
+
   if (event.hasText()) {
     return handleEventWithText(event.text());
   }

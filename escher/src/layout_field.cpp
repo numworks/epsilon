@@ -473,6 +473,11 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     if (!isEditing()) {
       setEditing(true);
     }
+
+    if (event == Ion::Events::Percent && Ion::Events::isAlphaLockActive()) {
+      event = Ion::Events::Backspace;
+    }
+
     if (event.hasText()) {
       handleEventWithText(event.text());
     } else if (event == Ion::Events::Paste) {

@@ -19,11 +19,11 @@ extern "C" {
 }
 
 void __attribute__((noinline)) abort() {
-#if DEBUG
+#ifdef NDEBUG
+  Ion::Device::Reset::core();
+#else
   while (1) {
   }
-#else
-  Ion::Device::Reset::core();
 #endif
 }
 

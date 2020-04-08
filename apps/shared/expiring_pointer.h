@@ -11,31 +11,31 @@ class ExpiringPointer {
   friend class ExpiringPointer;
 public:
   ExpiringPointer(T * rawPointer) : m_rawPointer(rawPointer) {
-#if DEBUG
+#ifndef NDEBUG
     s_global = rawPointer;
 #endif
   }
   T * pointer() { return m_rawPointer; }
   T *operator->() {
-#if DEBUG
+#ifndef NDEBUG
     assert(m_rawPointer != nullptr && m_rawPointer == s_global);
 #endif
     return m_rawPointer;
   }
   T &operator*() {
-#if DEBUG
+#ifndef NDEBUG
     assert(m_rawPointer != nullptr && m_rawPointer == s_global);
 #endif
     return *m_rawPointer;
   }
 private:
-#if DEBUG
+#ifndef NDEBUG
   static T * s_global;
 #endif
   T * m_rawPointer;
 };
 
-#if DEBUG
+#ifndef NDEBUG
 template<class T>
 T * ExpiringPointer<T>::s_global = nullptr;
 #endif

@@ -14,10 +14,10 @@
 #endif
 
 constexpr int kHeapSize = 131072;
-#if DEBUG
-constexpr int kStackSize = 32768*2; // In DEBUG mode, we increase the stack to be able to pass the tests
-#else
+#ifdef NDEBUG
 constexpr int kStackSize = 32768;
+#else
+constexpr int kStackSize = 32768*2; // In DEBUG mode, we increase the stack to be able to pass the tests
 #endif
 
 char heap[kHeapSize];

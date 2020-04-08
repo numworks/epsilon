@@ -19,7 +19,7 @@ ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerD
 }
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
-  if (editionIsInTextField()) {
+  if (usingTextField()) {
     if (reinitDraftBuffer) {
       m_textField.reinitDraftTextBuffer();
     }
@@ -32,19 +32,19 @@ void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
   }
 }
 
-bool ExpressionField::isEditing() const {
-  return editionIsInTextField() ? m_textField.isEditing() : m_layoutField.isEditing();
+bool ExpressionField::isEditing() {
+  return field<EditableField>()->isEditing();
 }
 
 const char * ExpressionField::text() {
-  if (!editionIsInTextField()) {
+  if (!usingTextField()) {
     m_layoutField.layout().serializeParsedExpression(m_textField.draftTextBuffer(), k_textFieldBufferSize, m_layoutField.context());
   }
   return m_textField.draftTextBuffer();
 }
 
 void ExpressionField::setText(const char * text) {
-  if (editionIsInTextField()) {
+  if (usingTextField()) {
     m_textField.reinitDraftTextBuffer();
     m_textField.setText(text);
   } else {
@@ -55,15 +55,12 @@ void ExpressionField::setText(const char * text) {
 
 View * ExpressionField::subviewAtIndex(int index) {
   assert(index == 0);
-  if (editionIsInTextField()) {
-    return &m_textField;
-  }
-  return &m_layoutField;
+  return field<View>(); // We know the field is also a view
 }
 
 void ExpressionField::layoutSubviews(bool force) {
   KDRect inputViewFrame(0, k_separatorThickness, bounds().width(), bounds().height() - k_separatorThickness);
-  if (editionIsInTextField()) {
+  if (usingTextField()) {
     m_textField.setFrame(inputViewFrame, force);
     m_layoutField.setFrame(KDRectZero, force);
     return;
@@ -78,7 +75,7 @@ void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {
-  return editionIsInTextField() ? m_textField.handleEvent(event) : m_layoutField.handleEvent(event);
+  return field<Responder>()->handleEvent(event);
 }
 
 void ExpressionField::didBecomeFirstResponder() {
@@ -89,12 +86,12 @@ KDSize ExpressionField::minimalSizeForOptimalDisplay() const {
   return KDSize(0, inputViewHeight());
 }
 
-bool ExpressionField::editionIsInTextField() const {
+bool ExpressionField::usingTextField() const {
   return Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition1D;
 }
 
 bool ExpressionField::isEmpty() const {
-  return editionIsInTextField() ? (m_textField.draftTextLength() == 0) : !m_layoutField.hasText();
+  return usingTextField() ? (m_textField.draftTextLength() == 0) : !m_layoutField.hasText();
 }
 
 bool ExpressionField::inputViewHeightDidChange() {
@@ -105,16 +102,12 @@ bool ExpressionField::inputViewHeightDidChange() {
 }
 
 bool ExpressionField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
-  if (editionIsInTextField()) {
-    return m_textField.handleEventWithText(text, indentation, forceCursorRightOfText);
-  } else {
-    return m_layoutField.handleEventWithText(text, indentation, forceCursorRightOfText);
-  }
+  return field<EditableField>()->handleEventWithText(text, indentation, forceCursorRightOfText);
 }
 
 KDCoordinate ExpressionField::inputViewHeight() const {
   return k_separatorThickness
-    + (editionIsInTextField() ? k_minimalHeight :
+    + (usingTextField() ? k_minimalHeight :
         std::min(k_maximalHeight,
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }

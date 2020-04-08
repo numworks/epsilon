@@ -508,15 +508,46 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-static inline bool IsSimpleMoveEvent(Ion::Events::Event event) {
-  return event == Ion::Events::Left
-    || event == Ion::Events::Right
-    || event == Ion::Events::Up
-    || event == Ion::Events::Down;
+#define static_assert_immediately_follows(a, b) static_assert( \
+  static_cast<uint8_t>(a) + 1 == static_cast<uint8_t>(b), \
+  "Ordering error" \
+)
+
+#define static_assert_sequential(a, b, c, d) \
+  static_assert_immediately_follows(a, b); \
+  static_assert_immediately_follows(b, c); \
+  static_assert_immediately_follows(c, d);
+
+static_assert_sequential(
+  LayoutCursor::Direction::Left,
+  LayoutCursor::Direction::Up,
+  LayoutCursor::Direction::Down,
+  LayoutCursor::Direction::Right
+);
+
+static_assert_sequential(
+  Ion::Events::Left,
+  Ion::Events::Up,
+  Ion::Events::Down,
+  Ion::Events::Right
+);
+
+static inline bool IsMoveEvent(Ion::Events::Event event) {
+  return
+    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::Left) &&
+    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::Right);
+}
+
+static inline LayoutCursor::Direction DirectionForMoveEvent(Ion::Events::Event event) {
+  assert(IsMoveEvent(event));
+  return static_cast<LayoutCursor::Direction>(
+    static_cast<uint8_t>(LayoutCursor::Direction::Left) +
+    static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::Left)
+  );
 }
 
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
-  if (!IsSimpleMoveEvent(event)) {
+  if (!IsMoveEvent(event)) {
     return false;
   }
   if (resetSelection()) {
@@ -524,16 +555,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     return true;
   }
   LayoutCursor result;
-  if (event == Ion::Events::Left) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Left, shouldRecomputeLayout);
-  } else if (event == Ion::Events::Right) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Right, shouldRecomputeLayout);
-  } else if (event == Ion::Events::Up) {
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Up, shouldRecomputeLayout);
-  } else {
-    assert(event == Ion::Events::Down);
-    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::Direction::Down, shouldRecomputeLayout);
-  }
+  result = m_contentView.cursor()->cursorAtDirection(DirectionForMoveEvent(event), shouldRecomputeLayout);
   if (result.isDefined()) {
     m_contentView.setCursor(result);
     return true;
@@ -541,20 +563,37 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   return false;
 }
 
-bool eventIsSelection(Ion::Events::Event event) {
-  return event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight || event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown;
+static_assert_sequential(
+  Ion::Events::ShiftLeft,
+  Ion::Events::ShiftUp,
+  Ion::Events::ShiftDown,
+  Ion::Events::ShiftRight
+);
+
+static inline bool IsSelectionEvent(Ion::Events::Event event) {
+  return
+    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::ShiftLeft) &&
+    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::ShiftRight);
+}
+
+static inline LayoutCursor::Direction DirectionForSelectionEvent(Ion::Events::Event event) {
+  assert(IsSelectionEvent(event));
+  return static_cast<LayoutCursor::Direction>(
+    static_cast<uint8_t>(LayoutCursor::Direction::Left) +
+    static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::ShiftLeft)
+  );
 }
 
 bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
-  if (!eventIsSelection(event)) {
+  if (!IsSelectionEvent(event)) {
     return false;
   }
   Layout addedSelection;
-  LayoutCursor::Direction direction = event == Ion::Events::ShiftLeft ? LayoutCursor::Direction::Left :
-    (event == Ion::Events::ShiftRight ? LayoutCursor::Direction::Right :
-     (event == Ion::Events::ShiftUp ? LayoutCursor::Direction::Up :
-      LayoutCursor::Direction::Down));
-  LayoutCursor result = m_contentView.cursor()->selectAtDirection(direction, shouldRecomputeLayout, &addedSelection);
+  LayoutCursor result = m_contentView.cursor()->selectAtDirection(
+    DirectionForSelectionEvent(event),
+    shouldRecomputeLayout,
+    &addedSelection
+  );
   if (addedSelection.isUninitialized()) {
     return false;
   }

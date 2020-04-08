@@ -30,7 +30,7 @@ MicroPython::ExecutionEnvironment * MicroPython::ExecutionEnvironment::currentEx
   return sCurrentExecutionEnvironment;
 }
 
-void MicroPython::ExecutionEnvironment::runCode(const char * str) {
+bool MicroPython::ExecutionEnvironment::runCode(const char * str) {
   assert(sCurrentExecutionEnvironment == nullptr);
   sCurrentExecutionEnvironment = this;
 
@@ -38,6 +38,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
    * for the exception handling (because of print). */
   mp_hal_set_interrupt_char((int)Ion::Keyboard::Key::Back);
 
+  bool runSucceeded = true;
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
@@ -45,10 +46,11 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
      * to be fed lines and not files. */
     // TODO: add a parameter when other input types (file, eval) are required
     mp_parse_tree_t pt = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
-    mp_obj_t module_fun = mp_compile(&pt, lex->source_name, MP_EMIT_OPT_NONE, true);
+    mp_obj_t module_fun = mp_compile(&pt, lex->source_name, true);
     mp_call_function_0(module_fun);
     nlr_pop();
   } else { // Uncaught exception
+    runSucceeded = false;
     /* mp_obj_print_exception is supposed to handle error printing. However,
      * because we want to print custom information, we copied and modified the
      * content of mp_obj_print_exception instead of calling it. */
@@ -69,7 +71,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
 #endif
                   // the block name can be NULL if it's unknown
                   qstr block = values[i + 2];
-                  if (block == MP_QSTR_NULL) {
+                  if (block == MP_QSTRnull) {
                     mp_print_str(&mp_plat_print, "\n");
                   } else {
                     mp_printf(&mp_plat_print, ", in %q\n", block);
@@ -93,6 +95,7 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
 
   assert(sCurrentExecutionEnvironment == this);
   sCurrentExecutionEnvironment = nullptr;
+  return runSucceeded;
 }
 
 void MicroPython::ExecutionEnvironment::interrupt() {

@@ -16,7 +16,7 @@ app_solver_src = $(addprefix apps/solver/,\
 )
 
 app_solver_src += $(app_solver_test_src)
-app_src += $(app_solver_src)
+apps_src += $(app_solver_src)
 
 i18n_files += $(addprefix apps/solver/,\
   base.de.i18n\

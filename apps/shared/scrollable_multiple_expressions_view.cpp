@@ -168,7 +168,10 @@ void AbstractScrollableMultipleExpressionsView::setLayouts(Poincare::Layout left
   }
   if (updateLeftLayout || updateCenterLayout || updateRightLayout) {
     contentCell()->reloadTextColor();
+    // Reload expressions layouts
     contentCell()->layoutSubviews();
+    // Reload the scroll content view layout (the content size might have changed)
+    layoutSubviews();
     // Do no reload scroll here as 'setLayouts' is called every time the table is re-layout (when scrolling for instance)
   }
 }

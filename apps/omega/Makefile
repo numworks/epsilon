@@ -1,7 +1,7 @@
 apps += Omega::App
 app_headers += apps/omega/app.h
 
-app_src += $(addprefix apps/omega/,\
+apps_src += $(addprefix apps/omega/,\
   app.cpp \
   omega_controller.cpp \
   omega_view.cpp \

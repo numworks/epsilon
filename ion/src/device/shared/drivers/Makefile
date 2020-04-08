@@ -3,6 +3,8 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   battery.cpp \
   base64.cpp \
   board.cpp \
+  console_uart.cpp:+consoleuart \
+  console_dummy.cpp:-consoleuart \
   crc32.cpp \
   display.cpp \
   events_keyboard_platform.cpp \
@@ -21,7 +23,3 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   usb.cpp \
   wakeup.cpp \
 )
-
-ion_console_uart_src = ion/src/device/shared/drivers/console.cpp
-ion_console_stdio_src += ion/src/device/shared/drivers/console_dummy.cpp
-ion_console_display_src += ion/src/device/shared/drivers/console_dummy.cpp

@@ -1,9 +1,11 @@
-usb_src += $(addprefix ion/src/device/shared/usb/, \
+# USB code
+
+ion_device_usb_src += $(addprefix ion/src/device/shared/usb/, \
   calculator.cpp \
   dfu_interface.cpp\
 )
 
-usb_src += $(addprefix ion/src/device/shared/usb/stack/, \
+ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/, \
   device.cpp\
   endpoint0.cpp \
   interface.cpp\
@@ -12,7 +14,7 @@ usb_src += $(addprefix ion/src/device/shared/usb/stack/, \
   streamable.cpp\
 )
 
-usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
+ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
   bos_descriptor.cpp\
   configuration_descriptor.cpp \
   descriptor.cpp\
@@ -29,27 +31,24 @@ usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
   webusb_platform_descriptor.cpp\
 )
 
-# Sources required to execute DFU in place
-ion_device_dfu_xip_src += ion/src/device/shared/usb/dfu_xip.cpp
-ion_device_dfu_xip_src += $(usb_src)
+# DFU code
 
-# Sources required to execute DFU in RAM
-dfu_src += liba/src/assert.c
-dfu_src += liba/src/strlen.c
-dfu_src += liba/src/strlcpy.c
-dfu_src += liba/src/memset.c
-dfu_src += liba/src/memcpy.c
-dfu_src += libaxx/src/cxxabi/pure_virtual.cpp
-dfu_src += ion/src/device/shared/usb/boot.cpp
-dfu_src += ion/src/device/$(MODEL)/drivers/board.cpp
-dfu_src += ion/src/device/$(MODEL)/drivers/cache.cpp
-dfu_src += ion/src/device/$(MODEL)/drivers/reset.cpp
-dfu_src += $(addprefix ion/src/device/shared/drivers/, \
+ion_device_dfu_src += liba/src/assert.c
+ion_device_dfu_src += liba/src/strlen.c
+ion_device_dfu_src += liba/src/strlcpy.c
+ion_device_dfu_src += liba/src/memset.c
+ion_device_dfu_src += liba/src/memcpy.c
+ion_device_dfu_src += libaxx/src/cxxabi/pure_virtual.cpp
+ion_device_dfu_src += ion/src/device/shared/usb/boot.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/board.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/cache.cpp
+ion_device_dfu_src += ion/src/device/$(MODEL)/drivers/reset.cpp
+ion_device_dfu_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
   battery.cpp \
   base64.cpp \
   board.cpp \
-  console.cpp \
+  console_uart.cpp \
   crc32.cpp \
   display.cpp \
   events_keyboard_platform.cpp \
@@ -68,8 +67,14 @@ dfu_src += $(addprefix ion/src/device/shared/drivers/, \
   wakeup.cpp \
 )
 
+# Sources required to execute DFU in place
+ion_device_src += ion/src/device/shared/usb/dfu_xip.cpp:+usbxip
+ion_device_src += $(addsuffix :+usbxip,$(ion_device_usb_src))
+
+# Sources required to execute DFU in RAM
+
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(usb_src) $(dfu_src))
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(ion_device_usb_src) $(ion_device_dfu_src))
 
 # In order to link the dfu bootloader inside the epsilon firmware, we need to
 # turn the dfu binary (dfu.bin) into an elf object.
@@ -83,5 +88,5 @@ $(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared
 	$(call rule_label,OBJCOPY)
 	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata.dfu_bootloader --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)
 
-ion_device_dfu_relocated_src += ion/src/device/shared/usb/dfu.cpp
-ion_device_dfu_relocated_src += ion/src/device/shared/usb/dfu_relocated.cpp
+ion_device_src += ion/src/device/shared/usb/dfu.cpp:-usbxip
+ion_device_src += ion/src/device/shared/usb/dfu_relocated.cpp:-usbxip

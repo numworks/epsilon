@@ -2,7 +2,7 @@ name: Continuous integration
 on: [pull_request, push]
 
 jobs:
-  build-simulator-android:
+  android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -11,9 +11,9 @@ jobs:
       - run: make -j2 PLATFORM=simulator TARGET=android
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-simulator-android.apk
-          path: output/release/simulator/android/app/outputs/apk/release/android-release-unsigned.apk
-  build-device-n0100:
+          name: epsilon-android.apk
+          path: output/release/simulator/android/epsilon.apk
+  n0100:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
@@ -29,10 +29,9 @@ jobs:
       - run: make -j2 MODEL=n0100 flasher.verbose.dfu
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-device-n0100.dfu
+          name: epsilon-n0100.dfu
           path: output/release/device/n0100/epsilon.dfu
-      - run: make -j2 MODEL=n0100 test.elf
-  build-device-n0110:
+  n0110:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
@@ -50,10 +49,9 @@ jobs:
       - run: make -j2 bench.flash.dfu
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-device-n0110.dfu
+          name: epsilon-n0110.dfu
           path: output/release/device/n0110/epsilon.dfu
-      - run: make -j2 test.elf
-  build-simulator-web:
+  web:
     runs-on: ubuntu-latest
     steps:
       - uses: numworks/setup-emscripten@v1
@@ -65,10 +63,9 @@ jobs:
       - run: make -j2 PLATFORM=simulator TARGET=web
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-simulator-web.zip
+          name: epsilon-web.zip
           path: output/release/simulator/web/epsilon.zip
-      - run: make -j2 PLATFORM=simulator TARGET=web test.headless.js
-  build-simulator-linux:
+  linux:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
@@ -78,6 +75,6 @@ jobs:
       - run: make -j2 PLATFORM=simulator
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-simulator-linux.bin
+          name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
       - run: make -j2 PLATFORM=simulator test.headless.bin

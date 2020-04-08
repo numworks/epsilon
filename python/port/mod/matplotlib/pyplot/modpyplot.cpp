@@ -88,8 +88,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
-  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0])+mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1])+mp_obj_get_float(args[3])), color, true); // TODO: use float_binary_op
-
+  sPlotStore->addSegment(args[0], args[1], mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[0]), args[2]),  mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[1]), args[3]), color, true);
   return mp_const_none;
 }
 
@@ -183,13 +182,23 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
 
   KDColor color = Palette::nextDataColor(&paletteIndex);
   for (size_t i=0; i<xLength; i++) {
-    mp_float_t iH = mp_obj_get_float(hItems[hLength > 1 ? i : 0]);
-    mp_float_t iW = mp_obj_get_float(wItems[wLength > 1 ? i : 0]);
-    mp_float_t iB = mp_obj_get_float(bItems[bLength > 1 ? i : 0]);
-    mp_float_t iX = mp_obj_get_float(xItems[i])-iW/2.0;
-    mp_float_t iYStart = iH < 0.0 ? iB : iB + iH;
-    mp_float_t iYEnd = iH < 0.0 ? iB + iH : iB;
-    sPlotStore->addRect(mp_obj_new_float(iX), mp_obj_new_float(iX+iW), mp_obj_new_float(iYStart), mp_obj_new_float(iYEnd), color); // TODO: use float_binary_op?
+    mp_obj_t iH = hItems[hLength > 1 ? i : 0];
+    mp_obj_t iW = wItems[wLength > 1 ? i : 0];
+    mp_obj_t iB = bItems[bLength > 1 ? i : 0];
+    mp_obj_t iX = xItems[i];
+
+    float iWf = mp_obj_get_float(iW);
+    float iXf = mp_obj_get_float(iX);
+    mp_obj_t rectLeft = mp_obj_new_float(iXf - iWf/2.0f);
+    mp_obj_t rectRight = mp_obj_new_float(iXf + iWf/2.0f);
+    mp_obj_t rectBottom = iB;
+    mp_obj_t rectTop = mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(iH), iB);
+    if (mp_obj_get_float(iH) < 0.0) {
+      mp_obj_t temp = rectTop;
+      rectTop = rectBottom;
+      rectBottom = temp;
+    }
+    sPlotStore->addRect(rectLeft, rectRight, rectTop, rectBottom, color);
   }
   return mp_const_none;
 }
@@ -229,6 +238,8 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
   mp_float_t min = mp_obj_get_float(xItems[0]);
   mp_float_t max = mp_obj_get_float(xItems[xLength - 1]);
 
+  // TODO: memory optimization
+  // Don't create a list of edges, compute the edge on the go if not present?
   mp_obj_t * edgeItems;
   size_t nBins;
   // bin arg
@@ -252,7 +263,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
     }
 
     // Fill the bin edges list
-    for (int i = 0; i < nBins+1; i++) {
+    for (size_t i = 0; i < nBins+1; i++) {
       edgeItems[i] = mp_obj_new_float(min+i*binWidth);
     }
   }
@@ -323,7 +334,7 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
 
     // Create the default xItems: [0, 1, 2,...]
     xItems = m_new(mp_obj_t, length);
-    for (int i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
       xItems[i] = mp_obj_new_float((float)i);
     }
   } else {

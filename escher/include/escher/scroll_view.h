@@ -106,8 +106,8 @@ protected:
   void layoutSubviews(bool force = false) override;
   virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
 #if ESCHER_VIEW_LOGGING
-  virtual const char * className() const override;
-  virtual void logAttributes(std::ostream &os) const override;
+  const char * className() const override;
+  void logAttributes(std::ostream &os) const override;
 #endif
   View * m_contentView;
 private:

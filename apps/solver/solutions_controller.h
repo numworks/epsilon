@@ -23,8 +23,8 @@ public:
 
   /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override;
-  virtual I18n::Message emptyMessage() override;
-  virtual Responder * defaultController() override;
+  I18n::Message emptyMessage() override;
+  Responder * defaultController() override;
   /* TableViewDataSource */
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }

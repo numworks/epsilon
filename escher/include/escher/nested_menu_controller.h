@@ -19,7 +19,7 @@ public:
   void viewDidDisappear() override;
 
   //ListViewDataSource
-  virtual KDCoordinate rowHeight(int j) override;
+  KDCoordinate rowHeight(int j) override;
   HighlightCell * reusableCell(int index, int type) override;
 protected:
   class Stack {

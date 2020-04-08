@@ -11,7 +11,7 @@ public:
   EditableTextCell * editableTextCell();
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  virtual Responder * responder() override {
+  Responder * responder() override {
     return this;
   }
   const char * text() const override {

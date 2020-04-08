@@ -10,7 +10,7 @@ class ExpressionFieldDelegateApp : public TextFieldDelegateApp, public LayoutFie
 public:
   virtual ~ExpressionFieldDelegateApp() = default;
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
-  virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
+  bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
 protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
 };

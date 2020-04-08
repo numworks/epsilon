@@ -15,7 +15,7 @@ public:
     Descriptor(0x03) { }
 protected:
   void push(Channel * c) const override;
-  virtual uint8_t bLength() const override;
+  uint8_t bLength() const override;
 };
 
 }

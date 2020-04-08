@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(MatrixTraceNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "MatrixTrace";
   }
 #endif

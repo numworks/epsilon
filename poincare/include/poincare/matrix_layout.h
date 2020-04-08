@@ -34,7 +34,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(MatrixLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "MatrixLayout";
   }
 #endif

@@ -269,7 +269,7 @@ int extapp_getKey(bool allowSuspend, bool *alphaWasActive) {
       continue;
     }
     if (event.isKeyboardEvent()) {
-      key = event.id();
+      key = static_cast<uint8_t>(event);
       if (key == 17 || key == 4 || key == 5 || key == 52) {
         extapp_resetKeyboard();
       }

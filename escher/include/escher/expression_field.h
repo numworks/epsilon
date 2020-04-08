@@ -21,7 +21,6 @@ public:
    * use text() there... TODO: change text() for fillTextInBuffer?*/
   const char * text();
   void setText(const char * text);
-  bool editionIsInTextField() const;
   bool isEmpty() const;
   bool inputViewHeightDidChange();
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
@@ -38,6 +37,7 @@ public:
   void didBecomeFirstResponder() override;
 
 private:
+  bool editionIsInTextField() const;
   static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
   static constexpr KDCoordinate k_minimalHeight = 37;
   static constexpr KDCoordinate k_maximalHeight = 0.6*Ion::Display::Height;

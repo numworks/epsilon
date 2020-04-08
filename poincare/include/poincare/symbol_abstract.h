@@ -37,7 +37,7 @@ public:
 
   // TreeNode
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "SymbolAbstract";
   }
   virtual void logAttributes(std::ostream & stream) const override {

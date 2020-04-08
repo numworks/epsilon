@@ -14,7 +14,7 @@ public:
   // TreeNode
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Symbol";
   }
 #endif

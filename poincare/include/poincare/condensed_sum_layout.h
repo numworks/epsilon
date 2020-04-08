@@ -36,7 +36,7 @@ public:
   size_t size() const override { return sizeof(CondensedSumLayoutNode); }
   int numberOfChildren() const override { return 3; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "CondensedSumLayout";
   }
 #endif

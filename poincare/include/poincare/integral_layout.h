@@ -31,7 +31,7 @@ public:
   size_t size() const override { return sizeof(IntegralLayoutNode); }
   int numberOfChildren() const override { return 4; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "IntegralLayout";
   }
 #endif

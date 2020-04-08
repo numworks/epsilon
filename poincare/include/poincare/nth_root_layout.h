@@ -38,7 +38,7 @@ public:
   size_t size() const override { return sizeof(NthRootLayoutNode); }
   int numberOfChildren() const override { return m_hasIndex ? 2 : 1; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "NthRootLayout";
   }
 #endif

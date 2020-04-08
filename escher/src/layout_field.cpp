@@ -335,27 +335,28 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     return true;
   }
 
+  Poincare::LayoutCursor * cursor = m_contentView.cursor();
   // Handle special cases
   if (strcmp(text, Ion::Events::Division.text()) == 0) {
-    m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
+    cursor->addFractionLayoutAndCollapseSiblings();
   } else if (strcmp(text, Ion::Events::Exp.text()) == 0) {
-    m_contentView.cursor()->addEmptyExponentialLayout();
+    cursor->addEmptyExponentialLayout();
   } else if (strcmp(text, Ion::Events::Power.text()) == 0) {
-    m_contentView.cursor()->addEmptyPowerLayout();
+    cursor->addEmptyPowerLayout();
   } else if (strcmp(text, Ion::Events::Sqrt.text()) == 0) {
-    m_contentView.cursor()->addEmptySquareRootLayout();
+    cursor->addEmptySquareRootLayout();
   } else if (strcmp(text, Ion::Events::Square.text()) == 0) {
-    m_contentView.cursor()->addEmptySquarePowerLayout();
+    cursor->addEmptySquarePowerLayout();
   } else if (strcmp(text, Ion::Events::EE.text()) == 0) {
-    m_contentView.cursor()->addEmptyTenPowerLayout();
+    cursor->addEmptyTenPowerLayout();
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
-    m_contentView.cursor()->addEmptyMatrixLayout();
+    cursor->addEmptyMatrixLayout();
   } else {
     Expression resultExpression = Expression::Parse(text, nullptr);
     if (resultExpression.isUninitialized()) {
       // The text is not parsable (for instance, ",") and is added char by char.
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-      m_contentView.cursor()->insertText(text, forceCursorRightOfText);
+      cursor->insertText(text, forceCursorRightOfText);
       reload(previousLayoutSize);
       return true;
     }

@@ -16,12 +16,12 @@ public:
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("");
 
-  virtual int numberOfRows() const override;
-  virtual int numberOfColumns() const override;
-  virtual KDCoordinate cellHeight() override;
-  virtual KDCoordinate cellWidth() override;
-  virtual HighlightCell * reusableCell(int index) override;
-  virtual int reusableCellCount() const override;
+  int numberOfRows() const override;
+  int numberOfColumns() const override;
+  KDCoordinate cellHeight() override;
+  KDCoordinate cellWidth() override;
+  HighlightCell * reusableCell(int index) override;
+  int reusableCellCount() const override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:

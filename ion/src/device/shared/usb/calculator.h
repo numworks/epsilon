@@ -117,11 +117,11 @@ public:
   uint32_t addressPointer() const { return m_dfuInterface.addressPointer(); }
   bool isErasingAndWriting() const { return m_dfuInterface.isErasingAndWriting(); }
 protected:
-  virtual Descriptor * descriptor(uint8_t type, uint8_t index) override;
-  virtual void setActiveConfiguration(uint8_t configurationIndex) override {
+  Descriptor * descriptor(uint8_t type, uint8_t index) override;
+  void setActiveConfiguration(uint8_t configurationIndex) override {
     assert(configurationIndex == k_bConfigurationValue);
   }
-  virtual uint8_t getActiveConfiguration() override {
+  uint8_t getActiveConfiguration() override {
     return k_bConfigurationValue;
   }
   bool processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;

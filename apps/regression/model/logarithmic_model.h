@@ -16,7 +16,7 @@ public:
   int numberOfCoefficients() const override { return 2; }
   int bannerLinesCount() const override { return 2; }
 protected:
-  virtual bool dataSuitableForFit(Store * store, int series) const override;
+  bool dataSuitableForFit(Store * store, int series) const override;
 };
 
 }

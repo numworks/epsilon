@@ -22,7 +22,7 @@ public:
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
   void didAddChildAtIndex(int newNumberOfChildren) override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Matrix";
   }
   virtual void logAttributes(std::ostream & stream) const override {

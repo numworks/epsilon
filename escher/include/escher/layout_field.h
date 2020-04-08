@@ -60,6 +60,7 @@ private:
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false);
+  bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == Ion::Events::Up; }
 
   class ContentView : public View {
   public:
@@ -83,14 +84,22 @@ private:
     void copySelection(Poincare::Context * context);
     bool selectionIsEmpty() const;
     void deleteSelection();
+    void invalidateInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
+    void updateInsertionCursor() {
+      if (!m_insertionCursor.isDefined()) {
+        m_insertionCursor = m_cursor;
+      }
+    }
 
   private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
+    void useInsertionCursor();
     KDRect selectionRect() const;
     Poincare::LayoutCursor m_cursor;
+    Poincare::LayoutCursor m_insertionCursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;
     /* The selection starts on the left of m_selectionStart, and ends on the

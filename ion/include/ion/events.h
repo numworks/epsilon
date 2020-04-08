@@ -56,7 +56,6 @@ void setShiftAlphaStatus(ShiftAlphaStatus s);
 void removeShift();
 bool isShiftActive();
 bool isAlphaActive();
-bool isAlphaLockActive();
 void setLongRepetition(bool longRepetition);
 bool isLongRepetition();
 void updateModifiersFromEvent(Event e);

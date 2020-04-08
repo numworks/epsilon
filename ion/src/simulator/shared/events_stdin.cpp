@@ -34,7 +34,7 @@ Event getPlatformEvent() {
     char filename[32];
     sprintf(filename, "event%d.png", sEventCount);
     Ion::Simulator::Framebuffer::writeToFile(filename);
-#if DEBUG
+#ifndef NDEBUG
     printf("Event %d is %s\n", sEventCount, event.name());
 #endif
   }

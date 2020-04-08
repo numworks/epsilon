@@ -33,7 +33,7 @@ public:
   }
 protected:
   void push(Channel * c) const override;
-  virtual uint8_t bLength() const override;
+  uint8_t bLength() const override;
 private:
   constexpr static uint8_t k_platformCapabilityUUIDSize = 16;
   uint8_t m_bReserved;

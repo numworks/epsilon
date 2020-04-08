@@ -10,8 +10,8 @@ public:
   KDCoordinate margin() const { return m_margin; }
 protected:
 #if ESCHER_VIEW_LOGGING
-  virtual const char * className() const override;
-  virtual void logAttributes(std::ostream &os) const override;
+  const char * className() const override;
+  void logAttributes(std::ostream &os) const override;
 #endif
   KDColor m_color;
   KDCoordinate m_margin;

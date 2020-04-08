@@ -12,9 +12,9 @@ protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
-  virtual int numberOfSubviews() const override;
-  virtual void layoutSubviews(bool force = false) override;
-  virtual View * subviewAtIndex(int index) override;
+  int numberOfSubviews() const override;
+  void layoutSubviews(bool force = false) override;
+  View * subviewAtIndex(int index) override;
   View * m_contentView;
 private:
   const Window * window() const override;

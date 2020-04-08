@@ -15,7 +15,7 @@ const char * EventData::text() const {
   return m_data;
 }
 
-Event::Event(Keyboard::Key key, bool shift, bool alpha) {
+Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   // We're mapping a key, shift and alpha to an event
   // This can be a bit more complicated than it seems since we want to fall back:
   // for example, alpha-up is just plain up.
@@ -41,6 +41,10 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha) {
     m_id = offset + (int)key;
   } while (offset > 0 && !s_dataForEvent[m_id].isDefined() && m_id < 4*PageSize);
 
+  //If we press percent in alphalock, change to backspace
+  if (m_id == static_cast<uint8_t>(Ion::Events::Percent) && lock){
+    m_id = static_cast<uint8_t>(Ion::Events::Backspace);
+  }
   assert(m_id != Events::None.m_id);
 }
 

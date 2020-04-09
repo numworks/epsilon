@@ -19,6 +19,7 @@ public:
     ScrollableView(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
     m_contentView(),
+    m_insertionCursorEvent(Ion::Events::None),
     m_delegate(delegate)
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
@@ -33,6 +34,7 @@ public:
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void putCursorRightOfLayout();
+  void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {
@@ -60,7 +62,7 @@ private:
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false);
-  bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == Ion::Events::Up; }
+  bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == m_insertionCursorEvent; }
 
   class ContentView : public View {
   public:
@@ -109,6 +111,7 @@ private:
     bool m_isEditing;
   };
   ContentView m_contentView;
+  Ion::Events::Event m_insertionCursorEvent;
   LayoutFieldDelegate * m_delegate;
 };
 

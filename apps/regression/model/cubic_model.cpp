@@ -19,31 +19,29 @@ namespace Regression {
 
 Layout CubicModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr int size = 15;
-    Layout layoutChildren[size] = {
+    m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('3', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
+        CodePointLayout::Builder('3', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('b', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
+        CodePointLayout::Builder('2', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('c', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('d', k_layoutFont),
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, size);
+    });
   }
   return m_layout;
 }
@@ -82,25 +80,28 @@ Expression CubicModel::expression(double * modelCoefficients) {
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  Expression addChildren[] = {
-    Multiplication::Builder(
+  // a*x^3+b*x^2+c*x+d
+  return Addition::Builder({
+    Multiplication::Builder({
       Number::DecimalNumber(a),
       Power::Builder(
         Symbol::Builder('x'),
-        Decimal::Builder(3.0))),
-    Multiplication::Builder(
+        Decimal::Builder(3.0)
+      )
+    }),
+    Multiplication::Builder({
       Number::DecimalNumber(b),
       Power::Builder(
         Symbol::Builder('x'),
-        Decimal::Builder(2.0))),
-    Multiplication::Builder(
+        Decimal::Builder(2.0)
+      )
+    }),
+    Multiplication::Builder({
       Number::DecimalNumber(c),
-      Symbol::Builder('x')),
+      Symbol::Builder('x')
+    }),
     Number::DecimalNumber(d)
-    };
-  // a*x^3+b*x^2+c*x+d
-  Expression result = Addition::Builder(addChildren, 4);
-  return result;
+  });
 }
 
 }

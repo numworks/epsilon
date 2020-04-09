@@ -35,7 +35,7 @@ private:
 class MatrixIdentity final : public Expression {
 public:
   MatrixIdentity(const MatrixIdentityNode * n) : Expression(n) {}
-  static MatrixIdentity Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIdentityNode>(&child, 1); }
+  static MatrixIdentity Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIdentityNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("identity", 1, &UntypedBuilderOneChild<MatrixIdentity>);
 

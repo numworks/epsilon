@@ -2,7 +2,7 @@
 #define POINCARE_TREE_BY_REFERENCE_H
 
 #include <poincare/tree_pool.h>
-#include <stdio.h>
+#include <initializer_list>
 
 namespace Shared {
   class ContinuousFunction;
@@ -23,8 +23,6 @@ namespace Poincare {
  * equivalent to Logarithm l = Logarithm(clone())). */
 
 class TreeHandle {
-  template<class T>
-  friend class ArrayBuilder;
   friend class ::Shared::ContinuousFunction;
   friend class TreeNode;
   friend class TreePool;
@@ -107,6 +105,8 @@ public:
   void log() const;
 #endif
 
+  typedef std::initializer_list<TreeHandle> Tuple;
+
 protected:
   /* Constructor */
   TreeHandle(const TreeNode * node);
@@ -119,9 +119,9 @@ protected:
 
   // WARNING: if the children table is the result of a cast, the object downcasted has to be the same size as a TreeHandle.
   template <class T, class U>
-  static T NAryBuilder(TreeHandle * children = nullptr, size_t numberOfChildren = 0);
+  static T NAryBuilder(const Tuple & children = {});
   template <class T, class U>
-  static T FixedArityBuilder(TreeHandle * children = nullptr, size_t numberOfChildren = 0);
+  static T FixedArityBuilder(const Tuple & children = {});
 
   static TreeHandle BuildWithGhostChildren(TreeNode * node);
 

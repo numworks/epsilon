@@ -39,7 +39,7 @@ private:
 class Factor final : public Expression {
 public:
   Factor(const FactorNode * n) : Expression(n) {}
-  static Factor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factor, FactorNode>(&child, 1); }
+  static Factor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factor, FactorNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, &UntypedBuilderOneChild<Factor>);
 

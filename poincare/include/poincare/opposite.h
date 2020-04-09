@@ -50,7 +50,7 @@ class Opposite final : public Expression {
 public:
   Opposite(const OppositeNode * n) : Expression(n) {}
   static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
-  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(&child, 1); }
+  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>({child}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

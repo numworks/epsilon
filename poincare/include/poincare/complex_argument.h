@@ -42,7 +42,7 @@ private:
 class ComplexArgument final : public Expression {
 public:
   ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
-  static ComplexArgument Builder(Expression child) { return TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>(&child, 1); }
+  static ComplexArgument Builder(Expression child) { return TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("arg", 1, &UntypedBuilderOneChild<ComplexArgument>);
 

@@ -212,19 +212,22 @@ TreeHandle TreeHandle::Builder() {
 }
 
 template <class T, class U>
-T TreeHandle::NAryBuilder(TreeHandle * children, size_t numberOfChildren) {
+T TreeHandle::NAryBuilder(const Tuple & children) {
   TreeHandle h = Builder<U>();
-  for (size_t i = 0; i < numberOfChildren; i++) {
-    h.addChildAtIndexInPlace(children[i], i, i);
+  size_t i = 0;
+  for (TreeHandle child : children) {
+    h.addChildAtIndexInPlace(child, i, i);
+    i++;
   }
   return static_cast<T &>(h);
 }
 
 template <class T, class U>
-T TreeHandle::FixedArityBuilder(TreeHandle * children, size_t numberOfChildren) {
+T TreeHandle::FixedArityBuilder(const Tuple & children) {
   TreeHandle h = Builder<U>();
-  for (size_t i = 0; i < numberOfChildren; i++) {
-    h.replaceChildAtIndexInPlace(i, children[i]);
+  size_t i = 0;
+  for (TreeHandle child : children) {
+    h.replaceChildAtIndexInPlace(i++, child);
   }
   return static_cast<T &>(h);
 }
@@ -277,96 +280,96 @@ void TreeHandle::release(uint16_t identifier) {
   node->release(node->numberOfChildren());
 }
 
-template AbsoluteValue TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>(TreeHandle*, size_t);
-template AbsoluteValueLayout TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(TreeHandle*, size_t);
-template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(TreeHandle*, size_t);
-template ArcCosine TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(TreeHandle*, size_t);
-template ArcSine TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(TreeHandle*, size_t);
-template ArcTangent TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(TreeHandle*, size_t);
-template BinomCDF TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>(TreeHandle*, size_t);
-template BinomialCoefficient TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>(TreeHandle*, size_t);
-template BinomialCoefficientLayout TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(TreeHandle*, size_t);
-template BinomPDF TreeHandle::FixedArityBuilder<BinomPDF, BinomPDFNode>(TreeHandle*, size_t);
-template Ceiling TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>(TreeHandle*, size_t);
-template CeilingLayout TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>(TreeHandle*, size_t);
-template CommonLogarithm TreeHandle::FixedArityBuilder<CommonLogarithm, LogarithmNode<1> >(TreeHandle*, size_t);
-template ComplexArgument TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>(TreeHandle*, size_t);
-template ComplexCartesian TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(TreeHandle*, size_t);
-template CondensedSumLayout TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>(TreeHandle*, size_t);
-template ConfidenceInterval TreeHandle::FixedArityBuilder<ConfidenceInterval, ConfidenceIntervalNode>(TreeHandle*, size_t);
-template Conjugate TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>(TreeHandle*, size_t);
-template ConjugateLayout TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(TreeHandle*, size_t);
-template Cosine TreeHandle::FixedArityBuilder<Cosine, CosineNode>(TreeHandle*, size_t);
-template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(TreeHandle*, size_t);
-template Determinant TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>(TreeHandle*, size_t);
-template Division TreeHandle::FixedArityBuilder<Division, DivisionNode>(TreeHandle*, size_t);
-template DivisionQuotient TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>(TreeHandle*, size_t);
-template DivisionRemainder TreeHandle::FixedArityBuilder<DivisionRemainder, DivisionRemainderNode>(TreeHandle*, size_t);
-template EmptyExpression TreeHandle::FixedArityBuilder<EmptyExpression, EmptyExpressionNode>(TreeHandle*, size_t);
-template Equal TreeHandle::FixedArityBuilder<Equal, EqualNode>(TreeHandle*, size_t);
-template Factor TreeHandle::FixedArityBuilder<Factor, FactorNode>(TreeHandle*, size_t);
-template Factorial TreeHandle::FixedArityBuilder<Factorial, FactorialNode>(TreeHandle*, size_t);
-template Floor TreeHandle::FixedArityBuilder<Floor, FloorNode>(TreeHandle*, size_t);
-template FloorLayout TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(TreeHandle*, size_t);
-template FracPart TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(TreeHandle*, size_t);
-template FractionLayout TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(TreeHandle*, size_t);
-template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(TreeHandle*, size_t);
-template GreatCommonDivisor TreeHandle::FixedArityBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(TreeHandle*, size_t);
-template HorizontalLayout TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(TreeHandle*, size_t);
-template HyperbolicArcCosine TreeHandle::FixedArityBuilder<HyperbolicArcCosine, HyperbolicArcCosineNode>(TreeHandle*, size_t);
-template HyperbolicArcSine TreeHandle::FixedArityBuilder<HyperbolicArcSine, HyperbolicArcSineNode>(TreeHandle*, size_t);
-template HyperbolicArcTangent TreeHandle::FixedArityBuilder<HyperbolicArcTangent, HyperbolicArcTangentNode>(TreeHandle*, size_t);
-template HyperbolicCosine TreeHandle::FixedArityBuilder<HyperbolicCosine, HyperbolicCosineNode>(TreeHandle*, size_t);
-template HyperbolicSine TreeHandle::FixedArityBuilder<HyperbolicSine, HyperbolicSineNode>(TreeHandle*, size_t);
-template HyperbolicTangent TreeHandle::FixedArityBuilder<HyperbolicTangent, HyperbolicTangentNode>(TreeHandle*, size_t);
-template ImaginaryPart TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>(TreeHandle*, size_t);
-template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(TreeHandle*, size_t);
-template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(TreeHandle*, size_t);
-template InvBinom TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(TreeHandle*, size_t);
-template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(TreeHandle*, size_t);
-template LeastCommonMultiple TreeHandle::FixedArityBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(TreeHandle*, size_t);
-template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(TreeHandle*, size_t);
-template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(TreeHandle*, size_t);
-template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(TreeHandle*, size_t);
-template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(TreeHandle*, size_t);
-template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(TreeHandle*, size_t);
-template MatrixComplex<float> TreeHandle::NAryBuilder<MatrixComplex<float>, MatrixComplexNode<float> >(TreeHandle*, size_t);
-template MatrixDimension TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>(TreeHandle*, size_t);
-template MatrixIdentity TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIdentityNode>(TreeHandle*, size_t);
-template MatrixInverse TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(TreeHandle*, size_t);
-template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(TreeHandle*, size_t);
-template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(TreeHandle*, size_t);
-template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(TreeHandle*, size_t);
-template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(TreeHandle*, size_t);
-template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(TreeHandle*, size_t);
-template NormCDF2 TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>(TreeHandle*, size_t);
-template NormPDF TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(TreeHandle*, size_t);
-template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(TreeHandle*, size_t);
-template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(TreeHandle*, size_t);
-template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(TreeHandle*, size_t);
-template PermuteCoefficient TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(TreeHandle*, size_t);
-template Power TreeHandle::FixedArityBuilder<Power, PowerNode>(TreeHandle*, size_t);
-template PredictionInterval TreeHandle::FixedArityBuilder<PredictionInterval, PredictionIntervalNode>(TreeHandle*, size_t);
-template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(TreeHandle*, size_t);
-template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(TreeHandle*, size_t);
-template Randint TreeHandle::FixedArityBuilder<Randint, RandintNode>(TreeHandle*, size_t);
-template Random TreeHandle::FixedArityBuilder<Random, RandomNode>(TreeHandle*, size_t);
-template RealPart TreeHandle::FixedArityBuilder<RealPart, RealPartNode>(TreeHandle*, size_t);
-template RightParenthesisLayout TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(TreeHandle*, size_t);
-template RightSquareBracketLayout TreeHandle::FixedArityBuilder<RightSquareBracketLayout, RightSquareBracketLayoutNode>(TreeHandle*, size_t);
-template Round TreeHandle::FixedArityBuilder<Round, RoundNode>(TreeHandle*, size_t);
-template SignFunction TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>(TreeHandle*, size_t);
-template SimplePredictionInterval TreeHandle::FixedArityBuilder<SimplePredictionInterval, SimplePredictionIntervalNode>(TreeHandle*, size_t);
-template Sine TreeHandle::FixedArityBuilder<Sine, SineNode>(TreeHandle*, size_t);
-template SquareRoot TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(TreeHandle*, size_t);
-template Store TreeHandle::FixedArityBuilder<Store, StoreNode>(TreeHandle*, size_t);
-template Subtraction TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(TreeHandle*, size_t);
-template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(TreeHandle*, size_t);
-template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(TreeHandle*, size_t);
-template Tangent TreeHandle::FixedArityBuilder<Tangent, TangentNode>(TreeHandle*, size_t);
-template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(TreeHandle*, size_t);
-template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(TreeHandle*, size_t);
-template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(TreeHandle*, size_t);
-template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(TreeHandle*, size_t);
+template AbsoluteValue TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>(const Tuple &);
+template AbsoluteValueLayout TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(const Tuple &);
+template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(const Tuple &);
+template ArcCosine TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(const Tuple &);
+template ArcSine TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(const Tuple &);
+template ArcTangent TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(const Tuple &);
+template BinomCDF TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>(const Tuple &);
+template BinomialCoefficient TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>(const Tuple &);
+template BinomialCoefficientLayout TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(const Tuple &);
+template BinomPDF TreeHandle::FixedArityBuilder<BinomPDF, BinomPDFNode>(const Tuple &);
+template Ceiling TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>(const Tuple &);
+template CeilingLayout TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>(const Tuple &);
+template CommonLogarithm TreeHandle::FixedArityBuilder<CommonLogarithm, LogarithmNode<1> >(const Tuple &);
+template ComplexArgument TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>(const Tuple &);
+template ComplexCartesian TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(const Tuple &);
+template CondensedSumLayout TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>(const Tuple &);
+template ConfidenceInterval TreeHandle::FixedArityBuilder<ConfidenceInterval, ConfidenceIntervalNode>(const Tuple &);
+template Conjugate TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>(const Tuple &);
+template ConjugateLayout TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(const Tuple &);
+template Cosine TreeHandle::FixedArityBuilder<Cosine, CosineNode>(const Tuple &);
+template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(const Tuple &);
+template Determinant TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>(const Tuple &);
+template Division TreeHandle::FixedArityBuilder<Division, DivisionNode>(const Tuple &);
+template DivisionQuotient TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>(const Tuple &);
+template DivisionRemainder TreeHandle::FixedArityBuilder<DivisionRemainder, DivisionRemainderNode>(const Tuple &);
+template EmptyExpression TreeHandle::FixedArityBuilder<EmptyExpression, EmptyExpressionNode>(const Tuple &);
+template Equal TreeHandle::FixedArityBuilder<Equal, EqualNode>(const Tuple &);
+template Factor TreeHandle::FixedArityBuilder<Factor, FactorNode>(const Tuple &);
+template Factorial TreeHandle::FixedArityBuilder<Factorial, FactorialNode>(const Tuple &);
+template Floor TreeHandle::FixedArityBuilder<Floor, FloorNode>(const Tuple &);
+template FloorLayout TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(const Tuple &);
+template FracPart TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(const Tuple &);
+template FractionLayout TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(const Tuple &);
+template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
+template GreatCommonDivisor TreeHandle::FixedArityBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
+template HorizontalLayout TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(const Tuple &);
+template HyperbolicArcCosine TreeHandle::FixedArityBuilder<HyperbolicArcCosine, HyperbolicArcCosineNode>(const Tuple &);
+template HyperbolicArcSine TreeHandle::FixedArityBuilder<HyperbolicArcSine, HyperbolicArcSineNode>(const Tuple &);
+template HyperbolicArcTangent TreeHandle::FixedArityBuilder<HyperbolicArcTangent, HyperbolicArcTangentNode>(const Tuple &);
+template HyperbolicCosine TreeHandle::FixedArityBuilder<HyperbolicCosine, HyperbolicCosineNode>(const Tuple &);
+template HyperbolicSine TreeHandle::FixedArityBuilder<HyperbolicSine, HyperbolicSineNode>(const Tuple &);
+template HyperbolicTangent TreeHandle::FixedArityBuilder<HyperbolicTangent, HyperbolicTangentNode>(const Tuple &);
+template ImaginaryPart TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>(const Tuple &);
+template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(const Tuple &);
+template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(const Tuple &);
+template InvBinom TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(const Tuple &);
+template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(const Tuple &);
+template LeastCommonMultiple TreeHandle::FixedArityBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
+template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(const Tuple &);
+template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(const Tuple &);
+template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(const Tuple &);
+template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
+template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(const Tuple &);
+template MatrixComplex<float> TreeHandle::NAryBuilder<MatrixComplex<float>, MatrixComplexNode<float> >(const Tuple &);
+template MatrixDimension TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>(const Tuple &);
+template MatrixIdentity TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIdentityNode>(const Tuple &);
+template MatrixInverse TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(const Tuple &);
+template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(const Tuple &);
+template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(const Tuple &);
+template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
+template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(const Tuple &);
+template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(const Tuple &);
+template NormCDF2 TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>(const Tuple &);
+template NormPDF TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(const Tuple &);
+template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(const Tuple &);
+template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
+template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
+template PermuteCoefficient TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(const Tuple &);
+template Power TreeHandle::FixedArityBuilder<Power, PowerNode>(const Tuple &);
+template PredictionInterval TreeHandle::FixedArityBuilder<PredictionInterval, PredictionIntervalNode>(const Tuple &);
+template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(const Tuple &);
+template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(const Tuple &);
+template Randint TreeHandle::FixedArityBuilder<Randint, RandintNode>(const Tuple &);
+template Random TreeHandle::FixedArityBuilder<Random, RandomNode>(const Tuple &);
+template RealPart TreeHandle::FixedArityBuilder<RealPart, RealPartNode>(const Tuple &);
+template RightParenthesisLayout TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(const Tuple &);
+template RightSquareBracketLayout TreeHandle::FixedArityBuilder<RightSquareBracketLayout, RightSquareBracketLayoutNode>(const Tuple &);
+template Round TreeHandle::FixedArityBuilder<Round, RoundNode>(const Tuple &);
+template SignFunction TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>(const Tuple &);
+template SimplePredictionInterval TreeHandle::FixedArityBuilder<SimplePredictionInterval, SimplePredictionIntervalNode>(const Tuple &);
+template Sine TreeHandle::FixedArityBuilder<Sine, SineNode>(const Tuple &);
+template SquareRoot TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(const Tuple &);
+template Store TreeHandle::FixedArityBuilder<Store, StoreNode>(const Tuple &);
+template Subtraction TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
+template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
+template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(const Tuple &);
+template Tangent TreeHandle::FixedArityBuilder<Tangent, TangentNode>(const Tuple &);
+template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(const Tuple &);
+template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(const Tuple &);
+template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(const Tuple &);
+template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 
 }

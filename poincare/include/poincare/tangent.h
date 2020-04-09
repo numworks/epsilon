@@ -45,7 +45,7 @@ private:
 class Tangent final : public Expression {
 public:
   Tangent(const TangentNode * n) : Expression(n) {}
-  static Tangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<Tangent, TangentNode>(&child, 1); }
+  static Tangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<Tangent, TangentNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, &UntypedBuilderOneChild<Tangent>);
 

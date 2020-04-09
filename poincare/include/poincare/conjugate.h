@@ -42,7 +42,7 @@ private:
 class Conjugate final : public Expression {
 public:
   Conjugate(const ConjugateNode * n) : Expression(n) {}
-  static Conjugate Builder(Expression child) { return TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>(&child, 1); }
+  static Conjugate Builder(Expression child) { return TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilderOneChild<Conjugate>);;
 

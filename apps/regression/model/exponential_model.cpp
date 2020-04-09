@@ -13,21 +13,19 @@ namespace Regression {
 
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr int size = 4;
-    Layout layoutChildren[size] = {
+    m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('e', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          HorizontalLayout::Builder(
-            CodePointLayout::Builder('b', k_layoutFont),
-            CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-            CodePointLayout::Builder('X', k_layoutFont)
-          ),
-          VerticalOffsetLayoutNode::Position::Superscript
-        )
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, size);
+        HorizontalLayout::Builder({
+          CodePointLayout::Builder('b', k_layoutFont),
+          CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+          CodePointLayout::Builder('X', k_layoutFont)
+        }),
+        VerticalOffsetLayoutNode::Position::Superscript
+      )
+    });
   }
   return m_layout;
 }

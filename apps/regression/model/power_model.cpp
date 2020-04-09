@@ -12,17 +12,15 @@ namespace Regression {
 
 Layout PowerModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr int size = 4;
-    Layout layoutChildren[size] = {
+    m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('b', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
-      };
-    m_layout = HorizontalLayout::Builder(layoutChildren, size);
+        CodePointLayout::Builder('b', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
+    });
   }
   return m_layout;
 }

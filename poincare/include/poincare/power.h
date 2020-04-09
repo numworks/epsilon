@@ -73,7 +73,7 @@ class Power final : public Expression {
   friend class Round;
 public:
   Power(const PowerNode * n) : Expression(n) {}
-  static Power Builder(Expression base, Expression exponent) { return TreeHandle::FixedArityBuilder<Power, PowerNode>(ArrayBuilder<TreeHandle>(base, exponent).array(), 2); }
+  static Power Builder(Expression base, Expression exponent) { return TreeHandle::FixedArityBuilder<Power, PowerNode>({base, exponent}); }
 
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;

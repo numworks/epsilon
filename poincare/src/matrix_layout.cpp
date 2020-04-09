@@ -331,7 +331,7 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
 }
 
 MatrixLayout MatrixLayout::Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
-  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(ArrayBuilder<TreeHandle>(l1,l2,l3,l4).array(), 4);
+  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1, l2, l3, l4});
   m.setDimensions(2, 2);
   return m;
 }

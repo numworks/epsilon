@@ -45,7 +45,7 @@ private:
 class ImaginaryPart final : public Expression {
 public:
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
-  static ImaginaryPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>(&child, 1); }
+  static ImaginaryPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, &UntypedBuilderOneChild<ImaginaryPart>);
 

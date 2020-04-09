@@ -46,7 +46,7 @@ private:
 
 class BinomialCoefficientLayout final : public Layout {
 public:
-  static BinomialCoefficientLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static BinomialCoefficientLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>({child0, child1}); }
   BinomialCoefficientLayout() = delete;
 };
 

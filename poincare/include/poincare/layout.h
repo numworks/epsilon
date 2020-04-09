@@ -1,7 +1,6 @@
 #ifndef POINCARE_LAYOUT_REFERENCE_H
 #define POINCARE_LAYOUT_REFERENCE_H
 
-#include <poincare/array_builder.h>
 #include <poincare/context.h>
 #include <poincare/layout_node.h>
 #include <poincare/tree_handle.h>

@@ -378,17 +378,17 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
     Expression g = m.matrixChild(2,0);
     Expression h = m.matrixChild(2,1);
     Expression i = m.matrixChild(2,2);
-    constexpr int additionChildrenCount = 6;
-    Expression additionChildren[additionChildrenCount] = {
+    Tuple children = {
       Multiplication::Builder(a.clone(), e.clone(), i.clone()),
       Multiplication::Builder(b.clone(), f.clone(), g.clone()),
       Multiplication::Builder(c.clone(), d.clone(), h.clone()),
       Multiplication::Builder(Rational::Builder(-1), c, e, g),
       Multiplication::Builder(Rational::Builder(-1), b, d, i),
-      Multiplication::Builder(Rational::Builder(-1), a, f, h)};
-    Expression result = Addition::Builder(additionChildren, additionChildrenCount);
-    for (int i = 0; i < additionChildrenCount; i++) {
-      additionChildren[i].shallowReduce(reductionContext);
+      Multiplication::Builder(Rational::Builder(-1), a, f, h)
+    };
+    Expression result = Addition::Builder(children);
+    for (Expression child : children) {
+      child.shallowReduce(reductionContext);
     }
     return result;
   }

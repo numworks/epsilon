@@ -45,7 +45,7 @@ private:
 class ArcCosine final : public Expression {
 public:
   ArcCosine(const ArcCosineNode * n) : Expression(n) {}
-  static ArcCosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(&child, 1); }
+  static ArcCosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acos", 1, &UntypedBuilderOneChild<ArcCosine>);
 

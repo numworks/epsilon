@@ -53,7 +53,7 @@ private:
 class Integral final : public ParameteredExpression {
 public:
   Integral(const IntegralNode * n) : ParameteredExpression(n) {}
-  static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Integral, IntegralNode>(ArrayBuilder<TreeHandle>(child0, child1, child2, child3).array(), 4); }
+  static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Integral, IntegralNode>({child0, child1, child2, child3}); }
   static Expression UntypedBuilder(Expression children);
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);

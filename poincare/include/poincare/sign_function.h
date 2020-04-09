@@ -45,7 +45,7 @@ private:
 class SignFunction final : public Expression {
 public:
   SignFunction(const SignFunctionNode * n) : Expression(n) {}
-  static SignFunction Builder(Expression child) { return TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>(&child, 1); }
+  static SignFunction Builder(Expression child) { return TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilderOneChild<SignFunction>);
 

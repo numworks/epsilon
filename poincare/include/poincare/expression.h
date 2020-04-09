@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
-#include <poincare/array_builder.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/tree_handle.h>
 #include <poincare/preferences.h>
@@ -286,6 +285,9 @@ public:
 
   static void Tidy() { sSymbolReplacementsCountLock = false; }
 
+  /* Tuple */
+  typedef std::initializer_list<Expression> Tuple;
+
 protected:
   static bool SimplificationHasBeenInterrupted();
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
@@ -326,6 +328,12 @@ protected:
     assert(T::IsExpression());
     static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
     return *reinterpret_cast<T *>(const_cast<Expression *>(this));
+  }
+
+  static_assert(sizeof(TreeHandle::Tuple) == sizeof(Tuple), "Size mismatch");
+  static const TreeHandle::Tuple & convert(const Tuple & l) {
+    assert(sizeof(TreeHandle) == sizeof(Expression));
+    return reinterpret_cast<const TreeHandle::Tuple &>(l);
   }
 
   /* Reference */

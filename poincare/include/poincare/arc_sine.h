@@ -43,7 +43,7 @@ private:
 class ArcSine final : public Expression {
 public:
   ArcSine(const ArcSineNode * n) : Expression(n) {}
-  static ArcSine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>(&child, 1); }
+  static ArcSine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcSine, ArcSineNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("asin", 1, &UntypedBuilderOneChild<ArcSine>);
 

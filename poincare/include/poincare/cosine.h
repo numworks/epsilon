@@ -46,7 +46,7 @@ private:
 class Cosine final : public Expression {
 public:
   Cosine(const CosineNode * n) : Expression(n) {}
-  static Cosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<Cosine, CosineNode>(&child, 1); }
+  static Cosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<Cosine, CosineNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cos", 1, &UntypedBuilderOneChild<Cosine>);
 

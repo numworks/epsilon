@@ -45,7 +45,7 @@ private:
 class RealPart final : public Expression {
 public:
   RealPart(const RealPartNode * n) : Expression(n) {}
-  static RealPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<RealPart, RealPartNode>(&child, 1); }
+  static RealPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<RealPart, RealPartNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, &UntypedBuilderOneChild<RealPart>);
 

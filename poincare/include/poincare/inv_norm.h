@@ -38,7 +38,7 @@ private:
 class InvNorm final : public NormalDistributionFunction {
 public:
   InvNorm(const InvNormNode * n) : NormalDistributionFunction(n) {}
-  static InvNorm Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static InvNorm Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>({child0, child1, child2}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("invnorm", 3, &UntypedBuilderThreeChildren<InvNorm>);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

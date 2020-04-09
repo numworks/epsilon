@@ -37,7 +37,7 @@ private:
 class NormCDF final : public NormalDistributionFunction {
 public:
   NormCDF(const NormCDFNode * n) : NormalDistributionFunction(n) {}
-  static NormCDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static NormCDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>({child0, child1, child2}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("normcdf", 3, &UntypedBuilderThreeChildren<NormCDF>);
 };
 

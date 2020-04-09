@@ -36,7 +36,7 @@ private:
 
 class AbsoluteValueLayout final : public Layout {
 public:
-  static AbsoluteValueLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(&child, 1); }
+  static AbsoluteValueLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>({child}); }
   AbsoluteValueLayout() = delete;
 };
 

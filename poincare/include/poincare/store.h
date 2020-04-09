@@ -32,7 +32,7 @@ class Store final : public Expression {
 friend class StoreNode;
 public:
   Store(const StoreNode * n) : Expression(n) {}
-  static Store Builder(Expression value, SymbolAbstract symbol) { return TreeHandle::FixedArityBuilder<Store, StoreNode>(ArrayBuilder<TreeHandle>(value, symbol).array(), 2); }
+  static Store Builder(Expression value, SymbolAbstract symbol) { return TreeHandle::FixedArityBuilder<Store, StoreNode>({value, symbol}); }
 
   // Store
   const SymbolAbstract symbol() const {

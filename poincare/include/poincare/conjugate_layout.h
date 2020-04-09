@@ -43,7 +43,7 @@ private:
 
 class ConjugateLayout final : public Layout {
 public:
-  static ConjugateLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(&child, 1); }
+  static ConjugateLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>({child}); }
   ConjugateLayout() = delete;
 };
 

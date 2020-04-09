@@ -40,7 +40,7 @@ private:
 class DivisionQuotient final : public Expression {
 public:
   DivisionQuotient(const DivisionQuotientNode * n) : Expression(n) {}
-  static DivisionQuotient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static DivisionQuotient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilderTwoChildren<DivisionQuotient>);
 
   // Expression

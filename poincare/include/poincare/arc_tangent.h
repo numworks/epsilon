@@ -44,7 +44,7 @@ private:
 class ArcTangent final : public Expression {
 public:
   ArcTangent(const ArcTangentNode * n) : Expression(n) {}
-  static ArcTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(&child, 1); }
+  static ArcTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("atan", 1, &UntypedBuilderOneChild<ArcTangent>);
 

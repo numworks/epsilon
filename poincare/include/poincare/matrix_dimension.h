@@ -37,7 +37,7 @@ private:
 class MatrixDimension final : public Expression {
 public:
   MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
-  static MatrixDimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>(&child, 1); }
+  static MatrixDimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilderOneChild<MatrixDimension>);
 

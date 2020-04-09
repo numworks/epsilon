@@ -48,7 +48,7 @@ class AbsoluteValue final : public Expression {
 friend class AbsoluteValueNode;
 public:
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
-  static AbsoluteValue Builder(Expression child) { return TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>(&child, 1); }
+  static AbsoluteValue Builder(Expression child) { return TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilderOneChild<AbsoluteValue>);
 

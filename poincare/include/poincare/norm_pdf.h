@@ -37,7 +37,7 @@ private:
 class NormPDF final : public NormalDistributionFunction {
 public:
   NormPDF(const NormPDFNode * n) : NormalDistributionFunction(n) {}
-  static NormPDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static NormPDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>({child0, child1, child2}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("normpdf", 3, &UntypedBuilderThreeChildren<NormPDF>);
 };
 

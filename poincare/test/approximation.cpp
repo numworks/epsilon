@@ -779,11 +779,11 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("atanh(𝐢-4)", "-0.238878+1.50862×𝐢", Degree, Cartesian, 6);
 
   // Check that the complex part is not neglected
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-26×𝐢)", "13.01+5ᴇ-16×𝐢", Radian, Cartesian, 4);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-60×𝐢)", "13.01+5ᴇ-50×𝐢", Radian, Cartesian, 4);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-150×𝐢)", "13.01+5ᴇ-140×𝐢", Radian, Cartesian, 4);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-250×𝐢)", "13.01+5ᴇ-240×𝐢", Radian, Cartesian, 4);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-300×𝐢)", "13.01+5ᴇ-290×𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-26×𝐢)", "13+5ᴇ-16×𝐢", Radian, Cartesian, 3);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-60×𝐢)", "13+5ᴇ-50×𝐢", Radian, Cartesian, 3);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-150×𝐢)", "13+5ᴇ-140×𝐢", Radian, Cartesian, 3);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-250×𝐢)", "13+5ᴇ-240×𝐢", Radian, Cartesian, 3);
+  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-300×𝐢)", "13+5ᴇ-290×𝐢", Radian, Cartesian, 3);
 
   // WARNING: evaluate on branch cut can be multivalued
   assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×𝐢", Radian);

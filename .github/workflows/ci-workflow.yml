@@ -60,7 +60,7 @@ jobs:
       - run: msys2do make -j2 PLATFORM=simulator
       - run: msys2do make -j2 PLATFORM=simulator epsilon.official.exe
       - run: msys2do make -j2 PLATFORM=simulator test.headless.exe
-      - run: output\release\simulator\windows\test.headless.exe
+      - run: msys2do output/release/simulator/windows/test.headless.exe
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-windows.exe

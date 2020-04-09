@@ -11,6 +11,7 @@
 class ExpressionField : public Responder, public View {
 public:
   ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ~ExpressionField();
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing();
@@ -37,7 +38,11 @@ public:
   void didBecomeFirstResponder() override;
 
 private:
-  bool usingTextField() const;
+  bool shouldUseTextField() const;
+  bool usingTextField() const {
+    assert(shouldUseTextField() == m_usingTextField);
+    return m_usingTextField;
+  }
   template <class T> T * field() {
     // A template is required because we may want to use several sub-types:
     // View, EditableField, Responder, etc...
@@ -55,8 +60,16 @@ private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
   KDCoordinate m_inputViewMemoizedHeight;
-  TextField m_textField;
-  LayoutField m_layoutField;
+  bool m_usingTextField;
+  union {
+    TextField m_textField;
+    struct {
+      LayoutField m_layoutField;
+      /* TODO: This secondary buffer will be made useless once we'll get rid
+       * of text() and replace it by fillTextInBuffer */
+      char m_textBuffer[k_textFieldBufferSize];
+    };
+  };
 };
 
 #endif

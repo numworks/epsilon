@@ -101,6 +101,14 @@ private:
     void useInsertionCursor();
     KDRect selectionRect() const;
     Poincare::LayoutCursor m_cursor;
+    /* The insertion cursor is a secondary cursor that determines where text
+     * should be inserted. Most of the time this cursor is useless (and is
+     * therefore disabled), but in an interface where the user can navigate out
+     * of the field, it's important to keep track of where inserted text should
+     * go even if the main cursor was moved.
+     * For instance, this is useful in the Calculation app when the user wants
+     * to type a division and scroll up the history to insert something at the
+     * denominator. */
     Poincare::LayoutCursor m_insertionCursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;

@@ -303,7 +303,7 @@ void Unit::chooseBestMultipleForValue(double & value, const int exponent, Expres
     double val = value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
     // Get the best prefix and update val accordingly
     const Prefix * pre = rep->bestPrefixForValue(val, exponent);
-    if (std::fabs(std::log10(std::fabs(val))) < std::fabs(std::log10(std::fabs(bestVal)))) {
+    if (std::fabs(std::log10(std::fabs(bestVal))) - std::fabs(std::log10(std::fabs(val))) > Epsilon<double>()) {
       /* At this point, val is closer to one than bestVal is.*/
       bestRep = rep;
       bestPre = pre;

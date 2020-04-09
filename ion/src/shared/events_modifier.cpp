@@ -29,6 +29,10 @@ bool isAlphaActive() {
   return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
+bool isLockActive() {
+  return sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+}
+
 void setLongRepetition(bool longRepetition) {
  sLongRepetition = longRepetition;
 }

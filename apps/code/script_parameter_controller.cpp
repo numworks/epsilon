@@ -1,5 +1,6 @@
 #include "script_parameter_controller.h"
 #include "menu_controller.h"
+#include <poincare/integer.h>
 
 namespace Code {
 
@@ -10,6 +11,7 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_renameScript(I18n::Message::Rename),
   m_autoImportScript(I18n::Message::AutoImportScript),
   m_deleteScript(I18n::Message::DeleteScript),
+  m_size(I18n::Message::ScriptSize),
   m_selectableTableView(this),
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
@@ -47,7 +49,13 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
         m_menuController->reloadConsole();
         Container::activeApp()->setFirstResponder(&m_selectableTableView);
         return true;
-      case 3:
+      case 3:{
+        MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+        m_sizedisplaypercent = !m_sizedisplaypercent;
+        GetScriptSize(myCell);
+        return true;
+      }
+      case 4:
         dismissScriptParameterController();
         m_menuController->deleteScript(s);
         m_menuController->reloadConsole();
@@ -74,7 +82,7 @@ void ScriptParameterController::didBecomeFirstResponder() {
 HighlightCell * ScriptParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
+  HighlightCell * cells[] = {&m_executeScript, &m_renameScript, &m_autoImportScript, &m_size, &m_deleteScript};
   return cells[index];
 }
 
@@ -82,6 +90,35 @@ void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   if (cell == &m_autoImportScript) {
     SwitchView * switchView = (SwitchView *)m_autoImportScript.accessoryView();
     switchView->setState(m_script.importationStatus());
+  } else if (cell == &m_size) {
+    MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+    GetScriptSize(myCell);
+    myCell->setAccessoryFont(KDFont::SmallFont);
+    myCell->setAccessoryTextColor(Palette::GreyDark);
+  }
+}
+
+void ScriptParameterController::GetScriptSize(MessageTableCellWithBuffer* myCell){
+  if(m_sizedisplaypercent){
+    char size[18];
+    int sizelen = Poincare::Integer((int)m_script.value().size).serialize(size, 6);
+    size[sizelen] = ' ';
+    size[sizelen+1] = 'o';
+    size[sizelen+2] = ' ';
+    size[sizelen+3] = '/';
+    size[sizelen+4] = ' ';
+    int sizelen2 = Poincare::Integer((int)Ion::Storage::k_storageSize).serialize(size+sizelen+5, 6) + sizelen + 5;
+    size[sizelen2] = ' ';
+    size[sizelen2+1] = 'o';
+    size[sizelen2+2] = '\0';
+    myCell->setAccessoryText(size);
+  }else{
+    char size[18];
+    int sizelen = Poincare::Integer((int)(((float)((int)m_script.value().size)/((int)Ion::Storage::k_storageSize)) * 100.f)).serialize(size, 3);
+    size[sizelen] = ' ';
+    size[sizelen+1] = '%';
+    size[sizelen+2] = '\0';
+    myCell->setAccessoryText(size);
   }
 }
 

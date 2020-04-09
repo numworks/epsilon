@@ -21,7 +21,7 @@ public:
 #if DEBUG
   const char * name() const;
 #endif
-  Event(Keyboard::Key key, bool shift, bool alpha);
+  Event(Keyboard::Key key, bool shift, bool alpha, bool lock);
 
   bool operator==(const Event & other) const {
     return (m_id == other.m_id);
@@ -56,6 +56,7 @@ void setShiftAlphaStatus(ShiftAlphaStatus s);
 void removeShift();
 bool isShiftActive();
 bool isAlphaActive();
+bool isLockActive();
 void setLongRepetition(bool longRepetition);
 bool isLongRepetition();
 void updateModifiersFromEvent(Event e);

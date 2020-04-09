@@ -1318,7 +1318,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("(((√(6)-√(2))/4)/((√(6)+√(2))/4))+1", "-√(3)+3");
   assert_parsed_expression_simplify_to("1/√(𝐢) × (√(2)-𝐢×√(2))", "-2×𝐢"); // TODO: get rid of complex at denominator?
 
-  assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.7027409010183ᴇ62");
+  assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.702740901018ᴇ62", Degree, Cartesian, 13);
 }
 
 QUIZ_CASE(poincare_hyperbolic_trigonometry) {

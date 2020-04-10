@@ -316,7 +316,12 @@ int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOri
 bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(rowIndex >= 0 && rowIndex < numberOfRows());
   m_selectableTableView.deselectTable();
-  ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex);
+
+  int cumulatedOriginsCount = 0;
+  int cellType = typeAndOriginAtLocation(rowIndex, nullptr, &cumulatedOriginsCount);
+  assert(cellType == k_itemCellType);
+  (void)cellType; // Silence warnings
+  ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex - cumulatedOriginsCount); // Remove the number of subtitle cells from the index
   insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
   if (selectedScriptNode->type() == ScriptNode::Type::Function) {
     insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);

@@ -236,7 +236,8 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     }
   }
   bool result = TextArea::handleEvent(event);
-  if (event == Ion::Events::Backspace) {
+  if (!m_contentView.isAutocompleting() && selectionIsEmpty()) {
+    // Add autocompletion after each event handled, if nothing is selected
     addAutocompletion();
   }
   return result;

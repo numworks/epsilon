@@ -127,7 +127,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       Container::activeApp()->setFirstResponder(parentResponder());
       return true;
     }
-    m_selectableTableView.selectCellAtLocation(0, (focusRow > 0) * (focusRow - 1));
+    m_selectableTableView.selectCellAtLocation(0, focusRow > 0 ? focusRow - 1 : 0);
     tableViewDidChangeSelection(&m_selectableTableView, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
     m_selectableTableView.scrollToCell(0, selectedRow());
     return true;

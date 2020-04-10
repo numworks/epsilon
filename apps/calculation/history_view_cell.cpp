@@ -181,7 +181,7 @@ void HistoryViewCell::layoutSubviews(bool force) {
   }
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  int singleLine = outputSize.width() + inputSize.width() < bounds().width() - (Metric::CommonSmallMargin * 2) - Metric::EllipsisCellWidth;
+  int singleLine = outputSize.width() + inputSize.width() < Ion::Display::Width - (Metric::CommonSmallMargin * 2) - Metric::EllipsisCellWidth;
   int inputHeight = (singleLine && inputSize.height() < outputSize.height()) ? (outputSize.height() - inputSize.height()) : 0;
   m_inputView.setFrame(KDRect(
     0,

@@ -107,7 +107,18 @@ void TitleBarView::refreshPreferences() {
         I18n::Message::Deg :
         (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(angleMessage), bufferSize - numberOfChar);
+    #if EPSILON_USE_SYMBOLIC
+    assert(numberOfChar < bufferSize-1);
+    assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
+    buffer[numberOfChar++] = '/';
+    #endif
   }
+  #if EPSILON_USE_SYMBOLIC
+  assert(numberOfChar <= bufferSize);
+  {
+    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::SymbolicComputation), bufferSize - numberOfChar);
+  }
+  #endif
   m_preferenceView.setText(buffer);
   // Layout the exam mode icon if needed
   layoutSubviews();

@@ -19,8 +19,12 @@ parser.add_argument('--implementation', help='the .cpp file to generate')
 parser.add_argument('--locales', nargs='+', help='locale to actually generate')
 parser.add_argument('--codepoints', help='the code_points.h file')
 parser.add_argument('--files', nargs='+', help='an i18n file')
+parser.add_argument('--generateISO6391locales', type=int, nargs='+', help='whether to generate the ISO6391 codes for the languages (for instance "en" for english)')
 
 args = parser.parse_args()
+
+def generate_ISO6391():
+    return args.generateISO6391locales[0] == 1
 
 def has_glyph(glyph):
     return glyph in codepoints
@@ -143,6 +147,14 @@ def print_header(data, path, locales):
     for locale in locales:
         f.write("  Message::Language" + locale.upper() + ",\n")
     f.write("};\n\n")
+
+    if generate_ISO6391():
+        # Language ISO639-1 codes
+        f.write("constexpr const Message LanguageISO6391Names[NumberOfLanguages] = {\n");
+        for locale in locales:
+            f.write("  Message::LanguageISO6391" + locale.upper() + ",\n")
+        f.write("};\n\n")
+
     f.write("}\n\n")
     f.write("#endif\n")
     f.close()

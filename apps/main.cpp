@@ -31,11 +31,13 @@ void ion_main(int argc, const char * const argv[]) {
      * $ ./epsilon.elf --language fr
      */
     if (strcmp(argv[i], "--language") == 0 && argc > i+1) {
-      const char * languageIdentifiers[] = {"none", "en", "fr", "es", "de", "pt"};
       const char * requestedLanguageId = argv[i+1];
-      for (int i=0; i<sizeof(languageIdentifiers)/sizeof(languageIdentifiers[0]); i++) {
-        if (strcmp(requestedLanguageId, languageIdentifiers[i]) == 0) {
-          GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)i);
+      if (strcmp(requestedLanguageId, "none") == 0) {
+        continue;
+      }
+      for (int j = 0; j < I18n::NumberOfLanguages; j++) {
+        if (strcmp(requestedLanguageId, I18n::translate(I18n::LanguageISO6391Names[j])) == 0) {
+          GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)j);
           break;
         }
       }

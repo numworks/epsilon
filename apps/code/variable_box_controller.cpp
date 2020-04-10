@@ -75,9 +75,15 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
 }
 
 KDCoordinate VariableBoxController::rowHeight(int j) {
-  int cellType = typeAndOriginAtLocation(j);
+  NodeOrigin cellOrigin = NodeOrigin::CurrentScript;
+  int cumulatedOriginsCount = 0;
+  int cellType = typeAndOriginAtLocation(j, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    return k_simpleItemRowHeight; // TODO LEA
+    //TODO LEA if cellOrigin == Imported?
+    if (scriptNodeAtIndex(j - cumulatedOriginsCount)->description() != nullptr) {
+      return k_complexItemRowHeight;
+    }
+    return k_simpleItemRowHeight;
   }
   assert(cellType == k_subtitleCellType);
   return k_subtitleRowHeight;

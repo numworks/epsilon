@@ -36,8 +36,8 @@ private:
   constexpr static int k_maxScriptNodesCount = 32; //TODO LEA
   constexpr static int k_totalBuiltinNodesCount = 98;
   constexpr static uint8_t k_scriptOriginsCount = 3;
-  constexpr static uint8_t k_subtitleCellType = 0;
-  constexpr static uint8_t k_itemCellType = 1;
+  constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
+  constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
   constexpr static KDCoordinate k_subtitleRowHeight = 23;
   constexpr static KDCoordinate k_simpleItemRowHeight = 27;
   constexpr static KDCoordinate k_complexItemRowHeight = 44;

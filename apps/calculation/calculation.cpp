@@ -161,7 +161,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
   if (displayOutput(context) == DisplayOutput::ExactOnly) {
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-    singleLine = exactOutputWidth + inputWidth < maxWidth - 40 - Metric::EllipsisCellWidth;
+    singleLine = exactOutputWidth + inputWidth < maxWidth - 40;
     if (singleLine && !allExpressionsInline) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
@@ -194,7 +194,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
 
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-    singleLine = approximateOutputWidth + inputWidth < maxWidth - 40 - Metric::EllipsisCellWidth;
+    singleLine = approximateOutputWidth + inputWidth < maxWidth - 40;
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
       
       if (singleLine && !allExpressionsInline) {
@@ -214,7 +214,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-      singleLine = exactOutputWidth + approximateOutputWidth + inputWidth < maxWidth - 70 - Metric::EllipsisCellWidth;
+      singleLine = exactOutputWidth + approximateOutputWidth + inputWidth < maxWidth - 70;
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
       if (singleLine && !allExpressionsInline) {
         result = maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline)) + singleMargin;

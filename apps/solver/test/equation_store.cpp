@@ -14,7 +14,6 @@ namespace Solver {
 void addEquationWithText(EquationStore * equationStore, const char * text, Context * context) {
   Ion::Storage::Record::ErrorStatus err = equationStore->addEmptyModel();
   quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, text);
-  (void) err; // Silence warning in release mode
   Ion::Storage::Record record = equationStore->recordAtIndex(equationStore->numberOfModels()-1);
   Shared::ExpiringPointer<Equation> model = equationStore->modelForRecord(record);
   model->setContent(text, context);

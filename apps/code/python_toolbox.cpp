@@ -179,7 +179,18 @@ const ToolboxMessageTree KandinskyModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSetPixel, I18n::Message::PythonSetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColor, I18n::Message::PythonColor),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillRect, I18n::Message::PythonFillRect)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillRect, I18n::Message::PythonFillRect),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBlue, I18n::Message::PythonTurtleBlue, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandRed, I18n::Message::PythonTurtleRed, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGreen, I18n::Message::PythonTurtleGreen, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandYellow, I18n::Message::PythonTurtleYellow, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBrown, I18n::Message::PythonTurtleBrown, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBlack, I18n::Message::PythonTurtleBlack, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandWhite, I18n::Message::PythonTurtleWhite, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPink, I18n::Message::PythonTurtlePink, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandOrange, I18n::Message::PythonTurtleOrange, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPurple, I18n::Message::PythonTurtlePurple, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGrey, I18n::Message::PythonTurtleGrey, false)
 };
 
 const ToolboxMessageTree IonModuleChildren[] = {

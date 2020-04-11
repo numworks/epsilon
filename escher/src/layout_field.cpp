@@ -476,11 +476,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
       setEditing(true);
     }
     if (event.hasText()) {
-      if(event.text() == "%" && Ion::Events::isLockActive() ){
-        m_contentView.cursor()->performBackspace();
-      } else {
-        handleEventWithText(event.text());
-      }
+      handleEventWithText(event.text());
     } else if (event == Ion::Events::Paste) {
       handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
     } else {

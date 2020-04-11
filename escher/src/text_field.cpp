@@ -414,11 +414,6 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
-  if(event.hasText()){
-    if(event.text() == "%" && Ion::Events::isLockActive() ){
-      return removePreviousGlyph();
-    }
-  }
   assert(m_delegate != nullptr);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;

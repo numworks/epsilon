@@ -54,9 +54,6 @@ bool BatteryView::setIsPlugged(bool isPlugged) {
   return false;
 }
 
-KDColor s_flashWorkingBuffer[BatteryView::k_flashHeight*BatteryView::k_flashWidth];
-KDColor s_tickWorkingBuffer[BatteryView::k_tickHeight*BatteryView::k_tickWidth];
-
 void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
   assert(m_chargeState != Ion::Battery::Charge::EMPTY);
   /* We draw from left to right. The middle part representing the battery
@@ -72,7 +69,8 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
     // Charging: Yellow background with flash
     ctx->fillRect(KDRect(batteryInsideX, 0, batteryInsideWidth, k_batteryHeight), Palette::YellowLight);
     KDRect frame((k_batteryWidth-k_flashWidth)/2, 0, k_flashWidth, k_flashHeight);
-    ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask, s_flashWorkingBuffer);
+    KDColor flashWorkingBuffer[BatteryView::k_flashHeight*BatteryView::k_flashWidth];
+    ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask, flashWorkingBuffer);
   } else if (m_chargeState == Ion::Battery::Charge::LOW) {
     assert(!m_isPlugged);
     // Low: Quite empty battery
@@ -91,7 +89,8 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
     if (m_isPlugged) {
       // Plugged and full: Full battery with tick
       KDRect frame((k_batteryWidth-k_tickWidth)/2, (k_batteryHeight-k_tickHeight)/2, k_tickWidth, k_tickHeight);
-      ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)tickMask, s_tickWorkingBuffer);
+      KDColor tickWorkingBuffer[BatteryView::k_tickHeight*BatteryView::k_tickWidth];
+      ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)tickMask, tickWorkingBuffer);
     }
   }
 

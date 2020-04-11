@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(BinomCDFNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "BinomCDF";
   }
 #endif
@@ -37,7 +37,7 @@ private:
 class BinomCDF final : public BinomialDistributionFunction {
 public:
   BinomCDF(const BinomCDFNode * n) : BinomialDistributionFunction(n) {}
-  static BinomCDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static BinomCDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<BinomCDF, BinomCDFNode>({child0, child1, child2}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomcdf", 3, &UntypedBuilderThreeChildren<BinomCDF>);
 };
 

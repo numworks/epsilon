@@ -25,13 +25,12 @@ const uint8_t okMask[OkView::k_okSize][OkView::k_okSize] = {
   {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xE1, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0xE1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
-KDColor s_okWorkingBuffer[OkView::k_okSize*OkView::k_okSize];
-
 void OkView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height =  bounds().height();
   KDRect frame((width-k_okSize)/2, (height-k_okSize)/2, k_okSize, k_okSize);
-  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)okMask, s_okWorkingBuffer);
+  KDColor okWorkingBuffer[OkView::k_okSize*OkView::k_okSize];
+  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)okMask, okWorkingBuffer);
 }
 
 KDSize OkView::minimalSizeForOptimalDisplay() const {

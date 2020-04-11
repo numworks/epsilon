@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(FracPartNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "FracPart";
   }
 #endif
@@ -45,7 +45,7 @@ private:
 class FracPart final : public Expression {
 public:
   FracPart(const FracPartNode * n) : Expression(n) {}
-  static FracPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(&child, 1); }
+  static FracPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<FracPart, FracPartNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("frac", 1, &UntypedBuilderOneChild<FracPart>);
 

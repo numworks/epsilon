@@ -270,7 +270,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
-      if (determinant) { *determinant *= 0.0; }
+      if (determinant) { *determinant *= (T)0.0; }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -281,7 +281,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
           array[h*numberOfColumns+col] = temp;
         }
         // Update determinant: det *= -1
-        if (determinant) { *determinant *= -1.0; }
+        if (determinant) { *determinant *= (T)-1.0; }
       }
       // Set to 1 array[h][k] by linear combination
       T divisor = array[h*numberOfColumns+k];
@@ -378,17 +378,17 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
     Expression g = m.matrixChild(2,0);
     Expression h = m.matrixChild(2,1);
     Expression i = m.matrixChild(2,2);
-    constexpr int additionChildrenCount = 6;
-    Expression additionChildren[additionChildrenCount] = {
+    Tuple children = {
       Multiplication::Builder(a.clone(), e.clone(), i.clone()),
       Multiplication::Builder(b.clone(), f.clone(), g.clone()),
       Multiplication::Builder(c.clone(), d.clone(), h.clone()),
       Multiplication::Builder(Rational::Builder(-1), c, e, g),
       Multiplication::Builder(Rational::Builder(-1), b, d, i),
-      Multiplication::Builder(Rational::Builder(-1), a, f, h)};
-    Expression result = Addition::Builder(additionChildren, additionChildrenCount);
-    for (int i = 0; i < additionChildrenCount; i++) {
-      additionChildren[i].shallowReduce(reductionContext);
+      Multiplication::Builder(Rational::Builder(-1), a, f, h)
+    };
+    Expression result = Addition::Builder(children);
+    for (Expression child : children) {
+      child.shallowReduce(reductionContext);
     }
     return result;
   }

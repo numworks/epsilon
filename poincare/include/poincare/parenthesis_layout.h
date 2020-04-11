@@ -21,13 +21,12 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(ParenthesisLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ParenthesisLayout";
   }
 #endif
 
 protected:
-  static KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   KDSize computeSize() override {
     return KDSize(ParenthesisWidth(), HeightGivenChildHeight(childHeight()));
   }

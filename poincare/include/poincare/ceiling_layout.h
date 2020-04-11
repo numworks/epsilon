@@ -22,7 +22,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(CeilingLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "CeilingLayout";
   }
 #endif
@@ -33,7 +33,7 @@ protected:
 
 class CeilingLayout final : public Layout {
 public:
-  static CeilingLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>(&child, 1); }
+  static CeilingLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>({child}); }
   CeilingLayout() = delete;
 };
 

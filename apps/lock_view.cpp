@@ -12,11 +12,10 @@ const uint8_t lockMask[LockView::k_lockHeight][LockView::k_lockWidth] = {
   {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 };
 
-KDColor s_lockWorkingBuffer[LockView::k_lockHeight*LockView::k_lockWidth];
-
 void LockView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect frame((bounds().width() - k_lockWidth)/2,  (bounds().height()-k_lockHeight)/2, k_lockWidth, k_lockHeight);
-  ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)lockMask, s_lockWorkingBuffer);
+  KDColor lockWorkingBuffer[LockView::k_lockHeight*LockView::k_lockWidth];
+  ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)lockMask, lockWorkingBuffer);
 }
 
 KDSize LockView::minimalSizeForOptimalDisplay() const {

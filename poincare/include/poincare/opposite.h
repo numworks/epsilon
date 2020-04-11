@@ -17,7 +17,7 @@ public:
   size_t size() const override { return sizeof(OppositeNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Opposite";
   }
 #endif
@@ -50,7 +50,7 @@ class Opposite final : public Expression {
 public:
   Opposite(const OppositeNode * n) : Expression(n) {}
   static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
-  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(&child, 1); }
+  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>({child}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

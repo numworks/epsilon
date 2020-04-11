@@ -37,7 +37,7 @@ public:
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void log(std::ostream & stream) const;
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Integer";
   }
   virtual void logAttributes(std::ostream & stream) const override;

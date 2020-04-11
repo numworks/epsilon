@@ -12,7 +12,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(HyperbolicArcTangentNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "HyperbolicArcTangent";
   }
 #endif
@@ -36,7 +36,7 @@ private:
 class HyperbolicArcTangent final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
-  static HyperbolicArcTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicArcTangent, HyperbolicArcTangentNode>(&child, 1); }
+  static HyperbolicArcTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicArcTangent, HyperbolicArcTangentNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("atanh", 1, &UntypedBuilderOneChild<HyperbolicArcTangent>);
 };

@@ -169,13 +169,11 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("1+2", Addition::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("(1)+2", Addition::Builder(Parenthesis::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("(1+2)", Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2))));
-  Expression nAryChildren[] = {BasedInteger::Builder(1),BasedInteger::Builder(2),BasedInteger::Builder(3)};
-  assert_parsed_expression_is("1+2+3", Addition::Builder(nAryChildren, 3));
-  nAryChildren[2] = Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4)));
-  assert_parsed_expression_is("1+2+(3+4)", Addition::Builder(nAryChildren, 3));
+  Expression::Tuple one_two_three = {BasedInteger::Builder(1),BasedInteger::Builder(2),BasedInteger::Builder(3)};
+  assert_parsed_expression_is("1+2+3", Addition::Builder(one_two_three));
+  assert_parsed_expression_is("1+2+(3+4)", Addition::Builder({BasedInteger::Builder(1), BasedInteger::Builder(2), Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4)))}));
   assert_parsed_expression_is("1×2", Multiplication::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
-  nAryChildren[2] = BasedInteger::Builder(3);
-  assert_parsed_expression_is("1×2×3", Multiplication::Builder(nAryChildren, 3));
+  assert_parsed_expression_is("1×2×3", Multiplication::Builder(one_two_three));
   assert_parsed_expression_is("1+2×3", Addition::Builder(BasedInteger::Builder(1), Multiplication::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
   assert_parsed_expression_is("1/2", Division::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("(1/2)", Parenthesis::Builder(Division::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2))));

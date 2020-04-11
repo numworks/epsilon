@@ -2,6 +2,4 @@
 
 namespace Poincare {
 
-KDColor ParenthesisLayoutNode::s_parenthesisWorkingBuffer[];
-
 }

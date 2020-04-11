@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(ParenthesisNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Parenthesis";
   }
 #endif
@@ -40,7 +40,7 @@ private:
 class Parenthesis final : public Expression {
 public:
   Parenthesis(const ParenthesisNode * n) : Expression(n) {}
-  static Parenthesis Builder(Expression child) { return TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(&child, 1); }
+  static Parenthesis Builder(Expression child) { return TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>({child}); }
   // Expression
   Expression shallowReduce();
 };

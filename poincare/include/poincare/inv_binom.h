@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(InvBinomNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "InvBinom";
   }
 #endif
@@ -38,7 +38,7 @@ private:
 class InvBinom final : public BinomialDistributionFunction {
 public:
   InvBinom(const InvBinomNode * n) : BinomialDistributionFunction(n) {}
-  static InvBinom Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static InvBinom Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>({child0, child1, child2}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("invbinom", 3, &UntypedBuilderThreeChildren<InvBinom>);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

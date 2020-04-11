@@ -14,7 +14,7 @@ public:
   // Tree
   size_t size() const override { return sizeof(MultiplicationNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Multiplication";
   }
 #endif
@@ -69,12 +69,12 @@ class Multiplication : public NAryExpression {
   friend class UnitConvert;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
-  static Multiplication Builder() { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(); }
-  static Multiplication Builder(Expression e1) { return Multiplication::Builder(&e1, 1); }
-  static Multiplication Builder(Expression e1, Expression e2) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
-  static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
-  static Multiplication Builder(Expression e1, Expression e2, Expression e3, Expression e4) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2, e3, e4).array(), 4); }
-  static Multiplication Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(children, numberOfChildren); }
+  static Multiplication Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(convert(children)); }
+  // TODO: Get rid of those helpers
+  static Multiplication Builder(Expression e1) { return Multiplication::Builder({e1}); }
+  static Multiplication Builder(Expression e1, Expression e2) { return Multiplication::Builder({e1, e2}); }
+  static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication::Builder({e1, e2, e3}); }
+  static Multiplication Builder(Expression e1, Expression e2, Expression e3, Expression e4) { return Multiplication::Builder({e1, e2, e3, e4}); }
 
   // Properties
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;

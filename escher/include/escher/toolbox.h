@@ -25,8 +25,8 @@ protected:
   bool returnToPreviousMenu() override;
   virtual int maxNumberOfDisplayedRows() = 0;
   virtual const ToolboxMessageTree * rootModel() const = 0;
-  virtual MessageTableCellWithMessage * leafCellAtIndex(int index) override = 0;
-  virtual MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
+  MessageTableCellWithMessage * leafCellAtIndex(int index) override = 0;
+  MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
   mutable ToolboxMessageTree * m_messageTreeModel;
   /* m_messageTreeModel points at the messageTree of the tree (describing the
    * whole model) where we are located. It enables to know which rows are leaves

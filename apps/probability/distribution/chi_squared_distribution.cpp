@@ -44,7 +44,7 @@ double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x
     return 0.0;
   }
   double result = 0.0;
-  if (regularizedGamma(m_parameter1/2.0, x/2.0, k_regularizedGammaPrecision, k_maxRegularizedGammaIterations, &result)) {
+  if (regularizedGamma(m_parameter1/2.0f, x/2.0, k_regularizedGammaPrecision, k_maxRegularizedGammaIterations, &result)) {
     return result;
   }
   return NAN;

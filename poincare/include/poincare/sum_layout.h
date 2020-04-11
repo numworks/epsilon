@@ -16,7 +16,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(SumLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "SumLayout";
   }
 #endif
@@ -27,7 +27,7 @@ private:
 
 class SumLayout final : public Layout {
 public:
-  static SumLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<SumLayout,SumLayoutNode>(ArrayBuilder<TreeHandle>(argument, variable, lowerB, upperB).array(), 4); }
+  static SumLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<SumLayout,SumLayoutNode>({argument, variable, lowerB, upperB}); }
   SumLayout() = delete;
 };
 

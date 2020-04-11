@@ -39,6 +39,24 @@ public:
   constexpr static size_t numberOfDataColors() { return sizeof(DataColor)/sizeof(KDColor); }
   constexpr static size_t numberOfLightDataColors() { return sizeof(DataColorLight)/sizeof(KDColor); }
   static KDColor nextDataColor(int * colorIndex);
+
+private :
+  class NameColorPair {
+  public:
+    constexpr NameColorPair(const char * name, KDColor color) :
+      m_name(name),
+      m_color(color)
+    {}
+    const char * name() const { return m_name; }
+    KDColor color() const { return m_color; }
+  private:
+    const char * m_name;
+    KDColor m_color;
+  };
+public :
+  static bool ColorFromString(const char* string, KDColor * buffer);
 };
+
+
 
 #endif

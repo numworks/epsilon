@@ -97,8 +97,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     // Outputs hold exact output, approximate output and its duplicate
     constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
     Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-    #if EPSILON_USE_SYMBOLIC
-    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinition);
+    #if EPSILON_USE_SYMBOLIC == 1
+    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
     #else
     PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     #endif

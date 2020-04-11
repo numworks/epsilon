@@ -26,7 +26,7 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
 
 KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
   assert(mode == GlobalPreferences::ExamMode::Standard);
-  #if EPSILON_USE_SYMBOLIC
+  #if EPSILON_USE_SYMBOLIC == 1
   return KDColorGreen;
   #else
   return KDColorRed;

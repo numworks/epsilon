@@ -102,19 +102,6 @@ private:
     Forward = 2
   };
 
-  class NameColorPair {
-  public:
-    constexpr NameColorPair(const char * name, KDColor color) :
-      m_name(name),
-      m_color(color)
-    {}
-    const char * name() const { return m_name; }
-    KDColor color() const { return m_color; }
-  private:
-    const char * m_name;
-    KDColor m_color;
-  };
-
   void setHeadingPrivate(mp_float_t angle);
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }

@@ -1,0 +1,18 @@
+#ifndef LIBAXX_ALGORITHM
+#define LIBAXX_ALGORITHM
+
+namespace std {
+
+template<class T>
+inline const T & min(const T & a, const T & b ) {
+  return (b < a) ? b : a;
+}
+
+template<class T>
+inline const T & max(const T & a, const T & b ) {
+  return (b > a) ? b : a;
+}
+
+}
+
+#endif

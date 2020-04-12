@@ -258,7 +258,7 @@ KDSize HorizontalLayoutNode::computeSize() {
   for (LayoutNode * l : children()) {
     KDSize childSize = l->layoutSize();
     totalWidth += childSize.width();
-    maxUnderBaseline = std::max(maxUnderBaseline, childSize.height() - l->baseline());
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - l->baseline());
     maxAboveBaseline = std::max(maxAboveBaseline, l->baseline());
   }
   return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
@@ -310,7 +310,7 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart
   for (int i = firstSelectedNodeIndex; i <= secondSelectedNodeIndex; i++) {
     Layout childi = thisLayout.childAtIndex(i);
     KDSize childSize = childi.layoutSize();
-    maxUnderBaseline = std::max(maxUnderBaseline, childSize.height() - childi.baseline());
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - childi.baseline());
     maxAboveBaseline = std::max(maxAboveBaseline, childi.baseline());
   }
   return KDRect(KDPoint(selectionXStart, const_cast<HorizontalLayoutNode *>(this)->baseline() - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline));

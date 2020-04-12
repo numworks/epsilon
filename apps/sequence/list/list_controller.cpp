@@ -54,7 +54,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     return defaultHeight;
   }
   KDCoordinate sequenceHeight = layout.layoutSize().height();
-  return std::max(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
+  return std::max<KDCoordinate>(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

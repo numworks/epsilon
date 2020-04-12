@@ -106,3 +106,13 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   micropython_port_interrupt_if_needed();
   return mp_const_none;
 }
+
+mp_obj_t modkandinsky_line(size_t n_args, const mp_obj_t * args){
+  KDPoint point1(mp_obj_get_int(args[0]), mp_obj_get_int(args[1]));
+  KDPoint point2(mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
+  KDColor color = ColorForTuple(args[4]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->drawLine(point1, point2, color);
+  micropython_port_interrupt_if_needed();
+  return mp_const_none;
+}

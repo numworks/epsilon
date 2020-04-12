@@ -176,7 +176,7 @@ KDSize SequenceLayoutNode::computeSize() {
 }
 
 KDCoordinate SequenceLayoutNode::computeBaseline() {
-  return std::max(upperBoundLayout()->layoutSize().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
+  return std::max<KDCoordinate>(upperBoundLayout()->layoutSize().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
 }
 
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
@@ -271,7 +271,7 @@ KDCoordinate SequenceLayoutNode::completeLowerBoundX() {
 }
 
 KDCoordinate SequenceLayoutNode::subscriptBaseline() {
-  return std::max(std::max(variableLayout()->baseline(), lowerBoundLayout()->baseline()), k_font->stringSize(k_equal).height()/2);
+  return std::max<KDCoordinate>(std::max(variableLayout()->baseline(), lowerBoundLayout()->baseline()), k_font->stringSize(k_equal).height()/2);
 }
 
 }

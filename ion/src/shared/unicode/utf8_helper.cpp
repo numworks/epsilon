@@ -173,7 +173,8 @@ size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoin
     codePointPointer = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
-  size_t copySize = std::min(dstSize - 1, codePointPointer - src);
+  assert(codePointPointer >= src);
+  size_t copySize = std::min(dstSize - 1, static_cast<size_t>(codePointPointer - src));
   assert(UTF8Helper::CodePointIs(src + copySize, 0) || UTF8Helper::CodePointIs(src + copySize, c));
   memmove(dst, src, copySize);
   assert(copySize < dstSize);

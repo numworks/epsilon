@@ -417,7 +417,7 @@ void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, 
     m_font,
     textColor,
     backgroundColor,
-    drawSelection ? (selectionStart >= text ? std::min(length, selectionStart - text) : 0) : length
+    drawSelection ? (selectionStart >= text ? std::min<KDCoordinate>(length, selectionStart - text) : 0) : length
   );
   if (!drawSelection) {
     return;

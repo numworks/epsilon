@@ -7,13 +7,12 @@
 #include <poincare/unreal.h>
 #include <string.h>
 #include <cmath>
+#include <algorithm>
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Calculation {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 bool Calculation::operator==(const Calculation& c) {
   return strcmp(inputText(), c.inputText()) == 0
@@ -158,7 +157,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     if (allExpressionsInline) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
+      result = std::max(inputBaseline, exactOutputBaseline) + std::max(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
     } else {
       result = inputHeight+exactOutputHeight;
     }
@@ -185,7 +184,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
       if (allExpressionsInline) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-        result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline);
+        result = std::max(inputBaseline, approximateOutputBaseline) + std::max(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline);
       } else {
         result = inputHeight+approximateOutputHeight;
       }
@@ -195,9 +194,9 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
       if (allExpressionsInline) {
-        result = maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline));
+        result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) + std::max(inputHeight - inputBaseline, std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline));
       } else {
-        KDCoordinate outputHeight = maxCoordinate(exactOutputBaseline, approximateOutputBaseline) + maxCoordinate(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
+        KDCoordinate outputHeight = std::max(exactOutputBaseline, approximateOutputBaseline) + std::max(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
         result = inputHeight + outputHeight;
       }
     }

@@ -5,10 +5,9 @@
 #include <poincare/serialization_helper.h>
 #include <escher/metric.h>
 #include <assert.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
    if (cursor->position() == LayoutCursor::Position::Left
@@ -170,7 +169,7 @@ void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
 }
 
 KDSize FractionLayoutNode::computeSize() {
-  KDCoordinate width = maxCoordinate(numeratorLayout()->layoutSize().width(), denominatorLayout()->layoutSize().width())
+  KDCoordinate width = std::max(numeratorLayout()->layoutSize().width(), denominatorLayout()->layoutSize().width())
     + 2*Metric::FractionAndConjugateHorizontalOverflow+2*Metric::FractionAndConjugateHorizontalMargin;
   KDCoordinate height = numeratorLayout()->layoutSize().height()
     + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin

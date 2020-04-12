@@ -1,4 +1,5 @@
 #include "plot_store.h"
+#include <algorithm>
 
 namespace Matplotlib {
 
@@ -160,15 +161,12 @@ void PlotStore::addLabel(mp_obj_t x, mp_obj_t y, mp_obj_t string) {
 
 // Axes
 
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
-
 void updateRange(float * xMin, float * xMax, float * yMin, float * yMax, float x, float y) {
   if (!std::isnan(x) && !std::isinf(x) && !std::isnan(y) && !std::isinf(y)) {
-    *xMin = minFloat(*xMin, x);
-    *xMax = maxFloat(*xMax, x);
-    *yMin = minFloat(*yMin, y);
-    *yMax = maxFloat(*yMax, y);
+    *xMin = std::min(*xMin, x);
+    *xMax = std::max(*xMax, x);
+    *yMin = std::min(*yMin, y);
+    *yMax = std::max(*yMax, y);
   }
 }
 

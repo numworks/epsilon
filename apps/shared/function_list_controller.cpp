@@ -1,10 +1,9 @@
 #include "function_list_controller.h"
 #include "function_app.h"
 #include "function_expression_cell.h"
+#include <algorithm>
 
 namespace Shared {
-
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 FunctionListController::FunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   ExpressionModelListController(parentResponder, text),
@@ -243,7 +242,7 @@ void FunctionListController::computeTitlesColumnWidth(bool forceMax) {
     return;
   }
   KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
-  m_titlesColumnWidth = maxInt(maxTitleWidth, k_minTitleColumnWidth);
+  m_titlesColumnWidth = std::max(maxTitleWidth, k_minTitleColumnWidth);
 }
 
 TabViewController * FunctionListController::tabController() const {
@@ -262,7 +261,7 @@ KDCoordinate FunctionListController::maxFunctionNameWidth() {
     const char * functionName = record.fullName();
     const char * dotPosition = strchr(functionName, Ion::Storage::k_dotChar);
     assert(dotPosition != nullptr);
-    maxNameLength = maxInt(maxNameLength, dotPosition-functionName);
+    maxNameLength = std::max(maxNameLength, dotPosition-functionName);
   }
   return nameWidth(maxNameLength + Function::k_parenthesedArgumentCodePointLength);
 }

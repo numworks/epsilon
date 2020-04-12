@@ -1,10 +1,9 @@
 #include "parser.h"
 #include <ion/unicode/utf8_decoder.h>
 #include <utility>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline Token::Type maxToken(Token::Type x, Token::Type y) { return ((int)x > (int) y ? x : y); }
 
 constexpr const Expression::FunctionHelper * Parser::s_reservedFunctions[];
 
@@ -185,7 +184,7 @@ void Parser::parseEmpty(Expression & leftHandSide, Token::Type stoppingType) {
 
 void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    Expression rightHandSide = parseUntil(maxToken(stoppingType, Token::Minus));
+    Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Minus));
     if (m_status != Status::Progress) {
       return;
     }

@@ -5,15 +5,11 @@
 #include <assert.h>
 #include <cmath>
 #include <float.h>
+#include <algorithm>
 
 using namespace Poincare;
 
 namespace Shared {
-
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
-static inline double minDouble(double x, double y) { return x < y ? x : y; }
-static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, previousModelsVersions, rangeVersion),
@@ -92,13 +88,13 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     if (std::isnan(tMin)) {
       tMin = xMin;
     } else if (f->shouldClipTRangeToXRange()) {
-      tMin = maxFloat(tMin, xMin);
+      tMin = std::max(tMin, xMin);
     }
     double tMax = f->tMax();
     if (std::isnan(tMax)) {
       tMax = xMax;
     } else if (f->shouldClipTRangeToXRange()) {
-      tMax = minFloat(tMax, xMax);
+      tMax = std::min(tMax, xMax);
     }
   /* In practice, a step smaller than a pixel's width is needed for sampling
    * the values of a function. Otherwise some relevant extremal values may be
@@ -113,8 +109,8 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
       if (!std::isnan(x) && !std::isinf(x) && x >= xMin && x <= xMax) {
         float y = xy.x2();
         if (!std::isnan(y) && !std::isinf(y)) {
-          min = minFloat(min, y);
-          max = maxFloat(max, y);
+          min = std::min(min, y);
+          max = std::max(max, y);
         }
       }
     }
@@ -167,7 +163,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   double clippedT = m_cursor->t();
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
-    clippedT = minDouble(f->tMax(), maxDouble(f->tMin(), clippedT));
+    clippedT = std::min(f->tMax(), std::max(f->tMin(), clippedT));
   }
   Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context);
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());

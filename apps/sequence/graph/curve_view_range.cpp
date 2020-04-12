@@ -2,13 +2,12 @@
 #include <cmath>
 #include <ion.h>
 #include <poincare/preferences.h>
+#include <algorithm>
 
 using namespace Shared;
 using namespace Poincare;
 
 namespace Sequence {
-
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
   InteractiveCurveViewRange(delegate)
@@ -37,7 +36,7 @@ void CurveViewRange::normalize() {
   float xMean = xCenter();
   float yMean = yCenter();
 
-  const float unit = maxFloat(xGridUnit(), yGridUnit());
+  const float unit = std::max(xGridUnit(), yGridUnit());
 
   // Compute the X
   const float newXHalfRange = NormalizedXHalfRange(unit);

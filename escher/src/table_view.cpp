@@ -4,8 +4,7 @@
 extern "C" {
 #include <assert.h>
 }
-
-#define MIN(x,y) ((x)<(y) ? (x) : (y))
+#include <algorithm>
 
 TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource) :
   ScrollView(&m_contentView, scrollDataSource),
@@ -200,7 +199,7 @@ int TableView::ContentView::numberOfFullyDisplayableColumns() const {
 int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
   int displayedHeightWithOffset = m_dataSource->indexFromCumulatedHeight(m_tableView->bounds().height() + m_tableView->contentOffset().y());
-  return MIN(
+  return std::min(
     m_dataSource->numberOfRows(),
     displayedHeightWithOffset + 1
   )  - rowOffset;
@@ -209,7 +208,7 @@ int TableView::ContentView::numberOfDisplayableRows() const {
 int TableView::ContentView::numberOfDisplayableColumns() const {
   int columnOffset = columnsScrollingOffset();
   int displayedWidthWithOffset = m_dataSource->indexFromCumulatedWidth(m_tableView->bounds().width() + m_tableView->contentOffset().x());
-  return MIN(
+  return std::min(
     m_dataSource->numberOfColumns(),
     displayedWidthWithOffset + 1
   )  - columnOffset;

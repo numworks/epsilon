@@ -8,13 +8,11 @@
 #include <poincare/matrix_layout.h>
 #include <poincare/preferences.h>
 #include <assert.h>
+#include <algorithm>
 
 using namespace Poincare;
 using namespace Shared;
 using namespace Ion;
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
-static inline KDCoordinate maxInt(int x, int y) { return x > y ? x : y; }
 
 VariableBoxController::VariableBoxController() :
   NestedMenuController(nullptr, I18n::Message::Variables),
@@ -129,7 +127,7 @@ KDCoordinate VariableBoxController::rowHeight(int index) {
   if (m_currentPage != Page::RootMenu) {
     Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
     if (!layoutR.isUninitialized()) {
-      return maxCoordinate(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
+      return std::max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
   }
   return NestedMenuController::rowHeight(index);
@@ -289,7 +287,7 @@ void VariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
     // The deleted row is after the memoization
     return;
   }
-  for (int i = maxInt(0, rowIndex - m_firstMemoizedLayoutIndex); i < k_maxNumberOfDisplayedRows - 1; i++) {
+  for (int i = std::max(0, rowIndex - m_firstMemoizedLayoutIndex); i < k_maxNumberOfDisplayedRows - 1; i++) {
     m_layouts[i] = m_layouts[i+1];
   }
   m_layouts[k_maxNumberOfDisplayedRows - 1] = Layout();

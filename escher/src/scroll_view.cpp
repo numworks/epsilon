@@ -4,9 +4,7 @@
 extern "C" {
 #include <assert.h>
 }
-
-static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+#include <algorithm>
 
 ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
@@ -76,8 +74,8 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
 
   // Handle cases when the size of the view has decreased.
   setContentOffset(KDPoint(
-    minCoordinate(contentOffset().x(), maxCoordinate(minimalSizeForOptimalDisplay().width() - bounds().width(), 0)),
-    minCoordinate(contentOffset().y(), maxCoordinate(minimalSizeForOptimalDisplay().height() - bounds().height(), 0))));
+    std::min(contentOffset().x(), std::max(minimalSizeForOptimalDisplay().width() - bounds().width(), 0)),
+    std::min(contentOffset().y(), std::max(minimalSizeForOptimalDisplay().height() - bounds().height(), 0))));
 }
 
 void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {

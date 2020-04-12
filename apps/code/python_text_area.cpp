@@ -9,6 +9,7 @@ extern "C" {
 #include "py/lexer.h"
 }
 #include <stdlib.h>
+#include <algorithm>
 
 namespace Code {
 
@@ -20,8 +21,6 @@ constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
 constexpr KDColor HighlightColor = Palette::Select;
-
-static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
@@ -84,7 +83,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       line,
       fromColumn,
       lineStart,
-      minPointer(text + byteLength, lineEnd) - lineStart,
+      std::min(text + byteLength, lineEnd) - lineStart,
       StringColor,
       BackgroundColor,
       selectionStart,
@@ -107,7 +106,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
         line,
         fromColumn,
         spacesStart,
-        minPointer(text + byteLength, firstNonSpace) - spacesStart,
+        std::min(text + byteLength, firstNonSpace) - spacesStart,
         StringColor,
         BackgroundColor,
         selectionStart,
@@ -135,7 +134,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
             line,
             UTF8Helper::GlyphOffsetAtCodePoint(text, tokenEnd),
             tokenEnd,
-            minPointer(text + byteLength, tokenFrom) - tokenEnd,
+            std::min(text + byteLength, tokenFrom) - tokenEnd,
             StringColor,
             BackgroundColor,
             selectionStart,

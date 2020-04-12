@@ -5,10 +5,9 @@
 #include <poincare/horizontal_layout.h>
 #include <assert.h>
 #include <string.h>
+#include <algorithm>
 
 using namespace Poincare;
-
-static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
@@ -610,8 +609,8 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(rect, true);
   // Show the rect area around its baseline
   KDCoordinate underBaseline = rect.height() - baseline;
-  KDCoordinate minAroundBaseline = minCoordinate(baseline, underBaseline);
-  minAroundBaseline = minCoordinate(minAroundBaseline, bounds().height() / 2);
+  KDCoordinate minAroundBaseline = std::min(baseline, underBaseline);
+  minAroundBaseline = std::min(minAroundBaseline, bounds().height() / 2);
   KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline, rect.width(), 2 * minAroundBaseline);
   scrollToContentRect(balancedRect, true);
 }

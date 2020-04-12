@@ -3,10 +3,9 @@
 #include "../constant.h"
 #include <assert.h>
 #include <cmath>
+#include <algorithm>
 
 using namespace Poincare;
-
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 namespace Shared {
 
@@ -60,7 +59,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
 int EditableCellTableViewController::numberOfRows() const {
   int numberOfModelElements = 0;
   for (int i = 0; i < numberOfColumns(); i++) {
-    numberOfModelElements = maxInt(numberOfModelElements, numberOfElementsInColumn(i));
+    numberOfModelElements = std::max(numberOfModelElements, numberOfElementsInColumn(i));
   }
   return 1 + numberOfModelElements + (numberOfModelElements < maxNumberOfElements());
 }

@@ -1,9 +1,7 @@
 #include <escher/table_cell.h>
 #include <escher/palette.h>
 #include <escher/metric.h>
-
-static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+#include <algorithm>
 
 TableCell::TableCell(Layout layout) :
   Bordered(),
@@ -95,21 +93,21 @@ void TableCell::layoutSubviews(bool force) {
     KDCoordinate y = k_separatorThickness;
     if (label) {
       y += k_verticalMargin;
-      KDCoordinate labelHeight = minCoordinate(labelSize.height(), height - y - k_separatorThickness - k_verticalMargin);
+      KDCoordinate labelHeight = std::min(labelSize.height(), height - y - k_separatorThickness - k_verticalMargin);
       label->setFrame(KDRect(horizontalMargin, y, width-2*horizontalMargin, labelHeight), force);
       y += labelHeight + k_verticalMargin;
     }
     horizontalMargin = k_separatorThickness + k_horizontalMargin;
-    y = maxCoordinate(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin) - withMargin(subAccessorySize.height(), 0));
+    y = std::max(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin) - withMargin(subAccessorySize.height(), 0));
     if (subAccessory) {
-      KDCoordinate subAccessoryHeight = minCoordinate(subAccessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
+      KDCoordinate subAccessoryHeight = std::min(subAccessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, subAccessoryHeight), force);
       y += subAccessoryHeight;
     }
     horizontalMargin = k_separatorThickness + accessoryMargin();
-    y = maxCoordinate(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin));
+    y = std::max(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin));
     if (accessory) {
-      KDCoordinate accessoryHeight = minCoordinate(accessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
+      KDCoordinate accessoryHeight = std::min(accessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, accessoryHeight), force);
     }
   } else {
@@ -137,29 +135,29 @@ void TableCell::layoutSubviews(bool force) {
     KDCoordinate verticalMargin = k_separatorThickness;
     KDCoordinate x = 0;
     KDCoordinate labelX = k_separatorThickness + labelMargin();
-    KDCoordinate subAccessoryX = maxCoordinate(k_separatorThickness + k_horizontalMargin, width - k_separatorThickness - withMargin(accessorySize.width(), accessoryMargin()) - withMargin(subAccessorySize.width(), 0));
-    KDCoordinate accessoryX = maxCoordinate(k_separatorThickness + accessoryMargin(), width - k_separatorThickness - withMargin(accessorySize.width(), accessoryMargin()));
+    KDCoordinate subAccessoryX = std::max(k_separatorThickness + k_horizontalMargin, width - k_separatorThickness - withMargin(accessorySize.width(), accessoryMargin()) - withMargin(subAccessorySize.width(), 0));
+    KDCoordinate accessoryX = std::max(k_separatorThickness + accessoryMargin(), width - k_separatorThickness - withMargin(accessorySize.width(), accessoryMargin()));
     if (label) {
       x = labelX;
-      KDCoordinate labelWidth = minCoordinate(labelSize.width(), width - x - k_separatorThickness - labelMargin());
+      KDCoordinate labelWidth = std::min(labelSize.width(), width - x - k_separatorThickness - labelMargin());
       if (m_layout == Layout::HorizontalRightOverlap) {
-        labelWidth = minCoordinate(labelWidth, subAccessoryX - x - labelMargin());
+        labelWidth = std::min(labelWidth, subAccessoryX - x - labelMargin());
       }
       label->setFrame(KDRect(x, verticalMargin, labelWidth, height-2*verticalMargin), force);
       x += labelWidth + labelMargin();
     }
     if (subAccessory) {
-      x = maxCoordinate(x, subAccessoryX);
-      KDCoordinate subAccessoryWidth = minCoordinate(subAccessorySize.width(), width - x - k_separatorThickness - k_horizontalMargin);
+      x = std::max(x, subAccessoryX);
+      KDCoordinate subAccessoryWidth = std::min(subAccessorySize.width(), width - x - k_separatorThickness - k_horizontalMargin);
       if (m_layout == Layout::HorizontalRightOverlap) {
-        subAccessoryWidth = minCoordinate(subAccessoryWidth, accessoryX - x);
+        subAccessoryWidth = std::min(subAccessoryWidth, accessoryX - x);
       }
       subAccessory->setFrame(KDRect(x, verticalMargin, subAccessoryWidth, height-2*verticalMargin), force);
       x += subAccessoryWidth;
     }
     if (accessory) {
-      x = maxCoordinate(x, accessoryX);
-      KDCoordinate accessoryWidth = minCoordinate(accessorySize.width(), width - x - k_separatorThickness - accessoryMargin());
+      x = std::max(x, accessoryX);
+      KDCoordinate accessoryWidth = std::min(accessorySize.width(), width - x - k_separatorThickness - accessoryMargin());
       accessory->setFrame(KDRect(x, verticalMargin, accessoryWidth, height-2*verticalMargin), force);
     }
   }

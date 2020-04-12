@@ -15,10 +15,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <utility>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 bool MatrixNode::hasMatrixChild(Context * context) const {
   for (ExpressionNode * c : children()) {
@@ -93,7 +92,7 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
     }
   }
   currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, ']');
-  return minInt(currentChar, bufferSize-1);
+  return std::min(currentChar, bufferSize-1);
 }
 
 template<typename T>

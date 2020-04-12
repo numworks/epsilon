@@ -21,10 +21,9 @@ extern "C" {
 #if POINCARE_INTEGER_LOG
 #include<iostream>
 #endif
-namespace Poincare {
+#include <algorithm>
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
+namespace Poincare {
 
 /* To compute operations between Integers, we need an array where to store the
  * result digits. Instead of allocating it on the stack which would eventually
@@ -483,7 +482,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
     return Integer::Overflow(a.m_negative != b.m_negative);
   }
 
-  uint8_t size = minInt(a.numberOfDigits() + b.numberOfDigits(), k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
+  uint8_t size = std::min(a.numberOfDigits() + b.numberOfDigits(), k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
 
   memset(s_workingBuffer, 0, size*sizeof(native_uint_t));
 
@@ -552,7 +551,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     return Overflow(a.m_negative != b.m_negative);
   }
 
-  uint8_t size = maxInt(a.numberOfDigits(), b.numberOfDigits());
+  uint8_t size = std::max(a.numberOfDigits(), b.numberOfDigits());
   if (!subtract) {
     // Addition can overflow
     size++;
@@ -576,7 +575,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
       carry = (aDigit > result) || (bDigit > result); // There's been an overflow
     }
   }
-  size = minInt(size, k_maxNumberOfDigits+oneDigitOverflow);
+  size = std::min(size, k_maxNumberOfDigits+oneDigitOverflow);
   while (size>0 && s_workingBuffer[size-1] == 0) {
     size--;
   }
@@ -655,7 +654,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   // qDigits is a half_native_uint_t array and enable one digit overflow
   half_native_uint_t * qDigits = reinterpret_cast<half_native_uint_t *>(s_workingBufferDivision);
   // The quotient q has at maximum m+1 half digits but we set an extra half digit to 0 to enable to easily convert it from half digits to digits
-  memset(qDigits, 0, maxInt(m+1+1,2*k_maxNumberOfDigits)*sizeof(half_native_uint_t));
+  memset(qDigits, 0, std::max(m+1+1,2*k_maxNumberOfDigits)*sizeof(half_native_uint_t));
   // betaMB = B*beta^m
   Integer betaMB = B.multiplyByPowerOfBase(m);
   if (Integer::NaturalOrder(A,betaMB) >= 0) { // A >= B*beta^m
@@ -666,7 +665,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   for (int j = m-1; j >= 0; j--) {
     native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1); // (a[n+j]*beta+a[n+j-1])/b[n-1]
     half_native_uint_t baseMinus1 = (1 << 16) -1; // beta-1
-    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // minInt(qj2, beta -1)
+    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // std::min(qj2, beta -1)
     A = Integer::addition(A, multiplication(qDigits[j], B.multiplyByPowerOfBase(j), true), true, true); // A-q[j]*beta^j*B
     if (A.isNegative()) {
       Integer betaJM = B.multiplyByPowerOfBase(j); // betaJM = B*beta^j

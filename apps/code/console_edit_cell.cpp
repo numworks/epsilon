@@ -4,10 +4,9 @@
 #include <apps/i18n.h>
 #include <apps/global_preferences.h>
 #include <assert.h>
+#include <algorithm>
 
 namespace Code {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
   HighlightCell(),
@@ -70,7 +69,7 @@ const char * ConsoleEditCell::shiftCurrentTextAndClear() {
   char * textFieldBuffer = const_cast<char *>(m_textField.text());
   char * newTextPosition = textFieldBuffer + 1;
   assert(previousBufferSize > 0);
-  size_t copyLength = minInt(previousBufferSize - 1, strlen(textFieldBuffer));
+  size_t copyLength = std::min(previousBufferSize - 1, strlen(textFieldBuffer));
   memmove(newTextPosition, textFieldBuffer, copyLength);
   newTextPosition[copyLength] = 0;
   textFieldBuffer[0] = 0;

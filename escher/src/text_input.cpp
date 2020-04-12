@@ -2,11 +2,9 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <assert.h>
+#include <algorithm>
 
 /* TextInput::ContentView */
-
-static inline const char * minCharPointer(const char * x, const char * y) { return x < y ? x : y; }
-static inline const char * maxCharPointer(const char * x, const char * y) { return x > y ? x : y; }
 
 void TextInput::ContentView::setFont(const KDFont * font) {
   m_font = font;
@@ -16,7 +14,7 @@ void TextInput::ContentView::setFont(const KDFont * font) {
 void TextInput::ContentView::setCursorLocation(const char * location) {
   assert(location != nullptr);
   assert(location >= editedText());
-  const char * adjustedLocation = minCharPointer(location, editedText() + editedTextLength());
+  const char * adjustedLocation = std::min(location, editedText() + editedTextLength());
   m_cursorLocation = adjustedLocation;
   layoutSubviews();
 }
@@ -131,7 +129,7 @@ bool TextInput::removePreviousGlyph() {
 
 bool TextInput::setCursorLocation(const char * location) {
   assert(location != nullptr);
-  const char * adjustedLocation = maxCharPointer(location, text());
+  const char * adjustedLocation = std::max(location, text());
   willSetCursorLocation(&adjustedLocation);
   contentView()->setCursorLocation(adjustedLocation);
   scrollToCursor();

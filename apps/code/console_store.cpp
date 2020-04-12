@@ -11,7 +11,7 @@ void ConsoleStore::startNewSession() {
 
   m_history[0] = makePrevious(m_history[0]);
 
-  for (int i = 0; i < k_historySize - 1; i++) {
+  for (size_t i = 0; i < k_historySize - 1; i++) {
     if (m_history[i] == 0) {
       if (m_history[i+1] == 0) {
         return ;
@@ -24,7 +24,7 @@ void ConsoleStore::startNewSession() {
 ConsoleLine ConsoleStore::lineAtIndex(int i) const {
   assert(i >= 0 && i < numberOfLines());
   int currentLineIndex = 0;
-  for (int j=0; j<k_historySize; j++) {
+  for (size_t j=0; j<k_historySize; j++) {
     if (m_history[j] == 0) {
       currentLineIndex++;
       j++;
@@ -42,7 +42,7 @@ int ConsoleStore::numberOfLines() const {
     return 0;
   }
   int result = 0;
-  for (int i = 0; i < k_historySize - 1; i++) {
+  for (size_t i = 0; i < k_historySize - 1; i++) {
     if (m_history[i] == 0) {
       result++;
       if (m_history[i+1] == 0) {
@@ -95,7 +95,7 @@ const char * ConsoleStore::push(const char marker, const char * text) {
   if (ConsoleLine::sizeOfConsoleLine(textLength) > k_historySize - 1) {
     textLength = k_historySize - 1 - 1 - 1; // Marker, null termination and null marker.
   }
-  int i = indexOfNullMarker();
+  size_t i = indexOfNullMarker();
   // If needed, make room for the text we want to push.
   while (i + ConsoleLine::sizeOfConsoleLine(textLength) > k_historySize - 1) {
     deleteFirstLine();
@@ -112,11 +112,11 @@ ConsoleLine::Type ConsoleStore::lineTypeForMarker(char marker) const {
   return static_cast<ConsoleLine::Type>(marker-1);
 }
 
-int ConsoleStore::indexOfNullMarker() const {
+size_t ConsoleStore::indexOfNullMarker() const {
   if (m_history[0] == 0) {
     return 0;
   }
-  for (int i=0; i<k_historySize; i++) {
+  for (size_t i=0; i<k_historySize; i++) {
     if (m_history[i] == 0 && m_history[i+1] == 0) {
       return (i+1);
     }
@@ -128,13 +128,13 @@ int ConsoleStore::indexOfNullMarker() const {
 void ConsoleStore::deleteLineAtIndex(int index) {
   assert(index >=0 && index < numberOfLines());
   int currentLineIndex = 0;
-  for (int i = 0; i < k_historySize - 1; i++) {
+  for (size_t i = 0; i < k_historySize - 1; i++) {
     if (m_history[i] == 0) {
       currentLineIndex++;
       continue;
     }
     if (currentLineIndex == index) {
-      int nextLineStart = i;
+      size_t nextLineStart = i;
       while (m_history[nextLineStart] != 0 && nextLineStart < k_historySize - 2) {
         nextLineStart++;
       }
@@ -157,7 +157,7 @@ void ConsoleStore::deleteFirstLine() {
     secondLineMarkerIndex++;
   }
   secondLineMarkerIndex++;
-  for (int i=0; i<k_historySize - secondLineMarkerIndex; i++) {
+  for (size_t i=0; i<k_historySize - secondLineMarkerIndex; i++) {
     m_history[i] = m_history[secondLineMarkerIndex+i];
   }
 }
@@ -173,7 +173,7 @@ void ConsoleStore::deleteLastLine() {
   }
   int currentLineIndex = 1;
   int lastLineMarkerIndex = 0;
-  for (int i=0; i<k_historySize; i++) {
+  for (size_t i=0; i<k_historySize; i++) {
     if (m_history[i] == 0) {
       currentLineIndex++;
       if (currentLineIndex == lineCount) {

@@ -4,6 +4,7 @@
 #include "app.h"
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>
+#include <algorithm>
 #include <cmath>
 #include <assert.h>
 #include <float.h>
@@ -12,9 +13,6 @@ using namespace Poincare;
 using namespace Shared;
 
 namespace Statistics {
-
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex, int * selectedSeriesIndex) :
   MultipleDataViewController(parentResponder, store, selectedBarIndex, selectedSeriesIndex),
@@ -193,8 +191,8 @@ void HistogramController::preinitXRangeParameters() {
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
-      minValue = minFloat(minValue, m_store->minValue(i));
-      maxValue = maxFloat(maxValue, m_store->maxValue(i));
+      minValue = std::min(minValue, m_store->minValue(i));
+      maxValue = std::max(maxValue, m_store->maxValue(i));
     }
   }
   m_store->setXMin(minValue);

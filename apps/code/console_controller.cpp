@@ -3,6 +3,7 @@
 #include "script.h"
 #include "variable_box_controller.h"
 #include <apps/i18n.h>
+#include <algorithm>
 #include <assert.h>
 #include <escher/metric.h>
 #include <apps/global_preferences.h>
@@ -14,8 +15,6 @@ extern "C" {
 }
 
 namespace Code {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 static const char * sStandardPromptText = ">>> ";
 
@@ -487,7 +486,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
 
     /* Copy the script name without the extension ".py". The '.' is overwritten
      * by the null terminating char. */
-    int copySizeWithNullTerminatingZero = minInt(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
+    int copySizeWithNullTerminatingZero = std::min(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
     assert(copySizeWithNullTerminatingZero >= 0);
     assert(copySizeWithNullTerminatingZero <= k_maxImportCommandSize - currentChar);
     strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);

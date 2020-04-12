@@ -1,11 +1,10 @@
 #include "list_controller.h"
 #include "../app.h"
 #include <assert.h>
+#include <algorithm>
 
 using namespace Shared;
 using namespace Poincare;
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 namespace Sequence {
 
@@ -55,7 +54,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     return defaultHeight;
   }
   KDCoordinate sequenceHeight = layout.layoutSize().height();
-  return maxCoordinate(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
+  return std::max(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

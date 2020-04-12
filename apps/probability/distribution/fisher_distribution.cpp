@@ -3,10 +3,9 @@
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <cmath>
 #include <float.h>
+#include <algorithm>
 
 namespace Probability {
-
-static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
 float FisherDistribution::xMin() const {
   return -k_displayLeftMarginRatio * xMax();
@@ -74,7 +73,7 @@ double FisherDistribution::cumulativeDistributiveInverseForProbability(double * 
   if (*probability < DBL_EPSILON) {
     return 0.0;
   }
-  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, DBL_EPSILON, maxDouble(xMax(), 100.0));  // Ad-hoc value;
+  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, DBL_EPSILON, std::max(xMax(), 100.0));  // Ad-hoc value;
 }
 
 float FisherDistribution::mode() const {

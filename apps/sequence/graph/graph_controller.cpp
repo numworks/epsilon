@@ -2,14 +2,12 @@
 #include <cmath>
 #include <limits.h>
 #include "../app.h"
+#include <algorithm>
 
 using namespace Shared;
 using namespace Poincare;
 
 namespace Sequence {
-
-static inline int minInt(int x, int y) { return (x < y ? x : y); }
-static inline int maxInt(int x, int y) { return (x > y ? x : y); }
 
 GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, previousModelsVersions, rangeVersion, angleUnitVersion),
@@ -39,7 +37,7 @@ float GraphController::interestingXMin() const {
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
     Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    nmin = minInt(nmin, s->initialRank());
+    nmin = std::min(nmin, s->initialRank());
   }
   assert(nmin < INT_MAX);
   return nmin;
@@ -53,8 +51,8 @@ float GraphController::interestingXHalfRange() const {
   for (int i = 0; i < nbOfActiveModels; i++) {
     Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     int firstInterestingIndex = s->initialRank();
-    nmin = minInt(nmin, firstInterestingIndex);
-    nmax = maxInt(nmax, firstInterestingIndex + standardRange);
+    nmin = std::min(nmin, firstInterestingIndex);
+    nmax = std::max(nmax, firstInterestingIndex + standardRange);
   }
   assert(nmax - nmin >= standardRange);
   return nmax - nmin;

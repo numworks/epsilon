@@ -4,10 +4,9 @@
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/layout_helper.h>
 #include <assert.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 void BinomialCoefficientLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Left
@@ -79,7 +78,7 @@ int BinomialCoefficientLayoutNode::serialize(char * buffer, int bufferSize, Pref
 
 KDSize BinomialCoefficientLayoutNode::computeSize() {
   KDSize coefficientsSize = KDSize(
-      maxCoordinate(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()),
+      std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()),
       knHeight());
   KDCoordinate width = coefficientsSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth();
   return KDSize(width, coefficientsSize.height());
@@ -90,7 +89,7 @@ KDCoordinate BinomialCoefficientLayoutNode::computeBaseline() {
 }
 
 KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {
-  KDCoordinate horizontalCenter = ParenthesisLayoutNode::ParenthesisWidth() + maxCoordinate(nLayout()->layoutSize().width(), kLayout()->layoutSize().width())/2;
+  KDCoordinate horizontalCenter = ParenthesisLayoutNode::ParenthesisWidth() + std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width())/2;
   if (child == nLayout()) {
     return KDPoint(horizontalCenter - nLayout()->layoutSize().width()/2, 0);
   }
@@ -101,7 +100,7 @@ KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {
 void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Render the parentheses.
   KDCoordinate childHeight = knHeight();
-  KDCoordinate rightParenthesisPointX = maxCoordinate(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()) + LeftParenthesisLayoutNode::ParenthesisWidth();
+  KDCoordinate rightParenthesisPointX = std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()) + LeftParenthesisLayoutNode::ParenthesisWidth();
   LeftParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p, expressionColor, backgroundColor);
   RightParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor, backgroundColor);
 }

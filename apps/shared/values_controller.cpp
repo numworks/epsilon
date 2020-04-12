@@ -3,12 +3,12 @@
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <limits.h>
+#include <algorithm>
 
 using namespace Poincare;
 
 namespace Shared {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 static inline int absInt(int x) { return x < 0 ? -x : x; }
 
 // Constructor and helpers
@@ -338,9 +338,9 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
     }
     // Compute the buffer of the new cells of the memoized table
     int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
-    for (int ii = 0; ii < minInt(nbOfMemoizedColumns, maxI); ii++) {
+    for (int ii = 0; ii < std::min(nbOfMemoizedColumns, maxI); ii++) {
       int maxJ = numberOfElementsInColumn(absoluteColumnForValuesColumn(ii+m_firstMemoizedColumn)) - m_firstMemoizedRow;
-      for (int jj = 0; jj < minInt(k_maxNumberOfDisplayableRows, maxJ); jj++) {
+      for (int jj = 0; jj < std::min(k_maxNumberOfDisplayableRows, maxJ); jj++) {
         // Escape if already filled
         if (ii >= -offsetI && ii < -offsetI + nbOfMemoizedColumns && jj >= -offsetJ && jj < -offsetJ + k_maxNumberOfDisplayableRows) {
           continue;

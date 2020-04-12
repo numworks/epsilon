@@ -1,9 +1,8 @@
 #include "console_store.h"
 #include <string.h>
+#include <algorithm>
 
 namespace Code {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 void ConsoleStore::startNewSession() {
   if (k_historySize < 1) {
@@ -103,7 +102,7 @@ const char * ConsoleStore::push(const char marker, const char * text) {
     i = indexOfNullMarker();
   }
   m_history[i] = marker;
-  strlcpy(&m_history[i+1], text, minInt(k_historySize-(i+1),textLength+1));
+  strlcpy(&m_history[i+1], text, std::min(k_historySize-(i+1),textLength+1));
   m_history[i+1+textLength+1] = 0;
   return &m_history[i+1];
 }

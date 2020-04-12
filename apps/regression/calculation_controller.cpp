@@ -4,15 +4,13 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/preferences.h>
-
+#include <algorithm>
 #include <assert.h>
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Regression {
-
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder),
@@ -375,7 +373,7 @@ int CalculationController::maxNumberOfCoefficients() const {
   int numberOfDefinedSeries = m_store->numberOfNonEmptySeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     int currentNumberOfCoefs = m_store->modelForSeries(m_store->indexOfKthNonEmptySeries(i))->numberOfCoefficients();
-    maxNumberCoefficients = maxInt(maxNumberCoefficients, currentNumberOfCoefs);
+    maxNumberCoefficients = std::max(maxNumberCoefficients, currentNumberOfCoefs);
   }
   return maxNumberCoefficients;
 }

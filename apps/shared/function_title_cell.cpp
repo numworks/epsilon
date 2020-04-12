@@ -1,10 +1,8 @@
 #include "function_title_cell.h"
 #include <assert.h>
+#include <algorithm>
 
 namespace Shared {
-
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 void FunctionTitleCell::setOrientation(Orientation orientation) {
   m_orientation = orientation;
@@ -51,9 +49,9 @@ KDRect FunctionTitleCell::subviewFrame() const {
 
 float FunctionTitleCell::verticalAlignment() const {
   assert(m_orientation == Orientation::VerticalIndicator);
-  return maxFloat(
+  return std::max(
       0.0f,
-      minFloat(
+      std::min(
         1.0f,
         m_baseline < 0 ? 0.5f : verticalAlignmentGivenExpressionBaselineAndRowHeight(m_baseline, subviewFrame().height())));
 }

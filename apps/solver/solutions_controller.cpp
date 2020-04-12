@@ -10,13 +10,12 @@
 #include <poincare/symbol_abstract.h>
 #include <poincare/symbol.h>
 #include <poincare/vertical_offset_layout.h>
+#include <algorithm>
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Solver {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 
@@ -260,7 +259,7 @@ KDCoordinate SolutionsController::rowHeight(int j) {
     Poincare::Layout approximateLayout = m_equationStore->exactSolutionLayoutAtIndex(j, false);
     KDCoordinate exactLayoutHeight = exactLayout.layoutSize().height();
     KDCoordinate approximateLayoutHeight = approximateLayout.layoutSize().height();
-    KDCoordinate layoutHeight = maxCoordinate(exactLayout.baseline(), approximateLayout.baseline()) + maxCoordinate(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
+    KDCoordinate layoutHeight = std::max(exactLayout.baseline(), approximateLayout.baseline()) + std::max(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
   if (j == rowOfUserVariablesMessage) {

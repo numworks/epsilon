@@ -4,8 +4,7 @@
 #include "device.h"
 #include "interface.h"
 #include "request_recipient.h"
-
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#include <algorithm>
 
 namespace Ion {
 namespace Device {
@@ -98,7 +97,7 @@ void Endpoint0::readAndDispatchSetupPacket() {
   };
 
   m_request = SetupPacket(m_largeBuffer);
-  uint16_t maxBufferLength = MIN(m_request.wLength(), MaxTransferSize);
+  uint16_t maxBufferLength = std::min(m_request.wLength(), MaxTransferSize);
 
   // Forward the request to the request recipient
   uint8_t type = static_cast<uint8_t>(m_request.recipientType());
@@ -261,7 +260,7 @@ void Endpoint0::clearForOutTransactions(uint16_t wLength) {
 
 int Endpoint0::receiveSomeData() {
   // If it is the first chunk of data to be received, m_transferBufferLength is 0.
-  uint16_t packetSize = MIN(k_maxPacketSize, m_request.wLength() - m_transferBufferLength);
+  uint16_t packetSize = std::min(k_maxPacketSize, m_request.wLength() - m_transferBufferLength);
   uint16_t sizeOfPacketRead = readPacket(m_largeBuffer + m_transferBufferLength, packetSize);
   if (sizeOfPacketRead != packetSize) {
     stallTransaction();
@@ -273,7 +272,7 @@ int Endpoint0::receiveSomeData() {
 
 uint16_t Endpoint0::readPacket(void * buffer, uint16_t length) {
   uint32_t * buffer32 = (uint32_t *) buffer;
-  uint16_t buffer32Length = MIN(length, m_receivedPacketSize);
+  uint16_t buffer32Length = std::min(length, m_receivedPacketSize);
 
   int i;
   // The RX FIFO is read 4 bytes by 4 bytes

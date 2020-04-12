@@ -11,7 +11,6 @@
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <algorithm>
-#include <stdio.h>
 
 namespace Poincare {
 

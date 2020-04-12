@@ -1,7 +1,6 @@
 #include <escher/warning_controller.h>
 #include <escher/container.h>
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+#include <algorithm>
 
 WarningController::ContentView::ContentView() :
   SolidColorView(KDColorBlack),
@@ -46,7 +45,7 @@ KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const  {
   }
   assert(numberOfSubviews() == 2);
   KDSize textSize2 = m_textView2.minimalSizeForOptimalDisplay();
-  return KDSize(maxCoordinate(textSize1.width(), textSize2.width()) + k_horizontalMargin,
+  return KDSize(std::max(textSize1.width(), textSize2.width()) + k_horizontalMargin,
       textSize1.height() + textSize2.height() + 2*k_topAndBottomMargin + k_middleMargin);
 }
 

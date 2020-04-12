@@ -78,7 +78,7 @@ double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(doubl
     2.0 * *probability * std::exp(std::lgamma(ceilKOver2)) / (exp(-kOver2Minus1) * std::pow(kOver2Minus1, kOver2Minus1)) :
     30.0; // Ad hoc value
   xmax = std::isnan(xmax) ? 1000000000.0 : xmax;
-  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, FLT_EPSILON, std::max(xMax(), xmax));
+  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, FLT_EPSILON, std::max<double>(xMax(), xmax));
 }
 
 }

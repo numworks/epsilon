@@ -14,7 +14,7 @@ KDSize CondensedSumLayoutNode::computeSize() {
   KDSize subscriptSize = subscriptLayout()->layoutSize();
   KDSize superscriptSize = superscriptLayout()->layoutSize();
   KDCoordinate sizeWidth = baseSize.width() + std::max(subscriptSize.width(), superscriptSize.width());
-  KDCoordinate sizeHeight = std::max(baseSize.height()/2, subscriptSize.height()) + std::max(baseSize.height()/2, superscriptSize.height());
+  KDCoordinate sizeHeight = std::max<KDCoordinate>(baseSize.height()/2, subscriptSize.height()) + std::max<KDCoordinate>(baseSize.height()/2, superscriptSize.height());
   return KDSize(sizeWidth, sizeHeight);
 }
 
@@ -28,7 +28,7 @@ KDPoint CondensedSumLayoutNode::positionOfChild(LayoutNode * child) {
   }
   if (child == subscriptLayout()) {
     x = baseSize.width();
-    y = std::max(baseSize.height()/2, superscriptSize.height());
+    y = std::max<KDCoordinate>(baseSize.height()/2, superscriptSize.height());
   }
   if (child == superscriptLayout()) {
     x = baseSize.width();

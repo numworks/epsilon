@@ -575,7 +575,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
       carry = (aDigit > result) || (bDigit > result); // There's been an overflow
     }
   }
-  size = std::min(size, k_maxNumberOfDigits+oneDigitOverflow);
+  size = std::min<int>(size, k_maxNumberOfDigits+oneDigitOverflow);
   while (size>0 && s_workingBuffer[size-1] == 0) {
     size--;
   }

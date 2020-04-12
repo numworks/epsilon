@@ -179,7 +179,7 @@ KDSize NthRootLayoutNode::computeSize() {
 }
 
 KDCoordinate NthRootLayoutNode::computeBaseline() {
-  return std::max(
+  return std::max<KDCoordinate>(
       radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
       adjustedIndexSize().height());
 }

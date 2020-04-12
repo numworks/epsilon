@@ -76,5 +76,4 @@ void PlotView::traceLabel(KDContext * ctx, KDRect r, PlotStore::Label label) con
   );
 }
 
-
 }

@@ -52,7 +52,7 @@ float GraphController::interestingXHalfRange() const {
     Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     int firstInterestingIndex = s->initialRank();
     nmin = std::min(nmin, firstInterestingIndex);
-    nmax = std::max(nmax, firstInterestingIndex + standardRange);
+    nmax = std::max(nmax, firstInterestingIndex + static_cast<int>(standardRange));
   }
   assert(nmax - nmin >= standardRange);
   return nmax - nmin;

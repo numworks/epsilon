@@ -610,7 +610,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   // Show the rect area around its baseline
   KDCoordinate underBaseline = rect.height() - baseline;
   KDCoordinate minAroundBaseline = std::min(baseline, underBaseline);
-  minAroundBaseline = std::min(minAroundBaseline, bounds().height() / 2);
+  minAroundBaseline = std::min<KDCoordinate>(minAroundBaseline, bounds().height() / 2);
   KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline, rect.width(), 2 * minAroundBaseline);
   scrollToContentRect(balancedRect, true);
 }

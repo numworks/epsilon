@@ -93,21 +93,21 @@ void TableCell::layoutSubviews(bool force) {
     KDCoordinate y = k_separatorThickness;
     if (label) {
       y += k_verticalMargin;
-      KDCoordinate labelHeight = std::min(labelSize.height(), height - y - k_separatorThickness - k_verticalMargin);
+      KDCoordinate labelHeight = std::min<KDCoordinate>(labelSize.height(), height - y - k_separatorThickness - k_verticalMargin);
       label->setFrame(KDRect(horizontalMargin, y, width-2*horizontalMargin, labelHeight), force);
       y += labelHeight + k_verticalMargin;
     }
     horizontalMargin = k_separatorThickness + k_horizontalMargin;
-    y = std::max(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin) - withMargin(subAccessorySize.height(), 0));
+    y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin) - withMargin(subAccessorySize.height(), 0));
     if (subAccessory) {
-      KDCoordinate subAccessoryHeight = std::min(subAccessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
+      KDCoordinate subAccessoryHeight = std::min<KDCoordinate>(subAccessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, subAccessoryHeight), force);
       y += subAccessoryHeight;
     }
     horizontalMargin = k_separatorThickness + accessoryMargin();
-    y = std::max(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin));
+    y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin));
     if (accessory) {
-      KDCoordinate accessoryHeight = std::min(accessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
+      KDCoordinate accessoryHeight = std::min<KDCoordinate>(accessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, accessoryHeight), force);
     }
   } else {
@@ -139,25 +139,25 @@ void TableCell::layoutSubviews(bool force) {
     KDCoordinate accessoryX = std::max(k_separatorThickness + accessoryMargin(), width - k_separatorThickness - withMargin(accessorySize.width(), accessoryMargin()));
     if (label) {
       x = labelX;
-      KDCoordinate labelWidth = std::min(labelSize.width(), width - x - k_separatorThickness - labelMargin());
+      KDCoordinate labelWidth = std::min<KDCoordinate>(labelSize.width(), width - x - k_separatorThickness - labelMargin());
       if (m_layout == Layout::HorizontalRightOverlap) {
-        labelWidth = std::min(labelWidth, subAccessoryX - x - labelMargin());
+        labelWidth = std::min<KDCoordinate>(labelWidth, subAccessoryX - x - labelMargin());
       }
       label->setFrame(KDRect(x, verticalMargin, labelWidth, height-2*verticalMargin), force);
       x += labelWidth + labelMargin();
     }
     if (subAccessory) {
       x = std::max(x, subAccessoryX);
-      KDCoordinate subAccessoryWidth = std::min(subAccessorySize.width(), width - x - k_separatorThickness - k_horizontalMargin);
+      KDCoordinate subAccessoryWidth = std::min<KDCoordinate>(subAccessorySize.width(), width - x - k_separatorThickness - k_horizontalMargin);
       if (m_layout == Layout::HorizontalRightOverlap) {
-        subAccessoryWidth = std::min(subAccessoryWidth, accessoryX - x);
+        subAccessoryWidth = std::min<KDCoordinate>(subAccessoryWidth, accessoryX - x);
       }
       subAccessory->setFrame(KDRect(x, verticalMargin, subAccessoryWidth, height-2*verticalMargin), force);
       x += subAccessoryWidth;
     }
     if (accessory) {
       x = std::max(x, accessoryX);
-      KDCoordinate accessoryWidth = std::min(accessorySize.width(), width - x - k_separatorThickness - accessoryMargin());
+      KDCoordinate accessoryWidth = std::min<KDCoordinate>(accessorySize.width(), width - x - k_separatorThickness - accessoryMargin());
       accessory->setFrame(KDRect(x, verticalMargin, accessoryWidth, height-2*verticalMargin), force);
     }
   }

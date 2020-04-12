@@ -197,7 +197,7 @@ void Store::resetMemoization() {
 float Store::maxValueOfColumn(int series, int i) const {
   float maxColumn = -FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    maxColumn = std::max(maxColumn, m_data[series][i][k]);
+    maxColumn = std::max<float>(maxColumn, m_data[series][i][k]);
   }
   return maxColumn;
 }
@@ -205,7 +205,7 @@ float Store::maxValueOfColumn(int series, int i) const {
 float Store::minValueOfColumn(int series, int i) const {
   float minColumn = FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    minColumn = std::min(minColumn, m_data[series][i][k]);
+    minColumn = std::min<float>(minColumn, m_data[series][i][k]);
   }
   return minColumn;
 }

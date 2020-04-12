@@ -191,8 +191,8 @@ void HistogramController::preinitXRangeParameters() {
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
-      minValue = std::min(minValue, m_store->minValue(i));
-      maxValue = std::max(maxValue, m_store->maxValue(i));
+      minValue = std::min<float>(minValue, m_store->minValue(i));
+      maxValue = std::max<float>(maxValue, m_store->maxValue(i));
     }
   }
   m_store->setXMin(minValue);

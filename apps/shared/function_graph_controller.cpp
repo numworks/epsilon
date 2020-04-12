@@ -88,13 +88,13 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     if (std::isnan(tMin)) {
       tMin = xMin;
     } else if (f->shouldClipTRangeToXRange()) {
-      tMin = std::max(tMin, xMin);
+      tMin = std::max<double>(tMin, xMin);
     }
     double tMax = f->tMax();
     if (std::isnan(tMax)) {
       tMax = xMax;
     } else if (f->shouldClipTRangeToXRange()) {
-      tMax = std::min(tMax, xMax);
+      tMax = std::min<double>(tMax, xMax);
     }
   /* In practice, a step smaller than a pixel's width is needed for sampling
    * the values of a function. Otherwise some relevant extremal values may be
@@ -163,7 +163,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   double clippedT = m_cursor->t();
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
-    clippedT = std::min(f->tMax(), std::max(f->tMin(), clippedT));
+    clippedT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), clippedT));
   }
   Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context);
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());

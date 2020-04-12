@@ -261,7 +261,7 @@ KDCoordinate FunctionListController::maxFunctionNameWidth() {
     const char * functionName = record.fullName();
     const char * dotPosition = strchr(functionName, Ion::Storage::k_dotChar);
     assert(dotPosition != nullptr);
-    maxNameLength = std::max(maxNameLength, dotPosition-functionName);
+    maxNameLength = std::max(maxNameLength, static_cast<int>(dotPosition-functionName));
   }
   return nameWidth(maxNameLength + Function::k_parenthesedArgumentCodePointLength);
 }

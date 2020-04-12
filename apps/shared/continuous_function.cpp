@@ -310,8 +310,8 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
-  double domainMin = std::max(tMin(), eDomainMin);
-  double domainMax = std::min(tMax(), eDomainMax);
+  double domainMin = std::max<double>(tMin(), eDomainMin);
+  double domainMax = std::min<double>(tMax(), eDomainMax);
   if (step > 0.0f) {
     start = std::max(start, domainMin);
     max = std::min(max, domainMax);
@@ -328,19 +328,19 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
   if (step > 0.0f) {
-    start = std::max(start, tMin());
-    max = std::min(max, tMax());
+    start = std::max<double>(start, tMin());
+    max = std::min<double>(max, tMax());
   } else {
-    start = std::min(start, tMax());
-    max = std::max(max, tMin());
+    start = std::min<double>(start, tMax());
+    max = std::max<double>(max, tMin());
   }
   return compute(expressionReduced(context), unknownX, start, step, max, context);
 }
 
 Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
   assert(plotType() == PlotType::Cartesian);
-  start = std::max(start, tMin());
-  end = std::min(end, tMax());
+  start = std::max<double>(start, tMin());
+  end = std::min<double>(end, tMax());
   return Poincare::Integral::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknown), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in

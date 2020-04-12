@@ -129,8 +129,8 @@ float GraphController::interestingXHalfRange() const {
     }
     // Compute the combined range of the functions
     assert(f->plotType() == ContinuousFunction::PlotType::Cartesian); // So that tMin tMax represents xMin xMax
-    tMin = std::min(tMin, f->tMin());
-    tMax = std::max(tMax, f->tMax());
+    tMin = std::min<double>(tMin, f->tMin());
+    tMax = std::max<double>(tMax, f->tMax());
   }
   constexpr float rangeMultiplicator = 1.6f;
   if (characteristicRange > 0.0f ) {

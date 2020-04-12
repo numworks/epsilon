@@ -73,7 +73,7 @@ double FisherDistribution::cumulativeDistributiveInverseForProbability(double * 
   if (*probability < DBL_EPSILON) {
     return 0.0;
   }
-  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, DBL_EPSILON, std::max(xMax(), 100.0));  // Ad-hoc value;
+  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(probability, DBL_EPSILON, std::max<double>(xMax(), 100.0));  // Ad-hoc value;
 }
 
 float FisherDistribution::mode() const {

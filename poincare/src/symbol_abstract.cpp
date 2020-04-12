@@ -13,8 +13,6 @@
 
 namespace Poincare {
 
-static inline int std::min(int x, int y) { return x < y ? x : y; }
-
 size_t SymbolAbstractNode::size() const {
   return nodeSize() + strlen(name()) + 1;
 }
@@ -42,7 +40,7 @@ int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bo
 }
 
 int SymbolAbstractNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return std::min(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
+  return std::min<int>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
 template <typename T, typename U>

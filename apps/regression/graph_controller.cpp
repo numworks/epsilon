@@ -162,7 +162,7 @@ void GraphController::reloadBannerView() {
   }
   if (!coefficientsAreDefined) {
     // Force the "Data not suitable" message to be on the next line
-    int numberOfCharToCompleteLine = std::max(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
+    int numberOfCharToCompleteLine = std::max<int>(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
     numberOfChar = 0;
     // Padding
     Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, numberOfCharToCompleteLine - 1);
@@ -387,8 +387,8 @@ InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Interact
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     for (int k = 0; k < m_store->numberOfPairsOfSeries(series); k++) {
       if (m_store->xMin() <= m_store->get(series, 0, k) && m_store->get(series, 0, k) <= m_store->xMax()) {
-        minY = std::min(minY, m_store->get(series, 1, k));
-        maxY = std::max(maxY, m_store->get(series, 1, k));
+        minY = std::min<float>(minY, m_store->get(series, 1, k));
+        maxY = std::max<float>(maxY, m_store->get(series, 1, k));
       }
     }
   }

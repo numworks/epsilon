@@ -137,10 +137,10 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
     }
     KDCoordinate siblingHeight = sibling->layoutSize().height();
     KDCoordinate siblingBaseline = sibling->baseline();
-    maxUnderBaseline = std::max(maxUnderBaseline, siblingHeight - siblingBaseline);
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, siblingHeight - siblingBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, siblingBaseline);
   }
-  return std::max(result, maxUnderBaseline + maxAboveBaseline);
+  return std::max<KDCoordinate>(result, maxUnderBaseline + maxAboveBaseline);
 }
 
 KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child) {

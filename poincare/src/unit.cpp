@@ -18,7 +18,7 @@ static inline int absInt(int x) { return x >= 0 ? x : -x; }
 
 int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
   assert(bufferSize >= 0);
-  return std::min(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
+  return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
 }
 
 bool UnitNode::Representative::canParse(const char * symbol, size_t length,
@@ -51,7 +51,7 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
     bufferSize -= length;
   }
   assert(bufferSize >= 0);
-  length += std::min(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
+  length += std::min<int>(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
   return length;
 }
 
@@ -134,7 +134,7 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 
 int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(bufferSize >= 0);
-  int underscoreLength = std::min(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
+  int underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
   buffer += underscoreLength;
   bufferSize -= underscoreLength;
   return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix);

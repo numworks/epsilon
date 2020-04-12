@@ -14,7 +14,7 @@ Layout UnrealNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
 }
 
 int UnrealNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return std::min(strlcpy(buffer, Unreal::Name(), bufferSize), bufferSize - 1);
+  return std::min<int>(strlcpy(buffer, Unreal::Name(), bufferSize), bufferSize - 1);
 }
 
 }

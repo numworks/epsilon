@@ -4,10 +4,9 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <assert.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode::k_leftRadixWidth] = {
 {0x51, 0xCC, 0xFF, 0xFF, 0xFF},
@@ -180,7 +179,7 @@ KDSize NthRootLayoutNode::computeSize() {
 }
 
 KDCoordinate NthRootLayoutNode::computeBaseline() {
-  return maxCoordinate(
+  return std::max(
       radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
       adjustedIndexSize().height());
 }
@@ -204,7 +203,7 @@ KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
 KDSize NthRootLayoutNode::adjustedIndexSize() {
   return indexLayout() == nullptr ?
     KDSize(k_leftRadixWidth, 0) :
-    KDSize(maxCoordinate(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
+    KDSize(std::max(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
 }
 
 void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {

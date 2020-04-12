@@ -3,14 +3,12 @@
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
+#include <algorithm>
 
 using namespace Shared;
 using namespace Poincare;
 
 namespace Graph {
-
-static inline double minDouble(double x, double y) { return x < y ? x : y; }
-static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
 bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, bool fast) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
@@ -34,7 +32,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     step *= 5.0;
   }
   t += dir * step;
-  t = maxDouble(tMin, minDouble(tMax, t));
+  t = std::max(tMin, std::min(tMax, t));
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());
   cursor->moveTo(t, xy.x1(), xy.x2());
   return true;

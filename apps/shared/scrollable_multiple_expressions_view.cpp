@@ -1,11 +1,10 @@
 #include "scrollable_multiple_expressions_view.h"
 #include <apps/i18n.h>
 #include <assert.h>
+#include <algorithm>
 using namespace Poincare;
 
 namespace Shared {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
@@ -75,7 +74,7 @@ KDSize AbstractScrollableMultipleExpressionsView::ContentCell::minimalSizeForOpt
     centeredExpressionSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
     width += centeredExpressionSize.width() + 2*Metric::CommonLargeMargin + m_approximateSign.minimalSizeForOptimalDisplay().width();
   }
-  KDCoordinate height = maxCoordinate(maxCoordinate(centeredBaseline, rightBaseline), leftViewBaseline) + maxCoordinate(maxCoordinate(centeredExpressionSize.height()-centeredBaseline, rightExpressionSize.height()-rightBaseline), leftSize.height()-leftViewBaseline);
+  KDCoordinate height = std::max(std::max(centeredBaseline, rightBaseline), leftViewBaseline) + std::max(std::max(centeredExpressionSize.height()-centeredBaseline, rightExpressionSize.height()-rightBaseline), leftSize.height()-leftViewBaseline);
   return KDSize(width, height);
 }
 
@@ -134,7 +133,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(bool
   KDSize rightExpressionSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
   KDCoordinate rightBaseline = m_rightExpressionView.layout().isUninitialized() ? 0 : m_rightExpressionView.layout().baseline();
   // Compute baseline
-  KDCoordinate baseline = maxCoordinate(maxCoordinate(leftViewBaseline, rightBaseline), centeredBaseline);
+  KDCoordinate baseline = std::max(std::max(leftViewBaseline, rightBaseline), centeredBaseline);
   // Layout left view
   KDCoordinate currentWidth = 0;
   if (leftExpressionView()) {

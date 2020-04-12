@@ -127,7 +127,7 @@ KDCoordinate VariableBoxController::rowHeight(int index) {
   if (m_currentPage != Page::RootMenu) {
     Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
     if (!layoutR.isUninitialized()) {
-      return std::max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
+      return std::max<KDCoordinate>(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
   }
   return NestedMenuController::rowHeight(index);

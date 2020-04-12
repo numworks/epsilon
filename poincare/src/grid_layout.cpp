@@ -233,7 +233,7 @@ KDCoordinate GridLayoutNode::rowHeight(int i) const {
   int j = 0;
   for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(i*m_numberOfColumns)) {
     KDCoordinate b = l->baseline();
-    underBaseline = std::max(underBaseline, l->layoutSize().height() - b);
+    underBaseline = std::max<KDCoordinate>(underBaseline, l->layoutSize().height() - b);
     aboveBaseline = std::max(aboveBaseline, b);
     j++;
     if (j >= m_numberOfColumns) {

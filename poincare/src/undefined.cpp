@@ -24,7 +24,7 @@ Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
 }
 
 int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return std::min(strlcpy(buffer, Undefined::Name(), bufferSize), bufferSize - 1);
+  return std::min<int>(strlcpy(buffer, Undefined::Name(), bufferSize), bufferSize - 1);
 }
 
 template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {

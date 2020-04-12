@@ -144,7 +144,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
       /* In Engineering mode, the number of significant digits cannot be lower
        * than 3, because we need to be able to display 100 for instance. */
       // TODO: Add warning about signifiant digits change ?
-      preferences->setNumberOfSignificantDigits(std::max(preferences->numberOfSignificantDigits(), 3));
+      preferences->setNumberOfSignificantDigits(std::max<int>(preferences->numberOfSignificantDigits(), 3));
     }
   } else if (message == I18n::Message::EditionMode) {
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);

@@ -1,6 +1,8 @@
 #ifndef LIBAXX_INITIALIZER_LIST
 #define LIBAXX_INITIALIZER_LIST
 
+#include <stddef.h>
+
 namespace std {
 
 template<class T>

@@ -23,7 +23,7 @@ private:
   static constexpr char CurrentSessionResultMarker = 0x02;
   static constexpr char PreviousSessionCommandMarker = 0x03;
   static constexpr char PreviousSessionResultMarker = 0x04;
-  static constexpr int k_historySize = 1024;
+  static constexpr size_t k_historySize = 1024;
   static char makePrevious(char marker) {
     if (marker == CurrentSessionCommandMarker || marker == CurrentSessionResultMarker) {
       return marker + 0x02;
@@ -32,7 +32,7 @@ private:
   }
   const char * push(const char marker, const char * text);
   ConsoleLine::Type lineTypeForMarker(char marker) const;
-  int indexOfNullMarker() const;
+  size_t indexOfNullMarker() const;
   void deleteLineAtIndex(int index);
   void deleteFirstLine();
   /* When there is no room left to store a new ConsoleLine, we have to delete

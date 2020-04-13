@@ -8,6 +8,8 @@
 
 namespace Poincare {
 
+constexpr KDCoordinate SequenceLayoutNode::k_symbolWidth;
+
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == upperBoundLayout())
   {

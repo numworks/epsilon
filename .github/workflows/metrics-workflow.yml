@@ -25,7 +25,7 @@ jobs:
         run: make -j2 -C head epsilon.elf
       - name: Retrieve binary size analysis
         id: binary_size
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --escape)"
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --escape)"
       - name: Prepare comment auth
         run: echo "::set-env name=GITHUB_TOKEN::$(echo ZGExNWM1YzNlMjVkMWU5ZGFmOWQyY2UxMmRhYjJiN2ZhMWM4ODVhMA== | base64 --decode)"
       - name: Add comment

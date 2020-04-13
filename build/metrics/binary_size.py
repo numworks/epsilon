@@ -8,8 +8,8 @@ import urllib.parse
 
 # ELF analysis
 
-def loadable_sections(elf_file, address_prefix = ""):
-  objdump_section_headers_pattern = re.compile("^\s+\d+\s+(\.[\w\.]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+("+address_prefix+"[0-9a-f]+)\s+([0-9a-f]+).*LOAD", flags=re.MULTILINE)
+def loadable_sections(elf_file):
+  objdump_section_headers_pattern = re.compile("^\s+\d+\s+(\.[\w\.]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)", flags=re.MULTILINE)
   objdump_output = subprocess.check_output(["arm-none-eabi-objdump", "-h", "-w", elf_file]).decode('utf-8')
   sections = []
   for (name, size, vma, lma, offset) in re.findall(objdump_section_headers_pattern, objdump_output):
@@ -21,19 +21,16 @@ def loadable_sections(elf_file, address_prefix = ""):
 
 # Data filtering
 
-def biggest_sections(sections, n):
-  sorted_sections = sorted(sections, key=lambda s: s['size'], reverse=True)
-  return sorted_sections[:n]
-
-def total_size(sections):
-  return sum(map(lambda s: s['size'], sections))
-
-def row_for_elf(elf, columns):
+def row_for_elf(elf, requested_section_prefixes):
   sections = loadable_sections(elf)
   result = {}
-  for s in biggest_sections(sections, columns):
-    result[s['name']] = s['size']
-  result['Total'] = total_size(sections)
+  for prefix in requested_section_prefixes:
+    for s in sections:
+      section_name = s['name']
+      if s['name'].startswith(prefix):
+        if not prefix in result:
+          result[prefix] = 0
+        result[prefix] += s['size']
   return result
 
 
@@ -119,7 +116,7 @@ def format_table(table):
 parser = argparse.ArgumentParser(description='Compute binary size metrics')
 parser.add_argument('files', type=str, nargs='+', help='an ELF file')
 parser.add_argument('--labels', type=str, nargs='+', help='label for ELF file')
-parser.add_argument('--number-of-sections', type=int, default=2, help='Number of detailed sections')
+parser.add_argument('--sections', type=str, nargs='+', help='Section (prefix) to list')
 parser.add_argument('--escape', action='store_true', help='Escape the output')
 args = parser.parse_args()
 
@@ -131,7 +128,7 @@ for i,filename in enumerate(args.files):
   label = os.path.basename(filename)
   if args.labels and i < len(args.labels):
     label = args.labels[i]
-  table.append({'label': label, 'values': row_for_elf(filename, args.number_of_sections)})
+  table.append({'label': label, 'values': row_for_elf(filename, args.sections)})
 formatted_table = format_table(table)
 
 if args.escape:

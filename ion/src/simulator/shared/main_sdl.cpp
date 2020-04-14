@@ -5,6 +5,7 @@
 #include "layout.h"
 #endif
 #include "telemetry.h"
+#include "random.h"
 
 #include <assert.h>
 #include <ion.h>
@@ -58,6 +59,8 @@ void init() {
     SDL_Log("Could not init video");
     return;
   }
+
+  Random::init();
 
   sWindow = SDL_CreateWindow(
     "Epsilon",

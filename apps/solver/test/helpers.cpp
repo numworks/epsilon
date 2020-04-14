@@ -85,16 +85,31 @@ void assert_solves_to(std::initializer_list<const char *> equations, std::initia
       const char * expectedValue = equal + 1;
 
       Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+
+      /* We want to give complex results to equations that explicitely use 𝐢
+       * As a result, we need to enforce a non-real complex format here. */
       if (complexFormat == Preferences::ComplexFormat::Real) {
         complexFormat = Preferences::ComplexFormat::Cartesian;
       }
 
-      Expression expectedExpression = Expression::ParseAndSimplify(
-        expectedValue,
+      /* We're pretty much reinventing ParseAndSimplify here.
+       * But for some reason, we really need to call simplifyAndApproximate,
+       * otherwise simplification of Polar numbers don't work. For instance,
+       * ParseAndSimplify("𝐢") will yield "𝐢", even in Polar mode!
+       * We're using the same weird trick as in assert_parsed_expression_simplify_to
+       * TODO: Fix ParseAndSimplify */
+
+      Expression expectedExpression = Expression::Parse(expectedValue, &globalContext, false);
+      quiz_assert(!expectedExpression.isUninitialized());
+      expectedExpression.simplifyAndApproximate(
+        &expectedExpression,
+        nullptr,
         &globalContext,
         complexFormat,
-        Preferences::sharedPreferences()->angleUnit()
+        Preferences::sharedPreferences()->angleUnit(),
+        ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
       );
+
       Layout expectedLayout = expectedExpression.createLayout(Preferences::PrintFloatMode::Decimal, 5);
       Layout obtainedLayout = store->exactSolutionLayoutAtIndex(i, true);
 #if 0

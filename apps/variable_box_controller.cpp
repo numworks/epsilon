@@ -15,7 +15,7 @@ using namespace Shared;
 using namespace Ion;
 
 VariableBoxController::VariableBoxController() :
-  NestedMenuController(nullptr, I18n::Message::Variables),
+  AlternateEmptyNestedMenuController(I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
   m_lockPageDelete(Page::RootMenu),
   m_firstMemoizedLayoutIndex(0)
@@ -27,15 +27,11 @@ VariableBoxController::VariableBoxController() :
 
 void VariableBoxController::viewWillAppear() {
   assert(m_currentPage == Page::RootMenu);
-  NestedMenuController::viewWillAppear();
+  AlternateEmptyNestedMenuController::viewWillAppear();
 }
 
 void VariableBoxController::viewDidDisappear() {
-  if (isDisplayingEmptyController()) {
-    pop();
-  }
-
-  NestedMenuController::viewDidDisappear();
+  AlternateEmptyNestedMenuController::viewDidDisappear();
 
   /* NestedMenuController::viewDidDisappear might need cell heights, which would
    * use the VariableBoxController cell heights memoization. We thus reset the
@@ -69,7 +65,7 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
     displayEmptyController();
     return true;
   }
-  return NestedMenuController::handleEvent(event);
+  return AlternateEmptyNestedMenuController::handleEvent(event);
 }
 
 int VariableBoxController::numberOfRows() const {
@@ -130,7 +126,7 @@ KDCoordinate VariableBoxController::rowHeight(int index) {
       return std::max<KDCoordinate>(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
   }
-  return NestedMenuController::rowHeight(index);
+  return AlternateEmptyNestedMenuController::rowHeight(index);
 }
 
 int VariableBoxController::typeAtLocation(int i, int j) {
@@ -163,7 +159,7 @@ void VariableBoxController::setPage(Page page) {
 bool VariableBoxController::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
   setPage(pageAtIndex(selectedRow));
-  bool selectSubMenu = NestedMenuController::selectSubMenu(selectedRow);
+  bool selectSubMenu = AlternateEmptyNestedMenuController::selectSubMenu(selectedRow);
   if (displayEmptyController()) {
     return true;
   }
@@ -177,7 +173,7 @@ bool VariableBoxController::returnToPreviousMenu() {
     m_selectableTableView.deselectTable();
   }
   setPage(Page::RootMenu);
-  return NestedMenuController::returnToPreviousMenu();
+  return AlternateEmptyNestedMenuController::returnToPreviousMenu();
 }
 
 bool VariableBoxController::selectLeaf(int selectedRow) {
@@ -261,15 +257,9 @@ Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {
   return Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
 }
 
-bool VariableBoxController::displayEmptyController() {
-  assert(!isDisplayingEmptyController());
-  // If the content is empty, we push above an empty controller.
-  if (numberOfRows() == 0) {
-    m_emptyViewController.setType((VariableBoxEmptyController::Type)m_currentPage);
-    push(&m_emptyViewController);
-    return true;
-  }
-  return false;
+ViewController * VariableBoxController::emptyViewController() {
+  m_emptyViewController.setType((VariableBoxEmptyController::Type)m_currentPage);
+  return &m_emptyViewController;
 }
 
 void VariableBoxController::resetMemoization() {

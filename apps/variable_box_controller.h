@@ -3,11 +3,11 @@
 
 #define MATRIX_VARIABLES 1
 
-#include <escher.h>
+#include "alternate_empty_nested_menu_controller.h"
 #include "variable_box_empty_controller.h"
 #include <apps/i18n.h>
 
-class VariableBoxController : public NestedMenuController {
+class VariableBoxController : public AlternateEmptyNestedMenuController {
 public:
   VariableBoxController();
 
@@ -47,8 +47,8 @@ private:
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
-  bool displayEmptyController();
-  bool isDisplayingEmptyController() { return StackViewController::depth() == 2; }
+  ViewController * emptyViewController() override;
+  bool isDisplayingEmptyController() override { return StackViewController::depth() == 2; }
   void resetMemoization();
   void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;

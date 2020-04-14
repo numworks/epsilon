@@ -1,5 +1,11 @@
-#include <ion.h>
+#include "random.h"
 #include <stdlib.h>
+#include <time.h>
+
+void Ion::Simulator::Random::init() {
+  // Set the seed for random using the current time
+  srand(time(NULL));
+}
 
 uint32_t Ion::random() {
   /* rand() returns a pseudo-random integral number in the range between 0 and

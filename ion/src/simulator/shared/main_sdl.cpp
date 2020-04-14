@@ -13,6 +13,10 @@
 #include <SDL.h>
 #include <vector>
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 void Ion::Timing::msleep(uint32_t ms) {
   SDL_Delay(ms);
 }
@@ -30,6 +34,9 @@ int main(int argc, char * argv[]) {
   Ion::Simulator::Telemetry::init();
 #endif
   Ion::Simulator::Main::init();
+#if __EMSCRIPTEN__
+  srand(emscripten_random());
+#endif
   ion_main(arguments.size(), &arguments[0]);
   Ion::Simulator::Main::quit();
 #if EPSILON_TELEMETRY

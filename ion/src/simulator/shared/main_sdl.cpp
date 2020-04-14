@@ -12,6 +12,8 @@
 #include <ion/events.h>
 #include <SDL.h>
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 
 void Ion::Timing::msleep(uint32_t ms) {
   SDL_Delay(ms);
@@ -58,6 +60,9 @@ void init() {
     SDL_Log("Could not init video");
     return;
   }
+
+  // Set the seed for random using the current time
+  srand(time(NULL));
 
   sWindow = SDL_CreateWindow(
     "Epsilon",

@@ -8,6 +8,9 @@
 
 namespace Poincare {
 
+constexpr KDCoordinate NthRootLayoutNode::k_leftRadixHeight;
+constexpr KDCoordinate NthRootLayoutNode::k_leftRadixWidth;
+
 const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode::k_leftRadixWidth] = {
 {0x51, 0xCC, 0xFF, 0xFF, 0xFF},
 {0x96, 0x37, 0xFD, 0xFF, 0xFF},

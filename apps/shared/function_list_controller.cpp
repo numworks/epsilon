@@ -5,6 +5,8 @@
 
 namespace Shared {
 
+constexpr KDCoordinate FunctionListController::k_minTitleColumnWidth;
+
 FunctionListController::FunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   ExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),

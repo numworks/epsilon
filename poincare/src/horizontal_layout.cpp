@@ -3,10 +3,9 @@
 #include <poincare/layout_helper.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/serialization_helper.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
 
 // LayoutNode
 
@@ -259,8 +258,8 @@ KDSize HorizontalLayoutNode::computeSize() {
   for (LayoutNode * l : children()) {
     KDSize childSize = l->layoutSize();
     totalWidth += childSize.width();
-    maxUnderBaseline = maxCoordinate(maxUnderBaseline, childSize.height() - l->baseline());
-    maxAboveBaseline = maxCoordinate(maxAboveBaseline, l->baseline());
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - l->baseline());
+    maxAboveBaseline = std::max(maxAboveBaseline, l->baseline());
   }
   return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
 }
@@ -268,7 +267,7 @@ KDSize HorizontalLayoutNode::computeSize() {
 KDCoordinate HorizontalLayoutNode::computeBaseline() {
   KDCoordinate result = 0;
   for (LayoutNode * l : children()) {
-    result = maxCoordinate(result, l->baseline());
+    result = std::max(result, l->baseline());
   }
   return result;
 }
@@ -311,8 +310,8 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart
   for (int i = firstSelectedNodeIndex; i <= secondSelectedNodeIndex; i++) {
     Layout childi = thisLayout.childAtIndex(i);
     KDSize childSize = childi.layoutSize();
-    maxUnderBaseline = maxCoordinate(maxUnderBaseline, childSize.height() - childi.baseline());
-    maxAboveBaseline = maxCoordinate(maxAboveBaseline, childi.baseline());
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - childi.baseline());
+    maxAboveBaseline = std::max(maxAboveBaseline, childi.baseline());
   }
   return KDRect(KDPoint(selectionXStart, const_cast<HorizontalLayoutNode *>(this)->baseline() - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline));
 }

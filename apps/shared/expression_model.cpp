@@ -7,13 +7,12 @@
 #include <string.h>
 #include <cmath>
 #include <assert.h>
+#include <algorithm>
 
 using namespace Ion;
 using namespace Poincare;
 
 namespace Shared {
-
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 ExpressionModel::ExpressionModel() :
   m_expression(),
@@ -126,7 +125,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   size_t newDataSize = previousDataSize - previousExpressionSize + newExpressionSize;
   void * expAddress = expressionAddress(record);
   // Update size of record to maximal size between previous and new data
-  newData.size = maxInt(previousDataSize, newDataSize);
+  newData.size = std::max(previousDataSize, newDataSize);
   Ion::Storage::Record::ErrorStatus error = record->setValue(newData);
   if (error != Ion::Storage::Record::ErrorStatus::None) {
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);

@@ -4,10 +4,9 @@
 #include "../constant.h"
 #include <escher/metric.h>
 #include <assert.h>
+#include <algorithm>
 
 using namespace Poincare;
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 namespace Shared {
 
@@ -245,7 +244,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     if (numberOfValuesToCompute == -1) {
       numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
     } else {
-      numberOfValuesToCompute = minInt(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+      numberOfValuesToCompute = std::min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
     }
     index++;
   }

@@ -1,9 +1,8 @@
 #include <escher/expression_view.h>
 #include <escher/palette.h>
+#include <algorithm>
 
 using namespace Poincare;
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor, Poincare::Layout * selectionStart, Poincare::Layout * selectionEnd ) :
@@ -65,7 +64,7 @@ KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
 
 KDPoint ExpressionView::drawingOrigin() const {
   KDSize expressionSize = m_layout.layoutSize();
-  return KDPoint(m_horizontalMargin + m_horizontalAlignment*(m_frame.width() - 2*m_horizontalMargin - expressionSize.width()), maxCoordinate(0, m_verticalAlignment*(m_frame.height() - expressionSize.height())));
+  return KDPoint(m_horizontalMargin + m_horizontalAlignment*(m_frame.width() - 2*m_horizontalMargin - expressionSize.width()), std::max<KDCoordinate>(0, m_verticalAlignment*(m_frame.height() - expressionSize.height())));
 }
 
 KDPoint ExpressionView::absoluteDrawingOrigin() const {

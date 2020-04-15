@@ -14,13 +14,11 @@
 #include <apps/i18n.h>
 #include <float.h>
 #include <cmath>
+#include <algorithm>
 
 using namespace Poincare;
 
 namespace Shared {
-
-static inline double maxDouble(double x, double y) { return x > y ? x : y; }
-static inline double minDouble(double x, double y) { return x < y ? x : y; }
 
 void ContinuousFunction::DefaultName(char buffer[], size_t bufferSize) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
@@ -312,14 +310,14 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
-  double domainMin = maxDouble(tMin(), eDomainMin);
-  double domainMax = minDouble(tMax(), eDomainMax);
+  double domainMin = std::max<double>(tMin(), eDomainMin);
+  double domainMax = std::min<double>(tMax(), eDomainMax);
   if (step > 0.0f) {
-    start = maxDouble(start, domainMin);
-    max = minDouble(max, domainMax);
+    start = std::max(start, domainMin);
+    max = std::min(max, domainMax);
   } else {
-    start = minDouble(start, domainMax);
-    max = maxDouble(max, domainMin);
+    start = std::min(start, domainMax);
+    max = std::max(max, domainMin);
   }
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, context, e);
 }
@@ -330,19 +328,19 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
   char unknownX[bufferSize];
   SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknown);
   if (step > 0.0f) {
-    start = maxDouble(start, tMin());
-    max = minDouble(max, tMax());
+    start = std::max<double>(start, tMin());
+    max = std::min<double>(max, tMax());
   } else {
-    start = minDouble(start, tMax());
-    max = maxDouble(max, tMin());
+    start = std::min<double>(start, tMax());
+    max = std::max<double>(max, tMin());
   }
   return compute(expressionReduced(context), unknownX, start, step, max, context);
 }
 
 Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
   assert(plotType() == PlotType::Cartesian);
-  start = maxDouble(start, tMin());
-  end = minDouble(end, tMax());
+  start = std::max<double>(start, tMin());
+  end = std::min<double>(end, tMax());
   return Poincare::Integral::Builder(expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknown), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in

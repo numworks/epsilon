@@ -10,15 +10,15 @@
 #include <assert.h>
 #include <string.h>
 #include <utility>
+#include <algorithm>
 
 namespace Poincare {
 
 static inline int absInt(int x) { return x >= 0 ? x : -x; }
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
   assert(bufferSize >= 0);
-  return minInt(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
+  return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
 }
 
 bool UnitNode::Representative::canParse(const char * symbol, size_t length,
@@ -51,7 +51,7 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
     bufferSize -= length;
   }
   assert(bufferSize >= 0);
-  length += minInt(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
+  length += std::min<int>(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
   return length;
 }
 
@@ -103,9 +103,9 @@ Expression UnitNode::getUnit() const {
   return Unit(this).getUnit();
 }
 
-int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
   }
   assert(type() == e->type());
   const UnitNode * eNode = static_cast<const UnitNode *>(e);
@@ -134,7 +134,7 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 
 int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(bufferSize >= 0);
-  int underscoreLength = minInt(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
+  int underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
   buffer += underscoreLength;
   bufferSize -= underscoreLength;
   return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix);

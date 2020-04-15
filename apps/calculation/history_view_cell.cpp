@@ -5,11 +5,9 @@
 #include <poincare/exception_checkpoint.h>
 #include <assert.h>
 #include <string.h>
+#include <algorithm>
 
 namespace Calculation {
-
-static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 /* HistoryViewCellDataSource */
 
@@ -186,14 +184,14 @@ void HistoryViewCell::layoutSubviews(bool force) {
   m_inputView.setFrame(KDRect(
     0,
     inputHeight,
-    minCoordinate(maxFrameWidth, inputSize.width()),
+    std::min(maxFrameWidth, inputSize.width()),
     inputSize.height()),
   force);
-  int outputHeight = (singleLine) ? (maxCoordinate(0, inputSize.height() - outputSize.height()) / 2) + maxCoordinate(0, (inputSize.height() - outputSize.height()) / 2) + 1 : inputSize.height();
+  int outputHeight = (singleLine) ? (std::max(0, inputSize.height() - outputSize.height()) / 2) + std::max(0, (inputSize.height() - outputSize.height()) / 2) + 1 : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
-    maxCoordinate(0, maxFrameWidth - outputSize.width()),
+    std::max(0, maxFrameWidth - outputSize.width()),
     outputHeight,
-    minCoordinate(maxFrameWidth, outputSize.width()),
+    std::min(maxFrameWidth, outputSize.width()),
     outputSize.height()),
   force);
 }

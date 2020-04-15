@@ -1,12 +1,11 @@
 #include "selectable_view_with_messages.h"
 #include <apps/i18n.h>
 #include <assert.h>
+#include <algorithm>
 
 using namespace Shared;
 
 namespace Settings {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 SelectableViewWithMessages::SelectableViewWithMessages(SelectableTableView * selectableTableView) :
   m_selectableTableView(selectableTableView),
@@ -52,7 +51,7 @@ void SelectableViewWithMessages::layoutSubviews(bool force) {
 
   // Layout the text
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
-  KDCoordinate defOrigin = maxCoordinate(bounds().height() - Metric::CommonBottomMargin - m_numberOfMessages*textHeight, tableHeight);
+  KDCoordinate defOrigin = std::max<KDCoordinate>(bounds().height() - Metric::CommonBottomMargin - m_numberOfMessages*textHeight, tableHeight);
 
   for (int i = 0; i < m_numberOfMessages; i++) {
     m_messageLines[i].setFrame(KDRect(0, defOrigin, bounds().width(), textHeight), force);

@@ -191,15 +191,15 @@ public:
    * together (ie Pi, 2*Pi).
    * Because SimplificationOrder is a recursive call, we sometimes enable its
    * interruption to avoid freezing in the simplification process. */
-  static int SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted = false);
+  static int SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted = false, bool ignoreParentheses = false);
   /* In the simplification order, most expressions are compared by only
    * comparing their types. However hierarchical expressions of same type would
    * compare their operands and thus need to reimplement
    * simplificationOrderSameType. Besides, operations that can be simplified
    * (ie +, *, ^, !) have specific rules to group like terms together and thus
    * reimplement simplificationOrderGreaterType. */
-  virtual int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const { return ascending ? -1 : 1; }
-  virtual int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const;
+  virtual int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const { return ascending ? -1 : 1; }
+  virtual int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const;
 
   /* Layout Helper */
   virtual Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;

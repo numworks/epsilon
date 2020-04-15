@@ -1022,6 +1022,9 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
 
   assert_parsed_expression_simplify_to("1→2", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→a+a", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→f(2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→f(g(4))", Undefined::Name());
   assert_parsed_expression_simplify_to("1→u(n)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→u(n+1)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→v(n)", Undefined::Name());
@@ -1040,6 +1043,20 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
   assert_parsed_expression_simplify_to("4→_km/_m", Undefined::Name());
   assert_parsed_expression_simplify_to("3×_min→_s+1-1", Undefined::Name());
+
+  assert_simplify("_m→a", Radian, Real);
+  assert_simplify("_m→b", Radian, Real);
+  assert_parsed_expression_simplify_to("1_km→a×b", Undefined::Name());
+
+  assert_simplify("2→a");
+  assert_parsed_expression_simplify_to("3_m→a×_km", Undefined::Name());
+  assert_simplify("2→f(x)");
+  assert_parsed_expression_simplify_to("3_m→f(2)×_km", Undefined::Name());
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {

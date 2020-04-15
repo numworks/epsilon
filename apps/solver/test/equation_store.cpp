@@ -117,8 +117,8 @@ QUIZ_CASE(equation_solve_complex_polar) {
   set_complex_format(Polar);
   assert_solves_to("x+𝐢=0", "x=ℯ^(-(π/2)𝐢)");
   assert_solves_to("x+√(-1)=0", "x=ℯ^(-(π/2)𝐢)");
-  assert_solves_to("x^2+x+1=0", {"x=ℯ^(-(2π/3)𝐢)", "x=ℯ^((2π/3)𝐢)", "delta=3ℯ^(𝐢π)"});
-  assert_solves_to("x^2-√(-1)=0", {"x=ℯ^(-(3×π/4)𝐢)", "x=ℯ^((π/4)𝐢)", "delta=4ℯ^(𝐢π/2)"});
+  assert_solves_to("x^2+x+1=0", {"x=ℯ^(-(2π/3)𝐢)", "x=ℯ^((2π/3)𝐢)", "delta=3ℯ^(π𝐢)"});
+  assert_solves_to("x^2-√(-1)=0", {"x=ℯ^(-(3π/4)𝐢)", "x=ℯ^((π/4)𝐢)", "delta=4ℯ^((π/2)𝐢)"});
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2×ℯ^((2π/3)𝐢)");
   reset_complex_format();
 }

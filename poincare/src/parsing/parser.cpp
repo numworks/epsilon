@@ -276,32 +276,29 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
     return;
   }
   // At this point, m_currentToken is Token::RightwardsArrow.
-  bool parseId = m_nextToken.is(Token::Identifier) && !IsReservedName(m_nextToken.text(), m_nextToken.length());
-  if (parseId) {
-    popToken();
-    // Try parsing a store
-    Expression rightHandSide;
-    parseCustomIdentifier(rightHandSide, m_currentToken.text(), m_currentToken.length(), true);
-    if (m_status != Status::Progress) {
-      return;
-    }
-    if (!m_nextToken.is(Token::EndOfStream)
-        || !(rightHandSide.type() == ExpressionNode::Type::Symbol
-          || (rightHandSide.type() == ExpressionNode::Type::Function
-            && rightHandSide.childAtIndex(0).type() == ExpressionNode::Type::Symbol)))
-    {
-      m_status = Status::Error; // Store expects a single symbol or function.
-      return;
-    }
+  const char * tokenName = m_nextToken.text();
+  size_t tokenNameLength = m_nextToken.length();
+  /* Right part of the RightwardsArrow are either a Symbol, a Function or units.
+   * Even undefined function "plouf(x)" should be interpreted as function and
+   * not as a multiplication. */
+  m_symbolPlusParenthesesAreFunctions = true;
+  Expression rightHandSide = parseUntil(stoppingType);
+  m_symbolPlusParenthesesAreFunctions = false;
+  if (m_status != Status::Progress) {
+    return;
+  }
+
+  // Pattern : "-> a" or "-> f(x)" Try parsing a store
+  if (m_nextToken.is(Token::EndOfStream) &&
+      (rightHandSide.type() == ExpressionNode::Type::Symbol
+       || (rightHandSide.type() == ExpressionNode::Type::Function
+         && rightHandSide.childAtIndex(0).type() == ExpressionNode::Type::Symbol)) &&
+      !IsReservedName(tokenName, tokenNameLength)) {
     leftHandSide = Store::Builder(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
     return;
   }
   // Try parsing a unit convert
-  Expression rightHandSide = parseUntil(stoppingType);
-  if (m_status != Status::Progress) {
-    return;
-  }
-  if (!m_nextToken.is(Token::EndOfStream) || rightHandSide.isUninitialized() || rightHandSide.type() == ExpressionNode::Type::Store || rightHandSide.type() == ExpressionNode::Type::UnitConvert) {
+  if (!m_nextToken.is(Token::EndOfStream) || rightHandSide.isUninitialized() || rightHandSide.type() == ExpressionNode::Type::Store || rightHandSide.type() == ExpressionNode::Type::UnitConvert || rightHandSide.type() == ExpressionNode::Type::Equal) {
     m_status = Status::Error; // UnitConvert expect a unit on the right.
     return;
   }
@@ -451,19 +448,19 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
   }
 }
 
-void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length, bool symbolPlusParenthesesAreFunctions) {
+void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length) {
   if (length >= SymbolAbstract::k_maxNameSize) {
     m_status = Status::Error; // Identifier name too long.
     return;
   }
   bool poppedParenthesisIsSystem = false;
 
-  /* If symbolPlusParenthesesAreFunctions is false, check the context: if the
+  /* If m_symbolPlusParenthesesAreFunctions is false, check the context: if the
    * identifier does not already exist as a function, interpret it as a symbol,
    * even if there are parentheses afterwards. */
 
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
-  if (m_context != nullptr && !symbolPlusParenthesesAreFunctions) {
+  if (m_context != nullptr && !m_symbolPlusParenthesesAreFunctions) {
     idType = m_context->expressionTypeForIdentifier(name, length);
     if (idType != Context::SymbolAbstractType::Function) {
       leftHandSide = Symbol::Builder(name, length);
@@ -511,7 +508,7 @@ void Parser::parseIdentifier(Expression & leftHandSide, Token::Type stoppingType
   } else if (IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length())) {
     parseSpecialIdentifier(leftHandSide);
   } else {
-    parseCustomIdentifier(leftHandSide, m_currentToken.text(), m_currentToken.length(), false);
+    parseCustomIdentifier(leftHandSide, m_currentToken.text(), m_currentToken.length());
   }
   isThereImplicitMultiplication();
 }

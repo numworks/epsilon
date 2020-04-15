@@ -1,8 +1,4 @@
-ion_src += $(addprefix ion/src/shared/, \
-  crc32.cpp \
-  power.cpp \
-  random.cpp \
-  timing.cpp \
+ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/backlight.cpp \
   dummy/battery.cpp \
   dummy/display.cpp \
@@ -12,10 +8,8 @@ ion_src += $(addprefix ion/src/shared/, \
   dummy/serial_number.cpp \
   dummy/stack.cpp \
   dummy/usb.cpp \
-)
-
-ion_src += $(addprefix ion/src/simulator/shared/, \
   console_stdio.cpp:-consoledisplay \
+  crc32.cpp \
   display.cpp:-headless \
   events_keyboard.cpp:-headless \
   events_stdin.cpp:+headless \
@@ -26,6 +20,9 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   layout.cpp:-headless \
   main_headless.cpp:+headless \
   main_sdl.cpp:-headless \
+  power.cpp \
+  random.cpp \
+  timing.cpp \
 )
 
 include ion/src/simulator/$(TARGET)/Makefile

@@ -216,6 +216,9 @@ public:
    * same structures and all their nodes have same types and values (ie,
    * sqrt(pi^2) is NOT identical to pi). */
   bool isIdenticalTo(const Expression e) const;
+  /* isIdenticalToWithoutParentheses behaves as isIdenticalTo, but without
+   * taking into account parentheses: e^(0) is identical to e^0. */
+  bool isIdenticalToWithoutParentheses(const Expression e) const;
   static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
   /* Layout Helper */

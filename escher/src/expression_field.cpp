@@ -3,6 +3,9 @@
 #include <assert.h>
 #include <algorithm>
 
+constexpr KDCoordinate ExpressionField::k_maximalHeight;
+constexpr KDCoordinate ExpressionField::k_minimalHeight;
+
 ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),

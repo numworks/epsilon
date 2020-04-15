@@ -136,6 +136,20 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   static_cast<MessageTableCell *>(cell)->setMessage(subtitleMessages[(int)cellOrigin]);
 }
 
+void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
+  const int currentSelectedRow = selectedRow();
+  if (typeAtLocation(0, currentSelectedRow) == k_subtitleCellType) {
+    if (currentSelectedRow == 0) {
+      t->selectCellAtLocation(0, 1);
+    } else {
+      t->selectCellAtLocation(0, selectedRow() + (previousSelectedCellY < currentSelectedRow ? 1 : -1));
+    }
+  }
+}
+
 int VariableBoxController::typeAtLocation(int i, int j) {
   assert(i == 0);
   return typeAndOriginAtLocation(j);

@@ -9,10 +9,10 @@ namespace Code {
 class ScriptNode {
 public:
   enum class Type : bool {
-    Function,
-    Variable
+    WithoutParentheses,
+    WithParentheses
   };
-  ScriptNode(Type type = Type::Variable, const char * name = nullptr, int nameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr) :
+  ScriptNode(Type type = Type::WithoutParentheses, const char * name = nullptr, int nameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr) :
     m_type(type),
     m_name(name),
     m_nodeSourceName(nodeSourceName),

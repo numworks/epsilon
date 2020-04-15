@@ -29,7 +29,7 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
   const KDCoordinate nodeNameY = rectHeightPerLine - k_verticalMargin / 2 - nameSize.height() ;
   ctx->drawString(nodeName, KDPoint(0, nodeNameY), k_font, KDColorBlack, backgroundColor, nodeNameLength);
   // If it is a function, draw the parentheses
-  if (m_scriptNode->type() == ScriptNode::Type::Function) {
+  if (m_scriptNode->type() == ScriptNode::Type::WithParentheses) {
     ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), nodeNameY), k_font, KDColorBlack, backgroundColor);
   }
 
@@ -49,7 +49,7 @@ KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
   return KDSize(300 /*TODO LEA*/, 2*k_topBottomMargin + m_scriptNode->description() == nullptr ? k_font->glyphSize().height() : k_font->glyphSize().height() * 2 + k_verticalMargin);
 #if 0
   KDSize nameLineSize = k_font->stringSize(m_scriptNode->name(), m_scriptNode->nameLength());
-  if (m_scriptNode->type() == ScriptNode::Type::Function) {
+  if (m_scriptNode->type() == ScriptNode::Type::WithParentheses) {
     nameLineSize = KDSize(nameLineSize.width() + k_font->stringSize(k_parentheses).width(), nameLineSize.height());
   }
   const char * sourceName = m_scriptNode->nodeSourceName();

@@ -7,7 +7,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 
-class NestedMenuController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class NestedMenuController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
   void setSender(InputEventHandler * sender) { m_sender = sender; }

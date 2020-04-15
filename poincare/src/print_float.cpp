@@ -19,6 +19,8 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr int PrintFloat::Long::k_maxNumberOfCharsForDigit;
+
 PrintFloat::Long::Long(int64_t i) :
   m_negative(i < 0)
 {

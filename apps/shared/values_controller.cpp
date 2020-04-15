@@ -9,6 +9,9 @@ using namespace Poincare;
 
 namespace Shared {
 
+constexpr int ValuesController::k_maxNumberOfDisplayableRows;
+
+// TODO: use std::abs
 static inline int absInt(int x) { return x < 0 ? -x : x; }
 
 // Constructor and helpers

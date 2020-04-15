@@ -26,7 +26,8 @@ public:
     m_tokenizer(text),
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(m_tokenizer.popToken()),
-    m_pendingImplicitMultiplication(false) {}
+    m_pendingImplicitMultiplication(false),
+    m_symbolPlusParenthesesAreFunctions(false) {}
 
   Expression parse();
   Status getStatus() const { return m_status; }
@@ -75,7 +76,7 @@ private:
   void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
   void parseSpecialIdentifier(Expression & leftHandSide);
   void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2);
-  void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length, bool symbolPlusParenthesesAreFunctions);
+  void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 
   // Data members
@@ -88,6 +89,7 @@ private:
   Token m_currentToken;
   Token m_nextToken;
   bool m_pendingImplicitMultiplication;
+  bool m_symbolPlusParenthesesAreFunctions;
 
   // The array of reserved functions' helpers
   static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {

@@ -81,9 +81,9 @@ KDCoordinate VariableBoxController::rowHeight(int j) {
   if (cellType == k_itemCellType) {
     //TODO LEA if cellOrigin == Imported?
     if (scriptNodeAtIndex(j - cumulatedOriginsCount)->description() != nullptr) {
-      return k_complexItemRowHeight;
+      return ScriptNodeCell::k_complexItemHeight;
     }
-    return k_simpleItemRowHeight;
+    return ScriptNodeCell::k_simpleItemHeight;
   }
   assert(cellType == k_subtitleCellType);
   return k_subtitleRowHeight;

@@ -39,8 +39,7 @@ private:
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = LeafCellType; // So that upper class NestedMenuController knows it's a leaf
   constexpr static KDCoordinate k_subtitleRowHeight = 23;
-  constexpr static KDCoordinate k_simpleItemRowHeight = 27;
-  constexpr static KDCoordinate k_complexItemRowHeight = 44;
+
   enum class NodeOrigin : uint8_t {
     CurrentScript = 0,
     Builtins = 1,

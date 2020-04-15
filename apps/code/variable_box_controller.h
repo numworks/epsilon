@@ -24,6 +24,8 @@ public:
   int typeAtLocation(int i, int j) override;
   /* ListViewDataSource */
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  /* SelectableTableViewDelegate */
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
   /* VariableBoxController */
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);

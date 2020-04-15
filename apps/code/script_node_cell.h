@@ -27,7 +27,8 @@ public:
   static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
   constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
-
+  constexpr static KDCoordinate k_simpleItemHeight = 27;
+  constexpr static KDCoordinate k_complexItemHeight = 42;
 protected:
   class ScriptNodeView : public HighlightCell {
   public:
@@ -43,8 +44,8 @@ protected:
     }
   private:
     constexpr static const KDFont * k_font = KDFont::SmallFont;
-    constexpr static KDCoordinate k_topBottomMargin = Metric::TableCellVerticalMargin;
-    constexpr static KDCoordinate k_verticalMargin = 7;
+    constexpr static KDCoordinate k_bottomMargin = 5;
+    constexpr static KDCoordinate k_topMargin = k_bottomMargin + k_separatorThickness;
     ScriptNode * m_scriptNode;
   };
   ScriptNodeView m_scriptNodeView;

@@ -545,6 +545,11 @@ bool Expression::isIdenticalTo(const Expression e) const {
   return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
 }
 
+bool Expression::isIdenticalToWithoutParentheses(const Expression e) const {
+  // Same as isIdenticalTo, but ignoring the parentheses.
+  return ExpressionNode::SimplificationOrder(node(), e.node(), true, true, true) == 0;
+}
+
 bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression exp0 = Expression::ParseAndSimplify(e0, context, complexFormat, angleUnit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   Expression exp1 = Expression::ParseAndSimplify(e1, context, complexFormat, angleUnit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);

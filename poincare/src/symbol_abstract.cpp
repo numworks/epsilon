@@ -34,7 +34,7 @@ Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, ReductionContext 
   return e.setSign(s, reductionContext);
 }
 
-int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   assert(type() == e->type());
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
 }

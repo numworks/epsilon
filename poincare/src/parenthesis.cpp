@@ -25,7 +25,6 @@ Evaluation<T> ParenthesisNode::templatedApproximate(Context * context, Preferenc
   return childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
 }
 
-
 Expression Parenthesis::shallowReduce() {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {

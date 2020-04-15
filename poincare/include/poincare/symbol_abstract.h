@@ -29,7 +29,7 @@ public:
   size_t size() const override;
 
   // ExpressionNode
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
   // Property
   Sign sign(Context * context) const override;

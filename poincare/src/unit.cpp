@@ -103,9 +103,9 @@ Expression UnitNode::getUnit() const {
   return Unit(this).getUnit();
 }
 
-int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
   }
   assert(type() == e->type());
   const UnitNode * eNode = static_cast<const UnitNode *>(e);

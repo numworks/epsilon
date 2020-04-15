@@ -43,7 +43,7 @@ public:
   CodePoint codePoint() const;
 
   // Comparison
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;

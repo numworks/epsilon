@@ -67,30 +67,42 @@ float ExpressionNode::characteristicXRange(Context * context, Preferences::Angle
   return range;
 }
 
-int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted) {
-  if (e1->type() > e2->type()) {
+int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted, bool ignoreParentheses) {
+  // Depending on ignoreParentheses, check if e1 or e2 are parenthesis
+  ExpressionNode::Type type1 = e1->type();
+  if (ignoreParentheses && type1 == Type::Parenthesis) {
+    if (canBeInterrupted && Expression::ShouldStopProcessing()) {
+      return -1;
+    }
+    return SimplificationOrder(e1->childAtIndex(0), e2, ascending, canBeInterrupted, ignoreParentheses);
+  }
+  ExpressionNode::Type type2 = e2->type();
+  if (ignoreParentheses && type2 == Type::Parenthesis) {
+    return SimplificationOrder(e1, e2->childAtIndex(0), ascending, canBeInterrupted, ignoreParentheses);
+  }
+  if (type1 > type2) {
     if (canBeInterrupted && Expression::ShouldStopProcessing()) {
       return 1;
     }
-    return -(e2->simplificationOrderGreaterType(e1, ascending, canBeInterrupted));
-  } else if (e1->type() == e2->type()) {
-    return e1->simplificationOrderSameType(e2, ascending, canBeInterrupted);
+    return -(e2->simplificationOrderGreaterType(e1, ascending, canBeInterrupted, ignoreParentheses));
+  } else if (type1 == type2) {
+    return e1->simplificationOrderSameType(e2, ascending, canBeInterrupted, ignoreParentheses);
   } else {
     if (canBeInterrupted && Expression::ShouldStopProcessing()) {
       return -1;
     }
-    return e1->simplificationOrderGreaterType(e2, ascending, canBeInterrupted);
+    return e1->simplificationOrderGreaterType(e2, ascending, canBeInterrupted, ignoreParentheses);
   }
 }
 
-int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   int index = 0;
   for (ExpressionNode * c : children()) {
     // The NULL node is the least node type.
     if (e->numberOfChildren() <= index) {
       return 1;
     }
-    int childIOrder = SimplificationOrder(c, e->childAtIndex(index), ascending, canBeInterrupted);
+    int childIOrder = SimplificationOrder(c, e->childAtIndex(index), ascending, canBeInterrupted, ignoreParentheses);
     if (childIOrder != 0) {
       return childIOrder;
     }

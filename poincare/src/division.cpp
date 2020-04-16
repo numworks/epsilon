@@ -47,7 +47,7 @@ Expression DivisionNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
-  if (d.real() == 0.0 && d.imag() == 0.0) {
+  if (d.real() == (T)0.0 && d.imag() == (T)0.0) {
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(c/d);

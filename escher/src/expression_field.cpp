@@ -1,9 +1,10 @@
 #include <escher/expression_field.h>
 #include <poincare/preferences.h>
 #include <assert.h>
+#include <algorithm>
 
-static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+constexpr KDCoordinate ExpressionField::k_maximalHeight;
+constexpr KDCoordinate ExpressionField::k_minimalHeight;
 
 ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
@@ -117,6 +118,6 @@ bool ExpressionField::handleEventWithText(const char * text, bool indentation, b
 KDCoordinate ExpressionField::inputViewHeight() const {
   return k_separatorThickness
     + (editionIsInTextField() ? k_minimalHeight :
-        minCoordinate(k_maximalHeight,
-          maxCoordinate(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
+        std::min(k_maximalHeight,
+          std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }

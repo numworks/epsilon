@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(ComplexCartesianNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ComplexCartesian";
   }
 #endif
@@ -44,7 +44,7 @@ public:
   ComplexCartesian() : Expression() {}
   ComplexCartesian(const ComplexCartesianNode * node) : Expression(node) {}
   static ComplexCartesian Builder() { return TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(); }
-  static ComplexCartesian Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static ComplexCartesian Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>({child0, child1}); }
 
   // Getters
   Expression real() { return childAtIndex(0); }

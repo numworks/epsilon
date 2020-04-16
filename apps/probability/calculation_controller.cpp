@@ -15,6 +15,7 @@
 #include "images/focused_calcul4_icon.h"
 #include <poincare/preferences.h>
 #include <assert.h>
+#include <algorithm>
 #include <cmath>
 
 using namespace Poincare;
@@ -22,7 +23,7 @@ using namespace Shared;
 
 namespace Probability {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
+constexpr int CalculationController::k_titleBufferSize;
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
   m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::SecondaryText, Palette::BackgroundApps),
@@ -293,7 +294,7 @@ void CalculationController::updateTitle() {
     }
     currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_titleBufferSize - currentChar);
   }
-  m_titleBuffer[minInt(currentChar, k_titleBufferSize) - 1] = 0;
+  m_titleBuffer[std::min(currentChar, k_titleBufferSize) - 1] = 0;
 }
 
 }

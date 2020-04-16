@@ -5,11 +5,9 @@
 #include <poincare/exception_checkpoint.h>
 #include <assert.h>
 #include <string.h>
+#include <algorithm>
 
 namespace Calculation {
-
-static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 /* HistoryViewCellDataSource */
 
@@ -182,16 +180,16 @@ void HistoryViewCell::layoutSubviews(bool force) {
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   m_inputView.setFrame(KDRect(
     0, 0,
-    minCoordinate(maxFrameWidth, inputSize.width()),
+    std::min(maxFrameWidth, inputSize.width()),
     inputSize.height()),
   force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
   int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6;
   int outputHeight = (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? (maxCoordinate(0, inputSize.height() - outputSize.height()) / 2) + maxCoordinate(0, (inputSize.height() - outputSize.height()) / 2) : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
-    maxCoordinate(0, maxFrameWidth - outputSize.width()),
+    std::max(0, maxFrameWidth - outputSize.width()),
     outputHeight,
-    minCoordinate(maxFrameWidth, outputSize.width()),
+    std::min(maxFrameWidth, outputSize.width()),
     outputSize.height()),
   force);
 }

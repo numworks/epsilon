@@ -4,17 +4,13 @@
 #include <poincare/print_float.h>
 #include <assert.h>
 #include <string.h>
+#include <algorithm>
 #include <cmath>
 #include <float.h>
 
 using namespace Poincare;
 
 namespace Shared {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
-
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     CursorView * cursorView, View * okView, bool displayBanner) :
@@ -182,8 +178,8 @@ void CurveView::computeLabels(Axis axis) {
      * them from overprinting one another.*/
     int labelMaxGlyphLength = labelMaxGlyphLengthSize();
     if (axis == Axis::Horizontal) {
-      float pixelsPerLabel = maxFloat(0.0f, ((float)Ion::Display::Width)/((float)axisLabelsCount) - k_labelMargin);
-      labelMaxGlyphLength = minInt(labelMaxGlyphLengthSize(), pixelsPerLabel/k_font->glyphSize().width());
+      float pixelsPerLabel = std::max(0.0f, ((float)Ion::Display::Width)/((float)axisLabelsCount) - k_labelMargin);
+      labelMaxGlyphLength = std::min<int>(labelMaxGlyphLengthSize(), pixelsPerLabel/k_font->glyphSize().width());
     }
 
     if (labelValue < step && labelValue > -step) {
@@ -590,7 +586,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     x = xy.x1();
     y = xy.x2();
     if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
-      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
+      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, std::min(0.0f, y), std::max(0.0f, y), color, 1);
     }
     joinDots(ctx, rect, xyEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations);
   } while (true);
@@ -599,8 +595,8 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-  float tStart = std::isnan(rectLeft) ? xMin : maxFloat(xMin, rectLeft);
-  float tEnd = std::isnan(rectRight) ? xMax : minFloat(xMax, rectRight);
+  float tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
+  float tEnd = std::isnan(rectRight) ? xMax : std::min(xMax, rectRight);
   assert(!std::isnan(tStart) && !std::isnan(tEnd));
   if (std::isinf(tStart) || std::isinf(tEnd) || tStart > tEnd) {
     return;
@@ -701,8 +697,8 @@ static void clipBarycentricCoordinatesBetweenBounds(float & start, float & end, 
       end = 0;
     }
   } else {
-    start = maxFloat(start, (bounds[(p1f > p2f) ? lower : upper] - p2f)/(p1f-p2f));
-    end   = minFloat( end , (bounds[(p1f > p2f) ? upper : lower] - p2f)/(p1f-p2f));
+    start = std::max(start, (bounds[(p1f > p2f) ? lower : upper] - p2f)/(p1f-p2f));
+    end   = std::min( end , (bounds[(p1f > p2f) ? upper : lower] - p2f)/(p1f-p2f));
   }
 }
 

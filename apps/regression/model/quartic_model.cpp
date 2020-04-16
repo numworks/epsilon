@@ -19,39 +19,37 @@ namespace Regression {
 
 Layout QuarticModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr int size = 20;
-    Layout layoutChildren[size] = {
+    m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('4', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
+        CodePointLayout::Builder('4', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('b', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('3', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
+        CodePointLayout::Builder('3', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('c', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
+        CodePointLayout::Builder('2', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('d', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('e', k_layoutFont),
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, size);
+    });
   }
   return m_layout;
 }
@@ -96,34 +94,35 @@ Expression QuarticModel::expression(double * modelCoefficients) {
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
   double e = modelCoefficients[4];
-  Expression addChildren[] = {
-    // a*x^4
-    Multiplication::Builder(
+  // a*x^4+b*x^3+c*x^2+d*x+e
+  return Addition::Builder({
+    Multiplication::Builder({
       Number::DecimalNumber(a),
       Power::Builder(
         Symbol::Builder('x'),
-        Decimal::Builder(4.0))),
-    // b*x^3
-    Multiplication::Builder(
+        Decimal::Builder(4.0)
+      )
+    }),
+    Multiplication::Builder({
       Number::DecimalNumber(b),
       Power::Builder(
         Symbol::Builder('x'),
-        Decimal::Builder(3.0))),
-    // c*x^2
-    Multiplication::Builder(
+        Decimal::Builder(3.0)
+      )
+    }),
+    Multiplication::Builder({
       Number::DecimalNumber(c),
       Power::Builder(
         Symbol::Builder('x'),
-        Decimal::Builder(2.0))),
-    // d*x
-    Multiplication::Builder(
+        Decimal::Builder(2.0)
+      )
+    }),
+    Multiplication::Builder({
       Number::DecimalNumber(d),
-      Symbol::Builder('x')),
-    // e
+      Symbol::Builder('x')
+    }),
     Number::DecimalNumber(e)
-  };
-  Expression result = Addition::Builder(addChildren, 5);
-  return result;
+  });
 }
 
 }

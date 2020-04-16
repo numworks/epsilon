@@ -10,7 +10,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(ProductNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Product";
   }
 #endif
@@ -34,7 +34,7 @@ class Product final : public Sequence {
 friend class ProductNode;
 public:
   Product(const ProductNode * n) : Sequence(n) {}
-  static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>(ArrayBuilder<TreeHandle>(child0, child1, child2, child3).array(), 4); }
+  static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>({child0, child1, child2, child3}); }
   static Expression UntypedBuilder(Expression children);
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("product", 4, &UntypedBuilder);

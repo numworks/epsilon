@@ -1,0 +1,35 @@
+#ifndef LIBAXX_INITIALIZER_LIST
+#define LIBAXX_INITIALIZER_LIST
+
+#include <stddef.h>
+
+namespace std {
+
+template<class T>
+class initializer_list {
+public:
+  initializer_list() noexcept : m_begin(nullptr), m_size(0) {}
+  const T * begin() const noexcept { return m_begin; }
+  const T * end() const noexcept { return m_begin + m_size; }
+private:
+  initializer_list(const T * begin, size_t size) noexcept
+    : m_begin(begin),
+    m_size(size)
+    {}
+  const T * m_begin;
+  size_t m_size;
+};
+
+template<class T>
+inline const T * begin(initializer_list<T> il) noexcept {
+  return il.begin();
+}
+
+template<class T>
+inline const T * end(initializer_list<T> il) noexcept {
+  return il.end();
+}
+
+}
+
+#endif

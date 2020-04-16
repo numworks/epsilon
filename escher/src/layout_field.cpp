@@ -5,10 +5,9 @@
 #include <poincare/horizontal_layout.h>
 #include <assert.h>
 #include <string.h>
+#include <algorithm>
 
 using namespace Poincare;
-
-static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
@@ -335,29 +334,30 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     return true;
   }
 
+  Poincare::LayoutCursor * cursor = m_contentView.cursor();
   // Handle special cases
   if (strcmp(text, Ion::Events::Division.text()) == 0) {
-    m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
+    cursor->addFractionLayoutAndCollapseSiblings();
   } else if (strcmp(text, Ion::Events::Exp.text()) == 0) {
-    m_contentView.cursor()->addEmptyExponentialLayout();
+    cursor->addEmptyExponentialLayout();
   } else if (strcmp(text, Ion::Events::Power.text()) == 0) {
-    m_contentView.cursor()->addEmptyPowerLayout();
+    cursor->addEmptyPowerLayout();
   } else if (strcmp(text, Ion::Events::Sqrt.text()) == 0) {
-    m_contentView.cursor()->addEmptySquareRootLayout();
+    cursor->addEmptySquareRootLayout();
   } else if (strcmp(text, Ion::Events::Square.text()) == 0) {
-    m_contentView.cursor()->addEmptySquarePowerLayout();
+    cursor->addEmptySquarePowerLayout();
   } else if (strcmp(text, Ion::Events::EE.text()) == 0) {
-    m_contentView.cursor()->addEmptyTenPowerLayout();
+    cursor->addEmptyTenPowerLayout();
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
-    m_contentView.cursor()->addEmptyMatrixLayout();
+    cursor->addEmptyMatrixLayout();
   } else if((strcmp(text, Ion::Events::Multiplication.text())) == 0){
-    m_contentView.cursor()->addMultiplicationPointLayout();
+    cursor->addMultiplicationPointLayout();
   } else {
     Expression resultExpression = Expression::Parse(text, nullptr);
     if (resultExpression.isUninitialized()) {
       // The text is not parsable (for instance, ",") and is added char by char.
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-      m_contentView.cursor()->insertText(text, forceCursorRightOfText);
+      cursor->insertText(text, forceCursorRightOfText);
       reload(previousLayoutSize);
       return true;
     }
@@ -431,6 +431,30 @@ void LayoutField::deleteSelection() {
   m_contentView.deleteSelection();
 }
 
+#define static_assert_immediately_follows(a, b) static_assert( \
+  static_cast<uint8_t>(a) + 1 == static_cast<uint8_t>(b), \
+  "Ordering error" \
+)
+
+#define static_assert_sequential(a, b, c, d) \
+  static_assert_immediately_follows(a, b); \
+  static_assert_immediately_follows(b, c); \
+  static_assert_immediately_follows(c, d);
+
+
+static_assert_sequential(
+  Ion::Events::Left,
+  Ion::Events::Up,
+  Ion::Events::Down,
+  Ion::Events::Right
+);
+
+static inline bool IsMoveEvent(Ion::Events::Event event) {
+  return
+    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::Left) &&
+    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::Right);
+}
+
 bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
@@ -455,7 +479,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   /* if move event was not caught neither by privateHandleMoveEvent nor by
    * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
    * event up. */
-  if ((event == Ion::Events::Up || event == Ion::Events::Down || event == Ion::Events::Left || event == Ion::Events::Right) && isEditing()) {
+  if (IsMoveEvent(event) && isEditing()) {
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
@@ -508,15 +532,6 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-#define static_assert_immediately_follows(a, b) static_assert( \
-  static_cast<uint8_t>(a) + 1 == static_cast<uint8_t>(b), \
-  "Ordering error" \
-)
-
-#define static_assert_sequential(a, b, c, d) \
-  static_assert_immediately_follows(a, b); \
-  static_assert_immediately_follows(b, c); \
-  static_assert_immediately_follows(c, d);
 
 static_assert_sequential(
   LayoutCursor::Direction::Left,
@@ -525,18 +540,6 @@ static_assert_sequential(
   LayoutCursor::Direction::Right
 );
 
-static_assert_sequential(
-  Ion::Events::Left,
-  Ion::Events::Up,
-  Ion::Events::Down,
-  Ion::Events::Right
-);
-
-static inline bool IsMoveEvent(Ion::Events::Event event) {
-  return
-    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::Left) &&
-    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::Right);
-}
 
 static inline LayoutCursor::Direction DirectionForMoveEvent(Ion::Events::Event event) {
   assert(IsMoveEvent(event));
@@ -612,8 +615,8 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(rect, true);
   // Show the rect area around its baseline
   KDCoordinate underBaseline = rect.height() - baseline;
-  KDCoordinate minAroundBaseline = minCoordinate(baseline, underBaseline);
-  minAroundBaseline = minCoordinate(minAroundBaseline, bounds().height() / 2);
+  KDCoordinate minAroundBaseline = std::min(baseline, underBaseline);
+  minAroundBaseline = std::min<KDCoordinate>(minAroundBaseline, bounds().height() / 2);
   KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline, rect.width(), 2 * minAroundBaseline);
   scrollToContentRect(balancedRect, true);
 }

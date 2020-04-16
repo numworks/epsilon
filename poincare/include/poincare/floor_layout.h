@@ -22,7 +22,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(FloorLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "FloorLayout";
   }
 #endif
@@ -33,7 +33,7 @@ protected:
 
 class FloorLayout final : public Layout {
 public:
-  static FloorLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(&child, 1); }
+  static FloorLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>({child}); }
   FloorLayout() = delete;
 };
 

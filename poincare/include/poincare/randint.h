@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(RandintNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Randint";
   }
 #endif
@@ -45,7 +45,7 @@ class Randint final : public Expression {
 friend class RandintNode;
 public:
   Randint(const RandintNode * n) : Expression(n) {}
-  static Randint Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Randint, RandintNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static Randint Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Randint, RandintNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilderTwoChildren<Randint>);
 private:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

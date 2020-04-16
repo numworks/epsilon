@@ -16,7 +16,7 @@ public:
   // TreeNode
   int numberOfChildren() const override { return 1; } //TODO allow any number of children? Needs templating
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Function";
   }
 #endif

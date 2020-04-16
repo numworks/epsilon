@@ -14,7 +14,7 @@ public:
   size_t size() const override { return sizeof(ArcCosineNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ArcCosine";
   }
 #endif
@@ -45,7 +45,7 @@ private:
 class ArcCosine final : public Expression {
 public:
   ArcCosine(const ArcCosineNode * n) : Expression(n) {}
-  static ArcCosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>(&child, 1); }
+  static ArcCosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acos", 1, &UntypedBuilderOneChild<ArcCosine>);
 

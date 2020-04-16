@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(FactorialNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Factorial";
   }
 #endif
@@ -52,7 +52,7 @@ private:
 class Factorial final : public Expression {
 public:
   Factorial(const FactorialNode * n) : Expression(n) {}
-  static Factorial Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factorial, FactorialNode>(&child, 1); }
+  static Factorial Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factorial, FactorialNode>({child}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 private:

@@ -2,10 +2,9 @@
 #include <escher/metric.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 void BracketLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() == this);
@@ -84,7 +83,7 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
     {
       currentNumberOfOpenBrackets++;
     }
-    result = maxCoordinate(result, sibling->baseline());
+    result = std::max(result, sibling->baseline());
   }
   return result + (layoutSize().height() - childHeight()) / 2;
 }
@@ -138,10 +137,10 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
     }
     KDCoordinate siblingHeight = sibling->layoutSize().height();
     KDCoordinate siblingBaseline = sibling->baseline();
-    maxUnderBaseline = maxCoordinate(maxUnderBaseline, siblingHeight - siblingBaseline);
-    maxAboveBaseline = maxCoordinate(maxAboveBaseline, siblingBaseline);
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, siblingHeight - siblingBaseline);
+    maxAboveBaseline = std::max(maxAboveBaseline, siblingBaseline);
   }
-  return maxCoordinate(result, maxUnderBaseline + maxAboveBaseline);
+  return std::max<KDCoordinate>(result, maxUnderBaseline + maxAboveBaseline);
 }
 
 KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child) {

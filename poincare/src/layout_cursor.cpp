@@ -10,14 +10,12 @@
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <stdio.h>
 #include <poincare/preferences.h>
+#include <algorithm>
 
 namespace Poincare {
 
 /* Getters and setters */
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 KDCoordinate LayoutCursor::cursorHeightWithoutSelection() {
   KDCoordinate height = layoutHeight();
@@ -36,7 +34,7 @@ KDCoordinate LayoutCursor::baselineWithoutSelection() {
   if (m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.baseline();
   } else if (m_layout.hasSibling(equivalentLayout)) {
-    return maxCoordinate(layoutBaseline, equivalentLayout.baseline());
+    return std::max(layoutBaseline, equivalentLayout.baseline());
   }
   return layoutBaseline;
 }
@@ -262,8 +260,8 @@ KDCoordinate LayoutCursor::layoutHeight() {
     KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize().height();
     KDCoordinate pointedLayoutBaseline = m_layout.baseline();
     KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline();
-    return maxCoordinate(pointedLayoutBaseline, equivalentLayoutBaseline)
-      + maxCoordinate(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
+    return std::max(pointedLayoutBaseline, equivalentLayoutBaseline)
+      + std::max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
   return pointedLayoutHeight;
 }

@@ -12,7 +12,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(HyperbolicSineNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "HyperbolicSine";
   }
 #endif
@@ -36,7 +36,7 @@ private:
 class HyperbolicSine final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicSine(const HyperbolicSineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  static HyperbolicSine Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicSine, HyperbolicSineNode>(&child, 1); }
+  static HyperbolicSine Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicSine, HyperbolicSineNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sinh", 1, &UntypedBuilderOneChild<HyperbolicSine>);
 };

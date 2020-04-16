@@ -23,7 +23,7 @@ public:
   size_t size() const override { return sizeof(ConjugateLayoutNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ConjugateLayout";
   }
 #endif
@@ -43,7 +43,7 @@ private:
 
 class ConjugateLayout final : public Layout {
 public:
-  static ConjugateLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(&child, 1); }
+  static ConjugateLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>({child}); }
   ConjugateLayout() = delete;
 };
 

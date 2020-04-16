@@ -1,6 +1,7 @@
 #include <poincare/undefined.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <algorithm>
 
 extern "C" {
 #include <math.h>
@@ -8,8 +9,6 @@ extern "C" {
 }
 
 namespace Poincare {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 int UndefinedNode::polynomialDegree(Context * context, const char * symbolName) const {
   return -1;
@@ -25,7 +24,7 @@ Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
 }
 
 int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return minInt(strlcpy(buffer, Undefined::Name(), bufferSize), bufferSize - 1);
+  return std::min<int>(strlcpy(buffer, Undefined::Name(), bufferSize), bufferSize - 1);
 }
 
 template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {

@@ -20,6 +20,7 @@
 #include <cmath>
 #include <utility>
 #include <poincare/preferences.h>
+#include <algorithm>
 
 namespace Poincare {
 
@@ -90,8 +91,6 @@ Expression MultiplicationNode::setSign(Sign s, ReductionContext reductionContext
   assert(s == ExpressionNode::Sign::Positive);
   return Multiplication(this).setSign(s, reductionContext);
 }
-
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
@@ -185,7 +184,7 @@ CodePoint MultiplicationNode::operatorSymbol() const {
       for (int i = 0; i < numberOfChildren() - 1; i++) {
       /* The operator symbol must be the same for all operands of the multiplication.
       * If one operator has to be '×', they will all be '×'. Idem for '·'. */
-      sign = maxInt(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
+      sign = std::max(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
     }
   } else {
     switch(preferences->symbolofMultiplication()){

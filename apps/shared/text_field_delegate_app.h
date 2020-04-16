@@ -17,7 +17,7 @@ public:
   virtual bool XNTCanBeOverriden() const { return true; }
   virtual CodePoint XNT() { return 'x'; }
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool isAcceptableText(const char * text);
   template<typename T>
   bool hasUndefinedValue(const char * text, T & value, bool enablePlusInfinity = false, bool enableMinusInfinity = false);

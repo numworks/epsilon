@@ -5,13 +5,11 @@
 #include <float.h>
 #include <cmath>
 #include <string.h>
+#include <algorithm>
 
 using namespace Shared;
 
 namespace Regression {
-
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
 
 static_assert(Model::k_numberOfModels == 9, "Number of models changed, Regression::Store() needs to adapt");
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
@@ -146,8 +144,8 @@ void Store::setDefault() {
   float maxX = -FLT_MAX;
   for (int series = 0; series < k_numberOfSeries; series++) {
     if (!seriesIsEmpty(series)) {
-      minX = minFloat(minX, minValueOfColumn(series, 0));
-      maxX = maxFloat(maxX, maxValueOfColumn(series, 0));
+      minX = std::min(minX, minValueOfColumn(series, 0));
+      maxX = std::max(maxX, maxValueOfColumn(series, 0));
     }
   }
   float range = maxX - minX;
@@ -199,7 +197,7 @@ void Store::resetMemoization() {
 float Store::maxValueOfColumn(int series, int i) const {
   float maxColumn = -FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    maxColumn = maxFloat(maxColumn, m_data[series][i][k]);
+    maxColumn = std::max<float>(maxColumn, m_data[series][i][k]);
   }
   return maxColumn;
 }
@@ -207,7 +205,7 @@ float Store::maxValueOfColumn(int series, int i) const {
 float Store::minValueOfColumn(int series, int i) const {
   float minColumn = FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    minColumn = minFloat(minColumn, m_data[series][i][k]);
+    minColumn = std::min<float>(minColumn, m_data[series][i][k]);
   }
   return minColumn;
 }

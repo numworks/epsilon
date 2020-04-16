@@ -57,6 +57,7 @@ liba_src += $(addprefix liba/src/external/openbsd/, \
   s_copysignf.c \
   s_cosf.c \
   s_erf.c \
+  s_erff.c \
   s_expm1f.o\
   s_fabsf.c \
   s_fmaxf.c \
@@ -65,6 +66,7 @@ liba_src += $(addprefix liba/src/external/openbsd/, \
   s_frexp.c \
   s_log1pf.c \
   s_logb.c \
+  s_logbf.c \
   s_modf.c \
   s_modff.c \
   s_rint.c \

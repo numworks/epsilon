@@ -185,7 +185,7 @@ void HistoryViewCell::layoutSubviews(bool force) {
   force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
   int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6;
-  int outputHeight = (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? (maxCoordinate(0, inputSize.height() - outputSize.height()) / 2) + maxCoordinate(0, (inputSize.height() - outputSize.height()) / 2) : inputSize.height();
+  int outputHeight = (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? (std::max(0, inputSize.height() - outputSize.height()) / 2) + std::max(0, (inputSize.height() - outputSize.height()) / 2) : inputSize.height();
   m_scrollableOutputView.setFrame(KDRect(
     std::max(0, maxFrameWidth - outputSize.width()),
     outputHeight,

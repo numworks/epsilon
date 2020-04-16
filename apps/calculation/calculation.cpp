@@ -167,7 +167,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     } else {
       if (allExpressionsInline) {
         KDCoordinate exactOutputBaseline = exactLayout.baseline();
-        result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
+        result = std::max(inputBaseline, exactOutputBaseline) + std::max(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
       } else {
         result = inputHeight + exactOutputHeight + doubleMargin;
       }

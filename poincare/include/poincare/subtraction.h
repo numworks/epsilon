@@ -24,7 +24,7 @@ public:
   Type type() const override { return Type::Subtraction; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
-  Expression extractUnits() override { assert(false); return ExpressionNode::extractUnits(); }
+  Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }

@@ -81,12 +81,8 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
   return -1;
 }
 
-Expression PowerNode::extractUnits() {
-  if (!childAtIndex(0)->extractUnits().isUninitialized()) {
-    assert(childAtIndex(0)->type() == ExpressionNode::Type::Unit);
-    return Power(this);
-  }
-  return ExpressionNode::extractUnits();
+Expression PowerNode::removeUnit(Expression * unit) {
+  return Power(this).removeUnit(unit);
 }
 
 int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
@@ -378,6 +374,23 @@ int Power::getPolynomialCoefficients(Context * context, const char * symbolName,
   return -1;
 }
 
+Expression Power::removeUnit(Expression * unit) {
+  Expression childUnit;
+  Expression child = childAtIndex(0).node()->removeUnit(&childUnit);
+  if (!childUnit.isUninitialized()) {
+    // Reduced power containing unit are of form "unit^i" with i integer
+    assert(child.isRationalOne());
+    assert(childUnit.type() == ExpressionNode::Type::Unit);
+    Power p = *this;
+    Expression result = child;
+    replaceWithInPlace(child);
+    p.replaceChildAtIndexInPlace(0, childUnit);
+    *unit = p;
+    return child;
+  }
+  return *this;
+}
+
 Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
 
   {
@@ -392,10 +405,13 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   // Step 1: Handle the units
   {
-    if (!index.extractUnits().isUninitialized()) {
+    Expression indexUnit;
+    index.removeUnit(&indexUnit);
+    if (!indexUnit.isUninitialized()) {
       // There must be no unit in the exponent
       return replaceWithUndefinedInPlace();
     }
+    assert(index == childAtIndex(1));
     if (base.hasUnit()) {
       if (index.type() != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
         // The exponent must be an Integer

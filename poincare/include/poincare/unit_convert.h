@@ -20,7 +20,7 @@ public:
   Type type() const override { return Type::UnitConvert; }
 
 private:
-  Expression extractUnits() override { assert(false); return ExpressionNode::extractUnits(); }
+  Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   // Evalutation

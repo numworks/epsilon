@@ -136,8 +136,8 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
-Expression ExpressionNode::extractUnits() {
-  return Expression();
+Expression ExpressionNode::removeUnit(Expression * unit) {
+  return Expression(this);
 }
 
 void ExpressionNode::setChildrenInPlace(Expression other) {

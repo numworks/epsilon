@@ -373,10 +373,12 @@ void assert_reduced_expression_unit(const char * expression, const char * unit, 
   ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, SystemForApproximation, symbolicComutation);
   Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(redContext);
-  Expression u1 = e.extractUnits();
-  Expression u2 = parse_expression(unit, &globalContext, false);
-  u2 = u2.reduce(redContext);
-  u2 = u2.extractUnits();
+  Expression u1;
+  e = e.removeUnit(&u1);
+  Expression e2 = parse_expression(unit, &globalContext, false);
+  Expression u2;
+  e2 = e2.reduce(redContext);
+  e2.removeUnit(&u2);
   quiz_assert_print_if_failure(u1.isUninitialized() == u2.isUninitialized() && (u1.isUninitialized() || u1.isIdenticalTo(u2)), expression);
 }
 

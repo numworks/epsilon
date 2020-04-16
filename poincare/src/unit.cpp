@@ -164,8 +164,8 @@ ExpressionNode::Sign UnitNode::sign(Context * context) const {
   return Sign::Positive;
 }
 
-Expression UnitNode::extractUnits() {
-  return Unit(this);
+Expression UnitNode::removeUnit(Expression * unit) {
+  return Unit(this).removeUnit(unit);
 }
 
 int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
@@ -339,6 +339,13 @@ void Unit::chooseBestMultipleForValue(double & value, const int exponent, Expres
   unitNode->setRepresentative(bestRep);
   unitNode->setPrefix(bestPre);
   value = bestVal;
+}
+
+Expression Unit::removeUnit(Expression * unit) {
+  *unit = *this;
+  Expression one = Rational::Builder(1);
+  replaceWithInPlace(one);
+  return one;
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

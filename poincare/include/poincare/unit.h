@@ -151,7 +151,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Unit; }
   Sign sign(Context * context) const override;
-  Expression extractUnits() override;
+  Expression removeUnit(Expression * unit) override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -183,6 +183,7 @@ private:
 };
 
 class Unit final : public Expression {
+  friend class UnitNode;
 public:
   typedef UnitNode::Prefix Prefix;
   typedef UnitNode::Representative Representative;
@@ -728,6 +729,9 @@ public:
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   void chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext);
+
+private:
+  Expression removeUnit(Expression * unit);
 };
 
 }

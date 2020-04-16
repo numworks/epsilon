@@ -63,8 +63,8 @@ bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & chi
   return child.isOfType(types, 2);
 }
 
-Expression MultiplicationNode::extractUnits() {
-  return Multiplication(this).extractUnits();
+Expression MultiplicationNode::removeUnit(Expression * unit) {
+  return Multiplication(this).removeUnit(unit);
 }
 
 template<typename T>
@@ -255,31 +255,30 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
   return deg;
 }
 
-Expression Multiplication::extractUnits() {
-  Multiplication result = Multiplication::Builder();
+Expression Multiplication::removeUnit(Expression * unit) {
+  Multiplication unitMult = Multiplication::Builder();
   int resultChildrenCount = 0;
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression currentUnit = childAtIndex(i).extractUnits();
+    Expression currentUnit;
+    childAtIndex(i).removeUnit(&currentUnit);
     if (!currentUnit.isUninitialized()) {
-      assert(childAtIndex(i) == currentUnit);
-      result.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
+      unitMult.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
       resultChildrenCount++;
+      assert(childAtIndex(i).isRationalOne());
       removeChildAtIndexInPlace(i--);
     }
   }
   if (resultChildrenCount == 0) {
-    return Expression();
+    *unit = Expression();
+  } else {
+    *unit = unitMult.squashUnaryHierarchyInPlace();
   }
-  /* squashUnaryHierarchyInPlace();
-   * That would make 'this' invalid, so we would rather keep any unary
-   * hierarchy as it is and handle it later.
-   * TODO ?
-   * A possible solution would be that the extractUnits method becomes
-   *   Expression extractUnits(Expression & units)
-   * returning the Expression that is left after extracting the units
-   * and setting the units reference instead of returning the units.
-   */
-  return result.squashUnaryHierarchyInPlace();
+  if (numberOfChildren() == 0) {
+    Expression one = Rational::Builder(1);
+    replaceWithInPlace(one);
+    return one;
+  }
+  return squashUnaryHierarchyInPlace();
 }
 
 template<typename T>
@@ -356,9 +355,11 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     return std::move(o);
   }
 
-  Expression result = *this;
-  Expression units = extractUnits();
+  Expression self = *this;
+  Expression units;
+  self = removeUnit(&units);
 
+  Expression result;
   if (!units.isUninitialized()) {
     /* Step 2: Handle the units
      *
@@ -408,8 +409,12 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     }
     if (unitsAccu.numberOfChildren() > 0) {
       units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
-      Expression newUnits = units.extractUnits();
-      result = Multiplication::Builder(result, units);
+      Expression newUnits;
+      units = units.removeUnit(&newUnits);
+      Multiplication m = Multiplication::Builder(units);
+      self.replaceWithInPlace(m);
+      m.addChildAtIndexInPlace(self, 0, 1);
+      self = m;
       if (newUnits.isUninitialized()) {
         units = unitsAccu;
       } else {
@@ -426,7 +431,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
      * most relevant.
      */
 
-    double value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    double value = self.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (std::isnan(value)) {
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();
@@ -480,7 +485,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     }
   }
 
-  replaceWithInPlace(result);
+  self.replaceWithInPlace(result);
   return result;
 }
 
@@ -1006,7 +1011,7 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
 }
 
 void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {
-  assert(const_cast<Multiplication*>(this)->extractUnits().isUninitialized());
+  assert(!hasUnit());
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
   int numberOfFactorsInNumerator = 0;

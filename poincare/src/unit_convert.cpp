@@ -41,7 +41,8 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
         reductionContext.angleUnit(),
         reductionContext.target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits);
-    Expression unit = childAtIndex(1).clone().reduce(reductionContextWithUnits).extractUnits();
+    Expression unit;
+    childAtIndex(1).clone().reduce(reductionContextWithUnits).removeUnit(&unit);
     if (unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
@@ -54,18 +55,21 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
       reductionContext.angleUnit(),
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  Expression finalUnit = childAtIndex(1).reduce(reductionContextWithoutUnits).extractUnits();
+  Expression finalUnit;
+  childAtIndex(1).reduce(reductionContextWithoutUnits).removeUnit(&finalUnit);
 
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), finalUnit.clone());
   division = division.reduce(reductionContext);
-  if (!division.extractUnits().isUninitialized()) {
+  Expression divisionUnit;
+  division = division.removeUnit(&divisionUnit);
+  if (!divisionUnit.isUninitialized()) {
     // The left and right members are not homogeneous
     return replaceWithUndefinedInPlace();
   }
   double floatValue = division.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   if (std::isinf(floatValue)) {
-    return Infinity::Builder(false); //FIXME sign?
+    return Infinity::Builder(floatValue < 0.0); //FIXME sign?
   }
   if (std::isnan(floatValue)) {
     return Undefined::Builder();

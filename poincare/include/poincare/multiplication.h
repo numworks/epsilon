@@ -25,7 +25,7 @@ public:
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
-  Expression extractUnits() override;
+  Expression removeUnit(Expression * unit) override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c*d); }
@@ -65,6 +65,7 @@ private:
 class Multiplication : public NAryExpression {
   friend class Addition;
   friend class Power;
+  friend class MultiplicationNode;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   static Multiplication Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(convert(children)); }
@@ -76,7 +77,7 @@ public:
 
   // Properties
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
-  Expression extractUnits();
+
   // Approximation
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Simplification
@@ -88,6 +89,9 @@ public:
     NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);
   }
 private:
+  // Unit
+  Expression removeUnit(Expression * unit);
+
   // Simplification
   Expression privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool expand, bool canBeInterrupted);
   void factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext);

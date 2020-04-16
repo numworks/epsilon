@@ -260,6 +260,10 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_L", "0.001×_m^3");
   assert_parsed_expression_simplify_to("_ha", "0.01×_km^2");
 
+  /* Unit sum/subtract */
+  assert_parsed_expression_simplify_to("_m+_m", "2×_m");
+  assert_parsed_expression_simplify_to("_m-_m", "0×_m");
+
   /* Usual physical quantities */
   assert_parsed_expression_simplify_to("_A×_s×_m^(-3)", "1×_C×_m^\u0012-3\u0013"); // Charge density
   assert_parsed_expression_simplify_to("_kg×_m×_s^(-3)×_K^(-1)", "1×_N×_K^\u0012-1\u0013×_s^\u0012-1\u0013"); // Thermal conductivity _W×_m^-1×_K^-1

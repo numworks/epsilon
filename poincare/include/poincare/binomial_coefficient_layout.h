@@ -27,7 +27,7 @@ public:
   size_t size() const override { return sizeof(BinomialCoefficientLayoutNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "BinomialCoefficientLayout";
   }
 #endif
@@ -46,7 +46,7 @@ private:
 
 class BinomialCoefficientLayout final : public Layout {
 public:
-  static BinomialCoefficientLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static BinomialCoefficientLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>({child0, child1}); }
   BinomialCoefficientLayout() = delete;
 };
 

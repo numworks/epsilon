@@ -4,10 +4,9 @@
 #include <poincare/serialization_helper.h>
 #include <string.h>
 #include <assert.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 const uint8_t topSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayoutNode::k_symbolWidth] = {
   {0x00, 0x00, 0xFF, 0xFF},
@@ -215,14 +214,14 @@ KDSize IntegralLayoutNode::computeSize() {
   KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+maxCoordinate(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
+  KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
   KDCoordinate baseline = computeBaseline();
-  KDCoordinate height = baseline + k_integrandHeigthMargin+maxCoordinate(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline())+lowerBoundSize.height();
+  KDCoordinate height = baseline + k_integrandHeigthMargin+std::max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline())+lowerBoundSize.height();
   return KDSize(width, height);
 }
 
 KDCoordinate IntegralLayoutNode::computeBaseline() {
-  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + maxCoordinate(integrandLayout()->baseline(), differentialLayout()->baseline());
+  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + std::max(integrandLayout()->baseline(), differentialLayout()->baseline());
 }
 
 KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
@@ -237,7 +236,7 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
     x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;;
     y = 0;
   } else if (child == integrandLayout()) {
-    x = k_symbolWidth +k_lineThickness+ k_boundWidthMargin+maxCoordinate(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
+    x = k_symbolWidth +k_lineThickness+ k_boundWidthMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
     y = computeBaseline()-integrandLayout()->baseline();
   } else if (child == differentialLayout()) {
     x = computeSize().width() - k_differentialWidthMargin - differentialLayout()->layoutSize().width();
@@ -252,7 +251,7 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   KDSize integrandSize = integrandLayout()->layoutSize();
   KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDCoordinate centralArgumentHeight =  maxCoordinate(integrandLayout()->baseline(), differentialLayout()->baseline()) + maxCoordinate(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline());
+  KDCoordinate centralArgumentHeight =  std::max(integrandLayout()->baseline(), differentialLayout()->baseline()) + std::max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline());
 
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
 

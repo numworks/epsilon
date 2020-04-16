@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
-#include <poincare/array_builder.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/tree_handle.h>
 #include <poincare/preferences.h>
@@ -217,6 +216,9 @@ public:
    * same structures and all their nodes have same types and values (ie,
    * sqrt(pi^2) is NOT identical to pi). */
   bool isIdenticalTo(const Expression e) const;
+  /* isIdenticalToWithoutParentheses behaves as isIdenticalTo, but without
+   * taking into account parentheses: e^(0) is identical to e^0. */
+  bool isIdenticalToWithoutParentheses(const Expression e) const;
   static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
   /* Layout Helper */
@@ -286,6 +288,9 @@ public:
 
   static void Tidy() { sSymbolReplacementsCountLock = false; }
 
+  /* Tuple */
+  typedef std::initializer_list<Expression> Tuple;
+
 protected:
   static bool SimplificationHasBeenInterrupted();
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
@@ -326,6 +331,12 @@ protected:
     assert(T::IsExpression());
     static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
     return *reinterpret_cast<T *>(const_cast<Expression *>(this));
+  }
+
+  static_assert(sizeof(TreeHandle::Tuple) == sizeof(Tuple), "Size mismatch");
+  static const TreeHandle::Tuple & convert(const Tuple & l) {
+    assert(sizeof(TreeHandle) == sizeof(Expression));
+    return reinterpret_cast<const TreeHandle::Tuple &>(l);
   }
 
   /* Reference */

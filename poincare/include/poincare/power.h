@@ -16,7 +16,7 @@ public:
   size_t size() const override { return sizeof(PowerNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Power";
   }
 #endif
@@ -52,8 +52,8 @@ private:
   Expression shallowBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::RightOfPower; }
-  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
   Expression denominator(ReductionContext reductionContext) const override;
   // Evaluation
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
@@ -73,7 +73,7 @@ class Power final : public Expression {
   friend class Round;
 public:
   Power(const PowerNode * n) : Expression(n) {}
-  static Power Builder(Expression base, Expression exponent) { return TreeHandle::FixedArityBuilder<Power, PowerNode>(ArrayBuilder<TreeHandle>(base, exponent).array(), 2); }
+  static Power Builder(Expression base, Expression exponent) { return TreeHandle::FixedArityBuilder<Power, PowerNode>({base, exponent}); }
 
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;

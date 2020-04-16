@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(LeastCommonMultipleNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "LeastCommonMultiple";
   }
 #endif
@@ -37,7 +37,7 @@ private:
 class LeastCommonMultiple final : public Expression {
 public:
   LeastCommonMultiple(const LeastCommonMultipleNode * n) : Expression(n) {}
-  static LeastCommonMultiple Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static LeastCommonMultiple Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<LeastCommonMultiple, LeastCommonMultipleNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", 2, &UntypedBuilderTwoChildren<LeastCommonMultiple>);
 
   // Expression

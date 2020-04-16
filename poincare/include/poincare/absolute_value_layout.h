@@ -22,7 +22,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(AbsoluteValueLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "AbsoluteValueLayout";
   }
 #endif
@@ -36,7 +36,7 @@ private:
 
 class AbsoluteValueLayout final : public Layout {
 public:
-  static AbsoluteValueLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(&child, 1); }
+  static AbsoluteValueLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>({child}); }
   AbsoluteValueLayout() = delete;
 };
 

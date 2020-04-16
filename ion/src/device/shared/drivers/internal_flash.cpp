@@ -2,6 +2,7 @@
 #include <drivers/cache.h>
 #include <drivers/config/internal_flash.h>
 #include <assert.h>
+#include <algorithm>
 
 namespace Ion {
 namespace Device {
@@ -96,11 +97,6 @@ static inline ptrdiff_t byte_offset(void * p1, void * p2) {
   return reinterpret_cast<uint8_t *>(p2) - reinterpret_cast<uint8_t *>(p1);
 }
 
-template <typename T>
-static inline T min(T i, T j) {
-  return (i<j) ? i : j;
-}
-
 static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length) {
   /* RM0402 3.5.4
    * It is not allowed to program data to the Flash memory that would cross the
@@ -156,7 +152,7 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
     // Here's where source data shall start being copied in the header
     uint8_t * headerDataStart = headerStart + headerDelta;
     // And here's where it should end
-    uint8_t * headerDataEnd = min<uint8_t *>(
+    uint8_t * headerDataEnd = std::min(
       headerStart + sizeof(MemoryAccessType), // Either at the end of the header
       headerDataStart + length // or whenever src runs out of data
     );

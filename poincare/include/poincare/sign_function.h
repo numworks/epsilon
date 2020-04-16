@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(SignFunctionNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "SignFunction";
   }
 #endif
@@ -45,7 +45,7 @@ private:
 class SignFunction final : public Expression {
 public:
   SignFunction(const SignFunctionNode * n) : Expression(n) {}
-  static SignFunction Builder(Expression child) { return TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>(&child, 1); }
+  static SignFunction Builder(Expression child) { return TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilderOneChild<SignFunction>);
 

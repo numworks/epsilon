@@ -51,7 +51,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   U(), U(), U(), TL(), U(), U(),
 };
 
-#if DEBUG
+#ifndef NDEBUG
 
 static constexpr const char * s_nameForEvent[255] = {
  // Plain

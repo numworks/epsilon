@@ -27,7 +27,7 @@ public:
   // TreeNode
   size_t size() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Decimal";
   }
   virtual void logAttributes(std::ostream & stream) const override {
@@ -56,7 +56,7 @@ public:
   /* Warning: Decimal(mantissa: 1000, exponent: 3) and Decimal(mantissa: 1, exponent: 3)
    * are strictly ordered with the SimplificationOrder although they are equal
    * with the usual math order (1.000E3 == 1E3). */
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;

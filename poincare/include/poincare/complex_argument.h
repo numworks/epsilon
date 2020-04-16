@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(ComplexArgumentNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ComplexArgument";
   }
 #endif
@@ -42,7 +42,7 @@ private:
 class ComplexArgument final : public Expression {
 public:
   ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
-  static ComplexArgument Builder(Expression child) { return TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>(&child, 1); }
+  static ComplexArgument Builder(Expression child) { return TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("arg", 1, &UntypedBuilderOneChild<ComplexArgument>);
 

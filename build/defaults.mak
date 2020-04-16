@@ -2,7 +2,6 @@ HOSTCC = gcc
 HOSTCXX = g++
 PYTHON = python3
 
-SFLAGS += -DDEBUG=$(DEBUG)
 SFLAGS += -DLEDS_CHOICE=$(LEDS_CHOICE)
 ifdef USERNAME
   SFLAGS += -DUSERNAME="$(USERNAME)"
@@ -17,9 +16,15 @@ CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)
-SFLAGS = -O0 -g
+SFLAGS += -O0 -g
 else
-SFLAGS = -Os
+SFLAGS += -Os
+SFLAGS += -DNDEBUG
+endif
+
+ifeq ($(ASAN),1)
+SFLAGS += -fsanitize=address
+LDFLAGS += -fsanitize=address
 endif
 
 # Flags - Header search path

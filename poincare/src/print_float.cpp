@@ -15,10 +15,11 @@ extern "C" {
 #include <limits.h>
 }
 #include <cmath>
+#include <algorithm>
 
 namespace Poincare {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
+constexpr int PrintFloat::Long::k_maxNumberOfCharsForDigit;
 
 PrintFloat::Long::Long(int64_t i) :
   m_negative(i < 0)
@@ -79,7 +80,7 @@ int PrintFloat::Long::serialize(char * buffer, int bufferSize) const {
        * terminating char. */
       return wantedNumberOfChars;
     }
-    numberOfChars+= PrintInt::Right(m_digits[1], buffer + numberOfChars, minInt(k_maxNumberOfCharsForDigit, bufferSize - numberOfChars - 1));
+    numberOfChars+= PrintInt::Right(m_digits[1], buffer + numberOfChars, std::min(k_maxNumberOfCharsForDigit, bufferSize - numberOfChars - 1));
   } else {
     numberOfChars+= PrintInt::Left(m_digits[1], buffer + numberOfChars, bufferSize - numberOfChars - 1);
   }
@@ -167,7 +168,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
   assert(glyphLength > 0 && glyphLength <= k_maxFloatGlyphLength);
-  int availableCharLength = minInt(bufferSize-1, glyphLength);
+  int availableCharLength = std::min(bufferSize-1, glyphLength);
   TextLengths exceptionResult = {.CharLength = bufferSize, .GlyphLength = glyphLength+1};
   //TODO: accelerate for f between 0 and 10 ?
   if (std::isinf(f)) {
@@ -238,7 +239,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
 
   // Correct the number of digits in mantissa after rounding
   if (IEEE754<T>::exponentBase10(mantissa) >= numberOfSignificantDigits) {
-    mantissa = mantissa/10.0;
+    mantissa = mantissa / (T)10.0;
   }
 
   // Number of chars for the mantissa

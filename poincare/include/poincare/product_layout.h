@@ -16,7 +16,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(ProductLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ProductLayout";
   }
 #endif
@@ -29,7 +29,7 @@ private:
 
 class ProductLayout final : public Layout {
 public:
-  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<ProductLayout,ProductLayoutNode>(ArrayBuilder<TreeHandle>(argument, variable, lowerB, upperB).array(), 4); }
+  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<ProductLayout,ProductLayoutNode>({argument, variable, lowerB, upperB}); }
   ProductLayout() = delete;
 };
 

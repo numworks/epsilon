@@ -5,12 +5,11 @@
 #include <stddef.h>
 #include <assert.h>
 #include <poincare/preferences.h>
+#include <algorithm>
 
 using namespace Poincare;
 
 namespace Shared {
-
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 uint32_t InteractiveCurveViewRange::rangeChecksum() {
   float data[5] = {xMin(), xMax(), yMin(), yMax(), m_yAuto ? 1.0f : 0.0f};
@@ -94,7 +93,7 @@ void InteractiveCurveViewRange::normalize() {
    * 1cm = 2 current units. */
   m_yAuto = false;
 
-  const float unit = maxFloat(xGridUnit(), yGridUnit());
+  const float unit = std::max(xGridUnit(), yGridUnit());
 
   // Set x range
   float newXHalfRange = NormalizedXHalfRange(unit);
@@ -160,7 +159,7 @@ void InteractiveCurveViewRange::setDefault() {
   yRange = yMax() - yMin();
   float xyRatio = xRange/yRange;
 
-  const float unit = maxFloat(xGridUnit(), yGridUnit());
+  const float unit = std::max(xGridUnit(), yGridUnit());
   const float newXHalfRange = NormalizedXHalfRange(unit);
   const float newYHalfRange = NormalizedYHalfRange(unit);
   float normalizedXYRatio = newXHalfRange/newYHalfRange;

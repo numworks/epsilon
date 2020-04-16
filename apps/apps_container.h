@@ -36,7 +36,7 @@ public:
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
   void suspend(bool checkIfOnOffKeyReleased = false);
-  virtual bool dispatchEvent(Ion::Events::Event event) override;
+  bool dispatchEvent(Ion::Events::Event event) override;
   bool switchTo(App::Snapshot * snapshot) override;
   void run() override;
   bool updateBatteryState();

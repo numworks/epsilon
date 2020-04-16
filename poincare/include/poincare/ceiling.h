@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(CeilingNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Ceiling";
   }
 #endif
@@ -41,7 +41,7 @@ private:
 class Ceiling final : public Expression {
 public:
   Ceiling(const CeilingNode * n) : Expression(n) {}
-  static Ceiling Builder(Expression child) { return TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>(&child, 1); }
+  static Ceiling Builder(Expression child) { return TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, &UntypedBuilderOneChild<Ceiling>);
 

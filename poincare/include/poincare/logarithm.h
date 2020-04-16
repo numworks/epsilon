@@ -15,7 +15,7 @@ public:
   size_t size() const override { return sizeof(LogarithmNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Logarithm";
   }
 #endif
@@ -48,7 +48,7 @@ class Logarithm final : public Expression {
   friend class LogarithmNode<2>;
 public:
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
-  static Logarithm Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2>>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static Logarithm Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2>>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, &UntypedBuilderTwoChildren<Logarithm>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
@@ -65,7 +65,7 @@ private:
 class CommonLogarithm : public Expression {
 public:
   CommonLogarithm(const LogarithmNode<1> * n) : Expression(n) {}
-  static CommonLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<CommonLogarithm, LogarithmNode<1>>(&child, 1); }
+  static CommonLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<CommonLogarithm, LogarithmNode<1>>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 1, &UntypedBuilderOneChild<CommonLogarithm>);
 

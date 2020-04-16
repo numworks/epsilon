@@ -31,7 +31,7 @@ public:
   size_t size() const override { return sizeof(IntegralLayoutNode); }
   int numberOfChildren() const override { return 4; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "IntegralLayout";
   }
 #endif
@@ -61,7 +61,7 @@ private:
 
 class IntegralLayout final : public Layout {
 public:
-  static IntegralLayout Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) { return TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(ArrayBuilder<TreeHandle>(integrand, differential, lowerBound, upperBound).array(), 4); }
+  static IntegralLayout Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) { return TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>({integrand, differential, lowerBound, upperBound}); }
   IntegralLayout() = delete;
 };
 

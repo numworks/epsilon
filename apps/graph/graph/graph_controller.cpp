@@ -1,15 +1,11 @@
 #include "graph_controller.h"
 #include "../app.h"
+#include <algorithm>
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Graph {
-
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
-static inline double minDouble(double x, double y) { return x < y ? x : y; }
-static inline double maxDouble(double x, double y) { return x > y ? x : y; }
 
 GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, previousModelsVersions, rangeVersion, angleUnitVersion),
@@ -52,10 +48,10 @@ void GraphController::interestingFunctionRange(ExpiringPointer<ContinuousFunctio
     float x = xy.x1();
     float y = xy.x2();
     if (!std::isnan(x) && !std::isinf(x) && !std::isnan(y) && !std::isinf(y)) {
-      *xm = minFloat(*xm, x);
-      *xM = maxFloat(*xM, x);
-      *ym = minFloat(*ym, y);
-      *yM = maxFloat(*yM, y);
+      *xm = std::min(*xm, x);
+      *xM = std::max(*xM, x);
+      *ym = std::min(*ym, y);
+      *yM = std::max(*yM, y);
     }
   }
 }
@@ -102,8 +98,8 @@ void GraphController::interestingRanges(float * xm, float * xM, float * ym, floa
      * y-range for even functions (y = 1/x). */
     assert(!std::isnan(f->tMin()));
     assert(!std::isnan(f->tMax()));
-    const double tMin = maxFloat(f->tMin(), resultxMin);
-    const double tMax = minFloat(f->tMax(), resultxMax);
+    const double tMin = std::max(f->tMin(), resultxMin);
+    const double tMax = std::min(f->tMax(), resultxMax);
     const double step = (tMax - tMin) / (2.0 * (m_view.bounds().width() - 1.0));
     interestingFunctionRange(f, tMin, tMax, step, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
   }
@@ -129,12 +125,12 @@ float GraphController::interestingXHalfRange() const {
     ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange) && !std::isinf(fRange)) {
-      characteristicRange = maxFloat(fRange, characteristicRange);
+      characteristicRange = std::max(fRange, characteristicRange);
     }
     // Compute the combined range of the functions
     assert(f->plotType() == ContinuousFunction::PlotType::Cartesian); // So that tMin tMax represents xMin xMax
-    tMin = minDouble(tMin, f->tMin());
-    tMax = maxDouble(tMax, f->tMax());
+    tMin = std::min<double>(tMin, f->tMin());
+    tMax = std::max<double>(tMax, f->tMax());
   }
   constexpr float rangeMultiplicator = 1.6f;
   if (characteristicRange > 0.0f ) {
@@ -145,7 +141,7 @@ float GraphController::interestingXHalfRange() const {
   if (tMin >= -defaultXHalfRange && tMax <= defaultXHalfRange) {
     /* If the combined Range of the functions is smaller than the default range,
      * use it. */
-    float f = rangeMultiplicator * (float)maxDouble(std::fabs(tMin), std::fabs(tMax));
+    float f = rangeMultiplicator * (float)std::max(std::fabs(tMin), std::fabs(tMax));
     return (std::isnan(f) || std::isinf(f)) ? defaultXHalfRange : f;
   }
   return defaultXHalfRange;
@@ -226,7 +222,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
       if (currentXDelta <= xDelta) {
         double potentialNextTMin = f->tMin();
         double potentialNextTMax = f->tMax();
-        double potentialNextT = maxDouble(potentialNextTMin, minDouble(potentialNextTMax, t));
+        double potentialNextT = std::max(potentialNextTMin, std::min(potentialNextTMax, t));
         Coordinate2D<double> xy = f->evaluateXYAtParameter(potentialNextT, App::app()->localContext());
         if (currentXDelta < xDelta || std::abs(xy.x2() - m_cursor->y()) < std::abs(nextY - m_cursor->y())) {
           nextCurveIndex = i;

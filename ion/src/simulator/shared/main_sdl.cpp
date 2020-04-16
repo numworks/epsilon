@@ -2,6 +2,7 @@
 #include "display.h"
 #include "platform.h"
 #include "layout.h"
+#include "random.h"
 
 #include <assert.h>
 #include <string.h>
@@ -78,6 +79,8 @@ void init() {
     SDL_Log("Could not init video");
     return;
   }
+
+  Random::init();
 
   uint32_t sdl_window_args = SDL_WINDOW_ALLOW_HIGHDPI | (argument_unresizable ? 0 : SDL_WINDOW_RESIZABLE);
 

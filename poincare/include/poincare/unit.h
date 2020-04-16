@@ -102,7 +102,7 @@ public:
   size_t size() const override { return sizeof(UnitNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Unit";
   }
   virtual void logAttributes(std::ostream & stream) const override {
@@ -125,7 +125,7 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
   // Comparison
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;

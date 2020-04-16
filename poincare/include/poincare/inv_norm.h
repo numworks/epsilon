@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(InvNormNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "InvNorm";
   }
 #endif
@@ -38,7 +38,7 @@ private:
 class InvNorm final : public NormalDistributionFunction {
 public:
   InvNorm(const InvNormNode * n) : NormalDistributionFunction(n) {}
-  static InvNorm Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static InvNorm Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>({child0, child1, child2}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("invnorm", 3, &UntypedBuilderThreeChildren<InvNorm>);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

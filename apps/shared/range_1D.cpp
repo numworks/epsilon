@@ -2,11 +2,9 @@
 #include <assert.h>
 #include <ion.h>
 #include <poincare/ieee754.h>
+#include <algorithm>
 
 namespace Shared {
-
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 void Range1D::setMin(float min, float lowerMaxFloat, float upperMaxFloat) {
   min = clipped(min, false, lowerMaxFloat, upperMaxFloat);
@@ -43,7 +41,7 @@ float Range1D::defaultRangeLengthFor(float position) {
 float Range1D::clipped(float x, bool isMax, float lowerMaxFloat, float upperMaxFloat) {
   float maxF = isMax ? upperMaxFloat : lowerMaxFloat;
   float minF = isMax ? -lowerMaxFloat : -upperMaxFloat;
-  return maxFloat(minF, minFloat(x, maxF));
+  return std::max(minF, std::min(x, maxF));
 }
 
 }

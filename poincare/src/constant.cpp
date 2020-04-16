@@ -50,9 +50,9 @@ CodePoint ConstantNode::codePoint() const {
   return result;
 }
 
-int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
   }
   assert(type() == e->type());
   return rankOfConstant(codePoint()) - rankOfConstant(static_cast<const ConstantNode *>(e)->codePoint());

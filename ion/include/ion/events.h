@@ -18,10 +18,10 @@ public:
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
 
   constexpr explicit operator uint8_t() const { return m_id; }
-#if DEBUG
+#ifndef NDEBUG
   const char * name() const;
 #endif
-  Event(Keyboard::Key key, bool shift, bool alpha);
+  Event(Keyboard::Key key, bool shift, bool alpha, bool lock);
 
   bool operator==(const Event & other) const {
     return (m_id == other.m_id);

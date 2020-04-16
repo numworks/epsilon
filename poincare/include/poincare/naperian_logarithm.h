@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(NaperianLogarithmNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "NaperianLogarithm";
   }
 #endif
@@ -46,7 +46,7 @@ private:
 class NaperianLogarithm final : public Expression {
 public:
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
-  static NaperianLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(&child, 1); }
+  static NaperianLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, &UntypedBuilderOneChild<NaperianLogarithm>);
 

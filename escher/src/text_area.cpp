@@ -8,10 +8,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <limits.h>
-
-static inline const char * maxPointer(const char * x, const char * y) { return x > y ? x : y; }
-static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
-static inline size_t minSizeT(size_t x, size_t y) { return x < y ? x : y; }
+#include <algorithm>
 
 /* TextArea */
 
@@ -194,11 +191,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Percent) {
     return removePreviousGlyph();
   } else if (event.hasText()) {
-    if(event.text() == "%" && Ion::Events::isLockActive()){
-      return removePreviousGlyph();
-    } else {
-      return handleEventWithText(event.text());
-    }
+    return handleEventWithText(event.text());
   } else {
     return false;
   }
@@ -239,7 +232,7 @@ const char * TextArea::Text::pointerAtPosition(Position p) {
   for (Line l : *this) {
     if (p.line() == y) {
       const char * result = UTF8Helper::CodePointAtGlyphOffset(l.text(), p.column());
-      return minPointer(result, l.text() + l.charLength());
+      return std::min(result, l.text() + l.charLength());
     }
     y++;
   }
@@ -445,13 +438,13 @@ void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, 
     m_font,
     textColor,
     backgroundColor,
-    drawSelection ? (selectionStart >= text ? minSizeT(length, selectionStart - text) : 0) : length
+    drawSelection ? (selectionStart >= text ? std::min<KDCoordinate>(length, selectionStart - text) : 0) : length
   );
   if (!drawSelection) {
     return;
   }
-  const char * highlightedDrawStart = maxPointer(selectionStart, text);
-  size_t highlightedDrawLength = minSizeT(selectionEnd - highlightedDrawStart, length - (highlightedDrawStart - text));
+  const char * highlightedDrawStart = std::max(selectionStart, text);
+  size_t highlightedDrawLength = std::min(selectionEnd - highlightedDrawStart, length - (highlightedDrawStart - text));
 
   nextPoint = ctx->drawString(
     highlightedDrawStart,

@@ -12,7 +12,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(UnitConvertNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "UnivtConvert";
   }
 #endif
@@ -33,7 +33,7 @@ class UnitConvert final : public Expression {
 friend class UnitConvertNode;
 public:
   UnitConvert(const UnitConvertNode * n) : Expression(n) {}
-  static UnitConvert Builder(Expression value, Expression unit) { return TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(ArrayBuilder<TreeHandle>(value, unit).array(), 2); }
+  static UnitConvert Builder(Expression value, Expression unit) { return TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>({value, unit}); }
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

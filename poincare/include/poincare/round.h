@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(RoundNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Round";
   }
 #endif
@@ -38,7 +38,7 @@ private:
 class Round final : public Expression {
 public:
   Round(const RoundNode * n) : Expression(n) {}
-  static Round Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Round, RoundNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static Round Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Round, RoundNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, &UntypedBuilderTwoChildren<Round>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

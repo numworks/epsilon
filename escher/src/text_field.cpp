@@ -5,8 +5,8 @@
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/serialization_helper.h>
 #include <assert.h>
+#include <algorithm>
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 static char s_draftTextBuffer[TextField::maxBufferSize()];
 
 /* TextField::ContentView */
@@ -84,7 +84,7 @@ void TextField::ContentView::setText(const char * text) {
     buffer[0] = 0;
     return;
   }
-  int textLength = minInt(textRealLength, maxBufferSize - 1);
+  int textLength = std::min(textRealLength, maxBufferSize - 1);
   // Copy the text
   strlcpy(buffer, text, maxBufferSize);
   // Update the draft text length
@@ -414,11 +414,6 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
-  if(event.hasText()){
-    if(event.text() == "%" && Ion::Events::isLockActive() ){
-      return removePreviousGlyph();
-    }
-  }
   assert(m_delegate != nullptr);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;

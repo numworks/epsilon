@@ -14,7 +14,7 @@ public:
   size_t size() const override { return sizeof(ArcTangentNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ArcTangent";
   }
 #endif
@@ -44,7 +44,7 @@ private:
 class ArcTangent final : public Expression {
 public:
   ArcTangent(const ArcTangentNode * n) : Expression(n) {}
-  static ArcTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>(&child, 1); }
+  static ArcTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcTangent, ArcTangentNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("atan", 1, &UntypedBuilderOneChild<ArcTangent>);
 

@@ -476,7 +476,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       result = numer;
     }
     if (!denom.isUninitialized()) {
-      result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
+      result = Division::Builder(numer.isUninitialized() ? Rational::Builder(1) : numer, denom);
     }
   }
 

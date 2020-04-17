@@ -85,7 +85,7 @@ MathToolbox * AppsContainer::mathToolbox() {
   return &m_mathToolbox;
 }
 
-VariableBoxController * AppsContainer::variableBoxController() {
+MathVariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 

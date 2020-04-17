@@ -1280,6 +1280,13 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4", User);
 }
 
+QUIZ_CASE(poincare_simplification_unit_conversion) {
+  assert_parsed_expression_simplify_to("1000000_cm", "10×_km", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, DefaultUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "1000000×_cm", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, NoUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "10000×_m", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, InternationalSystemUnitConversion);
+  //assert_parsed_expression_simplify_to("10_m/h", "0.01km/h", SystemForApproximation, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, ClassicUnitConversion);
+}
+
 QUIZ_CASE(poincare_simplification_user_function) {
   // User defined function
   // f: x → x*1

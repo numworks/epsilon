@@ -731,6 +731,7 @@ public:
   void chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext);
 
 private:
+  UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   Expression removeUnit(Expression * unit);
 };
 

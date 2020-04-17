@@ -285,7 +285,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None) {
     return *this;
   }
-  UnitNode * unitNode = static_cast<UnitNode *>(node());
+  UnitNode * unitNode = node();
   const Dimension * dim = unitNode->dimension();
   const Representative * rep = unitNode->representative();
   const Prefix * pre = unitNode->prefix();
@@ -315,7 +315,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
 
 void Unit::chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext) {
   assert(value != 0 && !std::isnan(value) && !std::isinf(value) && exponent != 0);
-  UnitNode * unitNode = static_cast<UnitNode *>(node());
+  UnitNode * unitNode = node();
   const Dimension * dim = unitNode->dimension();
   /* Find in the Dimension 'dim' which unit (Representative and Prefix) make
    * the value closer to 1.

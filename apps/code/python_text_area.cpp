@@ -259,8 +259,10 @@ void PythonTextArea::removeAutocompletion() {
   assert(m_contentView.isAutocompleting());
   const char * autocompleteStart = m_contentView.cursorLocation();
   const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
-  assert(autocompleteEnd > autocompleteStart);
-  m_contentView.removeText(autocompleteStart, autocompleteEnd);
+  assert(autocompleteEnd >= autocompleteStart);
+  if (autocompleteEnd > autocompleteStart) {
+   m_contentView.removeText(autocompleteStart, autocompleteEnd);
+  }
   m_contentView.setAutocompleting(false);
 }
 

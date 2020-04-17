@@ -1,14 +1,16 @@
 #ifndef CODE_VARIABLE_BOX_CONTROLLER_H
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
-#include <escher.h>
+#include <apps/alternate_empty_nested_menu_controller.h>
+#include <escher/message_table_cell.h>
 #include "script_node.h"
 #include "script_node_cell.h"
 #include "script_store.h"
+#include "variable_box_empty_controller.h"
 
 namespace Code {
 
-class VariableBoxController : public NestedMenuController {
+class VariableBoxController : public AlternateEmptyNestedMenuController {
 public:
   VariableBoxController(ScriptStore * scriptStore);
 
@@ -26,6 +28,10 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+
+  //AlternateEmptyNestedMenuController
+  ViewController * emptyViewController() override { return &m_variableBoxEmptyController; }
+  bool isDisplayingEmptyController() override { return StackViewController::depth() == 2; }
 
   /* VariableBoxController */
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
@@ -96,6 +102,7 @@ private:
   bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength);
   bool contains(const char * name, int nameLength);
   void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
+  VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];

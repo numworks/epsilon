@@ -282,7 +282,7 @@ Unit Unit::Builder(const Dimension * dimension, const Representative * represent
 }
 
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits) {
+  if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None) {
     return *this;
   }
   UnitNode * unitNode = static_cast<UnitNode *>(node());

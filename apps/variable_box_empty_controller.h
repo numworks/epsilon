@@ -9,36 +9,29 @@
 
 class VariableBoxEmptyController : public ViewController {
 public:
-  VariableBoxEmptyController();
-  enum class Type {
-    None = 0,
-    Expressions = 1,
-    Functions = 2
-  };
+  VariableBoxEmptyController() : ViewController(nullptr) {}
+  void setMessages(I18n::Message * messages);
   // View Controller
-  View * view() override;
   DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
-  void viewDidDisappear() override;
-
-  void setType(Type type);
-private:
+protected:
   class VariableBoxEmptyView : public View, public Bordered {
   public:
-    static constexpr const KDFont * k_font = KDFont::SmallFont;
-    VariableBoxEmptyView();
+    constexpr static const KDFont * k_font = KDFont::SmallFont;
+    void initMessageViews();
     void setMessages(I18n::Message * message);
-    void setLayout(Poincare::Layout layout);
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    constexpr static int k_numberOfMessages = 4;
   private:
+    constexpr static int k_expressionViewRowIndex = 2;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    constexpr static int k_layoutRowIndex = 2;
-    MessageTextView m_messages[k_numberOfMessages];
-    ExpressionView m_layoutExample;
+    virtual int numberOfMessageTextViews() const = 0;
+    virtual MessageTextView * messageTextViewAtIndex(int index) = 0;
+    bool hasExpressionView() const {
+      return const_cast<VariableBoxEmptyView *>(this)->expressionView() != nullptr;
+    }
+    virtual ExpressionView * expressionView() { return nullptr; }
   };
-  VariableBoxEmptyView m_view;
 };
 
 #endif

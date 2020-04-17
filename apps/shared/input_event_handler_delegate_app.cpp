@@ -20,9 +20,9 @@ Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler(InputEventHa
 }
 
 NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
+  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->setSender(textInput);
-  varBox->lockDeleteEvent(VariableBoxController::Page::RootMenu);
+  varBox->lockDeleteEvent(MathVariableBoxController::Page::RootMenu);
   return varBox;
 }
 

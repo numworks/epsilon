@@ -47,7 +47,7 @@ static bool shouldAddObject(const char * name, int maxLength) {
 }
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
-  NestedMenuController(nullptr, I18n::Message::FunctionsAndVariables),
+  AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
   m_scriptStore(scriptStore),
   m_currentScriptNodesCount(0),
   m_builtinNodesCount(0),
@@ -141,7 +141,7 @@ void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t,
     return;
   }
   const int currentSelectedRow = selectedRow();
-  if (typeAtLocation(0, currentSelectedRow) == k_subtitleCellType) {
+  if (currentSelectedRow >= 0 && typeAtLocation(0, currentSelectedRow) == k_subtitleCellType) {
     if (currentSelectedRow == 0) {
       t->selectCellAtLocation(0, 1);
     } else {

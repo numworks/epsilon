@@ -22,7 +22,8 @@ public:
 private:
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext reductionContext) override;
   // Evalutation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
@@ -36,8 +37,8 @@ public:
   static UnitConvert Builder(Expression value, Expression unit) { return TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>({value, unit}); }
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-
+  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
 private:
   UnitConvertNode * node() const { return static_cast<UnitConvertNode *>(Expression::node()); }
 };

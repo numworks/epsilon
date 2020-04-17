@@ -24,6 +24,7 @@ app_code_src = $(addprefix apps/code/,\
   script_parameter_controller.cpp \
   script_store.cpp \
   variable_box_controller.cpp \
+  variable_box_empty_controller.cpp \
 )
 
 app_code_src += $(app_code_test_src)

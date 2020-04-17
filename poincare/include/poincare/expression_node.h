@@ -128,8 +128,13 @@ public:
     ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,
     ReplaceAllDefinedSymbolsWithDefinition = 1,
     ReplaceDefinedFunctionsWithDefinitions = 2,
-    ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits = 3, // Used in UnitConvert::shallowReduce
-    ReplaceAllSymbolsWithUndefinedAndReplaceUnits = 4 // Used in UnitConvert::shallowReduce
+    ReplaceAllSymbolsWithUndefined = 3 // Used in UnitConvert::shallowReduce
+  };
+  enum class UnitConversion {
+    None = 0,
+    Default,
+    InternationalSystem,
+    Classic // km/h, days + hours + minute
   };
   enum class Sign {
     Negative = -1,
@@ -139,24 +144,27 @@ public:
 
   class ReductionContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) :
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
       m_context(context),
       m_complexFormat(complexFormat),
       m_angleUnit(angleUnit),
       m_target(target),
-      m_symbolicComputation(symbolicComputation)
+      m_symbolicComputation(symbolicComputation),
+      m_unitConversion(unitConversion)
     {}
     Context * context() { return m_context; }
     Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
     Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
     ReductionTarget target() const { return m_target; }
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
+    UnitConversion unitConversion() const { return m_unitConversion; }
   private:
     Context * m_context;
     Preferences::ComplexFormat m_complexFormat;
     Preferences::AngleUnit m_angleUnit;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;
+    UnitConversion m_unitConversion;
   };
 
   virtual Sign sign(Context * context) const { return Sign::Unknown; }

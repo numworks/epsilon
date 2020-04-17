@@ -154,9 +154,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
     return *this;
   }
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits
-      || reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits)
-  {
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
   {

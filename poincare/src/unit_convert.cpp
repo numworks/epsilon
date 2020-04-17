@@ -35,12 +35,13 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
 
   // Find the unit
   {
+    //
     ExpressionNode::ReductionContext reductionContextWithUnits = ExpressionNode::ReductionContext(
         reductionContext.context(),
         reductionContext.complexFormat(),
         reductionContext.angleUnit(),
         reductionContext.target(),
-        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits);
+        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
     childAtIndex(1).clone().reduce(reductionContextWithUnits).removeUnit(&unit);
     if (unit.isUninitialized()) {
@@ -54,7 +55,8 @@ Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reduction
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
       reductionContext.target(),
-      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined,
+      ExpressionNode::UnitConversion::None);
   Expression finalUnit;
   childAtIndex(1).reduce(reductionContextWithoutUnits).removeUnit(&finalUnit);
 

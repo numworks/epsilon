@@ -368,9 +368,9 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
-void assert_reduced_expression_unit(const char * expression, const char * unit, ExpressionNode::SymbolicComputation symbolicComutation) {
+void assert_reduced_expression_unit_is(const char * expression, const char * unit) {
   Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, SystemForApproximation, symbolicComutation);
+  ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, SystemForApproximation);
   Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(redContext);
   Expression u1;
@@ -383,15 +383,9 @@ void assert_reduced_expression_unit(const char * expression, const char * unit, 
 }
 
 QUIZ_CASE(poincare_properties_get_unit) {
-  assert_reduced_expression_unit("_km", "_km", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("_min/_km", "_km^(-1)×_min", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("_km^3", "_km^3", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("1_m+_km", Undefined::Name(), ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("_L^2×3×_s", "_L^2×_s", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-
-  assert_reduced_expression_unit("_km", "_m", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("_min/_km", "_m^(-1)×_s", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("_km^3", "_m^3", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("1_m+_km", "_m", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("_L^2×3×_s", "_m^6×_s", ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_reduced_expression_unit_is("_km", "_m");
+  assert_reduced_expression_unit_is("_min/_km", "_m^(-1)×_s");
+  assert_reduced_expression_unit_is("_km^3", "_m^3");
+  assert_reduced_expression_unit_is("1_m+_km", "_m");
+  assert_reduced_expression_unit_is("_L^2×3×_s", "_m^6×_s");
 }

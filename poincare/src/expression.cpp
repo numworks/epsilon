@@ -680,7 +680,6 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   sSimplificationHasBeenInterrupted = false;
   // Step 1: we reduce the expression
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
-  const bool isUnitConvert = type() == ExpressionNode::Type::UnitConvert;
   Expression e = clone().reduce(userReductionContext);
   if (sSimplificationHasBeenInterrupted) {
     sSimplificationHasBeenInterrupted = false;
@@ -714,13 +713,6 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
     if (approximateExpression) {
       static_cast<Matrix *>(approximateExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
     }
-  } else if (isUnitConvert) {
-    /* Case 2: the initial expression is a unit convert, so we already beautified the result. */
-    *simplifiedExpression = e;
-    if (approximateExpression) {
-      *approximateExpression = e;
-    }
-    return;
   } else {
     /* Case 3: the reduced expression is scalar or too complex to respect the
      * complex format. */

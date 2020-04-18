@@ -1,0 +1,2 @@
+TOOLCHAIN = devkitarm
+EXE = elf

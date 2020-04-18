@@ -62,7 +62,7 @@ endif
 # Get rid of unused symbols. This is also useful even if LTO=1.
 LDFLAGS += -Wl,--gc-sections
 
-LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
+LIBPATHS := $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 LDFLAGS += $(SFLAGS) $(LIBPATHS) $(LIBS) -lgcc
 

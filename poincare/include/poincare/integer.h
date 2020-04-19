@@ -13,11 +13,19 @@ class LayoutNode;
 class Integer;
 struct IntegerDivision;
 
+#ifdef _3DS
 typedef unsigned short half_native_uint_t;
 typedef int native_int_t;
 typedef long long int double_native_int_t;
 typedef unsigned int native_uint_t;
 typedef unsigned long long int double_native_uint_t;
+#else
+typedef uint16_t half_native_uint_t;
+typedef int32_t native_int_t;
+typedef int64_t double_native_int_t;
+typedef uint32_t native_uint_t;
+typedef uint64_t double_native_uint_t;
+#endif
 
 static_assert(sizeof(double_native_int_t) <= sizeof(double_native_uint_t), "double_native_int_t type has not the right size compared to double_native_uint_t");
 static_assert(sizeof(native_int_t) == sizeof(native_uint_t), "native_int_t type has not the right size compared to native_uint_t");

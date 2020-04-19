@@ -42,11 +42,7 @@ static bool sNeedsRefresh = false;
 
 void init() {
   gfxInitDefault();
-	cfguInit();
-	
-  consoleInit(GFX_BOTTOM, NULL);
-  consoleDebugInit(debugDevice_SVC);
-  printf("Init!\n");
+  cfguInit();
   relayout();
 }
 
@@ -87,9 +83,8 @@ void refresh() {
 }
 
 void quit() {
-  printf("Exit\n");
   cfguExit();
-	gfxExit();
+  gfxExit();
 }
 
 }

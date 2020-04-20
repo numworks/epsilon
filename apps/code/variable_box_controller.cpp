@@ -72,6 +72,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
    * when leaving the VariableBoxController, so we do not lose the environment
    * that was loaded when entering the VariableBoxController. */
   assert(App::app()->pythonIsInited());
+  displayEmptyController();
 }
 
 KDCoordinate VariableBoxController::rowHeight(int j) {

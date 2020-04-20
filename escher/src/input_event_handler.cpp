@@ -5,10 +5,14 @@
 #include <escher/metric.h>
 
 bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
+  if (m_inputEventHandlerDelegate == nullptr) {
+    return false;
+  }
   NestedMenuController * box = nullptr;
-  if (m_inputEventHandlerDelegate) {
-    box = event == Ion::Events::Toolbox ? m_inputEventHandlerDelegate->toolboxForInputEventHandler(this) : box;
-    box = event == Ion::Events::Var ? m_inputEventHandlerDelegate->variableBoxForInputEventHandler(this) : box;
+  if (event == Ion::Events::Toolbox) {
+    box = m_inputEventHandlerDelegate->toolboxForInputEventHandler(this);
+  } else if (event == Ion::Events::Var) {
+    box = m_inputEventHandlerDelegate->variableBoxForInputEventHandler(this);
   }
   if (box) {
     box->setSender(this);

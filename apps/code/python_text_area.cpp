@@ -53,6 +53,12 @@ static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
   }
   return lex->column - lex->tok_column;
 }
+bool PythonTextArea::shouldAutocomplete(const char * autocompletionLocation) const {
+  const char * location = autocompletionLocation != nullptr ? autocompletionLocation : cursorLocation();
+  CodePoint prevCodePoint = UTF8Helper::PreviousCodePoint(m_contentView.editedText(), location);
+  return !UTF8Helper::CodePointIsEndOfWord(prevCodePoint)
+    && UTF8Helper::CodePointIsEndOfWord(UTF8Helper::CodePointAtLocation(location));
+}
 
 const char * PythonTextArea::ContentView::textToAutocomplete() const {
   return UTF8Helper::BeginningOfWord(editedText(), cursorLocation());
@@ -272,10 +278,7 @@ void PythonTextArea::addAutocompletion() {
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());
   const char * textToInsert = nullptr;
   int textToInsertLength = 0;
-  CodePoint prevCodePoint = UTF8Helper::PreviousCodePoint(m_contentView.editedText(), autocompletionLocation);
-  if (!UTF8Helper::CodePointIsEndOfWord(prevCodePoint)
-      && UTF8Helper::CodePointIsEndOfWord(UTF8Helper::CodePointAtLocation(autocompletionLocation)))
-  {
+  if (shouldAutocomplete(autocompletionLocation)) {
     /* The previous code point is neither the beginning of the text, nor a
      * space, nor a \n, and the next code point is the end of the word.
      * Compute the text to insert:

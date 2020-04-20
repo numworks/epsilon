@@ -4,7 +4,7 @@
 #include <ion/display.h>
 #include <string.h>
 
-#include "keyboard_debug.h"
+#include "keyboard.h"
 
 namespace Ion {
 namespace Simulator {
@@ -37,7 +37,7 @@ void draw() {
   }
   
   u8* fb = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-  memcpy(fb, keyboard_debug_bgr, keyboard_debug_bgr_len);
+  memcpy(fb, keyboard_bgr, keyboard_bgr_len);
   
   gfxFlushBuffers();
   gfxSwapBuffers();

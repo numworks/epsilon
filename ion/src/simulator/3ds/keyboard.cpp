@@ -20,23 +20,24 @@ namespace Keyboard {
 bool m_heldLastFrame = false;
 
 State scan() {
-	hidScanInput();
-	
-	State state;
-	
-	touchPosition touch;
-	hidTouchRead(&touch);
-	
-	
-	if (touch.px == 0 && touch.py == 0) {
-	  if (m_heldLastFrame) {
-	    m_heldLastFrame = false;
-	  }
-	  
-	} else {
-	  if (!m_heldLastFrame) {
-	    m_heldLastFrame = true;
-	    
+  Simulator::Main::refresh();
+  
+  hidScanInput();
+  touchPosition touch;
+  hidTouchRead(&touch);
+  
+  State state;
+
+
+  if (touch.px == 0 && touch.py == 0) {
+    if (m_heldLastFrame) {
+      m_heldLastFrame = false;
+    }
+    
+  } else {
+    if (!m_heldLastFrame) {
+      m_heldLastFrame = true;
+      
       DETECT_KEY(271, 13 , 31, 31, Key::OK)
       DETECT_KEY(271, 46 , 31, 31, Key::Back)
       DETECT_KEY(227, 16 , 37, 25, Key::Home)
@@ -98,47 +99,41 @@ State scan() {
       
       DETECT_KEY(245, 212, 34, 23, Key::Toolbox)
       DETECT_KEY(285, 212, 34, 23, Key::Backspace)
-      
-      
-	    // printf("\x1b[2;0H%03d; %03d", touch.px, touch.py);
-	    // Handle touchscreen here.
-	  }
-	}
-	
-	u32 kDown = hidKeysDown();
-	
-	if (kDown & KEY_DUP) {
-	  state.setKey(Key::Up);
-	}
-	if (kDown & KEY_DDOWN) {
-	  state.setKey(Key::Down);
-	}
-	if (kDown & KEY_DLEFT) {
-	  state.setKey(Key::Left);
-	}
-	if (kDown & KEY_DRIGHT) {
-	  state.setKey(Key::Right);
-	}
-	if (kDown & KEY_A) {
-	  state.setKey(Key::OK);
-	}
-	if (kDown & KEY_B) {
-	  state.setKey(Key::Back);
-	}
-	if (kDown & KEY_Y) {
-	  state.setKey(Key::Shift);
-	}
-	if (kDown & KEY_X) {
-	  state.setKey(Key::Alpha);
-	}
-	if (kDown & KEY_START) {
-	  state.setKey(Key::Home);
-	}
-	if (kDown & KEY_SELECT) {
-	  state.setKey(Key::OnOff);
-	}
-	
-  Simulator::Main::refresh();
+    }
+  }
+
+  u32 kDown = hidKeysDown();
+
+  if (kDown & KEY_DUP) {
+    state.setKey(Key::Up);
+  }
+  if (kDown & KEY_DDOWN) {
+    state.setKey(Key::Down);
+  }
+  if (kDown & KEY_DLEFT) {
+    state.setKey(Key::Left);
+  }
+  if (kDown & KEY_DRIGHT) {
+    state.setKey(Key::Right);
+  }
+  if (kDown & KEY_A) {
+    state.setKey(Key::OK);
+  }
+  if (kDown & KEY_B) {
+    state.setKey(Key::Back);
+  }
+  if (kDown & KEY_Y) {
+    state.setKey(Key::Shift);
+  }
+  if (kDown & KEY_X) {
+    state.setKey(Key::Alpha);
+  }
+  if (kDown & KEY_START) {
+    state.setKey(Key::Home);
+  }
+  if (kDown & KEY_SELECT) {
+    state.setKey(Key::OnOff);
+  }
   
   return state;
 }

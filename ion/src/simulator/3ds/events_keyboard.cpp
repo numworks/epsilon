@@ -5,6 +5,8 @@
 #include <ion/events.h>
 #include <string.h>
 
+#include <3ds.h>
+
 
 namespace Ion {
 namespace Events {
@@ -12,6 +14,11 @@ namespace Events {
 
 Event getPlatformEvent() {
   Event result = None;
+  
+
+  if (!aptMainLoop()) {
+    result = Termination;
+  }
   
   return result;
 }

@@ -9,6 +9,7 @@ namespace Code {
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
   EditorView(Responder * parentResponder, App * pythonDelegate);
+  bool shouldAutocomplete() const { return m_textArea.shouldAutocomplete(); }
   bool isAutocompleting() const;
   void resetSelection();
   void setTextAreaDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) {

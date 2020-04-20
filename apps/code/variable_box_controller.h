@@ -31,7 +31,7 @@ public:
 
   //AlternateEmptyNestedMenuController
   ViewController * emptyViewController() override { return &m_variableBoxEmptyController; }
-  bool isDisplayingEmptyController() override { return StackViewController::depth() == 2; }
+  bool isDisplayingEmptyController() override { return StackViewController::depth() == 2; } //TODO LEA factorize with math toolbox
 
   /* VariableBoxController */
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);

@@ -18,6 +18,7 @@ public:
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  bool shouldAutocomplete(const char * autocompletionLocation = nullptr) const;
   bool isAutocompleting() const { return m_contentView.isAutocompleting(); }
 protected:
   class ContentView : public TextArea::ContentView {

@@ -1,6 +1,6 @@
 CalculApp = "Cálculo"
 CalculAppCapital = "CÁLCULO"
-AdditionalResults = "Resultados Adicionais"
+AdditionalResults = "Resultados adicionais"
 DecimalBase = "Decimal"
 HexadecimalBase = "Hexadecimal"
 BinaryBase = "Binário"

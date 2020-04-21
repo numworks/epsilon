@@ -259,7 +259,12 @@ constexpr const Unit::Representative
   Unit::CatalyticActivityRepresentatives[],
   Unit::SurfaceRepresentatives[],
   Unit::VolumeRepresentatives[];
+const Unit::Representative constexpr * Unit::SecondRepresentative;
+const Unit::Representative constexpr * Unit::HourRepresentative;
+const Unit::Representative constexpr * Unit::MeterRepresentative;
 constexpr const Unit::Dimension Unit::DimensionTable[];
+const Unit::Dimension constexpr * Unit::TimeDimension;
+const Unit::Dimension constexpr * Unit::DistanceDimension;
 constexpr const Unit::Dimension * Unit::DimensionTableUpperBound;
 
 bool Unit::CanParse(const char * symbol, size_t length,
@@ -346,6 +351,23 @@ Expression Unit::removeUnit(Expression * unit) {
   Expression one = Rational::Builder(1);
   replaceWithInPlace(one);
   return one;
+}
+
+bool Unit::isSecond() const {
+  return node()->dimension() == TimeDimension && node()->representative() == SecondRepresentative && node()->prefix() == &EmptyPrefix;
+}
+
+bool Unit::isMeter() const {
+  return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && node()->prefix() == &EmptyPrefix;
+}
+
+bool Unit::IsISSpeed(Expression & e) {
+  // Form m*s^-1
+  return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 2 &&
+    e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
+    e.childAtIndex(1).type() == ExpressionNode::Type::Power &&
+    e.childAtIndex(1).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isMinusOne() &&
+    e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isSecond();
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

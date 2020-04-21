@@ -43,6 +43,8 @@ static bool sNeedsRefresh = false;
 void init() {
   gfxInitDefault();
   cfguInit();
+  // mcuHwcInit();
+  ptmuInit();
   relayout();
 }
 
@@ -83,6 +85,8 @@ void refresh() {
 }
 
 void quit() {
+  // mcuHwcExit();
+  ptmuExit();
   cfguExit();
   gfxExit();
 }

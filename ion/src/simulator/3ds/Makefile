@@ -4,15 +4,22 @@ ion_src += $(addprefix ion/src/simulator/3ds/, \
   callback.cpp \
   display.cpp \
   framebuffer.cpp \
-  language.cpp \
   telemetry_init.cpp \
   keyboard.cpp \
   events_keyboard.cpp \
   driver/display.cpp \
+  driver/language.cpp \
+  driver/led.cpp \
+  driver/usb.cpp \
+  driver/battery.cpp \
+  driver/common.cpp \
 )
 
 sdl_simu_needs_to_be_removed += $(addprefix ion/src/simulator/shared/, \
   dummy/display.cpp \
+  dummy/led.cpp \
+  dummy/usb.cpp \
+  dummy/battery.cpp \
   display.cpp:-headless \
   events_keyboard.cpp:-headless \
   framebuffer_base.cpp \

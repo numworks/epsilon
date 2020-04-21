@@ -1,4 +1,4 @@
-#include "platform.h"
+#include "../platform.h"
 
 #include <3ds.h>
 

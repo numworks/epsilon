@@ -414,6 +414,9 @@ public:
             Representative::Prefixable::Yes,
             NegativePrefixes),
         };
+  static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
+  static const Representative constexpr * HourRepresentative = &TimeRepresentatives[2];
+  static const Representative constexpr * MeterRepresentative = &DistanceRepresentatives[0];
   static constexpr const Dimension DimensionTable[] = {
     /* The current table is sorted from most to least simple units.
      * The order determines the behavior of simplification.
@@ -718,6 +721,9 @@ public:
         &EmptyPrefix
         ),
   };
+  static const Dimension constexpr * TimeDimension = &DimensionTable[0] ;
+  static const Dimension constexpr * DistanceDimension = &DimensionTable[1];
+
   static constexpr const Unit::Dimension * DimensionTableUpperBound =
     DimensionTable + sizeof(DimensionTable)/sizeof(Dimension);
   static bool CanParse(const char * symbol, size_t length,
@@ -725,11 +731,18 @@ public:
 
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
+  static Unit Kilometer() { return Builder(DistanceDimension, MeterRepresentative, &KiloPrefix); }
+  static Unit Hour() { return Builder(TimeDimension, HourRepresentative, &EmptyPrefix); }
+
+  static bool IsISSpeed(Expression & e);
+  bool isMeter() const;
+  bool isSecond() const;
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   void chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext);
 
+  static constexpr double MeterPerSecondToKilometerPerHourFactor = 60.0*60.0/1000.0;
 private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   Expression removeUnit(Expression * unit);

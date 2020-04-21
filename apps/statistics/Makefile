@@ -29,15 +29,7 @@ app_statistics_src = $(addprefix apps/statistics/,\
 app_statistics_src += $(app_statistics_test_src)
 apps_src += $(app_statistics_src)
 
-i18n_files += $(addprefix apps/statistics/,\
-  base.de.i18n\
-  base.en.i18n\
-  base.es.i18n\
-  base.fr.i18n\
-  base.it.i18n\
-  base.nl.i18n\
-  base.pt.i18n\
-)
+i18n_files += $(call i18n_without_universal_for,statistics/base)
 
 tests_src += $(addprefix apps/statistics/test/,\
   store.cpp\

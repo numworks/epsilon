@@ -1,3 +1,4 @@
+include apps/helpers.mk
 include apps/shared/Makefile
 include apps/home/Makefile
 include apps/on_boarding/Makefile
@@ -60,30 +61,10 @@ i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_
 ifeq ($(EPSILON_GETOPT),1)
 i18n_files += $(addprefix apps/language_,$(addsuffix _iso6391.universal.i18n, $(EPSILON_I18N)))
 endif
-i18n_files += $(addprefix apps/,\
-  shared.de.i18n\
-  shared.en.i18n\
-  shared.es.i18n\
-  shared.fr.i18n\
-  shared.it.i18n\
-  shared.nl.i18n\
-  shared.pt.i18n\
-  shared.universal.i18n\
-  toolbox.de.i18n\
-  toolbox.en.i18n\
-  toolbox.es.i18n\
-  toolbox.fr.i18n\
-  toolbox.it.i18n\
-  toolbox.nl.i18n\
-  toolbox.pt.i18n\
-  variables.de.i18n\
-  variables.en.i18n\
-  variables.es.i18n\
-  variables.fr.i18n\
-  variables.it.i18n\
-  variables.nl.i18n\
-  variables.pt.i18n\
-)
+
+i18n_files += $(call i18n_with_universal_for,shared)
+i18n_files += $(call i18n_without_universal_for,toolbox)
+i18n_files += $(call i18n_without_universal_for,variables)
 
 $(eval $(call rule_for, \
   I18N, \

@@ -40,16 +40,7 @@ app_probability_src = $(addprefix apps/probability/,\
 app_probability_src += $(app_probability_test_src)
 apps_src += $(app_probability_src)
 
-i18n_files += $(addprefix apps/probability/,\
-  base.de.i18n\
-  base.en.i18n\
-  base.es.i18n\
-  base.fr.i18n\
-  base.it.i18n\
-  base.nl.i18n\
-  base.pt.i18n\
-  base.universal.i18n\
-)
+i18n_files += $(call i18n_with_universal_for,probability/base)
 
 tests_src += $(addprefix apps/probability/test/,\
   hypergeometric_function.cpp\

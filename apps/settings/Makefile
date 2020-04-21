@@ -25,14 +25,6 @@ app_settings_src = $(addprefix apps/settings/,\
 app_settings_src += $(app_settings_test_src)
 apps_src += $(app_settings_src)
 
-i18n_files += $(addprefix apps/settings/,\
-  base.de.i18n\
-  base.en.i18n\
-  base.es.i18n\
-  base.fr.i18n\
-  base.it.i18n\
-  base.nl.i18n\
-  base.pt.i18n\
-)
+i18n_files += $(call i18n_without_universal_for,settings/base)
 
 $(eval $(call depends_on_image,apps/settings/app.cpp,apps/settings/settings_icon.png))

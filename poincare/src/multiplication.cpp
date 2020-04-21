@@ -355,12 +355,13 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     return std::move(o);
   }
 
+  Expression result;
+
   // Step 2: Handle the units
   Expression self = *this;
   Expression units;
   self = removeUnit(&units);
 
-  Expression result;
   if (!units.isUninitialized()) {
     ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
     if (unitConversionMode == ExpressionNode::UnitConversion::Default || unitConversionMode == ExpressionNode::UnitConversion::Classic) {
@@ -438,48 +439,56 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();
     } else {
-      if (unitConversionMode == ExpressionNode::UnitConversion::Classic) {
-        // TODO create new result 1h 23min 24secondes ?
-        // Utiliser store ?
-      } else {
+      // Find the right unit prefix when the value ≠ 0
+      if (unitConversionMode == ExpressionNode::UnitConversion::Default && value != 0.0 && value != 1.0 && !std::isinf(value)) {
+        // Identify the first Unit factor and its exponent
+        Expression firstFactor = units;
+        int exponent = 1;
+        if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
+          firstFactor = firstFactor.childAtIndex(0);
+        }
+        if (firstFactor.type() == ExpressionNode::Type::Power) {
+          Expression exp = firstFactor.childAtIndex(1);
+          firstFactor = firstFactor.childAtIndex(0);
+          assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
+          Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
+          if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
+            exponent = expInt.extractedInt();
+          } else {
+            // The exponent is too large to be extracted, so do not try to use it.
+            exponent = 0;
+          }
+        }
+        assert(firstFactor.type() == ExpressionNode::Type::Unit);
+        // Choose its multiple and update value accordingly
+        if (exponent != 0) {
+          static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
+        }
+      } else if (unitConversionMode == ExpressionNode::UnitConversion::Classic) {
+        if (Unit::IsISSpeed(units)) {
+          value *= Unit::MeterPerSecondToKilometerPerHourFactor;
+          units = Multiplication::Builder(
+              Unit::Kilometer(),
+              Power::Builder(
+                Unit::Hour(),
+                Rational::Builder(-1)
+              )
+            );
+        }
+        // TODO: what to do if no classic conversion?
+      }
+      if (result.isUninitialized()) {
+        // Build final Expression
         Expression resultWithoutUnit;
         if (std::isinf(value)) {
           resultWithoutUnit = Infinity::Builder(value < 0.0);
         } else {
-          // Find the right unit prefix when the value ≠ 0
-          if (unitConversionMode == ExpressionNode::UnitConversion::Default && value != 0.0 && value != 1.0) {
-            // Identify the first Unit factor and its exponent
-            Expression firstFactor = units;
-            int exponent = 1;
-            if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
-              firstFactor = firstFactor.childAtIndex(0);
-            }
-            if (firstFactor.type() == ExpressionNode::Type::Power) {
-              Expression exp = firstFactor.childAtIndex(1);
-              firstFactor = firstFactor.childAtIndex(0);
-              assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
-              Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
-              if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
-                exponent = expInt.extractedInt();
-              } else {
-                // The exponent is too large to be extracted, so do not try to use it.
-                exponent = 0;
-              }
-            }
-            assert(firstFactor.type() == ExpressionNode::Type::Unit);
-            // Choose its multiple and update value accordingly
-            if (exponent != 0) {
-              static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
-            }
-          }
           resultWithoutUnit = Float<double>::Builder(value);
         }
-        // Build final Expression
         result = Multiplication::Builder(resultWithoutUnit, units);
         static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
       }
     }
-
   } else {
   // Step 3: Create a Division if relevant
     Expression numer, denom;

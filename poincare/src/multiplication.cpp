@@ -475,6 +475,11 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
               )
             );
         }
+        if (Unit::IsISVolume(units)) {
+          value *= Unit::CubicMeterToLiterFactor;
+          units = Unit::Liter();
+          static_cast<Unit&>(units).chooseBestMultipleForValue(value, 1, reductionContext);
+        }
         // TODO: what to do if no classic conversion?
       }
       if (result.isUninitialized()) {

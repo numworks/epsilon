@@ -356,7 +356,6 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
 void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
   //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
   //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
-  //TODO LEA add matplotlib.pyplot
   static const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
     {"False", ScriptNode::Type::WithoutParentheses},
     {"None", ScriptNode::Type::WithoutParentheses},
@@ -432,6 +431,7 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
     {qstr_str(MP_QSTR_locals), ScriptNode::Type::WithParentheses},
     {qstr_str(MP_QSTR_map), ScriptNode::Type::WithParentheses},
     {qstr_str(MP_QSTR_math), ScriptNode::Type::WithoutParentheses},
+    {qstr_str(MP_QSTR_matplotlib_dot_pyplot), ScriptNode::Type::WithoutParentheses},
     {qstr_str(MP_QSTR_max), ScriptNode::Type::WithParentheses},
     //{qstr_str(MP_QSTR_memoryview), ScriptNode::Type::WithParentheses},
     {qstr_str(MP_QSTR_min), ScriptNode::Type::WithParentheses},

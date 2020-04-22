@@ -337,10 +337,19 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(cellType == k_itemCellType);
   (void)cellType; // Silence warnings
   ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex - cumulatedOriginsCount); // Remove the number of subtitle cells from the index
+
+  /* We need to check now if we need to add parentheses: insertTextInCaller
+   * calls handleEventWithText, which will reload the autocompletion for the
+   * added text, which will probably chande the script nodes and
+   * selectedScriptNode will become invalid. */
+  const bool shouldAddParentheses = selectedScriptNode->type() == ScriptNode::Type::WithParentheses;
   insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
-  if (selectedScriptNode->type() == ScriptNode::Type::WithParentheses) {
+  // WARNING: selectedScriptNode is now invalid
+
+  if (shouldAddParentheses) {
     insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
   }
+
   Container::activeApp()->dismissModalViewController();
   return true;
 }

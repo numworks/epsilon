@@ -16,15 +16,15 @@ public:
 private:
   class VariableBoxEmptyView : public ::VariableBoxEmptyController::VariableBoxEmptyView {
   public:
-    constexpr static int k_numberOfMessages = 2;
+    constexpr static int k_numberOfMessages = 1;
     VariableBoxEmptyView();
   private:
     int numberOfMessageTextViews() const override { return k_numberOfMessages; }
     MessageTextView * messageTextViewAtIndex(int index) override {
       assert(index >= 0 && index < k_numberOfMessages);
-      return &m_messages[index];
+      return &m_message;
     }
-    MessageTextView m_messages[k_numberOfMessages];
+    MessageTextView m_message;
   };
   VariableBoxEmptyView m_view;
 };

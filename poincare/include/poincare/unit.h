@@ -414,9 +414,11 @@ public:
             Representative::Prefixable::Yes,
             NegativePrefixes),
         };
+  // TODO: find a better way to find defines these pointers
   static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
   static const Representative constexpr * HourRepresentative = &TimeRepresentatives[2];
   static const Representative constexpr * MeterRepresentative = &DistanceRepresentatives[0];
+  static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
   static constexpr const Dimension DimensionTable[] = {
     /* The current table is sorted from most to least simple units.
      * The order determines the behavior of simplification.
@@ -721,8 +723,10 @@ public:
         &EmptyPrefix
         ),
   };
+  // TODO: find a better way to find defines these pointers
   static const Dimension constexpr * TimeDimension = &DimensionTable[0] ;
   static const Dimension constexpr * DistanceDimension = &DimensionTable[1];
+  static const Dimension constexpr * VolumeDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-1];
 
   static constexpr const Unit::Dimension * DimensionTableUpperBound =
     DimensionTable + sizeof(DimensionTable)/sizeof(Dimension);
@@ -733,8 +737,10 @@ public:
   static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
   static Unit Kilometer() { return Builder(DistanceDimension, MeterRepresentative, &KiloPrefix); }
   static Unit Hour() { return Builder(TimeDimension, HourRepresentative, &EmptyPrefix); }
+  static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
 
   static bool IsISSpeed(Expression & e);
+  static bool IsISVolume(Expression & e);
   bool isMeter() const;
   bool isSecond() const;
 
@@ -743,6 +749,7 @@ public:
   void chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext);
 
   static constexpr double MeterPerSecondToKilometerPerHourFactor = 60.0*60.0/1000.0;
+  static constexpr double CubicMeterToLiterFactor = 10.0*10.0*10.0;
 private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   Expression removeUnit(Expression * unit);

@@ -45,6 +45,7 @@ public:
   // Basic test
   bool isZero() const { return unsignedNumerator().isZero(); }
   bool isOne() const { return signedNumerator().isOne() && isInteger(); }
+  bool isThree() const { return signedNumerator().isThree() && isInteger(); }
   bool isMinusOne() const { return signedNumerator().isMinusOne() && isInteger(); }
   bool isHalf() const { return signedNumerator().isOne() && denominator().isTwo(); }
   bool isMinusHalf() const { return signedNumerator().isMinusOne() && denominator().isTwo(); }
@@ -89,6 +90,7 @@ public:
   bool isNegative() const { return node()->isNegative(); }
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
+  bool isThree() const { return node()->isThree(); }
   bool isMinusOne() const { return node()->isMinusOne(); }
   bool isHalf() const { return node()->isHalf(); }
   bool isMinusHalf() const { return node()->isMinusHalf(); }

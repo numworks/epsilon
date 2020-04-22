@@ -122,7 +122,7 @@ void TextField::ContentView::reinitDraftTextBuffer() {
 bool TextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
   assert(m_isEditing);
 
-  int textLength = textLen < 0 ? strlen(text) : textLen;
+  size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   if (m_currentDraftTextLength + textLength >= m_draftTextBufferSize || textLength == 0) {
     return false;
   }
@@ -130,7 +130,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   memmove(location + textLength, location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
   // Caution! One byte will be overridden by the null-terminating char of strlcpy
-  size_t copySize = std::min(textLength + 1, (s_draftTextBuffer + m_draftTextBufferSize) - location);
+  size_t copySize = std::min(textLength + 1, static_cast<size_t>((s_draftTextBuffer + m_draftTextBufferSize) - location));
   char * overridenByteLocation = location + copySize - 1;
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);

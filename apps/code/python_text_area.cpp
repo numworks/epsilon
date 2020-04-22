@@ -54,6 +54,9 @@ static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
   return lex->column - lex->tok_column;
 }
 bool PythonTextArea::shouldAutocomplete(const char * autocompletionLocation) const {
+  if (isAutocompleting()) {
+    return true;
+  }
   const char * location = autocompletionLocation != nullptr ? autocompletionLocation : cursorLocation();
   CodePoint prevCodePoint = UTF8Helper::PreviousCodePoint(m_contentView.editedText(), location);
   return !UTF8Helper::CodePointIsEndOfWord(prevCodePoint)

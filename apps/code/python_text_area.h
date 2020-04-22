@@ -18,6 +18,9 @@ public:
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  /* shouldAutocomplete returns true if there is currently autocompletion, or if
+   * there should be autocompletion but there is not because there is no word to
+   * autocomplete. */
   bool shouldAutocomplete(const char * autocompletionLocation = nullptr) const;
   bool isAutocompleting() const { return m_contentView.isAutocompleting(); }
 protected:

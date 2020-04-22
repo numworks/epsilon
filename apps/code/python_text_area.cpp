@@ -188,7 +188,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
         line,
         UTF8Helper::GlyphOffsetAtCodePoint(text, autocompleteStart),
         autocompleteStart,
-        minPointer(text + byteLength, autocompleteEnd) - autocompleteStart,
+        std::min(text + byteLength, autocompleteEnd) - autocompleteStart,
         AutocompleteColor,
         BackgroundColor,
         nullptr,

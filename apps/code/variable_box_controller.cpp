@@ -360,7 +360,6 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
     {"False", ScriptNode::Type::WithoutParentheses},
     {"None", ScriptNode::Type::WithoutParentheses},
     {"True", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR___import__), ScriptNode::Type::WithParentheses},
     {qstr_str(MP_QSTR_abs), ScriptNode::Type::WithParentheses},
     {qstr_str(MP_QSTR_all), ScriptNode::Type::WithParentheses},
     {"and", ScriptNode::Type::WithoutParentheses},

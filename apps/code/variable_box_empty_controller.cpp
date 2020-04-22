@@ -7,8 +7,7 @@ VariableBoxEmptyController::VariableBoxEmptyView::VariableBoxEmptyView() :
   ::VariableBoxEmptyController::VariableBoxEmptyView()
 {
   initMessageViews();
-  m_messages[0].setMessage(I18n::Message::Degrees); //TODO LEA
-  m_messages[1].setMessage(I18n::Message::Degrees);
+  m_message.setMessage(I18n::Message::NoWordAvailableHere);
 }
 
 }

@@ -20,6 +20,12 @@ public:
   bool showPopUp() const { return m_showPopUp; }
   void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }
   int brightnessLevel() const { return m_brightnessLevel; }
+  int dimBacklightBrightness() const { return m_dimBacklightBrightness; }
+  void setDimBacklightBrightness(int dimBacklightBrightness);
+  int idleBeforeSuspendSeconds() const { return m_idleBeforeSuspendSeconds; }
+  void setIdleBeforeSuspendSeconds(int m_idleBeforeSuspendSeconds);
+  int idleBeforeDimmingSeconds() const { return m_idleBeforeDimmingSeconds; }
+  void setIdleBeforeDimmingSeconds(int m_idleBeforeDimmingSeconds);
   void setBrightnessLevel(int brightnessLevel);
   const KDFont * font() const { return m_font; }
   void setFont(const KDFont * font) { m_font = font; }
@@ -31,6 +37,9 @@ private:
     m_examMode(ExamMode::Unknown),
     m_showPopUp(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
+    m_dimBacklightBrightness(0),
+    m_idleBeforeSuspendSeconds(300),
+    m_idleBeforeDimmingSeconds(30),
     m_font(KDFont::LargeFont) {}
   I18n::Language m_language;
   static_assert((int8_t)GlobalPreferences::ExamMode::Off == 0, "GlobalPreferences::isInExamMode() is not right");
@@ -38,6 +47,9 @@ private:
   mutable ExamMode m_examMode;
   bool m_showPopUp;
   int m_brightnessLevel;
+  int m_dimBacklightBrightness;
+  int m_idleBeforeSuspendSeconds;
+  int m_idleBeforeDimmingSeconds;
   const KDFont * m_font;
 };
 

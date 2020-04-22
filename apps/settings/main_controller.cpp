@@ -12,19 +12,20 @@ constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18
 constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
 constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+constexpr SettingsMessageTree s_modelBrightnessChildren[4] = {SettingsMessageTree(I18n::Message::Normal), SettingsMessageTree(I18n::Message::Dim), SettingsMessageTree(I18n::Message::IdleTimeBeforeDimming), SettingsMessageTree(I18n::Message::IdleTimeBeforeSuspend)};
 constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
 constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   ViewController(parentResponder),
-  m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
   m_examModeController(this),
-  m_aboutController(this)
+  m_aboutController(this),
+  m_brightnessController(this, inputEventHandlerDelegate)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -53,16 +54,6 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (model()->children(selectedRow())->label() == I18n::Message::Brightness) {
-      if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
-        int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
-        int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
-        globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel()+direction);
-        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-        return true;
-      }
-      return false;
-    }
     if (model()->children(selectedRow())->label() == I18n::Message::Language) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
         stackController()->push(&m_languageController);
@@ -76,8 +67,10 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     int rowIndex = selectedRow();
     if (rowIndex == k_indexOfDisplayModeCell) {
       subController = &m_displayModeController;
-    } else if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
+    } else if (rowIndex == k_indexOfLanguageCell) {
       assert(false);
+    } else if (rowIndex == k_indexOfBrightnessCell) {
+      subController = &m_brightnessController;
     } else if (rowIndex == k_indexOfExamModeCell) {
       subController = &m_examModeController;
     } else if (rowIndex == k_indexOfAboutCell + hasPrompt()) {
@@ -98,24 +91,15 @@ int MainController::numberOfRows() const {
 };
 
 KDCoordinate MainController::rowHeight(int j) {
-  if (j == k_indexOfBrightnessCell) {
-    return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
-  }
   return Metric::ParameterCellHeight;
 }
 
 KDCoordinate MainController::cumulatedHeightFromIndex(int j) {
   KDCoordinate height = j * rowHeight(0);
-  if (j > k_indexOfBrightnessCell) {
-    height += CellWithSeparator::k_margin;
-  }
   return height;
 }
 
 int MainController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  if (offsetY < rowHeight(0)*k_indexOfBrightnessCell + CellWithSeparator::k_margin) {
-    return offsetY/rowHeight(0);
-  }
   return (offsetY - CellWithSeparator::k_margin)/rowHeight(0);
 }
 
@@ -130,7 +114,6 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_popUpCell;
   }
   assert(type == 1);
-  return &m_brightnessCell;
 }
 
 int MainController::reusableCellCount(int type) {
@@ -141,9 +124,6 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == k_indexOfBrightnessCell) {
-    return 1;
-  }
   if (hasPrompt() && j == k_indexOfPopUpCell) {
     return 2;
   }
@@ -154,13 +134,6 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
   I18n::Message title = model()->children(index)->label();
-  if (index == k_indexOfBrightnessCell) {
-    MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
-    myGaugeCell->setMessage(title);
-    GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
-    myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
-    return;
-  }
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(title);
   if (index == k_indexOfLanguageCell) {

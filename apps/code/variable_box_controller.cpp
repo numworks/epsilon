@@ -130,8 +130,8 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   assert(cellType == k_subtitleCellType);
   I18n::Message subtitleMessages[k_scriptOriginsCount] = {
-    I18n::Message::CurrentScript,
-    I18n::Message::BuiltinFunctionsAndKeyWords,
+    I18n::Message::ScriptInProgress,
+    I18n::Message::BuiltinsAndKeywords,
     I18n::Message::ImportedModulesAndScripts
   };
   static_cast<MessageTableCell *>(cell)->setMessage(subtitleMessages[(int)cellOrigin]);

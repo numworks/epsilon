@@ -245,8 +245,11 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     }
   }
   bool result = TextArea::handleEvent(event);
-  if (!m_contentView.isAutocompleting() && selectionIsEmpty()) {
-    // Add autocompletion after each event handled, if nothing is selected
+  if (event == Ion::Events::Backspace && !m_contentView.isAutocompleting() && selectionIsEmpty()) {
+    /* We want to add autocompletion when we are editing a word (after adding or
+     * deleting text). So if nothing is selected, we add the autocompletion if
+     * the event is backspace, as autocompletion has already been added if the
+     * event added text, in handleEventWithText. */
     addAutocompletion();
   }
   return result;

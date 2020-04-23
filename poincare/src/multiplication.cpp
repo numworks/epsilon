@@ -480,6 +480,15 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
           units = Unit::Liter();
           static_cast<Unit&>(units).chooseBestMultipleForValue(value, 1, reductionContext);
         }
+        if (Unit::IsISEnergy(units)) {
+          value *= Unit::JouleToWatthourFactor;
+          Unit w = Unit::Watt();
+          units = Multiplication::Builder(
+              w,
+              Unit::Hour()
+            );
+          w.chooseBestMultipleForValue(value, 1, reductionContext);
+        }
         // TODO: what to do if no classic conversion?
       }
       if (result.isUninitialized()) {

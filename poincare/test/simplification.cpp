@@ -1287,6 +1287,7 @@ QUIZ_CASE(poincare_simplification_unit_conversion) {
   assert_parsed_expression_simplify_to("10_m/_h", "0.01×_km×_h^\x12-1\x13", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, ClassicUnitConversion);
   assert_parsed_expression_simplify_to("0.2_m^3", "200×_L", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, ClassicUnitConversion);
   assert_parsed_expression_simplify_to("0.000012_m^3", "1.2×_cL", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, ClassicUnitConversion);
+  assert_parsed_expression_simplify_to("3600_J", "1×_W×_h", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, ClassicUnitConversion);
 }
 
 QUIZ_CASE(poincare_simplification_user_function) {

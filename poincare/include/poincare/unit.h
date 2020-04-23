@@ -415,10 +415,13 @@ public:
             NegativePrefixes),
         };
   // TODO: find a better way to find defines these pointers
+  static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative might require to be fixed if the TimeRepresentatives table was changed.");
   static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
   static const Representative constexpr * HourRepresentative = &TimeRepresentatives[2];
   static const Representative constexpr * MeterRepresentative = &DistanceRepresentatives[0];
+  static const Representative constexpr * KilogramRepresentative = &MassRepresentatives[0];
   static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
+  static const Representative constexpr * WattRepresentative = &PowerRepresentatives[0];
   static constexpr const Dimension DimensionTable[] = {
     /* The current table is sorted from most to least simple units.
      * The order determines the behavior of simplification.
@@ -724,8 +727,11 @@ public:
         ),
   };
   // TODO: find a better way to find defines these pointers
+  static_assert(sizeof(DimensionTable)/sizeof(Dimension) == 23, "The Unit::TimeDimension, Unit::DistanceDimension and so on might require to be fixed if the Dimension table was changed.");
   static const Dimension constexpr * TimeDimension = &DimensionTable[0] ;
   static const Dimension constexpr * DistanceDimension = &DimensionTable[1];
+  static const Dimension constexpr * MassDimension = &DimensionTable[2];
+  static const Dimension constexpr * PowerDimension = &DimensionTable[11];
   static const Dimension constexpr * VolumeDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-1];
 
   static constexpr const Unit::Dimension * DimensionTableUpperBound =
@@ -738,11 +744,14 @@ public:
   static Unit Kilometer() { return Builder(DistanceDimension, MeterRepresentative, &KiloPrefix); }
   static Unit Hour() { return Builder(TimeDimension, HourRepresentative, &EmptyPrefix); }
   static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
+  static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
 
   static bool IsISSpeed(Expression & e);
   static bool IsISVolume(Expression & e);
+  static bool IsISEnergy(Expression & e);
   bool isMeter() const;
   bool isSecond() const;
+  bool isKilogram() const;
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
@@ -750,6 +759,7 @@ public:
 
   static constexpr double MeterPerSecondToKilometerPerHourFactor = 60.0*60.0/1000.0;
   static constexpr double CubicMeterToLiterFactor = 10.0*10.0*10.0;
+  static constexpr double JouleToWatthourFactor = 1.0/3600.0;
 private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   Expression removeUnit(Expression * unit);

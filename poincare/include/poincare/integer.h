@@ -121,6 +121,7 @@ public:
   bool isThree() const { return (numberOfDigits() == 1 && digit(0) == 3 && !m_negative); };
   bool isTen() const { return (numberOfDigits() == 1 && digit(0) == 10 && !m_negative); };
   bool isMinusOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && m_negative); };
+  bool isMinusTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && m_negative); };
   bool isZero() const { return (numberOfDigits() == 0); };
   bool isEven() const { return ((digit(0) & 1) == 0); }
 

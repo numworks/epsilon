@@ -361,6 +361,11 @@ bool Unit::isMeter() const {
   return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && node()->prefix() == &EmptyPrefix;
 }
 
+
+bool Unit::isKilogram() const {
+  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &KiloPrefix;
+}
+
 bool Unit::IsISSpeed(Expression & e) {
   // Form m*s^-1
   return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 2 &&
@@ -375,6 +380,18 @@ bool Unit::IsISVolume(Expression & e) {
   return e.type() == ExpressionNode::Type::Power &&
     e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
     e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<const Rational>().isThree();
+}
+
+bool Unit::IsISEnergy(Expression & e) {
+  // Form _kg*_m^2*_s^-2
+  return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 3 &&
+    e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isKilogram() &&
+    e.childAtIndex(1).type() == ExpressionNode::Type::Power &&
+    e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isMeter();
+    e.childAtIndex(1).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isTwo() &&
+    e.childAtIndex(2).type() == ExpressionNode::Type::Power &&
+    e.childAtIndex(2).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isSecond();
+    e.childAtIndex(2).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isMinusTwo();
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

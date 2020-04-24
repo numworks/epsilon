@@ -124,11 +124,21 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
-  /* If the editor should be autocompleting, the variable box has already been
-   * loaded. We check shouldAutocomplete and not isAutocompleting, because the
-   * autocompletion result might be empty. */
-  if (!m_editorView.shouldAutocomplete()) {
+  /* If the editor should be autocompleting an identifier, the variable box has
+   * already been loaded. We check shouldAutocomplete and not isAutocompleting,
+   * because the autocompletion result might be empty. */
+  const char * beginningOfAutocompletion = nullptr;
+  const char * cursor = nullptr;
+  PythonTextArea::AutocompletionType autocompType = m_editorView.autocompletionType(&beginningOfAutocompletion, &cursor);
+  if (autocompType == PythonTextArea::AutocompletionType::NoIdentifier) {
     varBox->loadFunctionsAndVariables(m_scriptIndex, nullptr, 0);
+  } else if (autocompType == PythonTextArea::AutocompletionType::MiddleOfIdentifier) {
+    varBox->empty();
+  } else {
+    assert(autocompType == PythonTextArea::AutocompletionType::EndOfIdentifier);
+    assert(beginningOfAutocompletion != nullptr && cursor != nullptr);
+    assert(cursor > beginningOfAutocompletion);
+    varBox->loadFunctionsAndVariables(m_scriptIndex, beginningOfAutocompletion, cursor - beginningOfAutocompletion);
   }
   return varBox;
 }

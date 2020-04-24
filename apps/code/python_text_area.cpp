@@ -53,14 +53,64 @@ static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
   }
   return lex->column - lex->tok_column;
 }
-bool PythonTextArea::shouldAutocomplete(const char * autocompletionLocation) const {
-  if (isAutocompleting()) {
-    return true;
-  }
+
+PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char * autocompletionLocation, const char ** autocompletionLocationBeginning, const char ** autocompletionLocationEnd) const {
   const char * location = autocompletionLocation != nullptr ? autocompletionLocation : cursorLocation();
-  CodePoint prevCodePoint = UTF8Helper::PreviousCodePoint(m_contentView.editedText(), location);
-  return !UTF8Helper::CodePointIsEndOfWord(prevCodePoint)
-    && UTF8Helper::CodePointIsEndOfWord(UTF8Helper::CodePointAtLocation(location));
+  const char * beginningOfToken = nullptr;
+
+  // We want to autocomplete only at the end of an identifier or a keyword
+  AutocompletionType autocompleteType = AutocompletionType::NoIdentifier;
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+    const char * firstNonSpace = UTF8Helper::BeginningOfWord(m_contentView.editedText(), location);
+    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, firstNonSpace, UTF8Helper::EndOfWord(location) - firstNonSpace, 0);
+
+    const char * tokenStart;
+    const char * tokenEnd;
+    _mp_token_kind_t currentTokenKind = lex->tok_kind;
+
+    while (currentTokenKind != MP_TOKEN_NEWLINE && currentTokenKind != MP_TOKEN_END) {
+      tokenStart = firstNonSpace + lex->tok_column - 1;
+      tokenEnd = tokenStart + TokenLength(lex, tokenStart);
+
+      if (location < tokenStart) {
+        // The location for autocompletion is not in an identifier
+        break;
+      }
+      if (currentTokenKind == MP_TOKEN_NAME
+          || (currentTokenKind >= MP_TOKEN_KW_FALSE
+            && currentTokenKind <= MP_TOKEN_KW_YIELD))
+      {
+        if (location < tokenEnd) {
+          // The location for autocompletion is in the middle of an identifier
+          autocompleteType = AutocompletionType::MiddleOfIdentifier;
+          break;
+        }
+        if (location == tokenEnd) {
+          // The location for autocompletion is at the end of an identifier
+          beginningOfToken = tokenStart;
+          autocompleteType = AutocompletionType::EndOfIdentifier;
+          break;
+        }
+      }
+      if (location < tokenStart) {
+        // The location for autocompletion is not in an identifier
+        break;
+      }
+      mp_lexer_to_next(lex);
+      currentTokenKind = lex->tok_kind;
+    }
+    mp_lexer_free(lex);
+    nlr_pop();
+  }
+  if (autocompletionLocationBeginning != nullptr) {
+    *autocompletionLocationBeginning = beginningOfToken;
+  }
+  if (autocompletionLocationEnd != nullptr) {
+    *autocompletionLocationEnd = location;
+  }
+  assert(!isAutocompleting() || autocompleteType == AutocompletionType::EndOfIdentifier);
+  return autocompleteType;
 }
 
 const char * PythonTextArea::ContentView::textToAutocomplete() const {
@@ -281,18 +331,18 @@ void PythonTextArea::removeAutocompletion() {
 void PythonTextArea::addAutocompletion() {
   assert(!m_contentView.isAutocompleting());
 
+  const char * autocompletionTokenBeginning = nullptr;
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());
   const char * textToInsert = nullptr;
   int textToInsertLength = 0;
-  if (shouldAutocomplete(autocompletionLocation)) {
-    /* The previous code point is neither the beginning of the text, nor a
-     * space, nor a \n, and the next code point is the end of the word.
+  if (autocompletionType(autocompletionLocation, &autocompletionTokenBeginning) == AutocompletionType::EndOfIdentifier) {
+    /* The cursor is at the end of an identifier.
      * Compute the text to insert:
      * Look first in the current script variables and functions, then in the
      * builtins, then in the imported modules/scripts. */
     VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
-    const char * beginningOfWord = m_contentView.textToAutocomplete();
-    textToInsert = varBox->autocompletionForText(m_contentView.pythonDelegate()->menuController()->editedScriptIndex(), beginningOfWord, &textToInsertLength);
+    const int scriptIndex = m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
+    textToInsert = varBox->autocompletionForText(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning, &textToInsertLength);
   }
 
   // Try to insert the text (this might fail if the buffer is full)

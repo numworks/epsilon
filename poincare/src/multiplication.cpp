@@ -440,7 +440,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       result = Undefined::Builder();
     } else {
       // Find the right unit prefix when the value ≠ 0
-      if (unitConversionMode == ExpressionNode::UnitConversion::Default && value != 0.0 && value != 1.0 && !std::isinf(value)) {
+      if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
         // Identify the first Unit factor and its exponent
         Expression firstFactor = units;
         int exponent = 1;

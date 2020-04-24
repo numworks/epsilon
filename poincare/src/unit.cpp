@@ -319,7 +319,10 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
 }
 
 void Unit::chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext) {
-  assert(value != 0 && !std::isnan(value) && !std::isinf(value) && exponent != 0);
+  assert(!std::isnan(value) && exponent != 0);
+  if (value == 0 || value == 1.0 || std::isinf(value)) {
+    return;
+  }
   UnitNode * unitNode = node();
   const Dimension * dim = unitNode->dimension();
   /* Find in the Dimension 'dim' which unit (Representative and Prefix) make

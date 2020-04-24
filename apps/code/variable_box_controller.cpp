@@ -678,7 +678,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   bool loadAllContent = structKindIsImportWithoutFrom;
 
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(parseNode);
-  for (int i = 0; i < childNodesCount; i++) {
+  for (size_t i = 0; i < childNodesCount; i++) {
     mp_parse_node_t child = parseNode->nodes[i];
     if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
       // Parsing something like "import math"

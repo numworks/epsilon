@@ -285,6 +285,12 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
         || event == Ion::Events::Alpha
         || event == Ion::Events::OnOff)
     {
+    } else if(event == Ion::Events::Up
+        || event == Ion::Events::Down)
+    {
+      //TODO LEA handle only one suggestion in var box.
+      cycleAutocompletion(event == Ion::Events::Down);
+      return true;
     } else {
       removeAutocompletion();
       m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
@@ -319,6 +325,12 @@ bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bo
 
 void PythonTextArea::removeAutocompletion() {
   assert(m_contentView.isAutocompleting());
+  removeAutocompletionText();
+  m_contentView.setAutocompleting(false);
+}
+
+void PythonTextArea::removeAutocompletionText() {
+  assert(m_contentView.isAutocompleting());
   assert(m_contentView.autocompletionEnd() != nullptr);
   const char * autocompleteStart = m_contentView.cursorLocation();
   const char * autocompleteEnd = m_contentView.autocompletionEnd();
@@ -326,7 +338,6 @@ void PythonTextArea::removeAutocompletion() {
   //TODO LEA if (autocompleteEnd > autocompleteStart) {
   m_contentView.removeText(autocompleteStart, autocompleteEnd);
   //TODO LEA }
-  m_contentView.setAutocompleting(false);
 }
 
 void PythonTextArea::addAutocompletion() {
@@ -337,33 +348,52 @@ void PythonTextArea::addAutocompletion() {
     // The cursor is not at the end of an identifier.
     return;
   }
-  /* Compute the text to insert:
-   * Look first in the current script variables and functions, then in the
-   * builtins, then in the imported modules/scripts. */
-  VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
+
+  // First load variables and functions that complete the textToAutocomplete
   const int scriptIndex = m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
+   m_contentView.pythonDelegate()->variableBoxController()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
+
+  if (addAutocompletionTextAtIndex(0)) {
+    m_contentView.setAutocompleting(true);
+  }
+}
+
+bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate) {
+  // The variable box should be loaded at this point
+  const char * autocompletionTokenBeginning = nullptr;
+  const char * autocompletionLocation = const_cast<char *>(cursorLocation());
+  AutocompletionType type = autocompletionType(autocompletionLocation, &autocompletionTokenBeginning); // Done to get autocompletionTokenBeginning
+  assert(type == AutocompletionType::EndOfIdentifier);
+  (void)type; // Silence warnings
+  VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
   int textToInsertLength = 0;
   bool addParentheses = false;
-
-  const char * textToInsert = varBox->autocompletionForText(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning, &textToInsertLength, &addParentheses);
+  const char * textToInsert = varBox->autocompletionAlternativeAtIndex(autocompletionLocation - autocompletionTokenBeginning, &textToInsertLength, &addParentheses, nextIndex, currentIndexToUpdate);
 
   // Try to insert the text (this might fail if the buffer is full)
   if (textToInsert != nullptr
       && textToInsertLength > 0
       && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation), textToInsertLength))
   {
-    m_contentView.setAutocompleting(true);
     autocompletionLocation += textToInsertLength;
     m_contentView.setAutocompletionEnd(autocompletionLocation);
+    // Try to insert the parentheses if needed text
+    const char * parentheses = ScriptNodeCell::k_parentheses;
+    constexpr int parenthesesLength = 2;
+    assert(strlen(parentheses) == parenthesesLength);
+    if (addParentheses && m_contentView.insertTextAtLocation(parentheses, const_cast<char *>(autocompletionLocation), parenthesesLength)) {
+      m_contentView.setAutocompleting(true);
+      m_contentView.setAutocompletionEnd(autocompletionLocation + parenthesesLength);
+    }
+    return true;
   }
-  // Try to insert the parentheses if needed text
-  const char * parentheses = ScriptNodeCell::k_parentheses;
-  constexpr int parenthesesLength = 2;
-  assert(strlen(parentheses) == parenthesesLength);
-  if (addParentheses && m_contentView.insertTextAtLocation(parentheses, const_cast<char *>(autocompletionLocation), parenthesesLength)) {
-    m_contentView.setAutocompleting(true);
-    m_contentView.setAutocompletionEnd(autocompletionLocation + parenthesesLength);
-  }
+  return false;
+}
+
+void PythonTextArea::cycleAutocompletion(bool downwards) {
+  assert(m_contentView.isAutocompleting());
+  removeAutocompletionText();
+  addAutocompletionTextAtIndex(m_autocompletionResultIndex + (downwards ? 1 : -1), &m_autocompletionResultIndex);
 }
 
 void PythonTextArea::acceptAutocompletion(bool moveCursorToEndOfAutocompletion) {

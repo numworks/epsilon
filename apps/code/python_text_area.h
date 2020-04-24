@@ -16,7 +16,8 @@ public:
   };
   PythonTextArea(Responder * parentResponder, App * pythonDelegate, const KDFont * font) :
     TextArea(parentResponder, &m_contentView, font),
-    m_contentView(pythonDelegate, font)
+    m_contentView(pythonDelegate, font),
+    m_autocompletionResultIndex(0)
   {
   }
   void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
@@ -60,10 +61,14 @@ protected:
   };
 private:
   void removeAutocompletion();
+  void removeAutocompletionText(); // Just removes the suggested text, not the autocompletion mode
   void addAutocompletion();
+  bool addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate = nullptr); // Assumes the var box is already loaded
+  void cycleAutocompletion(bool downwards);
   void acceptAutocompletion(bool moveCursorToEndOfAutocompletion);
   const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;
+  int m_autocompletionResultIndex;
 };
 
 }

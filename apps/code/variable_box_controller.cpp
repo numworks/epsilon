@@ -742,7 +742,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
        * and "....function". */
       constexpr int numberOfNodesToSkip = 3;
       assert(numberOfChildren > numberOfNodesToSkip);
-      for (int i = 3; i < numberOfChildren; i++) {
+      for (int i = numberOfNodesToSkip; i < numberOfChildren; i++) {
         const char * name = I18n::translate((moduleChildren + i)->label());
         checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()) /*TODO LEA text or label?*/);
       }

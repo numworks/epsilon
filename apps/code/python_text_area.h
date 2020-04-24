@@ -38,12 +38,15 @@ protected:
     ContentView(App * pythonDelegate, const KDFont * font) :
       TextArea::ContentView(font),
       m_pythonDelegate(pythonDelegate),
-      m_autocomplete(false)
+      m_autocomplete(false),
+      m_autocompletionEnd(nullptr)
     {
     }
     App * pythonDelegate() { return m_pythonDelegate; }
     void setAutocompleting(bool autocomplete) { m_autocomplete = autocomplete; }
     bool isAutocompleting() const { return m_autocomplete; }
+    const char * autocompletionEnd() const { assert(m_autocomplete); return m_autocompletionEnd; }
+    void setAutocompletionEnd(const char * end) { m_autocompletionEnd = end; }
     const char * textToAutocomplete() const;
     void loadSyntaxHighlighter();
     void unloadSyntaxHighlighter();
@@ -53,6 +56,7 @@ protected:
   private:
     App * m_pythonDelegate;
     bool m_autocomplete;
+    const char * m_autocompletionEnd;
   };
 private:
   void removeAutocompletion();

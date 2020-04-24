@@ -190,8 +190,9 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   }
 }
 
-const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength) {
+const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses) {
   assert(textToAutocompleteLength >= 1);
+  assert(addParentheses != nullptr);
 
   // First load variables and functions that complete the textToAutocomplete
   loadFunctionsAndVariables(scriptIndex, textToAutocomplete, textToAutocompleteLength);
@@ -206,6 +207,7 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
   if (currentNameLength < 0) {
     currentNameLength = strlen(currentName);
   }
+  *addParentheses = node->type() == ScriptNode::Type::WithParentheses;
   // Assert the text we return does indeed autocomplete the text to autocomplete
   assert(currentNameLength != textToAutocompleteLength && strncmp(textToAutocomplete, currentName, textToAutocompleteLength) == 0);
   // Return the text without the beginning that matches the text to autocomplete

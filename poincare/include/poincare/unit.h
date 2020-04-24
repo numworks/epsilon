@@ -417,7 +417,11 @@ public:
   // TODO: find a better way to find defines these pointers
   static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative might require to be fixed if the TimeRepresentatives table was changed.");
   static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
+  static const Representative constexpr * MinuteRepresentative = &TimeRepresentatives[1];
   static const Representative constexpr * HourRepresentative = &TimeRepresentatives[2];
+  static const Representative constexpr * DayRepresentative = &TimeRepresentatives[3];
+  static const Representative constexpr * MonthRepresentative = &TimeRepresentatives[5];
+  static const Representative constexpr * YearRepresentative = &TimeRepresentatives[6];
   static const Representative constexpr * MeterRepresentative = &DistanceRepresentatives[0];
   static const Representative constexpr * KilogramRepresentative = &MassRepresentatives[0];
   static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
@@ -742,13 +746,20 @@ public:
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
   static Unit Kilometer() { return Builder(DistanceDimension, MeterRepresentative, &KiloPrefix); }
+  static Unit Second() { return Builder(TimeDimension, SecondRepresentative, &EmptyPrefix); }
+  static Unit Minute() { return Builder(TimeDimension, MinuteRepresentative, &EmptyPrefix); }
   static Unit Hour() { return Builder(TimeDimension, HourRepresentative, &EmptyPrefix); }
+  static Unit Day() { return Builder(TimeDimension, DayRepresentative, &EmptyPrefix); }
+  static Unit Month() { return Builder(TimeDimension, MonthRepresentative, &EmptyPrefix); }
+  static Unit Year() { return Builder(TimeDimension, YearRepresentative, &EmptyPrefix); }
   static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
   static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
+  static Expression BuildTimeSplit(double seconds);
 
   static bool IsISSpeed(Expression & e);
   static bool IsISVolume(Expression & e);
   static bool IsISEnergy(Expression & e);
+  static bool IsISTime(Expression & e);
   bool isMeter() const;
   bool isSecond() const;
   bool isKilogram() const;

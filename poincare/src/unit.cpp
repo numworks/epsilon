@@ -426,6 +426,34 @@ bool Unit::IsISEnergy(Expression & e) {
     e.childAtIndex(2).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isMinusTwo();
 }
 
+bool Unit::IsISTime(Expression & e) {
+  return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
+}
+
+Expression Unit::BuildTimeSplit(double seconds) {
+  assert(!std::isnan(seconds));
+  if (std::isinf(seconds)) {
+    return Multiplication::Builder(Infinity::Builder(seconds < 0.0), Unit::Second());
+  }
+  double remain = seconds;
+  constexpr static int numberOfTimeUnits = 6;
+  // This could be computed from the time representatives but we same time by using constexpr double
+  constexpr static double timeFactors[numberOfTimeUnits] = {365.25*24.0*60.0*60.0, 365.25/12.0*24.0*60.0*60.0, 24.0*60.0*60.0, 60.0*60.0, 60.0, 1.0 };
+  Unit units[numberOfTimeUnits] = {Unit::Year(), Unit::Month(), Unit::Day(), Unit::Hour(), Unit::Minute(), Unit::Second() };
+  double valuesPerUnit[numberOfTimeUnits];
+  Addition a = Addition::Builder();
+  for (size_t i = 0; i < numberOfTimeUnits; i++) {
+    valuesPerUnit[i] = std::floor(remain/timeFactors[i]);
+    remain -= valuesPerUnit[i]*timeFactors[i];
+    if (std::fabs(remain) < Expression::Epsilon<double>()) {
+      break;
+    }
+    Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
+    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+  }
+  return a.squashUnaryHierarchyInPlace();
+}
+
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 template Evaluation<double> UnitNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 

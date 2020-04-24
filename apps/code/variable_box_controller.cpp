@@ -190,16 +190,11 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   }
 }
 
-const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * textToAutocomplete, int * textToInsertLength) {
-  /* The text to autocomplete will most probably not be null-terminated. We thus
-   * say that the end of the text to autocomplete is the end if the current word,
-   * determined by the next space char or the next null char.*/
-  const char * endOfText = UTF8Helper::EndOfWord(textToAutocomplete);
-  const int textLength = endOfText - textToAutocomplete;
-  assert(textLength >= 1);
+const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength) {
+  assert(textToAutocompleteLength >= 1);
 
   // First load variables and functions that complete the textToAutocomplete
-  loadFunctionsAndVariables(scriptIndex, textToAutocomplete, textLength);
+  loadFunctionsAndVariables(scriptIndex, textToAutocomplete, textToAutocompleteLength);
   if (numberOfRows() == 0) {
     return nullptr;
   }
@@ -212,10 +207,16 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
     currentNameLength = strlen(currentName);
   }
   // Assert the text we return does indeed autocomplete the text to autocomplete
-  assert(currentNameLength != textLength && strncmp(textToAutocomplete, currentName, textLength) == 0);
+  assert(currentNameLength != textToAutocompleteLength && strncmp(textToAutocomplete, currentName, textToAutocompleteLength) == 0);
   // Return the text without the beginning that matches the text to autocomplete
-  *textToInsertLength = currentNameLength - textLength;
-  return currentName + textLength;
+  *textToInsertLength = currentNameLength - textToAutocompleteLength;
+  return currentName + textToAutocompleteLength;
+}
+
+void VariableBoxController::empty() {
+  m_builtinNodesCount = 0;
+  m_currentScriptNodesCount = 0;
+  m_importedNodesCount = 0;
 }
 
 // PRIVATE METHODS

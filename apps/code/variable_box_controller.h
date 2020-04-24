@@ -35,7 +35,8 @@ public:
 
   /* VariableBoxController */
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
-  const char * autocompletionForText(int scriptIndex, const char * textToAutocomplete, int * textToInsertLength);
+  const char * autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength);
+  void empty();
 
 private:
   //TODO LEA use size_t

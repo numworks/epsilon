@@ -9,6 +9,11 @@ class App;
 
 class PythonTextArea : public TextArea {
 public:
+  enum class AutocompletionType : uint8_t {
+    EndOfIdentifier,
+    MiddleOfIdentifier,
+    NoIdentifier
+  };
   PythonTextArea(Responder * parentResponder, App * pythonDelegate, const KDFont * font) :
     TextArea(parentResponder, &m_contentView, font),
     m_contentView(pythonDelegate, font)
@@ -18,10 +23,14 @@ public:
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
-  /* shouldAutocomplete returns true if there is currently autocompletion, or if
-   * there should be autocompletion but there is not because there is no word to
-   * autocomplete. */
-  bool shouldAutocomplete(const char * autocompletionLocation = nullptr) const;
+  /* autocompletionType returns:
+   * - EndOfIdentifier if there is currently autocompletion, or if the wursor is
+   *   at the end of an identifier,
+   * - MiddleOfIdentifier is the cursor is in the middle of an identifier,
+   * - No identifier otherwise.
+   * The autocompletionLocation can be provided with autocompletionLocation, or
+   * retreived with autocompletionLocationBeginning and autocompletionLocationEnd. */
+  AutocompletionType autocompletionType(const char * autocompletionLocation = nullptr, const char ** autocompletionLocationBeginning = nullptr, const char ** autocompletionLocationEnd = nullptr) const;
   bool isAutocompleting() const { return m_contentView.isAutocompleting(); }
 protected:
   class ContentView : public TextArea::ContentView {

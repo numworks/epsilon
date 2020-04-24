@@ -445,11 +445,11 @@ Expression Unit::BuildTimeSplit(double seconds) {
   for (size_t i = 0; i < numberOfTimeUnits; i++) {
     valuesPerUnit[i] = std::floor(remain/timeFactors[i]);
     remain -= valuesPerUnit[i]*timeFactors[i];
+    Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
+    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     if (std::fabs(remain) < Expression::Epsilon<double>()) {
       break;
     }
-    Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
-    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
   }
   return a.squashUnaryHierarchyInPlace();
 }

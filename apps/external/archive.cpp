@@ -118,7 +118,7 @@ size_t numberOfFiles() {
 #else
 
 bool fileAtIndex(size_t index, File &entry) {
-  entry.name = "No apps installed ";
+  entry.name = "Built-in";
   entry.data = NULL;
   entry.dataLength = 0;
   entry.isExecutable = true;
@@ -133,11 +133,11 @@ uint32_t executeFile(const char *name, void * heap, const uint32_t heapSize) {
 }
 
 int indexFromName(const char *name) {
-  return 0;
+  return 1;
 }
 
 size_t numberOfFiles() {
-  return 0;
+  return 1;
 }
 
 #endif

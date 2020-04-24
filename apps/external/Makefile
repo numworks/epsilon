@@ -18,6 +18,10 @@ else
 	include $(EXTAPP_PATH)/sources.mak
 endif
 
+ifdef EXTERNAL_BUILTIN
+SFLAGS += -DEXTERNAL_BUILTIN
+endif
+
 apps_src += $(app_external_src)
 
 i18n_files += $(addprefix apps/external/,\

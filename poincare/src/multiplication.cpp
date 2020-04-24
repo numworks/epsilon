@@ -364,7 +364,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
 
   if (!units.isUninitialized()) {
     ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
-    if (unitConversionMode == ExpressionNode::UnitConversion::Default || unitConversionMode == ExpressionNode::UnitConversion::Classic) {
+    if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
       /* Step 2a: Recognize derived units
        * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
        * - If an entry is found, simplify 'units' and add the corresponding unit or its inverse in 'unitsAccu'.

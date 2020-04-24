@@ -209,7 +209,9 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
   }
   *addParentheses = node->type() == ScriptNode::Type::WithParentheses;
   // Assert the text we return does indeed autocomplete the text to autocomplete
-  assert(currentNameLength != textToAutocompleteLength && strncmp(textToAutocomplete, currentName, textToAutocompleteLength) == 0);
+  assert((*addParentheses
+        || currentNameLength != textToAutocompleteLength)
+      && strncmp(textToAutocomplete, currentName, textToAutocompleteLength) == 0);
   // Return the text without the beginning that matches the text to autocomplete
   *textToInsertLength = currentNameLength - textToAutocompleteLength;
   return currentName + textToAutocompleteLength;
@@ -242,15 +244,6 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
     *strictlyStartsWith = true;
   }
   return nodeNameLengthStartsWithName ? 1 : -1;
-}
-
-int VariableBoxController::NodeNameStartsWith(ScriptNode * node, const char * name, int nameLength) {
-  bool strictlyStartsWith = false;
-  int result = NodeNameCompare(node, name, nameLength, &strictlyStartsWith);
-  if (strictlyStartsWith) {
-    return 0;
-  }
-  return result <= 0 ? -1 : 1;
 }
 
 int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
@@ -489,13 +482,25 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
     {qstr_str(MP_QSTR_zip), ScriptNode::Type::WithParentheses}
   };
   assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
+  /* We can leverage on the fact that buitin nodes are stored in alphabetical
+   * order, so we do not use shouldAddNode. */
   for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
     ScriptNode node = ScriptNode(builtinNames[i].type, builtinNames[i].name);
-    int startsWith = textToAutocomplete == nullptr ? 0 : NodeNameStartsWith(&node, textToAutocomplete, textToAutocompleteLength);
+
+    int startsWith = 0;
+    if (textToAutocomplete != nullptr) {
+      bool strictlyStartsWith = false;
+      startsWith = NodeNameCompare(&node, textToAutocomplete, textToAutocompleteLength, &strictlyStartsWith);
+      if (startsWith == 0) { // The node name and name are equal
+        startsWith = builtinNames[i].type == ScriptNode::Type::WithParentheses ? 0 : -1; // We accept the node only if it has parentheses
+      } else if (strictlyStartsWith) {
+        startsWith = 0;
+      } else if (startsWith > 0) {
+        return;
+      }
+    }
     if (startsWith == 0) {
       m_builtinNodes[m_builtinNodesCount++] = node;
-    } else if (startsWith > 0) {
-      break;
     }
   }
 }
@@ -577,7 +582,8 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
 
         /* If the token autocompletes the text and it is not already in the
          * variable box, add it. */
-        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength)) {
+        ScriptNode::Type nodeType = defToken ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
+        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType)) {
           /* This is a trick to get the token position in the text, as name and
            * nameLength are temporary variables that will be overriden when the
            * lexer continues lexing or is destroyed.
@@ -591,7 +597,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
             }
           }
           assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(defToken ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses, NodeOrigin::CurrentScript, tokenInText, nameLength);
+          addNode(nodeType, NodeOrigin::CurrentScript, tokenInText, nameLength);
         }
       }
 
@@ -783,13 +789,14 @@ void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int
   if (nodeNameLength < 0) {
     nodeNameLength = strlen(nodeName);
   }
-  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength)) {
+  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength, type)) {
     // Add the node in alphabetical order
     addNode(type, origin, nodeName, nodeNameLength, nodeSourceName, description);
   }
 }
 
-bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * nodeName, int nodeNameLength) {
+bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * nodeName, int nodeNameLength, ScriptNode::Type type) {
+  assert(nodeNameLength > 0);
   if (textToAutocomplete != nullptr) {
     /* Check that nodeName autocompletes the text to autocomplete
      *  - The start of nodeName must be equal to the text to autocomplete */
@@ -797,10 +804,9 @@ bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int t
       return false;
     }
     /*  - nodeName should be longer than the text to autocomplete. Beware of the
-     *  case where nodeName is textToAutocompleteLength(parameters), which we do
-     *  not want to accept. */
-    char firstCharAfterAutocompletion = *(nodeName + textToAutocompleteLength);
-    if (firstCharAfterAutocompletion == 0 || firstCharAfterAutocompletion == '(') {
+     *  case where nodeName is textToAutocompleteLength(), where we want to add
+     *  the node to autocomplete with parentheses. */
+    if (nodeNameLength == textToAutocompleteLength && type != ScriptNode::Type::WithParentheses) {
       return false;
     }
   }

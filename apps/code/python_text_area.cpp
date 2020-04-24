@@ -361,6 +361,7 @@ void PythonTextArea::addAutocompletion() {
   constexpr int parenthesesLength = 2;
   assert(strlen(parentheses) == parenthesesLength);
   if (addParentheses && m_contentView.insertTextAtLocation(ScriptNodeCell::k_parentheses, const_cast<char *>(autocompletionLocation), parenthesesLength)) {
+    m_contentView.setAutocompleting(true);
     m_contentView.setAutocompletionEnd(autocompletionLocation + parenthesesLength);
   }
 }

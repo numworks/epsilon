@@ -235,13 +235,13 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
   // Redraw the autocompleted word in the right color
   if (m_autocomplete && autocompleteStart >= text && autocompleteStart < text + byteLength) {
-    const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
+    assert(m_autocompletionEnd != nullptr && m_autocompletionEnd > autocompleteStart);
     drawStringAt(
         ctx,
         line,
         UTF8Helper::GlyphOffsetAtCodePoint(text, autocompleteStart),
         autocompleteStart,
-        std::min(text + byteLength, autocompleteEnd) - autocompleteStart,
+        std::min(text + byteLength, m_autocompletionEnd) - autocompleteStart,
         AutocompleteColor,
         BackgroundColor,
         nullptr,
@@ -319,12 +319,13 @@ bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bo
 
 void PythonTextArea::removeAutocompletion() {
   assert(m_contentView.isAutocompleting());
+  assert(m_contentView.autocompletionEnd() != nullptr);
   const char * autocompleteStart = m_contentView.cursorLocation();
-  const char * autocompleteEnd = UTF8Helper::EndOfWord(autocompleteStart);
-  assert(autocompleteEnd >= autocompleteStart);
-  if (autocompleteEnd > autocompleteStart) {
-   m_contentView.removeText(autocompleteStart, autocompleteEnd);
-  }
+  const char * autocompleteEnd = m_contentView.autocompletionEnd();
+  assert(autocompleteEnd != nullptr && autocompleteEnd > autocompleteStart);
+  //TODO LEA if (autocompleteEnd > autocompleteStart) {
+  m_contentView.removeText(autocompleteStart, autocompleteEnd);
+  //TODO LEA }
   m_contentView.setAutocompleting(false);
 }
 
@@ -348,15 +349,17 @@ void PythonTextArea::addAutocompletion() {
   // Try to insert the text (this might fail if the buffer is full)
   if (textToInsert && textToInsertLength > 0 && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation), textToInsertLength)) {
     m_contentView.setAutocompleting(true);
+    m_contentView.setAutocompletionEnd(autocompletionLocation + textToInsertLength);
   }
 }
 
 void PythonTextArea::acceptAutocompletion(bool moveCursorToEndOfAutocompletion) {
   assert(m_contentView.isAutocompleting());
+  const char * autocompEnd = m_contentView.autocompletionEnd();
   m_contentView.setAutocompleting(false);
+  m_contentView.setAutocompletionEnd(nullptr);
   if (moveCursorToEndOfAutocompletion) {
-    const char * autocompleteEnd = UTF8Helper::EndOfWord(m_contentView.cursorLocation());
-    setCursorLocation(autocompleteEnd);
+    setCursorLocation(autocompEnd);
     addAutocompletion();
   }
 }

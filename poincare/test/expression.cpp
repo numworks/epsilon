@@ -3,7 +3,10 @@
 #include <poincare/decimal.h>
 #include <poincare/expression.h>
 #include <poincare/rational.h>
+#include <poincare/unit.h>
+#include <apps/shared/global_context.h>
 #include "tree/helpers.h"
+#include "helper.h"
 
 using namespace Poincare;
 
@@ -69,4 +72,76 @@ QUIZ_CASE(poincare_expression_rational_constructor) {
   Rational e = Rational::Builder(overflow);
   Rational f = Rational::Builder(overflow, overflow);
   assert_pool_size(initialPoolSize+6);
+}
+
+QUIZ_CASE(poincare_expression_unit_constructor) {
+  Shared::GlobalContext globalContext;
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, User);
+  // Time
+  Unit s = Unit::Second();
+  quiz_assert(s.isSecond());
+  quiz_assert(!s.isMeter());
+  Expression time = Unit::BuildTimeSplit(1234567890);
+  Addition a = Addition::Builder();
+  a.addChildAtIndexInPlace(Multiplication::Builder(
+        Float<double>::Builder(39.0),
+        Unit::Year()
+        ),
+      0, 0);
+  a.addChildAtIndexInPlace(Multiplication::Builder(
+        Float<double>::Builder(1.0),
+        Unit::Month()
+        ),
+      1, 1);
+  a.addChildAtIndexInPlace(Multiplication::Builder(
+        Float<double>::Builder(13.0),
+        Unit::Day()
+        ),
+      2, 2);
+    a.addChildAtIndexInPlace(Multiplication::Builder(
+        Float<double>::Builder(19.0),
+        Unit::Hour()
+        ),
+      3, 3);
+  a.addChildAtIndexInPlace(Multiplication::Builder(
+        Float<double>::Builder(1.0),
+        Unit::Minute()
+        ),
+      4, 4);
+  a.addChildAtIndexInPlace(Multiplication::Builder(
+        Float<double>::Builder(30.0),
+        Unit::Second()
+        ),
+      5, 5);
+  quiz_assert(a.isIdenticalTo(time));
+
+  // Speed
+  Expression kilometerPerHour = Multiplication::Builder(
+      Unit::Kilometer(),
+      Power::Builder(
+        Unit::Hour(),
+        Rational::Builder(-1)
+        )
+      );
+  kilometerPerHour = kilometerPerHour.reduce(reductionContext);
+  Expression meterPerSecond;
+  kilometerPerHour = kilometerPerHour.removeUnit(&meterPerSecond);
+  quiz_assert(Unit::IsISSpeed(meterPerSecond));
+
+  // Volume
+  Expression liter = Unit::Liter();
+  liter = liter.reduce(reductionContext);
+  Expression meter3;
+  liter = liter.removeUnit(&meter3);
+  quiz_assert(Unit::IsISVolume(meter3));
+
+  // Energy
+  Expression wattHour = Multiplication::Builder(
+      Unit::Watt(),
+      Unit::Hour()
+      );
+  wattHour = wattHour.reduce(reductionContext);
+  Expression kilogramMeter2PerSecond2;
+  wattHour = wattHour.removeUnit(&kilogramMeter2PerSecond2);
+  quiz_assert(Unit::IsISEnergy(kilogramMeter2PerSecond2));
 }

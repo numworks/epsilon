@@ -439,31 +439,9 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();
     } else {
-      // Find the right unit prefix when the value ≠ 0
       if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
-        // Identify the first Unit factor and its exponent
-        Expression firstFactor = units;
-        int exponent = 1;
-        if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
-          firstFactor = firstFactor.childAtIndex(0);
-        }
-        if (firstFactor.type() == ExpressionNode::Type::Power) {
-          Expression exp = firstFactor.childAtIndex(1);
-          firstFactor = firstFactor.childAtIndex(0);
-          assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
-          Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
-          if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
-            exponent = expInt.extractedInt();
-          } else {
-            // The exponent is too large to be extracted, so do not try to use it.
-            exponent = 0;
-          }
-        }
-        assert(firstFactor.type() == ExpressionNode::Type::Unit);
-        // Choose its multiple and update value accordingly
-        if (exponent != 0) {
-          static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
-        }
+        // Find the right unit prefix
+        Unit::ChooseBestMultipleForValue(&units, &value, reductionContext);
       } else if (unitConversionMode == ExpressionNode::UnitConversion::Classic) {
         if (Unit::IsISSpeed(units)) {
           value *= Unit::MeterPerSecondToKilometerPerHourFactor;

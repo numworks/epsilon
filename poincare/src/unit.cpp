@@ -1,6 +1,9 @@
 #include <poincare/unit.h>
+#include <poincare/addition.h>
 #include <poincare/division.h>
+#include <poincare/float.h>
 #include <poincare/ieee754.h>
+#include <poincare/infinity.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -318,9 +321,35 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   return result;
 }
 
-void Unit::chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext) {
-  assert(!std::isnan(value) && exponent != 0);
-  if (value == 0 || value == 1.0 || std::isinf(value)) {
+void Unit::ChooseBestMultipleForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) {
+  // Identify the first Unit factor and its exponent
+  Expression firstFactor = *units;
+  int exponent = 1;
+  if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
+    firstFactor = firstFactor.childAtIndex(0);
+  }
+  if (firstFactor.type() == ExpressionNode::Type::Power) {
+    Expression exp = firstFactor.childAtIndex(1);
+    firstFactor = firstFactor.childAtIndex(0);
+    assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
+    Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
+    if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
+      exponent = expInt.extractedInt();
+    } else {
+      // The exponent is too large to be extracted, so do not try to use it.
+      exponent = 0;
+    }
+  }
+  assert(firstFactor.type() == ExpressionNode::Type::Unit);
+  // Choose its multiple and update value accordingly
+  if (exponent != 0) {
+    static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
+  }
+}
+
+void Unit::chooseBestMultipleForValue(double * value, const int exponent, ExpressionNode::ReductionContext reductionContext) {
+  assert(!std::isnan(*value) && exponent != 0);
+  if (*value == 0 || *value == 1.0 || std::isinf(*value)) {
     return;
   }
   UnitNode * unitNode = node();
@@ -330,11 +359,11 @@ void Unit::chooseBestMultipleForValue(double & value, const int exponent, Expres
    */
   const Representative * bestRep = unitNode->representative();
   const Prefix * bestPre = unitNode->prefix();
-  double bestVal = value;
+  double bestVal = *value;
 
   for (const Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
     // evaluate quotient
-    double val = value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
+    double val = *value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
     // Get the best prefix and update val accordingly
     const Prefix * pre = rep->bestPrefixForValue(val, exponent);
     if (std::fabs(std::log10(std::fabs(bestVal))) - std::fabs(std::log10(std::fabs(val))) > Epsilon<double>()) {
@@ -346,7 +375,7 @@ void Unit::chooseBestMultipleForValue(double & value, const int exponent, Expres
   }
   unitNode->setRepresentative(bestRep);
   unitNode->setPrefix(bestPre);
-  value = bestVal;
+  *value = bestVal;
 }
 
 Expression Unit::removeUnit(Expression * unit) {

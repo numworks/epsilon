@@ -755,13 +755,14 @@ public:
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  void chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext);
+  static void ChooseBestMultipleForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext);
 
   static constexpr double MeterPerSecondToKilometerPerHourFactor = 60.0*60.0/1000.0;
   static constexpr double CubicMeterToLiterFactor = 10.0*10.0*10.0;
   static constexpr double JouleToWatthourFactor = 1.0/3600.0;
 private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
+  void chooseBestMultipleForValue(double * value, const int exponent, ExpressionNode::ReductionContext reductionContext);
   Expression removeUnit(Expression * unit);
 };
 

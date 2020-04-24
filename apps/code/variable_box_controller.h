@@ -63,12 +63,6 @@ private:
    * strictlyStartsWith is set to True if the node name starts with name but
    * they are not equal.*/
   static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith = nullptr);
-  /* Returns:
-   * - a negative int if the node name is before name in alphabetical
-   * order or equal to name
-   * - 0 if node name strictly starts with name
-   * - a positive int if node name is after name in alphabetical order. */
-  static int NodeNameStartsWith(ScriptNode * node, const char * name, int nameLength);
 
   // Nodes and nodes count
   static int MaxNodesCountForOrigin(NodeOrigin origin) {
@@ -100,7 +94,7 @@ private:
   /* Add a node if it completes the text to autocomplete and if it is not
    * already contained in the variable box. */
   void checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
-  bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength);
+  bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength, ScriptNode::Type type);
   bool contains(const char * name, int nameLength);
   void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;

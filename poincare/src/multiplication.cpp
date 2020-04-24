@@ -442,38 +442,10 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
         // Find the right unit prefix
         Unit::ChooseBestMultipleForValue(&units, &value, reductionContext);
-      } else if (unitConversionMode == ExpressionNode::UnitConversion::Classic) {
-        if (Unit::IsISSpeed(units)) {
-          value *= Unit::MeterPerSecondToKilometerPerHourFactor;
-          units = Multiplication::Builder(
-              Unit::Kilometer(),
-              Power::Builder(
-                Unit::Hour(),
-                Rational::Builder(-1)
-              )
-            );
-        }
-        if (Unit::IsISVolume(units)) {
-          value *= Unit::CubicMeterToLiterFactor;
-          units = Unit::Liter();
-          static_cast<Unit&>(units).chooseBestMultipleForValue(value, 1, reductionContext);
-        }
-        if (Unit::IsISEnergy(units)) {
-          value *= Unit::JouleToWatthourFactor;
-          Unit w = Unit::Watt();
-          units = Multiplication::Builder(
-              w,
-              Unit::Hour()
-            );
-          w.chooseBestMultipleForValue(value, 1, reductionContext);
-        }
-        // TODO: what to do if no classic conversion?
       }
-      if (result.isUninitialized()) {
-        // Build final Expression
-        result = Multiplication::Builder(Number::FloatNumber(value), units);
-        static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
-      }
+      // Build final Expression
+      result = Multiplication::Builder(Number::FloatNumber(value), units);
+      static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
     }
   } else {
   // Step 3: Create a Division if relevant

@@ -200,18 +200,36 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
     return nullptr;
   }
 
-  // Return the first node
-  ScriptNode * node = scriptNodeAtIndex(0);
+  return autocompletionAlternativeAtIndex(textToAutocompleteLength, textToInsertLength, addParentheses, 0);
+}
+
+const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate) {
+  assert(numberOfRows() != 0);
+
+  int nodesCount = 0;  // We cannot use numberOfRows as it contains the banners
+  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+  for (NodeOrigin origin : origins) {
+    nodesCount += nodesCountForOrigin(origin);
+  }
+  if (index < 0) {
+    assert(index == -1);
+    index = nodesCount - 1;
+  } else if (index >= nodesCount) {
+    assert(index == nodesCount);
+    index = 0;
+  }
+
+  if (indexToUpdate != nullptr) {
+    *indexToUpdate = index;
+  }
+
+  ScriptNode * node = scriptNodeAtIndex(index);
   const char * currentName = node->name();
   int currentNameLength = node->nameLength();
   if (currentNameLength < 0) {
     currentNameLength = strlen(currentName);
   }
   *addParentheses = node->type() == ScriptNode::Type::WithParentheses;
-  // Assert the text we return does indeed autocomplete the text to autocomplete
-  assert((*addParentheses
-        || currentNameLength != textToAutocompleteLength)
-      && strncmp(textToAutocomplete, currentName, textToAutocompleteLength) == 0);
   // Return the text without the beginning that matches the text to autocomplete
   *textToInsertLength = currentNameLength - textToAutocompleteLength;
   return currentName + textToAutocompleteLength;

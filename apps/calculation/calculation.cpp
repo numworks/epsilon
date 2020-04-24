@@ -250,7 +250,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   if (input().isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit()) || o.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
     return AdditionalInformationType::Trigonometry;
   }
-  if (o.hasUnit()) {
+  if (o.hasUnit()) { // TODO: find a way to check that it'll do have additional results
     return AdditionalInformationType::Unit;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {

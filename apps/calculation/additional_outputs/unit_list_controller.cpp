@@ -21,6 +21,7 @@ void UnitListController::computeLayoutAtIndex(int index) { //FIXME
     // SI units only
     Shared::PoincareHelpers::Simplify(&expressionAtIndex, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
   } else if (index == 1) {
+    // Miscellaneous classic units for some dimensions
     ExpressionNode::ReductionContext reductionContext(
         App::app()->localContext(),
         Preferences::sharedPreferences()->complexFormat(),
@@ -31,9 +32,10 @@ void UnitListController::computeLayoutAtIndex(int index) { //FIXME
     // Reduce to be able to recognize units
     expressionAtIndex = expressionAtIndex.reduce(reductionContext);
     expressionAtIndex = expressionAtIndex.removeUnit(&units);
-    bool requireSimplification = true;
-    bool canChangeUnitPrefix = true;
+    bool requireSimplification = false;
+    bool canChangeUnitPrefix = false;
     if (Unit::IsISSpeed(units)) {
+      // Turn into km/h
       expressionAtIndex = UnitConvert::Builder(
           m_expression.clone(),
           Multiplication::Builder(
@@ -44,13 +46,17 @@ void UnitListController::computeLayoutAtIndex(int index) { //FIXME
               )
             )
           );
-      canChangeUnitPrefix = false; // We force km/h
+      requireSimplification = true; // Reduce the conversion
     } else if (Unit::IsISVolume(units)) {
+      // Turn into L
       expressionAtIndex = UnitConvert::Builder(
           m_expression.clone(),
           Unit::Liter()
           );
+      requireSimplification = true; // reduce the conversion
+      canChangeUnitPrefix = true; // Pick best prefix (mL)
     } else if (Unit::IsISEnergy(units)) {
+      // Turn into W
       expressionAtIndex = UnitConvert::Builder(
           m_expression.clone(),
           Multiplication::Builder(
@@ -58,16 +64,13 @@ void UnitListController::computeLayoutAtIndex(int index) { //FIXME
               Unit::Hour()
             )
           );
+      requireSimplification = true; // reduce the conversion
+      canChangeUnitPrefix = true; // Pick best prefix (kWh)
     } else if (Unit::IsISTime(units)) {
+      // Turn into ? year + ? month + ? day + ? h + ? min + ? s
       double value = Shared::PoincareHelpers::ApproximateToScalar<double>(expressionAtIndex, App::app()->localContext());
       expressionAtIndex = Unit::BuildTimeSplit(value);
-      requireSimplification = false;
-      canChangeUnitPrefix = false;
-    } else {
-      requireSimplification = false;
-      canChangeUnitPrefix = false;
     }
-
     if (requireSimplification) {
       Shared::PoincareHelpers::Simplify(&expressionAtIndex, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
     }

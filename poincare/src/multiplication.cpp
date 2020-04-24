@@ -493,13 +493,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       }
       if (result.isUninitialized()) {
         // Build final Expression
-        Expression resultWithoutUnit;
-        if (std::isinf(value)) {
-          resultWithoutUnit = Infinity::Builder(value < 0.0);
-        } else {
-          resultWithoutUnit = Float<double>::Builder(value);
-        }
-        result = Multiplication::Builder(resultWithoutUnit, units);
+        result = Multiplication::Builder(Number::FloatNumber(value), units);
         static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
       }
     }

@@ -133,8 +133,7 @@ public:
   enum class UnitConversion {
     None = 0,
     Default,
-    InternationalSystem,
-    Classic // km/h, days + hours + minute
+    InternationalSystem
   };
   enum class Sign {
     Negative = -1,

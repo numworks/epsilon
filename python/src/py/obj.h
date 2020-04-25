@@ -90,6 +90,7 @@ static inline bool mp_obj_is_qstr(mp_const_obj_t o)
     { return ((((mp_int_t)(o)) & 3) == 2); }
 #define MP_OBJ_QSTR_VALUE(o) (((mp_uint_t)(o)) >> 2)
 #define MP_OBJ_NEW_QSTR(qst) ((mp_obj_t)((((mp_uint_t)(qst)) << 2) | 2))
+mp_obj_t mp_obj_new_int_via_str(const char* value, int base);
 
 #if MICROPY_PY_BUILTINS_FLOAT
 #define mp_const_float_e MP_ROM_PTR(&mp_const_float_e_obj)
@@ -100,6 +101,7 @@ extern const struct _mp_obj_float_t mp_const_float_pi_obj;
 #define mp_obj_is_float(o) mp_obj_is_type((o), &mp_type_float)
 mp_float_t mp_obj_float_get(mp_obj_t self_in);
 mp_obj_t mp_obj_new_float(mp_float_t value);
+mp_obj_t mp_obj_new_float_via_str(const char* value);
 #endif
 
 static inline bool mp_obj_is_obj(mp_const_obj_t o)

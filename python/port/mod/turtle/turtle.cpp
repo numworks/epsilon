@@ -175,27 +175,6 @@ void Turtle::setVisible(bool visible) {
   }
 }
 
-void Turtle::setColor(const char * color) {
-  constexpr NameColorPair pairs[] = {
-    NameColorPair("blue", KDColorBlue),
-    NameColorPair("red", KDColorRed),
-    NameColorPair("green", Palette::Green),
-    NameColorPair("yellow", KDColorYellow),
-    NameColorPair("brown", Palette::Brown),
-    NameColorPair("black", KDColorBlack),
-    NameColorPair("white", KDColorWhite),
-    NameColorPair("pink", Palette::Pink),
-    NameColorPair("orange", Palette::Orange),
-    NameColorPair("purple", Palette::Purple),
-    NameColorPair("grey", Palette::GreyDark)
-  };
-  for (NameColorPair p : pairs) {
-    if (strcmp(p.name(), color) == 0) {
-      m_color = p.color();
-      return;
-    }
-  }
-}
 
 void Turtle::viewDidDisappear() {
   m_drawn = false;

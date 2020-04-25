@@ -201,6 +201,24 @@ mp_obj_t mp_obj_new_float(mp_float_t value) {
     return MP_OBJ_FROM_PTR(o);
 }
 
+mp_obj_t mp_obj_new_float_via_str(const char* value) {
+    mp_obj_float_t *o = m_new(mp_obj_float_t, 1);
+    o->base.type = &mp_type_float;
+    //Avoid \x0
+    int length = 0;
+    for(int i = 0; i <= sizeof(value); i++){
+        if(value[i] == '\x0'){
+            length = i;
+            break;
+        }
+    };
+    if(length == 0){
+        length = (int) sizeof(value);
+    }
+    o->value = mp_obj_float_get(mp_parse_num_decimal(value, length, false, false, NULL));
+    return MP_OBJ_FROM_PTR(o);
+}
+
 mp_float_t mp_obj_float_get(mp_obj_t self_in) {
     assert(mp_obj_is_float(self_in));
     mp_obj_float_t *self = MP_OBJ_TO_PTR(self_in);

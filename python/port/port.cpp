@@ -23,6 +23,8 @@ extern "C" {
 #include "mod/matplotlib/pyplot/modpyplot.h"
 }
 
+#include <escher/palette.h>
+
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
 
@@ -170,6 +172,83 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
 #endif
 }
 
+KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorModes ColorMode){
+  if(MP_OBJ_IS_STR(input)){
+    size_t l;
+    const char * color = mp_obj_str_get_data(input, &l);
+    // TODO add cyan
+    constexpr NameColorPair pairs[] = {
+      NameColorPair("blue", KDColorBlue),
+      NameColorPair("b", KDColorBlue),
+      NameColorPair("red", KDColorRed),
+      NameColorPair("r", KDColorRed),
+      NameColorPair("green", Palette::Green),
+      NameColorPair("g", Palette::Green),
+      NameColorPair("yellow", KDColorYellow),
+      NameColorPair("y", KDColorYellow),
+      NameColorPair("brown", Palette::Brown),
+      NameColorPair("black", KDColorBlack),
+      NameColorPair("k", KDColorBlack),
+      NameColorPair("white", KDColorWhite),
+      NameColorPair("w", KDColorWhite),
+      NameColorPair("pink", Palette::Pink),
+      NameColorPair("orange", Palette::Orange),
+      NameColorPair("purple", Palette::Purple),
+      NameColorPair("grey", Palette::GreyDark)
+    };
+    for (NameColorPair p : pairs) {
+      if (strcmp(p.name(), color) == 0) {
+        return p.color();
+      }
+    }
+
+    if(color[0] == '#'){
+      if(l != 7){
+        mp_raise_ValueError("RGB hex values are 6 bytes long");
+      }
+      uint32_t ColorInt = mp_obj_get_int(mp_obj_new_int_via_str(color+1, 16));
+      return KDColor::RGB24(ColorInt);
+    }
+
+    mp_float_t GreyLevel = mp_obj_float_get(mp_obj_new_float_via_str(color));
+    if(GreyLevel >= 0 && GreyLevel <= 1){
+      return KDColor::RGB888(
+        255 * (float) GreyLevel,
+        255 * (float) GreyLevel,
+        255 * (float) GreyLevel
+      );
+    }
+    mp_raise_ValueError("Grey levels are between 0.0 and 1.0");
+  } else if(mp_obj_is_int(input)) {
+    mp_raise_TypeError("Int are not colors");
+    //See https://github.com/numworks/epsilon/issues/1533#issuecomment-618443492
+  } else {
+    size_t len;
+    mp_obj_t * elem;
+
+    mp_obj_get_array(input, &len, &elem);
+
+    if (len != 3) {
+      mp_raise_TypeError("color needs 3 components");
+    }
+
+    if(ColorMode == MicroPython::ColorParser::ColorModes::MaxIntensity1){
+      return KDColor::RGB888(
+        mp_obj_get_float(elem[0]),
+        mp_obj_get_float(elem[1]),
+        mp_obj_get_float(elem[2])
+      );
+    } else {
+      return KDColor::RGB888(
+        mp_obj_get_int(elem[0]),
+        mp_obj_get_int(elem[1]),
+        mp_obj_get_int(elem[2])
+      );
+    }
+  }
+  mp_raise_TypeError("Color couldn't be parsed");
+}
+
 void gc_collect(void) {
   void * python_stack_top = MP_STATE_THREAD(stack_top);
   assert(python_stack_top != NULL);
@@ -260,3 +339,4 @@ const char * mp_hal_input(const char * prompt) {
   assert(sCurrentExecutionEnvironment != nullptr);
   return sCurrentExecutionEnvironment->inputText(prompt);
 }
+

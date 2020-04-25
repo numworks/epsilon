@@ -18,6 +18,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_pensize_obj, 0, 1, modturtl
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_isdown_obj, modturtle_isdown);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_pencolor_obj, 0, 3, modturtle_pencolor);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_colormode_obj, 0, 1, modturtle_colormode);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_reset_obj, modturtle_reset);
 
@@ -64,6 +65,7 @@ STATIC const mp_rom_map_elem_t modturtle_module_globals_table[] = {
 
   { MP_ROM_QSTR(MP_QSTR_color), (mp_obj_t)&modturtle_pencolor_obj },
   { MP_ROM_QSTR(MP_QSTR_pencolor), (mp_obj_t)&modturtle_pencolor_obj },
+  { MP_ROM_QSTR(MP_QSTR_colormode), (mp_obj_t)&modturtle_colormode_obj },
 
   { MP_ROM_QSTR(MP_QSTR_reset), (mp_obj_t)&modturtle_reset_obj },
 

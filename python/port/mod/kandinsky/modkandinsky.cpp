@@ -1,26 +1,10 @@
 extern "C" {
 #include "modkandinsky.h"
-#include <py/objtuple.h>
 #include <py/runtime.h>
 }
 #include <kandinsky.h>
 #include "port.h"
 
-static KDColor ColorForTuple(mp_obj_t tuple) {
-    size_t len;
-    mp_obj_t * elem;
-
-    mp_obj_get_array(tuple, &len, &elem);
-    if (len != 3) {
-      mp_raise_TypeError("color needs 3 components");
-    }
-
-    return KDColor::RGB888(
-      mp_obj_get_int(elem[0]),
-      mp_obj_get_int(elem[1]),
-      mp_obj_get_int(elem[2])
-    );
-}
 
 static mp_obj_t TupleForRGB(uint8_t r, uint8_t g, uint8_t b) {
   mp_obj_tuple_t * t = static_cast<mp_obj_tuple_t *>(MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL)));
@@ -56,19 +40,20 @@ mp_obj_t modkandinsky_get_pixel(mp_obj_t x, mp_obj_t y) {
   return TupleForRGB(c.red(), c.green(), c.blue());
 }
 
-mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t color) {
+mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t input) {
   KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
-  KDColor kdColor = ColorForTuple(color);
+  KDColor kdColor = MicroPython::ColorParser::ParseColor(input);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->setPixel(point, kdColor);
   return mp_const_none;
 }
 
+//TODO Use good colors
 mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   const char * text = mp_obj_str_get_str(args[0]);
   KDPoint point(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]));
-  KDColor textColor = (n_args >= 4) ? ColorForTuple(args[3]) : KDColorBlack;
-  KDColor backgroundColor = (n_args >= 5) ? ColorForTuple(args[4]) : KDColorWhite;
+  KDColor textColor = (n_args >= 4) ? MicroPython::ColorParser::ParseColor(args[3]) : KDColorBlack;
+  KDColor backgroundColor = (n_args >= 5) ? MicroPython::ColorParser::ParseColor(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->drawString(text, point, KDFont::LargeFont, textColor, backgroundColor);
   /* Before and after execution of "modkandinsky_draw_string",
@@ -98,8 +83,7 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
     y = y - height;
   }
   KDRect rect(x, y, width, height);
-  KDColor color = ColorForTuple(args[4]);
-
+  KDColor color = MicroPython::ColorParser::ParseColor(args[4]);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->fillRect(rect, color);
   // Cf comment on modkandinsky_draw_string

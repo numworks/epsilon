@@ -13,6 +13,8 @@
 
 #include <3ds.h>
 
+#include "driver/common.h"
+
 void Ion::Timing::msleep(uint32_t ms) {
     svcSleepThread((s64) ms * 1000);
 }
@@ -43,6 +45,7 @@ static bool sNeedsRefresh = false;
 void init() {
   gfxInitDefault();
   cfguInit();
+  Ion::Simulator::CommonDriver::init();
   // mcuHwcInit();
   ptmuInit();
   relayout();
@@ -88,6 +91,7 @@ void quit() {
   // mcuHwcExit();
   ptmuExit();
   cfguExit();
+  Ion::Simulator::CommonDriver::deinit();
   gfxExit();
 }
 

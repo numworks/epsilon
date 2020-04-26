@@ -1,10 +1,41 @@
 #include <3ds.h>
+#include <string.h>
 #include "common.h"
 
 static bool plugged = false;
 static bool battery_charging = false;
 static Ion::Battery::Charge battery_level = Ion::Battery::Charge::FULL;
 static time_t last_pull = 0;
+
+static Handle ptmsysmHandle = 0;
+
+static Result common_ptmsysmInit() {
+  return srvGetServiceHandle(&ptmsysmHandle, "ptm:sysm");
+}
+
+static Result common_ptmsysmExit() {
+  return svcCloseHandle(ptmsysmHandle);
+}
+
+Result Ion::Simulator::CommonDriver::common_ptmsysmSetInfoLedPattern(RGBLedPattern pattern) {
+  if (ptmsysmHandle == 0)
+    return -1;
+
+  u32* ipc = getThreadCommandBuffer();
+  ipc[0] = 0x8010640;
+  memcpy(&ipc[1], &pattern, 0x64);
+  Result ret = svcSendSyncRequest(ptmsysmHandle);
+  if(ret < 0) return ret;
+  return ipc[1];
+}
+
+void Ion::Simulator::CommonDriver::init() {
+  common_ptmsysmInit();
+}
+
+void Ion::Simulator::CommonDriver::deinit() {
+  common_ptmsysmExit();
+}
 
 bool Ion::Simulator::CommonDriver::isPlugged() {
   pullData();

@@ -58,8 +58,13 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char
   const char * location = autocompletionLocation != nullptr ? autocompletionLocation : cursorLocation();
   const char * beginningOfToken = nullptr;
 
-  // We want to autocomplete only at the end of an identifier or a keyword
-  AutocompletionType autocompleteType = AutocompletionType::NoIdentifier;
+  /* If there is already autocompleting, the cursor must be at the end of an
+   * identifier. Trying to compute autocompletionType will fail: because of the
+   * autocompletion text, the cursor seems to be in the middle of an identifier. */
+  AutocompletionType autocompleteType = isAutocompleting() ? AutocompletionType::EndOfIdentifier : AutocompletionType::NoIdentifier;
+  if (autocompletionLocationBeginning == nullptr && autocompletionLocationEnd == nullptr) {
+    return autocompleteType;
+  }
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     const char * firstNonSpace = UTF8Helper::BeginningOfWord(m_contentView.editedText(), location);
@@ -82,8 +87,10 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char
             && currentTokenKind <= MP_TOKEN_KW_YIELD))
       {
         if (location < tokenEnd) {
-          // The location for autocompletion is in the middle of an identifier
-          autocompleteType = AutocompletionType::MiddleOfIdentifier;
+          if (autocompleteType != AutocompletionType::EndOfIdentifier) {
+            // The location for autocompletion is in the middle of an identifier
+            autocompleteType = AutocompletionType::MiddleOfIdentifier;
+          }
           break;
         }
         if (location == tokenEnd) {

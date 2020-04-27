@@ -80,28 +80,25 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char
 
       if (location < tokenStart) {
         // The location for autocompletion is not in an identifier
+        assert(autocompleteType == AutocompletionType::NoIdentifier);
         break;
       }
-      if (currentTokenKind == MP_TOKEN_NAME
-          || (currentTokenKind >= MP_TOKEN_KW_FALSE
-            && currentTokenKind <= MP_TOKEN_KW_YIELD))
-      {
-        if (location < tokenEnd) {
-          if (autocompleteType != AutocompletionType::EndOfIdentifier) {
-            // The location for autocompletion is in the middle of an identifier
-            autocompleteType = AutocompletionType::MiddleOfIdentifier;
-          }
-          break;
-        }
-        if (location == tokenEnd) {
-          // The location for autocompletion is at the end of an identifier
+      if (location <= tokenEnd) {
+        if (currentTokenKind == MP_TOKEN_NAME
+            || (currentTokenKind >= MP_TOKEN_KW_FALSE
+              && currentTokenKind <= MP_TOKEN_KW_YIELD))
+        {
+          /* The location for autocompletion is in the middle or at the end of
+           * an identifier. */
           beginningOfToken = tokenStart;
-          autocompleteType = AutocompletionType::EndOfIdentifier;
-          break;
+          /* If autocompleteType is already EndOfIdentifier, we are
+           * autocompleting, so we do not need to update autocompleteType. If we
+           * recomputed autocompleteType now, we might wrongly think that it is
+           * MiddleOfIdentifier because of the autocompetion text. */
+          if (autocompleteType != AutocompletionType::EndOfIdentifier) {
+            autocompleteType = location < tokenEnd ? AutocompletionType::MiddleOfIdentifier : AutocompletionType::EndOfIdentifier;
+          }
         }
-      }
-      if (location < tokenStart) {
-        // The location for autocompletion is not in an identifier
         break;
       }
       mp_lexer_to_next(lex);

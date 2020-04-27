@@ -3,13 +3,15 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
+const KDColor VariableBoxEmptyController::VariableBoxEmptyView::k_backgroundColor;
+
 // VariableBoxEmptyController::VariableBoxEmptyView
 void VariableBoxEmptyController::VariableBoxEmptyView::initMessageViews() {
   const int numberOfMessageViews = numberOfMessageTextViews();
   for (int i = 0; i < numberOfMessageViews; i++) {
     MessageTextView * message = messageTextViewAtIndex(i);
     message->setFont(k_font);
-    message->setBackgroundColor(Palette::WallScreen);
+    message->setBackgroundColor(k_backgroundColor);
     float verticalAlignment = 0.5f;
     if (i == 0) {
       verticalAlignment = 1.0f;
@@ -28,6 +30,7 @@ void VariableBoxEmptyController::VariableBoxEmptyView::setMessages(I18n::Message
 }
 
 void VariableBoxEmptyController::VariableBoxEmptyView::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(bounds(), k_backgroundColor);
   drawBorderOfRect(ctx, bounds(), Palette::GreyBright);
 }
 

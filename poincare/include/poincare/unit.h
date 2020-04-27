@@ -415,7 +415,7 @@ public:
             NegativePrefixes),
         };
   // TODO: find a better way to find defines these pointers
-  static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative might require to be fixed if the TimeRepresentatives table was changed.");
+  static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative and so on might require to be fixed if the TimeRepresentatives table was changed.");
   static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
   static const Representative constexpr * MinuteRepresentative = &TimeRepresentatives[1];
   static const Representative constexpr * HourRepresentative = &TimeRepresentatives[2];
@@ -426,6 +426,8 @@ public:
   static const Representative constexpr * KilogramRepresentative = &MassRepresentatives[0];
   static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
   static const Representative constexpr * WattRepresentative = &PowerRepresentatives[0];
+  static_assert(sizeof(EnergyRepresentatives)/sizeof(Representative) == 2, "The Unit::ElectronVoltRepresentative might require to be fixed if the EnergyRepresentatives table was changed.");
+  static const Representative constexpr * ElectronVoltRepresentative = &EnergyRepresentatives[1];
   static constexpr const Dimension DimensionTable[] = {
     /* The current table is sorted from most to least simple units.
      * The order determines the behavior of simplification.
@@ -735,6 +737,7 @@ public:
   static const Dimension constexpr * TimeDimension = &DimensionTable[0] ;
   static const Dimension constexpr * DistanceDimension = &DimensionTable[1];
   static const Dimension constexpr * MassDimension = &DimensionTable[2];
+  static const Dimension constexpr * EnergyDimension = &DimensionTable[10];
   static const Dimension constexpr * PowerDimension = &DimensionTable[11];
   static const Dimension constexpr * VolumeDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-1];
 
@@ -753,6 +756,7 @@ public:
   static Unit Month() { return Builder(TimeDimension, MonthRepresentative, &EmptyPrefix); }
   static Unit Year() { return Builder(TimeDimension, YearRepresentative, &EmptyPrefix); }
   static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
+  static Unit ElectronVolt() { return Builder(EnergyDimension, ElectronVoltRepresentative, &EmptyPrefix); }
   static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
   static Expression BuildTimeSplit(double seconds);
 

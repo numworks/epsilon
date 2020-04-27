@@ -22,6 +22,7 @@ protected:
     void drawRect(KDContext * ctx, KDRect rect) const override;
   private:
     constexpr static int k_expressionViewRowIndex = 2;
+    constexpr static KDColor k_backgroundColor = Palette::WallScreen;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;

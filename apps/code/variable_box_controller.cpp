@@ -204,7 +204,9 @@ const char * VariableBoxController::autocompletionForText(int scriptIndex, const
 }
 
 const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate) {
-  assert(numberOfRows() != 0);
+  if (numberOfRows() == 0) {
+    return nullptr;
+  }
 
   int nodesCount = 0;  // We cannot use numberOfRows as it contains the banners
   NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};

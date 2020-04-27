@@ -10,11 +10,15 @@ public:
   UnitListController(EditExpressionController * editExpressionController) :
     ExpressionsListController(editExpressionController) {}
 
+  void setExpression(Poincare::Expression e) override;
+
   //ListViewDataSource
   int numberOfRows() const override;
 private:
   void computeLayoutAtIndex(int index) override;
   I18n::Message messageAtIndex(int index) override;
+  // Memoization of expressions
+  mutable Poincare::Expression m_memoizedExpressions[k_maxNumberOfCells];
 };
 
 }

@@ -438,11 +438,13 @@ PythonToolbox::PythonToolbox() :
 }
 
 const ToolboxMessageTree * PythonToolbox::moduleChildren(const char * name, int * numberOfNodes) const {
-  assert(numberOfNodes != nullptr);
   for (ToolboxMessageTree t : modulesChildren) {
     if (strcmp(I18n::translate(t.label()), name) == 0) {
-      *numberOfNodes = t.numberOfChildren();
-      assert(*numberOfNodes > 0);
+      const int childrenCount = t.numberOfChildren();
+      if (numberOfNodes != nullptr) {
+        *numberOfNodes = childrenCount;
+      }
+      assert(childrenCount > 0);
       return static_cast<const ToolboxMessageTree *>(t.children(0));
     }
   }

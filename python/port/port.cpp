@@ -242,9 +242,9 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorModes ColorMod
 
     if(ColorMode == MicroPython::ColorParser::ColorModes::MaxIntensity1){
       return KDColor::RGB888(
-        mp_obj_get_float(elem[0]),
-        mp_obj_get_float(elem[1]),
-        mp_obj_get_float(elem[2])
+        255 * mp_obj_get_float(elem[0]),
+        255 * mp_obj_get_float(elem[1]),
+        255 * mp_obj_get_float(elem[2])
       );
     } else {
       return KDColor::RGB888(

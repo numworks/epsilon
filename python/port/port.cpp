@@ -7,6 +7,13 @@
 #include <string.h>
 #include <setjmp.h>
 
+/* py/parsenum.h is a C header which uses C keyword restrict.
+ * It does not exist in C++ so we define it here in order to be able to include
+ * py/parsenum.h header. */
+#ifdef __cplusplus
+#define restrict   // disable
+#endif
+
 extern "C" {
 #include "py/builtin.h"
 #include "py/compile.h"
@@ -15,6 +22,7 @@ extern "C" {
 #include "py/mperrno.h"
 #include "py/mphal.h"
 #include "py/nlr.h"
+#include "py/parsenum.h"
 #include "py/repl.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
@@ -206,11 +214,11 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorModes ColorMod
       if(l != 7){
         mp_raise_ValueError("RGB hex values are 6 bytes long");
       }
-      uint32_t ColorInt = mp_obj_get_int(mp_obj_new_int_via_str(color+1, 16));
+      uint32_t ColorInt = mp_obj_get_int(mp_parse_num_integer(color+1, strlen(color+1), 16, NULL));
       return KDColor::RGB24(ColorInt);
     }
 
-    mp_float_t GreyLevel = mp_obj_float_get(mp_obj_new_float_via_str(color));
+    mp_float_t GreyLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
     if(GreyLevel >= 0 && GreyLevel <= 1){
       return KDColor::RGB888(
         255 * (float) GreyLevel,

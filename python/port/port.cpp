@@ -181,7 +181,7 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
 }
 
 KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorModes ColorMode){
-  if(MP_OBJ_IS_STR(input)){
+  if(mp_obj_is_str(input)){
     size_t l;
     const char * color = mp_obj_str_get_data(input, &l);
     // TODO add cyan

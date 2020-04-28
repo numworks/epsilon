@@ -137,7 +137,7 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
     // pencolor()
     KDColor c = sTurtle.color();
     mp_obj_t mp_col[3];
-    if(sTurtle.colorMode() == MicroPython::ColorParser::ColorModes::MaxIntensity255){
+    if(sTurtle.colorMode() == MicroPython::ColorParser::ColorMode::MaxIntensity255){
       mp_col[0] = mp_obj_new_int_from_uint(c.red());
       mp_col[1] = mp_obj_new_int_from_uint(c.green());
       mp_col[2] = mp_obj_new_int_from_uint(c.blue());
@@ -165,13 +165,13 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modturtle_colormode(size_t n_args, const mp_obj_t *args){
   if(n_args == 0){
-    return (sTurtle.colorMode() == MicroPython::ColorParser::ColorModes::MaxIntensity255) ? mp_obj_new_int_from_uint(255) : mp_obj_new_int_from_uint(1);
+    return (sTurtle.colorMode() == MicroPython::ColorParser::ColorMode::MaxIntensity255) ? mp_obj_new_int_from_uint(255) : mp_obj_new_int_from_uint(1);
   } else{
     int colorMode = mp_obj_get_int(args[0]);
     if(colorMode == 1){
-      sTurtle.setColorMode(MicroPython::ColorParser::ColorModes::MaxIntensity1);
+      sTurtle.setColorMode(MicroPython::ColorParser::ColorMode::MaxIntensity1);
     } else if(colorMode == 255){
-      sTurtle.setColorMode(MicroPython::ColorParser::ColorModes::MaxIntensity255);
+      sTurtle.setColorMode(MicroPython::ColorParser::ColorMode::MaxIntensity255);
     } else {
       mp_raise_ValueError("Colormodes can be 1 or 255");
     }

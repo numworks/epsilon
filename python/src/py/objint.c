@@ -462,17 +462,3 @@ const mp_obj_type_t mp_type_int = {
     .binary_op = mp_obj_int_binary_op,
     .locals_dict = (mp_obj_dict_t*)&int_locals_dict,
 };
-
-mp_obj_t mp_obj_new_int_via_str(const char* value, int base) {
-    int length = 0;
-    for(int i = 0; i <= sizeof(value); i++){
-        if(value[i] == '\x0'){
-            length = i;
-            break;
-        }
-    };
-    if(length == 0){
-        length = (int) sizeof(value);
-    }
-    return mp_parse_num_integer(value, length, base, NULL);
-}

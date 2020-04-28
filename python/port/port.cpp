@@ -180,7 +180,7 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
 #endif
 }
 
-KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorModes ColorMode){
+KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode){
   if(mp_obj_is_str(input)){
     size_t l;
     const char * color = mp_obj_str_get_data(input, &l);
@@ -240,7 +240,7 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorModes ColorMod
       mp_raise_TypeError("color needs 3 components");
     }
 
-    if(ColorMode == MicroPython::ColorParser::ColorModes::MaxIntensity1){
+    if(ColorMode == MicroPython::ColorParser::ColorMode::MaxIntensity1){
       return KDColor::RGB888(
         255 * mp_obj_get_float(elem[0]),
         255 * mp_obj_get_float(elem[1]),

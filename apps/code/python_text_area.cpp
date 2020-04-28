@@ -94,7 +94,10 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char
           /* If autocompleteType is already EndOfIdentifier, we are
            * autocompleting, so we do not need to update autocompleteType. If we
            * recomputed autocompleteType now, we might wrongly think that it is
-           * MiddleOfIdentifier because of the autocompetion text. */
+           * MiddleOfIdentifier because of the autocompetion text.
+           * Example : fin|ally -> the lexer is at the end of "fin", but because
+           * we are autocompleting with "ally", the lexer thinks the cursor is
+           * in the middle of an identifier. */
           if (autocompleteType != AutocompletionType::EndOfIdentifier) {
             autocompleteType = location < tokenEnd ? AutocompletionType::MiddleOfIdentifier : AutocompletionType::EndOfIdentifier;
           }

@@ -303,6 +303,10 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("normcdf(1.2, 3.4, 31.36)", "0.3472125");
   assert_expression_approximates_to<double>("normcdf(1.2, 3.4, 31.36)", "3.4721249841587ᴇ-1");
+  assert_expression_approximates_to<float>("normcdf(-1ᴇ99,3.4,31.36)", "0");
+  assert_expression_approximates_to<float>("normcdf(1ᴇ99,3.4,31.36)", "1");
+  assert_expression_approximates_to<float>("normcdf(-6,0,1)", "0");
+  assert_expression_approximates_to<float>("normcdf(6,0,1)", "1");
 
   assert_expression_approximates_to<float>("normcdf2(0.5, 3.6, 1.3, 11.56)", "0.3436388");
   assert_expression_approximates_to<double>("normcdf2(0.5, 3.6, 1.3, 11.56)", "3.4363881299147ᴇ-1");

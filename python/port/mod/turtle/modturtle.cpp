@@ -133,48 +133,33 @@ mp_obj_t modturtle_isdown() {
 }
 
 mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
-  switch(n_args){
-    case 0:{
-      // pencolor()
-      KDColor c = sTurtle.color();
-      mp_obj_t mp_col[3];
-      if(sTurtle.colorMode() == MicroPython::ColorParser::ColorModes::MaxIntensity255){
-        mp_col[0] = mp_obj_new_int_from_uint(c.red());
-        mp_col[1] = mp_obj_new_int_from_uint(c.green());
-        mp_col[2] = mp_obj_new_int_from_uint(c.blue());
-      } else {
-        mp_col[0] = mp_obj_new_float(c.red() / 255.0);
-        mp_col[1] = mp_obj_new_float(c.green() / 255.0);
-        mp_col[2] = mp_obj_new_float(c.blue() / 255.0);
-      }
-      return mp_obj_new_tuple(3, mp_col);
+  if (n_args == 0) {
+    // pencolor()
+    KDColor c = sTurtle.color();
+    mp_obj_t mp_col[3];
+    if(sTurtle.colorMode() == MicroPython::ColorParser::ColorModes::MaxIntensity255){
+      mp_col[0] = mp_obj_new_int_from_uint(c.red());
+      mp_col[1] = mp_obj_new_int_from_uint(c.green());
+      mp_col[2] = mp_obj_new_int_from_uint(c.blue());
+    } else {
+      mp_col[0] = mp_obj_new_float(c.red() / 255.0);
+      mp_col[1] = mp_obj_new_float(c.green() / 255.0);
+      mp_col[2] = mp_obj_new_float(c.blue() / 255.0);
     }
-    case 1:{
-      sTurtle.setColor(MicroPython::ColorParser::ParseColor(args[0], sTurtle.colorMode()));
-      break;
-    }
-    case 3:{
-      // pencolor(r, g, b)
-      if(sTurtle.colorMode() == MicroPython::ColorParser::ColorModes::MaxIntensity255){
-        sTurtle.setColor(
-          KDColor::RGB888(
-            mp_obj_get_int(args[0]),
-            mp_obj_get_int(args[1]),
-            mp_obj_get_int(args[2])));
-      } else {
-        sTurtle.setColor(
-          KDColor::RGB888(
-            mp_obj_get_int(args[0]) * 255,
-            mp_obj_get_int(args[1]) * 255,
-            mp_obj_get_int(args[2]) * 255));
-      }
-      break;
-    }
-    default:{
-      assert(n_args == 2);
-      mp_raise_TypeError("pencolor() takes 0, 1 or 3 arguments");
-    }
+    return mp_obj_new_tuple(3, mp_col);
   }
+  if (n_args == 2) {
+    mp_raise_TypeError("pencolor() takes 0, 1 or 3 arguments");
+    return mp_const_none;
+  }
+  mp_obj_t color;
+  if (n_args == 1) {
+    color = args[0];
+  } else {
+    assert(n_args == 3);
+    color = mp_obj_new_tuple(3, args);
+  }
+  sTurtle.setColor(MicroPython::ColorParser::ParseColor(color, sTurtle.colorMode()));
   return mp_const_none;
 }
 

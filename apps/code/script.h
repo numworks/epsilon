@@ -23,7 +23,7 @@ public:
   static bool DefaultName(char buffer[], size_t bufferSize);
   static bool nameCompliant(const char * name);
 
-  Script(Ion::Storage::Record r) : Record(r) {}
+  Script(Ion::Storage::Record r = Ion::Storage::Record()) : Record(r) {}
   bool importationStatus() const;
   void toggleImportationStatus();
   const char * scriptContent() const;

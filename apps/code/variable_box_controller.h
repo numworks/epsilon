@@ -3,6 +3,7 @@
 
 #include <apps/alternate_empty_nested_menu_controller.h>
 #include <escher/message_table_cell.h>
+#include <escher/toolbox_message_tree.h>
 #include "script_node.h"
 #include "script_node_cell.h"
 #include "script_store.h"
@@ -91,7 +92,10 @@ private:
   void loadGlobalAndImportedVariablesInScriptAsImported(const char * scriptName, const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength);
   // Returns true if this was an import structure
   bool addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength);
-  void addImportStruct(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength);
+  const char * importationSourceNameFromNode(mp_parse_node_t & node);
+  bool importationSourceIsModule(const char * sourceName, const ToolboxMessageTree * * moduleChildren = nullptr, int * numberOfModuleChildren = nullptr);
+  bool importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retreivedScript = nullptr);
+  void addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength);
   /* Add a node if it completes the text to autocomplete and if it is not
    * already contained in the variable box. */
   void checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);

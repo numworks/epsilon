@@ -13,6 +13,7 @@
 extern "C" {
 #include "py/lexer.h"
 #include "py/nlr.h"
+#include "py/objmodule.h"
 }
 
 namespace Code {
@@ -651,7 +652,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
       uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(pns);
       if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
         // The script is only a single function or variable definition
-        addImportStruct(pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
+        addImportStructFromScript(pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
       } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength)) {
         // The script is is only an import, handled in addNodesFromImportMaybe
       } else if (structKind == PN_file_input_2) {
@@ -666,7 +667,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
             mp_parse_node_struct_t *child_pns = (mp_parse_node_struct_t*)(child);
             structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
             if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
-              addImportStruct(child_pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
+              addImportStructFromScript(child_pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
             } else {
               addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength);
             }
@@ -701,9 +702,25 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   for (size_t i = 0; i < childNodesCount; i++) {
     mp_parse_node_t child = parseNode->nodes[i];
     if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
-      // Parsing something like "import math"
+      // Parsing something like "import xyz"
       const char * id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
-      checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, id, -1, "math", "desc" /*TODO LEA*/);
+
+      /* xyz might be:
+       *  - a module name -> in which case we want no importation source on the
+       *    node. The node will not be added if it is already in the builtins.
+       *  - a script name -> we want to have xyz.py as the importation source
+       *  - a non-existing identifier -> we want no source */
+      const char * sourceId = nullptr;
+      if (!importationSourceIsModule(id)) {
+        /*  If a module and a script have the same name, the micropython
+         *  importation algorithm first looks for a module then for a script. We
+         *  should thus check that the id is not a module name before retreiving
+         *  a script name to put it as source.
+         *  TODO Should importationSourceIsModule be called in
+         *  importationSourceIsScript?*/
+        importationSourceIsScript(id, &sourceId);
+      }
+      checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, id, -1, sourceId);
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       // Parsing something like "from math import sin"
       addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength);
@@ -717,66 +734,95 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   // Fetch a script / module content if needed
   if (loadAllContent) {
     assert(childNodesCount > 0);
-    mp_parse_node_t importationSource = parseNode->nodes[0];
-    const char * importationSourceName = nullptr;
-    if (MP_PARSE_NODE_IS_LEAF(importationSource)
-        && MP_PARSE_NODE_LEAF_KIND(importationSource) == MP_PARSE_NODE_ID)
-    {
-      // The importation source is "simple", for instance: from math import *
-      importationSourceName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSource));
-    } else if (MP_PARSE_NODE_IS_STRUCT(importationSource)) {
-      mp_parse_node_struct_t * importationSourcePNS = (mp_parse_node_struct_t *)importationSource;
-      uint importationSourceStructKind = MP_PARSE_NODE_STRUCT_KIND(importationSourcePNS);
-      if (importationSourceStructKind == PN_dotted_name) {
-        /* The importation source is "complex", for instance:
-         * from matplotlib.pyplot import *
-         * FIXME The solution would be to build a single qstr for this name,
-         * such as in python/src/compile.c, function do_import_name, from line
-         * 1117 (found by searching PN_dotted_name).
-         * We might do this later, for now the only dotted name we might want to
-         * find is matplolib.pyplot, so we do a very specific search. */
-        int numberOfSplitNames = MP_PARSE_NODE_STRUCT_NUM_NODES(importationSourcePNS);
-        if (numberOfSplitNames != 2) {
-          return true;
+    const char * importationSourceName = importationSourceNameFromNode(parseNode->nodes[0]);
+    int numberOfModuleChildren = 0;
+    const ToolboxMessageTree * moduleChildren = nullptr;
+    if (importationSourceIsModule(importationSourceName, &moduleChildren, &numberOfModuleChildren)) {
+      if (moduleChildren != nullptr) {
+        /* The importation source is a module that we display in the toolbox:
+         * get the nodes from the toolbox
+         * We skip the 3 first nodes, which are "import ...", "from ... import *"
+         * and "....function". */
+        constexpr int numberOfNodesToSkip = 3;
+        assert(numberOfModuleChildren > numberOfNodesToSkip);
+        for (int i = numberOfNodesToSkip; i < numberOfModuleChildren; i++) {
+          const char * name = I18n::translate((moduleChildren + i)->label());
+          checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()) /*TODO LEA text or label?*/);
         }
-        const char * importationSourceSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSourcePNS->nodes[0]));
-        if (strcmp(importationSourceSubName, "matplotlib") != 0) { //TODO LEA once rebased
-
-          return true;
-        }
-        importationSourceSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(importationSourcePNS->nodes[1]));
-        if (strcmp(importationSourceSubName, "pyplot") != 0) { //TODO LEA once rebased
-
-          return true;
-        }
-        importationSourceName = "matplotlib.pyplot"; //TODO LEA once rebased
       } else {
-        assert(false); //TODO LEA can we indeed assert?
-      }
-    }
-    int numberOfChildren = 0;
-    const ToolboxMessageTree * moduleChildren = static_cast<PythonToolbox *>(App::app()->toolboxForInputEventHandler(nullptr))->moduleChildren(importationSourceName, &numberOfChildren);
-    if (moduleChildren != nullptr) {
-      /* If the importation source is a module, get the nodes from the toolbox
-       * We skip the 3 first nodes, which are "import ...", "from ... import *"
-       * and "....function". */
-      constexpr int numberOfNodesToSkip = 3;
-      assert(numberOfChildren > numberOfNodesToSkip);
-      for (int i = numberOfNodesToSkip; i < numberOfChildren; i++) {
-        const char * name = I18n::translate((moduleChildren + i)->label());
-        checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()) /*TODO LEA text or label?*/);
+        //TODO LEA get module variables
       }
     } else {
       // Try fetching the nodes from a script
-      Script importedScript = ScriptStore::ScriptBaseNamed(importationSourceName);
-      if (!importedScript.isNull()) {
+      Script importedScript;
+      const char * scriptFullName;
+      if (importationSourceIsScript(importationSourceName, &scriptFullName, &importedScript)) {
         const char * scriptContent = importedScript.scriptContent();
         assert(scriptContent != nullptr);
-        loadGlobalAndImportedVariablesInScriptAsImported(importationSourceName, scriptContent, textToAutocomplete, textToAutocompleteLength);
+        loadGlobalAndImportedVariablesInScriptAsImported(scriptFullName, scriptContent, textToAutocomplete, textToAutocompleteLength);
       }
     }
   }
   return true;
+}
+
+const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_t & node) {
+  if (MP_PARSE_NODE_IS_LEAF(node) && MP_PARSE_NODE_LEAF_KIND(node) == MP_PARSE_NODE_ID) {
+    // The importation source is "simple", for instance: from math import *
+    return qstr_str(MP_PARSE_NODE_LEAF_ARG(node));
+  }
+  if (MP_PARSE_NODE_IS_STRUCT(node)) {
+    mp_parse_node_struct_t * nodePNS = (mp_parse_node_struct_t *)node;
+    uint nodeStructKind = MP_PARSE_NODE_STRUCT_KIND(nodePNS);
+    if (nodeStructKind != PN_dotted_name) {
+      return nullptr;
+    }
+    /* The importation source is "complex", for instance:
+     * from matplotlib.pyplot import *
+     * TODO LEA
+     * FIXME The solution would be to build a single qstr for this name,
+     * such as in python/src/compile.c, function do_import_name, from line
+     * 1117 (found by searching PN_dotted_name).
+     * We might do this later, for now the only dotted name we might want to
+     * find is matplolib.pyplot, so we do a very specific search. */
+    int numberOfSplitNames = MP_PARSE_NODE_STRUCT_NUM_NODES(nodePNS);
+    if (numberOfSplitNames != 2) {
+      return nullptr;
+    }
+    const char * nodeSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[0]));
+    if (strcmp(nodeSubName, qstr_str(MP_QSTR_matplotlib)) == 0) {
+      nodeSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[1]));
+      if (strcmp(nodeSubName, qstr_str(MP_QSTR_pyplot)) == 0) {
+        qstr_str(MP_QSTR_matplotlib_dot_pyplot);
+      }
+    }
+  }
+  return nullptr;
+}
+
+bool VariableBoxController::importationSourceIsModule(const char * sourceName, const ToolboxMessageTree * * moduleChildren, int * numberOfModuleChildren) {
+  const ToolboxMessageTree * children = static_cast<PythonToolbox *>(App::app()->toolboxForInputEventHandler(nullptr))->moduleChildren(sourceName, numberOfModuleChildren);
+  if (moduleChildren != nullptr) {
+    *moduleChildren = children;
+  }
+  if (children != nullptr) {
+    return true;
+  }
+  // The sourceName might be a module that is not in the toolbox
+  return mp_module_get(qstr_from_str(sourceName)) != MP_OBJ_NULL;
+}
+
+bool VariableBoxController::importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retreivedScript) {
+   // Try fetching the nodes from a script
+   Script importedScript = ScriptStore::ScriptBaseNamed(sourceName);
+   if (importedScript.isNull()) {
+     return false;
+   }
+   *scriptFullName = importedScript.fullName();
+   if (retreivedScript != nullptr) {
+      *retreivedScript = importedScript;
+   }
+   return true;
 }
 
 const char * structName(mp_parse_node_struct_t * structNode) {
@@ -795,7 +841,7 @@ const char * structName(mp_parse_node_struct_t * structNode) {
   return nullptr;
 }
 
-void VariableBoxController::addImportStruct(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength) {
   assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
   // Find the id child node, which stores the struct's name
   const char * name = structName(pns);

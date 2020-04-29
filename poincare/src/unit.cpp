@@ -183,7 +183,10 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascendi
   }
   const ptrdiff_t repdiff = eNode->representative() - m_representative;
   if (repdiff != 0) {
-    return repdiff;
+    /* We order representatives in the reverse order as how they're stored in
+     * the representatives table. This enables to sort addition of time as:
+     * year + month + days + hours + minutes + seconds. */
+    return -repdiff;
   }
   const ptrdiff_t prediff = eNode->prefix() - m_prefix;
   return prediff;

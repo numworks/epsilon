@@ -96,7 +96,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
       Expression newUnits;
       m_memoizedExpressions[currentExpressionIndex] = m_memoizedExpressions[currentExpressionIndex].removeUnit(&newUnits);
       double value = Shared::PoincareHelpers::ApproximateToScalar<double>(m_memoizedExpressions[currentExpressionIndex], App::app()->localContext());
-      Unit::ChooseBestMultipleForValue(&newUnits, &value, reductionContext);
+      Unit::ChooseBestPrefixForValue(&newUnits, &value, reductionContext);
       m_memoizedExpressions[currentExpressionIndex] = Multiplication::Builder(Number::FloatNumber(value), newUnits);
     }
     // Scan previous expressions to avoid duplicates

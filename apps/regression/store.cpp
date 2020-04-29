@@ -285,7 +285,7 @@ double Store::squaredCorrelationCoefficient(int series) const {
 }
 
 Model * Store::regressionModel(int index) {
-  Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_affineModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel};
+  Model * models[Model::k_numberOfModels] = {&m_affineModel, &m_linearModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel};
   return models[index];
 }
 

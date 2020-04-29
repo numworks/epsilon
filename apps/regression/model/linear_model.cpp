@@ -1,4 +1,4 @@
-#include "linear_model.h"
+#include "affine_model.h"
 #include "../store.h"
 #include <poincare/layout_helper.h>
 #include <math.h>
@@ -10,7 +10,7 @@ namespace Regression {
 
 Layout LinearModel::layout() {
   if (m_layout.isUninitialized()) {
-    const char * s = "a·X+b";
+    const char * s = "a·X";
     m_layout = LayoutHelper::String(s, strlen(s), k_layoutFont);
   }
   return m_layout;
@@ -18,8 +18,7 @@ Layout LinearModel::layout() {
 
 double LinearModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  return a*x+b;
+  return a*x;
 }
 
 double LinearModel::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
@@ -28,7 +27,7 @@ double LinearModel::levelSet(double * modelCoefficients, double xMin, double ste
   if (a == 0) {
     return NAN;
   }
-  return (y-b)/a;
+  return y-b;
 }
 
 void LinearModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {

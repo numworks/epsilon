@@ -75,7 +75,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   } else if (Unit::IsISTime(units)) {
     // Turn time into ? year + ? month + ? day + ? h + ? min + ? s
     double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
-    m_memoizedExpressions[numberOfMemoizedExpressions++] = Unit::BuildTimeSplit(value);
+    m_memoizedExpressions[numberOfMemoizedExpressions++] = Unit::BuildTimeSplit(value, App::app()->localContext(), Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit());
   }
   // 1.d. Simplify and tune prefix of all computed expressions
   size_t currentExpressionIndex = 0;

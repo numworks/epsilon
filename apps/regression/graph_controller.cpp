@@ -187,14 +187,15 @@ void GraphController::reloadBannerView() {
     coefficientName++;
   }
 
-  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
+  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear || m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Affine) {
+    int index = model->numberOfCoefficients();
     // Set "r=..."
     numberOfChar = 0;
     legend = " r=";
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
-    m_bannerView.subTextAtIndex(2)->setText(buffer);
+    m_bannerView.subTextAtIndex(0+index)->setText(buffer);
 
     // Set "r2=..."
     numberOfChar = 0;
@@ -202,11 +203,11 @@ void GraphController::reloadBannerView() {
     double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
-    m_bannerView.subTextAtIndex(3)->setText(buffer);
+    m_bannerView.subTextAtIndex(1+index)->setText(buffer);
 
     // Clean the last subview
     buffer[0] = 0;
-    m_bannerView.subTextAtIndex(4)->setText(buffer);
+    m_bannerView.subTextAtIndex(2+index)->setText(buffer);
 
   } else {
     // Empty all non used subviews

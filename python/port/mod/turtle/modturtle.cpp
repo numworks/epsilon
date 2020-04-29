@@ -163,7 +163,7 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
-mp_obj_t modturtle_colormode(size_t n_args, const mp_obj_t *args){
+mp_obj_t modturtle_colormode(size_t n_args, const mp_obj_t *args) {
   if(n_args == 0){
     return mp_obj_new_int_from_uint(static_cast<int>(sTurtle.colorMode()));
   } else{

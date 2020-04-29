@@ -54,10 +54,13 @@ bool ConsoleController::loadPythonEnvironment() {
   m_pythonDelegate->initPythonWithUser(this);
   MicroPython::registerScriptProvider(m_scriptStore);
   m_importScriptsWhenViewAppears = m_autoImportScripts;
+#if 0
+  //TODO LEA
   /* We load functions and variables names in the variable box before running
    * any other python code to avoid failling to load functions and variables
    * due to memory exhaustion. */
   App::app()->variableBoxController()->loadFunctionsAndVariables(-1, nullptr, -1);
+#endif
   return true;
 }
 
@@ -65,6 +68,7 @@ void ConsoleController::unloadPythonEnvironment() {
   if (!m_pythonDelegate->isPythonUser(nullptr)) {
     m_consoleStore.startNewSession();
     m_pythonDelegate->deinitPython();
+    m_scriptStore->clearFetchInformation();
   }
 }
 
@@ -474,7 +478,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
    * the sandbox. */
   hideAnyDisplayedViewController();
 
-  if (script.importationStatus() || force) {
+  if (script.autoImportationStatus() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
     assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);

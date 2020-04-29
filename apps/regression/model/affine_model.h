@@ -1,5 +1,5 @@
-#ifndef REGRESSION_AFFINE_MODEL_H
-#define REGRESSION_AFFINE_MODEL_H
+#ifndef REGRESSION_LINEAR_MODEL_H
+#define REGRESSION_LINEAR_MODEL_H
 
 #include "model.h"
 
@@ -14,8 +14,8 @@ public:
   double levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) override;
   void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
-  int numberOfCoefficients() const override { return 1; }
-  int bannerLinesCount() const override { return 2; }
+  int numberOfCoefficients() const override { return 2; }
+  int bannerLinesCount() const override { return 3; }
 };
 
 }

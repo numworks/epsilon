@@ -181,7 +181,8 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
 }
 
 KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode){
-  if(mp_obj_is_str(input)){
+  static constexpr int maxColorIntensity = static_cast<int>(ColorMode::MaxIntensity255);
+  if (mp_obj_is_str(input)) {
     size_t l;
     const char * color = mp_obj_str_get_data(input, &l);
     // TODO add cyan
@@ -219,11 +220,11 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
     }
 
     mp_float_t GreyLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
-    if(GreyLevel >= 0 && GreyLevel <= 1){
+    if(GreyLevel >= 0.0 && GreyLevel <= 1.0){
       return KDColor::RGB888(
-        255 * (float) GreyLevel,
-        255 * (float) GreyLevel,
-        255 * (float) GreyLevel
+        maxColorIntensity * (float) GreyLevel,
+        maxColorIntensity * (float) GreyLevel,
+        maxColorIntensity * (float) GreyLevel
       );
     }
     mp_raise_ValueError("Grey levels are between 0.0 and 1.0");
@@ -237,22 +238,14 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
     mp_obj_get_array(input, &len, &elem);
 
     if (len != 3) {
-      mp_raise_TypeError("color needs 3 components");
+      mp_raise_TypeError("Color needs 3 components");
     }
-
-    if(ColorMode == MicroPython::ColorParser::ColorMode::MaxIntensity1){
-      return KDColor::RGB888(
-        255 * mp_obj_get_float(elem[0]),
-        255 * mp_obj_get_float(elem[1]),
-        255 * mp_obj_get_float(elem[2])
+    int intensityFactor = maxColorIntensity/static_cast<int>(ColorMode);
+    return KDColor::RGB888(
+        intensityFactor * mp_obj_get_float(elem[0]),
+        intensityFactor * mp_obj_get_float(elem[1]),
+        intensityFactor * mp_obj_get_float(elem[2])
       );
-    } else {
-      return KDColor::RGB888(
-        mp_obj_get_int(elem[0]),
-        mp_obj_get_int(elem[1]),
-        mp_obj_get_int(elem[2])
-      );
-    }
   }
   mp_raise_TypeError("Color couldn't be parsed");
 }

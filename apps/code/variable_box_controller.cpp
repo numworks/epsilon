@@ -163,6 +163,14 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   m_builtinNodesCount = 0;
   m_importedNodesCount = 0;
 
+  if (scriptIndex < 0) {
+    /* If not script index is given, the variable box is loaded from console. We
+     * only want to load imported script variables. */
+    assert(textToAutocomplete == nullptr);
+    loadVariablesImportedFromScripts();
+    return;
+  }
+
   if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
     textToAutocompleteLength = strlen(textToAutocomplete);
   }
@@ -178,17 +186,12 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
 
   // Always load the builtin functions and variables
   loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
-
-  if (scriptIndex < 0) {
-    //TODO LEA load imported in console
-  } else {
-    Script script = m_scriptStore->scriptAtIndex(scriptIndex);
-    assert(!script.isNull());
-    const char * scriptContent = script.scriptContent();
-    assert(scriptContent != nullptr);
-    loadImportedVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
-    loadCurrentVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
-  }
+  Script script = m_scriptStore->scriptAtIndex(scriptIndex);
+  assert(!script.isNull());
+  const char * scriptContent = script.scriptContent();
+  assert(scriptContent != nullptr);
+  loadImportedVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
+  loadCurrentVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
 }
 
 const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses) {
@@ -377,6 +380,16 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
   char commandBuffer[k_maxScriptObjectNameSize];
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);
   sender()->handleEventWithText(commandBuffer);
+}
+
+void VariableBoxController::loadVariablesImportedFromScripts() {
+  const int scriptsCount = m_scriptStore->numberOfScripts();
+  for (int i = 0; i < scriptsCount; i++) {
+    Script * script = m_scriptStore->scriptAtIndex(i);
+    if (script->contentFetchedFromConsole()) {
+      loadGlobalAndImportedVariablesInScriptAsImported(script->fullName(), script->scriptContent(), nullptr, -1, false);
+    }
+  }
 }
 
 void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
@@ -639,7 +652,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
   }
 }
 
-void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(const char * scriptName, const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(const char * scriptName, const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
 
@@ -653,7 +666,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
       if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
         // The script is only a single function or variable definition
         addImportStructFromScript(pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
-      } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength)) {
+      } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength, importFromModules)) {
         // The script is is only an import, handled in addNodesFromImportMaybe
       } else if (structKind == PN_file_input_2) {
         /* At this point, if the script node is not of type "file_input_2", it
@@ -669,7 +682,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
             if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
               addImportStructFromScript(child_pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
             } else {
-              addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength);
+              addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength, importFromModules);
             }
           }
         }
@@ -680,7 +693,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
   }
 }
 
-bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength) {
+bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
   // Determine if the node is an import structure
   uint structKind = (uint) MP_PARSE_NODE_STRUCT_KIND(parseNode);
   bool structKindIsImportWithoutFrom = structKind == PN_import_name;
@@ -693,10 +706,10 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
     return false;
   }
 
-  /* loadAllModuleContent will be True if the struct imports all the content
+  /* loadAllSourceContent will be True if the struct imports all the content
    * from a script / module (for instance, "import math"), instead of single
    * items (for instance, "from math import sin"). */
-  bool loadAllContent = structKindIsImportWithoutFrom;
+  bool loadAllSourceContent = structKindIsImportWithoutFrom;
 
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(parseNode);
   for (size_t i = 0; i < childNodesCount; i++) {
@@ -718,26 +731,35 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
          *  a script name to put it as source.
          *  TODO Should importationSourceIsModule be called in
          *  importationSourceIsScript?*/
-        importationSourceIsScript(id, &sourceId);
+        if (!importationSourceIsScript(id, &sourceId) && !importFromModules) { // Warning : must be done in this order
+          /* We call importationSourceIsScript to load the script name in
+           * sourceId. We also use it to make sure, if importFromModules is
+           * false, that we are not importing variables from something else than
+           * scripts. */
+          return true;
+        }
       }
       checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, id, -1, sourceId);
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       // Parsing something like "from math import sin"
-      addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength);
+      addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength, importFromModules);
     } else if (MP_PARSE_NODE_IS_TOKEN(child) && MP_PARSE_NODE_IS_TOKEN_KIND(child, MP_TOKEN_OP_STAR)) {
       /* Parsing something like "from math import *"
        * -> Load all the module content */
-      loadAllContent = true;
+      loadAllSourceContent = true;
     }
   }
 
   // Fetch a script / module content if needed
-  if (loadAllContent) {
+  if (loadAllSourceContent) {
     assert(childNodesCount > 0);
     const char * importationSourceName = importationSourceNameFromNode(parseNode->nodes[0]);
     int numberOfModuleChildren = 0;
     const ToolboxMessageTree * moduleChildren = nullptr;
     if (importationSourceIsModule(importationSourceName, &moduleChildren, &numberOfModuleChildren)) {
+      if (!importFromModules) {
+        return true;
+      }
       if (moduleChildren != nullptr) {
         /* The importation source is a module that we display in the toolbox:
          * get the nodes from the toolbox

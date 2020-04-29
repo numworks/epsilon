@@ -936,6 +936,10 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   for (int i = *currentNodeCount - 1; i >= insertionIndex; i--) {
     nodes[i+1] = nodes[i];
   }
+  // Check if the node source name fits, if not, do not use it
+  if (!ScriptNodeCell::CanDisplayNameAndSource(nameLength, nodeSourceName)) {
+    nodeSourceName = nullptr;
+  }
   // Add the node
   nodes[insertionIndex] = ScriptNode(type, name, nameLength, nodeSourceName, description);
   // Increase the node count

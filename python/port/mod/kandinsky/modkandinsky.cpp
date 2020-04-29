@@ -6,11 +6,11 @@ extern "C" {
 #include "port.h"
 
 
-static mp_obj_t TupleForRGB(uint8_t r, uint8_t g, uint8_t b) {
+static mp_obj_t TupleForRGB(KDColor c) {
   mp_obj_tuple_t * t = static_cast<mp_obj_tuple_t *>(MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL)));
-  t->items[0] = MP_OBJ_NEW_SMALL_INT(r);
-  t->items[1] = MP_OBJ_NEW_SMALL_INT(g);
-  t->items[2] = MP_OBJ_NEW_SMALL_INT(b);
+  t->items[0] = MP_OBJ_NEW_SMALL_INT(c.red());
+  t->items[1] = MP_OBJ_NEW_SMALL_INT(c.green());
+  t->items[2] = MP_OBJ_NEW_SMALL_INT(c.blue());
   return MP_OBJ_FROM_PTR(t);
 }
 
@@ -20,12 +20,18 @@ static mp_obj_t TupleForRGB(uint8_t r, uint8_t g, uint8_t b) {
  * the stackViewController and forces the window to redraw itself.
  * KDIonContext::sharedContext is set to the frame of the last object drawn. */
 
-mp_obj_t modkandinsky_color(mp_obj_t red, mp_obj_t green, mp_obj_t blue) {
-  return TupleForRGB(
-    mp_obj_get_int(red),
-    mp_obj_get_int(green),
-    mp_obj_get_int(blue)
-  );
+mp_obj_t modkandinsky_color(size_t n_args, const mp_obj_t *args) {
+  mp_obj_t color;
+  if (n_args == 1) {
+    color = args[0];
+  } else if (n_args == 2) {
+    mp_raise_TypeError("color takes 1 or 3 arguments");
+    return mp_const_none;
+  } else {
+    assert(n_args == 3);
+    color = mp_obj_new_tuple(n_args, args);
+  }
+  return TupleForRGB(MicroPython::ColorParser::ParseColor(color));
 }
 
 /* Calling ExecutionEnvironment::displaySandbox() hides the console and switches
@@ -37,7 +43,7 @@ mp_obj_t modkandinsky_get_pixel(mp_obj_t x, mp_obj_t y) {
   KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
   KDColor c;
   KDIonContext::sharedContext()->getPixel(point, &c);
-  return TupleForRGB(c.red(), c.green(), c.blue());
+  return TupleForRGB(c);
 }
 
 mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t input) {

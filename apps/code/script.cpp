@@ -80,7 +80,16 @@ void Script::toggleImportationStatus() {
 const char * Script::scriptContent() const {
   assert(!isNull());
   Data d = value();
-  return (const char *)d.buffer + k_importationStatusSize;
+  return (const char *)d.buffer + k_autoimportationStatusSize + k_currentImportationStatusSize;
 }
+
+bool Script::contentFetchedFromConsole() const {
+
+}
+
+void Script::setContentFetchedFromConsole(bool fetch) const {
+
+}
+//TODO TODO LEA
 
 }

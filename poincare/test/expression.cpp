@@ -74,6 +74,14 @@ QUIZ_CASE(poincare_expression_rational_constructor) {
   assert_pool_size(initialPoolSize+6);
 }
 
+void assert_seconds_split_to(double totalSeconds, const char * splittedTime, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression time = Unit::BuildTimeSplit(totalSeconds, context, complexFormat, angleUnit);
+  constexpr static int bufferSize = 100;
+  char buffer[bufferSize];
+  time.serialize(buffer, bufferSize, DecimalMode);
+  quiz_assert_print_if_failure(strcmp(buffer, splittedTime) == 0, splittedTime);
+}
+
 QUIZ_CASE(poincare_expression_unit_constructor) {
   Shared::GlobalContext globalContext;
   ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, User);
@@ -81,39 +89,9 @@ QUIZ_CASE(poincare_expression_unit_constructor) {
   Unit s = Unit::Second();
   quiz_assert(s.isSecond());
   quiz_assert(!s.isMeter());
-  Expression time = Unit::BuildTimeSplit(1234567890);
-  Addition a = Addition::Builder();
-  a.addChildAtIndexInPlace(Multiplication::Builder(
-        Float<double>::Builder(39.0),
-        Unit::Year()
-        ),
-      0, 0);
-  a.addChildAtIndexInPlace(Multiplication::Builder(
-        Float<double>::Builder(1.0),
-        Unit::Month()
-        ),
-      1, 1);
-  a.addChildAtIndexInPlace(Multiplication::Builder(
-        Float<double>::Builder(13.0),
-        Unit::Day()
-        ),
-      2, 2);
-    a.addChildAtIndexInPlace(Multiplication::Builder(
-        Float<double>::Builder(19.0),
-        Unit::Hour()
-        ),
-      3, 3);
-  a.addChildAtIndexInPlace(Multiplication::Builder(
-        Float<double>::Builder(1.0),
-        Unit::Minute()
-        ),
-      4, 4);
-  a.addChildAtIndexInPlace(Multiplication::Builder(
-        Float<double>::Builder(30.0),
-        Unit::Second()
-        ),
-      5, 5);
-  quiz_assert(a.isIdenticalTo(time));
+
+  assert_seconds_split_to(1234567890, "39×_year+1×_month+13×_day+19×_h+1×_min+30×_s", &globalContext, Cartesian, Degree);
+  assert_seconds_split_to(-122, "-2×_min-2×_s", &globalContext, Cartesian, Degree);
 
   // Speed
   Expression kilometerPerHour = Multiplication::Builder(

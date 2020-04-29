@@ -9,12 +9,9 @@ namespace Code {
  * Script:                        | AutoImportationStatus | Content |*/
 
 class Script : public Ion::Storage::Record {
-private:
-  // Default script names are chosen between script1 and script99
-  static constexpr int k_maxNumberOfDefaultScriptNames = 99;
-  static constexpr int k_defaultScriptNameNumberMaxSize = 2; // Numbers from 1 to 99 have 2 digits max
 public:
-  static constexpr size_t k_importationStatusSize = 1;
+  static constexpr size_t k_autoimportationStatusSize = 1;
+  static constexpr size_t k_currentImportationStatusSize = 1;
   static constexpr int k_defaultScriptNameMaxSize = 6 + k_defaultScriptNameNumberMaxSize + 1;
   /* 6 = strlen("script")
    * k_defaultScriptNameNumberMaxSize = maxLength of integers between 1 and 99
@@ -27,6 +24,13 @@ public:
   bool importationStatus() const;
   void toggleImportationStatus();
   const char * scriptContent() const;
+  bool contentFetchedFromConsole() const;
+  void setContentFetchedFromConsole(bool fetch) const;
+private:
+  // Default script names are chosen between script1 and script99
+  static constexpr int k_maxNumberOfDefaultScriptNames = 99;
+  static constexpr int k_defaultScriptNameNumberMaxSize = 2; // Numbers from 1 to 99 have 2 digits max
+
 };
 
 }

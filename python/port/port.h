@@ -58,8 +58,8 @@ class ColorParser {
 
   public:
   enum class ColorMode {
-  MaxIntensity1,
-  MaxIntensity255,
+    MaxIntensity1 = 1,
+    MaxIntensity255 = 255,
   };
 
   static KDColor ParseColor(mp_obj_t input, ColorMode ColorMode = ColorMode::MaxIntensity255);

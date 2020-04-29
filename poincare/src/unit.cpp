@@ -435,8 +435,8 @@ bool Unit::IsISTime(Expression & e) {
 
 Expression Unit::BuildTimeSplit(double seconds) {
   assert(!std::isnan(seconds));
-  if (std::isinf(seconds)) {
-    return Multiplication::Builder(Infinity::Builder(seconds < 0.0), Unit::Second());
+  if (std::isinf(seconds) || std::fabs(seconds) < Expression::Epsilon<double>()) {
+    return Multiplication::Builder(Number::FloatNumber(seconds), Unit::Second());
   }
   double remain = seconds;
   constexpr static int numberOfTimeUnits = 6;
@@ -446,10 +446,16 @@ Expression Unit::BuildTimeSplit(double seconds) {
   double valuesPerUnit[numberOfTimeUnits];
   Addition a = Addition::Builder();
   for (size_t i = 0; i < numberOfTimeUnits; i++) {
-    valuesPerUnit[i] = std::floor(remain/timeFactors[i]);
+    valuesPerUnit[i] = remain/timeFactors[i];
+    // Keep only the floor of the values except for the last unit (seconds)
+    if (i < numberOfTimeUnits - 1) {
+      valuesPerUnit[i] = std::floor(valuesPerUnit[i]);
+    }
     remain -= valuesPerUnit[i]*timeFactors[i];
-    Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
-    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+    if (std::fabs(valuesPerUnit[i]) > Expression::Epsilon<double>()) {
+      Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
+      a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+    }
     if (std::fabs(remain) < Expression::Epsilon<double>()) {
       break;
     }

@@ -438,7 +438,16 @@ Expression Unit::BuildTimeSplit(double seconds) {
   if (std::isinf(seconds) || std::fabs(seconds) < Expression::Epsilon<double>()) {
     return Multiplication::Builder(Number::FloatNumber(seconds), Unit::Second());
   }
-  double remain = seconds;
+  /* Round the number of seconds to 13 significant digits
+   * (= k_numberOfStoredSignificantDigits - 1).
+     * Indeed, the user input has been converted to the most adequate unit
+     * which might have led to approximating the value to 14 significants
+     * digits. The number of seconds was then computed from this approximation.
+     * We thus round it to avoid displaying small numbers of seconds that are
+     * artifacts of the previous approximations. */
+  double err = std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 1 - std::ceil(log10(std::fabs(seconds))));
+  double remain = std::round(seconds*err)/err;
+
   constexpr static int numberOfTimeUnits = 6;
   // This could be computed from the time representatives but we same time by using constexpr double
   constexpr static double timeFactors[numberOfTimeUnits] = {365.25*24.0*60.0*60.0, 365.25/12.0*24.0*60.0*60.0, 24.0*60.0*60.0, 60.0*60.0, 60.0, 1.0 };
@@ -455,9 +464,6 @@ Expression Unit::BuildTimeSplit(double seconds) {
     if (std::fabs(valuesPerUnit[i]) > Expression::Epsilon<double>()) {
       Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
       a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
-    }
-    if (std::fabs(remain) < Expression::Epsilon<double>()) {
-      break;
     }
   }
   return a.squashUnaryHierarchyInPlace();

@@ -758,7 +758,7 @@ public:
   static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
   static Unit ElectronVolt() { return Builder(EnergyDimension, ElectronVoltRepresentative, &EmptyPrefix); }
   static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
-  static Expression BuildTimeSplit(double seconds);
+  static Expression BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
   static bool IsISSpeed(Expression & e);
   static bool IsISVolume(Expression & e);

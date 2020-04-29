@@ -39,7 +39,8 @@ public:
   bool isFull();
 
   /* MicroPython::ScriptProvider */
-  const char * contentOfScript(const char * name) override;
+  const char * contentOfScript(const char * name, bool markAsFetched) override;
+  void clearFetchInformation() override;
 
   Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
 private:

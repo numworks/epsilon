@@ -25,16 +25,27 @@ bool ScriptStore::isFull() {
   return Ion::Storage::sharedStorage()->availableSize() < k_fullFreeSpaceSizeLimit;
 }
 
-const char * ScriptStore::contentOfScript(const char * name) {
+const char * ScriptStore::contentOfScript(const char * name, bool markAsFetched) {
   Script script = ScriptNamed(name);
   if (script.isNull()) {
     return nullptr;
   }
+  if (markAsFetched) {
+    script.setContentFetchedFromConsole(true);
+  }
   return script.scriptContent();
 }
 
+void ScriptStore::clearFetchInformation() {
+  // TODO optimize fetches
+  const int scriptsCount = numberOfScripts();
+  for (int i = 0; i < scriptsCount; i++) {
+    scriptAtIndex(i).setContentFetchedFromConsole(false);
+  }
+}
+
 Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
-  size_t valueSize = strlen(scriptTemplate->content())+1+1;// scriptcontent size + 1 char for the importation status
+  size_t valueSize = Script::InformationSize() + strlen(scriptTemplate->content()) + 1; // (auto importation status + content fetched status) + scriptcontent size + null-terminating char
   assert(Script::nameCompliant(scriptTemplate->name()));
   Script::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithFullName(scriptTemplate->name(), scriptTemplate->value(), valueSize);
   assert(err != Script::ErrorStatus::NonCompliantName);

@@ -1,6 +1,8 @@
 #ifndef CODE_SCRIPT_TEMPLATE_H
 #define CODE_SCRIPT_TEMPLATE_H
 
+#include "script.h"
+
 namespace Code {
 
 class ScriptTemplate {
@@ -12,11 +14,11 @@ public:
   static const ScriptTemplate * Polynomial();
   static const ScriptTemplate * Parabola();
   const char * name() const { return m_name; }
-  const char * content() const { return m_value+1; }
+  const char * content() const { return m_value + Script::InformationSize(); }
   const char * value() const { return m_value; }
 private:
   const char * m_name;
-  const char * m_value; // hold the 'importation status' flag concatenate with the script content
+  const char * m_value; // holds the 'importation status' and 'current importation status' flags concatenated with the script content
 };
 
 }

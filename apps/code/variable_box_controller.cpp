@@ -385,9 +385,9 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
 void VariableBoxController::loadVariablesImportedFromScripts() {
   const int scriptsCount = m_scriptStore->numberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
-    Script * script = m_scriptStore->scriptAtIndex(i);
-    if (script->contentFetchedFromConsole()) {
-      loadGlobalAndImportedVariablesInScriptAsImported(script->fullName(), script->scriptContent(), nullptr, -1, false);
+    Script script = m_scriptStore->scriptAtIndex(i);
+    if (script.contentFetchedFromConsole()) {
+      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.scriptContent(), nullptr, -1, false); // TODO optimize number of script fetches
     }
   }
 }

@@ -288,7 +288,7 @@ void nlr_jump_fail(void *val) {
 
 mp_lexer_t * mp_lexer_new_from_file(const char * filename) {
   if (sScriptProvider != nullptr) {
-    const char * script = sScriptProvider->contentOfScript(filename);
+    const char * script = sScriptProvider->contentOfScript(filename, true);
     if (script != nullptr) {
       return mp_lexer_new_from_str_len(qstr_from_str(filename), script, strlen(script), 0 /* size_t free_len*/);
     } else {
@@ -300,7 +300,7 @@ mp_lexer_t * mp_lexer_new_from_file(const char * filename) {
 }
 
 mp_import_stat_t mp_import_stat(const char *path) {
-  if (sScriptProvider && sScriptProvider->contentOfScript(path)) {
+  if (sScriptProvider && sScriptProvider->contentOfScript(path, false)) {
     return MP_IMPORT_STAT_FILE;
   }
   return MP_IMPORT_STAT_NO_EXIST;

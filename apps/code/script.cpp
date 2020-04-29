@@ -65,31 +65,35 @@ bool Script::nameCompliant(const char * name) {
   return false;
 }
 
-bool Script::importationStatus() const {
+bool Script::autoImportationStatus() const {
   assert(!isNull());
   Data d = value();
   return (((char *)d.buffer)[0] == 1);
 }
 
-void Script::toggleImportationStatus() {
+void Script::toggleAutoimportationStatus() {
+  assert(!isNull());
   Data d = value();
   ((char *)d.buffer)[0] = (((char *)d.buffer)[0] == 1 ? 0 : 1);
   setValue(d);
 }
 
 const char * Script::scriptContent() const {
-  assert(!isNull());
   Data d = value();
-  return (const char *)d.buffer + k_autoimportationStatusSize + k_currentImportationStatusSize;
+  return ((const char *)d.buffer) + InformationSize();
 }
 
 bool Script::contentFetchedFromConsole() const {
-
+  assert(!isNull());
+  Data d = value();
+  return (((char *)d.buffer)[k_autoImportationStatusSize] == 1);
 }
 
-void Script::setContentFetchedFromConsole(bool fetch) const {
-
+void Script::setContentFetchedFromConsole(bool fetch) {
+  assert(!isNull());
+  Data d = value();
+  ((char *)d.buffer)[k_autoImportationStatusSize] = fetch;
+  setValue(d);
 }
-//TODO TODO LEA
 
 }

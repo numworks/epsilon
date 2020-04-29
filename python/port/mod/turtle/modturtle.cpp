@@ -157,7 +157,7 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
     color = args[0];
   } else {
     assert(n_args == 3);
-    color = mp_obj_new_tuple(3, args);
+    color = mp_obj_new_tuple(n_args, args);
   }
   sTurtle.setColor(MicroPython::ColorParser::ParseColor(color, sTurtle.colorMode()));
   return mp_const_none;

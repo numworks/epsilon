@@ -433,7 +433,7 @@ bool Unit::IsISTime(Expression & e) {
   return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
 }
 
-Expression Unit::BuildTimeSplit(double seconds) {
+Expression Unit::BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   assert(!std::isnan(seconds));
   if (std::isinf(seconds) || std::fabs(seconds) < Expression::Epsilon<double>()) {
     return Multiplication::Builder(Number::FloatNumber(seconds), Unit::Second());
@@ -458,7 +458,7 @@ Expression Unit::BuildTimeSplit(double seconds) {
     valuesPerUnit[i] = remain/timeFactors[i];
     // Keep only the floor of the values except for the last unit (seconds)
     if (i < numberOfTimeUnits - 1) {
-      valuesPerUnit[i] = std::floor(valuesPerUnit[i]);
+      valuesPerUnit[i] = valuesPerUnit[i] >= 0.0 ? std::floor(valuesPerUnit[i]) : std::ceil(valuesPerUnit[i]);
     }
     remain -= valuesPerUnit[i]*timeFactors[i];
     if (std::fabs(valuesPerUnit[i]) > Expression::Epsilon<double>()) {
@@ -466,7 +466,9 @@ Expression Unit::BuildTimeSplit(double seconds) {
       a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     }
   }
-  return a.squashUnaryHierarchyInPlace();
+  ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion::None);
+  // Beautify the addition into an subtraction if necessary
+  return a.squashUnaryHierarchyInPlace().shallowBeautify(reductionContext);
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

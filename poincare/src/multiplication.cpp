@@ -441,7 +441,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     } else {
       if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
         // Find the right unit prefix
-        Unit::ChooseBestMultipleForValue(&units, &value, reductionContext);
+        Unit::ChooseBestRepresentativeAndPrefixForValue(&units, &value, reductionContext);
       }
       // Build final Expression
       result = Multiplication::Builder(Number::FloatNumber(value), units);

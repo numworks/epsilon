@@ -321,7 +321,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
   return result;
 }
 
-void Unit::ChooseBestMultipleForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) {
+void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
   // Identify the first Unit factor and its exponent
   Expression firstFactor = *units;
   int exponent = 1;
@@ -343,25 +343,28 @@ void Unit::ChooseBestMultipleForValue(Expression * units, double * value, Expres
   assert(firstFactor.type() == ExpressionNode::Type::Unit);
   // Choose its multiple and update value accordingly
   if (exponent != 0) {
-    static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
+    static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, tuneRepresentative, reductionContext);
   }
 }
 
-void Unit::chooseBestMultipleForValue(double * value, const int exponent, ExpressionNode::ReductionContext reductionContext) {
+void Unit::chooseBestMultipleForValue(double * value, const int exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
   assert(!std::isnan(*value) && exponent != 0);
   if (*value == 0 || *value == 1.0 || std::isinf(*value)) {
     return;
   }
   UnitNode * unitNode = node();
   const Dimension * dim = unitNode->dimension();
-  /* Find in the Dimension 'dim' which unit (Representative and Prefix) make
-   * the value closer to 1.
+  /* Find in the Dimension 'dim' which unit (Prefix and optionally
+   * Representative) make the value closer to 1.
    */
   const Representative * bestRep = unitNode->representative();
   const Prefix * bestPre = unitNode->prefix();
   double bestVal = *value;
 
-  for (const Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
+  // Test all representatives if tuneRepresentative is on. Otherwise, force current representative
+  const Representative * startRep = tuneRepresentative ? dim->stdRepresentative() : bestRep;
+  const Representative * endRep = tuneRepresentative ? dim->representativesUpperBound() : bestRep + 1;
+  for (const Representative * rep = startRep; rep < endRep; rep++) {
     // evaluate quotient
     double val = *value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
     // Get the best prefix and update val accordingly

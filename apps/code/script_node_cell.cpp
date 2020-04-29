@@ -41,8 +41,17 @@ KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
     return KDSizeZero;
   }
   return KDSize(
-      Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin,
+      k_optimalWidth,
       m_scriptNode->description() == nullptr ? k_simpleItemHeight : k_complexItemHeight);
+}
+
+bool ScriptNodeCell::CanDisplayNameAndSource(int nameLength, const char * source) {
+  if (source == nullptr) {
+    return true;
+  }
+  assert(nameLength > 0);
+  const KDFont * font = ScriptNodeView::k_font;
+  return font->glyphSize().width()*(nameLength + 1) + font->stringSize(source).width() <= ScriptNodeView::k_optimalWidth; // + 1 for the separating space
 }
 
 void ScriptNodeCell::setScriptNode(ScriptNode * scriptNode) {

@@ -240,6 +240,7 @@ const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToA
 }
 
 void VariableBoxController::loadVariablesImportedFromScripts() {
+  empty();
   const int scriptsCount = m_scriptStore->numberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
     Script script = m_scriptStore->scriptAtIndex(i);

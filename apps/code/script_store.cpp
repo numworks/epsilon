@@ -33,7 +33,7 @@ const char * ScriptStore::contentOfScript(const char * name, bool markAsFetched)
   if (markAsFetched) {
     script.setContentFetchedFromConsole(true);
   }
-  return script.scriptContent();
+  return script.content();
 }
 
 void ScriptStore::clearFetchInformation() {

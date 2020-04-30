@@ -78,7 +78,7 @@ void Script::toggleAutoimportationStatus() {
   setValue(d);
 }
 
-const char * Script::scriptContent() const {
+const char * Script::content() const {
   Data d = value();
   return ((const char *)d.buffer) + InformationSize();
 }

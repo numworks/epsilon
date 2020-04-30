@@ -29,7 +29,7 @@ public:
   Script(Ion::Storage::Record r = Ion::Storage::Record()) : Record(r) {}
   bool autoImportationStatus() const;
   void toggleAutoimportationStatus();
-  const char * scriptContent() const;
+  const char * content() const;
   bool contentFetchedFromConsole() const;
   void setContentFetchedFromConsole(bool fetch);
 };

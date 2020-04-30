@@ -62,7 +62,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
     selectCellAtLocation(selectedColumn(), newSelectedRow);
     m_selectableTableView.reloadData();
-    displayEmptyController();
+    displayEmptyControllerIfNeeded();
     return true;
   }
   return AlternateEmptyNestedMenuController::handleEvent(event);
@@ -160,7 +160,7 @@ bool MathVariableBoxController::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
   setPage(pageAtIndex(selectedRow));
   bool selectSubMenu = AlternateEmptyNestedMenuController::selectSubMenu(selectedRow);
-  if (displayEmptyController()) {
+  if (displayEmptyControllerIfNeeded()) {
     return true;
   }
   return selectSubMenu;

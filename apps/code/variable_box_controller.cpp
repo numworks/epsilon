@@ -70,8 +70,8 @@ KDCoordinate VariableBoxController::rowHeight(int j) {
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(j, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    //TODO LEA if cellOrigin == Imported?
     if (scriptNodeAtIndex(j - cumulatedOriginsCount)->description() != nullptr) {
+      // If there is a node description, the cell is bigger
       return ScriptNodeCell::k_complexItemHeight;
     }
     return ScriptNodeCell::k_simpleItemHeight;
@@ -236,7 +236,7 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
   for (int i = 0; i < scriptsCount; i++) {
     Script script = m_scriptStore->scriptAtIndex(i);
     if (script.contentFetchedFromConsole()) {
-      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.content(), nullptr, -1, false); // TODO optimize number of script fetches
+      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.content(), nullptr, -1, false);
     }
   }
 }
@@ -250,7 +250,6 @@ void VariableBoxController::empty() {
 // PRIVATE METHODS
 
 int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith) {
-  // TODO LEA compare until parenthesis
   assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
   assert(nameLength > 0);
   const char * nodeName = node->name();
@@ -383,8 +382,9 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
 }
 
 void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
-  //TODO LEA could be great to use strings defined in STATIC const char *const tok_kw[] from python/lexer.c
-  //TODO LEA Prune these (check all are usable in our Python, but just comment those which aren't -> there might become usable later)
+  //TODO Could be great to use strings defined in STATIC const char *const tok_kw[] in python/lexer.c
+  /* The commented values do not work with our current MicroPython but might
+   * work later, which is chy we keep them. */
   static const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
     {"False", ScriptNode::Type::WithoutParentheses},
     {"None", ScriptNode::Type::WithoutParentheses},
@@ -529,7 +529,7 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
   }
 }
 
-/*TODO LEA very dirty
+/* WARNING: This is very dirty.
  * This is done to get the lexer position during lexing. As the _mp_reader_mem_t
  * struct is private and declared in python/src/py/reader.c, we copy-paste it
  * here to be able to use it. */
@@ -542,7 +542,7 @@ typedef struct _mp_reader_mem_t {
 
 void VariableBoxController::loadImportedVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
   /* Load the imported variables and functions: lex and the parse on a line per
-   * line basis untils parsing fails, while detecting import structures. */
+   * line basis until parsing fails, while detecting import structures. */
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     const char * parseStart = scriptContent;
@@ -550,7 +550,6 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
     while (*parseStart == '\n' && *parseStart != 0) {
       parseStart++;
     }
-    //TODO LEA also look for ";" ? But what if in string?
     const char * parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
 
     while (parseStart != parseEnd) {
@@ -612,7 +611,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
           /* This is a trick to get the token position in the text, as name and
            * nameLength are temporary variables that will be overriden when the
            * lexer continues lexing or is destroyed.
-           * The -2 was found from stepping in the code and trying. */
+           * This was found from stepping in the code and trying. */
           // TODO LEA FIXME
           for (int i = 0; i < 3; i++) {
             if (strncmp(tokenInText, name, nameLength) != 0) {
@@ -723,9 +722,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
         /*  If a module and a script have the same name, the micropython
          *  importation algorithm first looks for a module then for a script. We
          *  should thus check that the id is not a module name before retreiving
-         *  a script name to put it as source.
-         *  TODO Should importationSourceIsModule be called in
-         *  importationSourceIsScript?*/
+         *  a script name to put it as source. */
         if (!importationSourceIsScript(id, &sourceId) && !importFromModules) { // Warning : must be done in this order
           /* We call importationSourceIsScript to load the script name in
            * sourceId. We also use it to make sure, if importFromModules is
@@ -767,7 +764,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
           checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()) /*TODO LEA text or label?*/);
         }
       } else {
-        //TODO LEA get module variables
+        //TODO LEA get module variables that are not in the toolbox
       }
     } else {
       // Try fetching the nodes from a script
@@ -796,7 +793,6 @@ const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_
     }
     /* The importation source is "complex", for instance:
      * from matplotlib.pyplot import *
-     * TODO LEA
      * FIXME The solution would be to build a single qstr for this name,
      * such as in python/src/compile.c, function do_import_name, from line
      * 1117 (found by searching PN_dotted_name).

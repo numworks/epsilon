@@ -773,9 +773,6 @@ public:
   static void ChooseBestRepresentativeAndPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, true, reductionContext); }
   static void ChooseBestPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, false, reductionContext); }
 
-  static constexpr double MeterPerSecondToKilometerPerHourFactor = 60.0*60.0/1000.0;
-  static constexpr double CubicMeterToLiterFactor = 10.0*10.0*10.0;
-  static constexpr double JouleToWatthourFactor = 1.0/3600.0;
 private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);

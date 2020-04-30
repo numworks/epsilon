@@ -176,7 +176,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
   Script script = m_scriptStore->scriptAtIndex(scriptIndex);
   assert(!script.isNull());
-  const char * scriptContent = script.scriptContent();
+  const char * scriptContent = script.content();
   assert(scriptContent != nullptr);
   loadImportedVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
   loadCurrentVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
@@ -235,7 +235,7 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
   for (int i = 0; i < scriptsCount; i++) {
     Script script = m_scriptStore->scriptAtIndex(i);
     if (script.contentFetchedFromConsole()) {
-      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.scriptContent(), nullptr, -1, false); // TODO optimize number of script fetches
+      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.content(), nullptr, -1, false); // TODO optimize number of script fetches
     }
   }
 }
@@ -773,7 +773,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       Script importedScript;
       const char * scriptFullName;
       if (importationSourceIsScript(importationSourceName, &scriptFullName, &importedScript)) {
-        const char * scriptContent = importedScript.scriptContent();
+        const char * scriptContent = importedScript.content();
         assert(scriptContent != nullptr);
         loadGlobalAndImportedVariablesInScriptAsImported(scriptFullName, scriptContent, textToAutocomplete, textToAutocompleteLength);
       }

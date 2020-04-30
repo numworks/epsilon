@@ -21,7 +21,7 @@ public:
   {}
   Type type() const { return m_type; }
   const char * name() const { return m_name; }
-  int nameLength() const { return m_nameLength; }
+  int nameLength() const { return static_cast<int>(m_nameLength); }
   const char * nodeSourceName() const { return m_nodeSourceName; }
   const char * description() const { return m_description; }
 private:
@@ -29,7 +29,7 @@ private:
   const char * m_name;
   const char * m_nodeSourceName;
   const char * m_description;
-  int m_nameLength; // TODO LEA smaller type ?
+  size_t m_nameLength;
 };
 
 }

@@ -296,7 +296,6 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     } else if(event == Ion::Events::Up
         || event == Ion::Events::Down)
     {
-      //TODO LEA handle only one suggestion in var box.
       cycleAutocompletion(event == Ion::Events::Down);
       return true;
     } else {
@@ -343,9 +342,7 @@ void PythonTextArea::removeAutocompletionText() {
   const char * autocompleteStart = m_contentView.cursorLocation();
   const char * autocompleteEnd = m_contentView.autocompletionEnd();
   assert(autocompleteEnd != nullptr && autocompleteEnd > autocompleteStart);
-  //TODO LEA if (autocompleteEnd > autocompleteStart) {
   m_contentView.removeText(autocompleteStart, autocompleteEnd);
-  //TODO LEA }
 }
 
 void PythonTextArea::addAutocompletion() {

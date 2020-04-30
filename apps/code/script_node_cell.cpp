@@ -28,7 +28,7 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
   }
 
   /* If it exists, draw the source name. If it did not fit, we would have put
-   * nullptr at the node creation. TODO LEA */
+   * nullptr at the node creation. */
   const char * sourceName = m_scriptNode->nodeSourceName();
   if (sourceName != nullptr) {
     KDSize sourceNameSize = k_font->stringSize(sourceName);

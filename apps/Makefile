@@ -39,7 +39,6 @@ apps_src += $(addprefix apps/,\
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
   title_bar_view.cpp \
-  variable_box_empty_controller.cpp \
 )
 
 tests_src += apps/exam_mode_configuration_official.cpp

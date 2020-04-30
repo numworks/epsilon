@@ -4,7 +4,7 @@
 namespace Code {
 
 VariableBoxEmptyController::VariableBoxEmptyView::VariableBoxEmptyView() :
-  ::VariableBoxEmptyController::VariableBoxEmptyView()
+  ::ModalViewEmptyController::ModalViewEmptyView()
 {
   initMessageViews();
   m_message.setMessage(I18n::Message::NoWordAvailableHere);

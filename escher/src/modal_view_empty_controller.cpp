@@ -1,12 +1,11 @@
-#include "variable_box_empty_controller.h"
-#include <poincare/layout_helper.h>
+#include <escher/modal_view_empty_controller.h>
 #include <apps/i18n.h>
 #include <assert.h>
 
-const KDColor VariableBoxEmptyController::VariableBoxEmptyView::k_backgroundColor;
+const KDColor ModalViewEmptyController::ModalViewEmptyView::k_backgroundColor;
 
-// VariableBoxEmptyController::VariableBoxEmptyView
-void VariableBoxEmptyController::VariableBoxEmptyView::initMessageViews() {
+// ModalViewEmptyController::ModalViewEmptyView
+void ModalViewEmptyController::ModalViewEmptyView::initMessageViews() {
   const int numberOfMessageViews = numberOfMessageTextViews();
   for (int i = 0; i < numberOfMessageViews; i++) {
     MessageTextView * message = messageTextViewAtIndex(i);
@@ -22,23 +21,23 @@ void VariableBoxEmptyController::VariableBoxEmptyView::initMessageViews() {
   }
 }
 
-void VariableBoxEmptyController::VariableBoxEmptyView::setMessages(I18n::Message * message) {
+void ModalViewEmptyController::ModalViewEmptyView::setMessages(I18n::Message * message) {
   const int numberOfMessageViews = numberOfMessageTextViews();
   for (int i = 0; i < numberOfMessageViews; i++) {
     messageTextViewAtIndex(i)->setMessage(message[i]);
   }
 }
 
-void VariableBoxEmptyController::VariableBoxEmptyView::drawRect(KDContext * ctx, KDRect rect) const {
+void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
   drawBorderOfRect(ctx, bounds(), Palette::GreyBright);
 }
 
-int VariableBoxEmptyController::VariableBoxEmptyView::numberOfSubviews() const {
+int ModalViewEmptyController::ModalViewEmptyView::numberOfSubviews() const {
   return numberOfMessageTextViews() + hasExpressionView();
 }
 
-View * VariableBoxEmptyController::VariableBoxEmptyView::subviewAtIndex(int index) {
+View * ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
   if (hasExpressionView()) {
     if (index == k_expressionViewRowIndex) {
       return expressionView();
@@ -48,7 +47,7 @@ View * VariableBoxEmptyController::VariableBoxEmptyView::subviewAtIndex(int inde
   return messageTextViewAtIndex(index);
 }
 
-void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews(bool force) {
+void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   const int numberOfMessageViews = numberOfMessageTextViews();
   const bool hasExpression = hasExpressionView();
   KDCoordinate width = bounds().width() - 2 * k_separatorThickness;
@@ -75,8 +74,8 @@ void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews(bool force
   }
 }
 
-// VariableBoxEmptyController
+// ModalViewEmptyController
 
-void VariableBoxEmptyController::setMessages(I18n::Message * messages) {
-  static_cast<VariableBoxEmptyView *>(view())->setMessages(messages);
+void ModalViewEmptyController::setMessages(I18n::Message * messages) {
+  static_cast<ModalViewEmptyView *>(view())->setMessages(messages);
 }

@@ -1,13 +1,13 @@
 #ifndef APPS_MATH_VARIABLE_BOX_EMPTY_CONTROLLER_H
 #define APPS_MATH_VARIABLE_BOX_EMPTY_CONTROLLER_H
 
+#include <escher/modal_view_empty_controller.h>
 #include <poincare/layout.h>
-#include "variable_box_empty_controller.h"
 
-class MathVariableBoxEmptyController : public VariableBoxEmptyController {
+class MathVariableBoxEmptyController : public ModalViewEmptyController {
 public:
   MathVariableBoxEmptyController() :
-    VariableBoxEmptyController(),
+    ModalViewEmptyController(),
     m_view()
   {}
   enum class Type {
@@ -20,7 +20,7 @@ public:
   View * view() override { return &m_view; }
   void viewDidDisappear() override;
 private:
-  class MathVariableBoxEmptyView : public VariableBoxEmptyView {
+  class MathVariableBoxEmptyView : public ModalViewEmptyController::ModalViewEmptyView {
   public:
     constexpr static int k_numberOfMessages = 4;
     MathVariableBoxEmptyView();

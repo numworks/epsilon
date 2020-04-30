@@ -4,7 +4,7 @@
 #include <assert.h>
 
 MathVariableBoxEmptyController::MathVariableBoxEmptyView::MathVariableBoxEmptyView() :
-  VariableBoxEmptyView(),
+  ModalViewEmptyView(),
   m_layoutExample(0.5f, 0.5f, KDColorBlack, Palette::WallScreen)
 {
   initMessageViews();

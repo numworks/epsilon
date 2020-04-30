@@ -133,6 +133,8 @@ void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t,
   const int currentSelectedRow = selectedRow();
   if (currentSelectedRow >= 0 && typeAtLocation(0, currentSelectedRow) == k_subtitleCellType) {
     if (currentSelectedRow == 0) {
+      // We scroll to the first cell, otherwise it will never appear again
+      t->scrollToCell(0, 0);
       t->selectCellAtLocation(0, 1);
     } else {
       t->selectCellAtLocation(0, selectedRow() + (previousSelectedCellY < currentSelectedRow ? 1 : -1));

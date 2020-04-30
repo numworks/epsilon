@@ -41,9 +41,8 @@ public:
   void empty();
 
 private:
-  //TODO LEA use size_t
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
-  constexpr static int k_maxScriptNodesCount = 32; //TODO LEA
+  constexpr static size_t k_maxScriptNodesCount = 32; //TODO LEA
   constexpr static int k_totalBuiltinNodesCount = 107;
   constexpr static uint8_t k_scriptOriginsCount = 3;
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable
@@ -66,12 +65,12 @@ private:
   static int NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith = nullptr);
 
   // Nodes and nodes count
-  static int MaxNodesCountForOrigin(NodeOrigin origin) {
+  static size_t MaxNodesCountForOrigin(NodeOrigin origin) {
     assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
     return k_maxScriptNodesCount;
   }
   int nodesCountForOrigin(NodeOrigin origin) const;
-  int * nodesCountPointerForOrigin(NodeOrigin origin);
+  size_t * nodesCountPointerForOrigin(NodeOrigin origin);
   ScriptNode * nodesForOrigin(NodeOrigin origin);
   ScriptNode * scriptNodeAtIndex(int index);
 
@@ -109,9 +108,9 @@ private:
   MessageTableCell m_subtitleCells[k_scriptOriginsCount];
   ScriptStore * m_scriptStore;
   // TODO LEA Put these in an array?
-  int m_currentScriptNodesCount;
-  int m_builtinNodesCount;
-  int m_importedNodesCount;
+  size_t m_currentScriptNodesCount;
+  size_t m_builtinNodesCount;
+  size_t m_importedNodesCount;
   int m_shortenResultCharCount; // This is used to send only the completing text when we are autocompleting
 };
 

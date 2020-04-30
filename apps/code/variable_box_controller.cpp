@@ -271,12 +271,12 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
 
 int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
   if (origin == NodeOrigin::Builtins) {
-    return m_builtinNodesCount;
+    return static_cast<int>(m_builtinNodesCount);
   }
-  return *(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin));
+  return static_cast<int>(*(const_cast<VariableBoxController *>(this)->nodesCountPointerForOrigin(origin)));
 }
 
-int * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
+size_t * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
   if (origin == NodeOrigin::CurrentScript) {
     return &m_currentScriptNodesCount;
   }
@@ -935,7 +935,7 @@ bool VariableBoxController::contains(const char * name, int nameLength) {
 
 void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName, const char * description) {
   assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
-  int * currentNodeCount = nodesCountPointerForOrigin(origin);
+  size_t * currentNodeCount = nodesCountPointerForOrigin(origin);
   if (*currentNodeCount >= MaxNodesCountForOrigin(origin)) {
     // There is no room to add another node
     return;
@@ -943,21 +943,24 @@ void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, co
   /* We want to insert the node in alphabetical order, so we look for the
    * insertion index. */
   ScriptNode * nodes = nodesForOrigin(origin);
-  int insertionIndex = 0;
-  while (insertionIndex < *currentNodeCount) {
-    ScriptNode * node = nodes + insertionIndex;
-    int nameComparison = NodeNameCompare(node, name, nameLength);
-    assert(nameComparison != 0); // We already checked that the name is not present already
-    if (nameComparison > 0) {
-      break;
+  size_t insertionIndex = 0;
+  if (*currentNodeCount != 0) {
+    while (insertionIndex < *currentNodeCount) {
+      ScriptNode * node = nodes + insertionIndex;
+      int nameComparison = NodeNameCompare(node, name, nameLength);
+      assert(nameComparison != 0); // We already checked that the name is not present already
+      if (nameComparison > 0) {
+        break;
+      }
+      insertionIndex++;
     }
-    insertionIndex++;
+
+    // Shift all the following nodes
+    for (size_t i = *currentNodeCount; i > insertionIndex; i--) {
+      nodes[i] = nodes[i - 1];
+    }
   }
 
-  // Shift all the following nodes
-  for (int i = *currentNodeCount - 1; i >= insertionIndex; i--) {
-    nodes[i+1] = nodes[i];
-  }
   // Check if the node source name fits, if not, do not use it
   if (!ScriptNodeCell::CanDisplayNameAndSource(nameLength, nodeSourceName)) {
     nodeSourceName = nullptr;

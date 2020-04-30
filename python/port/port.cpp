@@ -221,12 +221,9 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
     }
 
     mp_float_t GreyLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
-    if(GreyLevel >= 0.0 && GreyLevel <= 1.0){
-      return KDColor::RGB888(
-        maxColorIntensity * (float) GreyLevel,
-        maxColorIntensity * (float) GreyLevel,
-        maxColorIntensity * (float) GreyLevel
-      );
+    if (GreyLevel >= 0.0 && GreyLevel <= 1.0) {
+      uint8_t color = maxColorIntensity * (float) GreyLevel;
+      return KDColor::RGB888(color, color, color);
     }
     mp_raise_ValueError("Grey levels are between 0.0 and 1.0");
   } else if(mp_obj_is_int(input)) {

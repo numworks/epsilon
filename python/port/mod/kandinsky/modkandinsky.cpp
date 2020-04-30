@@ -6,7 +6,7 @@ extern "C" {
 #include "port.h"
 
 
-static mp_obj_t TupleForRGB(KDColor c) {
+static mp_obj_t TupleForKDColor(KDColor c) {
   mp_obj_tuple_t * t = static_cast<mp_obj_tuple_t *>(MP_OBJ_TO_PTR(mp_obj_new_tuple(3, NULL)));
   t->items[0] = MP_OBJ_NEW_SMALL_INT(c.red());
   t->items[1] = MP_OBJ_NEW_SMALL_INT(c.green());
@@ -31,7 +31,7 @@ mp_obj_t modkandinsky_color(size_t n_args, const mp_obj_t *args) {
     assert(n_args == 3);
     color = mp_obj_new_tuple(n_args, args);
   }
-  return TupleForRGB(MicroPython::ColorParser::ParseColor(color));
+  return TupleForKDColor(MicroPython::ColorParser::ParseColor(color));
 }
 
 /* Calling ExecutionEnvironment::displaySandbox() hides the console and switches
@@ -43,7 +43,7 @@ mp_obj_t modkandinsky_get_pixel(mp_obj_t x, mp_obj_t y) {
   KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
   KDColor c;
   KDIonContext::sharedContext()->getPixel(point, &c);
-  return TupleForRGB(c);
+  return TupleForKDColor(c);
 }
 
 mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t input) {

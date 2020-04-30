@@ -211,9 +211,9 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
       }
     }
 
-    if(color[0] == '#'){
+    if (color[0] == '#') {
       // TODO handle #abc as #aabbcc (see matplotlib spec)
-      if(l != 7){
+      if (l != 7) {
         mp_raise_ValueError("RGB hex values are 6 bytes long");
       }
       uint32_t ColorInt = mp_obj_get_int(mp_parse_num_integer(color+1, strlen(color+1), 16, NULL));

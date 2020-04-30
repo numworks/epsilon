@@ -42,7 +42,7 @@ public:
 
 private:
   //TODO LEA use size_t
-  constexpr static int k_maxNumberOfDisplayedRows = 8; // (240 - titlebar - margin)/27 //TODO LEA
+  constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
   constexpr static int k_maxScriptNodesCount = 32; //TODO LEA
   constexpr static int k_totalBuiltinNodesCount = 107;
   constexpr static uint8_t k_scriptOriginsCount = 3;
@@ -105,7 +105,7 @@ private:
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];
   ScriptNode m_importedNodes[k_maxScriptNodesCount];
-  ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedRows];
+  ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
   MessageTableCell m_subtitleCells[k_scriptOriginsCount];
   ScriptStore * m_scriptStore;
   // TODO LEA Put these in an array?

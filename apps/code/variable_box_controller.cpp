@@ -106,7 +106,7 @@ int VariableBoxController::reusableCellCount(int type) {
     return k_scriptOriginsCount;
   }
   assert(type == k_itemCellType);
-  return k_maxNumberOfDisplayedRows;
+  return k_maxNumberOfDisplayedItems;
 }
 
 void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {

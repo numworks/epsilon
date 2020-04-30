@@ -1,19 +1,19 @@
-#ifndef APPS_VARIABLE_BOX_EMPTY_CONTROLLER_H
-#define APPS_VARIABLE_BOX_EMPTY_CONTROLLER_H
+#ifndef ESCHER_EMPTY_MODAL_VIEW_EMPTY_CONTROLLER_H
+#define ESCHER_EMPTY_MODAL_VIEW_EMPTY_CONTROLLER_H
 
 #include <escher/bordered.h>
 #include <escher/expression_view.h>
 #include <escher/message_text_view.h>
 #include <escher/view_controller.h>
 
-class VariableBoxEmptyController : public ViewController {
+class ModalViewEmptyController : public ViewController {
 public:
-  VariableBoxEmptyController() : ViewController(nullptr) {}
+  ModalViewEmptyController() : ViewController(nullptr) {}
   void setMessages(I18n::Message * messages);
   // View Controller
   DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
 protected:
-  class VariableBoxEmptyView : public View, public Bordered {
+  class ModalViewEmptyView : public View, public Bordered {
   public:
     constexpr static const KDFont * k_font = KDFont::SmallFont;
     void initMessageViews();
@@ -28,7 +28,7 @@ protected:
     virtual int numberOfMessageTextViews() const = 0;
     virtual MessageTextView * messageTextViewAtIndex(int index) = 0;
     bool hasExpressionView() const {
-      return const_cast<VariableBoxEmptyView *>(this)->expressionView() != nullptr;
+      return const_cast<ModalViewEmptyView *>(this)->expressionView() != nullptr;
     }
     virtual ExpressionView * expressionView() { return nullptr; }
   };

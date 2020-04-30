@@ -5,7 +5,6 @@
 #include <escher/expression_view.h>
 #include <escher/message_text_view.h>
 #include <escher/view_controller.h>
-#include <poincare/layout.h>
 
 class VariableBoxEmptyController : public ViewController {
 public:

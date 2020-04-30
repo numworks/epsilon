@@ -35,18 +35,6 @@ constexpr static uint PN_import_as_name = 99; //  sin as stew
 constexpr static uint PN_import_as_names = 102; // ... import sin as stew, cos as cabbage
 constexpr static uint PN_dotted_name = 104;
 
-//TODO LEA use this
-static bool shouldAddObject(const char * name, int maxLength) {
-  if (strlen(name)+1 > (size_t)maxLength) {
-    return false;
-  }
-  assert(name != nullptr);
-  if (UTF8Helper::CodePointIs(name, '_')) {
-    return false;
-  }
-  return true;
-}
-
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
   m_scriptStore(scriptStore),
@@ -616,7 +604,8 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
         /* If the token autocompletes the text and it is not already in the
          * variable box, add it. */
         ScriptNode::Type nodeType = defToken ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
-        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType)) {
+        const NodeOrigin origin = NodeOrigin::CurrentScript;
+        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType, origin)) {
           /* This is a trick to get the token position in the text, as name and
            * nameLength are temporary variables that will be overriden when the
            * lexer continues lexing or is destroyed.
@@ -630,7 +619,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
             }
           }
           assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(nodeType, NodeOrigin::CurrentScript, tokenInText, nameLength);
+          addNode(nodeType, origin, tokenInText, nameLength);
         }
       }
 
@@ -880,14 +869,22 @@ void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int
   if (nodeNameLength < 0) {
     nodeNameLength = strlen(nodeName);
   }
-  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength, type)) {
+  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength, type, origin)) {
     // Add the node in alphabetical order
     addNode(type, origin, nodeName, nodeNameLength, nodeSourceName, description);
   }
 }
 
-bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * nodeName, int nodeNameLength, ScriptNode::Type type) {
+bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * nodeName, int nodeNameLength, ScriptNode::Type type, NodeOrigin origin) {
   assert(nodeNameLength > 0);
+  assert(nodeName != nullptr);
+
+  /* If the node will go to imported, do not add it if it starts with an
+   * underscore : such identifiers are meant to be private. */
+  if (origin == NodeOrigin::Importation && UTF8Helper::CodePointIs(nodeName, '_')) {
+    return false;
+  }
+
   if (textToAutocomplete != nullptr) {
     /* Check that nodeName autocompletes the text to autocomplete
      *  - The start of nodeName must be equal to the text to autocomplete */

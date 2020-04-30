@@ -445,7 +445,7 @@ const ToolboxMessageTree * PythonToolbox::moduleChildren(const char * name, int 
         *numberOfNodes = childrenCount;
       }
       assert(childrenCount > 0);
-      return static_cast<const ToolboxMessageTree *>(t.children(0));
+      return static_cast<const ToolboxMessageTree *>(t.childAtIndex(0));
     }
   }
   return nullptr;
@@ -476,7 +476,7 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
        * We thus decided to compute the real height only for the ifStatement
        * children of the toolbox, which is the only menu that has special height
        * rows. */
-    const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->children(j));
+    const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(j));
     return k_font->stringSize(I18n::translate(messageTree->label())).height() + 2*Metric::TableCellVerticalMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
   }
   return Toolbox::rowHeight(j);
@@ -484,7 +484,7 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
 
 bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
-  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
+  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   const char * editedText = I18n::translate(node->insertedText());
   // strippedEditedText array needs to be in the same scope as editedText
   char strippedEditedText[k_maxMessageSize];
@@ -525,7 +525,7 @@ void PythonToolbox::scrollToLetter(char letter) {
   char lowerLetter = tolower(letter);
   int index = -1;
   for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
-    char l = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
+    char l = tolower(I18n::translate(m_messageTreeModel->childAtIndex(i)->label())[0]);
     if (l == lowerLetter) {
       index = i;
       break;

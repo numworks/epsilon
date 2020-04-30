@@ -300,7 +300,7 @@ MathToolbox::MathToolbox() :
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   m_selectableTableView.deselectTable();
 
   // Translate the message

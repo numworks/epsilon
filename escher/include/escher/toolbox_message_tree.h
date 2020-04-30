@@ -24,7 +24,7 @@ public:
         N,
         true);
   }
-  const MessageTree * children(int index) const override { return &m_children[index]; }
+  const MessageTree * childAtIndex(int index) const override { return &m_children[index]; }
   I18n::Message text() const { return m_text; }
   I18n::Message insertedText() const { return m_insertedText; }
   bool stripInsertedText() const { return m_stripInsertedText; }

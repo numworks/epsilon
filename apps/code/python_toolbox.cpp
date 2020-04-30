@@ -145,7 +145,7 @@ const ToolboxMessageTree TurtleModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandShowturtle, I18n::Message::PythonTurtleShowturtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandHideturtle, I18n::Message::PythonTurtleHideturtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandColor, I18n::Message::PythonTurtleColor, false, I18n::Message::PythonTurtleCommandColorWithoutArg),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandColorMode, I18n::Message::PythonTurtleColorMode, false, I18n::Message::PythonTurtleCommandColorModeWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandColorMode, I18n::Message::PythonTurtleColorMode),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBlue, I18n::Message::PythonTurtleBlue, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandRed, I18n::Message::PythonTurtleRed, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGreen, I18n::Message::PythonTurtleGreen, false),

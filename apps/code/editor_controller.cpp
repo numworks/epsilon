@@ -140,6 +140,7 @@ VariableBoxController * EditorController::variableBoxForInputEventHandler(InputE
     assert(cursor > beginningOfAutocompletion);
     varBox->loadFunctionsAndVariables(m_scriptIndex, beginningOfAutocompletion, cursor - beginningOfAutocompletion);
   }
+  varBox->setTitle(I18n::Message::Autocomplete);
   return varBox;
 }
 

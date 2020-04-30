@@ -98,6 +98,10 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
+void NestedMenuController::setTitle(I18n::Message title) {
+  m_listController.setTitle(title);
+}
+
 bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   return handleEventForRow(event, selectedRow());
 }

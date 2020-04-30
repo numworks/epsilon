@@ -26,14 +26,16 @@ constexpr static uint PN_funcdef = 3;
 constexpr static uint PN_expr_stmt = 5;
 constexpr static uint PN_import_name = 14; // import math // import math as m // import math, cmath // import math as m, cmath as cm
 constexpr static uint PN_import_from = 15; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage // from a.b import *
-constexpr static uint PN_import_stmt = 92; // ?
-constexpr static uint PN_import_from_2 = 93; // ?
-constexpr static uint PN_import_from_2b = 94; // "from .foo import"
-constexpr static uint PN_import_from_3 = 95; // ?
-constexpr static uint PN_import_as_names_paren = 96; // ?
-constexpr static uint PN_import_as_name = 99; //  sin as stew
+constexpr static uint PN_import_as_name = 99; // sin as stew
 constexpr static uint PN_import_as_names = 102; // ... import sin as stew, cos as cabbage
 constexpr static uint PN_dotted_name = 104;
+/* These are not used for now but might be relevant at some point?
+constexpr static uint PN_import_stmt = 92;
+constexpr static uint PN_import_from_2 = 93;
+constexpr static uint PN_import_from_2b = 94; // "from .foo import"
+constexpr static uint PN_import_from_3 = 95;
+constexpr static uint PN_import_as_names_paren = 96;
+*/
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),

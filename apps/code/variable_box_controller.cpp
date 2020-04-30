@@ -375,6 +375,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
 
 void VariableBoxController::insertTextInCaller(const char * text, int textLength) {
   int textLen = textLength < 0 ? strlen(text) : textLength;
+  constexpr int k_maxScriptObjectNameSize = 100; // Ad hoc value
   int commandBufferMaxSize = std::min(k_maxScriptObjectNameSize, textLen + 1);
   char commandBuffer[k_maxScriptObjectNameSize];
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);

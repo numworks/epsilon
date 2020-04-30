@@ -47,20 +47,12 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
 }
 
 bool ConsoleController::loadPythonEnvironment() {
-  if (m_pythonDelegate->isPythonUser(this)) {
-    return true;
+  if (!m_pythonDelegate->isPythonUser(this)) {
+    emptyOutputAccumulationBuffer();
+    m_pythonDelegate->initPythonWithUser(this);
+    MicroPython::registerScriptProvider(m_scriptStore);
+    m_importScriptsWhenViewAppears = m_autoImportScripts;
   }
-  emptyOutputAccumulationBuffer();
-  m_pythonDelegate->initPythonWithUser(this);
-  MicroPython::registerScriptProvider(m_scriptStore);
-  m_importScriptsWhenViewAppears = m_autoImportScripts;
-#if 0
-  //TODO LEA
-  /* We load functions and variables names in the variable box before running
-   * any other python code to avoid failling to load functions and variables
-   * due to memory exhaustion. */
-  App::app()->variableBoxController()->loadFunctionsAndVariables(-1, nullptr, -1);
-#endif
   return true;
 }
 

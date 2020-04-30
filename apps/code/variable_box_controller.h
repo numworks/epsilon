@@ -42,7 +42,6 @@ public:
 
 private:
   //TODO LEA use size_t
-  constexpr static int k_maxScriptObjectNameSize = 100; //TODO LEA
   constexpr static int k_maxNumberOfDisplayedRows = 8; // (240 - titlebar - margin)/27 //TODO LEA
   constexpr static int k_maxScriptNodesCount = 32; //TODO LEA
   constexpr static int k_totalBuiltinNodesCount = 107;

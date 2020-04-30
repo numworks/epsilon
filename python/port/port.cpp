@@ -216,13 +216,13 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
       if (l != 7) {
         mp_raise_ValueError("RGB hex values are 6 bytes long");
       }
-      uint32_t ColorInt = mp_obj_get_int(mp_parse_num_integer(color+1, strlen(color+1), 16, NULL));
-      return KDColor::RGB24(ColorInt);
+      uint32_t colorInt = mp_obj_get_int(mp_parse_num_integer(color+1, strlen(color+1), 16, NULL));
+      return KDColor::RGB24(colorInt);
     }
 
-    mp_float_t GreyLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
-    if (GreyLevel >= 0.0 && GreyLevel <= 1.0) {
-      uint8_t color = maxColorIntensity * (float) GreyLevel;
+    mp_float_t greyLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
+    if (greyLevel >= 0.0 && greyLevel <= 1.0) {
+      uint8_t color = maxColorIntensity * (float) greyLevel;
       return KDColor::RGB888(color, color, color);
     }
     mp_raise_ValueError("Grey levels are between 0.0 and 1.0");

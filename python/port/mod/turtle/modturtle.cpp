@@ -132,6 +132,8 @@ mp_obj_t modturtle_isdown() {
   return sTurtle.isPenDown() ? mp_const_true : mp_const_false;
 }
 
+mp_float_t uint8tColorToDouble(uint8_t c) { return static_cast<double>(c)/255.0; }
+
 mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
   if (n_args == 0) {
     // pencolor()
@@ -142,9 +144,9 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
       mp_col[1] = mp_obj_new_int_from_uint(c.green());
       mp_col[2] = mp_obj_new_int_from_uint(c.blue());
     } else {
-      mp_col[0] = mp_obj_new_float(c.red() / 255.0);
-      mp_col[1] = mp_obj_new_float(c.green() / 255.0);
-      mp_col[2] = mp_obj_new_float(c.blue() / 255.0);
+      mp_col[0] = mp_obj_new_float(uint8tColorToDouble(c.red()));
+      mp_col[1] = mp_obj_new_float(uint8tColorToDouble(c.green()));
+      mp_col[2] = mp_obj_new_float(uint8tColorToDouble(c.blue()));
     }
     return mp_obj_new_tuple(3, mp_col);
   }

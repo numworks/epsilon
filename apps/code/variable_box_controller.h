@@ -107,7 +107,6 @@ private:
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
   MessageTableCell m_subtitleCells[k_scriptOriginsCount];
   ScriptStore * m_scriptStore;
-  // TODO LEA Put these in an array?
   size_t m_currentScriptNodesCount;
   size_t m_builtinNodesCount;
   size_t m_importedNodesCount;

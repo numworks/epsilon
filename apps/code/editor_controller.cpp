@@ -37,7 +37,7 @@ void EditorController::setScript(Script script, int scriptIndex) {
    * */
 
   size_t newScriptSize = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(m_script);
-  m_editorView.setText(const_cast<char *>(m_script.scriptContent()), newScriptSize - Script::InformationSize());
+  m_editorView.setText(const_cast<char *>(m_script.content()), newScriptSize - Script::InformationSize());
 }
 
 void EditorController::willExitApp() {
@@ -155,7 +155,7 @@ void EditorController::cleanStorageEmptySpace() {
   Ion::Storage::Record::Data scriptValue = m_script.value();
   Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
       m_script,
-      scriptValue.size - Script::InformationSize() - (strlen(m_script.scriptContent()) + 1)); // TODO optimize number of script fetches
+      scriptValue.size - Script::InformationSize() - (strlen(m_script.content()) + 1)); // TODO optimize number of script fetches
 }
 
 

@@ -7,7 +7,7 @@ void AlternateEmptyNestedMenuController::viewDidDisappear() {
   NestedMenuController::viewDidDisappear();
 }
 
-bool AlternateEmptyNestedMenuController::displayEmptyController() {
+bool AlternateEmptyNestedMenuController::displayEmptyControllerIfNeeded() {
   assert(!isDisplayingEmptyController());
   // If the content is empty, we push an empty controller.
   if (numberOfRows() == 0) {

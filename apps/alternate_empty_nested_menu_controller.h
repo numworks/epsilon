@@ -13,7 +13,7 @@ public:
 protected:
   virtual ViewController * emptyViewController() = 0;
   virtual bool isDisplayingEmptyController() = 0;
-  bool displayEmptyController();
+  bool displayEmptyControllerIfNeeded();
 };
 
 #endif

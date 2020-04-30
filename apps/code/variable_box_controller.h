@@ -100,7 +100,7 @@ private:
   /* Add a node if it completes the text to autocomplete and if it is not
    * already contained in the variable box. */
   void checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
-  bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength, ScriptNode::Type type);
+  bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength, ScriptNode::Type type, NodeOrigin origin);
   bool contains(const char * name, int nameLength);
   void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;

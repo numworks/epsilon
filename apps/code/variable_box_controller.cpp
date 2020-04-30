@@ -722,7 +722,11 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
        *  - a script name -> we want to have xyz.py as the importation source
        *  - a non-existing identifier -> we want no source */
       const char * sourceId = nullptr;
-      if (!importationSourceIsModule(id)) {
+      if (importationSourceIsModule(id)) {
+        if (!importFromModules) {
+          return true;
+        }
+      } else {
         /*  If a module and a script have the same name, the micropython
          *  importation algorithm first looks for a module then for a script. We
          *  should thus check that the id is not a module name before retreiving

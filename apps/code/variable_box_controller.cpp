@@ -813,7 +813,7 @@ const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_
     if (strcmp(nodeSubName, qstr_str(MP_QSTR_matplotlib)) == 0) {
       nodeSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[1]));
       if (strcmp(nodeSubName, qstr_str(MP_QSTR_pyplot)) == 0) {
-        qstr_str(MP_QSTR_matplotlib_dot_pyplot);
+        return qstr_str(MP_QSTR_matplotlib_dot_pyplot);
       }
     }
   }

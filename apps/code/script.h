@@ -5,8 +5,14 @@
 
 namespace Code {
 
-/* Record  : | Total Size |  Name |             Body                |
- * Script:                        | AutoImportationStatus | Content |*/
+/* Record: | Size |  Name |             Body                                                  |
+ * Script: |      |       | AutoImportationStatus | ContentFetchedFromConsoleStatus | Content |
+ *
+ * AutoImportationStatus is 1 if the script should be auto imported when the
+ * console opens.
+ *
+ * ContentFetchedFromConsoleStatus is 1 if hte console has currently imported
+ * this script. This is used to import the right variables in the variable box. */
 
 class Script : public Ion::Storage::Record {
 private:

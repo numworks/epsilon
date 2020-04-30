@@ -12,7 +12,7 @@ public:
   void viewDidDisappear() override;
 protected:
   virtual ViewController * emptyViewController() = 0;
-  virtual bool isDisplayingEmptyController() = 0;
+  bool isDisplayingEmptyController() { return StackViewController::depth() == 2; }
   bool displayEmptyControllerIfNeeded();
 };
 

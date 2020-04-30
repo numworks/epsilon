@@ -47,7 +47,6 @@ private:
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
   ViewController * emptyViewController() override;
-  bool isDisplayingEmptyController() override { return StackViewController::depth() == 2; }
   void resetMemoization();
   void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;

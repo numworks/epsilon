@@ -9,6 +9,7 @@
 #include <escher/palette.h>
 #include <ion/unicode/utf8_helper.h>
 #include <string.h>
+#include <algorithm>
 
 extern "C" {
 #include "py/lexer.h"
@@ -17,8 +18,6 @@ extern "C" {
 }
 
 namespace Code {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 // Got these in python/py/src/compile.cpp compiled file
 constexpr static uint PN_file_input_2 = 1;
@@ -256,7 +255,7 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
   assert(nameLength > 0);
   const char * nodeName = node->name();
   const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
-  const int comparisonLength = minInt(nameLength, nodeNameLength);
+  const int comparisonLength = std::min(nameLength, nodeNameLength);
   int result = strncmp(nodeName, name, comparisonLength);
   if (result != 0) {
     return result;
@@ -377,7 +376,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
 
 void VariableBoxController::insertTextInCaller(const char * text, int textLength) {
   int textLen = textLength < 0 ? strlen(text) : textLength;
-  int commandBufferMaxSize = minInt(k_maxScriptObjectNameSize, textLen + 1);
+  int commandBufferMaxSize = std::min(k_maxScriptObjectNameSize, textLen + 1);
   char commandBuffer[k_maxScriptObjectNameSize];
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);
   sender()->handleEventWithText(commandBuffer);

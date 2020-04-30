@@ -159,9 +159,7 @@ int VariableBoxController::typeAtLocation(int i, int j) {
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
   // Reset the node counts
-  m_currentScriptNodesCount = 0;
-  m_builtinNodesCount = 0;
-  m_importedNodesCount = 0;
+  empty();
 
   if (scriptIndex < 0) {
     /* If not script index is given, the variable box is loaded from console. We
@@ -239,6 +237,16 @@ const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToA
   // Return the text without the beginning that matches the text to autocomplete
   *textToInsertLength = currentNameLength - textToAutocompleteLength;
   return currentName + textToAutocompleteLength;
+}
+
+void VariableBoxController::loadVariablesImportedFromScripts() {
+  const int scriptsCount = m_scriptStore->numberOfScripts();
+  for (int i = 0; i < scriptsCount; i++) {
+    Script script = m_scriptStore->scriptAtIndex(i);
+    if (script.contentFetchedFromConsole()) {
+      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.scriptContent(), nullptr, -1, false); // TODO optimize number of script fetches
+    }
+  }
 }
 
 void VariableBoxController::empty() {
@@ -380,16 +388,6 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
   char commandBuffer[k_maxScriptObjectNameSize];
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);
   sender()->handleEventWithText(commandBuffer);
-}
-
-void VariableBoxController::loadVariablesImportedFromScripts() {
-  const int scriptsCount = m_scriptStore->numberOfScripts();
-  for (int i = 0; i < scriptsCount; i++) {
-    Script script = m_scriptStore->scriptAtIndex(i);
-    if (script.contentFetchedFromConsole()) {
-      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.scriptContent(), nullptr, -1, false); // TODO optimize number of script fetches
-    }
-  }
 }
 
 void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {

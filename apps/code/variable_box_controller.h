@@ -38,6 +38,7 @@ public:
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
   const char * autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses);
   const char * autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate = nullptr);
+  void loadVariablesImportedFromScripts();
   void empty();
 
 private:
@@ -86,7 +87,6 @@ private:
   void insertTextInCaller(const char * text, int textLength = -1);
 
   // Loading
-  void loadVariablesImportedFromScripts();
   void loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength);
   void loadImportedVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength);
   void loadCurrentVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength);

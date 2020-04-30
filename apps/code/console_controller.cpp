@@ -30,7 +30,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_pythonDelegate(pythonDelegate),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
-  m_editCell(this, pythonDelegate, this),
+  m_editCell(this, this, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this),
   m_inputRunLoopActive(false)
@@ -376,6 +376,12 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 #endif
   }
   return true;
+}
+
+VariableBoxController * ConsoleController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  VariableBoxController * varBox = App::app()->variableBoxController();
+  varBox->loadVariablesImportedFromScripts();
+  return varBox;
 }
 
 void ConsoleController::resetSandbox() {

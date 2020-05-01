@@ -53,10 +53,6 @@ void Interval::setElement(int i, double f) {
   }
 }
 
-void Interval::setNeedRecompute(bool needrecompute) {
-  m_needCompute = needrecompute; 
-}
-
 void Interval::reset() {
   m_start = 0.0;
   m_end = 10.0;

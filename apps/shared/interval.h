@@ -18,6 +18,8 @@ public:
   void setEnd(double f);
   void setStep(double f);
   void setElement(int i, double f);
+  bool NeedRecompute() const { return m_needCompute; }
+  void setNeedRecompute(bool needrecompute);
   void reset();
   void clear();
   // TODO: decide the max number of elements after optimization

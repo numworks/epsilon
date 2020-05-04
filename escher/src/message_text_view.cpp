@@ -9,11 +9,13 @@ MessageTextView::MessageTextView(const KDFont * font, I18n::Message message, flo
 }
 
 const char * MessageTextView::text() const {
+  if (m_text)
+    return m_text;
   return I18n::translate(m_message);
 }
 
 void MessageTextView::setText(const char * text) {
-  assert(false);
+  m_text = text;
 }
 
 void MessageTextView::setMessage(I18n::Message message) {

@@ -6,6 +6,10 @@ extern "C" {
 #include <assert.h>
 }
 
+#ifdef HOME_DISPLAY_EXTERNALS
+#include "../external/archive.h"
+#endif
+
 namespace Home {
 
 Controller::ContentView::ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource) :
@@ -49,16 +53,45 @@ void Controller::ContentView::layoutSubviews(bool force) {
   m_selectableTableView.setFrame(bounds(), force);
 }
 
-Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource) :
+Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource, ::App * app) :
   ViewController(parentResponder),
   m_view(this, selectionDataSource)
 {
+  m_app = app;
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1);
+    
+    int index = selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1;
+    
+#ifdef HOME_DISPLAY_EXTERNALS
+    if (index >= container->numberOfApps()) {
+      External::Archive::File executable;
+      if (External::Archive::executableAtIndex(index - container->numberOfApps(), executable)) {
+        uint32_t res = External::Archive::executeFile(executable.name, ((App *)m_app)->heap(), ((App *)m_app)->heapSize());
+        ((App*)m_app)->redraw();
+        switch(res) {
+          case 0:
+            break;
+          case 1:
+            Container::activeApp()->displayWarning(I18n::Message::ExternalAppApiMismatch);
+            break;
+          case 2:
+            Container::activeApp()->displayWarning(I18n::Message::StorageMemoryFull1);
+            break;
+          default:
+            Container::activeApp()->displayWarning(I18n::Message::ExternalAppExecError);
+            break;
+        }
+        return true;
+      }
+      
+    } else {
+#endif
+    
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
     if (((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText) && selectedSnapshot->descriptor()->examinationLevel() < 2) ||
       ((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Standard || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) && selectedSnapshot->descriptor()->examinationLevel() < 1)) {
       App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
@@ -67,6 +100,9 @@ bool Controller::handleEvent(Ion::Events::Event event) {
       assert(switched);
       (void) switched; // Silence compilation warning about unused variable.
     }
+#ifdef HOME_DISPLAY_EXTERNALS
+    }
+#endif
     return true;
   }
 
@@ -134,7 +170,19 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
   int appIndex = (j*k_numberOfColumns+i)+1;
   if (appIndex >= container->numberOfApps()) {
+#ifdef HOME_DISPLAY_EXTERNALS
+    External::Archive::File app_file;
+
+    
+    if (External::Archive::executableAtIndex(appIndex - container->numberOfApps(), app_file)) {
+      appCell->setExtAppDescriptor(app_file.name);
+      appCell->setVisible(true);
+    } else {
+      appCell->setVisible(false);      
+    }
+#else
     appCell->setVisible(false);
+#endif
   } else {
     appCell->setVisible(true);
     ::App::Descriptor * descriptor = container->appSnapshotAtIndex(appIndex)->descriptor();
@@ -145,7 +193,11 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
 int Controller::numberOfIcons() const {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
   assert(container->numberOfApps() > 0);
+#ifdef HOME_DISPLAY_EXTERNALS
+  return container->numberOfApps() - 1 + External::Archive::numberOfExecutables();
+#else
   return container->numberOfApps() - 1;
+#endif
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -162,7 +214,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * background complete redrawing but the code is a bit
    * clumsy. */
   if (t->selectedRow() == numberOfRows()-1) {
-    m_view.reloadBottomRow(this, container->numberOfApps()-1, k_numberOfColumns);
+    m_view.reloadBottomRow(this, this->numberOfIcons(), k_numberOfColumns);
   }
   /* To prevent the selectable table view to select cells that are unvisible,
    * we reselect the previous selected cell as soon as the selected cell is
@@ -170,7 +222,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
   int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
-  if (appIndex >= container->numberOfApps()) {
+  if (appIndex >= this->numberOfIcons() + 1) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }
 }

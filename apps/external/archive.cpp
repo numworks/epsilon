@@ -115,14 +115,57 @@ size_t numberOfFiles() {
   return count;
 }
 
+bool executableAtIndex(size_t index, File &entry) {
+  File dummy;
+  size_t count;
+  size_t final_count = 0;
+
+  for (count = 0; fileAtIndex(count, dummy); count++) {
+    if (dummy.isExecutable) {
+      if (final_count == index) {
+        entry = dummy;
+        return true;
+      }
+      final_count++;
+    }
+  }
+  
+  return false;
+}
+
+size_t numberOfExecutables() {
+  File dummy;
+  size_t count;
+  size_t final_count = 0;
+
+  for (count = 0; fileAtIndex(count, dummy); count++)
+    if (dummy.isExecutable)
+      final_count++;
+
+  return final_count;
+}
+
+
+
 #else
 
 bool fileAtIndex(size_t index, File &entry) {
+  if (index != 0)
+    return false;
+  
   entry.name = "Built-in";
   entry.data = NULL;
   entry.dataLength = 0;
   entry.isExecutable = true;
   return true;
+}
+
+bool executableAtIndex(size_t index, File &entry) {
+  return fileAtIndex(index, entry);
+}
+
+size_t numberOfExecutables() {
+  return 1;
 }
 
 extern "C" void extapp_main(void);

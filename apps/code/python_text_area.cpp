@@ -356,7 +356,7 @@ void PythonTextArea::addAutocompletion() {
 
   // First load variables and functions that complete the textToAutocomplete
   const int scriptIndex = m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
-   m_contentView.pythonDelegate()->variableBoxController()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
+  m_contentView.pythonDelegate()->variableBoxController()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
 
   if (addAutocompletionTextAtIndex(0)) {
     m_contentView.setAutocompleting(true);
@@ -403,12 +403,21 @@ void PythonTextArea::cycleAutocompletion(bool downwards) {
 
 void PythonTextArea::acceptAutocompletion(bool moveCursorToEndOfAutocompletion) {
   assert(m_contentView.isAutocompleting());
-  const char * autocompEnd = m_contentView.autocompletionEnd();
-  m_contentView.setAutocompleting(false);
-  m_contentView.setAutocompletionEnd(nullptr);
+
+  // Save the cursor location
+  const char * previousCursorLocation = cursorLocation();
+
+  removeAutocompletion();
+
+  m_contentView.pythonDelegate()->variableBoxController()->setSender(this);
+  m_contentView.pythonDelegate()->variableBoxController()->insertAutocompletionResultAtIndex(m_autocompletionResultIndex);
+
+  /* Add the autocompletion if we moved the cursor. If we did not want to move
+   * the cursor, restore its position. */
   if (moveCursorToEndOfAutocompletion) {
-    setCursorLocation(autocompEnd);
     addAutocompletion();
+  } else {
+    setCursorLocation(previousCursorLocation);
   }
 }
 

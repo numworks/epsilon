@@ -39,6 +39,7 @@ public:
   const char * autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate = nullptr);
   void loadVariablesImportedFromScripts();
   void empty();
+  void insertAutocompletionResultAtIndex(int index);
 
 private:
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom

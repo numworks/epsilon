@@ -247,6 +247,22 @@ void VariableBoxController::empty() {
   m_importedNodesCount = 0;
 }
 
+void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
+  ScriptNode * selectedScriptNode = scriptNodeAtIndex(index);
+
+  /* We need to check now if we need to add parentheses: insertTextInCaller
+   * calls handleEventWithText, which will reload the autocompletion for the
+   * added text, which will probably change the script nodes and
+   * selectedScriptNode will become invalid. */
+  const bool shouldAddParentheses = selectedScriptNode->type() == ScriptNode::Type::WithParentheses;
+  insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
+  // WARNING: selectedScriptNode is now invalid
+
+  if (shouldAddParentheses) {
+    insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
+  }
+}
+
 // PRIVATE METHODS
 
 int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith) {
@@ -355,19 +371,8 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   int cellType = typeAndOriginAtLocation(rowIndex, nullptr, &cumulatedOriginsCount);
   assert(cellType == k_itemCellType);
   (void)cellType; // Silence warnings
-  ScriptNode * selectedScriptNode = scriptNodeAtIndex(rowIndex - cumulatedOriginsCount); // Remove the number of subtitle cells from the index
 
-  /* We need to check now if we need to add parentheses: insertTextInCaller
-   * calls handleEventWithText, which will reload the autocompletion for the
-   * added text, which will probably chande the script nodes and
-   * selectedScriptNode will become invalid. */
-  const bool shouldAddParentheses = selectedScriptNode->type() == ScriptNode::Type::WithParentheses;
-  insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
-  // WARNING: selectedScriptNode is now invalid
-
-  if (shouldAddParentheses) {
-    insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
-  }
+  insertAutocompletionResultAtIndex(rowIndex - cumulatedOriginsCount); // Remove the number of subtitle cells from the index
 
   Container::activeApp()->dismissModalViewController();
   return true;

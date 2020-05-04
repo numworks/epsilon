@@ -1,4 +1,4 @@
-#include "affine_model.h"
+#include "linear_model.h"
 #include "../store.h"
 #include <poincare/layout_helper.h>
 #include <math.h>
@@ -23,26 +23,20 @@ double LinearModel::evaluate(double * modelCoefficients, double x) const {
 
 double LinearModel::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
   double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  if (a == 0) {
+  if (a == 0.0) {
     return NAN;
   }
-  return y-b;
+  return y/a;
 }
 
 void LinearModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   modelCoefficients[0] = store->slope(series);
-  modelCoefficients[1] = store->yIntercept(series);
 }
 
 double LinearModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate: x
     return x;
-  }
-  if (derivateCoefficientIndex == 1) {
-    // Derivate: 1;
-    return 1;
   }
   assert(false);
   return 0.0;

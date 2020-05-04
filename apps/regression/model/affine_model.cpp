@@ -1,4 +1,4 @@
-#include "linear_model.h"
+#include "affine_model.h"
 #include "../store.h"
 #include <poincare/layout_helper.h>
 #include <math.h>

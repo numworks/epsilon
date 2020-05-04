@@ -18,7 +18,6 @@ public:
   void setEnd(double f);
   void setStep(double f);
   void setElement(int i, double f);
-  bool needCompute() const { return m_needCompute; }
   void setNeedCompute(bool compute){ m_needCompute = compute;}
   void reset();
   void clear();

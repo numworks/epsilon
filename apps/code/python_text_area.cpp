@@ -375,24 +375,30 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIn
   bool addParentheses = false;
   const char * textToInsert = varBox->autocompletionAlternativeAtIndex(autocompletionLocation - autocompletionTokenBeginning, &textToInsertLength, &addParentheses, nextIndex, currentIndexToUpdate);
 
-  // Try to insert the text (this might fail if the buffer is full)
-  if (textToInsert != nullptr
-      && textToInsertLength > 0
-      && m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation), textToInsertLength))
-  {
+  if (textToInsert == nullptr) {
+    return false;
+  }
+
+  if (textToInsertLength > 0) {
+    // Try to insert the text (this might fail if the buffer is full)
+    if (!m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation), textToInsertLength)) {
+      return false;
+    }
     autocompletionLocation += textToInsertLength;
     m_contentView.setAutocompletionEnd(autocompletionLocation);
-    // Try to insert the parentheses if needed text
-    const char * parentheses = ScriptNodeCell::k_parentheses;
-    constexpr int parenthesesLength = 2;
-    assert(strlen(parentheses) == parenthesesLength);
-    if (addParentheses && m_contentView.insertTextAtLocation(parentheses, const_cast<char *>(autocompletionLocation), parenthesesLength)) {
-      m_contentView.setAutocompleting(true);
-      m_contentView.setAutocompletionEnd(autocompletionLocation + parenthesesLength);
-    }
-    return true;
   }
-  return false;
+
+  // Try to insert the parentheses if needed
+  const char * parentheses = ScriptNodeCell::k_parentheses;
+  constexpr int parenthesesLength = 2;
+  assert(strlen(parentheses) == parenthesesLength);
+  /* If couldInsertText is false, we should not try to add the parentheses as
+   * there was already not enough space to add the autocompletion. */
+  if (addParentheses && m_contentView.insertTextAtLocation(parentheses, const_cast<char *>(autocompletionLocation), parenthesesLength)) {
+    m_contentView.setAutocompleting(true);
+    m_contentView.setAutocompletionEnd(autocompletionLocation + parenthesesLength);
+  }
+  return true;
 }
 
 void PythonTextArea::cycleAutocompletion(bool downwards) {

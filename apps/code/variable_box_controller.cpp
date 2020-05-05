@@ -522,7 +522,7 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
       bool strictlyStartsWith = false;
       startsWith = NodeNameCompare(&node, textToAutocomplete, textToAutocompleteLength, &strictlyStartsWith);
       if (startsWith == 0) { // The node name and name are equal
-        startsWith = builtinNames[i].type == ScriptNode::Type::WithParentheses ? 0 : -1; // We accept the node only if it has parentheses
+        startsWith = node.type() == ScriptNode::Type::WithParentheses ? 0 : -1; // We accept the node only if it has parentheses
       } else if (strictlyStartsWith) {
         startsWith = 0;
       } else if (startsWith > 0) {

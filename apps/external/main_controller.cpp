@@ -131,7 +131,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
 void MainController::viewWillAppear() {
   int count;
   #if defined(DEVICE) || defined(EXTERNAL_BUILTIN)
-    #if defined(DEVICE_N0100) || !defined(EXTERNAL_BUILTIN)
+    #if !defined(DEVICE_N0110) && !defined(EXTERNAL_BUILTIN)
     count = 2;
     #else
       if(numberOfFiles() > 0){

@@ -31,18 +31,11 @@ class View {
   friend class Shared::RoundCursorView;
 public:
   View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero) {}
-  virtual ~View() {
-    for (int i = 0; i < numberOfSubviews(); i++) {
-      View * subview = subviewAtIndex(i);
-      if (subview != nullptr) {
-        subview->m_superview = nullptr;
-      }
-    }
-  }
   View(View&& other) = default;
   View(const View& other) = delete;
   View& operator=(const View& other) = delete;
   View& operator=(View&& other) = delete;
+
   void resetSuperview() {
     m_superview = nullptr;
   }
@@ -90,6 +83,12 @@ private:
   KDPoint absoluteOrigin() const;
   KDRect absoluteVisibleFrame() const;
 
+  /* At destruction, subviews aren't notified that their own pointer
+   * 'm_superview' is outdated. This is not an issue since all view hierarchy
+   * is created or destroyed at once: when the app is packed or unpacked. The
+   * view and its subviews are then destroyed concomitantly.
+   * Otherwise, we would just have to implement the destructor to notify
+   * subviews that 'm_superview = nullptr'. */
   View * m_superview;
   KDRect m_dirtyRect;
 };

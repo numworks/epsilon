@@ -412,11 +412,10 @@ void PythonTextArea::acceptAutocompletion(bool moveCursorToEndOfAutocompletion) 
   m_contentView.pythonDelegate()->variableBoxController()->setSender(this);
   m_contentView.pythonDelegate()->variableBoxController()->insertAutocompletionResultAtIndex(m_autocompletionResultIndex);
 
-  /* Add the autocompletion if we moved the cursor. If we did not want to move
-   * the cursor, restore its position. */
-  if (moveCursorToEndOfAutocompletion) {
-    addAutocompletion();
-  } else {
+  // insertAutocompletionResultAtIndex already added the autocompletion
+
+  // If we did not want to move the cursor, restore its position.
+  if (!moveCursorToEndOfAutocompletion) {
     setCursorLocation(previousCursorLocation);
   }
 }

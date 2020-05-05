@@ -5,6 +5,8 @@ app_external_src = $(addprefix apps/external/,\
 	archive.cpp \
 )
 
+$(eval $(call depends_on_image,apps/home/controller.cpp,apps/external/external_icon.png))
+
 else
 
 apps += External::App

@@ -40,6 +40,9 @@ bool isExamModeAndFileNotExecutable(const TarHeader* tar) {
 }
 
 bool fileAtIndex(size_t index, File &entry) {
+  if (index == -1)
+    return false;
+  
   const TarHeader* tar = reinterpret_cast<const TarHeader*>(0x90200000);
   unsigned size = 0;
 
@@ -123,7 +126,10 @@ bool executableAtIndex(size_t index, File &entry) {
   for (count = 0; fileAtIndex(count, dummy); count++) {
     if (dummy.isExecutable) {
       if (final_count == index) {
-        entry = dummy;
+        entry.name = dummy.name;
+        entry.data = dummy.data;
+        entry.dataLength = dummy.dataLength;
+        entry.isExecutable = dummy.isExecutable;
         return true;
       }
       final_count++;
@@ -176,7 +182,10 @@ uint32_t executeFile(const char *name, void * heap, const uint32_t heapSize) {
 }
 
 int indexFromName(const char *name) {
-  return 1;
+  if (strcmp(name, "Built-in") == 0)
+    return 0;
+  else
+    return -1;
 }
 
 size_t numberOfFiles() {

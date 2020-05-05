@@ -7,7 +7,9 @@ extern "C" {
 }
 
 #ifdef HOME_DISPLAY_EXTERNALS
+#include "../external/external_icon.h"
 #include "../external/archive.h"
+#include <string.h>
 #endif
 
 namespace Home {
@@ -68,38 +70,41 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     
 #ifdef HOME_DISPLAY_EXTERNALS
     if (index >= container->numberOfApps()) {
-      External::Archive::File executable;
-      if (External::Archive::executableAtIndex(index - container->numberOfApps(), executable)) {
-        uint32_t res = External::Archive::executeFile(executable.name, ((App *)m_app)->heap(), ((App *)m_app)->heapSize());
-        ((App*)m_app)->redraw();
-        switch(res) {
-          case 0:
-            break;
-          case 1:
-            Container::activeApp()->displayWarning(I18n::Message::ExternalAppApiMismatch);
-            break;
-          case 2:
-            Container::activeApp()->displayWarning(I18n::Message::StorageMemoryFull1);
-            break;
-          default:
-            Container::activeApp()->displayWarning(I18n::Message::ExternalAppExecError);
-            break;
+      if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) {
+        App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
+      } else {
+        External::Archive::File executable;
+        if (External::Archive::executableAtIndex(index - container->numberOfApps(), executable)) {
+          uint32_t res = External::Archive::executeFile(executable.name, ((App *)m_app)->heap(), ((App *)m_app)->heapSize());
+          ((App*)m_app)->redraw();
+          switch(res) {
+            case 0:
+              break;
+            case 1:
+              Container::activeApp()->displayWarning(I18n::Message::ExternalAppApiMismatch);
+              break;
+            case 2:
+              Container::activeApp()->displayWarning(I18n::Message::StorageMemoryFull1);
+              break;
+            default:
+              Container::activeApp()->displayWarning(I18n::Message::ExternalAppExecError);
+              break;
+          }
+          return true;
         }
-        return true;
       }
-      
     } else {
 #endif
     
-    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
-    if (((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText) && selectedSnapshot->descriptor()->examinationLevel() < 2) ||
-      ((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Standard || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) && selectedSnapshot->descriptor()->examinationLevel() < 1)) {
-      App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
-    } else {
-      bool switched = container->switchTo(selectedSnapshot);
-      assert(switched);
-      (void) switched; // Silence compilation warning about unused variable.
-    }
+      ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
+      if (((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText) && selectedSnapshot->descriptor()->examinationLevel() < 2) ||
+        ((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Standard || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) && selectedSnapshot->descriptor()->examinationLevel() < 1)) {
+        App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
+      } else {
+        bool switched = container->switchTo(selectedSnapshot);
+        assert(switched);
+        (void) switched; // Silence compilation warning about unused variable.
+      }
 #ifdef HOME_DISPLAY_EXTERNALS
     }
 #endif
@@ -175,7 +180,25 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
 
     
     if (External::Archive::executableAtIndex(appIndex - container->numberOfApps(), app_file)) {
-      appCell->setExtAppDescriptor(app_file.name);
+      char temp_name_buffer[100];
+      strlcpy(temp_name_buffer, app_file.name, 94);
+      strlcat(temp_name_buffer, ".icon", 99);
+      
+      int img_index = External::Archive::indexFromName(temp_name_buffer);
+      
+      if (img_index != -1) {
+        External::Archive::File image_file;
+        if (External::Archive::fileAtIndex(img_index, image_file)) {
+          const Image* img = new Image(55, 56, image_file.data, image_file.dataLength);
+          appCell->setExtAppDescriptor(app_file.name, img);
+          
+        } else {
+          appCell->setExtAppDescriptor(app_file.name, ImageStore::ExternalIcon);
+        }
+      } else {
+        appCell->setExtAppDescriptor(app_file.name, ImageStore::ExternalIcon);
+      }
+      
       appCell->setVisible(true);
     } else {
       appCell->setVisible(false);      
@@ -201,7 +224,6 @@ int Controller::numberOfIcons() const {
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  AppsContainer * container = AppsContainer::sharedAppsContainer();
   if (withinTemporarySelection) {
     return;
   }

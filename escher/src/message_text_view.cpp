@@ -1,5 +1,6 @@
 #include <escher/message_text_view.h>
 #include <assert.h>
+#include <apps/i18n.h>
 
 MessageTextView::MessageTextView(const KDFont * font, I18n::Message message, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
@@ -9,9 +10,12 @@ MessageTextView::MessageTextView(const KDFont * font, I18n::Message message, flo
 }
 
 const char * MessageTextView::text() const {
-  if (m_text)
+  if (m_message != I18n::Message::Default && m_text == nullptr)
+    return I18n::translate(m_message);
+  if (m_text != nullptr && m_message == I18n::Message::Default)
     return m_text;
-  return I18n::translate(m_message);
+  assert(false);
+  return nullptr;
 }
 
 void MessageTextView::setText(const char * text) {

@@ -624,7 +624,6 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
            * nameLength are temporary variables that will be overriden when the
            * lexer continues lexing or is destroyed.
            * This was found from stepping in the code and trying. */
-          // TODO LEA FIXME
           for (int i = 0; i < 3; i++) {
             if (strncmp(tokenInText, name, nameLength) != 0) {
               tokenInText--;
@@ -773,10 +772,10 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
         assert(numberOfModuleChildren > numberOfNodesToSkip);
         for (int i = numberOfNodesToSkip; i < numberOfModuleChildren; i++) {
           const char * name = I18n::translate((moduleChildren + i)->label());
-          checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()) /*TODO LEA text or label?*/);
+          checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()));
         }
       } else {
-        //TODO LEA get module variables that are not in the toolbox
+        //TODO get module variables that are not in the toolbox
       }
     } else {
       // Try fetching the nodes from a script
@@ -921,7 +920,7 @@ bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int t
 bool VariableBoxController::contains(const char * name, int nameLength) {
   assert(nameLength > 0);
   bool alreadyInVarBox = false;
-  // TODO LEA speed this up with dichotomia?
+  // This could be faster with dichotomia, but there is no speed problem for now
   NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
   for (NodeOrigin origin : origins) {
     const int nodesCount = nodesCountForOrigin(origin);

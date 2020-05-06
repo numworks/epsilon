@@ -38,7 +38,6 @@ public:
       m_symbol(symbol),
       m_exponent(exponent)
     {}
-    inline bool operator==(const Prefix& p) const { return m_exponent == p.m_exponent && strcmp(m_symbol, p.m_symbol) == 0; }
     const char * symbol() const { return m_symbol; }
     int8_t exponent() const { return m_exponent; }
     int serialize(char * buffer, int bufferSize) const;
@@ -57,19 +56,19 @@ public:
       Yes
     };
     template <size_t N>
-    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix (&outputPrefixes)[N]) :
+    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix * const (&outputPrefixes)[N]) :
       m_rootSymbol(rootSymbol),
       m_definition(definition),
       m_prefixable(prefixable),
       m_outputPrefixes(outputPrefixes),
-      m_outputPrefixesUpperBound(outputPrefixes + N)
+      m_outputPrefixesLength(N)
     {
     }
     const char * rootSymbol() const { return m_rootSymbol; }
     const char * definition() const { return m_definition; }
     bool isPrefixable() const { return m_prefixable == Prefixable::Yes; }
-    const Prefix * outputPrefixes() const { return m_outputPrefixes; }
-    const Prefix * outputPrefixesUpperBound() const { return m_outputPrefixesUpperBound; }
+    const Prefix * const * outputPrefixes() const { return m_outputPrefixes; }
+    size_t outputPrefixesLength() const { return m_outputPrefixesLength; }
     bool canParse(const char * symbol, size_t length,
         const Prefix * * prefix) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
@@ -78,8 +77,8 @@ public:
     const char * m_rootSymbol;
     const char * m_definition;
     const Prefixable m_prefixable;
-    const Prefix * m_outputPrefixes;
-    const Prefix * m_outputPrefixesUpperBound;
+    const Prefix * const * m_outputPrefixes;
+    const size_t m_outputPrefixesLength;
   };
 
   class Dimension {
@@ -203,58 +202,57 @@ public:
     MegaPrefix  = Prefix("M",   6),
     GigaPrefix  = Prefix("G",   9),
     TeraPrefix  = Prefix("T",  12);
-  static constexpr const Prefix
-    NoPrefix[] = {
-      EmptyPrefix
-    },
-    NegativeLongScalePrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      EmptyPrefix,
-    },
-    PositiveLongScalePrefixes[] = {
-      EmptyPrefix,
-      KiloPrefix,
-      MegaPrefix,
-      GigaPrefix,
-      TeraPrefix,
-    },
-    LongScalePrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      EmptyPrefix,
-      KiloPrefix,
-      MegaPrefix,
-      GigaPrefix,
-      TeraPrefix,
-    },
-    NegativePrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      CentiPrefix,
-      DeciPrefix,
-      EmptyPrefix,
-    },
-    AllPrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      CentiPrefix,
-      DeciPrefix,
-      EmptyPrefix,
-      DecaPrefix,
-      HectoPrefix,
-      KiloPrefix,
-      MegaPrefix,
-      GigaPrefix,
-      TeraPrefix,
+  static constexpr const Prefix * NoPrefix[] = {
+      &EmptyPrefix
+    };
+   static constexpr const Prefix * NegativeLongScalePrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &EmptyPrefix,
+    };
+    static constexpr const Prefix * PositiveLongScalePrefixes[] = {
+      &EmptyPrefix,
+      &KiloPrefix,
+      &MegaPrefix,
+      &GigaPrefix,
+      &TeraPrefix,
+    };
+    static constexpr const Prefix * LongScalePrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &EmptyPrefix,
+      &KiloPrefix,
+      &MegaPrefix,
+      &GigaPrefix,
+      &TeraPrefix,
+    };
+    static constexpr const Prefix * NegativePrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &CentiPrefix,
+      &DeciPrefix,
+      &EmptyPrefix,
+    };
+    static constexpr const Prefix * AllPrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &CentiPrefix,
+      &DeciPrefix,
+      &EmptyPrefix,
+      &DecaPrefix,
+      &HectoPrefix,
+      &KiloPrefix,
+      &MegaPrefix,
+      &GigaPrefix,
+      &TeraPrefix,
     };
   static constexpr size_t NumberOfBaseUnits = UnitNode::NumberOfBaseUnits;
   static constexpr const Representative

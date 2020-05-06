@@ -9,17 +9,27 @@
 namespace Poincare {
 
 const uint8_t topSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayoutNode::k_symbolWidth] = {
-  {0x00, 0x00, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0x00, 0xFF},
-  {0xFF, 0xFF, 0x00, 0x00},
-  {0xFF, 0xFF, 0x00, 0x00},
+  {0xFF, 0xD5, 0x46, 0x09},
+  {0xF1, 0x1A, 0x93, 0xF0},
+  {0x98, 0x54, 0xFF, 0xFF},
+  {0x53, 0xA7, 0xFF, 0xFF},
+  {0x29, 0xCF, 0xFF, 0xFF},
+  {0x14, 0xEA, 0xFF, 0xFF},
+  {0x02, 0xFC, 0xFF, 0xFF},
+  {0x00, 0xFF, 0xFF, 0xFF},
+  {0x00, 0xFF, 0xFF, 0xFF},
 };
 
 const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayoutNode::k_symbolWidth] = {
-  {0x00, 0x00, 0xFF, 0xFF},
-  {0x00, 0x00, 0xFF, 0xFF},
-  {0xFF, 0x00, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0x00, 0x00},
+  {0xFF, 0xFF, 0xFF, 0x00},
+  {0xFF, 0xFF, 0xFF, 0x00},
+  {0xFF, 0xFF, 0xFE, 0x03},
+  {0xFF, 0xFF, 0xEA, 0x13},
+  {0xFF, 0xFF, 0xCF, 0x29},
+  {0xFF, 0xFF, 0xA5, 0x53},
+  {0xFF, 0xFF, 0x54, 0x99},
+  {0xF2, 0x95, 0x1A, 0xF1},
+  {0x09, 0x46, 0xD5, 0xFF},
 };
 
 void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -208,6 +218,86 @@ CodePoint IntegralLayoutNode::XNTCodePoint(int childIndex) const {
   return (childIndex == k_integrandLayoutIndex || childIndex == k_differentialLayoutIndex) ? CodePoint('x') : UCodePointNull;
 }
 
+/*
+Window configuration explained :
+Vertical margins and offsets
++-----------------------------------------------------------------+
+|            |                                                    |
+|    k_boundHeightMargin                                          |
+|            |                                                    |
+|        +------------------+                                     |
+|        | upperBoundHeight |                                     |
+|        +------------------+                                     |
+|            |                                                    |
+|    k_integrandHeightMargin                                      |
+|            |                                                    |
+|                                                                 |
+|              +++                                                |
+|            +++       k_symbolHeight                             |
+|           +++                                                   |
+|                                                                 |
+|           |||                                                   |
+|           |||                                                   |
+|           |||                                                   |
+|           |||                                                   |
+|           |||        centralArgumentHeight                      |
+|           |||                                                   |
+|           |||                                                   |
+|           |||                                                   |
+|           |||                                                   |
+|                                                                 |
+|          +++                                                    |
+|         +++          k_symbolHeight                             |
+|        +++                                                      |
+|            |                                                    |
+|    k_integrandHeightMargin                                      |
+|            |                                                    |
+|        +------------------+                                     |
+|        | lowerBoundHeight |                                     |
+|        +------------------+                                     |
+|            |                                                    |
+|    k_boundHeightMargin                                          |
+|            |                                                    |
++-----------------------------------------------------------------+
+
+Horizontal margins and offsets
++-------------------------------------------------------------------------+
+|                      |                                                  |
+|                                                                         |
+|                      |                          +------------------+    |
+|                      |<-upperBoundLengthOffset->| upperBoundWidth  |    |
+|                      |                          +------------------+    |
+|                                                                         |
+|                      |                        |                         |
+|                                                   +++                   |
+|                      |                        | +++                     |
+|                                                +++                      |
+|                      |                        |                         |
+|                                                |||                      |
+|                      |                        ||||                      |
+|                                                |||                      |
+|                      |                        ||||                      |
+|<-k_boundWidthMargin->|<-integralSymbolOffset->||||                      |
+|                      |                        ||||                      |
+|                                                |||                      |
+|                      |                        ||||                      |
+|                                                |||                      |
+|                      |                      | a  |                      |
+|                                                +++                      |
+|                      |                      | a++|                      |
+|                                              +++                        |
+|                      |                      | a  |                      |
+|                                                                         |
+|                      |                          +------------------+    |
+|                      |<-lowerBoundLengthOffset->|  lowerBoundWidth |    |
+|                      |                          +------------------+    |
+|                                                                         |
+|                      |                                                  |
++-------------------------------------------------------------------------+
+With a = k_symbolWidth + k_lineThickness
+integralSymbolOffset = std::max((int)upperBoundSize.width()/2, (int)lowerBoundSize.width()/2) - k_integrandWidthMargin;
+*/
+
 KDSize IntegralLayoutNode::computeSize() {
   KDSize dSize = k_font->stringSize("d");
   KDSize integrandSize = integrandLayout()->layoutSize();
@@ -215,13 +305,12 @@ KDSize IntegralLayoutNode::computeSize() {
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
-  KDCoordinate baseline = computeBaseline();
-  KDCoordinate height = baseline + k_integrandHeigthMargin+std::max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline())+lowerBoundSize.height();
+  KDCoordinate height = upperBoundSize.height() + k_integrandHeigthMargin + k_symbolHeight + centralArgumentHeight() + k_symbolHeight + k_integrandHeigthMargin + lowerBoundSize.height();
   return KDSize(width, height);
 }
 
 KDCoordinate IntegralLayoutNode::computeBaseline() {
-  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + std::max(integrandLayout()->baseline(), differentialLayout()->baseline());
+  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + k_symbolHeight + std::max(integrandLayout()->baseline(), differentialLayout()->baseline());
 }
 
 KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
@@ -229,42 +318,60 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDCoordinate x = 0;
   KDCoordinate y = 0;
+  // Offsets the integral bounds in order to center them
+  int difference = (upperBoundSize.width() - lowerBoundSize.width())/2;
   if (child == lowerBoundLayout()) {
-    x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;
-    y = computeSize().height()-lowerBoundSize.height();
+    x = std::max(0, difference);
+    y = computeSize().height() - lowerBoundSize.height();
   } else if (child == upperBoundLayout()) {
-    x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;;
+    x = std::max(0, -difference);
     y = 0;
   } else if (child == integrandLayout()) {
-    x = k_symbolWidth +k_lineThickness+ k_boundWidthMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
+    x = k_symbolWidth + k_lineThickness + k_boundWidthMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
     y = computeBaseline()-integrandLayout()->baseline();
-  } else if (child == differentialLayout()) {
+  } else {
+    assert(child == differentialLayout());
     x = computeSize().width() - k_differentialWidthMargin - differentialLayout()->layoutSize().width();
     y = computeBaseline()-differentialLayout()->baseline();
-  } else {
-    assert(false);
   }
   return KDPoint(x,y);
 }
 
+KDCoordinate IntegralLayoutNode::centralArgumentHeight() {
+  KDCoordinate integrandHeight = integrandLayout()->layoutSize().height();
+  KDCoordinate integrandBaseline = integrandLayout()->baseline();
+  KDCoordinate differentialHeight = differentialLayout()->layoutSize().height();
+  KDCoordinate differentialBaseline = differentialLayout()->baseline();
+  return std::max(integrandBaseline, differentialBaseline) + std::max(integrandHeight-integrandBaseline, differentialHeight - differentialBaseline);
+}
+
 void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize integrandSize = integrandLayout()->layoutSize();
-  KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDCoordinate centralArgumentHeight =  std::max(integrandLayout()->baseline(), differentialLayout()->baseline()) + std::max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline());
+  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
 
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
 
   // Render the integral symbol
-  KDRect topSymbolFrame(p.x() + k_symbolWidth + k_lineThickness, p.y() + upperBoundSize.height() - k_boundHeightMargin,
-    k_symbolWidth, k_symbolHeight);
+  KDCoordinate integralSymbolOffset = std::max((int)upperBoundSize.width(), (int)lowerBoundSize.width())/2 - k_integrandWidthMargin;
+  KDCoordinate offsetX = p.x() + integralSymbolOffset;
+  KDCoordinate offsetY = p.y() + upperBoundSize.height() + k_integrandHeigthMargin;
+
+  // Upper part
+  KDRect topSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(topSymbolFrame, expressionColor, (const uint8_t *)topSymbolPixel, (KDColor *)workingBuffer);
-  KDRect bottomSymbolFrame(p.x(),
-    p.y() + upperBoundSize.height() + 2*k_integrandHeigthMargin + centralArgumentHeight + k_boundHeightMargin - k_symbolHeight,
-    k_symbolWidth, k_symbolHeight);
+
+  // Central bar
+  offsetY = offsetY + k_symbolHeight;
+  KDCoordinate k_centralArgumentHeight = centralArgumentHeight();
+  ctx->fillRect(KDRect(offsetX, offsetY, k_lineThickness, k_centralArgumentHeight), expressionColor);
+
+  // Lower part
+  offsetX = offsetX - k_symbolWidth + k_lineThickness;
+  offsetY = offsetY + k_centralArgumentHeight;
+  KDRect bottomSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(bottomSymbolFrame, expressionColor, (const uint8_t *)bottomSymbolPixel, (KDColor *)workingBuffer);
-  ctx->fillRect(KDRect(p.x() + k_symbolWidth, p.y() + upperBoundSize.height() - k_boundHeightMargin, k_lineThickness,
-    2*k_boundHeightMargin+2*k_integrandHeigthMargin+centralArgumentHeight), expressionColor);
+
 
   // Render "d"
   KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout())).translatedBy(KDPoint(integrandSize.width() + k_differentialWidthMargin, integrandLayout()->baseline() - k_font->glyphSize().height()/2));

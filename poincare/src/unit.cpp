@@ -392,16 +392,16 @@ Expression Unit::removeUnit(Expression * unit) {
 }
 
 bool Unit::isSecond() const {
-  return node()->dimension() == TimeDimension && node()->representative() == SecondRepresentative && node()->prefix() == &EmptyPrefix;
+  return node()->dimension() == TimeDimension && node()->representative() == SecondRepresentative && *(node()->prefix()) == EmptyPrefix;
 }
 
 bool Unit::isMeter() const {
-  return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && node()->prefix() == &EmptyPrefix;
+  return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && *(node()->prefix()) == EmptyPrefix;
 }
 
 
 bool Unit::isKilogram() const {
-  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &KiloPrefix;
+  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && *(node()->prefix()) == KiloPrefix;
 }
 
 bool Unit::IsISSpeed(Expression & e) {

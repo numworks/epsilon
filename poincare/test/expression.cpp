@@ -74,60 +74,19 @@ QUIZ_CASE(poincare_expression_rational_constructor) {
   assert_pool_size(initialPoolSize+6);
 }
 
-void assert_seconds_split_to(double totalSeconds, const char * splittedTime, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  Expression time = Unit::BuildTimeSplit(totalSeconds, context, complexFormat, angleUnit);
-  constexpr static int bufferSize = 100;
-  char buffer[bufferSize];
-  time.serialize(buffer, bufferSize, DecimalMode);
-  quiz_assert_print_if_failure(strcmp(buffer, splittedTime) == 0, splittedTime);
-}
-
 QUIZ_CASE(poincare_expression_unit_constructor) {
-  Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, User);
-  // 1. Time
-  // 1.a. Test Unit::Second constructor
-  Unit s = Unit::Second();
-  // 1.b. Test Unit::isSecond helper
-  quiz_assert(s.isSecond());
-  quiz_assert(!s.isMeter());
-  // 1.c. Test Unit::BuildTimeSplit constructor
-  assert_seconds_split_to(1234567890, "39×_year+1×_month+13×_day+19×_h+1×_min+30×_s", &globalContext, Cartesian, Degree);
-  assert_seconds_split_to(-122, "-2×_min-2×_s", &globalContext, Cartesian, Degree);
+  Unit u = Unit::Second();
+  assert_expression_serialize_to(u, "_s");
 
-  // 2. Speed
-  // 2.a. test Unit::Kilometer and Unit::Hour constructors
-  Expression kilometerPerHour = Multiplication::Builder(
-      Unit::Kilometer(),
-      Power::Builder(
-        Unit::Hour(),
-        Rational::Builder(-1)
-        )
-      );
-  kilometerPerHour = kilometerPerHour.reduce(reductionContext);
-  Expression meterPerSecond;
-  kilometerPerHour = kilometerPerHour.removeUnit(&meterPerSecond);
-  // 2.b. Test Unit::IsISSpeed helper
-  quiz_assert(Unit::IsISSpeed(meterPerSecond));
+  u = Unit::Hour();
+  assert_expression_serialize_to(u, "_h");
 
-  // 3. Volume
-  // 3.a. test Unit::Liter constructor
-  Expression liter = Unit::Liter();
-  liter = liter.reduce(reductionContext);
-  Expression meter3;
-  liter = liter.removeUnit(&meter3);
-  // 3.b. Test Unit::IsISVolume helper
-  quiz_assert(Unit::IsISVolume(meter3));
+  u = Unit::Kilometer();
+  assert_expression_serialize_to(u, "_km");
 
-  // 4. Energy
-  // 4.a. test Unit::Watt and Unit::Hour constructors
-  Expression wattHour = Multiplication::Builder(
-      Unit::Watt(),
-      Unit::Hour()
-      );
-  wattHour = wattHour.reduce(reductionContext);
-  Expression kilogramMeter2PerSecond2;
-  wattHour = wattHour.removeUnit(&kilogramMeter2PerSecond2);
-  // 4.b. Test Unit::IsISEnergy helper
-  quiz_assert(Unit::IsISEnergy(kilogramMeter2PerSecond2));
+  u = Unit::Liter();
+  assert_expression_serialize_to(u, "_L");
+
+  u = Unit::Watt();
+  assert_expression_serialize_to(u, "_W");
 }

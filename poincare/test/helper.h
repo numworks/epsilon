@@ -50,6 +50,9 @@ void assert_expression_simplifies_and_approximates_to(const char * expression, c
 template<typename T>
 void assert_expression_simplifies_approximates_to(const char * expression, const char * approximation, Poincare::Preferences::AngleUnit angleUnit = Degree, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, int numberOfSignificantDigits = -1);
 
+// Expression serializing
+
+void assert_expression_serialize_to(Poincare::Expression expression, const char * serialization, Poincare::Preferences::PrintFloatMode mode = ScientificMode, int numberOfSignificantDigits = 7);
 
 // Layout serializing
 

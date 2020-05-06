@@ -2,13 +2,6 @@
 
 using namespace Poincare;
 
-void assert_expression_serialize_to(Poincare::Expression expression, const char * serialization, Preferences::PrintFloatMode mode = ScientificMode, int numberOfSignificantDigits = 7) {
-  constexpr int bufferSize = 500;
-  char buffer[bufferSize];
-  expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
-  quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0, serialization);
-}
-
 QUIZ_CASE(poincare_serialization_based_integer) {
   assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Decimal), "23");
   assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Binary), "0b10111");

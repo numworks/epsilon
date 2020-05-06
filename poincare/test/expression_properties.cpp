@@ -382,10 +382,51 @@ void assert_reduced_expression_unit_is(const char * expression, const char * uni
   quiz_assert_print_if_failure(u1.isUninitialized() == u2.isUninitialized() && (u1.isUninitialized() || u1.isIdenticalTo(u2)), expression);
 }
 
-QUIZ_CASE(poincare_properties_get_unit) {
+QUIZ_CASE(poincare_properties_remove_unit) {
   assert_reduced_expression_unit_is("_km", "_m");
   assert_reduced_expression_unit_is("_min/_km", "_m^(-1)×_s");
   assert_reduced_expression_unit_is("_km^3", "_m^3");
   assert_reduced_expression_unit_is("1_m+_km", "_m");
   assert_reduced_expression_unit_is("_L^2×3×_s", "_m^6×_s");
 }
+
+void assert_seconds_split_to(double totalSeconds, const char * splittedTime, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression time = Unit::BuildTimeSplit(totalSeconds, context, complexFormat, angleUnit);
+  constexpr static int bufferSize = 100;
+  char buffer[bufferSize];
+  time.serialize(buffer, bufferSize, DecimalMode);
+  quiz_assert_print_if_failure(strcmp(buffer, splittedTime) == 0, splittedTime);
+}
+
+Expression extract_unit(const char * expression) {
+  Shared::GlobalContext globalContext;
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, User);
+  Expression e = parse_expression(expression, &globalContext, false).reduce(reductionContext);
+  Expression unit;
+  e.removeUnit(&unit);
+  return unit;
+}
+
+QUIZ_CASE(poincare_expression_unit_helper) {
+  // 1. Time
+  Expression s = extract_unit("_s");
+  quiz_assert(s.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(s).isSecond());
+  quiz_assert(!static_cast<Unit &>(s).isMeter());
+
+  Shared::GlobalContext globalContext;
+  assert_seconds_split_to(1234567890, "39×_year+1×_month+13×_day+19×_h+1×_min+30×_s", &globalContext, Cartesian, Degree);
+  assert_seconds_split_to(-122, "-2×_min-2×_s", &globalContext, Cartesian, Degree);
+
+  // 2. Speed
+  Expression meterPerSecond = extract_unit("_m×_s^-1");
+  quiz_assert(Unit::IsISSpeed(meterPerSecond));
+
+  // 3. Volume
+  Expression meter3 = extract_unit("_m^3");
+  quiz_assert(Unit::IsISVolume(meter3));
+
+  // 4. Energy
+  Expression kilogramMeter2PerSecond2 = extract_unit("_kg×_m^2×_s^-2");
+  quiz_assert(Unit::IsISEnergy(kilogramMeter2PerSecond2));
+}
+

@@ -127,6 +127,13 @@ void assert_expression_simplifies_approximates_to(const char * expression, const
     }, numberOfDigits);
 }
 
+void assert_expression_serialize_to(Poincare::Expression expression, const char * serialization, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
+  quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0, serialization);
+}
+
 void assert_layout_serialize_to(Poincare::Layout layout, const char * serialization) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];

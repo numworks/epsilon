@@ -9,7 +9,8 @@ namespace Poincare {
 
 class IntegralLayoutNode final : public LayoutNode {
 public:
-  constexpr static KDCoordinate k_symbolHeight = 4;
+  // Sizes of the upper and lower curls of the integral symbol
+  constexpr static KDCoordinate k_symbolHeight = 9;
   constexpr static KDCoordinate k_symbolWidth = 4;
 
   using LayoutNode::LayoutNode;
@@ -40,16 +41,18 @@ protected:
   // LayoutNode
   KDSize computeSize() override;
   KDCoordinate computeBaseline() override;
+  KDCoordinate centralArgumentHeight();
   KDPoint positionOfChild(LayoutNode * child) override;
+
 private:
   constexpr static int k_integrandLayoutIndex = 0;
   constexpr static int k_differentialLayoutIndex = 1;
   constexpr static const KDFont * k_font = KDFont::LargeFont;
-  constexpr static KDCoordinate k_boundHeightMargin = 8;
+  constexpr static KDCoordinate k_boundHeightMargin = 5;
   constexpr static KDCoordinate k_boundWidthMargin = 5;
   constexpr static KDCoordinate k_differentialWidthMargin = 3;
   constexpr static KDCoordinate k_integrandWidthMargin = 2;
-  constexpr static KDCoordinate k_integrandHeigthMargin = 2;
+  constexpr static KDCoordinate k_integrandHeigthMargin = 4;
   constexpr static KDCoordinate k_lineThickness = 1;
   // int(f(x), x, a, b)
   LayoutNode * integrandLayout() { return childAtIndex(k_integrandLayoutIndex); } // f(x)

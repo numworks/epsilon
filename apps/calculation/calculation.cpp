@@ -3,8 +3,10 @@
 #include "../shared/scrollable_multiple_expressions_view.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
+#include "app.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/undefined.h>
+#include <poincare/unit.h>
 #include <poincare/unreal.h>
 #include <string.h>
 #include <cmath>

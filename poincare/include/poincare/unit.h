@@ -38,6 +38,7 @@ public:
       m_symbol(symbol),
       m_exponent(exponent)
     {}
+    inline bool operator==(const Prefix& p) const { return m_exponent == p.m_exponent && strcmp(m_symbol, p.m_symbol) == 0; }
     const char * symbol() const { return m_symbol; }
     int8_t exponent() const { return m_exponent; }
     int serialize(char * buffer, int bufferSize) const;

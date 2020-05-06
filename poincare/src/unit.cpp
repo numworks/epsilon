@@ -452,8 +452,7 @@ Expression Unit::BuildTimeSplit(double seconds, Context * context, Preferences::
   double remain = std::round(seconds*err)/err;
 
   constexpr static int numberOfTimeUnits = 6;
-  // This could be computed from the time representatives but we same time by using constexpr double
-  constexpr static double timeFactors[numberOfTimeUnits] = {365.25*24.0*60.0*60.0, 365.25/12.0*24.0*60.0*60.0, 24.0*60.0*60.0, 60.0*60.0, 60.0, 1.0 };
+  constexpr static double timeFactors[numberOfTimeUnits] = {MonthPerYear*DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, HoursPerDay*MinutesPerHour*SecondsPerMinute, MinutesPerHour*SecondsPerMinute, SecondsPerMinute, 1.0 };
   Unit units[numberOfTimeUnits] = {Unit::Year(), Unit::Month(), Unit::Day(), Unit::Hour(), Unit::Minute(), Unit::Second() };
   double valuesPerUnit[numberOfTimeUnits];
   Addition a = Addition::Builder();

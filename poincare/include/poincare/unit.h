@@ -773,7 +773,14 @@ public:
   static void ChooseBestRepresentativeAndPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, true, reductionContext); }
   static void ChooseBestPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, false, reductionContext); }
 
+  // This could be computed from the time representatives but we save time by using constexpr double
+  static constexpr double SecondsPerMinute = 60.0;
 private:
+  static constexpr double MinutesPerHour = 60.0;
+  static constexpr double HoursPerDay = 24.0;
+  static constexpr double DaysPerYear = 365.25;
+  static constexpr double MonthPerYear = 12.0;
+  static constexpr double DaysPerMonth = DaysPerYear/MonthPerYear;
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
   void chooseBestMultipleForValue(double * value, const int exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);

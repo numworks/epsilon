@@ -245,7 +245,8 @@ QUIZ_CASE(poincare_simplification_units) {
       Unit::Builder(dim, rep, &Unit::EmptyPrefix).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
       assert_parsed_expression_simplify_to(buffer, buffer);
       if (rep->isPrefixable()) {
-        for (const Unit::Prefix * pre = rep->outputPrefixes(); pre < rep->outputPrefixesUpperBound(); pre++) {
+        for (size_t i = 0; i < rep->outputPrefixesLength(); i++) {
+          const Unit::Prefix * pre = rep->outputPrefixes()[i];
           Unit::Builder(dim, rep, pre).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           assert_parsed_expression_simplify_to(buffer, buffer);
         }

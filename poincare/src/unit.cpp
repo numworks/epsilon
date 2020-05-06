@@ -30,8 +30,9 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length,
     *prefix = &Unit::EmptyPrefix;
     return length == 0;
   }
-  const Prefix * pre = Unit::AllPrefixes;
-  while (pre < Unit::AllPrefixes + sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix)) {
+  size_t numberOfPrefixes = sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix *);
+  for (size_t i = 0; i < numberOfPrefixes; i++) {
+    const Prefix * pre = Unit::AllPrefixes[i];
     const char * prefixSymbol = pre->symbol();
     if (strncmp(symbol, prefixSymbol, length) == 0 &&
         prefixSymbol[length] == 0)
@@ -66,7 +67,8 @@ const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & v
    * magnitude of 'value'.
    */
   const int orderOfMagnitude = IEEE754<double>::exponentBase10(std::fabs(value));
-  for (const Prefix * pre = m_outputPrefixes; pre < m_outputPrefixesUpperBound; pre++) {
+  for (size_t i = 0; i < m_outputPrefixesLength; i++) {
+    const Prefix * pre = m_outputPrefixes[i];
     unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
     if (newDiff < diff) {
       diff = newDiff;
@@ -234,13 +236,12 @@ constexpr const Unit::Prefix
   Unit::MegaPrefix,
   Unit::GigaPrefix,
   Unit::TeraPrefix;
-constexpr const Unit::Prefix
-  Unit::NoPrefix[],
-  Unit::NegativeLongScalePrefixes[],
-  Unit::PositiveLongScalePrefixes[],
-  Unit::LongScalePrefixes[],
-  Unit::NegativePrefixes[],
-  Unit::AllPrefixes[];
+constexpr const Unit::Prefix * const Unit::NoPrefix[];
+constexpr const Unit::Prefix * const Unit::NegativeLongScalePrefixes[];
+constexpr const Unit::Prefix * const Unit::PositiveLongScalePrefixes[];
+constexpr const Unit::Prefix * const Unit::LongScalePrefixes[];
+constexpr const Unit::Prefix * const Unit::NegativePrefixes[];
+constexpr const Unit::Prefix * const Unit::AllPrefixes[];
 constexpr const Unit::Representative
   Unit::TimeRepresentatives[],
   Unit::DistanceRepresentatives[],
@@ -392,16 +393,16 @@ Expression Unit::removeUnit(Expression * unit) {
 }
 
 bool Unit::isSecond() const {
-  return node()->dimension() == TimeDimension && node()->representative() == SecondRepresentative && *(node()->prefix()) == EmptyPrefix;
+  return node()->dimension() == TimeDimension && node()->representative() == SecondRepresentative && node()->prefix() == &EmptyPrefix;
 }
 
 bool Unit::isMeter() const {
-  return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && *(node()->prefix()) == EmptyPrefix;
+  return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && node()->prefix() == &EmptyPrefix;
 }
 
 
 bool Unit::isKilogram() const {
-  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && *(node()->prefix()) == KiloPrefix;
+  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &KiloPrefix;
 }
 
 bool Unit::IsISSpeed(Expression & e) {

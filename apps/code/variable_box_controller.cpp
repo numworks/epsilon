@@ -70,12 +70,13 @@ KDCoordinate VariableBoxController::rowHeight(int j) {
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(j, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    if (scriptNodeAtIndex(j - cumulatedOriginsCount)->description() != nullptr) {
+    if (scriptNodeAtIndex(j - (m_displaySubtitles ? cumulatedOriginsCount : 0))->description() != nullptr) {
       // If there is a node description, the cell is bigger
       return ScriptNodeCell::k_complexItemHeight;
     }
     return ScriptNodeCell::k_simpleItemHeight;
   }
+  assert(m_displaySubtitles);
   assert(cellType == k_subtitleCellType);
   return k_subtitleRowHeight;
 }
@@ -86,7 +87,7 @@ int VariableBoxController::numberOfRows() const {
   for (NodeOrigin origin : origins) {
     int nodeCount = nodesCountForOrigin(origin);
     if (nodeCount > 0) {
-      result += nodeCount + 1; // 1 for the subtitle cell
+      result += nodeCount + (m_displaySubtitles ? 1 : 0);
     }
   }
   return result;
@@ -97,12 +98,14 @@ HighlightCell * VariableBoxController::reusableCell(int index, int type) {
   if (type == k_itemCellType) {
     return m_itemCells + index;
   }
+  assert(m_displaySubtitles);
   assert(type == k_subtitleCellType);
   return m_subtitleCells + index;
 }
 
 int VariableBoxController::reusableCellCount(int type) {
   if (type == k_subtitleCellType) {
+    assert(m_displaySubtitles);
     return k_scriptOriginsCount;
   }
   assert(type == k_itemCellType);
@@ -115,9 +118,10 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index - cumulatedOriginsCount)); // Remove the number of subtitle cells from the index
+    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index - (m_displaySubtitles ? cumulatedOriginsCount : 0)));
     return;
   }
+  assert(m_displaySubtitles);
   assert(cellType == k_subtitleCellType);
   I18n::Message subtitleMessages[k_scriptOriginsCount] = {
     I18n::Message::ScriptInProgress,
@@ -128,9 +132,10 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
 }
 
 void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  if (withinTemporarySelection) {
+  if (withinTemporarySelection || !m_displaySubtitles) {
     return;
   }
+  // Make sure subtitle cells cannot be selected
   const int currentSelectedRow = selectedRow();
   if (currentSelectedRow >= 0 && typeAtLocation(0, currentSelectedRow) == k_subtitleCellType) {
     if (currentSelectedRow == 0) {
@@ -339,10 +344,10 @@ int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOri
     if (nodeCount > 0) {
       originsCount++;
       int result = -1;
-      if (i == cellIndex) {
+      if (m_displaySubtitles && i == cellIndex) {
         result = k_subtitleCellType;
       } else {
-        cellIndex += nodeCount + 1; // 1 for the subtitle cell
+        cellIndex += nodeCount + (m_displaySubtitles ? 1 : 0);
         if (i < cellIndex) {
           result = k_itemCellType;
         }
@@ -354,6 +359,7 @@ int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOri
         if (cumulatedOriginsCount != nullptr) {
           *cumulatedOriginsCount = originsCount;
         }
+        assert(result != k_subtitleCellType || m_displaySubtitles);
         return result;
       }
     }
@@ -372,7 +378,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(cellType == k_itemCellType);
   (void)cellType; // Silence warnings
 
-  insertAutocompletionResultAtIndex(rowIndex - cumulatedOriginsCount); // Remove the number of subtitle cells from the index
+  insertAutocompletionResultAtIndex(rowIndex - (m_displaySubtitles ? cumulatedOriginsCount : 0));
 
   Container::activeApp()->dismissModalViewController();
   return true;

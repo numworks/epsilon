@@ -34,6 +34,7 @@ public:
   ViewController * emptyViewController() override { return &m_variableBoxEmptyController; }
 
   /* VariableBoxController */
+  void setDisplaySubtitles(bool display) { m_displaySubtitles = display; }
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
   const char * autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses);
   const char * autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate = nullptr);
@@ -112,6 +113,7 @@ private:
   size_t m_builtinNodesCount;
   size_t m_importedNodesCount;
   int m_shortenResultCharCount; // This is used to send only the completing text when we are autocompleting
+  bool m_displaySubtitles;
 };
 
 }

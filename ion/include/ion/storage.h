@@ -86,8 +86,6 @@ public:
     uint32_t m_fullNameCRC32;
   };
 
-  Storage();
-
 #if ION_STORAGE_LOG
   void log();
 #endif
@@ -125,6 +123,8 @@ public:
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
+
+  Storage();
 
   /* Getters/Setters on recordID */
   const char * fullNameOfRecord(const Record record);

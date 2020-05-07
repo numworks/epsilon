@@ -393,15 +393,18 @@ Expression Unit::removeUnit(Expression * unit) {
 }
 
 bool Unit::isSecond() const {
+  // TODO: comparing pointers suffices because all time dimension are built from the same pointers. This should be asserted some way at compile-time?
   return node()->dimension() == TimeDimension && node()->representative() == SecondRepresentative && node()->prefix() == &EmptyPrefix;
 }
 
 bool Unit::isMeter() const {
+  // See comment on isSecond
   return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && node()->prefix() == &EmptyPrefix;
 }
 
 
 bool Unit::isKilogram() const {
+  // See comment on isSecond
   return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &KiloPrefix;
 }
 

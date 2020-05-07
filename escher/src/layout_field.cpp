@@ -294,6 +294,11 @@ void LayoutField::setEditing(bool isEditing) {
   }
 }
 
+void LayoutField::clearLayout() {
+  m_contentView.clearLayout(); // Replace the layout with an empty horizontal layout
+  reloadScroll(); // Put the scroll to offset 0
+}
+
 Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }

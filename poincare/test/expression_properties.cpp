@@ -400,7 +400,7 @@ void assert_seconds_split_to(double totalSeconds, const char * splittedTime, Con
 
 Expression extract_unit(const char * expression) {
   Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, User);
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, User, ReplaceAllSymbolsWithUndefined, NoUnitConversion);
   Expression e = parse_expression(expression, &globalContext, false).reduce(reductionContext);
   Expression unit;
   e.removeUnit(&unit);
@@ -428,5 +428,11 @@ QUIZ_CASE(poincare_expression_unit_helper) {
   // 4. Energy
   Expression kilogramMeter2PerSecond2 = extract_unit("_kg×_m^2×_s^-2");
   quiz_assert(Unit::IsISEnergy(kilogramMeter2PerSecond2));
-}
 
+  // 5. International System
+  quiz_assert(Unit::IsIS(kilogramMeter2PerSecond2));
+  quiz_assert(Unit::IsIS(meter3));
+  quiz_assert(Unit::IsIS(meterPerSecond));
+  Expression joule = extract_unit("_J");
+  quiz_assert(!Unit::IsIS(joule));
+}

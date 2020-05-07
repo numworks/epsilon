@@ -252,7 +252,32 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   if (input().isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit()) || o.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
     return AdditionalInformationType::Trigonometry;
   }
-  if (o.hasUnit()) { // TODO: find a way to check that it'll do have additional results
+  if (o.hasUnit()) {
+    Expression unit;
+    ExpressionNode::ReductionContext reductionContext(
+        App::app()->localContext(),
+        Preferences::sharedPreferences()->complexFormat(),
+        Preferences::sharedPreferences()->angleUnit(),
+        ExpressionNode::ReductionTarget::User,
+        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+        ExpressionNode::UnitConversion::None);
+    o = o.reduce(reductionContext).removeUnit(&unit);
+    if (Unit::IsIS(unit)) {
+      if (Unit::IsISSpeed(unit) || Unit::IsISVolume(unit) || Unit::IsISEnergy(unit)) {
+        /* All these units will provide misc. classic representatives in
+         * addition to the SI unit in additional information. */
+        return AdditionalInformationType::Unit;
+      }
+      if (Unit::IsISTime(unit)) {
+        /* If the number of seconds is above 60s, we can write it in the form
+         * of an addition: 23_min + 12_s for instance. */
+        double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
+        if (value >  Unit::SecondsPerMinute) {
+          return AdditionalInformationType::Unit;
+        }
+      }
+      return AdditionalInformationType::None;
+    }
     return AdditionalInformationType::Unit;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {

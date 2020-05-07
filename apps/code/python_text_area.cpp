@@ -277,8 +277,7 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
     // Handle event with autocompletion
     if (event == Ion::Events::Right
         || event == Ion::Events::ShiftRight
-        || event == Ion::Events::OK
-        || event == Ion::Events::EXE)
+        || event == Ion::Events::OK)
     {
       m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
       acceptAutocompletion(event != Ion::Events::ShiftRight);

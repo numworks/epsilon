@@ -188,6 +188,13 @@ public:
   typedef UnitNode::Prefix Prefix;
   typedef UnitNode::Representative Representative;
   typedef UnitNode::Dimension Dimension;
+  /* TODO: Prefix, Representative and Dimension defined below must be defined
+   * only once and all units must be constructed from their pointers. This way
+   * we can easily check if two Unit objects are equal by comparing pointers.
+   * This saves us from overloading the == operator on Prefix, Representative
+   * and Dimension and saves time at execution. We should assert at compilation
+   * that only one occurence of each is built by maybe privatizing constructors
+   * on these classes? */
   static constexpr const Prefix
     PicoPrefix  = Prefix("p", -12),
     NanoPrefix  = Prefix("n",  -9),

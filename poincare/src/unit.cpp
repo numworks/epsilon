@@ -459,11 +459,11 @@ bool Unit::IsISEnergy(Expression & e) {
   return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 3 &&
     e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isKilogram() &&
     e.childAtIndex(1).type() == ExpressionNode::Type::Power &&
-    e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isMeter();
+    e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isMeter() &&
     e.childAtIndex(1).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isTwo() &&
     e.childAtIndex(2).type() == ExpressionNode::Type::Power &&
-    e.childAtIndex(2).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isSecond();
-    e.childAtIndex(2).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isMinusTwo();
+    e.childAtIndex(2).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(2).childAtIndex(0).convert<Unit>().isSecond() &&
+    e.childAtIndex(2).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(2).childAtIndex(1).convert<const Rational>().isMinusTwo();
 }
 
 bool Unit::IsISTime(Expression & e) {

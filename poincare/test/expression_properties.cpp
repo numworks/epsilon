@@ -428,6 +428,8 @@ QUIZ_CASE(poincare_expression_unit_helper) {
   // 4. Energy
   Expression kilogramMeter2PerSecond2 = extract_unit("_kg×_m^2×_s^-2");
   quiz_assert(Unit::IsISEnergy(kilogramMeter2PerSecond2));
+  Expression kilogramMeter3PerSecond2 = extract_unit("_kg×_m^3×_s^-2");
+  quiz_assert(!Unit::IsISEnergy(kilogramMeter3PerSecond2));
 
   // 5. International System
   quiz_assert(Unit::IsIS(kilogramMeter2PerSecond2));

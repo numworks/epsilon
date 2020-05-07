@@ -13,10 +13,9 @@ using namespace Shared;
 namespace Calculation {
 
 void UnitListController::setExpression(Poincare::Expression e) {
-  // TODO: order of call issue!!!
   ExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
-  // Reinitizlize m_memoizedExpressions
+  // Reinitialize m_memoizedExpressions
   for (size_t i = 0; i < k_maxNumberOfCells; i++) {
     m_memoizedExpressions[i] = Expression();
   }
@@ -43,14 +42,14 @@ void UnitListController::setExpression(Poincare::Expression e) {
             )
           )
         );
-    requireSimplification = true; // Reduce the conversion
+    requireSimplification = true; // Simplify the conversion
   } else if (Unit::IsISVolume(units)) {
     // 1.b. Turn volume into L
     m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
         Unit::Liter()
         );
-    requireSimplification = true; // reduce the conversion
+    requireSimplification = true; // Simplify the conversion
     canChangeUnitPrefix = true; // Pick best prefix (mL)
   } else if (Unit::IsISEnergy(units)) {
     // 1.c. Turn energy into Wh
@@ -65,7 +64,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
         m_expression.clone(),
         Unit::ElectronVolt()
         );
-    requireSimplification = true; // reduce the conversion
+    requireSimplification = true; // Simplify the conversion
     canChangeUnitPrefix = true; // Pick best prefix (kWh)
   } else if (Unit::IsISTime(units)) {
     // Turn time into ? year + ? month + ? day + ? h + ? min + ? s
@@ -102,11 +101,16 @@ void UnitListController::setExpression(Poincare::Expression e) {
   numberOfMemoizedExpressions++;
 
   // 3. Get rid of duplicates
+  Expression reduceExpression = m_expression.clone();
+  // Make m_expression compareable to m_memoizedExpressions (turn BasedInteger into Rational for instance)
+  Shared::PoincareHelpers::Simplify(&reduceExpression, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::None);
   currentExpressionIndex = 1;
   while (currentExpressionIndex < numberOfMemoizedExpressions) {
-    for (size_t i = 0; i < currentExpressionIndex; i++) {
-      assert(!m_memoizedExpressions[i].isUninitialized());
-      if (m_memoizedExpressions[i].isIdenticalTo(m_memoizedExpressions[currentExpressionIndex])) {
+    for (size_t i = 0; i < currentExpressionIndex + 1; i++) {
+      // Compare the currentExpression to all previous memoized expressions and to m_expression
+      Expression comparedExpression = i == currentExpressionIndex ? reduceExpression : m_memoizedExpressions[i];
+      assert(!comparedExpression.isUninitialized());
+      if (comparedExpression.isIdenticalTo(m_memoizedExpressions[currentExpressionIndex])) {
         numberOfMemoizedExpressions--;
         // Shift next expressions
         for (size_t j = currentExpressionIndex; j < numberOfMemoizedExpressions; j++) {

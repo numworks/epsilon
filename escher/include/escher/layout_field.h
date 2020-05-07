@@ -25,7 +25,7 @@ public:
   Poincare::Context * context() const;
   bool isEditing() const override { return m_contentView.isEditing(); }
   void setEditing(bool isEditing) override;
-  void clearLayout() { m_contentView.clearLayout(); }
+  void clearLayout();
   void scrollToCursor() {
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baselineWithoutSelection());
   }

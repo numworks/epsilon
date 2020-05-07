@@ -254,14 +254,8 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   }
   if (o.hasUnit()) {
     Expression unit;
-    ExpressionNode::ReductionContext reductionContext(
-        App::app()->localContext(),
-        Preferences::sharedPreferences()->complexFormat(),
-        Preferences::sharedPreferences()->angleUnit(),
-        ExpressionNode::ReductionTarget::User,
-        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        ExpressionNode::UnitConversion::None);
-    o = o.reduce(reductionContext).removeUnit(&unit);
+    PoincareHelpers::Reduce(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User,ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+    o = o.removeUnit(&unit);
     if (Unit::IsIS(unit)) {
       if (Unit::IsISSpeed(unit) || Unit::IsISVolume(unit) || Unit::IsISEnergy(unit)) {
         /* All these units will provide misc. classic representatives in

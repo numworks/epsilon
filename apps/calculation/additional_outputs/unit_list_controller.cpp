@@ -8,6 +8,7 @@
 #include <poincare/unit.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Calculation {
 
@@ -22,16 +23,10 @@ void UnitListController::setExpression(Poincare::Expression e) {
 
   size_t numberOfMemoizedExpressions = 0;
   // 1. First rows: miscellaneous classic units for some dimensions
-  ExpressionNode::ReductionContext reductionContext(
-      App::app()->localContext(),
-      Preferences::sharedPreferences()->complexFormat(),
-      Preferences::sharedPreferences()->angleUnit(),
-      ExpressionNode::ReductionTarget::User,
-      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   Expression copy = m_expression.clone();
   Expression units;
   // Reduce to be able to recognize units
-  copy = copy.reduce(reductionContext);
+  PoincareHelpers::Reduce(&copy, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
   copy = copy.removeUnit(&units);
   bool requireSimplification = false;
   bool canChangeUnitPrefix = false;
@@ -88,6 +83,12 @@ void UnitListController::setExpression(Poincare::Expression e) {
       Expression newUnits;
       m_memoizedExpressions[currentExpressionIndex] = m_memoizedExpressions[currentExpressionIndex].removeUnit(&newUnits);
       double value = Shared::PoincareHelpers::ApproximateToScalar<double>(m_memoizedExpressions[currentExpressionIndex], App::app()->localContext());
+      ExpressionNode::ReductionContext reductionContext(
+          App::app()->localContext(),
+          Preferences::sharedPreferences()->complexFormat(),
+          Preferences::sharedPreferences()->angleUnit(),
+          ExpressionNode::ReductionTarget::User,
+          ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
       Unit::ChooseBestPrefixForValue(&newUnits, &value, reductionContext);
       m_memoizedExpressions[currentExpressionIndex] = Multiplication::Builder(Number::FloatNumber(value), newUnits);
     }

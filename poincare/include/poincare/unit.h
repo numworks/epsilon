@@ -766,6 +766,7 @@ public:
   static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
   static Expression BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
+  static bool IsIS(Expression & e);
   static bool IsISSpeed(Expression & e);
   static bool IsISVolume(Expression & e);
   static bool IsISEnergy(Expression & e);
@@ -788,6 +789,7 @@ private:
   static constexpr double MonthPerYear = 12.0;
   static constexpr double DaysPerMonth = DaysPerYear/MonthPerYear;
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
+  bool isIS() const;
   static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
   void chooseBestMultipleForValue(double * value, const int exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
   Expression removeUnit(Expression * unit);

@@ -408,6 +408,36 @@ bool Unit::isKilogram() const {
   return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &KiloPrefix;
 }
 
+bool Unit::isIS() const {
+  UnitNode * unitNode = node();
+  const Dimension * dim = unitNode->dimension();
+  const Representative * rep = unitNode->representative();
+  return rep == dim->stdRepresentative() &&
+         rep->definition() == nullptr &&
+         unitNode->prefix() == dim->stdRepresentativePrefix();
+}
+
+bool Unit::IsIS(Expression & e) {
+  if (e.type() == ExpressionNode::Type::Multiplication) {
+    for (int i = 0; i < e.numberOfChildren(); i++) {
+      Expression child = e.childAtIndex(i);
+      assert(child.type() == ExpressionNode::Type::Power || child.type() == ExpressionNode::Type::Unit);
+      if (!IsIS(child)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  if (e.type() == ExpressionNode::Type::Power) {
+    assert(e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<Rational>().isInteger());
+    Expression child = e.childAtIndex(0);
+    assert(child.type() == ExpressionNode::Type::Unit);
+    return IsIS(child);
+  }
+  assert(e.type() == ExpressionNode::Type::Unit);
+  return static_cast<Unit &>(e).isIS();
+}
+
 bool Unit::IsISSpeed(Expression & e) {
   // Form m*s^-1
   return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 2 &&

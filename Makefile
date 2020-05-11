@@ -22,6 +22,14 @@ ifdef FORCE_EXTERNAL
   apps_list = ${EPSILON_APPS}
 endif
 
+ifdef HOME_DISPLAY_EXTERNALS
+  ifneq ($(filter external,$(apps_list)),)
+    SFLAGS += -DHOME_DISPLAY_EXTERNALS
+  else
+    $(warning HOME_DISPLAY_EXTERNALS is set but external isn't included, ignoring flag.)
+  endif
+endif
+
 .PHONY: info
 info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"

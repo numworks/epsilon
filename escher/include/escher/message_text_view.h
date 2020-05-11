@@ -15,6 +15,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   I18n::Message m_message;
+  const char* m_text = 0;
 };
 
 #endif

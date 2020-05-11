@@ -24,9 +24,18 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
+void App::didBecomeActive(Window * window) {
+  ::App::didBecomeActive(window);
+  m_window = window;
+}
+
+void App::redraw() {
+  m_window->redraw(true);
+}
+
 App::App(Snapshot * snapshot) :
   ::App(snapshot, &m_controller, I18n::Message::Warning),
-  m_controller(&m_modalViewController, snapshot)
+  m_controller(&m_modalViewController, snapshot, this)
 {
 }
 

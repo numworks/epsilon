@@ -1,4 +1,5 @@
 #include <escher/scroll_view_indicator.h>
+#include <escher/metric.h>
 #include <escher/palette.h>
 extern "C" {
 #include <assert.h>
@@ -8,7 +9,7 @@ extern "C" {
 ScrollViewIndicator::ScrollViewIndicator() :
   View(),
   m_color(Palette::GreyDark),
-  m_margin(14)
+  m_margin(Metric::CommonTopMargin)
 {
 }
 

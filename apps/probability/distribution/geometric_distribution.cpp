@@ -10,7 +10,7 @@ float GeometricDistribution::xMin() const {
 }
 
 float GeometricDistribution::xMax() const {
-  assert(m_parameter1 != 0);
+  assert(m_parameter1 != 0.0f);
   return 5/m_parameter1 * (1.0f + k_displayRightMarginRatio);
 }
 

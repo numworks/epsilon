@@ -7,9 +7,7 @@ namespace Probability {
 
 /* We chose the definition:
  * 0 < p <= 1 for success probability
- * k failures where k ∈ {0, 1, 2, ... }
- * The distribution follows the probability distribution of the number of failures before
- * the first success. */
+ * k number of trials needed to get one success, where k ∈ {1, 2, 3, ...}. */
 
 class GeometricDistribution final : public OneParameterDistribution {
 public:

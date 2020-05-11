@@ -59,9 +59,9 @@ int ZoomParameterController::ContentView::numberOfSubviews() const {
 View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
-    return m_curveView;
+    return &m_legendView;
   }
-  return &m_legendView;
+  return m_curveView;
 }
 
 void ZoomParameterController::ContentView::layoutSubviews(bool force) {

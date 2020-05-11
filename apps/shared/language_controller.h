@@ -8,7 +8,7 @@ namespace Shared {
 
 class LanguageController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  LanguageController(Responder * parentResponder, KDCoordinate topMargin);
+  LanguageController(Responder * parentResponder, KDCoordinate verticalMargin);
   void resetSelection();
 
   View * view() override;

@@ -5,12 +5,12 @@
 
 namespace Shared {
 
-LanguageController::LanguageController(Responder * parentResponder, KDCoordinate topMargin) :
+LanguageController::LanguageController(Responder * parentResponder, KDCoordinate verticalMargin) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, this)
 {
-  m_selectableTableView.setTopMargin(topMargin);
-  m_selectableTableView.setBottomMargin(0);
+  m_selectableTableView.setTopMargin(verticalMargin);
+  m_selectableTableView.setBottomMargin(verticalMargin);
   for (int i = 0; i < I18n::NumberOfLanguages; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
   }

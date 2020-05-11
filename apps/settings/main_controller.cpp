@@ -22,7 +22,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_selectableTableView(this),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
-  m_languageController(this, 13),
+  m_languageController(this, Metric::CommonTopMargin),
   m_examModeController(this),
   m_aboutController(this)
 {

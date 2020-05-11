@@ -15,8 +15,7 @@ float GeometricDistribution::xMax() const {
 }
 
 float GeometricDistribution::yMax() const {
-  int maxAbscissa = 0;
-  float result = evaluateAtAbscissa(maxAbscissa);
+  float result = evaluateAtAbscissa(1.0); // Tha probability is max for x == 1
   return result * (1.0f + k_displayTopMarginRatio);
 }
 
@@ -29,16 +28,18 @@ bool GeometricDistribution::authorizedValueAtIndex(float x, int index) const {
 }
 
 template<typename T>
-T GeometricDistribution::templatedApproximateAtAbscissa(T x) const {
-  if (x < 0) {
+T GeometricDistribution::templatedApproximateAtAbscissa(T k) const {
+  constexpr T castedOne = static_cast<T>(1.0);
+  if (k < castedOne) {
     return static_cast<T>(0.0);
   }
   T p = static_cast<T>(m_parameter1);
-  if (p == static_cast<T>(1.0)) {
-    return static_cast<T>(x == 0 ? 1.0 : 0.0);
+  if (p == castedOne) {
+    return k == castedOne ? castedOne : static_cast<T>(0.0);
   }
-  T lResult = x * std::log(static_cast<T>(1.0) - p);
-  return p*std::exp(lResult);
+  // The result is p * (1-p)^{k-1}
+  T lResult = (k - castedOne) * std::log(castedOne - p);
+  return p * std::exp(lResult);
 }
 
 }

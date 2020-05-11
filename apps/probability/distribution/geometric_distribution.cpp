@@ -31,13 +31,13 @@ bool GeometricDistribution::authorizedValueAtIndex(float x, int index) const {
 template<typename T>
 T GeometricDistribution::templatedApproximateAtAbscissa(T x) const {
   if (x < 0) {
-    return NAN;
+    return static_cast<T>(0.0);
   }
-  T p = (T)m_parameter1;
-  if (p == (T)1.0) {
-    return (T)(x == 0 ? 1.0 : 0.0);
+  T p = static_cast<T>(m_parameter1);
+  if (p == static_cast<T>(1.0)) {
+    return static_cast<T>(x == 0 ? 1.0 : 0.0);
   }
-  T lResult = x * std::log(((T)1.0) - p);
+  T lResult = x * std::log(static_cast<T>(1.0) - p);
   return p*std::exp(lResult);
 }
 

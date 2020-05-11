@@ -5,32 +5,21 @@ namespace Code {
 constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01\x00" R"(from math import *
 )");
 
-constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01\x00" R"(
-#from math import sin as stew, cos as cabbage
-from math import *
-)");
+constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01\x00" R"(from math import *
+from turtle import *
+def squares(angle=0.5):
+  reset()
+  L=330
+  speed(10)
+  penup()
+  goto(-L/2,-L/2)
+  pendown()
+  for i in range(660):
+    forward(L)
+    left(90+angle)
+    L=L-L*sin(angle*pi/180)
+  hideturtle())");
 
-/*constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01\x00" R"(
-import math
-import math as m
-import math, cmath
-import math as m, cmath as cm
-from math import *
-from math import sin
-from math import sin as stew
-from math import sin, cos
-from math import sin as stew, cos as cabbage)");*/
-/*
-import math  // math
-import math as m // math
-import math, cmath // math math
-import math as m, cmath as cm
-from math import *
-from math import sin
-from math import sin as stew
-from math import sin, cos
-from math import sin as stew, cos as cabbage
-*/
 constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", "\x01\x00" R"(# This script draws a Mandelbrot fractal set
 # N_iteration: degree of precision
 import kandinsky

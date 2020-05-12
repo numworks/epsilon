@@ -110,19 +110,19 @@ QUIZ_CASE(geometric_distribution) {
   // Geometric distribution with probability of success 0.5
   Probability::GeometricDistribution distribution;
   distribution.setParameterAtIndex(0.5, 0);
-  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 2.0, 0.875);
-  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 3.0, 0.9375);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.0, 0.5);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 2.0, 0.75);
 
   // Geometric distribution with probability of success 0.2
   distribution.setParameterAtIndex(0.2, 0);
-  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 7.0, 0.8322278399999998299563230830244719982147216796875);
-  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 3.0, 0.5904);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 6.0, 0.737856);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 2.0, 0.36);
 
   // Geometric distribution with probability of success 0.4
   distribution.setParameterAtIndex(0.4, 0);
-  assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.24);
+  assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.4);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
-  assert_finite_integral_between_abscissas_is(&distribution, 1.0, 2.0, 0.384);
+  assert_finite_integral_between_abscissas_is(&distribution, 2.0, 3.0, 0.384);
 }
 
 QUIZ_CASE(fisher_distribution) {

@@ -5,10 +5,9 @@
 
 namespace Probability {
 
-DiscreteCalculation::DiscreteCalculation() :
-  Calculation(),
-  m_abscissa(0.0),
-  m_result(0.0)
+DiscreteCalculation::DiscreteCalculation(Distribution * distribution) :
+  Calculation(distribution),
+  m_abscissa(distribution->defaultComputedValue())
 {
   compute(0);
 }

@@ -4,11 +4,6 @@
 
 namespace Probability {
 
-void Calculation::setDistribution(Distribution * distribution) {
-  m_distribution = distribution;
-  compute(0);
-}
-
 double Calculation::lowerBound() {
   return -INFINITY;
 }

@@ -251,21 +251,20 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
   m_calculation->~Calculation();
   switch (index) {
     case 0:
-      new(m_calculation) LeftIntegralCalculation();
-      break;
+      new(m_calculation) LeftIntegralCalculation(m_distribution);
+      return;
     case 1:
-      new(m_calculation) FiniteIntegralCalculation();
-      break;
+      new(m_calculation) FiniteIntegralCalculation(m_distribution);
+      return;
     case 2:
-      new(m_calculation) RightIntegralCalculation();
-      break;
+      new(m_calculation) RightIntegralCalculation(m_distribution);
+      return;
     case 3:
-      new(m_calculation) DiscreteCalculation();
-      break;
+      new(m_calculation) DiscreteCalculation(m_distribution);
+      return;
     default:
      return;
   }
-  m_calculation->setDistribution(m_distribution);
 }
 
 void CalculationController::updateTitle() {

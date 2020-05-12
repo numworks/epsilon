@@ -7,7 +7,7 @@ namespace Probability {
 
 class FiniteIntegralCalculation : public Calculation {
 public:
-  FiniteIntegralCalculation();
+  FiniteIntegralCalculation(Distribution * distribution);
   Type type() override { return Type::FiniteIntegral; }
   int numberOfParameters() override { return 3; }
   I18n::Message legendForParameterAtIndex(int index) override;

@@ -13,10 +13,11 @@ public:
     RightIntegral,
     Discrete,
   };
-  Calculation() : m_distribution(nullptr) {}
+  Calculation(Distribution * distribution) : m_distribution(distribution) {
+    assert(distribution != nullptr);
+  }
   virtual ~Calculation() = default;
   virtual Type type() = 0;
-  void setDistribution(Distribution * distribution);
   virtual int numberOfParameters() = 0;
   virtual I18n::Message legendForParameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;

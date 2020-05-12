@@ -5,10 +5,9 @@
 
 namespace Probability {
 
-LeftIntegralCalculation::LeftIntegralCalculation() :
-  Calculation(),
-  m_upperBound(0.0),
-  m_result(0.0)
+LeftIntegralCalculation::LeftIntegralCalculation(Distribution * distribution) :
+  Calculation(distribution),
+  m_upperBound(distribution->defaultComputedValue())
 {
   compute(0);
 }

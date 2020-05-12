@@ -7,7 +7,7 @@ namespace Probability {
 
 class LeftIntegralCalculation final : public Calculation {
 public:
-  LeftIntegralCalculation();
+  LeftIntegralCalculation(Distribution * distribution);
   Type type() override { return Type::LeftIntegral; }
   int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;

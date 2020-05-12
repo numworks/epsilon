@@ -30,6 +30,7 @@ public:
     return templatedApproximateAtAbscissa(x);
   }
   bool authorizedValueAtIndex(float x, int index) const override;
+  double defaultComputedValue() const override { return 1.0f; }
 private:
   double evaluateAtDiscreteAbscissa(int k) const override {
     return templatedApproximateAtAbscissa((double)k);

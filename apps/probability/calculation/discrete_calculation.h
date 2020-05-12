@@ -7,7 +7,7 @@ namespace Probability {
 
 class DiscreteCalculation final : public Calculation {
 public:
-  DiscreteCalculation();
+  DiscreteCalculation(Distribution * distribution);
   Type type() override { return Type::Discrete; }
   int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;

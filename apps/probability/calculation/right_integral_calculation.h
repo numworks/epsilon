@@ -7,7 +7,7 @@ namespace Probability {
 
 class RightIntegralCalculation final : public Calculation {
 public:
-  RightIntegralCalculation();
+  RightIntegralCalculation(Distribution * distribution);
   Type type() override { return Type::RightIntegral; }
   int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;

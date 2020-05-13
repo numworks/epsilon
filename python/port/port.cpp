@@ -248,7 +248,10 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
   mp_raise_TypeError("Color couldn't be parsed");
 }
 
-void gc_collect(void) {
+/* Forbid inlining to ensure regs to be at the top of the stack. Otherwise,
+ * LTO inlining can make regs lower on the stack than some just-allocated
+ * pointers. */
+__attribute__((noinline)) void gc_collect(void) {
   void * python_stack_top = MP_STATE_THREAD(stack_top);
   assert(python_stack_top != NULL);
 

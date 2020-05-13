@@ -43,6 +43,13 @@ QUIZ_CASE(linear_regression) {
   assert_regression_is(x, y, 4, Model::Type::Linear, coefficients);
 }
 
+QUIZ_CASE(proportional_regression) {
+  double x[] = {7.0, 5.0, 1.0, 9.0, 3.0};
+  double y[] = {-41.4851, -29.62186, -6.454245, -53.4976, -18.03325};
+  double coefficients[] = {-5.89};
+  assert_regression_is(x, y, 5, Model::Type::Proportional, coefficients);
+}
+
 QUIZ_CASE(quadratic_regression) {
   double x[] = {-34.0, -12.0, 5.0, 86.0, -2.0};
   double y[] = {-8241.389, -1194.734, -59.163, - 46245.39, -71.774};

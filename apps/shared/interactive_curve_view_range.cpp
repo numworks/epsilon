@@ -1,7 +1,6 @@
 #include "interactive_curve_view_range.h"
 #include <ion.h>
 #include <cmath>
-#include <float.h>
 #include <stddef.h>
 #include <assert.h>
 #include <poincare/preferences.h>
@@ -203,24 +202,24 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
 void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation) {
   float xRange = xMax() - xMin();
   float yRange = yMax() - yMin();
-  if (x < xMin() + leftMarginRation*xRange - FLT_EPSILON && !std::isinf(x) && !std::isnan(x)) {
+  if (x < xMin() + leftMarginRation*xRange && !std::isinf(x) && !std::isnan(x)) {
     m_yAuto = false;
     float newXMin = x - leftMarginRation*xRange;
     m_xRange.setMax(newXMin + xRange, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
   }
-  if (x > xMax() - rightMarginRatio*xRange + FLT_EPSILON && !std::isinf(x) && !std::isnan(x)) {
+  if (x > xMax() - rightMarginRatio*xRange && !std::isinf(x) && !std::isnan(x)) {
     m_yAuto = false;
     m_xRange.setMax(x + rightMarginRatio*xRange, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetXMin(xMax() - xRange, k_lowerMaxFloat, k_upperMaxFloat);
   }
-  if (y < yMin() + bottomMarginRation*yRange - FLT_EPSILON && !std::isinf(y) && !std::isnan(y)) {
+  if (y < yMin() + bottomMarginRation*yRange && !std::isinf(y) && !std::isnan(y)) {
     m_yAuto = false;
     float newYMin = y - bottomMarginRation*yRange;
     m_yRange.setMax(newYMin + yRange, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
   }
-  if (y > yMax() - topMarginRatio*yRange + FLT_EPSILON && !std::isinf(y) && !std::isnan(y)) {
+  if (y > yMax() - topMarginRatio*yRange && !std::isinf(y) && !std::isnan(y)) {
     m_yAuto = false;
     m_yRange.setMax(y + topMarginRatio*yRange, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMin(yMax() - yRange, k_lowerMaxFloat, k_upperMaxFloat);

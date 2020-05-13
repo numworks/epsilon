@@ -61,21 +61,18 @@ double LogisticModel::partialDerivate(double * modelCoefficients, int derivateCo
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double denominator = 1.0+a*exp(-b*x);
+  double denominator = 1.0 + a * exp(-b * x);
   if (derivateCoefficientIndex == 0) {
-    // Derivate: exp(-b*x)*(-1 * c/(1.0+a*exp(-b*x))^2)
-    return -exp(-b*x) * c/(denominator * denominator);
+    // Derivate with respect to a: exp(-b*x)*(-1 * c/(1.0+a*exp(-b*x))^2)
+    return -exp(-b * x) * c / (denominator * denominator);
   }
   if (derivateCoefficientIndex == 1) {
-    // Derivate: (-x)*a*exp(-b*x)*(-1/(1.0+a*exp(-b*x))^2)
-    return x*a*exp(-b*x)*c/(denominator * denominator);
+    // Derivate with respect to b: (-x)*a*exp(-b*x)*(-1/(1.0+a*exp(-b*x))^2)
+    return x * a * exp(-b * x) * c / (denominator * denominator);
   }
-  if (derivateCoefficientIndex == 2) {
-    // Derivate: (-x)*a*exp(-b*x)*(-1/(1.0+a*exp(-b*x))^2)
-    return 1.0/denominator;
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 2);
+  // Derivate with respect to c: (-x)*a*exp(-b*x)*(-1/(1.0+a*exp(-b*x))^2)
+  return 1.0 / denominator;
 }
 
 void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
@@ -86,7 +83,7 @@ void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients
    * and c. Twice the standard vertical deviation is a rough estimate of c
    * that is "close enough" to c to seed the coefficient, without being too
    * dependent on outliers.*/
-  modelCoefficients[2] = 2.0*store->standardDeviationOfColumn(series, 1);
+  modelCoefficients[2] = 2.0 * store->standardDeviationOfColumn(series, 1);
 }
 
 

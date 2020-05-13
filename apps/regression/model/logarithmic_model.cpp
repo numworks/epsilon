@@ -33,16 +33,13 @@ double LogarithmicModel::levelSet(double * modelCoefficients, double xMin, doubl
 
 double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
-    // Derivate: ln(x)
-    assert(x >0);
+    // Derivate with respect to a: ln(x)
+    assert(x > 0);
     return log(x);
   }
-  if (derivateCoefficientIndex == 1) {
-    // Derivate: 1
-    return 1;
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 1);
+  // Derivate with respect to b: 1
+  return 1.0;
 }
 
 bool LogarithmicModel::dataSuitableForFit(Store * store, int series) const {

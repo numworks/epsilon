@@ -46,28 +46,27 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
 }
 
 double TrigonometricModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
+  if (derivateCoefficientIndex == 3) {
+    // Derivate with respect to d: 1
+    return 1.0;
+  }
+
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double radianX = x * toRadians(Poincare::Preferences::sharedPreferences()->angleUnit());
+
   if (derivateCoefficientIndex == 0) {
-    // Derivate: sin(b*x+c)
-    return sin(b*radianX+c);
+    // Derivate with respect to a: sin(b*x+c)
+    return sin(b * radianX + c);
   }
   if (derivateCoefficientIndex == 1) {
-    // Derivate: x*a*cos(b*x+c);
-    return radianX*a*cos(b*radianX+c);
+    // Derivate with respect to b: x*a*cos(b*x+c);
+    return radianX * a * cos(b * radianX + c);
   }
-  if (derivateCoefficientIndex == 2) {
-    // Derivate: a*cos(b*x+c)
-    return a*cos(b*radianX+c);
-  }
-  if (derivateCoefficientIndex == 3) {
-    // Derivate: 1
-    return 1.0;
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 2);
+  // Derivatewith respect to c: a*cos(b*x+c)
+  return a * cos(b * radianX + c);
 }
 
 void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {

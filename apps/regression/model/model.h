@@ -14,16 +14,16 @@ class Store;
 class Model {
 public:
   enum class Type : uint8_t {
-    Linear      = 0,
-    Affine      = 1,
-    Quadratic   = 2,
-    Cubic       = 3,
-    Quartic     = 4,
-    Logarithmic = 5,
-    Exponential = 6,
-    Power       = 7,
+    Linear        = 0,
+    Proportional  = 1,
+    Quadratic     = 2,
+    Cubic         = 3,
+    Quartic       = 4,
+    Logarithmic   = 5,
+    Exponential   = 6,
+    Power         = 7,
     Trigonometric = 8,
-    Logistic    = 9
+    Logistic      = 9
   };
   static constexpr int k_numberOfModels = 10;
   static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients

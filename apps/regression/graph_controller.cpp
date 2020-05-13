@@ -187,7 +187,7 @@ void GraphController::reloadBannerView() {
     coefficientName++;
   }
 
-  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear || m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Affine) {
+  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear || m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Proportional) {
     int index = model->numberOfCoefficients();
     // Set "r=..."
     numberOfChar = 0;

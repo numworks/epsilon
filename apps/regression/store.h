@@ -8,10 +8,10 @@
 #include "model/logarithmic_model.h"
 #include "model/logistic_model.h"
 #include "model/power_model.h"
+#include "model/proportional_model.h"
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
-#include "model/affine_model.h"
 #include "../shared/interactive_curve_view_range.h"
 #include "../shared/double_pair_store.h"
 #include <escher/responder.h>
@@ -80,7 +80,7 @@ private:
   uint32_t m_seriesChecksum[k_numberOfSeries];
   Model::Type m_regressionTypes[k_numberOfSeries];
   LinearModel m_linearModel;
-  AffineModel m_affineModel;
+  ProportionalModel m_proportionalModel;
   QuadraticModel m_quadraticModel;
   CubicModel m_cubicModel;
   QuarticModel m_quarticModel;

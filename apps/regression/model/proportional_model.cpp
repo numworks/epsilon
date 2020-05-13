@@ -1,7 +1,6 @@
 #include "proportional_model.h"
 #include "../store.h"
 #include <poincare/layout_helper.h>
-#include <math.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -17,12 +16,11 @@ Layout ProportionalModel::layout() {
 }
 
 double ProportionalModel::evaluate(double * modelCoefficients, double x) const {
-  double a = modelCoefficients[0];
-  return a*x;
+  return modelCoefficients[0] * x;
 }
 
 double ProportionalModel::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
-  double a = modelCoefficients[0];
+  const double a = modelCoefficients[0];
   if (a == 0.0) {
     return NAN;
   }
@@ -34,12 +32,9 @@ void ProportionalModel::fit(Store * store, int series, double * modelCoefficient
 }
 
 double ProportionalModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  if (derivateCoefficientIndex == 0) {
-    // Derivate: x
-    return x;
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 0);
+  // Derivate: x
+  return x;
 }
 
 }

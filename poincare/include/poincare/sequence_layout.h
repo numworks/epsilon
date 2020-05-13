@@ -8,7 +8,7 @@ namespace Poincare {
 
 class SequenceLayoutNode : public LayoutNode {
 public:
-  constexpr static KDCoordinate k_symbolHeight = 30;
+  constexpr static KDCoordinate k_symbolHeight = 29;
   constexpr static KDCoordinate k_symbolWidth = 22;
 
   using LayoutNode::LayoutNode;

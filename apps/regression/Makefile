@@ -8,7 +8,6 @@ app_regression_test_src += $(addprefix apps/regression/,\
 )
 
 app_regression_test_src += $(addprefix apps/regression/model/,\
-  affine_model.cpp \
   cubic_model.cpp \
   exponential_model.cpp \
   linear_model.cpp \
@@ -16,6 +15,7 @@ app_regression_test_src += $(addprefix apps/regression/model/,\
   logistic_model.cpp \
   model.cpp \
   power_model.cpp \
+  proportional_model.cpp \
   quadratic_model.cpp \
   quartic_model.cpp \
   trigonometric_model.cpp \

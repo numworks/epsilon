@@ -264,9 +264,9 @@ Horizontal margins and offsets
 +-------------------------------------------------------------------------+
 |                      |                                                  |
 |                                                                         |
-|                      |                          +------------------+    |
-|                      |<-upperBoundLengthOffset->| upperBoundWidth  |    |
-|                      |                          +------------------+    |
+|                      |                          +-----------------+     |
+|                      |<-upperBoundLengthOffset->| upperBoundWidth |     |
+|                      |                          +-----------------+     |
 |                                                                         |
 |                      |                        |                         |
 |                                                   +++                   |
@@ -277,20 +277,20 @@ Horizontal margins and offsets
 |                      |                        ||||                      |
 |                                                |||                      |
 |                      |                        ||||                      |
-|<-k_boundWidthMargin->|<-integralSymbolOffset->||||                      |
-|                      |                        ||||                      |
+|<-k_boundWidthMargin->|<-integralSymbolOffset->||||                 dx   |
+|                      |                        ||||                ^     |
 |                                                |||                      |
-|                      |                        ||||                      |
+|                      |                        ||||                |     |
 |                                                |||                      |
-|                      |                      | a  |                      |
+|                      |                      | a  |                |     |
 |                                                +++                      |
-|                      |                      | a++|                      |
+|                      |                      | a++|                |     |
 |                                              +++                        |
-|                      |                      | a  |                      |
+|                      |                      | a  |                |     |
 |                                                                         |
-|                      |                          +------------------+    |
-|                      |<-lowerBoundLengthOffset->|  lowerBoundWidth |    |
-|                      |                          +------------------+    |
+|                      |                          +-----------------+     |
+|                      |<-lowerBoundLengthOffset->| lowerBoundWidth |     |
+|                      |                          +-----------------+     |
 |                                                                         |
 |                      |                                                  |
 +-------------------------------------------------------------------------+
@@ -304,7 +304,7 @@ KDSize IntegralLayoutNode::computeSize() {
   KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
+  KDCoordinate width = k_symbolWidth+std::max(lowerBoundSize.width(), upperBoundSize.width())/2+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
   KDCoordinate height = upperBoundSize.height() + k_integrandHeigthMargin + k_symbolHeight + centralArgumentHeight() + k_symbolHeight + k_integrandHeigthMargin + lowerBoundSize.height();
   return KDSize(width, height);
 }
@@ -327,7 +327,7 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
     x = std::max(0, -difference);
     y = 0;
   } else if (child == integrandLayout()) {
-    x = k_symbolWidth + k_lineThickness + k_boundWidthMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
+    x = k_symbolWidth + std::max(lowerBoundSize.width(), upperBoundSize.width())/2;
     y = computeBaseline()-integrandLayout()->baseline();
   } else {
     assert(child == differentialLayout());

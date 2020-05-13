@@ -47,19 +47,16 @@ double QuadraticModel::evaluate(double * modelCoefficients, double x) const {
 
 double QuadraticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
-    // Derivate: x^2
+    // Derivate with respect to a: x^2
     return x*x;
   }
   if (derivateCoefficientIndex == 1) {
-    // Derivate: x
+    // Derivate with respect to b: x
     return x;
   }
-  if (derivateCoefficientIndex == 2) {
-    // Derivate: 1
-    return 1;
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 2);
+  // Derivate with respect to c: 1
+  return 1.0;
 }
 
 Expression QuadraticModel::expression(double * modelCoefficients) {

@@ -86,18 +86,15 @@ void ExponentialModel::fit(Store * store, int series, double * modelCoefficients
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
+  const double b = modelCoefficients[1];
   if (derivateCoefficientIndex == 0) {
-    // Derivate: exp(b*x)
+    // Derivate with respect to a: exp(b*x)
     return exp(b*x);
   }
-  if (derivateCoefficientIndex == 1) {
-    // Derivate: a*x*exp(b*x)
-    return a*x*exp(b*x);
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 1);
+  // Derivate with respect to b: a*x*exp(b*x)
+  double a = modelCoefficients[0];
+  return a*x*exp(b*x);
 }
 
 }

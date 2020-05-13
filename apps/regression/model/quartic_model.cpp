@@ -64,28 +64,24 @@ double QuarticModel::evaluate(double * modelCoefficients, double x) const {
 }
 
 double QuarticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  if (derivateCoefficientIndex == 0) {
-    // Derivate: x^4
-    return x*x*x*x;
-  }
-  if (derivateCoefficientIndex == 1) {
-    // Derivate: x^3
-    return x*x*x;
-  }
-  if (derivateCoefficientIndex == 2) {
-    // Derivate: x^2
-    return x*x;
-  }
-  if (derivateCoefficientIndex == 3) {
-    // Derivate: x
-    return x;
-  }
-  if (derivateCoefficientIndex == 4) {
-    // Derivate: 1
-    return 1;
-  }
-  assert(false);
-  return 0.0;
+  switch (derivateCoefficientIndex) {
+    case 0:
+      // Derivate with respect to a: x^4
+      return x*x*x*x;
+    case 1:
+      // Derivate with respect to b: x^3
+      return x*x*x;
+    case 2:
+      // Derivate with respect to c: x^2
+      return x*x;
+    case 3:
+      // Derivate with respect to d: x
+      return x;
+    default:
+      assert(derivateCoefficientIndex == 4);
+      // Derivate with respect to e: 1
+      return 1.0;
+  };
 }
 
 Expression QuarticModel::expression(double * modelCoefficients) {

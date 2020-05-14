@@ -1,6 +1,6 @@
 #include "port.h"
 
-#include <ion/keyboard.h>
+#include <ion.h>
 
 #include <math.h>
 #include <stdint.h>
@@ -231,63 +231,54 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
   mp_raise_TypeError("Color couldn't be parsed");
 }
 
-/* Forbid inlining to ensure regs to be at the top of the stack. Otherwise,
- * LTO inlining can make regs lower on the stack than some just-allocated
- * pointers. */
-__attribute__((noinline)) void gc_collect(void) {
+void gc_collect_regs_and_stack(void) {
+  // get the registers and the sp
+  jmp_buf regs;
+  uintptr_t sp = Ion::collectRegisters(regs);
+
   void * python_stack_top = MP_STATE_THREAD(stack_top);
   assert(python_stack_top != NULL);
-
-  gc_collect_start();
-
-  modturtle_gc_collect();
-  modpyplot_gc_collect();
-
-  /* get the registers.
-   * regs is the also the last object on the stack so the stack is bound by
-   * &regs and python_stack_top. */
-  jmp_buf regs;
-  /* TODO: we use setjmp to get the registers values to look for python heap
-   * root. However, the 'setjmp' does not guarantee that it gets all registers
-   * values. We should check our setjmp implementation for the device and
-   * ensure that it also works for other platforms. */
-  setjmp(regs);
-
-  void **regs_ptr = (void**)&regs;
 
   /* On the device, the stack is stored in reverse order, but it might not be
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
   size_t stackLengthInByte;
   void ** scanStart;
-  if ((uintptr_t)python_stack_top > (uintptr_t)regs_ptr) {
+  if ((uintptr_t)python_stack_top > sp) {
 
     /* To compute the stack length:
-     *                                  regs
+     *                               registers
      *                             <----------->
      * STACK <-  ...|  |  |  |  |  |--|--|--|--|  |  |  |  |  |  |
-     *                             ^&regs                        ^python_stack_top
+     *                             ^sp                           ^python_stack_top
      * */
 
-    stackLengthInByte = (uintptr_t)python_stack_top - (uintptr_t)regs_ptr;
-    scanStart = regs_ptr;
+    stackLengthInByte = (uintptr_t)python_stack_top - sp;
+    scanStart = (void **)sp;
 
   } else {
 
     /* When computing the stack length, take into account regs' size.
-     *                                                 regs
+     *                                              registers
      *                                            <----------->
      * STACK ->  |  |  |  |  |  |  |  |  |  |  |  |--|--|--|--|  |  |  |...
-     *           ^python_stack_top                ^&regs
+     *           ^python_stack_top                ^sp
      * */
 
-    stackLengthInByte = (uintptr_t)regs_ptr - (uintptr_t)python_stack_top + sizeof(regs);
+    stackLengthInByte = sp - (uintptr_t)python_stack_top + sizeof(regs);
     scanStart = (void **)python_stack_top;
 
   }
   /* Memory error detectors might find an error here as they might split regs
    * and stack memory zones. */
   MicroPython::collectRootsAtAddress((char *)scanStart, stackLengthInByte);
+}
+
+void gc_collect(void) {
+  gc_collect_start();
+  modturtle_gc_collect();
+  modpyplot_gc_collect();
+  gc_collect_regs_and_stack();
   gc_collect_end();
 }
 

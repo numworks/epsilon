@@ -18,13 +18,11 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 }
 
 bool ExpressionView::setLayout(Layout layoutR) {
-  /* TODO: this would avoid some useless redrawing. However, when we call
-   * setLayout after raising an Exception that led to erase all
-   * Poincare::TreePool, accessing m_layout will result in an ACCESS ERROR.
-   * How do we avoid that? */
-  /*if (m_layout.isIdenticalTo(layoutR)) {
+  if (!m_layout.wasErasedByException() && m_layout.isIdenticalTo(layoutR)) {
+    /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
+     * result in an ACCESS ERROR. */
     return false;
-  }*/
+  }
   m_layout = layoutR;
   markRectAsDirty(bounds());
   return true;

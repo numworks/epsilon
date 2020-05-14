@@ -57,7 +57,11 @@ float InteractiveCurveViewController::addMargin(float y, float range, bool isVer
   assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
   float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
   float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
-  ratio = ratio / ratioDenominator;
+  /* We want to add slightly more than the required margin, so that
+   * InteractiveCurveViewRange::panToMakePointVisible does not think a point is
+   * invisible due to precision problems when checking if it is outside the
+   * required margin. This is why we add a 1.05f factor. */
+  ratio = 1.05f * ratio / ratioDenominator;
   return y + ratio * range;
 }
 

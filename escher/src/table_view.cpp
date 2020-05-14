@@ -179,20 +179,14 @@ void TableView::ContentView::layoutSubviews(bool force) {
 
 int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
-  int displayedHeightWithOffset = m_dataSource->indexFromCumulatedHeight(m_tableView->bounds().height() + m_tableView->contentOffset().y());
-  return std::min(
-    m_dataSource->numberOfRows(),
-    displayedHeightWithOffset + 1
-  )  - rowOffset;
+  int displayedHeightWithOffset = m_dataSource->indexFromCumulatedHeight(m_tableView->bounds().height() + (m_tableView->contentOffset().y() - m_tableView->topMargin()));
+  return std::min(m_dataSource->numberOfRows(), displayedHeightWithOffset + 1) - rowOffset;
 }
 
 int TableView::ContentView::numberOfDisplayableColumns() const {
   int columnOffset = columnsScrollingOffset();
-  int displayedWidthWithOffset = m_dataSource->indexFromCumulatedWidth(m_tableView->bounds().width() + m_tableView->contentOffset().x());
-  return std::min(
-    m_dataSource->numberOfColumns(),
-    displayedWidthWithOffset + 1
-  )  - columnOffset;
+  int displayedWidthWithOffset = m_dataSource->indexFromCumulatedWidth(m_tableView->bounds().width() + m_tableView->contentOffset().x() - m_tableView->leftMargin());
+  return std::min(m_dataSource->numberOfColumns(), displayedWidthWithOffset + 1) - columnOffset;
 }
 
 int TableView::ContentView::rowsScrollingOffset() const {

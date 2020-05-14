@@ -1,6 +1,7 @@
 #ifndef LIBA_SETJMP_H
 #define LIBA_SETJMP_H
 
+#include <stdint.h>
 #include "private/macros.h"
 
 /* We are preseving registers:
@@ -14,7 +15,7 @@
 
 LIBA_BEGIN_DECLS
 
-typedef int jmp_buf[31];
+typedef uintptr_t jmp_buf[31];
 void longjmp(jmp_buf env, int val);
 int setjmp(jmp_buf env);
 

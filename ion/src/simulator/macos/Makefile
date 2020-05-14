@@ -5,6 +5,8 @@ ion_src += $(addprefix ion/src/simulator/macos/, \
 ion_src += $(addprefix ion/src/simulator/shared/, \
   apple/language.m \
   dummy/callback.cpp \
+  collect_registers_x86_64.s \
+  collect_registers.cpp \
 )
 
 ifeq ($(EPSILON_TELEMETRY),1)

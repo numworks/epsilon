@@ -9,6 +9,9 @@ public:
     m_width(width), m_height(height) {}
   constexpr KDCoordinate width() const { return m_width; }
   constexpr KDCoordinate height() const { return m_height; }
+  bool operator==(const KDSize &other) const {
+    return m_width == other.width() && m_height == other.height();
+  }
 private:
   KDCoordinate m_width;
   KDCoordinate m_height;

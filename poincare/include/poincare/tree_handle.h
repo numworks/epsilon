@@ -62,6 +62,9 @@ public:
 
   uint16_t identifier() const { return m_identifier; }
   TreeNode * node() const;
+  bool wasErasedByException() const {
+    return hasNode(m_identifier) && node() == nullptr;
+  }
   int nodeRetainCount() const { return node()->retainCount(); }
   size_t size() const;
   void * addressInPool() const { return reinterpret_cast<void *>(node()); }

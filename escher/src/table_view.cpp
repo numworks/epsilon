@@ -192,15 +192,13 @@ int TableView::ContentView::numberOfDisplayableColumns() const {
 int TableView::ContentView::rowsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
-  KDCoordinate invisibleHeight = m_tableView->contentOffset().y()-m_tableView->topMargin();
-  invisibleHeight = invisibleHeight < 0 ? 0 : invisibleHeight;
+  KDCoordinate invisibleHeight = std::max(m_tableView->contentOffset().y() - m_tableView->topMargin(), 0);
   return m_dataSource->indexFromCumulatedHeight(invisibleHeight);
 }
 
 int TableView::ContentView::columnsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
-  KDCoordinate invisibleWidth = m_tableView->contentOffset().x()-m_tableView->leftMargin();
-  invisibleWidth = invisibleWidth < 0 ? 0 : invisibleWidth;
+  KDCoordinate invisibleWidth = std::max(m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0);
   return m_dataSource->indexFromCumulatedWidth(invisibleWidth);
 }

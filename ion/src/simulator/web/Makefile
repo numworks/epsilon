@@ -22,6 +22,8 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/language.cpp \
 )
 
+ion_src += ion/src/shared/collect_registers.cpp
+
 ifeq ($(EPSILON_TELEMETRY),1)
 ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
 ion_src += ion/src/shared/telemetry_console.cpp

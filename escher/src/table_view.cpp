@@ -177,25 +177,6 @@ void TableView::ContentView::layoutSubviews(bool force) {
   }
 }
 
-
-int TableView::ContentView::numberOfFullyDisplayableRows() const {
-  // The number of displayable rows taking into accounts margins
-  int rowOffsetWithMargin = m_dataSource->indexFromCumulatedHeight(m_tableView->contentOffset().y() +
-    m_tableView->topMargin());
-  int displayedHeightWithOffsetAndMargin = m_dataSource->indexFromCumulatedHeight(m_tableView->maxContentHeightDisplayableWithoutScrolling() +
-    m_tableView->contentOffset().y() + m_tableView->topMargin());
-  return displayedHeightWithOffsetAndMargin - rowOffsetWithMargin;
-}
-
-int TableView::ContentView::numberOfFullyDisplayableColumns() const {
-  // The number of displayable rows taking into accounts margins
-  int columnOffsetWithMargin = m_dataSource->indexFromCumulatedWidth(m_tableView->contentOffset().x() +
-    m_tableView->leftMargin());
-  int displayedWidthWithOffsetAndMargin = m_dataSource->indexFromCumulatedWidth(m_tableView->maxContentWidthDisplayableWithoutScrolling() +
-    m_tableView->contentOffset().x() + m_tableView->leftMargin());
-  return displayedWidthWithOffsetAndMargin - columnOffsetWithMargin;
-}
-
 int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
   int displayedHeightWithOffset = m_dataSource->indexFromCumulatedHeight(m_tableView->bounds().height() + m_tableView->contentOffset().y());

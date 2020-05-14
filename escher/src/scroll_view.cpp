@@ -53,9 +53,16 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
   if (!allowOverscroll && !m_contentView->bounds().contains(p)) {
     return;
   }
+
+  KDRect visibleRect = visibleContentRect();
+
+  if (visibleRect.width() < 0 || visibleRect.height() < 0) {
+    return;
+  }
+
   KDCoordinate offsetX = 0;
   KDCoordinate offsetY = 0;
-  KDRect visibleRect = visibleContentRect();
+
   if (visibleRect.left() > p.x()) {
     offsetX = p.x() - visibleRect.left();
   }

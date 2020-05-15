@@ -58,6 +58,11 @@ int ZoomParameterController::ContentView::numberOfSubviews() const {
 
 View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
+  /* The order of subview is important here :
+   * If we redraw the curveView before the legendView, that can have some display issue, when exiting sleep mode, which
+     can be visible, if the redraw of curveView is long (with complicated curve), so we prefer to have legendView
+    at first subview.
+  */
   if (index == 0) {
     return &m_legendView;
   }

@@ -179,32 +179,32 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
   gc_collect_root((void **)alignedAddress, byteLength /  sizeof(uintptr_t));
 }
 
-KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode){
-  static constexpr int maxColorIntensity = static_cast<int>(ColorMode::MaxIntensity255);
+KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
+  static constexpr int maxColorIntensity = static_cast<int>(Mode::MaxIntensity255);
   if (mp_obj_is_str(input)) {
     size_t l;
     const char * color = mp_obj_str_get_data(input, &l);
     // TODO add cyan
-    constexpr NameColorPair pairs[] = {
-      NameColorPair("blue", KDColorBlue),
-      NameColorPair("b", KDColorBlue),
-      NameColorPair("red", KDColorRed),
-      NameColorPair("r", KDColorRed),
-      NameColorPair("green", Palette::Green),
-      NameColorPair("g", Palette::Green),
-      NameColorPair("yellow", KDColorYellow),
-      NameColorPair("y", KDColorYellow),
-      NameColorPair("brown", Palette::Brown),
-      NameColorPair("black", KDColorBlack),
-      NameColorPair("k", KDColorBlack),
-      NameColorPair("white", KDColorWhite),
-      NameColorPair("w", KDColorWhite),
-      NameColorPair("pink", Palette::Pink),
-      NameColorPair("orange", Palette::Orange),
-      NameColorPair("purple", Palette::Purple),
-      NameColorPair("grey", Palette::GreyDark)
+    constexpr NamedColor pairs[] = {
+      NamedColor("blue", KDColorBlue),
+      NamedColor("b", KDColorBlue),
+      NamedColor("red", KDColorRed),
+      NamedColor("r", KDColorRed),
+      NamedColor("green", Palette::Green),
+      NamedColor("g", Palette::Green),
+      NamedColor("yellow", KDColorYellow),
+      NamedColor("y", KDColorYellow),
+      NamedColor("brown", Palette::Brown),
+      NamedColor("black", KDColorBlack),
+      NamedColor("k", KDColorBlack),
+      NamedColor("white", KDColorWhite),
+      NamedColor("w", KDColorWhite),
+      NamedColor("pink", Palette::Pink),
+      NamedColor("orange", Palette::Orange),
+      NamedColor("purple", Palette::Purple),
+      NamedColor("grey", Palette::GreyDark)
     };
-    for (NameColorPair p : pairs) {
+    for (NamedColor p : pairs) {
       if (strcmp(p.name(), color) == 0) {
         return p.color();
       }
@@ -237,7 +237,7 @@ KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode
     if (len != 3) {
       mp_raise_TypeError("Color needs 3 components");
     }
-    int intensityFactor = maxColorIntensity/static_cast<int>(ColorMode);
+    int intensityFactor = maxColorIntensity/static_cast<int>(mode);
     return KDColor::RGB888(
         intensityFactor * mp_obj_get_float(elem[0]),
         intensityFactor * mp_obj_get_float(elem[1]),

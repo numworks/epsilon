@@ -155,8 +155,8 @@ void MicroPython::registerScriptProvider(ScriptProvider * s) {
 }
 
 void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
-  /* All pointers on the stack are aligned on sizeof(void *), as asserted.
-   * This is a consequence of the alignment requireduirements of compilers as long
+  /* All addresses stored on the stack are aligned on sizeof(void *), as
+   * asserted. This is a consequence of the alignment requirements of compilers
    * (Cf http://www.catb.org/esr/structure-packing/). */
   assert(((unsigned long)address) % ((unsigned long)sizeof(void *)) == 0);
   assert(byteLength % sizeof(void *) == 0);

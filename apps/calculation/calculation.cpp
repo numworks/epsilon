@@ -137,7 +137,6 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
   KDCoordinate inputWidth = inputLayout.layoutSize().width();
   float singleMargin = 2 * Metric::CommonSmallMargin;
   float doubleMargin = 4 * Metric::CommonSmallMargin;
-  bool singleLine = false;
   KDCoordinate inputBaseline = inputLayout.baseline();
 
   // Get exact output height if needed
@@ -160,7 +159,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
   if (displayOutput(context) == DisplayOutput::ExactOnly) {
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-    singleLine = exactOutputWidth + inputWidth < maxWidth - 2;
+    bool singleLine = exactOutputWidth + inputWidth < maxWidth - 2;
     if (singleLine && !allExpressionsInline) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       result = std::max(inputBaseline, exactOutputBaseline) + std::max(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
@@ -193,7 +192,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
 
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-    singleLine = approximateOutputWidth + inputWidth < maxWidth;
+    bool singleLine = approximateOutputWidth + inputWidth < maxWidth;
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
       if (singleLine && !allExpressionsInline) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();

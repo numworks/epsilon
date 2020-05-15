@@ -42,11 +42,18 @@ void deinit();
 void registerScriptProvider(ScriptProvider * s);
 void collectRootsAtAddress(char * address, int len);
 
-class ColorParser {
-  private:
-  class NameColorPair {
+class Color {
+public:
+  enum class Mode {
+    MaxIntensity1 = 1,
+    MaxIntensity255 = 255,
+  };
+
+  static KDColor Parse(mp_obj_t input, Mode Mode = Mode::MaxIntensity255);
+private:
+  class NamedColor {
   public:
-    constexpr NameColorPair(const char * name, KDColor color) :
+    constexpr NamedColor(const char * name, KDColor color) :
       m_name(name),
       m_color(color)
     {}
@@ -56,14 +63,6 @@ class ColorParser {
     const char * m_name;
     KDColor m_color;
   };
-
-  public:
-  enum class ColorMode {
-    MaxIntensity1 = 1,
-    MaxIntensity255 = 255,
-  };
-
-  static KDColor ParseColor(mp_obj_t input, ColorMode ColorMode = ColorMode::MaxIntensity255);
 };
 
 

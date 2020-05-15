@@ -244,7 +244,10 @@ void AbstractScrollableMultipleExpressionsView::setLayouts(Poincare::Layout left
     contentCell()->layoutSubviews();
     // Reload the scroll content view layout (the content size might have changed)
     layoutSubviews();
-    // Do no reload scroll here as 'setLayouts' is called every time the table is re-layout (when scrolling for instance)
+    /* TODO revert commit 87e48361961d1?
+     * We can call reloadScroll here instead of in didBecome firstResponder,
+     * because we fixed setLayouts (updateLeftLayout, updateCenterLayout and
+     * updateRightLayout are now sometimes false). */
   }
 }
 

@@ -124,7 +124,7 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpressionsInline) {
+KDCoordinate Calculation::height(Context * context, bool expanded, bool forceSingleLine) {
   KDCoordinate result = expanded ? m_expandedHeight : m_height;
   if (result >= 0) {
     // Height already computed
@@ -160,7 +160,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
 
-    bool singleLine = allExpressionsInline || ((exactOutputWidth + inputWidth) < maxWidth - 2); //TODO LEA 2
+    bool singleLine = forceSingleLine || ((exactOutputWidth + inputWidth) < maxWidth - 2); //TODO LEA 2
 
     if (singleLine) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
@@ -191,7 +191,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
-      bool singleLine = allExpressionsInline || ((approximateOutputWidth + inputWidth) < maxWidth); // TODO LEA 2
+      bool singleLine = forceSingleLine || ((approximateOutputWidth + inputWidth) < maxWidth); // TODO LEA 2
       if (singleLine) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
         result = std::max(inputBaseline, approximateOutputBaseline) + std::max(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + singleMargin;
@@ -205,7 +205,7 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-      bool singleLine = allExpressionsInline || ((inputWidth + exactOutputWidth + approximateOutputWidth) < (maxWidth - 30)); // the 30 represents the = sign (example: sin(30)) TODO LEA
+      bool singleLine = forceSingleLine || ((inputWidth + exactOutputWidth + approximateOutputWidth) < (maxWidth - 30)); // the 30 represents the = sign (example: sin(30)) TODO LEA
       if (singleLine) {
         result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) + std::max(inputHeight - inputBaseline, std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline)) + singleMargin;
       } else {

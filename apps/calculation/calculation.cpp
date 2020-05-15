@@ -159,19 +159,17 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
   if (displayOutput(context) == DisplayOutput::ExactOnly) {
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-    bool singleLine = exactOutputWidth + inputWidth < maxWidth - 2;
-    if (singleLine && !allExpressionsInline) {
+
+    bool singleLine = allExpressionsInline || ((exactOutputWidth + inputWidth) < maxWidth - 2); //TODO LEA 2
+
+    if (singleLine) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       result = std::max(inputBaseline, exactOutputBaseline) + std::max(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
     } else {
-      if (allExpressionsInline) {
-        KDCoordinate exactOutputBaseline = exactLayout.baseline();
-        result = std::max(inputBaseline, exactOutputBaseline) + std::max(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
-      } else {
-        result = inputHeight + exactOutputHeight + doubleMargin;
-      }
+      result = inputHeight + exactOutputHeight + doubleMargin;
     }
   } else {
+    // Create the approximate output layout
     bool couldNotCreateApproximateLayout = false;
     Layout approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
@@ -192,18 +190,13 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
 
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-    bool singleLine = approximateOutputWidth + inputWidth < maxWidth;
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
-      if (singleLine && !allExpressionsInline) {
+      bool singleLine = allExpressionsInline || ((approximateOutputWidth + inputWidth) < maxWidth); // TODO LEA 2
+      if (singleLine) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
         result = std::max(inputBaseline, approximateOutputBaseline) + std::max(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + singleMargin;
       } else {
-        if (allExpressionsInline) {
-          KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-          result = std::max(inputBaseline, approximateOutputBaseline) + std::max(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline);
-        } else {
-          result = inputHeight + approximateOutputHeight + doubleMargin;
-        }
+        result = inputHeight + approximateOutputHeight + doubleMargin;
       }
     } else {
       assert(displayOutput(context) == DisplayOutput::ExactAndApproximate || (displayOutput(context) == DisplayOutput::ExactAndApproximateToggle && expanded));
@@ -211,17 +204,13 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpre
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-      singleLine = exactOutputWidth + approximateOutputWidth + inputWidth < maxWidth - 30; // the 30 represents the = sign (example: sin(30))
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-      if (singleLine && !allExpressionsInline) {
+      bool singleLine = allExpressionsInline || ((inputWidth + exactOutputWidth + approximateOutputWidth) < (maxWidth - 30)); // the 30 represents the = sign (example: sin(30)) TODO LEA
+      if (singleLine) {
         result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) + std::max(inputHeight - inputBaseline, std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline)) + singleMargin;
       } else {
-        if (allExpressionsInline) {
-          result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) + std::max(inputHeight - inputBaseline, std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline));
-        } else {
-          KDCoordinate outputHeight = std::max(exactOutputBaseline, approximateOutputBaseline) + std::max(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
-          result = inputHeight + outputHeight + doubleMargin;
-        }
+        KDCoordinate outputHeight = std::max(exactOutputBaseline, approximateOutputBaseline) + std::max(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
+        result = inputHeight + outputHeight + doubleMargin;
       }
     }
   }

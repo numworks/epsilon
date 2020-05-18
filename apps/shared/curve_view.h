@@ -78,15 +78,15 @@ protected:
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).
    * The parameters defining the shape of the arrow are the length in pixel of
-   * the projection of the arrow on the segment -'pixelArrowLength'- and the
-   * tangent of the angle between the segment and each wing of the arrow called
-   * 'angle'.
+   * half the base of the arrow triangle - 'pixelArrowWith' - and the tangent
+   * of the angle between the segment and each wing of the arrow called
+   * 'tanAngle'.
    *
    *            /                  |
    *          /                    |
-   *        /                      L
-   *      /                        |
-   *    /                          |
+   *        /                      l
+   *      / \                      |
+   *    /    \ angle               |
    *  <--------------------------------------------------
    *    \
    *      \
@@ -94,12 +94,12 @@ protected:
    *          \
    *            \
    *
-   *  <--- pl --->
+   *  <--- L --->
    *
-   *  pl = pixelArrowLength
-   *  tan(angle) = L/pl
+   *  l = pixelArrowWith
+   *  tanAngle = tan(angle) = l/L
    */
-  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowLength = 10, float angle = 0.4f) const;
+  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowWith = 4, float tanAngle = 0.4f) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;

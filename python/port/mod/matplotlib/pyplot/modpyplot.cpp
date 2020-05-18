@@ -50,6 +50,16 @@ static size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength
   return itemLength;
 }
 
+// Get color from arguments if possible
+
+KDColor colorFromOptionalArgumentAtIndex(size_t n_args, const mp_obj_t * args, size_t colorIndex) {
+  if (n_args > colorIndex) {
+    return MicroPython::Color::Parse(args[colorIndex]);
+  } else {
+    return Palette::nextDataColor(&paletteIndex);
+  }
+}
+
 // Internal functions
 
 mp_obj_t modpyplot___init__() {
@@ -79,15 +89,15 @@ void modpyplot_flush_used_heap() {
   }
 }
 
-/* arrow(x,y,dx,dy)
+/* arrow(x,y,dx,dy, color)
  * x, y, dx, dy scalars
  * */
 
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
-  assert(n_args == 4);
+  assert(n_args >= 4);
   assert(sPlotStore != nullptr);
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 4);
   sPlotStore->addSegment(args[0], args[1], mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[0]), args[2]),  mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[1]), args[3]), color, true);
   return mp_const_none;
 }
@@ -143,7 +153,7 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
   return mp_obj_new_tuple(4, coords);
 }
 
-/* bar(x, height, width, bottom)
+/* bar(x, height, width, bottom, color)
  * 'x', 'height', 'width' and 'bottom' can either be a scalar or an array/tuple of
  * scalar.
  * 'width' default value is 0.8
@@ -184,7 +194,7 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
     bItems[0] = mp_obj_new_float(0.0f);
   }
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 4);
   for (size_t i=0; i<xLength; i++) {
     mp_obj_t iH = hItems[hLength > 1 ? i : 0];
     mp_obj_t iW = wItems[wLength > 1 ? i : 0];
@@ -219,7 +229,7 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
-/* hist(x, bins)
+/* hist(x, bins, color)
  * 'x' array
  * 'bins': (default value 10)
  *    - int (number of bins)
@@ -298,25 +308,26 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
     binIndex++;
   }
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 2);
   for (size_t i=0; i<nBins; i++) {
     sPlotStore->addRect(edgeItems[i], edgeItems[i+1], binItems[i], mp_obj_new_float(0.0), color);
   }
   return mp_const_none;
 }
 
-/* scatter(x, y)
+/* scatter(x, y, color)
  * - x, y: list
  * - x, y: scalar
  * */
 
-mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
+mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
 
   mp_obj_t * xItems, * yItems;
-  size_t length = extractArgumentsAndCheckEqualSize(x, y, &xItems, &yItems);
+  assert(n_args >= 2);
+  size_t length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 2);
   for (size_t i=0; i<length; i++) {
     sPlotStore->addDot(xItems[i], yItems[i], color);
   }
@@ -324,7 +335,7 @@ mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   return mp_const_none;
 }
 
-/* plot(x, y) plots the curve (x, y)
+/* plot(x, y) plots the curve (x, y, color)
  * plot(y) plots the curve x as index array ([0,1,2...],y)
  * */
 
@@ -342,11 +353,11 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
       xItems[i] = mp_obj_new_float((float)i);
     }
   } else {
-    assert(n_args == 2);
+    assert(n_args >= 2);
     length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
   }
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 2);
   for (int i=0; i<(int)length-1; i++) {
     sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color, false);
   }

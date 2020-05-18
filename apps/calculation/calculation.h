@@ -84,7 +84,7 @@ public:
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context, bool * couldNotCreateApproximateLayout);
 
   // Memoization of height
-  KDCoordinate height(Poincare::Context * context, bool expanded = false, bool forceSingleLine = false);
+  KDCoordinate height(Poincare::Context * context, float verticalMargin, bool expanded, bool forceSingleLine);
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);

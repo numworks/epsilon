@@ -449,7 +449,7 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
 }
 
 
-void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowLength, float angle) const {
+void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowWith, float tanAngle) const {
   /* Let's call the following variables L and l:
    *
    *            /                  |
@@ -467,13 +467,12 @@ void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float 
    * ----- L -----
    *
    **/
-  assert(angle >= 0.0f);
+  assert(tanAngle >= 0.0f);
   if (std::fabs(dx) < FLT_EPSILON && std::fabs(dy) < FLT_EPSILON) {
     // We can't draw an arrow without any orientation
     return;
   }
-  /* We compute the arrow segments in pixels in order to correctly size the
-   * arrow without depending on the displayed range.
+  /* We compute the arrow segments in pixels
    * Warning: the computed values are relative so we need to add/subtract the
    * pixel position of 0s. */
   float x0Pixel = floatToPixel(Axis::Horizontal, 0.0f);
@@ -481,8 +480,8 @@ void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float 
   float dxPixel = floatToPixel(Axis::Horizontal, dx) - x0Pixel;
   float dyPixel = y0Pixel - floatToPixel(Axis::Vertical, dy);
   float dx2dy2 = std::sqrt(dxPixel*dxPixel+dyPixel*dyPixel);
-  float L = pixelArrowLength;
-  float l = angle*L;
+  float l = pixelArrowWith;
+  float L = l/tanAngle;
 
   float arrow1dx = pixelToFloat(Axis::Horizontal, x0Pixel + L*dxPixel/dx2dy2 + l*dyPixel/dx2dy2);
   float arrow1dy = pixelToFloat(Axis::Vertical, y0Pixel - (L*dyPixel/dx2dy2 - l*dxPixel/dx2dy2));

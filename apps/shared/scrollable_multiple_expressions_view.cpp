@@ -55,26 +55,36 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::reloadTextColor() {
 }
 
 KDSize AbstractScrollableMultipleExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
-  KDSize leftSize = KDSizeZero;
-  KDCoordinate leftViewBaseline = 0;
   KDCoordinate width = 0;
+
+  // Compute baselines
+  KDCoordinate leftBaseline = 0;
+  KDCoordinate centerBaseline = 0;
+  KDCoordinate rightBaseline = 0;
+  KDCoordinate viewBaseline = baseline(&leftBaseline, &centerBaseline, &rightBaseline);
+
+  KDSize leftSize = KDSizeZero;
   if (leftExpressionView() && !leftExpressionView()->layout().isUninitialized()) {
     leftSize = leftExpressionView()->minimalSizeForOptimalDisplay();
-    leftViewBaseline = leftExpressionView()->layout().baseline();
     width += leftSize.width() + Metric::CommonLargeMargin;
   }
-  KDSize rightExpressionSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
-  width += rightExpressionSize.width();
-  Layout l = m_rightExpressionView.layout();
-  KDCoordinate rightBaseline = l.isUninitialized() ? 0 : l.baseline();
-  KDSize centeredExpressionSize = KDSizeZero;
-  KDCoordinate centeredBaseline = 0;
+
+  KDSize centerSize = KDSizeZero;
   if (displayCenter()) {
-    centeredBaseline = m_centeredExpressionView.layout().baseline();
-    centeredExpressionSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
-    width += centeredExpressionSize.width() + 2*Metric::CommonLargeMargin + m_approximateSign.minimalSizeForOptimalDisplay().width();
+    centerSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
+    width += centerSize.width() + 2 * Metric::CommonLargeMargin + m_approximateSign.minimalSizeForOptimalDisplay().width();
   }
-  KDCoordinate height = std::max(std::max(centeredBaseline, rightBaseline), leftViewBaseline) + std::max(std::max(centeredExpressionSize.height()-centeredBaseline, rightExpressionSize.height()-rightBaseline), leftSize.height()-leftViewBaseline);
+
+  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
+  width += rightSize.width();
+
+  KDCoordinate height = viewBaseline
+    + std::max(
+        std::max(
+          centerSize.height() - centerBaseline,
+          rightSize.height() - rightBaseline),
+        leftSize.height() - leftBaseline);
+
   return KDSize(width, height);
 }
 
@@ -111,6 +121,32 @@ int AbstractScrollableMultipleExpressionsView::ContentCell::numberOfSubviews() c
   return nbOfSubviews;
 }
 
+KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(KDCoordinate * leftBaseline, KDCoordinate * centerBaseline, KDCoordinate * rightBaseline) const {
+  // Left view
+  KDCoordinate leftViewBaseline = (leftExpressionView() && !leftExpressionView()->layout().isUninitialized()) ?
+    leftExpressionView()->layout().baseline() :
+    0;
+  if (leftBaseline != nullptr) {
+    *leftBaseline = leftViewBaseline;
+  }
+
+  // Center view
+  KDCoordinate centerViewBaseline = displayCenter() ? m_centeredExpressionView.layout().baseline() : 0;
+  if (centerBaseline != nullptr) {
+    *centerBaseline = centerViewBaseline;
+  }
+
+  // Right view
+  KDCoordinate rightViewBaseline = m_rightExpressionView.layout().isUninitialized() ?
+    0 :
+    m_rightExpressionView.layout().baseline();
+  if (rightBaseline != nullptr) {
+    *rightBaseline = rightViewBaseline;
+  }
+
+  return std::max(std::max(leftViewBaseline, centerViewBaseline), rightViewBaseline);
+}
+
 View * AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(int index) {
   bool leftIsVisible = leftExpressionView() != nullptr;
   if (leftIsVisible && index == 0) {
@@ -123,33 +159,33 @@ View * AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(in
 void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(bool force) {
   // Subviews sizes
   KDSize leftSize = leftExpressionView() ? leftExpressionView()->minimalSizeForOptimalDisplay() : KDSizeZero;
-  KDCoordinate leftViewBaseline = leftExpressionView() && !leftExpressionView()->layout().isUninitialized() ? leftExpressionView()->layout().baseline() : 0;
-  KDSize centeredExpressionSize = KDSizeZero;
-  KDCoordinate centeredBaseline = 0;
-  if (displayCenter()) {
-    centeredBaseline = m_centeredExpressionView.layout().baseline();
-    centeredExpressionSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
-  }
-  KDSize rightExpressionSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
-  KDCoordinate rightBaseline = m_rightExpressionView.layout().isUninitialized() ? 0 : m_rightExpressionView.layout().baseline();
-  // Compute baseline
-  KDCoordinate baseline = std::max(std::max(leftViewBaseline, rightBaseline), centeredBaseline);
+  KDSize centerSize = displayCenter() ? m_centeredExpressionView.minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
+
+  // Compute baselines
+  KDCoordinate leftBaseline = 0;
+  KDCoordinate centerBaseline = 0;
+  KDCoordinate rightBaseline = 0;
+  KDCoordinate viewBaseline = baseline(&leftBaseline, &centerBaseline, &rightBaseline);
+
   // Layout left view
   KDCoordinate currentWidth = 0;
   if (leftExpressionView()) {
-    leftExpressionView()->setFrame(KDRect(currentWidth, baseline-leftViewBaseline, leftSize), force);
+    leftExpressionView()->setFrame(KDRect(currentWidth, viewBaseline - leftBaseline, leftSize), force);
     currentWidth += leftSize.width() + Metric::CommonLargeMargin;
   }
-  // Layout centered expression
+
+  // Layout center expression
   if (displayCenter()) {
     KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
-    m_centeredExpressionView.setFrame(KDRect(currentWidth, baseline-centeredBaseline, centeredExpressionSize), force);
-    currentWidth += Metric::CommonLargeMargin+centeredExpressionSize.width();
-    m_approximateSign.setFrame(KDRect(currentWidth, baseline-approximateSignSize.height()/2, approximateSignSize), force);
+    m_centeredExpressionView.setFrame(KDRect(currentWidth, viewBaseline - centerBaseline, centerSize), force);
+    currentWidth += Metric::CommonLargeMargin + centerSize.width();
+    m_approximateSign.setFrame(KDRect(currentWidth, viewBaseline - approximateSignSize.height()/2, approximateSignSize), force);
     currentWidth += Metric::CommonLargeMargin + approximateSignSize.width();
   }
+
   // Layout right expression
-  m_rightExpressionView.setFrame(KDRect(currentWidth, baseline-rightBaseline, rightExpressionSize), force);
+  m_rightExpressionView.setFrame(KDRect(currentWidth, viewBaseline - rightBaseline, rightSize), force);
 }
 
 AbstractScrollableMultipleExpressionsView::AbstractScrollableMultipleExpressionsView(Responder * parentResponder, View * contentCell) :

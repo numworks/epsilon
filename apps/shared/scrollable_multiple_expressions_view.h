@@ -28,9 +28,8 @@ public:
   void setDisplayCenter(bool display);
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
-  Poincare::Layout layout() const {
-    return constContentCell()->layout();
-  }
+  Poincare::Layout layout() const { return constContentCell()->layout(); }
+  KDCoordinate baseline() const { return constContentCell()->baseline(); }
 protected:
   class ContentCell : public ::EvenOddCell {
   public:
@@ -59,7 +58,7 @@ protected:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     virtual Poincare::Layout layout() const override;
-
+    KDCoordinate baseline(KDCoordinate * leftBaseline = nullptr, KDCoordinate * centerBaseline = nullptr, KDCoordinate * rightBaseline = nullptr) const;
   private:
     View * subviewAtIndex(int index) override;
     ExpressionView m_rightExpressionView;
@@ -68,8 +67,8 @@ protected:
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
   };
-  virtual ContentCell *  contentCell() = 0;
-  virtual const ContentCell *  constContentCell() const = 0;
+  virtual ContentCell * contentCell() = 0;
+  virtual const ContentCell * constContentCell() const = 0;
 };
 
 class ScrollableTwoExpressionsView : public AbstractScrollableMultipleExpressionsView {

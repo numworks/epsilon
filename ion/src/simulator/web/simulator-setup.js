@@ -19,6 +19,7 @@ var Module;
 
   Epsilon(Module);
 
+
   document.querySelectorAll('#keyboard span').forEach(function(span){
     function eventHandler(keyHandler) {
       return function(ev) {
@@ -62,4 +63,17 @@ function screenshot() {
   link.download = 'screenshot.png';
   link.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
   link.click();
+}
+
+function sendScript(evt) {
+  //TODO Support multiple files
+  const file = evt.target.files[0];
+  //FIXME Scenario : test.py.py
+  var name  = Module.allocate(Module.intArrayFromString(file.name.split(".py")[0]), 'i8', 0);
+  var reader = new FileReader();
+  reader.readAsText(file);
+  reader.onload = function() {
+    var content  = Module.allocate(Module.intArrayFromString("\001" + reader.result), 'i8', 0);
+    Module._IonStorageAddScript(name, content);
+  };
 }

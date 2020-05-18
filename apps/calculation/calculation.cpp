@@ -124,7 +124,7 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-KDCoordinate Calculation::height(Context * context, bool expanded, bool forceSingleLine) {
+KDCoordinate Calculation::height(Context * context, float verticalMargin, bool expanded, bool forceSingleLine) {
   KDCoordinate result = expanded ? m_expandedHeight : m_height;
   if (result >= 0) {
     // Height already computed
@@ -135,8 +135,6 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool forceSin
   Layout inputLayout = createInputLayout();
   KDCoordinate inputHeight = inputLayout.layoutSize().height();
   KDCoordinate inputWidth = inputLayout.layoutSize().width();
-  float singleMargin = 2 * Metric::CommonSmallMargin;
-  float doubleMargin = 4 * Metric::CommonSmallMargin;
   KDCoordinate inputBaseline = inputLayout.baseline();
 
   // Get exact output height if needed
@@ -159,14 +157,13 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool forceSin
   if (displayOutput(context) == DisplayOutput::ExactOnly) {
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-
     bool singleLine = forceSingleLine || ((exactOutputWidth + inputWidth) < maxWidth - 2); //TODO LEA 2
-
     if (singleLine) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      result = std::max(inputBaseline, exactOutputBaseline) + std::max(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
+      result = std::max(inputBaseline, exactOutputBaseline) // Above the baseline
+        + std::max(inputHeight - inputBaseline, exactOutputHeight - exactOutputBaseline); // Below the baseline
     } else {
-      result = inputHeight + exactOutputHeight + doubleMargin;
+      result = inputHeight + verticalMargin + exactOutputHeight;
     }
   } else {
     // Create the approximate output layout
@@ -194,9 +191,10 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool forceSin
       bool singleLine = forceSingleLine || ((approximateOutputWidth + inputWidth) < maxWidth); // TODO LEA 2
       if (singleLine) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-        result = std::max(inputBaseline, approximateOutputBaseline) + std::max(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + singleMargin;
+        result = std::max(inputBaseline, approximateOutputBaseline) // Above the baseline
+          + std::max(inputHeight - inputBaseline, approximateOutputHeight - approximateOutputBaseline); // Below the baseline
       } else {
-        result = inputHeight + approximateOutputHeight + doubleMargin;
+        result = inputHeight + verticalMargin + approximateOutputHeight;
       }
     } else {
       assert(displayOutput(context) == DisplayOutput::ExactAndApproximate || (displayOutput(context) == DisplayOutput::ExactAndApproximateToggle && expanded));
@@ -207,13 +205,20 @@ KDCoordinate Calculation::height(Context * context, bool expanded, bool forceSin
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
       bool singleLine = forceSingleLine || ((inputWidth + exactOutputWidth + approximateOutputWidth) < (maxWidth - 30)); // the 30 represents the = sign (example: sin(30)) TODO LEA
       if (singleLine) {
-        result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) + std::max(inputHeight - inputBaseline, std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline)) + singleMargin;
+        result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) // Above the baseline
+          + std::max(inputHeight - inputBaseline, // Beloxw the baseline
+              std::max(exactOutputHeight - exactOutputBaseline,
+                approximateOutputHeight - approximateOutputBaseline));
       } else {
-        KDCoordinate outputHeight = std::max(exactOutputBaseline, approximateOutputBaseline) + std::max(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
-        result = inputHeight + outputHeight + doubleMargin;
+        KDCoordinate outputHeight = std::max(exactOutputBaseline, approximateOutputBaseline) // Above the baseline
+          + std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight - approximateOutputBaseline); // Below the baseline
+        result = inputHeight + verticalMargin + outputHeight;
       }
     }
   }
+
+  // Add the top and bottom margins
+  result += 2 * verticalMargin;
 
   /* For all display outputs except ExactAndApproximateToggle, the selected
    * height and the usual height are identical. We update both heights in

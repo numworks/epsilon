@@ -179,18 +179,32 @@ void HistoryViewCell::layoutSubviews(bool force) {
   }
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  int singleLine = outputSize.width() + inputSize.width() < Ion::Display::Width - (Metric::CommonSmallMargin * 2) - Metric::EllipsisCellWidth;
-  int inputHeight = (singleLine && inputSize.height() < outputSize.height()) ? (outputSize.height() - inputSize.height()) : 0;
+  bool singleLine = (inputSize.width() + k_margin + outputSize.width()) < bounds().width() - Metric::EllipsisCellWidth; // k_margin the separation between the input and output. inputSize and outputSize already handle their left and right margins TODO LEA factorize singleLine()
+
+  KDCoordinate inputY = k_margin;
+  KDCoordinate outputY = k_margin;
+  if (singleLine) {
+    KDCoordinate inputBaseline = m_inputView.layout().baseline();
+    KDCoordinate outputBaseline = m_scrollableOutputView.baseline();
+    KDCoordinate baselineDifference = outputBaseline - inputBaseline;
+    if (baselineDifference > 0) {
+      inputY += baselineDifference;
+    } else {
+      outputY += -baselineDifference;
+    }
+  } else {
+    outputY += inputSize.height();
+  }
+
   m_inputView.setFrame(KDRect(
-    0,
-    inputHeight,
-    std::min(maxFrameWidth, inputSize.width()),
-    inputSize.height()),
-  force);
-  int outputHeight = singleLine ? std::max(0, inputSize.height() - outputSize.height()) / 2 + std::max(0, (inputSize.height() - outputSize.height()) / 2) + 1 : inputSize.height();
+        0,
+        inputY,
+        std::min(maxFrameWidth, inputSize.width()),
+        inputSize.height()),
+      force);
   m_scrollableOutputView.setFrame(KDRect(
         std::max(0, maxFrameWidth - outputSize.width()),
-        outputHeight,
+        outputY,
         std::min(maxFrameWidth, outputSize.width()),
         outputSize.height()),
       force);

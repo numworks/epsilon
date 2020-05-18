@@ -53,7 +53,7 @@ public:
   Shared::ScrollableTwoExpressionsView * outputView();
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
-  constexpr static KDCoordinate k_horizontalMargin = Metric::CommonSmallMargin;
+  constexpr static KDCoordinate k_margin = Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);

@@ -42,7 +42,7 @@ static size_t extractArgumentsAndCheckEqualSize(mp_obj_t x, mp_obj_t y, mp_obj_t
  * - of the required size
 */
 
-size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength, mp_obj_t ** items) {
+static size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength, mp_obj_t ** items) {
   size_t itemLength = extractArgument(arg, items);
   if (itemLength > 1 && requiredlength > 1 && itemLength != requiredlength) {
     mp_raise_ValueError("shape mismatch");

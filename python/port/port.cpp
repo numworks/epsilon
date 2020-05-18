@@ -123,7 +123,7 @@ void MicroPython::init(void * heapStart, void * heapEnd) {
   mp_pystack_init(pystack, &pystack[MP_ARRAY_SIZE(pystack)]);
 #endif
 
-  volatile uintptr_t stackTop;
+  volatile int stackTop;
   void * stackTopAddress = (void *)(&stackTop);
   /* We delimit the stack part that will be used by Python. The stackTop is the
    * address of the first object that can be allocated on Python stack. This

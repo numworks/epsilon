@@ -31,7 +31,8 @@ private:
 
 class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
-  constexpr static KDCoordinate k_verticalMargin = Metric::CommonLargeMargin; //TODO LEA same as k_horizontalMargin?
+  constexpr static KDCoordinate k_margin = Metric::CommonSmallMargin;
+  constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
   HistoryViewCell(Responder * parentResponder = nullptr);
   static bool CanBeSingleLine(KDCoordinate inputWidth, KDCoordinate outputWidth);
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType = HistoryViewCellDataSource::SubviewType::None);
@@ -54,7 +55,6 @@ public:
   Shared::ScrollableTwoExpressionsView * outputView();
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
-  constexpr static KDCoordinate k_margin = Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);

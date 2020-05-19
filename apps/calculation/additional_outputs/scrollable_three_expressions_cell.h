@@ -10,8 +10,9 @@ namespace Calculation {
 
 class ScrollableThreeExpressionsView : public Shared::AbstractScrollableMultipleExpressionsView {
 public:
+  static constexpr KDCoordinate k_margin = Metric::CommonSmallMargin;
   ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
-    setMargins(Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin); // Left Right margins are already added by TableCell
+    setMargins(k_margin, k_margin, k_margin, k_margin); // Left Right margins are already added by TableCell
     setBackgroundColor(KDColorWhite);
   }
   void resetMemoization();

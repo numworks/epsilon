@@ -2,6 +2,7 @@
 #define SHARED_SCROLLABLE_MULTIPLE_EXPRESSIONS_VIEW_H
 
 #include <escher.h>
+#include <apps/i18n.h>
 
 namespace Shared {
 
@@ -12,6 +13,11 @@ public:
     Center = 1,
     Right = 2
   };
+
+  static KDCoordinate StandardApproximateViewAndMarginsSize() {
+    return ContentCell::StandardApproximateViewAndMarginsSize();
+  }
+
   AbstractScrollableMultipleExpressionsView(Responder * parentResponder, View * contentCell);
   ::EvenOddCell * evenOddCell() {
     return contentCell();
@@ -33,6 +39,8 @@ public:
 protected:
   class ContentCell : public ::EvenOddCell {
   public:
+    static KDCoordinate StandardApproximateViewAndMarginsSize();
+    constexpr static KDCoordinate k_horizontalMargin = Metric::CommonLargeMargin;
     ContentCell();
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
@@ -60,6 +68,8 @@ protected:
     virtual Poincare::Layout layout() const override;
     KDCoordinate baseline(KDCoordinate * leftBaseline = nullptr, KDCoordinate * centerBaseline = nullptr, KDCoordinate * rightBaseline = nullptr) const;
   private:
+    constexpr static const KDFont * k_font = KDFont::LargeFont;
+    const static I18n::Message k_defaultApproximateMessage = I18n::Message::AlmostEqual;
     View * subviewAtIndex(int index) override;
     ExpressionView m_rightExpressionView;
     MessageTextView m_approximateSign;

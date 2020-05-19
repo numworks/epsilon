@@ -42,7 +42,7 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
   m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
   m_calculationExpanded(false),
-  m_inputView(this, Metric::CommonLargeMargin, Metric::CommonSmallMargin),
+  m_inputView(this, Metric::CommonLargeMargin, k_inputOutputViewsVerticalMargin),
   m_scrollableOutputView(this)
 {
   m_calculationCRC32 = 0;
@@ -171,7 +171,7 @@ View * HistoryViewCell::subviewAtIndex(int index) {
 
 bool HistoryViewCell::CanBeSingleLine(KDCoordinate inputWidth, KDCoordinate outputWidth) {
   // k_margin is the separation between the input and output.
-  return (inputWidth + k_margin + outputWidth) < (Ion::Display::Width - Metric::EllipsisCellWidth - 2 * k_margin);
+  return (inputWidth + k_margin + outputWidth) < (Ion::Display::Width - Metric::EllipsisCellWidth - 2 * k_margin); //TODO LEA -2 ??
 }
 
 void HistoryViewCell::layoutSubviews(bool force) {

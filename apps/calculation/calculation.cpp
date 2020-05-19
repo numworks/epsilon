@@ -1,5 +1,6 @@
 #include "calculation.h"
 #include "../shared/poincare_helpers.h"
+#include "../shared/scrollable_multiple_expressions_view.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
 #include <poincare/exception_checkpoint.h>
@@ -124,7 +125,7 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-KDCoordinate Calculation::height(Context * context, float verticalMargin, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canBeSingleLine) {
+KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canBeSingleLine) {
   KDCoordinate result = expanded ? m_expandedHeight : m_height;
   if (result >= 0) {
     // Height already computed
@@ -161,9 +162,10 @@ KDCoordinate Calculation::height(Context * context, float verticalMargin, bool e
     if (singleLine) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       result = std::max(inputBaseline, exactOutputBaseline) // Above the baseline
-        + std::max(inputHeight - inputBaseline, exactOutputHeight - exactOutputBaseline); // Below the baseline
+        + std::max(inputHeight - inputBaseline, exactOutputHeight - exactOutputBaseline) // Below the baseline
+        + 2 * verticalMarginAroundLayouts;
     } else {
-      result = inputHeight + verticalMargin + exactOutputHeight;
+      result = inputHeight + verticalMarginBetweenLayouts + exactOutputHeight + 4 * verticalMarginAroundLayouts;
     }
   } else {
     // Create the approximate output layout
@@ -192,9 +194,10 @@ KDCoordinate Calculation::height(Context * context, float verticalMargin, bool e
       if (singleLine) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
         result = std::max(inputBaseline, approximateOutputBaseline) // Above the baseline
-          + std::max(inputHeight - inputBaseline, approximateOutputHeight - approximateOutputBaseline); // Below the baseline
+          + std::max(inputHeight - inputBaseline, approximateOutputHeight - approximateOutputBaseline) // Below the baseline
+          + 2 * verticalMarginAroundLayouts;
       } else {
-        result = inputHeight + verticalMargin + approximateOutputHeight;
+        result = inputHeight + verticalMarginBetweenLayouts + approximateOutputHeight + 4 * verticalMarginAroundLayouts;
       }
     } else {
       assert(displayOutput(context) == DisplayOutput::ExactAndApproximate || (displayOutput(context) == DisplayOutput::ExactAndApproximateToggle && expanded));
@@ -203,22 +206,23 @@ KDCoordinate Calculation::height(Context * context, float verticalMargin, bool e
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-      bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, exactOutputWidth + /*TODO LEA equal sign " = "*/ + approximateOutputWidth);
+      bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, exactOutputWidth + AbstractScrollableMultipleExpressionsView::StandardApproximateViewAndMarginsSize() + approximateOutputWidth);
       if (singleLine) {
         result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) // Above the baseline
           + std::max(inputHeight - inputBaseline, // Beloxw the baseline
               std::max(exactOutputHeight - exactOutputBaseline,
-                approximateOutputHeight - approximateOutputBaseline));
+                approximateOutputHeight - approximateOutputBaseline))
+          + 2 * verticalMarginAroundLayouts;
       } else {
         KDCoordinate outputHeight = std::max(exactOutputBaseline, approximateOutputBaseline) // Above the baseline
           + std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight - approximateOutputBaseline); // Below the baseline
-        result = inputHeight + verticalMargin + outputHeight;
+        result = inputHeight + verticalMarginBetweenLayouts + outputHeight + 4 * verticalMarginAroundLayouts;
       }
     }
   }
 
   // Add the top and bottom margins
-  result += 2 * verticalMargin;
+  result += 2 * verticalMarginBetweenLayouts;
 
   /* For all display outputs except ExactAndApproximateToggle, the selected
    * height and the usual height are identical. We update both heights in

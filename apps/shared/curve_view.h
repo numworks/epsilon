@@ -77,29 +77,28 @@ protected:
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).
-   * The parameters defining the shape of the arrow are the length in pixel of
-   * half the base of the arrow triangle - 'pixelArrowWith' - and the tangent
-   * of the angle between the segment and each wing of the arrow called
-   * 'tanAngle'.
+   * The parameters defining the shape of the arrow are the length of the base
+   * of the arrow triangle - 'arrowWith' - and the tangent of the angle between
+   * the segment and each wing of the arrow called 'tanAngle'.
    *
    *            /                  |
    *          /                    |
-   *        /                      l
+   *        /                      |
    *      / \                      |
    *    /    \ angle               |
-   *  <--------------------------------------------------
-   *    \
-   *      \
-   *        \
-   *          \
-   *            \
+   *  <----------------------------l---------------------
+   *    \                          |
+   *      \                        |
+   *        \                      |
+   *          \                    |
+   *            \                  |
    *
    *  <--- L --->
    *
-   *  l = pixelArrowWith
+   *  l = arrowWith
    *  tanAngle = tan(angle) = l/L
    */
-  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, KDCoordinate pixelArrowWith = 4, float tanAngle = 0.4f) const;
+  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWith = 4, float tanAngle = 0.4f) const; // 0.3639 = tan(20°)
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;

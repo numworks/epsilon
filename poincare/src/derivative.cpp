@@ -179,6 +179,8 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   derivand = childAtIndex(0);
   /* Deep reduces the child, because didDerivate may not preserve its reduced
    * status. */
+
+  derivand = derivand.replaceSymbolWithExpression(symbol, symbolValue);
   derivand = derivand.deepReduce(reductionContext);
   replaceWithInPlace(derivand);
   return derivand;

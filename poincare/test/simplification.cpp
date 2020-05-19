@@ -1140,7 +1140,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("conj(-2+2×𝐢+𝐢)", "-2-3×𝐢", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("cos(12)", "cos(12)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("cos(12+𝐢)", "cos(12+𝐢)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("diff(3×x, x, 3)", "diff(3×x,x,3)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("diff(3×x, x, 3)", "3", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("quo(34,x)", "quo(34,x)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("rem(5,3)", "2", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("floor(x)", "floor(x)", User, Radian, Cartesian);

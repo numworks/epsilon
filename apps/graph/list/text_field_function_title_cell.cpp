@@ -27,8 +27,8 @@ void TextFieldFunctionTitleCell::setEditing(bool editing) {
   int extensionLength = UTF8Helper::HasCodePoint(previousText, UCodePointGreekSmallLetterTheta) ? Shared::Function::k_parenthesedThetaArgumentByteLength : Shared::Function::k_parenthesedXNTArgumentByteLength;
   m_textField.setExtensionLength(extensionLength);
   m_textField.setEditing(true);
-  m_textField.setText(previousText);
   m_textField.setDraftTextBufferSize(Poincare::SymbolAbstract::k_maxNameSize+extensionLength);
+  m_textField.setText(previousText);
 }
 
 bool TextFieldFunctionTitleCell::isEditing() const {

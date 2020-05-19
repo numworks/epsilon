@@ -26,6 +26,14 @@ QUIZ_CASE(poincare_differential_addition) {
   assert_parses_and_reduces_as("diff(x,x,1)", "1");
   assert_parses_and_reduces_as("diff(1+2,x,1)", "0");
   assert_parses_and_reduces_as("diff(a,x,1)", "0");
+
   assert_parses_and_reduces_as("diff(1+x,x,1)", "1");
   assert_parses_and_reduces_as("diff(undef,x,1)", "undef");
+
+  assert_parses_and_reduces_as("diff(x+x,x,4)", "2");
+  assert_parses_and_reduces_as("diff(2*x,x,1)", "2");
+  assert_parses_and_reduces_as("diff(a*x,x,2)", "a");
+  assert_parses_and_reduces_as("diff(a*x+b,x,x)", "a");
+
+  // assert_parses_and_reduces_as("diff(x*x,x,3)", "3");
 }

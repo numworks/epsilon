@@ -1,5 +1,6 @@
 #include <poincare/addition.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -8,7 +9,6 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
-#include <poincare/derivative.h>
 #include <assert.h>
 #include <utility>
 

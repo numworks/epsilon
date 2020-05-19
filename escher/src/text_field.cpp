@@ -135,7 +135,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);
   *overridenByteLocation = overridenByte;
-  m_currentDraftTextLength += copySize;
+  m_currentDraftTextLength += copySize-1; // Do no count the null-termination
 
   reloadRectFromPosition(m_horizontalAlignment == 0.0f ? location : s_draftTextBuffer);
   return true;

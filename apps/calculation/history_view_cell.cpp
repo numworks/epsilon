@@ -39,17 +39,18 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
+  m_calculationCRC32(0),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
   m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
-  m_calculationExpanded(false),
   m_inputView(this, k_inputOutputViewsHorizontalMargin, k_inputOutputViewsVerticalMargin),
-  m_scrollableOutputView(this)
+  m_scrollableOutputView(this),
+  m_calculationExpanded(false),
+  m_calculationSingleLine(false)
 {
-  m_calculationCRC32 = 0;
 }
 
 Shared::ScrollableTwoExpressionsView * HistoryViewCell::outputView() {
-  return &m_scrollableOutputView;
+  return &m_scrollableOutputView; //TODO LEA inline
 }
 
 void HistoryViewCell::setEven(bool even) {
@@ -190,11 +191,11 @@ void HistoryViewCell::layoutSubviews(bool force) {
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
 
-  bool singleLine = ViewsCanBeSingleLine(inputSize.width(), outputSize.width());
+  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), outputSize.width());
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;
-  if (singleLine) {
+  if (m_calculationSingleLine) {
     KDCoordinate inputBaseline = m_inputView.layout().baseline();
     KDCoordinate outputBaseline = m_scrollableOutputView.baseline();
     KDCoordinate baselineDifference = outputBaseline - inputBaseline;
@@ -312,27 +313,41 @@ void HistoryViewCell::didBecomeFirstResponder() {
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
-  assert(m_dataSource);
+  assert(m_dataSource != nullptr);
   HistoryViewCellDataSource::SubviewType type = m_dataSource->selectedSubviewType();
-  if ((event == Ion::Events::Down && type == HistoryViewCellDataSource::SubviewType::Input) ||
-      (event == Ion::Events::Up && type == HistoryViewCellDataSource::SubviewType::Output) ||
-      (event == Ion::Events::Right && type != HistoryViewCellDataSource::SubviewType::Ellipsis && displayedEllipsis()) ||
-      (event == Ion::Events::Left && type == HistoryViewCellDataSource::SubviewType::Ellipsis)) {
-    HistoryViewCellDataSource::SubviewType otherSubviewType;
-    if (event == Ion::Events::Down) {
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
-    } else if (event == Ion::Events::Up) {
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Input;
-    } else if (event == Ion::Events::Right) {
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Ellipsis;
-    } else {
-      assert(event == Ion::Events::Left);
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
+  assert(type != HistoryViewCellDataSource::SubviewType::None);
+  HistoryViewCellDataSource::SubviewType otherSubviewType = HistoryViewCellDataSource::SubviewType::None;
+  if (m_calculationSingleLine) {
+    static_assert(
+        static_cast<int>(HistoryViewCellDataSource::SubviewType::None) == 0
+        && static_cast<int>(HistoryViewCellDataSource::SubviewType::Input) == 1
+        && static_cast<int>(HistoryViewCellDataSource::SubviewType::Output) == 2
+        && static_cast<int>(HistoryViewCellDataSource::SubviewType::Ellipsis) == 3,
+        "The array types is not well-formed anymore");
+    HistoryViewCellDataSource::SubviewType types[] = {
+      HistoryViewCellDataSource::SubviewType::None,
+      HistoryViewCellDataSource::SubviewType::Input,
+      HistoryViewCellDataSource::SubviewType::Output,
+      displayedEllipsis() ? HistoryViewCellDataSource::SubviewType::Ellipsis : HistoryViewCellDataSource::SubviewType::None,
+      HistoryViewCellDataSource::SubviewType::None,
+    };
+    if (event == Ion::Events::Right || event == Ion::Events::Left) {
+      otherSubviewType = types[static_cast<int>(type) + (event == Ion::Events::Right ? 1 : -1)];
     }
-    m_dataSource->setSelectedSubviewType(otherSubviewType, true);
-    return true;
+  } else if ((event == Ion::Events::Down && type == HistoryViewCellDataSource::SubviewType::Input)
+      || (event == Ion::Events::Left && type == HistoryViewCellDataSource::SubviewType::Ellipsis))
+  {
+    otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
+  } else if (event == Ion::Events::Up && type == HistoryViewCellDataSource::SubviewType::Output) {
+    otherSubviewType = HistoryViewCellDataSource::SubviewType::Input;
+  } else if (event == Ion::Events::Right && type != HistoryViewCellDataSource::SubviewType::Ellipsis && displayedEllipsis()) {
+    otherSubviewType = HistoryViewCellDataSource::SubviewType::Ellipsis;
   }
-  return false;
+  if (otherSubviewType == HistoryViewCellDataSource::SubviewType::None) {
+    return false;
+  }
+  m_dataSource->setSelectedSubviewType(otherSubviewType, true);
+  return true;
 }
 
 bool HistoryViewCell::displayedEllipsis() const {

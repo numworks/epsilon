@@ -12,10 +12,10 @@ class HistoryViewCell;
 class HistoryViewCellDataSource {
 public:
   enum class SubviewType {
-    None,
-    Input,
-    Output,
-    Ellipsis
+    None = 0,
+    Input = 1,
+    Output = 2,
+    Ellipsis = 3
   };
   HistoryViewCellDataSource();
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
@@ -64,11 +64,12 @@ private:
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformationType m_calculationAdditionInformation;
-  bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableTwoExpressionsView m_scrollableOutputView;
   EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource * m_dataSource;
+  bool m_calculationExpanded;
+  bool m_calculationSingleLine;
 };
 
 }

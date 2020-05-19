@@ -116,7 +116,8 @@ Responder * CalculationController::defaultController() {
 }
 
 int CalculationController::numberOfRows() const {
-  return 1 + k_totalNumberOfDoubleBufferRows + 4 + maxNumberOfCoefficients() + hasLinearRegression() * 2;
+  // rows for : title + Mean ... Variance + Number of points ...  Regression + Coefficients + (R) + R2
+  return 1 + k_totalNumberOfDoubleBufferRows + 4 + maxNumberOfCoefficients() + hasLinearRegression() + 1;
 }
 
 int CalculationController::numberOfColumns() const {
@@ -131,11 +132,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
 
+  const int numberRows = numberOfRows();
   // Calculation title
   if (i == 0) {
-    bool shouldDisplayRAndR2 = hasLinearRegression();
-    int numberRows = numberOfRows();
-    if (shouldDisplayRAndR2 && j == numberRows-1) {
+    if (j == numberRows - 1) {
       EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
       myCell->setLayout(m_r2Layout);
       return;
@@ -147,7 +147,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       myCell->setMessage(titles[j-1]);
       return;
     }
-    if (shouldDisplayRAndR2 && j == numberRows - 2) {
+    if (hasLinearRegression() && j == numberRows - 2) {
       myCell->setMessage(I18n::Message::R);
       return;
     }
@@ -233,10 +233,14 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     }
 
     if (j > k_regressionCellIndex + maxNumberCoefficients) {
-      // Fill r and r2 if needed
-      if (modelType == Model::Type::Linear) {
-        const int calculationIndex = j - k_regressionCellIndex - maxNumberCoefficients - 1;
-        double calculation = calculationIndex == 0 ? m_store->correlationCoefficient(seriesNumber) : m_store->squaredCorrelationCoefficient(seriesNumber);
+      // Fill r (if needed, before last row) and r2 (last row)
+      if ((modelType == Model::Type::Linear && j == numberRows - 2) || j == numberRows - 1) {
+        double calculation;
+        if (j == numberRows - 1) {
+          calculation = m_store->squaredCorrelationCoefficient(seriesNumber);
+        } else {
+          calculation = m_store->correlationCoefficient(seriesNumber);
+        }
         constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
         char buffer[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
@@ -337,9 +341,8 @@ int CalculationController::typeAtLocation(int i, int j) {
   if (i == 0 && j == 0) {
     return k_hideableCellType;
   }
-  bool shouldDisplayRAndR2 = hasLinearRegression();
   int numberRows = numberOfRows();
-  if (shouldDisplayRAndR2 && i == 0 && j == numberRows-1) {
+  if (i == 0 && j == numberRows-1) {
     return k_r2CellType;
   }
   if (i == 0) {

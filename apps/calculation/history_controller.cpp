@@ -208,7 +208,13 @@ KDCoordinate HistoryController::rowHeight(int j) {
     return 0;
   }
   Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
-  return calculation->height(App::app()->localContext(), HistoryViewCell::k_verticalMargin, j == selectedRow() && selectedSubviewType() == SubviewType::Output, false, &HistoryViewCell::CanBeSingleLine);
+  return calculation->height(
+      App::app()->localContext(),
+      HistoryViewCell::k_margin,
+      HistoryViewCell::k_inputOutputViewsVerticalMargin,
+      j == selectedRow() && selectedSubviewType() == SubviewType::Output,
+      false,
+      &HistoryViewCell::CanBeSingleLine);
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

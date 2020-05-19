@@ -85,7 +85,7 @@ public:
 
   // Memoization of height
   typedef bool (*CanBeSingleLineFunction)(KDCoordinate inputWidth, KDCoordinate outputWidth);
-  KDCoordinate height(Poincare::Context * context, float verticalMargin, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canbeSingleLine = [](KDCoordinate inputWidth, KDCoordinate outputWidth) { assert(false); return true; });
+  KDCoordinate height(Poincare::Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canbeSingleLine = [](KDCoordinate inputWidth, KDCoordinate outputWidth) { assert(false); return true; });
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);

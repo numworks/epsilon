@@ -89,16 +89,20 @@ void modpyplot_flush_used_heap() {
   }
 }
 
-/* arrow(x,y,dx,dy, color)
+/* arrow(x,y,dx,dy, head_width, color)
  * x, y, dx, dy scalars
  * */
 
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(n_args >= 4);
   assert(sPlotStore != nullptr);
+  mp_obj_t arrowWidth = mp_obj_new_float(0.003); // Default value
+  if (n_args >= 5) {
+    arrowWidth = args[4];
+  }
 
-  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 4);
-  sPlotStore->addSegment(args[0], args[1], mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[0]), args[2]),  mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[1]), args[3]), color, true);
+  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 5);
+  sPlotStore->addSegment(args[0], args[1], mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[0]), args[2]),  mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[1]), args[3]), color, arrowWidth);
   return mp_const_none;
 }
 
@@ -359,7 +363,7 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
 
   KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 2);
   for (int i=0; i<(int)length-1; i++) {
-    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color, false);
+    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);
   }
 
   return mp_const_none;

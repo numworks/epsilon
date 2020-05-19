@@ -6,7 +6,8 @@ namespace Matplotlib {
 PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(),
   m_axesRequested(true),
   m_axesAuto(true),
-  m_gridRequested(false)
+  m_gridRequested(false),
+  m_show(false)
 {
   flush();
 }
@@ -19,10 +20,6 @@ void PlotStore::flush() {
   m_axesRequested = true;
   m_axesAuto = true;
   m_gridRequested = false;
-}
-
-bool PlotStore::isEmpty() {
-  return MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_dots)) == 0 && MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_segments)) == 0 && MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_rects)) == 0 && MP_OBJ_SMALL_INT_VALUE(mp_obj_len(m_labels)) == 0;
 }
 
 // Iterators

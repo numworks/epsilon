@@ -36,7 +36,7 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 Expression DerivativeNode::shallowReduce(ReductionContext reductionContext) {
-  return Derivative(this).shallowReduce(reductionContext.context());
+  return Derivative(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -151,7 +151,7 @@ T DerivativeNode::riddersApproximation(Context * context, Preferences::ComplexFo
   return ans;
 }
 
-Expression Derivative::shallowReduce(Context * context) {
+Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     e = e.defaultHandleUnitsInChildren();
@@ -159,12 +159,30 @@ Expression Derivative::shallowReduce(Context * context) {
       return e;
     }
   }
+  Context * context = reductionContext.context();
   assert(!childAtIndex(1).deepIsMatrix(context));
   if (childAtIndex(0).deepIsMatrix(context) || childAtIndex(2).deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
-  // TODO: to be implemented diff(+) -> +diff() etc
-  return *this;
+
+  Expression derivand = childAtIndex(0);
+  Symbol symbol = childAtIndex(1).convert<Symbol>();
+  Expression symbolValue = childAtIndex(2);
+
+  /* Since derivand is a child to the derivative node, it can be replaced in
+   * place without didDerivate having to return the derivative. */
+  if (!derivand.didDerivate(reductionContext, symbol, symbolValue)) {
+    return *this;
+  }
+  /* Updates the value of derivand, because didDerivate may call
+   * replaceWithInplace on it */
+  derivand = childAtIndex(0);
+  /* Deep reduces the child, because didDerivate may not preserve its reduced
+   * status. */
+  derivand = derivand.deepReduce(reductionContext);
+  replaceWithInPlace(derivand);
+  return derivand;
+
 }
 
 Expression Derivative::UntypedBuilder(Expression children) {

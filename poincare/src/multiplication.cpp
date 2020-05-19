@@ -1,6 +1,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/infinity.h>
@@ -216,6 +217,10 @@ Expression MultiplicationNode::shallowBeautify(ReductionContext reductionContext
 
 Expression MultiplicationNode::denominator(ReductionContext reductionContext) const {
   return Multiplication(this).denominator(reductionContext);
+}
+
+bool MultiplicationNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Multiplication(this).didDerivate(reductionContext, symbol, symbolValue);
 }
 
 /* Multiplication */
@@ -488,6 +493,26 @@ Expression Multiplication::denominator(ExpressionNode::ReductionContext reductio
   Expression numer, denom;
   splitIntoNormalForm(numer, denom, reductionContext);
   return denom;
+}
+
+bool Multiplication::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Addition resultingAddition = Addition::Builder();
+  int numberOfTerms = numberOfChildren();
+  assert (numberOfTerms > 0);
+  Expression childI;
+
+  for (int i = 0; i < numberOfTerms; ++i) {
+    childI = clone();
+    childI.replaceChildAtIndexInPlace(i, Derivative::Builder(
+      childI.childAtIndex(i),
+      symbol.clone().convert<Symbol>(),
+      symbolValue.clone()
+    ));
+    resultingAddition.addChildAtIndexInPlace(childI, i, i);
+  }
+
+  replaceWithInPlace(resultingAddition);
+  return true;
 }
 
 Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {

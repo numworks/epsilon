@@ -155,12 +155,28 @@ void MicroPython::registerScriptProvider(ScriptProvider * s) {
 }
 
 void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
-  /* All addresses stored on the stack are aligned on sizeof(void *), as
-   * asserted. This is a consequence of the alignment requirements of compilers
-   * (Cf http://www.catb.org/esr/structure-packing/). */
-  assert(((unsigned long)address) % ((unsigned long)sizeof(void *)) == 0);
-  assert(byteLength % sizeof(void *) == 0);
-  gc_collect_root((void **)address, byteLength / sizeof(void *));
+  /* The given address is not necessarily aligned on sizeof(void *). However,
+   * any pointer stored in the range [address, address + byteLength] will be
+   * aligned on sizeof(void *). This is a consequence of the alignment
+   * requirements of compilers (Cf http://www.catb.org/esr/structure-packing/).
+   * Micropython gc_collect_root scans looking for pointers jumping every
+   * sizeof(void *). It has to be provided with a sizeof(uintptr_t)-aligned
+   * address. */
+  // Compute the aligned address
+  // 0b000...00011 with 2 (or 3 for x64 arch) 1s
+  uintptr_t bitMaskOnes = sizeof(uintptr_t) - 1;
+  // 0b111...11100 with sizeof(uintptr_t)-1 0s
+  uintptr_t bitMaskZeros = ~bitMaskOnes;
+  uintptr_t alignedAddress = reinterpret_cast<uintptr_t>(address) & bitMaskZeros;
+  /* Increase the length consequently with the new alignment
+   * (We don't need to increase the byteLength to a sizeof(uintptr_t)-aligned
+   * lenght because no pointer can be stored on less than sizeof(uintptr_t)
+   * bytes.) */
+  int alignedByteLength = byteLength;
+  alignedByteLength += reinterpret_cast<uintptr_t>(address) & bitMaskOnes;
+
+  assert(alignedAddress % ((uintptr_t)sizeof(uintptr_t)) == 0);
+  gc_collect_root((void **)alignedAddress, byteLength /  sizeof(uintptr_t));
 }
 
 KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode){

@@ -127,6 +127,10 @@ Expression ExpressionNode::shallowBeautify(ReductionContext reductionContext) {
   return Expression(this).defaultShallowBeautify();
 }
 
+bool ExpressionNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Expression(this).defaultDidDerivate();
+}
+
 bool ExpressionNode::isOfType(Type * types, int length) const {
   for (int i = 0; i < length; i++) {
     if (type() == types[i]) {

@@ -193,3 +193,9 @@ mp_obj_t modturtle_hideturtle() {
 mp_obj_t modturtle_isvisible() {
   return sTurtle.isVisible() ? mp_const_true : mp_const_false;
 }
+
+mp_obj_t modturtle_write(mp_obj_t s) {
+  const char * string = mp_obj_str_get_str(s);
+  sTurtle.write(string);
+  return mp_const_none;
+}

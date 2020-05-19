@@ -175,6 +175,21 @@ void Turtle::setVisible(bool visible) {
   }
 }
 
+void Turtle::write(const char * string) {
+  // To prevent overlapping between the text and the turtle, force redraw
+  m_drawn = false;
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDContext * ctx = KDIonContext::sharedContext();
+  static constexpr KDCoordinate headOffsetLength = 6;
+  KDCoordinate headOffsetX = headOffsetLength * std::cos(m_heading * k_headingScale);
+  KDCoordinate headOffsetY = k_invertedYAxisCoefficient * headOffsetLength * std::sin(m_heading * k_headingScale);
+  KDPoint headOffset(headOffsetX, headOffsetY);
+  KDPoint head(-k_iconHeadSize, -k_iconHeadSize);
+  KDPoint stringOffset = KDPoint(0,-k_font->glyphSize().height());
+  ctx->drawString(string, position().translatedBy(headOffset).translatedBy(head).translatedBy(stringOffset));
+  draw(true);
+}
+
 
 void Turtle::viewDidDisappear() {
   m_drawn = false;

@@ -23,6 +23,7 @@ mp_obj_t modturtle_penup();
 mp_obj_t modturtle_isdown();
 mp_obj_t modturtle_pensize(size_t n_args, const mp_obj_t *args);
 mp_obj_t modturtle_isvisible();
+mp_obj_t modturtle_write(mp_obj_t s);
 
 mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args);
 mp_obj_t modturtle_colormode(size_t n_args, const mp_obj_t *args);

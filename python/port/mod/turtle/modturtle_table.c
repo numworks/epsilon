@@ -25,6 +25,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_reset_obj, modturtle_reset);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_showturtle_obj, modturtle_showturtle);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_hideturtle_obj, modturtle_hideturtle);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_isvisible_obj, modturtle_isvisible);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(modturtle_write_obj, modturtle_write);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle___init___obj, modturtle___init__);
 
@@ -74,6 +75,7 @@ STATIC const mp_rom_map_elem_t modturtle_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_hideturtle), (mp_obj_t)&modturtle_hideturtle_obj },
   { MP_ROM_QSTR(MP_QSTR_ht), (mp_obj_t)&modturtle_hideturtle_obj },
   { MP_ROM_QSTR(MP_QSTR_isvisible), (mp_obj_t)&modturtle_isvisible_obj },
+  { MP_ROM_QSTR(MP_QSTR_write), (mp_obj_t)&modturtle_write_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(modturtle_module_globals, modturtle_module_globals_table);

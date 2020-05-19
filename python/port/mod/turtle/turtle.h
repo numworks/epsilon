@@ -78,6 +78,8 @@ public:
     m_colorMode = colorMode;
   }
 
+  void write(const char * string);
+
   void viewDidDisappear();
 
 private:
@@ -91,6 +93,7 @@ private:
   static constexpr uint8_t k_maxSpeed = 10;
   static constexpr KDColor k_defaultColor = KDColorBlack;
   static constexpr uint8_t k_defaultPenSize = 1;
+  static constexpr const KDFont * k_font = KDFont::LargeFont;
 
   enum class PawType : uint8_t {
     FrontRight = 0,

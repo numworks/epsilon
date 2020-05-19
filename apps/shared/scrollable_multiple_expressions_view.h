@@ -8,6 +8,7 @@ namespace Shared {
 
 class AbstractScrollableMultipleExpressionsView : public ScrollableView, public ScrollViewDataSource {
 public:
+  constexpr static KDCoordinate k_horizontalMargin = Metric::CommonLargeMargin;
   enum class SubviewPosition : uint8_t {
     Left = 0,
     Center = 1,
@@ -40,7 +41,6 @@ protected:
   class ContentCell : public ::EvenOddCell {
   public:
     static KDCoordinate StandardApproximateViewAndMarginsSize();
-    constexpr static KDCoordinate k_horizontalMargin = Metric::CommonLargeMargin;
     ContentCell();
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;

@@ -214,7 +214,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
       HistoryViewCell::k_inputOutputViewsVerticalMargin,
       j == selectedRow() && selectedSubviewType() == SubviewType::Output,
       false,
-      &HistoryViewCell::CanBeSingleLine);
+      &HistoryViewCell::LayoutsCanBeSingleLine);
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

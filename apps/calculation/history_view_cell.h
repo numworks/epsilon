@@ -33,6 +33,7 @@ class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   constexpr static KDCoordinate k_verticalMargin = Metric::CommonLargeMargin; //TODO LEA same as k_horizontalMargin?
   HistoryViewCell(Responder * parentResponder = nullptr);
+  static bool CanBeSingleLine(KDCoordinate inputWidth, KDCoordinate outputWidth);
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType = HistoryViewCellDataSource::SubviewType::None);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;

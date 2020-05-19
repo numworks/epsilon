@@ -380,6 +380,12 @@ protected:
   // WARNING: this must be called on reduced expressions
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
+  /* Derivation */
+  /* This method is used for the reduction of Derivative expressions.
+   * It returns whether the instance is differentiable, and differentiates it if
+   * able. */
+  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->didDerivate(reductionContext, symbol, symbolValue); }
+
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
@@ -407,6 +413,7 @@ private:
   Expression defaultHandleUnitsInChildren(); // Children must be reduced
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
+  bool defaultDidDerivate() { return false; }
 
   /* Approximation */
   template<typename U> Evaluation<U> approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

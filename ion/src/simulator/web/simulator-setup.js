@@ -65,38 +65,53 @@ function screenshot() {
   link.click();
 }
 
+const notif = document.getElementById("notif");
+
+function createNotif(message, isError){
+  let child = document.createElement("div")
+  child.classList.add(isError ? "error" : "success");
+  child.classList.add("fadein")
+  child.innerHTML = message;
+  notif.appendChild(child);
+  setTimeout(() => {
+    child.classList.remove("fadein");
+    child.classList.add("fadeout");
+    setTimeout(() => {
+      notif.removeChild(child);
+    }, 500)
+  }, 5000)
+}
+
 function sendScript(evt) {
+  console.log(evt)
   for (var i = 0; i < evt.target.files.length; i++) {
     const file = evt.target.files[i]
     //FIXME Scenario : test.py.py
-    var name  = Module.allocate(Module.intArrayFromString(file.name.split(".py")[0]), 'i8', 0);
-    var reader = new FileReader();
+    const name = file.name.split(".py")[0];
+    const nameptr  = Module.allocate(Module.intArrayFromString(name), 'i8', 0);
+    let reader = new FileReader();
     reader.readAsText(file);
     reader.onload = function() {
       var content  = Module.allocate(Module.intArrayFromString("\001" + reader.result), 'i8', 0);
-      const ErrorStauts = Module._IonStorageAddScript(name, content, (reader.result.length + 1));
+      const ErrorStauts = Module._IonStorageAddScript(nameptr, content);
       switch(ErrorStauts){
         case 1 :{
-          alert("NameTaken");
+          createNotif(`${name} couldn't be added : this name is already taken`, true);
           break;
         }
         case 2 :{
-          alert("NonCompliantName");
+          createNotif(`${name} couldn't be added : this name is not compliant`, true);
           break;
         }
         case 3 :{
-          alert("NotEnoughSpaceAvailable");
-          break;
-        }
-        case 3 :{
-          alert("NotEnoughSpaceAvailable");
+          createNotif(`${name} couldn't be added : there isn't enough space`, true);
           break;
         }
         default:{
-
+          createNotif(name + " has succesfully been added !", false)
         }
       }
-      Module._free(name);
+      Module._free(nameptr);
       Module._free(content) 
     };
   }

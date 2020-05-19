@@ -595,7 +595,6 @@ Storage::RecordIterator & Storage::RecordIterator::operator++() {
 }
 
 #if EPSILON_SDL_SCREEN_ONLY
-//FIXME Add errors support
 int IonStorageAddScript(const char* name, const char* content){
   return static_cast<int>(Ion::Storage::sharedStorage()->createRecordWithExtension(name, "py", content, strlen(content)));
 }

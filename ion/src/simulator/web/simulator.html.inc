@@ -38,7 +38,7 @@ body.fullscreen .col-calculator {
   float: left;
 }
 
-a.action {
+.action {
   display: block;
   width: 4%;
   padding: 1.5% 3%;
@@ -48,16 +48,16 @@ a.action {
   opacity: 0.65;
 }
 
-a.action:hover {
+.action:hover {
   opacity: 1.0;
   background-color: rgba(0,0,0,0.125);
 }
 
-a.action svg {
+.action svg {
   display: block;
 }
 
-input[type="file"] {
+.action input[type="file"] {
   display : none;
 }
 
@@ -172,6 +172,60 @@ input[type="file"] {
         width: 16%;
         height: 0;
         padding-top: 11.3%; }
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.notif {
+  display: flex;
+  flex-direction: column;
+  position:absolute;
+  top:0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  width: 20%;
+}
+
+.notif div.fadeout {
+  animation-direction: reverse;
+  animation-duration: 0.5s;
+  animation-name: fadein;
+}
+
+.notif div.fadein {
+  animation-direction: normal;
+  animation-duration: 0.5s;
+  animation-name: fadein;
+}
+
+.notif div {
+  border-radius: 0px 0px 0px 0px;
+  -moz-border-radius: 0px 0px 0px 0px;
+  -webkit-border-radius: 0px 0px 0px 0px;
+  border: 1px solid #000000;
+  width: 100%;
+}
+
+.notif div.error {
+  background-color: #b40e11;
+  color:white;
+  text-align: center;
+}
+
+.notif div.success {
+  background-color: #3aac0d;
+  color:white;
+  text-align: center;
+}
+
 </style>
   </head>
   <body>
@@ -199,10 +253,13 @@ input[type="file"] {
         <canvas id="secondary-canvas" width="320" height="240"></canvas>
       </div>
     </div>
+    <div class="notif" id="notif">
+    </div>
     <script src="epsilon.js"></script>
     <script>
 #include "simulator-setup.js"
     </script>
+    
     <script>
 document.getElementById("action-fullscreen").addEventListener("click", function(e){
   if (document.body.className == "fullscreen") {

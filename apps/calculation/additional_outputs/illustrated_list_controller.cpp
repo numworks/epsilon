@@ -78,7 +78,7 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
     return 0;
   }
   Shared::ExpiringPointer<Calculation> calculation = m_calculationStore.calculationAtIndex(calculationIndex);
-  return calculation->height(App::app()->localContext(), Metric::CommonSmallMargin, true, true) + Metric::CellSeparatorThickness; //TODO LEA
+  return calculation->height(App::app()->localContext(), Metric::CommonSmallMargin, ScrollableThreeExpressionsView::k_margin, true, true) + Metric::CellSeparatorThickness;
 }
 
 int IllustratedListController::typeAtLocation(int i, int j) {

@@ -4,9 +4,6 @@
 namespace Matplotlib {
 
 PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(),
-  m_axesRequested(true),
-  m_axesAuto(true),
-  m_gridRequested(false),
   m_show(false)
 {
   flush();

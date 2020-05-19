@@ -96,6 +96,7 @@ void modpyplot_flush_used_heap() {
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   assert(n_args >= 4);
   assert(sPlotStore != nullptr);
+  sPlotStore->setShow(true);
   mp_obj_t arrowWidth = mp_obj_new_float(0.003); // Default value
   if (n_args >= 5) {
     arrowWidth = args[4];
@@ -114,7 +115,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   if (n_args == 1) {
     mp_obj_t arg = args[0];
     if (mp_obj_is_str(arg)) {
@@ -168,7 +169,7 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   mp_obj_t * xItems;
   mp_obj_t * hItems;
   mp_obj_t * wItems;
@@ -223,7 +224,7 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   if (n_args == 0) {
     // Toggle the grid visibility
     sPlotStore->setGridRequested(!sPlotStore->gridRequested());
@@ -242,7 +243,7 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   // Sort data to easily get the minimal and maximal value and count bin sizes
   mp_obj_t * xItems;
   size_t xLength = extractArgument(args[0], &xItems);
@@ -326,7 +327,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
   assert(n_args >= 2);
   size_t length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
@@ -345,7 +346,7 @@ mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
   size_t length;
   if (n_args == 1) {
@@ -371,7 +372,7 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   // Input parameter validation
   mp_obj_get_float(x);
   mp_obj_get_float(y);
@@ -383,10 +384,11 @@ mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s) {
 }
 
 mp_obj_t modpyplot_show() {
-  if (sPlotStore->isEmpty()) {
+  if (!sPlotStore->show()) {
     return mp_const_none;
   }
   MicroPython::ExecutionEnvironment * env = MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
   env->displayViewController(sPlotController);
+  sPlotStore->setShow(false);
   return mp_const_none;
 }

@@ -13,7 +13,6 @@ class PlotStore : public Shared::InteractiveCurveViewRange {
 public:
   PlotStore();
   void flush();
-  bool isEmpty();
 
   // Iterators
 
@@ -123,6 +122,8 @@ public:
   void setAxesRequested(bool b) { m_axesRequested = b; }
   bool axesRequested() const { return m_axesRequested; }
   void setAxesAuto(bool b) { m_axesAuto = b; }
+  void setShow(bool b) { m_show = b; }
+  bool show() { return m_show; }
   void initRange();
 
   void setGridRequested(bool b) { m_gridRequested = b; }
@@ -135,6 +136,7 @@ private:
   bool m_axesRequested;
   bool m_axesAuto;
   bool m_gridRequested;
+  bool m_show;
 };
 
 }

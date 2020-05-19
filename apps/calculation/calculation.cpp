@@ -125,7 +125,7 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canBeSingleLine) {
+KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, LayoutsCanBeSingleLineFunction canBeSingleLine) {
   KDCoordinate result = expanded ? m_expandedHeight : m_height;
   if (result >= 0) {
     // Height already computed

@@ -84,8 +84,8 @@ public:
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context, bool * couldNotCreateApproximateLayout);
 
   // Memoization of height
-  typedef bool (*CanBeSingleLineFunction)(KDCoordinate inputWidth, KDCoordinate outputWidth);
-  KDCoordinate height(Poincare::Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canbeSingleLine = [](KDCoordinate inputWidth, KDCoordinate outputWidth) { assert(false); return true; });
+  typedef bool (*LayoutsCanBeSingleLineFunction)(KDCoordinate inputWidth, KDCoordinate outputWidth);
+  KDCoordinate height(Poincare::Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, LayoutsCanBeSingleLineFunction canbeSingleLine = [](KDCoordinate inputLayoutWidth, KDCoordinate outputLayoutWidth) { assert(false); return true; });
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);

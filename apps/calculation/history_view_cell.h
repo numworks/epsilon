@@ -33,8 +33,10 @@ class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   constexpr static KDCoordinate k_margin = Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
+  constexpr static KDCoordinate k_inputOutputViewsHorizontalMargin = Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
   HistoryViewCell(Responder * parentResponder = nullptr);
-  static bool CanBeSingleLine(KDCoordinate inputWidth, KDCoordinate outputWidth);
+  static bool LayoutsCanBeSingleLine(KDCoordinate inputLayoutWidth, KDCoordinate outputLayoutWidth);
+  static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth);
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType = HistoryViewCellDataSource::SubviewType::None);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;

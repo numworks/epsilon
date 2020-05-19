@@ -226,7 +226,7 @@ extern "C" {
 #endif
 
 #if EPSILON_SDL_SCREEN_ONLY
-void IonStorageAddScript(const char* name, const char* content);
+int IonStorageAddScript(const char* name, const char* content);
 #endif
 #ifdef __cplusplus
 }

@@ -5,7 +5,6 @@
 #if ION_STORAGE_LOG
 #include<iostream>
 #endif
-
 namespace Ion {
 
 /* We want to implement a simple singleton pattern, to make sure the storage is
@@ -597,7 +596,7 @@ Storage::RecordIterator & Storage::RecordIterator::operator++() {
 
 #if EPSILON_SDL_SCREEN_ONLY
 //FIXME Add errors support
-void IonStorageAddScript(const char* name, const char* content){
-  Ion::Storage::sharedStorage()->createRecordWithExtension(name, "py", content, sizeof(content));
+int IonStorageAddScript(const char* name, const char* content){
+  return static_cast<int>(Ion::Storage::sharedStorage()->createRecordWithExtension(name, "py", content, strlen(content)));
 }
 #endif

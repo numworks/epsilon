@@ -66,14 +66,38 @@ function screenshot() {
 }
 
 function sendScript(evt) {
-  //TODO Support multiple files
-  const file = evt.target.files[0];
-  //FIXME Scenario : test.py.py
-  var name  = Module.allocate(Module.intArrayFromString(file.name.split(".py")[0]), 'i8', 0);
-  var reader = new FileReader();
-  reader.readAsText(file);
-  reader.onload = function() {
-    var content  = Module.allocate(Module.intArrayFromString("\001" + reader.result), 'i8', 0);
-    Module._IonStorageAddScript(name, content);
-  };
+  for (var i = 0; i < evt.target.files.length; i++) {
+    const file = evt.target.files[i]
+    //FIXME Scenario : test.py.py
+    var name  = Module.allocate(Module.intArrayFromString(file.name.split(".py")[0]), 'i8', 0);
+    var reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function() {
+      var content  = Module.allocate(Module.intArrayFromString("\001" + reader.result), 'i8', 0);
+      const ErrorStauts = Module._IonStorageAddScript(name, content, (reader.result.length + 1));
+      switch(ErrorStauts){
+        case 1 :{
+          alert("NameTaken");
+          break;
+        }
+        case 2 :{
+          alert("NonCompliantName");
+          break;
+        }
+        case 3 :{
+          alert("NotEnoughSpaceAvailable");
+          break;
+        }
+        case 3 :{
+          alert("NotEnoughSpaceAvailable");
+          break;
+        }
+        default:{
+
+        }
+      }
+      Module._free(name);
+      Module._free(content) 
+    };
+  }
 }

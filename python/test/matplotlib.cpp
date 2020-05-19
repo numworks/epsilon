@@ -35,7 +35,9 @@ QUIZ_CASE(python_matplotlib_pyplot_arrow) {
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "arrow(2,3,4,5)");
-  assert_command_execution_succeeds(env, "arrow(2,3,4,5, \"#FF00FF\")");
+  assert_command_execution_succeeds(env, "arrow(2,3,4,5, 0.1)");
+  assert_command_execution_fails(env, "arrow(2,3,4,5, \"width\")");
+  assert_command_execution_succeeds(env, "arrow(2,3,4,5, 0.1, \"#FF00FF\")");
   assert_command_execution_succeeds(env, "show()");
   deinit_environment();
 }

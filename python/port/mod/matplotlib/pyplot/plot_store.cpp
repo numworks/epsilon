@@ -104,12 +104,12 @@ PlotStore::Segment::Segment(mp_obj_t tuple) {
   m_xEnd = mp_obj_get_float(elements[2]);
   m_yEnd = mp_obj_get_float(elements[3]);
   m_color = KDColor::RGB16(mp_obj_get_int(elements[4]));
-  m_arrow = elements[5] == mp_const_true;
+  m_arrowWidth = mp_obj_get_float(elements[5]);
 }
 
-void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, bool arrowEdge) {
+void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, mp_obj_t arrowWidth) {
   mp_obj_t color = mp_obj_new_int(c);
-  mp_obj_t items[6] = {xStart, yStart, xEnd, yEnd, color, arrowEdge ? mp_const_true : mp_const_false};
+  mp_obj_t items[6] = {xStart, yStart, xEnd, yEnd, color, arrowWidth};
   checkFloatType(items, 4);
   mp_obj_t tuple = mp_obj_new_tuple(6, items);
   mp_obj_list_append(m_segments, tuple);

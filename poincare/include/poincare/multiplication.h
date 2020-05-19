@@ -49,6 +49,8 @@ private:
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const override;
+  // Derivation
+  bool didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
   // Approximation
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
@@ -88,6 +90,8 @@ public:
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);
   }
+  // Derivation
+  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 private:
   // Unit
   Expression removeUnit(Expression * unit);

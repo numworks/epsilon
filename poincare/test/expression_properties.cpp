@@ -216,8 +216,8 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("x+1", 1);
   assert_reduced_expression_polynomial_degree("cos(2)+1", 0);
   assert_reduced_expression_polynomial_degree("confidence(0.2,10)+1", -1);
-  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,2)", -1);
-  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", -1);
+  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,2)", 0);
+  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", 0);
   assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", 0, "a");
   assert_reduced_expression_polynomial_degree("(3×x+2)/3", 1);
   assert_reduced_expression_polynomial_degree("(3×x+2)/x", -1);

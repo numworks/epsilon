@@ -7,12 +7,6 @@
 
 using namespace Poincare;
 
-void assert_differentiates_as(Expression expression, Expression derivative, const char * information) {
-  Shared::GlobalContext globalContext;
-  Expression expressionReduced = expression.reduce(ExpressionNode::ReductionContext(&globalContext, Cartesian, Radian, User));
-  quiz_assert_print_if_failure(expressionReduced.isIdenticalTo(derivative), information);
-}
-
 void assert_parses_and_reduces_as(const char * expression, const char * derivative) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
@@ -32,8 +26,15 @@ QUIZ_CASE(poincare_differential_addition) {
 
   assert_parses_and_reduces_as("diff(x+x,x,4)", "2");
   assert_parses_and_reduces_as("diff(2*x,x,1)", "2");
+  assert_parses_and_reduces_as("diff(-x,x,1)", "-1");
+  assert_parses_and_reduces_as("diff(3-x,x,1)", "-1");
   assert_parses_and_reduces_as("diff(a*x,x,2)", "a");
   assert_parses_and_reduces_as("diff(a*x+b,x,x)", "a");
 
-  // assert_parses_and_reduces_as("diff(x*x,x,3)", "3");
+  assert_parses_and_reduces_as("diff(x*x,x,3)", "6");
+  assert_parses_and_reduces_as("diff(x^2,x,2)", "4");
+  assert_parses_and_reduces_as("diff(2^x,x,0)", "ln(2)");
+  assert_parses_and_reduces_as("diff(x^2,x,x)", "2*x");
+  assert_parses_and_reduces_as("diff(a*x^2+b*x+c,x,x)", "2*a*x+b");
+  assert_parses_and_reduces_as("diff(1/x,x,1)", "-1");
 }

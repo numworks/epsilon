@@ -84,7 +84,8 @@ public:
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context, bool * couldNotCreateApproximateLayout);
 
   // Memoization of height
-  KDCoordinate height(Poincare::Context * context, float verticalMargin, bool expanded, bool forceSingleLine);
+  typedef bool (*CanBeSingleLineFunction)(KDCoordinate inputWidth, KDCoordinate outputWidth);
+  KDCoordinate height(Poincare::Context * context, float verticalMargin, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canbeSingleLine = [](KDCoordinate inputWidth, KDCoordinate outputWidth) { assert(false); return true; });
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);
@@ -95,7 +96,6 @@ public:
   // Additional Information
   AdditionalInformationType additionalInformationType(Poincare::Context * context);
 private:
-  static constexpr int maxWidth = Ion::Display::Width - (Metric::CommonSmallMargin * 2) - Metric::EllipsisCellWidth - 48; // 48 is the difference history_view_cell's width and calculation's
   static constexpr int k_numberOfExpressions = 4;
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";

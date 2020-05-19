@@ -124,7 +124,7 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-KDCoordinate Calculation::height(Context * context, float verticalMargin, bool expanded, bool forceSingleLine) {
+KDCoordinate Calculation::height(Context * context, float verticalMargin, bool expanded, bool forceSingleLine, CanBeSingleLineFunction canBeSingleLine) {
   KDCoordinate result = expanded ? m_expandedHeight : m_height;
   if (result >= 0) {
     // Height already computed
@@ -157,7 +157,7 @@ KDCoordinate Calculation::height(Context * context, float verticalMargin, bool e
   if (displayOutput(context) == DisplayOutput::ExactOnly) {
     KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
     KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-    bool singleLine = forceSingleLine || ((exactOutputWidth + inputWidth) < maxWidth - 2); //TODO LEA 2
+    bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, exactOutputWidth);
     if (singleLine) {
       KDCoordinate exactOutputBaseline = exactLayout.baseline();
       result = std::max(inputBaseline, exactOutputBaseline) // Above the baseline
@@ -188,7 +188,7 @@ KDCoordinate Calculation::height(Context * context, float verticalMargin, bool e
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
     if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
-      bool singleLine = forceSingleLine || ((approximateOutputWidth + inputWidth) < maxWidth); // TODO LEA 2
+      bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, approximateOutputWidth);
       if (singleLine) {
         KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
         result = std::max(inputBaseline, approximateOutputBaseline) // Above the baseline
@@ -203,7 +203,7 @@ KDCoordinate Calculation::height(Context * context, float verticalMargin, bool e
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
       KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-      bool singleLine = forceSingleLine || ((inputWidth + exactOutputWidth + approximateOutputWidth) < (maxWidth - 30)); // the 30 represents the = sign (example: sin(30)) TODO LEA
+      bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, exactOutputWidth + /*TODO LEA equal sign " = "*/ + approximateOutputWidth);
       if (singleLine) {
         result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) // Above the baseline
           + std::max(inputHeight - inputBaseline, // Beloxw the baseline

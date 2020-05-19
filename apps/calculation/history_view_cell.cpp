@@ -169,6 +169,11 @@ View * HistoryViewCell::subviewAtIndex(int index) {
   return views[index];
 }
 
+bool HistoryViewCell::CanBeSingleLine(KDCoordinate inputWidth, KDCoordinate outputWidth) {
+  // k_margin is the separation between the input and output.
+  return (inputWidth + k_margin + outputWidth) < (Ion::Display::Width - Metric::EllipsisCellWidth - 2 * k_margin);
+}
+
 void HistoryViewCell::layoutSubviews(bool force) {
   KDCoordinate maxFrameWidth = bounds().width();
   if (displayedEllipsis()) {
@@ -179,7 +184,8 @@ void HistoryViewCell::layoutSubviews(bool force) {
   }
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  bool singleLine = (inputSize.width() + k_margin + outputSize.width()) < bounds().width() - Metric::EllipsisCellWidth; // k_margin the separation between the input and output. inputSize and outputSize already handle their left and right margins TODO LEA factorize singleLine()
+
+  bool singleLine = CanBeSingleLine(inputSize.width(), outputSize.width());
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;

@@ -138,87 +138,75 @@ KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginB
   KDCoordinate inputWidth = inputLayout.layoutSize().width();
   KDCoordinate inputBaseline = inputLayout.baseline();
 
-  // Get exact output height if needed
-  Poincare::Layout exactLayout;
-  bool couldNotCreateExactLayout = false;
-  if (DisplaysExact(displayOutput(context))) {
-    // Create the exact output layout
-    exactLayout = createExactOutputLayout(&couldNotCreateExactLayout);
-    if (couldNotCreateExactLayout) {
-      if (displayOutput(context) != DisplayOutput::ExactOnly) {
-        forceDisplayOutput(DisplayOutput::ApproximateOnly);
+  KDCoordinate outputWidth;
+  KDCoordinate outputBaseline;
+  KDCoordinate outputHeightBelowBaseline;
+
+  {
+    DisplayOutput displayType = displayOutput(context);
+    bool displaysExactOnly = displayType == DisplayOutput::ExactOnly;
+    bool displayApproximateOnly = displayType == DisplayOutput::ApproximateOnly
+      || (!expanded
+          && (displayType == DisplayOutput::ExactAndApproximateToggle));
+
+    KDCoordinate exactOutputWidth = 0;
+    KDCoordinate exactOutputBaseline = 0;
+    KDCoordinate exactOutputBelowBaseline = 0;
+
+    // Get exact output info if needed
+    if (displaysExactOnly || !displayApproximateOnly) {
+      bool couldNotCreateExactLayout = false;
+      Poincare::Layout exactLayout = createExactOutputLayout(&couldNotCreateExactLayout);
+      if (couldNotCreateExactLayout) {
+        if (!displaysExactOnly) {
+          displayType = DisplayOutput::ApproximateOnly;
+          forceDisplayOutput(displayType);
+          displaysExactOnly = false;
+          displayApproximateOnly = true;
+        } else {
+          /* We should only display the exact result, but we cannot create it
+           * -> raise an exception. */
+          ExceptionCheckpoint::Raise();
+        }
       } else {
-        /* We should only display the exact result, but we cannot create it
-         * -> raise an exception. */
-        ExceptionCheckpoint::Raise();
+        KDSize exactSize = exactLayout.layoutSize();
+        exactOutputWidth = exactSize.width();
+        exactOutputBaseline = exactLayout.baseline();
+        exactOutputBelowBaseline = exactSize.height() - exactOutputBaseline;
       }
     }
+
+    KDCoordinate approximateOutputWidth = 0;
+    KDCoordinate approximateOutputBaseline = 0;
+    KDCoordinate approximateOutputBelowBaseline = 0;
+
+    // Get approximate output info if needed
+    if (displayApproximateOnly || !displaysExactOnly) {
+      bool couldNotCreateApproximateLayout = false;
+      Layout approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+      if (couldNotCreateApproximateLayout) {
+        Poincare::ExceptionCheckpoint::Raise();
+      }
+      KDSize approximateOutputSize = approximateLayout.layoutSize();
+      approximateOutputWidth = approximateOutputSize.width();
+      approximateOutputBaseline = approximateLayout.baseline();
+      approximateOutputBelowBaseline = approximateOutputSize.height() - approximateOutputBaseline;
+    }
+
+    // Compute the output info
+    outputWidth = exactOutputWidth
+      + ((exactOutputWidth > 0 && approximateOutputWidth > 0) ? AbstractScrollableMultipleExpressionsView::StandardApproximateViewAndMarginsSize() : 0)
+      + approximateOutputWidth;
+    outputBaseline = std::max(exactOutputBaseline, approximateOutputBaseline);
+    outputHeightBelowBaseline = std::max(exactOutputBelowBaseline, approximateOutputBelowBaseline);
   }
 
-  if (displayOutput(context) == DisplayOutput::ExactOnly) {
-    KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-    KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-    bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, exactOutputWidth);
-    if (singleLine) {
-      KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      result = std::max(inputBaseline, exactOutputBaseline) // Above the baseline
-        + std::max(inputHeight - inputBaseline, exactOutputHeight - exactOutputBaseline) // Below the baseline
-        + 2 * verticalMarginAroundLayouts;
-    } else {
-      result = inputHeight + verticalMarginBetweenLayouts + exactOutputHeight + 4 * verticalMarginAroundLayouts;
-    }
+  if (forceSingleLine || canBeSingleLine(inputWidth, outputWidth)) {
+    result = std::max(inputBaseline, outputBaseline) // Above the baseline
+      + std::max(static_cast<KDCoordinate>(inputHeight - inputBaseline), outputHeightBelowBaseline) // Below the baseline
+      + 2 * verticalMarginAroundLayouts;
   } else {
-    // Create the approximate output layout
-    bool couldNotCreateApproximateLayout = false;
-    Layout approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
-    if (couldNotCreateApproximateLayout) {
-      if (displayOutput(context) == DisplayOutput::ApproximateOnly) {
-        Poincare::ExceptionCheckpoint::Raise();
-      } else {
-        /* Set the display output to ApproximateOnly, make room in the pool by
-         * erasing the exact layout, and retry to create the approximate layout */
-        forceDisplayOutput(DisplayOutput::ApproximateOnly);
-        exactLayout = Poincare::Layout();
-        couldNotCreateApproximateLayout = false;
-        approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
-        if (couldNotCreateApproximateLayout) {
-          Poincare::ExceptionCheckpoint::Raise();
-        }
-      }
-    }
-
-    KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
-    KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-    if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
-      bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, approximateOutputWidth);
-      if (singleLine) {
-        KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-        result = std::max(inputBaseline, approximateOutputBaseline) // Above the baseline
-          + std::max(inputHeight - inputBaseline, approximateOutputHeight - approximateOutputBaseline) // Below the baseline
-          + 2 * verticalMarginAroundLayouts;
-      } else {
-        result = inputHeight + verticalMarginBetweenLayouts + approximateOutputHeight + 4 * verticalMarginAroundLayouts;
-      }
-    } else {
-      assert(displayOutput(context) == DisplayOutput::ExactAndApproximate || (displayOutput(context) == DisplayOutput::ExactAndApproximateToggle && expanded));
-      KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-      KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-      KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-      KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-      bool singleLine = forceSingleLine || canBeSingleLine(inputWidth, exactOutputWidth + AbstractScrollableMultipleExpressionsView::StandardApproximateViewAndMarginsSize() + approximateOutputWidth);
-      if (singleLine) {
-        result = std::max(inputBaseline, std::max(exactOutputBaseline, approximateOutputBaseline)) // Above the baseline
-          + std::max(inputHeight - inputBaseline, // Beloxw the baseline
-              std::max(exactOutputHeight - exactOutputBaseline,
-                approximateOutputHeight - approximateOutputBaseline))
-          + 2 * verticalMarginAroundLayouts;
-      } else {
-        KDCoordinate outputHeight = std::max(exactOutputBaseline, approximateOutputBaseline) // Above the baseline
-          + std::max(exactOutputHeight - exactOutputBaseline, approximateOutputHeight - approximateOutputBaseline); // Below the baseline
-        result = inputHeight + verticalMarginBetweenLayouts + outputHeight + 4 * verticalMarginAroundLayouts;
-      }
-    }
+    result = inputHeight + verticalMarginBetweenLayouts + outputBaseline + outputHeightBelowBaseline + 4 * verticalMarginAroundLayouts;
   }
 
   // Add the top and bottom margins

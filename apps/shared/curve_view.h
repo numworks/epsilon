@@ -96,9 +96,10 @@ protected:
    *  <--- L --->
    *
    *  l = arrowWith
-   *  tanAngle = tan(angle) = l/L
+   *  tanAngle = tan(angle) = l/2L
    */
-  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWith = 4, float tanAngle = 0.4f) const; // 0.3639 = tan(20°)
+
+  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWith = 4, float tanAngle = 1.0f/3.0f) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;

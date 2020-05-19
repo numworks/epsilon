@@ -4,6 +4,7 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/constant.h>
 #include <poincare/cosine.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
@@ -249,6 +250,10 @@ int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascend
 
 Expression PowerNode::denominator(ReductionContext reductionContext) const {
   return Power(this).denominator(reductionContext);
+}
+
+bool PowerNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Power(this).didDerivate(reductionContext, symbol, symbolValue);
 }
 
 // Evaluation
@@ -1013,6 +1018,47 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
   }
 
   return *this;
+}
+
+bool Power::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  /* Generalized power derivation formula
+   * (f^g)` = (e^(g * ln(f)))`
+   *       = (g * ln(f))` * f^g
+   *        = (g`ln(f) + gf`/f) * f^g
+   *        = g`ln(f)f^g + gf`f^(g-1)
+   *
+   * Valid whenever f,g are derivable and f > 0 */
+
+  /* We might want to be able to derivate f^n when f <= 0 and n is a positive
+   * integer */
+
+  Expression base = childAtIndex(0);
+  Expression exponent = childAtIndex(1);
+  Multiplication derivedFromBase = Multiplication::Builder();
+  Multiplication derivedFromExponent = Multiplication::Builder();
+
+  derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 0, 0);
+  derivedFromExponent.addChildAtIndexInPlace(clone(), 1, 1);
+  derivedFromExponent.addChildAtIndexInPlace(Derivative::Builder(
+    exponent.clone(),
+    symbol.clone().convert<Symbol>(),
+    symbolValue.clone()
+    ), 2, 2);
+
+  derivedFromBase.addChildAtIndexInPlace(exponent.clone() , 0, 0);
+  derivedFromBase.addChildAtIndexInPlace(Power::Builder(
+    base.clone(),
+    Subtraction::Builder(exponent.clone(), Rational::Builder(1))
+    ), 1, 1);
+  derivedFromBase.addChildAtIndexInPlace(Derivative::Builder(
+    base.clone(),
+    symbol.clone().convert<Symbol>(),
+    symbolValue.clone()
+    ), 2, 2);
+
+  Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
+  replaceWithInPlace(result);
+  return true;
 }
 
 // Private

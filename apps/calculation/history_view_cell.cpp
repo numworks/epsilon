@@ -42,7 +42,7 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
   m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
   m_calculationExpanded(false),
-  m_inputView(this, Metric::CommonLargeMargin, k_inputOutputViewsVerticalMargin),
+  m_inputView(this, k_inputOutputViewsHorizontalMargin, k_inputOutputViewsVerticalMargin),
   m_scrollableOutputView(this)
 {
   m_calculationCRC32 = 0;
@@ -169,9 +169,14 @@ View * HistoryViewCell::subviewAtIndex(int index) {
   return views[index];
 }
 
-bool HistoryViewCell::CanBeSingleLine(KDCoordinate inputWidth, KDCoordinate outputWidth) {
+bool HistoryViewCell::LayoutsCanBeSingleLine(KDCoordinate inputLayoutWidth, KDCoordinate outputLayoutWidth) {
   // k_margin is the separation between the input and output.
-  return (inputWidth + k_margin + outputWidth) < (Ion::Display::Width - Metric::EllipsisCellWidth - 2 * k_margin); //TODO LEA -2 ??
+  return ViewsCanBeSingleLine(inputLayoutWidth + 2 * k_inputOutputViewsHorizontalMargin, outputLayoutWidth + 2 * k_inputOutputViewsHorizontalMargin);
+}
+
+bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth) {
+  // k_margin is the separation between the input and output.
+  return (inputViewWidth + k_margin + outputViewWidth) < Ion::Display::Width - Metric::EllipsisCellWidth;
 }
 
 void HistoryViewCell::layoutSubviews(bool force) {
@@ -185,7 +190,7 @@ void HistoryViewCell::layoutSubviews(bool force) {
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
 
-  bool singleLine = CanBeSingleLine(inputSize.width(), outputSize.width());
+  bool singleLine = ViewsCanBeSingleLine(inputSize.width(), outputSize.width());
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;

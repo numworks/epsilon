@@ -41,8 +41,8 @@ double NumberNode::doubleApproximation() const {
   }
 }
 
-bool NumberNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  return Number(this).didDerivate(reductionContext, symbol, symbolValue);
+bool NumberNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Number(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLenght, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
@@ -146,7 +146,7 @@ int Number::NaturalOrder(const Number & i, const Number & j) {
   }
 }
 
-bool Number::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Number::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   replaceWithInPlace(Rational::Builder(0));
   return true;
 }

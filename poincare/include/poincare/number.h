@@ -26,7 +26,7 @@ public:
 
   double doubleApproximation() const;
 
-  bool didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
 };
 
@@ -56,7 +56,7 @@ public:
     return Expression::setSign(s, ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User)).convert<Number>();
   }
 
-  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

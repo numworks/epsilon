@@ -252,8 +252,8 @@ Expression PowerNode::denominator(ReductionContext reductionContext) const {
   return Power(this).denominator(reductionContext);
 }
 
-bool PowerNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  return Power(this).didDerivate(reductionContext, symbol, symbolValue);
+bool PowerNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Power(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 // Evaluation
@@ -1020,7 +1020,7 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
   return *this;
 }
 
-bool Power::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   /* Generalized power derivation formula
    * (f^g)` = (e^(g * ln(f)))`
    *       = (g * ln(f))` * f^g

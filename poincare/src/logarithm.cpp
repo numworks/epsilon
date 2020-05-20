@@ -70,8 +70,8 @@ Expression LogarithmNode<2>::shallowReduce(ExpressionNode::ReductionContext redu
 }
 
 template <>
-bool LogarithmNode<2>::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  return Logarithm(this).didDerivate(reductionContext, symbol, symbolValue);
+bool LogarithmNode<2>::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Logarithm(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 template <>
@@ -82,7 +82,7 @@ Expression LogarithmNode<2>::unaryFunctionDifferential() {
 /* Those two methods will not be called, as CommonLogarithm disappears in
  * reduction */
 template <>
-bool LogarithmNode<1>::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool LogarithmNode<1>::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   assert(false);
   return false;
 }
@@ -355,7 +355,7 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
   return i;
 }
 
-bool Logarithm::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   /* We do nothing if the base is a function of the derivation variable, as the
    * log is then not an unary function anymore.
    * TODO : Check whether we want to deal with the case log(..., f(x)). */

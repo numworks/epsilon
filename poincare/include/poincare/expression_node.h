@@ -223,7 +223,7 @@ public:
   /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowBeautify(ReductionContext reductionContext);
-  /*!*/ virtual bool didDerivate(ReductionContext, Expression symbol, Expression symbolValue);
+  /*!*/ virtual bool derivate(ReductionContext, Expression symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential();
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(ExpressionNode::ReductionContext reductionContext) const;

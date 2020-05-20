@@ -23,6 +23,9 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Derivation
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  Expression unaryFunctionDifferential() override;
   //Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
@@ -37,6 +40,9 @@ class HyperbolicSine final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicSine(const HyperbolicSineNode * n) : HyperbolicTrigonometricFunction(n) {}
   static HyperbolicSine Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicSine, HyperbolicSineNode>({child}); }
+
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential();
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sinh", 1, &UntypedBuilderOneChild<HyperbolicSine>);
 };

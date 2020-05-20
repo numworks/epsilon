@@ -38,7 +38,7 @@ public:
   LayoutShape leftLayoutShape() const override;
 
   /* Derivation */
-  bool didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
@@ -72,7 +72,7 @@ public:
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);

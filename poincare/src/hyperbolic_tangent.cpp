@@ -1,5 +1,8 @@
 #include <poincare/hyperbolic_tangent.h>
+#include <poincare/derivative.h>
+#include <poincare/hyperbolic_cosine.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -17,6 +20,23 @@ int HyperbolicTangentNode::serialize(char * buffer, int bufferSize, Preferences:
 template<typename T>
 Complex<T> HyperbolicTangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::tanh(c), c));
+}
+
+bool HyperbolicTangentNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return HyperbolicTangent(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+Expression HyperbolicTangentNode::unaryFunctionDifferential() {
+  return HyperbolicTangent(this).unaryFunctionDifferential();
+}
+
+bool HyperbolicTangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  return true;
+}
+
+Expression HyperbolicTangent::unaryFunctionDifferential() {
+  return Power::Builder(HyperbolicCosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2));
 }
 
 template Complex<float> Poincare::HyperbolicTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);

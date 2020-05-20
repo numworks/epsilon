@@ -184,7 +184,6 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
   if (mp_obj_is_str(input)) {
     size_t l;
     const char * color = mp_obj_str_get_data(input, &l);
-    // TODO add cyan
     constexpr NamedColor pairs[] = {
       NamedColor("blue", KDColorBlue),
       NamedColor("b", KDColorBlue),
@@ -202,7 +201,8 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
       NamedColor("pink", Palette::Pink),
       NamedColor("orange", Palette::Orange),
       NamedColor("purple", Palette::Purple),
-      NamedColor("grey", Palette::GreyDark)
+      NamedColor("grey", Palette::GreyDark),
+      NamedColor("cyan", Palette::Cyan)
     };
     for (NamedColor p : pairs) {
       if (strcmp(p.name(), color) == 0) {

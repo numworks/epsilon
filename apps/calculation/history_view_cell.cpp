@@ -11,9 +11,6 @@ namespace Calculation {
 
 /* HistoryViewCellDataSource */
 
-HistoryViewCellDataSource::HistoryViewCellDataSource() :
-  m_selectedSubviewType(SubviewType::Output) {}
-
 void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedCellX, int previousSelectedCellY) {
   HistoryViewCell * selectedCell = nullptr;
   HistoryViewCell * previouslySelectedCell = nullptr;
@@ -47,10 +44,6 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   m_calculationExpanded(false),
   m_calculationSingleLine(false)
 {
-}
-
-Shared::ScrollableTwoExpressionsView * HistoryViewCell::outputView() {
-  return &m_scrollableOutputView; //TODO LEA inline
 }
 
 void HistoryViewCell::setEven(bool even) {
@@ -136,15 +129,6 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
    * and re-initialize the scroll. */
   layoutSubviews();
   reloadScroll();
-}
-
-KDColor HistoryViewCell::backgroundColor() const {
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
-  return background;
-}
-
-int HistoryViewCell::numberOfSubviews() const {
-  return 2 + displayedEllipsis();
 }
 
 View * HistoryViewCell::subviewAtIndex(int index) {
@@ -348,10 +332,6 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
   }
   m_dataSource->setSelectedSubviewType(otherSubviewType, true);
   return true;
-}
-
-bool HistoryViewCell::displayedEllipsis() const {
-  return m_highlighted && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None;
 }
 
 }

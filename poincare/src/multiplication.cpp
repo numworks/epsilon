@@ -356,13 +356,15 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   }
 
   Expression result;
+  Expression self = *this;
 
   // Step 2: Handle the units
-  Expression self = *this;
-  Expression units;
-  self = removeUnit(&units);
+  if (hasUnit()) {
+    Expression units;
+    self = deepReduce(reductionContext); // removeUnit has to be called on reduced expression
+    self = removeUnit(&units);
 
-  if (!units.isUninitialized()) {
+    assert(!units.isUninitialized());
     ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
     if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
       /* Step 2a: Recognize derived units

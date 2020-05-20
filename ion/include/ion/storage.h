@@ -227,6 +227,9 @@ extern "C" {
 
 #if EPSILON_SDL_SCREEN_ONLY
 int IonStorageAddScript(const char* name, const char* content);
+int IonStorageNumberOfScripts();
+const char* IonStorageScriptAtIndexName(int index);
+const char* IonStorageScriptAtIndexCotent(int index);
 #endif
 #ifdef __cplusplus
 }

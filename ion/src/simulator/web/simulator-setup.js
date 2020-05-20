@@ -116,3 +116,22 @@ function sendScript(evt) {
     };
   }
 }
+
+function ShowScriptList(){
+  const length = Module._IonStorageNumberOfScripts();
+  for(var i = 0; i<length; i++){
+    const name = Module.UTF8ToString(Module._IonStorageScriptAtIndexName(i));
+    console.log(name);
+  }
+}
+
+function downloadScriptAtIndex(index){
+  var a = document.createElement("a");
+  a.style.display = "none";
+  const name = Module.UTF8ToString(Module._IonStorageScriptAtIndexName(index));
+  const content = Module.UTF8ToString(Module._IonStorageScriptAtIndexCotent(index)).substr(1);
+  var file = new Blob([content], {type: "text/plain;charset=utf-8"});
+  a.href = URL.createObjectURL(file);
+  a.download = name;
+  a.click()
+}

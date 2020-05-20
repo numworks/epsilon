@@ -385,6 +385,7 @@ protected:
    * It returns whether the instance is differentiable, and differentiates it if
    * able. */
   bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->didDerivate(reductionContext, symbol, symbolValue); }
+  Expression unaryFunctionDifferential() { return node()->unaryFunctionDifferential(); }
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
@@ -414,6 +415,7 @@ private:
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
   bool defaultDidDerivate() { return false; }
+  Expression defaultUnaryFunctionDifferential() { return *this; }
 
   /* Approximation */
   template<typename U> Evaluation<U> approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

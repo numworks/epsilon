@@ -1,5 +1,7 @@
 #include <poincare/sine.h>
 #include <poincare/complex.h>
+#include <poincare/cosine.h>
+#include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 
@@ -34,6 +36,13 @@ Expression SineNode::shallowReduce(ReductionContext reductionContext) {
   return Sine(this).shallowReduce(reductionContext);
 }
 
+bool SineNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Sine(this).didDerivate(reductionContext, symbol, symbolValue);
+}
+
+Expression SineNode::unaryFunctionDifferential() {
+  return Sine(this).unaryFunctionDifferential();
+}
 
 Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
@@ -44,6 +53,15 @@ Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext
     }
   }
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
+}
+
+bool Sine::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  return true;
+}
+
+Expression Sine::unaryFunctionDifferential() {
+  return Cosine::Builder(childAtIndex(0).clone());
 }
 
 }

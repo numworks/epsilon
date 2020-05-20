@@ -131,6 +131,10 @@ bool ExpressionNode::didDerivate(ReductionContext reductionContext, Expression s
   return Expression(this).defaultDidDerivate();
 }
 
+Expression ExpressionNode::unaryFunctionDifferential() {
+  return Expression(this).defaultUnaryFunctionDifferential();
+}
+
 bool ExpressionNode::isOfType(Type * types, int length) const {
   for (int i = 0; i < length; i++) {
     if (type() == types[i]) {

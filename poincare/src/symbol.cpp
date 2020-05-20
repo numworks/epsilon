@@ -107,8 +107,8 @@ ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
   return LayoutShape::MoreLetters;
 }
 
-bool SymbolNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  return Symbol(this).didDerivate(reductionContext, symbol, symbolValue);
+bool SymbolNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Symbol(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 template<typename T>
@@ -196,7 +196,7 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   return result.deepReduce(reductionContext);
 }
 
-bool Symbol::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.convert<Symbol>().name()) == 0));
   return true;
 }

@@ -1,7 +1,10 @@
 #include <poincare/tangent.h>
 #include <poincare/cosine.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 
 #include <poincare/sine.h>
@@ -37,6 +40,13 @@ Expression TangentNode::shallowReduce(ReductionContext reductionContext) {
   return Tangent(this).shallowReduce(reductionContext);
 }
 
+bool TangentNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Tangent(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+Expression TangentNode::unaryFunctionDifferential() {
+  return Tangent(this).unaryFunctionDifferential();
+}
 
 Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
@@ -58,6 +68,15 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
     return d.shallowReduce(reductionContext);
   }
   return newExpression;
+}
+
+bool Tangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  return true;
+}
+
+Expression Tangent::unaryFunctionDifferential() {
+  return Power::Builder(Cosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2));
 }
 
 }

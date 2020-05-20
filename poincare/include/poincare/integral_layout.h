@@ -9,6 +9,7 @@ namespace Poincare {
 
 class IntegralLayoutNode final : public LayoutNode {
 public:
+
   // Sizes of the upper and lower curls of the integral symbol
   constexpr static KDCoordinate k_symbolHeight = 9;
   constexpr static KDCoordinate k_symbolWidth = 4;
@@ -48,11 +49,11 @@ private:
   constexpr static int k_integrandLayoutIndex = 0;
   constexpr static int k_differentialLayoutIndex = 1;
   constexpr static const KDFont * k_font = KDFont::LargeFont;
-  constexpr static KDCoordinate k_boundHeightMargin = 5;
-  constexpr static KDCoordinate k_boundWidthMargin = 5;
-  constexpr static KDCoordinate k_differentialWidthMargin = 3;
-  constexpr static KDCoordinate k_integrandWidthMargin = 2;
-  constexpr static KDCoordinate k_integrandHeigthMargin = 4;
+  constexpr static KDCoordinate k_boundVerticalMargin = 4;
+  constexpr static KDCoordinate k_boundHorizontalMargin = 3;
+  constexpr static KDCoordinate k_differentialHorizontalMargin = 3;
+  constexpr static KDCoordinate k_integrandHorizontalMargin = 2;
+  constexpr static KDCoordinate k_integrandVerticalMargin = 3;
   constexpr static KDCoordinate k_lineThickness = 1;
   // int(f(x), x, a, b)
   LayoutNode * integrandLayout() { return childAtIndex(k_integrandLayoutIndex); } // f(x)
@@ -60,6 +61,23 @@ private:
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); } // a
   LayoutNode * upperBoundLayout() { return childAtIndex(3); } // b
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+
+  enum class BoundPosition : uint8_t{
+    UpperBound,
+    LowerBound
+  };
+
+  enum class NestedPosition : uint8_t{
+    Previous,
+    Next
+  };
+
+  LayoutNode * boundLayout(BoundPosition position) { return position == BoundPosition::UpperBound ? upperBoundLayout() : lowerBoundLayout(); }
+  IntegralLayoutNode * nextNestedIntegral();
+  IntegralLayoutNode * previousNestedIntegral();
+  IntegralLayoutNode * nestedIntegral(NestedPosition position) { return position == NestedPosition::Next ? nextNestedIntegral() : previousNestedIntegral(); }
+  KDCoordinate boundMaxHeight(BoundPosition position);
+  IntegralLayoutNode * mostNestedIntegral (NestedPosition position);
 };
 
 class IntegralLayout final : public Layout {

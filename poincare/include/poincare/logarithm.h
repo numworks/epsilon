@@ -32,6 +32,9 @@ public:
   Expression shallowBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+  // Derivation
+  bool didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  Expression unaryFunctionDifferential() override;
   // Evaluation
   template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -53,6 +56,8 @@ public:
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
+  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential();
 
 private:
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);

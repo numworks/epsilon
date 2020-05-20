@@ -36,7 +36,7 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   // Derivation
-  bool didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
   Expression unaryFunctionDifferential() override;
 
   // Evaluation
@@ -57,7 +57,7 @@ public:
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
-  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
   Expression unaryFunctionDifferential();
 };
 

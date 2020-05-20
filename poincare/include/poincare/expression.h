@@ -384,7 +384,7 @@ protected:
   /* This method is used for the reduction of Derivative expressions.
    * It returns whether the instance is differentiable, and differentiates it if
    * able. */
-  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->didDerivate(reductionContext, symbol, symbolValue); }
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->derivate(reductionContext, symbol, symbolValue); }
   Expression unaryFunctionDifferential() { return node()->unaryFunctionDifferential(); }
 
 private:

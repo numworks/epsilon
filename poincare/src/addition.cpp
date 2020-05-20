@@ -51,8 +51,8 @@ Expression AdditionNode::shallowBeautify(ReductionContext reductionContext) {
 }
 
 // Derivation
-bool AdditionNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  return Addition(this).didDerivate(reductionContext, symbol, symbolValue);
+bool AdditionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Addition(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 // Addition
@@ -328,7 +328,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result;
 }
 
-bool Addition::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Addition::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   for (int i = 0; i < numberOfChildren(); i++) {
     replaceChildAtIndexInPlace(i, Derivative::Builder(childAtIndex(i), symbol.clone().convert<Symbol>(), symbolValue.clone()));
   }

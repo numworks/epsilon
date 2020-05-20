@@ -170,14 +170,14 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   Expression symbolValue = childAtIndex(2);
 
   /* Since derivand is a child to the derivative node, it can be replaced in
-   * place without didDerivate having to return the derivative. */
-  if (!derivand.didDerivate(reductionContext, symbol, symbolValue)) {
+   * place without derivate having to return the derivative. */
+  if (!derivand.derivate(reductionContext, symbol, symbolValue)) {
     return *this;
   }
-  /* Updates the value of derivand, because didDerivate may call
+  /* Updates the value of derivand, because derivate may call
    * replaceWithInplace on it */
   derivand = childAtIndex(0);
-  /* Deep reduces the child, because didDerivate may not preserve its reduced
+  /* Deep reduces the child, because derivate may not preserve its reduced
    * status. */
 
   derivand = derivand.replaceSymbolWithExpression(symbol, symbolValue);

@@ -46,4 +46,9 @@ QUIZ_CASE(poicare_differential_unary_functions) {
   assert_parses_and_reduces_as("diff(sin(2x)+sin(3x),x,π/6)","1");
 
   assert_parses_and_reduces_as("diff(cos(x),x,π/2)","-1");
+
+  assert_parses_and_reduces_as("diff(ln(x),x,x)","1/x");
+  assert_parses_and_reduces_as("diff(log(x,10),x,x)","1/(x*ln(10))");
+
+  assert_parses_and_reduces_as("diff(ln(cos(x)),x,a)","-tan(a)");
 }

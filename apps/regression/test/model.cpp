@@ -47,7 +47,7 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   }
 
   // Compute and compare r2
-  double r2 = store.squaredCorrelationCoefficient(series);
+  double r2 = store.determinationCoefficientForSeries(series, &globalContext);
   assert_value_is(r2, trueR2);
 }
 

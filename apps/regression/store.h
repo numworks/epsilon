@@ -57,7 +57,9 @@ public:
   bool seriesIsEmpty(int series) const override;
 
   // Calculation
+  void updateCoefficients(int series, Poincare::Context * globalContext);
   double * coefficientsForSeries(int series, Poincare::Context * globalContext);
+  double determinationCoefficientForSeries(int series, Poincare::Context * globalContext); // R2
   double doubleCastedNumberOfPairsOfSeries(int series) const;
   double squaredValueSumOfColumn(int series, int i, bool lnOfSeries = false) const;
   double columnProductSum(int series, bool lnOfSeries = false) const;
@@ -69,9 +71,9 @@ public:
   double yIntercept(int series, bool lnOfSeries = false) const;
   double yValueForXValue(int series, double x, Poincare::Context * globalContext);
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
-  double correlationCoefficient(int series) const;
-  double squaredCorrelationCoefficient(int series) const;
+  double correlationCoefficient(int series) const; // R
 private:
+  double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;
   void resetMemoization();
   float maxValueOfColumn(int series, int i) const; //TODO LEA why float ?
@@ -90,6 +92,7 @@ private:
   TrigonometricModel m_trigonometricModel;
   LogisticModel m_logisticModel;
   double m_regressionCoefficients[k_numberOfSeries][Model::k_maxNumberOfCoefficients];
+  double m_determinationCoefficient[k_numberOfSeries];
   bool m_regressionChanged[k_numberOfSeries];
   Poincare::Preferences::AngleUnit m_angleUnit;
 };

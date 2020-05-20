@@ -200,7 +200,7 @@ void GraphController::reloadBannerView() {
     // Set "r2=..."
     numberOfChar = 0;
     legend = " r2=";
-    double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
+    double r2 = m_store->determinationCoefficientForSeries(*m_selectedSeriesIndex, globalContext());
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(1+index)->setText(buffer);

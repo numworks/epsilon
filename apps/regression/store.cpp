@@ -149,8 +149,8 @@ void Store::setDefault() {
     }
   }
   float range = maxX - minX;
-  setXMin(minX - k_displayHorizontalMarginRatio*range);
-  setXMax(maxX + k_displayHorizontalMarginRatio*range);
+  setXMin(minX - k_displayHorizontalMarginRatio * range);
+  setXMax(maxX + k_displayHorizontalMarginRatio * range);
 }
 
 /* Series */
@@ -161,7 +161,7 @@ bool Store::seriesIsEmpty(int series) const {
 
 /* Calculations */
 
-double * Store::coefficientsForSeries(int series, Poincare::Context * globalContext) {
+void Store::updateCoefficients(int series, Poincare::Context * globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(!seriesIsEmpty(series));
   uint32_t storeChecksumSeries = storeChecksumForSeries(series);
@@ -179,8 +179,23 @@ double * Store::coefficientsForSeries(int series, Poincare::Context * globalCont
     seriesModel->fit(this, series, m_regressionCoefficients[series], globalContext);
     m_regressionChanged[series] = false;
     m_seriesChecksum[series] = storeChecksumSeries;
+    /* m_determinationCoefficient must be updated after m_seriesChecksum and m_regressionChanged
+     * updates to avoid infinite recursive calls as computeDeterminationCoefficient calls
+     * yValueForXValue which calls coefficientsForSeries which calls updateCoefficients */
+    m_determinationCoefficient[series] = computeDeterminationCoefficient(series, globalContext);
   }
+}
+
+double * Store::coefficientsForSeries(int series, Poincare::Context * globalContext) {
+  updateCoefficients(series, globalContext);
   return m_regressionCoefficients[series];
+}
+
+double Store::determinationCoefficientForSeries(int series, Poincare::Context * globalContext) {
+  /* Returns the Determination coefficient (R2).
+   * It will be updated if the regression has been updated */
+  updateCoefficients(series, globalContext);
+  return m_determinationCoefficient[series];
 }
 
 double Store::doubleCastedNumberOfPairsOfSeries(int series) const {
@@ -212,12 +227,13 @@ float Store::minValueOfColumn(int series, int i) const {
 
 double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const {
   double result = 0;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+  const int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
+    double value = m_data[series][i][k];
     if (lnOfSeries) {
-      result += log(m_data[series][i][k]) * log(m_data[series][i][k]);
-    } else {
-      result += m_data[series][i][k]*m_data[series][i][k];
+      value = log(value);
     }
+    result += value * value;
   }
   return result;
 }
@@ -225,22 +241,24 @@ double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const 
 double Store::columnProductSum(int series, bool lnOfSeries) const {
   double result = 0;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+    double value0 = m_data[series][0][k];
+    double value1 = m_data[series][1][k];
     if (lnOfSeries) {
-      result += log(m_data[series][0][k]) * log(m_data[series][1][k]);
-    } else {
-      result += m_data[series][0][k] * m_data[series][1][k];
+      value0 = log(value0);
+      value1 = log(value1);
     }
+    result += value0 * value1;
   }
   return result;
 }
 
 double Store::meanOfColumn(int series, int i, bool lnOfSeries) const {
-  return numberOfPairsOfSeries(series) == 0 ? 0 : sumOfColumn(series, i, lnOfSeries)/numberOfPairsOfSeries(series);
+  return numberOfPairsOfSeries(series) == 0 ? 0 : sumOfColumn(series, i, lnOfSeries) / numberOfPairsOfSeries(series);
 }
 
 double Store::varianceOfColumn(int series, int i, bool lnOfSeries) const {
   double mean = meanOfColumn(series, i, lnOfSeries);
-  return squaredValueSumOfColumn(series, i, lnOfSeries)/numberOfPairsOfSeries(series) - mean*mean;
+  return squaredValueSumOfColumn(series, i, lnOfSeries)/numberOfPairsOfSeries(series) - mean * mean;
 }
 
 double Store::standardDeviationOfColumn(int series, int i, bool lnOfSeries) const {
@@ -248,7 +266,9 @@ double Store::standardDeviationOfColumn(int series, int i, bool lnOfSeries) cons
 }
 
 double Store::covariance(int series, bool lnOfSeries) const {
-  return columnProductSum(series, lnOfSeries)/numberOfPairsOfSeries(series) - meanOfColumn(series, 0, lnOfSeries)*meanOfColumn(series, 1, lnOfSeries);
+  double mean0 = meanOfColumn(series, 0, lnOfSeries);
+  double mean1 = meanOfColumn(series, 1, lnOfSeries);
+  return columnProductSum(series, lnOfSeries)/numberOfPairsOfSeries(series) - mean0 * mean1;
 }
 
 double Store::slope(int series, bool lnOfSeries) const {
@@ -268,20 +288,39 @@ double Store::yValueForXValue(int series, double x, Poincare::Context * globalCo
 double Store::xValueForYValue(int series, double y, Poincare::Context * globalContext) {
   Model * model = regressionModel((int)m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
-  return model->levelSet(coefficients, xMin(), xGridUnit()/10.0, xMax(), y, globalContext);
+  return model->levelSet(coefficients, xMin(), xGridUnit() / 10.0, xMax(), y, globalContext);
 }
 
 double Store::correlationCoefficient(int series) const {
-  double sd0 = standardDeviationOfColumn(series, 0);
-  double sd1 = standardDeviationOfColumn(series, 1);
-  return (sd0 == 0.0 || sd1 == 0.0) ? 1.0 : covariance(series)/(sd0*sd1);
-}
-
-double Store::squaredCorrelationCoefficient(int series) const {
-  double cov = covariance(series);
+  /* Returns the correlation coefficient (R) between the series X and Y.
+   * In non-linear regressions, its square is different from the determinationCoefficient
+   * It is usually displayed in linear regressions only to avoid confusion */
   double v0 = varianceOfColumn(series, 0);
   double v1 = varianceOfColumn(series, 1);
-  return (v0 == 0.0 || v1 == 0.0) ? 1.0 : cov*cov/(v0*v1);
+  return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
+}
+
+double Store::computeDeterminationCoefficient(int series, Poincare::Context * globalContext) {
+  /* Computes and returns the determination coefficient (R2) of the regression.
+   * For regressions, it is equal to the square of the correlation coefficient between
+   * the series Y and the evaluated values from the series X and the selected model
+   * Computing the coefficient using the latter equality would require more calls to the evaluated
+   * values and would be less precise. */
+  // Residual sum of squares
+  double ssr = 0;
+  // Total sum of squares
+  double sst = 0;
+  double mean = meanOfColumn(series, 1);
+  const int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
+    // Difference between the observation and the estimated value of the model
+    double residual = m_data[series][1][k] - yValueForXValue(series, m_data[series][0][k], globalContext);
+    ssr += residual * residual;
+    // Difference between the observation and the overall observations mean
+    double difference = m_data[series][1][k] - mean;
+    sst += difference * difference;
+  }
+  return sst == 0.0 ? 1.0 : 1.0 - ssr / sst;
 }
 
 Model * Store::regressionModel(int index) {

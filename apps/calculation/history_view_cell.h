@@ -17,7 +17,7 @@ public:
     Output = 2,
     Ellipsis = 3
   };
-  HistoryViewCellDataSource();
+  HistoryViewCellDataSource() : m_selectedSubviewType(SubviewType::Output) {}
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
   SubviewType selectedSubviewType() { return m_selectedSubviewType; }
 private:
@@ -46,21 +46,23 @@ public:
     return this;
   }
   Poincare::Layout layout() const override;
-  KDColor backgroundColor() const override;
+  KDColor backgroundColor() const override { return m_even ? KDColorWhite : Palette::WallScreen; }
   void resetMemoization();
   void setCalculation(Calculation * calculation, bool expanded);
-  int numberOfSubviews() const override;
+  int numberOfSubviews() const override { return 2 + displayedEllipsis(); }
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Shared::ScrollableTwoExpressionsView * outputView();
+  Shared::ScrollableTwoExpressionsView * outputView() { return &m_scrollableOutputView; }
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);
-  bool displayedEllipsis() const;
+  bool displayedEllipsis() const {
+    return m_highlighted && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None;
+  }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformationType m_calculationAdditionInformation;

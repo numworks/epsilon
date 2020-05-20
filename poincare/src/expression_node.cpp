@@ -127,7 +127,7 @@ Expression ExpressionNode::shallowBeautify(ReductionContext reductionContext) {
   return Expression(this).defaultShallowBeautify();
 }
 
-bool ExpressionNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool ExpressionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
   return Expression(this).defaultDidDerivate();
 }
 

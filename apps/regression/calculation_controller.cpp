@@ -237,7 +237,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       if ((modelType == Model::Type::Linear && j == numberRows - 2) || j == numberRows - 1) {
         double calculation;
         if (j == numberRows - 1) {
-          calculation = m_store->squaredCorrelationCoefficient(seriesNumber);
+          calculation = m_store->determinationCoefficientForSeries(seriesNumber, globContext);
         } else {
           calculation = m_store->correlationCoefficient(seriesNumber);
         }

@@ -31,7 +31,7 @@ public:
   // IllustratedListController
   void setExpression(Poincare::Expression e) override;
 
-  constexpr static KDCoordinate k_illustrationHeight = 100;
+  constexpr static KDCoordinate k_illustrationHeight = 120;
 protected:
   Poincare::Expression m_savedExpression;
   CalculationStore m_calculationStore;

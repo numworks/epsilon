@@ -17,10 +17,10 @@ float ComplexModel::rangeBound(float direction, bool horizontal) const {
     maxFactor = k_maxHorizontalMarginFactor;
     value = real();
   }
-  if (std::isnan(value) || std::isinf(value) || value == 0.0f) {
-    return direction*maxFactor;
-  }
   float factor = direction*value >= 0.0f ? maxFactor : minFactor;
+  if (std::isnan(value) || std::isinf(value) || value == 0.0f) {
+    return direction*factor;
+  }
   return factor*value;
 }
 

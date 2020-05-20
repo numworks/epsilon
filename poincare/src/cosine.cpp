@@ -1,7 +1,11 @@
 #include <poincare/cosine.h>
 #include <poincare/complex.h>
+#include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/sine.h>
 
 #include <cmath>
 
@@ -34,6 +38,14 @@ Expression CosineNode::shallowReduce(ReductionContext reductionContext) {
   return Cosine(this).shallowReduce(reductionContext);
 }
 
+bool CosineNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Cosine(this).didDerivate(reductionContext, symbol, symbolValue);
+}
+
+Expression CosineNode::unaryFunctionDifferential() {
+  return Cosine(this).unaryFunctionDifferential();
+}
+
 Expression Cosine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -45,5 +57,13 @@ Expression Cosine::shallowReduce(ExpressionNode::ReductionContext reductionConte
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
+bool Cosine::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  return true;
+}
+
+Expression Cosine::unaryFunctionDifferential() {
+  return Multiplication::Builder(Rational::Builder(-1), Sine::Builder(childAtIndex(0).clone()));
+}
 
 }

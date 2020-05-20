@@ -34,6 +34,10 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
+App::Snapshot::Snapshot() : m_calculationStore(m_calculationBuffer, k_calculationBufferSize)
+{
+}
+
 App::App(Snapshot * snapshot) :
   ExpressionFieldDelegateApp(snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),

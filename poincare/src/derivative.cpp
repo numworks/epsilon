@@ -1,8 +1,8 @@
 #include <poincare/derivative.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
-
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -184,6 +184,12 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   derivand = derivand.deepReduce(reductionContext);
   replaceWithInPlace(derivand);
   return derivand;
+}
+
+void Derivative::DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue) {
+  Expression df = function.unaryFunctionDifferential();
+  Expression dg = Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());
+  function.replaceWithInPlace(Multiplication::Builder(df, dg));
 
 }
 

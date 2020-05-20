@@ -15,11 +15,12 @@ void assert_parses_and_reduces_as(const char * expression, const char * derivati
   quiz_assert_print_if_failure(eReduced.isIdenticalTo(d), expression);
 }
 
-QUIZ_CASE(poincare_differential_addition) {
+QUIZ_CASE(poincare_differential_operations) {
   assert_parses_and_reduces_as("diff(1,x,1)", "0");
   assert_parses_and_reduces_as("diff(x,x,1)", "1");
   assert_parses_and_reduces_as("diff(1+2,x,1)", "0");
   assert_parses_and_reduces_as("diff(a,x,1)", "0");
+  assert_parses_and_reduces_as("diff(diff(x^2,x,y),y,1)","2");
 
   assert_parses_and_reduces_as("diff(1+x,x,1)", "1");
   assert_parses_and_reduces_as("diff(undef,x,1)", "undef");
@@ -37,4 +38,10 @@ QUIZ_CASE(poincare_differential_addition) {
   assert_parses_and_reduces_as("diff(x^2,x,x)", "2*x");
   assert_parses_and_reduces_as("diff(a*x^2+b*x+c,x,x)", "2*a*x+b");
   assert_parses_and_reduces_as("diff(1/x,x,1)", "-1");
+}
+
+QUIZ_CASE(poicare_differential_unary_functions) {
+  assert_parses_and_reduces_as("diff(sin(x),x,π)","-1");
+  assert_parses_and_reduces_as("diff(sin(2y),y,π/12)","√(3)");
+  assert_parses_and_reduces_as("diff(sin(2x)+sin(3x),x,π/6)","1");
 }

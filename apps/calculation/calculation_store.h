@@ -7,37 +7,45 @@
 
 namespace Calculation {
 
-/* To optimize the storage space, we use one big buffer for all calculations.
- *
- * The previous solution was to keep 10 calculations, each containing 3 buffers
- * (for input and outputs). To optimize the storage, we then wanted to put all
- * outputs in a cache where they could be deleted to add a new entry, and
- * recomputed on cache miss. However, the computation depends too much on the
- * state of the memory for this to be possible. For instance:
- * 6->a
- * a+1
- * Perform some big computations that remove a+1 from the cache
- * Delete a from the variable box.
- * Scroll up to display a+1 : a does not exist anymore so the outputs won't be
- * recomputed correctly.
- *
- * Now we do not cap the number of calculations and just delete the oldests to
- * create space for a new calculation. */
+/*
+  To optimize the storage space, we use one big buffer for all calculations.
+  The calculations are stored one after another while pointers to the end of each
+  calculation are stored at the end of the buffer, in the opposite direction.
+  By doing so, we can memoize every calculation entered while not limiting
+  the number of calculation stored in the buffer.
+
+  If the remaining space is too small for storing a new calculation, we
+  delete the oldest one.
+
+ Memory layout :
+                                                                <- Available space for new calculations ->
++--------------------------------------------------------------------------------------------------------------------+
+|               |               |               |               |                                        |  |  |  |  |
+| Calculation 3 | Calculation 2 | Calculation 1 | Calculation O |                                        |p0|p1|p2|p3|
+|     Oldest    |               |               |               |                                        |  |  |  |  |
++--------------------------------------------------------------------------------------------------------------------+
+^               ^               ^               ^               ^                                        ^
+m_buffer        p3              p2              p1              p0                                       a
+
+m_calculationAreaEnd = p0
+a = addressOfPointerToCalculation(0)
+*/
 
 class CalculationStore {
 public:
   CalculationStore();
+  CalculationStore(char * buffer, int size);
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   typedef KDCoordinate (*HeightComputer)(Calculation * c, bool expanded);
   Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context, HeightComputer heightComputer);
   void deleteCalculationAtIndex(int i);
   void deleteAll();
+  int remainingBufferSize() const { assert(m_calculationAreaEnd >= m_buffer); return m_bufferSize - (m_calculationAreaEnd - m_buffer) - m_numberOfCalculations*sizeof(Calculation*); }
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Poincare::Expression ansExpression(Poincare::Context * context);
-  void tidy();
+  int bufferSize() { return m_bufferSize; }
+
 private:
-  static constexpr int k_maxNumberOfCalculations = 25;
-  static constexpr int k_bufferSize = 10 * Calculation::k_numberOfExpressions * Constant::MaxSerializedExpressionSize;
 
   class CalculationIterator {
   public:
@@ -53,26 +61,22 @@ private:
   };
 
   CalculationIterator begin() const { return CalculationIterator(m_buffer); }
-  CalculationIterator end() const { return CalculationIterator(m_bufferEnd); }
+  CalculationIterator end() const { return CalculationIterator(m_calculationAreaEnd); }
 
-  Calculation * bufferCalculationAtIndex(int i);
-  int remainingBufferSize() const { assert(m_bufferEnd >= m_buffer); return k_bufferSize - (m_bufferEnd - m_buffer); }
   bool pushSerializeExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-  char * slideCalculationsToEndOfBuffer(); // returns the new position of the calculations
-  size_t deleteLastCalculation(const char * calculationsStart = nullptr);
-  const char * lastCalculationPosition(const char * calculationsStart) const;
   Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context, HeightComputer heightComputer);
 
-  char m_buffer[k_bufferSize];
-  const char * m_bufferEnd;
+  char * m_buffer;
+  int m_bufferSize;
+  const char * m_calculationAreaEnd;
   int m_numberOfCalculations;
-  bool m_slidedBuffer;
+
+  size_t deleteOldestCalculation();
+  char * addressOfPointerToCalculationOfIndex(int i) {return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}
 
   // Memoization
-  static constexpr int k_numberOfMemoizedCalculationPointers = 10;
-  void resetMemoizedModelsAfterCalculationIndex(int index);
-  int m_indexOfFirstMemoizedCalculationPointer;
-  mutable Calculation * m_memoizedCalculationPointers[k_numberOfMemoizedCalculationPointers];
+  char * beginingOfMemoizationArea() {return addressOfPointerToCalculationOfIndex(0);};
+  void recomputeMemoizedPointersAfterCalculationIndex(int index);
 };
 
 }

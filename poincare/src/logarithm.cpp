@@ -3,6 +3,7 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
 #include <poincare/constant.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
@@ -67,6 +68,31 @@ template<>
 Expression LogarithmNode<2>::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   return Logarithm(this).shallowReduce(reductionContext);
 }
+
+template <>
+bool LogarithmNode<2>::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Logarithm(this).didDerivate(reductionContext, symbol, symbolValue);
+}
+
+template <>
+Expression LogarithmNode<2>::unaryFunctionDifferential() {
+  return Logarithm(this).unaryFunctionDifferential();
+}
+
+/* Those two methods will not be called, as CommonLogarithm disappears in
+ * reduction */
+template <>
+bool LogarithmNode<1>::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  assert(false);
+  return false;
+}
+
+template <>
+Expression LogarithmNode<1>::unaryFunctionDifferential() {
+  assert(false);
+  return Expression();
+}
+/**/
 
 template<>
 Expression LogarithmNode<1>::shallowBeautify(ReductionContext reductionContext) {
@@ -327,6 +353,24 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
     div = Integer::Division(i, base);
   }
   return i;
+}
+
+bool Logarithm::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  /* We do nothing if the base is a function of the derivation variable, as the
+   * log is then not an unary function anymore.
+   * TODO : Check whether we want to deal with the case log(..., f(x)). */
+  if (childAtIndex(1).polynomialDegree(reductionContext.context(), symbol.convert<Symbol>().name()) != 0) {
+    return false;
+  }
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue);
+  return true;
+}
+
+Expression Logarithm::unaryFunctionDifferential() {
+  /* log(x, b)` = (ln(x)/ln(b))`
+   *            = 1 / (x * ln(b))
+   */
+  return Power::Builder(Multiplication::Builder(childAtIndex(0).clone(), NaperianLogarithm::Builder(childAtIndex(1).clone())), Rational::Builder(-1));
 }
 
 Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext) {

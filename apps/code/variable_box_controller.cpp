@@ -624,8 +624,13 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
            * nameLength are temporary variables that will be overriden when the
            * lexer continues lexing or is destroyed.
            * This was found from stepping in the code and trying. */
+          /* TODO: Try to understand what is happening with tokenInText and
+           * remove this trick.*/
+          while (*tokenInText == ' ') {
+            tokenInText++;
+          }
           for (int i = 0; i < 3; i++) {
-            if (strncmp(tokenInText, name, nameLength) != 0) {
+            if (strncmp(tokenInText, name, nameLength) != 0 && tokenInText > scriptContent) {
               tokenInText--;
             } else {
               break;

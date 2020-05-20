@@ -44,4 +44,6 @@ QUIZ_CASE(poicare_differential_unary_functions) {
   assert_parses_and_reduces_as("diff(sin(x),x,π)","-1");
   assert_parses_and_reduces_as("diff(sin(2y),y,π/12)","√(3)");
   assert_parses_and_reduces_as("diff(sin(2x)+sin(3x),x,π/6)","1");
+
+  assert_parses_and_reduces_as("diff(cos(x),x,π/2)","-1");
 }

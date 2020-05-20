@@ -7,7 +7,6 @@
 #include "../shared/text_field_delegate.h"
 #include "../shared/layout_field_delegate.h"
 #include "history_controller.h"
-#include "calculation_store.h"
 #include "selectable_table_view.h"
 
 namespace Calculation {

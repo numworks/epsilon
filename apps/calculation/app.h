@@ -24,7 +24,6 @@ public:
     Descriptor * descriptor() override;
     CalculationStore * calculationStore() { return &m_calculationStore; }
   private:
-    void tidy() override;
     CalculationStore m_calculationStore;
   };
   static App * app() {

@@ -11,58 +11,47 @@ using namespace Shared;
 
 namespace Calculation {
 
-CalculationStore::CalculationStore() :
-  m_bufferEnd(m_buffer),
-  m_numberOfCalculations(0),
-  m_slidedBuffer(false),
-  m_indexOfFirstMemoizedCalculationPointer(0)
+CalculationStore::CalculationStore(char * buffer, int size) :
+  m_buffer(buffer),
+  m_bufferSize(size),
+  m_calculationAreaEnd(m_buffer),
+  m_numberOfCalculations(0)
 {
-  resetMemoizedModelsAfterCalculationIndex(-1);
+  assert(m_buffer != nullptr);
+  assert(m_bufferSize > 0);
 }
 
+// Returns an expiring pointer to the calculation of index i
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
-  assert(!m_slidedBuffer);
   assert(i >= 0 && i < m_numberOfCalculations);
-  assert(m_indexOfFirstMemoizedCalculationPointer >= 0);
-  if (i >= m_indexOfFirstMemoizedCalculationPointer && i < m_indexOfFirstMemoizedCalculationPointer + k_numberOfMemoizedCalculationPointers) {
-    // The calculation is within the range of memoized calculations
-    Calculation * c = m_memoizedCalculationPointers[i-m_indexOfFirstMemoizedCalculationPointer];
-    if (c != nullptr) {
-      // The pointer was memoized
-      return ExpiringPointer<Calculation>(c);
-    }
-    c = bufferCalculationAtIndex(i);
-    m_memoizedCalculationPointers[i-m_indexOfFirstMemoizedCalculationPointer] = c;
-    return c;
+  // m_buffer is the adress of the oldest calculation in calculation store
+  Calculation * c = (Calculation *) m_buffer;
+  if (i != m_numberOfCalculations-1) {
+    // The calculation we want is not the oldest one so we get its pointer
+    c = *reinterpret_cast<Calculation**>(addressOfPointerToCalculationOfIndex(i+1));
   }
-  // Slide the memoization buffer
-  if (i >= m_indexOfFirstMemoizedCalculationPointer) {
-    // Slide the memoization buffer to the left
-    memmove(m_memoizedCalculationPointers, m_memoizedCalculationPointers+1, (k_numberOfMemoizedCalculationPointers - 1) * sizeof(Calculation *));
-    m_memoizedCalculationPointers[k_numberOfMemoizedCalculationPointers - 1] = nullptr;
-    m_indexOfFirstMemoizedCalculationPointer++;
-  } else {
-    // Slide the memoization buffer to the right
-    memmove(m_memoizedCalculationPointers+1, m_memoizedCalculationPointers, (k_numberOfMemoizedCalculationPointers - 1) * sizeof(Calculation *));
-    m_memoizedCalculationPointers[0] = nullptr;
-    m_indexOfFirstMemoizedCalculationPointer--;
-  }
-  return calculationAtIndex(i);
+  return ExpiringPointer<Calculation>(c);
 }
 
+// Pushes an expression in the store
 ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context * context, HeightComputer heightComputer) {
-  /* Compute ans now, before the buffer is slided and before the calculation
+  /* Compute ans now, before the buffer is updated and before the calculation
    * might be deleted */
   Expression ans = ansExpression(context);
 
-  // Prepare the buffer for the new calculation
-  int minSize = Calculation::MinimalSize();
-  assert(k_bufferSize > minSize);
-  while (remainingBufferSize() < minSize || m_numberOfCalculations > k_maxNumberOfCalculations) {
-    deleteLastCalculation();
+  /* Prepare the buffer for the new calculation
+   *The minimal size to store the new calculation is the minimal size of a calculation plus the pointer to its end */
+  int minSize = Calculation::MinimalSize() + sizeof(Calculation *);
+  assert(m_bufferSize > minSize);
+  while (remainingBufferSize() < minSize) {
+    // If there is no more space to store a calculation, we delete the oldest one
+    deleteOldestCalculation();
   }
-  char * newCalculationsLocation = slideCalculationsToEndOfBuffer();
-  char * nextSerializationLocation = m_buffer;
+
+  // Getting the adresses of the limits of the free space
+  char * beginingOfFreeSpace = (char *)m_calculationAreaEnd;
+  char * endOfFreeSpace = beginingOfMemoizationArea();
+  char * previousCalc = beginingOfFreeSpace;
 
   // Add the beginning of the calculation
   {
@@ -70,23 +59,23 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
      * available, so this memmove will not overide anything. */
     Calculation newCalc = Calculation();
     size_t calcSize = sizeof(newCalc);
-    memmove(nextSerializationLocation, &newCalc, calcSize);
-    nextSerializationLocation += calcSize;
+    memcpy(beginingOfFreeSpace, &newCalc, calcSize);
+    beginingOfFreeSpace += calcSize;
   }
 
   /* Add the input expression.
    * We do not store directly the text entered by the user because we do not
    * want to keep Ans symbol in the calculation store. */
-  const char * inputSerialization = nextSerializationLocation;
+  const char * inputSerialization = beginingOfFreeSpace;
   {
     Expression input = Expression::Parse(text, context).replaceSymbolWithExpression(Symbol::Ans(), ans);
-    if (!pushSerializeExpression(input, nextSerializationLocation, &newCalculationsLocation)) {
+    if (!pushSerializeExpression(input, beginingOfFreeSpace, &endOfFreeSpace)) {
       /* If the input does not fit in the store (event if the current
        * calculation is the only calculation), just replace the calculation with
        * undef. */
       return emptyStoreAndPushUndef(context, heightComputer);
     }
-    nextSerializationLocation += strlen(nextSerializationLocation) + 1;
+    beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
   }
 
   // Compute and serialize the outputs
@@ -109,30 +98,27 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       if (i == numberOfOutputs - 1) {
         numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
       }
-      if (!pushSerializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation, numberOfSignificantDigits)) {
+      if (!pushSerializeExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
         /* If the exat/approximate output does not fit in the store (event if the
          * current calculation is the only calculation), replace the output with
          * undef if it fits, else replace the whole calcualtion with undef. */
         Expression undef = Undefined::Builder();
-        if (!pushSerializeExpression(undef, nextSerializationLocation, &newCalculationsLocation)) {
+        if (!pushSerializeExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
           return emptyStoreAndPushUndef(context, heightComputer);
         }
       }
-      nextSerializationLocation += strlen(nextSerializationLocation) + 1;
+      beginingOfFreeSpace += strlen(beginingOfFreeSpace) + 1;
     }
   }
+  // Storing the pointer of the end of the new calculation
+  memcpy(endOfFreeSpace-sizeof(Calculation*),&beginingOfFreeSpace,sizeof(beginingOfFreeSpace));
 
-  // Restore the other calculations
-  size_t slideSize = m_buffer + k_bufferSize - newCalculationsLocation;
-  memcpy(nextSerializationLocation, newCalculationsLocation, slideSize);
-  m_slidedBuffer = false;
+  // The new calculation is now stored
   m_numberOfCalculations++;
-  m_bufferEnd+= nextSerializationLocation - m_buffer;
 
-  // Clean the memoization
-  resetMemoizedModelsAfterCalculationIndex(-1);
-
-  ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(m_buffer));
+  // The end of the calculation storage area is updated
+  m_calculationAreaEnd += beginingOfFreeSpace - previousCalc;
+  ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(previousCalc));
   /* Heights are computed now to make sure that the display output is decided
    * accordingly to the remaining size in the Poincare pool. Once it is, it
    * can't change anymore: the calculation heights are fixed which ensures that
@@ -143,36 +129,42 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   return calculation;
 }
 
+// Delete the calculation of index i
 void CalculationStore::deleteCalculationAtIndex(int i) {
   assert(i >= 0 && i < m_numberOfCalculations);
-  assert(!m_slidedBuffer);
-  ExpiringPointer<Calculation> calcI = calculationAtIndex(i);
-  char * nextCalc = reinterpret_cast<char *>(calcI->next());
-  assert(m_bufferEnd >= nextCalc);
-  size_t slidingSize = m_bufferEnd - nextCalc;
-  memmove((char *)(calcI.pointer()), nextCalc, slidingSize);
-  m_bufferEnd -= (nextCalc - (char *)(calcI.pointer()));
-  m_numberOfCalculations--;
-  resetMemoizedModelsAfterCalculationIndex(i);
-}
-
-void CalculationStore::deleteAll() {
-  /* We might call deleteAll because the app closed due to a pool allocation
-   * failure, so we cannot assert that m_slidedBuffer is false. */
-  m_slidedBuffer = false;
-  m_bufferEnd = m_buffer;
-  m_numberOfCalculations = 0;
-  resetMemoizedModelsAfterCalculationIndex(-1);
-}
-
-void CalculationStore::tidy() {
-  if (m_slidedBuffer) {
-    deleteAll();
+  if (i == 0) {
+    ExpiringPointer<Calculation> lastCalculationPointer = calculationAtIndex(0);
+    m_calculationAreaEnd = (char *)(lastCalculationPointer.pointer());
+    m_numberOfCalculations--;
     return;
   }
-  resetMemoizedModelsAfterCalculationIndex(-1);
+  char * calcI = (char *)calculationAtIndex(i).pointer();
+  char * nextCalc = (char *) calculationAtIndex(i-1).pointer();
+  assert(m_calculationAreaEnd >= nextCalc);
+  size_t slidingSize = m_calculationAreaEnd - nextCalc;
+  // Slide the i-1 most recent calculations right after the i+1'th
+  memmove(calcI, nextCalc, slidingSize);
+  m_calculationAreaEnd -= nextCalc - calcI;
+  // Recompute pointer to calculations after the i'th
+  recomputeMemoizedPointersAfterCalculationIndex(i);
+  m_numberOfCalculations--;
 }
 
+// Delete the oldest calculation in the store and returns the amount of space freed by the operation
+size_t CalculationStore::deleteOldestCalculation() {
+  char * oldBufferEnd = (char *) m_calculationAreaEnd;
+  deleteCalculationAtIndex(numberOfCalculations()-1);
+  char * newBufferEnd = (char *) m_calculationAreaEnd;
+  return oldBufferEnd - newBufferEnd;
+}
+
+// Delete all calculations
+void CalculationStore::deleteAll() {
+  m_calculationAreaEnd = m_buffer;
+  m_numberOfCalculations = 0;
+}
+
+// Replace "Ans" by its expression
 Expression CalculationStore::ansExpression(Context * context) {
   if (numberOfCalculations() == 0) {
     return Rational::Builder(0);
@@ -191,92 +183,42 @@ Expression CalculationStore::ansExpression(Context * context) {
   return mostRecentCalculation->exactOutput();
 }
 
-Calculation * CalculationStore::bufferCalculationAtIndex(int i) {
-  int currentIndex = 0;
-  for (Calculation * c : *this) {
-    if (currentIndex == i) {
-      return c;
-    }
-    currentIndex++;
-  }
-  assert(false);
-  return nullptr;
-}
-
+// Push converted expression in the buffer
 bool CalculationStore::pushSerializeExpression(Expression e, char * location, char * * newCalculationsLocation, int numberOfSignificantDigits) {
-  assert(m_slidedBuffer);
-  assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
+  assert(*newCalculationsLocation <= m_buffer + m_bufferSize);
   bool expressionIsPushed = false;
   while (true) {
     size_t locationSize = *newCalculationsLocation - location;
     expressionIsPushed = (PoincareHelpers::Serialize(e, location, locationSize, numberOfSignificantDigits) < (int)locationSize-1);
-    if (expressionIsPushed || *newCalculationsLocation >= m_buffer + k_bufferSize) {
+    if (expressionIsPushed || *newCalculationsLocation >= m_buffer + m_bufferSize) {
       break;
     }
-    *newCalculationsLocation = *newCalculationsLocation + deleteLastCalculation();
-    assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
+    *newCalculationsLocation = *newCalculationsLocation + deleteOldestCalculation();
+    assert(*newCalculationsLocation <= m_buffer + m_bufferSize);
   }
   return expressionIsPushed;
 }
 
-char * CalculationStore::slideCalculationsToEndOfBuffer() {
-  int calculationsSize = m_bufferEnd - m_buffer;
-  char * calculationsNewPosition = m_buffer + k_bufferSize - calculationsSize;
-  memmove(calculationsNewPosition, m_buffer, calculationsSize);
-  m_slidedBuffer = true;
-  return calculationsNewPosition;
-}
 
-size_t CalculationStore::deleteLastCalculation(const char * calculationsStart) {
-  assert(m_numberOfCalculations > 0);
-  size_t result;
-  if (!m_slidedBuffer) {
-    assert(calculationsStart == nullptr);
-    const char * previousBufferEnd = m_bufferEnd;
-    m_bufferEnd = lastCalculationPosition(m_buffer);
-    assert(previousBufferEnd > m_bufferEnd);
-    result = previousBufferEnd - m_bufferEnd;
-  } else {
-    assert(calculationsStart != nullptr);
-    const char * lastCalc = lastCalculationPosition(calculationsStart);
-    assert(*lastCalc == 0);
-    result = m_buffer + k_bufferSize - lastCalc;
-    memmove(const_cast<char *>(calculationsStart + result), calculationsStart, m_buffer + k_bufferSize - calculationsStart - result);
-  }
-  m_numberOfCalculations--;
-  resetMemoizedModelsAfterCalculationIndex(-1);
-  return result;
-}
-
-const char * CalculationStore::lastCalculationPosition(const char * calculationsStart) const {
-  assert(calculationsStart >= m_buffer && calculationsStart < m_buffer + k_bufferSize);
-  Calculation * c = reinterpret_cast<Calculation *>(const_cast<char *>(calculationsStart));
-  int calculationIndex = 0;
-  while (calculationIndex < m_numberOfCalculations - 1) {
-    c = c->next();
-    calculationIndex++;
-  }
-  return reinterpret_cast<const char *>(c);
-}
 
 Shared::ExpiringPointer<Calculation> CalculationStore::emptyStoreAndPushUndef(Context * context, HeightComputer heightComputer) {
   /* We end up here as a result of a failed calculation push. The store
    * attributes are not necessarily clean, so we need to reset them. */
-  m_slidedBuffer = false;
   deleteAll();
   return push(Undefined::Name(), context, heightComputer);
 }
 
-void CalculationStore::resetMemoizedModelsAfterCalculationIndex(int index) {
-  if (index < m_indexOfFirstMemoizedCalculationPointer) {
-    memset(&m_memoizedCalculationPointers, 0, k_numberOfMemoizedCalculationPointers * sizeof(Calculation *));
-    return;
-  }
-  if (index >= m_indexOfFirstMemoizedCalculationPointer + k_numberOfMemoizedCalculationPointers) {
-    return;
-  }
-  for (int i = index - m_indexOfFirstMemoizedCalculationPointer; i < k_numberOfMemoizedCalculationPointers; i++) {
-    m_memoizedCalculationPointers[i] = nullptr;
+// Recompute memoized pointers to the calculations after index i
+void CalculationStore::recomputeMemoizedPointersAfterCalculationIndex(int index) {
+  assert(index < m_numberOfCalculations);
+  // Clear pointer and recompute new ones
+  Calculation * c = calculationAtIndex(index).pointer();
+  Calculation * nextCalc;
+  while (index != 0) {
+    nextCalc = c->next();
+    memcpy(addressOfPointerToCalculationOfIndex(index), &nextCalc, sizeof(Calculation *));
+    c = nextCalc;
+    index--;
   }
 }
 

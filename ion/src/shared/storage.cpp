@@ -5,7 +5,10 @@
 #if ION_STORAGE_LOG
 #include<iostream>
 #endif
+#if EPSILON_SDL_SCREEN_ONLY
 #include <apps/code/script_store.h>
+#include <apps/code/script.h>
+#endif
 namespace Ion {
 
 /* We want to implement a simple singleton pattern, to make sure the storage is
@@ -597,7 +600,11 @@ Storage::RecordIterator & Storage::RecordIterator::operator++() {
 
 #if EPSILON_SDL_SCREEN_ONLY
 int IonStorageAddScript(const char* name, const char* content){
-  return static_cast<int>(Ion::Storage::sharedStorage()->createRecordWithExtension(name, Code::ScriptStore::k_scriptExtension, content, strlen(content)));
+  if(Code::Script::nameCompliant(name)){
+    return static_cast<int>(Ion::Storage::sharedStorage()->createRecordWithFullName(name, content, strlen(content)));
+  } else {
+    return 2;
+  }
 }
 
 int IonStorageNumberOfScripts(){

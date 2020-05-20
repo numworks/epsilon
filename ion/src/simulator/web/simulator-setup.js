@@ -83,11 +83,10 @@ function createNotif(message, isError){
 }
 
 function sendScript(evt) {
-  console.log(evt)
   for (var i = 0; i < evt.target.files.length; i++) {
     const file = evt.target.files[i]
     //FIXME Scenario : test.py.py
-    const name = file.name.split(".py")[0];
+    const name = file.name.split(".py")[0] + ".py";
     const nameptr  = Module.allocate(Module.intArrayFromString(name), 'i8', 0);
     let reader = new FileReader();
     reader.readAsText(file);

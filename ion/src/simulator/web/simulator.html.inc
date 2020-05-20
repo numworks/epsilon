@@ -226,6 +226,44 @@ body.fullscreen .col-calculator {
   text-align: center;
 }
 
+.download {
+  border-radius: 18px 18px 18px 18px;
+  -moz-border-radius: 18px 18px 18px 18px;
+  -webkit-border-radius: 18px 18px 18px 18px;
+  border: 1px solid #000000;
+  position: fixed;
+  display: none;
+  left: 25%;
+  width: 50%;
+  top: 30%;
+  height:30%;
+  background-color: #9B9B9B;
+  padding: 15px;
+}
+
+.download.show {
+  display: block;
+}
+
+.download .close {
+  padding: 0;
+  margin: 0;
+  text-align: right;
+  cursor: pointer;
+}
+
+.download table {
+  width: 100%;
+}
+
+.download table .name {
+  width: 75%;
+}
+
+.download table, .download th, .download td {
+  border: 0;
+}
+
 </style>
   </head>
   <body>
@@ -246,6 +284,9 @@ body.fullscreen .col-calculator {
               <input type=file id="action-send-script"  multiple>
               <svg viewBox="0 1.5 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>871</title><defs></defs><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(0.995000, 2.980000)" fill="#434343"><circle cx="7.958" cy="6.958" r="2.958" class="si-glyph-fill"></circle><path d="M14.666,2.042 L10.953,2.042 L9.937,0.031 L6,0.031 L5,2.042 L1.333,2.042 C0.597,2.042 0,2.639 0,3.375 L0,10.625 C0,11.361 0.597,11.959 1.333,11.959 L14.666,11.959 C15.402,11.959 16,11.361 16,10.625 L16,3.375 C16,2.639 15.402,2.042 14.666,2.042 L14.666,2.042 Z M6.953,0.969 L9.047,0.969 L9.047,2.031 L6.953,2.031 L6.953,0.969 L6.953,0.969 Z M8.002,11.033 C5.764,11.033 3.947,9.221 3.947,6.985 C3.947,4.749 5.763,2.937 8.002,2.937 C10.242,2.937 12.057,4.749 12.057,6.985 C12.057,9.221 10.242,11.033 8.002,11.033 L8.002,11.033 Z M14,4.031 L11.953,4.031 L11.953,2.969 L14,2.969 L14,4.031 L14,4.031 Z" class="si-glyph-fill"></path></g></g></svg>
             </a>
+            <a id="action-download" class="action">
+              <svg viewBox="0 1.5 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>871</title><defs></defs><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(0.995000, 2.980000)" fill="#434343"><circle cx="7.958" cy="6.958" r="2.958" class="si-glyph-fill"></circle><path d="M14.666,2.042 L10.953,2.042 L9.937,0.031 L6,0.031 L5,2.042 L1.333,2.042 C0.597,2.042 0,2.639 0,3.375 L0,10.625 C0,11.361 0.597,11.959 1.333,11.959 L14.666,11.959 C15.402,11.959 16,11.361 16,10.625 L16,3.375 C16,2.639 15.402,2.042 14.666,2.042 L14.666,2.042 Z M6.953,0.969 L9.047,0.969 L9.047,2.031 L6.953,2.031 L6.953,0.969 L6.953,0.969 Z M8.002,11.033 C5.764,11.033 3.947,9.221 3.947,6.985 C3.947,4.749 5.763,2.937 8.002,2.937 C10.242,2.937 12.057,4.749 12.057,6.985 C12.057,9.221 10.242,11.033 8.002,11.033 L8.002,11.033 Z M14,4.031 L11.953,4.031 L11.953,2.969 L14,2.969 L14,4.031 L14,4.031 Z" class="si-glyph-fill"></path></g></g></svg>
+            </a>
           </div>
         </div>
       </div>
@@ -254,6 +295,13 @@ body.fullscreen .col-calculator {
       </div>
     </div>
     <div class="notif" id="notif">
+    </div>
+    <div class="download" id="download">
+      <div class="close">
+        <a id="closeButton">X</a>
+      </div>
+      <table id="downloadList">
+      </table>
     </div>
     <script src="epsilon.js"></script>
     <script>
@@ -274,6 +322,15 @@ document.getElementById("action-screenshot").addEventListener("click", function(
 });
 
 document.getElementById("action-send-script").addEventListener("change", sendScript, false);
+
+document.getElementById("action-download").addEventListener("click", function(e){
+  openDownload();
+});
+
+document.getElementById("closeButton").addEventListener("click", function(e){
+  closeDownload();
+});
+
     </script>
     <script async src="https://www.numworks.com/simulator/update.js"></script>
   </body>

@@ -117,14 +117,6 @@ function sendScript(evt) {
   }
 }
 
-function ShowScriptList(){
-  const length = Module._IonStorageNumberOfScripts();
-  for(var i = 0; i<length; i++){
-    const name = Module.UTF8ToString(Module._IonStorageScriptAtIndexName(i));
-    console.log(name);
-  }
-}
-
 function downloadScriptAtIndex(index){
   var a = document.createElement("a");
   a.style.display = "none";
@@ -134,4 +126,35 @@ function downloadScriptAtIndex(index){
   a.href = URL.createObjectURL(file);
   a.download = name;
   a.click()
+}
+
+const download = document.getElementById("download");
+const downloadList = document.getElementById("downloadList");
+
+function openDownload(){
+  download.classList.add("show");
+  const length = Module._IonStorageNumberOfScripts();
+  for(var i = 0; i<length; i++){
+    const name = Module.UTF8ToString(Module._IonStorageScriptAtIndexName(i));
+    let tr = document.createElement("tr")
+    let nameth = document.createElement("th")
+    nameth.classList.add("name")
+    nameth.innerHTML = name;
+    tr.appendChild(nameth);
+    let downloadth = document.createElement("th");
+    let a = document.createElement("a");
+    a.id = "download-"+i;
+    a.innerHTML = "Download file"
+    a.onclick = function(e){
+      downloadScriptAtIndex(a.id.split("download-")[1])
+    }
+    downloadth.appendChild(a);
+    tr.appendChild(downloadth);
+    downloadList.appendChild(tr);
+  }
+}
+
+function closeDownload(){
+  download.classList.remove("show");
+  downloadList.innerHTML = "";
 }

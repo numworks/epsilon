@@ -636,7 +636,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
           }
           if (strncmp(fixedTokenInText, name, nameLength) != 0) {
             fixedTokenInText = tokenInText;
-            while (*fixedTokenInText == ' ') {
+            while (*fixedTokenInText == ' ' || *fixedTokenInText == '\n') {
               fixedTokenInText++;
             }
           }

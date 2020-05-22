@@ -106,6 +106,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   Shared::PoincareHelpers::Simplify(&reduceExpression, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::None);
   currentExpressionIndex = 1;
   while (currentExpressionIndex < numberOfMemoizedExpressions) {
+    bool duplicateFound = false;
     for (size_t i = 0; i < currentExpressionIndex + 1; i++) {
       // Compare the currentExpression to all previous memoized expressions and to m_expression
       Expression comparedExpression = i == currentExpressionIndex ? reduceExpression : m_memoizedExpressions[i];
@@ -118,12 +119,15 @@ void UnitListController::setExpression(Poincare::Expression e) {
         }
         // Remove last expression
         m_memoizedExpressions[numberOfMemoizedExpressions] = Expression();
-        // The current expression has been discarded, no need to increment thre current index
-        continue;
+        // The current expression has been discarded, no need to increment the current index
+        duplicateFound = true;
+        break;
       }
     }
-    // The current expression is not a duplicate, check next expression
-    currentExpressionIndex++;
+    if (!duplicateFound) {
+      // The current expression is not a duplicate, check next expression
+      currentExpressionIndex++;
+    }
   }
 }
 

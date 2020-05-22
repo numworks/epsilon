@@ -52,6 +52,7 @@ void LayoutField::ContentView::useInsertionCursor() {
 void LayoutField::ContentView::clearLayout() {
   HorizontalLayout h = HorizontalLayout::Builder();
   if (m_expressionView.setLayout(h)) {
+    resetSelection();
     m_cursor.setLayout(h);
   }
 }

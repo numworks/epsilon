@@ -107,6 +107,10 @@ ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
   return LayoutShape::MoreLetters;
 }
 
+bool SymbolNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Symbol(this).didDerivate(reductionContext, symbol, symbolValue);
+}
+
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Symbol s(this);
@@ -190,6 +194,11 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   replaceWithInPlace(result);
   // The stored expression is as entered by the user, so we need to call reduce
   return result.deepReduce(reductionContext);
+}
+
+bool Symbol::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.convert<Symbol>().name()) == 0));
+  return true;
 }
 
 Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

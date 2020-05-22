@@ -8,6 +8,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
+#include <poincare/derivative.h>
 #include <assert.h>
 #include <utility>
 
@@ -47,6 +48,11 @@ Expression AdditionNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression AdditionNode::shallowBeautify(ReductionContext reductionContext) {
   return Addition(this).shallowBeautify(reductionContext);
+}
+
+// Derivation
+bool AdditionNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Addition(this).didDerivate(reductionContext, symbol, symbolValue);
 }
 
 // Addition
@@ -320,6 +326,13 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
      result = factorizeOnCommonDenominator(reductionContext);
   }
   return result;
+}
+
+bool Addition::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    replaceChildAtIndexInPlace(i, Derivative::Builder(childAtIndex(i), symbol.clone().convert<Symbol>(), symbolValue.clone()));
+  }
+  return true;
 }
 
 int Addition::NumberOfNonNumeralFactors(const Expression & e) {

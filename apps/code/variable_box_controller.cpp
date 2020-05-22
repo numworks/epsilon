@@ -626,18 +626,22 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
            * This was found from stepping in the code and trying. */
           /* TODO: Try to understand what is happening with tokenInText and
            * remove this trick.*/
-          while (*tokenInText == ' ') {
-            tokenInText++;
-          }
+          const char * fixedTokenInText = tokenInText;
           for (int i = 0; i < 3; i++) {
-            if (strncmp(tokenInText, name, nameLength) != 0 && tokenInText > scriptContent) {
-              tokenInText--;
+            if (strncmp(fixedTokenInText, name, nameLength) != 0 && fixedTokenInText > scriptContent) {
+              fixedTokenInText--;
             } else {
               break;
             }
           }
-          assert(strncmp(tokenInText, name, nameLength) == 0);
-          addNode(nodeType, origin, tokenInText, nameLength);
+          if (strncmp(fixedTokenInText, name, nameLength) != 0) {
+            fixedTokenInText = tokenInText;
+            while (*fixedTokenInText == ' ') {
+              fixedTokenInText++;
+            }
+          }
+          assert(strncmp(fixedTokenInText, name, nameLength) == 0);
+          addNode(nodeType, origin, fixedTokenInText, nameLength);
         }
       }
 

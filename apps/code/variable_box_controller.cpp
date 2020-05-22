@@ -604,7 +604,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
     _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
 
     // This is a trick to get the token position in the text.
-    const char * tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
+    const char * tokenInText = scriptContent;
     // Keep track of DEF tokens to differentiate between variables and functions
     bool defToken = false;
 

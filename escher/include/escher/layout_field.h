@@ -87,11 +87,7 @@ private:
     bool selectionIsEmpty() const;
     void deleteSelection();
     void invalidateInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
-    void updateInsertionCursor() {
-      if (!m_insertionCursor.isDefined()) {
-        m_insertionCursor = m_cursor;
-      }
-    }
+    void updateInsertionCursor();
 
   private:
     int numberOfSubviews() const override { return 2; }

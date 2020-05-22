@@ -43,7 +43,9 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::useInsertionCursor() {
   if (m_insertionCursor.isDefined()) {
+    m_cursor.layout().removeGreySquaresFromAllMatrixAncestors();
     m_cursor = m_insertionCursor;
+    m_cursor.layout().addGreySquaresToAllMatrixAncestors();
   }
 }
 

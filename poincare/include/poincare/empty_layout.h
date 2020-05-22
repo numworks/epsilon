@@ -82,6 +82,7 @@ public:
     node()->setVisible(visible);
   }
 
+  EmptyLayoutNode::Color color() const { return node()->color(); }
   void setColor(EmptyLayoutNode::Color color) {
     node()->setColor(color);
   }

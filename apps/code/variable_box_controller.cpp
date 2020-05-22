@@ -766,6 +766,10 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   if (loadAllSourceContent) {
     assert(childNodesCount > 0);
     const char * importationSourceName = importationSourceNameFromNode(parseNode->nodes[0]);
+    if (importationSourceName == nullptr) {
+      // For instance, the name is a "dotted name" but not matplotlib.pyplot
+      return true;
+    }
     int numberOfModuleChildren = 0;
     const ToolboxMessageTree * moduleChildren = nullptr;
     if (importationSourceIsModule(importationSourceName, &moduleChildren, &numberOfModuleChildren)) {
@@ -805,7 +809,7 @@ const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_
     // The importation source is "simple", for instance: from math import *
     return qstr_str(MP_PARSE_NODE_LEAF_ARG(node));
   }
-  if (MP_PARSE_NODE_IS_STRUCT(node)) {
+  if (MP_PARSE_NODE_IS_STRUCT(node)) { //TODO replace this with an assert?
     mp_parse_node_struct_t * nodePNS = (mp_parse_node_struct_t *)node;
     uint nodeStructKind = MP_PARSE_NODE_STRUCT_KIND(nodePNS);
     if (nodeStructKind != PN_dotted_name) {

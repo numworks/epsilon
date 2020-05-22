@@ -6,6 +6,7 @@
 #include <poincare/integer.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
+#include <poincare/derivative.h>
 extern "C" {
 #include <stdlib.h>
 #include <assert.h>
@@ -38,6 +39,10 @@ double NumberNode::doubleApproximation() const {
       assert(false);
       return 0.0;
   }
+}
+
+bool NumberNode::didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return Number(this).didDerivate(reductionContext, symbol, symbolValue);
 }
 
 Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLenght, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
@@ -139,6 +144,11 @@ int Number::NaturalOrder(const Number & i, const Number & j) {
     assert(i.node()->doubleApproximation() > j.node()->doubleApproximation());
     return 1;
   }
+}
+
+bool Number::didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  replaceWithInPlace(Rational::Builder(0));
+  return true;
 }
 
 template Number Number::DecimalNumber<float>(float);

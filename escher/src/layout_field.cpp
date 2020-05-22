@@ -2,6 +2,7 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/expression.h>
+#include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <assert.h>
 #include <string.h>
@@ -232,6 +233,17 @@ void LayoutField::ContentView::deleteSelection() {
     }
   }
   resetSelection();
+}
+
+void LayoutField::ContentView::updateInsertionCursor() {
+  if (!m_insertionCursor.isDefined()) {
+    Layout l = m_cursor.layout();
+    if (l.type() == LayoutNode::Type::EmptyLayout && static_cast<EmptyLayout &>(l).color() == EmptyLayoutNode::Color::Grey) {
+      // Don't set m_insertionCursor pointing to a layout which might disappear
+      return;
+    }
+    m_insertionCursor = m_cursor;
+  }
 }
 
 View * LayoutField::ContentView::subviewAtIndex(int index) {

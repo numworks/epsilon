@@ -27,6 +27,10 @@ public:
     return templatedApproximate<double>();
   }
 
+  /* Derivation
+   * Overrides NumberNode's didDerivate to revert to a non-derivable state */
+  bool didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return false; }
+
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;

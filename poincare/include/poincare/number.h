@@ -26,6 +26,8 @@ public:
 
   double doubleApproximation() const;
 
+  bool didDerivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+
 };
 
 class Number : public Expression {
@@ -53,6 +55,8 @@ public:
     assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
     return Expression::setSign(s, ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User)).convert<Number>();
   }
+
+  bool didDerivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

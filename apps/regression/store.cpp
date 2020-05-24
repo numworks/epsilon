@@ -225,7 +225,7 @@ float Store::minValueOfColumn(int series, int i) const {
   return minColumn;
 }
 
-double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const {
+double Store::squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSeries, double offset) const {
   double result = 0;
   const int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
@@ -233,9 +233,14 @@ double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const 
     if (lnOfSeries) {
       value = log(value);
     }
+    value -= offset;
     result += value * value;
   }
   return result;
+}
+
+double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const {
+  return squaredOffsettedValueSumOfColumn(series, i, lnOfSeries, 0.0);
 }
 
 double Store::columnProductSum(int series, bool lnOfSeries) const {
@@ -258,7 +263,7 @@ double Store::meanOfColumn(int series, int i, bool lnOfSeries) const {
 
 double Store::varianceOfColumn(int series, int i, bool lnOfSeries) const {
   double mean = meanOfColumn(series, i, lnOfSeries);
-  return squaredValueSumOfColumn(series, i, lnOfSeries)/numberOfPairsOfSeries(series) - mean * mean;
+  return squaredOffsettedValueSumOfColumn(series, i, lnOfSeries, mean)/numberOfPairsOfSeries(series);
 }
 
 double Store::standardDeviationOfColumn(int series, int i, bool lnOfSeries) const {

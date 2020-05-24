@@ -13,12 +13,18 @@ using namespace Regression;
  * then filling Y1 with the regression formula + random()/10. */
 
 double relativeError(double observedValue, double expectedValue) {
+  assert(expectedValue != 0.0);
   return std::fabs((observedValue - expectedValue) / expectedValue);
 }
 
 void assert_value_is(double observedValue, double expectedValue) {
-  double precision = 0.01;
-  quiz_assert(relativeError(observedValue, expectedValue) < precision);
+  if (expectedValue != 0.0) {
+    double precision = 0.01;
+    quiz_assert(relativeError(observedValue, expectedValue) < precision);
+  } else {
+    // The expected value can't be null for relativeError, the exact value is then expected
+    quiz_assert(observedValue == expectedValue);
+  }
 }
 
 void setRegressionPoints(Regression::Store * store, int series, int numberOfPoints, double * xi, double * yi = nullptr) {
@@ -197,6 +203,17 @@ QUIZ_CASE(column_calculation) {
   double standardDeviation = 1.741228;
   double variance = 3.031875;
   assert_column_calculations_is(x, 4, mean, sum, squaredSum, standardDeviation, variance);
+}
+
+QUIZ_CASE(constant_column_calculation) {
+  // This data produced a negative variance before
+  double x[] = {-996.8584, -996.8584, -996.8584};
+  double mean = -996.8584;
+  double sum = -2990.5752;
+  double squaredSum = 2.98118000895168e6;
+  double standardDeviation = 0;
+  double variance = 0;
+  assert_column_calculations_is(x, 3, mean, sum, squaredSum, standardDeviation, variance);
 }
 
 void assert_regression_calculations_is(double * xi, double * yi, int numberOfPoints, double trueCovariance, double trueProductSum, double trueR) {

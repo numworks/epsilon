@@ -269,7 +269,7 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
   if (strictlyStartsWith != nullptr && nodeNameLengthStartsWithName) {
     *strictlyStartsWith = true;
   }
-  return nodeNameLengthStartsWithName ? 1 : -1;
+  return nodeNameLengthStartsWithName ? *(nodeName + nameLength)  : - *(nodeName + nodeNameLength) ;
 }
 
 int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
@@ -599,20 +599,23 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
 
         /* If the token autocompletes the text and it is not already in the
          * variable box, add it. */
-        ScriptNode::Type nodeType = defToken ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
         const NodeOrigin origin = NodeOrigin::CurrentScript;
-        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType, origin)) {
-          size_t line = lex->tok_line - 1; // tok_line starts at 1, not 0
-          if (beginningLineIndex < line) {
-            while (beginningLineIndex < line) {
-              beginningLine = UTF8Helper::CodePointSearch(beginningLine, '\n') + 1;
-              beginningLineIndex++;
-              assert(*beginningLine != 0); // We should not get to the end of the text
-            }
+
+        // Find the token position in the text
+        size_t line = lex->tok_line - 1; // tok_line starts at 1, not 0
+        if (beginningLineIndex < line) {
+          while (beginningLineIndex < line) {
+            beginningLine = UTF8Helper::CodePointSearch(beginningLine, '\n') + 1;
+            beginningLineIndex++;
+            assert(*beginningLine != 0); // We should not get to the end of the text
           }
-          assert(beginningLineIndex == line);
-          const char * tokenInText = beginningLine + lex->tok_column - 1; // tok_column starts at 1, not 0
-          assert(strncmp(tokenInText, name, nameLength) == 0);
+        }
+        assert(beginningLineIndex == line);
+        const char * tokenInText = beginningLine + lex->tok_column - 1; // tok_column starts at 1, not 0
+        assert(strncmp(tokenInText, name, nameLength) == 0);
+
+        ScriptNode::Type nodeType = (defToken || *(tokenInText + nameLength) == '(')? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
+        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType, origin)) {
           addNode(nodeType, origin, tokenInText, nameLength);
         }
       }
@@ -887,14 +890,14 @@ bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int t
   }
 
   // Check that node name is not already present in the variable box.
-  if (contains(nodeName, nodeNameLength)) {
+  if (contains(nodeName, nodeNameLength, type)) {
     return false;
   }
 
   return true;
 }
 
-bool VariableBoxController::contains(const char * name, int nameLength) {
+bool VariableBoxController::contains(const char * name, int nameLength, ScriptNode::Type type) {
   assert(nameLength > 0);
   bool alreadyInVarBox = false;
   // This could be faster with dichotomia, but there is no speed problem for now
@@ -905,7 +908,7 @@ bool VariableBoxController::contains(const char * name, int nameLength) {
     for (int i = 0; i < nodesCount; i++) {
       ScriptNode * matchingNode = nodes + i;
       int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
-      if (comparisonResult == 0) {
+      if (comparisonResult == 0 || (comparisonResult == '(' && type == ScriptNode::Type::WithParentheses)) {
         alreadyInVarBox = true;
         break;
       }

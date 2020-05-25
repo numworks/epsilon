@@ -99,7 +99,7 @@ private:
    * already contained in the variable box. */
   void checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
   bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength, ScriptNode::Type type, NodeOrigin origin);
-  bool contains(const char * name, int nameLength);
+  bool contains(const char * name, int nameLength, ScriptNode::Type type);
   void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];

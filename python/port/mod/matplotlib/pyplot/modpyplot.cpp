@@ -50,7 +50,18 @@ static size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength
   return itemLength;
 }
 
+// Get color from keyword arguments if possible
+
+KDColor colorFromKeywordArgument(mp_map_elem_t * elemColor) {
+  if (elemColor != nullptr) {
+    return MicroPython::Color::Parse(elemColor->value);
+  } else {
+    return Palette::nextDataColor(&paletteIndex);
+  }
+}
+
 // Get color from arguments if possible
+// TODO DELETE AFTER REPLACEMENT
 
 KDColor colorFromOptionalArgumentAtIndex(size_t n_args, const mp_obj_t * args, size_t colorIndex) {
   if (n_args > colorIndex) {
@@ -89,20 +100,25 @@ void modpyplot_flush_used_heap() {
   }
 }
 
-/* arrow(x,y,dx,dy, head_width, color)
+/* arrow(x,y,dx,dy, KW : head_width, color)
  * x, y, dx, dy scalars
  * */
 
-mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(n_args >= 4);
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
-  mp_obj_t arrowWidth = mp_obj_new_float(0.003); // Default value
-  if (n_args >= 5) {
-    arrowWidth = args[4];
-  }
 
-  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 5);
+  mp_map_elem_t * elem;
+  // Setting arrow width
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_head_width), MP_MAP_LOOKUP);
+  mp_obj_t arrowWidth = (elem == nullptr) ? mp_obj_new_float(0.003) : elem->value;
+
+  // Setting arrow color
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  KDColor color = colorFromKeywordArgument(elem);
+
+  // Adding the object to the plot
   sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0]) + mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1]) + mp_obj_get_float(args[3])), color, arrowWidth);
   return mp_const_none;
 }

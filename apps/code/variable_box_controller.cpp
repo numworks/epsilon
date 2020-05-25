@@ -250,6 +250,7 @@ void VariableBoxController::empty() {
   m_builtinNodesCount = 0;
   m_currentScriptNodesCount = 0;
   m_importedNodesCount = 0;
+  m_shortenResultCharCount = 0;
 }
 
 void VariableBoxController::insertAutocompletionResultAtIndex(int index) {

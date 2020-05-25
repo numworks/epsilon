@@ -108,8 +108,12 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args)
   mp_obj_t arrowWidth = (elem == nullptr) ? mp_obj_new_float(0.003) : elem->value;
 
   // Setting arrow color
+  // color keyword
   elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
   KDColor color = colorFromKeywordArgument(elem);
+  // c keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_c), MP_MAP_LOOKUP);
+  color = colorFromKeywordArgument(elem);
 
   // Adding the object to the plot
   sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0]) + mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1]) + mp_obj_get_float(args[3])), color, arrowWidth);
@@ -210,8 +214,12 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   }
 
   // Setting bar color
+  // color keyword
   mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
   KDColor color = colorFromKeywordArgument(elem);
+  // c keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_c), MP_MAP_LOOKUP);
+  color = colorFromKeywordArgument(elem);
 
   for (size_t i=0; i<xLength; i++) {
     mp_obj_t iH = hItems[hLength > 1 ? i : 0];
@@ -330,8 +338,12 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args )
   }
 
   // Setting hist color
+  // color keyword
   mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
   KDColor color = colorFromKeywordArgument(elem);
+  // c keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_c), MP_MAP_LOOKUP);
+  color = colorFromKeywordArgument(elem);
 
   for (size_t i=0; i<nBins; i++) {
     sPlotStore->addRect(edgeItems[i], edgeItems[i+1], binItems[i], mp_obj_new_float(0.0), color);
@@ -355,8 +367,12 @@ mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_arg
   size_t length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
 
   // Setting scatter color
-  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  // c keyword
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_c), MP_MAP_LOOKUP);
   KDColor color = colorFromKeywordArgument(elem);
+  // color keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  color = colorFromKeywordArgument(elem);
 
   for (size_t i=0; i<length; i++) {
     sPlotStore->addDot(xItems[i], yItems[i], color);
@@ -391,8 +407,12 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args,mp_map_t* kw_args) {
   }
 
   // Setting plot color
-  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  // c keyword
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_c), MP_MAP_LOOKUP);
   KDColor color = colorFromKeywordArgument(elem);
+  // color keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  color = colorFromKeywordArgument(elem);
 
   for (int i=0; i<(int)length-1; i++) {
     sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);

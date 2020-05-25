@@ -60,17 +60,6 @@ KDColor colorFromKeywordArgument(mp_map_elem_t * elemColor) {
   }
 }
 
-// Get color from arguments if possible
-// TODO DELETE AFTER REPLACEMENT
-
-KDColor colorFromOptionalArgumentAtIndex(size_t n_args, const mp_obj_t * args, size_t colorIndex) {
-  if (n_args > colorIndex) {
-    return MicroPython::Color::Parse(args[colorIndex]);
-  } else {
-    return Palette::nextDataColor(&paletteIndex);
-  }
-}
-
 // Internal functions
 
 mp_obj_t modpyplot___init__() {

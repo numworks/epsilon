@@ -14,6 +14,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   labeled_curve_view.cpp \
   memoized_curve_view_range.cpp \
   range_1D.cpp \
+  toolbox_helpers.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
 )
@@ -74,7 +75,6 @@ app_shared_src = $(addprefix apps/shared/,\
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
   text_helpers.cpp \
-  toolbox_helpers.cpp \
   values_controller.cpp \
   values_function_parameter_controller.cpp \
   values_parameter_controller.cpp \

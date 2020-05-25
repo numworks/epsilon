@@ -1,10 +1,6 @@
 apps += Code::App
 app_headers += apps/code/app.h
 
-app_code_test_src = $(addprefix apps/code/,\
-  script_template.cpp \
-)
-
 app_code_src = $(addprefix apps/code/,\
   app.cpp \
   console_controller.cpp \
@@ -15,16 +11,24 @@ app_code_src = $(addprefix apps/code/,\
   editor_view.cpp \
   helpers.cpp \
   menu_controller.cpp \
-  python_toolbox.cpp \
   python_text_area.cpp \
   sandbox_controller.cpp \
-  script.cpp \
   script_name_cell.cpp \
-  script_node_cell.cpp \
   script_parameter_controller.cpp \
+)
+
+app_code_test_src = $(addprefix apps/code/,\
+  python_toolbox.cpp \
+  script.cpp \
+  script_node_cell.cpp \
   script_store.cpp \
-  variable_box_controller.cpp \
+  script_template.cpp \
   variable_box_empty_controller.cpp \
+  variable_box_controller.cpp \
+)
+
+tests_src += $(addprefix apps/code/test/,\
+  variable_box_controller.cpp\
 )
 
 app_code_src += $(app_code_test_src)

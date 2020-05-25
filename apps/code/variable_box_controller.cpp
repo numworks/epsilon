@@ -154,16 +154,10 @@ int VariableBoxController::typeAtLocation(int i, int j) {
 }
 
 void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
+  assert(scriptIndex >= 0);
+
   // Reset the node counts
   empty();
-
-  if (scriptIndex < 0) {
-    /* If not script index is given, the variable box is loaded from console. We
-     * only want to load imported script variables. */
-    assert(textToAutocomplete == nullptr);
-    loadVariablesImportedFromScripts();
-    return;
-  }
 
   if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
     textToAutocompleteLength = strlen(textToAutocomplete);

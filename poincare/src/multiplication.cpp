@@ -993,7 +993,6 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
 }
 
 void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {
-  assert(!hasUnit());
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
   int numberOfFactorsInNumerator = 0;

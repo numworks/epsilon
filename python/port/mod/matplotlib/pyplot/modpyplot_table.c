@@ -1,7 +1,7 @@
 #include "modpyplot.h"
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modpyplot___init___obj, modpyplot___init__);
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_arrow_obj, 4, 6, modpyplot_arrow);
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(modpyplot_arrow_obj, 4, modpyplot_arrow);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_axis_obj, 0, 1, modpyplot_axis);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_bar_obj, 2, 5, modpyplot_bar);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modpyplot_grid_obj, 0, 1, modpyplot_grid);

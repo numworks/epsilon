@@ -174,16 +174,14 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
   return mp_obj_new_tuple(4, coords);
 }
 
-/* bar(x, height, width, bottom, color)
+/* bar(x, height, width, bottom, KW :color)
  * 'x', 'height', 'width' and 'bottom' can either be a scalar or an array/tuple of
  * scalar.
  * 'width' default value is 0.8
  * 'bottom' default value is None
  * */
 
-// TODO: accept keyword args?
-
-mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
   mp_obj_t * xItems;
@@ -215,7 +213,10 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
     bItems[0] = mp_obj_new_float(0.0f);
   }
 
-  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 4);
+  // Setting bar color
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  KDColor color = colorFromKeywordArgument(elem);
+
   for (size_t i=0; i<xLength; i++) {
     mp_obj_t iH = hItems[hLength > 1 ? i : 0];
     mp_obj_t iW = wItems[wLength > 1 ? i : 0];

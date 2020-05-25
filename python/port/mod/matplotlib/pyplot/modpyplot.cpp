@@ -340,19 +340,22 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args )
   return mp_const_none;
 }
 
-/* scatter(x, y, color)
+/* scatter(x, y, KW : color)
  * - x, y: list
  * - x, y: scalar
  * */
 
-mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
   assert(n_args >= 2);
   size_t length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
 
-  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 2);
+  // Setting scatter color
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  KDColor color = colorFromKeywordArgument(elem);
+
   for (size_t i=0; i<length; i++) {
     sPlotStore->addDot(xItems[i], yItems[i], color);
   }

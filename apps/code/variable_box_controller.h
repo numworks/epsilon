@@ -36,7 +36,6 @@ public:
   /* VariableBoxController */
   void setDisplaySubtitles(bool display) { m_displaySubtitles = display; }
   void loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength);
-  const char * autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses);
   const char * autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate = nullptr);
   void loadVariablesImportedFromScripts();
   void empty();

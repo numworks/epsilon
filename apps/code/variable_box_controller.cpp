@@ -188,19 +188,6 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   loadCurrentVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
 }
 
-const char * VariableBoxController::autocompletionForText(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses) {
-  assert(textToAutocompleteLength >= 1);
-  assert(addParentheses != nullptr);
-
-  // First load variables and functions that complete the textToAutocomplete
-  loadFunctionsAndVariables(scriptIndex, textToAutocomplete, textToAutocompleteLength);
-  if (numberOfRows() == 0) {
-    return nullptr;
-  }
-
-  return autocompletionAlternativeAtIndex(textToAutocompleteLength, textToInsertLength, addParentheses, 0);
-}
-
 const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate) {
   if (numberOfRows() == 0) {
     return nullptr;

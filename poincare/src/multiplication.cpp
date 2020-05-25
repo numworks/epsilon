@@ -364,7 +364,12 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     self = deepReduce(reductionContext); // removeUnit has to be called on reduced expression
     self = removeUnit(&units);
 
-    assert(!units.isUninitialized());
+    if (units.isUninitialized()) {
+      // TODO: handle error "Invalid unit"
+      result = Undefined::Builder();
+      goto replace_by_result;
+    }
+
     ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
     if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
       /* Step 2a: Recognize derived units
@@ -461,6 +466,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     }
   }
 
+replace_by_result:
   self.replaceWithInPlace(result);
   return result;
 }

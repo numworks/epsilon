@@ -98,6 +98,10 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args)
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
 
+  if (n_args > 4) {
+    mp_raise_TypeError("arrow() takes 4 positional arguments");
+  }
+
   mp_map_elem_t * elem;
   // Setting arrow width
   elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_head_width), MP_MAP_LOOKUP);
@@ -172,6 +176,9 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
+  if (n_args > 4) {
+    mp_raise_TypeError("bar() takes 4 positional arguments");
+  }
   sPlotStore->setShow(true);
   mp_obj_t * xItems;
   mp_obj_t * hItems;
@@ -248,6 +255,9 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
  * */
 
 mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args ) {
+  if (n_args > 3) {
+    mp_raise_TypeError("hist() takes 3 positional arguments");
+  }
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
   // Sort data to easily get the minimal and maximal value and count bin sizes
@@ -336,6 +346,9 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args )
 
 mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
+  if (n_args > 2) {
+    mp_raise_TypeError("scatter() takes 2 positional arguments");
+  }
   sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
   assert(n_args >= 2);
@@ -358,6 +371,9 @@ mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_arg
 
 mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args,mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
+  if (n_args > 2) {
+    mp_raise_TypeError("plot() takes 2 positional arguments");
+  }
   sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
   size_t length;

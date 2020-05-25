@@ -35,9 +35,11 @@ QUIZ_CASE(python_matplotlib_pyplot_arrow) {
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "arrow(2,3,4,5)");
-  assert_command_execution_succeeds(env, "arrow(2,3,4,5, 0.1)");
+  assert_command_execution_fails(env, "arrow(2,3,4,5, 0.1)");
   assert_command_execution_fails(env, "arrow(2,3,4,5, \"width\")");
-  assert_command_execution_succeeds(env, "arrow(2,3,4,5, 0.1, \"#FF00FF\")");
+  assert_command_execution_fails(env, "arrow(2,3,4,5, 0.1, \"#FF00FF\")");
+  assert_command_execution_succeeds(env, "arrow(2,3,4,5,head_width=0.3)");
+  assert_command_execution_succeeds(env, "arrow(2,3,4,5,color=\"red\")");
   assert_command_execution_succeeds(env, "show()");
   deinit_environment();
 }
@@ -62,7 +64,7 @@ QUIZ_CASE(python_matplotlib_pyplot_bar) {
   assert_command_execution_succeeds(env, "bar([],[])");
   assert_command_execution_succeeds(env, "bar([1,2,3],[1,2,3],2,3)");
   assert_command_execution_succeeds(env, "bar([1,2,3],[1,2,3],[1,2,3],[1,2,3])");
-  assert_command_execution_succeeds(env, "bar([1,2,3],[1,2,3],[1,2,3],[1,2,3], \"orange\")");
+  assert_command_execution_succeeds(env, "bar([1,2,3],[1,2,3],[1,2,3],[1,2,3], color=\"orange\")");
   assert_command_execution_succeeds(env, "show()");
   assert_command_execution_fails(env, "bar([1,2,3],[1,2,3,4],[1,2,3],[1,2,3])");
   deinit_environment();
@@ -94,7 +96,7 @@ QUIZ_CASE(python_matplotlib_pyplot_plot) {
   assert_command_execution_succeeds(env, "plot([2,3,4,5,6])");
   assert_command_execution_succeeds(env, "plot(2,3)");
   assert_command_execution_succeeds(env, "plot([2,3,4,5,6],[3,4,5,6,7])");
-  assert_command_execution_succeeds(env, "plot([2,3,4,5,6],[3,4,5,6,7], \"g\")");
+  assert_command_execution_succeeds(env, "plot([2,3,4,5,6],[3,4,5,6,7], color=\"g\")");
   assert_command_execution_succeeds(env, "show()");
   assert_command_execution_fails(env, "plot([2,3,4,5,6],2)");
   deinit_environment();
@@ -105,7 +107,7 @@ QUIZ_CASE(python_matplotlib_pyplot_scatter) {
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "scatter(2,3)");
   assert_command_execution_succeeds(env, "scatter([2,3,4,5,6],[3,4,5,6,7])");
-  assert_command_execution_succeeds(env, "scatter([2,3,4,5,6],[3,4,5,6,7], (0,0,255))");
+  assert_command_execution_succeeds(env, "scatter([2,3,4,5,6],[3,4,5,6,7], color=(0,0,255))");
   assert_command_execution_succeeds(env, "show()");
   assert_command_execution_fails(env, "scatter([2,3,4,5,6],2)");
   deinit_environment();

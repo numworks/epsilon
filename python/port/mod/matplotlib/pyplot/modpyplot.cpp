@@ -363,11 +363,11 @@ mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_arg
   return mp_const_none;
 }
 
-/* plot(x, y) plots the curve (x, y, color)
+/* plot(x, y) plots the curve (x, y, KW : color)
  * plot(y) plots the curve x as index array ([0,1,2...],y)
  * */
 
-mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args,mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
@@ -385,7 +385,10 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
     length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
   }
 
-  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 2);
+  // Setting plot color
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  KDColor color = colorFromKeywordArgument(elem);
+
   for (int i=0; i<(int)length-1; i++) {
     sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);
   }

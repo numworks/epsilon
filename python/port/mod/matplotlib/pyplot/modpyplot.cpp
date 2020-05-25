@@ -251,14 +251,14 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
-/* hist(x, bins, color)
+/* hist(x, bins KW : color)
  * 'x' array
  * 'bins': (default value 10)
  *    - int (number of bins)
  *    - sequence of bins
  * */
 
-mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args ) {
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
   // Sort data to easily get the minimal and maximal value and count bin sizes
@@ -330,7 +330,10 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
     binIndex++;
   }
 
-  KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 2);
+  // Setting hist color
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  KDColor color = colorFromKeywordArgument(elem);
+
   for (size_t i=0; i<nBins; i++) {
     sPlotStore->addRect(edgeItems[i], edgeItems[i+1], binItems[i], mp_obj_new_float(0.0), color);
   }

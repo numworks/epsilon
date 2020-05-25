@@ -103,7 +103,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
   }
 
   KDColor color = colorFromOptionalArgumentAtIndex(n_args, args, 5);
-  sPlotStore->addSegment(args[0], args[1], mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[0]), args[2]),  mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[1]), args[3]), color, arrowWidth);
+  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0]) + mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1]) + mp_obj_get_float(args[3])), color, arrowWidth);
   return mp_const_none;
 }
 
@@ -211,7 +211,7 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
     mp_obj_t rectLeft = mp_obj_new_float(iXf - iWf/2.0f);
     mp_obj_t rectRight = mp_obj_new_float(iXf + iWf/2.0f);
     mp_obj_t rectBottom = iB;
-    mp_obj_t rectTop = mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(iH), iB);
+    mp_obj_t rectTop = mp_obj_new_float(mp_obj_get_float(iH) + mp_obj_get_float(iB));
     if (mp_obj_get_float(iH) < 0.0) {
       mp_obj_t temp = rectTop;
       rectTop = rectBottom;

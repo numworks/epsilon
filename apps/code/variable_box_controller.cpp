@@ -582,13 +582,13 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
 
-    // 1) Lex the script
+    // Lex the script
     _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
 
-    // This is a trick to get the token position in the text.
-    const char * tokenInText = scriptContent;
     // Keep track of DEF tokens to differentiate between variables and functions
     bool defToken = false;
+    const char * beginningLine = scriptContent;
+    size_t beginningLineIndex = 0;
 
     while (lex->tok_kind != MP_TOKEN_END) {
       // Keep only MP_TOKEN_NAME tokens
@@ -602,40 +602,22 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
         ScriptNode::Type nodeType = defToken ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
         const NodeOrigin origin = NodeOrigin::CurrentScript;
         if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType, origin)) {
-          /* This is a trick to get the token position in the text, as name and
-           * nameLength are temporary variables that will be overriden when the
-           * lexer continues lexing or is destroyed.
-           * This was found from stepping in the code and trying. */
-          /* TODO: Try to understand what is happening with tokenInText and
-           * remove this trick.*/
-          const char * fixedTokenInText = tokenInText;
-          for (int i = 0; i < 3; i++) {
-            if (strncmp(fixedTokenInText, name, nameLength) != 0 && fixedTokenInText > scriptContent) {
-              fixedTokenInText--;
-            } else {
-              break;
+          size_t line = lex->tok_line - 1; // tok_line starts at 1, not 0
+          if (beginningLineIndex < line) {
+            while (beginningLineIndex < line) {
+              beginningLine = UTF8Helper::CodePointSearch(beginningLine, '\n') + 1;
+              beginningLineIndex++;
+              assert(*beginningLine != 0); // We should not get to the end of the text
             }
           }
-          if (strncmp(fixedTokenInText, name, nameLength) != 0) {
-            fixedTokenInText = tokenInText;
-            while (*fixedTokenInText == ' ' || *fixedTokenInText == '\n') {
-              fixedTokenInText++;
-            }
-          }
-          assert(strncmp(fixedTokenInText, name, nameLength) == 0);
-          addNode(nodeType, origin, fixedTokenInText, nameLength);
+          assert(beginningLineIndex == line);
+          const char * tokenInText = beginningLine + lex->tok_column - 1; // tok_column starts at 1, not 0
+          assert(strncmp(tokenInText, name, nameLength) == 0);
+          addNode(nodeType, origin, tokenInText, nameLength);
         }
       }
 
       defToken = lex->tok_kind == MP_TOKEN_KW_DEF;
-
-      /* This is a trick to get the token position in the text. The -1 was found
-       *  from stepping in the code and trying. */
-      tokenInText = (const char *)(((_mp_reader_mem_t*)(lex->reader.data))->cur);
-      if (lex->tok_kind <= MP_TOKEN_ELLIPSIS || lex->tok_kind >= MP_TOKEN_OP_PLUS) {
-        tokenInText--;
-      }
-
       mp_lexer_to_next(lex);
     }
 

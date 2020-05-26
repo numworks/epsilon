@@ -25,7 +25,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   /* autocompletionType returns:
-   * - EndOfIdentifier if there is currently autocompletion, or if the wursor is
+   * - EndOfIdentifier if there is currently autocompletion, or if the cursor is
    *   at the end of an identifier,
    * - MiddleOfIdentifier is the cursor is in the middle of an identifier,
    * - No identifier otherwise.

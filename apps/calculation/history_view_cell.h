@@ -19,7 +19,7 @@ public:
   };
   HistoryViewCellDataSource() : m_selectedSubviewType(SubviewType::Output) {}
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
-  SubviewType selectedSubviewType() { return m_selectedSubviewType; }
+  SubviewType selectedSubviewType() const { return m_selectedSubviewType; }
 private:
   /* This method should belong to a delegate instead of a data source but as
    * both the data source and the delegate will be the same controller, we

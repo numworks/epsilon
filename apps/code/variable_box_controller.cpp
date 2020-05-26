@@ -615,7 +615,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
         assert(strncmp(tokenInText, name, nameLength) == 0);
 
         ScriptNode::Type nodeType = (defToken || *(tokenInText + nameLength) == '(')? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
-        if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType, origin)) {
+        if (tokenInText != textToAutocomplete && shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType, origin)) {
           addNode(nodeType, origin, tokenInText, nameLength);
         }
       }

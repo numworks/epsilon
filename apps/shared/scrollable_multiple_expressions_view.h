@@ -47,6 +47,7 @@ protected:
     void setEven(bool even) override;
     void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
+    KDSize minimalSizeForOptimalDisplayFullSize() const;
     virtual ExpressionView * leftExpressionView() const { return nullptr; }
     ExpressionView * rightExpressionView() {
       return &m_rightExpressionView;
@@ -70,6 +71,7 @@ protected:
   private:
     constexpr static const KDFont * k_font = KDFont::LargeFont;
     const static I18n::Message k_defaultApproximateMessage = I18n::Message::AlmostEqual;
+    KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View * subviewAtIndex(int index) override;
     ExpressionView m_rightExpressionView;
     MessageTextView m_approximateSign;
@@ -91,7 +93,9 @@ public:
         Metric::CommonLargeMargin
     );
   }
-
+  KDSize minimalSizeForOptimalDisplayFullSize() const {
+    return constContentCell()->minimalSizeForOptimalDisplayFullSize();
+  }
 private:
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };

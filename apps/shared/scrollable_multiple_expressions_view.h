@@ -68,6 +68,7 @@ protected:
     int numberOfSubviews() const override;
     virtual Poincare::Layout layout() const override;
     KDCoordinate baseline(KDCoordinate * leftBaseline = nullptr, KDCoordinate * centerBaseline = nullptr, KDCoordinate * rightBaseline = nullptr) const;
+    void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame);
   private:
     constexpr static const KDFont * k_font = KDFont::LargeFont;
     const static I18n::Message k_defaultApproximateMessage = I18n::Message::AlmostEqual;

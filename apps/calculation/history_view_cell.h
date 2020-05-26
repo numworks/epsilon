@@ -33,9 +33,9 @@ class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   constexpr static KDCoordinate k_margin = Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
-  constexpr static KDCoordinate k_inputOutputViewsHorizontalMargin = Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+  constexpr static KDCoordinate k_inputViewHorizontalMargin = Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+  static KDCoordinate Height(Calculation * calculation, bool expanded);
   HistoryViewCell(Responder * parentResponder = nullptr);
-  static bool LayoutsCanBeSingleLine(KDCoordinate inputLayoutWidth, KDCoordinate outputLayoutWidth);
   static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth);
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type, HistoryViewCellDataSource::SubviewType previousType = HistoryViewCellDataSource::SubviewType::None);
   void setEven(bool even) override;
@@ -58,6 +58,7 @@ public:
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
+  void computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate frameHeight, KDRect * ellipsisFrame, KDRect * inputFrame, KDRect * outputFrame);
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);
   bool displayedEllipsis() const {

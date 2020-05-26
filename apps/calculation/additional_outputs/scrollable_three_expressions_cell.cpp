@@ -65,6 +65,17 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation) {
   layoutSubviews();
 }
 
+KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation) {
+  ScrollableThreeExpressionsCell cell;
+  cell.setCalculation(calculation);
+  KDRect leftFrame = KDRectZero;
+  KDRect centerFrame = KDRectZero;
+  KDRect approximateSignFrame = KDRectZero;
+  KDRect rightFrame = KDRectZero;
+  cell.subviewFrames(&leftFrame, &centerFrame, &approximateSignFrame, &rightFrame);
+  return leftFrame.unionedWith(centerFrame).unionedWith(rightFrame).height();
+}
+
 void ScrollableThreeExpressionsCell::didBecomeFirstResponder() {
   reinitSelection();
   Container::activeApp()->setFirstResponder(&m_view);

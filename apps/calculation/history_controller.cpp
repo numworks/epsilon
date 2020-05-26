@@ -206,13 +206,13 @@ KDCoordinate HistoryController::rowHeight(int j) {
     return 0;
   }
   Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
-  return calculation->height(
-      App::app()->localContext(),
-      HistoryViewCell::k_margin,
-      HistoryViewCell::k_inputOutputViewsVerticalMargin,
-      j == selectedRow() && selectedSubviewType() == SubviewType::Output,
-      false,
-      &HistoryViewCell::LayoutsCanBeSingleLine);
+  bool expanded = j == selectedRow() && selectedSubviewType() == SubviewType::Output;
+  KDCoordinate result = calculation->memoizedHeight(expanded);
+  if (result < 0) {
+    result = HistoryViewCell::Height(calculation.pointer(), expanded);
+    calculation->setMemoizedHeight(expanded, result);
+  }
+  return result;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

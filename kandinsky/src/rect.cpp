@@ -174,5 +174,5 @@ KDRect KDRect::movedTo(KDPoint p) const {
 }
 
 bool KDRect::isEmpty() const {
-  return (width() == 0 || height() == 0);
+  return (width() == 0 || height() == 0); //TODO <= 0
 }

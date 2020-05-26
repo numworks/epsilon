@@ -117,6 +117,9 @@ KDRect ScrollView::visibleContentRect() {
 }
 
 void ScrollView::layoutSubviews(bool force) {
+  if (bounds().isEmpty()) {
+    return;
+  }
   KDRect r1 = KDRectZero;
   KDRect r2 = KDRectZero;
   KDRect innerFrame = decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), bounds(), &r1, &r2, force);

@@ -1437,5 +1437,7 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
 
 template Complex<float> PowerNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
 template Complex<double> PowerNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
+template Complex<double> PowerNode::computeNotPrincipalRealRootOfRationalPow<double>(std::complex<double>, double, double);
+template Complex<float> PowerNode::computeNotPrincipalRealRootOfRationalPow<float>(std::complex<float>, float, float);
 
 }

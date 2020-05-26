@@ -55,37 +55,11 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::reloadTextColor() {
 }
 
 KDSize AbstractScrollableMultipleExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
-  KDCoordinate width = 0;
+  return privateMinimalSizeForOptimalDisplay(false);
+}
 
-  // Compute baselines
-  KDCoordinate leftBaseline = 0;
-  KDCoordinate centerBaseline = 0;
-  KDCoordinate rightBaseline = 0;
-  KDCoordinate viewBaseline = baseline(&leftBaseline, &centerBaseline, &rightBaseline);
-
-  KDSize leftSize = KDSizeZero;
-  if (leftExpressionView() && !leftExpressionView()->layout().isUninitialized()) {
-    leftSize = leftExpressionView()->minimalSizeForOptimalDisplay();
-    width += leftSize.width() + AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
-  }
-
-  KDSize centerSize = KDSizeZero;
-  if (displayCenter()) {
-    centerSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
-    width += centerSize.width() + 2 * AbstractScrollableMultipleExpressionsView::k_horizontalMargin + m_approximateSign.minimalSizeForOptimalDisplay().width();
-  }
-
-  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
-  width += rightSize.width();
-
-  KDCoordinate height = viewBaseline
-    + std::max(
-        std::max(
-          centerSize.height() - centerBaseline,
-          rightSize.height() - rightBaseline),
-        leftSize.height() - leftBaseline);
-
-  return KDSize(width, height);
+KDSize AbstractScrollableMultipleExpressionsView::ContentCell::minimalSizeForOptimalDisplayFullSize() const {
+  return privateMinimalSizeForOptimalDisplay(true);
 }
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::setSelectedSubviewPosition(AbstractScrollableMultipleExpressionsView::SubviewPosition subviewPosition) {
@@ -145,6 +119,40 @@ KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(KD
   }
 
   return std::max(std::max(leftViewBaseline, centerViewBaseline), rightViewBaseline);
+}
+
+KDSize AbstractScrollableMultipleExpressionsView::ContentCell::privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const {
+  KDCoordinate width = 0;
+
+  // Compute baselines
+  KDCoordinate leftBaseline = 0;
+  KDCoordinate centerBaseline = 0;
+  KDCoordinate rightBaseline = 0;
+  KDCoordinate viewBaseline = baseline(&leftBaseline, &centerBaseline, &rightBaseline);
+
+  KDSize leftSize = KDSizeZero;
+  if (leftExpressionView() && !leftExpressionView()->layout().isUninitialized()) {
+    leftSize = leftExpressionView()->minimalSizeForOptimalDisplay();
+    width += leftSize.width() + AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+  }
+
+  KDSize centerSize = KDSizeZero;
+  if (displayCenter() || (forceFullDisplay && !m_centeredExpressionView.layout().isUninitialized())) {
+    centerSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
+    width += centerSize.width() + 2 * AbstractScrollableMultipleExpressionsView::k_horizontalMargin + m_approximateSign.minimalSizeForOptimalDisplay().width();
+  }
+
+  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
+  width += rightSize.width();
+
+  KDCoordinate height = viewBaseline
+    + std::max(
+        std::max(
+          centerSize.height() - centerBaseline,
+          rightSize.height() - rightBaseline),
+        leftSize.height() - leftBaseline);
+
+  return KDSize(width, height);
 }
 
 View * AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(int index) {

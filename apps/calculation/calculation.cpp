@@ -126,6 +126,9 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
 }
 
 KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, LayoutsCanBeSingleLineFunction canBeSingleLine) {
+  /* WARNING: this method must return the same result as
+   * Calculation::HistoryViewCell::layoutSubviews. */
+
   KDCoordinate result = expanded ? m_expandedHeight : m_height;
   if (result >= 0) {
     // Height already computed
@@ -138,12 +141,19 @@ KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginB
   KDCoordinate inputWidth = inputLayout.layoutSize().width();
   KDCoordinate inputBaseline = inputLayout.baseline();
 
+  // Get output height
   KDCoordinate outputWidth;
   KDCoordinate outputBaseline;
   KDCoordinate outputHeightBelowBaseline;
 
+
+  DisplayOutput displayType = displayOutput(context);
+  /* If the display output is ExactAndApproximateToggle, we want to use the
+   * expanded width to compute if the calculaton is in single line or not. */
+  bool shouldComputeMaxOutputWidthForSingleLine = !forceSingleLine && (!expanded && displayType == DisplayOutput::ExactAndApproximateToggle);
+  KDCoordinate maxOutputWidth = -1;
+
   {
-    DisplayOutput displayType = displayOutput(context);
     bool displaysExactOnly = displayType == DisplayOutput::ExactOnly;
     bool displayApproximateOnly = displayType == DisplayOutput::ApproximateOnly
       || (!expanded
@@ -154,7 +164,8 @@ KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginB
     KDCoordinate exactOutputBelowBaseline = 0;
 
     // Get exact output info if needed
-    if (displaysExactOnly || !displayApproximateOnly) {
+    bool displaysExact = displaysExactOnly || !displayApproximateOnly;
+    if (displaysExact || shouldComputeMaxOutputWidthForSingleLine) {
       bool couldNotCreateExactLayout = false;
       Poincare::Layout exactLayout = createExactOutputLayout(&couldNotCreateExactLayout);
       if (couldNotCreateExactLayout) {
@@ -170,9 +181,12 @@ KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginB
         }
       } else {
         KDSize exactSize = exactLayout.layoutSize();
-        exactOutputWidth = exactSize.width();
-        exactOutputBaseline = exactLayout.baseline();
-        exactOutputBelowBaseline = exactSize.height() - exactOutputBaseline;
+        maxOutputWidth = exactSize.width();
+        if (displaysExact) {
+          exactOutputWidth = exactSize.width();
+          exactOutputBaseline = exactLayout.baseline();
+          exactOutputBelowBaseline = exactSize.height() - exactOutputBaseline;
+        }
       }
     }
 
@@ -181,19 +195,24 @@ KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginB
     KDCoordinate approximateOutputBelowBaseline = 0;
 
     // Get approximate output info if needed
-    if (displayApproximateOnly || !displaysExactOnly) {
+    bool displaysApproximate = displayApproximateOnly || !displaysExactOnly;
+    if (displaysApproximate || shouldComputeMaxOutputWidthForSingleLine) {
       bool couldNotCreateApproximateLayout = false;
       Layout approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
       if (couldNotCreateApproximateLayout) {
         Poincare::ExceptionCheckpoint::Raise();
       }
       KDSize approximateOutputSize = approximateLayout.layoutSize();
-      approximateOutputWidth = approximateOutputSize.width();
-      approximateOutputBaseline = approximateLayout.baseline();
-      approximateOutputBelowBaseline = approximateOutputSize.height() - approximateOutputBaseline;
+      maxOutputWidth += approximateOutputSize.width();
+      if (displaysApproximate) {
+        approximateOutputWidth = approximateOutputSize.width();
+        approximateOutputBaseline = approximateLayout.baseline();
+        approximateOutputBelowBaseline = approximateOutputSize.height() - approximateOutputBaseline;
+      }
     }
 
     // Compute the output info
+    maxOutputWidth += AbstractScrollableMultipleExpressionsView::StandardApproximateViewAndMarginsSize();
     outputWidth = exactOutputWidth
       + ((exactOutputWidth > 0 && approximateOutputWidth > 0) ? AbstractScrollableMultipleExpressionsView::StandardApproximateViewAndMarginsSize() : 0)
       + approximateOutputWidth;
@@ -201,7 +220,7 @@ KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginB
     outputHeightBelowBaseline = std::max(exactOutputBelowBaseline, approximateOutputBelowBaseline);
   }
 
-  if (forceSingleLine || canBeSingleLine(inputWidth, outputWidth)) {
+  if (forceSingleLine || canBeSingleLine(inputWidth, maxOutputWidth)) {
     result = std::max(inputBaseline, outputBaseline) // Above the baseline
       + std::max(static_cast<KDCoordinate>(inputHeight - inputBaseline), outputHeightBelowBaseline) // Below the baseline
       + 2 * verticalMarginAroundLayouts;

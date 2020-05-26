@@ -242,38 +242,40 @@ void AbstractScrollableMultipleExpressionsView::setDisplayCenter(bool display) {
 }
 
 bool AbstractScrollableMultipleExpressionsView::handleEvent(Ion::Events::Event event) {
-  bool leftIsVisible = false;
-  KDCoordinate leftWidth = 0;
-  if (contentCell()->leftExpressionView()) {
-    leftWidth = contentCell()->leftExpressionView()->minimalSizeForOptimalDisplay().width();
-    leftIsVisible = leftWidth - contentOffset().x() > 0;
-  }
-  KDCoordinate rightExpressionWidth = contentCell()->rightExpressionView()->minimalSizeForOptimalDisplay().width();
-  bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() - rightExpressionWidth - contentOffset().x() < bounds().width();
-  bool centeredExpressionIsVisibleOnTheLeft = false;
-  bool centeredExpressionIsVisibleOnTheRight = false;
-  if (contentCell()->displayCenter()) {
-    KDCoordinate centerExpressionWidth = contentCell()->centeredExpressionView()->minimalSizeForOptimalDisplay().width();
-    KDCoordinate signWidth = contentCell()->approximateSign()->minimalSizeForOptimalDisplay().width();
-    centeredExpressionIsVisibleOnTheLeft = leftWidth + k_horizontalMargin + centerExpressionWidth - contentOffset().x() > 0;
-    centeredExpressionIsVisibleOnTheRight = minimalSizeForOptimalDisplay().width() - rightExpressionWidth - signWidth - centerExpressionWidth - 2 * k_horizontalMargin - contentOffset().x() < bounds().width();
-  }
-  // Select center
-  if ((event == Ion::Events::Left && selectedSubviewPosition() == SubviewPosition::Right && centeredExpressionIsVisibleOnTheLeft) ||
-      (event == Ion::Events::Right && selectedSubviewPosition() == SubviewPosition::Left && centeredExpressionIsVisibleOnTheRight)) {
-    setSelectedSubviewPosition(SubviewPosition::Center);
-    return true;
-  }
-  // Select left
-  if ((event == Ion::Events::Left && selectedSubviewPosition() == SubviewPosition::Right && leftIsVisible) ||
-      (event == Ion::Events::Left && selectedSubviewPosition() == SubviewPosition::Center && leftIsVisible)) {
-    setSelectedSubviewPosition(SubviewPosition::Left);
-    return true;
-  }
-  if ((event == Ion::Events::Right && selectedSubviewPosition() == SubviewPosition::Center && rightExpressionIsVisible) ||
-      (event == Ion::Events::Right && selectedSubviewPosition() == SubviewPosition::Left && rightExpressionIsVisible)) {
-    setSelectedSubviewPosition(SubviewPosition::Right);
-    return true;
+  if (event == Ion::Events::Left || event == Ion::Events::Right ) {
+    bool leftIsVisible = false;
+    KDCoordinate leftWidth = 0;
+    if (contentCell()->leftExpressionView()) {
+      leftWidth = contentCell()->leftExpressionView()->minimalSizeForOptimalDisplay().width();
+      leftIsVisible = leftWidth - contentOffset().x() > 0;
+    }
+    KDCoordinate rightExpressionWidth = contentCell()->rightExpressionView()->minimalSizeForOptimalDisplay().width();
+    bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() - rightExpressionWidth - contentOffset().x() < bounds().width();
+    bool centeredExpressionIsVisibleOnTheLeft = false;
+    bool centeredExpressionIsVisibleOnTheRight = false;
+    if (contentCell()->displayCenter()) {
+      KDCoordinate centerExpressionWidth = contentCell()->centeredExpressionView()->minimalSizeForOptimalDisplay().width();
+      KDCoordinate signWidth = contentCell()->approximateSign()->minimalSizeForOptimalDisplay().width();
+      centeredExpressionIsVisibleOnTheLeft = leftWidth + k_horizontalMargin + centerExpressionWidth - contentOffset().x() > 0;
+      centeredExpressionIsVisibleOnTheRight = minimalSizeForOptimalDisplay().width() - rightExpressionWidth - signWidth - centerExpressionWidth - 2 * k_horizontalMargin - contentOffset().x() < bounds().width();
+    }
+    // Select center
+    if ((event == Ion::Events::Left && selectedSubviewPosition() == SubviewPosition::Right && centeredExpressionIsVisibleOnTheLeft) ||
+        (event == Ion::Events::Right && selectedSubviewPosition() == SubviewPosition::Left && centeredExpressionIsVisibleOnTheRight)) {
+      setSelectedSubviewPosition(SubviewPosition::Center);
+      return true;
+    }
+    // Select left
+    if ((event == Ion::Events::Left && selectedSubviewPosition() == SubviewPosition::Right && leftIsVisible) ||
+        (event == Ion::Events::Left && selectedSubviewPosition() == SubviewPosition::Center && leftIsVisible)) {
+      setSelectedSubviewPosition(SubviewPosition::Left);
+      return true;
+    }
+    if ((event == Ion::Events::Right && selectedSubviewPosition() == SubviewPosition::Center && rightExpressionIsVisible) ||
+        (event == Ion::Events::Right && selectedSubviewPosition() == SubviewPosition::Left && rightExpressionIsVisible)) {
+      setSelectedSubviewPosition(SubviewPosition::Right);
+      return true;
+    }
   }
   return ScrollableView::handleEvent(event);
 }

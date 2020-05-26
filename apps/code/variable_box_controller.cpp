@@ -378,7 +378,7 @@ void VariableBoxController::insertTextInCaller(const char * text, int textLength
 void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
   //TODO Could be great to use strings defined in STATIC const char *const tok_kw[] in python/lexer.c
   /* The commented values do not work with our current MicroPython but might
-   * work later, which is chy we keep them. */
+   * work later, which is why we keep them. */
   static const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
     {"False", ScriptNode::Type::WithoutParentheses},
     {"None", ScriptNode::Type::WithoutParentheses},

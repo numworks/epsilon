@@ -262,6 +262,8 @@ double Store::meanOfColumn(int series, int i, bool lnOfSeries) const {
 }
 
 double Store::varianceOfColumn(int series, int i, bool lnOfSeries) const {
+  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
+   * to ensure a positive result and to minimize rounding errors */
   double mean = meanOfColumn(series, i, lnOfSeries);
   return squaredOffsettedValueSumOfColumn(series, i, lnOfSeries, mean)/numberOfPairsOfSeries(series);
 }

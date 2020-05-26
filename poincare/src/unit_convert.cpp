@@ -13,6 +13,13 @@
 
 namespace Poincare {
 
+Expression UnitConvertNode::removeUnit(Expression * unit) {
+  /* Warning: removeUnit of a UnitConvert doesn't make much sense but we
+   * implement a 'dummy' version since UnitConvert still exists among the
+   * reduced expression. */
+  childAtIndex(1)->removeUnit(unit);
+  return UnitConvert(this).replaceWithUndefinedInPlace();
+}
 Expression UnitConvertNode::shallowBeautify(ReductionContext reductionContext) {
   return UnitConvert(this).shallowBeautify(reductionContext);
 }

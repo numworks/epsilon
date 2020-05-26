@@ -155,7 +155,6 @@ View * HistoryViewCell::subviewAtIndex(int index) {
 }
 
 bool HistoryViewCell::LayoutsCanBeSingleLine(KDCoordinate inputLayoutWidth, KDCoordinate outputLayoutWidth) {
-  // k_margin is the separation between the input and output.
   return ViewsCanBeSingleLine(inputLayoutWidth + 2 * k_inputOutputViewsHorizontalMargin, outputLayoutWidth + 2 * k_inputOutputViewsHorizontalMargin);
 }
 
@@ -175,7 +174,9 @@ void HistoryViewCell::layoutSubviews(bool force) {
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
 
-  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), outputSize.width());
+  /* To compute if the calculation is on a single line, use the expanded width
+   * if there is both an exact and an approximate layout. */
+  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width());
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;

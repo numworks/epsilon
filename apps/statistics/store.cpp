@@ -153,8 +153,10 @@ double Store::mean(int series) const {
 }
 
 double Store::variance(int series) const {
+  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
+   * to ensure a positive result and to minimize rounding errors */
   double m = mean(series);
-  return squaredValueSum(series)/sumOfOccurrences(series) - m*m;
+  return squaredOffsettedValueSum(series, m)/sumOfOccurrences(series);
 }
 
 double Store::standardDeviation(int series) const {
@@ -193,10 +195,15 @@ double Store::sum(int series) const {
 }
 
 double Store::squaredValueSum(int series) const {
+  return squaredOffsettedValueSum(series, 0.0);
+}
+
+double Store::squaredOffsettedValueSum(int series, double offset) const {
   double result = 0;
-  int numberOfPairs = numberOfPairsOfSeries(series);
+  const int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    result += m_data[series][0][k]*m_data[series][0][k]*m_data[series][1][k];
+    double value = m_data[series][0][k] - offset;
+    result += value*value*m_data[series][1][k];
   }
   return result;
 }

@@ -20,7 +20,7 @@ public:
   Type type() const override { return Type::UnitConvert; }
 
 private:
-  Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
+  Expression removeUnit(Expression * unit) override;
   // Simplification
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;

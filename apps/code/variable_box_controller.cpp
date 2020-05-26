@@ -269,7 +269,7 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
   if (strictlyStartsWith != nullptr && nodeNameLengthStartsWithName) {
     *strictlyStartsWith = true;
   }
-  return nodeNameLengthStartsWithName ? *(nodeName + nameLength)  : - *(nodeName + nodeNameLength) ;
+  return nodeNameLengthStartsWithName ? *(nodeName + nameLength)  : - *(name + nameLength) ;
 }
 
 int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {

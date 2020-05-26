@@ -12,6 +12,9 @@ namespace USB {
 
 using namespace Regs;
 
+constexpr int Endpoint0::k_maxPacketSize;
+constexpr uint16_t Endpoint0::MaxTransferSize;
+
 void Endpoint0::setup() {
   // Setup the IN direction
 

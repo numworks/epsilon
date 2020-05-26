@@ -434,45 +434,44 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
       return replaceWithUndefinedInPlace();
     }
-    if (baseType != ExpressionNode::Type::Matrix) {
-      return *this;
+    if (baseType == ExpressionNode::Type::Matrix) {
+      Matrix matrixBase = static_cast<Matrix &>(base);
+      if (matrixBase.numberOfRows() != matrixBase.numberOfColumns()) {
+        return replaceWithUndefinedInPlace();
+      }
+      Integer exponent = static_cast<Rational &>(index).signedIntegerNumerator();
+      if (exponent.isNegative()) {
+        index.setSign(ExpressionNode::Sign::Positive, reductionContext);
+        Expression reducedPositiveExponentMatrix = shallowReduce(reductionContext);
+        Expression dummyExpression = Undefined::Builder();
+        MatrixInverse inv = MatrixInverse::Builder(dummyExpression);
+        reducedPositiveExponentMatrix.replaceWithInPlace(inv);
+        inv.replaceChildInPlace(dummyExpression, reducedPositiveExponentMatrix);
+        return inv.shallowReduce(reductionContext);
+      }
+      if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) <= 0) {
+        return *this;
+      }
+      int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
+      if (exp == 0) {
+        Matrix id = Matrix::CreateIdentity(matrixBase.numberOfRows());
+        replaceWithInPlace(id);
+        return std::move(id);
+      }
+      if (exp == 1) {
+        replaceWithInPlace(matrixBase);
+        return std::move(matrixBase);
+      }
+      Expression result = matrixBase.clone();
+      // TODO: implement a quick exponentiation
+      for (int k = 1; k < exp; k++) {
+        result = Multiplication::Builder(result, matrixBase.clone());
+        result = result.shallowReduce(reductionContext);
+      }
+      assert(!result.isUninitialized());
+      replaceWithInPlace(result);
+      return result;
     }
-    Matrix matrixBase = static_cast<Matrix &>(base);
-    if (matrixBase.numberOfRows() != matrixBase.numberOfColumns()) {
-      return replaceWithUndefinedInPlace();
-    }
-    Integer exponent = static_cast<Rational &>(index).signedIntegerNumerator();
-    if (exponent.isNegative()) {
-      index.setSign(ExpressionNode::Sign::Positive, reductionContext);
-      Expression reducedPositiveExponentMatrix = shallowReduce(reductionContext);
-      Expression dummyExpression = Undefined::Builder();
-      MatrixInverse inv = MatrixInverse::Builder(dummyExpression);
-      reducedPositiveExponentMatrix.replaceWithInPlace(inv);
-      inv.replaceChildInPlace(dummyExpression, reducedPositiveExponentMatrix);
-      return inv.shallowReduce(reductionContext);
-    }
-    if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
-      return *this;
-    }
-    int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
-    if (exp == 0) {
-      Matrix id = Matrix::CreateIdentity(matrixBase.numberOfRows());
-      replaceWithInPlace(id);
-      return std::move(id);
-    }
-    if (exp == 1) {
-      replaceWithInPlace(matrixBase);
-      return std::move(matrixBase);
-    }
-    Expression result = matrixBase.clone();
-    // TODO: implement a quick exponentiation
-    for (int k = 1; k < exp; k++) {
-      result = Multiplication::Builder(result, matrixBase.clone());
-      result = result.shallowReduce(reductionContext);
-    }
-    assert(!result.isUninitialized());
-    replaceWithInPlace(result);
-    return result;
   }
 
   Expression power = *this;

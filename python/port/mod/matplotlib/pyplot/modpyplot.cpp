@@ -101,7 +101,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args)
   sPlotStore->setShow(true);
 
   if (n_args > 4) {
-    mp_raise_TypeError("arrow() takes 4 positional arguments");
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"arrow() takes 4 positional arguments but %d were given",n_args));
   }
 
   mp_map_elem_t * elem;
@@ -180,8 +180,8 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
-  if (n_args > 4) {
-    mp_raise_TypeError("bar() takes 4 positional arguments");
+if (n_args > 4) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"bar() takes from 2 to 4 positional arguments but %d were given",n_args));
   }
   sPlotStore->setShow(true);
   mp_obj_t * xItems;
@@ -262,8 +262,8 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
  * */
 
 mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args ) {
-  if (n_args > 3) {
-    mp_raise_TypeError("hist() takes 3 positional arguments");
+  if (n_args > 2) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"hist() takes from 1 to 2 positional arguments but %d were given",n_args));
   }
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
@@ -357,7 +357,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args )
 mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
   if (n_args > 2) {
-    mp_raise_TypeError("scatter() takes 2 positional arguments");
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"scatter() takes 2 positional arguments but %d were given",n_args));
   }
   sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
@@ -388,6 +388,9 @@ mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_arg
 mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args,mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
+  if (n_args > 3) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"plot() takes 3 positional arguments but %d were given",n_args));
+  }
   mp_obj_t * xItems, * yItems;
   size_t length;
   if (n_args == 1) {

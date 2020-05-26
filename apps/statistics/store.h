@@ -43,6 +43,7 @@ public:
   double median(int series) const;
   double sum(int series) const;
   double squaredValueSum(int series) const;
+  double squaredOffsettedValueSum(int series, double offset) const;
   constexpr static double k_maxNumberOfBars = 10000.0;
   constexpr static float k_displayTopMarginRatio = 0.1f;
   constexpr static float k_displayRightMarginRatio = 0.04f;

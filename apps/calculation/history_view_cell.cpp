@@ -34,12 +34,22 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 
 /* HistoryViewCell */
 
+KDCoordinate HistoryViewCell::Height(Calculation * calculation, bool expanded) {
+  HistoryViewCell cell(nullptr);
+  cell.setCalculation(calculation, expanded);
+  KDRect ellipsisFrame = KDRectZero;
+  KDRect inputFrame = KDRectZero;
+  KDRect outputFrame = KDRectZero;
+  cell.computeSubviewFrames(Ion::Display::Width, KDCOORDINATE_MAX, &ellipsisFrame, &inputFrame, &outputFrame);
+  return k_margin + inputFrame.unionedWith(outputFrame).height() + k_margin;
+}
+
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationCRC32(0),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
   m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
-  m_inputView(this, k_inputOutputViewsHorizontalMargin, k_inputOutputViewsVerticalMargin),
+  m_inputView(this, k_inputViewHorizontalMargin, k_inputOutputViewsVerticalMargin),
   m_scrollableOutputView(this),
   m_calculationExpanded(false),
   m_calculationSingleLine(false)
@@ -154,23 +164,37 @@ View * HistoryViewCell::subviewAtIndex(int index) {
   return views[index];
 }
 
-bool HistoryViewCell::LayoutsCanBeSingleLine(KDCoordinate inputLayoutWidth, KDCoordinate outputLayoutWidth) {
-  return ViewsCanBeSingleLine(inputLayoutWidth + 2 * k_inputOutputViewsHorizontalMargin, outputLayoutWidth + 2 * k_inputOutputViewsHorizontalMargin);
-}
-
 bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth) {
   // k_margin is the separation between the input and output.
   return (inputViewWidth + k_margin + outputViewWidth) < Ion::Display::Width - Metric::EllipsisCellWidth;
 }
 
 void HistoryViewCell::layoutSubviews(bool force) {
-  KDCoordinate maxFrameWidth = bounds().width();
-  if (displayedEllipsis()) {
-    m_ellipsis.setFrame(KDRect(maxFrameWidth - Metric::EllipsisCellWidth, 0, Metric::EllipsisCellWidth, bounds().height()), force);
-    maxFrameWidth -= Metric::EllipsisCellWidth;
-  } else {
-    m_ellipsis.setFrame(KDRectZero, force); // Required to mark previous rect as dirty
+  KDRect frameBounds = bounds();
+  if (bounds().width() <= 0 || bounds().height() <= 0) {
+    // TODO Make this behaviour in a non-virtual layoutSublviews, and all layout subviews should become privateLayoutSubviews
+    return;
   }
+  KDRect ellipsisFrame = KDRectZero;
+  KDRect inputFrame = KDRectZero;
+  KDRect outputFrame = KDRectZero;
+  computeSubviewFrames(frameBounds.width(), frameBounds.height(), &ellipsisFrame, &inputFrame, &outputFrame);
+
+  m_ellipsis.setFrame(ellipsisFrame, force); // Required even if ellipsisFrame is KDRectZero, to mark previous rect as dirty
+  m_inputView.setFrame(inputFrame,force);
+  m_scrollableOutputView.setFrame(outputFrame, force);
+}
+
+void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate frameHeight, KDRect * ellipsisFrame, KDRect * inputFrame, KDRect * outputFrame) {
+  assert(ellipsisFrame != nullptr && inputFrame != nullptr && outputFrame != nullptr);
+
+  if (displayedEllipsis()) {
+    *ellipsisFrame = KDRect(frameWidth - Metric::EllipsisCellWidth, 0, Metric::EllipsisCellWidth, frameHeight);
+    frameWidth -= Metric::EllipsisCellWidth;
+  } else {
+    *ellipsisFrame = KDRectZero;
+  }
+
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
 
@@ -193,18 +217,16 @@ void HistoryViewCell::layoutSubviews(bool force) {
     outputY += inputSize.height();
   }
 
-  m_inputView.setFrame(KDRect(
+  *inputFrame = KDRect(
         0,
         inputY,
-        std::min(maxFrameWidth, inputSize.width()),
-        inputSize.height()),
-      force);
-  m_scrollableOutputView.setFrame(KDRect(
-        std::max(0, maxFrameWidth - outputSize.width()),
+        std::min(frameWidth, inputSize.width()),
+        inputSize.height());
+  *outputFrame = KDRect(
+        std::max(0, frameWidth - outputSize.width()),
         outputY,
-        std::min(maxFrameWidth, outputSize.width()),
-        outputSize.height()),
-      force);
+        std::min(frameWidth, outputSize.width()),
+        outputSize.height());
 }
 
 void HistoryViewCell::resetMemoization() {

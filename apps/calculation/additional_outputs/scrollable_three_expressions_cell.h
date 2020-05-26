@@ -17,6 +17,9 @@ public:
   }
   void resetMemoization();
   void setCalculation(Calculation * calculation);
+  void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
+    return m_contentCell.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
+  }
 private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
   public:
@@ -29,12 +32,13 @@ private:
   };
 
   ContentCell *  contentCell() override { return &m_contentCell; };
-  const ContentCell *  constContentCell() const override { return &m_contentCell; };
+  const ContentCell * constContentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
 };
 
 class ScrollableThreeExpressionsCell : public TableCell, public Responder {
 public:
+  static KDCoordinate Height(Calculation * calculation);
   ScrollableThreeExpressionsCell() :
     Responder(nullptr),
     m_view(this) {}
@@ -59,6 +63,9 @@ public:
   void setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 
   void reinitSelection();
+  void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
+    return m_view.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
+  }
 private:
   // Remove label margin added by TableCell because they're already handled by ScrollableThreeExpressionsView
   KDCoordinate labelMargin() const override { return 0; }

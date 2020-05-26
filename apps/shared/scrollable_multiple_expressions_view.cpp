@@ -121,6 +121,41 @@ KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(KD
   return std::max(std::max(leftViewBaseline, centerViewBaseline), rightViewBaseline);
 }
 
+void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
+  // Subviews sizes
+  KDSize leftSize = leftExpressionView() ? leftExpressionView()->minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize centerSize = displayCenter() ? m_centeredExpressionView.minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
+
+  // Compute baselines
+  KDCoordinate leftBaseline = 0;
+  KDCoordinate centerBaseline = 0;
+  KDCoordinate rightBaseline = 0;
+  KDCoordinate viewBaseline = baseline(&leftBaseline, &centerBaseline, &rightBaseline);
+
+  // Layout left view
+  KDCoordinate currentWidth = 0;
+  if (leftExpressionView()) {
+    assert(leftFrame != nullptr);
+    *leftFrame = KDRect(currentWidth, viewBaseline - leftBaseline, leftSize);
+    currentWidth += leftSize.width() + AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+  }
+
+  // Layout center expression
+  if (displayCenter()) {
+    assert(centerFrame != nullptr && approximateSignFrame != nullptr);
+    KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
+    *centerFrame = KDRect(currentWidth, viewBaseline - centerBaseline, centerSize);
+    currentWidth += AbstractScrollableMultipleExpressionsView::k_horizontalMargin + centerSize.width();
+    *approximateSignFrame = KDRect(currentWidth, viewBaseline - approximateSignSize.height()/2, approximateSignSize);
+    currentWidth += AbstractScrollableMultipleExpressionsView::k_horizontalMargin + approximateSignSize.width();
+  }
+
+  // Layout right expression
+  assert(rightFrame != nullptr);
+  *rightFrame = KDRect(currentWidth, viewBaseline - rightBaseline, rightSize);
+}
+
 KDSize AbstractScrollableMultipleExpressionsView::ContentCell::privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const {
   KDCoordinate width = 0;
 
@@ -169,35 +204,25 @@ KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::StandardApp
 }
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(bool force) {
-  // Subviews sizes
-  KDSize leftSize = leftExpressionView() ? leftExpressionView()->minimalSizeForOptimalDisplay() : KDSizeZero;
-  KDSize centerSize = displayCenter() ? m_centeredExpressionView.minimalSizeForOptimalDisplay() : KDSizeZero;
-  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
-
-  // Compute baselines
-  KDCoordinate leftBaseline = 0;
-  KDCoordinate centerBaseline = 0;
-  KDCoordinate rightBaseline = 0;
-  KDCoordinate viewBaseline = baseline(&leftBaseline, &centerBaseline, &rightBaseline);
-
-  // Layout left view
-  KDCoordinate currentWidth = 0;
-  if (leftExpressionView()) {
-    leftExpressionView()->setFrame(KDRect(currentWidth, viewBaseline - leftBaseline, leftSize), force);
-    currentWidth += leftSize.width() + AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+  if (bounds().width() <= 0 || bounds().height() <= 0) {
+    // TODO Make this behaviour in a non-virtual layoutSublviews, and all layout subviews should become privateLayoutSubviews
+    return;
   }
-
-  // Layout center expression
-  if (displayCenter()) {
-    KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
-    m_centeredExpressionView.setFrame(KDRect(currentWidth, viewBaseline - centerBaseline, centerSize), force);
-    currentWidth += AbstractScrollableMultipleExpressionsView::k_horizontalMargin + centerSize.width();
-    m_approximateSign.setFrame(KDRect(currentWidth, viewBaseline - approximateSignSize.height()/2, approximateSignSize), force);
-    currentWidth += AbstractScrollableMultipleExpressionsView::k_horizontalMargin + approximateSignSize.width();
+  KDRect leftFrame = KDRectZero;
+  KDRect centerFrame = KDRectZero;
+  KDRect approximateSignFrame = KDRectZero;
+  KDRect rightFrame = KDRectZero;
+  subviewFrames(&leftFrame, &centerFrame, &approximateSignFrame, &rightFrame);
+  if (leftExpressionView() != nullptr) {
+    leftExpressionView()->setFrame(leftFrame, force);
   }
-
-  // Layout right expression
-  m_rightExpressionView.setFrame(KDRect(currentWidth, viewBaseline - rightBaseline, rightSize), force);
+  if (centeredExpressionView() != nullptr) {
+    centeredExpressionView()->setFrame(centerFrame, force);
+  }
+  m_approximateSign.setFrame(approximateSignFrame, force);
+  if (rightExpressionView() != nullptr) {
+    rightExpressionView()->setFrame(rightFrame, force);
+  }
 }
 
 AbstractScrollableMultipleExpressionsView::AbstractScrollableMultipleExpressionsView(Responder * parentResponder, View * contentCell) :

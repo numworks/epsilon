@@ -125,7 +125,7 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginBetweenLayouts, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, LayoutsCanBeSingleLineFunction canBeSingleLine) {
+KDCoordinate Calculation::height(Context * context, KDCoordinate topBottomMargin, KDCoordinate verticalMarginAroundLayouts, bool expanded, bool forceSingleLine, LayoutsCanBeSingleLineFunction canBeSingleLine) {
   /* WARNING: this method must return the same result as
    * Calculation::HistoryViewCell::layoutSubviews. */
 
@@ -225,11 +225,11 @@ KDCoordinate Calculation::height(Context * context, KDCoordinate verticalMarginB
       + std::max(static_cast<KDCoordinate>(inputHeight - inputBaseline), outputHeightBelowBaseline) // Below the baseline
       + 2 * verticalMarginAroundLayouts;
   } else {
-    result = inputHeight + verticalMarginBetweenLayouts + outputBaseline + outputHeightBelowBaseline + 4 * verticalMarginAroundLayouts;
+    result = inputHeight + outputBaseline + outputHeightBelowBaseline + 4 * verticalMarginAroundLayouts;
   }
 
   // Add the top and bottom margins
-  result += 2 * verticalMarginBetweenLayouts;
+  result += 2 * topBottomMargin;
 
   /* For all display outputs except ExactAndApproximateToggle, the selected
    * height and the usual height are identical. We update both heights in

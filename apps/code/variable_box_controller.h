@@ -99,7 +99,6 @@ private:
    * should escape the node scanning process (due to the lexicographical order
    * or full node table). */
   bool addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr);
-  bool contains(const char * name, int nameLength, ScriptNode::Type type);
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];

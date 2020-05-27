@@ -858,6 +858,8 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     nodeNameLength = strlen(nodeName);
   }
   // Step 1: Check if the node matches the textToAutocomplete
+
+  // Step 1.1: Few escape cases
   /* If the node will go to imported, do not add it if it starts with an
    * underscore : such identifiers are meant to be private. */
   if (nodeOrigin == NodeOrigin::Importation && UTF8Helper::CodePointIs(nodeName, '_')) {
@@ -872,6 +874,7 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
 
   ScriptNode node(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
 
+  // Step 1.2: check if textToAutocomplete matches the node
   if (textToAutocomplete != nullptr) {
     /* Check that nodeName autocompletes the text to autocomplete
      *  - The start of nodeName must be equal to the text to autocomplete */
@@ -895,76 +898,65 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
     }
   }
 
-  /* Step 2: Check that node name is not already present in the variable box.
-   * (No need for builtins as they're the first added.) */
-  if (nodeOrigin != NodeOrigin::Builtins && contains(nodeName, nodeNameLength, nodeType)) {
-    return false;
-  }
+  // Step 2: Add Node
 
-  // Step 3: Add node
+  // Step 2.1: don't overflow the node list
   size_t * currentNodeCount = nodesCountPointerForOrigin(nodeOrigin);
+  ScriptNode * nodes = nodesForOrigin(nodeOrigin);
   if (*currentNodeCount >= MaxNodesCountForOrigin(nodeOrigin)) {
     // There is no room to add another node
     return true;
   }
-  /* We want to insert the node in lexicographical order, so we look for the
-   * insertion index.
-   * Some nodes (builtins) are added in lexicographical order so we start from
-   * the end of the node list to avoid scanning all list at each insertion. */
-  ScriptNode * nodes = nodesForOrigin(nodeOrigin);
-  size_t insertionIndex = *currentNodeCount;
-  if (*currentNodeCount != 0) {
-    while (insertionIndex > 0) {
-      ScriptNode * node = nodes + insertionIndex - 1;
-      int nameComparison = NodeNameCompare(node, nodeName, nodeNameLength);
-      assert(nameComparison != 0); // We already checked that the name is not present already
-      if (nameComparison < 0) {
-        break;
-      }
-      insertionIndex--;
-    }
 
-    // Shift all the following nodes
-    for (size_t i = *currentNodeCount; i > insertionIndex; i--) {
-      nodes[i] = nodes[i - 1];
+  // Step 2.2: find where to add the node (and check that it doesn't exist yet)
+  size_t insertionIndex = *currentNodeCount;
+  if (nodeOrigin == NodeOrigin::Builtins) {
+    /* For builtin nodes, we don't need to check whether the node was already
+     * added because they're added first in lexicographical order. Plus, we
+     * want to add it at the end of list to respect the lexicographical order. */
+    assert(nodeInLexicographicalOrder);
+  } else {
+    // Look where to add
+    bool alreadyInVarBox = false;
+    // This could be faster with dichotomia, but there is no speed problem for now
+    NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
+    for (NodeOrigin origin : origins) {
+      const int nodesCount = nodesCountForOrigin(origin);
+      ScriptNode * nodes = nodesForOrigin(origin);
+      for (int i = 0; i < nodesCount; i++) {
+        ScriptNode * matchingNode = nodes + i;
+        int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
+        if (comparisonResult == 0 || (comparisonResult == '(' && nodeType == ScriptNode::Type::WithParentheses)) {
+          alreadyInVarBox = true;
+          break;
+        }
+        if (comparisonResult > 0) {
+          if (nodeOrigin == origin) {
+            insertionIndex = i;
+          }
+          break;
+        }
+      }
+      if (alreadyInVarBox) {
+        return false;
+      }
     }
   }
 
-  // Check if the node source name fits, if not, do not use it
+  // Step 2.3: Shift all the following nodes
+  for (size_t i = *currentNodeCount; i > insertionIndex; i--) {
+    nodes[i] = nodes[i - 1];
+  }
+
+  // Step 2.4: Check if the node source name fits, if not, do not use it
   if (!ScriptNodeCell::CanDisplayNameAndSource(nodeNameLength, nodeSourceName)) {
     nodeSourceName = nullptr;
   }
-  // Add the node
+  // Step 2.5: Add the node
   nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
   // Increase the node count
   *currentNodeCount = *currentNodeCount + 1;
   return false;
-}
-
-bool VariableBoxController::contains(const char * name, int nameLength, ScriptNode::Type type) {
-  assert(nameLength > 0);
-  bool alreadyInVarBox = false;
-  // This could be faster with dichotomia, but there is no speed problem for now
-  NodeOrigin origins[] = {NodeOrigin::CurrentScript, NodeOrigin::Builtins, NodeOrigin::Importation};
-  for (NodeOrigin origin : origins) {
-    const int nodesCount = nodesCountForOrigin(origin);
-    ScriptNode * nodes = nodesForOrigin(origin);
-    for (int i = 0; i < nodesCount; i++) {
-      ScriptNode * matchingNode = nodes + i;
-      int comparisonResult = NodeNameCompare(matchingNode, name, nameLength);
-      if (comparisonResult == 0 || (comparisonResult == '(' && type == ScriptNode::Type::WithParentheses)) {
-        alreadyInVarBox = true;
-        break;
-      }
-      if (comparisonResult > 0) {
-        break;
-      }
-    }
-    if (alreadyInVarBox) {
-      break;
-    }
-  }
-  return alreadyInVarBox;
 }
 
 }

@@ -12,7 +12,7 @@ class IntervalParameterController : public Shared::FloatParameterController<doub
 public:
   IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
   Interval * interval() { assert(m_interval); return m_interval; }
-  void setInterval(Interval * interval) { m_interval = interval; }
+  void setInterval(Interval * interval);
   const char * title() override;
   void setTitle(I18n::Message title) { m_title = title; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
@@ -21,6 +21,7 @@ public:
 protected:
   constexpr static int k_totalNumberOfCell = 3;
   bool setParameterAtIndex(int parameterIndex, double f) override;
+  Interval m_tempInterval;
   Interval * m_interval;
   bool handleEvent(Ion::Events::Event event) override;
 private:

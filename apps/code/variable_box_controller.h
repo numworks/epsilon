@@ -67,8 +67,7 @@ private:
 
   // Nodes and nodes count
   static size_t MaxNodesCountForOrigin(NodeOrigin origin) {
-    assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
-    return k_maxScriptNodesCount;
+    return origin == NodeOrigin::Builtins ? k_totalBuiltinNodesCount : k_maxScriptNodesCount;
   }
   int nodesCountForOrigin(NodeOrigin origin) const;
   size_t * nodesCountPointerForOrigin(NodeOrigin origin);
@@ -94,13 +93,13 @@ private:
   const char * importationSourceNameFromNode(mp_parse_node_t & node);
   bool importationSourceIsModule(const char * sourceName, const ToolboxMessageTree * * moduleChildren = nullptr, int * numberOfModuleChildren = nullptr);
   bool importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retreivedScript = nullptr);
-  void addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength);
+  bool addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength);
   /* Add a node if it completes the text to autocomplete and if it is not
-   * already contained in the variable box. */
-  void checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
-  bool shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * name, int nameLength, ScriptNode::Type type, NodeOrigin origin);
+   * already contained in the variable box. The returned boolean means we
+   * should escape the node scanning process (due to the lexicographical order
+   * or full node table). */
+  bool addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr);
   bool contains(const char * name, int nameLength, ScriptNode::Type type);
-  void addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName = nullptr, const char * description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_currentScriptNodes[k_maxScriptNodesCount];
   ScriptNode m_builtinNodes[k_totalBuiltinNodesCount];

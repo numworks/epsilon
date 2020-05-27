@@ -280,11 +280,15 @@ int VariableBoxController::nodesCountForOrigin(NodeOrigin origin) const {
 }
 
 size_t * VariableBoxController::nodesCountPointerForOrigin(NodeOrigin origin) {
-  if (origin == NodeOrigin::CurrentScript) {
-    return &m_currentScriptNodesCount;
+  switch(origin) {
+    case NodeOrigin::CurrentScript:
+      return &m_currentScriptNodesCount;
+    case NodeOrigin::Builtins:
+      return &m_builtinNodesCount;
+    default:
+      assert(origin == NodeOrigin::Importation);
+      return &m_importedNodesCount;
   }
-  assert(origin == NodeOrigin::Importation);
-  return &m_importedNodesCount;
 }
 
 ScriptNode * VariableBoxController::nodesForOrigin(NodeOrigin origin) {
@@ -500,25 +504,11 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
     {qstr_str(MP_QSTR_zip), ScriptNode::Type::WithParentheses}
   };
   assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
-  /* We can leverage on the fact that buitin nodes are stored in alphabetical
-   * order, so we do not use shouldAddNode. */
   for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
-    ScriptNode node = ScriptNode(builtinNames[i].type, builtinNames[i].name);
-
-    int startsWith = 0;
-    if (textToAutocomplete != nullptr) {
-      bool strictlyStartsWith = false;
-      startsWith = NodeNameCompare(&node, textToAutocomplete, textToAutocompleteLength, &strictlyStartsWith);
-      if (startsWith == 0) { // The node name and name are equal
-        startsWith = node.type() == ScriptNode::Type::WithParentheses ? 0 : -1; // We accept the node only if it has parentheses
-      } else if (strictlyStartsWith) {
-        startsWith = 0;
-      } else if (startsWith > 0) {
-        return;
-      }
-    }
-    if (startsWith == 0) {
-      m_builtinNodes[m_builtinNodesCount++] = node;
+    if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, builtinNames[i].type, NodeOrigin::Builtins, builtinNames[i].name)) {
+      /* We can leverage on the fact that buitin nodes are stored in
+       * alphabetical order. */
+      return;
     }
   }
 }
@@ -615,8 +605,8 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
         assert(strncmp(tokenInText, name, nameLength) == 0);
 
         ScriptNode::Type nodeType = (defToken || *(tokenInText + nameLength) == '(')? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
-        if (tokenInText != textToAutocomplete && shouldAddNode(textToAutocomplete, textToAutocompleteLength, name, nameLength, nodeType, origin)) {
-          addNode(nodeType, origin, tokenInText, nameLength);
+        if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, nodeType, origin, tokenInText, nameLength)) {
+          break;
         }
       }
 
@@ -657,7 +647,9 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
             mp_parse_node_struct_t *child_pns = (mp_parse_node_struct_t*)(child);
             structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
             if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
-              addImportStructFromScript(child_pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
+              if (addImportStructFromScript(child_pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength)) {
+                break;
+              }
             } else {
               addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength, importFromModules);
             }
@@ -718,7 +710,9 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
           return true;
         }
       }
-      checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, id, -1, sourceId);
+      if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, id, -1, sourceId)) {
+        break;
+      }
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       // Parsing something like "from math import sin"
       addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength, importFromModules);
@@ -752,7 +746,9 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
         assert(numberOfModuleChildren > numberOfNodesToSkip);
         for (int i = numberOfNodesToSkip; i < numberOfModuleChildren; i++) {
           const char * name = I18n::translate((moduleChildren + i)->label());
-          checkAndAddNode(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()));
+          if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()))) {
+            break;
+          }
         }
       } else {
         //TODO get module variables that are not in the toolbox
@@ -845,56 +841,104 @@ const char * structName(mp_parse_node_struct_t * structNode) {
   return nullptr;
 }
 
-void VariableBoxController::addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength) {
+bool VariableBoxController::addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength) {
   assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
   // Find the id child node, which stores the struct's name
   const char * name = structName(pns);
   if (name == nullptr) {
-    return;
+    return false;
   }
-  checkAndAddNode(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, scriptName);
+  return addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses, NodeOrigin::Importation, name, -1, scriptName);
 }
 
-void VariableBoxController::checkAndAddNode(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type type, NodeOrigin origin, const char * nodeName, int nodeNameLength, const char * nodeSourceName, const char * description) {
+// The returned boolean means we should escape the process
+bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type nodeType, NodeOrigin nodeOrigin, const char * nodeName, int nodeNameLength, const char * nodeSourceName, const char * nodeDescription) {
+  assert(nodeName != nullptr);
   if (nodeNameLength < 0) {
     nodeNameLength = strlen(nodeName);
   }
-  if (shouldAddNode(textToAutocomplete, textToAutocompleteLength, nodeName, nodeNameLength, type, origin)) {
-    // Add the node in alphabetical order
-    addNode(type, origin, nodeName, nodeNameLength, nodeSourceName, description);
-  }
-}
-
-bool VariableBoxController::shouldAddNode(const char * textToAutocomplete, int textToAutocompleteLength, const char * nodeName, int nodeNameLength, ScriptNode::Type type, NodeOrigin origin) {
-  assert(nodeNameLength > 0);
-  assert(nodeName != nullptr);
-
+  // Step 1: Check if the node matches the textToAutocomplete
   /* If the node will go to imported, do not add it if it starts with an
    * underscore : such identifiers are meant to be private. */
-  if (origin == NodeOrigin::Importation && UTF8Helper::CodePointIs(nodeName, '_')) {
+  if (nodeOrigin == NodeOrigin::Importation && UTF8Helper::CodePointIs(nodeName, '_')) {
     return false;
   }
+  /* If the node is extracted from the current script, escape the current
+   * autocompleted word. */
+  if (nodeOrigin == NodeOrigin::CurrentScript && nodeName == textToAutocomplete) {
+    return false;
+  }
+  bool nodeInLexicographicalOrder = nodeOrigin == NodeOrigin::Builtins;
+
+  ScriptNode node(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
 
   if (textToAutocomplete != nullptr) {
     /* Check that nodeName autocompletes the text to autocomplete
      *  - The start of nodeName must be equal to the text to autocomplete */
-    if (strncmp(textToAutocomplete, nodeName, textToAutocompleteLength) != 0) {
-      return false;
-    }
-    /*  - nodeName should be longer than the text to autocomplete. Beware of the
-     *  case where nodeName is textToAutocompleteLength(), where we want to add
-     *  the node to autocomplete with parentheses. */
-    if (nodeNameLength == textToAutocompleteLength && type != ScriptNode::Type::WithParentheses) {
-      return false;
+    bool strictlyStartsWith = false;
+    int cmp = NodeNameCompare(&node, textToAutocomplete, textToAutocompleteLength, &strictlyStartsWith);
+    if (cmp == 0) {
+      // We don't accept the node if it has no parentheses
+      if (node.type() != ScriptNode::Type::WithParentheses) {
+        return false;
+      }
+    } else {
+      // We don't accept the node if it doesn't start as the textToAutocomplete
+      if (!strictlyStartsWith) {
+        if (nodeInLexicographicalOrder && cmp > 0) {
+          /* Signal to end the nodes scanning because we went past the
+           * textToAutocomplete in lexicographical order. */
+          return true;
+        }
+        return false;
+      }
     }
   }
 
-  // Check that node name is not already present in the variable box.
-  if (contains(nodeName, nodeNameLength, type)) {
+  /* Step 2: Check that node name is not already present in the variable box.
+   * (No need for builtins as they're the first added.) */
+  if (nodeOrigin != NodeOrigin::Builtins && contains(nodeName, nodeNameLength, nodeType)) {
     return false;
   }
 
-  return true;
+  // Step 3: Add node
+  size_t * currentNodeCount = nodesCountPointerForOrigin(nodeOrigin);
+  if (*currentNodeCount >= MaxNodesCountForOrigin(nodeOrigin)) {
+    // There is no room to add another node
+    return true;
+  }
+  /* We want to insert the node in lexicographical order, so we look for the
+   * insertion index.
+   * Some nodes (builtins) are added in lexicographical order so we start from
+   * the end of the node list to avoid scanning all list at each insertion. */
+  ScriptNode * nodes = nodesForOrigin(nodeOrigin);
+  size_t insertionIndex = *currentNodeCount;
+  if (*currentNodeCount != 0) {
+    while (insertionIndex > 0) {
+      ScriptNode * node = nodes + insertionIndex - 1;
+      int nameComparison = NodeNameCompare(node, nodeName, nodeNameLength);
+      assert(nameComparison != 0); // We already checked that the name is not present already
+      if (nameComparison < 0) {
+        break;
+      }
+      insertionIndex--;
+    }
+
+    // Shift all the following nodes
+    for (size_t i = *currentNodeCount; i > insertionIndex; i--) {
+      nodes[i] = nodes[i - 1];
+    }
+  }
+
+  // Check if the node source name fits, if not, do not use it
+  if (!ScriptNodeCell::CanDisplayNameAndSource(nodeNameLength, nodeSourceName)) {
+    nodeSourceName = nullptr;
+  }
+  // Add the node
+  nodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
+  // Increase the node count
+  *currentNodeCount = *currentNodeCount + 1;
+  return false;
 }
 
 bool VariableBoxController::contains(const char * name, int nameLength, ScriptNode::Type type) {
@@ -921,44 +965,6 @@ bool VariableBoxController::contains(const char * name, int nameLength, ScriptNo
     }
   }
   return alreadyInVarBox;
-}
-
-void VariableBoxController::addNode(ScriptNode::Type type, NodeOrigin origin, const char * name, int nameLength, const char * nodeSourceName, const char * description) {
-  assert(origin == NodeOrigin::CurrentScript || origin == NodeOrigin::Importation);
-  size_t * currentNodeCount = nodesCountPointerForOrigin(origin);
-  if (*currentNodeCount >= MaxNodesCountForOrigin(origin)) {
-    // There is no room to add another node
-    return;
-  }
-  /* We want to insert the node in alphabetical order, so we look for the
-   * insertion index. */
-  ScriptNode * nodes = nodesForOrigin(origin);
-  size_t insertionIndex = 0;
-  if (*currentNodeCount != 0) {
-    while (insertionIndex < *currentNodeCount) {
-      ScriptNode * node = nodes + insertionIndex;
-      int nameComparison = NodeNameCompare(node, name, nameLength);
-      assert(nameComparison != 0); // We already checked that the name is not present already
-      if (nameComparison > 0) {
-        break;
-      }
-      insertionIndex++;
-    }
-
-    // Shift all the following nodes
-    for (size_t i = *currentNodeCount; i > insertionIndex; i--) {
-      nodes[i] = nodes[i - 1];
-    }
-  }
-
-  // Check if the node source name fits, if not, do not use it
-  if (!ScriptNodeCell::CanDisplayNameAndSource(nameLength, nodeSourceName)) {
-    nodeSourceName = nullptr;
-  }
-  // Add the node
-  nodes[insertionIndex] = ScriptNode(type, name, nameLength, nodeSourceName, description);
-  // Increase the node count
-  *currentNodeCount = *currentNodeCount + 1;
 }
 
 }

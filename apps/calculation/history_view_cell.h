@@ -42,6 +42,9 @@ public:
   void setHighlighted(bool highlight) override;
   void reloadSubviewHighlight();
   void setDataSource(HistoryViewCellDataSource * dataSource) { m_dataSource = dataSource; }
+  bool displaysSingleLine() const {
+    return m_calculationSingleLine;
+  }
   Responder * responder() override {
     return this;
   }

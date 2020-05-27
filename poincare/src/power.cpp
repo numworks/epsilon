@@ -449,7 +449,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         inv.replaceChildInPlace(dummyExpression, reducedPositiveExponentMatrix);
         return inv.shallowReduce(reductionContext);
       }
-      if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) <= 0) {
+      if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
         return *this;
       }
       int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix

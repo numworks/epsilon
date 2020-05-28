@@ -152,6 +152,7 @@ const ToolboxMessageTree TurtleModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPenup, I18n::Message::PythonTurtlePenup, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPensize, I18n::Message::PythonTurtlePensize),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandIsdown, I18n::Message::PythonTurtleIsdown, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandWrite, I18n::Message::PythonTurtleWrite),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandReset, I18n::Message::PythonTurtleReset, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandShowturtle, I18n::Message::PythonTurtleShowturtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandHideturtle, I18n::Message::PythonTurtleHideturtle, false),
@@ -423,6 +424,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTurtleFunction, I18n::Message::PythonTurtleFunction, false, I18n::Message::PythonCommandTurtleFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUniform, I18n::Message::PythonUniform),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorWhite, I18n::Message::PythonColorWhite, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandWrite, I18n::Message::PythonTurtleWrite),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorYellow, I18n::Message::PythonColorYellow, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImag, I18n::Message::PythonImag, false, I18n::Message::PythonCommandImagWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReal, I18n::Message::PythonReal, false, I18n::Message::PythonCommandRealWithoutArg)

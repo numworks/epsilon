@@ -84,16 +84,41 @@ const char * Script::content() const {
 }
 
 bool Script::contentFetchedFromConsole() const {
-  assert(!isNull());
-  Data d = value();
-  return (((char *)d.buffer)[k_autoImportationStatusSize] == 1);
+  return fetchedStatus() == FetchedStatus::FromConsole;
 }
 
-void Script::setContentFetchedFromConsole(bool fetch) {
+bool Script::contentFetchedForVariableBox() const {
+  return fetchedStatus() == FetchedStatus::ForVariableBox;
+}
+
+void Script::setContentFetchedFromConsole() {
+  setFetchedStatus(FetchedStatus::FromConsole);
+}
+
+void Script::setContentFetchedForVariableBox() {
+  setFetchedStatus(FetchedStatus::ForVariableBox);
+}
+
+void Script::resetContentFetchedStatus() {
+  setFetchedStatus(FetchedStatus::None);
+}
+
+Script::FetchedStatus Script::fetchedStatus() const {
   assert(!isNull());
   Data d = value();
-  ((char *)d.buffer)[k_autoImportationStatusSize] = fetch;
+  uint8_t status = const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer))[k_autoImportationStatusSize];
+  assert(status == static_cast<uint8_t>(FetchedStatus::None)
+      || status == static_cast<uint8_t>(FetchedStatus::FromConsole)
+      || status == static_cast<uint8_t>(FetchedStatus::ForVariableBox));
+  return static_cast<FetchedStatus>(status);
+}
+
+void Script::setFetchedStatus(FetchedStatus status) {
+  assert(!isNull());
+  Data d = value();
+  const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer))[k_autoImportationStatusSize] = static_cast<uint8_t>(status);
   setValue(d);
 }
+
 
 }

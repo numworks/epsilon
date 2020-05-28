@@ -158,7 +158,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
 
   // Reset the node counts
   empty();
-
+  m_scriptStore->clearFetchInformation();
   if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
     textToAutocompleteLength = strlen(textToAutocomplete);
   }
@@ -176,6 +176,14 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
   Script script = m_scriptStore->scriptAtIndex(scriptIndex);
   assert(!script.isNull());
+
+  /* Handle the FetchedStatus: we will import the current script variables in
+   * loadCurrentVariablesInScript, so we do not want to import those variables
+   * before, if any imported script also imported the current script. */
+  assert(!script.contentFetchedFromConsole() && !script.contentFetchedForVariableBox());
+  script.setContentFetchedForVariableBox();
+
+  // Load the imported and current variables
   const char * scriptContent = script.content();
   assert(scriptContent != nullptr);
   loadImportedVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
@@ -222,7 +230,7 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
   for (int i = 0; i < scriptsCount; i++) {
     Script script = m_scriptStore->scriptAtIndex(i);
     if (script.contentFetchedFromConsole()) {
-      loadGlobalAndImportedVariablesInScriptAsImported(script.fullName(), script.content(), nullptr, -1, false);
+      loadGlobalAndImportedVariablesInScriptAsImported(script, nullptr, -1, false);
     }
   }
 }
@@ -619,10 +627,15 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
   }
 }
 
-void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(const char * scriptName, const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
+void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
+  if (script.contentFetchedForVariableBox()) {
+    // We already fetched these script variables
+    return;
+  }
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-
+    const char * scriptName = script.fullName();
+    const char * scriptContent = script.content();
     mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
     mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_FILE_INPUT);
     mp_parse_node_t pn = parseTree.root;
@@ -660,6 +673,8 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(con
     mp_parse_tree_clear(&parseTree);
     nlr_pop();
   }
+  // Mark that we already fetched these script variables
+  script.setContentFetchedForVariableBox();
 }
 
 bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
@@ -758,9 +773,7 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
       Script importedScript;
       const char * scriptFullName;
       if (importationSourceIsScript(importationSourceName, &scriptFullName, &importedScript)) {
-        const char * scriptContent = importedScript.content();
-        assert(scriptContent != nullptr);
-        loadGlobalAndImportedVariablesInScriptAsImported(scriptFullName, scriptContent, textToAutocomplete, textToAutocompleteLength);
+        loadGlobalAndImportedVariablesInScriptAsImported(importedScript, textToAutocomplete, textToAutocompleteLength);
       }
     }
   }

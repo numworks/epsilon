@@ -5,14 +5,21 @@
 
 namespace Code {
 
-/* Record: | Size |  Name |             Body                                                  |
- * Script: |      |       | AutoImportationStatus | ContentFetchedFromConsoleStatus | Content |
+/* Record: | Size |  Name |             Body                                |
+ * Script: |      |       | AutoImportationStatus | FetchedStatus | Content |
  *
  * AutoImportationStatus is 1 if the script should be auto imported when the
  * console opens.
  *
- * ContentFetchedFromConsoleStatus is 1 if hte console has currently imported
- * this script. This is used to import the right variables in the variable box. */
+ * FetchedStatus has two purposes:
+ * - It is used to detect which scripts are imported in the console, so we can
+ *   retrieve the correct variables afterwards in the variable box. When a
+ *   script has been imported, its fetchedStatus value is
+ *   FetchedStatus::FromConsole.
+ * - It is used to prevent circular importation problems, such as scriptA
+ *   importing scriptB, which imports scriptA. Once we get the variables from a
+ *   script to put them in the variable box, we switch the status to
+ *   FetchedStatus::ForVariableBox and won't reload it afterwards. */
 
 class Script : public Ion::Storage::Record {
 private:
@@ -22,6 +29,7 @@ private:
 
   static constexpr size_t k_autoImportationStatusSize = 1; // TODO use only 1 byte for both status flags
   static constexpr size_t k_currentImportationStatusSize = 1;
+
 public:
   static constexpr int k_defaultScriptNameMaxSize = 6 + k_defaultScriptNameNumberMaxSize + 1;
   /* 6 = strlen("script")
@@ -32,12 +40,25 @@ public:
   static bool nameCompliant(const char * name);
   static constexpr size_t InformationSize() { return k_autoImportationStatusSize + k_currentImportationStatusSize; }
 
+
   Script(Ion::Storage::Record r = Ion::Storage::Record()) : Record(r) {}
   bool autoImportationStatus() const;
   void toggleAutoimportationStatus();
   const char * content() const;
   bool contentFetchedFromConsole() const;
-  void setContentFetchedFromConsole(bool fetch);
+  bool contentFetchedForVariableBox() const;
+  void setContentFetchedFromConsole();
+  void setContentFetchedForVariableBox();
+  void resetContentFetchedStatus();
+private:
+  /* Fetched status */
+  enum class FetchedStatus : uint8_t {
+    None = 0,
+    FromConsole = 1,
+    ForVariableBox = 2
+  };
+  FetchedStatus fetchedStatus() const;
+  void setFetchedStatus(FetchedStatus status);
 };
 
 }

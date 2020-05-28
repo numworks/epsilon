@@ -20,7 +20,7 @@ private:
   static constexpr int k_maxNumberOfDefaultScriptNames = 99;
   static constexpr int k_defaultScriptNameNumberMaxSize = 2; // Numbers from 1 to 99 have 2 digits max
 
-  static constexpr size_t k_autoImportationStatusSize = 1; //TODO LEA use only 1 byte for both status flags
+  static constexpr size_t k_autoImportationStatusSize = 1; // TODO use only 1 byte for both status flags
   static constexpr size_t k_currentImportationStatusSize = 1;
 public:
   static constexpr int k_defaultScriptNameMaxSize = 6 + k_defaultScriptNameNumberMaxSize + 1;

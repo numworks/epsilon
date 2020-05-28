@@ -52,6 +52,7 @@ bool ConsoleController::loadPythonEnvironment() {
     m_pythonDelegate->initPythonWithUser(this);
     MicroPython::registerScriptProvider(m_scriptStore);
     m_importScriptsWhenViewAppears = m_autoImportScripts;
+    m_scriptStore->clearFetchInformation();
   }
   return true;
 }
@@ -60,7 +61,6 @@ void ConsoleController::unloadPythonEnvironment() {
   if (!m_pythonDelegate->isPythonUser(nullptr)) {
     m_consoleStore.startNewSession();
     m_pythonDelegate->deinitPython();
-    m_scriptStore->clearFetchInformation();
   }
 }
 

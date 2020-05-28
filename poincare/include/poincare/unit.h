@@ -166,6 +166,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; } // TODO
 
   const Dimension * dimension() const { return m_dimension; }
@@ -777,6 +778,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
   static void ChooseBestRepresentativeAndPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, true, reductionContext); }
   static void ChooseBestPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, false, reductionContext); }
 

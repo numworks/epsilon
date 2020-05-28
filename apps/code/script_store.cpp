@@ -31,7 +31,7 @@ const char * ScriptStore::contentOfScript(const char * name, bool markAsFetched)
     return nullptr;
   }
   if (markAsFetched) {
-    script.setContentFetchedFromConsole(true);
+    script.setContentFetchedFromConsole();
   }
   return script.content();
 }
@@ -40,7 +40,7 @@ void ScriptStore::clearFetchInformation() {
   // TODO optimize fetches
   const int scriptsCount = numberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
-    scriptAtIndex(i).setContentFetchedFromConsole(false);
+    scriptAtIndex(i).resetContentFetchedStatus();
   }
 }
 

@@ -43,7 +43,7 @@ public:
 
 private:
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Metric::TitleBarHeight - Metric::PopUpTopMargin) / ScriptNodeCell::k_simpleItemHeight + 2; // +2 if the cells are cropped on top and at the bottom
-  constexpr static size_t k_maxScriptNodesCount = 32; //TODO LEA
+  constexpr static size_t k_maxScriptNodesCount = 32; // Chosen without particular reasons
   constexpr static int k_totalBuiltinNodesCount = 107;
   constexpr static uint8_t k_scriptOriginsCount = 3;
   constexpr static uint8_t k_subtitleCellType = NodeCellType; // We don't care as it is not selectable

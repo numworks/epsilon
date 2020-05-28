@@ -162,7 +162,7 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   } else {
     HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
     SubviewType nextSelectedSubviewType = selectedSubviewType();
-    if (!selectedCell->displaysSingleLine()) {
+    if (selectedCell && !selectedCell->displaysSingleLine()) {
       nextSelectedSubviewType = previousSelectedCellY < selectedRow() ? SubviewType::Input : SubviewType::Output;
     }
     setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedCellX, previousSelectedCellY);

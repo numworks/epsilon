@@ -222,6 +222,10 @@ Expression UnitNode::shallowReduce(ReductionContext reductionContext) {
   return Unit(this).shallowReduce(reductionContext);
 }
 
+Expression UnitNode::shallowBeautify(ReductionContext reductionContext) {
+  return Unit(this).shallowBeautify(reductionContext);
+}
+
 constexpr const Unit::Prefix
   Unit::PicoPrefix,
   Unit::NanoPrefix,
@@ -317,12 +321,19 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
     Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier)).shallowReduce(reductionContext);
     result = Multiplication::Builder(multiplier, result).shallowReduce(reductionContext);
   }
-  if (parent().isUninitialized() && result.type() == ExpressionNode::Type::Unit) {
-    // A Unit must not be orphan
-    result = Multiplication::Builder(Rational::Builder(1), result);
-  }
   replaceWithInPlace(result);
   return result;
+}
+
+Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+  // Force Float(1) in front of an orphan Unit
+  if (parent().isUninitialized()) {
+    Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
+    replaceWithInPlace(m);
+    m.addChildAtIndexInPlace(*this, 1, 1);
+    return std::move(m);
+  }
+  return *this;
 }
 
 void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {

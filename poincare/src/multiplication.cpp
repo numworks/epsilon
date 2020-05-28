@@ -695,10 +695,6 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     if (hasUnit()) {
       // Do not expand Multiplication in presence of units
       shouldExpand = false;
-      // Make sure a Multiplication is not made of (Power of) Units only
-      if (!c.isNumber()) {
-        addChildAtIndexInPlace(Rational::Builder(1), 0, numberOfChildren());
-      }
     } else if (c.type() != ExpressionNode::Type::Rational) {
     } else if (static_cast<const Rational &>(c).isZero()) {
       // Check that other children don't match inf or unit

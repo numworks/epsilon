@@ -1,6 +1,6 @@
 ActivateDeactivate = "Zet aan/uit"
-ActivateExamMode = "Examenstand activeren"
-ActivateDutchExamMode = "Nederlandse examenstand activeren"
+ActivateExamMode = "Internationale examenst."
+ActivateDutchExamMode = "Nederlandse examenstand"
 ActiveExamModeMessage1 = "Al je gegevens worden "
 ActiveExamModeMessage2 = "gewist wanneer je de "
 ActiveExamModeMessage3 = "examenstand activeert."

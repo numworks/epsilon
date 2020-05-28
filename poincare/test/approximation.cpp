@@ -229,6 +229,9 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("abs(-1)", "1");
   assert_expression_approximates_to<double>("abs(-1)", "1");
 
+  assert_expression_approximates_to<float>("abs(-2.3ᴇ-39)", "2.3ᴇ-39", Degree, Cartesian, 5);
+  assert_expression_approximates_to<double>("abs(-2.3ᴇ-39)", "2.3ᴇ-39");
+
   assert_expression_approximates_to<float>("abs(3+2𝐢)", "3.605551");
   assert_expression_approximates_to<double>("abs(3+2𝐢)", "3.605551275464");
 

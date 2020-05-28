@@ -168,8 +168,16 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
 mp_obj_t modturtle_colormode(size_t n_args, const mp_obj_t *args) {
   if(n_args == 0){
     return mp_obj_new_int_from_uint(static_cast<int>(sTurtle.colorMode()));
-  } else{
-    int colorMode = mp_obj_get_int(args[0]);
+  } else {
+    // To accept both colormode(1) and colormode(1.0) we try to get args[0] as both int and float
+    mp_float_t decimalOne = mp_obj_get_float(args[0]);
+    int colorMode;
+    // But only 1 is accepted as float, 255 must be int
+    if (decimalOne == 1.0) {
+      colorMode = static_cast<int>(MicroPython::Color::Mode::MaxIntensity1);
+    } else {
+      colorMode = mp_obj_get_int(args[0]);
+    }
     if (colorMode != static_cast<int>(MicroPython::Color::Mode::MaxIntensity1) &&
         colorMode != static_cast<int>(MicroPython::Color::Mode::MaxIntensity255)) {
       mp_raise_ValueError("Colormode can be 1 or 255");

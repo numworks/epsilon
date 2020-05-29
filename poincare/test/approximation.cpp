@@ -426,6 +426,15 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0f, 45.0f, true);
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0, 45.0, true);
+
+  assert_expression_approximates_to<float>("binomial(12, 3)", "220");
+  assert_expression_approximates_to<double>("binomial(12, 3)", "220");
+
+  assert_expression_approximates_to<float>("binomial(-4.6, 3)", "-28.336");
+  assert_expression_approximates_to<double>("binomial(-4.6, 3)", "-28.336");
+
+  assert_expression_approximates_to<float>("binomial(π, 3)", "1.280108");
+  assert_expression_approximates_to<double>("binomial(π, 3)", "1.2801081307019");
 }
 
 QUIZ_CASE(poincare_approximation_trigonometry_functions) {

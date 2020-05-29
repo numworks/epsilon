@@ -40,18 +40,23 @@ Complex<T> BinomialCoefficientNode::templatedApproximate(Context * context, Pref
 
 template<typename T>
 T BinomialCoefficientNode::compute(T k, T n) {
-  k = k > (n-k) ? n-k : k;
-  if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || k > n || k < 0 || n < 0) {
+  if (std::isnan(n) || std::isnan(k) || k != std::round(k) || k < 0) {
     return NAN;
   }
+  // Generalized definition allows any n value
+  bool generalized = (n != std::round(n) || n < k);
+  // Take advantage of symmetry
+  k = (!generalized && k > (n - k)) ? n - k : k;
+
   T result = 1;
   for (int i = 0; i < k; i++) {
-    result *= (n-(T)i)/(k-(T)i);
+    result *= (n - (T)i) / (k - (T)i);
     if (std::isinf(result) || std::isnan(result)) {
       return result;
     }
   }
-  return std::round(result);
+  // If not generalized, the output must be round
+  return generalized ? result : std::round(result);
 }
 
 
@@ -70,28 +75,27 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
     return replaceWithUndefinedInPlace();
   }
 
-  if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational&>(c0);
-    if (!r0.isInteger() || r0.isNegative()) {
-      return replaceWithUndefinedInPlace();
-    }
-  }
-  if (c1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.isInteger() || r1.isNegative()) {
-      return replaceWithUndefinedInPlace();
-    }
-  }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
+
   Rational r0 = static_cast<Rational&>(c0);
   Rational r1 = static_cast<Rational&>(c1);
+
+  if (!r1.isInteger() || r1.isNegative()) {
+    return replaceWithUndefinedInPlace();
+  }
+
+  if (!r0.isInteger()) {
+    // Generalized binomial coefficient
+    return *this;
+  }
 
   Integer n = r0.signedIntegerNumerator();
   Integer k = r1.signedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    return replaceWithUndefinedInPlace();
+    // Generalized binomial coefficient
+    return *this;
   }
   /* If n is too big, we do not reduce in order to avoid too long computation.
    * The binomial coefficient will be approximatively evaluated later. */

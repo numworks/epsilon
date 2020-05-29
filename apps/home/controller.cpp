@@ -2,6 +2,8 @@
 #include "app.h"
 #include "../apps_container.h"
 #include "../global_preferences.h"
+#include "../exam_mode_configuration.h"
+
 extern "C" {
 #include <assert.h>
 }
@@ -59,7 +61,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1);
-    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch && selectedSnapshot->descriptor()->name() == I18n::Message::CodeApp) {
+    if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
       App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
     } else {
       bool switched = container->switchTo(selectedSnapshot);

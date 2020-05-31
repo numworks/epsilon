@@ -178,6 +178,9 @@ Event getPlatformEvent() {
       if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
         Ion::Simulator::Main::relayout();
       }
+      if (event.window.event == SDL_WINDOWEVENT_EXPOSED) {
+        Ion::Simulator::Main::refresh();
+      }
     }
     if (event.type == SDL_QUIT) {
       result = Termination;

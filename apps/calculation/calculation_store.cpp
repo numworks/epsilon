@@ -3,6 +3,7 @@
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
+#include "../exam_mode_configuration.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -98,6 +99,10 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
     Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
     PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode()) && outputs[1].hasUnit()) {
+      // Hide results with units on units if required by the exam mode configuration
+      outputs[1] = Undefined::Builder();
+    }
     outputs[2] = outputs[1];
     int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
     for (int i = 0; i < numberOfOutputs; i++) {

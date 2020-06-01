@@ -231,6 +231,9 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 }
 
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
+  if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return AdditionalInformationType::None;
+  }
   Preferences * preferences = Preferences::sharedPreferences();
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
   Expression i = input();

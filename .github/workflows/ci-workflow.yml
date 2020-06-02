@@ -54,7 +54,7 @@ jobs:
   web:
     runs-on: ubuntu-latest
     steps:
-      - uses: numworks/setup-emscripten@v1
+      - uses: numworks/setup-emscripten@v2
         with:
           sdk: latest-fastcomp
       - uses: actions/checkout@v1

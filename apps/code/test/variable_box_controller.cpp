@@ -18,7 +18,7 @@ void assert_variables_are(const char * script, const char * nameToComplete, cons
     .buffer = &dataBuffer,
     .size = dataBufferSize
   };
-  strcpy(dataBuffer, script);
+  strlcpy(dataBuffer, script, dataBufferSize);
   constexpr int scriptIndex = 0;
   store.scriptAtIndex(scriptIndex).setValue(data);
 

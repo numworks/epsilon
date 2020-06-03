@@ -85,7 +85,7 @@ QUIZ_CASE(python_matplotlib_pyplot_hist) {
   assert_command_execution_succeeds(env, "hist([2,3,4,5,6],23)");
   assert_command_execution_succeeds(env, "hist([2,3,4,5,6],[0,2,3])");
   assert_command_execution_succeeds(env, "hist([2,3,4,5,6],[0,2,3, 4,5,6,7])");
-  assert_command_execution_succeeds(env, "hist([2,3,4,5,6],[0,2,3, 4,5,6,7], (0,255,0))");
+  assert_command_execution_succeeds(env, "hist([2,3,4,5,6],[0,2,3, 4,5,6,7], color=(0,255,0))");
   assert_command_execution_succeeds(env, "show()");
   deinit_environment();
 }

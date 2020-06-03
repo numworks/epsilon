@@ -46,7 +46,7 @@ void PlotView::traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segmen
     segment.xEnd(), segment.yEnd(),
     segment.color()
   );
-  if (segment.arrowWidth() > 0.0f) {
+  if (!std::isnan(segment.arrowWidth())) {
     float dx = segment.xEnd() - segment.xStart();
     float dy = segment.yEnd() - segment.yStart();
     drawArrow(ctx, r, segment.xEnd(), segment.yEnd(), dx, dy, segment.color(), segment.arrowWidth());

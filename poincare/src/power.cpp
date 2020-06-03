@@ -439,6 +439,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       if (exponent.isNegative()) {
         index.setSign(ExpressionNode::Sign::Positive, reductionContext);
         Expression reducedPositiveExponentMatrix = shallowReduce(reductionContext);
+        if (reducedPositiveExponentMatrix.type() == ExpressionNode::Type::Power) {
+          /* The shallowReduce did not work, stop here so we do not get in an
+           * infinite loop. */
+          static_cast<Power &>(reducedPositiveExponentMatrix).childAtIndex(1).setSign(ExpressionNode::Sign::Negative, reductionContext);
+          return reducedPositiveExponentMatrix;
+        }
         Expression dummyExpression = Undefined::Builder();
         MatrixInverse inv = MatrixInverse::Builder(dummyExpression);
         reducedPositiveExponentMatrix.replaceWithInPlace(inv);

@@ -901,6 +901,9 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("cos(3a)*abs(transpose(a))", "cos(3×confidence(cos(2)/25,3))×abs(transpose(confidence(cos(2)/25,3)))");
   assert_parsed_expression_simplify_to("abs(transpose(a))*cos(3a)", "abs(transpose(confidence(cos(2)/25,3)))×cos(3×confidence(cos(2)/25,3))");
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  // Mix
+  assert_parsed_expression_simplify_to("1/identity(2)^500", "1/[[1,0][0,1]]^500");
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_matrices) {

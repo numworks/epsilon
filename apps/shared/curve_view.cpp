@@ -133,6 +133,22 @@ float CurveView::floatToPixel(Axis axis, float f) const {
   }
 }
 
+float CurveView::floatLengthToPixelLength(Axis axis, float f) const {
+  float dist = floatToPixel(axis, f) - floatToPixel(axis, 0.0f);
+  return axis == Axis::Vertical ? - dist : dist;
+}
+
+float CurveView::floatLengthToPixelLength(float dx, float dy) const {
+  float dxPixel = floatLengthToPixelLength(Axis::Horizontal, dx);
+  float dyPixel = floatLengthToPixelLength(Axis::Vertical, dy);
+  return std::sqrt(dxPixel*dxPixel+dyPixel*dyPixel);
+}
+
+float CurveView::pixelLengthToFloatLength(Axis axis, float f) const {
+  f = axis == Axis::Vertical ? -f : f;
+  return pixelToFloat(axis, floatToPixel(axis, 0.0f) + f);
+}
+
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
@@ -449,7 +465,27 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
 }
 
 
-void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWidth, float tanAngle) const {
+void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWith, float tanAngle) const {
+  /* TODO: all computations are done in pixels because doing them in float
+   * values led to approximation error (?). But this leads to useless back and
+   * forth between float and pixels. Find a proper way to handle approximation
+   * errors (if this was the problem). */
+
+  assert(tanAngle >= 0.0f);
+  if (std::fabs(dx) < FLT_EPSILON && std::fabs(dy) < FLT_EPSILON) {
+    // We can't draw an arrow without any orientation
+    return;
+  }
+
+  // Turn arrowWith in pixel length
+  float pixelArrowWith = 8.0f; // default value in pixels
+  if (arrowWith > 0.0f) {
+    float dxdy = std::sqrt(dx*dx+dy*dy);
+    float dxArrow = arrowWith*dx/dxdy;
+    float dyArrow = arrowWith*dy/dxdy;
+    pixelArrowWith = floatLengthToPixelLength(dxArrow, dyArrow);
+  }
+
   /* Let's call the following variables L and l:
    *
    *            /                  |
@@ -466,22 +502,22 @@ void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float 
    *
    * ----- L -----
    *
-   **/
-  assert(tanAngle >= 0.0f);
-  if (std::fabs(dx) < FLT_EPSILON && std::fabs(dy) < FLT_EPSILON) {
-    // We can't draw an arrow without any orientation
-    return;
-  }
-  float l = arrowWidth/2.0f;
-  float L = l/tanAngle;
-  float dx2dy2 = std::sqrt(dx*dx+dy*dy);
+   */
 
-  float arrow1dx = L*dx/dx2dy2 + l*dy/dx2dy2;
-  float arrow1dy = L*dy/dx2dy2 - l*dx/dx2dy2;
+  float l = pixelArrowWith/2.0;
+  float L = l/tanAngle;
+
+  // We compute the arrow segments in pixels
+  float dxPixel = floatLengthToPixelLength(Axis::Horizontal, dx);
+  float dyPixel = floatLengthToPixelLength(Axis::Vertical, dy);
+  float dx2dy2Pixel = floatLengthToPixelLength(dx, dy);
+
+  float arrow1dx = pixelLengthToFloatLength(Axis::Horizontal, L*dxPixel/dx2dy2Pixel + l*dyPixel/dx2dy2Pixel);
+  float arrow1dy = pixelLengthToFloatLength(Axis::Vertical, L*dyPixel/dx2dy2Pixel - l*dxPixel/dx2dy2Pixel);
   drawSegment(ctx, rect, x, y, x - arrow1dx, y - arrow1dy, color, false);
 
-  float arrow2dx = L*dx/dx2dy2 - l*dy/dx2dy2;
-  float arrow2dy = L*dy/dx2dy2 + l*dx/dx2dy2;
+  float arrow2dx =  pixelLengthToFloatLength(Axis::Horizontal, L*dxPixel/dx2dy2Pixel - l*dyPixel/dx2dy2Pixel);
+  float arrow2dy = pixelLengthToFloatLength(Axis::Vertical, L*dyPixel/dx2dy2Pixel + l*dxPixel/dx2dy2Pixel);
   drawSegment(ctx, rect, x, y, x - arrow2dx, y - arrow2dy, color, false);
 }
 

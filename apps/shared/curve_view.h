@@ -57,6 +57,9 @@ protected:
   constexpr static int k_externRectMargin = 2;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
+  float floatLengthToPixelLength(Axis axis, float f) const;
+  float pixelLengthToFloatLength(Axis axis, float f) const;
+  float floatLengthToPixelLength(float dx, float dy) const;
   void drawLine(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1) const {
     return drawHorizontalOrVerticalSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
@@ -77,9 +80,9 @@ protected:
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Small) const;
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).
-   * The parameters defining the shape of the arrow are the length of the base
-   * of the arrow triangle - 'arrowWith' - and the tangent of the angle between
-   * the segment and each wing of the arrow called 'tanAngle'.
+   * The parameters defining the shape of the arrow are the length of
+   * the base of the arrow triangle - 'pixelArrowWith' - and the tangent of the
+   * angle between the segment and each wing of the arrow called 'tanAngle'.
    *
    *            /                  |
    *          /                    |
@@ -95,11 +98,11 @@ protected:
    *
    *  <--- L --->
    *
-   *  l = arrowWith
+   *  l = pixelArrowWith
    *  tanAngle = tan(angle) = l/2L
    */
 
-  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWith = 4, float tanAngle = 1.0f/3.0f) const;
+  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWith, float tanAngle = 1.0f/3.0f) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;

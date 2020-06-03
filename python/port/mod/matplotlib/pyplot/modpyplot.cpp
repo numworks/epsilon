@@ -106,7 +106,9 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args)
   mp_map_elem_t * elem;
   // Setting arrow width
   elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_head_width), MP_MAP_LOOKUP);
-  mp_obj_t arrowWidth = (elem == nullptr) ? mp_obj_new_float(0.003) : elem->value;
+  /* Default head_width is 0.0f because we want a default width in pixel
+   * coordinates which is handled by CurveView::drawArrow. */
+  mp_obj_t arrowWidth = (elem == nullptr) ? mp_obj_new_float(0.0f) : elem->value;
 
   // Setting arrow color
   KDColor color;

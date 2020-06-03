@@ -78,7 +78,7 @@ public:
     KDColor m_color;
   };
 
-  void addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, mp_obj_t arrowWidth = mp_obj_new_float(0.0));
+  void addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, mp_obj_t arrowWidth = mp_obj_new_float(NAN));
   Iterable<ListIterator<Segment>> segments() { return Iterable<ListIterator<Segment>>(m_segments); }
 
   // Rect

@@ -96,7 +96,6 @@ void modpyplot_flush_used_heap() {
  * */
 
 mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
-  assert(n_args >= 4);
   assert(sPlotStore != nullptr);
   sPlotStore->setShow(true);
 
@@ -116,6 +115,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args)
   colorFromKeywordArgument(elem, &color);
 
   // Adding the object to the plot
+  assert(n_args >= 4);
   sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0]) + mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1]) + mp_obj_get_float(args[3])), color, arrowWidth);
   return mp_const_none;
 }
@@ -189,6 +189,8 @@ if (n_args > 4) {
   mp_obj_t * wItems;
   mp_obj_t * bItems;
 
+  assert(n_args >= 2);
+
   // x arg
   size_t xLength = extractArgument(args[0], &xItems);
 
@@ -249,6 +251,7 @@ mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
     // Toggle the grid visibility
     sPlotStore->setGridRequested(!sPlotStore->gridRequested());
   } else {
+    assert(n_args >= 1);
     sPlotStore->setGridRequested(mp_obj_is_true(args[0]));
   }
   return mp_const_none;
@@ -269,6 +272,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args )
   sPlotStore->setShow(true);
   // Sort data to easily get the minimal and maximal value and count bin sizes
   mp_obj_t * xItems;
+  assert(n_args >= 1);
   size_t xLength = extractArgument(args[0], &xItems);
   if (xLength == 0) {
     return mp_const_none;

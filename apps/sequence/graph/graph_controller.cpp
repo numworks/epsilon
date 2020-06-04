@@ -85,7 +85,7 @@ bool GraphController::moveCursorHorizontally(int direction, bool fast) {
     return false;
   }
   // The cursor moves by step that is larger than 1 and than a pixel's width.
-  const int step = std::ceil(m_view.pixelWidth());
+  const int step = std::ceil(m_view.pixelWidth()) * (fast ? 5 : 1);
   double x = direction > 0 ? xCursorPosition + step:
     xCursorPosition -  step;
   if (x < 0.0) {

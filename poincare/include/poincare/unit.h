@@ -421,7 +421,7 @@ public:
             Representative::Prefixable::Yes,
             NegativePrefixes),
         };
-  // TODO: find a better way to find defines these pointers
+  // TODO: find a better way to define these pointers
   static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative and so on might require to be fixed if the TimeRepresentatives table was changed.");
   static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
   static const Representative constexpr * MinuteRepresentative = &TimeRepresentatives[1];

@@ -179,10 +179,12 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascendi
   }
   assert(type() == e->type());
   const UnitNode * eNode = static_cast<const UnitNode *>(e);
+  // This works because dimensions are ordered in a table
   const ptrdiff_t dimdiff = eNode->dimension() - m_dimension;
   if (dimdiff != 0) {
     return dimdiff;
   }
+  // This works because reprensentatives are ordered in a table
   const ptrdiff_t repdiff = eNode->representative() - m_representative;
   if (repdiff != 0) {
     /* We order representatives in the reverse order as how they're stored in
@@ -190,7 +192,7 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascendi
      * year + month + days + hours + minutes + seconds. */
     return -repdiff;
   }
-  const ptrdiff_t prediff = eNode->prefix() - m_prefix;
+  const ptrdiff_t prediff = eNode->prefix()->exponent() - m_prefix->exponent();
   return prediff;
 }
 

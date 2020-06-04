@@ -11,10 +11,9 @@
 
 namespace Shared {
 
-/* This class is used in a DataBuffer of a Storage::Record. See comment in
- * Shared::Function::RecordDataBuffer about packing. */
+// This class is used in a DataBuffer of a Storage::Record
 
-class __attribute__((packed)) Range1D final {
+class Range1D final {
 public:
   /* If m_min and m_max are too close, we cannot divide properly the range by
    * the number of pixels, which creates a drawing problem. */
@@ -34,8 +33,8 @@ private:
 #if __EMSCRIPTEN__
     // See comment about emscripten alignement in Shared::Function::RecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_float m_min __attribute__((packed));
-    emscripten_align1_float m_max __attribute__((packed));
+    emscripten_align1_float m_min;
+    emscripten_align1_float m_max;
 #else
   float m_min;
   float m_max;

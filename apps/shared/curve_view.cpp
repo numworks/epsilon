@@ -465,60 +465,66 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
 }
 
 
-void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWith, float tanAngle) const {
-  /* TODO: all computations are done in pixels because doing them in float
-   * values led to approximation error (?). But this leads to useless back and
-   * forth between float and pixels. Find a proper way to handle approximation
-   * errors (if this was the problem). */
-
+void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWidth, float tanAngle) const {
   assert(tanAngle >= 0.0f);
   if (std::fabs(dx) < FLT_EPSILON && std::fabs(dy) < FLT_EPSILON) {
     // We can't draw an arrow without any orientation
     return;
   }
 
-  // Turn arrowWith in pixel length
-  float pixelArrowWith = 8.0f; // default value in pixels
-  if (arrowWith > 0.0f) {
-    float dxdy = std::sqrt(dx*dx+dy*dy);
-    float dxArrow = arrowWith*dx/dxdy;
-    float dyArrow = arrowWith*dy/dxdy;
-    pixelArrowWith = floatLengthToPixelLength(dxArrow, dyArrow);
+  // Translate arrowWidth in pixel length
+  float pixelArrowWidth = 8.0f; // default value in pixels
+  if (arrowWidth > 0.0f) {
+    float dxdyFloat = std::sqrt(dx * dx + dy * dy);
+    float dxArrowFloat = arrowWidth * std::fabs(dy) / dxdyFloat;
+    float dyArrowFloat = arrowWidth * std::fabs(dx) / dxdyFloat;
+    pixelArrowWidth = floatLengthToPixelLength(dxArrowFloat, dyArrowFloat);
+    assert(pixelArrowWidth > 0.0f);
   }
 
   /* Let's call the following variables L and l:
    *
-   *            /                  |
+   *            /arrow2            |
    *          /                    |
    *        /                      l
    *      /                        |
-   *    /                          |
-   *  <--------------------------------------------------
+   *    /        B                 |
+   *  <---------+----------------------------------------
    *    \
    *      \
    *        \
    *          \
-   *            \
+   *            \arrow1
    *
    * ----- L -----
    *
    */
 
-  float l = pixelArrowWith/2.0;
-  float L = l/tanAngle;
+  float lPixel = pixelArrowWidth / 2.0;
+  float LPixel = lPixel / tanAngle;
+
+  float xPixel = floatToPixel(Axis::Horizontal, x);
+  float yPixel = floatToPixel(Axis::Vertical, y);
 
   // We compute the arrow segments in pixels
   float dxPixel = floatLengthToPixelLength(Axis::Horizontal, dx);
   float dyPixel = floatLengthToPixelLength(Axis::Vertical, dy);
   float dx2dy2Pixel = floatLengthToPixelLength(dx, dy);
 
-  float arrow1dx = pixelLengthToFloatLength(Axis::Horizontal, L*dxPixel/dx2dy2Pixel + l*dyPixel/dx2dy2Pixel);
-  float arrow1dy = pixelLengthToFloatLength(Axis::Vertical, L*dyPixel/dx2dy2Pixel - l*dxPixel/dx2dy2Pixel);
-  drawSegment(ctx, rect, x, y, x - arrow1dx, y - arrow1dy, color, false);
+  // Point B is the orthogonal projection of the arrow tips on the arrow body
+  float bxPixel = xPixel - LPixel * dxPixel / dx2dy2Pixel;
+  float byPixel = yPixel + LPixel * dyPixel / dx2dy2Pixel;
 
-  float arrow2dx =  pixelLengthToFloatLength(Axis::Horizontal, L*dxPixel/dx2dy2Pixel - l*dyPixel/dx2dy2Pixel);
-  float arrow2dy = pixelLengthToFloatLength(Axis::Vertical, L*dyPixel/dx2dy2Pixel + l*dxPixel/dx2dy2Pixel);
-  drawSegment(ctx, rect, x, y, x - arrow2dx, y - arrow2dy, color, false);
+  float dxArrowPixel = - lPixel * dyPixel / dx2dy2Pixel;
+  float dyArrowPixel = lPixel * dxPixel / dx2dy2Pixel;
+
+  float arrow1xPixel = bxPixel + dxArrowPixel;
+  float arrow1yPixel = byPixel - dyArrowPixel;
+  float arrow2xPixel = bxPixel - dxArrowPixel;
+  float arrow2yPixel = byPixel + dyArrowPixel;
+
+  straightJoinDots(ctx, rect, xPixel, yPixel, arrow1xPixel, arrow1yPixel, color, true);
+  straightJoinDots(ctx, rect, xPixel, yPixel, arrow2xPixel, arrow2yPixel, color, true);
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {

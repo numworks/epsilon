@@ -81,10 +81,10 @@ private:
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a ContinuousFunction. See comment on
    * Shared::Function::RecordDataBuffer about packing. */
-  class __attribute__((packed)) RecordDataBuffer : public Function::RecordDataBuffer {
+  class RecordDataBuffer : public Function::RecordDataBuffer {
   public:
     RecordDataBuffer(KDColor color) :
-      Function::RecordDataBuffer(color),
+      Function::RecordDataBuffer(color, sizeof(RecordDataBuffer)),
       m_plotType(PlotType::Cartesian),
       m_domain(-INFINITY, INFINITY),
       m_displayDerivative(false)

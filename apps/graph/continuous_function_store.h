@@ -16,8 +16,8 @@ public:
     return recordSatisfyingTestAtIndex(i, &isFunctionActiveOfType, &plotType);
   }
   Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record))); }
-private:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+private:
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }
   Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;

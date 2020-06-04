@@ -61,7 +61,7 @@ protected:
    *   creating dependency on uninitialized values. */
   class RecordDataBuffer {
   public:
-    RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
+    RecordDataBuffer(KDColor color, size_t size);
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }
@@ -77,9 +77,9 @@ protected:
      * version of uint16_t type to avoid producing an alignment error on the
      * emscripten platform. */
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_short m_color __attribute__((packed));
+    emscripten_align1_short m_color;
 #else
-    uint16_t m_color __attribute__((packed));
+    uint16_t m_color;
 #endif
     bool m_active;
   };

@@ -85,3 +85,18 @@ app_shared_src = $(addprefix apps/shared/,\
 
 app_shared_src += $(app_shared_test_src)
 apps_src += $(app_shared_src)
+
+# The .cpp files could also be added to app_shared_test_src in their respective makefiles
+#     -> it would then be impossible to run the shared test alone
+app_shared_test_src += $(addprefix apps/graph/,\
+  continuous_function_store.cpp\
+)
+
+app_shared_test_src += $(addprefix apps/sequence/,\
+  sequence.cpp\
+  sequence_store.cpp\
+)
+
+tests_src += $(addprefix apps/shared/test/,\
+  function_alignement.cpp\
+)

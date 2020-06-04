@@ -78,7 +78,7 @@ private:
   class RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
     RecordDataBuffer(KDColor color) :
-      Shared::Function::RecordDataBuffer(color),
+      Shared::Function::RecordDataBuffer(color, sizeof(RecordDataBuffer)),
       m_type(Type::Explicit),
       m_initialRank(0),
       m_initialConditionSizes{0,0}
@@ -102,9 +102,9 @@ private:
 #if __EMSCRIPTEN__
     // See comment about emscripten alignement in Shared::Function::RecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_short m_initialConditionSizes[2] __attribute__((packed));
+    emscripten_align1_short m_initialConditionSizes[2];
 #else
-    uint16_t m_initialConditionSizes[2] __attribute__((packed));
+    uint16_t m_initialConditionSizes[2];
 #endif
   };
 

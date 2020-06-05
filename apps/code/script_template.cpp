@@ -2,10 +2,10 @@
 
 namespace Code {
 
-constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01\x00" R"(from math import *
+constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01" R"(from math import *
 )");
 
-constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01\x00" R"(from math import *
+constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01" R"(from math import *
 from turtle import *
 def squares(angle=0.5):
   reset()
@@ -20,7 +20,7 @@ def squares(angle=0.5):
     L=L-L*sin(angle*pi/180)
   hideturtle())");
 
-constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", "\x01\x00" R"(# This script draws a Mandelbrot fractal set
+constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", "\x01" R"(# This script draws a Mandelbrot fractal set
 # N_iteration: degree of precision
 import kandinsky
 def mandelbrot(N_iteration):
@@ -40,7 +40,7 @@ def mandelbrot(N_iteration):
 # Draw a pixel colored in 'col' at position (x,y)
       kandinsky.set_pixel(x,y,col))");
 
-constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py", "\x01\x00" R"(from math import *
+constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py", "\x01" R"(from math import *
 # roots(a,b,c) computes the solutions of the equation a*x**2+b*x+c=0
 def roots(a,b,c):
   delta = b*b-4*a*c
@@ -53,7 +53,7 @@ def roots(a,b,c):
   else:
     return None)");
 
-constexpr ScriptTemplate parabolaScriptTemplate("parabola.py", "\x01\x00" R"(from matplotlib.pyplot import *
+constexpr ScriptTemplate parabolaScriptTemplate("parabola.py", "\x01" R"(from matplotlib.pyplot import *
 from math import *
 
 g=9.81

@@ -377,6 +377,9 @@ Storage::Record::Data Storage::valueOfRecord(const Record record) {
 
 Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Data data) {
   char * p = pointerOfRecord(record);
+  /* TODO: if data.buffer == p, assert that size hasn't change and do not do any
+   * memcopy, but still notify the delegate. Beware of scripts and the accordion
+   * routine.*/
   if (p != nullptr) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     const char * fullName = fullNameOfRecordStarting(p);

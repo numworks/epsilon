@@ -5,8 +5,12 @@
 
 namespace Code {
 
-/* Record: | Size |  Name |             Body                                |
- * Script: |      |       | AutoImportationStatus | FetchedStatus | Content |
+/* Record: | Size |  Name |            Body                |
+ * Script: |      |       | Status |       Content         |
+ *
+ * Status is a byte long: xxxxxxxx
+ *                        ^^     ^
+ *             FetchedStatus     AutoImportationStatus
  *
  * AutoImportationStatus is 1 if the script should be auto imported when the
  * console opens.
@@ -27,8 +31,8 @@ private:
   static constexpr int k_maxNumberOfDefaultScriptNames = 99;
   static constexpr int k_defaultScriptNameNumberMaxSize = 2; // Numbers from 1 to 99 have 2 digits max
 
-  static constexpr size_t k_autoImportationStatusSize = 1; // TODO use only 1 byte for both status flags
-  static constexpr size_t k_currentImportationStatusSize = 1;
+  // See the comment at the beginning of the file
+  static constexpr size_t k_statusSize = 1;
 
 public:
   static constexpr int k_defaultScriptNameMaxSize = 6 + k_defaultScriptNameNumberMaxSize + 1;
@@ -38,7 +42,7 @@ public:
 
   static bool DefaultName(char buffer[], size_t bufferSize);
   static bool nameCompliant(const char * name);
-  static constexpr size_t InformationSize() { return k_autoImportationStatusSize + k_currentImportationStatusSize; }
+  static constexpr size_t StatusSize() { return k_statusSize; }
 
 
   Script(Ion::Storage::Record r = Ion::Storage::Record()) : Record(r) {}
@@ -51,6 +55,10 @@ public:
   void setContentFetchedForVariableBox();
   void resetContentFetchedStatus();
 private:
+  static constexpr uint8_t k_autoImportationStatusMask = 0b1;
+  static constexpr uint8_t k_fetchedStatusBits = 0b11;
+  static constexpr uint8_t k_fetchedStatusOffset = 6;
+  static constexpr uint8_t k_fetchedStatusMask = k_fetchedStatusBits << k_fetchedStatusOffset;
   /* Fetched status */
   enum class FetchedStatus : uint8_t {
     None = 0,
@@ -59,6 +67,7 @@ private:
   };
   FetchedStatus fetchedStatus() const;
   void setFetchedStatus(FetchedStatus status);
+  uint8_t * statusFromData(Data d) const;
 };
 
 }

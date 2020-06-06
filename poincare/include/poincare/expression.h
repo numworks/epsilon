@@ -118,6 +118,8 @@ class Expression : public TreeHandle {
   friend class StoreNode;
   friend class SymbolNode;
 
+  friend class Modulo;
+
 public:
   static bool IsExpression() { return true; }
 

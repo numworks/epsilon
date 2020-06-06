@@ -52,6 +52,7 @@ public:
     HexadecimalNumber,
     Unit,
     Identifier,
+    Modulo,
     Undefined
   };
 

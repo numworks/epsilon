@@ -81,6 +81,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseNumber,          // Token::HexadecimalNumber
     &Parser::parseUnit,            // Token::Unit
     &Parser::parseIdentifier,      // Token::Identifier
+    &Parser::parseModulo,          // Token::Modulo
     &Parser::parseUnexpected       // Token::Undefined
   };
   Expression leftHandSide;
@@ -306,6 +307,13 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
     return;
   }
   leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
+}
+
+void Parser::parseModulo(Expression & leftHandSide, Token::Type stoppingType) {
+  Expression rightHandSide;
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Modulo)) {
+    leftHandSide = Modulo::Builder(leftHandSide, rightHandSide);
+  }
 }
 
 bool Parser::parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType) {

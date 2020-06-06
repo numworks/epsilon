@@ -105,6 +105,7 @@ public:
     MatrixTranspose,
     PredictionInterval,
     Matrix,
+    Modulo,
     EmptyExpression
    };
 

@@ -87,5 +87,6 @@
 #include <poincare/unit_convert.h>
 #include <poincare/unreal.h>
 #include <poincare/variable_context.h>
+#include <poincare/modulo.h>
 
 #endif

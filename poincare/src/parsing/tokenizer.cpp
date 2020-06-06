@@ -191,6 +191,9 @@ Token Tokenizer::popToken() {
     assert(c != '.');
     return Token(typeForCodePoint[c - '(']);
   }
+  if(c == '%'){
+    return Token(Token::Modulo);
+  }
   if (c == UCodePointMultiplicationSign || c == UCodePointMiddleDot) {
     return Token(Token::Times);
   }

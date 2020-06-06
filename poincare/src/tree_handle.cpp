@@ -371,5 +371,6 @@ template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(const
 template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(const Tuple &);
 template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
+template Modulo TreeHandle::FixedArityBuilder<Modulo, ModuloNode>(const Tuple &);
 
 }

@@ -102,6 +102,7 @@ poincare_src += $(addprefix poincare/src/,\
   matrix_trace.cpp \
   matrix_transpose.cpp \
   multiplication.cpp \
+  modulo.cpp \
   n_ary_expression.cpp \
   naperian_logarithm.cpp \
   norm_cdf.cpp \

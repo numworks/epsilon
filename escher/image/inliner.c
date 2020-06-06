@@ -20,7 +20,7 @@
 #define MAX_FILENAME_LENGTH 255
 
 void generateHeaderFromImage(FILE * file, const char * guardian, const char * variable);
-void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers);
+void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_byte colorType, png_bytep * pixelsRowPointers);
 void fileNameToSnakeCaseName(const char * fileName, char * snakeCaseName, size_t maxLength);
 void snakeCaseNameToUpperSnakeName(const char * snakeCaseName, char * upperSnakeCaseName, size_t maxLength);
 void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * upperSnakeCaseName, char * camelCaseName, size_t maxLength);
@@ -55,7 +55,7 @@ int main(int argc, char * argv[]) {
   png_byte colorType = png_get_color_type(png, info);
   png_byte bitDepth = png_get_bit_depth(png, info);
 
-  ERROR_IF(colorType != PNG_COLOR_TYPE_RGB_ALPHA, "Error: Inliner only handles RGBA PNG images.");
+  ERROR_IF(colorType != PNG_COLOR_TYPE_RGB_ALPHA && colorType != PNG_COLOR_TYPE_RGB, "Error: Inliner only handles RGB/RGBA PNG images.");
   ERROR_IF(bitDepth != 8, "Error: Inliner only handles RGBA8888 PNG images.");
 
   png_bytep * rowPointers = (png_bytep *)malloc(sizeof(png_bytep)*height);
@@ -102,7 +102,7 @@ int main(int argc, char * argv[]) {
   fclose(header);
 
   FILE * implementation = fopen(implementationPath, "w");
-  generateImplementationFromImage(implementation, lowerSnakeCaseName, camelCaseName, width, height, rowPointers);
+  generateImplementationFromImage(implementation, lowerSnakeCaseName, camelCaseName, width, height, colorType, rowPointers);
   fclose(implementation);
 
   fclose(inputFile);
@@ -151,7 +151,7 @@ void generateHeaderFromImage(FILE * file, const char * guardian, const char * va
   fprintf(file, "#endif\n");
 }
 
-void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_bytep * pixelsRowPointers) {
+void generateImplementationFromImage(FILE * file, const char * header, const char * variable, uint32_t width, uint32_t height, png_byte colorType, png_bytep * pixelsRowPointers) {
 
   int sizeOfPixelBuffer = width * height * sizeof(uint16_t);
   uint16_t * pixelBuffer = (uint16_t *)malloc(sizeOfPixelBuffer);
@@ -159,11 +159,18 @@ void generateImplementationFromImage(FILE * file, const char * header, const cha
   for (int j=0; j<height; j++) {
     png_bytep pixelRow = pixelsRowPointers[j];
     for (int i=0; i<width; i++) {
-      png_bytep pixel = &(pixelRow[i*4]);
+      double alpha;
+      png_bytep pixel;
+      if (colorType == PNG_COLOR_TYPE_RGB) {
+        pixel = &(pixelRow[i*3]);
+        alpha = 1.0;
+      } else {
+        pixel = &(pixelRow[i*4]);
+        alpha = pixel[3]/255.0;
+      }
       double red = pixel[0]/255.0;
       double green = pixel[1]/255.0;
       double blue = pixel[2]/255.0;
-      double alpha = pixel[3]/255.0;
       // Assume a white background (1.0, 1.0, 1.0) in the blending
       double blendedRed = red*alpha + 1.0*(1.0-alpha);
       double blendedGreen = green*alpha + 1.0*(1.0-alpha);

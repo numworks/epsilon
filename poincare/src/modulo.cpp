@@ -32,7 +32,7 @@ Complex<T> ModuloNode::templatedApproximate(Context * context, Preferences::Comp
 }
 
 Expression Modulo::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  assert(numberOfChildren() > 0);
+  assert(numberOfChildren() > 2);
   Expression a = childAtIndex(0);
   Expression b = childAtIndex(1);
   return Subtraction::Builder(a,

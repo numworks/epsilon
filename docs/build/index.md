@@ -15,7 +15,7 @@ pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-co
 echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
 ```
 
-Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2.
+Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2. If you encounter issues while trying to build & run epsilon with [Msys2](https://www.msys2.org/), you can try following the steps for Debian or Ubuntu with the WSL (Windows Subsystem For Linux) (Only availble for Windows 10 & up).
 
 ### macOS
 
@@ -66,10 +66,28 @@ make PLATFORM=simulator
 
 You can also update your NumWorks calculator easily. Note that you'll need to press the Reset button and that all data on your calculator will be lost.
 
+### Build & Run if USB is supported
+
 ```
 make clean
 make
 make epsilon_flash
 ```
 
+### Build & Flash in different environments
+
+This can be useful if you wish to build with the WSL (Windows Subsystem for Linux) and/or you wish to share your modifications! Note that you can specify the number of cores you want to be used during the building process with the ```-j``` flag. After reading and accepting the <a href="https://www.numworks.com/legal/tos/">official numworks terms of service</a>, run ```export ACCEPT_OFFICIAL_TOS=1```
+
+Run the following commands to generate the binpacks:
+
+```
+make clean
+make binpack -j 2
+```
+
+The internal and external binpacks will be in the ```output/``` folder. Now you can flash the binaries onto your device with a tool like webdfu.
+
+___
+
 Congratulations, you're running your very own version of Epsilon!
+

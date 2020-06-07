@@ -13,9 +13,10 @@ TitleBarView::TitleBarView() :
   m_preferenceView(KDFont::SmallFont, 1.0f, 0.5, Palette::ToolbarText, Palette::Toolbar),
   m_clockView(KDFont::SmallFont, 0.5f, 0.5f, Palette::ToolbarText, Palette::Toolbar),
   m_hours(-1),
-  m_mins(-1)
+  m_mins(-1),
+  m_clockEnabled(Ion::RTC::mode() != Ion::RTC::Mode::Disabled)
 {
-  setClock(0, 0);
+  setClock(Ion::RTC::dateTime().tm_hour, Ion::RTC::dateTime().tm_min, m_clockEnabled);
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
 
@@ -29,8 +30,15 @@ void TitleBarView::setTitle(I18n::Message title) {
   m_titleView.setMessage(title);
 }
 
-bool TitleBarView::setClock(int hours, int mins) {
-  if (m_hours != hours || m_mins != mins) {
+bool TitleBarView::setClock(int hours, int mins, bool enabled) {
+  bool changed = m_clockEnabled != enabled;
+
+  if (!enabled) {
+    m_clockView.setText("");
+    hours = -1;
+    mins = -1;
+  }
+  else if (m_hours != hours || m_mins != mins) {
     char buf[6], *ptr = buf;
     *ptr++ = (hours / 10) + '0';
     *ptr++ = (hours % 10) + '0';
@@ -40,12 +48,16 @@ bool TitleBarView::setClock(int hours, int mins) {
     *ptr   = '\0';
     m_clockView.setText(buf);
 
-    m_hours = hours;
-    m_mins = mins;
-
-    return true;
+    changed = true;
   }
-  return false;
+  if (m_clockEnabled != enabled) {
+    layoutSubviews();
+    m_clockEnabled = enabled; 
+  }
+
+  m_hours = hours;
+  m_mins = mins;
+  return changed;
 }
 
 bool TitleBarView::setChargeState(Ion::Battery::Charge chargeState) {
@@ -97,6 +109,9 @@ void TitleBarView::layoutSubviews(bool force) {
   m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()), force);
   KDSize clockSize = m_clockView.minimalSizeForOptimalDisplay();
   m_clockView.setFrame(KDRect(bounds().width() - clockSize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- clockSize.height())/2, clockSize), force);
+  if (clockSize.width() != 0) {
+    clockSize = KDSize(clockSize.width() + k_alphaRightMargin, clockSize.height());
+  }
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - clockSize.width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize), force);
   if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {

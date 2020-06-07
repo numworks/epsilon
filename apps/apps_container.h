@@ -17,6 +17,7 @@
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
 #include "on_boarding/pop_up_controller.h"
+#include "clock_timer.h"
 
 #include <ion/events.h>
 
@@ -39,6 +40,7 @@ public:
   bool dispatchEvent(Ion::Events::Event event) override;
   bool switchTo(App::Snapshot * snapshot) override;
   void run() override;
+  bool updateClock();
   bool updateBatteryState();
   void refreshPreferences();
   void reloadTitleBarView();
@@ -76,6 +78,7 @@ private:
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
+  ClockTimer m_clockTimer;
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;

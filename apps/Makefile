@@ -25,6 +25,7 @@ apps_src += $(addprefix apps/,\
   backlight_dimming_timer.cpp \
   battery_timer.cpp \
   battery_view.cpp \
+  clock_timer.cpp \
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
   exam_mode_configuration_official.cpp:+official \

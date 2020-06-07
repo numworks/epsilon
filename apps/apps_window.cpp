@@ -3,6 +3,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <ion/rtc.h>
 
 AppsWindow::AppsWindow() :
   Window(),
@@ -17,6 +18,11 @@ void AppsWindow::setTitle(I18n::Message title) {
 
 bool AppsWindow::updateBatteryLevel() {
   return m_titleBarView.setChargeState(Ion::Battery::level());
+}
+
+bool AppsWindow::updateClock() {
+  Ion::RTC::DateTime dateTime = Ion::RTC::dateTime();
+  return m_titleBarView.setClock(dateTime.tm_hour, dateTime.tm_min);
 }
 
 bool AppsWindow::updateIsChargingState() {

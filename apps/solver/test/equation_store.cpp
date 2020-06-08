@@ -170,6 +170,9 @@ QUIZ_CASE(equation_and_symbolic_computation) {
 
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"});
 
+  set("e", "8_g");
+  assert_solves_to({"e+1=0"}, {"e=-1"});
+
   unset("a");
   unset("b");
   unset("c");

@@ -176,8 +176,8 @@ void Turtle::setVisible(bool visible) {
 }
 
 void Turtle::write(const char * string) {
-  // To prevent overlapping between the text and the turtle, force redraw
-  m_drawn = false;
+  // We erase the turtle to redraw it on top of the text
+  erase();
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDContext * ctx = KDIonContext::sharedContext();
   static constexpr KDCoordinate headOffsetLength = 6;

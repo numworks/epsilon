@@ -199,20 +199,23 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   }
 }
 
-void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio) {
+void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
   if (!std::isinf(x) && !std::isnan(x)) {
     const float xRange = xMax() - xMin();
     const float leftMargin = leftMarginRatio * xRange;
     if (x < xMin() + leftMargin) {
       m_yAuto = false;
-      const float newXMin = x - leftMargin;
+      /* The panning increment is a whole number of pixels so that the caching
+       * for cartesian functions is not invalidated. */
+      const float newXMin = std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth + xMin();
       m_xRange.setMax(newXMin + xRange, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
     }
     const float rightMargin = rightMarginRatio * xRange;
     if (x > xMax() - rightMargin) {
       m_yAuto = false;
-      m_xRange.setMax(x + rightMargin, k_lowerMaxFloat, k_upperMaxFloat);
+      const float newXMax = std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax();
+      m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetXMin(xMax() - xRange, k_lowerMaxFloat, k_upperMaxFloat);
     }
   }

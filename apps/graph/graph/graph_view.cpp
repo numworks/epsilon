@@ -62,7 +62,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
-          });
+          },
+          &ContinuousFunctionCache::PrepareCache);
       /* Draw tangent */
       if (m_tangent && record == m_selectedRecord) {
         float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
@@ -83,7 +84,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         ContinuousFunction * f = (ContinuousFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;
         return f->evaluateXYAtParameter(t, c);
-      }, f.operator->(), context(), false, f->color());
+      }, f.operator->(), context(), false, f->color(),
+      true, false, 0.0f, 0.0f, /* drawCurve's default arguments */
+      &ContinuousFunctionCache::PrepareCache);
   }
 }
 

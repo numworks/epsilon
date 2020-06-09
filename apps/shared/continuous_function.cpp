@@ -125,7 +125,7 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
 
   recordData()->setPlotType(newPlotType);
 
-  cache()->clear();
+  clearCache();
 
   // Recompute the layouts
   m_model.tidy();
@@ -253,12 +253,12 @@ float ContinuousFunction::tMax() const {
 
 void ContinuousFunction::setTMin(float tMin) {
   recordData()->setTMin(tMin);
-  cache()->clear();
+  clearCache();
 }
 
 void ContinuousFunction::setTMax(float tMax) {
   recordData()->setTMax(tMax);
-  cache()->clear();
+  clearCache();
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
@@ -353,7 +353,7 @@ Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double e
 
 Poincare::Coordinate2D<float> ContinuousFunction::checkForCacheHitAndEvaluate(float t, Poincare::Context * context) const {
   Poincare::Coordinate2D<float> res(NAN, NAN);
-  if (cache()->filled()) {
+  if (cacheIsFilled()) {
     res = cache()->valueForParameter(this, t);
   }
   if (std::isnan(res.x1()) || std::isnan(res.x2())) {
@@ -364,7 +364,7 @@ Poincare::Coordinate2D<float> ContinuousFunction::checkForCacheHitAndEvaluate(fl
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Poincare::Context * context) {
-  cache()->clear();
+  clearCache();
   return ExpressionModelHandle::setContent(c, context);
 }
 

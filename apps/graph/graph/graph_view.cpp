@@ -27,7 +27,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   const int activeFunctionsCount = functionStore->numberOfActiveFunctions();
   for (int i = 0; i < activeFunctionsCount ; i++) {
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);;
+    ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
+    ExpiringPointer<ContinuousFunctionCache> cch = functionStore->cacheAtIndex(i);
     Shared::ContinuousFunction::PlotType type = f->plotType();
     Poincare::Expression e = f->expressionReduced(context());
     if (e.isUndefined() || (
@@ -63,7 +64,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           },
-          &ContinuousFunctionCache::PrepareCache);
+          &ContinuousFunctionCache::PrepareCache, cch.operator->());
       /* Draw tangent */
       if (m_tangent && record == m_selectedRecord) {
         float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
@@ -86,7 +87,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         return f->evaluateXYAtParameter(t, c);
       }, f.operator->(), context(), false, f->color(),
       true, false, 0.0f, 0.0f, /* drawCurve's default arguments */
-      &ContinuousFunctionCache::PrepareCache);
+      &ContinuousFunctionCache::PrepareCache, cch.operator->());
   }
 }
 

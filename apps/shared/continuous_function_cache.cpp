@@ -5,20 +5,28 @@ namespace Shared {
 
 constexpr int ContinuousFunctionCache::k_sizeOfCache;
 constexpr float ContinuousFunctionCache::k_cacheHitTolerance;
+constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
 
 // public
-void ContinuousFunctionCache::PrepareCache(void * f, void * c, float tMin, float tStep) {
+void ContinuousFunctionCache::PrepareCache(void * f, void * ctx, void * cch, float tMin, float tStep) {
+  if (!cch) {
+    return;
+  }
   ContinuousFunction * function = (ContinuousFunction *)f;
-  Poincare::Context * context = (Poincare::Context *)c;
-  ContinuousFunctionCache * functionCache = function->cache();
-  if (functionCache->filled() && tStep / StepFactor(function) == functionCache->step()) {
+  Poincare::Context * context = (Poincare::Context *)ctx;
+  if (!function->cache()) {
+    ContinuousFunctionCache * cache = (ContinuousFunctionCache *)cch;
+    cache->clear();
+    function->setCache(cache);
+  }
+  if (function->cache()->filled() && tStep / StepFactor(function) == function->cache()->step()) {
     if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
       function->cache()->pan(function, context, tMin);
     }
     return;
   }
-  functionCache->setRange(function, tMin, tStep);
-  functionCache->memoize(function, context);
+  function->cache()->setRange(function, tMin, tStep);
+  function->cache()->memoize(function, context);
 }
 
 void ContinuousFunctionCache::clear() {

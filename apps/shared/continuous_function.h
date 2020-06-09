@@ -80,7 +80,10 @@ public:
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
 
   // Cache
-  ContinuousFunctionCache * cache() const { return const_cast<ContinuousFunctionCache *>(&m_cache); }
+  ContinuousFunctionCache * cache() const { return m_cache; }
+  void setCache(ContinuousFunctionCache * v) { m_cache = v; }
+  void clearCache() { m_cache = nullptr; }
+  bool cacheIsFilled() const { return cache() && cache()->filled(); }
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
@@ -125,7 +128,7 @@ private:
   RecordDataBuffer * recordData() const;
   template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context) const;
   Model m_model;
-  ContinuousFunctionCache m_cache;
+  ContinuousFunctionCache * m_cache;
 };
 
 }

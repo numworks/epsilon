@@ -11,7 +11,11 @@ class ContinuousFunction;
 
 class ContinuousFunctionCache {
 public:
-  static void PrepareCache(void * f, void * c, float tMin, float tStep);
+  /* The size of the cache is chosen to optimize the display of cartesian
+   * function */
+  static constexpr int k_numberOfAvailableCaches = 2;
+
+  static void PrepareCache(void * f, void * ctx, void * cch, float tMin, float tStep);
 
   float step() const { return m_tStep; }
   bool filled() const { return m_filled; }

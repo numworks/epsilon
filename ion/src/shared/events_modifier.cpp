@@ -41,6 +41,10 @@ bool isLongRepetition() {
  return sLongRepetition;
 }
 
+int longRepetitionScrollSpeed() {
+  return sLongRepetition ? 5 : 1;
+};
+
 void setShiftAlphaStatus(ShiftAlphaStatus s) {
   sShiftAlphaStatus = s;
 }

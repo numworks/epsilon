@@ -26,7 +26,7 @@ SumGraphController::SumGraphController(Responder * parentResponder, InputEventHa
 
 void SumGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio, curveView()->pixelWidth());
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
   m_graphView->setOkView(nullptr);
@@ -77,7 +77,7 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
     m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
   }
   m_legendView.setEditableZone(m_cursor->x());
-  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio, curveView()->pixelWidth());
   m_graphView->reload();
   return true;
 }

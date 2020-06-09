@@ -37,7 +37,7 @@ public:
   virtual void setTrigonometric();
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
-  void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
+  void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
 protected:
   constexpr static float k_upperMaxFloat = 1E+8f;
   constexpr static float k_lowerMaxFloat = 9E+7f;

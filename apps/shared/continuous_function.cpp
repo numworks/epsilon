@@ -125,6 +125,8 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
 
   recordData()->setPlotType(newPlotType);
 
+  cache()->clear();
+
   // Recompute the layouts
   m_model.tidy();
 
@@ -251,10 +253,12 @@ float ContinuousFunction::tMax() const {
 
 void ContinuousFunction::setTMin(float tMin) {
   recordData()->setTMin(tMin);
+  cache()->clear();
 }
 
 void ContinuousFunction::setTMax(float tMax) {
   recordData()->setTMax(tMax);
+  cache()->clear();
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
@@ -345,6 +349,11 @@ Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double e
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
+}
+
+Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Poincare::Context * context) {
+  cache()->clear();
+  return ExpressionModelHandle::setContent(c, context);
 }
 
 template Coordinate2D<float> ContinuousFunction::templatedApproximateAtParameter<float>(float, Poincare::Context *) const;

@@ -30,7 +30,7 @@ public:
    * behaviour but it is not true for its child classes (for example, in
    * Sequence). */
   virtual void tidy() { model()->tidy(); }
-  Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) { return editableModel()->setContent(this, c, context, symbol()); }
+  virtual Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) { return editableModel()->setContent(this, c, context, symbol()); }
   Ion::Storage::Record::ErrorStatus setExpressionContent(const Poincare::Expression & e) { return editableModel()->setExpressionContent(this, e); }
 protected:
   ExpressionModel * editableModel() { return const_cast<ExpressionModel *>(model()); }

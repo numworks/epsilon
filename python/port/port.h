@@ -13,7 +13,6 @@ namespace MicroPython {
 class ScriptProvider {
 public:
   virtual const char * contentOfScript(const char * name, bool markAsFetched) = 0;
-  virtual void clearFetchInformation() = 0;
 };
 
 class ExecutionEnvironment {

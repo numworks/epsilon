@@ -602,7 +602,8 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, PrepareContinuousFunction functionPreparator) const {
+  functionPreparator(model, context, tStart, tStep);
   float previousT = NAN;
   float t = NAN;
   float previousX = NAN;
@@ -634,7 +635,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
   } while (true);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForParameter xyEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, PrepareContinuousFunction functionPreparator) const {
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   float tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
@@ -644,7 +645,7 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, flo
     return;
   }
   float tStep = pixelWidth();
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, functionPreparator);
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,

@@ -80,6 +80,7 @@ public:
 
   // Cache
   ContinuousFunctionCache * cache() const { return const_cast<ContinuousFunctionCache *>(&m_cache); }
+  Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);

@@ -146,7 +146,7 @@ void FunctionGraphController::initCursorParameters() {
   }
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   if (interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+    interactiveCurveViewRange()->panToMakePointVisible(xy.x1(), xy.x2(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio, curveView()->pixelWidth());
   }
   selectFunctionWithCursor(functionIndex);
 }

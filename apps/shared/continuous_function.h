@@ -10,6 +10,7 @@
  */
 
 #include "global_context.h"
+#include "continuous_function_cache.h"
 #include "function.h"
 #include "range_1D.h"
 #include <poincare/symbol.h>
@@ -18,6 +19,9 @@
 namespace Shared {
 
 class ContinuousFunction : public Function {
+  /* We want the cache to be able to call privateEvaluateXYAtParameter to
+   * bypass cache lookup when memoizing the function's values. */
+  friend class ContinuousFunctionCache;
 public:
   static void DefaultName(char buffer[], size_t bufferSize);
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
@@ -73,6 +77,9 @@ public:
   Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression e, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
   // Integral
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
+
+  // Cache
+  ContinuousFunctionCache * cache() const { return const_cast<ContinuousFunctionCache *>(&m_cache); }
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);
@@ -115,6 +122,7 @@ private:
   RecordDataBuffer * recordData() const;
   template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context) const;
   Model m_model;
+  ContinuousFunctionCache m_cache;
 };
 
 }

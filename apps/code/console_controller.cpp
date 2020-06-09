@@ -52,7 +52,7 @@ bool ConsoleController::loadPythonEnvironment() {
     m_pythonDelegate->initPythonWithUser(this);
     MicroPython::registerScriptProvider(m_scriptStore);
     m_importScriptsWhenViewAppears = m_autoImportScripts;
-    m_scriptStore->clearFetchInformation();
+    m_scriptStore->clearConsoleFetchInformation();
   }
   return true;
 }

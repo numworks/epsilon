@@ -158,7 +158,7 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
 
   // Reset the node counts
   empty();
-  m_scriptStore->clearFetchInformation();
+
   if (textToAutocomplete != nullptr && textToAutocompleteLength < 0) {
     textToAutocompleteLength = strlen(textToAutocomplete);
   }
@@ -180,8 +180,8 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   /* Handle the FetchedStatus: we will import the current script variables in
    * loadCurrentVariablesInScript, so we do not want to import those variables
    * before, if any imported script also imported the current script. */
-  assert(!script.contentFetchedFromConsole() && !script.contentFetchedForVariableBox());
-  script.setContentFetchedForVariableBox();
+  assert(!script.fetchedFromConsole() && !script.fetchedForVariableBox());
+  script.setFetchedForVariableBox(true);
 
   // Load the imported and current variables
   const char * scriptContent = script.content();
@@ -229,7 +229,7 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
   const int scriptsCount = m_scriptStore->numberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
     Script script = m_scriptStore->scriptAtIndex(i);
-    if (script.contentFetchedFromConsole()) {
+    if (script.fetchedFromConsole()) {
       loadGlobalAndImportedVariablesInScriptAsImported(script, nullptr, -1, false);
     }
   }
@@ -240,6 +240,7 @@ void VariableBoxController::empty() {
   m_currentScriptNodesCount = 0;
   m_importedNodesCount = 0;
   m_shortenResultCharCount = 0;
+  m_scriptStore->clearVariableBoxFetchInformation();
 }
 
 void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
@@ -628,7 +629,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
 }
 
 void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
-  if (script.contentFetchedForVariableBox()) {
+  if (script.fetchedForVariableBox()) {
     // We already fetched these script variables
     return;
   }
@@ -674,7 +675,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Scr
     nlr_pop();
   }
   // Mark that we already fetched these script variables
-  script.setContentFetchedForVariableBox();
+  script.setFetchedForVariableBox(true);
 }
 
 bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {

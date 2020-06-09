@@ -47,7 +47,8 @@ public:
     return templatedApproximateAtParameter(t, context);
   }
   Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const override {
-    return privateEvaluateXYAtParameter<float>(t, context);
+    //return privateEvaluateXYAtParameter<float>(t, context);
+    return checkForCacheHitAndEvaluate(t, context);
   }
   Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const override {
     return privateEvaluateXYAtParameter<double>(t, context);
@@ -86,6 +87,7 @@ private:
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double step, double max, Poincare::Context * context, ComputePointOfInterest compute) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
+  Poincare::Coordinate2D<float> checkForCacheHitAndEvaluate(float t, Poincare::Context * context) const;
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a ContinuousFunction. See comment on
    * Shared::Function::RecordDataBuffer about packing. */

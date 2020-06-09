@@ -31,16 +31,24 @@ const char * ScriptStore::contentOfScript(const char * name, bool markAsFetched)
     return nullptr;
   }
   if (markAsFetched) {
-    script.setContentFetchedFromConsole();
+    script.setFetchedFromConsole(true);
   }
   return script.content();
 }
 
-void ScriptStore::clearFetchInformation() {
+void ScriptStore::clearVariableBoxFetchInformation() {
   // TODO optimize fetches
   const int scriptsCount = numberOfScripts();
   for (int i = 0; i < scriptsCount; i++) {
-    scriptAtIndex(i).resetContentFetchedStatus();
+    scriptAtIndex(i).setFetchedForVariableBox(false);
+  }
+}
+
+void ScriptStore::clearConsoleFetchInformation() {
+  // TODO optimize fetches
+  const int scriptsCount = numberOfScripts();
+  for (int i = 0; i < scriptsCount; i++) {
+    scriptAtIndex(i).setFetchedFromConsole(false);
   }
 }
 

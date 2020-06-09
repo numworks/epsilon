@@ -65,16 +65,18 @@ bool Script::nameCompliant(const char * name) {
   return false;
 }
 
+uint8_t * StatusFromData(Script::Data d) {
+  return const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer));
+}
+
 bool Script::autoImportationStatus() const {
-  assert(!isNull());
-  Data d = value();
-  return (*statusFromData(d) & k_autoImportationStatusMask) == 1;
+  return getStatutBit(k_autoImportationStatusMask);
 }
 
 void Script::toggleAutoimportationStatus() {
   assert(!isNull());
   Data d = value();
-  *statusFromData(d) ^= k_autoImportationStatusMask;
+  *StatusFromData(d) ^= k_autoImportationStatusMask;
   setValue(d);
 }
 
@@ -83,46 +85,34 @@ const char * Script::content() const {
   return ((const char *)d.buffer) + StatusSize();
 }
 
-bool Script::contentFetchedFromConsole() const {
-  return fetchedStatus() == FetchedStatus::FromConsole;
+bool Script::fetchedFromConsole() const {
+  return getStatutBit(k_fetchedFromConsoleMask);
 }
 
-bool Script::contentFetchedForVariableBox() const {
-  return fetchedStatus() == FetchedStatus::ForVariableBox;
+void Script::setFetchedFromConsole(bool fetched) {
+  setStatutBit(k_fetchedFromConsoleMask, k_fetchedFromConsoleOffset, fetched);
 }
 
-void Script::setContentFetchedFromConsole() {
-  setFetchedStatus(FetchedStatus::FromConsole);
+bool Script::fetchedForVariableBox() const {
+  return getStatutBit(k_fetchedForVariableBoxMask);
 }
 
-void Script::setContentFetchedForVariableBox() {
-  setFetchedStatus(FetchedStatus::ForVariableBox);
+void Script::setFetchedForVariableBox(bool fetched) {
+  setStatutBit(k_fetchedForVariableBoxMask, k_fetchedForVariableBoxOffset, fetched);
 }
 
-void Script::resetContentFetchedStatus() {
-  setFetchedStatus(FetchedStatus::None);
-}
-
-Script::FetchedStatus Script::fetchedStatus() const {
+bool Script::getStatutBit(uint8_t mask) const {
   assert(!isNull());
   Data d = value();
-  uint8_t status = (*statusFromData(d)) >> k_fetchedStatusOffset;
-  assert(status == static_cast<uint8_t>(FetchedStatus::None)
-      || status == static_cast<uint8_t>(FetchedStatus::FromConsole)
-      || status == static_cast<uint8_t>(FetchedStatus::ForVariableBox));
-  return static_cast<FetchedStatus>(status);
+  return ((*StatusFromData(d)) & mask) != 0;
 }
 
-void Script::setFetchedStatus(FetchedStatus fetchedStatus) {
+void Script::setStatutBit(uint8_t mask, uint8_t offset, bool statusBit) {
   assert(!isNull());
   Data d = value();
-  uint8_t * status = statusFromData(d);
-  *status = ((*status) & ~k_fetchedStatusMask) | (static_cast<uint8_t>(fetchedStatus) << k_fetchedStatusOffset); //TODO Create and use a bit operations library
+  uint8_t * status = StatusFromData(d);
+  *status = ((*status) & ~mask) | (static_cast<uint8_t>(statusBit) << offset); //TODO Create and use a bit operations library
   setValue(d);
-}
-
-uint8_t * Script::statusFromData(Data d) const {
-  return const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer));
 }
 
 }

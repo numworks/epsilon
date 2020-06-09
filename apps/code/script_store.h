@@ -40,7 +40,8 @@ public:
 
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name, bool markAsFetched) override;
-  void clearFetchInformation() override;
+  void clearVariableBoxFetchInformation();
+  void clearConsoleFetchInformation();
 
   Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
 private:

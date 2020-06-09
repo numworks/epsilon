@@ -28,7 +28,7 @@ protected:
   /* the result of moveCursorVertically/Horizontally means:
    * false -> the cursor cannot move in this direction
    * true -> the cursor moved */
-  virtual bool moveCursorHorizontally(int direction, bool fast = false) { return false; }
+  virtual bool moveCursorHorizontally(int direction, int scrollSpeed = 1) { return false; }
   virtual bool handleEnter() = 0;
   CurveViewCursor * m_cursor;
 };

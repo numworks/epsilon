@@ -64,7 +64,7 @@ bool CalculationGraphController::handleEnter() {
   return true;
 }
 
-bool CalculationGraphController::moveCursorHorizontally(int direction, bool fast) {
+bool CalculationGraphController::moveCursorHorizontally(int direction, int scrollspeed) {
   if (!m_isActive) {
     return false;
   }

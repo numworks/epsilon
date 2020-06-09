@@ -31,7 +31,7 @@ protected:
   bool m_isActive;
 private:
   bool handleEnter() override;
-  bool moveCursorHorizontally(int direction, bool fast = false) override;
+  bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
 };

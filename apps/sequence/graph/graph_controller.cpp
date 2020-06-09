@@ -79,13 +79,13 @@ bool GraphController::handleEnter() {
   return FunctionGraphController::handleEnter();
 }
 
-bool GraphController::moveCursorHorizontally(int direction, bool fast) {
+bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double xCursorPosition = std::round(m_cursor->x());
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
   // The cursor moves by step that is larger than 1 and than a pixel's width.
-  const int step = std::ceil(m_view.pixelWidth()) * (fast ? 5 : 1);
+  const int step = std::ceil(m_view.pixelWidth()) * scrollSpeed;
   double x = direction > 0 ? xCursorPosition + step:
     xCursorPosition -  step;
   if (x < 0.0) {

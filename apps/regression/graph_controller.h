@@ -25,7 +25,7 @@ public:
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
 
   // moveCursorHorizontally and Vertically are public to be used in tests
-  bool moveCursorHorizontally(int direction, bool fast = false) override;
+  bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   bool moveCursorVertically(int direction) override;
 
 private:

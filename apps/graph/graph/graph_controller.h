@@ -27,7 +27,7 @@ private:
   void selectFunctionWithCursor(int functionIndex) override;
   BannerView * bannerView() override { return &m_bannerView; }
   void reloadBannerView() override;
-  bool moveCursorHorizontally(int direction, bool fast = false) override;
+  bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const override;
   double defaultCursorT(Ion::Storage::Record record) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }

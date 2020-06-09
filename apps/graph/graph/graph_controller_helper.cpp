@@ -10,7 +10,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, bool fast) {
+bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   double tCursorPosition = cursor->t();
   double t = tCursorPosition;
@@ -27,10 +27,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
   double dir = (direction > 0 ? 1.0 : -1.0);
   double step = function->plotType() == ContinuousFunction::PlotType::Cartesian ? range->xGridUnit()/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
-  if (fast) {
-    // TODO Navigate quicker the longer the user presses?  (slow start)
-    step *= 5.0;
-  }
+  step *= scrollSpeed;
   t += dir * step;
   t = std::max(tMin, std::min(tMax, t));
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());

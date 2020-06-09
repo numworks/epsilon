@@ -219,7 +219,7 @@ void GraphController::reloadBannerView() {
   m_bannerView.reload();
 }
 
-bool GraphController::moveCursorHorizontally(int direction, bool fast) {
+bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
@@ -235,10 +235,7 @@ bool GraphController::moveCursorHorizontally(int direction, bool fast) {
     }
     *m_selectedDotIndex = dotSelected;
   } else {
-    double step = direction * m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
-    if (fast) {
-      step *= 5.0;
-    }
+    double step = direction * scrollSpeed * m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
     x = m_cursor->x() + step;
     y = yValue(*m_selectedSeriesIndex, x, globalContext());
   }

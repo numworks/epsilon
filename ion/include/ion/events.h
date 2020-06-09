@@ -59,6 +59,7 @@ bool isAlphaActive();
 bool isLockActive();
 void setLongRepetition(bool longRepetition);
 bool isLongRepetition();
+int longRepetitionScrollSpeed();
 void updateModifiersFromEvent(Event e);
 void didPressNewKey();
 

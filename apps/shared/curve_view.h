@@ -19,6 +19,7 @@ public:
   typedef Poincare::Coordinate2D<float> (*EvaluateXYForFloatParameter)(float t, void * model, void * context);
   typedef Poincare::Coordinate2D<double> (*EvaluateXYForDoubleParameter)(double t, void * model, void * context);
   typedef float (*EvaluateYForX)(float x, void * model, void * context);
+  typedef void (* PrepareContinuousFunction)(void * model, void * context, float xMin, float xStep);
   enum class Axis {
     Horizontal = 0,
     Vertical = 1
@@ -107,8 +108,8 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
-  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
+  void drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, PrepareContinuousFunction functionPreparator = [](void * model, void * context, float xMin, float xStep) {}) const;
+  void drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, PrepareContinuousFunction functionPreparator = [](void * model, void * context, float xMin, float xStep) {}) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);

@@ -351,6 +351,18 @@ Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double e
    * the derivative table. */
 }
 
+Poincare::Coordinate2D<float> ContinuousFunction::checkForCacheHitAndEvaluate(float t, Poincare::Context * context) const {
+  Poincare::Coordinate2D<float> res(NAN, NAN);
+  if (cache()->filled()) {
+    res = cache()->valueForParameter(this, t);
+  }
+  if (std::isnan(res.x1()) || std::isnan(res.x2())) {
+    res = privateEvaluateXYAtParameter(t, context);
+    //res = Poincare::Coordinate2D<float>(privateEvaluateXYAtParameter(t, context).x1(), 0);
+  }
+  return res;
+}
+
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Poincare::Context * context) {
   cache()->clear();
   return ExpressionModelHandle::setContent(c, context);

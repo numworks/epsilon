@@ -30,6 +30,7 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
   void deselectTable(bool withinTemporarySelection = false);
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
+  bool selectCellAtClippedLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   HighlightCell * selectedCell();
 protected:
   void unhighlightSelectedCell();

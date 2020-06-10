@@ -95,15 +95,11 @@ public:
   void moveUnder(bool * shouldRecomputeLayout, bool forSelection = false) {
     layoutNode()->moveCursorDown(this, shouldRecomputeLayout, false, forSelection);
   }
-  LayoutCursor cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
+  LayoutCursor cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false, int step = 1);
 
   /* Select */
   void select(Direction direction, bool * shouldRecomputeLayout, Layout * selection);
-  LayoutCursor selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
-    LayoutCursor result = clone();
-    result.select(direction, shouldRecomputeLayout, selection);
-    return result;
-  }
+  LayoutCursor selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection, int step = 1);
 
   /* Layout modification */
   void addEmptyExponentialLayout();

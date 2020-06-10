@@ -69,9 +69,30 @@ void LayoutCursor::move(Direction direction, bool * shouldRecomputeLayout, bool 
   }
 }
 
-LayoutCursor LayoutCursor::cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection) {
+LayoutCursor LayoutCursor::cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection, int step) {
   LayoutCursor result = clone();
+  if (step <= 0) {
+    return result;
+  }
+  // First step
   result.move(direction, shouldRecomputeLayout, forSelection);
+
+  if (step == 1 || !result.isDefined()) {
+    // If first step is undefined, it is returned so the situation is handled
+    return result;
+  }
+  // Otherwise, as many steps as possible are performed
+  LayoutCursor result_temp = result;
+  for (int i = 1; i < step; ++i) {
+    result_temp.move(direction, shouldRecomputeLayout, forSelection);
+    if (!result_temp.isDefined()) {
+      // Return last successful result
+      return result;
+    }
+    // Update last successful result
+    result = result_temp;
+    assert(result.isDefined());
+  }
   return result;
 }
 
@@ -83,6 +104,36 @@ void LayoutCursor::select(Direction direction, bool * shouldRecomputeLayout, Lay
   } else {
     selectUpDown(direction == Direction::Up, shouldRecomputeLayout, selection);
   }
+}
+
+LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection, int step) {
+  LayoutCursor result = clone();
+  if (step <= 0) {
+    return result;
+  }
+  // First step
+  result.select(direction, shouldRecomputeLayout, selection);
+
+  if (step == 1 || selection->isUninitialized()) {
+    // If first step failed, result is returned so the situation is handled
+    return result;
+  }
+  // Otherwise, as many steps as possible are performed
+  // Shallow copy to temporary variables
+  LayoutCursor result_temp = result;
+  Layout selection_temp = *selection;
+  for (int i = 1; i < step; ++i) {
+    result_temp.select(direction, shouldRecomputeLayout, &selection_temp);
+    if (selection_temp.isUninitialized()) {
+      // Return last successful result
+      return result;
+    }
+    // Update last successful result
+    result = result_temp;
+    *selection = selection_temp;
+    assert(result.isDefined());
+  }
+  return result;
 }
 
 /* Layout modification */

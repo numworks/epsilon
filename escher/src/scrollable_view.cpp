@@ -12,28 +12,29 @@ ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollV
 
 bool ScrollableView::handleEvent(Ion::Events::Event event) {
   KDPoint translation = KDPointZero;
+  KDCoordinate scrollStep = Ion::Events::longRepetitionScrollSpeed() * Metric::ScrollStep;
   if (event == Ion::Events::Left) {
     KDCoordinate movementToEdge = contentOffset().x();
     if (movementToEdge > 0) {
-      translation = KDPoint(-std::min(Metric::ScrollStep, movementToEdge), 0);
+      translation = KDPoint(-std::min(scrollStep, movementToEdge), 0);
     }
   }
   if (event == Ion::Events::Right) {
     KDCoordinate movementToEdge = minimalSizeForOptimalDisplay().width() - bounds().width() - contentOffset().x();
     if (movementToEdge > 0) {
-      translation = KDPoint(std::min(Metric::ScrollStep, movementToEdge), 0);
+      translation = KDPoint(std::min(scrollStep, movementToEdge), 0);
     }
   }
   if (event == Ion::Events::Up) {
     KDCoordinate movementToEdge = contentOffset().y();
     if (movementToEdge > 0) {
-      translation = KDPoint(0, -std::min(Metric::ScrollStep, movementToEdge));
+      translation = KDPoint(0, -std::min(scrollStep, movementToEdge));
     }
   }
   if (event == Ion::Events::Down) {
     KDCoordinate movementToEdge = minimalSizeForOptimalDisplay().height() - bounds().height() - contentOffset().y();
     if (movementToEdge > 0) {
-      translation = KDPoint(0, std::min(Metric::ScrollStep, movementToEdge));
+      translation = KDPoint(0, std::min(scrollStep, movementToEdge));
     }
   }
   if (translation != KDPointZero) {

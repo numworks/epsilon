@@ -106,25 +106,22 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   if (handleBoxEvent(event)) {
     return true;
   }
+  int step = Ion::Events::longRepetitionScrollSpeed();
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    selectLeftRight(event == Ion::Events::ShiftLeft, false);
+    selectLeftRight(event == Ion::Events::ShiftLeft, false, step);
     return true;
   }
-  if (event == Ion::Events::ShiftUp ||event == Ion::Events::ShiftDown) {
-    selectUpDown(event == Ion::Events::ShiftUp);
+  if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
+    selectUpDown(event == Ion::Events::ShiftUp, step);
     return true;
   }
-  if (event == Ion::Events::Left) {
+  if (event == Ion::Events::Left || event == Ion::Events::Right) {
     if (contentView()->resetSelection()) {
       return true;
     }
-    return TextInput::moveCursorLeft();
-  }
-  if (event == Ion::Events::Right) {
-    if (contentView()->resetSelection()) {
-      return true;
-    }
-    return TextInput::moveCursorRight();
+    return (event == Ion::Events::Left) ?
+      TextInput::moveCursorLeft(step) :
+      TextInput::moveCursorRight(step);
   }
 
   if (event.hasText()) {
@@ -158,12 +155,9 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       deleteSelection();
       return true;
     }
-  } else if (event == Ion::Events::Up) {
+  } else if (event == Ion::Events::Up || event == Ion::Events::Down) {
     contentView()->resetSelection();
-    contentView()->moveCursorGeo(0, -1);
-  } else if (event == Ion::Events::Down) {
-    contentView()->resetSelection();
-    contentView()->moveCursorGeo(0, 1);
+    contentView()->moveCursorGeo(0, event == Ion::Events::Up ? -step : step);
   } else if (event == Ion::Events::Clear) {
     if (!contentView()->selectionIsEmpty()) {
       deleteSelection();
@@ -565,9 +559,9 @@ void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
   setCursorLocation(m_text.pointerAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY)));
 }
 
-void TextArea::selectUpDown(bool up) {
+void TextArea::selectUpDown(bool up, int step) {
   const char * previousCursorLocation = contentView()->cursorLocation();
-  contentView()->moveCursorGeo(0, up ? -1 : 1);
+  contentView()->moveCursorGeo(0, up ? -step : step);
   const char * newCursorLocation = contentView()->cursorLocation();
   contentView()->addSelection(up ? newCursorLocation : previousCursorLocation, up ? previousCursorLocation : newCursorLocation);
   scrollToCursor();

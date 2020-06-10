@@ -98,9 +98,10 @@ protected:
     return const_cast<ContentView *>(nonEditableContentView());
   }
   virtual const ContentView * nonEditableContentView() const = 0;
-  bool moveCursorLeft();
-  bool moveCursorRight();
-  bool selectLeftRight(bool left, bool all); // While indicates if all the text on the left/right should be selected
+  bool moveCursorLeft(int step = 1);
+  bool moveCursorRight(int step = 1);
+  // all indicates if all the text on the left/right should be selected
+  bool selectLeftRight(bool left, bool all, int step = 1);
 private:
   virtual void willSetCursorLocation(const char * * location) {}
   virtual bool privateRemoveEndOfLine();

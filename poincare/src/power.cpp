@@ -73,7 +73,7 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
       return -1;
     }
     Integer numeratorInt = r->signedNumerator();
-    if (Integer::NaturalOrder(numeratorInt, Integer(Integer::k_maxExtractableInteger)) > 0) {
+    if (!numeratorInt.isExtractable()) {
       return -1;
     }
     op0Deg *= numeratorInt.extractedInt();
@@ -360,7 +360,7 @@ int Power::getPolynomialCoefficients(Context * context, const char * symbolName,
       return -1;
     }
     Integer num = r.unsignedIntegerNumerator();
-    if (Integer::NaturalOrder(num, Integer(Integer::k_maxExtractableInteger)) > 0) {
+    if (!num.isExtractable()) {
       return -1;
     }
     int n = num.extractedInt();

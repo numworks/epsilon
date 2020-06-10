@@ -151,7 +151,7 @@ HighlightCell * SelectableTableView::selectedCell() {
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
-  int step = Ion::Events::longRepetitionScrollSpeed();
+  int step = Ion::Events::repetitionFactor();
   if (event == Ion::Events::Down) {
     return selectCellAtClippedLocation(selectedColumn(), selectedRow() + step);
   }

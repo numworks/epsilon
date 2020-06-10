@@ -37,11 +37,7 @@ void setLongRepetition(bool longRepetition) {
  sLongRepetition = longRepetition;
 }
 
-bool isLongRepetition() {
- return sLongRepetition;
-}
-
-int longRepetitionScrollSpeed() {
+int repetitionFactor() {
   return sLongRepetition ? 5 : 1;
 };
 

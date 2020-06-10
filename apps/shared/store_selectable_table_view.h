@@ -12,7 +12,7 @@ public:
   StoreSelectableTableView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource = nullptr, SelectableTableViewDelegate * delegate = nullptr);
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  bool selectNonHiddenCellAtLocation(int i, int j);
+  bool selectNonHiddenCellAtClippedLocation(int i, int j);
   DoublePairStore * m_store;
 };
 

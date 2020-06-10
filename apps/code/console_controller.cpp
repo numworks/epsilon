@@ -52,7 +52,6 @@ bool ConsoleController::loadPythonEnvironment() {
     m_pythonDelegate->initPythonWithUser(this);
     MicroPython::registerScriptProvider(m_scriptStore);
     m_importScriptsWhenViewAppears = m_autoImportScripts;
-    m_scriptStore->clearConsoleFetchInformation();
   }
   return true;
 }
@@ -61,6 +60,10 @@ void ConsoleController::unloadPythonEnvironment() {
   if (!m_pythonDelegate->isPythonUser(nullptr)) {
     m_consoleStore.startNewSession();
     m_pythonDelegate->deinitPython();
+    /* We clean upon unloading and not upon loading, otherwise we break an
+     * assertion in VariableBoxController::loadFunctionsAndVariables, which
+     * checks that the script statuses are clean. */
+    m_scriptStore->clearConsoleFetchInformation();
   }
 }
 

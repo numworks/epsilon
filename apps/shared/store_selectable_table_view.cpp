@@ -9,34 +9,35 @@ StoreSelectableTableView::StoreSelectableTableView(DoublePairStore * store, Resp
 }
 
 bool StoreSelectableTableView::handleEvent(Ion::Events::Event event) {
+  int step = Ion::Events::longRepetitionScrollSpeed();
   if (event == Ion::Events::Down) {
-    return selectNonHiddenCellAtLocation(selectedColumn(), selectedRow()+1);
+    return selectNonHiddenCellAtClippedLocation(selectedColumn(), selectedRow() + step);
   }
   if (event == Ion::Events::Up) {
-    return selectNonHiddenCellAtLocation(selectedColumn(), selectedRow()-1);
+    return selectNonHiddenCellAtClippedLocation(selectedColumn(), selectedRow() - step);
   }
   if (event == Ion::Events::Left) {
-    return selectNonHiddenCellAtLocation(selectedColumn()-1, selectedRow());
+    return selectNonHiddenCellAtClippedLocation(selectedColumn() - step, selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selectNonHiddenCellAtLocation(selectedColumn()+1, selectedRow());
+    return selectNonHiddenCellAtClippedLocation(selectedColumn() + step, selectedRow());
   }
   return false;
 }
 
-bool StoreSelectableTableView::selectNonHiddenCellAtLocation(int i, int j) {
-  if (i < 0 || i >= dataSource()->numberOfColumns()) {
-    return false;
+bool StoreSelectableTableView::selectNonHiddenCellAtClippedLocation(int i, int j) {
+  // Clip i to retrieve a valid seriesIndex
+  if (i < 0) {
+    i = 0;
+  } else if (i >= dataSource()->numberOfColumns()) {
+    i = dataSource()->numberOfColumns() - 1;
   }
-  if (j < 0 || j >= dataSource()->numberOfRows()) {
-    return false;
-  }
-  int seriesIndex = i/DoublePairStore::k_numberOfColumnsPerSeries;
+  int seriesIndex = i / DoublePairStore::k_numberOfColumnsPerSeries;
   int numberOfPairsOfCurrentSeries = m_store->numberOfPairsOfSeries(seriesIndex);
   if (j > 1 + numberOfPairsOfCurrentSeries) {
-    return selectCellAtLocation(i, 1 + numberOfPairsOfCurrentSeries);
+    j = 1 + numberOfPairsOfCurrentSeries;
   }
-  return selectCellAtLocation(i, j);
+  return selectCellAtClippedLocation(i, j);
 }
 
 }

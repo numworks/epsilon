@@ -60,7 +60,7 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1);
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1);
     if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
       App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
     } else {
@@ -72,14 +72,14 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
 
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
-    return m_view.selectableTableView()->selectCellAtLocation(0,0);
+    return m_view.selectableTableView()->selectCellAtLocation(0, 0);
   }
 
-  if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows()) {
-    return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow()+1);
+  if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows() - 1) {
+    return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow() + 1);
   }
   if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
-    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns()-1, selectionDataSource()->selectedRow()-1);
+    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns() - 1, selectionDataSource()->selectedRow() - 1);
   }
 
   return false;
@@ -97,7 +97,7 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() const {
-  return ((numberOfIcons()-1)/k_numberOfColumns)+1;
+  return ((numberOfIcons() - 1) / k_numberOfColumns) + 1;
 }
 
 int Controller::numberOfColumns() const {
@@ -123,7 +123,7 @@ int Controller::reusableCellCount() const {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = (j*k_numberOfColumns+i)+1;
+  int appIndex = (j * k_numberOfColumns + i) + 1;
   if (appIndex >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
@@ -148,7 +148,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * unvisible. This trick does not create an endless loop as we ensure not to
    * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
-  int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
+  int appIndex = (t->selectedColumn() + t->selectedRow() * k_numberOfColumns) + 1;
   if (appIndex >= AppsContainer::sharedAppsContainer()->numberOfApps()) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }
@@ -166,8 +166,8 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
    * redrawing takes time and is visible at scrolling. Here, we avoid the
    * background complete redrawing but the code is a bit
    * clumsy. */
-  if (t->selectedRow() == numberOfRows()-1) {
-    m_view.reloadBottomRow(this, AppsContainer::sharedAppsContainer()->numberOfApps()-1, k_numberOfColumns);
+  if (t->selectedRow() == numberOfRows() - 1) {
+    m_view.reloadBottomRow(this, AppsContainer::sharedAppsContainer()->numberOfApps() - 1, k_numberOfColumns);
   }
 }
 

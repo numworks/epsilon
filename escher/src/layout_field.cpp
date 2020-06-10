@@ -591,7 +591,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     return true;
   }
   LayoutCursor result;
-  int step = Ion::Events::longRepetitionScrollSpeed();
+  int step = Ion::Events::repetitionFactor();
   result = m_contentView.cursor()->cursorAtDirection(DirectionForMoveEvent(event), shouldRecomputeLayout, false, step);
   if (result.isDefined()) {
     if (eventShouldUpdateInsertionCursor(event)) {
@@ -629,7 +629,7 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
     return false;
   }
   Layout addedSelection;
-  int step = Ion::Events::longRepetitionScrollSpeed();
+  int step = Ion::Events::repetitionFactor();
   LayoutCursor result = m_contentView.cursor()->selectAtDirection(
     DirectionForSelectionEvent(event),
     shouldRecomputeLayout,

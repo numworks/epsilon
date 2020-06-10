@@ -131,7 +131,7 @@ protected:
 
   ContentView * contentView() { return static_cast<ContentView *>(TextInput::contentView()); }
 private:
-  void selectUpDown(bool up);
+  void selectUpDown(bool up, int step);
   TextAreaDelegate * m_delegate;
 };
 

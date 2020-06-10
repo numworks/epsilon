@@ -350,7 +350,7 @@ void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool t
     firstFactor = firstFactor.childAtIndex(0);
     assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
     Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
-    if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
+    if (expInt.isExtractable()) {
       exponent = expInt.extractedInt();
     } else {
       // The exponent is too large to be extracted, so do not try to use it.

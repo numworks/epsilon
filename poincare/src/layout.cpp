@@ -18,6 +18,13 @@ Layout Layout::clone() const {
   return cast;
 }
 
+Layout Layout::LayoutFromAddress(const void * address, size_t size) {
+  if (address == nullptr || size == 0) {
+    return Layout();
+  }
+  return Layout(static_cast<LayoutNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
+}
+
 int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * context) const {
   /* This method fixes the following problem:
    * Some layouts have a special serialization so they can be parsed afterwards,

@@ -38,6 +38,7 @@ public:
   View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
   TELEMETRY_ID("Console");

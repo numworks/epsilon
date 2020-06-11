@@ -121,3 +121,46 @@ KDCoordinate ExpressionField::inputViewHeight() const {
         std::min(k_maximalHeight,
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
+
+size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) const {
+  size_t size;
+  size_t returnValue;
+  char * currentLayout;
+  if (editionIsInTextField()) {
+    size = strlen(m_textField.draftTextBuffer()) + 1;
+    currentLayout = m_textField.draftTextBuffer();
+    /* We take advantage of the fact that draftTextBuffer is null terminated to
+     * use a size of 0 as a shorthand for "The buffer contains raw text instead
+     * of layouts", since the size of a layout is at least 32 (the size of an
+     * empty horizontal layout). This way, we can detect when the edition mode
+     * has changed and invalidate the data.*/
+    returnValue = 0;
+  } else {
+    size = m_layoutField.layout().size();
+    currentLayout = reinterpret_cast<char *>(m_layoutField.layout().node());
+    returnValue = size;
+  }
+  if (size > bufferSize - 1) {
+    buffer[0] = 0;
+    return 0;
+  }
+  memcpy(buffer, currentLayout, size);
+  return returnValue;
+}
+
+void ExpressionField::restoreLayout(const char * buffer, size_t size) {
+  if (editionIsInTextField()) {
+    if (size != 0 || buffer[0] == 0) {
+      /* A size other than 0 means the buffer contains Layout information
+       * (instead of raw text) that we don't want to restore. This is most
+       * likely because the edition mode has been changed between use. */
+      return;
+    }
+    setText(buffer);
+    return;
+  }
+  if (size == 0) {
+    return;
+  }
+  m_layoutField.setLayout(Poincare::Layout::LayoutFromAddress(buffer, size));
+}

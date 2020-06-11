@@ -24,11 +24,15 @@ public:
     void reset() override;
     Descriptor * descriptor() override;
     CalculationStore * calculationStore() { return &m_calculationStore; }
+    char * cacheBuffer() { return m_cacheBuffer; }
+    size_t * cacheBufferInformationAddress() { return &m_cacheBufferInformation; }
   private:
     CalculationStore m_calculationStore;
     // Set the size of the buffer needed to store the calculations
     static constexpr int k_calculationBufferSize = 10 * (sizeof(Calculation) + Calculation::k_numberOfExpressions * Constant::MaxSerializedExpressionSize + sizeof(Calculation *));
     char m_calculationBuffer[k_calculationBufferSize];
+    char m_cacheBuffer[EditExpressionController::k_cacheBufferSize];
+    size_t m_cacheBufferInformation;
   };
   static App * app() {
     return static_cast<App *>(Container::activeApp());

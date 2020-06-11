@@ -27,6 +27,8 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   m_calculationStore.deleteAll();
+  m_cacheBuffer[0] = 0;
+  m_cacheBufferInformation = 0;
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -41,7 +43,7 @@ App::Snapshot::Snapshot() : m_calculationStore(m_calculationBuffer, k_calculatio
 App::App(Snapshot * snapshot) :
   ExpressionFieldDelegateApp(snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
-  m_editExpressionController(&m_modalViewController, this, &m_historyController, snapshot->calculationStore())
+  m_editExpressionController(&m_modalViewController, this, snapshot->cacheBuffer(), snapshot->cacheBufferInformationAddress(), &m_historyController, snapshot->calculationStore())
 {
 }
 

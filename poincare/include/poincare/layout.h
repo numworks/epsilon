@@ -25,6 +25,7 @@ public:
     assert(isUninitialized() || !TreeHandle::node()->isGhost());
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
+  static Layout LayoutFromAddress(const void * address, size_t size);
 
   // Properties
   LayoutNode::Type type() const { return node()->type(); }

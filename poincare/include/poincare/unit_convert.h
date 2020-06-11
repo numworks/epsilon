@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(UnitConvertNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "UnivtConvert";
+    stream << "UnitConvert";
   }
 #endif
   // ExpressionNode

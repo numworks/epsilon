@@ -56,7 +56,14 @@ void EditExpressionController::insertTextBody(const char * text) {
 void EditExpressionController::didBecomeFirstResponder() {
   m_contentView.mainView()->scrollToBottom();
   m_contentView.expressionField()->setEditing(true, false);
+  m_contentView.expressionField()->restoreLayout(m_cacheBuffer, *m_cacheBufferInformation);
+  clearCacheBuffer();
   Container::activeApp()->setFirstResponder(m_contentView.expressionField());
+}
+
+void EditExpressionController::willExitResponderChain(Responder * nextFirstResponder) {
+  *m_cacheBufferInformation = m_contentView.expressionField()->dumpLayout(m_cacheBuffer, k_cacheBufferSize);
+  ::ViewController::willExitResponderChain(nextFirstResponder);
 }
 
 void EditExpressionController::viewWillAppear() {
@@ -129,7 +136,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   }
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
-      m_cacheBuffer[0] = 0;
+      clearCacheBuffer();
       m_contentView.expressionField()->setEditing(false, false);
       Container::activeApp()->setFirstResponder(m_historyController);
     }

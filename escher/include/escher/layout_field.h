@@ -35,6 +35,7 @@ public:
   CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void putCursorRightOfLayout();
   void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
+  void setLayout(Poincare::Layout newLayout);
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {

@@ -27,6 +27,7 @@ public:
 
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
   void viewWillAppear() override;
   void insertTextBody(const char * text);
 
@@ -56,6 +57,7 @@ private:
     ExpressionField m_expressionField;
   };
   void reloadView();
+  void clearCacheBuffer() { m_cacheBuffer[0] = 0; *m_cacheBufferInformation = 0; }
   bool inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation);
   bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);

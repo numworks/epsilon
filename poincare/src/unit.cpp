@@ -329,7 +329,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
 
 Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   // Force Float(1) in front of an orphan Unit
-  if (parent().isUninitialized()) {
+  if (parent().isUninitialized() || parent().type() == ExpressionNode::Type::Opposite) {
     Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
     replaceWithInPlace(m);
     m.addChildAtIndexInPlace(*this, 1, 1);

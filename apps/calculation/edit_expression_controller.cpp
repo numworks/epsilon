@@ -38,13 +38,14 @@ void EditExpressionController::ContentView::reload() {
   markRectAsDirty(bounds());
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, char * cacheBuffer, size_t * cacheBufferInformation, HistoryController * historyController, CalculationStore * calculationStore) :
   ViewController(parentResponder),
+  m_cacheBuffer(cacheBuffer),
+  m_cacheBufferInformation(cacheBufferInformation),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
   m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this, this)
 {
-  m_cacheBuffer[0] = 0;
 }
 
 void EditExpressionController::insertTextBody(const char * text) {

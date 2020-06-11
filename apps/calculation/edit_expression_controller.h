@@ -14,7 +14,17 @@ namespace Calculation {
 /* TODO: implement a split view */
 class EditExpressionController : public ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore);
+  EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, char * cacheBuffer, size_t * cacheBufferInformation, HistoryController * historyController, CalculationStore * calculationStore);
+
+  /* k_layoutBufferMaxSize dictates the size under which the expression being
+   * edited can be remembered when the user leaves Calculation. */
+  static constexpr int k_layoutBufferMaxSize = 1024;
+  /* k_cacheBufferSize is the size of the array to which m_cacheBuffer points.
+   * It is used both as a way to buffer expression when pushing them the
+   * CalculationStore, and as a storage for the current input when leaving the
+   * application. */
+  static constexpr int k_cacheBufferSize = (k_layoutBufferMaxSize < Constant::MaxSerializedExpressionSize) ? Constant::MaxSerializedExpressionSize : k_layoutBufferMaxSize;
+
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -49,8 +59,8 @@ private:
   bool inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation);
   bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);
-  static constexpr int k_cacheBufferSize = Constant::MaxSerializedExpressionSize;
-  char m_cacheBuffer[k_cacheBufferSize];
+  char * m_cacheBuffer;
+  size_t * m_cacheBufferInformation;
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
   ContentView m_contentView;

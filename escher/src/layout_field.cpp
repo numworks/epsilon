@@ -314,6 +314,14 @@ void LayoutField::clearLayout() {
   reloadScroll(); // Put the scroll to offset 0
 }
 
+void LayoutField::setLayout(Poincare::Layout newLayout) {
+  m_contentView.clearLayout();
+  KDSize previousSize = minimalSizeForOptimalDisplay();
+  const_cast<ExpressionView *>(m_contentView.expressionView())->setLayout(newLayout);
+  putCursorRightOfLayout();
+  reload(previousSize);
+}
+
 Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }

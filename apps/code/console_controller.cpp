@@ -60,10 +60,6 @@ void ConsoleController::unloadPythonEnvironment() {
   if (!m_pythonDelegate->isPythonUser(nullptr)) {
     m_consoleStore.startNewSession();
     m_pythonDelegate->deinitPython();
-    /* We clean upon unloading and not upon loading, otherwise we break an
-     * assertion in VariableBoxController::loadFunctionsAndVariables, which
-     * checks that the script statuses are clean. */
-    m_scriptStore->clearConsoleFetchInformation();
   }
 }
 
@@ -197,6 +193,14 @@ void ConsoleController::didBecomeFirstResponder() {
      * auto-import. */
     Container::activeApp()->setFirstResponder(stackViewController()->topViewController());
   }
+}
+
+void ConsoleController::willExitResponderChain(Responder * nextFirstResponder) {
+  ViewController::willExitResponderChain(nextFirstResponder);
+  /* We clean when exiting the responder chain and not when entering it,
+   * otherwise we break an assertion which checks that the script statuses are
+   * clean in VariableBoxController::loadFunctionsAndVariables. */
+  m_scriptStore->clearConsoleFetchInformation();
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {

@@ -80,6 +80,8 @@ void UnitListController::setExpression(Poincare::Expression e) {
     }
     if (canChangeUnitPrefix) {
       Expression newUnits;
+      // Reduce to be able to removeUnit
+      PoincareHelpers::Reduce(&m_memoizedExpressions[currentExpressionIndex], App::app()->localContext(), ExpressionNode::ReductionTarget::User);
       m_memoizedExpressions[currentExpressionIndex] = m_memoizedExpressions[currentExpressionIndex].removeUnit(&newUnits);
       double value = Shared::PoincareHelpers::ApproximateToScalar<double>(m_memoizedExpressions[currentExpressionIndex], App::app()->localContext());
       ExpressionNode::ReductionContext reductionContext(

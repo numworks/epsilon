@@ -204,6 +204,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_K", "1×_K");
   assert_parsed_expression_simplify_to("_mol", "1×_mol");
   assert_parsed_expression_simplify_to("_cd", "1×_cd");
+  assert_parsed_expression_simplify_to("-_s", "-1×_s");
 
   /* Inverses of SI base units */
   assert_parsed_expression_simplify_to("_s^-1", "1×_s^\u0012-1\u0013");

@@ -98,6 +98,8 @@ constexpr KDColor Palette::HomeCellBackground;
 constexpr KDColor Palette::HomeCellBackgroundActive;
 constexpr KDColor Palette::HomeCellText;
 constexpr KDColor Palette::HomeCellTextActive;
+constexpr KDColor Palette::HomeCellTextExternal;
+constexpr KDColor Palette::HomeCellTextExternalActive;
 
 constexpr KDColor Palette::YellowDark; // Done
 constexpr KDColor Palette::YellowLight; // Done

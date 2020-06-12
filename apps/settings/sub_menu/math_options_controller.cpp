@@ -68,6 +68,9 @@ void MathOptionsController::willDisplayCellForIndex(HighlightCell * cell, int in
       break;
     case I18n::Message::ResultDisplay:
       childIndex = (int)preferences->resultDisplay();
+    case I18n::Message::SymbolFunction:
+      childIndex = (int)preferences->symbolofFunction();
+      break;      
     default:
       break;
   }

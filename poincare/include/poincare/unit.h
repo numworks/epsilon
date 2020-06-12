@@ -255,7 +255,7 @@ public:
         Representative("pc",  "180*60*60/π*_au",
             Representative::Prefixable::No,
             NoPrefix),
-        Representative("ft",  "0.3048*_m", // used meters to allow for conversion
+        Representative("ft",  nullptr, // used meters to allow for conversion
             Representative::Prefixable::No,
             NoPrefix),
         Representative("in",  "(1/12)*_ft",
@@ -281,7 +281,7 @@ public:
         Representative("Da",  "(6.02214076*10^23*1000)^-1*_kg",
             Representative::Prefixable::Yes,
             NoPrefix),
-        Representative("lb",   "453.59237*_g",
+        Representative("lb",   nullptr,
             Representative::Prefixable::Yes,
             NoPrefix),
         Representative("oz",   "(1/16)*_lb",

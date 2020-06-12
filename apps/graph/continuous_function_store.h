@@ -16,7 +16,7 @@ public:
     return recordSatisfyingTestAtIndex(i, &isFunctionActiveOfType, &plotType);
   }
   Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record))); }
-  Shared::ExpiringPointer<Shared::ContinuousFunctionCache> cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? Shared::ExpiringPointer<Shared::ContinuousFunctionCache>(k_functionCaches + i) : nullptr; }
+  Shared::ContinuousFunctionCache * cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? m_functionCaches + i : nullptr; }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
 private:
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }
@@ -27,7 +27,7 @@ private:
     return isFunctionActive(model, context) && plotType == static_cast<Shared::ContinuousFunction *>(model)->plotType();
   }
   mutable Shared::ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];
-  mutable Shared::ContinuousFunctionCache k_functionCaches[Shared::ContinuousFunctionCache::k_numberOfAvailableCaches];
+  mutable Shared::ContinuousFunctionCache m_functionCaches[Shared::ContinuousFunctionCache::k_numberOfAvailableCaches];
 
 };
 

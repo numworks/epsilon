@@ -1,6 +1,7 @@
 #include "graph_view.h"
 #include "../app.h"
 #include <assert.h>
+#include <algorithm>
 
 using namespace Shared;
 
@@ -28,7 +29,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   for (int i = 0; i < activeFunctionsCount ; i++) {
     Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
-    ExpiringPointer<ContinuousFunctionCache> cch = functionStore->cacheAtIndex(i);
+    ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
     Shared::ContinuousFunction::PlotType type = f->plotType();
     Poincare::Expression e = f->expressionReduced(context());
     if (e.isUndefined() || (
@@ -52,14 +53,24 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
      * how fast the function moves... */
     float tstep = (tmax-tmin)/10.0938275501223f;
 
+    float tCacheMin, tCacheStep;
+    if (type == ContinuousFunction::PlotType::Cartesian) {
+      float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+      tCacheMin = std::isnan(rectLeft) ? tmin : std::max(tmin, rectLeft);
+      tCacheStep = pixelWidth();
+    } else {
+      tCacheMin = tmin;
+      tCacheStep = tstep;
+    }
+    ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
+
     // Cartesian
     if (type == Shared::ContinuousFunction::PlotType::Cartesian) {
       drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
-          }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd,
-          &ContinuousFunctionCache::PrepareCache, cch.operator->());
+          }, f.operator->(), context(), f->color(), true, record == m_selectedRecord, m_highlightedStart, m_highlightedEnd);
       /* Draw tangent */
       if (m_tangent && record == m_selectedRecord) {
         float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context());
@@ -80,9 +91,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         ContinuousFunction * f = (ContinuousFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;
         return f->evaluateXYAtParameter(t, c);
-      }, f.operator->(), context(), false, f->color(),
-      true, false, 0.0f, 0.0f, /* drawCurve's default arguments */
-      &ContinuousFunctionCache::PrepareCache, cch.operator->());
+      }, f.operator->(), context(), false, f->color());
   }
 }
 

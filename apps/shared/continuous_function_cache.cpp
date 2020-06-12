@@ -1,5 +1,6 @@
 #include "continuous_function_cache.h"
 #include "continuous_function.h"
+#include <limits.h>
 
 namespace Shared {
 
@@ -8,43 +9,38 @@ constexpr float ContinuousFunctionCache::k_cacheHitTolerance;
 constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
 
 // public
-void ContinuousFunctionCache::PrepareCache(void * f, void * ctx, void * cch, float tMin, float tStep) {
-  if (!cch) {
+void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
+  if (!cache) {
+    /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
+     * of the function we are trying to draw is greater than the number of
+     * available caches, so we do nothing.*/
     return;
   }
-  ContinuousFunction * function = (ContinuousFunction *)f;
-  Poincare::Context * context = (Poincare::Context *)ctx;
-  if (!function->cache()) {
-    ContinuousFunctionCache * cache = (ContinuousFunctionCache *)cch;
+
+  ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
+  if (function->cache() != cache) {
     cache->clear();
     function->setCache(cache);
   }
-  if (function->cache()->filled() && tStep / StepFactor(function) == function->cache()->step()) {
-    if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
-      function->cache()->pan(function, context, tMin);
-    }
-    return;
+
+  if (function->plotType() == ContinuousFunction::PlotType::Cartesian && tStep != 0) {
+    function->cache()->pan(function, tMin);
   }
   function->cache()->setRange(function, tMin, tStep);
-  function->cache()->memoize(function, context);
 }
 
 void ContinuousFunctionCache::clear() {
-  m_filled = false;
   m_startOfCache = 0;
+  m_tStep = 0;
+  invalidateBetween(0, k_sizeOfCache);
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const ContinuousFunction * function, float t) const {
-  int iRes = indexForParameter(function, t);
-  /* If t does not map to an index, iRes is -1 */
-  if (iRes < 0) {
-    return Poincare::Coordinate2D<float>(NAN, NAN);
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t) {
+  int resIndex = indexForParameter(function, t);
+  if (resIndex < 0) {
+    return function->privateEvaluateXYAtParameter(t, context);
   }
-  if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
-    return Poincare::Coordinate2D<float>(t, m_cache[iRes]);
-  }
-  assert(m_startOfCache == 0);
-  return Poincare::Coordinate2D<float>(m_cache[2*iRes], m_cache[2*iRes+1]);
+  return valuesAtIndex(function, context, t, resIndex);
 }
 
 // private
@@ -55,46 +51,15 @@ float ContinuousFunctionCache::StepFactor(ContinuousFunction * function) {
   return (function->plotType() == ContinuousFunction::PlotType::Cartesian) ? 1.f : 16.f;
 }
 
+void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
+  for (int i = iInf; i < iSup; i++) {
+    m_cache[i] = NAN;
+  }
+}
+
 void ContinuousFunctionCache::setRange(ContinuousFunction * function, float tMin, float tStep) {
   m_tMin = tMin;
   m_tStep = tStep / StepFactor(function);
-}
-
-void ContinuousFunctionCache::memoize(ContinuousFunction * function, Poincare::Context * context) {
-  m_filled = true;
-  m_startOfCache = 0;
-  if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
-    memoizeYForX(function, context);
-    return;
-  }
-  memoizeXYForT(function, context);
-}
-
-void ContinuousFunctionCache::memoizeYForX(ContinuousFunction * function, Poincare::Context * context) {
-  memoizeYForXBetweenIndices(function, context, 0, k_sizeOfCache);
-}
-
-void ContinuousFunctionCache::memoizeYForXBetweenIndices(ContinuousFunction * function, Poincare::Context * context, int iInf, int iSup) {
-  assert(function->plotType() == ContinuousFunction::PlotType::Cartesian);
-  for (int i = iInf; i < iSup; i++) {
-    m_cache[i] = function->privateEvaluateXYAtParameter(parameterForIndex(i), context).x2();
-  }
-}
-
-void ContinuousFunctionCache::memoizeXYForT(ContinuousFunction * function, Poincare::Context * context) {
-  assert(function->plotType() != ContinuousFunction::PlotType::Cartesian);
-  for (int i = 1; i < k_sizeOfCache; i += 2) {
-    Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(parameterForIndex(i/2), context);
-    m_cache[i - 1] = res.x1();
-    m_cache[i] = res.x2();
-  }
-}
-
-float ContinuousFunctionCache::parameterForIndex(int i) const {
-  if (i < m_startOfCache) {
-    i += k_sizeOfCache;
-  }
-  return m_tMin + m_tStep * (i - m_startOfCache);
 }
 
 int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * function, float t) const {
@@ -104,14 +69,31 @@ int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * functi
   }
   int res = std::round(delta);
   assert(res >= 0);
-  if (res >= k_sizeOfCache || std::abs(res - delta) > k_cacheHitTolerance) {
+  if ((res >= k_sizeOfCache && function->plotType() == ContinuousFunction::PlotType::Cartesian)
+   || (res >= k_sizeOfCache / 2 && function->plotType() != ContinuousFunction::PlotType::Cartesian)
+   || std::abs(res - delta) > k_cacheHitTolerance) {
     return -1;
   }
   assert(function->plotType() == ContinuousFunction::PlotType::Cartesian || m_startOfCache == 0);
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
-void ContinuousFunctionCache::pan(ContinuousFunction * function, Poincare::Context * context, float newTMin) {
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i) {
+  if (function->plotType() == ContinuousFunction::PlotType::Cartesian) {
+    if (std::isnan(m_cache[i])) {
+      m_cache[i] = function->privateEvaluateXYAtParameter(t, context).x2();
+    }
+    return Poincare::Coordinate2D<float>(t, m_cache[i]);
+  }
+  if (std::isnan(m_cache[2 * i]) || std::isnan(m_cache[2 * i + 1])) {
+    Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(t, context);
+    m_cache[2 * i] = res.x1();
+    m_cache[2 * i + 1] = res.x2();
+  }
+  return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
+}
+
+void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) {
   assert(function->plotType() == ContinuousFunction::PlotType::Cartesian);
   if (newTMin == m_tMin) {
     return;
@@ -120,12 +102,12 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, Poincare::Conte
   float dT = (newTMin - m_tMin) / m_tStep;
   m_tMin = newTMin;
   if (std::abs(dT) > INT_MAX) {
-    memoize(function, context);
+    clear();
     return;
   }
   int dI = std::round(dT);
   if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache || std::abs(dT - dI) > k_cacheHitTolerance) {
-    memoize(function, context);
+    clear();
     return;
   }
 
@@ -136,17 +118,17 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, Poincare::Conte
   }
   if (dI > 0) {
     if (m_startOfCache > oldStart) {
-      memoizeYForXBetweenIndices(function, context, oldStart, m_startOfCache);
+      invalidateBetween(oldStart, m_startOfCache);
     } else {
-      memoizeYForXBetweenIndices(function, context, oldStart, k_sizeOfCache);
-      memoizeYForXBetweenIndices(function, context, 0, m_startOfCache);
+      invalidateBetween(oldStart, k_sizeOfCache);
+      invalidateBetween(0, m_startOfCache);
     }
   } else {
     if (m_startOfCache > oldStart) {
-      memoizeYForXBetweenIndices(function, context, m_startOfCache, k_sizeOfCache);
-      memoizeYForXBetweenIndices(function, context, 0, oldStart);
+      invalidateBetween(m_startOfCache, k_sizeOfCache);
+      invalidateBetween(0, oldStart);
     } else {
-      memoizeYForXBetweenIndices(function, context, m_startOfCache, oldStart);
+      invalidateBetween(m_startOfCache, oldStart);
     }
   }
 }

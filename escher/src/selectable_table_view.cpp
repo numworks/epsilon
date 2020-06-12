@@ -128,25 +128,25 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     return selectCellAtLocation(selectedColumn(), selectedRow()+1);
   }
-  if (event == Ion::Events::ShiftDown && selectedRow() < dataSource()->numberOfRows()-1) {
+  if ((event == Ion::Events::ShiftDown || event == Ion::Events::AlphaDown) && selectedRow() < dataSource()->numberOfRows()-1) {
     return selectCellAtLocation(selectedColumn(), dataSource()->numberOfRows()-1);
   }
   if (event == Ion::Events::Up) {
     return selectCellAtLocation(selectedColumn(), selectedRow()-1);
   }
-  if (event == Ion::Events::ShiftUp && selectedRow() > 0) {
+  if ((event == Ion::Events::ShiftUp || event == Ion::Events::AlphaUp) && selectedRow() > 0) {
     return selectCellAtLocation(selectedColumn(), 0);
   }
   if (event == Ion::Events::Left) {
     return selectCellAtLocation(selectedColumn()-1, selectedRow());
   }
-  if (event == Ion::Events::ShiftLeft && selectedColumn() > 0) {
+  if ((event == Ion::Events::ShiftLeft || event == Ion::Events::AlphaLeft) && selectedColumn() > 0) {
     return selectCellAtLocation(0, selectedRow());
   }
   if (event == Ion::Events::Right) {
     return selectCellAtLocation(selectedColumn()+1, selectedRow());
   }
-  if (event == Ion::Events::ShiftRight && selectedColumn() < dataSource()->numberOfColumns()-1) {
+  if ((event == Ion::Events::ShiftRight || event == Ion::Events::AlphaRight) && selectedColumn() < dataSource()->numberOfColumns()-1) {
     return selectCellAtLocation(dataSource()->numberOfColumns()-1, selectedRow());
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {

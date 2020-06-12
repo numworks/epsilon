@@ -9,7 +9,7 @@ BatteryTimer::BatteryTimer() :
 bool BatteryTimer::fire() {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
   bool needRedrawing = container->updateBatteryState();
-  if (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+  if (Ion::Battery::level() == Ion::Battery::Charge::EMPTY && !Ion::USB::isPlugged()) {
     container->shutdownDueToLowBattery();
   }
   return needRedrawing;

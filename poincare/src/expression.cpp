@@ -126,7 +126,7 @@ bool Expression::deepIsMatrix(Context * context) const {
   }
   // Scalar expressions
   ExpressionNode::Type types1[] = {ExpressionNode::Type::BinomialCoefficient, ExpressionNode::Type::Derivative, ExpressionNode::Type::Determinant, ExpressionNode::Type::DivisionQuotient, ExpressionNode::Type::DivisionRemainder, ExpressionNode::Type::Factor, ExpressionNode::Type::GreatCommonDivisor, ExpressionNode::Type::Integral, ExpressionNode::Type::LeastCommonMultiple, ExpressionNode::Type::MatrixTrace, ExpressionNode::Type::NthRoot, ExpressionNode::Type::PermuteCoefficient, ExpressionNode::Type::Randint, ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction, ExpressionNode::Type::SquareRoot};
-  if (isOfType(types1, 16)) {
+  if (isOfType(types1, sizeof(types1)/sizeof(ExpressionNode::Type))) {
     return false;
   }
   // The children were sorted so any expression which is a matrix (deeply) would be at the end
@@ -137,7 +137,7 @@ bool Expression::deepIsMatrix(Context * context) const {
   }
   // Logarithm, Power, Product, Sum are matrices only if their first child is a matrix
   ExpressionNode::Type types2[] = {ExpressionNode::Type::Logarithm, ExpressionNode::Type::Power, ExpressionNode::Type::Product, ExpressionNode::Type::Sum};
-  if (isOfType(types2, 4)) {
+  if (isOfType(types2, sizeof(types2)/sizeof(ExpressionNode::Type))) {
     assert(numberOfChildren() > 0);
     return childAtIndex(0).deepIsMatrix(context);
   }

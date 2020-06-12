@@ -140,6 +140,12 @@ bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIn
   if ((event == Ion::Events::Back || event == Ion::Events::Left) && depth > 0) {
     return returnToPreviousMenu();
   }
+  if (event == Ion::Events::ShiftLeft && depth > 0) {
+    for (int i = depth; i > 0; i--) {
+      returnToPreviousMenu();
+    }
+    return true;
+  }
   if (selectedRow() < 0) {
     return false;
   }

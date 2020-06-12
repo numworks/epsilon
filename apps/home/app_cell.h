@@ -27,6 +27,7 @@ private:
   ImageView m_iconView;
   MessageTextView m_nameView;
   bool m_visible;
+  bool m_external_app;
 };
 
 }

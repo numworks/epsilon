@@ -8,7 +8,7 @@ namespace Home {
 AppCell::AppCell() :
   HighlightCell(),
   m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::HomeCellText, Palette::HomeCellTextActive),
-  m_visible(true)
+  m_visible(true), m_external_app(false)
 {
 }
 
@@ -34,17 +34,19 @@ void AppCell::layoutSubviews(bool force) {
 }
 
 void AppCell::setExtAppDescriptor(const char* name, const Image* icon) {
+  m_external_app = true;
   m_iconView.setImage(icon);
   m_nameView.setText(name);
-  m_nameView.setTextColor(Palette::AccentText);
+  m_nameView.setTextColor(Palette::HomeCellTextExternal);
   m_nameView.setMessage(I18n::Message::Default);
   layoutSubviews();
 }
 
 void AppCell::setAppDescriptor(::App::Descriptor * descriptor) {
+  m_external_app = false;
   m_iconView.setImage(descriptor->icon());
   m_nameView.setMessage(descriptor->name());
-  m_nameView.setTextColor(Palette::PrimaryText);
+  m_nameView.setTextColor(Palette::HomeCellText);
   m_nameView.setText(nullptr);
   layoutSubviews();
 }
@@ -57,7 +59,7 @@ void AppCell::setVisible(bool visible) {
 }
 
 void AppCell::reloadCell() {
-  m_nameView.setTextColor(isHighlighted() ? Palette::HomeCellTextActive : Palette::HomeCellText);
+  m_nameView.setTextColor(isHighlighted() ? (m_external_app ? Palette::HomeCellTextExternalActive : Palette::HomeCellTextActive) : (m_external_app ? Palette::HomeCellTextExternal : Palette::HomeCellText));
   m_nameView.setBackgroundColor(isHighlighted() ? Palette::HomeCellBackgroundActive : Palette::HomeCellBackground);
 }
 

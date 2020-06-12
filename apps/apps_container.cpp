@@ -290,7 +290,7 @@ void AppsContainer::shutdownDueToLowBattery() {
    * case. */
     return;
   }
-  while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+  while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY && !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
     if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the

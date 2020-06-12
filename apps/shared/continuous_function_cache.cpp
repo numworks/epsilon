@@ -7,6 +7,7 @@ namespace Shared {
 constexpr int ContinuousFunctionCache::k_sizeOfCache;
 constexpr float ContinuousFunctionCache::k_cacheHitTolerance;
 constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
+constexpr int ContinuousFunctionCache::k_parametricStepFactor;
 
 // public
 void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
@@ -44,13 +45,6 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const C
 }
 
 // private
-float ContinuousFunctionCache::StepFactor(ContinuousFunction * function) {
-  /* When drawing a parametric or polar curve, the range is first divided by
-   * ~10,9, creating 11 intervals which are filled by dichotomy.
-   * We memoize 16 values for each of the 10 big intervals. */
-  return (function->plotType() == ContinuousFunction::PlotType::Cartesian) ? 1.f : 16.f;
-}
-
 void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   for (int i = iInf; i < iSup; i++) {
     m_cache[i] = NAN;
@@ -59,7 +53,7 @@ void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
 
 void ContinuousFunctionCache::setRange(ContinuousFunction * function, float tMin, float tStep) {
   m_tMin = tMin;
-  m_tStep = tStep / StepFactor(function);
+  m_tStep = tStep;
 }
 
 int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * function, float t) const {

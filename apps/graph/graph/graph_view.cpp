@@ -40,18 +40,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }
     float tmin = f->tMin();
     float tmax = f->tMax();
-    /* The step is a fraction of tmax-tmin. We will evaluate the function at
-     * every step and if the consecutive dots are close enough, we won't
-     * evaluate any more dot within the step. We pick a very strange fraction
-     * denominator to avoid evaluating a periodic function periodically. For
-     * example, if tstep was (tmax - tmin)/10, the polar function r(θ) = sin(5θ)
-     * defined on 0..2π would be evaluated on r(0) = 0, r(π/5) = 0, r(2*π/5) = 0
-     * which would lead to no curve at all. With 10.0938275501223, the
-     * problematic functions are the functions whose period is proportionned to
-     * 10.0938275501223 which are hopefully rare enough.
-     * TODO: The drawCurve algorithm should use the derivative function to know
-     * how fast the function moves... */
-    float tstep = (tmax-tmin)/10.0938275501223f;
+
+    float tstep = (tmax-tmin)/k_graphStepDenominator;
 
     float tCacheMin, tCacheStep;
     if (type == ContinuousFunction::PlotType::Cartesian) {
@@ -60,7 +50,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       tCacheStep = pixelWidth();
     } else {
       tCacheMin = tmin;
-      tCacheStep = tstep;
+      tCacheStep = tstep / ContinuousFunctionCache::k_parametricStepFactor;
     }
     ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 

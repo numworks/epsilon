@@ -1,6 +1,7 @@
 #ifndef SHARED_CONTINUOUS_FUNCTION_CACHE_H
 #define SHARED_CONTINUOUS_FUNCTION_CACHE_H
 
+#include "../graph/graph/graph_view.h"
 #include <ion/display.h>
 #include <poincare/context.h>
 #include <poincare/coordinate_2D.h>
@@ -10,10 +11,13 @@ namespace Shared {
 class ContinuousFunction;
 
 class ContinuousFunctionCache {
-public:
+private:
   /* The size of the cache is chosen to optimize the display of cartesian
-   * function */
+   * functions */
+   static constexpr int k_sizeOfCache = Ion::Display::Width;
+public:
   static constexpr int k_numberOfAvailableCaches = 2;
+  static constexpr int k_parametricStepFactor = k_sizeOfCache / int(Graph::GraphView::k_graphStepDenominator);
 
   static void PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep);
 
@@ -23,12 +27,7 @@ public:
   void clear();
   Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t);
 private:
-  /* The size of the cache is chosen to optimize the display of cartesian
-   * function */
-  static constexpr int k_sizeOfCache = Ion::Display::Width;
   static constexpr float k_cacheHitTolerance = 1e-3;
-
-  static float StepFactor(ContinuousFunction * function);
 
   void invalidateBetween(int iInf, int iSup);
   void setRange(ContinuousFunction * function, float tMin, float tStep);

@@ -5,17 +5,14 @@
 MessageTextView::MessageTextView(const KDFont * font, I18n::Message message, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
-  m_message(message)
+  m_message(message), m_text(nullptr)
 {
 }
 
 const char * MessageTextView::text() const {
-  if (m_message != I18n::Message::Default && m_text == nullptr)
-    return I18n::translate(m_message);
-  if (m_text != nullptr && m_message == I18n::Message::Default)
+  if (m_text != nullptr)
     return m_text;
-  assert(false);
-  return nullptr;
+  return I18n::translate(m_message);
 }
 
 void MessageTextView::setText(const char * text) {

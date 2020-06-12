@@ -15,12 +15,13 @@ public:
    * function */
   static constexpr int k_numberOfAvailableCaches = 2;
 
-  static void PrepareCache(void * f, void * ctx, void * cch, float tMin, float tStep);
+  static void PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep);
+
+  ContinuousFunctionCache() { clear(); }
 
   float step() const { return m_tStep; }
-  bool filled() const { return m_filled; }
   void clear();
-  Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, float t) const;
+  Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t);
 private:
   /* The size of the cache is chosen to optimize the display of cartesian
    * function */
@@ -29,14 +30,11 @@ private:
 
   static float StepFactor(ContinuousFunction * function);
 
+  void invalidateBetween(int iInf, int iSup);
   void setRange(ContinuousFunction * function, float tMin, float tStep);
-  void memoize(ContinuousFunction * function, Poincare::Context * context);
-  void memoizeYForX(ContinuousFunction * function, Poincare::Context * context);
-  void memoizeYForXBetweenIndices(ContinuousFunction * function, Poincare::Context * context, int iInf, int iSup);
-  void memoizeXYForT(ContinuousFunction * function, Poincare::Context * context);
-  float parameterForIndex(int i) const;
   int indexForParameter(const ContinuousFunction * function, float t) const;
-  void pan(ContinuousFunction * function, Poincare::Context * context, float newTMin);
+  Poincare::Coordinate2D<float> valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i);
+  void pan(ContinuousFunction * function, float newTMin);
 
   float m_tMin, m_tStep;
   float m_cache[k_sizeOfCache];
@@ -44,7 +42,6 @@ private:
    * with cartesian functions. When dealing with parametric or polar functions,
    * m_startOfCache should be zero.*/
   int m_startOfCache;
-  bool m_filled;
 };
 
 }

@@ -26,7 +26,8 @@ public:
   static void DefaultName(char buffer[], size_t bufferSize);
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   ContinuousFunction(Ion::Storage::Record record = Record()) :
-    Function(record)
+    Function(record),
+    m_cache(nullptr)
   {}
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override;
@@ -47,8 +48,7 @@ public:
     return templatedApproximateAtParameter(t, context);
   }
   Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const override {
-    //return privateEvaluateXYAtParameter<float>(t, context);
-    return checkForCacheHitAndEvaluate(t, context);
+    return (m_cache) ? m_cache->valueForParameter(this, context, t) : privateEvaluateXYAtParameter<float>(t, context);
   }
   Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const override {
     return privateEvaluateXYAtParameter<double>(t, context);
@@ -83,14 +83,12 @@ public:
   ContinuousFunctionCache * cache() const { return m_cache; }
   void setCache(ContinuousFunctionCache * v) { m_cache = v; }
   void clearCache() { m_cache = nullptr; }
-  bool cacheIsFilled() const { return cache() && cache()->filled(); }
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double step, double max, Poincare::Context * context, ComputePointOfInterest compute) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
-  Poincare::Coordinate2D<float> checkForCacheHitAndEvaluate(float t, Poincare::Context * context) const;
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a ContinuousFunction. See comment on
    * Shared::Function::RecordDataBuffer about packing. */

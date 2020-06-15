@@ -120,6 +120,9 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   {
     return replaceWithUndefinedInPlace();
   }
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) {
+    return *this;
+  }
   Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, reductionContext.symbolicComputation());
   if (result.isUninitialized()) {
     if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {

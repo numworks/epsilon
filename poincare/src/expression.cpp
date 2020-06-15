@@ -87,14 +87,29 @@ bool Expression::isRationalOne() const {
   return type() == ExpressionNode::Type::Rational && convert<const Rational>().isOne();
 }
 
-bool Expression::recursivelyMatches(ExpressionTest test, Context * context, bool replaceSymbols) const {
+bool Expression::recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
   if (test(*this, context)) {
     return true;
   }
+
+  // Handle symbols and functions
   ExpressionNode::Type t = type();
-  if (replaceSymbols && (t == ExpressionNode::Type::Symbol || t == ExpressionNode::Type::Function)) {
-    return SymbolAbstract::matches(convert<const SymbolAbstract>(), test, context);
+  if (t == ExpressionNode::Type::Symbol || t == ExpressionNode::Type::Function) {
+    assert(replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
+        || replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
+        || replaceSymbols == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol); // We need only those cases for now
+
+    if (replaceSymbols == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol
+        || (replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
+          && t == ExpressionNode::Type::Symbol))
+    {
+      return false;
+    }
+    assert(replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
+        || t == ExpressionNode::Type::Function);
+      return SymbolAbstract::matches(convert<const SymbolAbstract>(), test, context);
   }
+
   const int childrenCount = this->numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols)) {
@@ -197,7 +212,7 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
 }
 
 bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation) const {
-  assert(!recursivelyMatches(IsMatrix, context, true));
+  assert(!recursivelyMatches(IsMatrix, context, symbolicComputation));
   // variables is in fact of type char[k_maxNumberOfVariables][maxVariableSize]
   int index = 0;
   while (variables[index*maxVariableSize] != 0) {
@@ -223,7 +238,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
         /* degree is supposed to be 0 or 1. Otherwise, it means that equation
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
-        assert(!recursivelyMatches([](const Expression e, Context * context) { return e.isUndefined(); }, context, true));
+        assert(!recursivelyMatches([](const Expression e, Context * context) { return e.isUndefined(); }, context));
         return false;
     }
     /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
@@ -473,7 +488,7 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
 /* Units */
 
 bool Expression::hasUnit() const {
-  return recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, false);
+  return recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 }
 
 /* Complex */
@@ -494,7 +509,7 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Prefere
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & exp, Context * context) {
-  if (complexFormat == Preferences::ComplexFormat::Real && exp.recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context, true)) {
+  if (complexFormat == Preferences::ComplexFormat::Real && exp.recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context)) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;

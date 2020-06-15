@@ -598,7 +598,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   while (i < numberOfChildren()-1) {
     Expression oi = childAtIndex(i);
     Expression oi1 = childAtIndex(i+1);
-    if (oi.recursivelyMatches(Expression::IsRandom, context, true)) {
+    if (oi.recursivelyMatches(Expression::IsRandom, context)) {
       // Do not factorize random or randint
     } else if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
@@ -715,7 +715,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
    * If there is a random somewhere, do not expand. */
   Expression p = parent();
-  bool hasRandom = recursivelyMatches(Expression::IsRandom, context, true);
+  bool hasRandom = recursivelyMatches(Expression::IsRandom, context);
   if (shouldExpand
       && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)
       && !hasRandom)

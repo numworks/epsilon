@@ -156,7 +156,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     }
 
     const Expression e = eq->standardForm(context, replaceFunctionsButNotSymbols); // The standard form is memoized so there is no double computation even if replaceFunctionsButNotSymbols is true.
-    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
+    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined || e.recursivelyMatches(Expression::IsMatrix, context, replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition)) {
       return Error::EquationUndefined;
     }
     if (e.type() == ExpressionNode::Type::Unreal) {

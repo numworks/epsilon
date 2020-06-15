@@ -205,7 +205,7 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   quiz_assert(Symbol::Builder('a').recursivelyMatches(Expression::IsMatrix, &context));
 
   assert_expression_approximates_to<double>("1.2→b", "1.2");
-  quiz_assert(Symbol::Builder('b').recursivelyMatches(Expression::IsApproximate, &context, true));
+  quiz_assert(Symbol::Builder('b').recursivelyMatches(Expression::IsApproximate, &context));
 
   /* [[x]]→f(x) expression contains a matrix, so its simplification is going
    * to be interrupted. We thus rather approximate it instead of simplifying it.
@@ -214,7 +214,7 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   assert_expression_approximates_to<double>("[[x]]→f(x)", "[[undef]]");
   quiz_assert(Function::Builder("f", 1, Symbol::Builder('x')).recursivelyMatches(Poincare::Expression::IsMatrix, &context));
   assert_expression_approximates_to<double>("0.2*x→g(x)", "undef");
-  quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, &context, true));
+  quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, &context));
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();

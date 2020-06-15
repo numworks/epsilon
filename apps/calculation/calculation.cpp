@@ -176,7 +176,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::PredictionInterval
           };
           return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes)/sizeof(ExpressionNode::Type));
-        }, context, true)
+        }, context)
   )
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;

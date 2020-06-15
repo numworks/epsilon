@@ -801,7 +801,20 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("acos(cos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
-  assert_parsed_expression_simplify_to("acos(cos(12))", "acos(cos(12))");
+
+  assert_parsed_expression_simplify_to("acos(cos(12))", "4×π-12");
+  assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))", "20000000000");
+  assert_parsed_expression_simplify_to("acos(cos(inf))", "acos(cos(inf))");
+  assert_parsed_expression_simplify_to("acos(cos(9))", "-2×π+9");
+  assert_parsed_expression_simplify_to("acos(cos(10^125))", "acos(cos(10^125))");
+  assert_parsed_expression_simplify_to("acos(cos(1/0))", Undefined::Name());
+  assert_parsed_expression_simplify_to("acos(cos(-8.8))", "\u0012-10×π+44\u0013/5");
+  assert_parsed_expression_simplify_to("acos(cos(π+26))", "9×π-26");
+  assert_parsed_expression_simplify_to("acos(cos(0))", "0");
+  assert_parsed_expression_simplify_to("acos(cos(9π))", "π");
+  assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))", "160", User, Degree);
+  assert_parsed_expression_simplify_to("acos(cos(180+50))", "130", User, Degree);
+
   assert_parsed_expression_simplify_to("acos(cos(4π/7))", "\u00124×π\u0013/7");
   assert_parsed_expression_simplify_to("acos(-cos(2))", "π-2");
   assert_parsed_expression_simplify_to("acos(-1/2)", "120", User, Degree);
@@ -820,7 +833,16 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("sin(asin(2/3))", "2/3");
   assert_parsed_expression_simplify_to("sin(asin(3/2))", "3/2");
   assert_parsed_expression_simplify_to("asin(sin(3/2))", "3/2");
-  assert_parsed_expression_simplify_to("asin(sin(12))", "asin(sin(12))");
+  assert_parsed_expression_simplify_to("asin(sin(3.6))", "\u00125×π-18\u0013/5");
+  assert_parsed_expression_simplify_to("asin(sin(-2.23))", "\u0012-100×π+223\u0013/100");
+  assert_parsed_expression_simplify_to("asin(sin(-18.39))", "\u0012600×π-1839\u0013/100");
+
+
+  assert_parsed_expression_simplify_to("asin(sin(12))", "-4×π+12");
+  assert_parsed_expression_simplify_to("asin(sin(2+π))", "-π+2");
+  assert_parsed_expression_simplify_to("asin(sin(90+6800))", "50", User, Degree);
+  assert_parsed_expression_simplify_to("asin(sin(60-9×9×9))", "51", User, Degree);
+
   assert_parsed_expression_simplify_to("asin(sin(-π/7))", "-π/7");
   assert_parsed_expression_simplify_to("asin(sin(-√(2)))", "-√(2)");
   assert_parsed_expression_simplify_to("asin(-1/2)", "-30", User, Degree);
@@ -837,8 +859,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(tan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
-  assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
-  assert_parsed_expression_simplify_to("atan(tan(5/2))", "atan(tan(5/2))");
+  assert_parsed_expression_simplify_to("atan(tan(5/2))", "\u0012-2×π+5\u0013/2");
   assert_parsed_expression_simplify_to("atan(tan(-π/7))", "-π/7");
   assert_parsed_expression_simplify_to("atan(√(3))", "π/3");
   assert_parsed_expression_simplify_to("atan(tan(-√(2)))", "-√(2)");
@@ -1406,7 +1427,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("√(-𝐢)", "√(2)/2-√(2)/2×𝐢");
   assert_parsed_expression_simplify_to("A×cos(9)𝐢𝐢ln(2)", "-A×cos(9)×ln(2)");
   assert_parsed_expression_simplify_to("(√(2)+√(2)×𝐢)/2(√(2)+√(2)×𝐢)/2(√(2)+√(2)×𝐢)/2", "√(2)/32-√(2)/32×𝐢");
-  assert_parsed_expression_simplify_to("root(5^((-𝐢)3^9),𝐢)", "1/ℯ^atan(tan(19683×ln(5)))");
+  assert_parsed_expression_simplify_to("root(5^((-𝐢)3^9),𝐢)", "ℯ^\x12-19683×ln(5)+10084×π\x13");
   assert_parsed_expression_simplify_to("𝐢^𝐢", "1/ℯ^\u0012π/2\u0013");
   assert_parsed_expression_simplify_to("𝐢/(1+𝐢×√(x))", "𝐢/\u0012√(x)×𝐢+1\u0013");
   assert_parsed_expression_simplify_to("x+𝐢/(1+𝐢×√(x))", "\u0012x^\u00123/2\u0013×𝐢+𝐢+x\u0013/\u0012√(x)×𝐢+1\u0013");

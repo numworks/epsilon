@@ -12,6 +12,7 @@ constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllDefinedSymbols
 constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllSymbolsWithDefinitionsOrUndefined = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
 constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceDefinedFunctionsWithDefinitions = Poincare::ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
 constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllSymbolsWithUndefined = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined;
+constexpr Poincare::ExpressionNode::SymbolicComputation DoNotReplaceAnySymbol = Poincare::ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
 constexpr Poincare::ExpressionNode::UnitConversion NoUnitConversion = Poincare::ExpressionNode::UnitConversion::None;
 constexpr Poincare::ExpressionNode::UnitConversion DefaultUnitConversion = Poincare::ExpressionNode::UnitConversion::Default;
 constexpr Poincare::ExpressionNode::UnitConversion InternationalSystemUnitConversion = Poincare::ExpressionNode::UnitConversion::InternationalSystem;

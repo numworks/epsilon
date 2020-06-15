@@ -355,7 +355,7 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
   int numberOfNonNumeralFactors = numberOfNonNumeralFactorsInE1;
   if (numberOfNonNumeralFactors == 1) {
     Expression nonNumeralFactor = FirstNonNumeralFactor(e1);
-    if (nonNumeralFactor.recursivelyMatches(Expression::IsRandom, context, true)) {
+    if (nonNumeralFactor.recursivelyMatches(Expression::IsRandom, context)) {
       return false;
     }
     return FirstNonNumeralFactor(e1).isIdenticalTo(FirstNonNumeralFactor(e2));
@@ -380,7 +380,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
     Expression childI = childAtIndex(i);
     Expression currentDenominator = childI.denominator(reductionContext);
     if (!currentDenominator.isUninitialized()) {
-      if (currentDenominator.recursivelyMatches(Expression::IsRandom, reductionContext.context(), true)) {
+      if (currentDenominator.recursivelyMatches(Expression::IsRandom, reductionContext.context())) {
         // Remove "random" factors
         removeChildInPlace(childI, childI.numberOfChildren());
         a.addChildAtIndexInPlace(childI, a.numberOfChildren(), a.numberOfChildren());

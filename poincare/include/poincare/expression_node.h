@@ -128,7 +128,8 @@ public:
     ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,
     ReplaceAllDefinedSymbolsWithDefinition = 1,
     ReplaceDefinedFunctionsWithDefinitions = 2,
-    ReplaceAllSymbolsWithUndefined = 3 // Used in UnitConvert::shallowReduce
+    ReplaceAllSymbolsWithUndefined = 3, // Used in UnitConvert::shallowReduce
+    DoNotReplaceAnySymbol = 4
   };
   enum class UnitConversion {
     None = 0,

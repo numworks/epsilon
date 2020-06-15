@@ -35,12 +35,12 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
 
 void assert_expression_has_property(const char * expression, Context * context, Expression::ExpressionTest test) {
   Expression e = parse_expression(expression, context, false);
-  quiz_assert_print_if_failure(e.recursivelyMatches(test, context, true), expression);
+  quiz_assert_print_if_failure(e.recursivelyMatches(test, context), expression);
 }
 
 void assert_expression_has_not_property(const char * expression, Context * context, Expression::ExpressionTest test) {
   Expression e = parse_expression(expression, context, false);
-  quiz_assert_print_if_failure(!e.recursivelyMatches(test, context, true), expression);
+  quiz_assert_print_if_failure(!e.recursivelyMatches(test, context), expression);
 }
 
 QUIZ_CASE(poincare_properties_is_approximate) {
@@ -360,6 +360,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   const char * coefficient7[] = {"4", 0};
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", coefficient7 );
   const char * coefficient8[] = {"2", "1", 0};
+  assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, DoNotReplaceAnySymbol);
   assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, ReplaceDefinedFunctionsWithDefinitions);
   assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4, Cartesian, Radian, ReplaceDefinedFunctionsWithDefinitions);
 

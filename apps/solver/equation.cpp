@@ -21,7 +21,11 @@ bool Equation::containsIComplex(Context * context) const {
 Expression Equation::Model::standardForm(const Storage::Record * record, Context * context, bool replaceFunctionsButNotSymbols) const {
   Expression * returnedExpression = replaceFunctionsButNotSymbols ? &m_standardFormWithReplacedFunctionsButNotSymbols : &m_standardFormWithReplacedFunctionsAndSymbols;
   if (returnedExpression->isUninitialized()) {
-    const Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, replaceFunctionsButNotSymbols);
+    Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, replaceFunctionsButNotSymbols);
+    if (expressionInputWithoutFunctions.isUninitialized()) {
+      // The expression is circularly-defined
+      expressionInputWithoutFunctions = Undefined::Builder();
+    }
 
     EmptyContext emptyContext;
     Context * contextToUse = replaceFunctionsButNotSymbols ? &emptyContext : context;

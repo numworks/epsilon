@@ -72,7 +72,7 @@ public:
     bool canParse(const char * symbol, size_t length,
         const Prefix * * prefix) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
-    const Prefix * bestPrefixForValue(double & value, const double exponent) const;
+    const Prefix * bestPrefixForValue(double & value, const float exponent) const;
   private:
     const char * m_rootSymbol;
     const char * m_definition;
@@ -304,9 +304,12 @@ public:
             NoPrefix),
         },
     MassRepresentatives[] = {
-        Representative("g",   nullptr,
+        Representative("kg",   nullptr,
+            Representative::Prefixable::No,
+            NoPrefix),
+        Representative("g",   "0.001_kg",
             Representative::Prefixable::Yes,
-            LongScalePrefixes),
+            NegativeLongScalePrefixes),
         Representative("t",   "1000_kg",
             Representative::Prefixable::Yes,
             NoPrefix),
@@ -406,7 +409,7 @@ public:
     InductanceRepresentatives[] = {
         Representative("H",   "_kg*_m^2*_s^-2*_A^-2",
             Representative::Prefixable::Yes,
-            NoPrefix),
+            LongScalePrefixes),
         },
     CatalyticActivityRepresentatives[] = {
         Representative("kat", "_mol*_s^-1",
@@ -478,7 +481,7 @@ public:
           .luminuousIntensity = 0,
         },
         MassRepresentatives,
-        &KiloPrefix
+        &EmptyPrefix
         ),
     Dimension(
         Dimension::Vector<int8_t> {
@@ -795,7 +798,7 @@ private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   bool isSI() const;
   static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
-  void chooseBestMultipleForValue(double * value, const double exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
+  void chooseBestMultipleForValue(double * value, const float exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
   Expression removeUnit(Expression * unit);
 };
 

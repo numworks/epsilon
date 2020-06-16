@@ -8,6 +8,7 @@
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
+#include <limits.h>
 #include <cmath>
 #include <assert.h>
 #include <string.h>
@@ -15,8 +16,6 @@
 #include <algorithm>
 
 namespace Poincare {
-
-static inline int absInt(int x) { return x >= 0 ? x : -x; }
 
 int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
   assert(bufferSize >= 0);
@@ -57,20 +56,20 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
   return length;
 }
 
-const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const int exponent) const {
+const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const double exponent) const {
   if (!isPrefixable()) {
     return &Unit::EmptyPrefix;
   }
   const Prefix * bestPre = nullptr;
-  unsigned int diff = -1;
+  double diff = -1.0;
   /* Find the 'Prefix' with the most adequate 'exponent' for the order of
    * magnitude of 'value'.
    */
-  const int orderOfMagnitude = IEEE754<double>::exponentBase10(std::fabs(value));
+  const double orderOfMagnitude = IEEE754<double>::exponentBase10(std::fabs(value));
   for (size_t i = 0; i < m_outputPrefixesLength; i++) {
     const Prefix * pre = m_outputPrefixes[i];
-    unsigned int newDiff = absInt(orderOfMagnitude - pre->exponent() * exponent);
-    if (newDiff < diff) {
+    double newDiff = std::abs(orderOfMagnitude - pre->exponent() * exponent);
+    if (newDiff < diff || diff < 0.0) {
       diff = newDiff;
       bestPre = pre;
     }
@@ -112,6 +111,8 @@ Unit::Dimension::Vector<int8_t>::Metrics UnitNode::Dimension::Vector<int8_t>::me
 
 template<>
 Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseUnits(const Expression baseUnits) {
+  /* Returns the vector of Base units with integer exponents. If rational, the
+   * closest integer will be used. */
   Vector<Integer> vector;
   int numberOfFactors;
   int factorIndex = 0;
@@ -128,8 +129,20 @@ Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseU
     Integer exponent(1);
     if (factor.type() == ExpressionNode::Type::Power) {
       Expression exp = factor.childAtIndex(1);
-      assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
-      exponent = static_cast<Rational &>(exp).signedIntegerNumerator();
+      assert(exp.type() == ExpressionNode::Type::Rational);
+      // Using the closest integer to the exponent.
+      double exponent_double = static_cast<const Rational &>(exp).node()->templatedApproximate<double>();
+      if (std::fabs(exponent_double) < INT_MAX / 2) {
+        // Exponent can be safely casted as int
+        exponent = (int)std::round(exponent_double);
+        assert(std::fabs(exponent_double - exponent.approximate<double>()) <= 0.5);
+      } else {
+        /* Base units vector will ignore this coefficient, that could have been
+         * casted as int8_t in CanSimplifyUnitProduct, leading to homogeneous,
+         * but badly formatted units. Any way, the missing exponent won't affect
+         * CanSimplifyUnitProduct as homogeneity is conserved. */
+        exponent = 0;
+      }
       factor = factor.childAtIndex(0);
     }
     // Fill the vector with the unit's exponent
@@ -184,7 +197,7 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascendi
   if (dimdiff != 0) {
     return dimdiff;
   }
-  // This works because reprensentatives are ordered in a table
+  // This works because representatives are ordered in a table
   const ptrdiff_t repdiff = eNode->representative() - m_representative;
   if (repdiff != 0) {
     /* We order representatives in the reverse order as how they're stored in
@@ -341,31 +354,25 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
 void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
   // Identify the first Unit factor and its exponent
   Expression firstFactor = *units;
-  int exponent = 1;
+  double exponent = 1.0;
   if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
     firstFactor = firstFactor.childAtIndex(0);
   }
   if (firstFactor.type() == ExpressionNode::Type::Power) {
     Expression exp = firstFactor.childAtIndex(1);
     firstFactor = firstFactor.childAtIndex(0);
-    assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
-    Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
-    if (expInt.isExtractable()) {
-      exponent = expInt.extractedInt();
-    } else {
-      // The exponent is too large to be extracted, so do not try to use it.
-      exponent = 0;
-    }
+    assert(exp.type() == ExpressionNode::Type::Rational);
+    exponent = static_cast<const Rational &>(exp).node()->templatedApproximate<double>();
   }
   assert(firstFactor.type() == ExpressionNode::Type::Unit);
   // Choose its multiple and update value accordingly
-  if (exponent != 0) {
+  if (exponent != 0.0) {
     static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, tuneRepresentative, reductionContext);
   }
 }
 
-void Unit::chooseBestMultipleForValue(double * value, const int exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
-  assert(!std::isnan(*value) && exponent != 0);
+void Unit::chooseBestMultipleForValue(double * value, const double exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
+  assert(!std::isnan(*value) && exponent != 0.0);
   if (*value == 0 || *value == 1.0 || std::isinf(*value)) {
     return;
   }
@@ -442,7 +449,8 @@ bool Unit::IsSI(Expression & e) {
     return true;
   }
   if (e.type() == ExpressionNode::Type::Power) {
-    assert(e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<Rational>().isInteger());
+    // Rational exponents are accepted in IS system
+    assert(e.childAtIndex(1).type() == ExpressionNode::Type::Rational);
     Expression child = e.childAtIndex(0);
     assert(child.type() == ExpressionNode::Type::Unit);
     return IsSI(child);

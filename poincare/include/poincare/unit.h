@@ -72,7 +72,7 @@ public:
     bool canParse(const char * symbol, size_t length,
         const Prefix * * prefix) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
-    const Prefix * bestPrefixForValue(double & value, const int exponent) const;
+    const Prefix * bestPrefixForValue(double & value, const double exponent) const;
   private:
     const char * m_rootSymbol;
     const char * m_definition;
@@ -793,7 +793,7 @@ private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   bool isSI() const;
   static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
-  void chooseBestMultipleForValue(double * value, const int exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
+  void chooseBestMultipleForValue(double * value, const double exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
   Expression removeUnit(Expression * unit);
 };
 

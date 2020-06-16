@@ -48,14 +48,6 @@ void LeftParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight, 
       expressionColor);
 }
 
-bool LeftParenthesisLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
-  if (*numberOfOpenParenthesis == 0 && goingLeft) {
-    return false;
-  }
-  *numberOfOpenParenthesis = goingLeft ? *numberOfOpenParenthesis - 1 : *numberOfOpenParenthesis + 1;
-  return true;
-}
-
 void LeftParenthesisLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   RenderWithChildHeight(ParenthesisLayoutNode::ChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
 }

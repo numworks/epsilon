@@ -76,6 +76,32 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_layout_serialize_to(layout, "\u0012\u001212\u0013/\u001234\u0013\u0013+5");
   quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
+
+  /*
+   *  1                      1   3
+   * --- 3|4 -> "Divide" -> --- ---
+   *  2                      2   4
+   * */
+  Layout l1 = HorizontalLayout::Builder(
+      FractionLayout::Builder(
+        HorizontalLayout::Builder(CodePointLayout::Builder('1')),
+        HorizontalLayout::Builder(CodePointLayout::Builder('2'))),
+      CodePointLayout::Builder('3'),
+      CodePointLayout::Builder('4'));
+  LayoutCursor c1(l1.childAtIndex(2), LayoutCursor::Position::Left);
+  c1.addFractionLayoutAndCollapseSiblings();
+  assert_layout_serialize_to(l1, "\u0012\u00121\u0013/\u00122\u0013\u0013\u0012\u00123\u0013/\u00124\u0013\u0013");
+
+  /*
+   *                                sin(x)cos(x)
+   * sin(x)cos(x)|2 -> "Divide" -> --------------
+   *                                     2
+   * */
+
+  Layout l2 = LayoutHelper::String("sin(x)cos(x)2", 13);
+  LayoutCursor c2(l2.childAtIndex(12), LayoutCursor::Position::Left);
+  c2.addFractionLayoutAndCollapseSiblings();
+  assert_layout_serialize_to(l2, "\u0012\u0012sin(x)cos(x)\u0013/\u00122\u0013\u0013");
 }
 
 QUIZ_CASE(poincare_layout_parentheses_size) {

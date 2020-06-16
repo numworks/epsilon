@@ -418,8 +418,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
     assert(index == childAtIndex(1));
     if (base.hasUnit()) {
-      if (index.type() != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
-        // The exponent must be an Integer
+      if (index.type() != ExpressionNode::Type::Rational) {
+        // The exponent must be an Rational
         return replaceWithUndefinedInPlace();
       }
     }
@@ -995,8 +995,8 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
     p.shallowReduce(reductionContext);
     return d.shallowBeautify(reductionContext);
   }
-  // Step 2: Turn a^(1/n) into root(a, n)
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne()) {
+  // Step 2: Turn a^(1/n) into root(a, n), unless base is a unit
+  if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne() && childAtIndex(0).type() != ExpressionNode::Type::Unit) {
     Integer index = childAtIndex(1).convert<Rational>().integerDenominator();
     // Special case: a^(1/2) --> sqrt(a)
     if (index.isEqualTo(Integer(2))) {

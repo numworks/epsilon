@@ -256,13 +256,21 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-2)", "1×_H");
   assert_parsed_expression_simplify_to("_mol×_s^-1", "1×_kat");
 
+  /* Displayed order of magnitude */
+  assert_parsed_expression_simplify_to("1_t", "1×_t");
+  assert_parsed_expression_simplify_to("100_kg", "100×_kg");
+  assert_parsed_expression_simplify_to("1_min", "1×_min");
+  assert_parsed_expression_simplify_to("0.1_m", "100×_mm");
+  assert_parsed_expression_simplify_to("180_MΩ", "180×_MΩ");
+  assert_parsed_expression_simplify_to("180_MH", "180×_MH");
+
   /* Test simplification of all possible (prefixed) unit symbols.
    * Some symbols are however excluded:
    *  - At present, some units will not appear as simplification output:
    *    t, Hz, S, ha, L. These exceptions are tested below. */
   for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
     for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
-      if (strcmp(rep->rootSymbol(), "t") == 0 || strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "ha") == 0 || strcmp(rep->rootSymbol(), "L") == 0) {
+      if (strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "ha") == 0 || strcmp(rep->rootSymbol(), "L") == 0) {
         continue;
       }
       static constexpr size_t bufferSize = 12;
@@ -280,11 +288,10 @@ QUIZ_CASE(poincare_simplification_units) {
   }
 
   /* Units that do not appear as output yet */
-  assert_parsed_expression_simplify_to("_t", "1×_Mg");
   assert_parsed_expression_simplify_to("_Hz", "1×_s^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_S", "1×_Ω^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_L", "0.001×_m^3");
-  assert_parsed_expression_simplify_to("_ha", "0.01×_km^2");
+  assert_parsed_expression_simplify_to("_ha", "10000×_m^2");
 
   /* Unit sum/subtract */
   assert_parsed_expression_simplify_to("_m+_m", "2×_m");

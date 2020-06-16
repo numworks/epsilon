@@ -215,6 +215,33 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_mol^-1", "1×_mol^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_cd^-1", "1×_cd^\u0012-1\u0013");
 
+  /* Power of SI units */
+  assert_parsed_expression_simplify_to("_s^3", "1×_s^3");
+  assert_parsed_expression_simplify_to("_m^2", "1×_m^2");
+  assert_parsed_expression_simplify_to("_m^3", "1×_m^3");
+  assert_parsed_expression_simplify_to("_m^(1/2)", "1×_m^\u00121/2\u0013");
+
+  /* Possible improvements */
+  /* Ignored derived metrics :
+   * -> Possible solution : Favor unities from user input. We do not want to
+   *    favor positive exponents to avoid a Velocity being displayed as _m*_Hz
+   * assert_parsed_expression_simplify_to("_Hz", "_Hz");
+   * assert_parsed_expression_simplify_to("_S", "_S");
+   */
+  /* Non unitary exponents on Derived metrics :
+   * -> See CanSimplifyUnitProduct in multiplication.cpp
+   * assert_parsed_expression_simplify_to("_C^3", "1×_C^3");
+   * assert_parsed_expression_simplify_to("_N^(1/2)", "1×_N^\u00121/2\u0013");
+   */
+  /* Taking exponents complexity into account :
+   * -> See note on metrics in CanSimplifyUnitProduct in multiplication.cpp
+   * assert_parsed_expression_simplify_to("_C×_s", "1×_C×_s");
+   * assert_parsed_expression_simplify_to("_C^10", "1×_C^10");
+   * assert_parsed_expression_simplify_to("_ha", "1×_ha");
+   * FIXME : int8_t norm metric overflow, only visible with a non constant norm
+   * assert_parsed_expression_simplify_to("_C^130", "1×_C^130"); */
+  assert_parsed_expression_simplify_to("_m_s^-2", "1×_m×_s^\u0012-2\u0013");
+
   /* SI derived units with special names and symbols */
   assert_parsed_expression_simplify_to("_kg×_m×_s^(-2)", "1×_N");
   assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-2)", "1×_Pa");
@@ -224,10 +251,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-1)", "1×_V");
   assert_parsed_expression_simplify_to("_m^(-2)×_kg^(-1)×_s^4×_A^2", "1×_F");
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-2)", "1×_Ω");
-  // FIXME _S should not be simplified to _Ω^(-1)
-  // A possible solution: a unit with exponent +1 is simpler than a unit with exponent -1.
-  // The same should probably go for Hz.
-  // assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-2)×_s^3×_A^2", "1×_S");
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-1)", "1×_Wb");
   assert_parsed_expression_simplify_to("_kg×_s^(-2)×_A^(-1)", "1×_T");
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-2)", "1×_H");

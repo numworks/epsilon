@@ -391,6 +391,10 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
        * - Repeat those steps until no more simplification is possible.
        */
       Multiplication unitsAccu = Multiplication::Builder();
+      /* If exponents are not integers, FromBaseUnits will return the closest
+       * representation of units with base units and integer exponents.
+       * It cause no problem because once the best derived units are found,
+       * units is divided then multiplied by them. */
       Unit::Dimension::Vector<Integer> unitsExponents = Unit::Dimension::Vector<Integer>::FromBaseUnits(units);
       Unit::Dimension::Vector<Integer>::Metrics unitsMetrics = unitsExponents.metrics();
       Unit::Dimension::Vector<Integer> bestRemainderExponents;

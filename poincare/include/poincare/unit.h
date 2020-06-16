@@ -85,6 +85,8 @@ public:
   public:
     template<typename T>
     struct Vector {
+      /* SupportSize is defined as the number of distinct base units.
+       * Norm is defined as the sum of all unit exponents absolute values. */
       struct Metrics {
         size_t supportSize;
         T norm;

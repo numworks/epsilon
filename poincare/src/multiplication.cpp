@@ -331,21 +331,81 @@ static bool CanSimplifyUnitProduct(
    * 'bestRemainder' are updated accordingly. */
   Unit::Dimension::Vector<Integer> simplifiedExponents;
   Integer (*operationOnExponents)(const Integer &, const Integer &) = entryUnitExponent == -1 ? Integer::Addition : Integer::Subtraction;
+
+  #if 0
+  /* In the current algorithm, simplification is attempted using derived units
+   * with no exponents. Some good simplifications might be missed:
+   *    For instance with _A^2*_s^2, a first attempt will be to simplify to
+   *    _C_A_s which has a bigger supportSize and will not be kept, the output
+   *    will stay _A^2*_s^2.
+   * With the commented code, this issue is solved by trying to simplify with
+   * the highest exponent possible, so that, in this example, _A^2*_s^2 can be
+   * simplified to _C^2.
+   * An optimization might be possible using algorithms minimizing the sum of
+   * absolute difference of array elements */
+  int n = 0;
+  Integer best_norm;
+  Integer norm_temp = unitsMetrics.norm;
+  /* To extend this algorithm to square root simplifications, rational exponents
+   * can be handled, and a 1/2 step can be used (but it should be asserted that
+   * no square root simplification is performed if all exponents are integers.*/
+  int step = 1;
   for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+    // Setting simplifiedExponents to unitsExponents
+    simplifiedExponents.setCoefficientAtIndex(i, unitsExponents.coefficientAtIndex(i));
+  }
+  do {
+    best_norm = norm_temp;
+    n+= step;
+    for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+      // Simplify unitsExponents with base units from derived unit
+      simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(simplifiedExponents.coefficientAtIndex(i), step * entryUnitExponents->coefficientAtIndex(i)));
+    }
+    Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = simplifiedExponents.metrics();
+    norm_temp = Integer::Addition(n, simplifiedMetrics.norm);
+
+  } while (norm_temp.isLowerThan(best_norm));
+  // Undo last step as it did not reduce the norm
+  n -= step;
+
+  Integer derivedMetricNorm = n * step * entryUnitNorm;
+  #else
+  Integer derivedMetricNorm = entryUnitNorm;
+  #endif
+
+  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+    // Simplify unitsExponents with base units from derived unit
+    #if 0
+    simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(simplifiedExponents.coefficientAtIndex(i), -step * entryUnitExponents->coefficientAtIndex(i)));
+    #else
     simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents->coefficientAtIndex(i)));
+    #endif
   }
   Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = simplifiedExponents.metrics();
+  // Compute metrics to evaluate the simplification
+
+  bool isSimpler = (1 + simplifiedMetrics.supportSize < unitsMetrics.supportSize);
+
+  /* Note: A metric is considered simpler if the support size (number of
+   * symbols) is reduced. A norm taking coefficients into account is possible.
+   * One could use the sum of all coefficients to favor _C_s from _A_s^2.
+   * However, replacing _m_s^-2 with _N_kg^-1 should be avoided. */
+  // TODO : Remove Metrics vectors entirely
   Unit::Dimension::Vector<Integer>::Metrics candidateMetrics = {
     .supportSize = 1 + simplifiedMetrics.supportSize,
-    .norm = Integer::Addition(entryUnitNorm, simplifiedMetrics.norm)
+    .norm = Integer::Addition(derivedMetricNorm, simplifiedMetrics.norm)
   };
-  bool isSimpler = candidateMetrics.supportSize < unitsMetrics.supportSize ||
-    (candidateMetrics.supportSize == unitsMetrics.supportSize &&
-     candidateMetrics.norm.isLowerThan(unitsMetrics.norm));
+
   if (isSimpler) {
+    #if 0
+    bestUnitExponent = entryUnitExponent * n * step;
+    #else
     bestUnitExponent = entryUnitExponent;
+    #endif
     bestRemainderExponents = simplifiedExponents;
     bestRemainderMetrics = simplifiedMetrics;
+    /* unitsMetrics (support size and norm) is updated and will be taken into
+     * account in next iterations of CanSimplifyUnitProduct. */
     unitsMetrics = candidateMetrics;
   }
   return isSimpler;
@@ -402,9 +462,11 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
       while (unitsMetrics.supportSize > 1) {
         const Unit::Dimension * bestDim = nullptr;
         int8_t bestUnitExponent = 0;
+        // Look up in the table of derived units.
         for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
           const Unit::Dimension::Vector<int8_t> * entryUnitExponents = dim->vector();
           int8_t entryUnitNorm = entryUnitExponents->metrics().norm;
+          // A simplification is tried by either multiplying or dividing
           if (CanSimplifyUnitProduct(
                 unitsExponents, unitsMetrics,
                 entryUnitExponents, entryUnitNorm, 1,
@@ -417,30 +479,48 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
                 bestUnitExponent, bestRemainderExponents, bestRemainderMetrics
                 ))
           {
+          /* If successful, unitsMetrics, bestUnitExponent,
+           * bestRemainderExponents and bestRemainderMetrics have been updated*/
             bestDim = dim;
           }
         }
         if (bestDim == nullptr) {
+          // No simplification could be performed
           break;
         }
+        // Build and add the best derived unit
         Expression derivedUnit = Unit::Builder(bestDim, bestDim->stdRepresentative(), bestDim->stdRepresentativePrefix());
+
+        #if 0
+        if (bestUnitExponent != 1) {
+          derivedUnit = Power::Builder(derivedUnit, Rational::Builder(bestUnitExponent));
+        }
+        #else
         assert(bestUnitExponent == 1 || bestUnitExponent == -1);
         if (bestUnitExponent == -1) {
           derivedUnit = Power::Builder(derivedUnit, Rational::Builder(-1));
         }
+        #endif
+
         const int position = unitsAccu.numberOfChildren();
         unitsAccu.addChildAtIndexInPlace(derivedUnit, position, position);
+        // Update remainder units and their exponents for next simplifications
         unitsExponents = bestRemainderExponents;
         unitsMetrics = bestRemainderMetrics;
       }
+      // Apply simplifications
       if (unitsAccu.numberOfChildren() > 0) {
+        // Divide by derived units
         units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
         Expression newUnits;
+        // Separate units and generated values
         units = units.removeUnit(&newUnits);
+        // Assemble final value
         Multiplication m = Multiplication::Builder(units);
         self.replaceWithInPlace(m);
         m.addChildAtIndexInPlace(self, 0, 1);
         self = m;
+        // Update units with derived and base units
         if (newUnits.isUninitialized()) {
           units = unitsAccu;
         } else {

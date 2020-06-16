@@ -70,7 +70,7 @@ jobs:
     steps:
       - uses: numworks/setup-emscripten@v2
         with:
-          sdk: latest-fastcomp
+          sdk: 1.39.16-fastcomp
       - uses: actions/checkout@v2
       - run: make -j2 PLATFORM=simulator TARGET=web
       - run: make -j2 PLATFORM=simulator TARGET=web epsilon.official.zip

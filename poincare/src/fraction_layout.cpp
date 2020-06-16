@@ -161,6 +161,24 @@ LayoutNode * FractionLayoutNode::layoutToPointWhenInserting(Expression * corresp
   return this;
 }
 
+bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+  if (*numberOfOpenParenthesis > 0) {
+    return true;
+  }
+
+  /* We do not want to absorb a fraction if something else is already being
+   * absorbed. This way, the user can write a product of fractions without
+   * typing the × sign. */
+  Layout p = Layout(parent());
+  assert(!p.isUninitialized() && p.type() == LayoutNode::Type::HorizontalLayout);
+  int indexInParent = p.indexOfChild(Layout(this));
+  int indexOfAbsorbingSibling = indexInParent + (goingLeft ? 1 : -1);
+  assert(indexOfAbsorbingSibling >= 0 && indexOfAbsorbingSibling < p.numberOfChildren());
+  Layout absorbingSibling = p.childAtIndex(indexOfAbsorbingSibling);
+  Layout absorbingChild = absorbingSibling.childAtIndex((goingLeft) ? absorbingSibling.leftCollapsingAbsorbingChildIndex() : absorbingSibling.rightCollapsingAbsorbingChildIndex());
+  return absorbingChild.type() == LayoutNode::Type::HorizontalLayout && absorbingChild.isEmpty();
+}
+
 void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
   if (cursor != nullptr) {
     cursor->setLayoutNode(denominatorLayout());

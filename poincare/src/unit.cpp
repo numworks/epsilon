@@ -56,21 +56,39 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
   return length;
 }
 
-const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const double exponent) const {
+static bool compareMagnitudeOrders(float order, float otherOrder) {
+  /* Precision can be lost (with a year conversion for instance), so the order
+   * value is rounded */
+  if (std::abs(order) < Expression::Epsilon<float>()) {
+    order = 0.0;
+  }
+  if (std::abs(otherOrder) < Expression::Epsilon<float>()) {
+    otherOrder = 0.0;
+  }
+  if (std::abs(std::abs(order) - std::abs(otherOrder)) < 3.0 && order * otherOrder < 0.0) {
+    /* If the two values are close, and their sign are opposed, the positive
+     * order is preferred */
+    return (order >= 0.0);
+  }
+  // Otherwise, the closest order to 0 is preferred
+  return (std::abs(order) < std::abs(otherOrder));
+}
+
+const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const float exponent) const {
   if (!isPrefixable()) {
     return &Unit::EmptyPrefix;
   }
+  float bestOrder;
   const Prefix * bestPre = nullptr;
-  double diff = -1.0;
   /* Find the 'Prefix' with the most adequate 'exponent' for the order of
    * magnitude of 'value'.
    */
-  const double orderOfMagnitude = IEEE754<double>::exponentBase10(std::fabs(value));
+  const float orderOfMagnitude = std::log10(std::fabs(value));
   for (size_t i = 0; i < m_outputPrefixesLength; i++) {
     const Prefix * pre = m_outputPrefixes[i];
-    double newDiff = std::abs(orderOfMagnitude - pre->exponent() * exponent);
-    if (newDiff < diff || diff < 0.0) {
-      diff = newDiff;
+    float order = orderOfMagnitude - pre->exponent() * exponent;
+    if (bestPre == nullptr || compareMagnitudeOrders(order, bestOrder)) {
+      bestOrder = order;
       bestPre = pre;
     }
   }
@@ -131,11 +149,11 @@ Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseU
       Expression exp = factor.childAtIndex(1);
       assert(exp.type() == ExpressionNode::Type::Rational);
       // Using the closest integer to the exponent.
-      double exponent_double = static_cast<const Rational &>(exp).node()->templatedApproximate<double>();
-      if (std::fabs(exponent_double) < INT_MAX / 2) {
+      float exponent_float = static_cast<const Rational &>(exp).node()->templatedApproximate<float>();
+      if (std::abs(exponent_float) < INT_MAX / 2) {
         // Exponent can be safely casted as int
-        exponent = (int)std::round(exponent_double);
-        assert(std::fabs(exponent_double - exponent.approximate<double>()) <= 0.5);
+        exponent = (int)std::round(exponent_float);
+        assert(std::abs(exponent_float - exponent.approximate<float>()) <= 0.5);
       } else {
         /* Base units vector will ignore this coefficient, that could have been
          * casted as int8_t in CanSimplifyUnitProduct, leading to homogeneous,
@@ -354,7 +372,7 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
 void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
   // Identify the first Unit factor and its exponent
   Expression firstFactor = *units;
-  double exponent = 1.0;
+  float exponent = 1.0;
   if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
     firstFactor = firstFactor.childAtIndex(0);
   }
@@ -362,7 +380,7 @@ void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool t
     Expression exp = firstFactor.childAtIndex(1);
     firstFactor = firstFactor.childAtIndex(0);
     assert(exp.type() == ExpressionNode::Type::Rational);
-    exponent = static_cast<const Rational &>(exp).node()->templatedApproximate<double>();
+    exponent = static_cast<const Rational &>(exp).node()->templatedApproximate<float>();
   }
   assert(firstFactor.type() == ExpressionNode::Type::Unit);
   // Choose its multiple and update value accordingly
@@ -371,7 +389,7 @@ void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool t
   }
 }
 
-void Unit::chooseBestMultipleForValue(double * value, const double exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
+void Unit::chooseBestMultipleForValue(double * value, const float exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
   assert(!std::isnan(*value) && exponent != 0.0);
   if (*value == 0 || *value == 1.0 || std::isinf(*value)) {
     return;
@@ -393,7 +411,7 @@ void Unit::chooseBestMultipleForValue(double * value, const double exponent, boo
     double val = *value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
     // Get the best prefix and update val accordingly
     const Prefix * pre = rep->bestPrefixForValue(val, exponent);
-    if (std::fabs(std::log10(std::fabs(bestVal))) - std::fabs(std::log10(std::fabs(val))) > Epsilon<double>()) {
+    if (compareMagnitudeOrders(std::log10(std::fabs(val)), std::log10(std::fabs(bestVal)))) {
       /* At this point, val is closer to one than bestVal is.*/
       bestRep = rep;
       bestPre = pre;
@@ -425,7 +443,7 @@ bool Unit::isMeter() const {
 
 bool Unit::isKilogram() const {
   // See comment on isSecond
-  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &KiloPrefix;
+  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &EmptyPrefix;
 }
 
 bool Unit::isSI() const {

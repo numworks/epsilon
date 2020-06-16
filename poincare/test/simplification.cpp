@@ -319,7 +319,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
 
   /* Units with invalid exponent */
-  assert_parsed_expression_simplify_to("_s^(1/2)", "undef");
+  assert_parsed_expression_simplify_to("_s^(_s)", "undef");
+  assert_parsed_expression_simplify_to("_s^(π)", "undef");
 
   /* Inhomogeneous expressions */
   assert_parsed_expression_simplify_to("1+_s", "undef");
@@ -416,7 +417,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("tanh(_s)", "undef");
   assert_parsed_expression_simplify_to("trace(_s)", "undef");
   assert_parsed_expression_simplify_to("transpose(_s)", "undef");
-  assert_parsed_expression_simplify_to("√(_s)", "undef");
 
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");

@@ -16,9 +16,6 @@ public:
 
   static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
-  // LayoutNode
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
-
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::CodePoint(buffer, bufferSize, ')');

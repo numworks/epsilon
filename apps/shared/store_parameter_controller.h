@@ -15,8 +15,10 @@ public:
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
   void selectSeries(int series) { m_series = series; }
   View * view() override { return &m_selectableTableView; }
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   KDCoordinate rowHeight(int j) override { return Metric::ParameterCellHeight; }
@@ -34,15 +36,9 @@ protected:
   int m_series;
   SelectableTableView m_selectableTableView;
 private:
-#if COPY_IMPORT_LIST
-  constexpr static int k_totalNumberOfCell = 4;
-  MessageTableCellWithChevron m_copyColumn;
-  MessageTableCellWithChevron m_importList;
-#else
-  constexpr static int k_totalNumberOfCell = 2;
-#endif
-  MessageTableCell m_deleteColumn;
-  MessageTableCell m_fillWithFormula;
+  virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
+  constexpr static int k_totalNumberOfCell = 3;
+  MessageTableCell m_cells[k_totalNumberOfCell];
   StoreController * m_storeController;
   bool m_xColumnSelected;
 };

@@ -23,6 +23,7 @@ public:
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
+  I18n::Message sortMessage() override { return I18n::Message::SortValues; }
   static constexpr int k_regressionCellType = 1;
   MessageTableCellWithChevronAndExpression m_changeRegressionCell;
   bool m_lastSelectionIsRegression;

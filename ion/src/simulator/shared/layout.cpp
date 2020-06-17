@@ -11,7 +11,7 @@ static constexpr float X(int x) { return static_cast<float>(x)/static_cast<float
 static constexpr float Y(int y) { return static_cast<float>(y)/static_cast<float>(backgroundHeight); }
 
 static constexpr SDL_FRect areaOfInterest = {X(110), Y(30), X(940), Y(2150)};
-static constexpr SDL_FRect screenRect = {X(192), Y(191), X(779), Y(582)};
+static constexpr SDL_FRect screenRect = {X(192), Y(191), X(776), Y(582)};
 
 static SDL_Rect sFrame;
 

@@ -43,6 +43,16 @@ void SequenceTitleCell::setColor(KDColor color) {
   m_titleTextView.setTextColor(color);
 }
 
+void SequenceTitleCell::reloadCell() {
+  /* When creating a new sequence, the layout has not yet been initialized, but
+   * it is needed in layoutSubview to compute the vertical alignment. */
+  if (TreeNode::IsValidIdentifier(layout().identifier())) {
+    layoutSubviews();
+  }
+  m_titleTextView.reloadCell();
+  FunctionTitleCell::reloadCell();
+}
+
 int SequenceTitleCell::numberOfSubviews() const {
   return 1;
 }
@@ -53,6 +63,7 @@ View * SequenceTitleCell::subviewAtIndex(int index) {
 }
 
 void SequenceTitleCell::layoutSubviews(bool force) {
+  assert(TreeNode::IsValidIdentifier(layout().identifier()));
   if (m_orientation == Orientation::VerticalIndicator) {
     m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, verticalAlignment());
   }

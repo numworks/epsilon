@@ -98,5 +98,15 @@ bool Rotate(uint32_t * dst, uint32_t * src, size_t len) {
   return true;
 }
 
+void Sort(Swap swap, Compare compare, void * context, int numberOfElements) {
+  for (int i = 0; i < numberOfElements-1; i++) {
+    for (int j = 0; j < numberOfElements - i - 1; j++) {
+      if (compare(j, j+1, context, numberOfElements)) {
+        swap(j, j+1, context, numberOfElements);
+      }
+    }
+  }
+}
+
 }
 }

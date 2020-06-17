@@ -20,6 +20,7 @@ public:
   Poincare::Layout layout() const override {
     return m_titleTextView.layout();
   }
+  void reloadCell() override;
 private:
   static constexpr float k_horizontalOrientationAlignment = 0.5f;
   static constexpr float k_verticalOrientationHorizontalAlignment = 0.9f;

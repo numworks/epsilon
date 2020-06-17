@@ -35,6 +35,7 @@ public:
     return &m_textField;
   }
   void layoutSubviews(bool force = false) override;
+  void reloadCell() override;
 
   // Responder
   void didBecomeFirstResponder() override;

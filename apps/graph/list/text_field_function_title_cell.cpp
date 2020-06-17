@@ -62,6 +62,11 @@ void TextFieldFunctionTitleCell::layoutSubviews(bool force) {
   m_textField.setAlignment(horizontalAlignment, verticalAlignment());
 }
 
+void TextFieldFunctionTitleCell::reloadCell() {
+  layoutSubviews();
+  FunctionTitleCell::reloadCell();
+}
+
 void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
   if (isEditing()) {
     Container::activeApp()->setFirstResponder(&m_textField);

@@ -26,6 +26,7 @@ app_shared_src = $(addprefix apps/shared/,\
   buffer_function_title_cell.cpp \
   buffer_text_view_with_text_field.cpp \
   button_with_separator.cpp \
+  country_controller.cpp \
   cursor_view.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \

@@ -109,7 +109,14 @@ public:
   void addEmptyExponentialLayout();
   void addEmptyMatrixLayout();
   void addEmptyPowerLayout();
+  void addRoot();
+  void addLog();
+  void addEmptyLog();
+  void addEmpty10Log();
+  void addEmptyArgLog();
   void addEmptySquareRootLayout();
+  void addEmptyRootLayout();
+  void addEmptyArgSquareRootLayout();
   void addEmptySquarePowerLayout();
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();

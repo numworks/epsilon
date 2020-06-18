@@ -52,6 +52,11 @@ public:
     Star = 2,
     Auto = 3
   };
+  enum class SymbolFunction : uint8_t {
+    Default = 0,
+    ArgDefault = 1,
+    Arg = 2   
+  };
   enum class PythonFont : uint8_t {
     Large = 0,
     Small = 1
@@ -72,6 +77,8 @@ public:
   void setColorOfLED(LEDColor color) { m_colorOfLED = color; }
   SymbolMultiplication symbolofMultiplication() const { return m_symbolMultiplication; }
   void setSymbolMultiplication(SymbolMultiplication symbolofMultiplication) { m_symbolMultiplication = symbolofMultiplication; }
+  SymbolFunction symbolofFunction() const { return m_symbolFunction; }
+  void setSymbolofFunction(SymbolFunction symbolofFunction) { m_symbolFunction = symbolofFunction; }
   PythonFont pythonFont() const { return m_pythonFont; }
   void setPythonFont(PythonFont pythonFont) { m_pythonFont = pythonFont; }
   const KDFont * KDPythonFont() const { return (m_pythonFont == PythonFont::Small) ? KDFont::SmallFont : KDFont::LargeFont; }
@@ -83,6 +90,7 @@ private:
   uint8_t m_numberOfSignificantDigits;
   LEDColor m_colorOfLED;
   SymbolMultiplication m_symbolMultiplication;
+  SymbolFunction m_symbolFunction;
   PythonFont m_pythonFont;
 };
 

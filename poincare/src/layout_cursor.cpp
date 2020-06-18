@@ -3,6 +3,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/layout_helper.h>
 #include <poincare/layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/matrix_layout.h>
@@ -108,6 +109,90 @@ void LayoutCursor::addEmptyMatrixLayout() {
   m_position = Position::Right;
 }
 
+void LayoutCursor::addLog() {
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch((int)preferences->symbolofFunction()){
+    case 1:
+      addEmpty10Log();
+      break;
+    case 2:
+      addEmptyArgLog();
+      break;
+    default:
+      addEmptyLog();
+      break;
+  }
+}
+
+void LayoutCursor::addEmptyLog() {
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  Layout logLayout = LayoutHelper::String("log", 3);
+  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
+  //VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child2, VerticalOffsetLayoutNode::Position::Subscript);
+  //resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addChildAtIndex(HorizontalLayout::Builder(
+    LeftParenthesisLayout::Builder(),
+    child1,
+    RightParenthesisLayout::Builder()
+    
+  ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+
+  m_layout.addSibling(this, resultLayout, true);
+  LayoutCursor::moveLeft(nullptr, false);
+}
+
+void LayoutCursor::addEmpty10Log() {
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(CodePointLayout::Builder('1'),CodePointLayout::Builder('0'));
+  Layout logLayout = LayoutHelper::String("log", 3);
+  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child2, VerticalOffsetLayoutNode::Position::Subscript);
+  resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addChildAtIndex(HorizontalLayout::Builder(
+    LeftParenthesisLayout::Builder(),
+    child1,
+    RightParenthesisLayout::Builder()
+    
+  ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  
+  m_layout.addSibling(this, resultLayout, true);
+  LayoutCursor::moveLeft(nullptr, false);
+}
+
+void LayoutCursor::addEmptyArgLog() {
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  Layout logLayout = LayoutHelper::String("log", 3);
+  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child2, VerticalOffsetLayoutNode::Position::Subscript);
+  resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addChildAtIndex(HorizontalLayout::Builder(
+    LeftParenthesisLayout::Builder(),
+    child1,
+    RightParenthesisLayout::Builder()
+    
+  ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  
+  m_layout.addSibling(this, resultLayout, true);
+  LayoutCursor::moveLeft(nullptr, false);
+}
+
+void LayoutCursor::addRoot() {
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch((int)preferences->symbolofFunction()){
+    case 1:
+      addEmptyArgSquareRootLayout();
+      break;
+    case 2:
+      addEmptyRootLayout();
+      break;
+    default:
+      addEmptySquareRootLayout();
+      break;
+  }
+}
+
 void LayoutCursor::addEmptySquareRootLayout() {
   // TODO: add a horizontal layout only if several children
   HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
@@ -115,6 +200,28 @@ void LayoutCursor::addEmptySquareRootLayout() {
   m_layout.addSibling(this, newChild, false);
   m_layout = newChild.childAtIndex(0);
   m_position = Position::Left;
+  ((Layout *)&newChild)->collapseSiblings(this);
+}
+
+void LayoutCursor::addEmptyRootLayout() {
+  // TODO: add a horizontal layout only if several children
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  NthRootLayout newChild = NthRootLayout::Builder(child1, child2);
+  m_layout.addSibling(this, newChild, false);
+  m_layout = newChild.childAtIndex(0);
+  m_position = Position::Right;
+  ((Layout *)&newChild)->collapseSiblings(this);
+}
+
+void LayoutCursor::addEmptyArgSquareRootLayout() {
+  // TODO: add a horizontal layout only if several children
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(CodePointLayout::Builder('2'));
+  NthRootLayout newChild = NthRootLayout::Builder(child1, child2);
+  m_layout.addSibling(this, newChild, false);
+  m_layout = newChild.childAtIndex(0);
+  m_position = Position::Right;
   ((Layout *)&newChild)->collapseSiblings(this);
 }
 

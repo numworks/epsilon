@@ -364,7 +364,9 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else if (strcmp(text, Ion::Events::Power.text()) == 0) {
     cursor->addEmptyPowerLayout();
   } else if (strcmp(text, Ion::Events::Sqrt.text()) == 0) {
-    cursor->addEmptySquareRootLayout();
+    m_contentView.cursor()->addRoot();
+  } else if (strcmp(text, Ion::Events::Log.text()) == 0) {
+    m_contentView.cursor()->addLog();
   } else if (strcmp(text, Ion::Events::Square.text()) == 0) {
     cursor->addEmptySquarePowerLayout();
   } else if (strcmp(text, Ion::Events::EE.text()) == 0) {

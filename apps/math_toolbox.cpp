@@ -232,6 +232,8 @@ const ToolboxMessageTree unitVolumeLiterChildren[] = {
 const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeLiterChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, unitCurrentAmpereChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
@@ -249,8 +251,6 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitConductanceMenu, unitConductanceSiemensChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMagneticFieldMenu, unitMagneticFieldChildren),
   ToolboxMessageTree::Node(I18n::Message::InductanceMenu, unitInductanceChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeLiterChildren),
 };
 
 const ToolboxMessageTree randomAndApproximationChildren[] = {

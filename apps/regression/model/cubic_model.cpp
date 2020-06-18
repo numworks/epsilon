@@ -55,24 +55,21 @@ double CubicModel::evaluate(double * modelCoefficients, double x) const {
 }
 
 double CubicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  if (derivateCoefficientIndex == 0) {
-    // Derivate: x^3
-    return x*x*x;
-  }
-  if (derivateCoefficientIndex == 1) {
-    // Derivate: x^2
-    return x*x;
-  }
-  if (derivateCoefficientIndex == 2) {
-    // Derivate: x
-    return x;
-  }
-  if (derivateCoefficientIndex == 3) {
-    // Derivate: 1
-    return 1;
-  }
-  assert(false);
-  return 0.0;
+  switch (derivateCoefficientIndex) {
+    case 0:
+      // Derivate with respect to a: x^3
+      return x*x*x;
+    case 1:
+      // Derivate with respect to b: x^2
+      return x*x;
+    case 2:
+      // Derivate with respect to c: x
+      return x;
+    default:
+      // Derivate with respect to d: 1
+      assert(derivateCoefficientIndex == 3);
+      return 1.0;
+  };
 }
 
 Expression CubicModel::expression(double * modelCoefficients) {

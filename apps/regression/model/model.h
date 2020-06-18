@@ -14,17 +14,18 @@ class Store;
 class Model {
 public:
   enum class Type : uint8_t {
-    Linear      = 0,
-    Quadratic   = 1,
-    Cubic       = 2,
-    Quartic     = 3,
-    Logarithmic = 4,
-    Exponential = 5,
-    Power       = 6,
-    Trigonometric = 7,
-    Logistic    = 8
+    Linear        = 0,
+    Proportional  = 1,
+    Quadratic     = 2,
+    Cubic         = 3,
+    Quartic       = 4,
+    Logarithmic   = 5,
+    Exponential   = 6,
+    Power         = 7,
+    Trigonometric = 8,
+    Logistic      = 9
   };
-  static constexpr int k_numberOfModels = 9;
+  static constexpr int k_numberOfModels = 10;
   static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
   virtual ~Model() = default;
   virtual Poincare::Layout layout() = 0;

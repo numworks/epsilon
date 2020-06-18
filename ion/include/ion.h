@@ -17,6 +17,7 @@
 #include <ion/unicode/utf8_helper.h>
 #include <stdint.h>
 #include <string.h>
+#include <setjmp.h>
 
 /* ION is not your regular library. It is a library you link against, but it
  * will take care of configuring the whole environment for you. In POSIX terms,
@@ -51,6 +52,9 @@ void decompress(const uint8_t * src, uint8_t * dst, int srcSize, int dstSize);
 
 // Tells whether the stack pointer is within acceptable bounds
 bool stackSafe();
+
+// Collect registers in a buffer and returns the stack pointer
+uintptr_t collectRegisters(jmp_buf regs);
 
 }
 

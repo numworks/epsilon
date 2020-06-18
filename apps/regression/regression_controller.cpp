@@ -82,7 +82,7 @@ HighlightCell * RegressionController::reusableCell(int index, int type) {
 void RegressionController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   assert(i == 0);
   assert(j >= 0 && j < k_numberOfRows);
-  I18n::Message messages[k_numberOfRows] = {I18n::Message::Linear, I18n::Message::Quadratic, I18n::Message::Cubic, I18n::Message::Quartic, I18n::Message::Logarithmic, I18n::Message::Exponential, I18n::Message::Power, I18n::Message::Trigonometrical, I18n::Message::Logistic};
+  I18n::Message messages[k_numberOfRows] = {I18n::Message::Linear, I18n::Message::Proportional, I18n::Message::Quadratic, I18n::Message::Cubic, I18n::Message::Quartic, I18n::Message::Logarithmic, I18n::Message::Exponential, I18n::Message::Power, I18n::Message::Trigonometrical, I18n::Message::Logistic};
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
   castedCell->setMessage(messages[j]);
   castedCell->setLayout(m_store->regressionModel((Model::Type) j)->layout());

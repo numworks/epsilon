@@ -66,11 +66,40 @@ bool RoundCursorView::eraseCursorIfPossible() {
     return false;
   }
   // Erase the cursor
-  KDColor cursorWorkingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiameter];
+  KDColor cursorWorkingBuffer[k_cursorSize * k_cursorSize];
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->setOrigin(currentFrame.origin());
   ctx->setClippingRect(currentFrame);
-  ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, cursorWorkingBuffer);
+  KDSize cursorSize = KDSize(k_cursorSize, k_cursorSize);
+
+  /* We assert that the visible frame is not cropped (indeed a cursor is always
+   * fully inside the window, thanks to panToMakeCursorVisible). Otherwise, we
+   * would need to change this algorithm.
+   *
+   *       +---+
+   *       |   |<- frame                    m_underneathPixelBuffer: +---+
+   *  +----+---+--------+                                            |000|
+   *  |    |xxx|        |<- parentVisibleFrame                       |xxx|
+   *  |    +---+        |                                            +---+
+   *  |                 |
+   *  +-----------------+
+   *
+   * +---+
+   * |xxx|: absoluteVisibleFrame
+   * +---+
+   *
+   * What we would draw with the current algorithm:
+   *       +---+
+   *       |   |<- frame
+   *  +----+---+--------+
+   *  |    |000|        |<- parentVisibleFrame
+   *  |    +---+        |
+   *  |                 |
+   *  +-----------------+
+   *
+   * */
+  assert(currentFrame.size() == cursorSize);
+  ctx->fillRectWithPixels(KDRect(0, 0, cursorSize), m_underneathPixelBuffer, cursorWorkingBuffer);
   // TODO Restore the context to previous values?
   return true;
 }

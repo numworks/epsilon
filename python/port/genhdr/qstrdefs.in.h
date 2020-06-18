@@ -487,6 +487,7 @@ Q(st)
 Q(hideturtle)
 Q(ht)
 Q(isvisible)
+Q(colormode)
 
 // utime QSTRs
 Q(time)

@@ -85,6 +85,7 @@ int IntervalParameterController::reusableParameterCellCount(int type) {
 }
 
 void IntervalParameterController::buttonAction() {
+  m_interval->forceRecompute();
   StackViewController * stack = stackController();
   stack->pop();
   if (stack->depth() > 1) {

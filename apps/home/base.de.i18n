@@ -1,4 +1,4 @@
 Apps = "Anwendungen"
 AppsCapital = "STAY HOME(GA)"
 ForbidenAppInExamMode1 = "Diese Anwendung ist im"
-ForbidenAppInExamMode2 = "Prüfungsmodus verboten"
+ForbidenAppInExamMode2 = "Prüfungsmodus nicht erlaubt."

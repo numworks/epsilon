@@ -1,3 +1,4 @@
+ProportionalRegressionFormula  = " y=a·x "
 QuadraticRegressionFormula  = " y=a·x^2+b·x+c "
 CubicRegressionFormula  = " y=a·x^3+b·x^2+c·x+d "
 QuarticRegressionFormula  = " y=a·x^4+b·x^3+c·x^2+d·x+e "

@@ -11,9 +11,6 @@ namespace Calculation {
 
 /* HistoryViewCellDataSource */
 
-HistoryViewCellDataSource::HistoryViewCellDataSource() :
-  m_selectedSubviewType(SubviewType::Output) {}
-
 void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedCellX, int previousSelectedCellY) {
   HistoryViewCell * selectedCell = nullptr;
   HistoryViewCell * previouslySelectedCell = nullptr;
@@ -37,19 +34,26 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 
 /* HistoryViewCell */
 
-HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
-  Responder(parentResponder),
-  m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
-  m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
-  m_calculationExpanded(false),
-  m_inputView(this, Metric::CommonLargeMargin, Metric::CommonSmallMargin),
-  m_scrollableOutputView(this)
-{
-  m_calculationCRC32 = 0;
+KDCoordinate HistoryViewCell::Height(Calculation * calculation, bool expanded) {
+  HistoryViewCell cell(nullptr);
+  cell.setCalculation(calculation, expanded);
+  KDRect ellipsisFrame = KDRectZero;
+  KDRect inputFrame = KDRectZero;
+  KDRect outputFrame = KDRectZero;
+  cell.computeSubviewFrames(Ion::Display::Width, KDCOORDINATE_MAX, &ellipsisFrame, &inputFrame, &outputFrame);
+  return k_margin + inputFrame.unionedWith(outputFrame).height() + k_margin;
 }
 
-Shared::ScrollableTwoExpressionsView * HistoryViewCell::outputView() {
-  return &m_scrollableOutputView;
+HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
+  Responder(parentResponder),
+  m_calculationCRC32(0),
+  m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
+  m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
+  m_inputView(this, k_inputViewHorizontalMargin, k_inputOutputViewsVerticalMargin),
+  m_scrollableOutputView(this),
+  m_calculationExpanded(false),
+  m_calculationSingleLine(false)
+{
 }
 
 void HistoryViewCell::setEven(bool even) {
@@ -137,15 +141,6 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
   reloadScroll();
 }
 
-KDColor HistoryViewCell::backgroundColor() const {
-  KDColor background = m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd;
-  return background;
-}
-
-int HistoryViewCell::numberOfSubviews() const {
-  return 2 + displayedEllipsis();
-}
-
 View * HistoryViewCell::subviewAtIndex(int index) {
   /* The order of the subviews should not matter here as they don't overlap.
    * However, the order determines the order of redrawing as well. For several
@@ -169,29 +164,69 @@ View * HistoryViewCell::subviewAtIndex(int index) {
   return views[index];
 }
 
+bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth) {
+  // k_margin is the separation between the input and output.
+  return (inputViewWidth + k_margin + outputViewWidth) < Ion::Display::Width - Metric::EllipsisCellWidth;
+}
+
 void HistoryViewCell::layoutSubviews(bool force) {
-  KDCoordinate maxFrameWidth = bounds().width();
-  if (displayedEllipsis()) {
-    m_ellipsis.setFrame(KDRect(maxFrameWidth - Metric::EllipsisCellWidth, 0, Metric::EllipsisCellWidth, bounds().height()), force);
-    maxFrameWidth -= Metric::EllipsisCellWidth;
-  } else {
-    m_ellipsis.setFrame(KDRectZero, force); // Required to mark previous rect as dirty
+  KDRect frameBounds = bounds();
+  if (bounds().width() <= 0 || bounds().height() <= 0) {
+    // TODO Make this behaviour in a non-virtual layoutSublviews, and all layout subviews should become privateLayoutSubviews
+    return;
   }
+  KDRect ellipsisFrame = KDRectZero;
+  KDRect inputFrame = KDRectZero;
+  KDRect outputFrame = KDRectZero;
+  computeSubviewFrames(frameBounds.width(), frameBounds.height(), &ellipsisFrame, &inputFrame, &outputFrame);
+
+  m_ellipsis.setFrame(ellipsisFrame, force); // Required even if ellipsisFrame is KDRectZero, to mark previous rect as dirty
+  m_inputView.setFrame(inputFrame,force);
+  m_scrollableOutputView.setFrame(outputFrame, force);
+}
+
+void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate frameHeight, KDRect * ellipsisFrame, KDRect * inputFrame, KDRect * outputFrame) {
+  assert(ellipsisFrame != nullptr && inputFrame != nullptr && outputFrame != nullptr);
+
+  if (displayedEllipsis()) {
+    *ellipsisFrame = KDRect(frameWidth - Metric::EllipsisCellWidth, 0, Metric::EllipsisCellWidth, frameHeight);
+    frameWidth -= Metric::EllipsisCellWidth;
+  } else {
+    *ellipsisFrame = KDRectZero;
+  }
+
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
-  m_inputView.setFrame(KDRect(
-    0, 0,
-    std::min(maxFrameWidth, inputSize.width()),
-    inputSize.height()),
-  force);
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  int singleLine = outputSize.width() + inputSize.width() < bounds().width() - 6;
-  int outputHeight = (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) ? (std::max(0, inputSize.height() - outputSize.height()) / 2) + std::max(0, (inputSize.height() - outputSize.height()) / 2) : inputSize.height();
-  m_scrollableOutputView.setFrame(KDRect(
-    std::max(0, maxFrameWidth - outputSize.width()),
-    outputHeight,
-    std::min(maxFrameWidth, outputSize.width()),
-    outputSize.height()),
-  force);
+
+  /* To compute if the calculation is on a single line, use the expanded width
+   * if there is both an exact and an approximate layout. */
+  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width());
+
+  KDCoordinate inputY = k_margin;
+  KDCoordinate outputY = k_margin;
+  if (m_calculationSingleLine) {
+    KDCoordinate inputBaseline = m_inputView.layout().baseline();
+    KDCoordinate outputBaseline = m_scrollableOutputView.baseline();
+    KDCoordinate baselineDifference = outputBaseline - inputBaseline;
+    if (baselineDifference > 0) {
+      inputY += baselineDifference;
+    } else {
+      outputY += -baselineDifference;
+    }
+  } else {
+    outputY += inputSize.height();
+  }
+
+  *inputFrame = KDRect(
+        0,
+        inputY,
+        std::min(frameWidth, inputSize.width()),
+        inputSize.height());
+  *outputFrame = KDRect(
+        std::max(0, frameWidth - outputSize.width()),
+        outputY,
+        std::min(frameWidth, outputSize.width()),
+        outputSize.height());
 }
 
 void HistoryViewCell::resetMemoization() {
@@ -285,31 +320,41 @@ void HistoryViewCell::didBecomeFirstResponder() {
 }
 
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
-  assert(m_dataSource);
+  assert(m_dataSource != nullptr);
   HistoryViewCellDataSource::SubviewType type = m_dataSource->selectedSubviewType();
-  if ((event == Ion::Events::Down && type == HistoryViewCellDataSource::SubviewType::Input) ||
-      (event == Ion::Events::Up && type == HistoryViewCellDataSource::SubviewType::Output) ||
-      (event == Ion::Events::Right && type != HistoryViewCellDataSource::SubviewType::Ellipsis && displayedEllipsis()) ||
-      (event == Ion::Events::Left && type == HistoryViewCellDataSource::SubviewType::Ellipsis)) {
-    HistoryViewCellDataSource::SubviewType otherSubviewType;
-    if (event == Ion::Events::Down) {
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
-    } else if (event == Ion::Events::Up) {
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Input;
-    } else if (event == Ion::Events::Right) {
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Ellipsis;
-    } else {
-      assert(event == Ion::Events::Left);
-      otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
+  assert(type != HistoryViewCellDataSource::SubviewType::None);
+  HistoryViewCellDataSource::SubviewType otherSubviewType = HistoryViewCellDataSource::SubviewType::None;
+  if (m_calculationSingleLine) {
+    static_assert(
+        static_cast<int>(HistoryViewCellDataSource::SubviewType::None) == 0
+        && static_cast<int>(HistoryViewCellDataSource::SubviewType::Input) == 1
+        && static_cast<int>(HistoryViewCellDataSource::SubviewType::Output) == 2
+        && static_cast<int>(HistoryViewCellDataSource::SubviewType::Ellipsis) == 3,
+        "The array types is not well-formed anymore");
+    HistoryViewCellDataSource::SubviewType types[] = {
+      HistoryViewCellDataSource::SubviewType::None,
+      HistoryViewCellDataSource::SubviewType::Input,
+      HistoryViewCellDataSource::SubviewType::Output,
+      displayedEllipsis() ? HistoryViewCellDataSource::SubviewType::Ellipsis : HistoryViewCellDataSource::SubviewType::None,
+      HistoryViewCellDataSource::SubviewType::None,
+    };
+    if (event == Ion::Events::Right || event == Ion::Events::Left) {
+      otherSubviewType = types[static_cast<int>(type) + (event == Ion::Events::Right ? 1 : -1)];
     }
-    m_dataSource->setSelectedSubviewType(otherSubviewType, true);
-    return true;
+  } else if ((event == Ion::Events::Down && type == HistoryViewCellDataSource::SubviewType::Input)
+      || (event == Ion::Events::Left && type == HistoryViewCellDataSource::SubviewType::Ellipsis))
+  {
+    otherSubviewType = HistoryViewCellDataSource::SubviewType::Output;
+  } else if (event == Ion::Events::Up && type == HistoryViewCellDataSource::SubviewType::Output) {
+    otherSubviewType = HistoryViewCellDataSource::SubviewType::Input;
+  } else if (event == Ion::Events::Right && type != HistoryViewCellDataSource::SubviewType::Ellipsis && displayedEllipsis()) {
+    otherSubviewType = HistoryViewCellDataSource::SubviewType::Ellipsis;
   }
-  return false;
-}
-
-bool HistoryViewCell::displayedEllipsis() const {
-  return m_highlighted && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None;
+  if (otherSubviewType == HistoryViewCellDataSource::SubviewType::None) {
+    return false;
+  }
+  m_dataSource->setSelectedSubviewType(otherSubviewType, true);
+  return true;
 }
 
 }

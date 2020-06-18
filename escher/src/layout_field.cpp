@@ -11,6 +11,7 @@ using namespace Poincare;
 
 LayoutField::ContentView::ContentView() :
   m_cursor(),
+  m_insertionCursor(),
   m_expressionView(0.0f, 0.5f, Palette::PrimaryText, Palette::BackgroundHard, &m_selectionStart, &m_selectionEnd),
   m_cursorView(),
   m_selectionStart(),
@@ -30,10 +31,19 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
       m_expressionView.layout().invalidAllSizesPositionsAndBaselines();
       return true;
     }
+  } else {
+    // We're leaving the edition of the current layout
+    useInsertionCursor();
   }
   layoutSubviews();
   markRectAsDirty(bounds());
   return false;
+}
+
+void LayoutField::ContentView::useInsertionCursor() {
+  if (m_insertionCursor.isDefined()) {
+    m_cursor = m_insertionCursor;
+  }
 }
 
 void LayoutField::ContentView::clearLayout() {
@@ -284,6 +294,11 @@ void LayoutField::setEditing(bool isEditing) {
   }
 }
 
+void LayoutField::clearLayout() {
+  m_contentView.clearLayout(); // Replace the layout with an empty horizontal layout
+  reloadScroll(); // Put the scroll to offset 0
+}
+
 Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
@@ -317,6 +332,12 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
    * - the result of a copy-paste. */
+
+  /* This routing can be called even if no actual underlying event has been
+   * dispatched on the LayoutField. For instance, when someone wants to insert
+   * text in the field from the outside. In this scenario, let's make sure the
+   * insertionCursor is invalidated. */
+  m_contentView.invalidateInsertionCursor();
 
   // Delete the selected layouts if needed
   deleteSelection();
@@ -384,6 +405,9 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;
+  if (!eventShouldUpdateInsertionCursor(event)) {
+    m_contentView.invalidateInsertionCursor();
+  }
   if (privateHandleMoveEvent(event, &moveEventChangedLayout)) {
     if (!isEditing()) {
       setEditing(true);
@@ -556,6 +580,9 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   LayoutCursor result;
   result = m_contentView.cursor()->cursorAtDirection(DirectionForMoveEvent(event), shouldRecomputeLayout);
   if (result.isDefined()) {
+    if (eventShouldUpdateInsertionCursor(event)) {
+      m_contentView.updateInsertionCursor();
+    }
     m_contentView.setCursor(result);
     return true;
   }

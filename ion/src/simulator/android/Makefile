@@ -7,6 +7,8 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/language.cpp \
 )
 
+ion_src += ion/src/shared/collect_registers.cpp
+
 $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
 
 LDFLAGS += -ljnigraphics -llog

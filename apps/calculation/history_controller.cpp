@@ -166,13 +166,17 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
   }
   if (previousSelectedCellY == -1) {
     setSelectedSubviewType(SubviewType::Output, false, previousSelectedCellX, previousSelectedCellY);
-  } else if (selectedRow() < previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Output, false, previousSelectedCellX, previousSelectedCellY);
-  } else if (selectedRow() > previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Input, false, previousSelectedCellX, previousSelectedCellY);
   } else if (selectedRow() == -1) {
     setSelectedSubviewType(SubviewType::Input, false, previousSelectedCellX, previousSelectedCellY);
+  } else {
+    HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
+    SubviewType nextSelectedSubviewType = selectedSubviewType();
+    if (!selectedCell->displaysSingleLine()) {
+      nextSelectedSubviewType = previousSelectedCellY < selectedRow() ? SubviewType::Input : SubviewType::Output;
+    }
+    setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedCellX, previousSelectedCellY);
   }
+  // The selectedCell may change during setSelectedSubviewType
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   if (selectedCell == nullptr) {
     return;
@@ -208,7 +212,13 @@ KDCoordinate HistoryController::rowHeight(int j) {
     return 0;
   }
   Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
-  return calculation->height(App::app()->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output);
+  bool expanded = j == selectedRow() && selectedSubviewType() == SubviewType::Output;
+  KDCoordinate result = calculation->memoizedHeight(expanded);
+  if (result < 0) {
+    result = HistoryViewCell::Height(calculation.pointer(), expanded);
+    calculation->setMemoizedHeight(expanded, result);
+  }
+  return result;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

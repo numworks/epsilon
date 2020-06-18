@@ -38,15 +38,12 @@ void LinearModel::fit(Store * store, int series, double * modelCoefficients, Poi
 
 double LinearModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
-    // Derivate: x
+    // Derivate with respect to a: x
     return x;
   }
-  if (derivateCoefficientIndex == 1) {
-    // Derivate: 1;
-    return 1;
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 1);
+  // Derivate with respect to b: 1
+  return 1.0;
 }
 
 }

@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: numworks/setup-emscripten@v2
         with:
-          sdk: latest-fastcomp
+          sdk: 1.39.16-fastcomp
       - uses: actions/checkout@v1
         with:
           submodules: true

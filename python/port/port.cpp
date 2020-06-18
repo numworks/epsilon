@@ -1,11 +1,18 @@
 #include "port.h"
 
-#include <ion/keyboard.h>
+#include <ion.h>
 
 #include <math.h>
 #include <stdint.h>
 #include <string.h>
 #include <setjmp.h>
+
+/* py/parsenum.h is a C header which uses C keyword restrict.
+ * It does not exist in C++ so we define it here in order to be able to include
+ * py/parsenum.h header. */
+#ifdef __cplusplus
+#define restrict   // disable
+#endif
 
 extern "C" {
 #include "py/builtin.h"
@@ -15,6 +22,7 @@ extern "C" {
 #include "py/mperrno.h"
 #include "py/mphal.h"
 #include "py/nlr.h"
+#include "py/parsenum.h"
 #include "py/repl.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
@@ -22,6 +30,8 @@ extern "C" {
 #include "mod/turtle/modturtle.h"
 #include "mod/matplotlib/pyplot/modpyplot.h"
 }
+
+#include <escher/palette.h>
 
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
@@ -145,85 +155,130 @@ void MicroPython::registerScriptProvider(ScriptProvider * s) {
 }
 
 void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
-#if __EMSCRIPTEN__
-   // All objects are aligned, as asserted.
+  /* All addresses stored on the stack are aligned on sizeof(void *), as
+   * asserted. This is a consequence of the alignment requirements of compilers
+   * (Cf http://www.catb.org/esr/structure-packing/). */
   assert(((unsigned long)address) % ((unsigned long)sizeof(void *)) == 0);
   assert(byteLength % sizeof(void *) == 0);
   gc_collect_root((void **)address, byteLength / sizeof(void *));
-#else
-  for (size_t i = 0; i < sizeof(void *); i++) {
-    /* Objects on the stack are not necessarily aligned on sizeof(void *),
-     * which is also true for pointers refering to the heap. MicroPython
-     * gc_collect_root expects a table of void * that will be scanned every
-     * sizeof(void *) step. So we have to scan the stack repetitively with a
-     * increasing offset to be sure to check every byte for a heap address.
-     * If some memory can be reinterpreted as a pointer in the heap, gc_collect_root
-     * will prevent the destruction of the pointed heap memory. At worst (if
-     * the interpreted pointer was in fact an unaligned object or uninitialized
-     * memory), we will just keep extra objects in the heap which is not optimal
-     * but does not cause any crash. */
-    char * addressWithOffset = address + i;
-    // Ensure to round the length to the ceiling
-    size_t lengthInAddressSize = (byteLength - i + sizeof(void *) - 1)/sizeof(void *);
-    gc_collect_root((void **)addressWithOffset, lengthInAddressSize);
-  }
-#endif
 }
 
-void gc_collect(void) {
+KDColor MicroPython::ColorParser::ParseColor(mp_obj_t input, ColorMode ColorMode){
+  static constexpr int maxColorIntensity = static_cast<int>(ColorMode::MaxIntensity255);
+  if (mp_obj_is_str(input)) {
+    size_t l;
+    const char * color = mp_obj_str_get_data(input, &l);
+    // TODO add cyan
+    constexpr NameColorPair pairs[] = {
+      NameColorPair("blue", KDColorBlue),
+      NameColorPair("b", KDColorBlue),
+      NameColorPair("red", KDColorRed),
+      NameColorPair("r", KDColorRed),
+      NameColorPair("green", Palette::Green),
+      NameColorPair("g", Palette::Green),
+      NameColorPair("yellow", KDColorYellow),
+      NameColorPair("y", KDColorYellow),
+      NameColorPair("brown", Palette::Brown),
+      NameColorPair("black", KDColorBlack),
+      NameColorPair("k", KDColorBlack),
+      NameColorPair("white", KDColorWhite),
+      NameColorPair("w", KDColorWhite),
+      NameColorPair("pink", Palette::Pink),
+      NameColorPair("orange", Palette::Orange),
+      NameColorPair("purple", Palette::Purple),
+      NameColorPair("grey", Palette::GreyDark)
+    };
+    for (NameColorPair p : pairs) {
+      if (strcmp(p.name(), color) == 0) {
+        return p.color();
+      }
+    }
+
+    if (color[0] == '#') {
+      // TODO handle #abc as #aabbcc (see matplotlib spec)
+      if (l != 7) {
+        mp_raise_ValueError("RGB hex values are 6 bytes long");
+      }
+      uint32_t colorInt = mp_obj_get_int(mp_parse_num_integer(color+1, strlen(color+1), 16, NULL));
+      return KDColor::RGB24(colorInt);
+    }
+
+    mp_float_t greyLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
+    if (greyLevel >= 0.0 && greyLevel <= 1.0) {
+      uint8_t color = maxColorIntensity * (float) greyLevel;
+      return KDColor::RGB888(color, color, color);
+    }
+    mp_raise_ValueError("Grey levels are between 0.0 and 1.0");
+  } else if(mp_obj_is_int(input)) {
+    mp_raise_TypeError("Int are not colors");
+    //See https://github.com/numworks/epsilon/issues/1533#issuecomment-618443492
+  } else {
+    size_t len;
+    mp_obj_t * elem;
+
+    mp_obj_get_array(input, &len, &elem);
+
+    if (len != 3) {
+      mp_raise_TypeError("Color needs 3 components");
+    }
+    int intensityFactor = maxColorIntensity/static_cast<int>(ColorMode);
+    return KDColor::RGB888(
+        intensityFactor * mp_obj_get_float(elem[0]),
+        intensityFactor * mp_obj_get_float(elem[1]),
+        intensityFactor * mp_obj_get_float(elem[2])
+      );
+  }
+  mp_raise_TypeError("Color couldn't be parsed");
+}
+
+void gc_collect_regs_and_stack(void) {
+  // get the registers and the sp
+  jmp_buf regs;
+  uintptr_t sp = Ion::collectRegisters(regs);
+
   void * python_stack_top = MP_STATE_THREAD(stack_top);
   assert(python_stack_top != NULL);
-
-  gc_collect_start();
-
-  modturtle_gc_collect();
-  modpyplot_gc_collect();
-
-  /* get the registers.
-   * regs is the also the last object on the stack so the stack is bound by
-   * &regs and python_stack_top. */
-  jmp_buf regs;
-  /* TODO: we use setjmp to get the registers values to look for python heap
-   * root. However, the 'setjmp' does not guarantee that it gets all registers
-   * values. We should check our setjmp implementation for the device and
-   * ensure that it also works for other platforms. */
-  setjmp(regs);
-
-  void **regs_ptr = (void**)&regs;
 
   /* On the device, the stack is stored in reverse order, but it might not be
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
   size_t stackLengthInByte;
   void ** scanStart;
-  if ((uintptr_t)python_stack_top > (uintptr_t)regs_ptr) {
+  if ((uintptr_t)python_stack_top > sp) {
 
     /* To compute the stack length:
-     *                                  regs
+     *                               registers
      *                             <----------->
      * STACK <-  ...|  |  |  |  |  |--|--|--|--|  |  |  |  |  |  |
-     *                             ^&regs                        ^python_stack_top
+     *                             ^sp                           ^python_stack_top
      * */
 
-    stackLengthInByte = (uintptr_t)python_stack_top - (uintptr_t)regs_ptr;
-    scanStart = regs_ptr;
+    stackLengthInByte = (uintptr_t)python_stack_top - sp;
+    scanStart = (void **)sp;
 
   } else {
 
     /* When computing the stack length, take into account regs' size.
-     *                                                 regs
+     *                                              registers
      *                                            <----------->
      * STACK ->  |  |  |  |  |  |  |  |  |  |  |  |--|--|--|--|  |  |  |...
-     *           ^python_stack_top                ^&regs
+     *           ^python_stack_top                ^sp
      * */
 
-    stackLengthInByte = (uintptr_t)regs_ptr - (uintptr_t)python_stack_top + sizeof(regs);
+    stackLengthInByte = sp - (uintptr_t)python_stack_top + sizeof(regs);
     scanStart = (void **)python_stack_top;
 
   }
   /* Memory error detectors might find an error here as they might split regs
    * and stack memory zones. */
   MicroPython::collectRootsAtAddress((char *)scanStart, stackLengthInByte);
+}
+
+void gc_collect(void) {
+  gc_collect_start();
+  modturtle_gc_collect();
+  modpyplot_gc_collect();
+  gc_collect_regs_and_stack();
   gc_collect_end();
 }
 
@@ -260,3 +315,4 @@ const char * mp_hal_input(const char * prompt) {
   assert(sCurrentExecutionEnvironment != nullptr);
   return sCurrentExecutionEnvironment->inputText(prompt);
 }
+

@@ -78,7 +78,13 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
     return 0;
   }
   Shared::ExpiringPointer<Calculation> calculation = m_calculationStore.calculationAtIndex(calculationIndex);
-  return calculation->height(App::app()->localContext(), true, true) + 2 * Metric::CommonSmallMargin + Metric::CellSeparatorThickness;
+  constexpr bool expanded = true;
+  KDCoordinate result = calculation->memoizedHeight(expanded);
+  if (result < 0) {
+    result = ScrollableThreeExpressionsCell::Height(calculation.pointer());
+    calculation->setMemoizedHeight(expanded, result);
+  }
+  return result + Metric::CellSeparatorThickness;
 }
 
 int IllustratedListController::typeAtLocation(int i, int j) {

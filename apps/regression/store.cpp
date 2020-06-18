@@ -11,7 +11,7 @@ using namespace Shared;
 
 namespace Regression {
 
-static_assert(Model::k_numberOfModels == 9, "Number of models changed, Regression::Store() needs to adapt");
+static_assert(Model::k_numberOfModels == 10, "Number of models changed, Regression::Store() needs to adapt");
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
 Store::Store() :
@@ -285,7 +285,7 @@ double Store::squaredCorrelationCoefficient(int series) const {
 }
 
 Model * Store::regressionModel(int index) {
-  Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel};
+  Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel};
   return models[index];
 }
 

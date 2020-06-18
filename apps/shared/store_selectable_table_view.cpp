@@ -37,6 +37,7 @@ bool StoreSelectableTableView::selectNonHiddenCellAtClippedLocation(int i, int j
   if (j > 1 + numberOfPairsOfCurrentSeries) {
     j = 1 + numberOfPairsOfCurrentSeries;
   }
+  // if negative, j will be clipped in selectCellAtClippedLocation
   return selectCellAtClippedLocation(i, j);
 }
 

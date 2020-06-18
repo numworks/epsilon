@@ -71,7 +71,7 @@ $(eval $(call rule_for, \
   I18N, \
   apps/i18n.cpp, \
   $(i18n_files), \
-  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ --generateISO6391locales $$(EPSILON_GETOPT), \
+  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $$^ --generateISO6391locales $$(EPSILON_GETOPT), \
   global \
 ))
 

@@ -5,7 +5,7 @@
 
 namespace I18n {
   enum class Message : uint16_t;
-  enum class Language : uint16_t;
+  enum class Language : uint8_t;
   const char * translate(Message m);
   int numberOfLanguages();
 }

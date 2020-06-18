@@ -244,12 +244,9 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     GlobalPreferences::sharedGlobalPreferences()->setTempExamMode((GlobalPreferences::ExamMode)((uint8_t)valueIndex + 1));
   } else if (message == I18n::Message::SymbolMultiplication) {
     preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
-  } else if (message == I18n::Message::ResultDisplay) {
-    preferences->setResultDisplay((Preferences::ResultDisplay)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
   }
-
 }
 
 int PreferencesController::valueIndexForPreference(I18n::Message message) const {
@@ -273,9 +270,6 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
 #endif
   if (message == I18n::Message::SymbolMultiplication) {
     return (int)preferences->symbolofMultiplication();
-  }
-  if (message == I18n::Message::ResultDisplay) {
-    return (int)preferences->resultDisplay();
   }
   if (message == I18n::Message::FontSizes) {
     return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;

@@ -49,7 +49,7 @@ public:
     return this;
   }
   Poincare::Layout layout() const override;
-  KDColor backgroundColor() const override { return m_even ? KDColorWhite : Palette::WallScreen; }
+  KDColor backgroundColor() const override { return m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd; }
   void resetMemoization();
   void setCalculation(Calculation * calculation, bool expanded);
   int numberOfSubviews() const override { return 2 + displayedEllipsis(); }

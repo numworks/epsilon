@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser(description="Process some i18n files.")
 parser.add_argument('--header', help='the .h file to generate')
 parser.add_argument('--implementation', help='the .cpp file to generate')
 parser.add_argument('--locales', nargs='+', help='locale to actually generate')
+parser.add_argument('--countries', nargs='+', help='countries to actually generate')
 parser.add_argument('--codepoints', help='the code_points.h file')
 parser.add_argument('--files', nargs='+', help='an i18n file')
 parser.add_argument('--generateISO6391locales', type=int, nargs='+', help='whether to generate the ISO6391 codes for the languages (for instance "en" for english)')
@@ -114,7 +115,7 @@ def parse_codepoints(file):
 
 codepoints = parse_codepoints(args.codepoints)
 
-def print_header(data, path, locales):
+def print_header(data, path, locales, countries):
     f = open(path, "w")
     f.write("#ifndef APPS_I18N_H\n")
     f.write("#define APPS_I18N_H\n\n")
@@ -122,6 +123,7 @@ def print_header(data, path, locales):
     f.write("#include <escher.h>\n\n")
     f.write("namespace I18n {\n\n")
     f.write("constexpr static int NumberOfLanguages = %d;\n\n" % len(locales))
+    f.write("constexpr static int NumberOfCountries = %d;\n\n" % len(countries))
 
     # Messages enumeration
     f.write("enum class Message : uint16_t {\n")
@@ -135,10 +137,10 @@ def print_header(data, path, locales):
     f.write("};\n\n")
 
     # Languages enumeration
-    f.write("enum class Language : uint16_t {\n")
+    f.write("enum class Language : uint8_t {\n")
     index = 0
     for locale in locales:
-        f.write("  " + locale.upper() + (" = 0" if (index < 1) else "") +",\n")
+        f.write("  " + locale.upper() + (" = 0" if (index < 1) else "") + ",\n")
         index = index + 1
     f.write("};\n\n")
 
@@ -154,6 +156,20 @@ def print_header(data, path, locales):
         for locale in locales:
             f.write("  Message::LanguageISO6391" + locale.upper() + ",\n")
         f.write("};\n\n")
+
+    # Countries enumeration
+    f.write("enum class Country : uint8_t {\n")
+    index = 0
+    for country in countries:
+        f.write("  " + country.upper() + (" = 0" if (index < 1) else "") + ",\n")
+        index += 1
+    f.write("};\n\n")
+
+    # Country names
+    f.write("constexpr const Message CountryNames[NumberOfCountries] = {\n");
+    for country in countries:
+        f.write("  Message::Country" + country.upper() + ",\n")
+    f.write("};\n\n")
 
     f.write("}\n\n")
     f.write("#endif\n")
@@ -226,6 +242,6 @@ def print_implementation(data, path, locales):
 
 data = parse_files(args.files)
 if args.header:
-    print_header(data, args.header, args.locales)
+    print_header(data, args.header, args.locales, args.countries)
 if args.implementation:
     print_implementation(data, args.implementation, args.locales)

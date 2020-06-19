@@ -27,6 +27,7 @@ constexpr KDColor Palette::CalculationBackgroundOdd;
 constexpr KDColor Palette::CalculationBackgroundEven;
 constexpr KDColor Palette::CalculationEmptyBox;
 constexpr KDColor Palette::CalculationEmptyBoxNeeded;
+constexpr KDColor Palette::CalculationTrigoAndComplexForeground;
 
 constexpr KDColor Palette::CodeBackground;
 constexpr KDColor Palette::CodeBackgroundSelected;

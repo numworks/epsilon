@@ -31,7 +31,7 @@ int ContributorsController::reusableCellCount(int type) {
 constexpr static int s_numberOfDevelopers = 11;
 constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PQuentinGuidee,
-  I18n::Message::PDannySimmons,
+  I18n::Message::PSandraSimmons,
   I18n::Message::PJoachimLeFournis,
   I18n::Message::PJeanBaptisteBoric,
   I18n::Message::PMaximeFriess,

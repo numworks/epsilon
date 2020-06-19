@@ -9,7 +9,7 @@ namespace Omega {
 // constexpr SettingsMessageTree s_contributorsChildren[17] = {
 //   SettingsMessageTree(I18n::Message::Developers),
 //   SettingsMessageTree(I18n::Message::QuentinGuidee),
-//   SettingsMessageTree(I18n::Message::DannySimmons),
+//   SettingsMessageTree(I18n::Message::SandraSimmons),
 //   SettingsMessageTree(I18n::Message::JoachimLeFournis),
 //   SettingsMessageTree(I18n::Message::JeanBaptisteBoric),
 //   SettingsMessageTree(I18n::Message::MaximeFriess),

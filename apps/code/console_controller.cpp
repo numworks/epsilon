@@ -173,6 +173,7 @@ const char * ConsoleController::inputText(const char * prompt) {
 
 void ConsoleController::viewWillAppear() {
   ViewController::viewWillAppear();
+  m_scriptStore->clearConsoleFetchInformation();
   loadPythonEnvironment();
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;
@@ -193,14 +194,6 @@ void ConsoleController::didBecomeFirstResponder() {
      * auto-import. */
     Container::activeApp()->setFirstResponder(stackViewController()->topViewController());
   }
-}
-
-void ConsoleController::willExitResponderChain(Responder * nextFirstResponder) {
-  ViewController::willExitResponderChain(nextFirstResponder);
-  /* We clean when exiting the responder chain and not when entering it,
-   * otherwise we break an assertion which checks that the script statuses are
-   * clean in VariableBoxController::loadFunctionsAndVariables. */
-  m_scriptStore->clearConsoleFetchInformation();
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {

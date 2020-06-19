@@ -177,10 +177,11 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   Script script = m_scriptStore->scriptAtIndex(scriptIndex);
   assert(!script.isNull());
 
-  /* Handle the FetchedStatus: we will import the current script variables in
-   * loadCurrentVariablesInScript, so we do not want to import those variables
-   * before, if any imported script also imported the current script. */
-  assert(!script.fetchedFromConsole() && !script.fetchedForVariableBox());
+  /* Handle the fetchedForVariableBox status: we will import the current script
+   * variables in loadCurrentVariablesInScript, so we do not want to import
+   * those variables before, if any imported script also imported the current
+   * script. */
+  assert(!script.fetchedForVariableBox());
   script.setFetchedForVariableBox(true);
 
   // Load the imported and current variables

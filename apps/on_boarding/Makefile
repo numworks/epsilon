@@ -1,5 +1,6 @@
 app_on_boarding_src = $(addprefix apps/on_boarding/,\
   app.cpp \
+  country_controller.cpp \
   language_controller.cpp \
   logo_controller.cpp \
   logo_view.cpp \

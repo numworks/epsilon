@@ -36,6 +36,7 @@ constexpr KDColor Palette::CodeNumber;
 constexpr KDColor Palette::CodeKeyword;
 constexpr KDColor Palette::CodeOperator;
 constexpr KDColor Palette::CodeString;
+constexpr KDColor Palette::CodeGutterViewBackground;
 
 constexpr KDColor Palette::ProbabilityCurve;
 constexpr KDColor Palette::ProbabilityCellBorder;

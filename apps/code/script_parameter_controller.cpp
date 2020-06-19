@@ -100,7 +100,7 @@ void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, in
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
     GetScriptSize(myCell);
     myCell->setAccessoryFont(KDFont::SmallFont);
-    myCell->setAccessoryTextColor(Palette::GreyDark);
+    myCell->setAccessoryTextColor(Palette::SecondaryText);
   }
 }
 

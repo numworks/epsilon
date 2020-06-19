@@ -29,7 +29,7 @@ void VariableBoxEmptyController::VariableBoxEmptyView::setLayout(Poincare::Layou
 }
 
 void VariableBoxEmptyController::VariableBoxEmptyView::drawRect(KDContext * ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), Palette::GreyBright);
+  drawBorderOfRect(ctx, bounds(), Palette::ListCellBorder);
 }
 
 int VariableBoxEmptyController::VariableBoxEmptyView::numberOfSubviews() const {

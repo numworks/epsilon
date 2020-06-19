@@ -26,7 +26,7 @@ private:
   class ContentView : public View {
   public:
     ContentView(SelectableTableView * selectableTableView) :
-      m_titleView(KDFont::SmallFont, I18n::Message::ChooseDistribution, 0.5f, 0.5f, Palette::GreyDark, Palette::BackgroundApps),
+      m_titleView(KDFont::SmallFont, I18n::Message::ChooseDistribution, 0.5f, 0.5f, Palette::SecondaryText, Palette::BackgroundApps),
       m_selectableTableView(selectableTableView)
     {}
     constexpr static KDCoordinate k_titleMargin = 8;

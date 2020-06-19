@@ -13,8 +13,10 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 App::App(Snapshot * snapshot) :
-  ::App(snapshot, &m_languageController),
-  m_languageController(&m_modalViewController),
+  ::App(snapshot, &m_stackController),
+  m_stackController(&m_modalViewController, &m_languageController),
+  m_languageController(&m_stackController),
+  m_countryController(&m_languageController),
   m_logoController()
 {
 }
@@ -45,6 +47,7 @@ void App::didBecomeActive(Window * window) {
 
 void App::reinitOnBoarding() {
   m_languageController.resetSelection();
+  m_countryController.resetSelection();
   displayModalViewController(&m_logoController, 0.5f, 0.5f);
 }
 

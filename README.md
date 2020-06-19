@@ -110,6 +110,23 @@ Also, you can change the number of processes that run in parallel during the bui
 
 </details>
 
+<details>
+  <summary><b>3DS Simulator</b></summary>
+  
+You need devkitPro and devkitARM installed and in your path (instructions [here](https://devkitpro.org/wiki/Getting_Started))
+```
+git clone --recursive https://github.com/Omega-Numworks/Omega.git
+cd Omega
+git checkout --recursive omega-dev
+make PLATFORM=simulator TARGET=3ds -j
+```
+You can then put epsilon.3dsx on a SD card to run it from the HBC or use 3dslink to launch it over the network:
+```
+3dslink output/release/simulator/3ds/epsilon.3dsx -a <3DS' IP ADDRESS>
+```
+
+</details>
+
 ## Contributing
 
 To contribute, please refer to the [Wiki](https://github.com/Omega-Numworks/Omega/wiki/Contributing)

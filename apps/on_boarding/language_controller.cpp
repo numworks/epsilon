@@ -1,6 +1,8 @@
 #include "language_controller.h"
 #include "../global_preferences.h"
 #include "../apps_container.h"
+#include "app.h"
+#include "country_controller.h"
 #include <escher/scroll_view_indicator.h>
 #include <algorithm>
 
@@ -23,7 +25,7 @@ bool LanguageController::handleEvent(Ion::Events::Event event) {
     if (appsContainer->promptController()) {
       Container::activeApp()->displayModalViewController(appsContainer->promptController(), 0.5f, 0.5f);
     } else {
-      appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
+      stackController()->push(App::app()->countryController());
     }
     return true;
   }

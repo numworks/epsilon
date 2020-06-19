@@ -12,7 +12,7 @@ public:
   static I18n::Country CountryAtIndex(int i);
 
   CountryController(Responder * parentResponder, KDCoordinate verticalMargin);
-  void resetSelection();
+  virtual void resetSelection();
 
   View * view() override { return &m_selectableTableView; }
   const char * title() override {return I18n::translate(I18n::Message::Country); }

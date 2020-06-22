@@ -3,7 +3,7 @@
 
 namespace Probability {
 
-float TwoParameterDistribution::parameterValueAtIndex(int index) {
+double TwoParameterDistribution::parameterValueAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
     return m_parameter1;

@@ -36,7 +36,7 @@ double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) c
   /* TODO There are some computation errors, where the probability falsly jumps to 1.
    * k = 0.001 and P(x < 42000000) (for 41000000 it is around 0.5)
    * k = 0.01 and P(x < 8400000) (for 41000000 it is around 0.6) */
-  const float k = m_parameter1;
+  const double k = m_parameter1;
   const double sqrtXSquaredPlusK = std::sqrt(x*x + k);
   double t = (x + sqrtXSquaredPlusK) / (2.0 * sqrtXSquaredPlusK);
   return Poincare::RegularizedIncompleteBetaFunction(k/2.0, k/2.0, t);

@@ -207,10 +207,22 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
 
   /* Part I: Mantissa */
 
-  // Compute mantissa
-  T unroundedMantissa = f * std::pow((T)10.0, (T)(numberOfSignificantDigits - 1 - exponentInBase10));
+  /* Compute mantissa
+   * We compute the unroundedMantissa using doubles to limit approximation errors.
+   * Previously when computing with floats : 0.000600000028 * 10^10 = 6000000.28
+   * was rounded into 6000000.5 because of the conversion error
+   * Mantissa was the 6000001 instead of 6000000.
+   * As a result, 0.0006 was displayed as 0.0006000001
+   * With doubles, 0.000600000028 * 10^10 = 6000000.2849...
+   * This value is then rounded into mantissa = 6000000 which yields a proper
+   * display of 0.0006 */
+  double unroundedMantissa = static_cast<double>(f) * std::pow(10.0, (double)(numberOfSignificantDigits - 1 - exponentInBase10));
   // Round mantissa to get the right number of significant digits
-  T mantissa = std::round(unroundedMantissa);
+  double mantissa = std::round(unroundedMantissa);
+
+  /* Since no problem of approximation was detected from using potential float
+   * (instead of double) in the rest of the code, we decided to leave it like
+   * this */
 
   /* If (numberOfSignificantDigits - 1 - exponentInBase10) is too big (or too
    * small), mantissa is now inf. We handle this case by using logarithm
@@ -225,7 +237,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
    * "exponentBase10(unroundedMantissa) != exponentBase10(mantissa)",
    * However, unroundedMantissa can have a different exponent than expected
    * (ex: f = 1E13, unroundedMantissa = 99999999.99 and mantissa = 1000000000) */
-  if (f != 0 && IEEE754<T>::exponentBase10(mantissa) - exponentInBase10 != numberOfSignificantDigits - 1 - exponentInBase10) {
+  if (f != 0 && IEEE754<double>::exponentBase10(mantissa) - exponentInBase10 != numberOfSignificantDigits - 1 - exponentInBase10) {
     exponentInBase10++;
   }
 

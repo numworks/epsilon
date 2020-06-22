@@ -12,6 +12,7 @@ public:
   void resetSelection() override;
   bool handleEvent(Ion::Events::Event event) override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
+
 };
 
 }

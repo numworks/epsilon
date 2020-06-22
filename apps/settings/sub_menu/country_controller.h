@@ -8,7 +8,7 @@ namespace Settings {
 
 class CountryController : public Shared::CountryController {
 public:
-  using Shared::CountryController::CountryController;
+  CountryController(Responder * parentResponder, KDCoordinate verticalMargin);
   bool handleEvent(Ion::Events::Event event) override;
 };
 

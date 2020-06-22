@@ -30,6 +30,7 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(123.456f, "1.23456ᴇ2", ScientificMode, 7);
   assert_float_prints_to(123.456f, "123.456", DecimalMode, 7);
   assert_float_prints_to(123.456f, "123.456", EngineeringMode, 7);
+  assert_float_prints_to(0.0006f, "0.0006", DecimalMode, 7);
   assert_float_prints_to(123.456, "1.23456ᴇ2", ScientificMode, 14);
   assert_float_prints_to(123.456, "123.456", DecimalMode, 14);
   assert_float_prints_to(123.456, "123.456", EngineeringMode, 14);

@@ -26,7 +26,7 @@ public:
   virtual Type type() const = 0;
   virtual bool isContinuous() const = 0;
   virtual int numberOfParameter() = 0;
-  virtual float parameterValueAtIndex(int index) = 0;
+  virtual double parameterValueAtIndex(int index) = 0;
   virtual I18n::Message parameterNameAtIndex(int index) = 0;
   virtual I18n::Message parameterDefinitionAtIndex(int index) = 0;
   virtual void setParameterAtIndex(float f, int index) = 0;

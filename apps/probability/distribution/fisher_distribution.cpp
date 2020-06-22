@@ -60,9 +60,7 @@ void FisherDistribution::setParameterAtIndex(float f, int index) {
 }
 
 double FisherDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  const double d1 = m_parameter1;
-  const double d2 = m_parameter2;
-  return Poincare::RegularizedIncompleteBetaFunction(d1/2.0, d2/2.0, d1*x/(d1*x+d2));
+  return Poincare::RegularizedIncompleteBetaFunction(m_parameter1/2.0, m_parameter2/2.0, m_parameter1*x/(m_parameter1*x+m_parameter2));
 }
 
 double FisherDistribution::cumulativeDistributiveInverseForProbability(double * probability) {

@@ -119,6 +119,22 @@ MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
   return result;
 }
 
+template<typename T>
+MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
+  // Compute Matrix Row Echelon Form
+  if (numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
+    return MatrixComplex<T>::Undefined();
+  }
+  std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
+  for (int i = 0; i < numberOfChildren(); i++) {
+    operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
+  }
+  /* Reduced row echelon form is also called row canonical form. To compute the
+   * row echelon form (non reduced one), fewer steps are required. */
+  Matrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns, static_cast<std::complex<T>*>(nullptr), reduced);
+  return MatrixComplex<T>::Builder(operandsCopy, m_numberOfRows, m_numberOfColumns);
+}
+
 // MATRIX COMPLEX REFERENCE
 
 template<typename T>

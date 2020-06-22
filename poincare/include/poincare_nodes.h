@@ -54,6 +54,8 @@
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix_trace.h>
 #include <poincare/matrix_transpose.h>
+#include <poincare/matrix_ref.h>
+#include <poincare/matrix_rref.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/norm_cdf.h>

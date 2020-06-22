@@ -447,6 +447,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("tanh(_s)", "undef");
   assert_parsed_expression_simplify_to("trace(_s)", "undef");
   assert_parsed_expression_simplify_to("transpose(_s)", "undef");
+  assert_parsed_expression_simplify_to("ref(_s)", "undef");
+  assert_parsed_expression_simplify_to("rref(_s)", "undef");
 
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
@@ -926,6 +928,12 @@ QUIZ_CASE(poincare_simplification_matrix) {
   // Transpose
   assert_parsed_expression_simplify_to("transpose([[1/√(2),1/2,3][2,1,-3]])", "[[√(2)/2,2][1/2,1][3,-3]]");
   assert_parsed_expression_simplify_to("transpose(√(4))", "2");
+
+  // Ref and Rref
+  assert_parsed_expression_simplify_to("ref([[1,1/√(2),√(4)]])", "[[1,√(2)/2,2]]");
+  assert_parsed_expression_simplify_to("rref([[1,1/√(2),√(4)]])", "[[1,√(2)/2,2]]");
+  assert_parsed_expression_simplify_to("ref([[1,0,√(4)][0,1,1/√(2)][0,0,1]])", "[[1,0,2][0,1,√(2)/2][0,0,1]]");
+  assert_parsed_expression_simplify_to("rref([[1,0,√(4)][0,1,1/√(2)][0,0,0]])", "[[1,0,2][0,1,√(2)/2][0,0,0]]");
 
   // Expressions with unreduced matrix
   assert_reduce("confidence(cos(2)/25,3)→a");

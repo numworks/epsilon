@@ -46,6 +46,7 @@ public:
   std::complex<T> determinant() const override;
   MatrixComplex<T> inverse() const;
   MatrixComplex<T> transpose() const;
+  MatrixComplex<T> ref(bool reduced) const;
 private:
   // See comment on Matrix
   uint16_t m_numberOfRows;
@@ -63,6 +64,7 @@ public:
   static MatrixComplex<T> CreateIdentity(int dim);
   MatrixComplex<T> inverse() const { return node()->inverse(); }
   MatrixComplex<T> transpose() const { return node()->transpose(); }
+  MatrixComplex<T> ref(bool reduced) const { return node()->ref(reduced); }
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }

@@ -180,7 +180,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant) {
+Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant, bool reduced) {
   Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
@@ -231,8 +231,11 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
       }
       replaceChildInPlace(divisor, Rational::Builder(1));
 
-      /* Set to 0 all M[i][j] i != h, j > k by linear combination */
-      for (int i = 0; i < m; i++) {
+      int l = reduced ? 0 : h + 1;
+      /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
+       * non-reduced form is computed (ref), only rows below the pivot are
+       * reduced, i > h as well */
+      for (int i = l; i < m; i++) {
         if (i == h) { continue; }
         Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
@@ -255,7 +258,7 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
 }
 
 template<typename T>
-void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * determinant) {
+void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * determinant, bool reduced) {
   int h = 0; // row pivot
   int k = 0; // column pivot
 
@@ -291,8 +294,11 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
       }
       array[h*numberOfColumns+k] = 1;
 
-      /* Set to 0 all M[i][j] i != h, j > k by linear combination */
-      for (int i = 0; i < numberOfRows; i++) {
+      int l = reduced ? 0 : h + 1;
+      /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
+       * non-reduced form is computed (ref), only rows below the pivot are
+       * reduced, i > h as well */
+      for (int i = l; i < numberOfRows; i++) {
         if (i == h) { continue; }
         T factor = array[i*numberOfColumns+k];
         for (int j = k+1; j < numberOfColumns; j++) {
@@ -328,6 +334,36 @@ Matrix Matrix::createTranspose() const {
   // Intentionally swapping dimensions for transpose
   matrix.setDimensions(numberOfColumns(), numberOfRows());
   return matrix;
+}
+
+Expression Matrix::createRef(ExpressionNode::ReductionContext reductionContext, bool * couldComputeRef, bool reduced) const {
+  // Compute Matrix Row Echelon Form
+  /* If the matrix is too big, the rowCanonization might not be computed exactly
+   * because of a pool allocation error, but we might still be able to compute
+   * it approximately. We thus encapsulate the ref creation in an exception
+   * checkpoint.
+   * We can safely use an exception checkpoint here because we are sure of not
+   * modifying any pre-existing node in the pool. We are sure there is no Store
+   * in the matrix. */
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    /* We clone the current matrix to extract its children later. We can't clone
+     * its children directly. Indeed, the current matrix node (this->node()) is
+     * located before the exception checkpoint. In order to clone its chidlren,
+     * we would temporary increase the reference counter of each child (also
+     * located before the checkpoint). If an exception is raised before
+     * destroying the child handle, its reference counter would be off by one
+     * after the long jump. */
+    Matrix result = clone().convert<Matrix>();
+    *couldComputeRef = true;
+    /* Reduced row echelon form is also called row canonical form. To compute the
+     * row echelon form (non reduced one), fewer steps are required. */
+    result = result.rowCanonize(reductionContext, nullptr, reduced);
+    return std::move(result);
+  } else {
+    *couldComputeRef = false;
+    return Expression();
+  }
 }
 
 Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const {
@@ -479,7 +515,7 @@ template int Matrix::ArrayInverse<float>(float *, int, int);
 template int Matrix::ArrayInverse<double>(double *, int, int);
 template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float> *, int, int);
 template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double> *, int, int);
-template void Matrix::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*);
-template void Matrix::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*);
+template void Matrix::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*, bool);
+template void Matrix::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*, bool);
 
 }

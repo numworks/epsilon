@@ -185,7 +185,9 @@ bool Expression::IsMatrix(const Expression e, Context * context) {
     || e.type() == ExpressionNode::Type::PredictionInterval
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixIdentity
-    || e.type() == ExpressionNode::Type::MatrixTranspose;
+    || e.type() == ExpressionNode::Type::MatrixTranspose
+    || e.type() == ExpressionNode::Type::MatrixRef
+    || e.type() == ExpressionNode::Type::MatrixRref;
 }
 
 bool Expression::IsInfinity(const Expression e, Context * context) {

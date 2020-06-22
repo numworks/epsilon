@@ -405,6 +405,25 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("transpose([[1,7,5][4,2,8]])", "[[1,4][7,2][5,8]]");
   assert_expression_approximates_to<double>("transpose([[1,2][4,5][7,8]])", "[[1,4,7][2,5,8]]");
 
+  /* Results for ref depend on the implementation. In any case :
+   * - Rows with only zeros must be at the bottom.
+   * - Leading coefficient of other rows must be to the right (strictly) of the
+   * - one above.
+   * - (Optional, but sometimes recommended) Leading coefficients must be 1.
+   * NOTE : It would be better if results for ref matched the one commented
+   *  bellow. */
+  assert_expression_approximates_to<double>("ref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,0,3,4][0,1,-1.2857142857143,-1.7142857142857][0,0,1,1.2215568862275]]");
+  // --> "[[1,1.4,1.2,1.6][0,1,1.1,1.2][0,0,1,1.221557]]"
+  assert_expression_approximates_to<double>("rref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,0,0,3.3532934131737ᴇ-1][0,1,0,-0.1437125748503][0,0,1,1.2215568862275]]");
+  assert_expression_approximates_to<double>("ref([[1,0][5,6][0,10]])", "[[1,0][0,1][0,0]]");
+  // --> "[[1,1.2][0,1][0,0]]"
+  assert_expression_approximates_to<double>("rref([[1,0][5,6][0,10]])", "[[1,0][0,1][0,0]]");
+  assert_expression_approximates_to<double>("ref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
+  assert_expression_approximates_to<double>("rref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
+  assert_expression_approximates_to<double>("ref([[0,2,-1][5,6,7][12,11,10]])", "[[1,1.2,1.4][0,1,-0.5][0,0,1]]");
+  // --> "[[1,0.9166667,0.8333333][0,1,-0.5][0,0,1]]"
+  assert_expression_approximates_to<double>("rref([[0,2,-1][5,6,7][12,11,10]])", "[[1,0,0][0,1,0][0,0,1]]");
+
   assert_expression_approximates_to<float>("round(2.3246,3)", "2.325");
   assert_expression_approximates_to<double>("round(2.3245,3)", "2.325");
 

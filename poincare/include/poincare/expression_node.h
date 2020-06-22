@@ -103,6 +103,8 @@ public:
     MatrixIdentity,
     MatrixInverse,
     MatrixTranspose,
+    MatrixRef,
+    MatrixRref,
     PredictionInterval,
     Matrix,
     EmptyExpression

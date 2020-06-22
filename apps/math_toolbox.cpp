@@ -71,7 +71,9 @@ const ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DeterminantCommandWithArg, I18n::Message::Determinant),
   ToolboxMessageTree::Leaf(I18n::Message::TransposeCommandWithArg, I18n::Message::Transpose),
   ToolboxMessageTree::Leaf(I18n::Message::TraceCommandWithArg, I18n::Message::Trace),
-  ToolboxMessageTree::Leaf(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension)
+  ToolboxMessageTree::Leaf(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension),
+  ToolboxMessageTree::Leaf(I18n::Message::RowEchelonFormCommandWithArg, I18n::Message::RowEchelonForm),
+  ToolboxMessageTree::Leaf(I18n::Message::ReducedRowEchelonFormCommandWithArg, I18n::Message::ReducedRowEchelonForm)
 };
 
 #if LIST_ARE_DEFINED

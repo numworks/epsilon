@@ -79,6 +79,7 @@ public:
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
   static Matrix CreateIdentity(int dim);
   Matrix createTranspose() const;
+  Expression createRef(ExpressionNode::ReductionContext reductionContext, bool * couldComputeRef, bool reduced) const;
   /* createInverse can be called on any matrix, reduced or not, approximated or
    * not. */
   Expression createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const;
@@ -94,10 +95,10 @@ private:
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
   Expression computeInverseOrDeterminant(bool computeDeterminant, ExpressionNode::ReductionContext reductionContext, bool * couldCompute) const;
-  // rowCanonize turns a matrix in its reduced row echelon form.
-  Matrix rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant);
+  // rowCanonize turns a matrix in its row echelon form, reduced or not.
+  Matrix rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant, bool reduced = true);
   // Row canonize the array in place
-  template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
+  template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr, bool reduced = true);
 
 };
 

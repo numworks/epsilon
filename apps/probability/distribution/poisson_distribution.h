@@ -23,12 +23,12 @@ public:
     return I18n::Message::LambdaPoissonDefinition;
   }
   float evaluateAtAbscissa(float x) const override {
-    return templatedApproximateAtAbscissa(x);
+    return templatedApproximateAtAbscissa<float>(x);
   }
   bool authorizedValueAtIndex(float x, int index) const override;
 private:
   double evaluateAtDiscreteAbscissa(int k) const override {
-    return templatedApproximateAtAbscissa((double)k);
+    return templatedApproximateAtAbscissa<double>(static_cast<double>(k));
   }
   template<typename T> T templatedApproximateAtAbscissa(T x) const;
 };

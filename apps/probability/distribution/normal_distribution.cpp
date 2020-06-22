@@ -31,7 +31,7 @@ I18n::Message NormalDistribution::parameterDefinitionAtIndex(int index) {
 }
 
 float NormalDistribution::evaluateAtAbscissa(float x) const {
-  return Poincare::NormalDistribution::EvaluateAtAbscissa(x, m_parameter1, m_parameter2);
+  return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, m_parameter1, m_parameter2);
 }
 
 bool NormalDistribution::authorizedValueAtIndex(float x, int index) const {
@@ -52,11 +52,11 @@ void NormalDistribution::setParameterAtIndex(float f, int index) {
 }
 
 double NormalDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(x, m_parameter1, m_parameter2);
+  return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(x, m_parameter1, m_parameter2);
 }
 
 double NormalDistribution::cumulativeDistributiveInverseForProbability(double * probability) {
-  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(*probability, m_parameter1, m_parameter2);
+  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(*probability, m_parameter1, m_parameter2);
 }
 
 float NormalDistribution::xExtremum(bool min) const {

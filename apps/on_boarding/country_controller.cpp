@@ -12,18 +12,18 @@ CountryController::CountryController(Responder * parentResponder) :
       static_cast<int>(Metric::CommonLeftMargin),
       (Ion::Display::Height - I18n::NumberOfCountries*Metric::ParameterCellHeight)/2))
 {
-  static_cast<ScrollViewIndicator *>(m_selectableTableView.decorator()->indicatorAtIndex(1))->setMargin(
+  static_cast<ScrollViewIndicator *>(selectableTableView()->decorator()->indicatorAtIndex(1))->setMargin(
     std::max(
       static_cast<int>(Metric::CommonLeftMargin),
       (Ion::Display::Height - I18n::NumberOfCountries*Metric::ParameterCellHeight)/2));
 }
 
 void CountryController::resetSelection() {
-  m_selectableTableView.deselectTable();
+  selectableTableView()->deselectTable();
   /* The base ::CountryController behaviour is to highlight the previously
    * chosen country. On boarding, we want the highlighted cell to be the first
    * alphabetically, but with the default behaviour, it would be Canada, as it
-   * is the country of value 0. */
+   * is the country of value t 0. */
   selectCellAtLocation(0, 0);
 }
 

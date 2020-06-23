@@ -107,10 +107,20 @@ apps_tests_src += $(addprefix apps/,\
   global_preferences.cpp \
 )
 
+ifeq ($(OMEGA_THEME_REPO),local)
 $(foreach img,$(image_list), $(eval $(call rule_for, \
   ICON, \
   $(img), \
-  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
-  $$(PYTHON) themes/themes_manager.py -i $(OMEGA_THEME) $$@ $(BUILD_DIR)/, \
+  $(addprefix themes/themes/local/, $(addsuffix .json, $(OMEGA_THEME_NAME))), \
+  $$(PYTHON) themes/themes_manager.py -i $(OMEGA_THEME_REPO) $(OMEGA_THEME_NAME) $$@ $(BUILD_DIR)/, \
   global \
 )))
+else
+$(foreach img,$(image_list), $(eval $(call rule_for, \
+  ICON, \
+  $(img), \
+  $(addsuffix /escher/palette.h, $(BUILD_DIR)), \
+  $$(PYTHON) themes/themes_manager.py -i $(OMEGA_THEME_REPO) $(OMEGA_THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+)))
+endif

@@ -27,7 +27,15 @@ public:
   void clear();
   Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t);
 private:
-  static constexpr float k_cacheHitTolerance = 1e-3;
+  /* We need a certain amount of tolerance since we try to evaluate the
+   * equality of floats. But the value has to be chosen carefully. Too high of
+   * a tolerance causes false positives, which lead to errors in curves
+   * (ex : 1/x with a vertical line at 0). Too low of a tolerance causes false
+   * negatives, which slows down the drawing.
+   *
+   * The value 128*FLT_EPSILON has been found to be the lowest for which all
+   * indices verify indexForParameter(tMin + index * tStep) = index. */
+  static constexpr float k_cacheHitTolerance = 128 * FLT_EPSILON;
 
   void invalidateBetween(int iInf, int iSup);
   void setRange(ContinuousFunction * function, float tMin, float tStep);

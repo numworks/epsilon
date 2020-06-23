@@ -1,9 +1,12 @@
 apps += Graph::App
 app_headers += apps/graph/app.h
 
+app_graph_test_src = $(addprefix apps/graph/,\
+  continuous_function_store.cpp \
+)
+
 app_graph_src = $(addprefix apps/graph/,\
   app.cpp \
-  continuous_function_store.cpp \
   graph/banner_view.cpp \
   graph/calculation_graph_controller.cpp \
   graph/calculation_parameter_controller.cpp \
@@ -31,8 +34,13 @@ app_graph_src = $(addprefix apps/graph/,\
   values/values_controller.cpp \
 )
 
+app_graph_src += $(app_graph_test_src)
 apps_src += $(app_graph_src)
 
 i18n_files += $(call i18n_without_universal_for,graph/base)
+
+tests_src += $(addprefix apps/graph/test/,\
+  caching.cpp\
+)
 
 $(eval $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png))

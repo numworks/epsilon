@@ -84,7 +84,7 @@ $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
-apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
+apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
 
 apps_tests_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \

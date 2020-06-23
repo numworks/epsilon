@@ -19,6 +19,14 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
   }
 
   ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
+  if (tStep < 3 * k_cacheHitTolerance) {
+    /* If tStep is lower than twice the tolerance, we risk shifting the index
+     * by 1 for cache hits. As an added safety, we add another buffer of
+     * k_cacheHitTolerance, raising the threshold for caching to three times
+     * the tolerance. */
+    function->clearCache();
+    return;
+  }
   if (function->cache() != cache) {
     cache->clear();
     function->setCache(cache);

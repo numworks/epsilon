@@ -27,6 +27,7 @@ constexpr KDColor Palette::CalculationBackgroundOdd;
 constexpr KDColor Palette::CalculationBackgroundEven;
 constexpr KDColor Palette::CalculationEmptyBox;
 constexpr KDColor Palette::CalculationEmptyBoxNeeded;
+constexpr KDColor Palette::CalculationTrigoAndComplexForeground;
 
 constexpr KDColor Palette::CodeBackground;
 constexpr KDColor Palette::CodeBackgroundSelected;
@@ -36,6 +37,7 @@ constexpr KDColor Palette::CodeNumber;
 constexpr KDColor Palette::CodeKeyword;
 constexpr KDColor Palette::CodeOperator;
 constexpr KDColor Palette::CodeString;
+constexpr KDColor Palette::CodeGutterViewBackground;
 
 constexpr KDColor Palette::ProbabilityCurve;
 constexpr KDColor Palette::ProbabilityCellBorder;

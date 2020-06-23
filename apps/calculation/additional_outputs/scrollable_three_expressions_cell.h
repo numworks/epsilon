@@ -5,6 +5,7 @@
 #include "../../shared/scrollable_multiple_expressions_view.h"
 #include "../calculation.h"
 #include "expression_with_equal_sign_view.h"
+#include <escher/palette.h>
 
 namespace Calculation {
 
@@ -13,7 +14,7 @@ public:
   static constexpr KDCoordinate k_margin = Metric::CommonSmallMargin;
   ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
     setMargins(k_margin, k_margin, k_margin, k_margin); // Left Right margins are already added by TableCell
-    setBackgroundColor(KDColorWhite);
+    setBackgroundColor(Palette::BackgroundApps);
   }
   void resetMemoization();
   void setCalculation(Calculation * calculation);
@@ -24,7 +25,7 @@ private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
   public:
     ContentCell() : m_leftExpressionView() {}
-    KDColor backgroundColor() const override { return KDColorWhite; }
+    KDColor backgroundColor() const override { return Palette::BackgroundApps; }
     void setEven(bool even) override { return; }
     ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }
   private:

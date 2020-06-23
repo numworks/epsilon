@@ -1,12 +1,23 @@
 SFLAGS += -Iescher/include
 
+ifeq ($(THEME_REPO),local)
 $(eval $(call rule_for, \
   THEME, \
   escher/palette.h, \
-  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
-  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@, \
+  $(addprefix themes/themes/local/, $(addsuffix .json, $(THEME_NAME))), \
+  $$(PYTHON) themes/themes_manager.py $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
   global \
 ))
+else
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  themes/themes/git/.empty-folder, \
+  $$(PYTHON) themes/themes_manager.py $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+))
+endif
+
 
 escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \

@@ -35,7 +35,8 @@ info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
 	@echo "EPSILON_APPS = $(EPSILON_APPS)"
 	@echo "EPSILON_I18N = $(EPSILON_I18N)"
-	@echo "OMEGA_THEME = $(OMEGA_THEME)"
+	@echo "THEME_NAME = $(THEME_NAME)"
+	@echo "THEME_REPO = $(THEME_REPO)"
 	@echo "BUILD_DIR = $(BUILD_DIR)"
 	@echo "PLATFORM" = $(PLATFORM)
 	@echo "DEBUG" = $(DEBUG)

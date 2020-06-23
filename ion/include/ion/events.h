@@ -57,7 +57,7 @@ void removeShift();
 bool isShiftActive();
 bool isAlphaActive();
 bool isLockActive();
-void setLongRepetition(bool longRepetition);
+void setLongRepetition(int longRepetition);
 int repetitionFactor();
 void updateModifiersFromEvent(Event e);
 void didPressNewKey();

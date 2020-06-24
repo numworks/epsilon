@@ -98,21 +98,5 @@ bool Rotate(uint32_t * dst, uint32_t * src, size_t len) {
   return true;
 }
 
-bool IsApproximatelyEqual(double observedValue, double expectedValue, double precision, double reference) {
-  /* Return true if observedValue and expectedValue are approximately equal, according to precision and reference parameters */
-  if (expectedValue != 0.0) {
-    double relativeError = std::fabs((observedValue - expectedValue) / expectedValue);
-    // The relative error must be smaller than the precision
-    return relativeError <= precision;
-  }
-  if (reference != 0.0) {
-    double referenceRatio = std::fabs(observedValue / reference);
-    // The observedValue must be negligible against the reference
-    return referenceRatio <= precision;
-  }
-  // The observedValue must exactly match the expectedValue
-  return observedValue == expectedValue;
-}
-
 }
 }

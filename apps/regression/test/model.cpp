@@ -6,6 +6,7 @@
 #include "../regression_context.h"
 #include "../store.h"
 #include <poincare/helpers.h>
+#include <poincare/test/helper.h>
 
 using namespace Poincare;
 using namespace Regression;
@@ -39,13 +40,13 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   double * coefficients = store.coefficientsForSeries(series, &context);
   int numberOfCoefs = store.modelForSeries(series)->numberOfCoefficients();
   for (int i = 0; i < numberOfCoefs; i++) {
-    quiz_assert(Helpers::IsApproximatelyEqual(coefficients[i], trueCoefficients[i], precision, reference));
+    quiz_assert(IsApproximatelyEqual(coefficients[i], trueCoefficients[i], precision, reference));
   }
 
   // Compute and check r2 value and sign
   double r2 = store.determinationCoefficientForSeries(series, &globalContext);
   quiz_assert(r2 >= 0.0);
-  quiz_assert(Helpers::IsApproximatelyEqual(r2, trueR2, precision, reference));
+  quiz_assert(IsApproximatelyEqual(r2, trueR2, precision, reference));
 }
 
 QUIZ_CASE(linear_regression) {
@@ -190,15 +191,15 @@ void assert_column_calculations_is(double * xi, int numberOfPoints, double trueM
   // The least likely value to be null is trueSquaredSum
   double reference = trueSquaredSum;
 
-  quiz_assert(Helpers::IsApproximatelyEqual(variance, trueVariance, precision, reference));
-  quiz_assert(Helpers::IsApproximatelyEqual(squaredSum, trueSquaredSum, precision, reference));
+  quiz_assert(IsApproximatelyEqual(variance, trueVariance, precision, reference));
+  quiz_assert(IsApproximatelyEqual(squaredSum, trueSquaredSum, precision, reference));
 
   // adapt the reference
   reference = std::sqrt(trueSquaredSum);
 
-  quiz_assert(Helpers::IsApproximatelyEqual(mean, trueMean, precision, reference));
-  quiz_assert(Helpers::IsApproximatelyEqual(sum, trueSum, precision, reference));
-  quiz_assert(Helpers::IsApproximatelyEqual(standardDeviation, trueStandardDeviation, precision, reference));
+  quiz_assert(IsApproximatelyEqual(mean, trueMean, precision, reference));
+  quiz_assert(IsApproximatelyEqual(sum, trueSum, precision, reference));
+  quiz_assert(IsApproximatelyEqual(standardDeviation, trueStandardDeviation, precision, reference));
 }
 
 QUIZ_CASE(column_calculation) {
@@ -236,8 +237,8 @@ void assert_regression_calculations_is(double * xi, double * yi, int numberOfPoi
 
   // trueProductSum and trueCovariance are using each other as reference
   // By construction, they often have a close value with a numberOfPoints factor
-  quiz_assert(Helpers::IsApproximatelyEqual(covariance, trueCovariance, precision, trueProductSum / numberOfPoints));
-  quiz_assert(Helpers::IsApproximatelyEqual(productSum, trueProductSum, precision, trueCovariance * numberOfPoints));
+  quiz_assert(IsApproximatelyEqual(covariance, trueCovariance, precision, trueProductSum / numberOfPoints));
+  quiz_assert(IsApproximatelyEqual(productSum, trueProductSum, precision, trueCovariance * numberOfPoints));
 
   // When trueR = 0, a DBL_EPSILON reference ensures that the only accepted errors are due to double approximations
   // sqrt is used because the R is computed from sqrt(V1*V0)
@@ -245,7 +246,7 @@ void assert_regression_calculations_is(double * xi, double * yi, int numberOfPoi
 
   double r = store.correlationCoefficient(series);
   quiz_assert(r >= 0.0);
-  quiz_assert(Helpers::IsApproximatelyEqual(r, trueR, precision, reference));
+  quiz_assert(IsApproximatelyEqual(r, trueR, precision, reference));
 }
 
 QUIZ_CASE(regression_calculation) {

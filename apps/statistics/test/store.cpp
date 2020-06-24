@@ -4,6 +4,7 @@
 #include <cmath>
 #include "../store.h"
 #include <poincare/helpers.h>
+#include <poincare/test/helper.h>
 
 using namespace Poincare;
 
@@ -12,7 +13,7 @@ namespace Statistics {
 void assert_value_approximately_equal_to(double d1, double d2, double precision, double reference) {
   quiz_assert((std::isnan(d1) && std::isnan(d2))
       || (std::isinf(d1) && std::isinf(d2) && d1 * d2 > 0.0 /*same sign*/)
-      || Helpers::IsApproximatelyEqual(d1, d2, precision, reference));
+      || IsApproximatelyEqual(d1, d2, precision, reference));
 }
 
 void assert_data_statictics_equal_to(double v[], double n[], int numberOfData, double trueSumOfOccurrences, double trueMaxValue, double trueMinValue, double trueRange, double trueMean, double trueVariance, double trueStandardDeviation, double trueSampleStandardDeviation, double trueFirstQuartile, double trueThirdQuartile, double trueQuartileRange, double trueMedian, double trueSum, double trueSquaredValueSum) {

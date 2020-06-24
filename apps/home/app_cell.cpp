@@ -7,7 +7,7 @@ namespace Home {
 
 AppCell::AppCell() :
   HighlightCell(),
-  m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::HomeCellText, Palette::HomeCellTextActive),
+  m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, Palette::HomeCellText, Palette::HomeCellBackground),
   m_visible(true), m_external_app(false)
 {
 }

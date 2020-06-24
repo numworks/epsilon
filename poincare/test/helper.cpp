@@ -103,6 +103,21 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
     });
 }
 
+bool IsApproximatelyEqual(double observedValue, double expectedValue, double precision, double reference) {
+  if (expectedValue != 0.0) {
+    double relativeError = std::fabs((observedValue - expectedValue) / expectedValue);
+    // The relative error must be smaller than the precision
+    return relativeError <= precision;
+  }
+  if (reference != 0.0) {
+    double referenceRatio = std::fabs(observedValue / reference);
+    // The observedValue must be negligible against the reference
+    return referenceRatio <= precision;
+  }
+  // The observedValue must exactly match the expectedValue
+  return observedValue == expectedValue;
+}
+
 template<typename T>
 void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;

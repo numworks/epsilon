@@ -75,10 +75,10 @@ private:
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in
    * Shared::Function::RecordDataBuffer about packing. */
-  class RecordDataBuffer : public Shared::Function::RecordDataBuffer {
+  class __attribute__((packed)) RecordDataBuffer : public Shared::Function::RecordDataBuffer {
   public:
     RecordDataBuffer(KDColor color) :
-      Shared::Function::RecordDataBuffer(color, sizeof(RecordDataBuffer)),
+      Shared::Function::RecordDataBuffer(color),
       m_type(Type::Explicit),
       m_initialRank(0),
       m_initialConditionSizes{0,0}
@@ -100,7 +100,7 @@ private:
     Type m_type;
     uint8_t m_initialRank;
 #if __EMSCRIPTEN__
-    // See comment about emscripten alignement in Shared::Function::RecordDataBuffer
+    // See comment about emscripten alignment in Shared::Function::RecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
     emscripten_align1_short m_initialConditionSizes[2];
 #else

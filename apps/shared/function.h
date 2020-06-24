@@ -58,10 +58,17 @@ protected:
    * representing a Function. We want to avoid padding which would:
    * - increase the size of the storage file
    * - introduce junk memory zone which are then crc-ed in Storage::checksum
-   *   creating dependency on uninitialized values. */
-  class RecordDataBuffer {
+   *   creating dependency on uninitialized values.
+   * - complicate getters, setters and record handling
+   * In addition, Record::value() is a pointer to an address inside
+   * Ion::Storage::sharedStorage(), and it might be unaligned. We use the packed
+   * keyword to warn the compiler that it members are potentially unaligned
+   * (otherwise, the compiler can emit instructions that work only on aligned
+   * objects). It also solves the padding issue mentioned above.
+   */
+  class __attribute__((packed)) RecordDataBuffer {
   public:
-    RecordDataBuffer(KDColor color, size_t size);
+    RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }
@@ -69,9 +76,7 @@ protected:
     void setActive(bool active) { m_active = active; }
   private:
 #if __EMSCRIPTEN__
-    /* Record::value() is a pointer to an address inside
-     * Ion::Storage::sharedStorage(), and it might be unaligned. However, for
-     * emscripten memory representation, loads and stores must be aligned;
+    /* For emscripten memory representation, loads and stores must be aligned;
      * performing a normal load or store on an unaligned address can fail
      * silently. We thus use 'emscripten_align1_short' type, the unaligned
      * version of uint16_t type to avoid producing an alignment error on the

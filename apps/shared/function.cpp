@@ -68,17 +68,6 @@ int Function::nameWithArgument(char * buffer, size_t bufferSize) {
   return result;
 }
 
-Function::RecordDataBuffer::RecordDataBuffer(KDColor color, size_t size) {
-  /* Size is passed so that the entire derived RecordDataBuffer can be set to 0
-   * before initializing parameters. This is done in order to ensure any padding
-   * bits are set to 0 and prevent storage's CRC32 from depending on junk data. */
-  assert(size >= sizeof(*this));
-  memset(this, 0, size);
-  // Members must be initialized after memset
-  m_color = color;
-  m_active = true;
-}
-
 Function::RecordDataBuffer * Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();

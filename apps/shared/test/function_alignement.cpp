@@ -9,7 +9,7 @@ namespace Shared {
 template<class F>
 void interactWithBaseRecordMember(F * fct) {
   /* Accessing Function record member m_color, which has a 2-byte alignment
-   * Only efffective in DEBUG=1, as there are no compiler optimizations */
+   * Only effective in DEBUG=1, as there are no compiler optimizations */
   KDColor color = fct->color();
   (void) color; // Silence compilation warning about unused variable.
 }
@@ -68,11 +68,11 @@ void testAlignmentHandlingFor() {
   sharedStorage->destroyAllRecords();
 }
 
-QUIZ_CASE(alignment_handled_on_emscripten) {
+QUIZ_CASE(alignment_handling) {
   /* This test main function is to crash if storage alignment is not handled
-   * properly on DEBUG and __EMSCRIPTEN__ modes only. It also ensures that the
-   * right test - load and store of differently-aligned objects - is performed
-   * (if storage/record implementations change for instance). */
+   * properly. It also ensures that the right test - load and store of
+   * differently-aligned objects - is performed (if storage/record
+   * implementations change for instance). */
   testAlignmentHandlingFor<Sequence::SequenceStore>();
   testAlignmentHandlingFor<Graph::ContinuousFunctionStore>();
 }

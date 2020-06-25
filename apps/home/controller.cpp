@@ -140,7 +140,21 @@ int Controller::numberOfIcons() const {
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  AppsContainer * container = AppsContainer::sharedAppsContainer();
+  if (withinTemporarySelection) {
+    return;
+  }
+  /* To prevent the selectable table view to select cells that are unvisible,
+   * we reselect the previous selected cell as soon as the selected cell is
+   * unvisible. This trick does not create an endless loop as we ensure not to
+   * stay on a unvisible cell and to initialize the first cell on a visible one
+   * (so the previous one is always visible). */
+  int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
+  if (appIndex >= AppsContainer::sharedAppsContainer()->numberOfApps()) {
+    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+  }
+}
+
+void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -153,16 +167,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * background complete redrawing but the code is a bit
    * clumsy. */
   if (t->selectedRow() == numberOfRows()-1) {
-    m_view.reloadBottomRow(this, container->numberOfApps()-1, k_numberOfColumns);
-  }
-  /* To prevent the selectable table view to select cells that are unvisible,
-   * we reselect the previous selected cell as soon as the selected cell is
-   * unvisible. This trick does not create an endless loop as we ensure not to
-   * stay on a unvisible cell and to initialize the first cell on a visible one
-   * (so the previous one is always visible). */
-  int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
-  if (appIndex >= container->numberOfApps()) {
-    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    m_view.reloadBottomRow(this, AppsContainer::sharedAppsContainer()->numberOfApps()-1, k_numberOfColumns);
   }
 }
 

@@ -285,7 +285,7 @@ void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, i
   }
 }
 
-void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void ConsoleController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }

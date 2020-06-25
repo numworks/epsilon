@@ -11,8 +11,6 @@ namespace Solver {
 class SolutionsController : public ViewController, public AlternateEmptyViewDefaultDelegate, public SelectableTableViewDataSource, public TableViewDataSource, public SelectableTableViewDelegate {
 public:
   SolutionsController(Responder * parentResponder, EquationStore * equationStore);
-  void setShouldReplaceFuncionsButNotSymbols(bool shouldReplaceFuncionsButNotSymbols) { m_shouldReplaceFunctionsButNotSymbols = shouldReplaceFuncionsButNotSymbols; }
-  bool shouldReplaceFuncionsButNotSymbols() const { return m_shouldReplaceFunctionsButNotSymbols; }
   /* ViewController */
   const char * title() override;
   View * view() override { return &m_contentView; }
@@ -111,7 +109,6 @@ private:
   EvenOddBufferTextCell m_approximateValueCells[k_numberOfApproximateValueCells];
   MessageCell m_messageCells[k_numberOfMessageCells];
   ContentView m_contentView;
-  bool m_shouldReplaceFunctionsButNotSymbols;
 };
 
 }

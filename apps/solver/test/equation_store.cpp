@@ -89,7 +89,11 @@ QUIZ_CASE(equation_solve) {
   // conj(x)*x+1 = 0
   assert_solves_to_error("conj(x)*x+1=0", RequireApproximateSolution);
   assert_solves_numerically_to("conj(x)*x+1=0", -100, 100, {});
+
+  assert_solves_to_error("(x-10)^7=0", RequireApproximateSolution);
+  assert_solves_numerically_to("(x-10)^7=0", -100, 100, {10});
 }
+
 
 QUIZ_CASE(equation_solve_complex_real) {
   set_complex_format(Real);

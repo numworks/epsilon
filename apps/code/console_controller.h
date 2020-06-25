@@ -53,7 +53,7 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;

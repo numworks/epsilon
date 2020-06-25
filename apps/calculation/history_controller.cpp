@@ -40,7 +40,7 @@ void HistoryController::reload() {
   if (numberOfRows() > 0) {
     m_selectableTableView.scrollToCell(0, numberOfRows()-1);
     // Force to reload last added cell (hide the burger and exact output if necessary)
-    tableViewDidChangeSelection(&m_selectableTableView, 0, numberOfRows()-1);
+    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, numberOfRows()-1);
   }
 }
 
@@ -128,7 +128,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableTableView.selectCellAtLocation(0, focusRow > 0 ? focusRow - 1 : 0);
-    tableViewDidChangeSelection(&m_selectableTableView, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
+    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
     m_selectableTableView.scrollToCell(0, selectedRow());
     return true;
   }
@@ -151,7 +151,7 @@ Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(int i
   return m_calculationStore->calculationAtIndex(storeIndex(i));
 }
 
-void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void HistoryController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection || previousSelectedCellY == selectedRow()) {
     return;
   }

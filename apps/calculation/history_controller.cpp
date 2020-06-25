@@ -161,6 +161,9 @@ void HistoryController::tableViewDidChangeSelectionAndDidScroll(SelectableTableV
     setSelectedSubviewType(SubviewType::Input, false, previousSelectedCellX, previousSelectedCellY);
   } else {
     HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
+    if (selectedSubviewType() == SubviewType::Ellipsis && selectedCell->additionalInformationType() == Calculation::AdditionalInformationType::None) {
+      setSelectedSubviewType(SubviewType::Output, false, previousSelectedCellX, previousSelectedCellY);
+    }
     SubviewType nextSelectedSubviewType = selectedSubviewType();
     if (selectedCell && !selectedCell->displaysSingleLine()) {
       nextSelectedSubviewType = previousSelectedCellY < selectedRow() ? SubviewType::Input : SubviewType::Output;

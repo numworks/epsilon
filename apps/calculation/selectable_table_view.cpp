@@ -35,6 +35,8 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   unhighlightSelectedCell();
 
   /* Main part of the scroll */
+  HistoryViewCell * cell = (HistoryViewCell *)(selectedCell());
+  assert(cell);
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(j+1) - maxContentHeightDisplayableWithoutScrolling();
   if (subviewType == HistoryViewCellDataSource::SubviewType::Input) {
@@ -43,12 +45,15 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
     } else {
       contentOffsetY = dataSource()->cumulatedHeightFromIndex(j);
     }
+  } else if (cell->displaysSingleLine() && dataSource()->rowHeight(j) > maxContentHeightDisplayableWithoutScrolling()) {
+    /* If we cannot display the full calculation, we display the output as
+     * close as possible to the top of the screen without drawing empty space
+     * between the history and the input field. */
+    contentOffsetY = dataSource()->cumulatedHeightFromIndex(j) + std::min(dataSource()->rowHeight(j) - maxContentHeightDisplayableWithoutScrolling(), cell->inputView()->layout().baseline() - cell->outputView()->baseline());
   }
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
   /* For the same reason, we have to rehighlight the new history view cell and
    * reselect the first responder. */
-  HistoryViewCell * cell = (HistoryViewCell *)(selectedCell());
-  assert(cell);
   cell->setHighlighted(true);
   Container::activeApp()->setFirstResponder(cell);
 }

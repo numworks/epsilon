@@ -45,7 +45,8 @@ IntervalController::IntervalController(Responder * parentResponder, InputEventHa
   FloatParameterController<double>(parentResponder),
   m_contentView(&m_selectableTableView),
   m_intervalCell{},
-  m_equationStore(equationStore)
+  m_equationStore(equationStore),
+  m_shouldReplaceFunctionsButNotSymbols(false)
 {
   m_selectableTableView.setTopMargin(0);
   m_okButton.setMessage(I18n::Message::ResolveEquation);
@@ -102,7 +103,7 @@ bool IntervalController::textFieldDidFinishEditing(TextField * textField, const 
 
 void IntervalController::buttonAction() {
   StackViewController * stack = stackController();
-  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext(), App::app()->solutionsController()->shouldReplaceFuncionsButNotSymbols());
+  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext(),   m_shouldReplaceFunctionsButNotSymbols);
   stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 

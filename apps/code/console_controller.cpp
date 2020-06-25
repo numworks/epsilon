@@ -48,6 +48,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
 
 bool ConsoleController::loadPythonEnvironment() {
   if (!m_pythonDelegate->isPythonUser(this)) {
+    m_scriptStore->clearConsoleFetchInformation();
     emptyOutputAccumulationBuffer();
     m_pythonDelegate->initPythonWithUser(this);
     MicroPython::registerScriptProvider(m_scriptStore);
@@ -173,7 +174,6 @@ const char * ConsoleController::inputText(const char * prompt) {
 
 void ConsoleController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_scriptStore->clearConsoleFetchInformation();
   loadPythonEnvironment();
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;

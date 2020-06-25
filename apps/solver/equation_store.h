@@ -74,14 +74,18 @@ public:
   /* Approximate resolution */
   double intervalBound(int index) const;
   void setIntervalBound(int index, double value);
-  double approximateSolutionAtIndex(int i);
+  double approximateSolutionAtIndex(int i) {
+    assert(m_type == Type::Monovariable && i >= 0 && i < m_numberOfSolutions);
+    return m_approximateSolutions[i];
+  }
   void approximateSolve(Poincare::Context * context, bool shouldReplaceFuncionsButNotSymbols);
-  bool haveMoreApproximationSolutions(Poincare::Context * context, bool solveWithoutContext);
+  bool haveMoreApproximationSolutions() { return m_hasMoreThanMaxNumberOfApproximateSolution; }
 
   void tidy() override;
 
   static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
   static constexpr int k_maxNumberOfApproximateSolutions = 10;
+  bool m_hasMoreThanMaxNumberOfApproximateSolution;
   static constexpr int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;
 private:
   static constexpr double k_precision = 0.01;

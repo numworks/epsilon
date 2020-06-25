@@ -15,6 +15,7 @@ public:
   TELEMETRY_ID("Interval");
   int numberOfRows() const override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  void setShouldReplaceFuncionsButNotSymbols(bool shouldReplaceFunctionsButNotSymbols) { m_shouldReplaceFunctionsButNotSymbols = shouldReplaceFunctionsButNotSymbols; }
 private:
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
@@ -39,6 +40,7 @@ private:
   constexpr static int k_maxNumberOfCells = 2;
   MessageTableCellWithEditableText m_intervalCell[k_maxNumberOfCells];
   EquationStore * m_equationStore;
+  bool m_shouldReplaceFunctionsButNotSymbols;
 };
 
 }

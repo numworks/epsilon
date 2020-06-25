@@ -102,6 +102,10 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
     scrollToCell(selectedColumn(), selectedRow());
   }
 
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousX, previousY, withinTemporarySelection);
+  }
+
   HighlightCell * cell = selectedCell();
   if (cell) {
     // Update first responder

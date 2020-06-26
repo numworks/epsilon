@@ -115,11 +115,6 @@ void relayout() {
   sScreenRect.h = windowHeight;
 #else
   Layout::recompute(windowWidth, windowHeight);
-  SDL_Rect backgroundRect;
-  Layout::getBackgroundRect(&backgroundRect);
-
-  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
-  SDL_RenderPresent(sRenderer);
 #endif
 
   setNeedsRefresh();

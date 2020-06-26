@@ -31,11 +31,11 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
     return;
   }
   /* As we scroll, the selected calculation does not use the same history view
-   * cell, thus, we want to deselect the previous used history view cell. */
+   * cell, thus, we want to deselect the previous used history view cell. (*) */
   unhighlightSelectedCell();
 
   /* Main part of the scroll */
-  HistoryViewCell * cell = (HistoryViewCell *)(selectedCell());
+  HistoryViewCell * cell = static_cast<HistoryViewCell *>(selectedCell());
   assert(cell);
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(j+1) - maxContentHeightDisplayableWithoutScrolling();
@@ -52,8 +52,12 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
     contentOffsetY = dataSource()->cumulatedHeightFromIndex(j) + std::min(dataSource()->rowHeight(j) - maxContentHeightDisplayableWithoutScrolling(), cell->inputView()->layout().baseline() - cell->outputView()->baseline());
   }
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
-  /* For the same reason, we have to rehighlight the new history view cell and
-   * reselect the first responder. */
+  /* For the same reason as (*), we have to rehighlight the new history view
+   * cell and reselect the first responder.
+   * We have to recall "selectedCell" because when the table might have been
+   * relayouted in "setContentOffset".*/
+  cell = static_cast<HistoryViewCell *>(selectedCell());
+  assert(cell);
   cell->setHighlighted(true);
   Container::activeApp()->setFirstResponder(cell);
 }

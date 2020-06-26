@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+EditExpressionController::ContentView::ContentView(Responder * parentResponder, CalculationSelectableTableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
   m_expressionField(parentResponder, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
@@ -42,7 +42,7 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   ViewController(parentResponder),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
-  m_contentView(this, (TableView *)m_historyController->view(), inputEventHandlerDelegate, this, this)
+  m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this, this)
 {
   m_cacheBuffer[0] = 0;
 }
@@ -53,8 +53,7 @@ void EditExpressionController::insertTextBody(const char * text) {
 }
 
 void EditExpressionController::didBecomeFirstResponder() {
-  int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
-  m_contentView.mainView()->scrollToCell(0, lastRow);
+  m_contentView.mainView()->scrollToBottom();
   m_contentView.expressionField()->setEditing(true, false);
   Container::activeApp()->setFirstResponder(m_contentView.expressionField());
 }

@@ -98,7 +98,7 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
   KDPoint br  = rect.bottomRight();
   KDRect visibleRect = visibleContentRect();
   /* We first check that we can display the whole rect. If we can't, we focus
-   * the croll to the closest part of the rect. */
+   * the scroll to the closest part of the rect. */
   if (visibleRect.height() < rect.height()) {
     // The visible rect is too small to display 'rect'
     if (rect.top() >= visibleRect.top()) {

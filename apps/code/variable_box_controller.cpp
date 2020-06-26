@@ -594,7 +594,6 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
       // Keep only MP_TOKEN_NAME tokens
       if (lex->tok_kind == MP_TOKEN_NAME) {
 
-        const char * name = lex->vstr.buf;
         int nameLength = lex->vstr.len;
 
         /* If the token autocompletes the text and it is not already in the
@@ -612,7 +611,7 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
         }
         assert(beginningLineIndex == line);
         const char * tokenInText = beginningLine + lex->tok_column - 1; // tok_column starts at 1, not 0
-        assert(strncmp(tokenInText, name, nameLength) == 0);
+        assert(strncmp(tokenInText, lex->vstr.buf, nameLength) == 0);
 
         ScriptNode::Type nodeType = (defToken || *(tokenInText + nameLength) == '(')? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
         if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, nodeType, origin, tokenInText, nameLength)) {

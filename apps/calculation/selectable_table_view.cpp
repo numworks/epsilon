@@ -12,6 +12,12 @@ CalculationSelectableTableView::CalculationSelectableTableView(Responder * paren
   setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
+void CalculationSelectableTableView::scrollToBottom() {
+  KDCoordinate contentOffsetX = contentOffset().x();
+  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(dataSource()->numberOfRows()) - maxContentHeightDisplayableWithoutScrolling();
+  setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
+}
+
 void CalculationSelectableTableView::scrollToCell(int i, int j) {
   if (m_contentView.bounds().height() < bounds().height()) {
     setTopMargin(bounds().height() - m_contentView.bounds().height());
@@ -21,9 +27,8 @@ void CalculationSelectableTableView::scrollToCell(int i, int j) {
   ::SelectableTableView::scrollToCell(i, j);
   ScrollView::layoutSubviews();
   if (m_contentView.bounds().height() - contentOffset().y() < bounds().height()) {
-    KDCoordinate contentOffsetX = contentOffset().x();
-    KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(dataSource()->numberOfRows()) - maxContentHeightDisplayableWithoutScrolling();
-    setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
+    // Avoid empty space at the end of the table
+    scrollToBottom();
   }
 }
 

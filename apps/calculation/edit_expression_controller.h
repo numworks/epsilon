@@ -8,6 +8,7 @@
 #include "../shared/layout_field_delegate.h"
 #include "history_controller.h"
 #include "calculation_store.h"
+#include "selectable_table_view.h"
 
 namespace Calculation {
 
@@ -34,15 +35,15 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, TableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+    ContentView(Responder * parentResponder, CalculationSelectableTableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     void reload();
-    TableView * mainView() { return m_mainView; }
+    CalculationSelectableTableView * mainView() { return m_mainView; }
     ExpressionField * expressionField() { return &m_expressionField; }
   private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    TableView * m_mainView;
+    CalculationSelectableTableView * m_mainView;
     ExpressionField m_expressionField;
   };
   void reloadView();

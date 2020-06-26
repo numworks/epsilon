@@ -128,8 +128,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableTableView.selectCellAtLocation(0, focusRow > 0 ? focusRow - 1 : 0);
-    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
     m_selectableTableView.scrollToCell(0, selectedRow());
+    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
     return true;
   }
   if (event == Ion::Events::Clear) {

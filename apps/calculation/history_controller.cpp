@@ -128,10 +128,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableTableView.selectCellAtLocation(0, focusRow > 0 ? focusRow - 1 : 0);
-    HistoryViewCell * selectedCell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
-    if (subviewType == SubviewType::Ellipsis && selectedCell->additionalInformationType() == Calculation::AdditionalInformationType::None) {
-      subviewType = SubviewType::Output;
-    }
     setSelectedSubviewType(subviewType, true, 0, selectedRow());
     return true;
   }
@@ -167,9 +163,6 @@ void HistoryController::tableViewDidChangeSelectionAndDidScroll(SelectableTableV
     SubviewType nextSelectedSubviewType = selectedSubviewType();
     if (selectedCell && !selectedCell->displaysSingleLine()) {
       nextSelectedSubviewType = previousSelectedCellY < selectedRow() ? SubviewType::Input : SubviewType::Output;
-    }
-    if (nextSelectedSubviewType == SubviewType::Ellipsis && selectedCell->additionalInformationType() == Calculation::AdditionalInformationType::None) {
-      nextSelectedSubviewType = SubviewType::Output;
     }
     setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedCellX, previousSelectedCellY);
   }
@@ -225,6 +218,16 @@ int HistoryController::typeAtLocation(int i, int j) {
 bool HistoryController::calculationAtIndexToggles(int index) {
   Context * context = App::app()->localContext();
   return index >= 0 && index < m_calculationStore->numberOfCalculations() && calculationAtIndex(index)->displayOutput(context) == Calculation::DisplayOutput::ExactAndApproximateToggle;
+}
+
+
+void HistoryController::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX, int previousSelectedY) {
+  // Avoid selecting non-displayed ellipsis
+  HistoryViewCell * selectedCell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
+  if (subviewType == SubviewType::Ellipsis && selectedCell && selectedCell->additionalInformationType() == Calculation::AdditionalInformationType::None) {
+    subviewType = SubviewType::Output;
+  }
+  HistoryViewCellDataSource::setSelectedSubviewType(subviewType, sameCell, previousSelectedX, previousSelectedY);
 }
 
 void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY, SubviewType type, SubviewType previousType) {

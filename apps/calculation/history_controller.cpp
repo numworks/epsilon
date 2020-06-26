@@ -128,8 +128,11 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableTableView.selectCellAtLocation(0, focusRow > 0 ? focusRow - 1 : 0);
-    m_selectableTableView.scrollToCell(0, selectedRow());
-    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
+    HistoryViewCell * selectedCell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
+    if (subviewType == SubviewType::Ellipsis && selectedCell->additionalInformationType() == Calculation::AdditionalInformationType::None) {
+      subviewType = SubviewType::Output;
+    }
+    setSelectedSubviewType(subviewType, true, 0, selectedRow());
     return true;
   }
   if (event == Ion::Events::Clear) {

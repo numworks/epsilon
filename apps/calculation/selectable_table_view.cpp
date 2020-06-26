@@ -1,4 +1,5 @@
 #include "selectable_table_view.h"
+#include <algorithm>
 
 namespace Calculation {
 

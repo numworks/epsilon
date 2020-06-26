@@ -18,7 +18,7 @@ public:
     Ellipsis = 3
   };
   HistoryViewCellDataSource() : m_selectedSubviewType(SubviewType::Output) {}
-  void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
+  virtual void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
   SubviewType selectedSubviewType() const { return m_selectedSubviewType; }
 private:
   /* This method should belong to a delegate instead of a data source but as

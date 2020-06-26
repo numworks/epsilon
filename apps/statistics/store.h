@@ -24,6 +24,7 @@ public:
   bool scrollToSelectedBarIndex(int series, int index);
   bool isEmpty() const override;
   bool seriesIsEmpty(int i) const override;
+  bool frequenciesAreInteger(int series) const;
   int numberOfNonEmptySeries() const override;
 
   // Calculation
@@ -61,6 +62,7 @@ private:
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
+  double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
   int minIndex(double * bufferValues, int bufferLength) const;
   // Histogram bars
   double m_barWidth;

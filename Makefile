@@ -122,7 +122,7 @@ include quiz/Makefile # Quiz needs to be included at the end
 all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(tests_src)
 # Make palette.h a dep for every source-file.
 # This ensures that the theming engine works correctly.
-$(call object_for,$(all_src)): $(BUILD_DIR)/escher/palette.h
+$(call object_for,$(all_src)): $(BUILD_DIR)/escher/palette.h $(BUILD_DIR)/apps/i18n.h
 
 all_objs = $(call object_for,$(all_src))
 .SECONDARY: $(all_objs)

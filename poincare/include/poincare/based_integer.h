@@ -17,7 +17,7 @@ public:
   size_t size() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "Based Integer";
+    stream << "BasedInteger";
   }
   virtual void logAttributes(std::ostream & stream) const override;
 #endif
@@ -38,6 +38,7 @@ public:
   template<typename T> T templatedApproximate() const;
 
 private:
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return m_base == Integer::Base::Decimal ? LayoutShape::Integer : LayoutShape::BinaryHexadecimal; }
   Integer::Base m_base;

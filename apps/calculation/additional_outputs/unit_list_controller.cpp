@@ -15,12 +15,15 @@ namespace Calculation {
 void UnitListController::setExpression(Poincare::Expression e) {
   ExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
-  // Reinitialize m_memoizedExpressions
-  for (size_t i = 0; i < k_maxNumberOfCells; i++) {
-    m_memoizedExpressions[i] = Expression();
+  static_assert(k_maxNumberOfRows >= 3, "k_maxNumberOfRows must be greater than 3");
+
+  Poincare::Expression expressions[k_maxNumberOfRows];
+  // Initialize expressions
+  for (size_t i = 0; i < k_maxNumberOfRows; i++) {
+    expressions[i] = Expression();
   }
 
-  size_t numberOfMemoizedExpressions = 0;
+  size_t numberOfExpressions = 0;
   // 1. First rows: miscellaneous classic units for some dimensions
   Expression copy = m_expression.clone();
   Expression units;
@@ -32,7 +35,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
 
   if (Unit::IsSISpeed(units)) {
     // 1.a. Turn speed into km/h
-    m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
+    expressions[numberOfExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
         Multiplication::Builder(
           Unit::Kilometer(),
@@ -45,7 +48,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
     requireSimplification = true; // Simplify the conversion
   } else if (Unit::IsSIVolume(units)) {
     // 1.b. Turn volume into L
-    m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
+    expressions[numberOfExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
         Unit::Liter()
         );
@@ -53,14 +56,14 @@ void UnitListController::setExpression(Poincare::Expression e) {
     canChangeUnitPrefix = true; // Pick best prefix (mL)
   } else if (Unit::IsSIEnergy(units)) {
     // 1.c. Turn energy into Wh
-    m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
+    expressions[numberOfExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
         Multiplication::Builder(
           Unit::Watt(),
           Unit::Hour()
           )
         );
-    m_memoizedExpressions[numberOfMemoizedExpressions++] = UnitConvert::Builder(
+    expressions[numberOfExpressions++] = UnitConvert::Builder(
         m_expression.clone(),
         Unit::ElectronVolt()
         );
@@ -69,21 +72,21 @@ void UnitListController::setExpression(Poincare::Expression e) {
   } else if (Unit::IsSITime(units)) {
     // Turn time into ? year + ? month + ? day + ? h + ? min + ? s
     double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
-    m_memoizedExpressions[numberOfMemoizedExpressions++] = Unit::BuildTimeSplit(value, App::app()->localContext(), Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit());
+    expressions[numberOfExpressions++] = Unit::BuildTimeSplit(value, App::app()->localContext(), Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit());
   }
   // 1.d. Simplify and tune prefix of all computed expressions
   size_t currentExpressionIndex = 0;
-  while (currentExpressionIndex < numberOfMemoizedExpressions) {
-    assert(!m_memoizedExpressions[currentExpressionIndex].isUninitialized());
+  while (currentExpressionIndex < numberOfExpressions) {
+    assert(!expressions[currentExpressionIndex].isUninitialized());
     if (requireSimplification) {
-      Shared::PoincareHelpers::Simplify(&m_memoizedExpressions[currentExpressionIndex], App::app()->localContext(), ExpressionNode::ReductionTarget::User);
+      Shared::PoincareHelpers::Simplify(&expressions[currentExpressionIndex], App::app()->localContext(), ExpressionNode::ReductionTarget::User);
     }
     if (canChangeUnitPrefix) {
       Expression newUnits;
       // Reduce to be able to removeUnit
-      PoincareHelpers::Reduce(&m_memoizedExpressions[currentExpressionIndex], App::app()->localContext(), ExpressionNode::ReductionTarget::User);
-      m_memoizedExpressions[currentExpressionIndex] = m_memoizedExpressions[currentExpressionIndex].removeUnit(&newUnits);
-      double value = Shared::PoincareHelpers::ApproximateToScalar<double>(m_memoizedExpressions[currentExpressionIndex], App::app()->localContext());
+      PoincareHelpers::Reduce(&expressions[currentExpressionIndex], App::app()->localContext(), ExpressionNode::ReductionTarget::User);
+      expressions[currentExpressionIndex] = expressions[currentExpressionIndex].removeUnit(&newUnits);
+      double value = Shared::PoincareHelpers::ApproximateToScalar<double>(expressions[currentExpressionIndex], App::app()->localContext());
       ExpressionNode::ReductionContext reductionContext(
           App::app()->localContext(),
           Preferences::sharedPreferences()->complexFormat(),
@@ -91,36 +94,36 @@ void UnitListController::setExpression(Poincare::Expression e) {
           ExpressionNode::ReductionTarget::User,
           ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
       Unit::ChooseBestPrefixForValue(&newUnits, &value, reductionContext);
-      m_memoizedExpressions[currentExpressionIndex] = Multiplication::Builder(Number::FloatNumber(value), newUnits);
+      expressions[currentExpressionIndex] = Multiplication::Builder(Number::FloatNumber(value), newUnits);
     }
     currentExpressionIndex++;
   }
 
   // 2. IS units only
-  assert(numberOfMemoizedExpressions < k_maxNumberOfCells - 1);
-  m_memoizedExpressions[numberOfMemoizedExpressions] = m_expression.clone();
-  Shared::PoincareHelpers::Simplify(&m_memoizedExpressions[numberOfMemoizedExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
-  numberOfMemoizedExpressions++;
+  assert(numberOfExpressions < k_maxNumberOfRows - 1);
+  expressions[numberOfExpressions] = m_expression.clone();
+  Shared::PoincareHelpers::Simplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
+  numberOfExpressions++;
 
   // 3. Get rid of duplicates
   Expression reduceExpression = m_expression.clone();
-  // Make m_expression compareable to m_memoizedExpressions (turn BasedInteger into Rational for instance)
+  // Make m_expression comparable to expressions (turn BasedInteger into Rational for instance)
   Shared::PoincareHelpers::Simplify(&reduceExpression, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::None);
   currentExpressionIndex = 1;
-  while (currentExpressionIndex < numberOfMemoizedExpressions) {
+  while (currentExpressionIndex < numberOfExpressions) {
     bool duplicateFound = false;
     for (size_t i = 0; i < currentExpressionIndex + 1; i++) {
-      // Compare the currentExpression to all previous memoized expressions and to m_expression
-      Expression comparedExpression = i == currentExpressionIndex ? reduceExpression : m_memoizedExpressions[i];
+      // Compare the currentExpression to all previous expressions and to m_expression
+      Expression comparedExpression = i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());
-      if (comparedExpression.isIdenticalTo(m_memoizedExpressions[currentExpressionIndex])) {
-        numberOfMemoizedExpressions--;
+      if (comparedExpression.isIdenticalTo(expressions[currentExpressionIndex])) {
+        numberOfExpressions--;
         // Shift next expressions
-        for (size_t j = currentExpressionIndex; j < numberOfMemoizedExpressions; j++) {
-          m_memoizedExpressions[j] = m_memoizedExpressions[j+1];
+        for (size_t j = currentExpressionIndex; j < numberOfExpressions; j++) {
+          expressions[j] = expressions[j+1];
         }
         // Remove last expression
-        m_memoizedExpressions[numberOfMemoizedExpressions] = Expression();
+        expressions[numberOfExpressions] = Expression();
         // The current expression has been discarded, no need to increment the current index
         duplicateFound = true;
         break;
@@ -131,21 +134,12 @@ void UnitListController::setExpression(Poincare::Expression e) {
       currentExpressionIndex++;
     }
   }
-}
-
-int UnitListController::numberOfRows() const {
-  int nbOfRows = 0;
-  for (size_t i = 0; i < k_maxNumberOfCells; i++) {
-    if (!m_memoizedExpressions[i].isUninitialized()) {
-      nbOfRows++;
+  // Memoize layouts
+  for (size_t i = 0; i < k_maxNumberOfRows; i++) {
+    if (!expressions[i].isUninitialized()) {
+      m_layouts[i] = Shared::PoincareHelpers::CreateLayout(expressions[i]);
     }
   }
-  return nbOfRows;
-}
-
-void UnitListController::computeLayoutAtIndex(int index) {
-  assert(!m_memoizedExpressions[index].isUninitialized());
-  m_layouts[index] = Shared::PoincareHelpers::CreateLayout(m_memoizedExpressions[index]);
 }
 
 I18n::Message UnitListController::messageAtIndex(int index) {

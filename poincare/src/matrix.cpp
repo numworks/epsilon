@@ -146,6 +146,16 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
   return rank;
 }
 
+Expression Matrix::createTrace() {
+  assert(numberOfRows() == numberOfColumns());
+  int n = numberOfRows();
+  Addition a = Addition::Builder();
+  for (int i = 0; i < n; i++) {
+    a.addChildAtIndexInPlace(matrixChild(i,i).clone(), i, i);
+  }
+  return std::move(a);
+}
+
 template<typename T>
 int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   if (numberOfRows != numberOfColumns) {
@@ -378,6 +388,7 @@ Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionConte
 }
 
 Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext, bool * couldComputeDeterminant, bool inPlace) {
+  // Determinant must be called on a reduced matrix only.
   *couldComputeDeterminant = true;
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
   int dim = m.numberOfRows();

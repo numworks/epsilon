@@ -48,11 +48,7 @@ Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reduction
     if (matrixChild0.numberOfRows() != matrixChild0.numberOfColumns()) {
       return replaceWithUndefinedInPlace();
     }
-    int n = matrixChild0.numberOfRows();
-    Addition a = Addition::Builder();
-    for (int i = 0; i < n; i++) {
-      a.addChildAtIndexInPlace(matrixChild0.matrixChild(i,i), i, i); // No need to clone
-    }
+    Expression a = matrixChild0.createTrace();
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }

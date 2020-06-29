@@ -10,10 +10,9 @@ public:
   RationalListController(EditExpressionController * editExpressionController) :
     ExpressionsListController(editExpressionController) {}
 
-  //ListViewDataSource
-  int numberOfRows() const override;
+  void setExpression(Poincare::Expression e) override;
+
 private:
-  void computeLayoutAtIndex(int index) override;
   I18n::Message messageAtIndex(int index) override;
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
 };

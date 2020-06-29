@@ -66,6 +66,15 @@ template<typename T> T BasedIntegerNode::templatedApproximate() const {
 
 // Comparison
 
+int BasedIntegerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
+  }
+  assert(e->type() == ExpressionNode::Type::BasedInteger);
+  const BasedIntegerNode * other = static_cast<const BasedIntegerNode *>(e);
+  return Integer::NaturalOrder(integer(), other->integer());
+}
+
 Expression BasedIntegerNode::shallowReduce(ReductionContext reductionContext) {
   return BasedInteger(this).shallowReduce();
 }

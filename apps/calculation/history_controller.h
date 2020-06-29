@@ -10,6 +10,7 @@
 #include "additional_outputs/rational_list_controller.h"
 #include "additional_outputs/trigonometry_list_controller.h"
 #include "additional_outputs/unit_list_controller.h"
+#include "additional_outputs/matrix_list_controller.h"
 
 namespace Calculation {
 
@@ -48,6 +49,7 @@ private:
   RationalListController m_rationalController;
   TrigonometryListController m_trigonometryController;
   UnitListController m_unitController;
+  MatrixListController m_matrixController;
 };
 
 }

@@ -11,7 +11,7 @@ ExpressionsListController::ExpressionsListController(EditExpressionController * 
   ListController(editExpressionController),
   m_cells{}
 {
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_cells[i].setParentResponder(m_listController.selectableTableView());
   }
 }
@@ -21,15 +21,17 @@ void ExpressionsListController::didEnterResponderChain(Responder * previousFirst
 }
 
 int ExpressionsListController::reusableCellCount(int type) {
-  return k_maxNumberOfCells;
+  return k_maxNumberOfRows;
 }
 
 void ExpressionsListController::viewDidDisappear() {
   ListController::viewDidDisappear();
-  // Reset cell memoization to avoid taking extra space in the pool
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
+  // Reset layout and cell memoization to avoid taking extra space in the pool
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_cells[i].setLayout(Layout());
+    m_layouts[i] = Layout();
   }
+  m_expression = Expression();
 }
 
 HighlightCell * ExpressionsListController::reusableCell(int index, int type) {
@@ -43,24 +45,34 @@ KDCoordinate ExpressionsListController::rowHeight(int j) {
 }
 
 void ExpressionsListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  /* Note : To further optimize memoization space in the pool, layout
+   * serialization could be memoized instead, and layout would be recomputed
+   * here, when setting cell's layout. */
   ExpressionTableCellWithPointer * myCell = static_cast<ExpressionTableCellWithPointer *>(cell);
   myCell->setLayout(layoutAtIndex(index));
   myCell->setAccessoryMessage(messageAtIndex(index));
   myCell->reloadScroll();
 }
 
+int ExpressionsListController::numberOfRows() const {
+  int nbOfRows = 0;
+  for (size_t i = 0; i < k_maxNumberOfRows; i++) {
+    if (!m_layouts[i].isUninitialized()) {
+      nbOfRows++;
+    }
+  }
+  return nbOfRows;
+}
+
 void ExpressionsListController::setExpression(Poincare::Expression e) {
   // Reinitialize memoization
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_layouts[i] = Layout();
   }
   m_expression = e;
 }
 
 Poincare::Layout ExpressionsListController::layoutAtIndex(int index) {
-  if (m_layouts[index].isUninitialized()) {
-    computeLayoutAtIndex(index);
-  }
   assert(!m_layouts[index].isUninitialized());
   return m_layouts[index];
 }

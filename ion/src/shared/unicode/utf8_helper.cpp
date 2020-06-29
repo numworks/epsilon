@@ -132,37 +132,104 @@ bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodeP
 }
 
 void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate, const char * stoppingPosition) {
-  UTF8Decoder decoder(buffer);
-  const char * currentPointer = buffer;
-  CodePoint codePoint = decoder.nextCodePoint();
-  const char * initialPointerToUpdate =  *pointerToUpdate;
-  const char * nextPointer = decoder.stringPosition();
-  size_t bufferIndex = 0;
+  constexpr int patternMaxSize = CodePoint::MaxCodePointCharLength + 1; // +1 for null terminating char
+  char pattern[patternMaxSize];
   int codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
-  (void)codePointCharSize; // Silence compilation warning about unused variable.
+  UTF8Decoder::CodePointToChars(c, pattern, codePointCharSize);
+  pattern[codePointCharSize] = '\0';
+  TextPair pair(pattern, "");
+  tryAndReplacePatternsInStringByPatterns(buffer, strlen(buffer), &pair, 1, true, pointerToUpdate, stoppingPosition);
+}
 
-  while (codePoint != UCodePointNull && (stoppingPosition == nullptr || currentPointer < stoppingPosition)) {
-    if (codePoint != c) {
-      int copySize = nextPointer - currentPointer;
-      memmove(buffer + bufferIndex, currentPointer, copySize);
-      bufferIndex+= copySize;
-    } else if (pointerToUpdate != nullptr && currentPointer < initialPointerToUpdate) {
-      assert(*pointerToUpdate - buffer >= codePointCharSize);
-      *pointerToUpdate = *pointerToUpdate - codePointCharSize;
-    }
-    currentPointer = nextPointer;
-    codePoint = decoder.nextCodePoint();
-    nextPointer = decoder.stringPosition();
+bool slideStringByNumberOfChar(char * text, int slidingSize, int textMaxLength) {
+  int lenText = strlen(text);
+  if (lenText + slidingSize > textMaxLength || lenText + slidingSize < 0) {
+    return false;
   }
-  if (codePoint == UCodePointNull) {
-    *(buffer + bufferIndex) = 0;
-  } else {
-    assert(stoppingPosition != nullptr);
-    // Find the null-terminating code point
-    const char * nullTermination = currentPointer + strlen(currentPointer);
-    /* Copy what remains of the buffer after the stopping position for code
-     * point removal */
-    memmove(buffer + bufferIndex, stoppingPosition, nullTermination - stoppingPosition + 1);
+  if (slidingSize > 0) {
+    memmove(text+slidingSize, text, strlen(text)+1);
+  } else if (slidingSize < 0) {
+    memmove(text, text-slidingSize, strlen(text)+1);
+  }
+  // In case slidingSize = 0, there is nothing to do
+  return true;
+}
+
+/* Replaces the first chars of a string by other ones. If the sizes are different
+ * the rest of the string will be moved right after the replacement chars.
+ * If successful returns true.*/
+static bool replaceFirstCharsByPattern(char * text, int lengthOfPatternToRemove, const char * replacementPattern, int textMaxLength) {
+  int lengthOfReplacementPattern = strlen(replacementPattern);
+  if (lengthOfPatternToRemove <= strlen(text) && slideStringByNumberOfChar(text, lengthOfReplacementPattern-lengthOfPatternToRemove, textMaxLength)) {
+    for (int i = 0; i < lengthOfReplacementPattern; i++) {
+      text[i] = replacementPattern[i];
+    }
+    return true;
+  }
+  return false;
+}
+
+void tryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * pointerToUpdate, const char * stoppingPosition) {
+  size_t i = 0;
+  size_t iPrev = 0;
+  size_t textLength = strlen(text);
+  size_t lengthOfParenthesisExtention = strlen("(\x11)");
+  while(i < textLength) {
+    iPrev = i;
+    bool didReplace = false;
+    for (int j = 0; j < numberOfPairs; j++) {
+      TextPair p = textPairs[j];
+      size_t firstStringLength = strlen(p.firstString());
+      size_t secondStringLength = strlen(p.secondString());
+      /* Instead of storing TextPair("√(\x11)", "sqrt(\x11)") for the keyboard
+       * events and TextPair("√", "sqrt") for the copy paste, we store just the
+       * first and register it as "function". Therefore we can decide to remove
+       * the (\x11) part or not depending on the application. This process is
+       * repeated for all 4 function keys usable in python (√, ℯ, ln, log)*/
+      if (p.removeParenthesesExtention()) {
+        firstStringLength -= lengthOfParenthesisExtention;
+        secondStringLength -= lengthOfParenthesisExtention;
+      }
+      char firstString[TextPair::k_maxLength];
+      char secondString[TextPair::k_maxLength];
+      // Getting rid of the eventual (\x11) part
+      strlcpy((char *)firstString, p.firstString(), firstStringLength+1);
+      strlcpy((char *)secondString, p.secondString(), secondStringLength+1);
+
+      char * matchedString = firstToSecond ? firstString : secondString;
+      size_t matchedStringLength = strlen(matchedString);
+      char * replacingString = firstToSecond ? secondString : firstString;
+      size_t replacingStringLength = strlen(replacingString);
+
+      if (strncmp(&text[i], matchedString, matchedStringLength) == 0) {
+        didReplace = replaceFirstCharsByPattern(&text[i], matchedStringLength, replacingString, textMaxLength);
+        if (didReplace) {
+          int delta = replacingStringLength - matchedStringLength;
+          textLength += delta;
+          if (pointerToUpdate != nullptr && &text[i] < *pointerToUpdate) {
+            // We still have to update the pointer as the modification cursor has not yet exceeded it.
+            *pointerToUpdate = *pointerToUpdate + delta;
+          }
+          if (stoppingPosition != nullptr) {
+            stoppingPosition = stoppingPosition + delta;
+          }
+          if (replacingStringLength != 0) {
+            i += replacingStringLength - 1;
+            /* When working with multiple TextPairs at the same time, it can be
+             * usefull to go back by one char. That is the case for empty matrixes
+             * Indeed, in the string ",,]",  ",," is replaced by ",\x11,".
+             * The ",]" pattern right after would be missed if not for the -1.*/
+          }
+        }
+      }
+    }
+    if (iPrev == i && !didReplace) {
+      // In case no pattern matched with the text, we go to the next char.
+      i++;
+    }
+    if ((stoppingPosition != nullptr) && (&text[i] >= stoppingPosition)) {
+      break;
+    }
   }
 }
 

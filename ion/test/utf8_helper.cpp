@@ -53,9 +53,8 @@ void assert_copy_and_remove_code_points_gives(char * dst, size_t dstSize, const 
     quiz_assert(dst[i] == result[i]);
   }
 }
-
+static int bufferSize = 100;
 QUIZ_CASE(ion_utf8_copy_and_remove_code_point) {
-  constexpr int bufferSize = 100;
   char buffer[bufferSize];
 
   const char * s = "12345";
@@ -116,7 +115,6 @@ void assert_remove_code_point_gives(char * buffer, CodePoint c, const char * * i
 }
 
 QUIZ_CASE(ion_utf8_remove_code_point) {
-  constexpr int bufferSize = 100;
   char buffer[bufferSize];
 
   const char * s = "2345";
@@ -165,13 +163,77 @@ QUIZ_CASE(ion_utf8_remove_code_point) {
   assert_remove_code_point_gives(buffer, c, &indexToUpdate, stoppingPosition, indexToUpdateResult, result);
 }
 
+void assert_slide_string_by_number_of_char_gives(const char * string, int slidingSize, bool successResult, const char * stringResult = nullptr) {
+  char buffer[bufferSize];
+  strlcpy(buffer, string, bufferSize);
+  bool success = UTF8Helper::slideStringByNumberOfChar((char *)buffer, slidingSize, bufferSize);
+  quiz_assert(success == successResult);
+  if (successResult) {
+    quiz_assert(strncmp(buffer, stringResult, bufferSize) == 0);
+  }
+}
+
+
+QUIZ_CASE(ion_utf8_move_string_from_index_by_number_of_char) {
+  const char * string1 = "12345";
+  assert_slide_string_by_number_of_char_gives(string1, 1, true, "112345");
+  const char * string2 = "(1+3)";
+  assert_slide_string_by_number_of_char_gives(string2, 3, true, "(1+(1+3)");
+  assert_slide_string_by_number_of_char_gives(string2, bufferSize - strlen(string2)/2, false);
+  const char * string3 = "exp(3+4)";
+  assert_slide_string_by_number_of_char_gives(string3, -3, true, "(3+4)");
+  assert_slide_string_by_number_of_char_gives(string3, -(strlen(string3)+3), false);
+  assert_slide_string_by_number_of_char_gives(string3, -8, true, "");
+}
+
+void assert_try_and_replace_pattern_in_string_by_pattern_gives(char * buffer, int bufferSize, UTF8Helper::TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * stringResult, const char ** indexToUpdate = nullptr, const char * indexToUpdateResult = nullptr, const char * stoppingPosition = nullptr) {
+  UTF8Helper::tryAndReplacePatternsInStringByPatterns(buffer, bufferSize, textPairs, numberOfPairs, firstToSecond, indexToUpdate, stoppingPosition);
+  quiz_assert(strncmp(buffer, stringResult, bufferSize) == 0);
+  if (indexToUpdateResult != nullptr) {
+    quiz_assert(*indexToUpdate == indexToUpdateResult);
+  }
+}
+
+QUIZ_CASE(ion_utf8_try_and_replace_pattern_in_string_by_pattern) {
+  constexpr int numberOfPairs = 2;
+  constexpr UTF8Helper::TextPair textPairs[numberOfPairs] = {
+    UTF8Helper::TextPair("12", "2.3"),
+    UTF8Helper::TextPair("exp", "ln"),
+  };
+
+  char buffer[bufferSize];
+  const char * string = "1234512";
+  strlcpy(buffer, string, bufferSize);
+  const char * indexToUpdate = buffer + 3;
+  const char * indexToUpdateResult = indexToUpdate + 1;
+  const char * result = "2.33452.3";
+  const char * stoppingPosition = nullptr;
+  assert_try_and_replace_pattern_in_string_by_pattern_gives(buffer, bufferSize, (UTF8Helper::TextPair *)&textPairs, numberOfPairs, true, result, &indexToUpdate, indexToUpdateResult);
+
+  string = "exp(2.3)12";
+  strlcpy(buffer, string, bufferSize);
+  indexToUpdate = buffer + 3;
+  indexToUpdateResult = indexToUpdate - 1;
+  result = "ln(2.3)12";
+  stoppingPosition = buffer + 5;
+  assert_try_and_replace_pattern_in_string_by_pattern_gives(buffer, bufferSize, (UTF8Helper::TextPair *)&textPairs, numberOfPairs, true, result, &indexToUpdate, indexToUpdateResult, stoppingPosition);
+
+  string = "12*ln(7)+ln";
+  strlcpy(buffer, string, bufferSize);
+  indexToUpdate = buffer + 7;
+  indexToUpdateResult = indexToUpdate + 1;
+  result = "12*exp(7)+ln";
+  stoppingPosition = buffer + 7;
+  assert_try_and_replace_pattern_in_string_by_pattern_gives(buffer, bufferSize, (UTF8Helper::TextPair *)&textPairs, numberOfPairs, false, result, &indexToUpdate, indexToUpdateResult, stoppingPosition);
+
+}
+
 void assert_string_copy_until_code_point_gives(char * dst, size_t dstSize, const char * src, CodePoint c, const char * result, size_t returnedResult) {
   quiz_assert(UTF8Helper::CopyUntilCodePoint(dst, dstSize, src, c) == returnedResult);
   quiz_assert(strcmp(dst, result) == 0);
 }
 
 QUIZ_CASE(ion_utf8_helper_copy_until_code_point) {
-  constexpr int bufferSize = 100;
   char buffer[bufferSize];
 
   const char * s = "1234";
@@ -217,7 +279,6 @@ void assert_string_remove_previous_glyph_gives(const char * text, char * locatio
 }
 
 QUIZ_CASE(ion_utf8_helper_remove_previous_glyph) {
-  constexpr int bufferSize = 100;
   char buffer[bufferSize];
   // 3é4
   buffer[0] = '3';

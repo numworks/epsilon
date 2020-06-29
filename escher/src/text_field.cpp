@@ -123,6 +123,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   assert(m_isEditing);
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
+  // TODO when paste fails because of a too big message, create a pop-up
   if (m_currentDraftTextLength + textLength >= m_draftTextBufferSize || textLength == 0) {
     return false;
   }

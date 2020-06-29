@@ -1,4 +1,6 @@
 #include <quiz.h>
+#include <apps/i18n.h>
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <math.h>
 #include <cmath>
@@ -16,7 +18,33 @@ void assert_value_approximately_equal_to(double d1, double d2, double precision,
       || IsApproximatelyEqual(d1, d2, precision, reference));
 }
 
-void assert_data_statictics_equal_to(double v[], double n[], int numberOfData, double trueSumOfOccurrences, double trueMaxValue, double trueMinValue, double trueRange, double trueMean, double trueVariance, double trueStandardDeviation, double trueSampleStandardDeviation, double trueFirstQuartile, double trueThirdQuartile, double trueQuartileRange, double trueMedian, double trueSum, double trueSquaredValueSum) {
+/* SublistMethod is the method for computing quartiles used in most
+ * countries, which defines quartiles as the medians of the left and right
+ * subsets of data.
+ * FrequencyMethod is the method used in France and Italy, which defines the
+ * quartiles as the 25th and 75th percentile, in terms of cumulated
+ * frequencies. */
+void assert_data_statictics_equal_to(
+    double v[],
+    double n[],
+    int numberOfData,
+    double trueSumOfOccurrences,
+    double trueMaxValue,
+    double trueMinValue,
+    double trueRange,
+    double trueMean,
+    double trueVariance,
+    double trueStandardDeviation,
+    double trueSampleStandardDeviation,
+    double trueFirstQuartileSublistMethod,
+    double trueThirdQuartileSublistMethod,
+    double trueQuartileRangeSublistMethod,
+    double trueFirstQuartileFrequencyMethod,
+    double trueThirdQuartileFrequencyMethod,
+    double trueQuartileRangeFrequencyMethod,
+    double trueMedian,
+    double trueSum,
+    double trueSquaredValueSum) {
   Store store;
   int seriesIndex = 0;
 
@@ -28,7 +56,6 @@ void assert_data_statictics_equal_to(double v[], double n[], int numberOfData, d
 
   double precision = 1e-3;
 
-  // Compare the statistics
   double sumOfOccurrences = store.sumOfOccurrences(seriesIndex);
   double maxValue = store.maxValue(seriesIndex);
   double minValue = store.minValue(seriesIndex);
@@ -37,9 +64,6 @@ void assert_data_statictics_equal_to(double v[], double n[], int numberOfData, d
   double variance = store.variance(seriesIndex);
   double standardDeviation = store.standardDeviation(seriesIndex);
   double sampleStandardDeviation = store.sampleStandardDeviation(seriesIndex);
-  double firstQuartile = store.firstQuartile(seriesIndex);
-  double thirdQuartile = store.thirdQuartile(seriesIndex);
-  double quartileRange = store.quartileRange(seriesIndex);
   double median = store.median(seriesIndex);
   double sum = store.sum(seriesIndex);
   double squaredValueSum = store.squaredValueSum(seriesIndex);
@@ -49,9 +73,9 @@ void assert_data_statictics_equal_to(double v[], double n[], int numberOfData, d
   quiz_assert(variance >= 0.0);
   quiz_assert(standardDeviation >= 0.0);
   quiz_assert(sampleStandardDeviation >= 0.0);
-  quiz_assert(quartileRange >= 0.0);
   quiz_assert(squaredValueSum >= 0.0);
 
+  // Compare the statistics
   double reference = trueSquaredValueSum;
   assert_value_approximately_equal_to(variance, trueVariance, precision, reference);
   assert_value_approximately_equal_to(squaredValueSum, trueSquaredValueSum, precision, reference);
@@ -62,8 +86,6 @@ void assert_data_statictics_equal_to(double v[], double n[], int numberOfData, d
   assert_value_approximately_equal_to(mean, trueMean, precision, reference);
   assert_value_approximately_equal_to(standardDeviation, trueStandardDeviation, precision, reference);
   assert_value_approximately_equal_to(sampleStandardDeviation, trueSampleStandardDeviation, precision, reference);
-  assert_value_approximately_equal_to(firstQuartile, trueFirstQuartile, precision, reference);
-  assert_value_approximately_equal_to(thirdQuartile, trueThirdQuartile, precision, reference);
   assert_value_approximately_equal_to(median, trueMedian, precision, reference);
   assert_value_approximately_equal_to(sum, trueSum, precision, reference);
 
@@ -71,7 +93,21 @@ void assert_data_statictics_equal_to(double v[], double n[], int numberOfData, d
   assert_value_approximately_equal_to(maxValue, trueMaxValue, 0.0, 0.0);
   assert_value_approximately_equal_to(minValue, trueMinValue, 0.0, 0.0);
   assert_value_approximately_equal_to(range, trueRange, 0.0, 0.0);
-  assert_value_approximately_equal_to(quartileRange, trueQuartileRange, 0.0, 0.0);
+
+  // Compare the country specific statistics
+  I18n::Country country;
+  double quartileRange;
+  bool shouldUseFrequencyMethod;
+  for (int c = 0; c < I18n::NumberOfCountries; c++) {
+    country = static_cast<I18n::Country>(c);
+    GlobalPreferences::sharedGlobalPreferences()->setCountry(country);
+    quartileRange = store.quartileRange(seriesIndex);
+    quiz_assert(quartileRange >= 0.0);
+    shouldUseFrequencyMethod = country == I18n::Country::FR || country == I18n::Country::IT;
+    assert_value_approximately_equal_to(store.firstQuartile(seriesIndex), shouldUseFrequencyMethod ? trueFirstQuartileFrequencyMethod : trueFirstQuartileSublistMethod, precision, reference);
+    assert_value_approximately_equal_to(store.thirdQuartile(seriesIndex), shouldUseFrequencyMethod ? trueThirdQuartileFrequencyMethod : trueThirdQuartileSublistMethod, precision, reference);
+    assert_value_approximately_equal_to(quartileRange, shouldUseFrequencyMethod ? trueQuartileRangeFrequencyMethod : trueQuartileRangeSublistMethod, 0.0, 0.0);
+  }
 }
 
 QUIZ_CASE(data_statistics) {
@@ -94,9 +130,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 1.25,
       /* standardDeviation */ 1.118,
       /* sampleStandardDeviation */ 1.291,
-      /* firstQuartile */ 1.0,
-      /* thirdQuartile */ 3.0,
-      /* quartileRange */ 2.0,
+      /* firstQuartileSublistMethod */ 1.5,
+      /* thirdQuartileSublistMethod */ 3.5,
+      /* quartileRangeSublistMethod */ 2.0,
+      /* firstQuartileFrequencyMethod */ 1.0,
+      /* thirdQuartileFrequencyMethod */ 3.0,
+      /* quartileRangeFrequencyMethod */ 2.0,
       /* median */ 2.5,
       /* sum */ 10.0,
       /* squaredValueSum */ 30.0);
@@ -120,9 +159,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 10.0,
       /* standardDeviation */ 3.1623,
       /* sampleStandardDeviation */ 3.3166,
-      /* firstQuartile */ 3.0,
-      /* thirdQuartile */ 9.0,
-      /* quartileRange */ 6.0,
+      /* firstQuartileSublistMethod */ 3.0,
+      /* thirdQuartileSublistMethod */ 9.0,
+      /* quartileRangeSublistMethod */ 6.0,
+      /* firstQuartileFrequencyMethod */ 3.0,
+      /* thirdQuartileFrequencyMethod */ 9.0,
+      /* quartileRangeFrequencyMethod */ 6.0,
       /* median */ 6.0,
       /* sum */ 66.0,
       /* squaredValueSum */ 506.0);
@@ -145,9 +187,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 11.917,
       /* standardDeviation */ 3.4521,
       /* sampleStandardDeviation */ 3.6056,
-      /* firstQuartile */ 3.0,
-      /* thirdQuartile */ 9.0,
-      /* quartileRange */ 6.0,
+      /* firstQuartileSublistMethod */ 3.5,
+      /* thirdQuartileSublistMethod */ 9.5,
+      /* quartileRangeSublistMethod */ 6.0,
+      /* firstQuartileFrequencyMethod */ 3.0,
+      /* thirdQuartileFrequencyMethod */ 9.0,
+      /* quartileRangeFrequencyMethod */ 6.0,
       /* median */ 6.5,
       /* sum */ 78.0,
       /* squaredValueSum */ 650.0);
@@ -170,9 +215,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 15.6082,
       /* standardDeviation */ 3.9507,
       /* sampleStandardDeviation */ INFINITY,
-      /* firstQuartile */ 2.0,
-      /* thirdQuartile */ 10.0,
-      /* quartileRange */ 8.0,
+      /* firstQuartileSublistMethod */ 2.0,
+      /* thirdQuartileSublistMethod */ 10.0,
+      /* quartileRangeSublistMethod */ 8.0,
+      /* firstQuartileFrequencyMethod */ 2.0,
+      /* thirdQuartileFrequencyMethod */ 10.0,
+      /* quartileRangeFrequencyMethod */ 8.0,
       /* median */ 3.0,
       /* sum */ 5.6995,
       /* squaredValueSum */ 48.0925);
@@ -195,9 +243,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 10.06,
       /* standardDeviation */ 3.1719,
       /* sampleStandardDeviation */ 4.2947,
-      /* firstQuartile */ 3.0,
-      /* thirdQuartile */ 5.0,
-      /* quartileRange */ 2.0,
+      /* firstQuartileSublistMethod */ 3.0,
+      /* thirdQuartileSublistMethod */ 5.0,
+      /* quartileRangeSublistMethod */ 2.0,
+      /* firstQuartileFrequencyMethod */ 3.0,
+      /* thirdQuartileFrequencyMethod */ 5.0,
+      /* quartileRangeFrequencyMethod */ 2.0,
       /* median */ 3.0,
       /* sum */ 10.1,
       /* squaredValueSum */ 68.500);
@@ -220,9 +271,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 18.9155,
       /* standardDeviation */ 4.3492,
       /* sampleStandardDeviation */ 4.4492,
-      /* firstQuartile */ -7.0,
-      /* thirdQuartile */ -2.0,
-      /* quartileRange */ 5.0,
+      /* firstQuartileSublistMethod */ -7.0,
+      /* thirdQuartileSublistMethod */ -2.0,
+      /* quartileRangeSublistMethod */ 5.0,
+      /* firstQuartileFrequencyMethod */ -7.0,
+      /* thirdQuartileFrequencyMethod */ -2.0,
+      /* quartileRangeFrequencyMethod */ 5.0,
       /* median */ -2.0,
       /* sum */ -87.0,
       /* squaredValueSum */ 762.0);
@@ -245,9 +299,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 0.75,
       /* standardDeviation */ 0.866,
       /* sampleStandardDeviation */ 1.0,
-      /* firstQuartile */ 1.0,
-      /* thirdQuartile */ 1.0,
-      /* quartileRange */ 0.0,
+      /* firstQuartileSublistMethod */ 1.0,
+      /* thirdQuartileSublistMethod */ 2.0,
+      /* quartileRangeSublistMethod */ 1.0,
+      /* firstQuartileFrequencyMethod */ 1.0,
+      /* thirdQuartileFrequencyMethod */ 1.0,
+      /* quartileRangeFrequencyMethod */ 0.0,
       /* median */ 1.0,
       /* sum */ 6.0,
       /* squaredValueSum */ 12.0);
@@ -270,9 +327,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 1.0,
       /* standardDeviation */ 1.0,
       /* sampleStandardDeviation */ 1.414,
-      /* firstQuartile */ 2.0,
-      /* thirdQuartile */ 4.0,
-      /* quartileRange */ 2.0,
+      /* firstQuartileSublistMethod */ 2.0,
+      /* thirdQuartileSublistMethod */ 4.0,
+      /* quartileRangeSublistMethod */ 2.0,
+      /* firstQuartileFrequencyMethod */ 2.0,
+      /* thirdQuartileFrequencyMethod */ 4.0,
+      /* quartileRangeFrequencyMethod */ 2.0,
       /* median */ 3.0,
       /* sum */ 6.0,
       /* squaredValueSum */ 20.0);
@@ -295,9 +355,12 @@ QUIZ_CASE(data_statistics) {
       /* variance */ 0.0,
       /* standardDeviation */ 0.0,
       /* sampleStandardDeviation */ 0.0,
-      /* firstQuartile */ -996.85840734641,
-      /* thirdQuartile */ -996.85840734641,
-      /* quartileRange */ 0.0,
+      /* firstQuartileSublistMethod */ -996.85840734641,
+      /* thirdQuartileSublistMethod */ -996.85840734641,
+      /* quartileRangeSublistMethod */ 0.0,
+      /* firstQuartileFrequencyMethod */ -996.85840734641,
+      /* thirdQuartileFrequencyMethod */ -996.85840734641,
+      /* quartileRangeFrequencyMethod */ 0.0,
       /* median */ -996.85840734641,
       /* sum */ -8971.72566611769,
       /* squaredValueSum */ 8943540.158675);

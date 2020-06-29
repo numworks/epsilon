@@ -85,11 +85,13 @@ App::App(Snapshot * snapshot) :
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
   m_variableBoxController(snapshot->scriptStore())
 {
+  Clipboard::sharedClipboard()->enterPython();
 }
 
 App::~App() {
   assert(!m_consoleController.inputRunLoopActive());
   deinitPython();
+  Clipboard::sharedClipboard()->exitPython();
 }
 
 bool App::handleEvent(Ion::Events::Event event) {

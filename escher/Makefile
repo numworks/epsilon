@@ -89,6 +89,7 @@ escher_src += $(addprefix escher/src/,\
 )
 
 tests_src += $(addprefix escher/test/,\
+  clipboard.cpp \
   layout_field.cpp\
 )
 

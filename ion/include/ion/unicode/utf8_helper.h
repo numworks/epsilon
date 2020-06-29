@@ -6,6 +6,19 @@
 
 namespace UTF8Helper {
 
+class TextPair {
+public:
+  constexpr TextPair(const char * firstString, const char * secondString, bool removeParenthesesExtention = false) :  m_firstString(firstString), m_secondString(secondString), m_removeParenthesesExtention(removeParenthesesExtention){}
+  const char * firstString() { return m_firstString; }
+  const char * secondString() { return m_secondString; }
+  bool removeParenthesesExtention() { return m_removeParenthesesExtention; }
+  static constexpr int k_maxLength = 20;
+private:
+  const char * m_firstString;
+  const char * m_secondString;
+  bool m_removeParenthesesExtention;
+};
+
 // Returns the number of occurences of a code point in a string
 int CountOccurrences(const char * s, CodePoint c);
 
@@ -27,6 +40,25 @@ bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodeP
 /* Remove all code points c. and update an index that should be lower if code
  * points where removed before it. Ensure null-termination of dst. */
 void RemoveCodePoint(char * buffer, CodePoint c, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
+
+/* Slides a string by a number of chars. If slidingSize < 0, the string is slided
+ * to the left losing the first chars. Returns true if successful.
+ * Exemples :
+ * slideStringByNumberOfChar("12345", 2, 7) gives "1212345"
+ * slideStringByNumberOfChar("12345", 2, 5) gives "12123"
+ * slideStringByNumberOfChar("12345", -2, 5) gives "34545"*/
+bool slideStringByNumberOfChar(char * text, int slidingSize, int textMaxLength);
+
+/* Looks for patterns in a string. If a pattern is found, it is replaced by
+ * the one associated in the TextPair struct.
+ * - firstToSecond defines if replace the first string of a TextPair by the second
+ *   or the other way around.
+ * - indexToUpdate is a pointer to a char in the string. It will be updated to
+ *   point to the same place after calling the function.
+ * - stoppingPosition allows partial replacement in the string.
+ *
+ * Ensure null termination of the string or set the value of stoppingPosition*/
+void tryAndReplacePatternsInStringByPatterns(char * text, int textMaxSize, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
 
 /* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);

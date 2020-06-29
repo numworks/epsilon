@@ -41,6 +41,7 @@ public:
     Rational,
     Trigonometry,
     Unit,
+    Matrix,
     Complex
   };
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }

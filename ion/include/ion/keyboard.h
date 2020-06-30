@@ -43,7 +43,9 @@ public:
   }
   operator uint64_t() const { return m_bitField; }
   void setKey(Key k) {
-    m_bitField |= (uint64_t)1 << (uint8_t)k;
+    if (k != Key::None) {
+      m_bitField |= (uint64_t)1 << (uint8_t)k;
+    }
   }
   void clearKey(Key k) {
     m_bitField &= ~((uint64_t)1 << (uint8_t)k);

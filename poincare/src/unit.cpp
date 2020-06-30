@@ -97,41 +97,31 @@ const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & v
 }
 
 template<>
-Unit::Dimension::Vector<Integer>::Metrics UnitNode::Dimension::Vector<Integer>::metrics() const {
+size_t UnitNode::Dimension::Vector<int>::supportSize() const {
   size_t supportSize = 0;
-  Integer norm(0);
-  for (const Integer * i = reinterpret_cast<const Integer*>(this); i < reinterpret_cast<const Integer*>(this) + NumberOfBaseUnits; i++) {
-    Integer coefficient = *i;
-    if (coefficient.isZero()) {
-      continue;
-    }
-    supportSize++;
-    coefficient.setNegative(false);
-    norm = Integer::Addition(norm, coefficient);
-  }
-  return {.supportSize = supportSize, .norm = norm};
-}
-
-template<>
-Unit::Dimension::Vector<int8_t>::Metrics UnitNode::Dimension::Vector<int8_t>::metrics() const {
-  size_t supportSize = 0;
-  int8_t norm = 0;
-  for (const int8_t * i = reinterpret_cast<const int8_t*>(this); i < reinterpret_cast<const int8_t*>(this) + NumberOfBaseUnits; i++) {
-    int8_t coefficient = *i;
+  for (const int * i = reinterpret_cast<const int*>(this); i < reinterpret_cast<const int*>(this) + NumberOfBaseUnits; i++) {
+    int coefficient = *i;
     if (coefficient == 0) {
       continue;
     }
     supportSize++;
-    norm += coefficient > 0 ? coefficient : -coefficient;
   }
-  return {.supportSize = supportSize, .norm = norm};
+  return supportSize;
 }
 
 template<>
-Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseUnits(const Expression baseUnits) {
+Unit::Dimension::Vector<int> UnitNode::Dimension::Vector<int>::FromBaseUnits(const Expression baseUnits) {
   /* Returns the vector of Base units with integer exponents. If rational, the
    * closest integer will be used. */
-  Vector<Integer> vector;
+  Vector<int> vector = {
+    .time               = 0,
+    .distance           = 0,
+    .mass               = 0,
+    .current            = 0,
+    .temperature        = 0,
+    .amountOfSubstance  = 0,
+    .luminuousIntensity = 0,
+  };
   int numberOfFactors;
   int factorIndex = 0;
   Expression factor;
@@ -144,21 +134,22 @@ Unit::Dimension::Vector<Integer> UnitNode::Dimension::Vector<Integer>::FromBaseU
   }
   do {
     // Get the unit's exponent
-    Integer exponent(1);
+    int exponent = 1;
     if (factor.type() == ExpressionNode::Type::Power) {
       Expression exp = factor.childAtIndex(1);
       assert(exp.type() == ExpressionNode::Type::Rational);
       // Using the closest integer to the exponent.
       float exponent_float = static_cast<const Rational &>(exp).node()->templatedApproximate<float>();
-      if (std::abs(exponent_float) < INT_MAX / 2) {
+      /* We limit to INT_MAX / 3 because an exponent might get bigger with
+       * simplification. As a worst case scenario, (_s²_m²_kg/_A²)^n should be
+       * simplified to (_s^5_S)^n. If 2*n is under INT_MAX, 5*n might not. */
+      if (std::abs(exponent_float) < INT_MAX / 3) {
         // Exponent can be safely casted as int
         exponent = (int)std::round(exponent_float);
-        assert(std::abs(exponent_float - exponent.approximate<float>()) <= 0.5);
+        assert(std::abs(exponent_float - (float)exponent) <= 0.5);
       } else {
-        /* Base units vector will ignore this coefficient, that could have been
-         * casted as int8_t in CanSimplifyUnitProduct, leading to homogeneous,
-         * but badly formatted units. Any way, the missing exponent won't affect
-         * CanSimplifyUnitProduct as homogeneity is conserved. */
+        /* Base units vector will ignore this coefficient, to avoid exponent
+         * overflow. In any way, shallowBeautify will conserve homogeneity. */
         exponent = 0;
       }
       factor = factor.childAtIndex(0);

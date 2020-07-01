@@ -1,9 +1,10 @@
 #include "main.h"
 #include "display.h"
-#include "platform.h"
+#include "haptics.h"
 #if !EPSILON_SDL_SCREEN_ONLY
 #include "layout.h"
 #endif
+#include "platform.h"
 #include "telemetry.h"
 #include "random.h"
 
@@ -27,11 +28,17 @@ int main(int argc, char * argv[]) {
     arguments.push_back(language);
   }
 
+  // Init
 #if EPSILON_TELEMETRY
   Ion::Simulator::Telemetry::init();
 #endif
   Ion::Simulator::Main::init();
+  Ion::Simulator::Haptics::init();
+
   ion_main(arguments.size(), &arguments[0]);
+
+  // Shutdown
+  Ion::Simulator::Haptics::shutdown();
   Ion::Simulator::Main::quit();
 #if EPSILON_TELEMETRY
   Ion::Simulator::Telemetry::shutdown();

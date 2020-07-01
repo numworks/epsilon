@@ -11,6 +11,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   console_stdio.cpp:-consoledisplay \
   crc32.cpp \
   display.cpp:-headless \
+  events.cpp \
   events_keyboard.cpp:-headless \
   events_stdin.cpp:+headless \
   framebuffer_base.cpp \

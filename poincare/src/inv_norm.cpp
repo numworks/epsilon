@@ -29,11 +29,11 @@ template<typename T>
 Evaluation<T> InvNormNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
-  Evaluation<T> varEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> sigmaEvaluation = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
 
   T a = aEvaluation.toScalar();
   T mu = muEvaluation.toScalar();
-  T sigma = std::sqrt(varEvaluation.toScalar());
+  T sigma = sigmaEvaluation.toScalar();
 
   // CumulativeDistributiveInverseForProbability handles bad mu and var values
   return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveInverseForProbability<T>(a, mu, sigma));

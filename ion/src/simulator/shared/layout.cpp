@@ -148,51 +148,21 @@ static void getKeyCenter(int validKeyIndex, SDL_Point * point) {
   makeAbsolute(&sKeyCenters[validKeyIndex], point);
 }
 
-#if 0
-/* TODO: once we use std++14, we can make maxHalfDistanceBetweekAdjacentKeys
- * constexpr and use it to compute the k_closenessThreshold. */
-
-static int maxHalfDistanceBetweekAdjacentKeys() {
-  int maxSquaredDistance = 0;
-  for (int i=0; i<Keyboard::NumberOfValidKeys-1; i++) {
-    int minSquaredDistance = INT_MAX;
-    for (int j=i+1; j<Keyboard::NumberOfValidKeys; j++) {
-      SDL_Point keyICenter;
-      SDL_Point keyJCenter;
-      getKeyCenter(i, &keyICenter);
-      getKeyCenter(j, &keyJCenter);
-      int dx = keyICenter.x - keyJCenter.x;
-      int dy = keyICenter.y - keyJCenter.y;
-      int squaredDistance = dx*dx + dy*dy;
-      if (squaredDistance < minSquaredDistance) {
-        minSquaredDistance = squaredDistance;
-      }
-    }
-    if (minSquaredDistance > maxSquaredDistance) {
-      maxSquaredDistance = minSquaredDistance;
-    }
-  }
-  return maxSquaredDistance/4; // return 843
-}
-#endif
-
 Keyboard::Key keyAt(SDL_Point * p) {
   int minSquaredDistance = INT_MAX;
   Keyboard::Key nearestKey = Keyboard::Key::None;
-  /* The maximal distance between two adjacent keys is between keys Home and
-   * OK (index 3 and 7). So we set the threshold to correspond to slightly over
-   * half the distance between these keys.
-   * TODO: Looking for the maximal distance between adjacent keys could be done
-   * constexpr once we use c++14 standard.
-   * (Cf maxHalfDistanceBetweekAdjacentKeys above) */
-  constexpr int k_closenessThreshold = 3*843/2; // 3*maxHalfDistanceBetweekAdjacentKeys()/2
+  /* The closenessThreshold is apportioned to the size of the frame. As the
+   * width and the height have a constant ratio, we can compute the
+   * closenessThreshold from the frame width exclusively. */
+  int closenessThreshold = sFrame.w/6;
+  int squaredClosenessThreshold = closenessThreshold*closenessThreshold;
   for (int i=0; i<Keyboard::NumberOfValidKeys; i++) {
     SDL_Point keyCenter;
     getKeyCenter(i, &keyCenter);
     int dx = keyCenter.x - p->x;
     int dy = keyCenter.y - p->y;
     int squaredDistance = dx*dx + dy*dy;
-    if (squaredDistance < k_closenessThreshold && squaredDistance < minSquaredDistance) {
+    if (squaredDistance < squaredClosenessThreshold && squaredDistance < minSquaredDistance) {
       minSquaredDistance = squaredDistance;
       nearestKey = Keyboard::ValidKeys[i];
     }

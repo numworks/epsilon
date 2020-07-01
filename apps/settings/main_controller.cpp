@@ -23,6 +23,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_languageController(this, Metric::CommonTopMargin),
+  m_countryController(this, Metric::CommonTopMargin),
   m_examModeController(this),
   m_aboutController(this)
 {
@@ -44,52 +45,54 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  if (model()->childAtIndex(selectedRow())->numberOfChildren() == 0) {
-    if (model()->childAtIndex(selectedRow())->label() == promptMessage()) {
-      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-        globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
-        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-        return true;
-      }
-      return false;
+  int rowIndex = selectedRow();
+
+  if (hasPrompt() && rowIndex == k_indexOfPopUpCell) {
+    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+      globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
+      m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+      return true;
     }
-    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Brightness) {
-      if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
-        int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
-        int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
-        globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel()+direction);
-        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-        return true;
-      }
-      return false;
-    }
-    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Language) {
-      if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-        stackController()->push(&m_languageController);
-        return true;
-      }
-      return false;
-    }
+    return false;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    GenericSubController * subController = nullptr;
-    int rowIndex = selectedRow();
-    if (rowIndex == k_indexOfDisplayModeCell) {
-      subController = &m_displayModeController;
-    } else if (rowIndex == k_indexOfBrightnessCell || rowIndex == k_indexOfLanguageCell) {
-      assert(false);
-    } else if (rowIndex == k_indexOfExamModeCell) {
-      subController = &m_examModeController;
-    } else if (rowIndex == k_indexOfAboutCell + hasPrompt()) {
-      subController = &m_aboutController;
-    } else {
-      subController = &m_preferencesController;
-    }
-    subController->setMessageTreeModel(model()->childAtIndex(selectedRow()));
-    StackViewController * stack = stackController();
-    stack->push(subController);
+
+  if (rowIndex == k_indexOfBrightnessCell
+   && (event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Minus || event == Ion::Events::Plus)) {
+    int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+    int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
+    globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel()+direction);
+    m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
     return true;
   }
+
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    assert(rowIndex != k_indexOfBrightnessCell);
+    /* The About cell can either be found at index k_indexOfExamModeCell + 1 or
+     * k_indexOfExamModeCell + 2, depending on whether there is a Pop-Up cell.
+     * Since the Pop-Up cell has been handled above, we can use those two
+     * indices for the About cell. */
+    ViewController * subControllers[k_indexOfAboutCell + 2] = {
+      &m_preferencesController,
+      &m_displayModeController,
+      &m_preferencesController,
+      &m_preferencesController,
+      nullptr, //&m_brightnessController
+      &m_preferencesController,
+      &m_languageController,
+      &m_countryController,
+      &m_examModeController,
+      &m_aboutController,
+      &m_aboutController
+    };
+    ViewController * selectedSubController = subControllers[rowIndex];
+    assert(selectedSubController);
+    if (model()->childAtIndex(rowIndex)->numberOfChildren() != 0) {
+      static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(rowIndex));
+    }
+    stackController()->push(selectedSubController);
+    return true;
+  }
+
   return false;
 }
 
@@ -166,6 +169,11 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == k_indexOfLanguageCell) {
     int index = (int)(globalPreferences->language());
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
+    return;
+  }
+  if (index == k_indexOfCountryCell) {
+    int index = (int)(globalPreferences->country());
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::CountryNames[index]);
     return;
   }
   if (hasPrompt() && index == k_indexOfPopUpCell) {

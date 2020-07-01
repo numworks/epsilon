@@ -5,6 +5,7 @@
 #include <apps/shared/settings_message_tree.h>
 #include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"
+#include "sub_menu/country_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
@@ -45,7 +46,8 @@ private:
   constexpr static int k_indexOfBrightnessCell = k_indexOfComplexFormatCell + 1;
   constexpr static int k_indexOfFontCell = k_indexOfBrightnessCell + 1;
   constexpr static int k_indexOfLanguageCell = k_indexOfFontCell + 1;
-  constexpr static int k_indexOfExamModeCell = k_indexOfLanguageCell + 1;
+  constexpr static int k_indexOfCountryCell = k_indexOfLanguageCell + 1;
+  constexpr static int k_indexOfExamModeCell = k_indexOfCountryCell + 1;
   /* Pop-up cell and About cell are located at the same index because pop-up
    * cell is optional. We must always correct k_indexOfAboutCell with
    * hasPrompt() (TODO: make hasPrompt() constexpr and correct
@@ -56,7 +58,7 @@ private:
   StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
-  constexpr static int k_numberOfSimpleChevronCells = 7;
+  constexpr static int k_numberOfSimpleChevronCells = (Ion::Display::Height - Metric::TitleBarHeight) / Metric::ParameterCellHeight + 1;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   MessageTableCellWithSwitch m_popUpCell;
@@ -64,6 +66,7 @@ private:
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
   LanguageController m_languageController;
+  CountryController m_countryController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
 

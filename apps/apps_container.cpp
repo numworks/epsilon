@@ -37,7 +37,7 @@ AppsContainer::AppsContainer() :
   m_usbConnectedSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
-#if __EMSCRIPTEN__
+// #if __EMSCRIPTEN__
   /* AppsContainer::poincareCircuitBreaker uses Ion::Keyboard::scan(), which
    * calls emscripten_sleep. If we set the poincare circuit breaker, we would
    * need to whitelist all the methods that might be in the call stack when
@@ -47,9 +47,13 @@ AppsContainer::AppsContainer() :
    * quite painy to maintain).
    * We just remove the circuit breaker for now.
    * TODO: Put the Poincare circuit breaker back on epsilon's web emulator */
-#else
+
+  /*
+   * This can be run in Omega, since it uses WebASM.
+   */
+// #else
   Poincare::Expression::SetCircuitBreaker(AppsContainer::poincareCircuitBreaker);
-#endif
+// #endif
   Ion::Storage::sharedStorage()->setDelegate(this);
 }
 

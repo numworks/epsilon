@@ -15,6 +15,7 @@ ion_src += $(addprefix ion/src/simulator/linux/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/callback.cpp \
+  dummy/haptics.cpp \
   collect_registers_x86_64.s \
   collect_registers.cpp \
 )

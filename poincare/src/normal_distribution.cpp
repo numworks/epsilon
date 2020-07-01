@@ -88,7 +88,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
   if (std::isnan(abscissa)) {
     return NAN;
   }
-  if (std::isinf(abscissa) || std::fabs(abscissa) > k_boundStandardNormalDistribution) {
+  if (std::isinf(abscissa)) {
     return abscissa > (T)0.0 ? (T)1.0 : (T)0.0;
   }
   if (abscissa == (T)0.0) {

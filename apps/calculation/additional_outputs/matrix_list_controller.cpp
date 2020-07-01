@@ -56,13 +56,13 @@ void MatrixListController::setExpression(Poincare::Expression e) {
   }
   // 3. Matrix row echelon form
   messageIndex = 2;
-  Expression rowEchelonForm = MatrixRef::Builder(m_expression.clone());
+  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(m_expression.clone());
   m_indexMessageMap[index] = messageIndex++;
   m_layouts[index++] = getLayoutFromExpression(rowEchelonForm, context, preferences);
   /* 4. Matrix reduced row echelon form
    *    it can be computed from row echelon form to save computation time.*/
   m_indexMessageMap[index] = messageIndex++;
-  m_layouts[index++] = getLayoutFromExpression(MatrixRref::Builder(rowEchelonForm), context, preferences);
+  m_layouts[index++] = getLayoutFromExpression(MatrixReducedRowEchelonForm::Builder(rowEchelonForm), context, preferences);
   // 5. Matrix trace if square matrix
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;

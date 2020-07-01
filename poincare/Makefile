@@ -101,8 +101,9 @@ poincare_src += $(addprefix poincare/src/,\
   matrix_inverse.cpp \
   matrix_trace.cpp \
   matrix_transpose.cpp \
-  matrix_ref.cpp \
-  matrix_rref.cpp \
+  matrix_echelon_form.cpp \
+  matrix_row_echelon_form.cpp \
+  matrix_reduced_row_echelon_form.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
   naperian_logarithm.cpp \

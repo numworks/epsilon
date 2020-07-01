@@ -5,7 +5,7 @@ jobs:
   nintendo_3ds:
     runs-on: ubuntu-latest
     steps:
-      - run: wget https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman_1.0.2.amd64.deb -O /tmp/devkitpro-pacman.deb
+      - run: wget https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman.amd64.deb -O /tmp/devkitpro-pacman.deb
       - run: yes | sudo dpkg -i /tmp/devkitpro-pacman.deb
       - run: yes | sudo dkp-pacman -Syu --needed devkitARM 3dstools libctru
       - run: echo ::set-env name=DEVKITPRO::/opt/devkitpro

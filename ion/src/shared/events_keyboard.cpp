@@ -65,6 +65,7 @@ Event getEvent(int * timeout) {
     if (keysSeenTransitionningFromUpToDown != 0) {
       sEventIsRepeating = false;
       resetLongRepetition();
+      didPressNewKey();
       /* The key that triggered the event corresponds to the first non-zero bit
        * in "match". This is a rather simple logic operation for the which many
        * processors have an instruction (ARM thumb uses CLZ).

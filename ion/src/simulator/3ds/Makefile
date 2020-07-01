@@ -15,6 +15,8 @@ ion_src += $(addprefix ion/src/simulator/3ds/, \
   driver/common.cpp \
 )
 
+ion_src += ion/src/shared/collect_registers.cpp
+
 sdl_simu_needs_to_be_removed += $(addprefix ion/src/simulator/shared/, \
   dummy/display.cpp \
   dummy/led.cpp \

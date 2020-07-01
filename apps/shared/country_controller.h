@@ -8,6 +8,9 @@ namespace Shared {
 
 class CountryController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
+  static int IndexOfCountry(I18n::Country country);
+  static I18n::Country CountryAtIndex(int i);
+
   CountryController(Responder * parentResponder, KDCoordinate verticalMargin);
   void resetSelection();
 

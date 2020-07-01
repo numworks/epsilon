@@ -160,7 +160,9 @@ Thanks goes to these wonderful people!
 
 ## License
 
-NumWorks is a registered trademark. Omega is not affiliated with NumWorks.
+NumWorks is a registered trademark of NumWorks SAS, 24 Rue Godot de Mauroy, 75009 Paris, France.
+Nintendo and Nintendo 3DS are registered trademarks of Nintendo of America Inc, 4600 150th Ave NE, Redmond, WA 98052, USA.
+NumWorks SAS and Nintendo of America Inc aren't associated in any shape or form with this project.
 
 * NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).

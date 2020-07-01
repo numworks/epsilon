@@ -295,8 +295,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
   assert_expression_approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
 
-  assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 5.76)", "1.662326");
-  //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 5.76)", "1.6623258450088"); FIXME precision error
+  assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
+  //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error
 
   assert_expression_approximates_to<float>("ln(2)", "0.6931472");
   assert_expression_approximates_to<double>("ln(2)", "6.9314718055995ᴇ-1");
@@ -304,17 +304,19 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("log(2)", "0.30103");
   assert_expression_approximates_to<double>("log(2)", "3.0102999566398ᴇ-1");
 
-  assert_expression_approximates_to<float>("normcdf(1.2, 3.4, 31.36)", "0.3472125");
-  assert_expression_approximates_to<double>("normcdf(1.2, 3.4, 31.36)", "3.4721249841587ᴇ-1");
-  assert_expression_approximates_to<float>("normcdf(-1ᴇ99,3.4,31.36)", "0");
-  assert_expression_approximates_to<float>("normcdf(1ᴇ99,3.4,31.36)", "1");
+  assert_expression_approximates_to<float>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10");
+
+  assert_expression_approximates_to<float>("normcdf(1.2, 3.4, 5.6)", "0.3472125");
+  assert_expression_approximates_to<double>("normcdf(1.2, 3.4, 5.6)", "3.4721249841587ᴇ-1");
+  assert_expression_approximates_to<float>("normcdf(-1ᴇ99,3.4,5.6)", "0");
+  assert_expression_approximates_to<float>("normcdf(1ᴇ99,3.4,5.6)", "1");
   assert_expression_approximates_to<float>("normcdf(-6,0,1)", "0");
   assert_expression_approximates_to<float>("normcdf(6,0,1)", "1");
 
-  assert_expression_approximates_to<float>("normcdf2(0.5, 3.6, 1.3, 11.56)", "0.3436388");
-  assert_expression_approximates_to<double>("normcdf2(0.5, 3.6, 1.3, 11.56)", "3.4363881299147ᴇ-1");
+  assert_expression_approximates_to<float>("normcdf2(0.5, 3.6, 1.3, 3.4)", "0.3436388");
+  assert_expression_approximates_to<double>("normcdf2(0.5, 3.6, 1.3, 3.4)", "3.4363881299147ᴇ-1");
 
-  assert_expression_approximates_to<float>("normpdf(1.2, 3.4, 31.36)", "0.06594901");
+  assert_expression_approximates_to<float>("normpdf(1.2, 3.4, 5.6)", "0.06594901");
 
   assert_expression_approximates_to<float>("permute(10, 4)", "5040");
   assert_expression_approximates_to<double>("permute(10, 4)", "5040");

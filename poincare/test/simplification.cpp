@@ -344,7 +344,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("inf×_s", "inf×_s");
   assert_parsed_expression_simplify_to("-inf×_s", "-inf×_s");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
-  assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "0×_s");
+  assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "13.083978345207×_ps");
   assert_parsed_expression_simplify_to("log(0)×_s", "-inf×_s");
   assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
 

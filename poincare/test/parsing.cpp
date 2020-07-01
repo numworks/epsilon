@@ -410,8 +410,8 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("tanh(1)", HyperbolicTangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("trace(1)", MatrixTrace::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("transpose(1)", MatrixTranspose::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("ref(1)", MatrixRef::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("rref(1)", MatrixRref::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("ref(1)", MatrixRowEchelonForm::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("rref(1)", MatrixReducedRowEchelonForm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("√(1)", SquareRoot::Builder(BasedInteger::Builder(1)));
   assert_text_not_parsable("cos(1,2)");
   assert_text_not_parsable("log(1,2,3)");

@@ -1,24 +1,17 @@
-#ifndef POINCARE_MATRIX_RREF_H
-#define POINCARE_MATRIX_RREF_H
+#ifndef POINCARE_MATRIX_ECHELON_FORM_H
+#define POINCARE_MATRIX_ECHELON_FORM_H
 
 #include <poincare/expression.h>
 
 namespace Poincare {
 
-class MatrixRrefNode final : public ExpressionNode {
+class MatrixEchelonFormNode : public ExpressionNode {
 public:
 
   // TreeNode
-  size_t size() const override { return sizeof(MatrixRrefNode); }
   int numberOfChildren() const override;
-#if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
-    stream << "MatrixRref";
-  }
-#endif
-
-  // Properties
-  Type type() const override { return Type::MatrixRref; }
+  virtual bool isFormReduced() const = 0;
+  static constexpr int sNumberOfChildren = 1;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -31,16 +24,16 @@ private:
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
+  // Properties
+  virtual const char * functionHelperName() const = 0;
 };
 
-class MatrixRref final : public Expression {
+class MatrixEchelonForm : public Expression {
 public:
-  MatrixRref(const MatrixRrefNode * n) : Expression(n) {}
-  static MatrixRref Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixRref, MatrixRrefNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rref", 1, &UntypedBuilderOneChild<MatrixRref>);
-
+  MatrixEchelonForm(const MatrixEchelonFormNode * n) : Expression(n) {}
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  bool isFormReduced() const { return static_cast<MatrixEchelonFormNode *>(node())->isFormReduced(); }
 };
 
 }

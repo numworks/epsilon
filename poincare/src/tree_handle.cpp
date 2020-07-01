@@ -336,8 +336,8 @@ template MatrixIdentity TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIden
 template MatrixInverse TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(const Tuple &);
 template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(const Tuple &);
 template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(const Tuple &);
-template MatrixRef TreeHandle::FixedArityBuilder<MatrixRef, MatrixRefNode>(const Tuple &);
-template MatrixRref TreeHandle::FixedArityBuilder<MatrixRref, MatrixRrefNode>(const Tuple &);
+template MatrixRowEchelonForm TreeHandle::FixedArityBuilder<MatrixRowEchelonForm, MatrixRowEchelonFormNode>(const Tuple &);
+template MatrixReducedRowEchelonForm TreeHandle::FixedArityBuilder<MatrixReducedRowEchelonForm, MatrixReducedRowEchelonFormNode>(const Tuple &);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(const Tuple &);
 template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(const Tuple &);

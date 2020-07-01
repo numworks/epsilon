@@ -186,8 +186,8 @@ bool Expression::IsMatrix(const Expression e, Context * context) {
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixIdentity
     || e.type() == ExpressionNode::Type::MatrixTranspose
-    || e.type() == ExpressionNode::Type::MatrixRef
-    || e.type() == ExpressionNode::Type::MatrixRref;
+    || e.type() == ExpressionNode::Type::MatrixRowEchelonForm
+    || e.type() == ExpressionNode::Type::MatrixReducedRowEchelonForm;
 }
 
 bool Expression::IsInfinity(const Expression e, Context * context) {

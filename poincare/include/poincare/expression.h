@@ -63,8 +63,9 @@ class Expression : public TreeHandle {
   friend class MatrixInverse;
   friend class MatrixTrace;
   friend class MatrixTranspose;
-  friend class MatrixRef;
-  friend class MatrixRref;
+  friend class MatrixEchelonForm;
+  friend class MatrixRowEchelonForm;
+  friend class MatrixReducedRowEchelonForm;
   friend class Multiplication;
   friend class MultiplicationNode;
   friend class NaperianLogarithm;

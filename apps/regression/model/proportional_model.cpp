@@ -27,10 +27,6 @@ double ProportionalModel::levelSet(double * modelCoefficients, double xMin, doub
   return y/a;
 }
 
-void ProportionalModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
-  modelCoefficients[0] = store->slope(series);
-}
-
 double ProportionalModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   assert(derivateCoefficientIndex == 0);
   // Derivate: x

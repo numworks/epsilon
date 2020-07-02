@@ -1,4 +1,5 @@
 #include <poincare/matrix.h>
+#include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
@@ -204,12 +205,35 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
   int k = 0; // column pivot
 
   while (h < m && k < n) {
-    // Find the first non-null pivot
+    /* In non-reduced form, the pivot selection method will affect the output.
+     * Here we prioritize the biggest pivot (in value) to get an output that
+     * does not depends on the order of the rows of the matrix.
+     * We could also take lowest non null pivots, or just first non null as we
+     * already do with reduced forms. Output would be different, but correct. */
+    int iPivot_temp = h;
     int iPivot = h;
-    while (iPivot < m && matrixChild(iPivot, k).isRationalZero()) {
-      iPivot++;
+    float bestPivot = 0.0;
+    while (iPivot_temp < m) {
+      // Using float to find the biggest pivot is sufficient.
+      float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      // Handle very low pivots
+      if (pivot == 0.0f && !matrixChild(iPivot_temp, k).isRationalZero()) {
+        pivot = FLT_MIN;
+      }
+
+      if (pivot > bestPivot) {
+        // Update best pivot
+        bestPivot = pivot;
+        iPivot = iPivot_temp;
+        if (reduced) {
+          /* In reduced form, taking the first non null pivot is enough, and
+           * more efficient. */
+          break;
+        }
+      }
+      iPivot_temp++;
     }
-    if (iPivot == m) {
+    if (matrixChild(iPivot, k).isRationalZero()) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {
@@ -273,12 +297,26 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
   int k = 0; // column pivot
 
   while (h < numberOfRows && k < numberOfColumns) {
-    // Find the first non-null pivot
+    // Find the biggest pivot (in absolute value). See comment on rowCanonize.
+    int iPivot_temp = h;
     int iPivot = h;
-    while (iPivot < numberOfRows && std::abs(array[iPivot*numberOfColumns+k]) < Expression::Epsilon<double>()) {
-      iPivot++;
+    // Using double to stay accurate with any type T
+    double bestPivot = 0.0;
+    while (iPivot_temp < numberOfRows) {
+      double pivot = std::abs(array[iPivot_temp*numberOfColumns+k]);
+      if (pivot > bestPivot) {
+        // Update best pivot
+        bestPivot = pivot;
+        iPivot = iPivot_temp;
+        if (reduced) {
+          /* In reduced form, taking the first non null pivot is enough, and
+           * more efficient. */
+          break;
+        }
+      }
+      iPivot_temp++;
     }
-    if (iPivot == numberOfRows) {
+    if (bestPivot < DBL_MIN) {
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
@@ -522,7 +560,6 @@ Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, Expressi
 }
 
 
-template int Matrix::ArrayInverse<float>(float *, int, int);
 template int Matrix::ArrayInverse<double>(double *, int, int);
 template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float> *, int, int);
 template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double> *, int, int);

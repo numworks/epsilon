@@ -934,6 +934,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("rref([[1,1/√(2),√(4)]])", "[[1,√(2)/2,2]]");
   assert_parsed_expression_simplify_to("ref([[1,0,√(4)][0,1,1/√(2)][0,0,1]])", "[[1,0,2][0,1,√(2)/2][0,0,1]]");
   assert_parsed_expression_simplify_to("rref([[1,0,√(4)][0,1,1/√(2)][0,0,0]])", "[[1,0,2][0,1,√(2)/2][0,0,0]]");
+  assert_parsed_expression_simplify_to("ref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,7/5,6/5,8/5][0,1,11/10,6/5][0,0,1,204/167]]");
 
   // Expressions with unreduced matrix
   assert_reduce("confidence(cos(2)/25,3)→a");

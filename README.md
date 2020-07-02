@@ -23,6 +23,14 @@ The main new features are listed [here](https://github.com/Omega-Numworks/Omega/
 
 ## Installation
 
+### Automatic
+
+You can install Omega automatically on our website [here](https://getomega.web.app/) in the "install" page.
+
+<a href="https://getomega.web.app"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86352956-e9000480-bc66-11ea-82b7-79fd7e56fa27.png" /></p></a>
+
+### Manual
+
 First of all, follow **step 1** [here](https://www.numworks.com/resources/engineering/software/build/). Then:
 
 <details>

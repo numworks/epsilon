@@ -105,7 +105,7 @@ void init() {
       "Omega",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
-      290, 555,
+      458, 888,
       sdl_window_args
     );
   }
@@ -153,11 +153,6 @@ void relayout() {
     sScreenRect.y = (windowHeight - sScreenRect.h) / 2;
   } else {
     Layout::recompute(windowWidth, windowHeight);
-    SDL_Rect backgroundRect;
-    Layout::getBackgroundRect(&backgroundRect);
-
-    SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
-    SDL_RenderPresent(sRenderer);
   }
 
   setNeedsRefresh();

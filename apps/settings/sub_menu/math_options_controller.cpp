@@ -64,10 +64,10 @@ void MathOptionsController::willDisplayCellForIndex(HighlightCell * cell, int in
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::SymbolMultiplication:
-      childIndex = (int)preferences->symbolofMultiplication();
+      childIndex = (int)preferences->symbolOfMultiplication();
       break;
     case I18n::Message::SymbolFunction:
-      childIndex = (int)preferences->symbolofFunction();
+      childIndex = (int)preferences->symbolOfFunction();
       break;      
     default:
       break;

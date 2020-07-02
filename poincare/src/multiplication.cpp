@@ -181,14 +181,14 @@ CodePoint MultiplicationNode::operatorSymbol() const {
    * × --> 2
    * * --> 3 */
   int sign = -1;
-  if(preferences->symbolofMultiplication() == Poincare::Preferences::SymbolMultiplication::Auto){
+  if(preferences->symbolOfMultiplication() == Poincare::Preferences::SymbolMultiplication::Auto){
       for (int i = 0; i < numberOfChildren() - 1; i++) {
       /* The operator symbol must be the same for all operands of the multiplication.
       * If one operator has to be '×', they will all be '×'. Idem for '·'. */
       sign = std::max(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
     }
   } else {
-    switch(preferences->symbolofMultiplication()){
+    switch(preferences->symbolOfMultiplication()){
       case Poincare::Preferences::SymbolMultiplication::MiddleDot :
         sign = 1; // · --> · (1)
         break;

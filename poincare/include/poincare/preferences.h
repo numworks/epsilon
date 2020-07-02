@@ -75,10 +75,10 @@ public:
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
   LEDColor colorOfLED() const { return m_colorOfLED; }
   void setColorOfLED(LEDColor color) { m_colorOfLED = color; }
-  SymbolMultiplication symbolofMultiplication() const { return m_symbolMultiplication; }
-  void setSymbolMultiplication(SymbolMultiplication symbolofMultiplication) { m_symbolMultiplication = symbolofMultiplication; }
-  SymbolFunction symbolofFunction() const { return m_symbolFunction; }
-  void setSymbolofFunction(SymbolFunction symbolofFunction) { m_symbolFunction = symbolofFunction; }
+  SymbolMultiplication symbolOfMultiplication() const { return m_symbolMultiplication; }
+  void setSymbolMultiplication(SymbolMultiplication symbolOfMultiplication) { m_symbolMultiplication = symbolOfMultiplication; }
+  SymbolFunction symbolOfFunction() const { return m_symbolFunction; }
+  void setSymbolOfFunction(SymbolFunction symbolOfFunction) { m_symbolFunction = symbolOfFunction; }
   PythonFont pythonFont() const { return m_pythonFont; }
   void setPythonFont(PythonFont pythonFont) { m_pythonFont = pythonFont; }
   const KDFont * KDPythonFont() const { return (m_pythonFont == PythonFont::Small) ? KDFont::SmallFont : KDFont::LargeFont; }

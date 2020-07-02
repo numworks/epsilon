@@ -111,7 +111,7 @@ void LayoutCursor::addEmptyMatrixLayout() {
 
 void LayoutCursor::addLog() {
   Preferences * preferences = Preferences::sharedPreferences();
-  switch((int)preferences->symbolofFunction()){
+  switch((int)preferences->symbolOfFunction()){
     case 1:
       addEmpty10Log();
       break;
@@ -180,7 +180,7 @@ void LayoutCursor::addEmptyArgLog() {
 
 void LayoutCursor::addRoot() {
   Preferences * preferences = Preferences::sharedPreferences();
-  switch((int)preferences->symbolofFunction()){
+  switch((int)preferences->symbolOfFunction()){
     case 1:
       addEmptyArgSquareRootLayout();
       break;
@@ -240,7 +240,7 @@ void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   Preferences * preferences = Preferences::sharedPreferences();
   int Symbol;
-  switch((int)preferences->symbolofMultiplication()){
+  switch((int)preferences->symbolOfMultiplication()){
     case 1:
       Symbol = UCodePointMiddleDot;
       break;
@@ -276,7 +276,7 @@ void LayoutCursor::addXNTCodePointLayout() {
 
 void LayoutCursor::addMultiplicationPointLayout(){
   Preferences * preferences = Preferences::sharedPreferences();
-  switch((int)preferences->symbolofMultiplication()){
+  switch((int)preferences->symbolOfMultiplication()){
     case 1:
       addLayoutAndMoveCursor(HorizontalLayout::Builder(CodePointLayout::Builder(UCodePointMiddleDot)));
       break;

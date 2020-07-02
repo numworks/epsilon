@@ -261,7 +261,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   } else if (message == I18n::Message::SymbolMultiplication) {
     preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
   } else if (message == I18n::Message::SymbolFunction) {
-    preferences->setSymbolofFunction((Preferences::SymbolFunction)valueIndex);  
+    preferences->setSymbolOfFunction((Preferences::SymbolFunction)valueIndex);  
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
   }
@@ -287,10 +287,10 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
 #endif
   if (message == I18n::Message::SymbolMultiplication) {
-    return (int)preferences->symbolofMultiplication();
+    return (int)preferences->symbolOfMultiplication();
   }
   if (message == I18n::Message::SymbolFunction) {
-    return (int)preferences->symbolofFunction();
+    return (int)preferences->symbolOfFunction();
   }
   if (message == I18n::Message::FontSizes) {
     return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;

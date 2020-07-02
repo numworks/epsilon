@@ -50,6 +50,14 @@ QUIZ_CASE(proportional_regression) {
   assert_regression_is(x, y, 5, Model::Type::Proportional, coefficients);
 }
 
+QUIZ_CASE(proportional_regression2) {
+  constexpr int numberOfPoints = 4;
+  double x[numberOfPoints] = {5.0, 2.0, 3.0, 4.0};
+  double y[numberOfPoints] = {10.0, 6.0, 7.0, 8.0};
+  double coefficients[] = {2.12963963};
+  assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional, coefficients);
+}
+
 QUIZ_CASE(quadratic_regression) {
   double x[] = {-34.0, -12.0, 5.0, 86.0, -2.0};
   double y[] = {-8241.389, -1194.734, -59.163, - 46245.39, -71.774};

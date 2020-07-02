@@ -191,6 +191,9 @@ QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to<double>("[[1,2][3,4]]/[[3,4][6,9]]", "[[-1,6.6666666666667ᴇ-1][1,0]]");
   assert_expression_approximates_to<double>("3/[[3,4][5,6]]", "[[-9,6][7.5,-4.5]]");
   assert_expression_approximates_to<double>("(3+4𝐢)/[[1,𝐢][3,4]]", "[[4×𝐢,1][-3×𝐢,𝐢]]");
+  // TODO: get rid of the neglectable real or imaginary parts
+  assert_expression_approximates_to<double>("(3+4𝐢)/[[3,4][1,𝐢]]", "[[1+5.5511151231258ᴇ-17×𝐢,-2.2204460492503ᴇ-16+4×𝐢][𝐢,-3×𝐢]]");
+  // [[1,4×𝐢][𝐢,-3×𝐢]] is expected
   assert_expression_approximates_to<float>("1ᴇ20/(1ᴇ20+1ᴇ20𝐢)", "0.5-0.5×𝐢");
   assert_expression_approximates_to<double>("1ᴇ155/(1ᴇ155+1ᴇ155𝐢)", "0.5-0.5×𝐢");
 
@@ -409,20 +412,22 @@ QUIZ_CASE(poincare_approximation_function) {
    * - Rows with only zeros must be at the bottom.
    * - Leading coefficient of other rows must be to the right (strictly) of the
    * - one above.
-   * - (Optional, but sometimes recommended) Leading coefficients must be 1.
-   * NOTE : It would be better if results for ref matched the one commented
-   *  bellow. */
-  assert_expression_approximates_to<double>("ref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,0,3,4][0,1,-1.2857142857143,-1.7142857142857][0,0,1,1.2215568862275]]");
-  // --> "[[1,1.4,1.2,1.6][0,1,1.1,1.2][0,0,1,1.221557]]"
+   * - (Optional, but sometimes recommended) Leading coefficients must be 1. */
+  assert_expression_approximates_to<double>("ref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,1.4,1.2,1.6][0,1,1.1,1.2][0,0,1,1.2215568862275]]");
   assert_expression_approximates_to<double>("rref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,0,0,3.3532934131737ᴇ-1][0,1,0,-0.1437125748503][0,0,1,1.2215568862275]]");
-  assert_expression_approximates_to<double>("ref([[1,0][5,6][0,10]])", "[[1,0][0,1][0,0]]");
-  // --> "[[1,1.2][0,1][0,0]]"
+  assert_expression_approximates_to<double>("ref([[1,0][5,6][0,10]])", "[[1,1.2][0,1][0,0]]");
   assert_expression_approximates_to<double>("rref([[1,0][5,6][0,10]])", "[[1,0][0,1][0,0]]");
   assert_expression_approximates_to<double>("ref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
   assert_expression_approximates_to<double>("rref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
-  assert_expression_approximates_to<double>("ref([[0,2,-1][5,6,7][12,11,10]])", "[[1,1.2,1.4][0,1,-0.5][0,0,1]]");
-  // --> "[[1,0.9166667,0.8333333][0,1,-0.5][0,0,1]]"
+  assert_expression_approximates_to<double>("ref([[0,2,-1][5,6,7][12,11,10]])", "[[1,9.1666666666667ᴇ-1,8.3333333333333ᴇ-1][0,1,-0.5][0,0,1]]");
   assert_expression_approximates_to<double>("rref([[0,2,-1][5,6,7][12,11,10]])", "[[1,0,0][0,1,0][0,0,1]]");
+  assert_expression_approximates_to<double>("ref([[3,9][2,5]])", "[[1,3][0,1]]");
+  assert_expression_approximates_to<double>("ref([[3,2][5,7]])", "[[1,1.4][0,1]]");
+  assert_expression_approximates_to<double>("ref([[3,11][5,7]])", "[[1,1.4][0,1]]");
+  assert_expression_approximates_to<double>("ref([[2,5][2,7]])", "[[1,2.5][0,1]]");
+  assert_expression_approximates_to<double>("ref([[3,12][-4,1]])", "[[1,-0.25][0,1]]");
+  assert_expression_approximates_to<double>("ref([[0,1][1ᴇ-100,1]])", "[[1,1ᴇ100][0,1]]");
+  assert_expression_approximates_to<double>("rref([[0,1][1ᴇ-100,1]])", "[[1,0][0,1]]");
 
   assert_expression_approximates_to<float>("round(2.3246,3)", "2.325");
   assert_expression_approximates_to<double>("round(2.3245,3)", "2.325");

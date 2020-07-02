@@ -2,7 +2,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
-const KDColor ModalViewEmptyController::ModalViewEmptyView::k_backgroundColor;
+constexpr KDColor ModalViewEmptyController::ModalViewEmptyView::k_backgroundColor;
 
 // ModalViewEmptyController::ModalViewEmptyView
 void ModalViewEmptyController::ModalViewEmptyView::initMessageViews() {

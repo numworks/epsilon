@@ -1,4 +1,4 @@
-#include "haptics.h"
+#include "../haptics.h"
 
 namespace Ion {
 namespace Simulator {

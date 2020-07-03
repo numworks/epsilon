@@ -65,7 +65,8 @@ public:
   Poincare::Coordinate2D<double> evaluateXYAtParameter(double x, Poincare::Context * context) const override {
     return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
   }
-  template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx) const;
+  template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIndex = -1) const;
+  template<typename T> T valueAtRank(int n, SequenceContext * sqctx);
 
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999

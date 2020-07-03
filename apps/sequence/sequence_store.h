@@ -27,6 +27,7 @@ public:
   static constexpr const char * k_sequenceNames[MaxNumberOfSequences] = {
     "u", "v", "w"
   };
+  Sequence sequenceAtIndex(int i) { assert(i < MaxNumberOfSequences && i >= 0); return m_sequences[i]; }
 
 private:
   const char * modelExtension() const override { return Ion::Storage::seqExtension; }

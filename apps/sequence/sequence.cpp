@@ -118,7 +118,30 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
 }
 
 template<typename T>
-T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
+T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
+  if (n < 0) {
+    return NAN;
+  }
+  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
+  if (sqctx->independantSequenceRank<T>(sequenceIndex) > n || sqctx->independantSequenceRank<T>(sequenceIndex) < 0) {
+    // Reset cache indexes and cache values
+    sqctx->setIndependantSequenceRank<T>(-1, sequenceIndex);
+    for (int i = 0 ; i < MaxRecurrenceDepth+1; i++) {
+      sqctx->setIndependantSequenceValue(NAN, sequenceIndex, i);
+    }
+  }
+
+  while(sqctx->independantSequenceRank<T>(sequenceIndex) < n) {
+    sqctx->stepSequenceAtIndex<T>(sequenceIndex);
+  }
+  /* In case we have sqctx->independantSequenceRank<T>(sequenceIndex) = n, we can return the
+   * value */
+  T value = sqctx->independantSequenceValue<T>(sequenceIndex, 0);
+  return value;
+}
+
+template<typename T>
+T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIndex) const {
   if (n < initialRank() || n < 0) {
     return NAN;
   }
@@ -128,11 +151,29 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
 
   CacheContext<T> ctx = CacheContext<T>(sqctx);
+  ctx.setSequenceContext(sqctx);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
   T values[MaxNumberOfSequences][MaxRecurrenceDepth+1];
+
+  /* In case we step only one sequence to the next step, the data stored in
+   * values is not necessarily u(n), u(n-1).... Indeed, since the indexes are
+   * independant, if the index for u is 3 but the one for v is 5, value will
+   * hold u(3), u(2), u(1) | v(5), v(4), v(3). Therefore, the calculation will
+   * be wrong if they relay on a symbol such as u(n). To prevent this, we align
+   * all the values around the index of the sequence we are stepping. */
+  int independantRank = sqctx->independantSequenceRank<T>(sequenceIndex);
   for (int i = 0; i < MaxNumberOfSequences; i++) {
-    for (int j = 0; j < MaxRecurrenceDepth+1; j++) {
-      values[i][j] = sqctx->valueOfSequenceAtPreviousRank<T>(i, j);
+    if (sequenceIndex != -1 && sqctx->independantSequenceRank<T>(i) != independantRank) {
+      int offset = independantRank - sqctx->independantSequenceRank<T>(i);
+      if (offset != 0) {
+        for (int j = MaxRecurrenceDepth; j >= 0; j--) {
+            values[i][j] = j-offset < 0 ? NAN : sqctx->independantSequenceValue<T>(i, j-offset);
+        }
+      }
+    } else {
+      for (int j = 0; j < MaxRecurrenceDepth+1; j++) {
+        values[i][j] = sequenceIndex != -1 ? sqctx->independantSequenceValue<T>(i, j) : sqctx->valueOfSequenceAtPreviousRank<T>(i, j);
+      }
     }
   }
   // Hold symbols u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
@@ -157,7 +198,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     case Type::SingleRecurrence:
     {
       if (n == initialRank()) {
-        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpressionReduced(sqctx), sqctx);
+        return PoincareHelpers::ApproximateWithValueForSymbol(firstInitialConditionExpressionReduced(sqctx), unknownN, (T)NAN, &ctx);
       }
       for (int i = 0; i < MaxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-1) and u(n+1) = u(n) for all sequences
@@ -169,10 +210,10 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     default:
     {
       if (n == initialRank()) {
-        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpressionReduced(sqctx), sqctx);
+        return PoincareHelpers::ApproximateWithValueForSymbol(firstInitialConditionExpressionReduced(sqctx), unknownN, (T)NAN, &ctx);
       }
       if (n == initialRank()+1) {
-        return PoincareHelpers::ApproximateToScalar<T>(secondInitialConditionExpressionReduced(sqctx), sqctx);
+        return PoincareHelpers::ApproximateWithValueForSymbol(secondInitialConditionExpressionReduced(sqctx), unknownN, (T)NAN, &ctx);
       }
       for (int i = 0; i < MaxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-2) and u(n+1) = u(n-1) for all sequences
@@ -293,7 +334,9 @@ void Sequence::InitialConditionModel::buildName(Sequence * sequence) {
 
 template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;
 template float Sequence::templatedApproximateAtAbscissa<float>(float, SequenceContext*) const;
-template double Sequence::approximateToNextRank<double>(int, SequenceContext*) const;
-template float Sequence::approximateToNextRank<float>(int, SequenceContext*) const;
+template double Sequence::approximateToNextRank<double>(int, SequenceContext*, int) const;
+template float Sequence::approximateToNextRank<float>(int, SequenceContext*, int) const;
+template double Sequence::valueAtRank<double>(int, SequenceContext *);
+template float Sequence::valueAtRank<float>(int, SequenceContext *);
 
 }

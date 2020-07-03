@@ -59,19 +59,19 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
 static bool compareMagnitudeOrders(float order, float otherOrder) {
   /* Precision can be lost (with a year conversion for instance), so the order
    * value is rounded */
-  if (std::abs(order) < Expression::Epsilon<float>()) {
-    order = 0.0;
+  if (std::fabs(order) < Expression::Epsilon<float>()) {
+    order = 0.0f;
   }
-  if (std::abs(otherOrder) < Expression::Epsilon<float>()) {
-    otherOrder = 0.0;
+  if (std::fabs(otherOrder) < Expression::Epsilon<float>()) {
+    otherOrder = 0.0f;
   }
-  if (std::abs(std::abs(order) - std::abs(otherOrder)) < 3.0 && order * otherOrder < 0.0) {
+  if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) < 3.0f && order * otherOrder < 0.0f) {
     /* If the two values are close, and their sign are opposed, the positive
      * order is preferred */
-    return (order >= 0.0);
+    return (order >= 0.0f);
   }
   // Otherwise, the closest order to 0 is preferred
-  return (std::abs(order) < std::abs(otherOrder));
+  return (std::fabs(order) < std::fabs(otherOrder));
 }
 
 const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const float exponent) const {
@@ -139,14 +139,14 @@ Unit::Dimension::Vector<int> UnitNode::Dimension::Vector<int>::FromBaseUnits(con
       Expression exp = factor.childAtIndex(1);
       assert(exp.type() == ExpressionNode::Type::Rational);
       // Using the closest integer to the exponent.
-      float exponent_float = static_cast<const Rational &>(exp).node()->templatedApproximate<float>();
+      float exponentFloat = static_cast<const Rational &>(exp).node()->templatedApproximate<float>();
       /* We limit to INT_MAX / 3 because an exponent might get bigger with
        * simplification. As a worst case scenario, (_s²_m²_kg/_A²)^n should be
        * simplified to (_s^5_S)^n. If 2*n is under INT_MAX, 5*n might not. */
-      if (std::abs(exponent_float) < INT_MAX / 3) {
+      if (std::fabs(exponentFloat) < INT_MAX / 3) {
         // Exponent can be safely casted as int
-        exponent = (int)std::round(exponent_float);
-        assert(std::abs(exponent_float - (float)exponent) <= 0.5);
+        exponent = static_cast<int>(std::round(exponentFloat));
+        assert(std::fabs(exponentFloat - static_cast<float>(exponent)) <= 0.5f);
       } else {
         /* Base units vector will ignore this coefficient, to avoid exponent
          * overflow. In any way, shallowBeautify will conserve homogeneity. */
@@ -363,7 +363,7 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
 void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
   // Identify the first Unit factor and its exponent
   Expression firstFactor = *units;
-  float exponent = 1.0;
+  float exponent = 1.0f;
   if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
     firstFactor = firstFactor.childAtIndex(0);
   }
@@ -375,14 +375,14 @@ void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool t
   }
   assert(firstFactor.type() == ExpressionNode::Type::Unit);
   // Choose its multiple and update value accordingly
-  if (exponent != 0.0) {
+  if (exponent != 0.0f) {
     static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, tuneRepresentative, reductionContext);
   }
 }
 
 void Unit::chooseBestMultipleForValue(double * value, const float exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
-  assert(!std::isnan(*value) && exponent != 0.0);
-  if (*value == 0 || *value == 1.0 || std::isinf(*value)) {
+  assert(!std::isnan(*value) && exponent != 0.0f);
+  if (*value == 0.0 || *value == 1.0 || std::isinf(*value)) {
     return;
   }
   UnitNode * unitNode = node();

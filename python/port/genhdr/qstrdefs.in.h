@@ -493,3 +493,7 @@ Q(colormode)
 Q(time)
 Q(sleep)
 Q(monotonic)
+
+// file QSTRs
+Q(file)
+

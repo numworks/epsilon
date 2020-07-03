@@ -136,6 +136,7 @@ port_src += $(addprefix python/port/,\
   helpers.c \
   mod/ion/modion.cpp \
   mod/ion/modion_table.cpp \
+  mod/ion/file.cpp \
   mod/kandinsky/modkandinsky.cpp \
   mod/kandinsky/modkandinsky_table.c \
   mod/matplotlib/modmatplotlib.cpp \

@@ -45,10 +45,12 @@ jobs:
       - run: make -j2 MODEL=n0100 epsilon.onboarding.beta.dfu
       - run: make -j2 MODEL=n0100 flasher.light.dfu
       - run: make -j2 MODEL=n0100 flasher.verbose.dfu
+      - run: make -j2 MODEL=n0100 binpack
+      - run: cp output/release/device/n0100/binpack-n0100-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0100/binpack-n0100.tgz
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-n0100.dfu
-          path: output/release/device/n0100/epsilon.dfu
+          name: epsilon-binpack-n0100.tgz
+          path: output/release/device/n0100/binpack-n0100.tgz
   n0110:
     runs-on: ubuntu-latest
     steps:
@@ -65,10 +67,12 @@ jobs:
       - run: make -j2 flasher.verbose.dfu
       - run: make -j2 bench.ram.dfu
       - run: make -j2 bench.flash.dfu
+      - run: make -j2 binpack
+      - run: cp output/release/device/n0110/binpack-n0110-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0110/binpack-n0110.tgz
       - uses: actions/upload-artifact@master
         with:
-          name: epsilon-n0110.dfu
-          path: output/release/device/n0110/epsilon.dfu
+          name: epsilon-binpack-n0110.tgz
+          path: output/release/device/n0110/binpack-n0110.tgz
   web:
     runs-on: ubuntu-latest
     steps:

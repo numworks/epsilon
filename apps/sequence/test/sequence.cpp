@@ -336,6 +336,70 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[2] = nullptr;
   conditions2[2] = nullptr;
   check_sequences_defined_by(results28, types, definitions, conditions1, conditions2);
+
+  // u independent, v depends on u(3)
+  // u(n) = n; v(n) = u(5)+n
+  double results29[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
+    {5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0},
+    {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "n";
+  definitions[1] = "u(5)+n";
+  definitions[2] = nullptr;
+  conditions1[0] = nullptr;
+  conditions2[0] = nullptr;
+  conditions1[1] = nullptr;
+  conditions2[1] = nullptr;
+  conditions1[2] = nullptr;
+  conditions2[2] = nullptr;
+  check_sequences_defined_by(results29, types, definitions, conditions1, conditions2);
+
+// u independent, v depends on u(2)
+// u(n) = n; v(n+1) = v(n)-u(2)
+  double results30[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
+    {2.0, 0.0, -2.0, -4.0, -6.0, -8.0, -10.0, -12.0, -14.0, -16.0},
+    {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n";
+  definitions[1] = "v(n)-u(2)";
+  conditions1[0] = nullptr;
+  conditions2[0] = nullptr;
+  conditions1[1] = "u(2)";
+  check_sequences_defined_by(results30, types, definitions, conditions1, conditions2);
+
+// u and v interdependent
+// u(n+2) = n + v(3) + u(n+1) - u(n); v(n) = u(n) - u(1)
+  double results31[MaxNumberOfSequences][10] = {{0.0, 3.0, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+    {-3.0, 0.0, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+    {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "n+v(3)+u(n+1)-u(n)";
+  definitions[1] = "u(n)-u(1)";
+  conditions1[0] = "0";
+  conditions2[0] = "3";
+  check_sequences_defined_by(results31, types, definitions, conditions1, conditions2);
+
+// u is independent, v depends on u(120) and w(5), w depends on u(8)
+// u(n) = n; v(n+2) = v(n+1) + v(n) + u(120); w(n+1) = w(n) - u(8)
+  double results32[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
+    {46.0, 6.0, 172.0, 298.0, 590.0, 1008.0, 1718.0, 2846.0, 4684.0, 7650.0},
+    {6.0, 14.0, 22.0, 30.0, 38.0, 46.0, 54.0, 62.0, 70.0, 78.0}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::DoubleRecurrence;
+  types[2] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n";
+  definitions[1] = "v(n+1)+v(n)+u(120)";
+  definitions[2] = "w(n)+u(8)";
+  conditions1[0] = nullptr;
+  conditions2[0] = nullptr;
+  conditions1[1] = "w(5)";
+  conditions2[1] = "6";
+  conditions1[2] = "6";
+  conditions2[2] = nullptr;
+  check_sequences_defined_by(results32, types, definitions, conditions1, conditions2);
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {

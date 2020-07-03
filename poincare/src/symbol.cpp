@@ -81,6 +81,22 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
             VerticalOffsetLayoutNode::Position::Subscript));
         }
       }
+      /* Checking for u(k) forms with k positive integer. Since the sequence
+       * parser only handles sequenceIndexes like above and BasedIntegers, there
+       * is no need to be carefull with how we process m_name. */
+      if (m_name[1] == '(') {
+        int numberOfDigits = 0;
+        while (m_name[numberOfDigits + 2] != ')') {
+          if (m_name[numberOfDigits + 2] <= '9' && m_name[numberOfDigits + 2] >= '0') {
+            numberOfDigits++;
+          }
+        }
+        return HorizontalLayout::Builder(
+            CodePointLayout::Builder(sequenceName),
+            VerticalOffsetLayout::Builder(
+              LayoutHelper::String(m_name+2, numberOfDigits),
+              VerticalOffsetLayoutNode::Position::Subscript));
+      }
     }
   }
   return LayoutHelper::String(m_name, strlen(m_name));

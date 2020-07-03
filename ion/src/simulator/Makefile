@@ -26,5 +26,11 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   timing.cpp \
 )
 
+$(eval $(call depends_on_image,ion/src/simulator/shared/layout.cpp,ion/src/simulator/shared/key_layouts/horizontal_arrow.png))
+$(eval $(call depends_on_image,ion/src/simulator/shared/layout.cpp,ion/src/simulator/shared/key_layouts/large_squircle.png))
+$(eval $(call depends_on_image,ion/src/simulator/shared/layout.cpp,ion/src/simulator/shared/key_layouts/round.png))
+$(eval $(call depends_on_image,ion/src/simulator/shared/layout.cpp,ion/src/simulator/shared/key_layouts/small_squircle.png))
+$(eval $(call depends_on_image,ion/src/simulator/shared/layout.cpp,ion/src/simulator/shared/key_layouts/vertical_arrow.png))
+
 include ion/src/simulator/$(TARGET)/Makefile
 include ion/src/simulator/external/Makefile

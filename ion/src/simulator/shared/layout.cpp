@@ -16,16 +16,16 @@ static constexpr SDL_FRect screenRect = {X(192), Y(191), X(776), Y(582)};
 
 static SDL_Rect sFrame;
 
-static void makeAbsolute(const SDL_FRect * f, SDL_Rect * r) {
-  r->x = f->x * sFrame.w + sFrame.x;
-  r->y = f->y * sFrame.h + sFrame.y;
-  r->w = f->w * sFrame.w;
-  r->h = f->h * sFrame.h;
+static void makeAbsolute(const SDL_FRect f, SDL_Rect * r) {
+  r->x = f.x * sFrame.w + sFrame.x;
+  r->y = f.y * sFrame.h + sFrame.y;
+  r->w = f.w * sFrame.w;
+  r->h = f.h * sFrame.h;
 }
 
-static void makeAbsolute(const SDL_FPoint * f, SDL_Point * p) {
-  p->x = f->x * sFrame.w + sFrame.x;
-  p->y = f->y * sFrame.h + sFrame.y;
+static void makeAbsolute(const SDL_FPoint f, SDL_Point * p) {
+  p->x = f.x * sFrame.w + sFrame.x;
+  p->y = f.y * sFrame.h + sFrame.y;
 }
 
 void recompute(int width, int height) {
@@ -75,7 +75,7 @@ void recompute(int width, int height) {
 }
 
 void getScreenRect(SDL_Rect * rect) {
-  makeAbsolute(&screenRect, rect);
+  makeAbsolute(screenRect, rect);
 }
 
 void getBackgroundRect(SDL_Rect * rect) {
@@ -143,9 +143,8 @@ static constexpr SDL_FPoint sKeyCenters[Keyboard::NumberOfValidKeys] = {
 };
 
 static void getKeyCenter(int validKeyIndex, SDL_Point * point) {
-  assert(validKeyIndex >= 0);
-  assert(validKeyIndex < Keyboard::NumberOfValidKeys);
-  makeAbsolute(&sKeyCenters[validKeyIndex], point);
+  assert(validKeyIndex >= 0 && validKeyIndex < Keyboard::NumberOfValidKeys);
+  makeAbsolute(sKeyCenters[validKeyIndex], point);
 }
 
 Keyboard::Key keyAt(SDL_Point * p) {

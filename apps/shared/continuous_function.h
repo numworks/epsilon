@@ -82,7 +82,6 @@ public:
   // Cache
   ContinuousFunctionCache * cache() const { return m_cache; }
   void setCache(ContinuousFunctionCache * v) { m_cache = v; }
-  void clearCache() { m_cache = nullptr; }
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
 private:
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification

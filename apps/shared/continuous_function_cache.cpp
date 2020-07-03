@@ -73,7 +73,7 @@ int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * functi
   assert(res >= 0);
   if ((res >= k_sizeOfCache && function->plotType() == ContinuousFunction::PlotType::Cartesian)
    || (res >= k_sizeOfCache / 2 && function->plotType() != ContinuousFunction::PlotType::Cartesian)
-   || std::abs(res - delta) > k_cacheHitTolerance) {
+   || std::fabs(res - delta) > k_cacheHitTolerance) {
     return -1;
   }
   assert(function->plotType() == ContinuousFunction::PlotType::Cartesian || m_startOfCache == 0);
@@ -103,12 +103,12 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) 
 
   float dT = (newTMin - m_tMin) / m_tStep;
   m_tMin = newTMin;
-  if (std::abs(dT) > INT_MAX) {
+  if (std::fabs(dT) > INT_MAX) {
     clear();
     return;
   }
   int dI = std::round(dT);
-  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache || std::abs(dT - dI) > k_cacheHitTolerance) {
+  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache || std::fabs(dT - dI) > k_cacheHitTolerance) {
     clear();
     return;
   }

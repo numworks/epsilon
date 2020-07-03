@@ -24,7 +24,7 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
      * by 1 for cache hits. As an added safety, we add another buffer of
      * k_cacheHitTolerance, raising the threshold for caching to three times
      * the tolerance. */
-    function->clearCache();
+    function->setCache(nullptr);
     return;
   }
   if (function->cache() != cache) {

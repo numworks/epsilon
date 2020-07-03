@@ -125,7 +125,7 @@ void ContinuousFunction::setPlotType(PlotType newPlotType, Poincare::Preferences
 
   recordData()->setPlotType(newPlotType);
 
-  clearCache();
+  setCache(nullptr);
 
   // Recompute the layouts
   m_model.tidy();
@@ -253,12 +253,12 @@ float ContinuousFunction::tMax() const {
 
 void ContinuousFunction::setTMin(float tMin) {
   recordData()->setTMin(tMin);
-  clearCache();
+  setCache(nullptr);
 }
 
 void ContinuousFunction::setTMax(float tMax) {
   recordData()->setTMax(tMax);
-  clearCache();
+  setCache(nullptr);
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
@@ -352,7 +352,7 @@ Poincare::Expression ContinuousFunction::sumBetweenBounds(double start, double e
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Poincare::Context * context) {
-  clearCache();
+  setCache(nullptr);
   return ExpressionModelHandle::setContent(c, context);
 }
 

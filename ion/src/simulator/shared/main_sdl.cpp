@@ -147,6 +147,7 @@ void refresh() {
   SDL_RenderClear(sRenderer);
   SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   Display::draw(sRenderer, &screenRect);
+  Layout::drawHighlightedKey(sRenderer);
 #endif
   SDL_RenderPresent(sRenderer);
   sNeedsRefresh = false;

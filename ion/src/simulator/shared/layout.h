@@ -13,7 +13,8 @@ void recompute(int width, int height);
 void getScreenRect(SDL_Rect * rect);
 void getBackgroundRect(SDL_Rect * rect);
 
-Ion::Keyboard::Key keyAt(SDL_Point * p);
+Ion::Keyboard::Key highlightKeyAt(SDL_Point * p);
+void drawHighlightedKey(SDL_Renderer * renderer);
 
 }
 }

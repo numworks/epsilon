@@ -14,10 +14,12 @@ public:
   CacheContext(Poincare::Context * parentContext);
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
+  void setSequenceContext(SequenceContext * sequenceContext) { m_sequenceContext = sequenceContext;}
 private:
   int nameIndexForSymbol(const Poincare::Symbol & symbol);
   int rankIndexForSymbol(const Poincare::Symbol & symbol);
   T m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
+  SequenceContext * m_sequenceContext;
 };
 
 }

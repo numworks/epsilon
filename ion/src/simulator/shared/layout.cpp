@@ -1,5 +1,6 @@
 #include "layout.h"
 #include "main.h"
+#include "platform.h"
 #include <ion.h>
 #include <limits.h>
 #include "key_layouts/horizontal_arrow.h"
@@ -279,6 +280,28 @@ void drawHighlightedKey(SDL_Renderer * renderer) {
   getKeyRectangle(sHighlightedKeyIndex, &rect);
   SDL_RenderCopy(renderer, framebufferTexture, nullptr, &rect);
   SDL_DestroyTexture(framebufferTexture);
+}
+
+#if !EPSILON_SDL_SCREEN_ONLY
+static SDL_Texture * sBackgroundTexture = nullptr;
+#endif
+
+void init(SDL_Renderer * renderer) {
+#if !EPSILON_SDL_SCREEN_ONLY
+  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
+#endif
+}
+
+void draw(SDL_Renderer * renderer) {
+  SDL_Rect backgroundRect;
+  getBackgroundRect(&backgroundRect);
+  SDL_RenderCopy(renderer, sBackgroundTexture, nullptr, &backgroundRect);
+  drawHighlightedKey(renderer);
+}
+
+void quit() {
+  SDL_DestroyTexture(sBackgroundTexture);
+  sBackgroundTexture = nullptr;
 }
 
 }

@@ -53,9 +53,6 @@ namespace Main {
 
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;
-#if !EPSILON_SDL_SCREEN_ONLY
-static SDL_Texture * sBackgroundTexture = nullptr;
-#endif
 static bool sNeedsRefresh = false;
 #if EPSILON_SDL_SCREEN_ONLY
 static SDL_Rect sScreenRect;
@@ -101,10 +98,7 @@ void init() {
   assert(sRenderer);
 
   Display::init(sRenderer);
-
-#if !EPSILON_SDL_SCREEN_ONLY
-  sBackgroundTexture = IonSimulatorLoadImage(sRenderer, "background.jpg");
-#endif
+  Layout::init(sRenderer);
 
   relayout();
 }
@@ -140,14 +134,11 @@ void refresh() {
 #else
   SDL_Rect screenRect;
   Layout::getScreenRect(&screenRect);
-  SDL_Rect backgroundRect;
-  Layout::getBackgroundRect(&backgroundRect);
 
   SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
   SDL_RenderClear(sRenderer);
-  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
+  Layout::draw(sRenderer);
   Display::draw(sRenderer, &screenRect);
-  Layout::drawHighlightedKey(sRenderer);
 #endif
   SDL_RenderPresent(sRenderer);
   sNeedsRefresh = false;
@@ -156,6 +147,7 @@ void refresh() {
 }
 
 void quit() {
+  Layout::quit();
   Display::quit();
   SDL_DestroyWindow(sWindow);
   SDL_Quit();

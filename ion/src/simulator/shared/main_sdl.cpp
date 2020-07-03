@@ -155,6 +155,7 @@ void refresh() {
 }
 
 void quit() {
+  Display::quit();
   SDL_DestroyWindow(sWindow);
   SDL_Quit();
 }

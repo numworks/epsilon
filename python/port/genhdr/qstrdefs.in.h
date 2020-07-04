@@ -496,4 +496,10 @@ Q(monotonic)
 
 // file QSTRs
 Q(file)
+Q(tell)
+Q(seek)
+Q(seekable)
+Q(SEEK_SET)
+Q(SEEK_CUR)
+Q(SEEK_END)
 

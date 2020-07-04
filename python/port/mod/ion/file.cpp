@@ -9,6 +9,7 @@ extern "C" {
 #include <py/obj.h>
 }
 
+#include <algorithm>
 #include <string.h>
 #include <ion/storage.h>
 
@@ -31,6 +32,14 @@ const mp_obj_fun_builtin_var_t file_seek_obj = {
     {(mp_fun_var_t)file_seek}
 };
 
+STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args);
+
+const mp_obj_fun_builtin_var_t file_read_obj = {
+    {&mp_type_fun_builtin_var},
+    MP_OBJ_FUN_MAKE_SIG(1, 2, false),
+    {(mp_fun_var_t)file_read}
+};
+
 STATIC mp_obj_t file_seekable(mp_obj_t o_in);
 
 const mp_obj_fun_builtin_fixed_t file_seekable_obj = {
@@ -43,6 +52,34 @@ STATIC mp_obj_t file_close(mp_obj_t o_in);
 const mp_obj_fun_builtin_fixed_t file_close_obj = {
   {&mp_type_fun_builtin_1},
   {(mp_fun_0_t)file_close}
+};
+
+STATIC mp_obj_t file_fileno(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_fileno_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_fileno}
+};
+
+STATIC mp_obj_t file_flush(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_flush_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_flush}
+};
+
+STATIC mp_obj_t file_isatty(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_isatty_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_isatty}
+};
+
+STATIC mp_obj_t file_readable(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_readable_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_readable}
 };
 
 STATIC const mp_rom_map_elem_t file_type_globals_table[] = {
@@ -105,8 +142,9 @@ typedef struct _file_obj_t {
 } file_obj_t;
 
 STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
+    destination[1] = self_in;
     file_obj_t *self = (file_obj_t*) MP_OBJ_TO_PTR(self_in);
-
+    
     if (destination[0] == nullptr) {
         switch(attribute) {
             case MP_QSTR_closed:
@@ -114,19 +152,30 @@ STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
                 break;
             case MP_QSTR_close:
                 destination[0] = (mp_obj_t) MP_ROM_PTR(&file_close_obj);
-                destination[1] = self_in;
                 break;
             case MP_QSTR_tell:
                 destination[0] = (mp_obj_t) MP_ROM_PTR(&file_tell_obj);
-                destination[1] = self_in;
                 break;
             case MP_QSTR_seek:
                 destination[0] = (mp_obj_t) MP_ROM_PTR(&file_seek_obj);
-                destination[1] = self_in;
                 break;
             case MP_QSTR_seekable:
                 destination[0] = (mp_obj_t) MP_ROM_PTR(&file_seekable_obj);
-                destination[1] = self_in;
+                break;
+            case MP_QSTR_fileno:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_fileno_obj);
+                break;
+            case MP_QSTR_flush:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_flush_obj);
+                break;
+            case MP_QSTR_isatty:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_isatty_obj);
+                break;
+            case MP_QSTR_readable:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_readable_obj);
+                break;
+            case MP_QSTR_read:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_read_obj);
                 break;
             default:
                 break;
@@ -453,5 +502,89 @@ STATIC mp_obj_t file_seekable(mp_obj_t o_in) {
     check_closed(file);
     
     return mp_const_true;
+}
+
+STATIC mp_obj_t file_fileno(mp_obj_t o_in) {
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    check_closed(file);
+
+    mp_raise_OSError(1);
+    return mp_const_none;
+}
+
+STATIC mp_obj_t file_flush(mp_obj_t o_in) {
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    check_closed(file);
+
+    return mp_const_none;
+}
+
+STATIC mp_obj_t file_isatty(mp_obj_t o_in) {
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    check_closed(file);
+
+    return mp_const_false;
+}
+
+STATIC mp_obj_t file_readable(mp_obj_t o_in) {
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    check_closed(file);
+
+    return mp_const_true;
+}
+
+STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
+    mp_arg_check_num(n_args, 0, 1, 2, false);
+    
+    if(!mp_obj_is_type(args[0], &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(args[0]);
+    
+    check_closed(file);
+    
+    if (file->open_mode != READ && file->edit_mode != true) {
+        mp_raise_OSError(1);
+    }
+    
+    mp_int_t size = -1;
+    
+    if (n_args > 1) {
+        if (!mp_obj_is_integer(args[1])) {
+            mp_raise_ValueError("size must be an int!");
+        }
+        
+        size = mp_obj_get_int(args[1]);
+    }
+    
+    if (file->location == RAM) {
+        mp_int_t file_size = file->record.value().size;
+        mp_int_t start = file->position;
+        if (start >= file_size || size == 0) {
+            if (file->binary_mode == TEXT)
+                return mp_obj_new_str("", 0);
+            if (file->binary_mode == BINARY)
+                return mp_const_empty_bytes;
+        }
+        
+        mp_int_t end = 0;
+        
+        // size == 0 handled earlier.
+        if (size < 0) {
+            end = file_size - 1;
+        } else {
+            end = std::min(file_size - 1, file->position + size);
+        }
+        
+        file->position = end;
+        
+        if (file->binary_mode == TEXT)
+            return mp_obj_new_str((const char*)file->record.value().buffer + start, end - start);
+        if (file->binary_mode == BINARY)
+            return mp_obj_new_bytes((const byte*)file->record.value().buffer + start, end - start);
+    }
+    
+    return mp_const_none;
 }
 

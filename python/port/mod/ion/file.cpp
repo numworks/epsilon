@@ -37,11 +37,19 @@ const mp_obj_fun_builtin_fixed_t file_seekable_obj = {
   {(mp_fun_0_t)file_seekable}
 };
 
+STATIC mp_obj_t file_close(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_close_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_close}
+};
+
 STATIC const mp_rom_map_elem_t file_type_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_SEEK_SET), MP_ROM_INT(0) },
     { MP_ROM_QSTR(MP_QSTR_SEEK_CUR), MP_ROM_INT(1) },
     { MP_ROM_QSTR(MP_QSTR_SEEK_END), MP_ROM_INT(2) },
     
+    { MP_ROM_QSTR(MP_QSTR_close), MP_ROM_PTR(&file_close_obj)},
     { MP_ROM_QSTR(MP_QSTR_tell), MP_ROM_PTR(&file_tell_obj)},
     { MP_ROM_QSTR(MP_QSTR_seek), MP_ROM_PTR(&file_seek_obj)},
     { MP_ROM_QSTR(MP_QSTR_seekable), MP_ROM_PTR(&file_seekable_obj)},
@@ -96,6 +104,8 @@ typedef struct _file_obj_t {
     
     uint16_t position;
     
+    bool closed;
+    
 } file_obj_t;
 
 STATIC void file_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
@@ -142,7 +152,10 @@ STATIC void file_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_
     mp_print_str(print, file_name);
     mp_print_str(print, "' mode='");
     mp_print_str(print, file_mode);
-    mp_print_str(print, "'>");
+    mp_print_str(print, "'");
+    if (self->closed)
+        mp_print_str(print, " closed");
+    mp_print_str(print, ">");
 }
 
 /*
@@ -305,6 +318,32 @@ STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     return MP_OBJ_FROM_PTR(file);
 }
 
+void check_closed(file_obj_t* file) {
+    if (file->closed)
+        mp_raise_ValueError("I/O operation on closed file");
+}
+
+
+// Methods
+
+STATIC mp_obj_t file_close(mp_obj_t o_in) {
+    if(!mp_obj_is_type(o_in, &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+    
+    file_obj_t* file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    
+    if (!file->closed) {
+        if(file->location == RAM) {
+            file->record = Ion::Storage::Record();
+        }
+    
+        file->closed = true;
+    }
+    
+    return mp_const_none;
+}
+
 
 STATIC mp_obj_t file_tell(mp_obj_t o_in) {
     if(!mp_obj_is_type(o_in, &file_type)) {
@@ -312,6 +351,8 @@ STATIC mp_obj_t file_tell(mp_obj_t o_in) {
     }
     
     file_obj_t* file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    
+    check_closed(file);
     
     return mp_obj_new_int(file->position);
 }
@@ -324,6 +365,8 @@ STATIC mp_obj_t file_seek(size_t n_args, const mp_obj_t* args) {
     }
 
     file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(args[0]);
+    
+    check_closed(file);
     
     if (!mp_obj_is_integer(args[1])) {
         mp_raise_ValueError("offset must be an int!");
@@ -378,6 +421,10 @@ STATIC mp_obj_t file_seekable(mp_obj_t o_in) {
         mp_raise_TypeError("self must be a file!");
     }
     
-    return mp_obj_new_bool(1);
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    
+    check_closed(file);
+    
+    return mp_const_true;
 }
 

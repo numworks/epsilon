@@ -15,12 +15,57 @@ extern "C" {
 STATIC void file_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind);
 STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args);
 
+STATIC mp_obj_t file_tell(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_tell_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_tell}
+};
+
+STATIC mp_obj_t file_seek(size_t n_args, const mp_obj_t* args);
+
+const mp_obj_fun_builtin_var_t file_seek_obj = {
+    {&mp_type_fun_builtin_var},
+    MP_OBJ_FUN_MAKE_SIG(2, 3, false),
+    {(mp_fun_var_t)file_seek}
+};
+
+STATIC mp_obj_t file_seekable(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_seekable_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_seekable}
+};
+
+STATIC const mp_rom_map_elem_t file_type_globals_table[] = {
+    { MP_ROM_QSTR(MP_QSTR_SEEK_SET), MP_ROM_INT(0) },
+    { MP_ROM_QSTR(MP_QSTR_SEEK_CUR), MP_ROM_INT(1) },
+    { MP_ROM_QSTR(MP_QSTR_SEEK_END), MP_ROM_INT(2) },
+    
+    { MP_ROM_QSTR(MP_QSTR_tell), MP_ROM_PTR(&file_tell_obj)},
+    { MP_ROM_QSTR(MP_QSTR_seek), MP_ROM_PTR(&file_seek_obj)},
+    { MP_ROM_QSTR(MP_QSTR_seekable), MP_ROM_PTR(&file_seekable_obj)},
+};
+
+STATIC MP_DEFINE_CONST_DICT(file_type_globals, file_type_globals_table);
+
 extern const mp_obj_type_t file_type = {
-    { &mp_type_type },
-    0,
-    MP_QSTR_file,
-    file_print,
-    file_make_new,
+    { &mp_type_type },  // base
+    0,                  // flags
+    MP_QSTR_file,       // name
+    file_print,         // __repr__, __srt__
+    file_make_new,      // __new__, __init__
+    nullptr,            // __call__
+    nullptr,            // unary operations
+    nullptr,            // binary operations
+    nullptr,            // load, store, delete attributes
+    nullptr,            // load, store, delete subscripting
+    nullptr,            // __iter__  -> TODO!
+    nullptr,            // __next__
+    nullptr,            // buffer
+    nullptr,            // protocol
+    nullptr,            // parent
+    (mp_obj_dict_t*) &file_type_globals   // globals table
 };
 
 typedef enum _file_location_t {
@@ -119,7 +164,7 @@ STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     file_obj_t *file = m_new_obj(file_obj_t);
     
     if (!mp_obj_is_str(args[0])) {
-        mp_raise_ValueError("First argument must be a string!");
+        mp_raise_ValueError("path must be a string!");
     }
     
     // Store and parse file name
@@ -134,7 +179,7 @@ STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     
     if (n_args == 2) {
         if (!mp_obj_is_str(args[1])) {
-            mp_raise_ValueError("Second argument must be a string!");
+            mp_raise_ValueError("mode must be a string!");
         }
         
         const char* file_mode = mp_obj_str_get_data(args[1], &l);
@@ -252,14 +297,87 @@ STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
                 file->position = file->record.value().size;
                 break;
         }
+    } else {
+        mp_raise_OSError(2);
     }
-    
-    // mp_raise_FileNotFoundError("Test");
-    
     
     file->base.type = &file_type;
     return MP_OBJ_FROM_PTR(file);
 }
 
 
+STATIC mp_obj_t file_tell(mp_obj_t o_in) {
+    if(!mp_obj_is_type(o_in, &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+    
+    file_obj_t* file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    
+    return mp_obj_new_int(file->position);
+}
+
+STATIC mp_obj_t file_seek(size_t n_args, const mp_obj_t* args) {
+    mp_arg_check_num(n_args, 0, 2, 3, false);
+    
+    if(!mp_obj_is_type(args[0], &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(args[0]);
+    
+    if (!mp_obj_is_integer(args[1])) {
+        mp_raise_ValueError("offset must be an int!");
+    }
+    
+    mp_int_t position = mp_obj_get_int(args[1]);
+    mp_int_t whence = 0;
+    
+    if (n_args > 2) {
+        if (!mp_obj_is_integer(args[2])) {
+            mp_raise_ValueError("whence must be an int!");
+        }
+        
+        whence = mp_obj_get_int(args[2]);
+    }
+    
+    mp_int_t new_position = file->position;
+    size_t file_size = 0;
+    
+    if(file->location == RAM) {
+        file_size = file->record.value().size;
+    }
+        
+    switch (whence) {
+        // SEEK_SET
+        case 0:
+            new_position = position;
+            break;
+        // SEEK_CUR
+        case 1:
+            new_position += position;
+            break;
+        // SEEK_END
+        case 2:
+            new_position = file_size + position;
+            break;
+        default:
+            mp_raise_ValueError("invalid whence (should be 0, 1 or 2)");
+    }
+    
+    if (new_position < 0) {
+        mp_raise_ValueError("negative seek position");
+    } else {
+        file->position = (size_t) new_position;
+    }
+    
+    return mp_obj_new_int(file->position);
+}
+
+STATIC mp_obj_t file_seekable(mp_obj_t o_in) {
+    if(!mp_obj_is_type(o_in, &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+    
+    return mp_obj_new_bool(1);
+}
 

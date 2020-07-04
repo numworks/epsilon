@@ -14,6 +14,7 @@ extern "C" {
 
 STATIC void file_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind);
 STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args);
+STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination);
 
 STATIC mp_obj_t file_tell(mp_obj_t o_in);
 
@@ -48,11 +49,6 @@ STATIC const mp_rom_map_elem_t file_type_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_SEEK_SET), MP_ROM_INT(0) },
     { MP_ROM_QSTR(MP_QSTR_SEEK_CUR), MP_ROM_INT(1) },
     { MP_ROM_QSTR(MP_QSTR_SEEK_END), MP_ROM_INT(2) },
-    
-    { MP_ROM_QSTR(MP_QSTR_close), MP_ROM_PTR(&file_close_obj)},
-    { MP_ROM_QSTR(MP_QSTR_tell), MP_ROM_PTR(&file_tell_obj)},
-    { MP_ROM_QSTR(MP_QSTR_seek), MP_ROM_PTR(&file_seek_obj)},
-    { MP_ROM_QSTR(MP_QSTR_seekable), MP_ROM_PTR(&file_seekable_obj)},
 };
 
 STATIC MP_DEFINE_CONST_DICT(file_type_globals, file_type_globals_table);
@@ -66,7 +62,7 @@ extern const mp_obj_type_t file_type = {
     nullptr,            // __call__
     nullptr,            // unary operations
     nullptr,            // binary operations
-    nullptr,            // load, store, delete attributes
+    file_attr,          // load, store, delete attributes
     nullptr,            // load, store, delete subscripting
     nullptr,            // __iter__  -> TODO!
     nullptr,            // __next__
@@ -107,6 +103,37 @@ typedef struct _file_obj_t {
     bool closed;
     
 } file_obj_t;
+
+STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
+    file_obj_t *self = (file_obj_t*) MP_OBJ_TO_PTR(self_in);
+
+    if (destination[0] == nullptr) {
+        switch(attribute) {
+            case MP_QSTR_closed:
+                destination[0] = mp_obj_new_bool(self->closed);
+                break;
+            case MP_QSTR_close:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_close_obj);
+                destination[1] = self_in;
+                break;
+            case MP_QSTR_tell:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_tell_obj);
+                destination[1] = self_in;
+                break;
+            case MP_QSTR_seek:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_seek_obj);
+                destination[1] = self_in;
+                break;
+            case MP_QSTR_seekable:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_seekable_obj);
+                destination[1] = self_in;
+                break;
+            default:
+                break;
+        }
+    }
+
+}
 
 STATIC void file_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     (void)kind;

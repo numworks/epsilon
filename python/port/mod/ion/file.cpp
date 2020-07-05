@@ -16,6 +16,7 @@ extern "C" {
 STATIC void file_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind);
 STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args);
 STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination);
+STATIC mp_obj_t file___iter__(mp_obj_t o_in, mp_obj_iter_buf_t *iter_buf);
 
 STATIC mp_obj_t file_tell(mp_obj_t o_in);
 
@@ -138,7 +139,7 @@ extern const mp_obj_type_t file_type = {
     nullptr,            // binary operations
     file_attr,          // load, store, delete attributes
     nullptr,            // load, store, delete subscripting
-    nullptr,            // __iter__  -> TODO!
+    file___iter__,      // __iter__
     nullptr,            // __next__
     nullptr,            // buffer
     nullptr,            // protocol
@@ -177,6 +178,40 @@ typedef struct _file_obj_t {
     bool closed;
     
 } file_obj_t;
+
+STATIC mp_obj_t __file_read_backend(file_obj_t* file, mp_int_t size, bool with_line_sep);
+
+// file iterator
+typedef struct _file_it_obj_t {
+    mp_obj_base_t base;
+    mp_fun_1_t iternext;
+    mp_obj_t file;
+} file_it_obj_t;
+
+STATIC mp_obj_t file_it___next__(mp_obj_t self_in) {
+    file_it_obj_t *file_it = (file_it_obj_t*) MP_OBJ_TO_PTR(self_in);
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(file_it->file);
+    
+    mp_obj_t ret = __file_read_backend(file, -1, false);
+    
+    if (ret == mp_const_none) {
+        return MP_OBJ_STOP_ITERATION;
+    } else {
+        return ret;
+    }
+}
+
+STATIC mp_obj_t file___iter__(mp_obj_t self_in, mp_obj_iter_buf_t *iter_buf) {
+    assert(sizeof(file_it_obj_t) <= sizeof(mp_obj_iter_buf_t));
+    
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(self_in);
+    
+    file_it_obj_t *o = (file_it_obj_t*)iter_buf;
+    o->base.type = &mp_type_polymorph_iter;
+    o->iternext = file_it___next__;
+    o->file = file;
+    return MP_OBJ_FROM_PTR(o);
+}
 
 STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
     destination[1] = self_in;
@@ -679,10 +714,7 @@ STATIC mp_obj_t __file_read_backend(file_obj_t* file, mp_int_t size, bool with_l
         size_t file_size = file->record.value().size;
         size_t start = file->position;
         if (start >= file_size || size == 0) {
-            if (file->binary_mode == TEXT)
-                return mp_obj_new_str("", 0);
-            if (file->binary_mode == BINARY)
-                return mp_const_empty_bytes;
+            return mp_const_none;
         }
         
         size_t end = 0;
@@ -739,7 +771,14 @@ STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
         size = mp_obj_get_int(args[1]);
     }
 
-    return __file_read_backend(file, size, false);
+    mp_obj_t ret = __file_read_backend(file, size, false);
+    
+    if (ret == mp_const_none) {
+        if (file->binary_mode == TEXT)
+            return mp_obj_new_str("", 0);
+        if (file->binary_mode == BINARY)
+            return mp_const_empty_bytes;
+    }
 }
 
 STATIC mp_obj_t file_readline(size_t n_args, const mp_obj_t* args) {
@@ -767,6 +806,13 @@ STATIC mp_obj_t file_readline(size_t n_args, const mp_obj_t* args) {
         size = mp_obj_get_int(args[1]);
     }
 
-    return __file_read_backend(file, size, true);
+    mp_obj_t ret = __file_read_backend(file, size, false);
+    
+    if (ret == mp_const_none) {
+        if (file->binary_mode == TEXT)
+            return mp_obj_new_str("", 0);
+        if (file->binary_mode == BINARY)
+            return mp_const_empty_bytes;
+    }
 }
 

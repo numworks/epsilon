@@ -439,18 +439,30 @@ Q(monotonic)
 
 // file QSTRs
 Q(file)
-Q(tell)
-Q(seek)
+
 Q(close)
 Q(closed)
-Q(fileno)
 Q(flush)
 Q(isatty)
 Q(readable)
 Q(readline)
+Q(readlines)
 Q(seekable)
-Q(write)
+Q(tell)
 Q(writable)
+Q(writelines)
+
+Q(fileno)
+Q(seek)
+Q(truncate)
+
+Q(write)
+
+Q(read)
+
+Q(name)
+Q(mode)
+
 Q(SEEK_SET)
 Q(SEEK_CUR)
 Q(SEEK_END)

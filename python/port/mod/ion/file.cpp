@@ -7,6 +7,8 @@ extern "C" {
 #include <py/stream.h>
 #include <py/builtin.h>
 #include <py/obj.h>
+#include <py/misc.h>
+#include "file.h"
 }
 
 #include <algorithm>
@@ -156,7 +158,8 @@ extern const mp_obj_type_t file_type = {
     0,                  // flags
     MP_QSTR_file,       // name
     file_print,         // __repr__, __srt__
-    file_make_new,      // __new__, __init__
+//  file_make_new,      // __new__, __init__
+    nullptr,            // __new__, __init__
     nullptr,            // __call__
     nullptr,            // unary operations
     nullptr,            // binary operations
@@ -996,5 +999,20 @@ STATIC mp_obj_t file_truncate(size_t n_args, const mp_obj_t* args) {
     }
     
     return mp_const_none;
+}
+
+mp_obj_t file_open(mp_obj_t file_name) {
+    mp_obj_t args[1];
+    args[0] = file_name;
+
+    return file_make_new(nullptr, 1, 0, args);
+}
+
+mp_obj_t file_open_mode(mp_obj_t file_name, mp_obj_t file_mode) {
+    mp_obj_t args[2];
+    args[0] = file_name;
+    args[1] = file_mode;
+
+    return file_make_new(nullptr, 2, 0, args);
 }
 

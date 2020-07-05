@@ -61,6 +61,21 @@ const mp_obj_fun_builtin_fixed_t file_close_obj = {
   {(mp_fun_0_t)file_close}
 };
 
+STATIC mp_obj_t file___enter__(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file___enter___obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file___enter__}
+};
+
+STATIC mp_obj_t file___exit__(size_t n_args, const mp_obj_t* args);
+
+const mp_obj_fun_builtin_var_t file___exit___obj = {
+    {&mp_type_fun_builtin_var},
+    MP_OBJ_FUN_MAKE_SIG(4, 4, false),
+    {(mp_fun_var_t)file___exit__}
+};
+
 STATIC mp_obj_t file_fileno(mp_obj_t o_in);
 
 const mp_obj_fun_builtin_fixed_t file_fileno_obj = {
@@ -87,6 +102,13 @@ STATIC mp_obj_t file_readable(mp_obj_t o_in);
 const mp_obj_fun_builtin_fixed_t file_readable_obj = {
   {&mp_type_fun_builtin_1},
   {(mp_fun_0_t)file_readable}
+};
+
+STATIC mp_obj_t file_writable(mp_obj_t o_in);
+
+const mp_obj_fun_builtin_fixed_t file_writable_obj = {
+  {&mp_type_fun_builtin_1},
+  {(mp_fun_0_t)file_writable}
 };
 
 STATIC const mp_rom_map_elem_t file_type_globals_table[] = {
@@ -156,6 +178,12 @@ STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
         switch(attribute) {
             case MP_QSTR_closed:
                 destination[0] = mp_obj_new_bool(self->closed);
+                break;
+            case MP_QSTR___enter__:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file___enter___obj);
+                break;
+            case MP_QSTR___exit__:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file___exit___obj);
                 break;
             case MP_QSTR_close:
                 destination[0] = (mp_obj_t) MP_ROM_PTR(&file_close_obj);
@@ -412,6 +440,25 @@ void check_closed(file_obj_t* file) {
 
 // Methods
 
+STATIC mp_obj_t file___enter__(mp_obj_t o_in) {
+    
+    if(!mp_obj_is_type(o_in, &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+    
+    return o_in;
+}
+
+STATIC mp_obj_t file___exit__(size_t n_args, const mp_obj_t* args) {
+    mp_arg_check_num(n_args, 0, 4, 4, false);
+    
+    if(!mp_obj_is_type(args[0], &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+    
+    return file_close(args[0]);
+}
+
 STATIC mp_obj_t file_close(mp_obj_t o_in) {
     if(!mp_obj_is_type(o_in, &file_type)) {
         mp_raise_TypeError("self must be a file!");
@@ -536,9 +583,24 @@ STATIC mp_obj_t file_isatty(mp_obj_t o_in) {
     return mp_const_false;
 }
 
+STATIC mp_obj_t file_writable(mp_obj_t o_in) {
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    check_closed(file);
+
+    if (file->open_mode == READ && file->edit_mode != true) {
+        return mp_const_false;
+    }
+
+    return mp_const_true;
+}
+
 STATIC mp_obj_t file_readable(mp_obj_t o_in) {
     file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
     check_closed(file);
+
+    if (file->open_mode != READ && file->edit_mode != true) {
+        return mp_const_false;
+    }
 
     return mp_const_true;
 }

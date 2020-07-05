@@ -40,6 +40,13 @@ const mp_obj_fun_builtin_var_t file_read_obj = {
     {(mp_fun_var_t)file_read}
 };
 
+STATIC mp_obj_t file_write(mp_obj_t o_in, mp_obj_t o_s);
+
+const mp_obj_fun_builtin_fixed_t file_write_obj = {
+  {&mp_type_fun_builtin_2},
+  {(mp_fun_0_t)file_write}
+};
+
 STATIC mp_obj_t file_seekable(mp_obj_t o_in);
 
 const mp_obj_fun_builtin_fixed_t file_seekable_obj = {
@@ -135,7 +142,7 @@ typedef struct _file_obj_t {
     // If location is set to RAM, record is used.
     Ion::Storage::Record record;
     
-    uint16_t position;
+    size_t position;
     
     bool closed;
     
@@ -176,6 +183,9 @@ STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
                 break;
             case MP_QSTR_read:
                 destination[0] = (mp_obj_t) MP_ROM_PTR(&file_read_obj);
+                break;
+            case MP_QSTR_write:
+                destination[0] = (mp_obj_t) MP_ROM_PTR(&file_write_obj);
                 break;
             default:
                 break;
@@ -448,7 +458,7 @@ STATIC mp_obj_t file_seek(size_t n_args, const mp_obj_t* args) {
         mp_raise_ValueError("offset must be an int!");
     }
     
-    mp_int_t position = mp_obj_get_int(args[1]);
+    int position = mp_obj_get_int(args[1]);
     mp_int_t whence = 0;
     
     if (n_args > 2) {
@@ -459,7 +469,7 @@ STATIC mp_obj_t file_seek(size_t n_args, const mp_obj_t* args) {
         whence = mp_obj_get_int(args[2]);
     }
     
-    mp_int_t new_position = file->position;
+    int new_position = file->position;
     size_t file_size = 0;
     
     if(file->location == RAM) {
@@ -533,6 +543,64 @@ STATIC mp_obj_t file_readable(mp_obj_t o_in) {
     return mp_const_true;
 }
 
+STATIC mp_obj_t file_write(mp_obj_t o_in, mp_obj_t o_s) {
+    
+    if(!mp_obj_is_type(o_in, &file_type)) {
+        mp_raise_TypeError("self must be a file!");
+    }
+
+    file_obj_t *file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
+    
+    check_closed(file);
+    
+    if (file->open_mode == READ && file->edit_mode != true) {
+        mp_raise_OSError(1);
+    }
+    
+    if (file->binary_mode == TEXT) {
+        if (!mp_obj_is_str(o_s)) {
+            mp_raise_ValueError("s must be a str!");
+        }
+    } else if (file->binary_mode == BINARY) {
+        if (!mp_obj_is_type(o_s, &mp_type_bytes)) {
+            mp_raise_ValueError("s must be a bytes!");
+        }
+    }
+    
+    size_t len;
+    const char* buffer;
+    buffer = mp_obj_str_get_data(o_s, &len);
+    
+    if (file->location == RAM) {
+        size_t previous_size = file->record.value().size;
+        
+        // Claim avaliable space.
+        size_t avaliable_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
+        
+        // Check if there is enough space left
+        if (file->position + len + 1 > avaliable_size) {
+            Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, avaliable_size - previous_size);
+            mp_raise_OSError(28);
+        }
+        
+        // Check if seek pos is higher than file end
+        // If yes, fill space between there with 0x00
+        if (file->position > previous_size) {
+            memset((uint8_t*)(file->record.value().buffer) + file->position, 0x00, file->position - previous_size);
+        }
+        
+        // Copy buffer to destination
+        memcpy((uint8_t*)(file->record.value().buffer) + file->position, buffer, len);
+        
+        // Set size again
+        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, file->record.value().size - std::max(previous_size, file->position + len));
+        
+        file->position += len;
+    }
+    
+    return mp_obj_new_int(len);
+}
+
 STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
     mp_arg_check_num(n_args, 0, 1, 2, false);
     
@@ -559,8 +627,8 @@ STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
     }
     
     if (file->location == RAM) {
-        mp_int_t file_size = file->record.value().size;
-        mp_int_t start = file->position;
+        size_t file_size = file->record.value().size;
+        size_t start = file->position;
         if (start >= file_size || size == 0) {
             if (file->binary_mode == TEXT)
                 return mp_obj_new_str("", 0);
@@ -568,13 +636,13 @@ STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
                 return mp_const_empty_bytes;
         }
         
-        mp_int_t end = 0;
+        size_t end = 0;
         
         // size == 0 handled earlier.
         if (size < 0) {
-            end = file_size - 1;
+            end = file_size;
         } else {
-            end = std::min(file_size - 1, file->position + size);
+            end = std::min(file_size, file->position + size);
         }
         
         file->position = end;

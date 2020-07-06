@@ -8,6 +8,9 @@
 
 namespace Calculation {
 
+/* TODO There is factorizable code between this and Calculation::HistoryViewCell
+ * (at least setCalculation). */
+
 class ScrollableThreeExpressionsView : public Shared::AbstractScrollableMultipleExpressionsView {
 public:
   static constexpr KDCoordinate k_margin = Metric::CommonSmallMargin;

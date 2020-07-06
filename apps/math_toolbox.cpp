@@ -117,19 +117,38 @@ const ToolboxMessageTree unitDistanceMeterChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterPicoSymbol, I18n::Message::UnitDistanceMeterPico),
 };
 
+const ToolboxMessageTree unitDistanceImperialChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMileSymbol, I18n::Message::UnitDistanceMile),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceYardSymbol, I18n::Message::UnitDistanceYard),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceFootSymbol, I18n::Message::UnitDistanceFoot),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceInchSymbol, I18n::Message::UnitDistanceInch),
+};
+
 const ToolboxMessageTree unitDistanceChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMeterMenu, unitDistanceMeterChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitDistanceImperialChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceAstronomicalUnitSymbol, I18n::Message::UnitDistanceAstronomicalUnit),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceLightYearSymbol, I18n::Message::UnitDistanceLightYear),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceParsecSymbol, I18n::Message::UnitDistanceParsec)};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceParsecSymbol, I18n::Message::UnitDistanceParsec),
+};
 
-const ToolboxMessageTree unitMassChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne),
+const ToolboxMessageTree unitMassGramChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramKiloSymbol, I18n::Message::UnitMassGramKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramSymbol, I18n::Message::UnitMassGram),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMilliSymbol, I18n::Message::UnitMassGramMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramMicroSymbol, I18n::Message::UnitMassGramMicro),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramNanoSymbol, I18n::Message::UnitMassGramNano),
+};
+
+const ToolboxMessageTree unitMassImperialChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassPoundSymbol, I18n::Message::UnitMassPound),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassOunceSymbol, I18n::Message::UnitMassOunce),
+};
+
+const ToolboxMessageTree unitMassChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitMassGram, unitMassGramChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitMassImperialChildren),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne),
 };
 
 const ToolboxMessageTree unitCurrentAmpereChildren[] = {
@@ -228,6 +247,7 @@ const ToolboxMessageTree unitInductanceChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitInductanceHenrySymbol, I18n::Message::UnitInductanceHenry)};
 
 const ToolboxMessageTree unitSurfaceChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre),
   ToolboxMessageTree::Leaf(I18n::Message::UnitSurfaceHectarSymbol, I18n::Message::UnitSurfaceHectar)};
 
 const ToolboxMessageTree unitVolumeLiterChildren[] = {
@@ -237,11 +257,26 @@ const ToolboxMessageTree unitVolumeLiterChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterMilliSymbol, I18n::Message::UnitVolumeLiterMilli),
 };
 
+const ToolboxMessageTree unitVolumeImperialChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeGallonSymbol, I18n::Message::UnitVolumeGallon),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeQuartSymbol, I18n::Message::UnitVolumeQuart),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumePintSymbol, I18n::Message::UnitVolumePint),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeCupSymbol, I18n::Message::UnitVolumeCup),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeFluidOunceSymbol, I18n::Message::UnitVolumeFluidOunce),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeTablespoonSymbol, I18n::Message::UnitVolumeTablespoon),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeTeaspoonSymbol, I18n::Message::UnitVolumeTeaspoon),
+};
+
+const ToolboxMessageTree unitVolumeChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitVolumeLiter, unitVolumeLiterChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitImperialMenu, unitVolumeImperialChildren),
+};
+
 const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTimeMenu, unitTimeChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitSurfaceMenu, unitSurfaceChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeLiterChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitVolumeMenu, unitVolumeChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCurrentMenu, unitCurrentAmpereChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),

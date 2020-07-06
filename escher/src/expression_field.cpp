@@ -136,6 +136,16 @@ size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) const {
      * has changed and invalidate the data.*/
     returnValue = 0;
   } else {
+    /* dumpLayout will be called whenever Calculation exits, event when an
+     * exception occurs. We thus need to check the validity of the layout we
+     * are dumping (m_layoutField.m_contentView.m_expressionView.m_layout).
+     * However, attempting to get a handle on a layout that has been erased
+     * will crash the program. We need the check to be performed on the
+     * original object in expressionView. */
+    if (!m_layoutField.layoutHasNode()) {
+      buffer[0] = 0;
+      return 0;
+    }
     size = m_layoutField.layout().size();
     currentLayout = reinterpret_cast<char *>(m_layoutField.layout().node());
     returnValue = size;

@@ -208,6 +208,10 @@ KDCoordinate HistoryController::rowHeight(int j) {
     result = HistoryViewCell::Height(calculation.pointer(), expanded);
     calculation->setMemoizedHeight(expanded, result);
   }
+  /* We might want to put an assertion here to check the memoization:
+   * assert(result == HistoryViewCell::Height(calculation.pointer(), expanded));
+   * However, Height might fail due to pool memory exhaustion, in which case the
+   * assertion fails even if "result" had the right value. */
   return result;
 }
 

@@ -51,7 +51,7 @@ public:
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override { return m_even ? KDColorWhite : Palette::WallScreen; }
   void resetMemoization();
-  void setCalculation(Calculation * calculation, bool expanded);
+  void setCalculation(Calculation * calculation, bool expanded, bool * didForceOutput = nullptr);
   int numberOfSubviews() const override { return 2 + displayedEllipsis(); }
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

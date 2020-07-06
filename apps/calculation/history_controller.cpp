@@ -1,5 +1,6 @@
 #include "history_controller.h"
 #include "app.h"
+#include <poincare/exception_checkpoint.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -206,6 +207,10 @@ KDCoordinate HistoryController::rowHeight(int j) {
   KDCoordinate result = calculation->memoizedHeight(expanded);
   if (result < 0) {
     result = HistoryViewCell::Height(calculation.pointer(), expanded);
+    if (result < 0) {
+      // Raise, because Height modified the calculation and failed.
+      Poincare::ExceptionCheckpoint::Raise();
+    }
     calculation->setMemoizedHeight(expanded, result);
   }
   /* We might want to put an assertion here to check the memoization:

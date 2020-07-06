@@ -41,8 +41,7 @@ Calculation * Calculation::next() const {
 void Calculation::tidy() {
   /* Reset height memoization (the complex format could have changed when
    * re-entering Calculation app which would impact the heights). */
-  m_height = -1;
-  m_expandedHeight = -1;
+  resetHeightMemoization();
 }
 
 const char * Calculation::approximateOutputText(NumberOfSignificantDigits numberOfSignificantDigits) const {
@@ -193,9 +192,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
 void Calculation::forceDisplayOutput(DisplayOutput d) {
   m_displayOutput = d;
   // Reset heights memoization as it might have changed when we modify the display output
-  m_height = -1;
-  m_expandedHeight = -1;
+  resetHeightMemoization();
 }
+
 bool Calculation::shouldOnlyDisplayExactOutput() {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
@@ -288,6 +287,11 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     return AdditionalInformationType::Complex;
   }
   return AdditionalInformationType::None;
+}
+
+void  Calculation::resetHeightMemoization() {
+  m_height = -1;
+  m_expandedHeight = -1;
 }
 
 }

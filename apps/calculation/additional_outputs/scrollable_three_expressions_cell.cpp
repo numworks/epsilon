@@ -8,7 +8,8 @@ void ScrollableThreeExpressionsView::resetMemoization() {
   setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
 }
 
-void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation) {
+void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, bool * didForceOutput) {
+  assert(!didForceOutput || *didForceOutput == false);
   Poincare::Context * context = App::app()->localContext();
 
   // Clean the layouts to make room in the pool
@@ -27,6 +28,9 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation) {
         Poincare::ExceptionCheckpoint::Raise();
       } else {
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+        if (didForceOutput) {
+          *didForceOutput = true;
+        }
       }
     }
   }
@@ -46,6 +50,9 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation) {
         /* Set the display output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, and retry to create the approximate layout */
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+        if (didForceOutput) {
+          *didForceOutput = true;
+        }
         exactOutputLayout = Poincare::Layout();
         couldNotCreateApproximateLayout = false;
         approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
@@ -67,7 +74,16 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation) {
 
 KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation) {
   ScrollableThreeExpressionsCell cell;
-  cell.setCalculation(calculation);
+  bool didForceOutput = false;
+  cell.setCalculation(calculation, &didForceOutput);
+  if (didForceOutput) {
+    /* We could not compute the height of the calculation as it is (the display
+     * output was forced to another value during the height computation).
+     * Warning: the display output of calculation was actually changed, so it
+     * will cause problems if we already did some computations with another
+     * display value. */
+    return -1;
+  }
   KDRect leftFrame = KDRectZero;
   KDRect centerFrame = KDRectZero;
   KDRect approximateSignFrame = KDRectZero;
@@ -87,8 +103,8 @@ void ScrollableThreeExpressionsCell::reinitSelection() {
   m_view.reloadScroll();
 }
 
-void ScrollableThreeExpressionsCell::setCalculation(Calculation * calculation) {
-  m_view.setCalculation(calculation);
+void ScrollableThreeExpressionsCell::setCalculation(Calculation * calculation, bool * didForceOutput) {
+  m_view.setCalculation(calculation, didForceOutput);
   layoutSubviews();
 }
 

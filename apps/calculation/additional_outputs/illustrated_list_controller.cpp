@@ -1,4 +1,5 @@
 #include "illustrated_list_controller.h"
+#include <poincare/exception_checkpoint.h>
 #include <poincare/symbol.h>
 #include "../app.h"
 
@@ -82,6 +83,10 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
   KDCoordinate result = calculation->memoizedHeight(expanded);
   if (result < 0) {
     result = ScrollableThreeExpressionsCell::Height(calculation.pointer());
+    if (result < 0) {
+      // Raise, because Height modified the calculation and failed.
+      Poincare::ExceptionCheckpoint::Raise();
+    }
     calculation->setMemoizedHeight(expanded, result);
   }
   return result + Metric::CellSeparatorThickness;

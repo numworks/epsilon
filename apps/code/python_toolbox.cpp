@@ -441,12 +441,20 @@ const ToolboxMessageTree fileChildren[] {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileWritelines, I18n::Message::PythonFileWritelines, false, I18n::Message::PythonCommandFileWritelinesWithoutArg),
 };
 
+const ToolboxMessageTree exceptionsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::TryExcept1ErrorWithArg, I18n::Message::Default, false, I18n::Message::TryExcept1Error),
+  ToolboxMessageTree::Leaf(I18n::Message::TryExcept1ErrorElseWithArg, I18n::Message::Default, false, I18n::Message::TryExcept1ErrorElse),
+  ToolboxMessageTree::Leaf(I18n::Message::TryExcept2ErrorWithArg, I18n::Message::Default, false, I18n::Message::TryExcept2Error),
+  ToolboxMessageTree::Leaf(I18n::Message::WithInstructionWithArg, I18n::Message::Default, false, I18n::Message::WithInstruction),
+};
+
 const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::LoopsAndTests, loopsAndTestsChildren),
   ToolboxMessageTree::Node(I18n::Message::Modules, modulesChildren),
   ToolboxMessageTree::Node(I18n::Message::Catalog, catalogChildren),
   ToolboxMessageTree::Node(I18n::Message::Functions, functionsChildren),
-  ToolboxMessageTree::Node(I18n::Message::Files, fileChildren)
+  ToolboxMessageTree::Node(I18n::Message::Files, fileChildren),
+  ToolboxMessageTree::Node(I18n::Message::Exceptions, exceptionsChildren)
 };
 
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
@@ -472,7 +480,7 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
 }
 
 KDCoordinate PythonToolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == Toolbox::LeafCellType && m_messageTreeModel->label() == I18n::Message::IfStatementMenu) {
+  if (typeAtLocation(0, j) == Toolbox::LeafCellType && (m_messageTreeModel->label() == I18n::Message::IfStatementMenu || m_messageTreeModel->label() == I18n::Message::Exceptions)) {
       /* To get the exact height needed for each cell, we have to compute its
        * text size, which means scan the text char by char to look for '\n'
        * chars. This is very costly and ruins the speed performance when

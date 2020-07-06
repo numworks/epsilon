@@ -210,21 +210,21 @@ public:
   static constexpr const Prefix * NoPrefix[] = {
       &EmptyPrefix
     };
-   static constexpr const Prefix * NegativeLongScalePrefixes[] = {
+  static constexpr const Prefix * NegativeLongScalePrefixes[] = {
       &PicoPrefix,
       &NanoPrefix,
       &MicroPrefix,
       &MilliPrefix,
       &EmptyPrefix,
     };
-    static constexpr const Prefix * PositiveLongScalePrefixes[] = {
+  static constexpr const Prefix * PositiveLongScalePrefixes[] = {
       &EmptyPrefix,
       &KiloPrefix,
       &MegaPrefix,
       &GigaPrefix,
       &TeraPrefix,
     };
-    static constexpr const Prefix * LongScalePrefixes[] = {
+  static constexpr const Prefix * LongScalePrefixes[] = {
       &PicoPrefix,
       &NanoPrefix,
       &MicroPrefix,
@@ -235,7 +235,7 @@ public:
       &GigaPrefix,
       &TeraPrefix,
     };
-    static constexpr const Prefix * NegativePrefixes[] = {
+  static constexpr const Prefix * NegativePrefixes[] = {
       &PicoPrefix,
       &NanoPrefix,
       &MicroPrefix,
@@ -244,7 +244,7 @@ public:
       &DeciPrefix,
       &EmptyPrefix,
     };
-    static constexpr const Prefix * AllPrefixes[] = {
+  static constexpr const Prefix * AllPrefixes[] = {
       &PicoPrefix,
       &NanoPrefix,
       &MicroPrefix,

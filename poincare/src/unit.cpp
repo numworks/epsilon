@@ -8,12 +8,13 @@
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
-#include <limits.h>
-#include <cmath>
+#include <algorithm>
 #include <assert.h>
+#include <cmath>
+#include <float.h>
+#include <limits.h>
 #include <string.h>
 #include <utility>
-#include <algorithm>
 
 namespace Poincare {
 

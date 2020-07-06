@@ -298,6 +298,10 @@ STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
             destination[0] = (mp_obj_t) MP_ROM_PTR(&file_readable_obj);
             destination[1] = self_in;
             break;
+        case MP_QSTR_writable:
+            destination[0] = (mp_obj_t) MP_ROM_PTR(&file_writable_obj);
+            destination[1] = self_in;
+            break;
         case MP_QSTR_read:
             destination[0] = (mp_obj_t) MP_ROM_PTR(&file_read_obj);
             destination[1] = self_in;

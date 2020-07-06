@@ -422,11 +422,31 @@ const ToolboxMessageTree functionsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReturn, I18n::Message::Default)
 };
 
+const ToolboxMessageTree fileChildren[] {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileOpen, I18n::Message::PythonFileOpen, false, I18n::Message::PythonCommandFileOpenWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileClose, I18n::Message::PythonFileClose, false, I18n::Message::PythonCommandFileCloseWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileClosed, I18n::Message::PythonFileClosed, false, I18n::Message::PythonCommandFileClosedWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileMode, I18n::Message::PythonFileMode, false, I18n::Message::PythonCommandFileModeWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileName, I18n::Message::PythonFileName, false, I18n::Message::PythonCommandFileNameWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileRead, I18n::Message::PythonFileRead, false, I18n::Message::PythonCommandFileReadWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileReadable, I18n::Message::PythonFileReadable, false, I18n::Message::PythonCommandFileReadableWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileReadline, I18n::Message::PythonFileReadline, false, I18n::Message::PythonCommandFileReadlineWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileReadlines, I18n::Message::PythonFileReadlines, false, I18n::Message::PythonCommandFileReadlinesWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileSeek, I18n::Message::PythonFileSeek, false, I18n::Message::PythonCommandFileSeekWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileSeekable, I18n::Message::PythonFileSeekable, false, I18n::Message::PythonCommandFileSeekableWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileTell, I18n::Message::PythonFileTell, false, I18n::Message::PythonCommandFileTellWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileTruncate, I18n::Message::PythonFileTruncate, false, I18n::Message::PythonCommandFileTruncateWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileWrite, I18n::Message::PythonFileWrite, false, I18n::Message::PythonCommandFileWriteWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileWritable, I18n::Message::PythonFileWritable, false, I18n::Message::PythonCommandFileWritableWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFileWritelines, I18n::Message::PythonFileWritelines, false, I18n::Message::PythonCommandFileWritelinesWithoutArg),
+};
+
 const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::LoopsAndTests, loopsAndTestsChildren),
   ToolboxMessageTree::Node(I18n::Message::Modules, modulesChildren),
   ToolboxMessageTree::Node(I18n::Message::Catalog, catalogChildren),
-  ToolboxMessageTree::Node(I18n::Message::Functions, functionsChildren)
+  ToolboxMessageTree::Node(I18n::Message::Functions, functionsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Files, fileChildren)
 };
 
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);

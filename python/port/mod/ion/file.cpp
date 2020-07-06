@@ -153,12 +153,18 @@ STATIC const mp_rom_map_elem_t file_type_globals_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(file_type_globals, file_type_globals_table);
 
+/*
+ * File type creation.
+ *
+ * Constructor is set to nullptr, forcing users to use "open".
+ * attr is used to return methods ands attributes.
+ * file___iter__ return an iterable object.
+ */
 extern const mp_obj_type_t file_type = {
     { &mp_type_type },  // base
     0,                  // flags
     MP_QSTR_file,       // name
     file_print,         // __repr__, __srt__
-//  file_make_new,      // __new__, __init__
     nullptr,            // __new__, __init__
     nullptr,            // __call__
     nullptr,            // unary operations
@@ -172,10 +178,6 @@ extern const mp_obj_type_t file_type = {
     nullptr,            // parent
     (mp_obj_dict_t*) &file_type_globals   // globals table
 };
-
-typedef enum _file_location_t {
-    RAM = 0, FLASH = 1
-} file_location_t;
 
 typedef enum _file_mode_t {
     READ = 0, WRITE = 1, APPEND = 2, CREATE = 3
@@ -196,8 +198,6 @@ typedef struct _file_obj_t {
     bool            edit_mode;
     file_bin_t      binary_mode;
     
-    file_location_t location;
-    // If location is set to RAM, record is used.
     Ion::Storage::Record record;
     
     size_t position;
@@ -208,7 +208,10 @@ typedef struct _file_obj_t {
 
 STATIC mp_obj_t __file_read_backend(file_obj_t* file, mp_int_t size, bool with_line_sep);
 
-// file iterator
+/*
+ * Definition of the file iterator object.
+ * iternext gets the next line of the file.
+ */
 typedef struct _file_it_obj_t {
     mp_obj_base_t base;
     mp_fun_1_t iternext;
@@ -240,6 +243,8 @@ STATIC mp_obj_t file___iter__(mp_obj_t self_in, mp_obj_iter_buf_t *iter_buf) {
     return MP_OBJ_FROM_PTR(o);
 }
 
+// Gets attributs and methods for file object.
+// destination[0] is set to object itself, destination[1] is set to self (only for methods).
 STATIC void file_attr(mp_obj_t self_in, qstr attribute, mp_obj_t *destination) {
     file_obj_t *self = (file_obj_t*) MP_OBJ_TO_PTR(self_in);
     
@@ -346,13 +351,6 @@ STATIC void file_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_
  *  - name: name of the file
  *  - mode: mode of opening (optional, r by default)
  *
- * File system organisation:
- *  - /ram/
- *     Contains all files in RAM (python, poincare stuff, etc..)
- *  - /flash/
- *     Contains all files in external's TAR archive
- *
- *  When nme doesn't start with "/", we use RAM.
  */
 STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     mp_arg_check_num(n_args, n_kw, 1, 2, true);
@@ -409,92 +407,69 @@ STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
         }
     }
     
-    // If "", throw file not found
-    if (l > 0) {
-        file->location = RAM;
-        // Check location (RAM/FLASH)
-        if (file_name[0] == '/') {
-            if (strncmp(file_name, "/ram/", 5) == 0) {
-                file->location = RAM;
-                file_name = file_name + 5;
-            // } else if (strncmp(file_name, "/flash/", 7)) {
-            //     file->location = FLASH;
-            //     file_name = file_name + 7;
-            } else {
-                mp_raise_OSError(2);
-            }
-        }
-    } else {
-        mp_raise_OSError(2);
-    }
-    
     if (!Ion::Storage::FullNameCompliant(file_name)) {
         mp_raise_OSError(22);
     }
     
-    if(file->location == RAM) {
-        Ion::Storage::Record::ErrorStatus status;
-    
-        switch(file->open_mode) {
-            case READ:
-                file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
-                file->position = 0;
-                if (file->record == Ion::Storage::Record()) {
-                    mp_raise_OSError(2);
-                }
-                break;
-            case CREATE:
-                file->position = 0;
-                status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
-                switch (status) {
-                    case Ion::Storage::Record::ErrorStatus::NameTaken:
-                        mp_raise_OSError(17);
-                        break;
-                    case Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable:
-                        mp_raise_OSError(28);
-                        break;
-                    default:
-                        break;
-                }
-                file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
-                break;
-            case WRITE:
-                file->position = 0;
-                status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
-                switch (status) {
-                    case Ion::Storage::Record::ErrorStatus::NameTaken:
-                        // setValue messes with empty buffer, so we delete record and re-create it.
-                        file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
-                        file->record.destroy();
-                        
-                        status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
-                        
-                        if (status == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-                            mp_raise_OSError(28);
-                        }
-                        break;
-                    case Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable:
-                        mp_raise_OSError(28);
-                        break;
-                    default:
-                        break;
-                }
-                file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
-                break;
-            case APPEND:
-                file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
-                file->position = 0;
-                if (file->record == Ion::Storage::Record()) {
+    Ion::Storage::Record::ErrorStatus status;
+
+    switch(file->open_mode) {
+        case READ:
+            file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+            file->position = 0;
+            if (file->record == Ion::Storage::Record()) {
+                mp_raise_OSError(2);
+            }
+            break;
+        case CREATE:
+            file->position = 0;
+            status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
+            switch (status) {
+                case Ion::Storage::Record::ErrorStatus::NameTaken:
+                    mp_raise_OSError(17);
+                    break;
+                case Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable:
+                    mp_raise_OSError(28);
+                    break;
+                default:
+                    break;
+            }
+            file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+            break;
+        case WRITE:
+            file->position = 0;
+            status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
+            switch (status) {
+                case Ion::Storage::Record::ErrorStatus::NameTaken:
+                    // setValue messes with empty buffer, so we delete record and re-create it.
+                    file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+                    file->record.destroy();
+                    
                     status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
+                    
                     if (status == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
                         mp_raise_OSError(28);
                     }
+                    break;
+                case Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable:
+                    mp_raise_OSError(28);
+                    break;
+                default:
+                    break;
+            }
+            file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+            break;
+        case APPEND:
+            file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+            file->position = 0;
+            if (file->record == Ion::Storage::Record()) {
+                status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
+                if (status == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
+                    mp_raise_OSError(28);
                 }
-                file->position = file->record.value().size;
-                break;
-        }
-    } else {
-        mp_raise_OSError(2);
+            }
+            file->position = file->record.value().size;
+            break;
     }
     
     file->base.type = &file_type;
@@ -573,10 +548,7 @@ STATIC mp_obj_t file_close(mp_obj_t o_in) {
     file_obj_t* file = (file_obj_t*) MP_OBJ_TO_PTR(o_in);
     
     if (!file->closed) {
-        if(file->location == RAM) {
-            file->record = Ion::Storage::Record();
-        }
-    
+        file->record = Ion::Storage::Record();
         file->closed = true;
     }
     
@@ -623,11 +595,7 @@ STATIC mp_obj_t file_seek(size_t n_args, const mp_obj_t* args) {
     }
     
     int new_position = file->position;
-    size_t file_size = 0;
-    
-    if(file->location == RAM) {
-        file_size = file->record.value().size;
-    }
+    size_t file_size = file->record.value().size;
         
     switch (whence) {
         // SEEK_SET
@@ -738,33 +706,31 @@ STATIC mp_obj_t file_write(mp_obj_t o_in, mp_obj_t o_s) {
     size_t len;
     const char* buffer;
     buffer = mp_obj_str_get_data(o_s, &len);
+
+    size_t previous_size = file->record.value().size;
     
-    if (file->location == RAM) {
-        size_t previous_size = file->record.value().size;
-        
-        // Claim avaliable space.
-        size_t avaliable_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
-        
-        // Check if there is enough space left
-        if (file->position + len > avaliable_size) {
-            Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, avaliable_size - previous_size);
-            mp_raise_OSError(28);
-        }
-        
-        // Check if seek pos is higher than file end
-        // If yes, fill space between there with 0x00
-        if (file->position > previous_size) {
-            memset((uint8_t*)(file->record.value().buffer) + file->position, 0x00, file->position - previous_size);
-        }
-        
-        // Copy buffer to destination
-        memcpy((uint8_t*)(file->record.value().buffer) + file->position, buffer, len);
-        
-        // Set size again
-        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, file->record.value().size - std::max(previous_size, file->position + len));
-        
-        file->position += len;
+    // Claim avaliable space.
+    size_t avaliable_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
+    
+    // Check if there is enough space left
+    if (file->position + len > avaliable_size) {
+        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, avaliable_size - previous_size);
+        mp_raise_OSError(28);
     }
+    
+    // Check if seek pos is higher than file end
+    // If yes, fill space between there with 0x00
+    if (file->position > previous_size) {
+        memset((uint8_t*)(file->record.value().buffer) + file->position, 0x00, file->position - previous_size);
+    }
+    
+    // Copy buffer to destination
+    memcpy((uint8_t*)(file->record.value().buffer) + file->position, buffer, len);
+    
+    // Set size again
+    Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, file->record.value().size - std::max(previous_size, file->position + len));
+    
+    file->position += len;
     
     return mp_obj_new_int(len);
 }
@@ -779,39 +745,47 @@ STATIC mp_obj_t file_writelines(mp_obj_t o_in, mp_obj_t o_lines) {
     return mp_const_none;
 }
 
+/*
+ * Simpler read function usef by read and readline.
+ */
 STATIC mp_obj_t __file_read_backend(file_obj_t* file, mp_int_t size, bool with_line_sep) {
-    if (file->location == RAM) {
-        size_t file_size = file->record.value().size;
-        size_t start = file->position;
-        if (start >= file_size || size == 0) {
-            return mp_const_none;
-        }
-        
-        size_t end = 0;
-        
-        // size == 0 handled earlier.
-        if (size < 0) {
-            end = file_size;
-        } else {
-            end = std::min(file_size, file->position + size);
-        }
-        
-        if (with_line_sep) {
-            for(size_t i = start; i < end; i++) {
-                if (*((uint8_t*)(file->record.value().buffer) + i) == '\n') {
-                    end = i + 1;
-                    break;
-                }
+    size_t file_size = file->record.value().size;
+    size_t start = file->position;
+    
+    // Handle seek pos > file size
+    // And size = 0
+    if (start >= file_size || size == 0) {
+        return mp_const_none;
+    }
+    
+    size_t end = 0;
+    
+    // size == 0 handled earlier.
+    if (size < 0) {
+        end = file_size;
+    } else {
+        end = std::min(file_size, file->position + size);
+    }
+    
+    // Handle line separator case.
+    // Always use \n, because simpler.
+    if (with_line_sep) {
+        for(size_t i = start; i < end; i++) {
+            if (*((uint8_t*)(file->record.value().buffer) + i) == '\n') {
+                end = i + 1;
+                break;
             }
         }
-        
-        file->position = end;
-        
-        if (file->binary_mode == TEXT)
-            return mp_obj_new_str((const char*)file->record.value().buffer + start, end - start);
-        if (file->binary_mode == BINARY)
-            return mp_obj_new_bytes((const byte*)file->record.value().buffer + start, end - start);
     }
+    
+    file->position = end;
+    
+    
+    // Return different type based on mode.
+    if (file->binary_mode == TEXT)
+        return mp_obj_new_str((const char*)file->record.value().buffer + start, end - start);
+    if (file->binary_mode == BINARY)
+        return mp_obj_new_bytes((const byte*)file->record.value().buffer + start, end - start);
     
     return mp_const_none;
 }
@@ -819,6 +793,7 @@ STATIC mp_obj_t __file_read_backend(file_obj_t* file, mp_int_t size, bool with_l
 STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
     mp_arg_check_num(n_args, 0, 1, 2, false);
     
+    // Check type of self
     if(!mp_obj_is_type(args[0], &file_type)) {
         mp_raise_TypeError("self must be a file!");
     }
@@ -827,12 +802,14 @@ STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
     
     check_closed(file);
     
+    // Check mode
     if (file->open_mode != READ && file->edit_mode != true) {
         mp_raise_OSError(1);
     }
     
     mp_int_t size = -1;
     
+    // Check size arg
     if (n_args > 1) {
         if (!mp_obj_is_integer(args[1])) {
             mp_raise_ValueError("size must be an int!");
@@ -841,8 +818,10 @@ STATIC mp_obj_t file_read(size_t n_args, const mp_obj_t* args) {
         size = mp_obj_get_int(args[1]);
     }
 
+    // Call the actual read function.
     mp_obj_t ret = __file_read_backend(file, size, false);
     
+    // Handle none return
     if (ret == mp_const_none) {
         if (file->binary_mode == TEXT)
             return mp_obj_new_str("", 0);
@@ -922,14 +901,17 @@ STATIC mp_obj_t file_readlines(size_t n_args, const mp_obj_t* args) {
     mp_obj_t list = mp_obj_new_list(0, NULL);
     
     if (hint <= 0) {
+        // Read until there is no new lines.
         mp_obj_t ret = __file_read_backend(file, -1, true);
         while(ret != mp_const_none) {
+            // Append to list.
             mp_obj_list_append(list, ret);
             ret = __file_read_backend(file, -1, true);
         }
     } else {
         mp_int_t curr_len = 0;
         
+        // Read until total read > hint.
         mp_obj_t ret = __file_read_backend(file, -1, true);
         while(ret != mp_const_none && curr_len <= hint) {
             mp_obj_list_append(list, ret);
@@ -974,33 +956,32 @@ STATIC mp_obj_t file_truncate(size_t n_args, const mp_obj_t* args) {
     
     size_t new_end = (size_t) temp_new_end;
     
-    if (file->location == RAM) {
-        size_t previous_size = file->record.value().size;
+    size_t previous_size = file->record.value().size;
+
+    // Claim avaliable space.
+    size_t avaliable_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
     
-        // Claim avaliable space.
-        size_t avaliable_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
-        
-        // Check if there is enough space left
-        if (new_end > avaliable_size) {
-            Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, avaliable_size - previous_size);
-            mp_raise_OSError(28);
-        }
-        
-        // Check if new_end is higher than file end
-        // If yes, fill space between there with 0x00
-        if (new_end > previous_size) {
-            memset((uint8_t*)(file->record.value().buffer) + new_end, 0x00, new_end - previous_size);
-        }
-        
-        // Set new size
-        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, file->record.value().size - new_end);
-        
-        return mp_obj_new_int(new_end);
+    // Check if there is enough space left
+    if (new_end > avaliable_size) {
+        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, avaliable_size - previous_size);
+        mp_raise_OSError(28);
     }
+    
+    // Check if new_end is higher than file end
+    // If yes, fill space between there with 0x00
+    if (new_end > previous_size) {
+        memset((uint8_t*)(file->record.value().buffer) + new_end, 0x00, new_end - previous_size);
+    }
+    
+    // Set new size
+    Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, file->record.value().size - new_end);
+    
+    return mp_obj_new_int(new_end);
     
     return mp_const_none;
 }
 
+// Open method, with only name. Calls constructor.
 mp_obj_t file_open(mp_obj_t file_name) {
     mp_obj_t args[1];
     args[0] = file_name;
@@ -1008,6 +989,7 @@ mp_obj_t file_open(mp_obj_t file_name) {
     return file_make_new(nullptr, 1, 0, args);
 }
 
+// Open method, with name and mode. Calls constructor.
 mp_obj_t file_open_mode(mp_obj_t file_name, mp_obj_t file_mode) {
     mp_obj_t args[2];
     args[0] = file_name;

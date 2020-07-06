@@ -133,7 +133,14 @@ void CountryController::viewWillAppear() {
 
 bool CountryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    GlobalPreferences::sharedGlobalPreferences()->setCountry(CountryAtIndex(selectedRow()));
+    /* FIXME : Changing the unit format should perhaps be done in setCountry.*/
+    I18n::Country country = CountryAtIndex(selectedRow());
+    GlobalPreferences::sharedGlobalPreferences()->setCountry(country);
+    if (country == I18n::Country::US) {
+      Poincare::Preferences::sharedPreferences()->setUnitFormat(Poincare::Preferences::UnitFormat::Imperial);
+    } else {
+      Poincare::Preferences::sharedPreferences()->setUnitFormat(Poincare::Preferences::UnitFormat::Metric);
+    }
     return true;
   }
   return false;

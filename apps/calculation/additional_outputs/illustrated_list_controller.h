@@ -10,6 +10,8 @@
 namespace Calculation {
 
 class IllustratedListController : public ListController, public SelectableTableViewDelegate {
+/* TODO There is factorizable code between this and
+ * Calculation::HistoryController (at least rowHeight). */
 public:
   IllustratedListController(EditExpressionController * editExpressionController);
 

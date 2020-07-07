@@ -92,11 +92,11 @@ I18n::Message MatrixListController::messageAtIndex(int index) {
   // Message index is mapped in setExpression because it depends on the Matrix.
   assert(index < k_maxNumberOfOutputRows && index >=0);
   I18n::Message messages[k_maxNumberOfOutputRows] = {
-    I18n::Message::Determinant,
-    I18n::Message::Inverse,
-    I18n::Message::RowEchelonForm,
-    I18n::Message::ReducedRowEchelonForm,
-    I18n::Message::Trace};
+    I18n::Message::AdditionalDeterminant,
+    I18n::Message::AdditionalInverse,
+    I18n::Message::AdditionalRowEchelonForm,
+    I18n::Message::AdditionalReducedRowEchelonForm,
+    I18n::Message::AdditionalTrace};
   return messages[m_indexMessageMap[index]];
 }
 

@@ -336,6 +336,7 @@ CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 
 void LayoutField::putCursorRightOfLayout() {
   m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixAncestors();
+  m_contentView.cursor()->showEmptyLayoutIfNeeded();
   m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Right));
 }
 

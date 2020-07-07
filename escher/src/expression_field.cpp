@@ -122,7 +122,7 @@ KDCoordinate ExpressionField::inputViewHeight() const {
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
-size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) const {
+size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) {
   size_t size;
   size_t returnValue;
   char * currentLayout;
@@ -146,6 +146,7 @@ size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) const {
       buffer[0] = 0;
       return 0;
     }
+    m_layoutField.putCursorRightOfLayout();
     size = m_layoutField.layout().size();
     currentLayout = reinterpret_cast<char *>(m_layoutField.layout().node());
     returnValue = size;

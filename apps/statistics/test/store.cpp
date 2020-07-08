@@ -103,7 +103,7 @@ void assert_data_statictics_equal_to(
     GlobalPreferences::sharedGlobalPreferences()->setCountry(country);
     quartileRange = store.quartileRange(seriesIndex);
     quiz_assert(quartileRange >= 0.0);
-    shouldUseFrequencyMethod = country == I18n::Country::FR || country == I18n::Country::IT;
+    shouldUseFrequencyMethod = GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == I18n::MethodForQuartiles::CumulatedFrequency;
     assert_value_approximately_equal_to(store.firstQuartile(seriesIndex), shouldUseFrequencyMethod ? trueFirstQuartileFrequencyMethod : trueFirstQuartileSublistMethod, precision, reference);
     assert_value_approximately_equal_to(store.thirdQuartile(seriesIndex), shouldUseFrequencyMethod ? trueThirdQuartileFrequencyMethod : trueThirdQuartileSublistMethod, precision, reference);
     assert_value_approximately_equal_to(quartileRange, shouldUseFrequencyMethod ? trueQuartileRangeFrequencyMethod : trueQuartileRangeSublistMethod, 0.0, 0.0);

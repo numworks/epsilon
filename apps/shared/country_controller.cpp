@@ -136,11 +136,7 @@ bool CountryController::handleEvent(Ion::Events::Event event) {
     /* FIXME : Changing the unit format should perhaps be done in setCountry.*/
     I18n::Country country = CountryAtIndex(selectedRow());
     GlobalPreferences::sharedGlobalPreferences()->setCountry(country);
-    if (country == I18n::Country::US) {
-      Poincare::Preferences::sharedPreferences()->setUnitFormat(Poincare::Preferences::UnitFormat::Imperial);
-    } else {
-      Poincare::Preferences::sharedPreferences()->setUnitFormat(Poincare::Preferences::UnitFormat::Metric);
-    }
+    Poincare::Preferences::sharedPreferences()->setUnitFormat(GlobalPreferences::sharedGlobalPreferences()->unitFormat());
     return true;
   }
   return false;

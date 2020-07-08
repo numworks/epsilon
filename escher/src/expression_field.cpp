@@ -122,13 +122,14 @@ KDCoordinate ExpressionField::inputViewHeight() const {
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
-size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) {
+size_t ExpressionField::moveCursorAndDumpContent(char * buffer, size_t bufferSize) {
   size_t size;
   size_t returnValue;
-  char * currentLayout;
+  char * currentContent;
   if (editionIsInTextField()) {
     size = strlen(m_textField.draftTextBuffer()) + 1;
-    currentLayout = m_textField.draftTextBuffer();
+    m_textField.setCursorLocation(m_textField.cursorLocation() + size - 1);
+    currentContent = m_textField.draftTextBuffer();
     /* We take advantage of the fact that draftTextBuffer is null terminated to
      * use a size of 0 as a shorthand for "The buffer contains raw text instead
      * of layouts", since the size of a layout is at least 32 (the size of an
@@ -136,9 +137,9 @@ size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) {
      * has changed and invalidate the data.*/
     returnValue = 0;
   } else {
-    /* dumpLayout will be called whenever Calculation exits, event when an
-     * exception occurs. We thus need to check the validity of the layout we
-     * are dumping (m_layoutField.m_contentView.m_expressionView.m_layout).
+    /* moveCursorAndDumpContent will be called whenever Calculation exits,
+     * even when an exception occurs. We thus need to check the validity of the
+     * layout we are dumping (m_layoutField.contentView.expressionView.layout).
      * However, attempting to get a handle on a layout that has been erased
      * will crash the program. We need the check to be performed on the
      * original object in expressionView. */
@@ -148,18 +149,18 @@ size_t ExpressionField::dumpLayout(char * buffer, size_t bufferSize) {
     }
     m_layoutField.putCursorRightOfLayout();
     size = m_layoutField.layout().size();
-    currentLayout = reinterpret_cast<char *>(m_layoutField.layout().node());
+    currentContent = reinterpret_cast<char *>(m_layoutField.layout().node());
     returnValue = size;
   }
   if (size > bufferSize - 1) {
     buffer[0] = 0;
     return 0;
   }
-  memcpy(buffer, currentLayout, size);
+  memcpy(buffer, currentContent, size);
   return returnValue;
 }
 
-void ExpressionField::restoreLayout(const char * buffer, size_t size) {
+void ExpressionField::restoreContent(const char * buffer, size_t size) {
   if (editionIsInTextField()) {
     if (size != 0 || buffer[0] == 0) {
       /* A size other than 0 means the buffer contains Layout information

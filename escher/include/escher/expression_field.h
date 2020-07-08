@@ -26,8 +26,8 @@ public:
   bool inputViewHeightDidChange();
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
   void setLayoutInsertionCursorEvent(Ion::Events::Event event) { m_layoutField.setInsertionCursorEvent(event); }
-  size_t dumpLayout(char * buffer, size_t bufferSize);
-  void restoreLayout(const char * buffer, size_t size);
+  size_t moveCursorAndDumpContent(char * buffer, size_t bufferSize);
+  void restoreContent(const char * buffer, size_t size);
 
   /* View */
   int numberOfSubviews() const override { return 1; }

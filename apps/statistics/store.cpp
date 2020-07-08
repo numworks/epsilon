@@ -1,6 +1,5 @@
 #include "store.h"
 #include <apps/global_preferences.h>
-#include <apps/i18n.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -199,20 +198,18 @@ double Store::sampleStandardDeviation(int series) const {
  * the more general definition if non-integral frequencies are found.
  * */
 double Store::firstQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences()->country() == I18n::Country::FR
-   || GlobalPreferences::sharedGlobalPreferences()->country() == I18n::Country::IT
-   || !frequenciesAreInteger(series)) {
+  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == I18n::MethodForQuartiles::CumulatedFrequency || !frequenciesAreInteger(series)) {
     return sortedElementAtCumulatedFrequency(series, 1.0/4.0);
   }
+  assert(GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == I18n::MethodForQuartiles::MedianOfSublist);
   return sortedElementAtCumulatedPopulation(series, std::floor(sumOfOccurrences(series) / 2.) / 2., true);
 }
 
 double Store::thirdQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences()->country() == I18n::Country::FR
-   || GlobalPreferences::sharedGlobalPreferences()->country() == I18n::Country::IT
-   || !frequenciesAreInteger(series)) {
+  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == I18n::MethodForQuartiles::CumulatedFrequency || !frequenciesAreInteger(series)) {
     return sortedElementAtCumulatedFrequency(series, 3.0/4.0);
   }
+  assert(GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == I18n::MethodForQuartiles::MedianOfSublist);
   return sortedElementAtCumulatedPopulation(series, std::ceil(3./2. * sumOfOccurrences(series)) / 2., true);
 }
 

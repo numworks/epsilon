@@ -30,7 +30,7 @@ public:
     m_y(0),
     m_heading(0),
     m_color(k_defaultColor),
-    m_colorMode(MicroPython::ColorParser::ColorMode::MaxIntensity255),
+    m_colorMode(MicroPython::Color::Mode::MaxIntensity255),
     m_penDown(true),
     m_visible(true),
     m_speed(k_defaultSpeed),
@@ -73,10 +73,12 @@ public:
   void setColor(uint8_t r, uint8_t g, uint8_t b) {
     m_color = KDColor::RGB888(r, g, b);
   }
-  MicroPython::ColorParser::ColorMode colorMode() const {return m_colorMode; }
-  void setColorMode(MicroPython::ColorParser::ColorMode colorMode){
+  MicroPython::Color::Mode colorMode() const {return m_colorMode; }
+  void setColorMode(MicroPython::Color::Mode colorMode){
     m_colorMode = colorMode;
   }
+
+  void write(const char * string);
 
   void viewDidDisappear();
 
@@ -91,6 +93,7 @@ private:
   static constexpr uint8_t k_maxSpeed = 10;
   static constexpr KDColor k_defaultColor = KDColorBlack;
   static constexpr uint8_t k_defaultPenSize = 1;
+  static constexpr const KDFont * k_font = KDFont::LargeFont;
 
   enum class PawType : uint8_t {
     FrontRight = 0,
@@ -141,7 +144,7 @@ private:
   mp_float_t m_heading;
 
   KDColor m_color;
-  MicroPython::ColorParser::ColorMode m_colorMode;
+  MicroPython::Color::Mode m_colorMode;
   bool m_penDown;
   bool m_visible;
 

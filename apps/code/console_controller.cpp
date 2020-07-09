@@ -31,7 +31,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_pythonDelegate(pythonDelegate),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
-  m_editCell(this, pythonDelegate, this),
+  m_editCell(this, this, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this),
   m_inputRunLoopActive(false)
@@ -48,17 +48,13 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
 }
 
 bool ConsoleController::loadPythonEnvironment() {
-  if (m_pythonDelegate->isPythonUser(this)) {
-    return true;
+  if (!m_pythonDelegate->isPythonUser(this)) {
+    m_scriptStore->clearConsoleFetchInformation();
+    emptyOutputAccumulationBuffer();
+    m_pythonDelegate->initPythonWithUser(this);
+    MicroPython::registerScriptProvider(m_scriptStore);
+    m_importScriptsWhenViewAppears = m_autoImportScripts;
   }
-  emptyOutputAccumulationBuffer();
-  m_pythonDelegate->initPythonWithUser(this);
-  MicroPython::registerScriptProvider(m_scriptStore);
-  m_importScriptsWhenViewAppears = m_autoImportScripts;
-  /* We load functions and variables names in the variable box before running
-   * any other python code to avoid failling to load functions and variables
-   * due to memory exhaustion. */
-  App::app()->variableBoxController()->loadFunctionsAndVariables();
   return true;
 }
 
@@ -290,7 +286,7 @@ void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, i
   }
 }
 
-void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void ConsoleController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -373,6 +369,14 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 #endif
   }
   return true;
+}
+
+VariableBoxController * ConsoleController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  VariableBoxController * varBox = App::app()->variableBoxController();
+  varBox->loadVariablesImportedFromScripts();
+  varBox->setTitle(I18n::Message::FunctionsAndVariables);
+  varBox->setDisplaySubtitles(false);
+  return varBox;
 }
 
 void ConsoleController::resetSandbox() {
@@ -479,7 +483,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
    * the sandbox. */
   hideAnyDisplayedViewController();
 
-  if (script.importationStatus() || force) {
+  if (script.autoImportationStatus() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
     assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);

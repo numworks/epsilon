@@ -66,6 +66,7 @@ escher_src += $(addprefix escher/src/,\
   message_text_view.cpp \
   metric.cpp \
   modal_view_controller.cpp \
+  modal_view_empty_controller.cpp \
   nested_menu_controller.cpp \
   palette.cpp \
   pointer_text_view.cpp \

@@ -13,8 +13,19 @@
 
 namespace Poincare {
 
-Expression UnitConvertNode::shallowReduce(ReductionContext reductionContext) {
-  return UnitConvert(this).shallowReduce(reductionContext);
+Expression UnitConvertNode::removeUnit(Expression * unit) {
+  /* Warning: removeUnit of a UnitConvert doesn't make much sense but we
+   * implement a 'dummy' version since UnitConvert still exists among the
+   * reduced expression. */
+  childAtIndex(1)->removeUnit(unit);
+  return UnitConvert(this).replaceWithUndefinedInPlace();
+}
+Expression UnitConvertNode::shallowBeautify(ReductionContext reductionContext) {
+  return UnitConvert(this).shallowBeautify(reductionContext);
+}
+
+void UnitConvertNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  UnitConvert(this).deepReduceChildren(reductionContext);
 }
 
 template<typename T>
@@ -25,55 +36,63 @@ Evaluation<T> UnitConvertNode::templatedApproximate(Context * context, Preferenc
   return Complex<T>::Undefined();
 }
 
-Expression UnitConvert::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  {
-    Expression e = Expression::defaultShallowReduce();
-    if (e.isUndefined()) {
-      return e;
-    }
-  }
+void UnitConvert::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  childAtIndex(0).deepReduce(reductionContext);
+  ExpressionNode::ReductionContext reductionContextKeepUnitAsIs = ExpressionNode::ReductionContext(
+      reductionContext.context(),
+      reductionContext.complexFormat(),
+      reductionContext.angleUnit(),
+      reductionContext.target(),
+      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined,
+      ExpressionNode::UnitConversion::None);
+  // Don't transform the targetted unit
+  childAtIndex(1).deepReduce(reductionContextKeepUnitAsIs);
+}
 
-  // Find the unit
+Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+  // Discard cases like 4 -> _m/_km
   {
     ExpressionNode::ReductionContext reductionContextWithUnits = ExpressionNode::ReductionContext(
         reductionContext.context(),
         reductionContext.complexFormat(),
         reductionContext.angleUnit(),
         reductionContext.target(),
-        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits);
-    Expression unit = childAtIndex(1).clone().reduce(reductionContextWithUnits).getUnit();
-    if (unit.isUndefined()) {
+        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+    Expression unit;
+    childAtIndex(1).clone().deepReduce(reductionContextWithUnits).removeUnit(&unit);
+    if (unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
     }
   }
-
+  // Find the unit
   ExpressionNode::ReductionContext reductionContextWithoutUnits = ExpressionNode::ReductionContext(
       reductionContext.context(),
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
       reductionContext.target(),
-      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  Expression finalUnit = childAtIndex(1).reduce(reductionContextWithoutUnits).getUnit();
+      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined,
+      ExpressionNode::UnitConversion::None);
+  Expression unit;
+  childAtIndex(1).removeUnit(&unit);
+  if (unit.isUninitialized()) {
+    // There is no unit on the right
+    return replaceWithUndefinedInPlace();
+  }
 
   // Divide the left member by the new unit
-  Expression division = Division::Builder(childAtIndex(0), finalUnit.clone());
-  division = division.reduce(reductionContext);
-  if (division.hasUnit()) {
+  Expression division = Division::Builder(childAtIndex(0), unit.clone());
+  division = division.deepReduce(reductionContext);
+  Expression divisionUnit;
+  division = division.removeUnit(&divisionUnit);
+  if (!divisionUnit.isUninitialized()) {
     // The left and right members are not homogeneous
     return replaceWithUndefinedInPlace();
   }
-  double floatValue = division.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
-  if (std::isinf(floatValue)) {
-    return Infinity::Builder(false); //FIXME sign?
-  }
-  if (std::isnan(floatValue)) {
-    return Undefined::Builder();
-  }
-  division = Multiplication::Builder(Float<double>::Builder(floatValue), finalUnit);
-  static_cast<Multiplication &>(division).mergeMultiplicationChildrenInPlace();
-  replaceWithInPlace(division);
-  return division;
+  Expression result = Multiplication::Builder(division, unit);
+  replaceWithInPlace(result);
+  result.shallowReduce(reductionContextWithoutUnits);
+  return result.shallowBeautify(reductionContextWithoutUnits);
 }
 
 template Evaluation<float> UnitConvertNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

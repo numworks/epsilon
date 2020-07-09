@@ -120,7 +120,18 @@ const ToolboxMessageTree MatplotlibPyplotModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPlot, I18n::Message::PythonPlot),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandScatter, I18n::Message::PythonScatter),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandShow, I18n::Message::PythonShow),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandText, I18n::Message::PythonText)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandText, I18n::Message::PythonText),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBlue, I18n::Message::PythonColorBlue, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorRed, I18n::Message::PythonColorRed, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGreen, I18n::Message::PythonColorGreen, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorYellow, I18n::Message::PythonColorYellow, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBrown, I18n::Message::PythonColorBrown, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBlack, I18n::Message::PythonColorBlack, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorWhite, I18n::Message::PythonColorWhite, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPink, I18n::Message::PythonColorPink, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorOrange, I18n::Message::PythonColorOrange, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPurple, I18n::Message::PythonColorPurple, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGrey, I18n::Message::PythonColorGrey, false)
 };
 
 const ToolboxMessageTree TurtleModuleChildren[] = {
@@ -141,22 +152,23 @@ const ToolboxMessageTree TurtleModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPenup, I18n::Message::PythonTurtlePenup, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPensize, I18n::Message::PythonTurtlePensize),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandIsdown, I18n::Message::PythonTurtleIsdown, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandWrite, I18n::Message::PythonTurtleWrite),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandReset, I18n::Message::PythonTurtleReset, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandShowturtle, I18n::Message::PythonTurtleShowturtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandHideturtle, I18n::Message::PythonTurtleHideturtle, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandColor, I18n::Message::PythonTurtleColor, false, I18n::Message::PythonTurtleCommandColorWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandColor, I18n::Message::PythonTurtleColor),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandColorMode, I18n::Message::PythonTurtleColorMode),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBlue, I18n::Message::PythonTurtleBlue, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandRed, I18n::Message::PythonTurtleRed, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGreen, I18n::Message::PythonTurtleGreen, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandYellow, I18n::Message::PythonTurtleYellow, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBrown, I18n::Message::PythonTurtleBrown, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBlack, I18n::Message::PythonTurtleBlack, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandWhite, I18n::Message::PythonTurtleWhite, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPink, I18n::Message::PythonTurtlePink, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandOrange, I18n::Message::PythonTurtleOrange, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPurple, I18n::Message::PythonTurtlePurple, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGrey, I18n::Message::PythonTurtleGrey, false)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBlue, I18n::Message::PythonColorBlue, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorRed, I18n::Message::PythonColorRed, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGreen, I18n::Message::PythonColorGreen, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorYellow, I18n::Message::PythonColorYellow, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBrown, I18n::Message::PythonColorBrown, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBlack, I18n::Message::PythonColorBlack, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorWhite, I18n::Message::PythonColorWhite, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPink, I18n::Message::PythonColorPink, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorOrange, I18n::Message::PythonColorOrange, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPurple, I18n::Message::PythonColorPurple, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGrey, I18n::Message::PythonColorGrey, false)
 };
 
 const ToolboxMessageTree RandomModuleChildren[] = {
@@ -278,9 +290,9 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBackward, I18n::Message::PythonTurtleBackward),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBar, I18n::Message::PythonBar),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBin, I18n::Message::PythonBin),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBlack, I18n::Message::PythonTurtleBlack, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBlue, I18n::Message::PythonTurtleBlue,  false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandBrown, I18n::Message::PythonTurtleBrown, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBlack, I18n::Message::PythonColorBlack, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBlue, I18n::Message::PythonColorBlue,  false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorBrown, I18n::Message::PythonColorBrown, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandCeil, I18n::Message::PythonCeil),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandChoice, I18n::Message::PythonChoice),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandCircle, I18n::Message::PythonTurtleCircle),
@@ -319,8 +331,8 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetPixel, I18n::Message::PythonGetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetrandbits, I18n::Message::PythonGetrandbits),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGoto, I18n::Message::PythonTurtleGoto),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGreen, I18n::Message::PythonTurtleGreen, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGrey, I18n::Message::PythonTurtleGrey, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGreen, I18n::Message::PythonColorGreen, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGrey, I18n::Message::PythonColorGrey, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGrid, I18n::Message::PythonGrid),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandHeading, I18n::Message::PythonTurtleHeading, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandHex, I18n::Message::PythonHex),
@@ -366,19 +378,19 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandModf, I18n::Message::PythonModf),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMonotonic, I18n::Message::PythonMonotonic, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandOct, I18n::Message::PythonOct),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandOrange, I18n::Message::PythonTurtleOrange, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorOrange, I18n::Message::PythonColorOrange, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPendown, I18n::Message::PythonTurtlePendown, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPenup, I18n::Message::PythonTurtlePenup, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPensize, I18n::Message::PythonTurtlePensize),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPhase, I18n::Message::PythonPhase),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandConstantPi, I18n::Message::PythonConstantPi, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPink, I18n::Message::PythonTurtlePink, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPink, I18n::Message::PythonColorPink, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPolar, I18n::Message::PythonPolar),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPosition, I18n::Message::PythonTurtlePosition, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPower, I18n::Message::PythonPower),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPlot, I18n::Message::PythonPlot),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPrint, I18n::Message::PythonPrint),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandPurple, I18n::Message::PythonTurtlePurple, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPurple, I18n::Message::PythonColorPurple, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRadians, I18n::Message::PythonRadians),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandint, I18n::Message::PythonRandint),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandom, I18n::Message::PythonRandom, false),
@@ -387,7 +399,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRangeStartStop, I18n::Message::PythonRangeStartStop),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRangeStop, I18n::Message::PythonRangeStop),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRect, I18n::Message::PythonRect),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandRed, I18n::Message::PythonTurtleRed, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorRed, I18n::Message::PythonColorRed, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandReset, I18n::Message::PythonTurtleReset, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandRight, I18n::Message::PythonTurtleRight),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRound, I18n::Message::PythonRound),
@@ -411,8 +423,9 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTrunc, I18n::Message::PythonTrunc),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTurtleFunction, I18n::Message::PythonTurtleFunction, false, I18n::Message::PythonCommandTurtleFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUniform, I18n::Message::PythonUniform),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandWhite, I18n::Message::PythonTurtleWhite, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandYellow, I18n::Message::PythonTurtleYellow, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorWhite, I18n::Message::PythonColorWhite, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandWrite, I18n::Message::PythonTurtleWrite),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorYellow, I18n::Message::PythonColorYellow, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImag, I18n::Message::PythonImag, false, I18n::Message::PythonCommandImagWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReal, I18n::Message::PythonReal, false, I18n::Message::PythonCommandRealWithoutArg)
 };
@@ -465,6 +478,20 @@ PythonToolbox::PythonToolbox() :
 {
 }
 
+const ToolboxMessageTree * PythonToolbox::moduleChildren(const char * name, int * numberOfNodes) const {
+  for (ToolboxMessageTree t : modulesChildren) {
+    if (strcmp(I18n::translate(t.label()), name) == 0) {
+      const int childrenCount = t.numberOfChildren();
+      if (numberOfNodes != nullptr) {
+        *numberOfNodes = childrenCount;
+      }
+      assert(childrenCount > 0);
+      return static_cast<const ToolboxMessageTree *>(t.childAtIndex(0));
+    }
+  }
+  return nullptr;
+}
+
 bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;
@@ -490,7 +517,7 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
        * We thus decided to compute the real height only for the ifStatement
        * children of the toolbox, which is the only menu that has special height
        * rows. */
-    const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->children(j));
+    const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(j));
     return k_font->stringSize(I18n::translate(messageTree->label())).height() + 2*Metric::TableCellVerticalMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
   }
   return Toolbox::rowHeight(j);
@@ -498,7 +525,7 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
 
 bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
-  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
+  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   const char * editedText = I18n::translate(node->insertedText());
   // strippedEditedText array needs to be in the same scope as editedText
   char strippedEditedText[k_maxMessageSize];
@@ -539,7 +566,7 @@ void PythonToolbox::scrollToLetter(char letter) {
   char lowerLetter = tolower(letter);
   int index = -1;
   for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
-    char l = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
+    char l = tolower(I18n::translate(m_messageTreeModel->childAtIndex(i)->label())[0]);
     if (l == lowerLetter) {
       index = i;
       break;

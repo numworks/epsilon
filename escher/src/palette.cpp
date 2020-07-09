@@ -130,6 +130,8 @@ constexpr KDColor Palette::Green;
 constexpr KDColor Palette::GreenLight;
 constexpr KDColor Palette::Brown;
 constexpr KDColor Palette::Purple;
+constexpr KDColor Palette::Cyan; // TODO Palette change
+constexpr KDColor Palette::BlueishGrey; // TODO Palette change
 constexpr KDColor Palette::DataColor[];
 constexpr KDColor Palette::DataColorLight[];
 

@@ -71,6 +71,7 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   selectRow(-1);
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
+    m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }
 }
 
@@ -87,19 +88,26 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   selectColumn(i);
   selectRow(j);
 
+  /* The delegate is notified:
+   * - after changing the selected cell but before scrolling: for instance,
+   *   ExpressionModelListController needs to update its memoized cell before
+   *   being able to scroll;
+   * - after scrolling: for instance, the calculation history table might
+   *   change its cell content when selected (outup toggling, ellipsis toggling)
+   *   and thus need to access the right used cell - which is defined only
+   *   after scrolling.
+   */
+
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousX, previousY, withinTemporarySelection);
   }
 
-  /* We need to scroll:
-   * - After notifying the delegate. For instance,
-   *   ExpressionModelListController needs to update its memoized cell
-   *   height values before any scroll.
-   * - Before setting the first responder. If the first responder is a view, it
-   *   might change during the scroll. */
-
   if (selectedRow() >= 0) {
     scrollToCell(selectedColumn(), selectedRow());
+  }
+
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousX, previousY, withinTemporarySelection);
   }
 
   HighlightCell * cell = selectedCell();

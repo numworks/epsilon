@@ -81,9 +81,9 @@ CodePoint App::XNT() {
 }
 
 NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
+  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->setSender(textInput);
-  varBox->lockDeleteEvent(VariableBoxController::Page::Function);
+  varBox->lockDeleteEvent(MathVariableBoxController::Page::Function);
   return varBox;
 }
 

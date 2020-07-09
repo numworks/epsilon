@@ -2,6 +2,8 @@
 #include "app.h"
 #include "../apps_container.h"
 #include "../global_preferences.h"
+#include "../exam_mode_configuration.h"
+
 extern "C" {
 #include <assert.h>
 }
@@ -65,7 +67,6 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    
     int index = selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1;
     
 #ifdef HOME_DISPLAY_EXTERNALS
@@ -93,21 +94,16 @@ bool Controller::handleEvent(Ion::Events::Event event) {
           return true;
         }
       }
-    } else {
-#endif
-    
-      ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
-      if (((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText) && selectedSnapshot->descriptor()->examinationLevel() < 2) ||
-        ((GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Standard || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) && selectedSnapshot->descriptor()->examinationLevel() < 1)) {
-        App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
-      } else {
-        bool switched = container->switchTo(selectedSnapshot);
-        assert(switched);
-        (void) switched; // Silence compilation warning about unused variable.
-      }
-#ifdef HOME_DISPLAY_EXTERNALS
     }
 #endif
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
+    if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+      App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
+    } else {
+      bool switched = container->switchTo(selectedSnapshot);
+      assert(switched);
+      (void) switched; // Silence compilation warning about unused variable.
+    }
     return true;
   }
 
@@ -227,6 +223,18 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
   if (withinTemporarySelection) {
     return;
   }
+  /* To prevent the selectable table view to select cells that are unvisible,
+   * we reselect the previous selected cell as soon as the selected cell is
+   * unvisible. This trick does not create an endless loop as we ensure not to
+   * stay on a unvisible cell and to initialize the first cell on a visible one
+   * (so the previous one is always visible). */
+  int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
+  if (appIndex >= AppsContainer::sharedAppsContainer()->numberOfApps()) {
+    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+  }
+}
+
+void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   /* If the number of apps (including home) is != 3*n+1, when we display the
    * lowest icons, the other(s) are empty. As no icon is thus redrawn on the
    * previous ones, the cell is not cleaned. We need to redraw a white rect on
@@ -236,16 +244,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * background complete redrawing but the code is a bit
    * clumsy. */
   if (t->selectedRow() == numberOfRows()-1) {
-    m_view.reloadBottomRow(this, this->numberOfIcons(), k_numberOfColumns);
-  }
-  /* To prevent the selectable table view to select cells that are unvisible,
-   * we reselect the previous selected cell as soon as the selected cell is
-   * unvisible. This trick does not create an endless loop as we ensure not to
-   * stay on a unvisible cell and to initialize the first cell on a visible one
-   * (so the previous one is always visible). */
-  int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
-  if (appIndex >= this->numberOfIcons() + 1) {
-    t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+    m_view.reloadBottomRow(this, AppsContainer::sharedAppsContainer()->numberOfApps()-1, k_numberOfColumns);
   }
 }
 

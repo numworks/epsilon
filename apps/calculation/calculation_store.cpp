@@ -4,6 +4,7 @@
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
+#include "../exam_mode_configuration.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -98,8 +99,11 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     // Outputs hold exact output, approximate output and its duplicate
     constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
     Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-    // SYMBOLIC COMPUTATION <= E12: PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic()); // Symbolic computation
     PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, GlobalPreferences::sharedGlobalPreferences()->isInExamModeSymbolic() ? Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition : Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode()) && outputs[1].hasUnit()) {
+      // Hide results with units on units if required by the exam mode configuration
+      outputs[1] = Undefined::Builder();
+    }
     outputs[2] = outputs[1];
     int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
     for (int i = 0; i < numberOfOutputs; i++) {

@@ -6,11 +6,10 @@
 
 namespace Probability {
 
-FiniteIntegralCalculation::FiniteIntegralCalculation() :
-  Calculation(),
-  m_lowerBound(0.0),
-  m_upperBound(1.0),
-  m_result(0.0)
+FiniteIntegralCalculation::FiniteIntegralCalculation(Distribution * distribution) :
+  Calculation(distribution),
+  m_lowerBound(distribution->defaultComputedValue()),
+  m_upperBound(m_lowerBound + 1.0)
 {
   compute(0);
 }

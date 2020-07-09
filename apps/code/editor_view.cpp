@@ -17,6 +17,10 @@ EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   m_textArea.setScrollViewDelegate(this);
 }
 
+bool EditorView::isAutocompleting() const {
+  return m_textArea.isAutocompleting();
+}
+
 void EditorView::resetSelection() {
   m_textArea.resetSelection();
 }

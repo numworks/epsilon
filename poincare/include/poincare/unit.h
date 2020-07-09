@@ -11,16 +11,26 @@ public:
   /* The units having the same physical dimension are grouped together.
    * Each such group has a standard representative with a standard prefix.
    *
-   * A standard unit is a derived unit, when defined from base units
-   * or otherwise a base unit (if no definition is provided).
-   *
    * Each representative has
    *  - a root symbol
    *  - a definition
    *  - a list of allowed output prefixes
    * Given a Dimension, a representative in that Dimension and a Prefix
    * allowed for that representative, one may get a symbol and an Expression.
+   *
+   * FIXME ?
+   * The UnitNode class holds as members pointers to a Dimension, a
+   * Representative, a Prefix. Those nested classes may not be forward
+   * declared and must be defined in UnitNode and then aliased in Unit so as
+   * to be used outside. That technical limitation could have been avoided if
+   * UnitNode were itself a nested class of Unit, say Unit::Node. More
+   * generally, turning all the Poincare::...Node classes into nested
+   * Poincare::...::Node classes might be a more clever usage of namespaces
+   * and scopes.
    */
+
+  // There are 7 base units from which all other units are derived.
+  static constexpr size_t NumberOfBaseUnits = 7;
 
   class Prefix {
   public:
@@ -46,19 +56,19 @@ public:
       Yes
     };
     template <size_t N>
-    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix (&outputPrefixes)[N]) :
+    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix * const (&outputPrefixes)[N]) :
       m_rootSymbol(rootSymbol),
       m_definition(definition),
       m_prefixable(prefixable),
       m_outputPrefixes(outputPrefixes),
-      m_outputPrefixesUpperBound(outputPrefixes + N)
+      m_outputPrefixesLength(N)
     {
     }
     const char * rootSymbol() const { return m_rootSymbol; }
     const char * definition() const { return m_definition; }
     bool isPrefixable() const { return m_prefixable == Prefixable::Yes; }
-    const Prefix * outputPrefixes() const { return m_outputPrefixes; }
-    const Prefix * outputPrefixesUpperBound() const { return m_outputPrefixesUpperBound; }
+    const Prefix * const * outputPrefixes() const { return m_outputPrefixes; }
+    size_t outputPrefixesLength() const { return m_outputPrefixesLength; }
     bool canParse(const char * symbol, size_t length,
         const Prefix * * prefix) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
@@ -67,25 +77,52 @@ public:
     const char * m_rootSymbol;
     const char * m_definition;
     const Prefixable m_prefixable;
-    const Prefix * m_outputPrefixes;
-    const Prefix * m_outputPrefixesUpperBound;
+    const Prefix * const * m_outputPrefixes;
+    const size_t m_outputPrefixesLength;
   };
 
   class Dimension {
   public:
+    template<typename T>
+    struct Vector {
+      struct Metrics {
+        size_t supportSize;
+        T norm;
+      };
+      Metrics metrics() const;
+      static Vector FromBaseUnits(const Expression baseUnits);
+      const T coefficientAtIndex(size_t i) const {
+        assert(i < NumberOfBaseUnits);
+        return *(reinterpret_cast<const T*>(this) + i);
+      }
+      void setCoefficientAtIndex(size_t i, T c) {
+        assert(i < NumberOfBaseUnits);
+        *(reinterpret_cast<T*>(this) + i) = c;
+      }
+      T time;
+      T distance;
+      T mass;
+      T current;
+      T temperature;
+      T amountOfSubstance;
+      T luminuousIntensity;
+    };
     template <size_t N>
-    constexpr Dimension(const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
+    constexpr Dimension(Vector<int8_t> vector, const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
+      m_vector(vector),
       m_representatives(representatives),
       m_representativesUpperBound(representatives + N),
       m_stdRepresentativePrefix(stdRepresentativePrefix)
     {
     }
+    const Vector<int8_t> * vector() const { return &m_vector; }
     const Representative * stdRepresentative() const { return m_representatives; }
     const Representative * representativesUpperBound() const { return m_representativesUpperBound; }
     const Prefix * stdRepresentativePrefix() const { return m_stdRepresentativePrefix; }
     bool canParse(const char * symbol, size_t length,
         const Representative * * representative, const Prefix * * prefix) const;
   private:
+    Vector<int8_t> m_vector;
     const Representative * m_representatives;
     const Representative * m_representativesUpperBound;
     const Prefix * m_stdRepresentativePrefix;
@@ -114,7 +151,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Unit; }
   Sign sign(Context * context) const override;
-  Expression getUnit() const override;
+  Expression removeUnit(Expression * unit) override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -147,10 +184,18 @@ private:
 };
 
 class Unit final : public Expression {
+  friend class UnitNode;
 public:
   typedef UnitNode::Prefix Prefix;
   typedef UnitNode::Representative Representative;
   typedef UnitNode::Dimension Dimension;
+  /* TODO: Prefix, Representative and Dimension defined below must be defined
+   * only once and all units must be constructed from their pointers. This way
+   * we can easily check if two Unit objects are equal by comparing pointers.
+   * This saves us from overloading the == operator on Prefix, Representative
+   * and Dimension and saves time at execution. We should assert at compilation
+   * that only one occurence of each is built by maybe privatizing constructors
+   * on these classes? */
   static constexpr const Prefix
     PicoPrefix  = Prefix("p", -12),
     NanoPrefix  = Prefix("n",  -9),
@@ -165,59 +210,59 @@ public:
     MegaPrefix  = Prefix("M",   6),
     GigaPrefix  = Prefix("G",   9),
     TeraPrefix  = Prefix("T",  12);
-  static constexpr const Prefix
-    NoPrefix[] = {
-      EmptyPrefix
-    },
-    NegativeLongScalePrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      EmptyPrefix,
-    },
-    PositiveLongScalePrefixes[] = {
-      EmptyPrefix,
-      KiloPrefix,
-      MegaPrefix,
-      GigaPrefix,
-      TeraPrefix,
-    },
-    LongScalePrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      EmptyPrefix,
-      KiloPrefix,
-      MegaPrefix,
-      GigaPrefix,
-      TeraPrefix,
-    },
-    NegativePrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      CentiPrefix,
-      DeciPrefix,
-      EmptyPrefix,
-    },
-    AllPrefixes[] = {
-      PicoPrefix,
-      NanoPrefix,
-      MicroPrefix,
-      MilliPrefix,
-      CentiPrefix,
-      DeciPrefix,
-      EmptyPrefix,
-      DecaPrefix,
-      HectoPrefix,
-      KiloPrefix,
-      MegaPrefix,
-      GigaPrefix,
-      TeraPrefix,
+  static constexpr const Prefix * NoPrefix[] = {
+      &EmptyPrefix
     };
+   static constexpr const Prefix * NegativeLongScalePrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &EmptyPrefix,
+    };
+    static constexpr const Prefix * PositiveLongScalePrefixes[] = {
+      &EmptyPrefix,
+      &KiloPrefix,
+      &MegaPrefix,
+      &GigaPrefix,
+      &TeraPrefix,
+    };
+    static constexpr const Prefix * LongScalePrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &EmptyPrefix,
+      &KiloPrefix,
+      &MegaPrefix,
+      &GigaPrefix,
+      &TeraPrefix,
+    };
+    static constexpr const Prefix * NegativePrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &CentiPrefix,
+      &DeciPrefix,
+      &EmptyPrefix,
+    };
+    static constexpr const Prefix * AllPrefixes[] = {
+      &PicoPrefix,
+      &NanoPrefix,
+      &MicroPrefix,
+      &MilliPrefix,
+      &CentiPrefix,
+      &DeciPrefix,
+      &EmptyPrefix,
+      &DecaPrefix,
+      &HectoPrefix,
+      &KiloPrefix,
+      &MegaPrefix,
+      &GigaPrefix,
+      &TeraPrefix,
+    };
+  static constexpr size_t NumberOfBaseUnits = UnitNode::NumberOfBaseUnits;
   static constexpr const Representative
     TimeRepresentatives[] = {
         Representative("s",   nullptr,
@@ -406,130 +451,380 @@ public:
             Representative::Prefixable::Yes,
             NegativePrefixes),
         };
+  // TODO: find a better way to define these pointers
+  static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative and so on might require to be fixed if the TimeRepresentatives table was changed.");
+  static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
+  static const Representative constexpr * MinuteRepresentative = &TimeRepresentatives[1];
+  static const Representative constexpr * HourRepresentative = &TimeRepresentatives[2];
+  static const Representative constexpr * DayRepresentative = &TimeRepresentatives[3];
+  static const Representative constexpr * MonthRepresentative = &TimeRepresentatives[5];
+  static const Representative constexpr * YearRepresentative = &TimeRepresentatives[6];
+  static const Representative constexpr * MeterRepresentative = &DistanceRepresentatives[0];
+  static const Representative constexpr * KilogramRepresentative = &MassRepresentatives[0];
+  static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
+  static const Representative constexpr * WattRepresentative = &PowerRepresentatives[0];
+  static_assert(sizeof(EnergyRepresentatives)/sizeof(Representative) == 2, "The Unit::ElectronVoltRepresentative might require to be fixed if the EnergyRepresentatives table was changed.");
+  static const Representative constexpr * ElectronVoltRepresentative = &EnergyRepresentatives[1];
   static constexpr const Dimension DimensionTable[] = {
     /* The current table is sorted from most to least simple units.
      * The order determines the behavior of simplification.
      */
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         TimeRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 1,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         DistanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
-        SolideAngleRepresentatives,
-        &EmptyPrefix
-    ),
-    Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         MassRepresentatives,
         &KiloPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         CurrentRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 1,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         TemperatureRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 1,
+          .luminuousIntensity = 0,
+        },
         AmountOfSubstanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 1,
+        },
         LuminousIntensityRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         FrequencyRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
-        LuminousFluxRepresentatives,
-        &EmptyPrefix
-    ),
-    Dimension(
-        IlluminanceRepresentatives,
-        &EmptyPrefix
-    ),
-    Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 1,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ForceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           =-1,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         PressureRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 2,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         EnergyRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-3,
+          .distance           = 2,
+          .mass               = 1,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         PowerRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricChargeRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-3,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricPotentialRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 4,
+          .distance           =-2,
+          .mass               =-1,
+          .current            = 2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricCapacitanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-3,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricResistanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 3,
+          .distance           =-2,
+          .mass               =-1,
+          .current            = 2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         ElectricConductanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         MagneticFluxRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 0,
+          .mass               = 1,
+          .current            =-1,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         MagneticFieldRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-2,
+          .distance           = 2,
+          .mass               = 1,
+          .current            =-2,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         InductanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               =-1,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 1,
+          .luminuousIntensity = 0,
+        },
         CatalyticActivityRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 2,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         SurfaceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 3,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+        },
         VolumeRepresentatives,
         &EmptyPrefix
         ),
   };
+  // TODO: find a better way to find defines these pointers
+  static_assert(sizeof(DimensionTable)/sizeof(Dimension) == 23, "The Unit::TimeDimension, Unit::DistanceDimension and so on might require to be fixed if the Dimension table was changed.");
+  static const Dimension constexpr * TimeDimension = &DimensionTable[0] ;
+  static const Dimension constexpr * DistanceDimension = &DimensionTable[1];
+  static const Dimension constexpr * MassDimension = &DimensionTable[2];
+  static const Dimension constexpr * EnergyDimension = &DimensionTable[10];
+  static const Dimension constexpr * PowerDimension = &DimensionTable[11];
+  static const Dimension constexpr * VolumeDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-1];
+
   static constexpr const Unit::Dimension * DimensionTableUpperBound =
     DimensionTable + sizeof(DimensionTable)/sizeof(Dimension);
   static bool CanParse(const char * symbol, size_t length,
       const Dimension * * dimension, const Representative * * representative, const Prefix * * prefix);
 
-  const Dimension * dimension() const { return static_cast<const UnitNode *>(node())->dimension(); }
-
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
-  Expression getUnit() const { return clone(); }
+  static Unit Kilometer() { return Builder(DistanceDimension, MeterRepresentative, &KiloPrefix); }
+  static Unit Second() { return Builder(TimeDimension, SecondRepresentative, &EmptyPrefix); }
+  static Unit Minute() { return Builder(TimeDimension, MinuteRepresentative, &EmptyPrefix); }
+  static Unit Hour() { return Builder(TimeDimension, HourRepresentative, &EmptyPrefix); }
+  static Unit Day() { return Builder(TimeDimension, DayRepresentative, &EmptyPrefix); }
+  static Unit Month() { return Builder(TimeDimension, MonthRepresentative, &EmptyPrefix); }
+  static Unit Year() { return Builder(TimeDimension, YearRepresentative, &EmptyPrefix); }
+  static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
+  static Unit ElectronVolt() { return Builder(EnergyDimension, ElectronVoltRepresentative, &EmptyPrefix); }
+  static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
+  static Expression BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+
+  static bool IsIS(Expression & e);
+  static bool IsISSpeed(Expression & e);
+  static bool IsISVolume(Expression & e);
+  static bool IsISEnergy(Expression & e);
+  static bool IsISTime(Expression & e);
+  bool isMeter() const;
+  bool isSecond() const;
+  bool isKilogram() const;
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
-  void chooseBestMultipleForValue(double & value, const int exponent, ExpressionNode::ReductionContext reductionContext);
+  static void ChooseBestRepresentativeAndPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, true, reductionContext); }
+  static void ChooseBestPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, false, reductionContext); }
+
+  // This could be computed from the time representatives but we save time by using constexpr double
+  static constexpr double SecondsPerMinute = 60.0;
+private:
+  static constexpr double MinutesPerHour = 60.0;
+  static constexpr double HoursPerDay = 24.0;
+  static constexpr double DaysPerYear = 365.25;
+  static constexpr double MonthPerYear = 12.0;
+  static constexpr double DaysPerMonth = DaysPerYear/MonthPerYear;
+  UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
+  bool isIS() const;
+  static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
+  void chooseBestMultipleForValue(double * value, const int exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
+  Expression removeUnit(Expression * unit);
 };
 
 }

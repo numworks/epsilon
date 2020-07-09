@@ -33,13 +33,6 @@ app_graph_src = $(addprefix apps/graph/,\
 
 apps_src += $(app_graph_src)
 
-i18n_files += $(addprefix apps/graph/,\
-  base.de.i18n\
-  base.en.i18n\
-  base.es.i18n\
-  base.fr.i18n\
-  base.pt.i18n\
-  base.hu.i18n\
-)
+i18n_files += $(call i18n_without_universal_for,graph/base)
 
 $(eval $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png))

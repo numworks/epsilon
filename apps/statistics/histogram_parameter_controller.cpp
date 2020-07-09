@@ -37,66 +37,35 @@ double HistogramParameterController::parameterAtIndex(int index) {
   return index == 0 ? m_store->barWidth() : m_store->firstDrawnBarAbscissa();
 }
 
-bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double f) {
-  assert(parameterIndex >= 0 && parameterIndex < k_numberOfCells);
-  if (parameterIndex == 0) {
+bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double value) {
+  assert(parameterIndex == 0 || parameterIndex == 1);
+  const bool setBarWidth = parameterIndex == 0;
+
+  if (setBarWidth && value <= 0.0) {
     // The bar width cannot be negative
-    if (f <= 0.0f) {
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
+
+  const double nextFirstDrawnBarAbscissa = setBarWidth ? m_store->firstDrawnBarAbscissa() : value;
+  const double nextBarWidth = setBarWidth ? value : m_store->barWidth();
+
+  // The number of bars cannot be above the max
+  assert(DoublePairStore::k_numberOfSeries > 0);
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    const double min = setBarWidth ? m_store->minValue(i) : nextFirstDrawnBarAbscissa;
+    double numberOfBars = std::ceil((m_store->maxValue(i) - min)/nextBarWidth);
+    if (numberOfBars > Store::k_maxNumberOfBars) {
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
+  }
 
-    // There should be at least one value in the drawn bin
-    for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-      if (m_store->firstDrawnBarAbscissa() <= m_store->maxValue(i)+f) {
-        break;
-      } else if (i == DoublePairStore::k_numberOfSeries - 1) {
-        Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
-        return false;
-      }
-    }
-
-    // The number of bars cannot be above the max
-    assert(DoublePairStore::k_numberOfSeries > 0);
-    double maxNewNumberOfBars = std::ceil((m_store->maxValue(0) - m_store->minValue(0))/f);
-    for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-      double numberOfBars = std::ceil((m_store->maxValue(i) - m_store->minValue(i))/f);
-      if (maxNewNumberOfBars < numberOfBars) {
-        maxNewNumberOfBars = numberOfBars;
-      }
-    }
-    if (maxNewNumberOfBars > Store::k_maxNumberOfBars) {
-      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
-
+  if (setBarWidth) {
     // Set the bar width
-    m_store->setBarWidth(f);
+    m_store->setBarWidth(value);
   } else {
-    // The number of bars cannot be above the max
-    assert(DoublePairStore::k_numberOfSeries > 0);
-    double maxNewNumberOfBars = ceilf((m_store->maxValue(0) - f)/m_store->barWidth());
-    for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-      double numberOfBars = ceilf((m_store->maxValue(i) - f)/m_store->barWidth());
-      if (maxNewNumberOfBars < numberOfBars) {
-        maxNewNumberOfBars = numberOfBars;
-      }
-    }
-    if (maxNewNumberOfBars > Store::k_maxNumberOfBars) {
-      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
-    // There should be at least one value in the drawn bin
-    for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-      if (f <= m_store->maxValue(i)+m_store->barWidth()) {
-        break;
-      } else if (i == DoublePairStore::k_numberOfSeries - 1) {
-        Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
-        return false;
-      }
-    }
-    // Set the first drawn bar abscissa
-    m_store->setFirstDrawnBarAbscissa(f);
+    m_store->setFirstDrawnBarAbscissa(value);
   }
   return true;
 }

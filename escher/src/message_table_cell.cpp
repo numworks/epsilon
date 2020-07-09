@@ -4,7 +4,8 @@
 
 MessageTableCell::MessageTableCell(I18n::Message label, const KDFont * font, Layout layout) :
   TableCell(layout),
-  m_messageTextView(font, label, 0, 0.5, Palette::PrimaryText, Palette::ListCellBackground)
+  m_messageTextView(font, label, 0, 0.5, Palette::PrimaryText, Palette::ListCellBackground),
+  m_backgroundColor(KDColorWhite)
 {
 }
 
@@ -30,4 +31,9 @@ void MessageTableCell::setTextColor(KDColor color) {
 void MessageTableCell::setMessageFont(const KDFont * font) {
   m_messageTextView.setFont(font);
   layoutSubviews();
+}
+
+void MessageTableCell::setBackgroundColor(KDColor color) {
+  m_backgroundColor = color;
+  m_messageTextView.setBackgroundColor(color);
 }

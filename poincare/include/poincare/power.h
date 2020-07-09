@@ -29,7 +29,7 @@ public:
   Sign sign(Context * context) const override;
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
-  Expression getUnit() const override;
+  Expression removeUnit(Expression * unit) override;
 
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
@@ -79,11 +79,13 @@ public:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
-  Expression getUnit() const;
 
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
+
+  // Unit
+  Expression removeUnit(Expression * unit);
 
   // Simplification
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const;

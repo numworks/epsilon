@@ -45,7 +45,10 @@ public:
   // Basic test
   bool isZero() const { return unsignedNumerator().isZero(); }
   bool isOne() const { return signedNumerator().isOne() && isInteger(); }
+  bool isTwo() const { return signedNumerator().isTwo() && isInteger(); }
+  bool isThree() const { return signedNumerator().isThree() && isInteger(); }
   bool isMinusOne() const { return signedNumerator().isMinusOne() && isInteger(); }
+  bool isMinusTwo() const { return signedNumerator().isMinusTwo() && isInteger(); }
   bool isHalf() const { return signedNumerator().isOne() && denominator().isTwo(); }
   bool isMinusHalf() const { return signedNumerator().isMinusOne() && denominator().isTwo(); }
   bool isTen() const { return signedNumerator().isTen() && isInteger(); }
@@ -89,7 +92,10 @@ public:
   bool isNegative() const { return node()->isNegative(); }
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
+  bool isTwo() const { return node()->isTwo(); }
+  bool isThree() const { return node()->isThree(); }
   bool isMinusOne() const { return node()->isMinusOne(); }
+  bool isMinusTwo() const { return node()->isMinusTwo(); }
   bool isHalf() const { return node()->isHalf(); }
   bool isMinusHalf() const { return node()->isMinusHalf(); }
   bool isTen() const { return node()->isTen(); }

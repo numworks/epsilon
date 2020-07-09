@@ -10,12 +10,14 @@
 #include "console_store.h"
 #include "sandbox_controller.h"
 #include "script_store.h"
+#include "variable_box_controller.h"
+#include "../shared/input_event_handler_delegate.h"
 
 namespace Code {
 
 class App;
 
-class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
+class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public Shared::InputEventHandlerDelegate, public MicroPython::ExecutionEnvironment {
 public:
   ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT
@@ -52,13 +54,16 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
+
+  // InputEventHandlerDelegate
+  VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 
   // MicroPython::ExecutionEnvironment
   ViewController * sandbox() override { return &m_sandboxController; }

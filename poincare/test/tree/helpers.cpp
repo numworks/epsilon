@@ -2,10 +2,6 @@
 #include <poincare/tree_pool.h>
 #include <quiz.h>
 
-#if POINCARE_TREE_LOG
-#include <iostream>
-#endif
-
 int pool_size() {
   return Poincare::TreePool::sharedPool()->numberOfNodes();
 }

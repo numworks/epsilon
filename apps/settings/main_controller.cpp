@@ -31,7 +31,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
   m_mathOptionsController(this, inputEventHandlerDelegate),
-  m_languageController(this, 13),
+  m_languageController(this, Metric::CommonTopMargin),
   m_accessibilityController(this),
   m_examModeController(this),
   m_aboutController(this),
@@ -62,8 +62,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), 1);
     return true;
   }
-  if (model()->children(selectedRow())->numberOfChildren() == 0) {
-    if (model()->children(selectedRow())->label() == promptMessage()) {
+  if (model()->childAtIndex(selectedRow())->numberOfChildren() == 0) {
+    if (model()->childAtIndex(selectedRow())->label() == promptMessage()) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -71,7 +71,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (model()->children(selectedRow())->label() == I18n::Message::Brightness) {
+    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Brightness) {
       if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
         int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
         int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
@@ -81,7 +81,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (model()->children(selectedRow())->label() == I18n::Message::Language) {
+    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Language) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
         stackController()->push(&m_languageController);
         return true;
@@ -91,7 +91,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-    I18n::Message title = model()->children(selectedRow())->label();
+    I18n::Message title = model()->childAtIndex(selectedRow())->label();
     if (title == I18n::Message::Brightness || title == I18n::Message::Language) {
       assert(false);
     } else if (title == I18n::Message::ExamMode) {
@@ -105,7 +105,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     } else {
       subController = &m_preferencesController;
     }
-    subController->setMessageTreeModel(model()->children(selectedRow()));
+    subController->setMessageTreeModel(model()->childAtIndex(selectedRow()));
     StackViewController * stack = stackController();
     stack->push(subController);
     return true;
@@ -118,7 +118,7 @@ int MainController::numberOfRows() const {
 };
 
 KDCoordinate MainController::rowHeight(int j) {
-  if (model()->children(j)->label() == I18n::Message::Brightness) {
+  if (model()->childAtIndex(j)->label() == I18n::Message::Brightness) {
     return Metric::ParameterCellHeight + CellWithSeparator::k_margin;
   }
   return Metric::ParameterCellHeight;
@@ -161,10 +161,10 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (model()->children(j)->label() == I18n::Message::Brightness) {
+  if (model()->childAtIndex(j)->label() == I18n::Message::Brightness) {
     return 1;
   }
-  if (model()->children(j)->label() == I18n::Message::UpdatePopUp || model()->children(j)->label() == I18n::Message::BetaPopUp) {
+  if (model()->childAtIndex(j)->label() == I18n::Message::UpdatePopUp || model()->childAtIndex(j)->label() == I18n::Message::BetaPopUp) {
     return 2;
   }
   return 0;
@@ -172,8 +172,8 @@ int MainController::typeAtLocation(int i, int j) {
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  I18n::Message title = model()->children(index)->label();
-  if (model()->children(index)->label() == I18n::Message::Brightness) {
+  I18n::Message title = model()->childAtIndex(index)->label();
+  if (model()->childAtIndex(index)->label() == I18n::Message::Brightness) {
     MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
@@ -182,12 +182,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(title);
-  if (model()->children(index)->label() == I18n::Message::Language) {
+  if (model()->childAtIndex(index)->label() == I18n::Message::Language) {
     int index = (int)(globalPreferences->language());
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-  if (model()->children(index)->label() == I18n::Message::UpdatePopUp || model()->children(index)->label() == I18n::Message::BetaPopUp) {
+  if (model()->childAtIndex(index)->label() == I18n::Message::UpdatePopUp || model()->childAtIndex(index)->label() == I18n::Message::BetaPopUp) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -195,14 +195,14 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
-  switch (model()->children(index)->label()) {
+  switch (model()->childAtIndex(index)->label()) {
     case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
       break;
     default:
       break;
   }
-  I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
+  I18n::Message message = childIndex >= 0 ? model()->childAtIndex(index)->childAtIndex(childIndex)->label() : I18n::Message::Default;
   myTextCell->setSubtitle(message);
 }
 

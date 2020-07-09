@@ -228,7 +228,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
 void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithExpression * myCell = (MessageTableCellWithExpression *)cell;
-  myCell->setLayout(layoutForPreferences(m_messageTreeModel->children(index)->label()));
+  myCell->setLayout(layoutForPreferences(m_messageTreeModel->childAtIndex(index)->label()));
 }
 
 KDCoordinate PreferencesController::rowHeight(int j) {

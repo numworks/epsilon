@@ -10,8 +10,10 @@
 namespace Calculation {
 
 class IllustratedListController : public ListController, public SelectableTableViewDelegate {
+/* TODO There is factorizable code between this and
+ * Calculation::HistoryController (at least rowHeight). */
 public:
-  IllustratedListController(Responder * parentResponder, EditExpressionController * editExpressionController);
+  IllustratedListController(EditExpressionController * editExpressionController);
 
   // Responder
   void viewDidDisappear() override;
@@ -31,7 +33,7 @@ public:
   // IllustratedListController
   void setExpression(Poincare::Expression e) override;
 
-  constexpr static KDCoordinate k_illustrationHeight = 100;
+  constexpr static KDCoordinate k_illustrationHeight = 120;
 protected:
   Poincare::Expression m_savedExpression;
   CalculationStore m_calculationStore;

@@ -9,6 +9,8 @@ namespace Code {
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
   EditorView(Responder * parentResponder, App * pythonDelegate);
+  PythonTextArea::AutocompletionType autocompletionType(const char ** autocompletionBeginning, const char ** autocompletionEnd) const { return m_textArea.autocompletionType(nullptr, autocompletionBeginning, autocompletionEnd); }
+  bool isAutocompleting() const;
   void resetSelection();
   void setTextAreaDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) {
     m_textArea.setDelegates(inputEventHandlerDelegate, delegate);
@@ -16,6 +18,9 @@ public:
   const char * text() const { return m_textArea.text(); }
   void setText(char * textBuffer, size_t textBufferSize) {
     m_textArea.setText(textBuffer, textBufferSize);
+  }
+  const char * cursorLocation() {
+    return m_textArea.cursorLocation();
   }
   bool setCursorLocation(const char * location) {
     return m_textArea.setCursorLocation(location);

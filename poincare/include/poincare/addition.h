@@ -35,7 +35,6 @@ public:
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
     return MatrixComplex<T>::Undefined();
   }
-  Expression getUnit() const override;
 
   // Simplification
   LayoutShape leftLayoutShape() const override {

@@ -21,6 +21,7 @@ constexpr KDColor OperatorColor = Palette::CodeOperator;
 constexpr KDColor StringColor = Palette::CodeString;
 constexpr KDColor BackgroundColor = Palette::CodeBackground;
 constexpr KDColor HighlightColor = Palette::CodeBackgroundSelected;
+constexpr KDColor AutocompleteColor = KDColor::RGB24(0xC6C6C6); // TODO Palette change
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
@@ -29,13 +30,96 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_INTEGER || tokenKind == MP_TOKEN_FLOAT_OR_IMAG) {
     return NumberColor;
   }
+  static_assert(MP_TOKEN_ELLIPSIS + 1 == MP_TOKEN_KW_FALSE
+      && MP_TOKEN_KW_FALSE      + 1 == MP_TOKEN_KW_NONE
+      && MP_TOKEN_KW_NONE       + 1 == MP_TOKEN_KW_TRUE
+      && MP_TOKEN_KW_TRUE       + 1 == MP_TOKEN_KW___DEBUG__
+      && MP_TOKEN_KW___DEBUG__  + 1 == MP_TOKEN_KW_AND
+      && MP_TOKEN_KW_AND        + 1 == MP_TOKEN_KW_AS
+      && MP_TOKEN_KW_AS         + 1 == MP_TOKEN_KW_ASSERT
+      /* Here there are keywords that depend on MICROPY_PY_ASYNC_AWAIT, we do
+       * not test them */
+      && MP_TOKEN_KW_BREAK      + 1 == MP_TOKEN_KW_CLASS
+      && MP_TOKEN_KW_CLASS      + 1 == MP_TOKEN_KW_CONTINUE
+      && MP_TOKEN_KW_CONTINUE   + 1 == MP_TOKEN_KW_DEF
+      && MP_TOKEN_KW_DEF        + 1 == MP_TOKEN_KW_DEL
+      && MP_TOKEN_KW_DEL        + 1 == MP_TOKEN_KW_ELIF
+      && MP_TOKEN_KW_ELIF       + 1 == MP_TOKEN_KW_ELSE
+      && MP_TOKEN_KW_ELSE       + 1 == MP_TOKEN_KW_EXCEPT
+      && MP_TOKEN_KW_EXCEPT     + 1 == MP_TOKEN_KW_FINALLY
+      && MP_TOKEN_KW_FINALLY    + 1 == MP_TOKEN_KW_FOR
+      && MP_TOKEN_KW_FOR        + 1 == MP_TOKEN_KW_FROM
+      && MP_TOKEN_KW_FROM       + 1 == MP_TOKEN_KW_GLOBAL
+      && MP_TOKEN_KW_GLOBAL     + 1 == MP_TOKEN_KW_IF
+      && MP_TOKEN_KW_IF         + 1 == MP_TOKEN_KW_IMPORT
+      && MP_TOKEN_KW_IMPORT     + 1 == MP_TOKEN_KW_IN
+      && MP_TOKEN_KW_IN         + 1 == MP_TOKEN_KW_IS
+      && MP_TOKEN_KW_IS         + 1 == MP_TOKEN_KW_LAMBDA
+      && MP_TOKEN_KW_LAMBDA     + 1 == MP_TOKEN_KW_NONLOCAL
+      && MP_TOKEN_KW_NONLOCAL   + 1 == MP_TOKEN_KW_NOT
+      && MP_TOKEN_KW_NOT        + 1 == MP_TOKEN_KW_OR
+      && MP_TOKEN_KW_OR         + 1 == MP_TOKEN_KW_PASS
+      && MP_TOKEN_KW_PASS       + 1 == MP_TOKEN_KW_RAISE
+      && MP_TOKEN_KW_RAISE      + 1 == MP_TOKEN_KW_RETURN
+      && MP_TOKEN_KW_RETURN     + 1 == MP_TOKEN_KW_TRY
+      && MP_TOKEN_KW_TRY        + 1 == MP_TOKEN_KW_WHILE
+      && MP_TOKEN_KW_WHILE      + 1 == MP_TOKEN_KW_WITH
+      && MP_TOKEN_KW_WITH       + 1 == MP_TOKEN_KW_YIELD
+      && MP_TOKEN_KW_YIELD      + 1 == MP_TOKEN_OP_TILDE,
+    "MP_TOKEN order changed, so Code::PythonTextArea::TokenColor might need to change too.");
   if (tokenKind >= MP_TOKEN_KW_FALSE && tokenKind <= MP_TOKEN_KW_YIELD) {
     return KeywordColor;
   }
-  if (tokenKind >= MP_TOKEN_OP_PLUS && tokenKind <= MP_TOKEN_OP_NOT_EQUAL) {
-    return OperatorColor;
-  }
-  if (tokenKind >= MP_TOKEN_DEL_EQUAL && tokenKind <= MP_TOKEN_DEL_MINUS_MORE) {
+  static_assert(MP_TOKEN_OP_TILDE       + 1 == MP_TOKEN_OP_LESS
+      && MP_TOKEN_OP_LESS               + 1 == MP_TOKEN_OP_MORE
+      && MP_TOKEN_OP_MORE               + 1 == MP_TOKEN_OP_DBL_EQUAL
+      && MP_TOKEN_OP_DBL_EQUAL          + 1 == MP_TOKEN_OP_LESS_EQUAL
+      && MP_TOKEN_OP_LESS_EQUAL         + 1 == MP_TOKEN_OP_MORE_EQUAL
+      && MP_TOKEN_OP_MORE_EQUAL         + 1 == MP_TOKEN_OP_NOT_EQUAL
+      && MP_TOKEN_OP_NOT_EQUAL          + 1 == MP_TOKEN_OP_PIPE
+      && MP_TOKEN_OP_PIPE               + 1 == MP_TOKEN_OP_CARET
+      && MP_TOKEN_OP_CARET              + 1 == MP_TOKEN_OP_AMPERSAND
+      && MP_TOKEN_OP_AMPERSAND          + 1 == MP_TOKEN_OP_DBL_LESS
+      && MP_TOKEN_OP_DBL_LESS           + 1 == MP_TOKEN_OP_DBL_MORE
+      && MP_TOKEN_OP_DBL_MORE           + 1 == MP_TOKEN_OP_PLUS
+      && MP_TOKEN_OP_PLUS               + 1 == MP_TOKEN_OP_MINUS
+      && MP_TOKEN_OP_MINUS              + 1 == MP_TOKEN_OP_STAR
+      && MP_TOKEN_OP_STAR               + 1 == MP_TOKEN_OP_AT
+      && MP_TOKEN_OP_AT                 + 1 == MP_TOKEN_OP_DBL_SLASH
+      && MP_TOKEN_OP_DBL_SLASH          + 1 == MP_TOKEN_OP_SLASH
+      && MP_TOKEN_OP_SLASH              + 1 == MP_TOKEN_OP_PERCENT
+      && MP_TOKEN_OP_PERCENT            + 1 == MP_TOKEN_OP_DBL_STAR
+      && MP_TOKEN_OP_DBL_STAR           + 1 == MP_TOKEN_DEL_PIPE_EQUAL
+      && MP_TOKEN_DEL_PIPE_EQUAL        + 1 == MP_TOKEN_DEL_CARET_EQUAL
+      && MP_TOKEN_DEL_CARET_EQUAL       + 1 == MP_TOKEN_DEL_AMPERSAND_EQUAL
+      && MP_TOKEN_DEL_AMPERSAND_EQUAL   + 1 == MP_TOKEN_DEL_DBL_LESS_EQUAL
+      && MP_TOKEN_DEL_DBL_LESS_EQUAL    + 1 == MP_TOKEN_DEL_DBL_MORE_EQUAL
+      && MP_TOKEN_DEL_DBL_MORE_EQUAL    + 1 == MP_TOKEN_DEL_PLUS_EQUAL
+      && MP_TOKEN_DEL_PLUS_EQUAL        + 1 == MP_TOKEN_DEL_MINUS_EQUAL
+      && MP_TOKEN_DEL_MINUS_EQUAL       + 1 == MP_TOKEN_DEL_STAR_EQUAL
+      && MP_TOKEN_DEL_STAR_EQUAL        + 1 == MP_TOKEN_DEL_AT_EQUAL
+      && MP_TOKEN_DEL_AT_EQUAL          + 1 == MP_TOKEN_DEL_DBL_SLASH_EQUAL
+      && MP_TOKEN_DEL_DBL_SLASH_EQUAL   + 1 == MP_TOKEN_DEL_SLASH_EQUAL
+      && MP_TOKEN_DEL_SLASH_EQUAL       + 1 == MP_TOKEN_DEL_PERCENT_EQUAL
+      && MP_TOKEN_DEL_PERCENT_EQUAL     + 1 == MP_TOKEN_DEL_DBL_STAR_EQUAL
+      && MP_TOKEN_DEL_DBL_STAR_EQUAL    + 1 == MP_TOKEN_DEL_PAREN_OPEN
+      && MP_TOKEN_DEL_PAREN_OPEN        + 1 == MP_TOKEN_DEL_PAREN_CLOSE
+      && MP_TOKEN_DEL_PAREN_CLOSE       + 1 == MP_TOKEN_DEL_BRACKET_OPEN
+      && MP_TOKEN_DEL_BRACKET_OPEN      + 1 == MP_TOKEN_DEL_BRACKET_CLOSE
+      && MP_TOKEN_DEL_BRACKET_CLOSE     + 1 == MP_TOKEN_DEL_BRACE_OPEN
+      && MP_TOKEN_DEL_BRACE_OPEN        + 1 == MP_TOKEN_DEL_BRACE_CLOSE
+      && MP_TOKEN_DEL_BRACE_CLOSE       + 1 == MP_TOKEN_DEL_COMMA
+      && MP_TOKEN_DEL_COMMA             + 1 == MP_TOKEN_DEL_COLON
+      && MP_TOKEN_DEL_COLON             + 1 == MP_TOKEN_DEL_PERIOD
+      && MP_TOKEN_DEL_PERIOD            + 1 == MP_TOKEN_DEL_SEMICOLON
+      && MP_TOKEN_DEL_SEMICOLON         + 1 == MP_TOKEN_DEL_EQUAL
+      && MP_TOKEN_DEL_EQUAL             + 1 == MP_TOKEN_DEL_MINUS_MORE,
+    "MP_TOKEN order changed, so Code::PythonTextArea::TokenColor might need to change too.");
+
+  if ((tokenKind >= MP_TOKEN_OP_TILDE && tokenKind <= MP_TOKEN_DEL_DBL_STAR_EQUAL)
+      || tokenKind == MP_TOKEN_DEL_EQUAL
+      || tokenKind == MP_TOKEN_DEL_MINUS_MORE)
+  {
     return OperatorColor;
   }
   return Palette::CodeText;
@@ -50,6 +134,76 @@ static inline size_t TokenLength(mp_lexer_t * lex, const char * tokenPosition) {
     return UTF8Helper::CodePointSearch(tokenPosition, '\n') - tokenPosition;
   }
   return lex->column - lex->tok_column;
+}
+
+PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char * autocompletionLocation, const char ** autocompletionLocationBeginning, const char ** autocompletionLocationEnd) const {
+  const char * location = autocompletionLocation != nullptr ? autocompletionLocation : cursorLocation();
+  const char * beginningOfToken = nullptr;
+
+  /* If there is already autocompleting, the cursor must be at the end of an
+   * identifier. Trying to compute autocompletionType will fail: because of the
+   * autocompletion text, the cursor seems to be in the middle of an identifier. */
+  AutocompletionType autocompleteType = isAutocompleting() ? AutocompletionType::EndOfIdentifier : AutocompletionType::NoIdentifier;
+  if (autocompletionLocationBeginning == nullptr && autocompletionLocationEnd == nullptr) {
+    return autocompleteType;
+  }
+  nlr_buf_t nlr;
+  if (nlr_push(&nlr) == 0) {
+    const char * firstNonSpace = UTF8Helper::BeginningOfWord(m_contentView.editedText(), location);
+    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, firstNonSpace, UTF8Helper::EndOfWord(location) - firstNonSpace, 0);
+
+    const char * tokenStart;
+    const char * tokenEnd;
+    _mp_token_kind_t currentTokenKind = lex->tok_kind;
+
+    while (currentTokenKind != MP_TOKEN_NEWLINE && currentTokenKind != MP_TOKEN_END) {
+      tokenStart = firstNonSpace + lex->tok_column - 1;
+      tokenEnd = tokenStart + TokenLength(lex, tokenStart);
+
+      if (location < tokenStart) {
+        // The location for autocompletion is not in an identifier
+        assert(autocompleteType == AutocompletionType::NoIdentifier);
+        break;
+      }
+      if (location <= tokenEnd) {
+        if (currentTokenKind == MP_TOKEN_NAME
+            || (currentTokenKind >= MP_TOKEN_KW_FALSE
+              && currentTokenKind <= MP_TOKEN_KW_YIELD))
+        {
+          /* The location for autocompletion is in the middle or at the end of
+           * an identifier. */
+          beginningOfToken = tokenStart;
+          /* If autocompleteType is already EndOfIdentifier, we are
+           * autocompleting, so we do not need to update autocompleteType. If we
+           * recomputed autocompleteType now, we might wrongly think that it is
+           * MiddleOfIdentifier because of the autocompetion text.
+           * Example : fin|ally -> the lexer is at the end of "fin", but because
+           * we are autocompleting with "ally", the lexer thinks the cursor is
+           * in the middle of an identifier. */
+          if (autocompleteType != AutocompletionType::EndOfIdentifier) {
+            autocompleteType = location < tokenEnd ? AutocompletionType::MiddleOfIdentifier : AutocompletionType::EndOfIdentifier;
+          }
+        }
+        break;
+      }
+      mp_lexer_to_next(lex);
+      currentTokenKind = lex->tok_kind;
+    }
+    mp_lexer_free(lex);
+    nlr_pop();
+  }
+  if (autocompletionLocationBeginning != nullptr) {
+    *autocompletionLocationBeginning = beginningOfToken;
+  }
+  if (autocompletionLocationEnd != nullptr) {
+    *autocompletionLocationEnd = location;
+  }
+  assert(!isAutocompleting() || autocompleteType == AutocompletionType::EndOfIdentifier);
+  return autocompleteType;
+}
+
+const char * PythonTextArea::ContentView::textToAutocomplete() const {
+  return UTF8Helper::BeginningOfWord(editedText(), cursorLocation());
 }
 
 void PythonTextArea::ContentView::loadSyntaxHighlighter() {
@@ -75,23 +229,7 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t byteLength, int fromColumn, int toColumn, const char * selectionStart, const char * selectionEnd) const {
   LOG_DRAW("Drawing \"%.*s\"\n", byteLength, text);
 
-  if (!m_pythonDelegate->isPythonUser(this)) {
-    const char * lineStart = UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
-    const char * lineEnd = UTF8Helper::CodePointAtGlyphOffset(text, toColumn);
-    drawStringAt(
-      ctx,
-      line,
-      fromColumn,
-      lineStart,
-      std::min(text + byteLength, lineEnd) - lineStart,
-      StringColor,
-      BackgroundColor,
-      selectionStart,
-      selectionEnd,
-      HighlightColor
-    );
-    return;
-  }
+  assert(m_pythonDelegate->isPythonUser(this));
 
   /* We're using the MicroPython lexer to do syntax highlighting on a per-line
    * basis. This can work, however the MicroPython lexer won't accept a line
@@ -116,6 +254,8 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
     return;
   }
+
+  const char * autocompleteStart = m_autocomplete ? m_cursorLocation : nullptr;
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
@@ -143,12 +283,16 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       }
       tokenLength = TokenLength(lex, tokenFrom);
       tokenEnd = tokenFrom + tokenLength;
+
+      // If the token is being autocompleted, use DefaultColor
+      KDColor color = (tokenFrom <= autocompleteStart && autocompleteStart < tokenEnd) ? Palette::CodeText : TokenColor(lex->tok_kind);
+
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
         UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
         tokenFrom,
         tokenLength,
-        TokenColor(lex->tok_kind),
+        color,
         BackgroundColor,
         selectionStart,
         selectionEnd,
@@ -160,6 +304,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
     tokenFrom += tokenLength;
 
+    // Even if the token is being autocompleted, use CommentColor
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
       drawStringAt(ctx, line,
@@ -176,6 +321,22 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     mp_lexer_free(lex);
     nlr_pop();
   }
+
+  // Redraw the autocompleted word in the right color
+  if (m_autocomplete && autocompleteStart >= text && autocompleteStart < text + byteLength) {
+    assert(m_autocompletionEnd != nullptr && m_autocompletionEnd > autocompleteStart);
+    drawStringAt(
+        ctx,
+        line,
+        UTF8Helper::GlyphOffsetAtCodePoint(text, autocompleteStart),
+        autocompleteStart,
+        std::min(text + byteLength, m_autocompletionEnd) - autocompleteStart,
+        AutocompleteColor,
+        BackgroundColor,
+        nullptr,
+        nullptr,
+        HighlightColor);
+  }
 }
 
 KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position, bool includeFollowingLines) const {
@@ -191,6 +352,160 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position,
     bounds().width(),
     baseDirtyRect.height()
   );
+}
+
+bool PythonTextArea::handleEvent(Ion::Events::Event event) {
+  if (m_contentView.isAutocompleting()) {
+    // Handle event with autocompletion
+    if (event == Ion::Events::Right
+        || event == Ion::Events::ShiftRight
+        || event == Ion::Events::OK)
+    {
+      m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
+      acceptAutocompletion(event != Ion::Events::ShiftRight);
+      if (event != Ion::Events::ShiftRight) {
+        // Do not process the event more
+        scrollToCursor();
+        return true;
+      }
+    } else if (event == Ion::Events::Toolbox
+        || event == Ion::Events::Var
+        || event == Ion::Events::Shift
+        || event == Ion::Events::Alpha
+        || event == Ion::Events::OnOff)
+    {
+    } else if(event == Ion::Events::Up
+        || event == Ion::Events::Down)
+    {
+      cycleAutocompletion(event == Ion::Events::Down);
+      return true;
+    } else {
+      removeAutocompletion();
+      m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
+      if (event == Ion::Events::Back) {
+        // Do not process the event more
+        return true;
+      }
+    }
+  }
+  bool result = TextArea::handleEvent(event);
+  if (event == Ion::Events::Backspace && !m_contentView.isAutocompleting() && selectionIsEmpty()) {
+    /* We want to add autocompletion when we are editing a word (after adding or
+     * deleting text). So if nothing is selected, we add the autocompletion if
+     * the event is backspace, as autocompletion has already been added if the
+     * event added text, in handleEventWithText. */
+    addAutocompletion();
+  }
+  return result;
+}
+
+bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+  if (*text == 0) {
+    return false;
+  }
+  if (m_contentView.isAutocompleting()) {
+    removeAutocompletion();
+  }
+  bool result = TextArea::handleEventWithText(text, indentation, forceCursorRightOfText);
+  addAutocompletion();
+  return result;
+}
+
+void PythonTextArea::removeAutocompletion() {
+  assert(m_contentView.isAutocompleting());
+  removeAutocompletionText();
+  m_contentView.setAutocompleting(false);
+}
+
+void PythonTextArea::removeAutocompletionText() {
+  assert(m_contentView.isAutocompleting());
+  assert(m_contentView.autocompletionEnd() != nullptr);
+  const char * autocompleteStart = m_contentView.cursorLocation();
+  const char * autocompleteEnd = m_contentView.autocompletionEnd();
+  assert(autocompleteEnd != nullptr && autocompleteEnd > autocompleteStart);
+  m_contentView.removeText(autocompleteStart, autocompleteEnd);
+}
+
+void PythonTextArea::addAutocompletion() {
+  assert(!m_contentView.isAutocompleting());
+  const char * autocompletionTokenBeginning = nullptr;
+  const char * autocompletionLocation = const_cast<char *>(cursorLocation());
+  m_autocompletionResultIndex = 0;
+  if (autocompletionType(autocompletionLocation, &autocompletionTokenBeginning) != AutocompletionType::EndOfIdentifier) {
+    // The cursor is not at the end of an identifier.
+    return;
+  }
+
+  // First load variables and functions that complete the textToAutocomplete
+  const int scriptIndex = m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
+  m_contentView.pythonDelegate()->variableBoxController()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
+
+  if (addAutocompletionTextAtIndex(0)) {
+    m_contentView.setAutocompleting(true);
+  }
+}
+
+bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate) {
+  // The variable box should be loaded at this point
+  const char * autocompletionTokenBeginning = nullptr;
+  const char * autocompletionLocation = const_cast<char *>(cursorLocation());
+  AutocompletionType type = autocompletionType(autocompletionLocation, &autocompletionTokenBeginning); // Done to get autocompletionTokenBeginning
+  assert(type == AutocompletionType::EndOfIdentifier);
+  (void)type; // Silence warnings
+  VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
+  int textToInsertLength = 0;
+  bool addParentheses = false;
+  const char * textToInsert = varBox->autocompletionAlternativeAtIndex(autocompletionLocation - autocompletionTokenBeginning, &textToInsertLength, &addParentheses, nextIndex, currentIndexToUpdate);
+
+  if (textToInsert == nullptr) {
+    return false;
+  }
+
+  if (textToInsertLength > 0) {
+    // Try to insert the text (this might fail if the buffer is full)
+    if (!m_contentView.insertTextAtLocation(textToInsert, const_cast<char *>(autocompletionLocation), textToInsertLength)) {
+      return false;
+    }
+    autocompletionLocation += textToInsertLength;
+    m_contentView.setAutocompletionEnd(autocompletionLocation);
+  }
+
+  // Try to insert the parentheses if needed
+  const char * parentheses = ScriptNodeCell::k_parentheses;
+  constexpr int parenthesesLength = 2;
+  assert(strlen(parentheses) == parenthesesLength);
+  /* If couldInsertText is false, we should not try to add the parentheses as
+   * there was already not enough space to add the autocompletion. */
+  if (addParentheses && m_contentView.insertTextAtLocation(parentheses, const_cast<char *>(autocompletionLocation), parenthesesLength)) {
+    m_contentView.setAutocompleting(true);
+    m_contentView.setAutocompletionEnd(autocompletionLocation + parenthesesLength);
+  }
+  return true;
+}
+
+void PythonTextArea::cycleAutocompletion(bool downwards) {
+  assert(m_contentView.isAutocompleting());
+  removeAutocompletionText();
+  addAutocompletionTextAtIndex(m_autocompletionResultIndex + (downwards ? 1 : -1), &m_autocompletionResultIndex);
+}
+
+void PythonTextArea::acceptAutocompletion(bool moveCursorToEndOfAutocompletion) {
+  assert(m_contentView.isAutocompleting());
+
+  // Save the cursor location
+  const char * previousCursorLocation = cursorLocation();
+
+  removeAutocompletion();
+
+  m_contentView.pythonDelegate()->variableBoxController()->setSender(this);
+  m_contentView.pythonDelegate()->variableBoxController()->insertAutocompletionResultAtIndex(m_autocompletionResultIndex);
+
+  // insertAutocompletionResultAtIndex already added the autocompletion
+
+  // If we did not want to move the cursor, restore its position.
+  if (!moveCursorToEndOfAutocompletion) {
+    setCursorLocation(previousCursorLocation);
+  }
 }
 
 }

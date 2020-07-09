@@ -9,13 +9,6 @@ app_on_boarding_src = $(addprefix apps/on_boarding/,\
 
 apps_src += $(app_on_boarding_src)
 
-i18n_files += $(addprefix apps/on_boarding/,\
-  base.de.i18n\
-  base.en.i18n\
-  base.es.i18n\
-  base.fr.i18n\
-  base.pt.i18n\
-  base.hu.i18n\
-)
+i18n_files += $(call i18n_without_universal_for,on_boarding/base)
 
 $(eval $(call depends_on_image,apps/on_boarding/logo_view.cpp,apps/on_boarding/logo_icon.png))

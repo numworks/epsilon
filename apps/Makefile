@@ -1,3 +1,4 @@
+include apps/helpers.mk
 include apps/shared/Makefile
 include apps/home/Makefile
 include apps/on_boarding/Makefile
@@ -11,6 +12,7 @@ apps =
 $(foreach i,${apps_list},${eval include apps/$(i)/Makefile})
 
 apps_src += $(addprefix apps/,\
+  alternate_empty_nested_menu_controller.cpp \
   apps_container.cpp \
   apps_container_launch_default.cpp:-onboarding \
   apps_container_launch_on_boarding.cpp:+onboarding \
@@ -32,11 +34,11 @@ apps_src += $(addprefix apps/,\
   lock_view.cpp \
   main.cpp \
   math_toolbox.cpp \
+  math_variable_box_controller.cpp \
+  math_variable_box_empty_controller.cpp \
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
   title_bar_view.cpp \
-  variable_box_controller.cpp \
-  variable_box_empty_controller.cpp \
 )
 
 tests_src += apps/exam_mode_configuration_non_official.cpp
@@ -60,27 +62,10 @@ i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_
 ifeq ($(EPSILON_GETOPT),1)
 i18n_files += $(addprefix apps/language_,$(addsuffix _iso6391.universal.i18n, $(EPSILON_I18N)))
 endif
-i18n_files += $(addprefix apps/,\
-  shared.de.i18n\
-  shared.en.i18n\
-  shared.es.i18n\
-  shared.fr.i18n\
-  shared.pt.i18n\
-  shared.hu.i18n\
-  shared.universal.i18n\
-  toolbox.de.i18n\
-  toolbox.en.i18n\
-  toolbox.es.i18n\
-  toolbox.fr.i18n\
-  toolbox.pt.i18n\
-  toolbox.hu.i18n\
-  variables.de.i18n\
-  variables.en.i18n\
-  variables.es.i18n\
-  variables.fr.i18n\
-  variables.pt.i18n\
-  variables.hu.i18n\
-)
+
+i18n_files += $(call i18n_with_universal_for,shared)
+i18n_files += $(call i18n_without_universal_for,toolbox)
+i18n_files += $(call i18n_without_universal_for,variables)
 
 $(eval $(call rule_for, \
   I18N, \
@@ -104,6 +89,7 @@ $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qst
 apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_probability_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src)
 
 apps_tests_src += $(addprefix apps/,\
+  alternate_empty_nested_menu_controller.cpp \
   global_preferences.cpp \
 )
 

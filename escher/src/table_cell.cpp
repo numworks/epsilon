@@ -98,16 +98,16 @@ void TableCell::layoutSubviews(bool force) {
       y += labelHeight + k_verticalMargin;
     }
     horizontalMargin = k_separatorThickness + k_horizontalMargin;
-    y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin) - withMargin(subAccessorySize.height(), 0));
+    y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), k_verticalMargin) - withMargin(subAccessorySize.height(), 0));
     if (subAccessory) {
-      KDCoordinate subAccessoryHeight = std::min<KDCoordinate>(subAccessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
+      KDCoordinate subAccessoryHeight = std::min<KDCoordinate>(subAccessorySize.height(), height - y - k_separatorThickness - k_verticalMargin);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, subAccessoryHeight), force);
       y += subAccessoryHeight;
     }
     horizontalMargin = k_separatorThickness + accessoryMargin();
-    y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), Metric::TableCellVerticalMargin));
+    y = std::max<KDCoordinate>(y, height - k_separatorThickness - withMargin(accessorySize.height(), k_verticalMargin));
     if (accessory) {
-      KDCoordinate accessoryHeight = std::min<KDCoordinate>(accessorySize.height(), height - y - k_separatorThickness - Metric::TableCellVerticalMargin);
+      KDCoordinate accessoryHeight = std::min<KDCoordinate>(accessorySize.height(), height - y - k_separatorThickness - k_verticalMargin);
       accessory->setFrame(KDRect(horizontalMargin, y, width - 2*horizontalMargin, accessoryHeight), force);
     }
   } else {
@@ -164,7 +164,7 @@ void TableCell::layoutSubviews(bool force) {
 }
 
 void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backgroundColor = isHighlighted() ? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
-  drawInnerRect(ctx, bounds(), backgroundColor);
+  KDColor backColor = isHighlighted() ? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
+  drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), Palette::ListCellBorder);
 }

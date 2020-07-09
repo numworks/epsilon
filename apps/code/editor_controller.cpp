@@ -13,13 +13,15 @@ EditorController::EditorController(MenuController * menuController, App * python
   ViewController(nullptr),
   m_editorView(this, pythonDelegate),
   m_script(Ion::Storage::Record()),
+  m_scriptIndex(-1),
   m_menuController(menuController)
 {
   m_editorView.setTextAreaDelegates(this, this);
 }
 
-void EditorController::setScript(Script script) {
+void EditorController::setScript(Script script, int scriptIndex) {
   m_script = script;
+  m_scriptIndex = scriptIndex;
 
   /* We edit the script direclty in the storage buffer. We thus put all the
    * storage available space at the end of the current edited script and we set
@@ -35,7 +37,7 @@ void EditorController::setScript(Script script) {
    * */
 
   size_t newScriptSize = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(m_script);
-  m_editorView.setText(const_cast<char *>(m_script.scriptContent()), newScriptSize - Script::k_importationStatusSize);
+  m_editorView.setText(const_cast<char *>(m_script.content()), newScriptSize - Script::StatusSize());
 }
 
 void EditorController::willExitApp() {
@@ -131,7 +133,24 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = App::app()->variableBoxController();
-  varBox->loadFunctionsAndVariables();
+  /* If the editor should be autocompleting an identifier, the variable box has
+   * already been loaded. We check shouldAutocomplete and not isAutocompleting,
+   * because the autocompletion result might be empty. */
+  const char * beginningOfAutocompletion = nullptr;
+  const char * cursor = nullptr;
+  PythonTextArea::AutocompletionType autocompType = m_editorView.autocompletionType(&beginningOfAutocompletion, &cursor);
+  if (autocompType == PythonTextArea::AutocompletionType::NoIdentifier) {
+    varBox->loadFunctionsAndVariables(m_scriptIndex, nullptr, 0);
+  } else if (autocompType == PythonTextArea::AutocompletionType::MiddleOfIdentifier) {
+    varBox->empty();
+  } else {
+    assert(autocompType == PythonTextArea::AutocompletionType::EndOfIdentifier);
+    assert(beginningOfAutocompletion != nullptr && cursor != nullptr);
+    assert(cursor > beginningOfAutocompletion);
+    varBox->loadFunctionsAndVariables(m_scriptIndex, beginningOfAutocompletion, cursor - beginningOfAutocompletion);
+  }
+  varBox->setTitle(I18n::Message::Autocomplete);
+  varBox->setDisplaySubtitles(true);
   return varBox;
 }
 
@@ -146,7 +165,7 @@ void EditorController::cleanStorageEmptySpace() {
   Ion::Storage::Record::Data scriptValue = m_script.value();
   Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
       m_script,
-      scriptValue.size - Script::k_importationStatusSize - (strlen(m_script.scriptContent()) + 1)); // TODO optimize number of script fetches
+      scriptValue.size - Script::StatusSize() - (strlen(m_script.content()) + 1)); // TODO optimize number of script fetches
 }
 
 

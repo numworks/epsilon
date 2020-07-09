@@ -65,8 +65,8 @@ bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & chi
   return child.isOfType(types, 2);
 }
 
-Expression MultiplicationNode::getUnit() const {
-  return Multiplication(this).getUnit();
+Expression MultiplicationNode::removeUnit(Expression * unit) {
+  return Multiplication(this).removeUnit(unit);
 }
 
 template<typename T>
@@ -275,24 +275,30 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
   return deg;
 }
 
-Expression Multiplication::getUnit() const {
-  const int childrenCount = numberOfChildren();
-  if (childrenCount == 1) {
-    return childAtIndex(0).getUnit();
-  }
-  Multiplication result = Multiplication::Builder();
+Expression Multiplication::removeUnit(Expression * unit) {
+  Multiplication unitMult = Multiplication::Builder();
   int resultChildrenCount = 0;
-  for (int i = 0; i < childrenCount; i++) {
-    Expression currentUnit = childAtIndex(i).getUnit();
-    if (!currentUnit.isUndefined()) {
-      result.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression currentUnit;
+    childAtIndex(i).removeUnit(&currentUnit);
+    if (!currentUnit.isUninitialized()) {
+      unitMult.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
       resultChildrenCount++;
+      assert(childAtIndex(i).isRationalOne());
+      removeChildAtIndexInPlace(i--);
     }
   }
   if (resultChildrenCount == 0) {
-    return Undefined::Builder();
+    *unit = Expression();
+  } else {
+    *unit = unitMult.squashUnaryHierarchyInPlace();
   }
-  return std::move(result);
+  if (numberOfChildren() == 0) {
+    Expression one = Rational::Builder(1);
+    replaceWithInPlace(one);
+    return one;
+  }
+  return squashUnaryHierarchyInPlace();
 }
 
 template<typename T>
@@ -322,82 +328,32 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   return privateShallowReduce(reductionContext, true, true);
 }
 
-static void ExponentsCopy(Integer (&dst)[numberOfFondamentalUnits], const Integer (&src)[numberOfFondamentalUnits]) {
-  for (int i = 0; i < numberOfFondamentalUnits; i++) {
-    dst[i] = src[i];
-  }
-}
-
-static void ExponentsMetrics(const Integer (&exponents)[numberOfFondamentalUnits], size_t & supportSize, Integer & norm) {
-  assert(supportSize == 0 && norm.isZero());
-  for (int i = 0; i < numberOfFondamentalUnits; i++) {
-    Integer unsignedExponent = exponents[i];
-    unsignedExponent.setNegative(false);
-    if (!unsignedExponent.isZero()) {
-      supportSize++;
-      norm = Integer::Addition(norm, unsignedExponent);
-    }
-  }
-}
-
-static void ExponentsOfBaseUnits(const Expression units, Integer (&exponents)[numberOfFondamentalUnits]) {
-  // Make sure the provided Expression is a Multiplication
-  Expression u = units;
-  if (u.type() == ExpressionNode::Type::Unit || u.type() == ExpressionNode::Type::Power) {
-    u = Multiplication::Builder(u.clone());
-  }
-  const int numberOfChildren = u.numberOfChildren();
-  for (int i = 0; i < numberOfChildren; i++) {
-    Expression factor = u.childAtIndex(i);
-
-    // Get the unit's exponent
-    Integer exponent(1);
-    if (factor.type() == ExpressionNode::Type::Power) {
-      Expression exp = factor.childAtIndex(1);
-      assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
-      exponent = static_cast<Rational &>(exp).signedIntegerNumerator();
-      factor = factor.childAtIndex(0);
-    }
-
-    // The leading factors may not be of Unit type
-    if (factor.type() != ExpressionNode::Type::Unit) {
-      continue;
-    }
-
-    // Fill the exponents array with the unit's exponent
-    const int indexInTable = static_cast<Unit &>(factor).dimension() - Unit::DimensionTable;
-    assert(0 <= indexInTable && indexInTable < numberOfFondamentalUnits);
-    exponents[indexInTable] = exponent;
-  }
-}
-
 static bool CanSimplifyUnitProduct(
-    const Integer (&unitsExponents)[numberOfFondamentalUnits], const Integer (&entryUnitExponents)[numberOfFondamentalUnits], const Integer entryUnitNorm, const Expression entryUnit,
-    Integer (*operationOnExponents)(const Integer & unitsExponent, const Integer & entryUnitExponent),
-    Expression & bestUnit, Integer & bestUnitNorm, Integer (&bestRemainderExponents)[numberOfFondamentalUnits], size_t & bestRemainderSupportSize, Integer & bestRemainderNorm) {
+    const Unit::Dimension::Vector<Integer> &unitsExponents, Unit::Dimension::Vector<Integer>::Metrics &unitsMetrics,
+    const Unit::Dimension::Vector<int8_t> *entryUnitExponents, int8_t entryUnitNorm, int8_t entryUnitExponent,
+    int8_t & bestUnitExponent, Unit::Dimension::Vector<Integer> &bestRemainderExponents, Unit::Dimension::Vector<Integer>::Metrics & bestRemainderMetrics) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' Integer array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
-  Integer simplifiedExponents[numberOfFondamentalUnits];
-  for(int i = 0; i < numberOfFondamentalUnits; i++){
-    simplifiedExponents[i] = Integer(0);
+  Unit::Dimension::Vector<Integer> simplifiedExponents;
+  Integer (*operationOnExponents)(const Integer &, const Integer &) = entryUnitExponent == -1 ? Integer::Addition : Integer::Subtraction;
+  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+    simplifiedExponents.setCoefficientAtIndex(i, operationOnExponents(unitsExponents.coefficientAtIndex(i), entryUnitExponents->coefficientAtIndex(i)));
   }
-  for (int i = 0; i < numberOfFondamentalUnits; i++) {
-    simplifiedExponents[i] = operationOnExponents(unitsExponents[i], entryUnitExponents[i]);
-  }
-  size_t simplifiedSupportSize = 0;
-  Integer simplifiedNorm(0);
-  ExponentsMetrics(simplifiedExponents, simplifiedSupportSize, simplifiedNorm);
-  bool isSimpler = simplifiedSupportSize < bestRemainderSupportSize ||
-    (simplifiedSupportSize == bestRemainderSupportSize &&
-     Integer::Addition(simplifiedNorm, entryUnitNorm).isLowerThan(Integer::Addition(bestRemainderNorm, bestUnitNorm)));
+  Unit::Dimension::Vector<Integer>::Metrics simplifiedMetrics = simplifiedExponents.metrics();
+  Unit::Dimension::Vector<Integer>::Metrics candidateMetrics = {
+    .supportSize = 1 + simplifiedMetrics.supportSize,
+    .norm = Integer::Addition(entryUnitNorm, simplifiedMetrics.norm)
+  };
+  bool isSimpler = candidateMetrics.supportSize < unitsMetrics.supportSize ||
+    (candidateMetrics.supportSize == unitsMetrics.supportSize &&
+     candidateMetrics.norm.isLowerThan(unitsMetrics.norm));
   if (isSimpler) {
-    bestUnit = entryUnit;
-    bestUnitNorm = entryUnitNorm;
-    ExponentsCopy(bestRemainderExponents, simplifiedExponents);
-    bestRemainderSupportSize = simplifiedSupportSize;
-    bestRemainderNorm = simplifiedNorm;
+    bestUnitExponent = entryUnitExponent;
+    bestRemainderExponents = simplifiedExponents;
+    bestRemainderMetrics = simplifiedMetrics;
+    unitsMetrics = candidateMetrics;
   }
   return isSimpler;
 }
@@ -406,8 +362,8 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Recognize derived units in the product of units
-   * - Creating a Division if there's either a term with a power of -1 (a.b^(-1)
-   *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
+   * - Creating a Division if relevant
+   */
 
   // Step 1: Turn -n*A into -(n*A)
   Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(reductionContext);
@@ -419,159 +375,130 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     return std::move(o);
   }
 
-  Expression numer, denom, units;
-  splitIntoNormalForm(numer, denom, units, reductionContext);
-
-  /* Step 2: Recognize derived units
-   * The reason why 'units' is handled before 'numer' and 'denom' is that this
-   * step is likely to alter the latter Expressions.
-   */
-  if (!units.isUninitialized()) {
-    /* In the following:
-     * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
-     * - If an entry is found, simplify 'units' and add the corresponding unit or its inverse in 'unitsAccu'.
-     * - Repeat those steps until no more simplification is possible.
-     */
-    Multiplication unitsAccu = Multiplication::Builder();
-    Integer unitsExponents[numberOfFondamentalUnits];
-    for(int i = 0; i < numberOfFondamentalUnits; i++){
-      unitsExponents[i] = Integer(0);
-    }
-    ExponentsOfBaseUnits(units, unitsExponents);
-    size_t unitsSupportSize = 0;
-    Integer unitsNorm(0);
-    ExponentsMetrics(unitsExponents, unitsSupportSize, unitsNorm);
-    Integer bestRemainderExponents[numberOfFondamentalUnits];
-    for(int i = 0; i < numberOfFondamentalUnits; i++){
-      bestRemainderExponents[i] = Integer(0);
-    }
-    while (unitsSupportSize > 1) {
-      Expression bestUnit;
-      Integer bestUnitNorm(0);
-      size_t bestRemainderSupportSize = unitsSupportSize - 1;
-      Integer bestRemainderNorm = unitsNorm;
-      for (const Unit::Dimension * dim = Unit::DimensionTable + 8; dim < Unit::DimensionTableUpperBound; dim++) {
-        Unit entryUnit = Unit::Builder(dim, dim->stdRepresentative(), dim->stdRepresentativePrefix());
-        Integer entryUnitExponents[numberOfFondamentalUnits];
-        for(int i = 0; i < numberOfFondamentalUnits; i++){
-          entryUnitExponents[i] = Integer(0);
-        }
-        Integer entryUnitNorm(0);
-        size_t entryUnitSupportSize = 0;
-        ExponentsOfBaseUnits(entryUnit.clone().shallowReduce(reductionContext), entryUnitExponents);
-        ExponentsMetrics(entryUnitExponents, entryUnitSupportSize, entryUnitNorm);
-        CanSimplifyUnitProduct(
-            unitsExponents, entryUnitExponents, entryUnitNorm, entryUnit,
-            Integer::Subtraction,
-            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderSupportSize, bestRemainderNorm
-            )
-        ||
-        CanSimplifyUnitProduct(
-            unitsExponents, entryUnitExponents, entryUnitNorm, Power::Builder(entryUnit, Rational::Builder(-1)),
-            Integer::Addition,
-            bestUnit, bestUnitNorm, bestRemainderExponents, bestRemainderSupportSize, bestRemainderNorm
-            );
-      }
-      if (bestUnit.isUninitialized()) {
-        break;
-      }
-      const int position = unitsAccu.numberOfChildren();
-      unitsAccu.addChildAtIndexInPlace(bestUnit, position, position);
-      ExponentsCopy(unitsExponents, bestRemainderExponents);
-      unitsSupportSize = bestRemainderSupportSize;
-      unitsNorm = bestRemainderNorm;
-    }
-    if (unitsAccu.numberOfChildren() > 0) {
-      units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
-      units = Multiplication::Builder(unitsAccu, units).shallowReduce(reductionContext);
-    }
-  }
-
-  // Step 3: Create a Division if relevant
   Expression result;
-  if (!numer.isUninitialized()) {
-    result = numer;
-  }
-  if (!denom.isUninitialized()) {
-    result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, denom);
-  }
+  Expression self = *this;
 
-  // Step 4: Turn into 'Float x units' and choose a unit multiple adequate for
-  // the numerical value
-  if (!units.isUninitialized()) {
-    /* An exhaustive exploration of all possible multiples would have
+  // Step 2: Handle the units
+  if (hasUnit()) {
+    Expression units;
+    self = deepReduce(reductionContext); // removeUnit has to be called on reduced expression
+    self = removeUnit(&units);
+
+    if (units.isUninitialized()) {
+      // TODO: handle error "Invalid unit"
+      result = Undefined::Builder();
+      goto replace_by_result;
+    }
+
+    ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
+    if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
+      /* Step 2a: Recognize derived units
+       * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
+       * - If an entry is found, simplify 'units' and add the corresponding unit or its inverse in 'unitsAccu'.
+       * - Repeat those steps until no more simplification is possible.
+       */
+      Multiplication unitsAccu = Multiplication::Builder();
+      Unit::Dimension::Vector<Integer> unitsExponents = Unit::Dimension::Vector<Integer>::FromBaseUnits(units);
+      Unit::Dimension::Vector<Integer>::Metrics unitsMetrics = unitsExponents.metrics();
+      Unit::Dimension::Vector<Integer> bestRemainderExponents;
+      Unit::Dimension::Vector<Integer>::Metrics bestRemainderMetrics;
+      while (unitsMetrics.supportSize > 1) {
+        const Unit::Dimension * bestDim = nullptr;
+        int8_t bestUnitExponent = 0;
+        for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
+          const Unit::Dimension::Vector<int8_t> * entryUnitExponents = dim->vector();
+          int8_t entryUnitNorm = entryUnitExponents->metrics().norm;
+          if (CanSimplifyUnitProduct(
+                unitsExponents, unitsMetrics,
+                entryUnitExponents, entryUnitNorm, 1,
+                bestUnitExponent, bestRemainderExponents, bestRemainderMetrics
+                )
+              ||
+              CanSimplifyUnitProduct(
+                unitsExponents, unitsMetrics,
+                entryUnitExponents, entryUnitNorm, -1,
+                bestUnitExponent, bestRemainderExponents, bestRemainderMetrics
+                ))
+          {
+            bestDim = dim;
+          }
+        }
+        if (bestDim == nullptr) {
+          break;
+        }
+        Expression derivedUnit = Unit::Builder(bestDim, bestDim->stdRepresentative(), bestDim->stdRepresentativePrefix());
+        assert(bestUnitExponent == 1 || bestUnitExponent == -1);
+        if (bestUnitExponent == -1) {
+          derivedUnit = Power::Builder(derivedUnit, Rational::Builder(-1));
+        }
+        const int position = unitsAccu.numberOfChildren();
+        unitsAccu.addChildAtIndexInPlace(derivedUnit, position, position);
+        unitsExponents = bestRemainderExponents;
+        unitsMetrics = bestRemainderMetrics;
+      }
+      if (unitsAccu.numberOfChildren() > 0) {
+        units = Division::Builder(units, unitsAccu.clone()).deepReduce(reductionContext);
+        Expression newUnits;
+        units = units.removeUnit(&newUnits);
+        Multiplication m = Multiplication::Builder(units);
+        self.replaceWithInPlace(m);
+        m.addChildAtIndexInPlace(self, 0, 1);
+        self = m;
+        if (newUnits.isUninitialized()) {
+          units = unitsAccu;
+        } else {
+          units = Multiplication::Builder(unitsAccu, newUnits);
+          static_cast<Multiplication &>(units).mergeSameTypeChildrenInPlace();
+        }
+      }
+    }
+
+    /* Step 2b: Turn into 'Float x units'.
+     * Choose a unit multiple adequate for the numerical value.
+     * An exhaustive exploration of all possible multiples would have
      * exponential complexity with respect to the number of factors. Instead,
      * we focus on one single factor. The first Unit factor is certainly the
      * most relevant.
      */
-    if (units.type() == ExpressionNode::Type::Multiplication) {
-      /* First, as step 2 might have introduced non Unit factors in 'units',
-       * 'units' must be split again.
-       */
-      Expression unitsNumer, unitsDenom, unitsUnits;
-      static_cast<Multiplication&>(units).splitIntoNormalForm(unitsNumer, unitsDenom, unitsUnits, reductionContext);
-      if (!unitsNumer.isUninitialized()) {
-        result = result.isUninitialized() ? unitsNumer : Multiplication::Builder(result, unitsNumer);
-      }
-      if (!unitsDenom.isUninitialized()) {
-        result = Division::Builder(result.isUninitialized() ? Rational::Builder(1) : result, unitsDenom);
-      }
-      units = unitsUnits;
-    }
 
-    double value = 1.0;
-    if (!result.isUninitialized()) {
-      value = result.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
-    }
+    double value = self.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (std::isnan(value)) {
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();
     } else {
-      Expression resultWithoutUnit;
-      if (std::isinf(value)) {
-        resultWithoutUnit = Infinity::Builder(value < 0.0);
-      } else {
-        // Find the right unit prefix when the value ≠ 0
-        if (value != 0.0 && value != 1.0) {
-          // Identify the first Unit factor and its exponent
-          Expression firstFactor = units;
-          int exponent = 1;
-          if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
-            firstFactor = firstFactor.childAtIndex(0);
-          }
-          if (firstFactor.type() == ExpressionNode::Type::Power) {
-            Expression exp = firstFactor.childAtIndex(1);
-            firstFactor = firstFactor.childAtIndex(0);
-            assert(exp.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(exp).isInteger());
-            Integer expInt = static_cast<Rational &>(exp).signedIntegerNumerator();
-            if (expInt.isLowerThan(Integer(Integer::k_maxExtractableInteger))) {
-              exponent = expInt.extractedInt();
-            } else {
-              // The exponent is too large to be extracted, so do not try to use it.
-              exponent = 0;
-            }
-          }
-          assert(firstFactor.type() == ExpressionNode::Type::Unit);
-          // Choose its multiple and update value accordingly
-          if (exponent != 0) {
-            static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, reductionContext);
-          }
-        }
-        resultWithoutUnit = Float<double>::Builder(value);
+      if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
+        // Find the right unit prefix
+        Unit::ChooseBestRepresentativeAndPrefixForValue(&units, &value, reductionContext);
       }
       // Build final Expression
-      result = Multiplication::Builder(resultWithoutUnit, units);
-      static_cast<Multiplication &>(result).mergeMultiplicationChildrenInPlace();
+      result = Multiplication::Builder(Number::FloatNumber(value), units);
+      static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
+    }
+  } else {
+  // Step 3: Create a Division if relevant
+    Expression numer, denom;
+    splitIntoNormalForm(numer, denom, reductionContext);
+    if (!numer.isUninitialized()) {
+      result = numer;
+    }
+    if (!denom.isUninitialized()) {
+      result = Division::Builder(numer.isUninitialized() ? Rational::Builder(1) : numer, denom);
     }
   }
 
-  replaceWithInPlace(result);
+replace_by_result:
+  self.replaceWithInPlace(result);
   return result;
 }
 
 Expression Multiplication::denominator(ExpressionNode::ReductionContext reductionContext) const {
-  Expression numer, denom, units;
-  splitIntoNormalForm(numer, denom, units, reductionContext);
+  /* TODO ?
+   * Turn the denominator const method into an extractDenominator method
+   * (non const) in the same same way as extractUnits.
+   * Then remove splitIntoNormalForm.
+   */
+  Expression numer, denom;
+  splitIntoNormalForm(numer, denom, reductionContext);
   return denom;
 }
 
@@ -584,8 +511,11 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   }
 
   /* Step 1: MultiplicationNode is associative, so let's start by merging children
-   * which also are multiplications themselves. */
-  mergeMultiplicationChildrenInPlace();
+   * which also are multiplications themselves.
+   * TODO If the parent Expression is a Multiplication, one should perhaps
+   * return now and let the parent do the reduction.
+   */
+  mergeSameTypeChildrenInPlace();
 
   Context * context = reductionContext.context();
 
@@ -688,12 +618,9 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   while (i < numberOfChildren()-1) {
     Expression oi = childAtIndex(i);
     Expression oi1 = childAtIndex(i+1);
-    if (oi.recursivelyMatches(Expression::IsRandom, context, true)) {
+    if (oi.recursivelyMatches(Expression::IsRandom, context)) {
       // Do not factorize random or randint
-      i++;
-      continue;
-    }
-    if (TermsHaveIdenticalBase(oi, oi1)) {
+    } else if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
       if (TermHasNumeralBase(oi)) {
         /* Combining powers of a given rational isn't straightforward. Indeed,
@@ -746,8 +673,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * i*i -> -1
    * 2^(1/2)*2^(1/2) -> 2
    * sin(x)*cos(x) -> 1*tan(x)
-   * Last, we remove the only rational child if it is one and not the only
-   * child. */
+   */
   i = 1;
   while (i < numberOfChildren()) {
     Expression o = childAtIndex(i);
@@ -757,8 +683,8 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
     if (o.isNumber()) {
       if (childAtIndex(0).isNumber()) {
-        Number o0 = childAtIndex(0).convert<Rational>();
-        Number m = Number::Multiplication(o0, static_cast<Number &>(o));
+        Expression o0 = childAtIndex(0);
+        Number m = Number::Multiplication(static_cast<Number &>(o0), static_cast<Number &>(o));
         if ((IsInfinity(m, context) || m.isUndefined())
             && !IsInfinity(o0, context) && !o0.isUndefined()
             && !IsInfinity(o, context) && !o.isUndefined())
@@ -786,15 +712,17 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);
-    if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isZero()) {
-      // Check that other children don't match inf or unit
-      bool infiniteOrUnitFactor = recursivelyMatches([](const Expression e, Context * context) { return Expression::IsInfinity(e,context) || e.type() == ExpressionNode::Type::Unit; }, context);
-      if (!infiniteOrUnitFactor) {
+    if (hasUnit()) {
+      // Do not expand Multiplication in presence of units
+      shouldExpand = false;
+    } else if (c.type() != ExpressionNode::Type::Rational) {
+    } else if (static_cast<const Rational &>(c).isZero()) {
+      // Check that other children don't match inf or matrix
+      if (!recursivelyMatches([](const Expression e, Context * context) { return IsInfinity(e, context) || IsMatrix(e, context); }, context)) {
         replaceWithInPlace(c);
         return c;
       }
-    }
-    if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
+    } else if (static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
       removeChildAtIndexInPlace(0);
     }
   }
@@ -807,7 +735,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
    * If there is a random somewhere, do not expand. */
   Expression p = parent();
-  bool hasRandom = recursivelyMatches(Expression::IsRandom, context, true);
+  bool hasRandom = recursivelyMatches(Expression::IsRandom, context);
   if (shouldExpand
       && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)
       && !hasRandom)
@@ -841,17 +769,18 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     assert(childAtIndex(i).type() == ExpressionNode::Type::ComplexCartesian);
     // First, we merge all ComplexCartesian children into one
     ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
-    removeChildAtIndexInPlace(i);
-    i--;
-    while (i >= 0) {
+    while (true) {
+      removeChildAtIndexInPlace(i);
+      i--;
+      if (i < 0) {
+        break;
+      }
       Expression e = childAtIndex(i);
       if (e.type() != ExpressionNode::Type::ComplexCartesian) {
         // the Multiplication is sorted so ComplexCartesian nodes are the last ones
         break;
       }
       child = child.multiply(static_cast<ComplexCartesian &>(e), reductionContext);
-      removeChildAtIndexInPlace(i);
-      i--;
     }
     // The real children are both factors of the real and the imaginary multiplication
     Multiplication real = *this;
@@ -868,19 +797,6 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   }
 
   return result;
-}
-
-void Multiplication::mergeMultiplicationChildrenInPlace() {
-  // Multiplication is associative: a*(b*c)->a*b*c
-  int i = 0;
-  while (i < numberOfChildren()) {
-    Expression c = childAtIndex(i);
-    if (c.type() == ExpressionNode::Type::Multiplication) {
-      mergeChildrenAtIndexInPlace(c, i); // TODO: ensure that matrix children are not swapped to implement MATRIX_EXACT_REDUCING
-      continue;
-    }
-    i++;
-  }
 }
 
 void Multiplication::factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext) {
@@ -911,7 +827,7 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Expressi
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
   if (p.type() == ExpressionNode::Type::Multiplication) {
-    mergeMultiplicationChildrenInPlace();
+    mergeChildrenAtIndexInPlace(p, i);
   }
 }
 
@@ -932,7 +848,7 @@ void Multiplication::factorizeExponent(int i, int j, ExpressionNode::ReductionCo
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
   if (p.type() == ExpressionNode::Type::Multiplication) {
-    mergeMultiplicationChildrenInPlace();
+    mergeChildrenAtIndexInPlace(p, i);
   }
 }
 
@@ -1092,20 +1008,17 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
   return false;
 }
 
-void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, Expression & units, ExpressionNode::ReductionContext reductionContext) const {
+void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
-  Multiplication mUnits = Multiplication::Builder();
   int numberOfFactorsInNumerator = 0;
   int numberOfFactorsInDenominator = 0;
-  int numberOfFactorsInUnits = 0;
   const int numberOfFactors = numberOfChildren();
   for (int i = 0; i < numberOfFactors; i++) {
     Expression factor = childAtIndex(i).clone();
     ExpressionNode::Type factorType = factor.type();
     Expression factorsNumerator;
     Expression factorsDenominator;
-    Expression factorsUnit;
     if (factorType == ExpressionNode::Type::Rational) {
       Rational r = static_cast<Rational &>(factor);
       if (r.isRationalOne()) {
@@ -1124,29 +1037,10 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
     } else if (factorType == ExpressionNode::Type::Power) {
       Expression fd = factor.denominator(reductionContext);
       if (fd.isUninitialized()) {
-        if (factor.childAtIndex(0).type() == ExpressionNode::Type::Unit) {
-          /* A Unit should only have integer exponents, otherwise
-           * simplification returns Undefined. That will be handled later in
-           * Unit::shallowBeautify: since an Expression is beautified from
-           * children to parent, the children of the current Multiplication are
-           * not beautified yet and the exponent of a Unit is not guaranted at
-           * this point to be an integer. Until then, any Unit with non-integer
-           * exponent, is flushed into the numerator instead of units.
-           */
-          Expression exponent = factor.childAtIndex(1);
-          if (exponent.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(exponent).isInteger()) {
-            factorsUnit = factor;
-          } else {
-            factorsNumerator = factor;
-          }
-        } else {
-          factorsNumerator = factor;
-        }
+        factorsNumerator = factor;
       } else {
         factorsDenominator = fd;
       }
-    } else if (factorType == ExpressionNode::Type::Unit) {
-      factorsUnit = factor;
     } else {
       factorsNumerator = factor;
     }
@@ -1158,19 +1052,12 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
       mDenominator.addChildAtIndexInPlace(factorsDenominator, numberOfFactorsInDenominator, numberOfFactorsInDenominator);
       numberOfFactorsInDenominator++;
     }
-    if (!factorsUnit.isUninitialized()) {
-      mUnits.addChildAtIndexInPlace(factorsUnit, numberOfFactorsInUnits, numberOfFactorsInUnits);
-      numberOfFactorsInUnits++;
-    }
   }
   if (numberOfFactorsInNumerator) {
     numerator = mNumerator.squashUnaryHierarchyInPlace();
   }
   if (numberOfFactorsInDenominator) {
     denominator = mDenominator.squashUnaryHierarchyInPlace();
-  }
-  if (numberOfFactorsInUnits) {
-    units = mUnits.squashUnaryHierarchyInPlace();
   }
 }
 

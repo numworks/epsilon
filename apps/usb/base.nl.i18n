@@ -1,0 +1,7 @@
+USBConnected = "DE REKENMACHINE IS AANGESLOTEN"
+ConnectedMessage1 = "Om gegevens op te slaan,"
+ConnectedMessage2 = "ga naar onze webpagina"
+ConnectedMessage3 = "workshop.numworks.com"
+ConnectedMessage4 = "Druk op de TERUG toets van je"
+ConnectedMessage5 = "rekenmachine of verwijder de"
+ConnectedMessage6 = " kabel om hem los te koppelen."

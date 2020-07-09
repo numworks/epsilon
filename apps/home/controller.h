@@ -25,6 +25,7 @@ public:
   int reusableCellCount() const override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   int numberOfIcons() const;
   SelectableTableViewDataSource * selectionDataSource() const;

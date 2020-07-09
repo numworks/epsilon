@@ -29,10 +29,10 @@ int CursorIndexInCommandText(const char * text) {
 }
 
 void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
-  TextToInsertForCommandText(I18n::translate(message), buffer, bufferSize, replaceArgsWithEmptyChar);
+  TextToInsertForCommandText(I18n::translate(message), -1, buffer, bufferSize, replaceArgsWithEmptyChar);
 }
 
-void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
+void TextToInsertForCommandText(const char * command, int commandLength, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
   int index = 0;
   int numberOfOpenParentheses = 0;
   int numberOfOpenBrackets = 0;
@@ -41,7 +41,7 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
 
   UTF8Decoder decoder(command);
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != UCodePointNull) {
+  while (codePoint != UCodePointNull && (commandLength < 0 || (decoder.stringPosition() - command <=  commandLength))) {
     if (codePoint == ')') {
       numberOfOpenParentheses--;
     } else if (codePoint == ']') {
@@ -62,6 +62,7 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
       index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
+        assert(index < bufferSize);
         index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
         argumentAlreadyReplaced = true;
       }
@@ -75,6 +76,7 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
     }
     codePoint = decoder.nextCodePoint();
   }
+  assert(index < bufferSize);
   buffer[index] = 0;
 }
 

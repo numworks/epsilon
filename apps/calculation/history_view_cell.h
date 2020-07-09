@@ -18,7 +18,7 @@ public:
     Ellipsis = 3
   };
   HistoryViewCellDataSource() : m_selectedSubviewType(SubviewType::Output) {}
-  void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
+  virtual void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1);
   SubviewType selectedSubviewType() const { return m_selectedSubviewType; }
 private:
   /* This method should belong to a delegate instead of a data source but as
@@ -51,13 +51,14 @@ public:
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override { return m_even ? Palette::CalculationBackgroundEven : Palette::CalculationBackgroundOdd; }
   void resetMemoization();
-  void setCalculation(Calculation * calculation, bool expanded);
+  void setCalculation(Calculation * calculation, bool expanded, bool * didForceOutput = nullptr);
   int numberOfSubviews() const override { return 2 + displayedEllipsis(); }
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableTwoExpressionsView * outputView() { return &m_scrollableOutputView; }
+  ScrollableExpressionView * inputView() { return &m_inputView; }
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
 private:
   constexpr static KDCoordinate k_resultWidth = 80;

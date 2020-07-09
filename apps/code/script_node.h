@@ -1,33 +1,35 @@
 #ifndef CODE_SCRIPT_NODE_H
 #define CODE_SCRIPT_NODE_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 namespace Code {
 
 class ScriptNode {
 public:
-  enum class Type {
-    Function = 0,
-    Variable = 1
+  enum class Type : bool {
+    WithoutParentheses,
+    WithParentheses
   };
-  ScriptNode() :
-    m_type(Type::Function), m_name(nullptr), m_scriptIndex(0) {}
-  static ScriptNode FunctionNode(const char * name, uint16_t scriptIndex) {
-    return ScriptNode(Type::Function, name, scriptIndex);
-  }
-  static ScriptNode VariableNode(const char * name, uint16_t scriptIndex) {
-    return ScriptNode(Type::Variable, name, scriptIndex);
-  }
+  ScriptNode(Type type = Type::WithoutParentheses, const char * name = nullptr, int nameLength = -1, const char * nodeSourceName = nullptr, const char * description = nullptr) :
+    m_type(type),
+    m_name(name),
+    m_nodeSourceName(nodeSourceName),
+    m_description(description),
+    m_nameLength(nameLength)
+  {}
   Type type() const { return m_type; }
   const char * name() const { return m_name; }
-  uint16_t scriptIndex() const { return m_scriptIndex; }
+  int nameLength() const { return static_cast<int>(m_nameLength); }
+  const char * nodeSourceName() const { return m_nodeSourceName; }
+  const char * description() const { return m_description; }
 private:
-  ScriptNode(Type type, const char * name, uint16_t scriptIndex) :
-    m_type(type), m_name(name), m_scriptIndex(scriptIndex) {}
   Type m_type;
   const char * m_name;
-  uint16_t m_scriptIndex;
+  const char * m_nodeSourceName;
+  const char * m_description;
+  size_t m_nameLength;
 };
 
 }

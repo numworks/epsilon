@@ -62,17 +62,14 @@ size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t le
 
 bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test, Context * context) {
   Expression e = SymbolAbstract::Expand(symbol, context, false);
-  return !e.isUninitialized() && e.recursivelyMatches(test, context, false);
+  return !e.isUninitialized() && e.recursivelyMatches(test, context, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
-  if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits
-    || symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefinedAndReplaceUnits)
-  {
-    return Undefined::Builder();
-  }
   bool shouldNotReplaceSymbols = symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
-  if (symbol.type() == ExpressionNode::Type::Symbol && shouldNotReplaceSymbols) {
+  if (symbolicComputation == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol
+    || (symbol.type() == ExpressionNode::Type::Symbol && shouldNotReplaceSymbols))
+  {
     return clone ? symbol.clone() : *const_cast<SymbolAbstract *>(&symbol);
   }
   Expression e = context->expressionForSymbolAbstract(symbol, clone);

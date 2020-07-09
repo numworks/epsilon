@@ -3,7 +3,10 @@
 #include <poincare/decimal.h>
 #include <poincare/expression.h>
 #include <poincare/rational.h>
+#include <poincare/unit.h>
+#include <apps/shared/global_context.h>
 #include "tree/helpers.h"
+#include "helper.h"
 
 using namespace Poincare;
 
@@ -69,4 +72,21 @@ QUIZ_CASE(poincare_expression_rational_constructor) {
   Rational e = Rational::Builder(overflow);
   Rational f = Rational::Builder(overflow, overflow);
   assert_pool_size(initialPoolSize+6);
+}
+
+QUIZ_CASE(poincare_expression_unit_constructor) {
+  Unit u = Unit::Second();
+  assert_expression_serialize_to(u, "_s");
+
+  u = Unit::Hour();
+  assert_expression_serialize_to(u, "_h");
+
+  u = Unit::Kilometer();
+  assert_expression_serialize_to(u, "_km");
+
+  u = Unit::Liter();
+  assert_expression_serialize_to(u, "_L");
+
+  u = Unit::Watt();
+  assert_expression_serialize_to(u, "_W");
 }

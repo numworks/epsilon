@@ -300,7 +300,7 @@ MathToolbox::MathToolbox() :
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   m_selectableTableView.deselectTable();
 
   // Translate the message
@@ -310,7 +310,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   //  Remove the arguments if we kept one message for both inserted and displayed message
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);
-    Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
+    Shared::ToolboxHelpers::TextToInsertForCommandText(text, -1, textToInsert, maxTextToInsertLength, true);
     text = textToInsert;
   }
   sender()->handleEventWithText(text);

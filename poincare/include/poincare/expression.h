@@ -10,8 +10,6 @@
 #include <poincare/solver.h>
 #include <ion/storage.h>
 
-#include <stdio.h>
-
 namespace Poincare {
 
 class Context;
@@ -117,6 +115,7 @@ class Expression : public TreeHandle {
   friend class NAryExpressionNode;
   friend class StoreNode;
   friend class SymbolNode;
+  friend class UnitNode;
 
 public:
   static bool IsExpression() { return true; }
@@ -152,7 +151,7 @@ public:
   bool isDivisionOfIntegers() const;
   bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
-  bool recursivelyMatches(ExpressionTest test, Context * context, bool replaceSymbols = true) const;
+  bool recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   typedef bool (*ExpressionTypeTest)(const Expression e, const void * context);
   bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
@@ -200,7 +199,7 @@ public:
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Units */
-  Expression getUnit() const { return node()->getUnit(); }
+  Expression removeUnit(Expression * unit) { return node()->removeUnit(unit); }
   bool hasUnit() const;
 
   /* Complex */
@@ -240,11 +239,11 @@ public:
    *   account the complex format required in the expression they return.
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
-  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   Expression simplify(ExpressionNode::ReductionContext reductionContext);
 
-  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
+  void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   Expression reduce(ExpressionNode::ReductionContext context);
 
   Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);

@@ -3,8 +3,10 @@
 #include "../shared/scrollable_multiple_expressions_view.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
+#include "app.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/undefined.h>
+#include <poincare/unit.h>
 #include <poincare/unreal.h>
 #include <string.h>
 #include <cmath>
@@ -39,8 +41,7 @@ Calculation * Calculation::next() const {
 void Calculation::tidy() {
   /* Reset height memoization (the complex format could have changed when
    * re-entering Calculation app which would impact the heights). */
-  m_height = -1;
-  m_expandedHeight = -1;
+  resetHeightMemoization();
 }
 
 const char * Calculation::approximateOutputText(NumberOfSignificantDigits numberOfSignificantDigits) const {
@@ -174,7 +175,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::PredictionInterval
           };
           return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes)/sizeof(ExpressionNode::Type));
-        }, context, true)
+        }, context)
   )
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
@@ -191,9 +192,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
 void Calculation::forceDisplayOutput(DisplayOutput d) {
   m_displayOutput = d;
   // Reset heights memoization as it might have changed when we modify the display output
-  m_height = -1;
-  m_expandedHeight = -1;
+  resetHeightMemoization();
 }
+
 bool Calculation::shouldOnlyDisplayExactOutput() {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
@@ -229,6 +230,9 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 }
 
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
+  if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return AdditionalInformationType::None;
+  }
   Preferences * preferences = Preferences::sharedPreferences();
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
   Expression i = input();
@@ -250,8 +254,28 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   if (input().isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit()) || o.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
     return AdditionalInformationType::Trigonometry;
   }
-
-  // TODO: return AdditionalInformationType::Unit
+  if (o.hasUnit()) {
+    Expression unit;
+    PoincareHelpers::Reduce(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User,ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+    o = o.removeUnit(&unit);
+    if (Unit::IsIS(unit)) {
+      if (Unit::IsISSpeed(unit) || Unit::IsISVolume(unit) || Unit::IsISEnergy(unit)) {
+        /* All these units will provide misc. classic representatives in
+         * addition to the SI unit in additional information. */
+        return AdditionalInformationType::Unit;
+      }
+      if (Unit::IsISTime(unit)) {
+        /* If the number of seconds is above 60s, we can write it in the form
+         * of an addition: 23_min + 12_s for instance. */
+        double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
+        if (value >  Unit::SecondsPerMinute) {
+          return AdditionalInformationType::Unit;
+        }
+      }
+      return AdditionalInformationType::None;
+    }
+    return AdditionalInformationType::Unit;
+  }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;
   }
@@ -263,6 +287,11 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     return AdditionalInformationType::Complex;
   }
   return AdditionalInformationType::None;
+}
+
+void  Calculation::resetHeightMemoization() {
+  m_height = -1;
+  m_expandedHeight = -1;
 }
 
 }

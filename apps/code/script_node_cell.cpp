@@ -7,56 +7,56 @@ namespace Code {
 constexpr char ScriptNodeCell::k_parentheses[];
 constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
 
-ScriptNodeCell::ScriptNodeView::ScriptNodeView() :
-  HighlightCell(),
-  m_scriptNode(nullptr),
-  m_scriptStore(nullptr)
-{
-}
-
-void ScriptNodeCell::ScriptNodeView::setScriptNode(ScriptNode * scriptNode) {
-  m_scriptNode = scriptNode;
-}
-
-void ScriptNodeCell::ScriptNodeView::setScriptStore(ScriptStore * scriptStore) {
-  m_scriptStore = scriptStore;
-}
-
 void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->drawString(m_scriptNode->name(), KDPoint(0, Metric::TableCellVerticalMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite);
-  KDSize nameSize = k_font->stringSize(m_scriptNode->name());
-  if (m_scriptNode->type() == ScriptNode::Type::Function) {
-    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), Metric::TableCellVerticalMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite);
+  const KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+
+  // If it exists, draw the description name.
+  const char * descriptionName = m_scriptNode->description();
+  if (descriptionName != nullptr) {
+    ctx->drawString(descriptionName, KDPoint(0, m_frame.height() - k_bottomMargin - k_font->glyphSize().height()), k_font, Palette::GreyDark, backgroundColor);
   }
-  ctx->drawString(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName(), KDPoint(0, Metric::TableCellVerticalMargin + nameSize.height() + k_verticalMargin), k_font, Palette::GreyDark, isHighlighted()? Palette::Select : KDColorWhite);
+
+  // Draw the node name
+  const char * nodeName = m_scriptNode->name();
+  const int nodeNameLength = m_scriptNode->nameLength();
+  KDSize nameSize = k_font->stringSize(nodeName, nodeNameLength);
+  const KDCoordinate nodeNameY = k_topMargin;
+  ctx->drawString(nodeName, KDPoint(0, nodeNameY), k_font, KDColorBlack, backgroundColor, nodeNameLength);
+  // If it is needed, draw the parentheses
+  if (m_scriptNode->type() == ScriptNode::Type::WithParentheses) {
+    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), nodeNameY), k_font, KDColorBlack, backgroundColor);
+  }
+
+  /* If it exists, draw the source name. If it did not fit, we would have put
+   * nullptr at the node creation. */
+  const char * sourceName = m_scriptNode->nodeSourceName();
+  if (sourceName != nullptr) {
+    KDSize sourceNameSize = k_font->stringSize(sourceName);
+    ctx->drawString(sourceName, KDPoint(m_frame.width() - sourceNameSize.width(), nodeNameY), k_font, Palette::GreyDark, backgroundColor);
+  }
 }
 
 KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
   if (m_scriptNode->name() == nullptr) {
     return KDSizeZero;
   }
-  KDSize size1 = k_font->stringSize(m_scriptNode->name());
-  KDSize size2 = k_font->stringSize(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName());
-  KDSize size3 = KDSizeZero;
-  if (m_scriptNode->type() == ScriptNode::Type::Function) {
-    size3 = k_font->stringSize(ScriptNodeCell::k_parentheses);
-  }
-  return KDSize(size1.width() + size3.width() > size2.width() ? size1.width() + size3.width() : size2.width(), Metric::TableCellVerticalMargin + size1.width() + k_verticalMargin + size2.width());
+  return KDSize(
+      k_optimalWidth,
+      m_scriptNode->description() == nullptr ? k_simpleItemHeight : k_complexItemHeight);
 }
 
-ScriptNodeCell::ScriptNodeCell() :
-  TableCell(),
-  m_scriptNodeView()
-{
+bool ScriptNodeCell::CanDisplayNameAndSource(int nameLength, const char * source) {
+  if (source == nullptr) {
+    return true;
+  }
+  assert(nameLength > 0);
+  const KDFont * font = ScriptNodeView::k_font;
+  return font->glyphSize().width()*(nameLength + 1) + font->stringSize(source).width() <= ScriptNodeView::k_optimalWidth; // + 1 for the separating space
 }
 
 void ScriptNodeCell::setScriptNode(ScriptNode * scriptNode) {
   m_scriptNodeView.setScriptNode(scriptNode);
   reloadCell();
-}
-
-void ScriptNodeCell::setScriptStore(ScriptStore * scriptStore) {
-  m_scriptNodeView.setScriptStore(scriptStore);
 }
 
 void ScriptNodeCell::setHighlighted(bool highlight) {

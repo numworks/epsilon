@@ -118,13 +118,17 @@ public:
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
   bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && !m_negative); };
   bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && !m_negative); };
+  bool isThree() const { return (numberOfDigits() == 1 && digit(0) == 3 && !m_negative); };
   bool isTen() const { return (numberOfDigits() == 1 && digit(0) == 10 && !m_negative); };
   bool isMinusOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && m_negative); };
+  bool isMinusTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && m_negative); };
   bool isZero() const { return (numberOfDigits() == 0); };
   bool isEven() const { return ((digit(0) & 1) == 0); }
 
-  constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
-  int extractedInt() const { assert(numberOfDigits() == 0 || (numberOfDigits() <= 1 && digit(0) <= k_maxExtractableInteger)); return numberOfDigits() == 0 ? 0 : (m_negative ? -digit(0) : digit(0)); }
+  bool isExtractable() const {
+    return numberOfDigits() == 0 || (numberOfDigits() <= 1 && digit(0) <= k_maxExtractableInteger);
+  }
+  int extractedInt() const { assert(isExtractable()); return numberOfDigits() == 0 ? 0 : (m_negative ? -digit(0) : digit(0)); }
 
   // Comparison
   static int NaturalOrder(const Integer & i, const Integer & j);
@@ -150,6 +154,7 @@ public:
   constexpr static int k_maxNumberOfDigits = 32;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
+  constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
 
   // Constructors
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);

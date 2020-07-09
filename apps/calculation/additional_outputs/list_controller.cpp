@@ -21,8 +21,8 @@ void ListController::InnerListController::didBecomeFirstResponder() {
 
 /* List Controller */
 
-ListController::ListController(Responder * parentResponder, EditExpressionController * editExpressionController, SelectableTableViewDelegate * delegate) :
-  StackViewController(parentResponder, &m_listController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
+ListController::ListController(EditExpressionController * editExpressionController, SelectableTableViewDelegate * delegate) :
+  StackViewController(nullptr, &m_listController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_listController(this, delegate),
   m_editExpressionController(editExpressionController)
 {
@@ -38,7 +38,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
      * insertTextBody. */
     Container::activeApp()->dismissModalViewController();
     m_editExpressionController->insertTextBody(buffer);
-    Container::activeApp()->setFirstResponder(m_editExpressionController);
     return true;
   }
   return false;

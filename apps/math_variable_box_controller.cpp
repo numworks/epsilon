@@ -1,4 +1,4 @@
-#include "variable_box_controller.h"
+#include "math_variable_box_controller.h"
 #include "shared/global_context.h"
 #include "shared/continuous_function.h"
 #include <escher/metric.h>
@@ -14,8 +14,8 @@ using namespace Poincare;
 using namespace Shared;
 using namespace Ion;
 
-VariableBoxController::VariableBoxController() :
-  NestedMenuController(nullptr, I18n::Message::Variables),
+MathVariableBoxController::MathVariableBoxController() :
+  AlternateEmptyNestedMenuController(I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
   m_lockPageDelete(Page::RootMenu),
   m_firstMemoizedLayoutIndex(0)
@@ -25,24 +25,20 @@ VariableBoxController::VariableBoxController() :
   }
 }
 
-void VariableBoxController::viewWillAppear() {
+void MathVariableBoxController::viewWillAppear() {
   assert(m_currentPage == Page::RootMenu);
-  NestedMenuController::viewWillAppear();
+  AlternateEmptyNestedMenuController::viewWillAppear();
 }
 
-void VariableBoxController::viewDidDisappear() {
-  if (isDisplayingEmptyController()) {
-    pop();
-  }
-
-  NestedMenuController::viewDidDisappear();
+void MathVariableBoxController::viewDidDisappear() {
+  AlternateEmptyNestedMenuController::viewDidDisappear();
 
   /* NestedMenuController::viewDidDisappear might need cell heights, which would
-   * use the VariableBoxController cell heights memoization. We thus reset the
-   * VariableBoxController layouts only after calling the parent's
+   * use the MathVariableBoxController cell heights memoization. We thus reset the
+   * MathVariableBoxController layouts only after calling the parent's
    * viewDidDisappear. */
 
-  // Tidy the layouts displayed in the VariableBoxController to clean TreePool
+  // Tidy the layouts displayed in the MathVariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
     m_leafCells[i].setAccessoryLayout(Layout());
@@ -53,7 +49,7 @@ void VariableBoxController::viewDidDisappear() {
   setPage(Page::RootMenu);
 }
 
-bool VariableBoxController::handleEvent(Ion::Events::Event event) {
+bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   /* We do not want to handle backspace event if:
    * - On the root menu page
    *   The deletion on the current page is locked
@@ -66,13 +62,13 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
     int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
     selectCellAtLocation(selectedColumn(), newSelectedRow);
     m_selectableTableView.reloadData();
-    displayEmptyController();
+    displayEmptyControllerIfNeeded();
     return true;
   }
-  return NestedMenuController::handleEvent(event);
+  return AlternateEmptyNestedMenuController::handleEvent(event);
 }
 
-int VariableBoxController::numberOfRows() const {
+int MathVariableBoxController::numberOfRows() const {
   switch (m_currentPage) {
     case Page::RootMenu:
       return k_numberOfMenuRows;
@@ -85,7 +81,7 @@ int VariableBoxController::numberOfRows() const {
   }
 }
 
-int VariableBoxController::reusableCellCount(int type) {
+int MathVariableBoxController::reusableCellCount(int type) {
   assert(type < 2);
   if (type == 0) {
     return k_maxNumberOfDisplayedRows;
@@ -93,7 +89,7 @@ int VariableBoxController::reusableCellCount(int type) {
   return k_numberOfMenuRows;
 }
 
-void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     I18n::Message label = nodeLabelAtIndex(index);
     MessageTableCell * myCell = (MessageTableCell *)cell;
@@ -123,64 +119,64 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   myCell->reloadCell();
 }
 
-KDCoordinate VariableBoxController::rowHeight(int index) {
+KDCoordinate MathVariableBoxController::rowHeight(int index) {
   if (m_currentPage != Page::RootMenu) {
     Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
     if (!layoutR.isUninitialized()) {
       return std::max<KDCoordinate>(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
   }
-  return NestedMenuController::rowHeight(index);
+  return AlternateEmptyNestedMenuController::rowHeight(index);
 }
 
-int VariableBoxController::typeAtLocation(int i, int j) {
+int MathVariableBoxController::typeAtLocation(int i, int j) {
   if (m_currentPage == Page::RootMenu) {
     return 1;
   }
   return 0;
 }
 
-ExpressionTableCellWithExpression * VariableBoxController::leafCellAtIndex(int index) {
+ExpressionTableCellWithExpression * MathVariableBoxController::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron * VariableBoxController::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfMenuRows);
   return &m_nodeCells[index];
 }
 
-VariableBoxController::Page VariableBoxController::pageAtIndex(int index) {
+MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
   Page pages[2] = {Page::Expression, Page::Function};
   return pages[index];
 }
 
-void VariableBoxController::setPage(Page page) {
+void MathVariableBoxController::setPage(Page page) {
   m_currentPage = page;
   resetMemoization();
 }
 
-bool VariableBoxController::selectSubMenu(int selectedRow) {
+bool MathVariableBoxController::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
   setPage(pageAtIndex(selectedRow));
-  bool selectSubMenu = NestedMenuController::selectSubMenu(selectedRow);
-  if (displayEmptyController()) {
+  bool selectSubMenu = AlternateEmptyNestedMenuController::selectSubMenu(selectedRow);
+  if (displayEmptyControllerIfNeeded()) {
     return true;
   }
   return selectSubMenu;
 }
 
-bool VariableBoxController::returnToPreviousMenu() {
+bool MathVariableBoxController::returnToPreviousMenu() {
   if (isDisplayingEmptyController()) {
     pop();
   } else {
     m_selectableTableView.deselectTable();
   }
   setPage(Page::RootMenu);
-  return NestedMenuController::returnToPreviousMenu();
+  return AlternateEmptyNestedMenuController::returnToPreviousMenu();
 }
 
-bool VariableBoxController::selectLeaf(int selectedRow) {
+bool MathVariableBoxController::selectLeaf(int selectedRow) {
   if (isDisplayingEmptyController()) {
     /* We do not want to handle OK/EXE events in that case. */
     return false;
@@ -214,13 +210,13 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
   return true;
 }
 
-I18n::Message VariableBoxController::nodeLabelAtIndex(int index) {
+I18n::Message MathVariableBoxController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
   I18n::Message labels[2] = {I18n::Message::Expressions, I18n::Message::Functions};
   return labels[index];
 }
 
-Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, int index) {
+Layout MathVariableBoxController::expressionLayoutForRecord(Storage::Record record, int index) {
   assert(m_currentPage != Page::RootMenu);
   assert(index >= 0);
   if (index >= m_firstMemoizedLayoutIndex+k_maxNumberOfDisplayedRows || index < m_firstMemoizedLayoutIndex) {
@@ -250,36 +246,30 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
   return m_layouts[index-m_firstMemoizedLayoutIndex];
 }
 
-const char * VariableBoxController::extension() const {
+const char * MathVariableBoxController::extension() const {
   assert(m_currentPage != Page::RootMenu);
   return m_currentPage == Page::Function ? Ion::Storage::funcExtension : Ion::Storage::expExtension;
 }
 
-Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {
+Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   assert(m_currentPage != Page::RootMenu);
   assert(!Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex).isNull());
   return Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
 }
 
-bool VariableBoxController::displayEmptyController() {
-  assert(!isDisplayingEmptyController());
-  // If the content is empty, we push above an empty controller.
-  if (numberOfRows() == 0) {
-    m_emptyViewController.setType((VariableBoxEmptyController::Type)m_currentPage);
-    push(&m_emptyViewController);
-    return true;
-  }
-  return false;
+ViewController * MathVariableBoxController::emptyViewController() {
+  m_emptyViewController.setType((MathVariableBoxEmptyController::Type)m_currentPage);
+  return &m_emptyViewController;
 }
 
-void VariableBoxController::resetMemoization() {
+void MathVariableBoxController::resetMemoization() {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_layouts[i] = Layout();
   }
   m_firstMemoizedLayoutIndex = 0;
 }
 
-void VariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
+void MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
   // Destroy the record
   recordAtIndex(rowIndex).destroy();
   // Shift the memoization if needed

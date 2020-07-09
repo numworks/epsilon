@@ -2,6 +2,7 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/expression.h>
+#include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <assert.h>
 #include <string.h>
@@ -42,13 +43,16 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::useInsertionCursor() {
   if (m_insertionCursor.isDefined()) {
+    m_cursor.layout().removeGreySquaresFromAllMatrixAncestors();
     m_cursor = m_insertionCursor;
+    m_cursor.layout().addGreySquaresToAllMatrixAncestors();
   }
 }
 
 void LayoutField::ContentView::clearLayout() {
   HorizontalLayout h = HorizontalLayout::Builder();
   if (m_expressionView.setLayout(h)) {
+    resetSelection();
     m_cursor.setLayout(h);
   }
 }
@@ -232,6 +236,17 @@ void LayoutField::ContentView::deleteSelection() {
     }
   }
   resetSelection();
+}
+
+void LayoutField::ContentView::updateInsertionCursor() {
+  if (!m_insertionCursor.isDefined()) {
+    Layout l = m_cursor.layout();
+    if (l.type() == LayoutNode::Type::EmptyLayout && static_cast<EmptyLayout &>(l).color() == EmptyLayoutNode::Color::Grey) {
+      // Don't set m_insertionCursor pointing to a layout which might disappear
+      return;
+    }
+    m_insertionCursor = m_cursor;
+  }
 }
 
 View * LayoutField::ContentView::subviewAtIndex(int index) {

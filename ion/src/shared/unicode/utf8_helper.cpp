@@ -33,10 +33,10 @@ int CountOccurrences(const char * s, CodePoint c) {
   return count;
 }
 
-const char * CodePointSearch(const char * s, CodePoint c) {
+const char * CodePointSearch(const char * s, CodePoint c, const char * stoppingPosition) {
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     const char * result = s;
-    while (*result != 0 && *result != c) {
+    while (*result != 0 && *result != c && (stoppingPosition == nullptr || result != stoppingPosition)) {
       result++;
     }
     return result;
@@ -45,7 +45,7 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   const char * currentPointer = s;
   CodePoint codePoint = decoder.nextCodePoint();
   const char * nextPointer = decoder.stringPosition();
-  while (codePoint != UCodePointNull && codePoint != c) {
+  while (codePoint != UCodePointNull && codePoint != c && (stoppingPosition == nullptr || currentPointer < stoppingPosition)) {
     currentPointer = nextPointer;
     codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();
@@ -53,9 +53,10 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   return currentPointer;
 }
 
-bool HasCodePoint(const char * s, CodePoint c) {
+bool HasCodePoint(const char * s, CodePoint c, const char * stoppingPosition) {
   assert(c != 0);
-  return *CodePointSearch(s, c) != 0;
+  const char * resultPosition = CodePointSearch(s, c, stoppingPosition);
+  return *resultPosition != 0 && (stoppingPosition == nullptr || resultPosition < stoppingPosition);
 }
 
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition) {
@@ -257,21 +258,36 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
   return codePointPointer;
 }
 
+CodePoint PreviousCodePoint(const char * buffer, const char * location) {
+  if (location == buffer) {
+    return UCodePointNull;
+  }
+  UTF8Decoder decoder(buffer, location);
+  return decoder.previousCodePoint();
+}
+
+CodePoint CodePointAtLocation(const char * location) {
+  UTF8Decoder decoder(location);
+  return decoder.nextCodePoint();
+}
+
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c) {
   assert(location > buffer);
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     return *(location -1) == c;
   }
-  UTF8Decoder decoder(buffer, location);
-  return decoder.previousCodePoint() == c;
+  return PreviousCodePoint(buffer, location) == c;
 }
 
 bool CodePointIs(const char * location, CodePoint c) {
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     return *(location) == c;
   }
-  UTF8Decoder decoder(location);
-  return decoder.nextCodePoint() == c;
+  return CodePointAtLocation(location) == c;
+}
+
+bool CodePointIsEndOfWord(CodePoint c) {
+  return c == '\n' || c == ' ' || c == UCodePointNull;
 }
 
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
@@ -361,6 +377,34 @@ size_t StringGlyphLength(const char * s, int maxSize) {
     }
   }
   return glyphIndex;
+}
+
+const char * BeginningOfWord(const char * text, const char * word) {
+  if (text == word) {
+    return text;
+  }
+  UTF8Decoder decoder(text, word);
+  const char * codePointPointer = decoder.stringPosition();
+  CodePoint codePoint = decoder.previousCodePoint();
+  while (!CodePointIsEndOfWord(codePoint)) {
+    codePointPointer = decoder.stringPosition();
+    if (codePointPointer == text) {
+      break;
+    }
+    codePoint = decoder.previousCodePoint();
+  }
+  return codePointPointer;
+}
+
+const char * EndOfWord(const char * word) {
+  UTF8Decoder decoder(word);
+  CodePoint codePoint = decoder.nextCodePoint();
+  const char * result = word;
+  while (!CodePointIsEndOfWord(codePoint)) {
+    result = decoder.stringPosition();
+    codePoint = decoder.nextCodePoint();
+  }
+  return result;
 }
 
 }

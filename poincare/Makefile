@@ -184,6 +184,10 @@ tests_src += $(addprefix poincare/test/,\
   simplification.cpp\
 )
 
+ifeq ($(DEBUG),1)
+POINCARE_TREE_LOG ?= 1
+endif
+
 ifdef POINCARE_TREE_LOG
-SFLAGS += -DPOINCARE_TREE_LOG=1
+SFLAGS += -DPOINCARE_TREE_LOG=$(POINCARE_TREE_LOG)
 endif

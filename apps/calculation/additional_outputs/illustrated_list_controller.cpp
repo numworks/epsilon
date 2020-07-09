@@ -1,4 +1,5 @@
 #include "illustrated_list_controller.h"
+#include <poincare/exception_checkpoint.h>
 #include <poincare/symbol.h>
 #include "../app.h"
 
@@ -8,8 +9,8 @@ namespace Calculation {
 
 /* Illustrated list controller */
 
-IllustratedListController::IllustratedListController(Responder * parentResponder, EditExpressionController * editExpressionController) :
-  ListController(parentResponder, editExpressionController, this),
+IllustratedListController::IllustratedListController(EditExpressionController * editExpressionController) :
+  ListController(editExpressionController, this),
   m_additionalCalculationCells{}
 {
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
@@ -82,6 +83,10 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
   KDCoordinate result = calculation->memoizedHeight(expanded);
   if (result < 0) {
     result = ScrollableThreeExpressionsCell::Height(calculation.pointer());
+    if (result < 0) {
+      // Raise, because Height modified the calculation and failed.
+      Poincare::ExceptionCheckpoint::Raise();
+    }
     calculation->setMemoizedHeight(expanded, result);
   }
   return result + Metric::CellSeparatorThickness;

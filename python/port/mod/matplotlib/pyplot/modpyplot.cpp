@@ -42,12 +42,24 @@ static size_t extractArgumentsAndCheckEqualSize(mp_obj_t x, mp_obj_t y, mp_obj_t
  * - of the required size
 */
 
-size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength, mp_obj_t ** items) {
+static size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength, mp_obj_t ** items) {
   size_t itemLength = extractArgument(arg, items);
   if (itemLength > 1 && requiredlength > 1 && itemLength != requiredlength) {
     mp_raise_ValueError("shape mismatch");
   }
   return itemLength;
+}
+
+// Get color from keyword arguments if possible
+
+bool colorFromKeywordArgument(mp_map_elem_t * elemColor, KDColor * color) {
+  if (elemColor != nullptr) {
+    *color = MicroPython::Color::Parse(elemColor->value);
+    return true;
+  } else {
+    *color = Palette::nextDataColor(&paletteIndex);
+    return false;
+  }
 }
 
 // Internal functions
@@ -79,16 +91,34 @@ void modpyplot_flush_used_heap() {
   }
 }
 
-/* arrow(x,y,dx,dy)
+/* arrow(x,y,dx,dy, KW : head_width, color)
  * x, y, dx, dy scalars
  * */
 
-mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
-  assert(n_args == 4);
+mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
+  sPlotStore->setShow(true);
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
-  sPlotStore->addSegment(args[0], args[1], mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[0]), args[2]),  mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(args[1]), args[3]), color, true);
+  if (n_args > 4) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"arrow() takes 4 positional arguments but %d were given",n_args));
+  }
+
+  mp_map_elem_t * elem;
+  // Setting arrow width
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_head_width), MP_MAP_LOOKUP);
+  /* Default head_width is 0.0f because we want a default width in pixel
+   * coordinates which is handled by CurveView::drawArrow. */
+  mp_obj_t arrowWidth = (elem == nullptr) ? mp_obj_new_float(0.0f) : elem->value;
+
+  // Setting arrow color
+  KDColor color;
+  // color keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  colorFromKeywordArgument(elem, &color);
+
+  // Adding the object to the plot
+  assert(n_args >= 4);
+  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0]) + mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1]) + mp_obj_get_float(args[3])), color, arrowWidth);
   return mp_const_none;
 }
 
@@ -100,7 +130,7 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   if (n_args == 1) {
     mp_obj_t arg = args[0];
     if (mp_obj_is_str(arg)) {
@@ -143,22 +173,25 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
   return mp_obj_new_tuple(4, coords);
 }
 
-/* bar(x, height, width, bottom)
+/* bar(x, height, width, bottom, KW :color)
  * 'x', 'height', 'width' and 'bottom' can either be a scalar or an array/tuple of
  * scalar.
  * 'width' default value is 0.8
  * 'bottom' default value is None
  * */
 
-// TODO: accept keyword args?
-
-mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
-
+if (n_args > 4) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"bar() takes from 2 to 4 positional arguments but %d were given",n_args));
+  }
+  sPlotStore->setShow(true);
   mp_obj_t * xItems;
   mp_obj_t * hItems;
   mp_obj_t * wItems;
   mp_obj_t * bItems;
+
+  assert(n_args >= 2);
 
   // x arg
   size_t xLength = extractArgument(args[0], &xItems);
@@ -184,7 +217,13 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
     bItems[0] = mp_obj_new_float(0.0f);
   }
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  // Setting bar color
+  // color keyword
+  KDColor color;
+  // color keyword
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  colorFromKeywordArgument(elem, &color);
+
   for (size_t i=0; i<xLength; i++) {
     mp_obj_t iH = hItems[hLength > 1 ? i : 0];
     mp_obj_t iW = wItems[wLength > 1 ? i : 0];
@@ -196,7 +235,7 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
     mp_obj_t rectLeft = mp_obj_new_float(iXf - iWf/2.0f);
     mp_obj_t rectRight = mp_obj_new_float(iXf + iWf/2.0f);
     mp_obj_t rectBottom = iB;
-    mp_obj_t rectTop = mp_obj_float_binary_op(MP_BINARY_OP_INPLACE_ADD, mp_obj_get_float(iH), iB);
+    mp_obj_t rectTop = mp_obj_new_float(mp_obj_get_float(iH) + mp_obj_get_float(iB));
     if (mp_obj_get_float(iH) < 0.0) {
       mp_obj_t temp = rectTop;
       rectTop = rectBottom;
@@ -209,28 +248,33 @@ mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_grid(size_t n_args, const mp_obj_t *args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   if (n_args == 0) {
     // Toggle the grid visibility
     sPlotStore->setGridRequested(!sPlotStore->gridRequested());
   } else {
+    assert(n_args >= 1);
     sPlotStore->setGridRequested(mp_obj_is_true(args[0]));
   }
   return mp_const_none;
 }
 
-/* hist(x, bins)
+/* hist(x, bins KW : color)
  * 'x' array
  * 'bins': (default value 10)
  *    - int (number of bins)
  *    - sequence of bins
  * */
 
-mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args ) {
+  if (n_args > 2) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"hist() takes from 1 to 2 positional arguments but %d were given",n_args));
+  }
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   // Sort data to easily get the minimal and maximal value and count bin sizes
   mp_obj_t * xItems;
+  assert(n_args >= 1);
   size_t xLength = extractArgument(args[0], &xItems);
   if (xLength == 0) {
     return mp_const_none;
@@ -298,25 +342,44 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args) {
     binIndex++;
   }
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  // Setting hist color
+  // color keyword
+  KDColor color;
+  // color keyword
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  colorFromKeywordArgument(elem, &color);
+
   for (size_t i=0; i<nBins; i++) {
     sPlotStore->addRect(edgeItems[i], edgeItems[i+1], binItems[i], mp_obj_new_float(0.0), color);
   }
   return mp_const_none;
 }
 
-/* scatter(x, y)
+/* scatter(x, y, KW : color)
  * - x, y: list
  * - x, y: scalar
  * */
 
-mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
+mp_obj_t modpyplot_scatter(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
-
+  if (n_args > 2) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"scatter() takes 2 positional arguments but %d were given",n_args));
+  }
+  sPlotStore->setShow(true);
   mp_obj_t * xItems, * yItems;
-  size_t length = extractArgumentsAndCheckEqualSize(x, y, &xItems, &yItems);
+  assert(n_args >= 2);
+  size_t length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  // Setting scatter color
+  // color keyword
+  KDColor color;
+  // c keyword
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_c), MP_MAP_LOOKUP);
+  colorFromKeywordArgument(elem, &color);
+  // color keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  colorFromKeywordArgument(elem, &color);
+
   for (size_t i=0; i<length; i++) {
     sPlotStore->addDot(xItems[i], yItems[i], color);
   }
@@ -324,13 +387,16 @@ mp_obj_t modpyplot_scatter(mp_obj_t x, mp_obj_t y) {
   return mp_const_none;
 }
 
-/* plot(x, y) plots the curve (x, y)
+/* plot(x, y) plots the curve (x, y, KW : color)
  * plot(y) plots the curve x as index array ([0,1,2...],y)
  * */
 
-mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args,mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
+  if (n_args > 3) {
+    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"plot() takes 3 positional arguments but %d were given",n_args));
+  }
   mp_obj_t * xItems, * yItems;
   size_t length;
   if (n_args == 1) {
@@ -342,13 +408,26 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
       xItems[i] = mp_obj_new_float((float)i);
     }
   } else {
-    assert(n_args == 2);
+    assert(n_args >= 2);
     length = extractArgumentsAndCheckEqualSize(args[0], args[1], &xItems, &yItems);
   }
 
-  KDColor color = Palette::nextDataColor(&paletteIndex);
+  // Setting plot color
+  KDColor color;
+  bool isUserSet = false;
+  // c keyword
+  mp_map_elem_t * elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_c), MP_MAP_LOOKUP);
+  isUserSet = colorFromKeywordArgument(elem, &color);
+  // color keyword
+  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  isUserSet = isUserSet | colorFromKeywordArgument(elem, &color);
+  // Eventual third positional argument
+  if (!isUserSet && n_args >= 3) {
+    color = MicroPython::Color::Parse(args[2]);
+  }
+
   for (int i=0; i<(int)length-1; i++) {
-    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color, false);
+    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);
   }
 
   return mp_const_none;
@@ -356,7 +435,7 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s) {
   assert(sPlotStore != nullptr);
-
+  sPlotStore->setShow(true);
   // Input parameter validation
   mp_obj_get_float(x);
   mp_obj_get_float(y);
@@ -368,10 +447,11 @@ mp_obj_t modpyplot_text(mp_obj_t x, mp_obj_t y, mp_obj_t s) {
 }
 
 mp_obj_t modpyplot_show() {
-  if (sPlotStore->isEmpty()) {
+  if (!sPlotStore->show()) {
     return mp_const_none;
   }
   MicroPython::ExecutionEnvironment * env = MicroPython::ExecutionEnvironment::currentExecutionEnvironment();
   env->displayViewController(sPlotController);
+  sPlotStore->setShow(false);
   return mp_const_none;
 }

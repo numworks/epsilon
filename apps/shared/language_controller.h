@@ -8,7 +8,7 @@ namespace Shared {
 
 class LanguageController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  LanguageController(Responder * parentResponder, KDCoordinate topMargin);
+  LanguageController(Responder * parentResponder, KDCoordinate verticalMargin);
   void resetSelection();
 
   View * view() override;
@@ -23,8 +23,11 @@ public:
   int reusableCellCount() const override;
 
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-private:
+
+protected:
   SelectableTableView m_selectableTableView;
+
+private:
   MessageTableCell m_cells[I18n::NumberOfLanguages];
 };
 

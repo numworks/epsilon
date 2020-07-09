@@ -129,10 +129,6 @@ void StackViewController::pop() {
   vc->viewDidDisappear();
 }
 
-int StackViewController::depth() {
-  return m_numberOfChildren;
-}
-
 void StackViewController::pushModel(Frame frame) {
   m_childrenFrame[m_numberOfChildren++] = frame;
 }
@@ -158,10 +154,6 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
-}
-
-View * StackViewController::view() {
-  return &m_view;
 }
 
 void StackViewController::initView() {

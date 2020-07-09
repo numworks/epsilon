@@ -22,7 +22,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_selectableTableView(this),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
-  m_languageController(this, 13),
+  m_languageController(this, Metric::CommonTopMargin),
   m_examModeController(this),
   m_aboutController(this)
 {
@@ -44,8 +44,8 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  if (model()->children(selectedRow())->numberOfChildren() == 0) {
-    if (model()->children(selectedRow())->label() == promptMessage()) {
+  if (model()->childAtIndex(selectedRow())->numberOfChildren() == 0) {
+    if (model()->childAtIndex(selectedRow())->label() == promptMessage()) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -53,7 +53,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (model()->children(selectedRow())->label() == I18n::Message::Brightness) {
+    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Brightness) {
       if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
         int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
         int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
@@ -63,7 +63,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (model()->children(selectedRow())->label() == I18n::Message::Language) {
+    if (model()->childAtIndex(selectedRow())->label() == I18n::Message::Language) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
         stackController()->push(&m_languageController);
         return true;
@@ -85,7 +85,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     } else {
       subController = &m_preferencesController;
     }
-    subController->setMessageTreeModel(model()->children(selectedRow()));
+    subController->setMessageTreeModel(model()->childAtIndex(selectedRow()));
     StackViewController * stack = stackController();
     stack->push(subController);
     return true;
@@ -153,7 +153,7 @@ int MainController::typeAtLocation(int i, int j) {
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
-  I18n::Message title = model()->children(index)->label();
+  I18n::Message title = model()->childAtIndex(index)->label();
   if (index == k_indexOfBrightnessCell) {
     MessageTableCellWithGaugeWithSeparator * myGaugeCell = (MessageTableCellWithGaugeWithSeparator *)cell;
     myGaugeCell->setMessage(title);
@@ -193,7 +193,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
       break;
   }
-  I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
+  I18n::Message message = childIndex >= 0 ? model()->childAtIndex(index)->childAtIndex(childIndex)->label() : I18n::Message::Default;
   myTextCell->setSubtitle(message);
 }
 

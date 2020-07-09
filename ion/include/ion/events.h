@@ -193,7 +193,7 @@ constexpr Event AlphaDown  = Event::AlphaKey(Keyboard::Key::Down);
 constexpr Event Colon = Event::AlphaKey(Keyboard::Key::XNT);
 constexpr Event SemiColon = Event::AlphaKey(Keyboard::Key::Var);
 constexpr Event DoubleQuotes = Event::AlphaKey(Keyboard::Key::Toolbox);
-constexpr Event Percent = Event::AlphaKey(Keyboard::Key::Back);
+constexpr Event Percent = Event::AlphaKey(Keyboard::Key::Backspace);
 
 constexpr Event LowerA = Event::AlphaKey(Keyboard::Key::Exp);
 constexpr Event LowerB = Event::AlphaKey(Keyboard::Key::Ln);

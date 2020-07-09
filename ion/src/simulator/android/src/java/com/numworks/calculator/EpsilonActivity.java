@@ -74,7 +74,11 @@ public class EpsilonActivity extends SDLActivity {
      * setWindowStyle(false) was already called in SDLActivity::onCreate. Find
      * out why and make a proper fix? */
     super.onCreate(savedInstanceState);
-    setWindowStyle(true);
+    if (!mBrokenLibraries) {
+      /* If mBrokenLibraries, SDL is not initialized by onCreate in
+       * SDLActivity.java. */
+      setWindowStyle(true);
+    }
   }
 
 }

@@ -229,7 +229,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
    * function. */
   if (std::isnan(mantissa) || std::isinf(mantissa)) {
     mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(numberOfSignificantDigits -1 - exponentInBase10)));
-    mantissa = std::copysign(mantissa, f);
+    mantissa = std::copysign(mantissa, static_cast<double>(f));
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance)

@@ -2,6 +2,7 @@
 #include "function_app.h"
 #include <assert.h>
 #include <cmath>
+#include <ion/display.h>
 
 namespace Shared {
 
@@ -15,6 +16,10 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(int parameterIndex
   assert(parameterIndex == 0);
   FunctionApp * myApp = FunctionApp::app();
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  // If possible, round f so that we go to the evaluation of the displayed f
+  double pixelWidth = (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
+  f = FunctionBannerDelegate::getValueDisplayedOnBanner(f, myApp->localContext(), pixelWidth, false);
+
   Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(f, myApp->localContext());
   m_cursor->moveTo(f, xy.x1(), xy.x2());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());

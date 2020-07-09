@@ -1,3 +1,4 @@
+#include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
 #include <cmath>
 #include <float.h>
@@ -219,6 +220,10 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
+  /* If possible, round floatBody so that we go to the evaluation of the
+   * displayed floatBody */
+  floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), curveView()->pixelWidth(), false);
+
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
   m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());

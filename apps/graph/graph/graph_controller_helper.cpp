@@ -27,8 +27,11 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
   double dir = (direction > 0 ? 1.0 : -1.0);
   double step = function->plotType() == ContinuousFunction::PlotType::Cartesian ? range->xGridUnit()/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
-  step *= scrollSpeed;
-  t += dir * step;
+  t += dir * step * scrollSpeed;
+
+  // If possible, round t so that f(x) matches f evaluated at displayed x
+  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), 0.05 * step, true);
+
   t = std::max(tMin, std::min(tMax, t));
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext());
   cursor->moveTo(t, xy.x1(), xy.x2());

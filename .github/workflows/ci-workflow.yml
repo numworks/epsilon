@@ -2,24 +2,24 @@ name: Continuous integration
 on: [pull_request, push]
 
 jobs:
-  nintendo_3ds:
-    runs-on: ubuntu-latest
-    steps:
-      - run: wget https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman.amd64.deb -O /tmp/devkitpro-pacman.deb
-      - run: yes | sudo dpkg -i /tmp/devkitpro-pacman.deb
-      - run: yes | sudo dkp-pacman -Syu --needed devkitARM 3dstools libctru
-      - run: echo ::set-env name=DEVKITPRO::/opt/devkitpro
-      - run: echo ::set-env name=DEVKITARM::/opt/devkitpro/devkitARM
-      - run: echo ::set-env name=PATH::$DEVKITPRO/tools/bin:$DEVKITARM/bin:$PATH
+  # nintendo_3ds:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: wget https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman.amd64.deb -O /tmp/devkitpro-pacman.deb
+  #     - run: yes | sudo dpkg -i /tmp/devkitpro-pacman.deb
+  #     - run: yes | sudo dkp-pacman -Syu --needed devkitARM 3dstools libctru
+  #     - run: echo ::set-env name=DEVKITPRO::/opt/devkitpro
+  #     - run: echo ::set-env name=DEVKITARM::/opt/devkitpro/devkitARM
+  #     - run: echo ::set-env name=PATH::$DEVKITPRO/tools/bin:$DEVKITARM/bin:$PATH
       
-      - uses: actions/checkout@v1
-        with:
-          submodules: true
-      - run: make -j2 PLATFORM=simulator TARGET=3ds
-      - uses: actions/upload-artifact@master
-        with:
-          name: epsilon-3ds.3dsx
-          path: output/release/simulator/3ds/epsilon.3dsx
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         submodules: true
+  #     - run: make -j2 PLATFORM=simulator TARGET=3ds
+  #     - uses: actions/upload-artifact@master
+  #       with:
+  #         name: epsilon-3ds.3dsx
+  #         path: output/release/simulator/3ds/epsilon.3dsx
   android:
     runs-on: ubuntu-latest
     steps:

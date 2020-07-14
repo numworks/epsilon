@@ -94,7 +94,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
           return true;
         }
       }
-    }
+    } else {
 #endif
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
     if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
@@ -104,6 +104,9 @@ bool Controller::handleEvent(Ion::Events::Event event) {
       assert(switched);
       (void) switched; // Silence compilation warning about unused variable.
     }
+#ifdef HOME_DISPLAY_EXTERNALS
+    }
+#endif
     return true;
   }
 
@@ -229,7 +232,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
   int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
-  if (appIndex >= AppsContainer::sharedAppsContainer()->numberOfApps()) {
+  if (appIndex >= this->numberOfIcons()+1) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }
 }
@@ -244,7 +247,7 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
    * background complete redrawing but the code is a bit
    * clumsy. */
   if (t->selectedRow() == numberOfRows()-1) {
-    m_view.reloadBottomRow(this, AppsContainer::sharedAppsContainer()->numberOfApps()-1, k_numberOfColumns);
+    m_view.reloadBottomRow(this, this->numberOfIcons(), k_numberOfColumns);
   }
 }
 

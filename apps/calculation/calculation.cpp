@@ -112,7 +112,7 @@ Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
     return PoincareHelpers::CreateLayout(exactOutput());
   } else {
     *couldNotCreateExactLayout = true;
-    return Layout(); 
+    return Layout();
   }
 }
 

@@ -258,13 +258,13 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     Expression unit;
     PoincareHelpers::Reduce(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User,ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
     o = o.removeUnit(&unit);
-    if (Unit::IsIS(unit)) {
-      if (Unit::IsISSpeed(unit) || Unit::IsISVolume(unit) || Unit::IsISEnergy(unit)) {
+    if (Unit::IsSI(unit)) {
+      if (Unit::IsSISpeed(unit) || Unit::IsSIVolume(unit) || Unit::IsSIEnergy(unit)) {
         /* All these units will provide misc. classic representatives in
          * addition to the SI unit in additional information. */
         return AdditionalInformationType::Unit;
       }
-      if (Unit::IsISTime(unit)) {
+      if (Unit::IsSITime(unit)) {
         /* If the number of seconds is above 60s, we can write it in the form
          * of an addition: 23_min + 12_s for instance. */
         double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());

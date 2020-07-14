@@ -420,22 +420,22 @@ QUIZ_CASE(poincare_expression_unit_helper) {
 
   // 2. Speed
   Expression meterPerSecond = extract_unit("_m×_s^-1");
-  quiz_assert(Unit::IsISSpeed(meterPerSecond));
+  quiz_assert(Unit::IsSISpeed(meterPerSecond));
 
   // 3. Volume
   Expression meter3 = extract_unit("_m^3");
-  quiz_assert(Unit::IsISVolume(meter3));
+  quiz_assert(Unit::IsSIVolume(meter3));
 
   // 4. Energy
   Expression kilogramMeter2PerSecond2 = extract_unit("_kg×_m^2×_s^-2");
-  quiz_assert(Unit::IsISEnergy(kilogramMeter2PerSecond2));
+  quiz_assert(Unit::IsSIEnergy(kilogramMeter2PerSecond2));
   Expression kilogramMeter3PerSecond2 = extract_unit("_kg×_m^3×_s^-2");
-  quiz_assert(!Unit::IsISEnergy(kilogramMeter3PerSecond2));
+  quiz_assert(!Unit::IsSIEnergy(kilogramMeter3PerSecond2));
 
   // 5. International System
-  quiz_assert(Unit::IsIS(kilogramMeter2PerSecond2));
-  quiz_assert(Unit::IsIS(meter3));
-  quiz_assert(Unit::IsIS(meterPerSecond));
+  quiz_assert(Unit::IsSI(kilogramMeter2PerSecond2));
+  quiz_assert(Unit::IsSI(meter3));
+  quiz_assert(Unit::IsSI(meterPerSecond));
   Expression joule = extract_unit("_J");
-  quiz_assert(!Unit::IsIS(joule));
+  quiz_assert(!Unit::IsSI(joule));
 }

@@ -39,18 +39,35 @@ jobs:
       - uses: actions/checkout@v1
         with:
           submodules: true
-      - run: make -j2 MODEL=n0100 epsilon.dfu
-      - run: make -j2 MODEL=n0100 epsilon.onboarding.dfu
-      - run: make -j2 MODEL=n0100 epsilon.onboarding.update.dfu
-      - run: make -j2 MODEL=n0100 epsilon.onboarding.beta.dfu
-      - run: make -j2 MODEL=n0100 flasher.light.dfu
-      - run: make -j2 MODEL=n0100 flasher.verbose.dfu
-      - run: make -j2 MODEL=n0100 binpack
-      - run: cp output/release/device/n0100/binpack-n0100-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0100/binpack-n0100.tgz
+      - run: mkdir final-output
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=en output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.en.bin
+      - run: make cleanall
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=fr output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.fr.bin
+      - run: make cleanall
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=nl output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.nl.bin
+      - run: make cleanall
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=pt output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.pt.bin
+      - run: make cleanall
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=it output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.it.bin
+      - run: make cleanall
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=de output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.de.bin
+      - run: make cleanall
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=es output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.es.bin
+      - run: make cleanall
+      - run: make -j2 MODEL=n0100 output/release/device/n0100/flasher.light.bin
+      - run: mv output/release/device/n0100/flasher.light.bin final-output/flasher.light.bin
+      - run: tar cvfz binpack-n0100.tgz final-output/*
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-binpack-n0100.tgz
-          path: output/release/device/n0100/binpack-n0100.tgz
+          path: binpack-n0100.tgz
   n0110:
     runs-on: ubuntu-latest
     steps:

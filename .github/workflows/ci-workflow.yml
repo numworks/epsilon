@@ -61,6 +61,9 @@ jobs:
       - run: make -j2 MODEL=n0100 EPSILON_I18N=es output/release/device/n0100/epsilon.onboarding.two_binaries
       - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.es.bin
       - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
+      - run: make -j2 MODEL=n0100 EPSILON_I18N=hu output/release/device/n0100/epsilon.onboarding.two_binaries
+      - run: mv output/release/device/n0100/epsilon.onboarding.internal.bin final-output/epsilon.onboarding.internal.hu.bin
+      - run: rm output/release/device/n0100/apps/i18n.o output/release/device/n0100/apps/i18n.cpp
       - run: make -j2 MODEL=n0100 output/release/device/n0100/flasher.light.bin
       - run: mv output/release/device/n0100/flasher.light.bin final-output/flasher.light.bin
       - run: tar cvfz binpack-n0100.tgz final-output/*

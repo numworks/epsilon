@@ -317,10 +317,14 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   /* If a move event was not caught before, we handle it here to avoid bubbling
    * the event up. */
   if (isEditing()
-      && (event == Ion::Events::Up
+       && (event == Ion::Events::Up
+        || event == Ion::Events::AlphaUp
         || event == Ion::Events::Down
+        || event == Ion::Events::AlphaDown
         || event == Ion::Events::Left
-        || event == Ion::Events::Right))
+        || event == Ion::Events::AlphaLeft
+        || event == Ion::Events::Right
+        || event == Ion::Events::AlphaRight))
   {
     return true;
   }
@@ -459,16 +463,24 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
     return false;
   }
   const char * draftBuffer = m_contentView.editedText();
-  if (event == Ion::Events::Left || event == Ion::Events::Right) {
+  if (event == Ion::Events::Left || event == Ion::Events::AlphaLeft || event == Ion::Events::Right || event == Ion::Events::AlphaRight) {
+    bool noAlphaLock = Ion::Events::shiftAlphaStatus() != Ion::Events::ShiftAlphaStatus::AlphaLock && Ion::Events::shiftAlphaStatus() != Ion::Events::ShiftAlphaStatus::ShiftAlphaLock;
+
     if (!m_contentView.selectionIsEmpty()) {
       resetSelection();
       return true;
     }
-    if (event == Ion::Events::Left && cursorLocation() > draftBuffer) {
+    if ((event == Ion::Events::Left || (event == Ion::Events::AlphaLeft && !noAlphaLock)) && cursorLocation() > draftBuffer) {
       return TextInput::moveCursorLeft();
     }
-    if (event == Ion::Events::Right && cursorLocation() < draftBuffer + draftTextLength()) {
+    if (event == Ion::Events::AlphaLeft && noAlphaLock && cursorLocation() > draftBuffer) {
+      return TextInput::moveCursorBegin();
+    }
+    if ((event == Ion::Events::Right || (event == Ion::Events::AlphaRight && !noAlphaLock)) && cursorLocation() < draftBuffer + draftTextLength()) {
       return TextInput::moveCursorRight();
+    }
+    if (event == Ion::Events::AlphaRight && noAlphaLock && cursorLocation() < draftBuffer + draftTextLength()) {
+      return TextInput::moveCursorEnd();
     }
   }
   return false;

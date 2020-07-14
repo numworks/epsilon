@@ -187,6 +187,29 @@ bool TextInput::removeEndOfLine() {
   return false;
 }
 
+bool TextInput::moveCursorBegin() {
+  if (cursorLocation() <= text()) {
+    assert(cursorLocation() == text());
+    return false;
+  }
+  
+  return setCursorLocation(text());
+}
+
+bool TextInput::moveCursorEnd() {
+  if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
+    return false;
+  }
+  
+  UTF8Decoder decoder(text(), cursorLocation());
+  
+  while(decoder.nextCodePoint() != UCodePointNull) {
+    decoder.setPosition(decoder.nextGlyphPosition());
+  }
+  
+  return setCursorLocation(decoder.stringPosition());
+}
+
 bool TextInput::moveCursorLeft() {
   if (cursorLocation() <= text()) {
     assert(cursorLocation() == text());

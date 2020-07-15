@@ -406,7 +406,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   // Step 1: Handle the units
   {
     Expression indexUnit;
-    index.removeUnit(&indexUnit);
+    index = index.removeUnit(&indexUnit);
     if (!indexUnit.isUninitialized()) {
       // There must be no unit in the exponent
       return replaceWithUndefinedInPlace();

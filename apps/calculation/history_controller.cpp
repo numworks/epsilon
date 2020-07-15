@@ -129,7 +129,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     m_selectableTableView.selectCellAtLocation(0, focusRow > 0 ? focusRow - 1 : 0);
-    setSelectedSubviewType(subviewType, true, 0, selectedRow());
+    /* The parameters 'sameCell' and 'previousSelectedY' are chosen to enforce
+     * toggling of the output when necessary. */
+    setSelectedSubviewType(subviewType, false, 0, (subviewType == SubviewType::Input) ? selectedRow() : -1);
     return true;
   }
   if (event == Ion::Events::Clear) {

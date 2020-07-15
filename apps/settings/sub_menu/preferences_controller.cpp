@@ -198,18 +198,6 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return NthRootLayout::Builder(CodePointLayout::Builder('x'), CodePointLayout::Builder('y'));
     }
 
-    // Result display
-    case I18n::Message::DefaultResult:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::CompactResult:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-
     // Font size
     case I18n::Message::LargeFont:
     case I18n::Message::SmallFont:

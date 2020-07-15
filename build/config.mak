@@ -4,7 +4,7 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 HOME_DISPLAY_EXTERNALS ?= 1
-EPSILON_VERSION ?= 14.4.0
+EPSILON_VERSION ?= 14.4.1
 OMEGA_VERSION ?= 1.20.0
 # USERNAME ?= N/A
 EPSILON_APPS ?= calculation rpn graph code statistics probability solver atom sequence regression settings external

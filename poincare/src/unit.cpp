@@ -424,7 +424,7 @@ bool Unit::isKilogram() const {
   return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &KiloPrefix;
 }
 
-bool Unit::isIS() const {
+bool Unit::isSI() const {
   UnitNode * unitNode = node();
   const Dimension * dim = unitNode->dimension();
   const Representative * rep = unitNode->representative();
@@ -433,12 +433,12 @@ bool Unit::isIS() const {
          unitNode->prefix() == dim->stdRepresentativePrefix();
 }
 
-bool Unit::IsIS(Expression & e) {
+bool Unit::IsSI(Expression & e) {
   if (e.type() == ExpressionNode::Type::Multiplication) {
     for (int i = 0; i < e.numberOfChildren(); i++) {
       Expression child = e.childAtIndex(i);
       assert(child.type() == ExpressionNode::Type::Power || child.type() == ExpressionNode::Type::Unit);
-      if (!IsIS(child)) {
+      if (!IsSI(child)) {
         return false;
       }
     }
@@ -448,13 +448,13 @@ bool Unit::IsIS(Expression & e) {
     assert(e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<Rational>().isInteger());
     Expression child = e.childAtIndex(0);
     assert(child.type() == ExpressionNode::Type::Unit);
-    return IsIS(child);
+    return IsSI(child);
   }
   assert(e.type() == ExpressionNode::Type::Unit);
-  return static_cast<Unit &>(e).isIS();
+  return static_cast<Unit &>(e).isSI();
 }
 
-bool Unit::IsISSpeed(Expression & e) {
+bool Unit::IsSISpeed(Expression & e) {
   // Form m*s^-1
   return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 2 &&
     e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
@@ -463,14 +463,14 @@ bool Unit::IsISSpeed(Expression & e) {
     e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isSecond();
 }
 
-bool Unit::IsISVolume(Expression & e) {
+bool Unit::IsSIVolume(Expression & e) {
   // Form m^3
   return e.type() == ExpressionNode::Type::Power &&
     e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
     e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<const Rational>().isThree();
 }
 
-bool Unit::IsISEnergy(Expression & e) {
+bool Unit::IsSIEnergy(Expression & e) {
   // Form _kg*_m^2*_s^-2
   return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 3 &&
     e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isKilogram() &&
@@ -482,7 +482,7 @@ bool Unit::IsISEnergy(Expression & e) {
     e.childAtIndex(2).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(2).childAtIndex(1).convert<const Rational>().isMinusTwo();
 }
 
-bool Unit::IsISTime(Expression & e) {
+bool Unit::IsSITime(Expression & e) {
   return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
 }
 

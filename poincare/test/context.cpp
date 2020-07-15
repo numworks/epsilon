@@ -70,8 +70,8 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
-  assert_simplify("a→b");
-  assert_simplify("b→a");
+  assert_reduce("a→b");
+  assert_reduce("b→a");
   assert_expression_approximates_to<double>("a", Undefined::Name());
   assert_expression_approximates_to<double>("b", Undefined::Name());
 
@@ -81,9 +81,9 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
-  assert_simplify("a→b");
-  assert_simplify("b→c");
-  assert_simplify("c→a");
+  assert_reduce("a→b");
+  assert_reduce("b→c");
+  assert_reduce("c→a");
   assert_expression_approximates_to<double>("a", Undefined::Name());
   assert_expression_approximates_to<double>("b", Undefined::Name());
   assert_expression_approximates_to<double>("c", Undefined::Name());
@@ -96,7 +96,7 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
 
 QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
   // h: x → h(x)
-  assert_simplify("h(x)→h(x)");
+  assert_reduce("h(x)→h(x)");
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
 
   // Clean the storage for other tests
@@ -104,9 +104,9 @@ QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
-  assert_simplify("1→f(x)");
-  assert_simplify("f(x)→g(x)");
-  assert_simplify("g(x)→f(x)");
+  assert_reduce("1→f(x)");
+  assert_reduce("f(x)→g(x)");
+  assert_reduce("g(x)→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("g(1)", Undefined::Name());
 
@@ -116,10 +116,10 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
-  assert_simplify("1→f(x)");
-  assert_simplify("f(x)→g(x)");
-  assert_simplify("g(x)→h(x)");
-  assert_simplify("h(x)→f(x)");
+  assert_reduce("1→f(x)");
+  assert_reduce("f(x)→g(x)");
+  assert_reduce("g(x)→h(x)");
+  assert_reduce("h(x)→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("g(1)", Undefined::Name());
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
@@ -131,9 +131,9 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
 }
 
 QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {
-  assert_simplify("a→b");
-  assert_simplify("b→a");
-  assert_simplify("a→f(x)");
+  assert_reduce("a→b");
+  assert_reduce("b→a");
+  assert_reduce("a→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("a", Undefined::Name());
   assert_expression_approximates_to<double>("b", Undefined::Name());
@@ -146,21 +146,21 @@ QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {
 
 QUIZ_CASE(poincare_context_user_variable_composed_functions) {
   // f: x→x^2
-  assert_simplify("x^2→f(x)");
+  assert_reduce("x^2→f(x)");
   // g: x→f(x-2)
-  assert_simplify("f(x-2)→g(x)");
+  assert_reduce("f(x-2)→g(x)");
   assert_expression_approximates_to<double>("f(2)", "4");
   assert_expression_approximates_to<double>("g(3)", "1");
   assert_expression_approximates_to<double>("g(5)", "9");
 
   // g: x→f(x-2)+f(x+1)
-  assert_simplify("f(x-2)+f(x+1)→g(x)");
+  assert_reduce("f(x-2)+f(x+1)→g(x)");
   // Add a sum to bypass simplification
   assert_expression_approximates_to<double>("g(3)+sum(1, n, 2, 4)", "20");
   assert_expression_approximates_to<double>("g(5)", "45");
 
   // g: x→x+1
-  assert_simplify("x+1→g(x)");
+  assert_reduce("x+1→g(x)");
   assert_expression_approximates_to<double>("f(g(4))", "25");
   // Add a sum to bypass simplification
   assert_expression_approximates_to<double>("f(g(4))+sum(1, n, 2, 4)", "28");
@@ -172,7 +172,7 @@ QUIZ_CASE(poincare_context_user_variable_composed_functions) {
 
 QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_symbol) {
   // f : x→ x^2
-  assert_simplify("x^2→f(x)");
+  assert_reduce("x^2→f(x)");
   // Approximate f(?-2) with ? = 5
 
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
@@ -187,7 +187,7 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
   // f : x → √(-1)
-  assert_simplify("√(-1)×√(-1)→f(x)");
+  assert_reduce("√(-1)×√(-1)→f(x)");
   // Approximate f(?) with ? = 5
   // Cartesian
   assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0, -1.0);

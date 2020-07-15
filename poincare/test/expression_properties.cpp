@@ -48,7 +48,7 @@ QUIZ_CASE(poincare_properties_is_approximate) {
   assert_expression_has_property("3.4", &context, Expression::IsApproximate);
   assert_expression_has_property("2.3+1", &context, Expression::IsApproximate);
   assert_expression_has_not_property("a", &context, Expression::IsApproximate);
-  assert_simplify("42.3→a");
+  assert_reduce("42.3→a");
   assert_expression_has_property("a", &context, Expression::IsApproximate);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
@@ -93,7 +93,7 @@ QUIZ_CASE(poincare_properties_is_infinity) {
   assert_expression_has_property("3.4+inf", &context, Expression::IsInfinity);
   assert_expression_has_not_property("2.3+1", &context, Expression::IsInfinity);
   assert_expression_has_not_property("a", &context, Expression::IsInfinity);
-  assert_simplify("42.3+inf→a");
+  assert_reduce("42.3+inf→a");
   assert_expression_has_property("a", &context, Expression::IsInfinity);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
@@ -155,7 +155,7 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("sign(π)", Positive);
   assert_reduced_expression_sign("sign(-π)", Negative);
   assert_reduced_expression_sign("a", Unknown);
-  assert_simplify("42→a");
+  assert_reduce("42→a");
   assert_reduced_expression_sign("a", Positive);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
@@ -232,7 +232,7 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("π×x", 1);
   assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);
   // f: x→x^2+πx+1
-  assert_simplify("1+π×x+x^2→f(x)");
+  assert_reduce("1+π×x+x^2→f(x)");
   assert_reduced_expression_polynomial_degree("f(x)", 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
@@ -271,7 +271,7 @@ QUIZ_CASE(poincare_properties_characteristic_range) {
   // cos(cos(x)), degree
   assert_reduced_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol::Builder(UCodePointUnknown))), 360.0f);
   // f(x) with f : x --> cos(x), degree
-  assert_simplify("cos(x)→f(x)");
+  assert_reduce("cos(x)→f(x)");
   assert_reduced_expression_has_characteristic_range(Function::Builder("f",1,Symbol::Builder(UCodePointUnknown)), 360.0f);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
@@ -309,7 +309,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
   assert_expression_has_variables("a+b+c+d+e+f+g", variableBuffer6, -1);
   // f: x→1+πx+x^2+toto
-  assert_simplify("1+π×x+x^2+toto→f(x)");
+  assert_reduce("1+π×x+x^2+toto→f(x)");
   const char * variableBuffer7[] = {"tata","toto", ""};
   assert_expression_has_variables("f(tata)", variableBuffer7, 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -347,7 +347,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   assert_reduced_expression_has_polynomial_coefficient("x^2-π×x+1", "x", coefficient3);
 
   // f: x→x^2+Px+1
-  assert_simplify("1+π×x+x^2→f(x)");
+  assert_reduce("1+π×x+x^2→f(x)");
   const char * coefficient4[] = {"1", "π", "1", 0}; //x^2+π×x+1
   assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4);
   const char * coefficient5[] = {"0", "𝐢", 0}; //√(-1)x
@@ -356,7 +356,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient6, Real);
 
   // 3 -> x
-  assert_simplify("3→x");
+  assert_reduce("3→x");
   const char * coefficient7[] = {"4", 0};
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", coefficient7 );
   const char * coefficient8[] = {"2", "1", 0};

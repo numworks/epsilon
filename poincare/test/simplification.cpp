@@ -1304,6 +1304,22 @@ QUIZ_CASE(poincare_simplification_user_function) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
+QUIZ_CASE(poincare_simplification_user_function_with_convert) {
+  /* User defined function
+   * f: x → 0→0
+   * It cannot be created with a const char *, so we create it by hand. */
+  Expression e = Store::Builder(
+      UnitConvert::Builder(
+        Rational::Builder(0),
+        Rational::Builder(0)),
+      Function::Builder(
+        "f", 1,
+        Symbol::Builder('x')));
+  assert_expression_simplify(e);
+  assert_simplify("e^(f(0))", Radian, Polar);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+}
+
 QUIZ_CASE(poincare_simplification_mix) {
   // Root at denominator
   assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)");

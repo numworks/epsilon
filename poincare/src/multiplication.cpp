@@ -264,8 +264,15 @@ Expression Multiplication::removeUnit(Expression * unit) {
     if (!currentUnit.isUninitialized()) {
       unitMult.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
       resultChildrenCount++;
-      assert(childAtIndex(i).isRationalOne());
-      removeChildAtIndexInPlace(i--);
+      if (childAtIndex(i).isRationalOne()) {
+        removeChildAtIndexInPlace(i--);
+      } else {
+        /* If the child was a unit convert, it replaced itself with an undefined
+         * during the removeUnit. */
+        assert(childAtIndex(i).isUndefined());
+        *unit = Expression();
+        return replaceWithUndefinedInPlace();
+      }
     }
   }
   if (resultChildrenCount == 0) {

@@ -1317,6 +1317,17 @@ QUIZ_CASE(poincare_simplification_user_function_with_convert) {
         Symbol::Builder('x')));
   assert_expression_reduce(e);
   assert_parsed_expression_simplify_to("e^(f(0))", "undef");
+
+  e = Store::Builder(
+      UnitConvert::Builder(
+        Rational::Builder(0),
+        Unit::Second()),
+      Function::Builder(
+        "f", 1,
+        Symbol::Builder('x')));
+  assert_expression_reduce(e);
+  assert_parsed_expression_simplify_to("0f(0)", "undef");
+
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 

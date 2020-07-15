@@ -69,6 +69,7 @@ help:
 	@echo "  make PLATFORM=simulator TARGET=macos"
 	@echo "  make PLATFORM=simulator TARGET=web"
 	@echo "  make PLATFORM=simulator TARGET=windows"
+	@echo "  make PLATFORM=simulator TARGET=3ds"
 
 .PHONY: doc
 doc:

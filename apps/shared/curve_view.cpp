@@ -713,7 +713,7 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
     const float deltaX = pxf - puf;
     const float deltaY = pyf - pvf;
     if (isFirstDot // First dot has to be stamped
-       || (!isLeftDotValid && maxNumberOfRecursion == 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
+       || (!isLeftDotValid && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
        || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
       // the dots are already joined
       /* We need to be sure that the point is not an artifact caused by error
@@ -750,8 +750,27 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
     }
   }
   if (maxNumberOfRecursion > 0) {
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, maxNumberOfRecursion-1, xyDoubleEvaluation);
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, maxNumberOfRecursion-1, xyDoubleEvaluation);
+    float xmin = min(Axis::Horizontal);
+    float xmax = max(Axis::Horizontal);
+    float ymax = max(Axis::Vertical);
+    float ymin = min(Axis::Vertical);
+
+    int nextMaxNumberOfRecursion = maxNumberOfRecursion - 1;
+    // If both dots are out of rect bounds, and on a same side
+    if ((xmax < x && xmax < u) || (x < xmin && u < xmin) ||
+        (ymax < y && ymax < v) || (y < ymin && v < ymin)) {
+      /* Discard a recursion step to save computation time on dots that are
+       * likely not to be drawn. It can alter precision with some functions when
+       * zooming excessively (compared to plot range) on local minimums
+       * For instance, plotting parametric function [t,|t-π|] with t in [0,360],
+       * x in [-1,20] and y in [-1,3] will show inaccuracies that would
+       * otherwise have been visible at higher zoom only, with x in [2,4] and y
+       * in [-0.2,0.2] in this case. */
+      nextMaxNumberOfRecursion--;
+    }
+
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation);
+    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation);
   }
 }
 

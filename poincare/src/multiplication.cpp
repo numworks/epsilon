@@ -260,19 +260,18 @@ Expression Multiplication::removeUnit(Expression * unit) {
   int resultChildrenCount = 0;
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression currentUnit;
-    childAtIndex(i).removeUnit(&currentUnit);
+    Expression childI = childAtIndex(i).removeUnit(&currentUnit);
+    if (childI.isUndefined()) {
+      /* If the child was a unit convert, it replaced itself with an undefined
+       * during the removeUnit. */
+      *unit = Expression();
+      return replaceWithUndefinedInPlace();
+    }
     if (!currentUnit.isUninitialized()) {
       unitMult.addChildAtIndexInPlace(currentUnit, resultChildrenCount, resultChildrenCount);
       resultChildrenCount++;
-      if (childAtIndex(i).isRationalOne()) {
-        removeChildAtIndexInPlace(i--);
-      } else {
-        /* If the child was a unit convert, it replaced itself with an undefined
-         * during the removeUnit. */
-        assert(childAtIndex(i).isUndefined());
-        *unit = Expression();
-        return replaceWithUndefinedInPlace();
-      }
+      assert(childAtIndex(i).isRationalOne());
+      removeChildAtIndexInPlace(i--);
     }
   }
   if (resultChildrenCount == 0) {
@@ -371,7 +370,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     self = deepReduce(reductionContext); // removeUnit has to be called on reduced expression
     self = removeUnit(&units);
 
-    if (units.isUninitialized()) {
+    if (self.isUndefined() || units.isUninitialized()) {
       // TODO: handle error "Invalid unit"
       result = Undefined::Builder();
       goto replace_by_result;

@@ -59,8 +59,8 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext reducti
         reductionContext.target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
-    childAtIndex(1).clone().deepReduce(reductionContextWithUnits).removeUnit(&unit);
-    if (unit.isUninitialized()) {
+    Expression childWithoutUnit = childAtIndex(1).clone().deepReduce(reductionContextWithUnits).removeUnit(&unit);
+    if (childWithoutUnit.isUndefined() || unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
     }

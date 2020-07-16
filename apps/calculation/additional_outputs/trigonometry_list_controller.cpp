@@ -11,9 +11,9 @@ void TrigonometryListController::setExpression(Poincare::Expression e) {
 
   // Fill calculation store
   Poincare::Context * context = App::app()->localContext();
-  m_calculationStore.push("sin(θ)", context);
-  m_calculationStore.push("cos(θ)", context);
-  m_calculationStore.push("θ", context);
+  m_calculationStore.push("sin(θ)", context, CalculationHeight);
+  m_calculationStore.push("cos(θ)", context, CalculationHeight);
+  m_calculationStore.push("θ", context, CalculationHeight);
 
   // Set trigonometry illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(m_calculationStore.calculationAtIndex(0)->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal), context);

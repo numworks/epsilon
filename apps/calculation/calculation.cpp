@@ -120,12 +120,15 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-void Calculation::setMemoizedHeight(bool expanded, KDCoordinate height) {
-  if (expanded) {
-    m_expandedHeight = height;
-  } else {
-    m_height = height;
-  }
+KDCoordinate Calculation::height(bool expanded) {
+  KDCoordinate h = expanded ? m_expandedHeight : m_height;
+  assert(h >= 0);
+  return h;
+}
+
+void Calculation::setHeights(KDCoordinate height, KDCoordinate expandedHeight) {
+  m_height = height;
+  m_expandedHeight = expandedHeight;
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
@@ -184,9 +187,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
 }
 
 void Calculation::forceDisplayOutput(DisplayOutput d) {
+  // Heights haven't been computed yet
+  assert(m_height == -1 && m_expandedHeight == -1);
   m_displayOutput = d;
-  // Reset heights memoization as it might have changed when we modify the display output
-  resetHeightMemoization();
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
@@ -282,11 +285,6 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     return AdditionalInformationType::Complex;
   }
   return AdditionalInformationType::None;
-}
-
-void  Calculation::resetHeightMemoization() {
-  m_height = -1;
-  m_expandedHeight = -1;
 }
 
 }

@@ -50,7 +50,7 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
   return calculationAtIndex(i);
 }
 
-ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context * context) {
+ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context * context, CalculationHeight height) {
   /* Compute ans now, before the buffer is slided and before the calculation
    * might be deleted */
   Expression ans = ansExpression(context);
@@ -84,7 +84,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       /* If the input does not fit in the store (event if the current
        * calculation is the only calculation), just replace the calculation with
        * undef. */
-      return emptyStoreAndPushUndef(context);
+      return emptyStoreAndPushUndef(context, height);
     }
     nextSerializationLocation += strlen(nextSerializationLocation) + 1;
   }
@@ -115,7 +115,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
          * undef if it fits, else replace the whole calcualtion with undef. */
         Expression undef = Undefined::Builder();
         if (!pushSerializeExpression(undef, nextSerializationLocation, &newCalculationsLocation)) {
-          return emptyStoreAndPushUndef(context);
+          return emptyStoreAndPushUndef(context, height);
         }
       }
       nextSerializationLocation += strlen(nextSerializationLocation) + 1;
@@ -132,7 +132,15 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   // Clean the memoization
   resetMemoizedModelsAfterCalculationIndex(-1);
 
-  return ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(m_buffer));
+  ExpiringPointer<Calculation> calculation = ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(m_buffer));
+  /* Heights are computed now to make sure that the display output is decided
+   * accordingly to the remaining size in the Poincare pool. Once it is, it
+   * can't change anymore: the calculation heights are fixed which ensures that
+   * scrolling computation is right. */
+  calculation->setHeights(
+      height(calculation.pointer(), false),
+      height(calculation.pointer(), true));
+  return calculation;
 }
 
 void CalculationStore::deleteCalculationAtIndex(int i) {
@@ -251,12 +259,12 @@ const char * CalculationStore::lastCalculationPosition(const char * calculations
   return reinterpret_cast<const char *>(c);
 }
 
-Shared::ExpiringPointer<Calculation> CalculationStore::emptyStoreAndPushUndef(Context * context) {
+Shared::ExpiringPointer<Calculation> CalculationStore::emptyStoreAndPushUndef(Context * context, CalculationHeight height) {
   /* We end up here as a result of a failed calculation push. The store
    * attributes are not necessarily clean, so we need to reset them. */
   m_slidedBuffer = false;
   deleteAll();
-  return push(Undefined::Name(), context);
+  return push(Undefined::Name(), context, height);
 }
 
 void CalculationStore::resetMemoizedModelsAfterCalculationIndex(int index) {

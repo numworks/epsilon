@@ -80,16 +80,7 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
   }
   Shared::ExpiringPointer<Calculation> calculation = m_calculationStore.calculationAtIndex(calculationIndex);
   constexpr bool expanded = true;
-  KDCoordinate result = calculation->memoizedHeight(expanded);
-  if (result < 0) {
-    result = ScrollableThreeExpressionsCell::Height(calculation.pointer());
-    if (result < 0) {
-      // Raise, because Height modified the calculation and failed.
-      Poincare::ExceptionCheckpoint::Raise();
-    }
-    calculation->setMemoizedHeight(expanded, result);
-  }
-  return result + Metric::CellSeparatorThickness;
+  return calculation->height(expanded) + Metric::CellSeparatorThickness;
 }
 
 int IllustratedListController::typeAtLocation(int i, int j) {

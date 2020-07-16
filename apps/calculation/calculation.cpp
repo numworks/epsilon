@@ -38,12 +38,6 @@ Calculation * Calculation::next() const {
   return reinterpret_cast<Calculation *>(const_cast<char *>(result));
 }
 
-void Calculation::tidy() {
-  /* Reset height memoization (the complex format could have changed when
-   * re-entering Calculation app which would impact the heights). */
-  resetHeightMemoization();
-}
-
 const char * Calculation::approximateOutputText(NumberOfSignificantDigits numberOfSignificantDigits) const {
   const char * exactOutput = exactOutputText();
   const char * approximateOutputTextWithMaxNumberOfDigits = exactOutput + strlen(exactOutput) + 1;
@@ -219,6 +213,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Preferences * preferences = Preferences::sharedPreferences();
+    // TODO: complex format should not be needed here (as it is not used to create layouts)
     Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
     m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, complexFormat, preferences->angleUnit()) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;

@@ -89,7 +89,6 @@ int IllustratedListController::typeAtLocation(int i, int j) {
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == 0) {
-    // TODO ?
     return;
   }
   Poincare::Context * context = App::app()->localContext();
@@ -97,7 +96,6 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
   myCell->setCalculation(c);
   myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);
-  //myCell->setHighlighted(myCell->isHighlighted()); //TODO??
 }
 
 void IllustratedListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

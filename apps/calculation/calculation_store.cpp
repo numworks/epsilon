@@ -163,9 +163,6 @@ void CalculationStore::tidy() {
     return;
   }
   resetMemoizedModelsAfterCalculationIndex(-1);
-  for (Calculation * c : *this) {
-    c->tidy();
-  }
 }
 
 Expression CalculationStore::ansExpression(Context * context) {

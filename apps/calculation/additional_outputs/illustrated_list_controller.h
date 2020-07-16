@@ -10,8 +10,6 @@
 namespace Calculation {
 
 class IllustratedListController : public ListController, public SelectableTableViewDelegate {
-/* TODO There is factorizable code between this and
- * Calculation::HistoryController (at least rowHeight). */
 public:
   IllustratedListController(EditExpressionController * editExpressionController);
 
@@ -35,6 +33,7 @@ public:
 
   constexpr static KDCoordinate k_illustrationHeight = 120;
 protected:
+  static KDCoordinate CalculationHeight(Calculation * c, bool expanded) { return ScrollableThreeExpressionsCell::Height(c); }
   Poincare::Expression m_savedExpression;
   CalculationStore m_calculationStore;
 private:

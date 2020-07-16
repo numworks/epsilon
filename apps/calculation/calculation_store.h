@@ -28,7 +28,8 @@ class CalculationStore {
 public:
   CalculationStore();
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
-  Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context);
+  typedef KDCoordinate (*CalculationHeight)(Calculation * c, bool expanded);
+  Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context, CalculationHeight height);
   void deleteCalculationAtIndex(int i);
   void deleteAll();
   int numberOfCalculations() const { return m_numberOfCalculations; }
@@ -60,7 +61,7 @@ private:
   char * slideCalculationsToEndOfBuffer(); // returns the new position of the calculations
   size_t deleteLastCalculation(const char * calculationsStart = nullptr);
   const char * lastCalculationPosition(const char * calculationsStart) const;
-  Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context);
+  Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context, CalculationHeight height);
 
   char m_buffer[k_bufferSize];
   const char * m_bufferEnd;

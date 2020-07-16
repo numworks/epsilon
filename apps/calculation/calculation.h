@@ -61,8 +61,6 @@ public:
   bool operator==(const Calculation& c);
   Calculation * next() const;
 
-  void tidy();
-
   // Texts
   enum class NumberOfSignificantDigits {
     Maximal,

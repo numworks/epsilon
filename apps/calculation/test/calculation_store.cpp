@@ -14,6 +14,7 @@ void assert_store_is(CalculationStore * store, const char * * result) {
   }
 }
 
+KDCoordinate dummyHeight(::Calculation::Calculation * c, bool expanded) { return 0; }
 
 QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;
@@ -22,7 +23,7 @@ QUIZ_CASE(calculation_store) {
   const char * result[] = {"9", "8", "7", "6", "5", "4", "3", "2", "1", "0"};
   for (int i = 0; i < 10; i++) {
     char text[2] = {(char)(i+'0'), 0};
-    store.push(text, &globalContext);
+    store.push(text, &globalContext, dummyHeight);
     quiz_assert(store.numberOfCalculations() == i+1);
   }
   assert_store_is(&store, result);
@@ -41,13 +42,13 @@ QUIZ_CASE(calculation_ans) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
 
-  store.push("1+3/4", &globalContext);
-  store.push("ans+2/3", &globalContext);
+  store.push("1+3/4", &globalContext, dummyHeight);
+  store.push("ans+2/3", &globalContext, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate);
   quiz_assert(strcmp(lastCalculation->exactOutputText(),"29/12") == 0);
 
-  store.push("ans+0.22", &globalContext);
+  store.push("ans+0.22", &globalContext, dummyHeight);
   lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
   quiz_assert(strcmp(lastCalculation->approximateOutputText(::Calculation::Calculation::NumberOfSignificantDigits::Maximal),"2.6366666666667") == 0);
@@ -56,7 +57,7 @@ QUIZ_CASE(calculation_ans) {
 }
 
 void assertCalculationIs(const char * input, ::Calculation::Calculation::DisplayOutput display, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * displayedApproximateOutput, const char * storedApproximateOutput, Context * context, CalculationStore * store) {
-  store->push(input, context);
+  store->push(input, context, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(context) == display);
   if (sign != ::Calculation::Calculation::EqualSign::Unknown) {

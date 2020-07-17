@@ -36,7 +36,7 @@ public:
 #endif
 
   // Properties
-  Type type() const override { return Type::Float; }
+  Type type() const override { return (sizeof(T) == sizeof(float)) ? Type::Float : Type::Double; }
   Sign sign(Context * context) const override { return m_value < 0 ? Sign::Negative : Sign::Positive; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;

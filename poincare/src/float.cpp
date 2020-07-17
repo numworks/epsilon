@@ -18,7 +18,7 @@ int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool asc
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
   }
-  assert(e->type() == ExpressionNode::Type::Float);
+  assert((e->type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (e->type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
   const FloatNode<T> * other = static_cast<const FloatNode<T> *>(e);
   if (value() < other->value()) {
     return -1;

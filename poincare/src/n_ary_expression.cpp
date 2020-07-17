@@ -1,5 +1,6 @@
 #include <poincare/n_ary_expression.h>
 #include <poincare/number.h>
+#include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -125,6 +126,22 @@ int NAryExpression::allChildrenAreReal(Context * context) const {
     i++;
   }
   return result;
+}
+
+Expression NAryExpression::checkChildrenAreRationalIntegers(Context * context) {
+  for (int i = 0; i < numberOfChildren(); ++i) {
+    Expression c = childAtIndex(i);
+    if (c.deepIsMatrix(context)) {
+      return replaceWithUndefinedInPlace();
+    }
+    if (c.type() != ExpressionNode::Type::Rational) {
+      return *this;
+    }
+    if (!static_cast<Rational &>(c).isInteger()) {
+      return replaceWithUndefinedInPlace();
+    }
+  }
+  return Expression();
 }
 
 }

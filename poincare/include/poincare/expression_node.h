@@ -30,6 +30,7 @@ public:
     Rational,
     BasedInteger,
     Decimal,
+    Double,
     Float,
     Infinity,
     Multiplication,

@@ -25,12 +25,9 @@ double NumberNode::doubleApproximation() const {
       assert(Number(this).sign() == Sign::Negative || Number(this).sign() == Sign::Positive);
       return Number(this).sign() == Sign::Negative ? -INFINITY : INFINITY;
     case Type::Float:
-      if (size() == sizeof(FloatNode<float>)) {
-        return static_cast<const FloatNode<float> *>(this)->value();
-      } else {
-        assert(size() == sizeof(FloatNode<double>));
-        return static_cast<const FloatNode<double> *>(this)->value();
-      }
+      return static_cast<const FloatNode<float> *>(this)->value();
+    case Type::Double:
+      return static_cast<const FloatNode<double> *>(this)->value();
     case Type::Rational:
       return static_cast<const RationalNode *>(this)->templatedApproximate<double>();
     case Type::BasedInteger:

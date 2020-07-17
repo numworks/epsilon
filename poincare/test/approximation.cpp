@@ -282,6 +282,12 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("gcd(-234,394)", "2");
   assert_expression_approximates_to<double>("gcd(234,-394)", "2");
   assert_expression_approximates_to<float>("gcd(-234,-394)", "2");
+  assert_expression_approximates_to<float>("gcd(-234,-394, -16)", "2");
+  assert_expression_approximates_to<double>("gcd(-234,-394, -16)", "2");
+  assert_expression_approximates_to<float>("gcd(6,15,10)", "1");
+  assert_expression_approximates_to<double>("gcd(6,15,10)", "1");
+  assert_expression_approximates_to<float>("gcd(30,105,70,42)", "1");
+  assert_expression_approximates_to<double>("gcd(30,105,70,42)", "1");
 
   assert_expression_approximates_to<float>("im(2+3𝐢)", "3");
   assert_expression_approximates_to<double>("im(2+3𝐢)", "3");
@@ -291,6 +297,12 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("lcm(-234,394)", "46098");
   assert_expression_approximates_to<double>("lcm(234,-394)", "46098");
   assert_expression_approximates_to<float>("lcm(-234,-394)", "46098");
+  assert_expression_approximates_to<float>("lcm(-234,-394, -16)", "368784");
+  assert_expression_approximates_to<double>("lcm(-234,-394, -16)", "368784");
+  assert_expression_approximates_to<float>("lcm(6,15,10)", "30");
+  assert_expression_approximates_to<double>("lcm(6,15,10)", "30");
+  assert_expression_approximates_to<float>("lcm(30,105,70,42)", "210");
+  assert_expression_approximates_to<double>("lcm(30,105,70,42)", "210");
 
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");

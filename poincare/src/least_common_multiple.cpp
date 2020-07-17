@@ -1,18 +1,11 @@
 #include <poincare/least_common_multiple.h>
-#include <poincare/approximation_helper.h>
-#include <poincare/rational.h>
-#include <poincare/undefined.h>
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <cmath>
-#include <assert.h>
 
 namespace Poincare {
 
 constexpr Expression::FunctionHelper LeastCommonMultiple::s_functionHelper;
-
-int LeastCommonMultipleNode::numberOfChildren() const { return LeastCommonMultiple::s_functionHelper.numberOfChildren(); }
 
 Layout LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::s_functionHelper.name());
@@ -26,32 +19,22 @@ Expression LeastCommonMultipleNode::shallowReduce(ReductionContext reductionCont
   return LeastCommonMultiple(this).shallowReduce(reductionContext.context());
 }
 
-template<typename T>
-Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  bool isUndefined = false;
-  int a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(0), &isUndefined, context, complexFormat, angleUnit);
-  int b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(childAtIndex(1), &isUndefined, context, complexFormat, angleUnit);
-  if (isUndefined) {
-    return Complex<T>::RealUndefined();
-  }
-  if (a == 0 || b == 0) {
-    return Complex<T>::Builder(0.0);
-  }
-  if (b > a) {
-    int temp = b;
-    b = a;
-    a = temp;
-  }
-  int product = a*b;
-  int r = 0;
-  while((int)b!=0){
-    r = a - (a/b)*b;
-    a = b;
-    b = r;
-  }
-  return Complex<T>::Builder(product/a);
+Expression LeastCommonMultipleNode::shallowBeautify(ReductionContext reductionContext) {
+  return LeastCommonMultiple(this).shallowBeautify(reductionContext.context());
 }
 
+template<typename T>
+Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return Arithmetic::LCM<T>(*this, context, complexFormat, angleUnit);
+}
+
+Expression LeastCommonMultiple::shallowBeautify(Context * context) {
+  /* Sort children in decreasing order:
+   * lcm(1,x,x^2) --> lcm(x^2,x,1)
+   * lcm(1,R(2)) --> lcm(R(2),1) */
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, context, true, true);
+  return *this;
+}
 
 Expression LeastCommonMultiple::shallowReduce(Context * context) {
   {
@@ -61,36 +44,22 @@ Expression LeastCommonMultiple::shallowReduce(Context * context) {
       return e;
     }
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
-  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
-  }
-  if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational &>(c0);
-    if (!r0.isInteger()) {
-      return replaceWithUndefinedInPlace();
-    }
-  }
-  if (c1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational &>(c1);
-    if (!r1.isInteger()) {
-      return replaceWithUndefinedInPlace();
-    }
-  }
-  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
-    return *this;
-  }
-  Rational r0 = static_cast<Rational &>(c0);
-  Rational r1 = static_cast<Rational &>(c1);
+  assert(numberOfChildren() > 0);
 
-  Integer a = r0.signedIntegerNumerator();
-  Integer b = r1.signedIntegerNumerator();
-  Integer lcm = Arithmetic::LCM(a, b);
-  if (lcm.isOverflow()) {
-    return *this;
+  // Step 0: Merge children which are LCM
+  mergeSameTypeChildrenInPlace();
+
+  // Step 1: check that all children are compatible
+  {
+    Expression checkChildren = checkChildrenAreRationalIntegers(context);
+    if (!checkChildren.isUninitialized()) {
+      return checkChildren;
+    }
   }
-  Expression result = Rational::Builder(lcm);
+
+  // Step 2: Compute LCM
+  Expression result = Arithmetic::LCM(*this);
+
   replaceWithInPlace(result);
   return result;
 }

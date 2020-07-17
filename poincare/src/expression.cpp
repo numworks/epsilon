@@ -167,7 +167,7 @@ bool Expression::deepIsMatrix(Context * context) const {
 }
 
 bool Expression::IsApproximate(const Expression e, Context * context) {
-  return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float;
+  return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || e.type() == ExpressionNode::Type::Double;
 }
 
 bool Expression::IsRandom(const Expression e, Context * context) {

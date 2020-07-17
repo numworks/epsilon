@@ -115,6 +115,12 @@ def parse_codepoints(file):
 
 codepoints = parse_codepoints(args.codepoints)
 
+def print_block_from_list(target, header, data, beautify=lambda arg: arg, prefix="  ", footer="};\n\n"):
+    target.write(header)
+    for i in range(len(data)):
+        target.write(prefix + beautify(data[i]) + ",\n")
+    target.write(footer)
+
 def print_header(data, path, locales, countries):
     f = open(path, "w")
     f.write("#ifndef APPS_I18N_H\n")
@@ -127,50 +133,46 @@ def print_header(data, path, locales, countries):
     f.write("constexpr static int NumberOfCountries = %d;\n\n" % len(countries))
 
     # Messages enumeration
-    f.write("enum class Message : uint16_t {\n")
-    f.write("  Default = 0,\n")
-    for message in data["universal_messages"]:
-        f.write("  " + message + ",\n")
-    f.write("\n")
-    f.write("  LocalizedMessageMarker,\n\n")
-    for message in data["messages"]:
-        f.write("  " + message + ",\n")
-    f.write("};\n\n")
+    print_block_from_list(f,
+            "enum class Message : uint16_t {\n  Default = 0,\n",
+            data["universal_messages"],
+            footer="\n")
+    print_block_from_list(f,
+            "  LocalizedMessageMarker,\n\n",
+            data["messages"])
 
     # Languages enumeration
-    f.write("enum class Language : uint8_t {\n")
-    index = 0
-    for locale in locales:
-        f.write("  " + locale.upper() + (" = 0" if (index < 1) else "") + ",\n")
-        index = index + 1
-    f.write("};\n\n")
+    print_block_from_list(f,
+            "enum class Language : uint8_t {\n",
+            locales,
+            lambda arg: arg.upper())
 
     # Language names
-    f.write("constexpr const Message LanguageNames[NumberOfLanguages] = {\n");
-    for locale in locales:
-        f.write("  Message::Language" + locale.upper() + ",\n")
-    f.write("};\n\n")
+    print_block_from_list(f,
+            "constexpr const Message LanguageNames[NumberOfLanguages] = {\n",
+            locales,
+            lambda arg: arg.upper(),
+            "  Message::Language")
 
     if generate_ISO6391():
-        # Language ISO639-1 codes
-        f.write("constexpr const Message LanguageISO6391Names[NumberOfLanguages] = {\n");
-        for locale in locales:
-            f.write("  Message::LanguageISO6391" + locale.upper() + ",\n")
-        f.write("};\n\n")
+        print_block_from_list(f,
+                "constexpr const Message LanguageISO6391Names[NumberOfLanguages] = {\n",
+                locales,
+                lambda arg: arg.upper(),
+                "  Message::LanguageISO6391")
 
     # Countries enumeration
-    f.write("enum class Country : uint8_t {\n")
-    index = 0
-    for country in countries:
-        f.write("  " + country.upper() + (" = 0" if (index < 1) else "") + ",\n")
-        index += 1
-    f.write("};\n\n")
+    print_block_from_list(f,
+            "enum class Country : uint8_t {\n",
+            countries,
+            lambda arg: arg.upper())
 
     # Country names
-    f.write("constexpr const Message CountryNames[NumberOfCountries] = {\n");
-    for country in countries:
-        f.write("  Message::Country" + country.upper() + ",\n")
-    f.write("};\n\n")
+    print_block_from_list(f,
+            "constexpr const Message CountryNames[NumberOfCountries] = {\n",
+            countries,
+            lambda arg: arg.upper(),
+            "  Message::Country")
 
     # Country preferences
     f.write("enum class AvailableExamModes : uint8_t {\n")
@@ -227,11 +229,10 @@ def print_implementation(data, path, locales):
         f = open(path, "a") # Re-open the file as text
         f.write(";\n")
     f.write("\n")
-    f.write("constexpr static const char * universalMessages[%d] = {\n" % (len(data["universal_messages"])+1))
-    f.write("  universalDefault,\n")
-    for message in data["universal_messages"]:
-        f.write("  universal" + message + ",\n")
-    f.write("};\n\n")
+    print_block_from_list(f,
+            "constexpr static const char * universalMessages[%d] = {\n  universalDefault,\n" % (len(data["universal_messages"])+1),
+            data["universal_messages"],
+            prefix="  universal")
 
     # Write the localized messages
     for message in data["messages"]:

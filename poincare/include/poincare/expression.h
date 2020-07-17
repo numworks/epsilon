@@ -317,6 +317,18 @@ protected:
     assert(children.type() == ExpressionNode::Type::Matrix);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3));
   }
+  template<typename U>
+  static Expression UntypedBuilderMultipleChildren(Expression children) {
+    // Only with Expression classes implementing addChildAtIndexInPlace
+    assert(children.type() == ExpressionNode::Type::Matrix);
+    int childrenNumber = children.numberOfChildren();
+    assert(childrenNumber > 0);
+    U expression = U::Builder({children.childAtIndex(0)});
+    for (int i = 1; i < childrenNumber; ++i) {
+      expression.addChildAtIndexInPlace(children.childAtIndex(i), i, i);
+    }
+    return std::move(expression);
+  }
 
   template<class T> T convert() const {
     /* This function allows to convert Expression to derived Expressions.

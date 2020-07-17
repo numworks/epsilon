@@ -1,4 +1,5 @@
 #include "app.h"
+#include "../apps_container.h"
 #include <assert.h>
 
 namespace OnBoarding {
@@ -13,10 +14,8 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 App::App(Snapshot * snapshot) :
-  ::App(snapshot, &m_stackController),
-  m_stackController(&m_modalViewController, &m_languageController),
-  m_languageController(&m_stackController),
-  m_countryController(&m_languageController),
+  ::App(snapshot, &m_localizationController),
+  m_localizationController(&m_modalViewController, Metric::CommonTopMargin, LocalizationController::Mode::Language),
   m_logoController()
 {
 }
@@ -46,8 +45,7 @@ void App::didBecomeActive(Window * window) {
 }
 
 void App::reinitOnBoarding() {
-  m_languageController.resetSelection();
-  m_countryController.resetSelection();
+  m_localizationController.resetSelection();
   displayModalViewController(&m_logoController, 0.5f, 0.5f);
 }
 

@@ -15,7 +15,7 @@ public:
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
-  void setCountry(I18n::Country country) { m_country = country; }
+  void setCountry(I18n::Country country);
   CountryPreferences::AvailableExamModes availableExamModes() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].availableExamModes(); }
   CountryPreferences::MethodForQuartiles methodForQuartiles() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].methodForQuartiles(); }
   Poincare::Preferences::UnitFormat unitFormat() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].unitFormat(); }

@@ -19,7 +19,7 @@ Omega is a fork of Numworks' Epsilon, the OS that runs on their calculator, whic
 - ~~32 KB Python heap instead of 16 KB~~ Now available on Epsilon `>=13.2.0`!
 - And more...
 
-The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Main-features), and the complete changelog can be found [here](https://github.com/quentinguidee/Omega/wiki/Complete-changelog).
+The main new features are listed [here](https://github.com/Omega-Numworks/Omega/wiki/Main-features), and the complete changelog can be found [here](https://github.com/Omega-Numworks/Omega/wiki/Complete-changelog).
 
 ## Installation
 

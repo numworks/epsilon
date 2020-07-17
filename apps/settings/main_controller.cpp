@@ -22,8 +22,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_selectableTableView(this),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
-  m_languageController(this, Metric::CommonTopMargin),
-  m_countryController(this, Metric::CommonTopMargin),
+  m_localizationController(this, Metric::CommonTopMargin, LocalizationController::Mode::Language),
   m_examModeController(this),
   m_aboutController(this)
 {
@@ -67,6 +66,12 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     assert(rowIndex != k_indexOfBrightnessCell);
+
+    if (rowIndex == k_indexOfLanguageCell) {
+      m_localizationController.setMode(LocalizationController::Mode::Language);
+    } else if (rowIndex == k_indexOfCountryCell) {
+      m_localizationController.setMode(LocalizationController::Mode::Country);
+    }
     /* The About cell can either be found at index k_indexOfExamModeCell + 1 or
      * k_indexOfExamModeCell + 2, depending on whether there is a Pop-Up cell.
      * Since the Pop-Up cell has been handled above, we can use those two
@@ -78,8 +83,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       &m_preferencesController,
       nullptr, //&m_brightnessController
       &m_preferencesController,
-      &m_languageController,
-      &m_countryController,
+      &m_localizationController,
+      &m_localizationController,
       &m_examModeController,
       &m_aboutController,
       &m_aboutController

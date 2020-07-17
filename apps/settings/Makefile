@@ -12,13 +12,12 @@ app_settings_src = $(addprefix apps/settings/,\
   sub_menu/about_controller.cpp \
   sub_menu/about_controller_official.cpp:+official \
   sub_menu/about_controller_non_official.cpp:-official \
-  sub_menu/country_controller.cpp \
   sub_menu/display_mode_controller.cpp \
   sub_menu/exam_mode_controller_official.cpp:+official \
   sub_menu/exam_mode_controller_non_official.cpp:-official \
   sub_menu/exam_mode_controller.cpp \
   sub_menu/generic_sub_controller.cpp \
-  sub_menu/language_controller.cpp \
+  sub_menu/localization_controller.cpp \
   sub_menu/preferences_controller.cpp \
   sub_menu/selectable_view_with_messages.cpp \
 )

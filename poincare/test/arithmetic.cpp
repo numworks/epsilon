@@ -22,6 +22,13 @@ void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
   fill_buffer_with(failInformationBuffer, bufferSize, "gcd(", args, 2);
   Integer gcd = Arithmetic::GCD(a, b);
   quiz_assert_print_if_failure(gcd.isEqualTo(c), failInformationBuffer);
+  if (a.isExtractable() && b.isExtractable()) {
+    // Test Arithmetic::GCD(int, int) if possible
+    a.setNegative(false);
+    b.setNegative(false);
+    int extractedGcd = Arithmetic::GCD(a.extractedInt(), b.extractedInt());
+    quiz_assert_print_if_failure(extractedGcd == c.extractedInt(), failInformationBuffer);
+  }
 }
 
 void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
@@ -31,6 +38,13 @@ void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
   fill_buffer_with(failInformationBuffer, bufferSize, "lcm(", args, 2);
   Integer lcm = Arithmetic::LCM(a, b);
   quiz_assert_print_if_failure(lcm.isEqualTo(c), failInformationBuffer);
+  if (a.isExtractable() && b.isExtractable()) {
+    // Test Arithmetic::LCM(int, int) if possible
+    a.setNegative(false);
+    b.setNegative(false);
+    int extractedLcm = Arithmetic::LCM(a.extractedInt(), b.extractedInt());
+    quiz_assert_print_if_failure(extractedLcm == c.extractedInt(), failInformationBuffer);
+  }
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {

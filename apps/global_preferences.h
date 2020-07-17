@@ -16,9 +16,9 @@ public:
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
   void setCountry(I18n::Country country) { m_country = country; }
-  I18n::AvailableExamModes availableExamModes() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].availableExamModes; }
-  I18n::MethodForQuartiles methodForQuartiles() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].methodForQuartiles; }
-  Poincare::Preferences::UnitFormat unitFormat() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].unitFormat; }
+  CountryPreferences::AvailableExamModes availableExamModes() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].availableExamModes(); }
+  CountryPreferences::MethodForQuartiles methodForQuartiles() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].methodForQuartiles(); }
+  Poincare::Preferences::UnitFormat unitFormat() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].unitFormat(); }
   bool isInExamMode() const { return (int8_t)examMode() > 0; }
   ExamMode examMode() const;
   void setExamMode(ExamMode examMode);

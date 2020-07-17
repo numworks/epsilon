@@ -30,7 +30,7 @@ public:
    */
 
   // There are 7 base units from which all other units are derived.
-  static constexpr size_t NumberOfBaseUnits = 7;
+  static constexpr size_t NumberOfBaseUnits = 8;
 
   class Prefix {
   public:
@@ -106,6 +106,7 @@ public:
       T temperature;
       T amountOfSubstance;
       T luminuousIntensity;
+      T solidAngle;
     };
     template <size_t N>
     constexpr Dimension(Vector<int8_t> vector, const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
@@ -478,6 +479,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         TimeRepresentatives,
         &EmptyPrefix
@@ -491,6 +493,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         DistanceRepresentatives,
         &EmptyPrefix
@@ -504,6 +507,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         MassRepresentatives,
         &KiloPrefix
@@ -517,6 +521,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         CurrentRepresentatives,
         &EmptyPrefix
@@ -530,6 +535,7 @@ public:
           .temperature        = 1,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         TemperatureRepresentatives,
         &EmptyPrefix
@@ -543,6 +549,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 1,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         AmountOfSubstanceRepresentatives,
         &EmptyPrefix
@@ -556,8 +563,23 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 1,
+          .solidAngle = 0,
         },
         LuminousIntensityRepresentatives,
+        &EmptyPrefix
+        ),
+    Dimension(
+      Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 0,
+          .solidAngle = 1,
+        },
+        SolideAngleRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
@@ -569,8 +591,37 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         FrequencyRepresentatives,
+        &EmptyPrefix
+        ),
+    Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           = 0,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 1,
+          .solidAngle = 1,
+        },
+        LuminousFluxRepresentatives,
+        &EmptyPrefix
+        ),
+    Dimension(
+        Dimension::Vector<int8_t> {
+          .time               = 0,
+          .distance           =-2,
+          .mass               = 0,
+          .current            = 0,
+          .temperature        = 0,
+          .amountOfSubstance  = 0,
+          .luminuousIntensity = 1,
+          .solidAngle = 1,
+        },
+        IlluminanceRepresentatives,
         &EmptyPrefix
         ),
     Dimension(
@@ -582,6 +633,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         ForceRepresentatives,
         &EmptyPrefix
@@ -595,6 +647,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         PressureRepresentatives,
         &EmptyPrefix
@@ -608,6 +661,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         EnergyRepresentatives,
         &EmptyPrefix
@@ -621,6 +675,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         PowerRepresentatives,
         &EmptyPrefix
@@ -634,6 +689,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         ElectricChargeRepresentatives,
         &EmptyPrefix
@@ -647,6 +703,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         ElectricPotentialRepresentatives,
         &EmptyPrefix
@@ -660,6 +717,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         ElectricCapacitanceRepresentatives,
         &EmptyPrefix
@@ -673,6 +731,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         ElectricResistanceRepresentatives,
         &EmptyPrefix
@@ -686,6 +745,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         ElectricConductanceRepresentatives,
         &EmptyPrefix
@@ -699,6 +759,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         MagneticFluxRepresentatives,
         &EmptyPrefix
@@ -712,6 +773,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         MagneticFieldRepresentatives,
         &EmptyPrefix
@@ -725,6 +787,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         InductanceRepresentatives,
         &EmptyPrefix
@@ -738,6 +801,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 1,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         CatalyticActivityRepresentatives,
         &EmptyPrefix
@@ -751,6 +815,7 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         SurfaceRepresentatives,
         &EmptyPrefix
@@ -764,18 +829,19 @@ public:
           .temperature        = 0,
           .amountOfSubstance  = 0,
           .luminuousIntensity = 0,
+          .solidAngle = 0,
         },
         VolumeRepresentatives,
         &EmptyPrefix
         ),
   };
   // TODO: find a better way to find defines these pointers
-  static_assert(sizeof(DimensionTable)/sizeof(Dimension) == 23, "The Unit::TimeDimension, Unit::DistanceDimension and so on might require to be fixed if the Dimension table was changed.");
+  static_assert(sizeof(DimensionTable)/sizeof(Dimension) == 26, "The Unit::TimeDimension, Unit::DistanceDimension and so on might require to be fixed if the Dimension table was changed.");
   static const Dimension constexpr * TimeDimension = &DimensionTable[0] ;
   static const Dimension constexpr * DistanceDimension = &DimensionTable[1];
   static const Dimension constexpr * MassDimension = &DimensionTable[2];
-  static const Dimension constexpr * EnergyDimension = &DimensionTable[10];
-  static const Dimension constexpr * PowerDimension = &DimensionTable[11];
+  static const Dimension constexpr * EnergyDimension = &DimensionTable[13];
+  static const Dimension constexpr * PowerDimension = &DimensionTable[14];
   static const Dimension constexpr * VolumeDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-1];
 
   static constexpr const Unit::Dimension * DimensionTableUpperBound =

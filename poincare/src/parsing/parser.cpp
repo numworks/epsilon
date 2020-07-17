@@ -386,14 +386,18 @@ void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::
     return;
   }
   int numberOfParameters = parameters.numberOfChildren();
-  while (numberOfParameters > (**functionHelper).numberOfChildren()) {
-    functionHelper++;
-    if (!(functionHelper < s_reservedFunctionsUpperBound && strcmp(name, (**functionHelper).name()) == 0)) {
-      m_status = Status::Error; // Too many parameters provided.
-      return;
+  /* FunctionHelpers with negative numberOfChildren value expect any number of
+   * children greater than this value (in absolute). */
+  if ((**functionHelper).numberOfChildren() >= 0) {
+    while (numberOfParameters > (**functionHelper).numberOfChildren()) {
+      functionHelper++;
+      if (!(functionHelper < s_reservedFunctionsUpperBound && strcmp(name, (**functionHelper).name()) == 0)) {
+        m_status = Status::Error; // Too many parameters provided.
+        return;
+      }
     }
   }
-  if (numberOfParameters < (**functionHelper).numberOfChildren()) {
+  if (numberOfParameters < abs((**functionHelper).numberOfChildren())) {
     m_status = Status::Error; // Too few parameters provided.
     return;
   }
@@ -484,7 +488,7 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
   }
   assert(!parameter.isUninitialized());
   if (parameter.numberOfChildren() != 1) {
-    m_status = Status::Error; // Unexpected number of paramters.
+    m_status = Status::Error; // Unexpected number of parameters.
     return;
   }
   parameter = parameter.childAtIndex(0);

@@ -42,9 +42,9 @@ bool NumberNode::derivate(ReductionContext reductionContext, Expression symbol, 
   return Number(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLenght, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
+Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLength, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
   // Integer
-  if (exponentLength == 0 && decimalLenght == 0) {
+  if (exponentLength == 0 && decimalLength == 0) {
     Integer i(integralPart, integralLength, false);
     if (!i.isOverflow()) {
       return BasedInteger::Builder(i, Integer::Base::Decimal);
@@ -53,7 +53,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   int exp;
   // Avoid overflowing int
   if (exponentLength < Decimal::k_maxExponentLength) {
-    exp = Decimal::Exponent(integralPart, integralLength, decimalPart, decimalLenght, exponentPart, exponentLength, exponentIsNegative);
+    exp = Decimal::Exponent(integralPart, integralLength, decimalPart, decimalLength, exponentPart, exponentLength, exponentIsNegative);
   } else {
     exp = exponentIsNegative ? -1 : 1;
   }
@@ -65,7 +65,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
       return Infinity::Builder(false);
     }
   }
-  return Decimal::Builder(integralPart, integralLength, decimalPart, decimalLenght, exp);
+  return Decimal::Builder(integralPart, integralLength, decimalPart, decimalLength, exp);
 }
 
 template <typename T>

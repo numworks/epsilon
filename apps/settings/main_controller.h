@@ -5,10 +5,9 @@
 #include <apps/shared/settings_message_tree.h>
 #include "message_table_cell_with_gauge_with_separator.h"
 #include "sub_menu/about_controller.h"
-#include "sub_menu/country_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
-#include "sub_menu/language_controller.h"
+#include "sub_menu/localization_controller.h"
 #include "sub_menu/preferences_controller.h"
 
 namespace Settings {
@@ -65,8 +64,7 @@ private:
   SelectableTableView m_selectableTableView;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
-  LanguageController m_languageController;
-  CountryController m_countryController;
+  LocalizationController m_localizationController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
 

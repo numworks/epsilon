@@ -125,17 +125,11 @@ void LayoutCursor::addLog() {
 }
 
 void LayoutCursor::addEmptyLog() {
-  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
-  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
   Layout logLayout = LayoutHelper::String("log", 3);
   HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
-  //VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child2, VerticalOffsetLayoutNode::Position::Subscript);
-  //resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addChildAtIndex(HorizontalLayout::Builder(
     LeftParenthesisLayout::Builder(),
-    child1,
     RightParenthesisLayout::Builder()
-    
   ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
 
   m_layout.addSibling(this, resultLayout, true);
@@ -143,17 +137,14 @@ void LayoutCursor::addEmptyLog() {
 }
 
 void LayoutCursor::addEmpty10Log() {
-  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
-  HorizontalLayout child2 = HorizontalLayout::Builder(CodePointLayout::Builder('1'),CodePointLayout::Builder('0'));
+  HorizontalLayout child = HorizontalLayout::Builder(CodePointLayout::Builder('1'),CodePointLayout::Builder('0'));
   Layout logLayout = LayoutHelper::String("log", 3);
   HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child2, VerticalOffsetLayoutNode::Position::Subscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addChildAtIndex(HorizontalLayout::Builder(
     LeftParenthesisLayout::Builder(),
-    child1,
     RightParenthesisLayout::Builder()
-    
   ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   
   m_layout.addSibling(this, resultLayout, true);
@@ -161,17 +152,14 @@ void LayoutCursor::addEmpty10Log() {
 }
 
 void LayoutCursor::addEmptyArgLog() {
-  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
-  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child = HorizontalLayout::Builder(EmptyLayout::Builder());
   Layout logLayout = LayoutHelper::String("log", 3);
   HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child2, VerticalOffsetLayoutNode::Position::Subscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addChildAtIndex(HorizontalLayout::Builder(
     LeftParenthesisLayout::Builder(),
-    child1,
     RightParenthesisLayout::Builder()
-    
   ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   
   m_layout.addSibling(this, resultLayout, true);

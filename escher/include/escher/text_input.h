@@ -100,8 +100,6 @@ protected:
   virtual const ContentView * nonEditableContentView() const = 0;
   bool moveCursorLeft();
   bool moveCursorRight();
-  bool moveCursorBegin();
-  bool moveCursorEnd();
   bool selectLeftRight(bool left, bool all); // While indicates if all the text on the left/right should be selected
 private:
   virtual void willSetCursorLocation(const char * * location) {}

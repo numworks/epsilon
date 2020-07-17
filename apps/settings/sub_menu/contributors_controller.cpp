@@ -44,13 +44,13 @@ constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PAntoninLoubiere,
 };
 
-constexpr static int s_numberOfBetaTesters = 5;
-
+constexpr static int s_numberOfBetaTesters = 6;
 constexpr static I18n::Message s_betaTestersUsernames[s_numberOfBetaTesters] = {
   I18n::Message::PCyprienMejat,
   I18n::Message::PTimeoArnouts,
   I18n::Message::PJulieC,
   I18n::Message::PLelahelHideux,
+  I18n::Message::PMadil,
   I18n::Message::PHilaireLeRoux,
 };
 

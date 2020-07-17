@@ -22,7 +22,7 @@ extern const Shared::SettingsMessageTree s_symbolFunctionChildren[3];
 extern const Shared::SettingsMessageTree s_modelMathOptionsChildren[6];
 extern const Shared::SettingsMessageTree s_modelFontChildren[2];
 extern const Shared::SettingsMessageTree s_accessibilityChildren[6];
-extern const Shared::SettingsMessageTree s_contributorsChildren[19];
+extern const Shared::SettingsMessageTree s_contributorsChildren[20];
 #ifdef USERNAME
 extern const Shared::SettingsMessageTree s_modelAboutChildren[8];
 #else

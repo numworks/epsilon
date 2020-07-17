@@ -391,6 +391,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("frac(_s)", "undef");
   assert_parsed_expression_simplify_to("gcd(1,_s)", "undef");
   assert_parsed_expression_simplify_to("gcd(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("gcd(1,2,3,_s)", "undef");
   assert_parsed_expression_simplify_to("identity(_s)", "undef");
   assert_parsed_expression_simplify_to("im(_s)", "undef");
   assert_parsed_expression_simplify_to("int(_s,x,0,1)", "undef");
@@ -405,6 +406,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("inverse(_s)", "undef");
   assert_parsed_expression_simplify_to("lcm(1,_s)", "undef");
   assert_parsed_expression_simplify_to("lcm(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("lcm(1,2,3,_s)", "undef");
   assert_parsed_expression_simplify_to("ln(_s)", "undef");
   assert_parsed_expression_simplify_to("log(_s)", "undef");
   assert_parsed_expression_simplify_to("log(_s,2)", "undef");
@@ -638,9 +640,11 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
+  assert_parsed_expression_simplify_to("gcd(56,112,28,91)", "7");
   assert_parsed_expression_simplify_to("im(1+5×𝐢)", "5");
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
+  assert_parsed_expression_simplify_to("lcm(11,121, 3)", "363");
   assert_parsed_expression_simplify_to("√(4)", "2");
   assert_parsed_expression_simplify_to("re(1+5×𝐢)", "1");
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
@@ -1008,6 +1012,7 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("gcd([[0,180]],1)", Undefined::Name());
   assert_parsed_expression_simplify_to("gcd(1,[[0,180]])", Undefined::Name());
   assert_parsed_expression_simplify_to("gcd([[0,180]],[[1]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("gcd(1,2,[[1]])", Undefined::Name());
   assert_parsed_expression_simplify_to("acosh([[0,π]])", "[[acosh(0),acosh(π)]]");
   assert_parsed_expression_simplify_to("asinh([[0,π]])", "[[0,asinh(π)]]");
   assert_parsed_expression_simplify_to("atanh([[0,π]])", "[[0,atanh(π)]]");
@@ -1206,9 +1211,13 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("floor(x)", "floor(x)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("frac(x)", "frac(x)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("gcd(x,y)", "gcd(x,y)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(3, 1, 2, x, x^2)", "gcd(x^2,x,3,2,1)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("im(1+𝐢)", "1", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("lcm(x,y)", "lcm(x,y)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(3, 1, 2, x, x^2)", "lcm(x^2,x,3,2,1)", User, Radian, Cartesian);
   // TODO: dim is not simplified yet
   //assert_parsed_expression_simplify_to("dim(x)", "dim(x)", User, Radian, Cartesian);
 

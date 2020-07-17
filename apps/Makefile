@@ -55,6 +55,8 @@ $(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/m
 
 # I18n file generation
 
+country_preferences = apps/country_preferences.csv
+
 # The header is refered to as <apps/i18n.h> so make sure it's findable this way
 SFLAGS += -I$(BUILD_DIR)
 
@@ -71,7 +73,7 @@ $(eval $(call rule_for, \
   I18N, \
   apps/i18n.cpp, \
   $(i18n_files), \
-  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $$^ --generateISO6391locales $$(EPSILON_GETOPT), \
+  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $$^ --generateISO6391locales $$(EPSILON_GETOPT), \
   global \
 ))
 

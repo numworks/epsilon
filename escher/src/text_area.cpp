@@ -100,8 +100,6 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 }
 
 bool TextArea::handleEvent(Ion::Events::Event event) {
-  bool noAlphaLock = Ion::Events::shiftAlphaStatus() != Ion::Events::ShiftAlphaStatus::AlphaLock && Ion::Events::shiftAlphaStatus() != Ion::Events::ShiftAlphaStatus::ShiftAlphaLock;
-
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
     return true;
   }
@@ -115,21 +113,25 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
     selectUpDown(event == Ion::Events::ShiftUp);
     return true;
-  } else if (noAlphaLock && event == Ion::Events::AlphaLeft) {
+  } else if (event == Ion::Events::AlphaLeft) {
     contentView()->moveCursorGeo(-INT_MAX/2, 0);
     TextInput::scrollToCursor();
-    return true;
-  } else if (noAlphaLock && event == Ion::Events::AlphaRight) {
+  } else if (event == Ion::Events::AlphaRight) {
     contentView()->moveCursorGeo(INT_MAX/2, 0);
     TextInput::scrollToCursor();
-    return true;
-  } else if (event == Ion::Events::Left || event == Ion::Events::AlphaLeft) {
+  } else if (event == Ion::Events::AlphaUp) {
+    contentView()->moveCursorGeo(0, -INT_MAX/2);
+    TextInput::scrollToCursor();
+  } else if (event == Ion::Events::AlphaDown) {
+    contentView()->moveCursorGeo(0, INT_MAX/2);
+    TextInput::scrollToCursor();
+  } else if (event == Ion::Events::Left) {
     if (contentView()->resetSelection()) {
       return true;
     }
     return TextInput::moveCursorLeft();
   }
-  if (event == Ion::Events::Right || event == Ion::Events::AlphaRight) {
+  if (event == Ion::Events::Right) {
     if (contentView()->resetSelection()) {
       return true;
     }
@@ -167,18 +169,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       deleteSelection();
       return true;
     }
-  } else if (noAlphaLock && event == Ion::Events::AlphaUp) {
-    contentView()->moveCursorGeo(0, -INT_MAX/2);
-    TextInput::scrollToCursor();
-    return true;
-  } else if (noAlphaLock && event == Ion::Events::AlphaDown) {
-    contentView()->moveCursorGeo(0, INT_MAX/2);
-    TextInput::scrollToCursor();
-    return true;
-  } else if (event == Ion::Events::Up || event == Ion::Events::AlphaUp) {
+  } else if (event == Ion::Events::Up) {
     contentView()->resetSelection();
     contentView()->moveCursorGeo(0, -1);
-  } else if (event == Ion::Events::Down || event == Ion::Events::AlphaDown) {
+  } else if (event == Ion::Events::Down) {
     contentView()->resetSelection();
     contentView()->moveCursorGeo(0, 1);
   } else if (event == Ion::Events::Backspace) {

@@ -74,6 +74,18 @@ Event getEvent(int * timeout) {
       bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
       bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
       bool lock = isLockActive();
+      
+      if (   key == Keyboard::Key::Left
+          || key == Keyboard::Key::Right
+          || key == Keyboard::Key::Up
+          || key == Keyboard::Key::Down) {
+        if (lock) {
+          lock = false;
+          alpha = false;
+          shift = false;
+        }
+      }
+      
       Event event(key, shift, alpha, lock);
       sLastEventShift = shift;
       sLastEventAlpha = alpha;

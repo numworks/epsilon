@@ -1,0 +1,11 @@
+CountryCode,CountryPreferences::AvailableExamModes,CountryPreferences::MethodForQuartiles,Poincare::Preferences::UnitFormat
+CA,StandardOnly,MedianOfSublist,Metric
+DE,StandardOnly,MedianOfSublist,Metric
+ES,StandardOnly,MedianOfSublist,Metric
+FR,StandardOnly,CumulatedFrequency,Metric
+GB,StandardOnly,MedianOfSublist,Metric
+IT,StandardOnly,CumulatedFrequency,Metric
+NL,All,MedianOfSublist,Metric
+PT,StandardOnly,MedianOfSublist,Metric
+US,StandardOnly,MedianOfSublist,Imperial
+WW,StandardOnly,MedianOfSublist,Metric

@@ -165,12 +165,6 @@ Omega is a fork of Epsilon, a high-performance graphing calculator operating sys
 
 You can try Epsilon straight from your browser in the [online simulator](https://www.numworks.com/simulator/).
 
-## Contributors ✨
-
-Thanks goes to these wonderful people!
-
-<p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Omega-Contributors.png" /></p>
-
 ## License
 
 NumWorks is a registered trademark of NumWorks SAS, 24 Rue Godot de Mauroy, 75009 Paris, France.

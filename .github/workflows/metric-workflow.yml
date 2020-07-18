@@ -10,17 +10,17 @@ jobs:
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@v1
       - name: Checkout PR base
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: recursive
           ref: ${{ github.event.pull_request.base.sha }}
           path: base
       - name: Build base
         run: make -j2 -C base epsilon.elf
       - name: Checkout PR head
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: recursive
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
       - name: Build head

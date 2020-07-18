@@ -37,7 +37,7 @@ def row_for_elf(elf, requested_section_prefixes):
 # String formatting
 
 def iso_separate(string):
-  space = ' ' # We may want to use a thin non-breaking space as thousands separator
+  space = '' # We may want to use a thin non-breaking space as thousands separator
   return string.replace('_',space).replace('+','+'+space).replace('-','-'+space)
 
 def format_bytes(value, force_sign=False):

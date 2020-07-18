@@ -17,8 +17,8 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::CalculAppCapital;
 }
 
-int App::Descriptor::examinationLevel() {
-  return App::Descriptor::StrictExaminationLevel;
+App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
+  return App::Descriptor::ExaminationLevel::Strict;
 }
 
 const Image * App::Descriptor::icon() {

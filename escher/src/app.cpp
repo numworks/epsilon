@@ -5,8 +5,8 @@ extern "C" {
 #include <assert.h>
 }
 
-int App::Descriptor::examinationLevel() {
-  return App::Descriptor::NoExaminationLevel;
+App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
+  return App::Descriptor::ExaminationLevel::No;
 }
 
 void App::Snapshot::pack(App * app) {

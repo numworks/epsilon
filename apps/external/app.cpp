@@ -12,8 +12,8 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::ExternalAppCapital;
 }
 
-int App::Descriptor::examinationLevel() {
-  return App::Descriptor::BasicExaminationLevel;
+App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
+  return App::Descriptor::ExaminationLevel::Basic;
 }
 
 const Image * App::Descriptor::icon() {

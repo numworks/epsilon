@@ -58,10 +58,13 @@ KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
   }
 }
 
-bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode) {
+bool ExamModeConfiguration::appIsForbiddenInExamMode(App::Descriptor::ExaminationLevel appExaminationLevel, GlobalPreferences::ExamMode mode) {
+  if (mode == GlobalPreferences::ExamMode::NoSymNoText) {
+    return appExaminationLevel == App::Descriptor::ExaminationLevel::Basic;
+  }
   return false;
 }
 
 bool ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::ExamMode mode) {
-  return false;
+  return mode == GlobalPreferences::ExamMode::NoSymNoText ? true : false;
 }

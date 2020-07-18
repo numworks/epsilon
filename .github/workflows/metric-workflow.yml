@@ -1,0 +1,38 @@
+name: Metrics
+on: [pull_request]
+
+jobs:
+  binary-size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - name: Install ARM toolchain
+        uses: numworks/setup-arm-toolchain@v1
+      - name: Checkout PR base
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+      - name: Build base
+        run: make -j2 -C base epsilon.elf
+      - name: Checkout PR head
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: head
+      - name: Build head
+        run: make -j2 -C head epsilon.elf
+      - name: Retrieve binary size analysis
+        id: binary_size
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --escape)"
+      - name: Prepare comment auth
+        run: echo "::set-env name=GITHUB_TOKEN::$(echo YjgxYTk1YTQ4YzYxNjU4ZTA3YWQzNDYwNTk3ZTI2MTlkODU5MThlOQo= | base64 --decode)"
+      - name: Add comment
+        uses: actions/github@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+        with:
+          args: comment ${{ steps.binary_size.outputs.table }}

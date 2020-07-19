@@ -78,11 +78,12 @@ Event getEvent(int * timeout) {
       if (   key == Keyboard::Key::Left
           || key == Keyboard::Key::Right
           || key == Keyboard::Key::Up
+          || key == Keyboard::Key::Backspace
           || key == Keyboard::Key::Down) {
         if (lock) {
           lock = false;
           alpha = false;
-          shift = false;
+          // shift = false;
         }
       }
       

@@ -1,4 +1,4 @@
-<p align="center"><img src="https://user-images.githubusercontent.com/12123721/87953533-75a22380-caab-11ea-8cde-c40291c4a9ae.png" /></p>
+<p align="center"><img src="https://github.com/Omega-Numworks/Omega-Design/blob/master/Banners/Omega-Banner-Dev-Branch.png?raw=true" /></p>
 
 <p align="center">
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-525252.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>

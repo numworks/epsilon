@@ -48,7 +48,7 @@ App::App(Snapshot * snapshot) :
   m_intervalController(nullptr, this, snapshot->equationStore()),
   m_alternateEmptyViewController(nullptr, &m_solutionsController, &m_solutionsController),
   m_listController(&m_listFooter, snapshot->equationStore(), &m_listFooter),
-  m_listFooter(&m_stackViewController, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
+  m_listFooter(&m_stackViewController, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray, ButtonRowController::Size::Large),
   m_stackViewController(&m_inputViewController, &m_listFooter),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
 {

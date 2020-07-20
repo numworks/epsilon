@@ -43,9 +43,9 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::useInsertionCursor() {
   if (m_insertionCursor.isDefined()) {
-    m_cursor.layout().removeGreySquaresFromAllMatrixAncestors();
+    m_cursor.layout().removeGraySquaresFromAllMatrixAncestors();
     m_cursor = m_insertionCursor;
-    m_cursor.layout().addGreySquaresToAllMatrixAncestors();
+    m_cursor.layout().addGraySquaresToAllMatrixAncestors();
   }
 }
 
@@ -241,7 +241,7 @@ void LayoutField::ContentView::deleteSelection() {
 void LayoutField::ContentView::updateInsertionCursor() {
   if (!m_insertionCursor.isDefined()) {
     Layout l = m_cursor.layout();
-    if (l.type() == LayoutNode::Type::EmptyLayout && static_cast<EmptyLayout &>(l).color() == EmptyLayoutNode::Color::Grey) {
+    if (l.type() == LayoutNode::Type::EmptyLayout && static_cast<EmptyLayout &>(l).color() == EmptyLayoutNode::Color::Gray) {
       // Don't set m_insertionCursor pointing to a layout which might disappear
       return;
     }
@@ -335,7 +335,7 @@ CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 void LayoutField::putCursorRightOfLayout() {
-  m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixAncestors();
+  m_contentView.cursor()->layout().removeGraySquaresFromAllMatrixAncestors();
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
   m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Right));
 }
@@ -448,11 +448,11 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
         Layout p = selectStart->parent();
         assert(p == selectEnd->parent());
         assert(p.type() == LayoutNode::Type::HorizontalLayout);
-        removedSquares = p.removeGreySquaresFromAllMatrixChildren();
+        removedSquares = p.removeGraySquaresFromAllMatrixChildren();
       } else {
-        removedSquares = selectStart->removeGreySquaresFromAllMatrixChildren();
+        removedSquares = selectStart->removeGraySquaresFromAllMatrixChildren();
       }
-      shouldRecomputeLayout = m_contentView.cursor()->layout().removeGreySquaresFromAllMatrixChildren() || removedSquares || shouldRecomputeLayout;
+      shouldRecomputeLayout = m_contentView.cursor()->layout().removeGraySquaresFromAllMatrixChildren() || removedSquares || shouldRecomputeLayout;
     }
   } else if (privateHandleEvent(event, &shouldScrollAndRedraw)) {
     if (!shouldScrollAndRedraw) {
@@ -751,7 +751,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   }
 
   // Handle matrices
-  cursor->layout().addGreySquaresToAllMatrixAncestors();
+  cursor->layout().addGraySquaresToAllMatrixAncestors();
 
   // Handle empty layouts
   cursor->hideEmptyLayoutIfNeeded();

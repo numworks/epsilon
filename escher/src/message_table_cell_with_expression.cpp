@@ -3,7 +3,7 @@
 
 MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message, const KDFont * font) :
   MessageTableCell(message, font),
-  m_subtitleView(1.0f, 0.5f, Palette::GreyDark)
+  m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
 {
 }
 

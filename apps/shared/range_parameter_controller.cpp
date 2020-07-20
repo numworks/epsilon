@@ -57,7 +57,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
   I18n::Message labels[k_numberOfTextCell+1] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::Default, I18n::Message::YMin, I18n::Message::YMax};
   myCell->setMessage(labels[index]);
-  KDColor yColor = m_tempInteractiveRange.yAuto() ? Palette::GreyDark : KDColorBlack;
+  KDColor yColor = m_tempInteractiveRange.yAuto() ? Palette::GrayDark : KDColorBlack;
   KDColor colors[k_numberOfTextCell+1] = {KDColorBlack, KDColorBlack, KDColorBlack, yColor, yColor};
   myCell->setTextColor(colors[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);

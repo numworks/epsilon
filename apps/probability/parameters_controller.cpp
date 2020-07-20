@@ -8,7 +8,7 @@ namespace Probability {
 
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
-  m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GrayDark, Palette::WallScreen),
   m_firstParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_secondParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)

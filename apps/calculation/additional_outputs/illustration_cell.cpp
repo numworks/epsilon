@@ -10,7 +10,7 @@ void IllustrationCell::layoutSubviews(bool force) {
 }
 
 void IllustrationCell::drawRect(KDContext * ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), Palette::GreyBright);
+  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
 }

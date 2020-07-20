@@ -14,7 +14,7 @@ public:
   void reload() { layoutSubviews(); }
   static constexpr const KDFont * Font() { return KDFont::SmallFont; }
   static constexpr KDColor TextColor() { return KDColorBlack; }
-  static constexpr KDColor BackgroundColor() { return Palette::GreyMiddle; }
+  static constexpr KDColor BackgroundColor() { return Palette::GrayMiddle; }
 private:
   static constexpr KDCoordinate LineSpacing = 2;
   int numberOfSubviews() const override = 0;

@@ -42,10 +42,10 @@ public:
   public:
     GlyphBuffer() {} // Don't initialize either buffer
     KDColor * colorBuffer() { return m_colors; }
-    uint8_t * greyscaleBuffer() { return m_greyscales; }
-    uint8_t * secondaryGreyscaleBuffer() { return m_greyscales + k_maxGlyphPixelCount; }
+    uint8_t * grayscaleBuffer() { return m_grayscales; }
+    uint8_t * secondaryGrayscaleBuffer() { return m_grayscales + k_maxGlyphPixelCount; }
   private:
-    uint8_t m_greyscales[2*k_maxGlyphPixelCount];
+    uint8_t m_grayscales[2*k_maxGlyphPixelCount];
     KDColor m_colors[k_maxGlyphPixelCount];
   };
 
@@ -62,8 +62,8 @@ public:
   static constexpr GlyphIndex IndexForReplacementCharacterCodePoint = 133;
   GlyphIndex indexForCodePoint(CodePoint c) const;
 
-  void setGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
-  void accumulateGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
+  void setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
+  void accumulateGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
 
   using RenderPalette = KDPalette<(1<<k_bitsPerPixel)>;
   void colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffer * glyphBuffer) const;
@@ -76,7 +76,7 @@ public:
   constexpr KDFont(size_t tableLength, const CodePointIndexPair * table, KDCoordinate glyphWidth, KDCoordinate glyphHeight, const uint16_t * glyphDataOffset, const uint8_t * data) :
     m_tableLength(tableLength), m_table(table), m_glyphSize(glyphWidth, glyphHeight), m_glyphDataOffset(glyphDataOffset), m_data(data) { }
 private:
-  void fetchGreyscaleGlyphAtIndex(GlyphIndex index, uint8_t * greyscaleBuffer) const;
+  void fetchGrayscaleGlyphAtIndex(GlyphIndex index, uint8_t * grayscaleBuffer) const;
 
   const uint8_t * compressedGlyphData(GlyphIndex index) const {
     return m_data + m_glyphDataOffset[index];

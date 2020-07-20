@@ -35,7 +35,7 @@ void BufferTextViewWithTextField::drawRect(KDContext * ctx, KDRect rect) const {
 
   // Draw the text field border
   KDRect borderRect = KDRect(textFieldRect.x()-k_borderWidth, textFieldRect.y()-k_borderWidth, textFieldRect.width()+2*k_borderWidth, textFieldRect.height()+2*k_borderWidth);
-  ctx->strokeRect(borderRect, Palette::GreyMiddle);
+  ctx->strokeRect(borderRect, Palette::GrayMiddle);
 }
 
 void BufferTextViewWithTextField::didBecomeFirstResponder() {

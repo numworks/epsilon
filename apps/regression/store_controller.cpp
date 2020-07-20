@@ -38,7 +38,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
   mytitleCell->setSeparatorLeft(isValuesColumn && i > 0);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
-  mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GreyDark : Store::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GreyDark with graph/list_controller and statistics/store_controller
+  mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : Store::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller and statistics/store_controller
   char name[] = {isValuesColumn ? 'X' : 'Y', static_cast<char>('1' + seriesIndex), 0};
   mytitleCell->setText(name);
 }

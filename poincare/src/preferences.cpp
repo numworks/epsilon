@@ -15,7 +15,7 @@ Preferences::Preferences() :
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits),
   m_colorOfLED(Preferences::LEDColor::Red),
   m_symbolMultiplication(Preferences::SymbolMultiplication::Auto),
-  m_resultDisplay(Preferences::ResultDisplay::Default),
+  m_symbolFunction(Preferences::SymbolFunction::Default),
   m_pythonFont(Preferences::PythonFont::Large)
 {}
 

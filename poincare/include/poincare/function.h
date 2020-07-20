@@ -16,7 +16,7 @@ public:
   // TreeNode
   int numberOfChildren() const override { return 1; } //TODO allow any number of children? Needs templating
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Function";
   }
 #endif
@@ -28,9 +28,6 @@ public:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
   float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
-  /* getUnit() is ExpressionNode::getUnit ->
-   * as the function is reduced, it would have been replaced if it had a
-   * definition. It thus has no definition, so no unit. */
 
 private:
   char m_name[0]; // MUST be the last member variable

@@ -19,13 +19,14 @@ public:
     ScrollableView(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
     m_contentView(),
+    m_insertionCursorEvent(Ion::Events::None),
     m_delegate(delegate)
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   Poincare::Context * context() const;
   bool isEditing() const override { return m_contentView.isEditing(); }
   void setEditing(bool isEditing) override;
-  void clearLayout() { m_contentView.clearLayout(); }
+  void clearLayout();
   void scrollToCursor() {
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baselineWithoutSelection());
   }
@@ -33,6 +34,7 @@ public:
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void putCursorRightOfLayout();
+  void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {
@@ -60,6 +62,7 @@ private:
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false);
+  bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == m_insertionCursorEvent; }
 
   class ContentView : public View {
   public:
@@ -83,14 +86,26 @@ private:
     void copySelection(Poincare::Context * context);
     bool selectionIsEmpty() const;
     void deleteSelection();
+    void invalidateInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
+    void updateInsertionCursor();
 
   private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
+    void useInsertionCursor();
     KDRect selectionRect() const;
     Poincare::LayoutCursor m_cursor;
+    /* The insertion cursor is a secondary cursor that determines where text
+     * should be inserted. Most of the time this cursor is useless (and is
+     * therefore disabled), but in an interface where the user can navigate out
+     * of the field, it's important to keep track of where inserted text should
+     * go even if the main cursor was moved.
+     * For instance, this is useful in the Calculation app when the user wants
+     * to type a division and scroll up the history to insert something at the
+     * denominator. */
+    Poincare::LayoutCursor m_insertionCursor;
     ExpressionView m_expressionView;
     TextCursorView m_cursorView;
     /* The selection starts on the left of m_selectionStart, and ends on the
@@ -100,6 +115,7 @@ private:
     bool m_isEditing;
   };
   ContentView m_contentView;
+  Ion::Events::Event m_insertionCursorEvent;
   LayoutFieldDelegate * m_delegate;
 };
 

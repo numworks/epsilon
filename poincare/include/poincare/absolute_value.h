@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(AbsoluteValueNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "AbsoluteValue";
   }
 #endif
@@ -33,7 +33,6 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
   }
-  Expression getUnit() const override;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -48,7 +47,7 @@ class AbsoluteValue final : public Expression {
 friend class AbsoluteValueNode;
 public:
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
-  static AbsoluteValue Builder(Expression child) { return TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>(&child, 1); }
+  static AbsoluteValue Builder(Expression child) { return TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilderOneChild<AbsoluteValue>);
 

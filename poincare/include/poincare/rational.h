@@ -21,7 +21,7 @@ public:
   // TreeNode
   size_t size() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Rational";
   }
   virtual void logAttributes(std::ostream & stream) const override;
@@ -45,14 +45,17 @@ public:
   // Basic test
   bool isZero() const { return unsignedNumerator().isZero(); }
   bool isOne() const { return signedNumerator().isOne() && isInteger(); }
+  bool isTwo() const { return signedNumerator().isTwo() && isInteger(); }
+  bool isThree() const { return signedNumerator().isThree() && isInteger(); }
   bool isMinusOne() const { return signedNumerator().isMinusOne() && isInteger(); }
+  bool isMinusTwo() const { return signedNumerator().isMinusTwo() && isInteger(); }
   bool isHalf() const { return signedNumerator().isOne() && denominator().isTwo(); }
   bool isMinusHalf() const { return signedNumerator().isMinusOne() && denominator().isTwo(); }
   bool isTen() const { return signedNumerator().isTen() && isInteger(); }
 
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction; };
@@ -89,7 +92,10 @@ public:
   bool isNegative() const { return node()->isNegative(); }
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
+  bool isTwo() const { return node()->isTwo(); }
+  bool isThree() const { return node()->isThree(); }
   bool isMinusOne() const { return node()->isMinusOne(); }
+  bool isMinusTwo() const { return node()->isMinusTwo(); }
   bool isHalf() const { return node()->isHalf(); }
   bool isMinusHalf() const { return node()->isMinusHalf(); }
   bool isTen() const { return node()->isTen(); }

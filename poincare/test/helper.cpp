@@ -37,10 +37,10 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
   quiz_assert(test);
 }
 
-void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation, ProcessExpression process, int numberOfSignifiantDigits) {
+void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  Expression m = process(e, ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target, symbolicComputation));
+  Expression m = process(e, ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target, symbolicComputation, unitConversion));
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
@@ -72,23 +72,27 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
 
 Poincare::Expression parse_expression(const char * expression, Context * context, bool addParentheses) {
   Expression result = Expression::Parse(expression, context, addParentheses);
-  quiz_assert(!result.isUninitialized());
+  quiz_assert_print_if_failure(!result.isUninitialized(), expression);
   return result;
 }
 
 void assert_simplify(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  quiz_assert_print_if_failure(!e.isUninitialized(), expression);
-  e = e.simplify(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
-  quiz_assert_print_if_failure(!(e.isUninitialized()), expression);
+  assert_expression_simplify(e, angleUnit, complexFormat, target, expression);
 }
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation) {
-  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, symbolicComputation, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+void assert_expression_simplify(Expression e, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target, const char * printIfFailure) {
+  Shared::GlobalContext globalContext;
+  e = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
+  quiz_assert_print_if_failure(!(e.isUninitialized()), printIfFailure);
+}
+
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, symbolicComputation, unitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       Expression copy = e.clone();
       if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-        copy.simplifyAndApproximate(&copy, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.symbolicComputation());
+        copy.simplifyAndApproximate(&copy, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
       } else {
         copy = copy.simplify(reductionContext);
       }
@@ -103,14 +107,14 @@ template<typename T>
 void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);
 }
 
 void assert_expression_simplifies_and_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : PrintFloat::k_numberOfStoredSignificantDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       Expression reduced;
       Expression approximated;
       e.simplifyAndApproximate(&reduced, &approximated, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.symbolicComputation());
@@ -122,10 +126,17 @@ template<typename T>
 void assert_expression_simplifies_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       e = e.simplify(reductionContext);
       return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);
+}
+
+void assert_expression_serialize_to(Poincare::Expression expression, const char * serialization, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
+  quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0, serialization);
 }
 
 void assert_layout_serialize_to(Poincare::Layout layout, const char * serialization) {

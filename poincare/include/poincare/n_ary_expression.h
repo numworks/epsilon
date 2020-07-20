@@ -38,8 +38,8 @@ protected:
    * than 6144 children which fit in uint16_t. */
   uint16_t m_numberOfChildren;
 private:
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
-  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
+  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 };
 
 class NAryExpression : public Expression {
@@ -52,6 +52,7 @@ public:
   Expression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }
+  void mergeSameTypeChildrenInPlace();
   /* allChildrenAreReal returns:
    * - 1 if all children are real
    * - 0 if all non real children are ComplexCartesian

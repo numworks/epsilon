@@ -58,10 +58,13 @@ int ZoomParameterController::ContentView::numberOfSubviews() const {
 
 View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
+  /* The order of subviews matters here: redrawing curve view can be long and
+   * if it was redraw before the legend view, you could see noise when
+   * switching the device on and off. */
   if (index == 0) {
-    return m_curveView;
+    return &m_legendView;
   }
-  return &m_legendView;
+  return m_curveView;
 }
 
 void ZoomParameterController::ContentView::layoutSubviews(bool force) {

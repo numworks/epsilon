@@ -25,7 +25,7 @@ int Toolbox::reusableCellCount(int type) {
 }
 
 void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->children(index);
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
   if (messageTree->numberOfChildren() == 0) {
     MessageTableCellWithMessage * myCell = (MessageTableCellWithMessage *)cell;
     myCell->setMessage(messageTree->label());
@@ -39,7 +39,7 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 int Toolbox::typeAtLocation(int i, int j) {
-  MessageTree * messageTree = (MessageTree *)m_messageTreeModel->children(j);
+  MessageTree * messageTree = (MessageTree *)m_messageTreeModel->childAtIndex(j);
   if (messageTree->numberOfChildren() == 0) {
     return LeafCellType;
   }
@@ -48,7 +48,7 @@ int Toolbox::typeAtLocation(int i, int j) {
 
 bool Toolbox::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
-  m_messageTreeModel = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
+  m_messageTreeModel = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   return NestedMenuController::selectSubMenu(selectedRow);
 }
 
@@ -63,7 +63,7 @@ bool Toolbox::returnToPreviousMenu() {
   ToolboxMessageTree * parentMessageTree = (ToolboxMessageTree *)rootModel();
   Stack::State * previousState = m_stack.stateAtIndex(index++);
   while (currentDepth-- > 1) {
-    parentMessageTree = (ToolboxMessageTree *)parentMessageTree->children(previousState->selectedRow());
+    parentMessageTree = (ToolboxMessageTree *)parentMessageTree->childAtIndex(previousState->selectedRow());
     previousState = m_stack.stateAtIndex(index++);
   }
   m_messageTreeModel = parentMessageTree;

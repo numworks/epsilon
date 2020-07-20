@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(ConfidenceIntervalNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "ConfidenceInterval";
   }
 #endif
@@ -48,7 +48,7 @@ class ConfidenceInterval : public Expression {
   friend class SimplePredictionInterval;
 public:
   ConfidenceInterval(const ConfidenceIntervalNode * n) : Expression(n) {}
-  static ConfidenceInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<ConfidenceInterval, ConfidenceIntervalNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static ConfidenceInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<ConfidenceInterval, ConfidenceIntervalNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("confidence", 2, &UntypedBuilderTwoChildren<ConfidenceInterval>);
 
   // Expression
@@ -60,7 +60,7 @@ private:
 class SimplePredictionInterval final : public ConfidenceInterval {
 public:
   SimplePredictionInterval(const SimplePredictionIntervalNode * n) : ConfidenceInterval(n) {}
-  static SimplePredictionInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<SimplePredictionInterval, SimplePredictionIntervalNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static SimplePredictionInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<SimplePredictionInterval, SimplePredictionIntervalNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction", 2, &UntypedBuilderTwoChildren<SimplePredictionInterval>);
 };
 

@@ -23,7 +23,7 @@ float StudentDistribution::evaluateAtAbscissa(float x) const {
 }
 
 bool StudentDistribution::authorizedValueAtIndex(float x, int index) const {
-  return x >= FLT_EPSILON && x <= 200.0; // We cannot draw the curve for x > 200 (coefficient() is too small)
+  return x >= FLT_EPSILON && x <= 200.0f; // We cannot draw the curve for x > 200 (coefficient() is too small)
 }
 
 double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
@@ -55,7 +55,7 @@ double StudentDistribution::cumulativeDistributiveInverseForProbability(double *
 
 float StudentDistribution::lnCoefficient() const {
   const float k = m_parameter1;
-  return std::lgamma((k+1.0f)/2.0f) - std::lgamma(k/2.0f) - (M_PI+k)/2.0f;
+  return std::lgamma((k+1.0f)/2.0f) - std::lgamma(k/2.0f) - ((float)M_PI+k)/2.0f;
 }
 
 }

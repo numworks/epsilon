@@ -169,13 +169,11 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("1+2", Addition::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("(1)+2", Addition::Builder(Parenthesis::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("(1+2)", Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2))));
-  Expression nAryChildren[] = {BasedInteger::Builder(1),BasedInteger::Builder(2),BasedInteger::Builder(3)};
-  assert_parsed_expression_is("1+2+3", Addition::Builder(nAryChildren, 3));
-  nAryChildren[2] = Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4)));
-  assert_parsed_expression_is("1+2+(3+4)", Addition::Builder(nAryChildren, 3));
+  Expression::Tuple one_two_three = {BasedInteger::Builder(1),BasedInteger::Builder(2),BasedInteger::Builder(3)};
+  assert_parsed_expression_is("1+2+3", Addition::Builder(one_two_three));
+  assert_parsed_expression_is("1+2+(3+4)", Addition::Builder({BasedInteger::Builder(1), BasedInteger::Builder(2), Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4)))}));
   assert_parsed_expression_is("1×2", Multiplication::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
-  nAryChildren[2] = BasedInteger::Builder(3);
-  assert_parsed_expression_is("1×2×3", Multiplication::Builder(nAryChildren, 3));
+  assert_parsed_expression_is("1×2×3", Multiplication::Builder(one_two_three));
   assert_parsed_expression_is("1+2×3", Addition::Builder(BasedInteger::Builder(1), Multiplication::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
   assert_parsed_expression_is("1/2", Division::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("(1/2)", Parenthesis::Builder(Division::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2))));
@@ -241,6 +239,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_text_not_parsable("t0000000");
   assert_text_not_parsable("[[t0000000[");
   assert_text_not_parsable("0→x=0");
+  assert_text_not_parsable("0→3=0");
   assert_text_not_parsable("0=0→x");
   assert_text_not_parsable("1ᴇ2ᴇ3");
   assert_text_not_parsable("0b001112");
@@ -295,7 +294,9 @@ QUIZ_CASE(poincare_parsing_units) {
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
       if (rep->isPrefixable()) {
-        for (const Unit::Prefix * pre = Unit::AllPrefixes; pre < Unit::AllPrefixes + sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix); pre++) {
+        size_t numberOfPrefixes = sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix *);
+        for (size_t i = 0; i < numberOfPrefixes; i++) {
+          const Unit::Prefix * pre = Unit::AllPrefixes[i];
           Unit::Builder(dim, rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
@@ -430,9 +431,7 @@ QUIZ_CASE(poincare_parsing_parse_store) {
   assert_text_not_parsable("1→\1"); // UnknownX
   assert_text_not_parsable("1→\2"); // UnknownN
   assert_text_not_parsable("1→acos");
-  assert_text_not_parsable("1→f(2)");
   assert_text_not_parsable("1→f(f)");
-  assert_text_not_parsable("3→f(g(4))");
 }
 
 QUIZ_CASE(poincare_parsing_parse_unit_convert) {
@@ -440,20 +439,6 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   assert_parsed_expression_is("1→_m", UnitConvert::Builder(BasedInteger::Builder(1), meter));
   Expression kilometer = Expression::Parse("_km", nullptr);
   assert_parsed_expression_is("1→_m/_km", UnitConvert::Builder(BasedInteger::Builder(1), Division::Builder(meter, kilometer)));
-
-  assert_simplify("_m→a", Radian, Real);
-  assert_simplify("_m→b", Radian, Real);
-  assert_text_not_parsable("1_km→a×b");
-
-  assert_simplify("2→a");
-  assert_text_not_parsable("3_m→a×_km");
-  assert_simplify("2→f(x)");
-  assert_text_not_parsable("3_m→f(2)×_km");
-
-  // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_parsing_implicit_multiplication) {

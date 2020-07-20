@@ -1,4 +1,5 @@
 #include "plot_view.h"
+#include <algorithm>
 
 namespace Matplotlib {
 
@@ -45,14 +46,13 @@ void PlotView::traceSegment(KDContext * ctx, KDRect r, PlotStore::Segment segmen
     segment.xEnd(), segment.yEnd(),
     segment.color()
   );
-  if (segment.isArrow()) {
+  if (!std::isnan(segment.arrowWidth())) {
     float dx = segment.xEnd() - segment.xStart();
     float dy = segment.yEnd() - segment.yStart();
-    drawArrow(ctx, r, segment.xEnd(), segment.yEnd(), dx, dy, segment.color());
+    drawArrow(ctx, r, segment.xEnd(), segment.yEnd(), dx, dy, segment.color(), segment.arrowWidth());
   }
 }
 
-static inline KDCoordinate maxKDCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 void PlotView::traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const {
   KDCoordinate left = std::round(floatToPixel(Axis::Horizontal, rect.left()));
   KDCoordinate right = std::round(floatToPixel(Axis::Horizontal, rect.right()));
@@ -61,7 +61,7 @@ void PlotView::traceRect(KDContext * ctx, KDRect r, PlotStore::Rect rect) const 
   KDRect pixelRect(
     left,
     top,
-    maxKDCoordinate(right - left, 1), // Rectangle should at least be visible
+    std::max(right - left, 1), // Rectangle should at least be visible
     bottom - top
   );
   ctx->fillRect(pixelRect, rect.color());
@@ -75,6 +75,5 @@ void PlotView::traceLabel(KDContext * ctx, KDRect r, PlotStore::Label label) con
     RelativePosition::After
   );
 }
-
 
 }

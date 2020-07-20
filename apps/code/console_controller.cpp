@@ -3,6 +3,7 @@
 #include "script.h"
 #include "variable_box_controller.h"
 #include <apps/i18n.h>
+#include <algorithm>
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/preferences.h>
@@ -15,8 +16,6 @@ extern "C" {
 }
 
 namespace Code {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 static const char * sStandardPromptText = ">>> ";
 
@@ -32,7 +31,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_pythonDelegate(pythonDelegate),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
-  m_editCell(this, pythonDelegate, this),
+  m_editCell(this, this, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this),
   m_inputRunLoopActive(false)
@@ -49,17 +48,13 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
 }
 
 bool ConsoleController::loadPythonEnvironment() {
-  if (m_pythonDelegate->isPythonUser(this)) {
-    return true;
+  if (!m_pythonDelegate->isPythonUser(this)) {
+    m_scriptStore->clearConsoleFetchInformation();
+    emptyOutputAccumulationBuffer();
+    m_pythonDelegate->initPythonWithUser(this);
+    MicroPython::registerScriptProvider(m_scriptStore);
+    m_importScriptsWhenViewAppears = m_autoImportScripts;
   }
-  emptyOutputAccumulationBuffer();
-  m_pythonDelegate->initPythonWithUser(this);
-  MicroPython::registerScriptProvider(m_scriptStore);
-  m_importScriptsWhenViewAppears = m_autoImportScripts;
-  /* We load functions and variables names in the variable box before running
-   * any other python code to avoid failling to load functions and variables
-   * due to memory exhaustion. */
-  App::app()->variableBoxController()->loadFunctionsAndVariables();
   return true;
 }
 
@@ -291,7 +286,7 @@ void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, i
   }
 }
 
-void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void ConsoleController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -376,6 +371,14 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
   return true;
 }
 
+VariableBoxController * ConsoleController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  VariableBoxController * varBox = App::app()->variableBoxController();
+  varBox->loadVariablesImportedFromScripts();
+  varBox->setTitle(I18n::Message::FunctionsAndVariables);
+  varBox->setDisplaySubtitles(false);
+  return varBox;
+}
+
 void ConsoleController::resetSandbox() {
   if (stackViewController()->topViewController() != sandbox()) {
     return;
@@ -448,7 +451,7 @@ void ConsoleController::printText(const char * text, size_t length) {
     flushOutputAccumulationBufferToStore();
     micropython_port_vm_hook_refresh_print();
   }
-#if __EMSCRIPTEN__
+// #if __EMSCRIPTEN__
   /* If we called micropython_port_interrupt_if_needed here, we would need to
    * put in the WHITELIST all the methods that call
    * ConsoleController::printText, which means all the MicroPython methods that
@@ -461,13 +464,17 @@ void ConsoleController::printText(const char * text, size_t length) {
    * device.
    *
    * TODO: Allow print interrpution on emscripten -> maybe by using WASM=1 ? */
-#else
+
+  /*
+   * This can be run in Omega, since it uses WebASM.
+   */
+// #else
   /* micropython_port_vm_hook_loop is not enough to detect user interruptions,
    * because it calls micropython_port_interrupt_if_needed every 20000
    * operations, and a print operation is quite long. We thus explicitely call
    * micropython_port_interrupt_if_needed here. */
   micropython_port_interrupt_if_needed();
-#endif
+// #endif
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {
@@ -476,7 +483,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
    * the sandbox. */
   hideAnyDisplayedViewController();
 
-  if (script.importationStatus() || force) {
+  if (script.autoImportationStatus() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
     assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
@@ -488,7 +495,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
 
     /* Copy the script name without the extension ".py". The '.' is overwritten
      * by the null terminating char. */
-    int copySizeWithNullTerminatingZero = minInt(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
+    int copySizeWithNullTerminatingZero = std::min(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
     assert(copySizeWithNullTerminatingZero >= 0);
     assert(copySizeWithNullTerminatingZero <= k_maxImportCommandSize - currentChar);
     strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);

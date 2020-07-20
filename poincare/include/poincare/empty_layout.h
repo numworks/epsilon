@@ -42,7 +42,7 @@ public:
   size_t size() const override { return sizeof(EmptyLayoutNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "EmptyLayout";
   }
 #endif
@@ -82,6 +82,7 @@ public:
     node()->setVisible(visible);
   }
 
+  EmptyLayoutNode::Color color() const { return node()->color(); }
   void setColor(EmptyLayoutNode::Color color) {
     node()->setColor(color);
   }

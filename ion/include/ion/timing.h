@@ -11,7 +11,7 @@ void msleep(uint32_t ms);
 
 /* millis is the number of milliseconds ellapsed since a random epoch.
  * On the device, epoch is the boot time. */
-volatile uint64_t millis();
+uint64_t millis();
 
 }
 }

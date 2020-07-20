@@ -17,11 +17,11 @@ public:
   constexpr Event() : m_id(4*PageSize){} // Return Ion::Event::None by default
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
 
-  uint8_t id() const { return m_id; }
-#if DEBUG
+  constexpr explicit operator uint8_t() const { return m_id; }
+#ifndef NDEBUG
   const char * name() const;
 #endif
-  Event(Keyboard::Key key, bool shift, bool alpha);
+  Event(Keyboard::Key key, bool shift, bool alpha, bool lock);
 
   bool operator==(const Event & other) const {
     return (m_id == other.m_id);
@@ -120,6 +120,8 @@ constexpr Event EXE = Event::PlainKey(Keyboard::Key::EXE);
 
 // Shift
 
+constexpr Event ShiftHome  = Event::ShiftKey(Keyboard::Key::Home);
+
 constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::Left);
 constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
 constexpr Event ShiftUp    = Event::ShiftKey(Keyboard::Key::Up);
@@ -191,7 +193,7 @@ constexpr Event AlphaDown  = Event::AlphaKey(Keyboard::Key::Down);
 constexpr Event Colon = Event::AlphaKey(Keyboard::Key::XNT);
 constexpr Event SemiColon = Event::AlphaKey(Keyboard::Key::Var);
 constexpr Event DoubleQuotes = Event::AlphaKey(Keyboard::Key::Toolbox);
-constexpr Event Percent = Event::AlphaKey(Keyboard::Key::Back);
+constexpr Event Percent = Event::AlphaKey(Keyboard::Key::Backspace);
 
 constexpr Event LowerA = Event::AlphaKey(Keyboard::Key::Exp);
 constexpr Event LowerB = Event::AlphaKey(Keyboard::Key::Ln);

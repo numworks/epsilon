@@ -21,11 +21,11 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T("0"), T("."), T("ᴇ"), TL(), TL(), U(),
 // Shift
   TL(), TL(), TL(), TL(), U(), U(),
-  U(), U(), U(), U(), U(), U(),
+  TL(), U(), U(), U(), U(), U(),
   U(), U(), TL(), TL(), TL(), TL(),
   T("["), T("]"), T("{"), T("}"), T("_"), T("→"),
   T("asin(\x11)"), T("acos(\x11)"), T("atan(\x11)"), T("="), T("<"), T(">"),
-  TL(), TL(), TL(), T("(\x11)"), U(), U(),
+  T("μ"), TL(), T("Ω"), T("(\x11)"), U(), U(),
   TL(), TL(), TL(), TL(), TL(), U(),
   TL(), TL(), TL(), TL(), TL(), U(),
   TL(), TL(), TL(), TL(), U(), U(),
@@ -38,7 +38,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T("m"), T("n"), T("o"), T("p"), T("q"), U(),
   T("r"), T("s"), T("t"), T("u"), T("v"), U(),
   T("w"), T("x"), T("y"), T("z"), T(" "), U(),
-  T("?"), T("!"), U(), TL(), U(), U(),
+  T("?"), T("!"), T("\x5c"), T("\x40"), U(), U(),
 // Shift+Alpha
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
@@ -51,7 +51,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   U(), U(), U(), TL(), U(), U(),
 };
 
-#if DEBUG
+#ifndef NDEBUG
 
 static constexpr const char * s_nameForEvent[255] = {
  // Plain
@@ -66,11 +66,11 @@ static constexpr const char * s_nameForEvent[255] = {
   "Zero", "Dot", "EE", "Ans", "EXE", nullptr,
   //Shift,
   "ShiftLeft", "ShiftUp", "ShiftDown", "ShiftRight", nullptr, nullptr,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  "ShiftHome", nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, "AlphaLock", "Cut", "Copy", "Paste", "Clear",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Underscore", "Sto",
   "Arcsine", "Arccosine", "Arctangent", "Equal", "Lower", "Greater",
-  nullptr, nullptr, nullptr, nullptr, "DoubleParenthesis", nullptr,
+  "Micro", nullptr, "Omega", nullptr, "DoubleParenthesis", nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, "BrightnessPlus", "BrightnessMinus", nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -83,7 +83,7 @@ static constexpr const char * s_nameForEvent[255] = {
   "LowerM", "LowerN", "LowerO", "LowerP", "LowerQ", nullptr,
   "LowerR", "LowerS", "LowerT", "LowerU", "LowerV", nullptr,
   "LowerW", "LowerX", "LowerY", "LowerZ", "Space", nullptr,
-  "Question", "Exclamation", nullptr, nullptr, nullptr, nullptr,
+  "Question", "Exclamation", "BackSlash", "At", nullptr, nullptr,
   //Shift+Alpha,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,

@@ -3,6 +3,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/layout_helper.h>
 #include <poincare/layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/matrix_layout.h>
@@ -10,14 +11,12 @@
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <stdio.h>
 #include <poincare/preferences.h>
+#include <algorithm>
 
 namespace Poincare {
 
 /* Getters and setters */
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 KDCoordinate LayoutCursor::cursorHeightWithoutSelection() {
   KDCoordinate height = layoutHeight();
@@ -36,7 +35,7 @@ KDCoordinate LayoutCursor::baselineWithoutSelection() {
   if (m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.baseline();
   } else if (m_layout.hasSibling(equivalentLayout)) {
-    return maxCoordinate(layoutBaseline, equivalentLayout.baseline());
+    return std::max(layoutBaseline, equivalentLayout.baseline());
   }
   return layoutBaseline;
 }
@@ -110,6 +109,78 @@ void LayoutCursor::addEmptyMatrixLayout() {
   m_position = Position::Right;
 }
 
+void LayoutCursor::addLog() {
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch((int)preferences->symbolOfFunction()){
+    case 1:
+      addEmpty10Log();
+      break;
+    case 2:
+      addEmptyArgLog();
+      break;
+    default:
+      addEmptyLog();
+      break;
+  }
+}
+
+void LayoutCursor::addEmptyLog() {
+  Layout logLayout = LayoutHelper::String("log", 3);
+  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
+  resultLayout.addChildAtIndex(HorizontalLayout::Builder(
+    LeftParenthesisLayout::Builder(),
+    RightParenthesisLayout::Builder()
+  ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+
+  m_layout.addSibling(this, resultLayout, true);
+  LayoutCursor::moveLeft(nullptr, false);
+}
+
+void LayoutCursor::addEmpty10Log() {
+  HorizontalLayout child = HorizontalLayout::Builder(CodePointLayout::Builder('1'),CodePointLayout::Builder('0'));
+  Layout logLayout = LayoutHelper::String("log", 3);
+  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child, VerticalOffsetLayoutNode::Position::Subscript);
+  resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addChildAtIndex(HorizontalLayout::Builder(
+    LeftParenthesisLayout::Builder(),
+    RightParenthesisLayout::Builder()
+  ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  
+  m_layout.addSibling(this, resultLayout, true);
+  LayoutCursor::moveLeft(nullptr, false);
+}
+
+void LayoutCursor::addEmptyArgLog() {
+  HorizontalLayout child = HorizontalLayout::Builder(EmptyLayout::Builder());
+  Layout logLayout = LayoutHelper::String("log", 3);
+  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(child, VerticalOffsetLayoutNode::Position::Subscript);
+  resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addChildAtIndex(HorizontalLayout::Builder(
+    LeftParenthesisLayout::Builder(),
+    RightParenthesisLayout::Builder()
+  ), resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  
+  m_layout.addSibling(this, resultLayout, true);
+  LayoutCursor::moveLeft(nullptr, false);
+}
+
+void LayoutCursor::addRoot() {
+  Preferences * preferences = Preferences::sharedPreferences();
+  switch((int)preferences->symbolOfFunction()){
+    case 1:
+      addEmptyArgSquareRootLayout();
+      break;
+    case 2:
+      addEmptyRootLayout();
+      break;
+    default:
+      addEmptySquareRootLayout();
+      break;
+  }
+}
+
 void LayoutCursor::addEmptySquareRootLayout() {
   // TODO: add a horizontal layout only if several children
   HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
@@ -117,6 +188,28 @@ void LayoutCursor::addEmptySquareRootLayout() {
   m_layout.addSibling(this, newChild, false);
   m_layout = newChild.childAtIndex(0);
   m_position = Position::Left;
+  ((Layout *)&newChild)->collapseSiblings(this);
+}
+
+void LayoutCursor::addEmptyRootLayout() {
+  // TODO: add a horizontal layout only if several children
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  NthRootLayout newChild = NthRootLayout::Builder(child1, child2);
+  m_layout.addSibling(this, newChild, false);
+  m_layout = newChild.childAtIndex(0);
+  m_position = Position::Right;
+  ((Layout *)&newChild)->collapseSiblings(this);
+}
+
+void LayoutCursor::addEmptyArgSquareRootLayout() {
+  // TODO: add a horizontal layout only if several children
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(CodePointLayout::Builder('2'));
+  NthRootLayout newChild = NthRootLayout::Builder(child1, child2);
+  m_layout.addSibling(this, newChild, false);
+  m_layout = newChild.childAtIndex(0);
+  m_position = Position::Right;
   ((Layout *)&newChild)->collapseSiblings(this);
 }
 
@@ -135,7 +228,7 @@ void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   Preferences * preferences = Preferences::sharedPreferences();
   int Symbol;
-  switch((int)preferences->symbolofMultiplication()){
+  switch((int)preferences->symbolOfMultiplication()){
     case 1:
       Symbol = UCodePointMiddleDot;
       break;
@@ -171,7 +264,7 @@ void LayoutCursor::addXNTCodePointLayout() {
 
 void LayoutCursor::addMultiplicationPointLayout(){
   Preferences * preferences = Preferences::sharedPreferences();
-  switch((int)preferences->symbolofMultiplication()){
+  switch((int)preferences->symbolOfMultiplication()){
     case 1:
       addLayoutAndMoveCursor(HorizontalLayout::Builder(CodePointLayout::Builder(UCodePointMiddleDot)));
       break;
@@ -262,8 +355,8 @@ KDCoordinate LayoutCursor::layoutHeight() {
     KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize().height();
     KDCoordinate pointedLayoutBaseline = m_layout.baseline();
     KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline();
-    return maxCoordinate(pointedLayoutBaseline, equivalentLayoutBaseline)
-      + maxCoordinate(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
+    return std::max(pointedLayoutBaseline, equivalentLayoutBaseline)
+      + std::max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
   return pointedLayoutHeight;
 }

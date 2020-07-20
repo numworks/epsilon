@@ -5,22 +5,30 @@
 #include "../../shared/scrollable_multiple_expressions_view.h"
 #include "../calculation.h"
 #include "expression_with_equal_sign_view.h"
+#include <escher/palette.h>
 
 namespace Calculation {
 
+/* TODO There is factorizable code between this and Calculation::HistoryViewCell
+ * (at least setCalculation). */
+
 class ScrollableThreeExpressionsView : public Shared::AbstractScrollableMultipleExpressionsView {
 public:
+  static constexpr KDCoordinate k_margin = Metric::CommonSmallMargin;
   ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
-    setMargins(Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin, Metric::CommonSmallMargin); // Left Right margins are already added by TableCell
-    setBackgroundColor(KDColorWhite);
+    setMargins(k_margin, k_margin, k_margin, k_margin); // Left Right margins are already added by TableCell
+    setBackgroundColor(Palette::BackgroundApps);
   }
   void resetMemoization();
-  void setCalculation(Calculation * calculation);
+  void setCalculation(Calculation * calculation, bool * didForceOutput = nullptr);
+  void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
+    return m_contentCell.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
+  }
 private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
   public:
     ContentCell() : m_leftExpressionView() {}
-    KDColor backgroundColor() const override { return KDColorWhite; }
+    KDColor backgroundColor() const override { return Palette::BackgroundApps; }
     void setEven(bool even) override { return; }
     ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }
   private:
@@ -28,12 +36,13 @@ private:
   };
 
   ContentCell *  contentCell() override { return &m_contentCell; };
-  const ContentCell *  constContentCell() const override { return &m_contentCell; };
+  const ContentCell * constContentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
 };
 
 class ScrollableThreeExpressionsCell : public TableCell, public Responder {
 public:
+  static KDCoordinate Height(Calculation * calculation);
   ScrollableThreeExpressionsCell() :
     Responder(nullptr),
     m_view(this) {}
@@ -52,12 +61,15 @@ public:
 
   void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
   void resetMemoization() { m_view.resetMemoization(); }
-  void setCalculation(Calculation * calculation);
+  void setCalculation(Calculation * calculation, bool * didForceOutput = nullptr);
   void setDisplayCenter(bool display);
   ScrollableThreeExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 
   void reinitSelection();
+  void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
+    return m_view.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
+  }
 private:
   // Remove label margin added by TableCell because they're already handled by ScrollableThreeExpressionsView
   KDCoordinate labelMargin() const override { return 0; }

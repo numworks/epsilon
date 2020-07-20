@@ -35,12 +35,12 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
 
 void assert_expression_has_property(const char * expression, Context * context, Expression::ExpressionTest test) {
   Expression e = parse_expression(expression, context, false);
-  quiz_assert_print_if_failure(e.recursivelyMatches(test, context, true), expression);
+  quiz_assert_print_if_failure(e.recursivelyMatches(test, context), expression);
 }
 
 void assert_expression_has_not_property(const char * expression, Context * context, Expression::ExpressionTest test) {
   Expression e = parse_expression(expression, context, false);
-  quiz_assert_print_if_failure(!e.recursivelyMatches(test, context, true), expression);
+  quiz_assert_print_if_failure(!e.recursivelyMatches(test, context), expression);
 }
 
 QUIZ_CASE(poincare_properties_is_approximate) {
@@ -328,7 +328,6 @@ void assert_reduced_expression_has_polynomial_coefficient(const char * expressio
   int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, &globalContext, complexFormat, Radian, symbolicComputation);
   for (int i = 0; i <= d; i++) {
     Expression f = parse_expression(coefficients[i], &globalContext, false);
-    quiz_assert(!f.isUninitialized());
     coefficientBuffer[i] = coefficientBuffer[i].reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, SystemForAnalysis, symbolicComputation));
     f = f.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, SystemForAnalysis, symbolicComputation));
     quiz_assert_print_if_failure(coefficientBuffer[i].isIdenticalTo(f), expression);
@@ -361,6 +360,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   const char * coefficient7[] = {"4", 0};
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", coefficient7 );
   const char * coefficient8[] = {"2", "1", 0};
+  assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, DoNotReplaceAnySymbol);
   assert_reduced_expression_has_polynomial_coefficient("x+2", "x", coefficient8, Real, Radian, ReplaceDefinedFunctionsWithDefinitions);
   assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4, Cartesian, Radian, ReplaceDefinedFunctionsWithDefinitions);
 
@@ -369,28 +369,73 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
-void assert_reduced_expression_unit(const char * expression, const char * unit, ExpressionNode::SymbolicComputation symbolicComutation) {
+void assert_reduced_expression_unit_is(const char * expression, const char * unit) {
   Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext redContext = ExpressionNode::ReductionContext(&globalContext, Real, Degree, SystemForApproximation, symbolicComutation);
+  ExpressionNode::ReductionContext redContext(&globalContext, Real, Degree, SystemForApproximation);
   Expression e = parse_expression(expression, &globalContext, false);
   e = e.reduce(redContext);
-  Expression u1 = e.getUnit();
-  u1 = u1.reduce(redContext);
-  Expression u2 = parse_expression(unit, &globalContext, false);
-  u2 = u2.reduce(redContext);
-  quiz_assert_print_if_failure(u1.isIdenticalTo(u2), expression);
+  Expression u1;
+  e = e.removeUnit(&u1);
+  Expression e2 = parse_expression(unit, &globalContext, false);
+  Expression u2;
+  e2 = e2.reduce(redContext);
+  e2.removeUnit(&u2);
+  quiz_assert_print_if_failure(u1.isUninitialized() == u2.isUninitialized() && (u1.isUninitialized() || u1.isIdenticalTo(u2)), expression);
 }
 
-QUIZ_CASE(poincare_properties_get_unit) {
-  assert_reduced_expression_unit("_km", "_km", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("_min/_km", "_km^(-1)×_min", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("_km^3", "_km^3", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("1_m+_km", Undefined::Name(), ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
-  assert_reduced_expression_unit("_L^2×3×_s", "_L^2×_s", ReplaceAllSymbolsWithUndefinedAndDoNotReplaceUnits);
+QUIZ_CASE(poincare_properties_remove_unit) {
+  assert_reduced_expression_unit_is("_km", "_m");
+  assert_reduced_expression_unit_is("_min/_km", "_m^(-1)×_s");
+  assert_reduced_expression_unit_is("_km^3", "_m^3");
+  assert_reduced_expression_unit_is("1_m+_km", "_m");
+  assert_reduced_expression_unit_is("_L^2×3×_s", "_m^6×_s");
+}
 
-  assert_reduced_expression_unit("_km", "_m", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("_min/_km", "_m^(-1)×_s", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("_km^3", "_m^3", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("1_m+_km", "_m", ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_reduced_expression_unit("_L^2×3×_s", "_m^6×_s", ReplaceAllSymbolsWithDefinitionsOrUndefined);
+void assert_seconds_split_to(double totalSeconds, const char * splittedTime, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression time = Unit::BuildTimeSplit(totalSeconds, context, complexFormat, angleUnit);
+  constexpr static int bufferSize = 100;
+  char buffer[bufferSize];
+  time.serialize(buffer, bufferSize, DecimalMode);
+  quiz_assert_print_if_failure(strcmp(buffer, splittedTime) == 0, splittedTime);
+}
+
+Expression extract_unit(const char * expression) {
+  Shared::GlobalContext globalContext;
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, User, ReplaceAllSymbolsWithUndefined, NoUnitConversion);
+  Expression e = parse_expression(expression, &globalContext, false).reduce(reductionContext);
+  Expression unit;
+  e.removeUnit(&unit);
+  return unit;
+}
+
+QUIZ_CASE(poincare_expression_unit_helper) {
+  // 1. Time
+  Expression s = extract_unit("_s");
+  quiz_assert(s.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(s).isSecond());
+  quiz_assert(!static_cast<Unit &>(s).isMeter());
+
+  Shared::GlobalContext globalContext;
+  assert_seconds_split_to(1234567890, "39×_year+1×_month+13×_day+19×_h+1×_min+30×_s", &globalContext, Cartesian, Degree);
+  assert_seconds_split_to(-122, "-2×_min-2×_s", &globalContext, Cartesian, Degree);
+
+  // 2. Speed
+  Expression meterPerSecond = extract_unit("_m×_s^-1");
+  quiz_assert(Unit::IsSISpeed(meterPerSecond));
+
+  // 3. Volume
+  Expression meter3 = extract_unit("_m^3");
+  quiz_assert(Unit::IsSIVolume(meter3));
+
+  // 4. Energy
+  Expression kilogramMeter2PerSecond2 = extract_unit("_kg×_m^2×_s^-2");
+  quiz_assert(Unit::IsSIEnergy(kilogramMeter2PerSecond2));
+  Expression kilogramMeter3PerSecond2 = extract_unit("_kg×_m^3×_s^-2");
+  quiz_assert(!Unit::IsSIEnergy(kilogramMeter3PerSecond2));
+
+  // 5. International System
+  quiz_assert(Unit::IsSI(kilogramMeter2PerSecond2));
+  quiz_assert(Unit::IsSI(meter3));
+  quiz_assert(Unit::IsSI(meterPerSecond));
+  Expression joule = extract_unit("_J");
+  quiz_assert(!Unit::IsSI(joule));
 }

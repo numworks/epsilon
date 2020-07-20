@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(RealPartNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "RealPart";
   }
 #endif
@@ -45,7 +45,7 @@ private:
 class RealPart final : public Expression {
 public:
   RealPart(const RealPartNode * n) : Expression(n) {}
-  static RealPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<RealPart, RealPartNode>(&child, 1); }
+  static RealPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<RealPart, RealPartNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, &UntypedBuilderOneChild<RealPart>);
 

@@ -4,8 +4,7 @@
 extern "C" {
 #include <assert.h>
 }
-
-#define MIN(x,y) ((x)<(y) ? (x) : (y))
+#include <algorithm>
 
 TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource) :
   ScrollView(&m_contentView, scrollDataSource),
@@ -178,55 +177,28 @@ void TableView::ContentView::layoutSubviews(bool force) {
   }
 }
 
-
-int TableView::ContentView::numberOfFullyDisplayableRows() const {
-  // The number of displayable rows taking into accounts margins
-  int rowOffsetWithMargin = m_dataSource->indexFromCumulatedHeight(m_tableView->contentOffset().y() +
-    m_tableView->topMargin());
-  int displayedHeightWithOffsetAndMargin = m_dataSource->indexFromCumulatedHeight(m_tableView->maxContentHeightDisplayableWithoutScrolling() +
-    m_tableView->contentOffset().y() + m_tableView->topMargin());
-  return displayedHeightWithOffsetAndMargin - rowOffsetWithMargin;
-}
-
-int TableView::ContentView::numberOfFullyDisplayableColumns() const {
-  // The number of displayable rows taking into accounts margins
-  int columnOffsetWithMargin = m_dataSource->indexFromCumulatedWidth(m_tableView->contentOffset().x() +
-    m_tableView->leftMargin());
-  int displayedWidthWithOffsetAndMargin = m_dataSource->indexFromCumulatedWidth(m_tableView->maxContentWidthDisplayableWithoutScrolling() +
-    m_tableView->contentOffset().x() + m_tableView->leftMargin());
-  return displayedWidthWithOffsetAndMargin - columnOffsetWithMargin;
-}
-
 int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
-  int displayedHeightWithOffset = m_dataSource->indexFromCumulatedHeight(m_tableView->bounds().height() + m_tableView->contentOffset().y());
-  return MIN(
-    m_dataSource->numberOfRows(),
-    displayedHeightWithOffset + 1
-  )  - rowOffset;
+  int displayedHeightWithOffset = m_dataSource->indexFromCumulatedHeight(m_tableView->bounds().height() + (m_tableView->contentOffset().y() - m_tableView->topMargin()));
+  return std::min(m_dataSource->numberOfRows(), displayedHeightWithOffset + 1) - rowOffset;
 }
 
 int TableView::ContentView::numberOfDisplayableColumns() const {
   int columnOffset = columnsScrollingOffset();
-  int displayedWidthWithOffset = m_dataSource->indexFromCumulatedWidth(m_tableView->bounds().width() + m_tableView->contentOffset().x());
-  return MIN(
-    m_dataSource->numberOfColumns(),
-    displayedWidthWithOffset + 1
-  )  - columnOffset;
+  int displayedWidthWithOffset = m_dataSource->indexFromCumulatedWidth(m_tableView->bounds().width() + m_tableView->contentOffset().x() - m_tableView->leftMargin());
+  return std::min(m_dataSource->numberOfColumns(), displayedWidthWithOffset + 1) - columnOffset;
 }
 
 int TableView::ContentView::rowsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
-  KDCoordinate invisibleHeight = m_tableView->contentOffset().y()-m_tableView->topMargin();
-  invisibleHeight = invisibleHeight < 0 ? 0 : invisibleHeight;
+  KDCoordinate invisibleHeight = std::max(m_tableView->contentOffset().y() - m_tableView->topMargin(), 0);
   return m_dataSource->indexFromCumulatedHeight(invisibleHeight);
 }
 
 int TableView::ContentView::columnsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
-  KDCoordinate invisibleWidth = m_tableView->contentOffset().x()-m_tableView->leftMargin();
-  invisibleWidth = invisibleWidth < 0 ? 0 : invisibleWidth;
+  KDCoordinate invisibleWidth = std::max(m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0);
   return m_dataSource->indexFromCumulatedWidth(invisibleWidth);
 }

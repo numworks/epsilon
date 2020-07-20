@@ -6,22 +6,14 @@ include ion/src/device/$(MODEL)/Makefile
 
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 
-ion_src += $(addprefix ion/src/shared/, \
-  console_line.cpp \
-  events_keyboard.cpp \
-  events_modifier.cpp \
-)
-
 ifeq ($(EPSILON_TELEMETRY),1)
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
-# If you need to benchmark execution, you can replace events_keyboard with
-# events_benchmark.
-# If you need to profile execution, you can replace events_keyboard with
-# events_replay.o and dummy/events_modifier.o
+ion_src += ion/src/shared/collect_registers.cpp
 
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
-$(call object_for,$(sort $(ion_device_src) $(dfu_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(usb_src) $(ion_target_device_bench_src) $(ion_device_dfu_xip_src) $(ion_device_dfu_relocated_src) $(ion_console_uart_src))): SFLAGS += $(ION_DEVICE_SFLAGS)
+$(call object_for,$(ion_device_src) $(ion_device_flasher_src) $(ion_device_bench_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
+
 ion_src += $(ion_device_src)

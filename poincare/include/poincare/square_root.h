@@ -16,7 +16,7 @@ public:
   size_t size() const override { return sizeof(SquareRootNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "SquareRoot";
   }
 #endif
@@ -41,7 +41,7 @@ private:
 class SquareRoot final : public Expression {
 public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
-  static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(&child, 1); }
+  static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>({child}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("√", 1, &UntypedBuilderOneChild<SquareRoot>);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

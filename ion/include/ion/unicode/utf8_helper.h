@@ -11,10 +11,10 @@ int CountOccurrences(const char * s, CodePoint c);
 
 /* Returns the first occurence of a code point in a string, the position of the
  * null terminating char otherwise. */
-const char * CodePointSearch(const char * s, CodePoint c);
+const char * CodePointSearch(const char * s, CodePoint c, const char * stoppingPosition = nullptr);
 
 // Returns true if the text had the code point
-bool HasCodePoint(const char * s, CodePoint c);
+bool HasCodePoint(const char * s, CodePoint c, const char * stoppingPosition = nullptr);
 
 /* Returns the first occurence of a code point that is not c in a string,
  * stopping at the null-terminating char or the start of string. */
@@ -66,8 +66,11 @@ const char * PerformAtCodePoints(
     const char * initialPosition = nullptr,
     const char * stoppingPosition = nullptr);
 
+CodePoint PreviousCodePoint(const char * buffer, const char * location); // returns 0 if location == buffer
+CodePoint CodePointAtLocation(const char * location);
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);
+bool CodePointIsEndOfWord(CodePoint c);
 
 // Shift the buffer and return the number of bytes removed.
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c = nullptr);
@@ -80,6 +83,11 @@ size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position);
 /* Return the number of glyphs in a string.
  * For instance, strlen("∑") = 3 but StringGlyphLength("∑") = 1 */
 size_t StringGlyphLength(const char * s, int maxSize = -1);
+
+// Returns the position of the first previous char ' ', '\n' or text
+const char * BeginningOfWord(const char * text, const char * word);
+// Returns the position of the first following char ' ', '\n' or 0
+const char * EndOfWord(const char * word);
 
 };
 

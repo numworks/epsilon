@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(PredictionIntervalNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "PredictionInterval";
   }
 #endif
@@ -39,7 +39,7 @@ private:
 class PredictionInterval final : public Expression {
 public:
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
-  static PredictionInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PredictionInterval, PredictionIntervalNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static PredictionInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PredictionInterval, PredictionIntervalNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction95", 2, &UntypedBuilderTwoChildren<PredictionInterval>);
 
   // Expression

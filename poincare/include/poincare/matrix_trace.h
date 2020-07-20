@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(MatrixTraceNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "MatrixTrace";
   }
 #endif
@@ -36,7 +36,7 @@ private:
 class MatrixTrace final : public Expression {
 public:
   MatrixTrace(const MatrixTraceNode * n) : Expression(n) {}
-  static MatrixTrace Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(&child, 1); }
+  static MatrixTrace Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("trace", 1, &UntypedBuilderOneChild<MatrixTrace>);
 

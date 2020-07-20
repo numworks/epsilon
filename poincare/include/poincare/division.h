@@ -17,7 +17,7 @@ public:
   size_t size() const override { return sizeof(DivisionNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Division";
   }
 #endif
@@ -25,7 +25,7 @@ public:
   // Properties
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+  Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Approximation
   virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
@@ -64,7 +64,7 @@ class Division final : public Expression {
 public:
   Division(const DivisionNode * n) : Expression(n) {}
   static Division Builder() { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(); }
-  static Division Builder(Expression numerator, Expression denominator) { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(ArrayBuilder<TreeHandle>(numerator, denominator).array(), 2); }
+  static Division Builder(Expression numerator, Expression denominator) { return TreeHandle::FixedArityBuilder<Division, DivisionNode>({numerator, denominator}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

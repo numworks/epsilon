@@ -29,7 +29,7 @@ public:
   size_t size() const override;
 
   // ExpressionNode
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
   // Property
   Sign sign(Context * context) const override;
@@ -37,7 +37,7 @@ public:
 
   // TreeNode
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "SymbolAbstract";
   }
   virtual void logAttributes(std::ostream & stream) const override {

@@ -6,7 +6,7 @@ uint32_t FunctionStore::storeChecksum() {
   return Ion::Storage::sharedStorage()->checksum();
 }
 
-uint32_t FunctionStore::storeChecksumAtIndex(size_t i) {
+uint32_t FunctionStore::storeChecksumAtIndex(int i) {
   if (numberOfActiveFunctions() <= i) {
     return 0;
   }

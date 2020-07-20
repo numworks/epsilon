@@ -9,12 +9,16 @@ class MessageTableCell : public TableCell {
 public:
   MessageTableCell(I18n::Message label = (I18n::Message)0, const KDFont * font = KDFont::SmallFont, Layout layout = Layout::HorizontalLeftOverlap);
   View * labelView() const override;
-  virtual void setHighlighted(bool highlight) override;
+  void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message message);
   virtual void setTextColor(KDColor color);
   void setMessageFont(const KDFont * font);
+  void setBackgroundColor(KDColor color);
+protected:
+  KDColor backgroundColor() const override { return m_backgroundColor; }
 private:
   MessageTextView m_messageTextView;
+  KDColor m_backgroundColor;
 };
 
 #endif

@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(MatrixInverseNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "MatrixInverse";
   }
 #endif
@@ -36,7 +36,7 @@ private:
 class MatrixInverse final : public Expression {
 public:
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
-  static MatrixInverse Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(&child, 1); }
+  static MatrixInverse Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("inverse", 1, &UntypedBuilderOneChild<MatrixInverse>);
 

@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(MatrixDimensionNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "MatrixDimension";
   }
 #endif
@@ -37,7 +37,7 @@ private:
 class MatrixDimension final : public Expression {
 public:
   MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
-  static MatrixDimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>(&child, 1); }
+  static MatrixDimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilderOneChild<MatrixDimension>);
 

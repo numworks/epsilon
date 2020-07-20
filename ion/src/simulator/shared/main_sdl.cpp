@@ -2,6 +2,7 @@
 #include "display.h"
 #include "platform.h"
 #include "layout.h"
+#include "random.h"
 
 #include <assert.h>
 #include <string.h>
@@ -79,6 +80,8 @@ void init() {
     return;
   }
 
+  Random::init();
+
   uint32_t sdl_window_args = SDL_WINDOW_ALLOW_HIGHDPI | (argument_unresizable ? 0 : SDL_WINDOW_RESIZABLE);
 
   if (argument_fullscreen) {
@@ -87,7 +90,7 @@ void init() {
 
   if (argument_screen_only) {
     sWindow = SDL_CreateWindow(
-      "Epsilon",
+      "Omega",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
       Ion::Display::Width, Ion::Display::Height,
@@ -99,10 +102,10 @@ void init() {
     );
   } else {
     sWindow = SDL_CreateWindow(
-      "Epsilon",
+      "Omega",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
-      290, 555,
+      458, 888,
       sdl_window_args
     );
   }
@@ -150,11 +153,6 @@ void relayout() {
     sScreenRect.y = (windowHeight - sScreenRect.h) / 2;
   } else {
     Layout::recompute(windowWidth, windowHeight);
-    SDL_Rect backgroundRect;
-    Layout::getBackgroundRect(&backgroundRect);
-
-    SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
-    SDL_RenderPresent(sRenderer);
   }
 
   setNeedsRefresh();

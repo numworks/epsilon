@@ -29,12 +29,13 @@ public:
   public:
     virtual I18n::Message name() { return (I18n::Message)0; }
     virtual I18n::Message upperName() { return (I18n::Message)0; }
-    virtual int examinationLevel();
+    enum class ExaminationLevel {
+      No= 0,
+      Basic = 1,
+      Strict = 2,
+    };
+    virtual ExaminationLevel examinationLevel();
     virtual const Image * icon() { return nullptr; }
-
-    const int NoExaminationLevel = 0;
-    const int BasicExaminationLevel = 1;
-    const int StrictExaminationLevel = 2;
   };
   class Snapshot {
   public:

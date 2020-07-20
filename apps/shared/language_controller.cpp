@@ -5,12 +5,12 @@
 
 namespace Shared {
 
-LanguageController::LanguageController(Responder * parentResponder, KDCoordinate topMargin) :
+LanguageController::LanguageController(Responder * parentResponder, KDCoordinate verticalMargin) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, this)
 {
-  m_selectableTableView.setTopMargin(topMargin);
-  m_selectableTableView.setBottomMargin(0);
+  m_selectableTableView.setTopMargin(verticalMargin);
+  m_selectableTableView.setBottomMargin(verticalMargin);
   for (int i = 0; i < I18n::NumberOfLanguages; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
   }
@@ -18,8 +18,7 @@ LanguageController::LanguageController(Responder * parentResponder, KDCoordinate
 
 void LanguageController::resetSelection() {
   m_selectableTableView.deselectTable();
-  int index = (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
-  selectCellAtLocation(0, index);
+  selectCellAtLocation(0, (int)(GlobalPreferences::sharedGlobalPreferences()->language()));
 }
 
 const char * LanguageController::title() {
@@ -41,7 +40,7 @@ void LanguageController::viewWillAppear() {
 
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(selectedRow()+1));
+    GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)selectedRow());
     /* We need to reload the whole title bar in order to translate both the
      * "Settings" title and the degree preference. */
     AppsContainer::sharedAppsContainer()->reloadTitleBarView();

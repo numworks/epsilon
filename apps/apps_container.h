@@ -8,7 +8,7 @@
 #include "apps_window.h"
 #include "empty_battery_window.h"
 #include "math_toolbox.h"
-#include "variable_box_controller.h"
+#include "math_variable_box_controller.h"
 #include "exam_pop_up_controller.h"
 #include "exam_pop_up_controller_delegate.h"
 #include "battery_timer.h"
@@ -34,9 +34,9 @@ public:
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
-  VariableBoxController * variableBoxController();
+  MathVariableBoxController * variableBoxController();
   void suspend(bool checkIfOnOffKeyReleased = false);
-  virtual bool dispatchEvent(Ion::Events::Event event) override;
+  bool dispatchEvent(Ion::Events::Event event) override;
   bool switchTo(App::Snapshot * snapshot) override;
   void run() override;
   bool updateBatteryState();
@@ -70,7 +70,7 @@ private:
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;
   MathToolbox m_mathToolbox;
-  VariableBoxController m_variableBoxController;
+  MathVariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
   OnBoarding::PopUpController m_promptController;
   BatteryTimer m_batteryTimer;

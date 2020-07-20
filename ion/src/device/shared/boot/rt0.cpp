@@ -19,11 +19,11 @@ extern "C" {
 }
 
 void __attribute__((noinline)) abort() {
-#if DEBUG
+#ifdef NDEBUG
+  Ion::Device::Reset::core();
+#else
   while (1) {
   }
-#else
-  Ion::Device::Reset::core();
 #endif
 }
 
@@ -119,5 +119,7 @@ void __attribute__((noinline)) start() {
 }
 
 void __attribute__((interrupt, noinline)) isr_systick() {
-  Ion::Device::Timing::MillisElapsed++;
+  auto t = Ion::Device::Timing::MillisElapsed;
+  t++;
+  Ion::Device::Timing::MillisElapsed = t;
 }

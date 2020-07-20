@@ -10,7 +10,11 @@ namespace Code {
 
 class PythonToolbox : public Toolbox {
 public:
+  // PythonToolbox
   PythonToolbox();
+  const ToolboxMessageTree * moduleChildren(const char * name, int * numberOfNodes) const;
+
+  // Toolbox
   bool handleEvent(Ion::Events::Event event) override;
   const ToolboxMessageTree * rootModel() const override;
 protected:

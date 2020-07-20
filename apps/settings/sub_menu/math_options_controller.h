@@ -16,7 +16,7 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_totalNumberOfCell = 5;
+  constexpr static int k_totalNumberOfCell = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_totalNumberOfCell];
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;

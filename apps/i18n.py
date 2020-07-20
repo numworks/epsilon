@@ -12,6 +12,23 @@ import unicodedata
 import argparse
 import io
 
+
+parser = argparse.ArgumentParser(description="Process some i18n files.")
+parser.add_argument('--header', help='the .h file to generate')
+parser.add_argument('--implementation', help='the .cpp file to generate')
+parser.add_argument('--locales', nargs='+', help='locale to actually generate')
+parser.add_argument('--codepoints', help='the code_points.h file')
+parser.add_argument('--files', nargs='+', help='an i18n file')
+parser.add_argument('--generateISO6391locales', type=int, nargs='+', help='whether to generate the ISO6391 codes for the languages (for instance "en" for english)')
+
+args = parser.parse_args()
+
+def generate_ISO6391():
+    return args.generateISO6391locales[0] == 1
+
+def has_glyph(glyph):
+    return glyph in codepoints
+
 def source_definition(i18n_string):
     s = unicodedata.normalize("NFKD", i18n_string)
     result = u"\""
@@ -29,6 +46,9 @@ def source_definition(i18n_string):
             # Remove the uppercase characters with combining chars
             checkForCombining = s[i].isupper()
             result = result + s[i]
+        if not has_glyph(s[i]):
+            sys.stderr.write(s[i] + " (" + str(hex(ord(s[i]))) + ") is not a character present in " + args.codepoints + " . Exiting !\n")
+            sys.exit(-1)
         i = i+1
     result = result + u"\""
     return result.encode("utf-8")
@@ -73,6 +93,27 @@ def parse_files(files):
                 data[locale][name] = definition
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
 
+def parse_codepoints(file):
+    codepoints = []
+    with io.open(file, "r", encoding='utf-8') as file:
+        IsCodePoint = False
+        for line in file:
+            if "};" in line:
+                IsCodePoint = False
+            if IsCodePoint:
+                start = line.find('0x')
+                stop = line.find(',')
+                if not (start == -1 or stop == -1):
+                    hexstring = line[start:stop]
+                    value = int(hexstring, 16)
+                    char = chr(value)
+                    codepoints.append(char)
+            if "CodePoints[]" in line:
+                IsCodePoint = True
+    return codepoints
+
+codepoints = parse_codepoints(args.codepoints)
+
 def print_header(data, path, locales):
     f = open(path, "w")
     f.write("#ifndef APPS_I18N_H\n")
@@ -95,9 +136,10 @@ def print_header(data, path, locales):
 
     # Languages enumeration
     f.write("enum class Language : uint16_t {\n")
-    f.write("  Default = 0,\n")
+    index = 0
     for locale in locales:
-        f.write("  " + locale.upper() + ",\n")
+        f.write("  " + locale.upper() + (" = 0" if (index < 1) else "") +",\n")
+        index = index + 1
     f.write("};\n\n")
 
     # Language names
@@ -105,6 +147,14 @@ def print_header(data, path, locales):
     for locale in locales:
         f.write("  Message::Language" + locale.upper() + ",\n")
     f.write("};\n\n")
+
+    if generate_ISO6391():
+        # Language ISO639-1 codes
+        f.write("constexpr const Message LanguageISO6391Names[NumberOfLanguages] = {\n");
+        for locale in locales:
+            f.write("  Message::LanguageISO6391" + locale.upper() + ",\n")
+        f.write("};\n\n")
+
     f.write("}\n\n")
     f.write("#endif\n")
     f.close()
@@ -159,32 +209,21 @@ def print_implementation(data, path, locales):
 
 
     # Write the translate method
-    f.write("const char * translate(Message m, Language l) {\n")
+    f.write("const char * translate(Message m) {\n")
     f.write("  assert(m != Message::LocalizedMessageMarker);\n")
     f.write("  int localizedMessageOffset = (int)Message::LocalizedMessageMarker+1;\n")
     f.write("  if ((int)m < localizedMessageOffset) {\n")
     f.write("    assert(universalMessages[(int)m] != nullptr);\n")
     f.write("    return universalMessages[(int)m];\n")
     f.write("  }\n")
-    f.write("  int languageIndex = (int)l;\n")
-    f.write("  if (l == Language::Default) {\n")
-    f.write("    languageIndex = (int) GlobalPreferences::sharedGlobalPreferences()->language();\n")
-    f.write("  }\n")
-    f.write("  assert(languageIndex > 0);\n")
+    f.write("  int languageIndex = (int)GlobalPreferences::sharedGlobalPreferences()->language();\n")
     f.write("  int messageIndex = (int)m - localizedMessageOffset;\n")
-    f.write("  assert((messageIndex*NumberOfLanguages+languageIndex-1)*sizeof(char *) < sizeof(messages));\n")
-    f.write("  return messages[messageIndex][languageIndex-1];\n")
+    f.write("  assert((messageIndex*NumberOfLanguages+languageIndex)*sizeof(char *) < sizeof(messages));\n")
+    f.write("  return messages[messageIndex][languageIndex];\n")
     f.write("}\n\n")
     f.write("}\n")
     f.close()
 
-parser = argparse.ArgumentParser(description="Process some i18n files.")
-parser.add_argument('--header', help='the .h file to generate')
-parser.add_argument('--implementation', help='the .cpp file to generate')
-parser.add_argument('--locales', nargs='+', help='locale to actually generate')
-parser.add_argument('--files', nargs='+', help='an i18n file')
-
-args = parser.parse_args()
 data = parse_files(args.files)
 if args.header:
     print_header(data, args.header, args.locales)

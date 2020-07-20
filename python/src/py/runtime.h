@@ -151,7 +151,6 @@ mp_obj_t mp_import_from(mp_obj_t module, qstr name);
 void mp_import_all(mp_obj_t module);
 
 NORETURN void mp_raise_msg(const mp_obj_type_t *exc_type, const char *msg);
-//NORETURN void nlr_raise_msg_varg(const mp_obj_type_t *exc_type, const char *fmt, ...);
 NORETURN void mp_raise_ValueError(const char *msg);
 NORETURN void mp_raise_TypeError(const char *msg);
 NORETURN void mp_raise_NotImplementedError(const char *msg);
@@ -172,9 +171,6 @@ NORETURN void mp_raise_recursion_depth(void);
 int mp_native_type_from_qstr(qstr qst);
 mp_uint_t mp_native_from_obj(mp_obj_t obj, mp_uint_t type);
 mp_obj_t mp_native_to_obj(mp_uint_t val, mp_uint_t type);
-mp_obj_dict_t *mp_native_swap_globals(mp_obj_dict_t *new_globals);
-mp_obj_t mp_native_call_function_n_kw(mp_obj_t fun_in, size_t n_args_kw, const mp_obj_t *args);
-void mp_native_raise(mp_obj_t o);
 
 #define mp_sys_path (MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_sys_path_obj)))
 #define mp_sys_argv (MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_sys_argv_obj)))

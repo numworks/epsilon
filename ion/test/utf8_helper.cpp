@@ -273,3 +273,29 @@ QUIZ_CASE(ion_utf8_helper_string_glyph_length) {
   uint8_t testString[] = {'a', 'b', 'c', 0b11111111, 0b11111111, 0}; // Malformed utf-8 string
   assert_string_glyph_length_is((const char *)testString, 3, 3);
 }
+
+
+void assert_beginning_of_word_is(const char * text, const char * word, const char * beginningOfWord) {
+  quiz_assert(UTF8Helper::BeginningOfWord(text, word) == beginningOfWord);
+}
+
+QUIZ_CASE(ion_utf8_helper_beginning_of_word) {
+  const char * test_sentence = "01 34+ \n89";
+  assert_beginning_of_word_is(test_sentence, test_sentence, test_sentence);
+  assert_beginning_of_word_is(test_sentence, test_sentence + 1, test_sentence);
+  assert_beginning_of_word_is(test_sentence, test_sentence + 2, test_sentence);
+  assert_beginning_of_word_is(test_sentence, test_sentence + 5, test_sentence + 3);
+  assert_beginning_of_word_is(test_sentence, test_sentence + 8, test_sentence + 8);
+}
+
+void assert_end_of_word_is(const char * word, const char * endOfWord) {
+  quiz_assert(UTF8Helper::EndOfWord(word) == endOfWord);
+}
+
+QUIZ_CASE(ion_utf8_helper_end_of_word) {
+  const char * test_sentence = "01 34+ 789";
+  assert_end_of_word_is(test_sentence, test_sentence + 2);
+  assert_end_of_word_is(test_sentence + 2, test_sentence + 2);
+  assert_end_of_word_is(test_sentence + 3, test_sentence + 6);
+  assert_end_of_word_is(test_sentence + 8, test_sentence + 10);
+}

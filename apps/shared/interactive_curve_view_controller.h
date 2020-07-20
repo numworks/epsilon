@@ -41,7 +41,7 @@ protected:
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;
-  virtual uint32_t modelVersionAtIndex(size_t i) = 0;
+  virtual uint32_t modelVersionAtIndex(int i) = 0;
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
 

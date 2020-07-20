@@ -15,8 +15,8 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::ProbaAppCapital;
 }
 
-int App::Descriptor::examinationLevel() {
-  return App::Descriptor::StrictExaminationLevel;
+App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
+  return App::Descriptor::ExaminationLevel::Strict;
 }
 
 const Image * App::Descriptor::icon() {
@@ -28,14 +28,11 @@ App::Snapshot::Snapshot() :
   m_calculation{},
   m_activePage(Page::Distribution)
 {
-  new(m_distribution) BinomialDistribution();
-  new(m_calculation) LeftIntegralCalculation();
-  calculation()->setDistribution(distribution());
+  initializeDistributionAndCalculation();
 }
 
 App::Snapshot::~Snapshot() {
-  distribution()->~Distribution();
-  calculation()->~Calculation();
+  deleteDistributionAndCalculation();
 }
 
 App * App::Snapshot::unpack(Container * container) {
@@ -48,10 +45,8 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 void App::Snapshot::reset() {
-  distribution()->~Distribution();
-  new(m_distribution) BinomialDistribution();
-  calculation()->~Calculation();
-  new(m_calculation) LeftIntegralCalculation();
+  deleteDistributionAndCalculation();
+  initializeDistributionAndCalculation();
   m_activePage = Page::Distribution;
 }
 
@@ -61,6 +56,16 @@ Distribution * App::Snapshot::distribution() {
 
 Calculation * App::Snapshot::calculation() {
   return (Calculation *)m_calculation;
+}
+
+void App::Snapshot::deleteDistributionAndCalculation() {
+  distribution()->~Distribution();
+  calculation()->~Calculation();
+}
+
+void App::Snapshot::initializeDistributionAndCalculation() {
+  new(m_distribution) BinomialDistribution();
+  new(m_calculation) LeftIntegralCalculation(distribution());
 }
 
 void App::Snapshot::setActivePage(Page activePage) {

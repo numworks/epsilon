@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(DeterminantNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Determinant";
   }
 #endif
@@ -37,7 +37,7 @@ private:
 class Determinant final : public Expression {
 public:
   Determinant(const DeterminantNode * n) : Expression(n) {}
-  static Determinant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>(&child, 1); }
+  static Determinant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilderOneChild<Determinant>);
 

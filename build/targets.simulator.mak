@@ -1,10 +1,8 @@
 # Headless targets
-epsilon_headless_src = $(base_src) $(ion_headless_src) $(apps_default_src)
-$(BUILD_DIR)/epsilon.headless.$(EXE): $(call object_for,$(epsilon_headless_src))
+$(eval $(call rule_for_epsilon_flavor,headless))
+HANDY_TARGETS += epsilon.headless
 
-test_runner_headless_src = $(test_base_src) $(ion_headless_src)
-$(BUILD_DIR)/test.headless.$(EXE): $(call object_for,$(test_runner_headless_src))
-
-HANDY_TARGETS += epsilon.headless test.headless
+$(BUILD_DIR)/test.headless.$(EXE): $(call flavored_object_for,$(test_runner_src),headless)
+HANDY_TARGETS += test.headless
 
 -include build/targets.simulator.$(TARGET).mak

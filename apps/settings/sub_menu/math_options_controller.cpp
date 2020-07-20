@@ -19,11 +19,11 @@ MathOptionsController::MathOptionsController(Responder * parentResponder, InputE
 bool MathOptionsController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::DisplayMode)
+    if (m_messageTreeModel->childAtIndex(selectedRow())->label() == I18n::Message::DisplayMode)
       subController = &m_displayModeController;
     else
       subController = &m_preferencesController;
-    subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+    subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(selectedRow()));
     StackViewController * stack = stackController();
     stack->push(subController);
     return true;
@@ -45,7 +45,7 @@ int MathOptionsController::reusableCellCount(int type) {
 void MathOptionsController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   Preferences * preferences = Preferences::sharedPreferences();
-  I18n::Message thisLabel = m_messageTreeModel->children(index)->label();
+  I18n::Message thisLabel = m_messageTreeModel->childAtIndex(index)->label();
   myTextCell->setMessage(thisLabel);
 
   //add text for preferences
@@ -64,12 +64,15 @@ void MathOptionsController::willDisplayCellForIndex(HighlightCell * cell, int in
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::SymbolMultiplication:
-      childIndex = (int)preferences->symbolofMultiplication();
+      childIndex = (int)preferences->symbolOfMultiplication();
       break;
+    case I18n::Message::SymbolFunction:
+      childIndex = (int)preferences->symbolOfFunction();
+      break;      
     default:
       break;
   }
-  I18n::Message message = childIndex >= 0 ? m_messageTreeModel->children(index)->children(childIndex)->label() : I18n::Message::Default;
+  I18n::Message message = childIndex >= 0 ? m_messageTreeModel->childAtIndex(index)->childAtIndex(childIndex)->label() : I18n::Message::Default;
   myTextCell->setSubtitle(message);
 }
 

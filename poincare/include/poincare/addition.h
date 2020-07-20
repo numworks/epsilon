@@ -15,7 +15,7 @@ public:
   // Tree
   size_t size() const override { return sizeof(AdditionNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Addition";
   }
 #endif
@@ -35,7 +35,6 @@ public:
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
     return MatrixComplex<T>::Undefined();
   }
-  Expression getUnit() const override;
 
   // Simplification
   LayoutShape leftLayoutShape() const override {
@@ -73,10 +72,12 @@ private:
 class Addition final : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
-  static Addition Builder() { return TreeHandle::NAryBuilder<Addition, AdditionNode>(); }
-  static Addition Builder(Expression e1) { return Addition::Builder(&e1, 1); }
-  static Addition Builder(Expression e1, Expression e2) { return Addition::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
-  static Addition Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<Addition, AdditionNode>(children, numberOfChildren); }
+  static Addition Builder(const Tuple & children = {}) {
+    return TreeHandle::NAryBuilder<Addition, AdditionNode>(convert(children));
+  }
+  // TODO: Get rid of these two helper functions
+  static Addition Builder(Expression e1) { return Addition::Builder({e1}); }
+  static Addition Builder(Expression e1, Expression e2) { return Addition::Builder({e1, e2}); }
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);

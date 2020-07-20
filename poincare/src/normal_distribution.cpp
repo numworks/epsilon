@@ -5,6 +5,8 @@
 #include <float.h>
 #include <assert.h>
 
+#define M_SQRT_2PI 2.506628274631000502415765284811
+
 namespace Poincare {
 
 template<typename T>
@@ -13,7 +15,7 @@ T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T sigma) {
     return NAN;
   }
   const float xMinusMuOverVar = (x - mu)/sigma;
-  return ((T)1.0)/(std::fabs(sigma) * std::sqrt(((T)2.0) * M_PI)) * std::exp(-((T)0.5) * xMinusMuOverVar * xMinusMuOverVar);
+  return ((T)1.0)/(std::fabs(sigma) * (T)M_SQRT_2PI) * std::exp(-((T)0.5) * xMinusMuOverVar * xMinusMuOverVar);
 }
 
 template<typename T>
@@ -86,8 +88,8 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
   if (std::isnan(abscissa)) {
     return NAN;
   }
-  if (std::isinf(abscissa) || abscissa > k_boundStandardNormalDistribution) {
-    return (T)1.0;
+  if (std::isinf(abscissa) || std::fabs(abscissa) > k_boundStandardNormalDistribution) {
+    return abscissa > (T)0.0 ? (T)1.0 : (T)0.0;
   }
   if (abscissa == (T)0.0) {
     return (T)0.5;
@@ -95,7 +97,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
   if (abscissa < (T)0.0) {
     return ((T)1.0) - StandardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
   }
-  return ((T)0.5) + ((T)0.5) * std::erf(abscissa/std::sqrt(((T)2.0)));
+  return ((T)0.5) + ((T)0.5) * std::erf(abscissa/(T)M_SQRT2);
 }
 
 template<typename T>
@@ -113,7 +115,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
   if (probability < (T)0.5) {
     return -StandardNormalCumulativeDistributiveInverseForProbability(((T)1.0)-probability);
   }
-  return std::sqrt((T)2.0) * erfInv(((T)2.0) * probability - (T)1.0);
+  return (T)M_SQRT2 * erfInv(((T)2.0) * probability - (T)1.0);
 }
 
 template float NormalDistribution::EvaluateAtAbscissa<float>(float, float, float);

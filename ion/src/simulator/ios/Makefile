@@ -7,6 +7,8 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/callback.cpp \
 )
 
+ion_src += ion/src/shared/collect_registers.cpp
+
 $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
 
 ifeq ($(EPSILON_TELEMETRY),1)
@@ -26,6 +28,8 @@ LDFLAGS += -framework CoreData
 LDFLAGS += -Lion/src/simulator/ios/GoogleAnalyticsServices
 endif
 
+ifndef ARCH
+
 # App resources
 
 SIMULATOR_ICON_SIZES = 20x20 29x29 40x40 40x40 40x40 58x58 58x58 60x60 76x76 \
@@ -33,9 +37,9 @@ SIMULATOR_ICON_SIZES = 20x20 29x29 40x40 40x40 40x40 58x58 58x58 60x60 76x76 \
 SIMULATOR_ASSETS_PATH = $(BUILD_DIR)/app/assets/Assets.xcassets
 SIMULATOR_ICONSET = $(SIMULATOR_ASSETS_PATH)/AppIcon.appiconset
 
-include ion/src/simulator/shared/apple/Makefile
+include ion/src/simulator/shared/apple/helpers.mak
 
-$(call simulator_app_plist,%,Info.plist): ion/src/simulator/ios/Info.plist $(call simulator_app_resource,%,Assets.car)
+$(call simulator_app_plist,Info.plist): ion/src/simulator/ios/Info.plist $(call simulator_app_resource,Assets.car)
 	$(call rule_label,PLUTIL)
 	$(Q) cp $< $@
 	$(Q) plutil -insert "BuildMachineOSBuild" -string "$(IOS_BUILD_MACHINE_OS_BUILD)" $@
@@ -54,12 +58,12 @@ $(call simulator_app_plist,%,Info.plist): ion/src/simulator/ios/Info.plist $(cal
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 
-$(call simulator_app_resource,%,launch.storyboardc): ion/src/simulator/ios/launch.storyboard | $$(@D)/.
+$(call simulator_app_resource,launch.storyboardc): ion/src/simulator/ios/launch.storyboard | $$(@D)/.
 	$(call rule_label,IBTOOL)
 	$(Q) $(IBTOOL) --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --compile $@ $^
 
 ifdef IOS_PROVISIONNING_PROFILE
-$(call simulator_app_resource,%,embedded.mobileprovision): $(IOS_PROVISIONNING_PROFILE) | $$(@D)/.
+$(call simulator_app_resource,embedded.mobileprovision): $(IOS_PROVISIONNING_PROFILE) | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
 
@@ -68,9 +72,9 @@ $(BUILD_DIR)/app/entitlements.plist: $(IOS_PROVISIONNING_PROFILE)
 	$(Q) security cms -D -i $(IOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
 
 simulator_app_deps += $(BUILD_DIR)/app/entitlements.plist
-simulator_app_deps += $(call simulator_app_resource,$1,embedded.mobileprovision)
+simulator_app_deps += $(call simulator_app_resource,embedded.mobileprovision)
 else
-$(call simulator_app_resource,%,embedded.mobileprovision):
+$(call simulator_app_resource,embedded.mobileprovision):
 	$(warning Building without a provisionning profile. Please define IOS_PROVISIONNING_PROFILE to point to the .mobileprovision file you want to use.)
 endif
 
@@ -78,29 +82,13 @@ $(SIMULATOR_ICONSET)/Contents.json: ion/src/simulator/ios/icon_assets.json $(SIM
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 
-$(call simulator_app_resource,%,Assets.car): $(SIMULATOR_ICONSET)/Contents.json | $$(@D)/.
+$(call simulator_app_resource,Assets.car): $(SIMULATOR_ICONSET)/Contents.json | $$(@D)/.
 	$(call rule_label,ACTOOL)
-	$(Q) $(ACTOOL) --compile $(BUILD_DIR)/app/Payload/$*.app --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --platform $(APPLE_SDK) --app-icon AppIcon --output-partial-info-plist $(BUILD_DIR)/app/assets/partial.plist $(SIMULATOR_ASSETS_PATH) > /dev/null
+	$(Q) $(ACTOOL) --compile $(BUILD_DIR)/$*.app --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --platform $(APPLE_SDK) --app-icon AppIcon --output-partial-info-plist $(BUILD_DIR)/app/assets/partial.plist $(SIMULATOR_ASSETS_PATH) > /dev/null
 
-simulator_app_deps += $(call simulator_app_resource,$(1), \
-  Assets.car \
-  launch.storyboardc \
-)
+simulator_app_deps += $(call simulator_app_resource,Assets.car)
+simulator_app_deps += $(call simulator_app_resource,launch.storyboardc)
 
-$(BUILD_DIR)/app/epsilon%ipa: $$(subst ..,.,$$(call simulator_app_deps,Epsilon$$*))
-ifdef IOS_PROVISIONNING_PROFILE
-	$(call rule_label,SIGN)
-	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "Apple Distribution: NumWorks" $(BUILD_DIR)/app/Payload/Epsilon$*app
-endif
-	$(call rule_label,ZIP)
-	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload
+include ion/src/simulator/shared/apple/targets.mak
 
-ifndef ARCH
-DEFAULT := $(BUILD_DIR)/app/epsilon.ipa
-endif
-
-ifeq ($(APPLE_PLATFORM),ios-simulator)
-.PHONY: epsilon%run
-epsilon%run: $(subst _.,.,$(call simulator_app_deps,Epsilon$*))
-	xcrun simctl install booted $(BUILD_DIR)/app/Payload/Epsilon$(subst _,.,$*)app
 endif

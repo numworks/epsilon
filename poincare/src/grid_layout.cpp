@@ -1,10 +1,9 @@
 #include <poincare/grid_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 // LayoutNode
 
@@ -219,7 +218,7 @@ KDCoordinate GridLayoutNode::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   int j = 0;
   for (LayoutNode * l : childrenFromIndex(i*m_numberOfColumns)) {
-    rowBaseline = maxCoordinate(rowBaseline, l->baseline());
+    rowBaseline = std::max(rowBaseline, l->baseline());
     j++;
     if (j >= m_numberOfColumns) {
       break;
@@ -234,8 +233,8 @@ KDCoordinate GridLayoutNode::rowHeight(int i) const {
   int j = 0;
   for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(i*m_numberOfColumns)) {
     KDCoordinate b = l->baseline();
-    underBaseline = maxCoordinate(underBaseline, l->layoutSize().height() - b);
-    aboveBaseline = maxCoordinate(aboveBaseline, b);
+    underBaseline = std::max<KDCoordinate>(underBaseline, l->layoutSize().height() - b);
+    aboveBaseline = std::max(aboveBaseline, b);
     j++;
     if (j >= m_numberOfColumns) {
       break;
@@ -259,7 +258,7 @@ KDCoordinate GridLayoutNode::columnWidth(int j) const {
   int lastIndex = (m_numberOfRows-1)*m_numberOfColumns + j;
   for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(j)) {
     if (childIndex%m_numberOfColumns == j) {
-      columnWidth = maxCoordinate(columnWidth, l->layoutSize().width());
+      columnWidth = std::max(columnWidth, l->layoutSize().width());
       if (childIndex >= lastIndex) {
         break;
       }

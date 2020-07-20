@@ -29,7 +29,7 @@ void usleep(uint32_t us) {
   }
 }
 
-volatile uint64_t millis() {
+uint64_t millis() {
   return MillisElapsed;
 }
 

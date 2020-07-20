@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(BinomPDFNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "BinomPDF";
   }
 #endif
@@ -37,7 +37,7 @@ private:
 class BinomPDF final : public BinomialDistributionFunction {
 public:
   BinomPDF(const BinomPDFNode * n) : BinomialDistributionFunction(n) {}
-  static BinomPDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<BinomPDF, BinomPDFNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static BinomPDF Builder(Expression child0, Expression child1, Expression child2) { return TreeHandle::FixedArityBuilder<BinomPDF, BinomPDFNode>({child0, child1, child2}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binompdf", 3, &UntypedBuilderThreeChildren<BinomPDF>);
 };
 

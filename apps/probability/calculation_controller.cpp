@@ -15,6 +15,7 @@
 #include "images/focused_calcul4_icon.h"
 #include <poincare/preferences.h>
 #include <assert.h>
+#include <algorithm>
 #include <cmath>
 
 using namespace Poincare;
@@ -22,7 +23,7 @@ using namespace Shared;
 
 namespace Probability {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
+constexpr int CalculationController::k_titleBufferSize;
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Distribution * distribution, Calculation * calculation) :
   m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::SecondaryText, Palette::BackgroundApps),
@@ -250,21 +251,20 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
   m_calculation->~Calculation();
   switch (index) {
     case 0:
-      new(m_calculation) LeftIntegralCalculation();
-      break;
+      new(m_calculation) LeftIntegralCalculation(m_distribution);
+      return;
     case 1:
-      new(m_calculation) FiniteIntegralCalculation();
-      break;
+      new(m_calculation) FiniteIntegralCalculation(m_distribution);
+      return;
     case 2:
-      new(m_calculation) RightIntegralCalculation();
-      break;
+      new(m_calculation) RightIntegralCalculation(m_distribution);
+      return;
     case 3:
-      new(m_calculation) DiscreteCalculation();
-      break;
+      new(m_calculation) DiscreteCalculation(m_distribution);
+      return;
     default:
      return;
   }
-  m_calculation->setDistribution(m_distribution);
 }
 
 void CalculationController::updateTitle() {
@@ -293,7 +293,7 @@ void CalculationController::updateTitle() {
     }
     currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_titleBufferSize - currentChar);
   }
-  m_titleBuffer[minInt(currentChar, k_titleBufferSize) - 1] = 0;
+  m_titleBuffer[std::min(currentChar, k_titleBufferSize) - 1] = 0;
 }
 
 }

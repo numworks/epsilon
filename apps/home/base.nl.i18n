@@ -1,0 +1,4 @@
+Apps = "Applicaties"
+AppsCapital = "OMEGA"
+ForbidenAppInExamMode1 = "Deze applicatie is"
+ForbidenAppInExamMode2 = "uitgesloten in examenstand"

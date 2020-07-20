@@ -25,6 +25,7 @@ public:
   void openConsoleWithScript(Script script);
   void scriptContentEditionDidFinish();
   void willExitApp();
+  int editedScriptIndex() const { return m_editorController.scriptIndex(); }
 
   /* ViewController */
   View * view() override { return &m_selectableTableView; }

@@ -16,8 +16,8 @@ I18n::Message App::Descriptor::upperName() {
   return I18n::Message::FunctionAppCapital;
 }
 
-int App::Descriptor::examinationLevel() {
-  return App::Descriptor::StrictExaminationLevel;
+App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
+  return App::Descriptor::ExaminationLevel::Strict;
 }
 
 const Image * App::Descriptor::icon() {
@@ -81,9 +81,9 @@ CodePoint App::XNT() {
 }
 
 NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
+  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->setSender(textInput);
-  varBox->lockDeleteEvent(VariableBoxController::Page::Function);
+  varBox->lockDeleteEvent(MathVariableBoxController::Page::Function);
   return varBox;
 }
 

@@ -8,10 +8,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <limits.h>
-
-static inline const char * maxPointer(const char * x, const char * y) { return x > y ? x : y; }
-static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
-static inline size_t minSizeT(size_t x, size_t y) { return x < y ? x : y; }
+#include <algorithm>
 
 /* TextArea */
 
@@ -194,11 +191,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Percent) {
     return removePreviousGlyph();
   } else if (event.hasText()) {
-    if(event.text() == "%" && Ion::Events::isLockActive()){
-      return removePreviousGlyph();
-    } else {
-      return handleEventWithText(event.text());
-    }
+    return handleEventWithText(event.text());
   } else {
     return false;
   }
@@ -239,7 +232,7 @@ const char * TextArea::Text::pointerAtPosition(Position p) {
   for (Line l : *this) {
     if (p.line() == y) {
       const char * result = UTF8Helper::CodePointAtGlyphOffset(l.text(), p.column());
-      return minPointer(result, l.text() + l.charLength());
+      return std::min(result, l.text() + l.charLength());
     }
     y++;
   }
@@ -265,11 +258,16 @@ void TextArea::Text::insertText(const char * s, int textLength, char * location)
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location < m_buffer + m_bufferSize - 1);
   assert(strlen(m_buffer) + textLength < m_bufferSize);
+  // assert the text to insert does not overlap the location where to insert
+  assert(s >= location || s + textLength < location);
 
+  /* The text to insert might be located after the insertion location, in which
+   * case we cannot simply do a memmove, as s will be shifted by the copy. */
+  bool noShift = (s + textLength < location) || (s > m_buffer + m_bufferSize);
   size_t sizeToMove = strlen(location) + 1;
   assert(location + textLength + sizeToMove <= m_buffer + m_bufferSize);
   memmove(location + textLength, location, sizeToMove);
-  memmove(location, s, textLength);
+  memmove(location, s + (noShift ? 0 : textLength), textLength);
 }
 
 void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces, char * location) {
@@ -445,13 +443,13 @@ void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, 
     m_font,
     textColor,
     backgroundColor,
-    drawSelection ? (selectionStart >= text ? minSizeT(length, selectionStart - text) : 0) : length
+    drawSelection ? (selectionStart >= text ? std::min<KDCoordinate>(length, selectionStart - text) : 0) : length
   );
   if (!drawSelection) {
     return;
   }
-  const char * highlightedDrawStart = maxPointer(selectionStart, text);
-  size_t highlightedDrawLength = minSizeT(selectionEnd - highlightedDrawStart, length - (highlightedDrawStart - text));
+  const char * highlightedDrawStart = std::max(selectionStart, text);
+  size_t highlightedDrawLength = std::min(selectionEnd - highlightedDrawStart, length - (highlightedDrawStart - text));
 
   nextPoint = ctx->drawString(
     highlightedDrawStart,
@@ -486,26 +484,19 @@ void TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
   m_cursorLocation = text();
 }
 
-bool TextArea::ContentView::insertTextAtLocation(const char * text, char * location) {
-  int textSize = strlen(text);
-  if (m_text.textLength() + textSize >= m_text.bufferSize() || textSize == 0) {
+bool TextArea::ContentView::insertTextAtLocation(const char * text, char * location, int textLength) {
+  int textLen = textLength < 0 ? strlen(text) : textLength;
+  assert(textLen < 0 || textLen <= strlen(text));
+  if (m_text.textLength() + textLen >= m_text.bufferSize() || textLen == 0) {
     return false;
   }
-  bool lineBreak = false;
 
-  // Scan for \n and 0
-  const char * nullLocation = UTF8Helper::PerformAtCodePoints(
-      text, '\n',
-      [](int codePointOffset, void * lineBreak, int context1, int context2) {
-        *((bool *)lineBreak) = true;
-      },
-      [](int c1, void * c2, int c3, int c4) { },
-      &lineBreak, 0);
+  // Scan for \n
+  bool lineBreak = UTF8Helper::HasCodePoint(text, '\n', text + textLen);
 
-  assert(UTF8Helper::CodePointIs(nullLocation, 0));
-  m_text.insertText(text, nullLocation - text, location);
+  m_text.insertText(text, textLen, location);
   // Replace System parentheses (used to keep layout tree structure) by normal parentheses
-  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(location, nullLocation - text);
+  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(location, textLen);
   reloadRectFromPosition(location, lineBreak);
   return true;
 }
@@ -549,9 +540,13 @@ bool TextArea::ContentView::removeStartOfLine() {
   return false;
 }
 
+size_t TextArea::ContentView::removeText(const char * start, const char * end) {
+  return m_text.removeText(start, end);
+}
+
 size_t TextArea::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
-  size_t removedLength = m_text.removeText(m_selectionStart, m_selectionEnd);
+  size_t removedLength = removeText(m_selectionStart, m_selectionEnd);
   /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd
    * are invalid */
   m_selectionStart = nullptr;

@@ -90,12 +90,16 @@ void NestedMenuController::ListController::setFirstSelectedRow(int firstSelected
 
 NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Message title) :
   StackViewController(parentResponder, &m_listController, Palette::ToolboxHeaderText, Palette::ToolboxHeaderBackground, Palette::ToolboxHeaderBorder),
-  m_selectableTableView(&m_listController, this, this),
+  m_selectableTableView(&m_listController, this, this, this),
   m_listController(this, &m_selectableTableView, title),
   m_sender(nullptr)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+}
+
+void NestedMenuController::setTitle(I18n::Message title) {
+  m_listController.setTitle(title);
 }
 
 bool NestedMenuController::handleEvent(Ion::Events::Event event) {
@@ -139,6 +143,12 @@ bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIn
   int depth = m_stack.depth();
   if ((event == Ion::Events::Back || event == Ion::Events::Left) && depth > 0) {
     return returnToPreviousMenu();
+  }
+  if ((event == Ion::Events::ShiftLeft || event == Ion::Events::AlphaLeft) && depth > 0) {
+    for (int i = depth; i > 0; i--) {
+      returnToPreviousMenu();
+    }
+    return true;
   }
   if (selectedRow() < 0) {
     return false;

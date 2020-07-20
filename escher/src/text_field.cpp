@@ -5,8 +5,8 @@
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/serialization_helper.h>
 #include <assert.h>
+#include <algorithm>
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 static char s_draftTextBuffer[TextField::maxBufferSize()];
 
 /* TextField::ContentView */
@@ -84,7 +84,7 @@ void TextField::ContentView::setText(const char * text) {
     buffer[0] = 0;
     return;
   }
-  int textLength = minInt(textRealLength, maxBufferSize - 1);
+  int textLength = std::min(textRealLength, maxBufferSize - 1);
   // Copy the text
   strlcpy(buffer, text, maxBufferSize);
   // Update the draft text length
@@ -119,10 +119,10 @@ void TextField::ContentView::reinitDraftTextBuffer() {
   setCursorLocation(s_draftTextBuffer);
 }
 
-bool TextField::ContentView::insertTextAtLocation(const char * text, char * location) {
+bool TextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
   assert(m_isEditing);
 
-  int textLength = strlen(text);
+  size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   if (m_currentDraftTextLength + textLength >= m_draftTextBufferSize || textLength == 0) {
     return false;
   }
@@ -130,12 +130,12 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   memmove(location + textLength, location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
   // Caution! One byte will be overridden by the null-terminating char of strlcpy
-  char * overridenByteLocation = location + textLength;
+  size_t copySize = std::min(textLength + 1, static_cast<size_t>((s_draftTextBuffer + m_draftTextBufferSize) - location));
+  char * overridenByteLocation = location + copySize - 1;
   char overridenByte = *overridenByteLocation;
-  strlcpy(location, text, (s_draftTextBuffer + m_draftTextBufferSize) - location);
-  assert(overridenByteLocation < s_draftTextBuffer + m_draftTextBufferSize);
+  strlcpy(location, text, copySize);
   *overridenByteLocation = overridenByte;
-  m_currentDraftTextLength += textLength;
+  m_currentDraftTextLength += copySize-1; // Do no count the null-termination
 
   reloadRectFromPosition(m_horizontalAlignment == 0.0f ? location : s_draftTextBuffer);
   return true;
@@ -414,11 +414,6 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
-  if(event.hasText()){
-    if(event.text() == "%" && Ion::Events::isLockActive() ){
-      return removePreviousGlyph();
-    }
-  }
   assert(m_delegate != nullptr);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;

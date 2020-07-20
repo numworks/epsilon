@@ -13,6 +13,7 @@ py_src = $(addprefix python/src/py/,\
   nlrx86.c \
   nlrx64.c \
   nlrthumb.c \
+  nlrpowerpc.c \
   nlrxtensa.c \
   nlrsetjmp.c \
   malloc.c \
@@ -43,6 +44,7 @@ py_src = $(addprefix python/src/py/,\
   asmxtensa.c \
   emitnxtensa.c \
   emitinlinextensa.c \
+  emitnxtensawin.c \
   formatfloat.c \
   parsenumbase.c \
   parsenum.c \
@@ -52,9 +54,11 @@ py_src = $(addprefix python/src/py/,\
   runtime_utils.c \
   scheduler.c \
   nativeglue.c \
+  ringbuf.c \
   stackctrl.c \
   argcheck.c \
   warning.c \
+  profile.c \
   map.c \
   obj.c \
   objarray.c \
@@ -132,6 +136,7 @@ port_src += $(addprefix python/port/,\
   helpers.c \
   mod/ion/modion.cpp \
   mod/ion/modion_table.cpp \
+  mod/ion/file.cpp \
   mod/kandinsky/modkandinsky.cpp \
   mod/kandinsky/modkandinsky_table.c \
   mod/matplotlib/modmatplotlib.cpp \
@@ -183,11 +188,20 @@ $(eval $(call rule_for, \
   QSTRDAT, \
   python/port/genhdr/qstrdefs.generated.h, \
   python/port/genhdr/qstrdefs.in.h, \
-  $$(PYTHON) python/src/py/makeqstrdata.py $$< > $$@ \
+  $$(PYTHON) python/src/py/makeqstrdata.py $$< > $$@, \
+  global \
 ))
 
 $(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
 tests_src += $(addprefix python/test/,\
-  mandelbrot.cpp \
+  basics.cpp \
+  execution_environment.cpp \
+  ion.cpp \
+  kandinsky.cpp \
+  math.cpp \
+  random.cpp \
+  time.cpp \
+  turtle.cpp \
+  matplotlib.cpp \
 )

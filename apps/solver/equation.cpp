@@ -15,13 +15,17 @@ using namespace Shared;
 namespace Solver {
 
 bool Equation::containsIComplex(Context * context) const {
-  return expressionClone().recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context, true);
+  return expressionClone().recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context);
 }
 
 Expression Equation::Model::standardForm(const Storage::Record * record, Context * context, bool replaceFunctionsButNotSymbols) const {
   Expression * returnedExpression = replaceFunctionsButNotSymbols ? &m_standardFormWithReplacedFunctionsButNotSymbols : &m_standardFormWithReplacedFunctionsAndSymbols;
   if (returnedExpression->isUninitialized()) {
-    const Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, replaceFunctionsButNotSymbols);
+    Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, replaceFunctionsButNotSymbols);
+    if (expressionInputWithoutFunctions.isUninitialized()) {
+      // The expression is circularly-defined
+      expressionInputWithoutFunctions = Undefined::Builder();
+    }
 
     EmptyContext emptyContext;
     Context * contextToUse = replaceFunctionsButNotSymbols ? &emptyContext : context;
@@ -40,8 +44,7 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
           [](const Expression e, Context * context) {
             return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context);
           },
-          contextToUse,
-          true))
+          contextToUse))
     {
       *returnedExpression = Undefined::Builder();
     } else if (expressionRed.type() == ExpressionNode::Type::Equal) {

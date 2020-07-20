@@ -4,10 +4,9 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/square_bracket_layout.h>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 // MatrixLayoutNode
 
@@ -164,7 +163,7 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 
   // Write the final closing bracket
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ']');
-  return minInt(numberOfChar, bufferSize-1);
+  return std::min(numberOfChar, bufferSize-1);
 }
 
 // Protected
@@ -331,7 +330,7 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
 }
 
 MatrixLayout MatrixLayout::Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
-  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(ArrayBuilder<TreeHandle>(l1,l2,l3,l4).array(), 4);
+  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1, l2, l3, l4});
   m.setDimensions(2, 2);
   return m;
 }

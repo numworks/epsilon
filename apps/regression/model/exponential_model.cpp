@@ -13,21 +13,19 @@ namespace Regression {
 
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr int size = 4;
-    Layout layoutChildren[size] = {
+    m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('e', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          HorizontalLayout::Builder(
-            CodePointLayout::Builder('b', k_layoutFont),
-            CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-            CodePointLayout::Builder('X', k_layoutFont)
-          ),
-          VerticalOffsetLayoutNode::Position::Superscript
-        )
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, size);
+        HorizontalLayout::Builder({
+          CodePointLayout::Builder('b', k_layoutFont),
+          CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+          CodePointLayout::Builder('X', k_layoutFont)
+        }),
+        VerticalOffsetLayoutNode::Position::Superscript
+      )
+    });
   }
   return m_layout;
 }
@@ -88,18 +86,15 @@ void ExponentialModel::fit(Store * store, int series, double * modelCoefficients
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
+  const double b = modelCoefficients[1];
   if (derivateCoefficientIndex == 0) {
-    // Derivate: exp(b*x)
+    // Derivate with respect to a: exp(b*x)
     return exp(b*x);
   }
-  if (derivateCoefficientIndex == 1) {
-    // Derivate: a*x*exp(b*x)
-    return a*x*exp(b*x);
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 1);
+  // Derivate with respect to b: a*x*exp(b*x)
+  double a = modelCoefficients[0];
+  return a*x*exp(b*x);
 }
 
 }

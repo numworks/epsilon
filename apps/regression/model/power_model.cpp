@@ -12,17 +12,15 @@ namespace Regression {
 
 Layout PowerModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr int size = 4;
-    Layout layoutChildren[size] = {
+    m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('b', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
-      };
-    m_layout = HorizontalLayout::Builder(layoutChildren, size);
+        CodePointLayout::Builder('b', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
+    });
   }
   return m_layout;
 }
@@ -46,19 +44,16 @@ double PowerModel::partialDerivate(double * modelCoefficients, int derivateCoeff
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   if (derivateCoefficientIndex == 0) {
-    // Derivate: pow(x,b)
+    // Derivate with respect to a: pow(x,b)
     return pow(x,b);
   }
-  if (derivateCoefficientIndex == 1) {
-    assert(x >= 0);
-    /* We assume all xi are positive.
-     * For x = 0, a*pow(x,b) = 0, the partial derivate along b is 0
-     * For x > 0, a*pow(x,b) = a*exp(b*ln(x)), the partial derivate along b is
-     *   ln(x)*a*pow(x,b) */
-    return x == 0 ? 0 : log(x)*a*pow(x, b);
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 1);
+  assert(x >= 0);
+  /* We assume all xi are positive.
+   * For x = 0, a*pow(x,b) = 0, the partial derivate with respect to b is 0
+   * For x > 0, a*pow(x,b) = a*exp(b*ln(x)), the partial derivate with respect
+   *            to b is ln(x)*a*pow(x,b) */
+  return x == 0.0 ? 0.0 : log(x) * a * pow(x, b);
 }
 
 void PowerModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {

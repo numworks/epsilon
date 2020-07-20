@@ -12,7 +12,7 @@ public:
   size_t size() const override { return sizeof(GreatCommonDivisorNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "GreatCommonDivisor";
   }
 #endif
@@ -37,7 +37,7 @@ private:
 class GreatCommonDivisor final : public Expression {
 public:
   GreatCommonDivisor(const GreatCommonDivisorNode * n) : Expression(n) {}
-  static GreatCommonDivisor Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static GreatCommonDivisor Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<GreatCommonDivisor, GreatCommonDivisorNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", 2, &UntypedBuilderTwoChildren<GreatCommonDivisor>);
 
   // Expression

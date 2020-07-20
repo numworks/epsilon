@@ -1,5 +1,5 @@
-ProbaApp = "Probabilidade"
-ProbaAppCapital = "PROBABILIDADE"
+ProbaApp = "Probabilidades"
+ProbaAppCapital = "PROBABILIDADES"
 ChooseDistribution = "Selecionar a distribuição"
 Binomial = "Binomial"
 Geometric = "Geométrica"

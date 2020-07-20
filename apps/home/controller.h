@@ -8,7 +8,7 @@ namespace Home {
 
 class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
 public:
-  Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource);
+  Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource, App * app);
 
   View * view() override;
 
@@ -17,14 +17,15 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
 
-  virtual int numberOfRows() const override;
-  virtual int numberOfColumns() const override;
-  virtual KDCoordinate cellHeight() override;
-  virtual KDCoordinate cellWidth() override;
-  virtual HighlightCell * reusableCell(int index) override;
-  virtual int reusableCellCount() const override;
+  int numberOfRows() const override;
+  int numberOfColumns() const override;
+  KDCoordinate cellHeight() override;
+  KDCoordinate cellWidth() override;
+  HighlightCell * reusableCell(int index) override;
+  int reusableCellCount() const override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   int numberOfIcons() const;
   SelectableTableViewDataSource * selectionDataSource() const;
@@ -49,6 +50,7 @@ private:
   static constexpr int k_cellWidth = 104;
   ContentView m_view;
   AppCell m_cells[k_maxNumberOfCells];
+  App * m_app;
 };
 
 }

@@ -11,11 +11,9 @@
 #include <assert.h>
 #include <cmath>
 #include <utility>
+#include <algorithm>
 
 namespace Poincare {
-
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 void removeZeroAtTheEnd(Integer * i, int minimalNumbersOfDigits = -1) {
   /* Remove the zeroes at the end of an integer, respecting the minimum number
@@ -87,9 +85,9 @@ Expression DecimalNode::setSign(Sign s, ReductionContext reductionContext) {
   return Decimal(this).setSign(s);
 }
 
-int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
   }
   assert(e->type() == Type::Decimal);
   const DecimalNode * other = static_cast<const DecimalNode *>(e);
@@ -204,7 +202,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   // Stop here if m is undef
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
-    return minInt(currentChar, bufferSize-1);
+    return std::min(currentChar, bufferSize-1);
   }
 
   /* We force scientific mode if the number of digits before the dot is superior
@@ -216,7 +214,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     if (exponent < 0) {
       numberOfRequiredDigits = mantissaLength-exponent;
     } else {
-      numberOfRequiredDigits = maxInt(mantissaLength, exponent);
+      numberOfRequiredDigits = std::max(mantissaLength, exponent);
     }
   }
 
@@ -269,7 +267,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
   assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
   int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;
-  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, maxInt(0, bufferSize-deltaCharMantissa-currentChar));
+  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, std::max(0, bufferSize-deltaCharMantissa-currentChar));
   if (exponent < 0) {
     for (int i = 0; i <= -exponent; i++) {
       buffer[currentChar++] = i == 1 ? '.' : '0';

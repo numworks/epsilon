@@ -1,7 +1,6 @@
 #include <poincare/tree_node.h>
 #include <poincare/tree_pool.h>
 #include <poincare/tree_handle.h>
-#include <stdio.h>
 
 namespace Poincare {
 
@@ -32,7 +31,7 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier) {
 
 TreeNode * TreeNode::parent() const {
   assert(m_parentIdentifier != m_identifier);
-  return TreeHandle::hasNode(m_parentIdentifier) ?  TreePool::sharedPool()->node(m_parentIdentifier) : nullptr;
+  return TreeHandle::hasNode(m_parentIdentifier) ? TreePool::sharedPool()->node(m_parentIdentifier) : nullptr;
 }
 
 TreeNode * TreeNode::root() {

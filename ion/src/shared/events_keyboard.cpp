@@ -73,7 +73,21 @@ Event getEvent(int * timeout) {
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
       bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
       bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
-      Event event(key, shift, alpha);
+      bool lock = isLockActive();
+      
+      if (   key == Keyboard::Key::Left
+          || key == Keyboard::Key::Right
+          || key == Keyboard::Key::Up
+          || key == Keyboard::Key::Backspace
+          || key == Keyboard::Key::Down) {
+        if (lock) {
+          lock = false;
+          alpha = false;
+          // shift = false;
+        }
+      }
+      
+      Event event(key, shift, alpha, lock);
       sLastEventShift = shift;
       sLastEventAlpha = alpha;
       updateModifiersFromEvent(event);

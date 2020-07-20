@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(ConjugateNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Conjugate";
   }
 #endif
@@ -42,7 +42,7 @@ private:
 class Conjugate final : public Expression {
 public:
   Conjugate(const ConjugateNode * n) : Expression(n) {}
-  static Conjugate Builder(Expression child) { return TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>(&child, 1); }
+  static Conjugate Builder(Expression child) { return TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilderOneChild<Conjugate>);;
 

@@ -15,6 +15,7 @@ app_regression_test_src += $(addprefix apps/regression/model/,\
   logistic_model.cpp \
   model.cpp \
   power_model.cpp \
+  proportional_model.cpp \
   quadratic_model.cpp \
   quartic_model.cpp \
   trigonometric_model.cpp \
@@ -37,17 +38,9 @@ app_regression_src = $(addprefix apps/regression/,\
 )
 
 app_regression_src += $(app_regression_test_src)
-app_src += $(app_regression_src)
+apps_src += $(app_regression_src)
 
-i18n_files += $(addprefix apps/regression/,\
-  base.de.i18n\
-  base.en.i18n\
-  base.es.i18n\
-  base.fr.i18n\
-  base.pt.i18n\
-  base.hu.i18n\
-  base.universal.i18n\
-)
+i18n_files += $(call i18n_with_universal_for,regression/base)
 
 tests_src += $(addprefix apps/regression/test/,\
   model.cpp\

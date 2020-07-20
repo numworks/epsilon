@@ -28,10 +28,7 @@ constexpr char Storage::seqExtension[];
 constexpr char Storage::eqExtension[];
 
 Storage * Storage::sharedStorage() {
-  static Storage * storage = nullptr;
-  if (storage == nullptr) {
-    storage = new (staticStorageArea) Storage();
-  }
+  static Storage * storage = new (staticStorageArea) Storage();
   return storage;
 }
 
@@ -89,20 +86,6 @@ Storage::Record::Record(const char * basename, int basenameLength, const char * 
 }
 
 // STORAGE
-
-Storage::Storage() :
-  m_magicHeader(Magic),
-  m_buffer(),
-  m_magicFooter(Magic),
-  m_delegate(nullptr),
-  m_lastRecordRetrieved(nullptr),
-  m_lastRecordRetrievedPointer(nullptr)
-{
-  assert(m_magicHeader == Magic);
-  assert(m_magicFooter == Magic);
-  // Set the size of the first record to 0
-  overrideSizeAtPosition(m_buffer, 0);
-}
 
 #if ION_STORAGE_LOG
 void Storage::log() {
@@ -305,6 +288,22 @@ void Storage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
+// PRIVATE
+
+Storage::Storage() :
+  m_magicHeader(Magic),
+  m_buffer(),
+  m_magicFooter(Magic),
+  m_delegate(nullptr),
+  m_lastRecordRetrieved(nullptr),
+  m_lastRecordRetrievedPointer(nullptr)
+{
+  assert(m_magicHeader == Magic);
+  assert(m_magicFooter == Magic);
+  // Set the size of the first record to 0
+  overrideSizeAtPosition(m_buffer, 0);
+}
+
 const char * Storage::fullNameOfRecord(const Record record) {
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
@@ -378,6 +377,9 @@ Storage::Record::Data Storage::valueOfRecord(const Record record) {
 
 Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Data data) {
   char * p = pointerOfRecord(record);
+  /* TODO: if data.buffer == p, assert that size hasn't change and do not do any
+   * memcopy, but still notify the delegate. Beware of scripts and the accordion
+   * routine.*/
   if (p != nullptr) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     const char * fullName = fullNameOfRecordStarting(p);

@@ -7,12 +7,12 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare/nth_root_layout.h>
+#include <algorithm>
 
 using namespace Poincare;
 
 namespace Settings {
-
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 PreferencesController::PreferencesController(Responder * parentResponder) :
   GenericSubController(parentResponder)
@@ -182,17 +182,20 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return CodePointLayout::Builder('*', k_layoutFont);
     case I18n::Message::SymbolMultiplicationAutoSymbol:
       return CodePointLayout::Builder(' ', k_layoutFont);
-    
-    // Result display
-    case I18n::Message::DefaultResult:
+
+
+    // Symbol function
+    case I18n::Message::SymbolDefaultFunction:
     {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+      return NthRootLayout::Builder(CodePointLayout::Builder('x'));
     }
-    case I18n::Message::CompactResult:
+    case I18n::Message::SymbolArgDefaultFunction:
     {
-      const char * text = "Beta";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+      return NthRootLayout::Builder(CodePointLayout::Builder('x'), CodePointLayout::Builder('2'));
+    }
+    case I18n::Message::SymbolArgFunction:
+    {
+      return NthRootLayout::Builder(CodePointLayout::Builder('x'), CodePointLayout::Builder('y'));
     }
 
     // Font size
@@ -213,7 +216,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
 void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithExpression * myCell = (MessageTableCellWithExpression *)cell;
-  myCell->setLayout(layoutForPreferences(m_messageTreeModel->children(index)->label()));
+  myCell->setLayout(layoutForPreferences(m_messageTreeModel->childAtIndex(index)->label()));
 }
 
 KDCoordinate PreferencesController::rowHeight(int j) {
@@ -233,7 +236,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
       /* In Engineering mode, the number of significant digits cannot be lower
        * than 3, because we need to be able to display 100 for instance. */
       // TODO: Add warning about signifiant digits change ?
-      preferences->setNumberOfSignificantDigits(maxInt(preferences->numberOfSignificantDigits(), 3));
+      preferences->setNumberOfSignificantDigits(std::max<int>(preferences->numberOfSignificantDigits(), 3));
     }
   } else if (message == I18n::Message::EditionMode) {
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
@@ -245,12 +248,11 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     GlobalPreferences::sharedGlobalPreferences()->setTempExamMode((GlobalPreferences::ExamMode)((uint8_t)valueIndex + 1));
   } else if (message == I18n::Message::SymbolMultiplication) {
     preferences->setSymbolMultiplication((Preferences::SymbolMultiplication)valueIndex);
-  } else if (message == I18n::Message::ResultDisplay) {
-    preferences->setResultDisplay((Preferences::ResultDisplay)valueIndex);
+  } else if (message == I18n::Message::SymbolFunction) {
+    preferences->setSymbolOfFunction((Preferences::SymbolFunction)valueIndex);  
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
   }
-
 }
 
 int PreferencesController::valueIndexForPreference(I18n::Message message) const {
@@ -273,10 +275,10 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
 #endif
   if (message == I18n::Message::SymbolMultiplication) {
-    return (int)preferences->symbolofMultiplication();
+    return (int)preferences->symbolOfMultiplication();
   }
-  if (message == I18n::Message::ResultDisplay) {
-    return (int)preferences->resultDisplay();
+  if (message == I18n::Message::SymbolFunction) {
+    return (int)preferences->symbolOfFunction();
   }
   if (message == I18n::Message::FontSizes) {
     return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;

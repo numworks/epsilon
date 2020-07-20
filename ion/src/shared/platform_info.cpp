@@ -9,8 +9,8 @@
 #error This file expects EPSILON_VERSION to be defined
 #endif
 
-#ifndef EPSILON_CUSTOM_VERSION
-#error This file expects EPSILON_CUSTOM_VERSION to be defined
+#ifndef OMEGA_VERSION
+#error This file expects OMEGA_VERSION to be defined
 #endif
 
 #ifndef HEADER_SECTION
@@ -32,7 +32,7 @@ public:
     m_storageSize(Ion::Storage::k_storageSize),
     m_footer(Magic),
     m_ohm_header(OmegaMagic),
-    m_customVersion{EPSILON_CUSTOM_VERSION},
+    m_omegaVersion{OMEGA_VERSION},
 #ifdef USERNAME
     m_username{USERNAME},
 #else
@@ -48,14 +48,14 @@ public:
     assert(m_ohm_footer == OmegaMagic);
     return m_version;
   }
-  const char * customVersion() const {
+  const char * omegaVersion() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
     assert(m_ohm_header == OmegaMagic);
     assert(m_ohm_footer == OmegaMagic);
-    return m_customVersion;
+    return m_omegaVersion;
   }
 #ifdef USERNAME
   const char * username() const {
@@ -87,7 +87,7 @@ private:
   size_t m_storageSize;
   uint32_t m_footer;
   uint32_t m_ohm_header;
-  const char m_customVersion[16];
+  const char m_omegaVersion[16];
   const char m_username[16];
   uint32_t m_ohm_footer;
 };
@@ -98,8 +98,8 @@ const char * Ion::softwareVersion() {
   return platform_infos.version();
 }
 
-const char * Ion::customSoftwareVersion() {
-  return platform_infos.customVersion();
+const char * Ion::omegaVersion() {
+  return platform_infos.omegaVersion();
 }
 
 #ifdef USERNAME

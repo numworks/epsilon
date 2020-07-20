@@ -19,23 +19,21 @@ namespace Regression {
 
 Layout QuadraticModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr int size = 10;
-    Layout layoutChildren[size] = {
+    m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2', k_layoutFont),
-          VerticalOffsetLayoutNode::Position::Superscript
-        ),
+        CodePointLayout::Builder('2', k_layoutFont),
+        VerticalOffsetLayoutNode::Position::Superscript
+      ),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('b', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
       CodePointLayout::Builder('X', k_layoutFont),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('c', k_layoutFont),
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, size);
+    });
   }
   return m_layout;
 }
@@ -49,19 +47,16 @@ double QuadraticModel::evaluate(double * modelCoefficients, double x) const {
 
 double QuadraticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
-    // Derivate: x^2
+    // Derivate with respect to a: x^2
     return x*x;
   }
   if (derivateCoefficientIndex == 1) {
-    // Derivate: x
+    // Derivate with respect to b: x
     return x;
   }
-  if (derivateCoefficientIndex == 2) {
-    // Derivate: 1
-    return 1;
-  }
-  assert(false);
-  return 0.0;
+  assert(derivateCoefficientIndex == 2);
+  // Derivate with respect to c: 1
+  return 1.0;
 }
 
 Expression QuadraticModel::expression(double * modelCoefficients) {
@@ -69,19 +64,20 @@ Expression QuadraticModel::expression(double * modelCoefficients) {
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   // a*x^2+b*x+c
-  Expression addChildren[] = {
-    Multiplication::Builder(
+  return Addition::Builder({
+    Multiplication::Builder({
       Number::DecimalNumber(a),
       Power::Builder(
         Symbol::Builder('x'),
-        Decimal::Builder(2.0))),
-    Multiplication::Builder(
+        Decimal::Builder(2.0)
+      )
+    }),
+    Multiplication::Builder({
       Number::DecimalNumber(b),
-      Symbol::Builder('x')),
+      Symbol::Builder('x')
+    }),
     Number::DecimalNumber(c)
-  };
-  Expression result = Addition::Builder(addChildren, 3);
-  return result;
+  });
 }
 
 }

@@ -43,7 +43,7 @@ private:
   // InteractiveCurveViewController
   void initCursorParameters() override;
   uint32_t modelVersion() override;
-  uint32_t modelVersionAtIndex(size_t i) override;
+  uint32_t modelVersionAtIndex(int i) override;
   uint32_t rangeVersion() override;
   size_t numberOfMemoizedVersions() const override { return Store::k_numberOfSeries; }
   int selectedCurveIndex() const override { return *m_selectedSeriesIndex; }

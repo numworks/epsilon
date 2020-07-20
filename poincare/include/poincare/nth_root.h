@@ -14,13 +14,13 @@ public:
   size_t size() const override { return sizeof(NthRootNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "NthRoot";
   }
 #endif
 
 private:
-  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+  Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -38,7 +38,7 @@ private:
 class NthRoot final : public Expression {
 public:
   NthRoot(const NthRootNode * n) : Expression(n) {}
-  static NthRoot Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static NthRoot Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("root", 2, &UntypedBuilderTwoChildren<NthRoot>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

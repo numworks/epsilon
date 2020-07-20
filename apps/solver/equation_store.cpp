@@ -124,7 +124,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool
   assert(replaceFunctionsButNotSymbols != nullptr);
   *replaceFunctionsButNotSymbols = false;
   Error e = privateExactSolve(context, false);
-  if (e == Error::NoError && numberOfSolutions() == 0 && m_numberOfUserVariables > 0) {
+  if (m_numberOfUserVariables > 0 && (e != Error::NoError || numberOfSolutions() == 0)) {
     *replaceFunctionsButNotSymbols = true;
     e = privateExactSolve(context, true);
   }
@@ -136,12 +136,27 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
 
   m_userVariablesUsed = !replaceFunctionsButNotSymbols;
 
-  // Step 0. Get unknown variables
+  // Step 1. Get unknown and user-defined variables
   m_variables[0][0] = 0;
   int numberOfVariables = 0;
+
+  // TODO we look twice for variables but not the same, is there a way to not do the same work twice?
+  m_userVariables[0][0] = 0;
+  m_numberOfUserVariables = 0;
+
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols);
-    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
+    Shared::ExpiringPointer<Equation> eq = modelForRecord(definedRecordAtIndex(i));
+
+    /* Start by looking for user variables, so that if we escape afterwards, we
+     * know  if it might be due to a user variable. */
+    if (m_numberOfUserVariables < Expression::k_maxNumberOfVariables) {
+      const Expression eWithSymbols = eq->standardForm(context, true);
+      int varCount = eWithSymbols.getVariables(context, [](const char * symbol, Poincare::Context * context) { return context->expressionTypeForIdentifier(symbol, strlen(symbol)) == Poincare::Context::SymbolAbstractType::Symbol; }, (char *)m_userVariables, Poincare::SymbolAbstract::k_maxNameSize, m_numberOfUserVariables);
+      m_numberOfUserVariables = varCount < 0 ? Expression::k_maxNumberOfVariables : varCount;
+    }
+
+    const Expression e = eq->standardForm(context, replaceFunctionsButNotSymbols); // The standard form is memoized so there is no double computation even if replaceFunctionsButNotSymbols is true.
+    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined || e.recursivelyMatches(Expression::IsMatrix, context, replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition)) {
       return Error::EquationUndefined;
     }
     if (e.type() == ExpressionNode::Type::Unreal) {
@@ -154,21 +169,6 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     /* The equation has been parsed so there should be no
      * Error::VariableNameTooLong*/
     assert(numberOfVariables >= 0);
-  }
-
-  // Step 1. Get user defined variables
-  // TODO used previously fetched variables?
-  m_userVariables[0][0] = 0;
-  m_numberOfUserVariables = 0;
-  for (int i = 0; i < numberOfDefinedModels(); i++) {
-    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context, true);
-    assert(!e.isUninitialized() && e.type() != ExpressionNode::Type::Undefined && e.type() != ExpressionNode::Type::Unreal);
-    int varCount = e.getVariables(context, [](const char * symbol, Poincare::Context * context) { return context->expressionTypeForIdentifier(symbol, strlen(symbol)) == Poincare::Context::SymbolAbstractType::Symbol; }, (char *)m_userVariables, Poincare::SymbolAbstract::k_maxNameSize, m_numberOfUserVariables);
-    if (varCount < 0) {
-      m_numberOfUserVariables = Expression::k_maxNumberOfVariables;
-      break;
-    }
-    m_numberOfUserVariables = varCount;
   }
 
   // Step 2. Linear System?

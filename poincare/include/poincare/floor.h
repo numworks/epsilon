@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(FloorNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Floor";
   }
 #endif
@@ -42,7 +42,7 @@ private:
 class Floor final : public Expression {
 public:
   Floor(const FloorNode * n) : Expression(n) {}
-  static Floor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Floor, FloorNode>(&child, 1); }
+  static Floor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Floor, FloorNode>({child}); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("floor", 1, &UntypedBuilderOneChild<Floor>);
 

@@ -36,7 +36,7 @@ public:
   size_t size() const override { return sizeof(CondensedSumLayoutNode); }
   int numberOfChildren() const override { return 3; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "CondensedSumLayout";
   }
 #endif
@@ -55,7 +55,7 @@ private:
 
 class CondensedSumLayout final : public Layout {
 public:
-  static CondensedSumLayout Builder(Layout base, Layout subscript, Layout superscript) { return TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>(ArrayBuilder<TreeHandle>(base, subscript, superscript).array(), 3); }
+  static CondensedSumLayout Builder(Layout base, Layout subscript, Layout superscript) { return TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>({base, subscript, superscript}); }
   CondensedSumLayout() = delete;
 };
 

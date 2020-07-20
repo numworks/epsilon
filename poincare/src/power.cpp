@@ -73,7 +73,7 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
       return -1;
     }
     Integer numeratorInt = r->signedNumerator();
-    if (Integer::NaturalOrder(numeratorInt, Integer(Integer::k_maxExtractableInteger)) > 0) {
+    if (!numeratorInt.isExtractable()) {
       return -1;
     }
     op0Deg *= numeratorInt.extractedInt();
@@ -82,8 +82,8 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
   return -1;
 }
 
-Expression PowerNode::getUnit() const {
-  return Power(this).getUnit();
+Expression PowerNode::removeUnit(Expression * unit) {
+  return Power(this).removeUnit(unit);
 }
 
 int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const {
@@ -136,7 +136,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
    * where the principal root is real as these cases are handled generically
    * later (for instance 1232^(1/8) which has a real principal root is not
    * handled here). */
-  if (c.imag() == 0 && std::pow((T)-1.0, q) < 0.0) {
+  if (c.imag() == (T)0.0 && std::pow((T)-1.0, q) < (T)0.0) {
     /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
      * exist (which is not necessarily the principal root)!
      * For q even integer, a real root does not necessarily exist (example:
@@ -148,7 +148,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
     /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
      *                      = sign(c)^p         * |c|^(p/q)
      *                      = -|c|^(p/q) iff c < 0 and p odd */
-    return c.real() < 0 && std::pow((T)-1.0, p) < 0.0 ? Complex<T>::Builder(-absCPowD.stdComplex()) : absCPowD;
+    return c.real() < (T)0.0 && std::pow((T)-1.0, p) < (T)0.0 ? Complex<T>::Builder(-absCPowD.stdComplex()) : absCPowD;
   }
   return Complex<T>::Undefined();
 }
@@ -156,7 +156,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   std::complex<T> result;
-  if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() != 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {
+  if (c.imag() == (T)0.0 && d.imag() == (T)0.0 && c.real() != (T)0.0 && (c.real() > (T)0.0 || std::round(d.real()) == d.real())) {
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
      * pow: (R-, N) -> R+ ((-2)^3 = -8)
      * In these cases we rather use std::pow(double, double) because:
@@ -228,23 +228,23 @@ Expression PowerNode::shallowBeautify(ReductionContext reductionContext) {
   return Power(this).shallowBeautify(reductionContext);
 }
 
-int PowerNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
-  int baseComparison = SimplificationOrder(childAtIndex(0), e, ascending, canBeInterrupted);
+int PowerNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+  int baseComparison = SimplificationOrder(childAtIndex(0), e, ascending, canBeInterrupted, ignoreParentheses);
   if (baseComparison != 0) {
     return baseComparison;
   }
   Rational one = Rational::Builder(1);
-  return SimplificationOrder(childAtIndex(1), one.node(), ascending, canBeInterrupted);
+  return SimplificationOrder(childAtIndex(1), one.node(), ascending, canBeInterrupted, ignoreParentheses);
 }
 
-int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   assert(e->numberOfChildren() > 0);
-  int baseComparison = SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending, canBeInterrupted);
+  int baseComparison = SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending, canBeInterrupted, ignoreParentheses);
   if (baseComparison != 0) {
     return baseComparison;
   }
   assert(e->numberOfChildren() > 1);
-  return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), ascending, canBeInterrupted);
+  return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), ascending, canBeInterrupted, ignoreParentheses);
 }
 
 Expression PowerNode::denominator(ReductionContext reductionContext) const {
@@ -325,7 +325,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Context * con
     }
     Complex<T> result = computeNotPrincipalRealRootOfRationalPow(c, p, q);
     if (!result.isUndefined()) {
-      return result;
+      return std::move(result);
     }
   }
 defaultApproximation:
@@ -360,7 +360,7 @@ int Power::getPolynomialCoefficients(Context * context, const char * symbolName,
       return -1;
     }
     Integer num = r.unsignedIntegerNumerator();
-    if (Integer::NaturalOrder(num, Integer(Integer::k_maxExtractableInteger)) > 0) {
+    if (!num.isExtractable()) {
       return -1;
     }
     int n = num.extractedInt();
@@ -375,6 +375,22 @@ int Power::getPolynomialCoefficients(Context * context, const char * symbolName,
   return -1;
 }
 
+Expression Power::removeUnit(Expression * unit) {
+  Expression childUnit;
+  Expression child = childAtIndex(0).node()->removeUnit(&childUnit);
+  if (!childUnit.isUninitialized()) {
+    // Reduced power containing unit are of form "unit^i" with i integer
+    assert(child.isRationalOne());
+    assert(childUnit.type() == ExpressionNode::Type::Unit);
+    Power p = *this;
+    replaceWithInPlace(child);
+    p.replaceChildAtIndexInPlace(0, childUnit);
+    *unit = p;
+    return child;
+  }
+  return *this;
+}
+
 Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
 
   {
@@ -387,9 +403,21 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
 
-  // Step 1: There should be no unit in the index!
-  if (index.hasUnit()) {
-    return replaceWithUndefinedInPlace();
+  // Step 1: Handle the units
+  {
+    Expression indexUnit;
+    index = index.removeUnit(&indexUnit);
+    if (!indexUnit.isUninitialized()) {
+      // There must be no unit in the exponent
+      return replaceWithUndefinedInPlace();
+    }
+    assert(index == childAtIndex(1));
+    if (base.hasUnit()) {
+      if (index.type() != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
+        // The exponent must be an Integer
+        return replaceWithUndefinedInPlace();
+      }
+    }
   }
 
   // Step 2: Handle matrices
@@ -402,45 +430,50 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
       return replaceWithUndefinedInPlace();
     }
-    if (baseType != ExpressionNode::Type::Matrix) {
-      return *this;
+    if (baseType == ExpressionNode::Type::Matrix) {
+      Matrix matrixBase = static_cast<Matrix &>(base);
+      if (matrixBase.numberOfRows() != matrixBase.numberOfColumns()) {
+        return replaceWithUndefinedInPlace();
+      }
+      Integer exponent = static_cast<Rational &>(index).signedIntegerNumerator();
+      if (exponent.isNegative()) {
+        index.setSign(ExpressionNode::Sign::Positive, reductionContext);
+        Expression reducedPositiveExponentMatrix = shallowReduce(reductionContext);
+        if (reducedPositiveExponentMatrix.type() == ExpressionNode::Type::Power) {
+          /* The shallowReduce did not work, stop here so we do not get in an
+           * infinite loop. */
+          static_cast<Power &>(reducedPositiveExponentMatrix).childAtIndex(1).setSign(ExpressionNode::Sign::Negative, reductionContext);
+          return reducedPositiveExponentMatrix;
+        }
+        Expression dummyExpression = Undefined::Builder();
+        MatrixInverse inv = MatrixInverse::Builder(dummyExpression);
+        reducedPositiveExponentMatrix.replaceWithInPlace(inv);
+        inv.replaceChildInPlace(dummyExpression, reducedPositiveExponentMatrix);
+        return inv.shallowReduce(reductionContext);
+      }
+      if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
+        return *this;
+      }
+      int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
+      if (exp == 0) {
+        Matrix id = Matrix::CreateIdentity(matrixBase.numberOfRows());
+        replaceWithInPlace(id);
+        return std::move(id);
+      }
+      if (exp == 1) {
+        replaceWithInPlace(matrixBase);
+        return std::move(matrixBase);
+      }
+      Expression result = matrixBase.clone();
+      // TODO: implement a quick exponentiation
+      for (int k = 1; k < exp; k++) {
+        result = Multiplication::Builder(result, matrixBase.clone());
+        result = result.shallowReduce(reductionContext);
+      }
+      assert(!result.isUninitialized());
+      replaceWithInPlace(result);
+      return result;
     }
-    Matrix matrixBase = static_cast<Matrix &>(base);
-    if (matrixBase.numberOfRows() != matrixBase.numberOfColumns()) {
-      return replaceWithUndefinedInPlace();
-    }
-    Integer exponent = static_cast<Rational &>(index).signedIntegerNumerator();
-    if (exponent.isNegative()) {
-      index.setSign(ExpressionNode::Sign::Positive, reductionContext);
-      Expression reducedPositiveExponentMatrix = shallowReduce(reductionContext);
-      Expression dummyExpression = Undefined::Builder();
-      MatrixInverse inv = MatrixInverse::Builder(dummyExpression);
-      reducedPositiveExponentMatrix.replaceWithInPlace(inv);
-      inv.replaceChildInPlace(dummyExpression, reducedPositiveExponentMatrix);
-      return inv.shallowReduce(reductionContext);
-    }
-    if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
-      return *this;
-    }
-    int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
-    if (exp == 0) {
-      Matrix id = Matrix::CreateIdentity(matrixBase.numberOfRows());
-      replaceWithInPlace(id);
-      return std::move(id);
-    }
-    if (exp == 1) {
-      replaceWithInPlace(matrixBase);
-      return std::move(matrixBase);
-    }
-    Expression result = matrixBase.clone();
-    // TODO: implement a quick exponentiation
-    for (int k = 1; k < exp; k++) {
-      result = Multiplication::Builder(result, matrixBase.clone());
-      result = result.shallowReduce(reductionContext);
-    }
-    assert(!result.isUninitialized());
-    replaceWithInPlace(result);
-    return result;
   }
 
   Expression power = *this;
@@ -980,17 +1013,6 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
   }
 
   return *this;
-}
-
-Expression Power::getUnit() const {
-  if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
-    return clone();
-  }
-  Expression baseUnit = childAtIndex(0).getUnit();
-  if (baseUnit.isUndefined()) {
-    return baseUnit;
-  }
-  return Power::Builder(baseUnit, childAtIndex(1).clone());
 }
 
 // Private

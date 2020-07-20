@@ -27,6 +27,7 @@ constexpr KDColor Palette::CalculationBackgroundOdd;
 constexpr KDColor Palette::CalculationBackgroundEven;
 constexpr KDColor Palette::CalculationEmptyBox;
 constexpr KDColor Palette::CalculationEmptyBoxNeeded;
+constexpr KDColor Palette::CalculationTrigoAndComplexForeground;
 
 constexpr KDColor Palette::CodeBackground;
 constexpr KDColor Palette::CodeBackgroundSelected;
@@ -36,6 +37,7 @@ constexpr KDColor Palette::CodeNumber;
 constexpr KDColor Palette::CodeKeyword;
 constexpr KDColor Palette::CodeOperator;
 constexpr KDColor Palette::CodeString;
+constexpr KDColor Palette::CodeGutterViewBackground;
 
 constexpr KDColor Palette::ProbabilityCurve;
 constexpr KDColor Palette::ProbabilityCellBorder;
@@ -98,6 +100,8 @@ constexpr KDColor Palette::HomeCellBackground;
 constexpr KDColor Palette::HomeCellBackgroundActive;
 constexpr KDColor Palette::HomeCellText;
 constexpr KDColor Palette::HomeCellTextActive;
+constexpr KDColor Palette::HomeCellTextExternal;
+constexpr KDColor Palette::HomeCellTextExternalActive;
 
 constexpr KDColor Palette::YellowDark; // Done
 constexpr KDColor Palette::YellowLight; // Done
@@ -126,6 +130,8 @@ constexpr KDColor Palette::Green;
 constexpr KDColor Palette::GreenLight;
 constexpr KDColor Palette::Brown;
 constexpr KDColor Palette::Purple;
+constexpr KDColor Palette::Cyan; // TODO Palette change
+constexpr KDColor Palette::BlueishGrey; // TODO Palette change
 constexpr KDColor Palette::DataColor[];
 constexpr KDColor Palette::DataColorLight[];
 

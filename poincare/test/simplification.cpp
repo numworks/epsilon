@@ -192,6 +192,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("[[1,2+𝐢][3,4][5,6]]×[[1,2+𝐢,3,4][5,6+𝐢,7,8]]", "[[11+5×𝐢,13+9×𝐢,17+7×𝐢,20+8×𝐢][23,30+7×𝐢,37,44][35,46+11×𝐢,57,68]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]×[[1,3][5,6]]×[[2,3][4,6]]", "[[82,123][178,267]]");
   assert_parsed_expression_simplify_to("π×confidence(π/5,3)[[1,2]]", "π×confidence(π/5,3)×[[1,2]]");
+  assert_parsed_expression_simplify_to("0*[[1,0][0,1]]^500", "0×[[1,0][0,1]]^500");
 }
 
 QUIZ_CASE(poincare_simplification_units) {
@@ -203,6 +204,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_K", "1×_K");
   assert_parsed_expression_simplify_to("_mol", "1×_mol");
   assert_parsed_expression_simplify_to("_cd", "1×_cd");
+  assert_parsed_expression_simplify_to("-_s", "-1×_s");
 
   /* Inverses of SI base units */
   assert_parsed_expression_simplify_to("_s^-1", "1×_s^\u0012-1\u0013");
@@ -245,7 +247,8 @@ QUIZ_CASE(poincare_simplification_units) {
       Unit::Builder(dim, rep, &Unit::EmptyPrefix).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
       assert_parsed_expression_simplify_to(buffer, buffer);
       if (rep->isPrefixable()) {
-        for (const Unit::Prefix * pre = rep->outputPrefixes(); pre < rep->outputPrefixesUpperBound(); pre++) {
+        for (size_t i = 0; i < rep->outputPrefixesLength(); i++) {
+          const Unit::Prefix * pre = rep->outputPrefixes()[i];
           Unit::Builder(dim, rep, pre).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           assert_parsed_expression_simplify_to(buffer, buffer);
         }
@@ -259,6 +262,10 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_S", "1×_Ω^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_L", "0.001×_m^3");
   assert_parsed_expression_simplify_to("_ha", "0.01×_km^2");
+
+  /* Unit sum/subtract */
+  assert_parsed_expression_simplify_to("_m+_m", "2×_m");
+  assert_parsed_expression_simplify_to("_m-_m", "0×_m");
 
   /* Usual physical quantities */
   assert_parsed_expression_simplify_to("_A×_s×_m^(-3)", "1×_C×_m^\u0012-3\u0013"); // Charge density
@@ -305,10 +312,10 @@ QUIZ_CASE(poincare_simplification_units) {
    * expression */
   assert_parsed_expression_simplify_to("0×_s", "0×_s");
   assert_parsed_expression_simplify_to("inf×_s", "inf×_s");
-  //assert_parsed_expression_simplify_to("-inf×_s", "-inf×_s");
+  assert_parsed_expression_simplify_to("-inf×_s", "-inf×_s");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
   assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "0×_s");
-  //assert_parsed_expression_simplify_to("log(0)×_s", "-inf×_s");
+  assert_parsed_expression_simplify_to("log(0)×_s", "-inf×_s");
   assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
 
   /* Units with invalid exponent */
@@ -414,6 +421,7 @@ QUIZ_CASE(poincare_simplification_units) {
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
   assert_parsed_expression_simplify_to("cos(1_s/1_s)", "cos(1)");
+  assert_parsed_expression_simplify_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
 }
 
 QUIZ_CASE(poincare_simplification_power) {
@@ -895,6 +903,9 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("cos(3a)*abs(transpose(a))", "cos(3×confidence(cos(2)/25,3))×abs(transpose(confidence(cos(2)/25,3)))");
   assert_parsed_expression_simplify_to("abs(transpose(a))*cos(3a)", "abs(transpose(confidence(cos(2)/25,3)))×cos(3×confidence(cos(2)/25,3))");
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+
+  // Mix
+  assert_parsed_expression_simplify_to("1/identity(2)^500", "1/[[1,0][0,1]]^500");
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_matrices) {
@@ -1021,6 +1032,9 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
 
   assert_parsed_expression_simplify_to("1→2", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→a+a", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→f(2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("1→f(g(4))", Undefined::Name());
   assert_parsed_expression_simplify_to("1→u(n)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→u(n+1)", Undefined::Name());
   assert_parsed_expression_simplify_to("1→v(n)", Undefined::Name());
@@ -1039,6 +1053,20 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
   assert_parsed_expression_simplify_to("4→_km/_m", Undefined::Name());
   assert_parsed_expression_simplify_to("3×_min→_s+1-1", Undefined::Name());
+
+  assert_simplify("_m→a", Radian, Real);
+  assert_simplify("_m→b", Radian, Real);
+  assert_parsed_expression_simplify_to("1_km→a×b", Undefined::Name());
+
+  assert_simplify("2→a");
+  assert_parsed_expression_simplify_to("3_m→a×_km", Undefined::Name());
+  assert_simplify("2→f(x)");
+  assert_parsed_expression_simplify_to("3_m→f(2)×_km", Undefined::Name());
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {
@@ -1258,6 +1286,12 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4", User);
 }
 
+QUIZ_CASE(poincare_simplification_unit_conversion) {
+  assert_parsed_expression_simplify_to("1000000_cm", "10×_km", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, DefaultUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "1000000×_cm", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, NoUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "10000×_m", User, Degree, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, InternationalSystemUnitConversion);
+}
+
 QUIZ_CASE(poincare_simplification_user_function) {
   // User defined function
   // f: x → x*1
@@ -1267,6 +1301,22 @@ QUIZ_CASE(poincare_simplification_user_function) {
   assert_simplify("3→f(x)", Radian, Polar);
   assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name(), User, Radian, Polar);
   // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+}
+
+QUIZ_CASE(poincare_simplification_user_function_with_convert) {
+  /* User defined function
+   * f: x → 0→0
+   * It cannot be created with a const char *, so we create it by hand. */
+  Expression e = Store::Builder(
+      UnitConvert::Builder(
+        Rational::Builder(0),
+        Rational::Builder(0)),
+      Function::Builder(
+        "f", 1,
+        Symbol::Builder('x')));
+  assert_expression_simplify(e);
+  assert_simplify("e^(f(0))", Radian, Polar);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
@@ -1318,7 +1368,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("(((√(6)-√(2))/4)/((√(6)+√(2))/4))+1", "-√(3)+3");
   assert_parsed_expression_simplify_to("1/√(𝐢) × (√(2)-𝐢×√(2))", "-2×𝐢"); // TODO: get rid of complex at denominator?
 
-  assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.7027409010183ᴇ62");
+  assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.702740901018ᴇ62", Degree, Cartesian, 13);
 }
 
 QUIZ_CASE(poincare_hyperbolic_trigonometry) {

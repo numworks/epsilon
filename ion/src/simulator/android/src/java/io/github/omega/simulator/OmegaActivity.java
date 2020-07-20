@@ -39,4 +39,11 @@ public class OmegaActivity extends SDLActivity {
     }
     return bitmap;
   }
+
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (!mBrokenLibraries) {
+      setWindowStyle(true);
+    }
+  }
 }

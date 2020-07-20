@@ -58,8 +58,6 @@ protected:
      * coordinates that refer to the data source entire table */
     int absoluteColumnNumberFromSubviewIndex(int index) const;
     int absoluteRowNumberFromSubviewIndex(int index) const;
-    int numberOfFullyDisplayableRows() const;
-    int numberOfFullyDisplayableColumns() const;
     int typeOfSubviewAtIndex(int index) const;
     /* This method transform a index (of subview for instance) into an index
      * refering to the set of cells of type "type". */

@@ -1,5 +1,24 @@
 SFLAGS += -Iescher/include
 
+ifeq ($(THEME_REPO),local)
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  $(addprefix themes/themes/local/, $(addsuffix .json, $(THEME_NAME))), \
+  $$(PYTHON) themes/themes_manager.py $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+))
+else
+$(eval $(call rule_for, \
+  THEME, \
+  escher/palette.h, \
+  themes/themes/git/.empty-folder, \
+  $$(PYTHON) themes/themes_manager.py $(THEME_REPO) $(THEME_NAME) $$@ $(BUILD_DIR)/, \
+  global \
+))
+endif
+
+
 escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
   app.cpp \
@@ -45,7 +64,9 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_message.cpp \
   message_table_cell_with_switch.cpp \
   message_text_view.cpp \
+  metric.cpp \
   modal_view_controller.cpp \
+  modal_view_empty_controller.cpp \
   nested_menu_controller.cpp \
   palette.cpp \
   pointer_text_view.cpp \
@@ -94,14 +115,8 @@ $(eval $(call rule_for, \
   HOSTCC, \
   escher/image/inliner, \
   escher/image/inliner.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
-  $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@ \
-))
-
-$(eval $(call rule_for, \
-  THEME, \
-  escher/palette.h, \
-  $(addprefix themes/themes/, $(addsuffix .json, $(OMEGA_THEME))), \
-  $$(PYTHON) themes/themes_manager.py $(OMEGA_THEME) $$@ \
+  $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@, \
+  global \
 ))
 
 INLINER := $(BUILD_DIR)/escher/image/inliner
@@ -111,7 +126,8 @@ $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \
   $(BUILD_DIR)/%.png $$(INLINER), \
-  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp \
+  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp, \
+  global \
 ))
 
 # Mark a .cpp file as depending on a .png one

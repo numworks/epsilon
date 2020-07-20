@@ -17,6 +17,7 @@ public:
   void setVisible(bool visible);
   void reloadCell() override;
   void setAppDescriptor(::App::Descriptor * appDescriptor);
+  void setExtAppDescriptor(const char* name, const Image* icon);
 private:
   static constexpr KDCoordinate k_iconMargin = 22;
   static constexpr KDCoordinate k_iconWidth = 55;
@@ -26,6 +27,7 @@ private:
   ImageView m_iconView;
   MessageTextView m_nameView;
   bool m_visible;
+  bool m_external_app;
 };
 
 }

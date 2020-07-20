@@ -1,4 +1,5 @@
 #include "complex_graph_cell.h"
+#include <escher/palette.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -12,7 +13,7 @@ ComplexGraphView::ComplexGraphView(ComplexModel * complexModel) :
 }
 
 void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
+  ctx->fillRect(rect, Palette::BackgroundApps);
 
   // Draw grid, axes and graduations
   drawGrid(ctx, rect);
@@ -25,7 +26,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
 
   assert(!std::isnan(real) && !std::isnan(imag) && !std::isinf(real) && !std::isinf(imag));
   // Draw the segment from the origin to the dot (real, imag)
-  drawSegment(ctx, rect, 0.0f, 0.0f, m_complex->real(), m_complex->imag(), Palette::GreyDark, false);
+  drawSegment(ctx, rect, 0.0f, 0.0f, m_complex->real(), m_complex->imag(), Palette::SecondaryText, false);
 
   /* Draw the partial ellipse indicating the angle θ
    * - the ellipse parameters are a = |real|/5 and b = |imag|/5,
@@ -39,7 +40,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
    * and the line of equation (real*t,imag*t).
    * (a*cos(t), b*sin(t)) = (real*t,imag*t) --> tan(t) = sign(a)*sign(b) (± π)
    * --> t = π/4 [π/2] according to sign(a) and sign(b). */
-  float th = real < 0.0f ? 3.0f*M_PI/4.0f : M_PI/4.0f;
+  float th = real < 0.0f ? (float)(3.0*M_PI_4) : (float)M_PI_4;
   th = imag < 0.0f ? -th : th;
   // Compute ellipsis parameters a and b
   float factor = 5.0f;
@@ -48,7 +49,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // Avoid flat ellipsis for edge cases (for real = 0, the case imag = 0 is excluded)
   if (real == 0.0f) {
     a = 1.0f/factor;
-    th = imag < 0.0f ? -M_PI/2.0f : M_PI/2.0f;
+    th = imag < 0.0f ? (float)-M_PI_2 : (float)M_PI_2;
   }
   std::complex<float> parameters(a,b);
   drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
@@ -58,27 +59,27 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float a = parameters.real();
         float b = parameters.imag();
         return Poincare::Coordinate2D<float>(a*std::cos(t*th), b*std::sin(t*th));
-    }, &parameters, &th, false, Palette::GreyDark, false);
+    }, &parameters, &th, false, Palette::SecondaryText, false);
 
   // Draw dashed segment to indicate real and imaginary
-  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);
-  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::CalculationTrigoAndComplexForeground, 1, 3);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::CalculationTrigoAndComplexForeground, 1, 3);
 
   // Draw complex position on the plan
-  drawDot(ctx, rect, real, imag, Palette::Red, Size::Large);
+  drawDot(ctx, rect, real, imag, Palette::CalculationTrigoAndComplexForeground, Size::Large);
 
   // Draw labels
   // 're(z)' label
-  drawLabel(ctx, rect, real, 0.0f, "re(z)", Palette::Red, CurveView::RelativePosition::None, imag >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
+  drawLabel(ctx, rect, real, 0.0f, "re(z)", Palette::CalculationTrigoAndComplexForeground, CurveView::RelativePosition::None, imag >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
   // 'im(z)' label
-  drawLabel(ctx, rect, 0.0f, imag, "im(θ)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
+  drawLabel(ctx, rect, 0.0f, imag, "im(z)", Palette::CalculationTrigoAndComplexForeground, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
   // '|z|' label, the relative horizontal position of this label depends on the quadrant
   CurveView::RelativePosition verticalPosition = real*imag < 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After;
   if (real == 0.0f) {
     // Edge case: pure imaginary
     verticalPosition = CurveView::RelativePosition::None;
   }
-  drawLabel(ctx, rect, real/2.0f, imag/2.0f, "|z|", Palette::Red, CurveView::RelativePosition::None, verticalPosition);
+  drawLabel(ctx, rect, real/2.0f, imag/2.0f, "|z|", Palette::CalculationTrigoAndComplexForeground, CurveView::RelativePosition::None, verticalPosition);
   // 'arg(z)' label, the absolute and relative horizontal/vertical positions of this label depends on the quadrant
   CurveView::RelativePosition horizontalPosition = real >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::None;
   verticalPosition = imag >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::Before;
@@ -87,7 +88,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
    * and for the left half plan, we position the label at the half angle. The
    * relative position is chosen accordingly. */
   float anglePositionRatio = real >= 0.0f ? 0.0f : 0.5f;
-  drawLabel(ctx, rect, a*std::cos(anglePositionRatio*th), b*std::sin(anglePositionRatio*th), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
+  drawLabel(ctx, rect, a*std::cos(anglePositionRatio*th), b*std::sin(anglePositionRatio*th), "arg(z)", Palette::CalculationTrigoAndComplexForeground, horizontalPosition, verticalPosition);
 }
 
 }

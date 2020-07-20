@@ -86,8 +86,6 @@ public:
     uint32_t m_fullNameCRC32;
   };
 
-  Storage();
-
 #if ION_STORAGE_LOG
   void log();
 #endif
@@ -122,9 +120,14 @@ public:
   void destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension);
   void destroyRecordsWithExtension(const char * extension);
 
+  // Useful
+  static bool FullNameCompliant(const char * name);
+
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
+
+  Storage();
 
   /* Getters/Setters on recordID */
   const char * fullNameOfRecord(const Record record);
@@ -149,7 +152,6 @@ private:
   bool isFullNameTaken(const char * fullName, const Record * recordToExclude = nullptr);
   bool isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
   bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
-  static bool FullNameCompliant(const char * name);
   char * endBuffer();
   size_t sizeOfBaseNameAndExtension(const char * baseName, const char * extension) const;
   size_t sizeOfRecordWithBaseNameAndExtension(const char * baseName, const char * extension, size_t size) const;

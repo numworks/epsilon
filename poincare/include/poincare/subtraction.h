@@ -13,7 +13,7 @@ public:
   size_t size() const override { return sizeof(SubtractionNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Subtraction";
   }
 #endif
@@ -24,7 +24,7 @@ public:
   Type type() const override { return Type::Subtraction; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
-  Expression getUnit() const override { assert(false); return ExpressionNode::getUnit(); }
+  Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }
@@ -62,7 +62,7 @@ class Subtraction final : public Expression {
 public:
   Subtraction(const SubtractionNode * n) : Expression(n) {}
   static Subtraction Builder() { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(); }
-  static Subtraction Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static Subtraction Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>({child0, child1}); }
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

@@ -65,22 +65,54 @@ bool Script::nameCompliant(const char * name) {
   return false;
 }
 
-bool Script::importationStatus() const {
-  assert(!isNull());
-  Data d = value();
-  return (((char *)d.buffer)[0] == 1);
+uint8_t * StatusFromData(Script::Data d) {
+  return const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer));
 }
 
-void Script::toggleImportationStatus() {
+bool Script::autoImportationStatus() const {
+  return getStatutBit(k_autoImportationStatusMask);
+}
+
+void Script::toggleAutoimportationStatus() {
+  assert(!isNull());
   Data d = value();
-  ((char *)d.buffer)[0] = (((char *)d.buffer)[0] == 1 ? 0 : 1);
+  *StatusFromData(d) ^= k_autoImportationStatusMask;
   setValue(d);
 }
 
-const char * Script::scriptContent() const {
+const char * Script::content() const {
+  Data d = value();
+  return ((const char *)d.buffer) + StatusSize();
+}
+
+bool Script::fetchedFromConsole() const {
+  return getStatutBit(k_fetchedFromConsoleMask);
+}
+
+void Script::setFetchedFromConsole(bool fetched) {
+  setStatutBit(k_fetchedFromConsoleMask, k_fetchedFromConsoleOffset, fetched);
+}
+
+bool Script::fetchedForVariableBox() const {
+  return getStatutBit(k_fetchedForVariableBoxMask);
+}
+
+void Script::setFetchedForVariableBox(bool fetched) {
+  setStatutBit(k_fetchedForVariableBoxMask, k_fetchedForVariableBoxOffset, fetched);
+}
+
+bool Script::getStatutBit(uint8_t mask) const {
   assert(!isNull());
   Data d = value();
-  return (const char *)d.buffer + k_importationStatusSize;
+  return ((*StatusFromData(d)) & mask) != 0;
+}
+
+void Script::setStatutBit(uint8_t mask, uint8_t offset, bool statusBit) {
+  assert(!isNull());
+  Data d = value();
+  uint8_t * status = StatusFromData(d);
+  *status = ((*status) & ~mask) | (static_cast<uint8_t>(statusBit) << offset); //TODO Create and use a bit operations library
+  setValue(d);
 }
 
 }

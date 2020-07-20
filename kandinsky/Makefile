@@ -30,6 +30,8 @@ tests_src += $(addprefix kandinsky/test/,\
   rect.cpp\
 )
 
+code_points = kandinsky/fonts/code_points.h
+
 RASTERIZER_CFLAGS := -std=c99 $(shell pkg-config freetype2 --cflags)
 RASTERIZER_LDFLAGS := $(shell pkg-config freetype2 --libs)
 
@@ -43,7 +45,8 @@ $(eval $(call rule_for, \
   HOSTCC, \
   kandinsky/fonts/rasterizer, \
   kandinsky/fonts/rasterizer.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
-  $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$^ $$(RASTERIZER_LDFLAGS) -o $$@ \
+  $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$^ $$(RASTERIZER_LDFLAGS) -o $$@, \
+  global \
 ))
 
 RASTERIZER := $(BUILD_DIR)/kandinsky/fonts/rasterizer
@@ -54,7 +57,8 @@ $(call rule_for, \
   RASTER, \
   kandinsky/fonts/$(1).cpp, \
   kandinsky/fonts/$(1).ttf $$(RASTERIZER), \
-  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $(if $(HAS_LIBPNG),$$(basename $$@).png) \
+  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $(if $(HAS_LIBPNG),$$(basename $$@).png), \
+  global \
 )
 endef
 

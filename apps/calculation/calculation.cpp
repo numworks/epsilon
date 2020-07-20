@@ -1,19 +1,21 @@
 #include "calculation.h"
 #include "../shared/poincare_helpers.h"
+#include "../shared/scrollable_multiple_expressions_view.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
+#include "app.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/undefined.h>
+#include <poincare/unit.h>
 #include <poincare/unreal.h>
 #include <string.h>
 #include <cmath>
+#include <algorithm>
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Calculation {
-
-static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 bool Calculation::operator==(const Calculation& c) {
   return strcmp(inputText(), c.inputText()) == 0
@@ -39,8 +41,7 @@ Calculation * Calculation::next() const {
 void Calculation::tidy() {
   /* Reset height memoization (the complex format could have changed when
    * re-entering Calculation app which would impact the heights). */
-  m_height = -1;
-  m_expandedHeight = -1;
+  resetHeightMemoization();
 }
 
 const char * Calculation::approximateOutputText(NumberOfSignificantDigits numberOfSignificantDigits) const {
@@ -125,123 +126,12 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-KDCoordinate Calculation::height(Context * context, bool expanded, bool allExpressionsInline) {
-  KDCoordinate result = expanded ? m_expandedHeight : m_height;
-  if (result >= 0) {
-    // Height already computed
-    return result;
-  }
-
-  // Get input height
-  Layout inputLayout = createInputLayout();
-  KDCoordinate inputHeight = inputLayout.layoutSize().height();
-  KDCoordinate inputWidth = inputLayout.layoutSize().width();
-  float singleMargin = 2 * Metric::CommonSmallMargin;
-  float doubleMargin = 4 * Metric::CommonSmallMargin;
-  bool singleLine = false;
-  KDCoordinate inputBaseline = inputLayout.baseline();
-
-  // Get exact output height if needed
-  Poincare::Layout exactLayout;
-  bool couldNotCreateExactLayout = false;
-  if (DisplaysExact(displayOutput(context))) {
-    // Create the exact output layout
-    exactLayout = createExactOutputLayout(&couldNotCreateExactLayout);
-    if (couldNotCreateExactLayout) {
-      if (displayOutput(context) != DisplayOutput::ExactOnly) {
-        forceDisplayOutput(DisplayOutput::ApproximateOnly);
-      } else {
-        /* We should only display the exact result, but we cannot create it
-         * -> raise an exception. */
-        ExceptionCheckpoint::Raise();
-      }
-    }
-  }
-
-  if (displayOutput(context) == DisplayOutput::ExactOnly) {
-    KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-    KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-    singleLine = exactOutputWidth + inputWidth < maxWidth - 40;
-    if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact && !allExpressionsInline) {
-      KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline) + singleMargin;
-    } else {
-      if (allExpressionsInline) {
-        KDCoordinate exactOutputBaseline = exactLayout.baseline();
-        result = maxCoordinate(inputBaseline, exactOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, exactOutputHeight-exactOutputBaseline);
-      } else {
-        result = inputHeight + exactOutputHeight + doubleMargin;
-      }
-    }
+void Calculation::setMemoizedHeight(bool expanded, KDCoordinate height) {
+  if (expanded) {
+    m_expandedHeight = height;
   } else {
-    bool couldNotCreateApproximateLayout = false;
-    Layout approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
-    if (couldNotCreateApproximateLayout) {
-      if (displayOutput(context) == DisplayOutput::ApproximateOnly) {
-        Poincare::ExceptionCheckpoint::Raise();
-      } else {
-        /* Set the display output to ApproximateOnly, make room in the pool by
-         * erasing the exact layout, and retry to create the approximate layout */
-        forceDisplayOutput(DisplayOutput::ApproximateOnly);
-        exactLayout = Poincare::Layout();
-        couldNotCreateApproximateLayout = false;
-        approximateLayout = createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
-        if (couldNotCreateApproximateLayout) {
-          Poincare::ExceptionCheckpoint::Raise();
-        }
-      }
-    }
-
-    KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
-    KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-    singleLine = approximateOutputWidth + inputWidth < maxWidth - 40;
-    if (displayOutput(context) == DisplayOutput::ApproximateOnly || (!expanded && displayOutput(context) == DisplayOutput::ExactAndApproximateToggle)) {
-      if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact && !allExpressionsInline) {
-        KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-        result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline) + singleMargin;
-      } else {
-        if (allExpressionsInline) {
-          KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-          result = maxCoordinate(inputBaseline, approximateOutputBaseline) + maxCoordinate(inputHeight - inputBaseline, approximateOutputHeight-approximateOutputBaseline);
-        } else {
-          result = inputHeight + approximateOutputHeight + doubleMargin;
-        }
-      }
-    } else {
-      assert(displayOutput(context) == DisplayOutput::ExactAndApproximate || (displayOutput(context) == DisplayOutput::ExactAndApproximateToggle && expanded));
-      KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-      KDCoordinate exactOutputBaseline = exactLayout.baseline();
-      KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-      KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-      singleLine = exactOutputWidth + approximateOutputWidth + inputWidth < maxWidth - 70;
-      KDCoordinate approximateOutputBaseline = approximateLayout.baseline();
-      if (singleLine && Poincare::Preferences::sharedPreferences()->resultDisplay() == Poincare::Preferences::ResultDisplay::Compact) {
-        result = maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline)) + singleMargin;
-      } else {
-        if (allExpressionsInline) {
-          result = maxCoordinate(inputBaseline, maxCoordinate(exactOutputBaseline, approximateOutputBaseline)) + maxCoordinate(inputHeight - inputBaseline, maxCoordinate(exactOutputHeight - exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline));
-        } else {
-          KDCoordinate outputHeight = maxCoordinate(exactOutputBaseline, approximateOutputBaseline) + maxCoordinate(exactOutputHeight-exactOutputBaseline, approximateOutputHeight-approximateOutputBaseline);
-          result = inputHeight + outputHeight + doubleMargin;
-        }
-      }
-    }
+    m_height = height;
   }
-
-  /* For all display outputs except ExactAndApproximateToggle, the selected
-   * height and the usual height are identical. We update both heights in
-   * theses cases. */
-  if (displayOutput(context) != DisplayOutput::ExactAndApproximateToggle) {
-    m_height = result;
-    m_expandedHeight = result;
-  } else {
-    if (expanded) {
-      m_expandedHeight = result;
-    } else {
-      m_height = result;
-    }
-  }
-  return result;
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
@@ -285,7 +175,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::PredictionInterval
           };
           return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes)/sizeof(ExpressionNode::Type));
-        }, context, true)
+        }, context)
   )
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
@@ -302,15 +192,15 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
 void Calculation::forceDisplayOutput(DisplayOutput d) {
   m_displayOutput = d;
   // Reset heights memoization as it might have changed when we modify the display output
-  m_height = -1;
-  m_expandedHeight = -1;
+  resetHeightMemoization();
 }
+
 bool Calculation::shouldOnlyDisplayExactOutput() {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
   Expression i = input();
-  return i.type() == ExpressionNode::Type::Store
-    && i.childAtIndex(1).type() == ExpressionNode::Type::Function;
+  return (i.type() == ExpressionNode::Type::Store && i.childAtIndex(1).type() == ExpressionNode::Type::Function)
+    || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {
@@ -340,6 +230,9 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 }
 
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
+  if (ExamModeConfiguration::exactExpressionsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return AdditionalInformationType::None;
+  }
   Preferences * preferences = Preferences::sharedPreferences();
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
   Expression i = input();
@@ -361,8 +254,28 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   if (input().isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit()) || o.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
     return AdditionalInformationType::Trigonometry;
   }
-
-  // TODO: return AdditionalInformationType::Unit
+  if (o.hasUnit()) {
+    Expression unit;
+    PoincareHelpers::Reduce(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User,ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+    o = o.removeUnit(&unit);
+    if (Unit::IsSI(unit)) {
+      if (Unit::IsSISpeed(unit) || Unit::IsSIVolume(unit) || Unit::IsSIEnergy(unit)) {
+        /* All these units will provide misc. classic representatives in
+         * addition to the SI unit in additional information. */
+        return AdditionalInformationType::Unit;
+      }
+      if (Unit::IsSITime(unit)) {
+        /* If the number of seconds is above 60s, we can write it in the form
+         * of an addition: 23_min + 12_s for instance. */
+        double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
+        if (value >  Unit::SecondsPerMinute) {
+          return AdditionalInformationType::Unit;
+        }
+      }
+      return AdditionalInformationType::None;
+    }
+    return AdditionalInformationType::Unit;
+  }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;
   }
@@ -374,6 +287,11 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     return AdditionalInformationType::Complex;
   }
   return AdditionalInformationType::None;
+}
+
+void  Calculation::resetHeightMemoization() {
+  m_height = -1;
+  m_expandedHeight = -1;
 }
 
 }

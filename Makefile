@@ -1,4 +1,16 @@
+# Disable default Make rules
+.SUFFIXES:
+
+# Define the default recipe
+default:
+
 include build/config.mak
+include build/pimp.mak
+include build/defaults.mak
+include build/platform.$(PLATFORM).mak
+include build/toolchain.$(TOOLCHAIN).mak
+include build/variants.mak
+include build/helpers.mk
 
 ifeq (${MODEL}, n0110)
   apps_list = ${EPSILON_APPS}
@@ -10,42 +22,21 @@ ifdef FORCE_EXTERNAL
   apps_list = ${EPSILON_APPS}
 endif
 
-# Disable default Make rules
-.SUFFIXES:
-
-object_for = $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
-
-# Define the default recipe
-
-default:
-
-# Define a standard rule helper
-# If passed a last parameter value of with_local_version, we also define an
-# extra rule that can build source files within the $(BUILD_DIR). This is useful
-# for rules that can be applied for intermediate objects (for example, when
-# going .png -> .cpp -> .o).
-
-define rule_label
-@ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(BUILD_DIR)/%=%)"
-endef
-
-define rule_for
-ifeq ($(strip $(5)),with_local_version)
-$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(addprefix $$(BUILD_DIR)/,$(strip $(3))) | $(if $(findstring official,${MAKECMDGOALS}),official_authorization)
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
-	$(Q) $(4)
+ifdef HOME_DISPLAY_EXTERNALS
+  ifneq ($(filter external,$(apps_list)),)
+    SFLAGS += -DHOME_DISPLAY_EXTERNALS
+  else
+    $(warning HOME_DISPLAY_EXTERNALS is set but external isn't included, ignoring flag.)
+  endif
 endif
-$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/. $(if $(findstring official,${MAKECMDGOALS}),official_authorization)
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
-	$(Q) $(4)
-endef
 
 .PHONY: info
 info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
 	@echo "EPSILON_APPS = $(EPSILON_APPS)"
 	@echo "EPSILON_I18N = $(EPSILON_I18N)"
-	@echo "OMEGA_THEME = $(OMEGA_THEME)"
+	@echo "THEME_NAME = $(THEME_NAME)"
+	@echo "THEME_REPO = $(THEME_REPO)"
 	@echo "BUILD_DIR = $(BUILD_DIR)"
 	@echo "PLATFORM" = $(PLATFORM)
 	@echo "DEBUG" = $(DEBUG)
@@ -78,6 +69,7 @@ help:
 	@echo "  make PLATFORM=simulator TARGET=macos"
 	@echo "  make PLATFORM=simulator TARGET=web"
 	@echo "  make PLATFORM=simulator TARGET=windows"
+	@echo "  make PLATFORM=simulator TARGET=3ds"
 
 .PHONY: doc
 doc:
@@ -107,7 +99,9 @@ $(BUILD_DIR)%/.:
 # Each sub-Makefile can either add sources to $(%_src) variables or define a
 # new executable target. The $(%_src) variables list the sources that can be
 # built and linked to executables being generated.
-
+ifndef USE_LIBA
+  $(error platform.mak should define USE_LIBA)
+endif
 ifeq ($(USE_LIBA),0)
 include liba/Makefile.bridge
 else
@@ -126,10 +120,10 @@ include build/struct_layout/Makefile
 include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-all_src = $(apps_all_src) $(escher_src) $(ion_all_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_target_device_flasher_light_src) $(ion_target_device_flasher_verbose_src) $(ion_target_device_bench_src) $(tests_src)
+all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(tests_src)
 # Make palette.h a dep for every source-file.
 # This ensures that the theming engine works correctly.
-$(call object_for,$(all_app_src)): $(BUILD_DIR)/escher/palette.h
+$(call object_for,$(all_src)): $(BUILD_DIR)/escher/palette.h $(BUILD_DIR)/apps/i18n.h
 
 all_objs = $(call object_for,$(all_src))
 .SECONDARY: $(all_objs)
@@ -144,8 +138,7 @@ all_objs = $(call object_for,$(all_src))
 include build/targets.mak
 
 # Fill in the default recipe
-DEFAULT ?= $(BUILD_DIR)/epsilon.$(EXE)
-default: $(DEFAULT)
+default: $(firstword $(HANDY_TARGETS)).$(firstword $(HANDY_TARGETS_EXTENSIONS))
 
 # Load standard build rules
 include build/rules.mk

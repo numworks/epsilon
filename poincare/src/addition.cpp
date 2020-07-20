@@ -29,11 +29,6 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
   return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients, symbolicComputation);
 }
 
-Expression AdditionNode::getUnit() const {
-  // The expression is reduced, so we can just ask the unit of the first child
-  return childAtIndex(0)->getUnit();
-}
-
 // Layout
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -148,15 +143,11 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
 
   /* Step 1: Addition is associative, so let's start by merging children which
-   * are additions. */
-  int i = 0;
-  while (i < numberOfChildren()) {
-    if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
-      mergeChildrenAtIndexInPlace(childAtIndex(i), i);
-      continue;
-    }
-    i++;
-  }
+   * are additions.
+   * TODO If the parent Expression is an Addition, one should perhaps
+   * return now and let the parent do the reduction.
+   */
+  mergeSameTypeChildrenInPlace();
 
   const int childrenCount = numberOfChildren();
   assert(childrenCount > 1);
@@ -164,11 +155,25 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   /* Step 2: Handle the units. All children should have the same unit, otherwise
    * the result is not homogeneous. */
   {
-    Expression unit = childAtIndex(0).getUnit();
+    Expression unit;
+    childAtIndex(0).removeUnit(&unit);
+    const bool hasUnit = !unit.isUninitialized();
     for (int i = 1; i < childrenCount; i++) {
-      if (!unit.isIdenticalTo(childAtIndex(i).getUnit())) {
+      Expression otherUnit;
+      childAtIndex(i).removeUnit(&otherUnit);
+      if (hasUnit == otherUnit.isUninitialized() ||
+          (hasUnit && !unit.isIdenticalTo(otherUnit)))
+      {
         return replaceWithUndefinedInPlace();
       }
+    }
+    if (hasUnit) {
+      Expression addition = shallowReduce(reductionContext);
+      Multiplication result = Multiplication::Builder(unit);
+      result.mergeSameTypeChildrenInPlace();
+      addition.replaceWithInPlace(result);
+      result.addChildAtIndexInPlace(addition, 0, 1);
+      return std::move(result);
     }
   }
 
@@ -231,7 +236,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 
   /* Step 5: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
-  i = 0;
+  int i = 0;
   while (i < numberOfChildren()-1) {
     Expression e1 = childAtIndex(i);
     Expression e2 = childAtIndex(i+1);
@@ -350,7 +355,7 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
   int numberOfNonNumeralFactors = numberOfNonNumeralFactorsInE1;
   if (numberOfNonNumeralFactors == 1) {
     Expression nonNumeralFactor = FirstNonNumeralFactor(e1);
-    if (nonNumeralFactor.recursivelyMatches(Expression::IsRandom, context, true)) {
+    if (nonNumeralFactor.recursivelyMatches(Expression::IsRandom, context)) {
       return false;
     }
     return FirstNonNumeralFactor(e1).isIdenticalTo(FirstNonNumeralFactor(e2));
@@ -375,7 +380,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
     Expression childI = childAtIndex(i);
     Expression currentDenominator = childI.denominator(reductionContext);
     if (!currentDenominator.isUninitialized()) {
-      if (currentDenominator.recursivelyMatches(Expression::IsRandom, reductionContext.context(), true)) {
+      if (currentDenominator.recursivelyMatches(Expression::IsRandom, reductionContext.context())) {
         // Remove "random" factors
         removeChildInPlace(childI, childI.numberOfChildren());
         a.addChildAtIndexInPlace(childI, a.numberOfChildren(), a.numberOfChildren());

@@ -9,6 +9,7 @@
 #include "additional_outputs/integer_list_controller.h"
 #include "additional_outputs/rational_list_controller.h"
 #include "additional_outputs/trigonometry_list_controller.h"
+#include "additional_outputs/unit_list_controller.h"
 
 namespace Calculation {
 
@@ -30,8 +31,8 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
-  void scrollToCell(int i, int j);
+  void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1) override;
+  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
@@ -46,6 +47,7 @@ private:
   IntegerListController m_integerController;
   RationalListController m_rationalController;
   TrigonometryListController m_trigonometryController;
+  UnitListController m_unitController;
 };
 
 }

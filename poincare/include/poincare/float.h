@@ -27,7 +27,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(FloatNode<T>); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream & stream) const override {
     stream << "Float";
   }
   virtual void logAttributes(std::ostream & stream) const override {
@@ -39,7 +39,7 @@ public:
   Type type() const override { return Type::Float; }
   Sign sign(Context * context) const override { return m_value < 0 ? Sign::Negative : Sign::Positive; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -50,7 +50,7 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 private:
   // Simplification
-  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::Decimal; }
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Decimal; }
 
   template<typename U> Evaluation<U> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
     return Complex<U>::Builder((U)m_value);

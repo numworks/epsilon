@@ -23,7 +23,7 @@ const ToolboxMessageTree calculChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
   ToolboxMessageTree::Leaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum, false, I18n::Message::SumCommand),
-  ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product, false, I18n::Message::ProductCommand)
+  ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product, false, I18n::Message::ProductCommand),
 };
 
 const ToolboxMessageTree complexChildren[] = {
@@ -109,13 +109,28 @@ const ToolboxMessageTree unitDistanceMeterChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMeterPicoSymbol, I18n::Message::UnitDistanceMeterPico),
 };
 
+const ToolboxMessageTree unitDistanceImperialChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceInchSymbol, I18n::Message::UnitDistanceInch),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceFootSymbol, I18n::Message::UnitDistanceFoot),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceYardSymbol, I18n::Message::UnitDistanceYard),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMileSymbol, I18n::Message::UnitDistanceMile),
+};
+
 const ToolboxMessageTree unitDistanceChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMeterMenu, unitDistanceMeterChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitDistanceImperialMenu, unitDistanceImperialChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceAstronomicalUnitSymbol, I18n::Message::UnitDistanceAstronomicalUnit),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceLightYearSymbol, I18n::Message::UnitDistanceLightYear),
   ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceParsecSymbol, I18n::Message::UnitDistanceParsec)};
 
+const ToolboxMessageTree unitMassImperialChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassPoundSymbol, I18n::Message::UnitMassPound),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassOunceSymbol, I18n::Message::UnitMassOunce),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonSymbol, I18n::Message::UnitMassTon),
+};
+
 const ToolboxMessageTree unitMassChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitMassImperialMenu, unitMassImperialChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassTonneSymbol, I18n::Message::UnitMassTonne),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramKiloSymbol, I18n::Message::UnitMassGramKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassGramSymbol, I18n::Message::UnitMassGram),
@@ -141,6 +156,19 @@ const ToolboxMessageTree unitAmountMoleChildren[] = {
 
 const ToolboxMessageTree unitLuminousIntensityChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousIntensityCandelaSymbol, I18n::Message::UnitLuminousIntensityCandela)};
+
+
+const ToolboxMessageTree unitLuminousFluxChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitLuminousFluxLumenSymbol, I18n::Message::UnitLuminousFluxLumen),
+};
+
+const ToolboxMessageTree unitSolidAngleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSolidAngleSteradianSymbol, I18n::Message::UnitSolidAngleSteradian),
+};
+
+const ToolboxMessageTree unitIlluminanceChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitIlluminanceLuxSymbol, I18n::Message::UnitIlluminanceLux),
+};
 
 const ToolboxMessageTree unitFrequencyHertzChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitFrequencyHertzGigaSymbol, I18n::Message::UnitFrequencyHertzGiga),
@@ -190,6 +218,7 @@ const ToolboxMessageTree unitElectricChargeCoulombChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombSymbol, I18n::Message::UnitChargeCoulomb),
 };
 
+
 const ToolboxMessageTree unitPotentialVoltChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltKiloSymbol, I18n::Message::UnitPotentialVoltKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitPotentialVoltSymbol, I18n::Message::UnitPotentialVolt),
@@ -237,6 +266,9 @@ const ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountMoleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitLuminousIntensityMenu, unitLuminousIntensityChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitLuminousFluxMenu, unitLuminousFluxChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitIlluminanceMenu, unitIlluminanceChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitSolidAngleMenu, unitSolidAngleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyHertzChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitForceMenu, unitForceNewtonChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPressureMenu, unitPressureChildren),
@@ -520,44 +552,162 @@ const ToolboxMessageTree chemistryMolarMassesByAlpha[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AlphaElementZr, I18n::Message::ElementZrMass, false, I18n::Message::ElementZrMass)
 };
 
-const ToolboxMessageTree chemistry[] = {
-  ToolboxMessageTree::Node(I18n::Message::MolarMassesByNumber, chemistryMolarMassesByNumber),
-  ToolboxMessageTree::Node(I18n::Message::MolarMassesByAlpha, chemistryMolarMassesByAlpha)
+const ToolboxMessageTree Pka[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::Pka01, I18n::Message::Pka01Value, false, I18n::Message::Pka01Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka02, I18n::Message::Pka02Value, false, I18n::Message::Pka02Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka03, I18n::Message::Pka03Value, false, I18n::Message::Pka03Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka04, I18n::Message::Pka04Value, false, I18n::Message::Pka04Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka05, I18n::Message::Pka05Value, false, I18n::Message::Pka05Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka06, I18n::Message::Pka06Value, false, I18n::Message::Pka06Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka07, I18n::Message::Pka07Value, false, I18n::Message::Pka07Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka08, I18n::Message::Pka08Value, false, I18n::Message::Pka08Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka09, I18n::Message::Pka09Value, false, I18n::Message::Pka09Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka10, I18n::Message::Pka10Value, false, I18n::Message::Pka10Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka11, I18n::Message::Pka11Value, false, I18n::Message::Pka11Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka12, I18n::Message::Pka12Value, false, I18n::Message::Pka12Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka13, I18n::Message::Pka13Value, false, I18n::Message::Pka13Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka14, I18n::Message::Pka14Value, false, I18n::Message::Pka14Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka15, I18n::Message::Pka15Value, false, I18n::Message::Pka15Value),
+  ToolboxMessageTree::Leaf(I18n::Message::Pka16, I18n::Message::Pka16Value, false, I18n::Message::Pka16Value),
+  ToolboxMessageTree::Leaf(I18n::Message::UltimateAnswer, I18n::Message::UltimateAnswerValue, false, I18n::Message::UltimateAnswerValue),
 };
 
-const ToolboxMessageTree UnitOfMesurement[] = {
+const ToolboxMessageTree chemistry[] = {
+  ToolboxMessageTree::Node(I18n::Message::MolarMassesByNumber, chemistryMolarMassesByNumber),
+  ToolboxMessageTree::Node(I18n::Message::MolarMassesByAlpha, chemistryMolarMassesByAlpha),
+  ToolboxMessageTree::Node(I18n::Message::Pka, Pka),
+};
+
+const ToolboxMessageTree FundamentalConstants[] = {
   ToolboxMessageTree::Leaf(I18n::Message::SpeedOfLightTag, I18n::Message::SpeedOfLight, false, I18n::Message::SpeedOfLight),
-  ToolboxMessageTree::Leaf(I18n::Message::YearLightTag, I18n::Message::YearLight, false, I18n::Message::YearLight)
+  ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permittivityTag, I18n::Message::Vacuum_permittivity, false, I18n::Message::Vacuum_permittivity),
+  ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permeabilityTag, I18n::Message::Vacuum_permeability, false, I18n::Message::Vacuum_permeability),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckTag, I18n::Message::Planck, false, I18n::Message::Planck),
+  ToolboxMessageTree::Leaf(I18n::Message::VacuumImpedanceTag, I18n::Message::VacuumImpedance, false, I18n::Message::VacuumImpedance),
+};
+
+const ToolboxMessageTree SpeedsOfSound[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSound0Tag, I18n::Message::SpeedOfSound0, false, I18n::Message::SpeedOfSound0),
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSoundWaterTag, I18n::Message::SpeedOfSoundWater, false, I18n::Message::SpeedOfSoundWater),
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSoundGlassTag, I18n::Message::SpeedOfSoundGlass, false, I18n::Message::SpeedOfSoundGlass),
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfSoundSteelTag, I18n::Message::SpeedOfSoundSteel, false, I18n::Message::SpeedOfSoundSteel)
+};
+
+const ToolboxMessageTree EscapeVelocities[] = {
+    ToolboxMessageTree::Leaf(I18n::Message::EscapeVelocityFromMoon, I18n::Message::EscapeVelocityOfMoon, false, I18n::Message::EscapeVelocityOfMoon),
+  ToolboxMessageTree::Leaf(I18n::Message::EscapeVelocityFromEarth, I18n::Message::EscapeVelocityOfEarth, false, I18n::Message::EscapeVelocityOfEarth),
+  ToolboxMessageTree::Leaf(I18n::Message::EscapeVelocityFromSun, I18n::Message::EscapeVelocityOfSun, false, I18n::Message::EscapeVelocityOfSun),
+};
+
+const ToolboxMessageTree Speed[] = {
+  ToolboxMessageTree::Node(I18n::Message::SpeedOfSound, SpeedsOfSound),
+  ToolboxMessageTree::Node(I18n::Message::EscapeVelocity, EscapeVelocities)
 };
 
 const ToolboxMessageTree Thermodynamics[] =  {
   ToolboxMessageTree::Leaf(I18n::Message::BoltzmannTag,I18n::Message::Boltzmann, false, I18n::Message::Boltzmann),
   ToolboxMessageTree::Leaf(I18n::Message::AvogadroTag, I18n::Message::Avogadro, false, I18n::Message::Avogadro),
   ToolboxMessageTree::Leaf(I18n::Message::GasTag,I18n::Message::Gas, false, I18n::Message::Gas),
-  ToolboxMessageTree::Leaf(I18n::Message::ElectronMassTag, I18n::Message::ElectronMass, false, I18n::Message::ElectronMass),
-  ToolboxMessageTree::Leaf(I18n::Message::ProtonMassTag, I18n::Message::ProtonMass, false, I18n::Message::ProtonMass),
-  ToolboxMessageTree::Leaf(I18n::Message::NeutronMassTag, I18n::Message::NeutronMass, false, I18n::Message::NeutronMass),
+  ToolboxMessageTree::Leaf(I18n::Message::StefanBoltzmannTag, I18n::Message::StefanBoltzmann, false, I18n::Message::StefanBoltzmann),
+  ToolboxMessageTree::Leaf(I18n::Message::WaterTriplePointTag, I18n::Message::WaterTriplePoint, false, I18n::Message::WaterTriplePoint),
+  ToolboxMessageTree::Leaf(I18n::Message::WienTag, I18n::Message::Wien, false, I18n::Message::Wien),
+  ToolboxMessageTree::Leaf(I18n::Message::AtmosphericPressureTag, I18n::Message::AtmosphericPressure, false, I18n::Message::AtmosphericPressure),
 };
 
 const ToolboxMessageTree Electromagnetism[] = {
   ToolboxMessageTree::Leaf(I18n::Message::CoulombTag, I18n::Message::Coulomb, false, I18n::Message::Coulomb),
-  ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permittivityTag, I18n::Message::Vacuum_permittivity, false, I18n::Message::Vacuum_permittivity),
-  ToolboxMessageTree::Leaf(I18n::Message::Vacuum_permeabilityTag, I18n::Message::Vacuum_permeability, false, I18n::Message::Vacuum_permeability),
-  ToolboxMessageTree::Leaf(I18n::Message::PlanckTag, I18n::Message::Planck, false, I18n::Message::Planck),
-  ToolboxMessageTree::Leaf(I18n::Message::ElementalChargeTag, I18n::Message::ElementalCharge, false, I18n::Message::ElementalCharge)
+  ToolboxMessageTree::Leaf(I18n::Message::ElementalChargeTag, I18n::Message::ElementalCharge, false, I18n::Message::ElementalCharge),
+  ToolboxMessageTree::Leaf(I18n::Message::FaradayConstantTag, I18n::Message::FaradayConstant, false, I18n::Message::FaradayConstant),
+
+};
+
+const ToolboxMessageTree ParticleMass[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::ElectronMassTag, I18n::Message::ElectronMass, false, I18n::Message::ElectronMass),
+  ToolboxMessageTree::Leaf(I18n::Message::MuonMassTag, I18n::Message::MuonMass, false, I18n::Message::MuonMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NeutronMassTag, I18n::Message::NeutronMass, false, I18n::Message::NeutronMass),
+  ToolboxMessageTree::Leaf(I18n::Message::ProtonMassTag, I18n::Message::ProtonMass, false, I18n::Message::ProtonMass),
+  ToolboxMessageTree::Leaf(I18n::Message::TauonMassTag, I18n::Message::TauonMass, false, I18n::Message::TauonMass),
+  ToolboxMessageTree::Leaf(I18n::Message::WBosonMassTag, I18n::Message::WBosonMass, false, I18n::Message::WBosonMass),
+  ToolboxMessageTree::Leaf(I18n::Message::ZBosonMassTag, I18n::Message::ZBosonMass, false, I18n::Message::ZBosonMass),
+  ToolboxMessageTree::Leaf(I18n::Message::AtomicMassUnitTag, I18n::Message::AtomicMassUnit, false, I18n::Message::AtomicMassUnit),
+};
+
+
+const ToolboxMessageTree Nuclear[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::FineStructureTag, I18n::Message::FineStructure, false, I18n::Message::FineStructure),
+  ToolboxMessageTree::Leaf(I18n::Message::RydbergConstantTag, I18n::Message::RydbergConstant, false, I18n::Message::RydbergConstant),
+  ToolboxMessageTree::Leaf(I18n::Message::HartreeConstantTag, I18n::Message::HartreeConstant, false, I18n::Message::HartreeConstant),
+  ToolboxMessageTree::Leaf(I18n::Message::MagneticFluxQuantumTag, I18n::Message::MagneticFluxQuantum, false, I18n::Message::MagneticFluxQuantum),
+  ToolboxMessageTree::Leaf(I18n::Message::ConductanceQuantumTag, I18n::Message::ConductanceQuantum, false, I18n::Message::ConductanceQuantum),
+  ToolboxMessageTree::Leaf(I18n::Message::CirculationQuantumTag, I18n::Message::CirculationQuantum, false, I18n::Message::CirculationQuantum),
+  ToolboxMessageTree::Leaf(I18n::Message::BohrRadiusTag, I18n::Message::BohrRadius, false, I18n::Message::BohrRadius),
+  ToolboxMessageTree::Leaf(I18n::Message::BohrMagnetonTag, I18n::Message::BohrMagneton, false, I18n::Message::BohrMagneton),
+  ToolboxMessageTree::Leaf(I18n::Message::NuclearMagnetonTag, I18n::Message::NuclearMagneton, false, I18n::Message::NuclearMagneton),
+  ToolboxMessageTree::Node(I18n::Message::ParticleMass, ParticleMass),
 };
 
 const ToolboxMessageTree Gravitation[] = {
   ToolboxMessageTree::Leaf(I18n::Message::GAccelerationTag, I18n::Message::GAcceleration, false, I18n::Message::GAcceleration),
-  ToolboxMessageTree::Leaf(I18n::Message::GConstantTag, I18n::Message::GConstant, false, I18n::Message::GConstant)
+  ToolboxMessageTree::Leaf(I18n::Message::GConstantTag, I18n::Message::GConstant, false, I18n::Message::GConstant),
+};
+
+
+const ToolboxMessageTree Radiuses[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::SunMassTag, I18n::Message::SunRadius, false, I18n::Message::SunRadius),
+  ToolboxMessageTree::Leaf(I18n::Message::EarthMassTag, I18n::Message::EarthRadius, false, I18n::Message::EarthRadius),
+  ToolboxMessageTree::Leaf(I18n::Message::MoonMassTag, I18n::Message::MoonRadius, false, I18n::Message::MoonRadius),
+
+};
+
+const ToolboxMessageTree Distances[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::EarthMoonDistanceTag, I18n::Message::EarthMoonDistance, false, I18n::Message::EarthMoonDistance),
+    ToolboxMessageTree::Leaf(I18n::Message::EarthSunDistanceTag, I18n::Message::EarthSunDistance, false, I18n::Message::EarthSunDistance),
+};
+
+const ToolboxMessageTree Length[] = {
+  ToolboxMessageTree::Node(I18n::Message::Radiuses, Radiuses),
+  ToolboxMessageTree::Node(I18n::Message::Distances, Distances),
+};
+
+const ToolboxMessageTree Mass[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::SunMassTag, I18n::Message::SunMass, false, I18n::Message::SunMass),
+  ToolboxMessageTree::Leaf(I18n::Message::EarthMassTag, I18n::Message::EarthMass, false, I18n::Message::EarthMass),
+  ToolboxMessageTree::Leaf(I18n::Message::MoonMassTag, I18n::Message::MoonMass, false, I18n::Message::MoonMass),
+};
+
+
+const ToolboxMessageTree PlanckUnits[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckReduceTag, I18n::Message::PlanckReduce, false, I18n::Message::PlanckReduce),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckMassTag, I18n::Message::PlanckMass, false, I18n::Message::PlanckMass),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckLengthTag, I18n::Message::PlanckLength, false, I18n::Message::PlanckLength),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckTimeTag, I18n::Message::PlanckTime, false, I18n::Message::PlanckTime),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckTemperatureTag, I18n::Message::PlanckTemperature, false, I18n::Message::PlanckTemperature),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckChargeTag, I18n::Message::PlanckCharge, false, I18n::Message::PlanckCharge),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckForceTag, I18n::Message::PlanckForce, false, I18n::Message::PlanckForce),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckEnergyTag, I18n::Message::PlanckEnergy, false, I18n::Message::PlanckEnergy),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckPowerTag, I18n::Message::PlanckPower, false, I18n::Message::PlanckPower),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckDensityTag, I18n::Message::PlanckDensity, false, I18n::Message::PlanckDensity),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckQuantityMovementTag, I18n::Message::PlanckQuantityMovement, false, I18n::Message::PlanckQuantityMovement),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckLinearMassTag, I18n::Message::PlanckLinearMass, false, I18n::Message::PlanckLinearMass),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckTensionTag, I18n::Message::PlanckTension, false, I18n::Message::PlanckTension),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckCurrentTag, I18n::Message::PlanckCurrent, false, I18n::Message::PlanckCurrent),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckPressureTag, I18n::Message::PlanckPressure, false, I18n::Message::PlanckPressure),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckImpedanceTag, I18n::Message::PlanckImpedance, false, I18n::Message::PlanckImpedance),
 };
 
 const ToolboxMessageTree Physics[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitOfMesurement, UnitOfMesurement),
-  ToolboxMessageTree::Node(I18n::Message::Thermodynamics, Thermodynamics),
+  ToolboxMessageTree::Node(I18n::Message::FundamentalConstants, FundamentalConstants),
   ToolboxMessageTree::Node(I18n::Message::Electromagnetism, Electromagnetism),
-  ToolboxMessageTree::Node(I18n::Message::Gravitation, Gravitation)
+  ToolboxMessageTree::Node(I18n::Message::NuclearConstants, Nuclear),
+  ToolboxMessageTree::Node(I18n::Message::Thermodynamics, Thermodynamics),
+  ToolboxMessageTree::Node(I18n::Message::Gravitation, Gravitation),
+  ToolboxMessageTree::Node(I18n::Message::Speed, Speed),
+  ToolboxMessageTree::Node(I18n::Message::Mass, Mass),
+  ToolboxMessageTree::Node(I18n::Message::Length, Length),
+  ToolboxMessageTree::Node(I18n::Message::PlanckUnitsTag, PlanckUnits),
 };
+
+
 
 const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
@@ -588,7 +738,7 @@ MathToolbox::MathToolbox() :
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {
-  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   m_selectableTableView.deselectTable();
 
   // Translate the message
@@ -598,7 +748,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   //  Remove the arguments if we kept one message for both inserted and displayed message
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);
-    Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
+    Shared::ToolboxHelpers::TextToInsertForCommandText(text, -1, textToInsert, maxTextToInsertLength, true);
     text = textToInsert;
   }
   sender()->handleEventWithText(text);

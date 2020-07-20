@@ -16,4 +16,4 @@ app_hardware_test_src = $(addprefix apps/hardware_test/,\
   vblank_test_controller.cpp \
 )
 
-app_src += $(app_hardware_test_src)
+apps_src += $(app_hardware_test_src)

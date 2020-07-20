@@ -1,11 +1,9 @@
 #include "text_field_function_title_cell.h"
 #include "list_controller.h"
 #include <assert.h>
+#include <algorithm>
 
 namespace Graph {
-
-static inline float minFloat(float x, float y) { return x < y ? x : y; }
-static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
@@ -29,8 +27,8 @@ void TextFieldFunctionTitleCell::setEditing(bool editing) {
   int extensionLength = UTF8Helper::HasCodePoint(previousText, UCodePointGreekSmallLetterTheta) ? Shared::Function::k_parenthesedThetaArgumentByteLength : Shared::Function::k_parenthesedXNTArgumentByteLength;
   m_textField.setExtensionLength(extensionLength);
   m_textField.setEditing(true);
-  m_textField.setText(previousText);
   m_textField.setDraftTextBufferSize(Poincare::SymbolAbstract::k_maxNameSize+extensionLength);
+  m_textField.setText(previousText);
 }
 
 bool TextFieldFunctionTitleCell::isEditing() const {
@@ -56,9 +54,9 @@ void TextFieldFunctionTitleCell::layoutSubviews(bool force) {
   KDRect frame = subviewFrame();
   m_textField.setFrame(frame, force);
   KDCoordinate maxTextFieldX = frame.width() - m_textField.minimalSizeForOptimalDisplay().width();
-  float horizontalAlignment = maxFloat(
+  float horizontalAlignment = std::max(
       0.0f,
-      minFloat(
+      std::min(
         1.0f,
         ((float)(maxTextFieldX - k_textFieldRightMargin))/((float)maxTextFieldX)));
   m_textField.setAlignment(horizontalAlignment, verticalAlignment());

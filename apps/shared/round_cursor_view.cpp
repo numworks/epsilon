@@ -2,10 +2,9 @@
 
 namespace Shared {
 
-static KDColor s_cursorWorkingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiameter];
-
 void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect r = bounds();
+  KDColor cursorWorkingBuffer[Dots::LargeDotDiameter*Dots::LargeDotDiameter];
 #ifdef GRAPH_CURSOR_SPEEDUP
   /* Beware that only the pixels of the intersection of rect with KDContext's
    * clipping rect are pulled. All other pixels are left unaltered. Indeed
@@ -15,7 +14,7 @@ void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->getPixels(r, m_underneathPixelBuffer);
   m_underneathPixelBufferLoaded = true;
 #endif
-  ctx->blendRectWithMask(r, m_color, (const uint8_t *)Dots::LargeDotMask, s_cursorWorkingBuffer);
+  ctx->blendRectWithMask(r, m_color, (const uint8_t *)Dots::LargeDotMask, cursorWorkingBuffer);
 }
 
 KDSize RoundCursorView::minimalSizeForOptimalDisplay() const {
@@ -67,10 +66,12 @@ bool RoundCursorView::eraseCursorIfPossible() {
     return false;
   }
   // Erase the cursor
+  KDColor cursorWorkingBuffer[k_cursorSize * k_cursorSize];
   KDContext * ctx = KDIonContext::sharedContext();
-  ctx->setOrigin(currentFrame.origin());
+  ctx->setOrigin(absoluteOrigin());
   ctx->setClippingRect(currentFrame);
-  ctx->fillRectWithPixels(KDRect(0,0,k_cursorSize, k_cursorSize), m_underneathPixelBuffer, s_cursorWorkingBuffer);
+  KDSize cursorSize = KDSize(k_cursorSize, k_cursorSize);
+  ctx->fillRectWithPixels(KDRect(0, 0, cursorSize), m_underneathPixelBuffer, cursorWorkingBuffer);
   // TODO Restore the context to previous values?
   return true;
 }

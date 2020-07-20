@@ -202,9 +202,10 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
       NamedColor("orange", Palette::Orange),
       NamedColor("purple", Palette::Purple),
       NamedColor("gray", Palette::GrayDark),
+      NamedColor("grey", Palette::GrayDark),
       NamedColor("cyan", Palette::Cyan),
       NamedColor("magenta", Palette::Magenta)
-};
+    };
     for (NamedColor p : pairs) {
       if (strcmp(p.name(), color) == 0) {
         return p.color();

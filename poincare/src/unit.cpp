@@ -514,41 +514,47 @@ bool Unit::IsSITime(Expression & e) {
   return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
 }
 
-Expression Unit::BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  assert(!std::isnan(seconds));
-  if (std::isinf(seconds) || std::fabs(seconds) < Expression::Epsilon<double>()) {
-    return Multiplication::Builder(Number::FloatNumber(seconds), Unit::Second());
+Expression Unit::BuildSplit(double baseValue, Unit const * units, double const * conversionFactors, const int numberOfUnits, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert(!std::isnan(baseValue));
+  if (std::isinf(baseValue) || std::fabs(baseValue) < Expression::Epsilon<double>()) {
+    return Multiplication::Builder(Number::FloatNumber(baseValue), units[numberOfUnits-1]);
   }
-  /* Round the number of seconds to 13 significant digits
-   * (= k_numberOfStoredSignificantDigits - 1).
-     * Indeed, the user input has been converted to the most adequate unit
-     * which might have led to approximating the value to 14 significants
-     * digits. The number of seconds was then computed from this approximation.
-     * We thus round it to avoid displaying small numbers of seconds that are
-     * artifacts of the previous approximations. */
-  double err = std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 1 - std::ceil(log10(std::fabs(seconds))));
-  double remain = std::round(seconds*err)/err;
 
-  constexpr static int numberOfTimeUnits = 6;
-  constexpr static double timeFactors[numberOfTimeUnits] = {MonthPerYear*DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, HoursPerDay*MinutesPerHour*SecondsPerMinute, MinutesPerHour*SecondsPerMinute, SecondsPerMinute, 1.0 };
-  Unit units[numberOfTimeUnits] = {Unit::Year(), Unit::Month(), Unit::Day(), Unit::Hour(), Unit::Minute(), Unit::Second() };
-  double valuesPerUnit[numberOfTimeUnits];
+  /* Round the base value to 13 significant digits
+   * (= k_numberOfStoredSignificantDigits - 1).
+   * Indeed, the user input has been converted to the most adequate unit
+   * which might have led to approximating the value to 14 significants
+   * digits. The value was then computed from this approximation.
+   * We thus round it to avoid displaying small numbers that are
+   * artifacts of the previous approximations. */
+  double err = std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 1 - std::ceil(log10(std::fabs(baseValue))));
+  double remain = std::round(baseValue*err)/err;
+
+  double valuesPerUnit[numberOfUnits];
   Addition a = Addition::Builder();
-  for (size_t i = 0; i < numberOfTimeUnits; i++) {
-    valuesPerUnit[i] = remain/timeFactors[i];
+  for (int i = 0; i < numberOfUnits; i++) {
+    valuesPerUnit[i] = remain/conversionFactors[i];
     // Keep only the floor of the values except for the last unit (seconds)
-    if (i < numberOfTimeUnits - 1) {
+    if (i < numberOfUnits - 1) {
       valuesPerUnit[i] = valuesPerUnit[i] >= 0.0 ? std::floor(valuesPerUnit[i]) : std::ceil(valuesPerUnit[i]);
     }
-    remain -= valuesPerUnit[i]*timeFactors[i];
+    remain -= valuesPerUnit[i] * conversionFactors[i];
     if (std::fabs(valuesPerUnit[i]) > Expression::Epsilon<double>()) {
       Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
       a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     }
   }
+
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion::None);
   // Beautify the addition into an subtraction if necessary
   return a.squashUnaryHierarchyInPlace().shallowBeautify(reductionContext);
+}
+
+Expression Unit::BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  constexpr static int numberOfTimeUnits = 6;
+  Unit units[numberOfTimeUnits] = {Unit::Year(), Unit::Month(), Unit::Day(), Unit::Hour(), Unit::Minute(), Unit::Second()};
+  constexpr static double timeFactors[numberOfTimeUnits] = {MonthPerYear*DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, HoursPerDay*MinutesPerHour*SecondsPerMinute, MinutesPerHour*SecondsPerMinute, SecondsPerMinute, 1.0};
+  return BuildSplit(seconds, units, timeFactors, numberOfTimeUnits, context, complexFormat, angleUnit);
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

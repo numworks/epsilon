@@ -840,6 +840,7 @@ public:
   static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
   static Unit ElectronVolt() { return Builder(EnergyDimension, ElectronVoltRepresentative, &EmptyPrefix); }
   static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
+  static Expression BuildSplit(double baseValue, const Unit * units, const double * conversionFactors, int numberOfUnits, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   static Expression BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
   static bool IsSI(Expression & e);

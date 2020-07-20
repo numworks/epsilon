@@ -10,16 +10,16 @@ namespace Poincare {
 
 // MatrixLayoutNode
 
-void MatrixLayoutNode::addGreySquares() {
-  if (!hasGreySquares()) {
+void MatrixLayoutNode::addGraySquares() {
+  if (!hasGraySquares()) {
     Layout thisRef(this);
-    addEmptyRow(EmptyLayoutNode::Color::Grey);
-    addEmptyColumn(EmptyLayoutNode::Color::Grey);
+    addEmptyRow(EmptyLayoutNode::Color::Gray);
+    addEmptyColumn(EmptyLayoutNode::Color::Gray);
   }
 }
 
-void MatrixLayoutNode::removeGreySquares() {
-  if (hasGreySquares()) {
+void MatrixLayoutNode::removeGraySquares() {
+  if (hasGraySquares()) {
     deleteRowAtIndex(m_numberOfRows - 1);
     deleteColumnAtIndex(m_numberOfColumns - 1);
   }
@@ -33,10 +33,10 @@ void MatrixLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomp
       && cursor->position() == LayoutCursor::Position::Left
       && childIsLeftOfGrid(childIndex))
   {
-    /* Case: Left of a child on the left of the grid. Remove the grey squares of
+    /* Case: Left of a child on the left of the grid. Remove the gray squares of
      * the grid, then go left of the grid. */
-    assert(hasGreySquares());
-    removeGreySquares();
+    assert(hasGraySquares());
+    removeGraySquares();
     *shouldRecomputeLayout = true;
     cursor->setLayoutNode(this);
     return;
@@ -44,10 +44,10 @@ void MatrixLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomp
   if (cursor->layoutNode() == this
       && cursor->position() == LayoutCursor::Position::Right)
   {
-    /* Case: Right. Add the grey squares to the matrix, then move to the bottom
-     * right non empty nor grey child. */
-    assert(!hasGreySquares());
-    addGreySquares();
+    /* Case: Right. Add the gray squares to the matrix, then move to the bottom
+     * right non empty nor gray child. */
+    assert(!hasGraySquares());
+    addGraySquares();
     *shouldRecomputeLayout = true;
     LayoutNode * lastChild = childAtIndex((m_numberOfColumns-1)*(m_numberOfRows-1));
     cursor->setLayoutNode(lastChild);
@@ -60,9 +60,9 @@ void MatrixLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecom
   if (cursor->layoutNode() == this
       && cursor->position() == LayoutCursor::Position::Left)
   {
-    // Case: Left. Add grey squares to the matrix, then go to its first entry.
-    assert(!hasGreySquares());
-    addGreySquares();
+    // Case: Left. Add gray squares to the matrix, then go to its first entry.
+    assert(!hasGraySquares());
+    addGraySquares();
     *shouldRecomputeLayout = true;
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     cursor->setLayoutNode(childAtIndex(0));
@@ -73,10 +73,10 @@ void MatrixLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecom
       && cursor->position() == LayoutCursor::Position::Right
       && childIsRightOfGrid(childIndex))
   {
-    /* Case: Right of a child on the right of the grid. Remove the grey squares
+    /* Case: Right of a child on the right of the grid. Remove the gray squares
      * of the grid, then go right of the grid. */
-    assert(hasGreySquares());
-    removeGreySquares();
+    assert(hasGraySquares());
+    removeGraySquares();
     *shouldRecomputeLayout = true;
     cursor->setLayoutNode(this);
     return;
@@ -149,7 +149,7 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   }
 
   // Serialize the vectors
-  int maxColumnIndex = hasGreySquares() ? m_numberOfColumns - 2 :  m_numberOfColumns - 1;
+  int maxColumnIndex = hasGraySquares() ? m_numberOfColumns - 2 :  m_numberOfColumns - 1;
   for (int i = minRowIndex; i <= maxRowIndex; i++) {
     numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '[');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
@@ -183,7 +183,7 @@ KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   MatrixLayout thisRef = MatrixLayout(this);
-  bool shouldRemoveGreySquares = false;
+  bool shouldRemoveGraySquares = false;
   int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
   int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
   int i = firstIndex;
@@ -192,16 +192,16 @@ void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutC
       break;
     }
     if (cursor->layout().node()->hasAncestor(l, true)) {
-      // The cursor is leaving the matrix, so remove the grey squares.
-      shouldRemoveGreySquares = true;
+      // The cursor is leaving the matrix, so remove the gray squares.
+      shouldRemoveGraySquares = true;
       break;
     }
     i++;
   }
   GridLayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
-  if (cursor->isDefined() && shouldRemoveGreySquares) {
-    assert(thisRef.hasGreySquares());
-    thisRef.removeGreySquares();
+  if (cursor->isDefined() && shouldRemoveGraySquares) {
+    assert(thisRef.hasGraySquares());
+    thisRef.removeGraySquares();
     *shouldRecomputeLayout = true;
   }
 }
@@ -214,7 +214,7 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
   int correspondingRow = rowAtChildIndex(index);
   if (childIsRightOfGrid(index)) {
     assert(m_numberOfRows >= 2);
-    // Color the grey EmptyLayouts of the column in yellow.
+    // Color the gray EmptyLayouts of the column in yellow.
     int correspondingColumn = m_numberOfColumns - 1;
     int childIndex = correspondingColumn;
     int maxIndex = (m_numberOfRows - 2)*m_numberOfColumns+correspondingColumn;
@@ -234,12 +234,12 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
       }
       childIndex++;
     }
-    // Add a column of grey EmptyLayouts on the right.
-    addEmptyColumn(EmptyLayoutNode::Color::Grey);
+    // Add a column of gray EmptyLayouts on the right.
+    addEmptyColumn(EmptyLayoutNode::Color::Gray);
   }
   if (shouldAddNewRow) {
     assert(m_numberOfColumns >= 2);
-    // Color the grey EmptyLayouts of the row in yellow.
+    // Color the gray EmptyLayouts of the row in yellow.
     int childIndex = correspondingRow * m_numberOfColumns;
     int maxIndex = correspondingRow * m_numberOfColumns + m_numberOfColumns - 2;
     for (LayoutNode * lastLayoutOfColumn : childrenFromIndex(correspondingRow*m_numberOfColumns)) {
@@ -256,8 +256,8 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
       }
       childIndex++;
     }
-    // Add a row of grey EmptyLayouts at the bottom.
-    addEmptyRow(EmptyLayoutNode::Color::Grey);
+    // Add a row of gray EmptyLayouts at the bottom.
+    addEmptyRow(EmptyLayoutNode::Color::Gray);
   }
 }
 
@@ -291,14 +291,14 @@ bool MatrixLayoutNode::isColumnEmpty(int index) const {
   return true;
 }
 
-bool MatrixLayoutNode::hasGreySquares() const {
+bool MatrixLayoutNode::hasGraySquares() const {
   if (numberOfChildren() == 0) {
     return false;
   }
   LayoutNode * lastChild = const_cast<MatrixLayoutNode *>(this)->childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
   if (lastChild->isEmpty()
       && lastChild->type() != Type::HorizontalLayout
-      && (static_cast<EmptyLayoutNode *>(lastChild))->color() == EmptyLayoutNode::Color::Grey)
+      && (static_cast<EmptyLayoutNode *>(lastChild))->color() == EmptyLayoutNode::Color::Gray)
   {
     assert(isRowEmpty(m_numberOfRows - 1));
     assert(isColumnEmpty(m_numberOfColumns - 1));

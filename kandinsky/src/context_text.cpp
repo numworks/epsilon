@@ -35,10 +35,10 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
       codePoint = decoder.nextCodePoint();
     } else {
       assert(!codePoint.isCombining());
-      font->setGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+      font->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
       codePoint = decoder.nextCodePoint();
       while (codePoint.isCombining()) {
-        font->accumulateGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+        font->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
         codePointPointer = decoder.stringPosition();
         codePoint = decoder.nextCodePoint();
       }

@@ -8,7 +8,7 @@ namespace Shared {
 
 AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
-  m_approximateSign(k_font, k_defaultApproximateMessage, 0.5f, 0.5f, Palette::GreyVeryDark),
+  m_approximateSign(k_font, k_defaultApproximateMessage, 0.5f, 0.5f, Palette::GrayVeryDark),
   m_centeredExpressionView(),
   m_selectedSubviewPosition(SubviewPosition::Center),
   m_displayCenter(true)
@@ -48,7 +48,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setEven(bool even) 
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::reloadTextColor() {
   if (displayCenter()) {
-    m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
+    m_rightExpressionView.setTextColor(Palette::GrayVeryDark);
   } else {
     m_rightExpressionView.setTextColor(KDColorBlack);
   }

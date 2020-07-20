@@ -77,7 +77,7 @@ void ExpressionField::layoutSubviews(bool force) {
 
 void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the separator
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GrayMiddle);
 }
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {

@@ -57,7 +57,7 @@ void EditorView::layoutSubviews(bool force) {
 /* EditorView::GutterView */
 
 void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor textColor = Palette::BlueishGrey;
+  KDColor textColor = Palette::BlueishGray;
   KDColor backgroundColor = KDColor::RGB24(0xE4E6E7);
 
   ctx->fillRect(rect, backgroundColor);

@@ -204,10 +204,10 @@ int main(int argc, char * argv[]) {
   fprintf(sourceFile, "static constexpr KDCoordinate glyphWidth = %d;\n\n", glyph_width);
   fprintf(sourceFile, "static constexpr KDCoordinate glyphHeight = %d;\n\n", glyph_height);
 
-  int greyscaleBitsPerPixel = 4;
+  int grayscaleBitsPerPixel = 4;
 
-  int sizeOfUncompressedGlyphBuffer = glyph_width * glyph_height * greyscaleBitsPerPixel/8;
-  ENSURE(8*sizeOfUncompressedGlyphBuffer == glyph_width * glyph_height * greyscaleBitsPerPixel, "Error: the glyph size (%dx%d@%dbpp) cannot fit in an integral number of bytes", glyph_width, glyph_height, greyscaleBitsPerPixel);
+  int sizeOfUncompressedGlyphBuffer = glyph_width * glyph_height * grayscaleBitsPerPixel/8;
+  ENSURE(8*sizeOfUncompressedGlyphBuffer == glyph_width * glyph_height * grayscaleBitsPerPixel, "Error: the glyph size (%dx%d@%dbpp) cannot fit in an integral number of bytes", glyph_width, glyph_height, grayscaleBitsPerPixel);
   uint8_t * uncompressedGlyphBuffer = (uint8_t *)malloc(sizeOfUncompressedGlyphBuffer);
 
   uint16_t glyphDataOffset[NumberOfCodePoints+1];
@@ -225,9 +225,9 @@ int main(int argc, char * argv[]) {
       for (int x = 0; x < glyph_width; x++) {
         pixel_t * pixel = (bitmap_image.pixels + (y+characterY)*bitmap_image.width + (x+characterX));
 
-        uint8_t greyscaleValue = (0xFF - pixel->green) >> (8 - greyscaleBitsPerPixel);
-        accumulator = (accumulator << greyscaleBitsPerPixel) | greyscaleValue;
-        if (numberOfValuesAccumulated++ == (8/greyscaleBitsPerPixel)-1) {
+        uint8_t grayscaleValue = (0xFF - pixel->green) >> (8 - grayscaleBitsPerPixel);
+        accumulator = (accumulator << grayscaleBitsPerPixel) | grayscaleValue;
+        if (numberOfValuesAccumulated++ == (8/grayscaleBitsPerPixel)-1) {
           uncompressedGlyphBuffer[uncompressedGlyphBufferIndex++] = accumulator;
           accumulator = 0;
           numberOfValuesAccumulated = 0;
@@ -261,7 +261,7 @@ int main(int argc, char * argv[]) {
   size_t initialDataSize = NumberOfCodePoints * glyph_width * glyph_height;
 
   fprintf(sourceFile, "/* Rasterized  = %5zu bytes (%d glyphs x %d pixels)\n", initialDataSize, NumberOfCodePoints, glyph_width*glyph_height);
-  fprintf(sourceFile, " * Downsampled = %5lu bytes (1/%d of rasterized)\n", initialDataSize*greyscaleBitsPerPixel/8, 8/greyscaleBitsPerPixel);
+  fprintf(sourceFile, " * Downsampled = %5lu bytes (1/%d of rasterized)\n", initialDataSize*grayscaleBitsPerPixel/8, 8/grayscaleBitsPerPixel);
   fprintf(sourceFile, " * Compressed  = %5zu bytes (%.2f%% of rasterized) */\n", finalDataSize, 100.0*finalDataSize/initialDataSize);
 
   fprintf(sourceFile, "static constexpr uint8_t glyphData[%d] = {", lastOffset);

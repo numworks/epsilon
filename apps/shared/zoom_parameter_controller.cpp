@@ -86,7 +86,7 @@ ZoomParameterController::ContentView::LegendView::LegendView()
   for (int i = 0; i < k_numberOfLegends; i++) {
     m_legends[i].setFont(KDFont::SmallFont);
     m_legends[i].setMessage(messages[i]);
-    m_legends[i].setBackgroundColor(Palette::GreyBright);
+    m_legends[i].setBackgroundColor(Palette::GrayBright);
     m_legends[i].setAlignment(horizontalAlignments[i], 0.5f);
   }
   KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Up, KeyView::Type::Down, KeyView::Type::Left, KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
@@ -96,7 +96,7 @@ ZoomParameterController::ContentView::LegendView::LegendView()
 }
 
 void ZoomParameterController::ContentView::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight), Palette::GrayBright);
 }
 
 int ZoomParameterController::ContentView::LegendView::numberOfSubviews() const {

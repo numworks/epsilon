@@ -3,7 +3,7 @@
 
 MessageTableCellWithChevronAndMessage::MessageTableCellWithChevronAndMessage(const KDFont * labelFont, const KDFont * contentFont) :
   MessageTableCellWithChevron((I18n::Message)0, labelFont),
-  m_subtitleView(contentFont, (I18n::Message)0, 1.0f, 0.5f, Palette::GreyDark)
+  m_subtitleView(contentFont, (I18n::Message)0, 1.0f, 0.5f, Palette::GrayDark)
 {
 }
 

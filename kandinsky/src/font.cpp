@@ -33,51 +33,51 @@ KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
   return stringSize;
 }
 
-void KDFont::setGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
-  fetchGreyscaleGlyphAtIndex(indexForCodePoint(codePoint), glyphBuffer->greyscaleBuffer());
+void KDFont::setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
+  fetchGrayscaleGlyphAtIndex(indexForCodePoint(codePoint), glyphBuffer->grayscaleBuffer());
 }
 
-void KDFont::accumulateGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
-  uint8_t * greyscaleBuffer = glyphBuffer->greyscaleBuffer();
-  uint8_t * accumulationGreyscaleBuffer = glyphBuffer->secondaryGreyscaleBuffer();
-  fetchGreyscaleGlyphAtIndex(indexForCodePoint(codePoint), accumulationGreyscaleBuffer);
+void KDFont::accumulateGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
+  uint8_t * grayscaleBuffer = glyphBuffer->grayscaleBuffer();
+  uint8_t * accumulationGrayscaleBuffer = glyphBuffer->secondaryGrayscaleBuffer();
+  fetchGrayscaleGlyphAtIndex(indexForCodePoint(codePoint), accumulationGrayscaleBuffer);
   for (int i=0; i<m_glyphSize.width()*m_glyphSize.height(); i++) {
-    greyscaleBuffer[i] |= accumulationGreyscaleBuffer[i];
+    grayscaleBuffer[i] |= accumulationGrayscaleBuffer[i];
   }
 }
 
-void KDFont::fetchGreyscaleGlyphAtIndex(KDFont::GlyphIndex index, uint8_t * greyscaleBuffer) const {
+void KDFont::fetchGrayscaleGlyphAtIndex(KDFont::GlyphIndex index, uint8_t * grayscaleBuffer) const {
   Ion::decompress(
     compressedGlyphData(index),
-    greyscaleBuffer,
+    grayscaleBuffer,
     compressedGlyphDataSize(index),
     m_glyphSize.width() * m_glyphSize.height() * k_bitsPerPixel/8
   );
 }
 
 void KDFont::colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffer * glyphBuffer) const {
-  /* Since a greyscale value is smaller than a color value (see assertion), we
-   * can store the temporary greyscale values in the output pixel buffer.
+  /* Since a grayscale value is smaller than a color value (see assertion), we
+   * can store the temporary grayscale values in the output pixel buffer.
    * What's great is that now, if we fill the pixel buffer right-to-left with
-   * colors derived from the temporary greyscale values, we will never overwrite
+   * colors derived from the temporary grayscale values, we will never overwrite
    * the remaining grayscale values since those are smaller. So we can avoid a
-   * separate buffer for the temporary greyscale values. */
+   * separate buffer for the temporary grayscale values. */
   assert(k_bitsPerPixel < 8*sizeof(KDColor));
 
-  uint8_t * greyscaleBuffer = glyphBuffer->greyscaleBuffer();
+  uint8_t * grayscaleBuffer = glyphBuffer->grayscaleBuffer();
   KDColor * colorBuffer = glyphBuffer->colorBuffer();
 
   uint8_t mask = (0xFF >> (8-k_bitsPerPixel));
   int pixelIndex = m_glyphSize.width() * m_glyphSize.height() - 1; // Let's start at the final pixel
-  int greyscaleByteIndex = pixelIndex * k_bitsPerPixel / 8;
+  int grayscaleByteIndex = pixelIndex * k_bitsPerPixel / 8;
   while (pixelIndex >= 0) {
-    assert(greyscaleByteIndex == pixelIndex * k_bitsPerPixel / 8);
-    uint8_t greyscaleByte = greyscaleBuffer[greyscaleByteIndex--]; // We consume a greyscale byte...
+    assert(grayscaleByteIndex == pixelIndex * k_bitsPerPixel / 8);
+    uint8_t grayscaleByte = grayscaleBuffer[grayscaleByteIndex--]; // We consume a grayscale byte...
     for (int j=0; j<8/k_bitsPerPixel; j++) { // .. and we'll output 8/k_bits pixels
-      uint8_t greyscale = greyscaleByte & mask;
-      greyscaleByte = greyscaleByte >> k_bitsPerPixel;
+      uint8_t grayscale = grayscaleByte & mask;
+      grayscaleByte = grayscaleByte >> k_bitsPerPixel;
       assert(pixelIndex >= 0);
-      colorBuffer[pixelIndex--] = renderPalette->colorAtIndex(greyscale);
+      colorBuffer[pixelIndex--] = renderPalette->colorAtIndex(grayscale);
     }
   }
 }

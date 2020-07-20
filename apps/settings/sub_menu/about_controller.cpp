@@ -11,7 +11,7 @@ AboutController::AboutController(Responder * parentResponder) :
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
     m_cells[i].setAccessoryFont(KDFont::SmallFont);
-    m_cells[i].setAccessoryTextColor(Palette::GreyDark);
+    m_cells[i].setAccessoryTextColor(Palette::GrayDark);
   }
 }
 

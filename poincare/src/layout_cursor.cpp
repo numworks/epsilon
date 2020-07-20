@@ -150,9 +150,9 @@ void LayoutCursor::addEmptyExponentialLayout() {
 void LayoutCursor::addEmptyMatrixLayout() {
   MatrixLayout matrixLayout = MatrixLayout::Builder(
       EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey));
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray));
   m_layout.addSibling(this, matrixLayout, false);
   m_layout = matrixLayout.childAtIndex(0);
   m_position = Position::Right;
@@ -432,7 +432,7 @@ void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * 
    * position). This ancestor will be the added selection.
    *
    * The current layout might have been detached from its parent, for instance
-   * if it was a grey empty layout of a matrix and the cursor move exited this
+   * if it was a gray empty layout of a matrix and the cursor move exited this
    * matrix. In this case, use the layout parent (it should still be attached to
    * the main layout). */
 

@@ -131,7 +131,7 @@ const ToolboxMessageTree MatplotlibPyplotModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPink, I18n::Message::PythonColorPink, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorOrange, I18n::Message::PythonColorOrange, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPurple, I18n::Message::PythonColorPurple, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGrey, I18n::Message::PythonColorGrey, false)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGray, I18n::Message::PythonColorGray, false)
 };
 
 const ToolboxMessageTree TurtleModuleChildren[] = {
@@ -168,7 +168,7 @@ const ToolboxMessageTree TurtleModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPink, I18n::Message::PythonColorPink, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorOrange, I18n::Message::PythonColorOrange, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPurple, I18n::Message::PythonColorPurple, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGrey, I18n::Message::PythonColorGrey, false)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGray, I18n::Message::PythonColorGray, false)
 };
 
 const ToolboxMessageTree RandomModuleChildren[] = {
@@ -332,7 +332,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetrandbits, I18n::Message::PythonGetrandbits),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGoto, I18n::Message::PythonTurtleGoto),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGreen, I18n::Message::PythonColorGreen, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGrey, I18n::Message::PythonColorGrey, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorGray, I18n::Message::PythonColorGray, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGrid, I18n::Message::PythonGrid),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandHeading, I18n::Message::PythonTurtleHeading, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandHex, I18n::Message::PythonHex),

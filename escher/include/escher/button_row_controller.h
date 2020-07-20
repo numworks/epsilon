@@ -18,7 +18,7 @@ public:
   };
   enum class Style {
     PlainWhite,
-    EmbossedGrey
+    EmbossedGray
   };
   enum class Size {
     Small,

@@ -155,16 +155,16 @@ void SumGraphController::reloadBannerView() {
 /* Legend View */
 
 SumGraphController::LegendView::LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
-  m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_sum(0.0f, 0.5f, KDColorBlack, Palette::GrayMiddle),
+  m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GrayMiddle),
+  m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GrayMiddle),
   m_sumSymbol(sumSymbol)
 {
   m_textBuffer[0] = 0;
 }
 
 void SumGraphController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::GreyMiddle);
+  ctx->fillRect(bounds(), Palette::GrayMiddle);
 }
 
 KDSize SumGraphController::LegendView::minimalSizeForOptimalDisplay() const {

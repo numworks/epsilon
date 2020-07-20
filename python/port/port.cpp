@@ -201,10 +201,10 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
       NamedColor("pink", Palette::Pink),
       NamedColor("orange", Palette::Orange),
       NamedColor("purple", Palette::Purple),
-      NamedColor("grey", Palette::GreyDark),
+      NamedColor("gray", Palette::GrayDark),
       NamedColor("cyan", Palette::Cyan),
       NamedColor("magenta", Palette::Magenta)
-    };
+};
     for (NamedColor p : pairs) {
       if (strcmp(p.name(), color) == 0) {
         return p.color();
@@ -220,12 +220,12 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
       return KDColor::RGB24(colorInt);
     }
 
-    mp_float_t greyLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
-    if (greyLevel >= 0.0 && greyLevel <= 1.0) {
-      uint8_t color = maxColorIntensity * (float) greyLevel;
+    mp_float_t grayLevel = mp_obj_float_get(mp_parse_num_decimal(color, strlen(color), false, false, NULL));
+    if (grayLevel >= 0.0 && grayLevel <= 1.0) {
+      uint8_t color = maxColorIntensity * (float) grayLevel;
       return KDColor::RGB888(color, color, color);
     }
-    mp_raise_ValueError("Grey levels are between 0.0 and 1.0");
+    mp_raise_ValueError("Gray levels are between 0.0 and 1.0");
   } else if(mp_obj_is_int(input)) {
     mp_raise_TypeError("Int are not colors");
     //See https://github.com/numworks/epsilon/issues/1533#issuecomment-618443492

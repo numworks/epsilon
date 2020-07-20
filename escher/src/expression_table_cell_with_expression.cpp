@@ -5,7 +5,7 @@
 
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder) :
   ExpressionTableCell(parentResponder, Layout::HorizontalLeftOverlap),
-  m_accessoryExpressionView(this, k_horizontalMargin, 0, 1.0f, 0.5f, Palette::GreyDark, KDColorWhite)
+  m_accessoryExpressionView(this, k_horizontalMargin, 0, 1.0f, 0.5f, Palette::GrayDark, KDColorWhite)
 {}
 
 View * ExpressionTableCellWithExpression::accessoryView() const {

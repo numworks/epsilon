@@ -19,8 +19,8 @@ public:
   Type type() const override { return Type::MatrixLayout; }
 
   // MatrixLayoutNode
-  void addGreySquares();
-  void removeGreySquares();
+  void addGraySquares();
+  void removeGraySquares();
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
@@ -50,7 +50,7 @@ private:
   void newRowOrColumnAtIndex(int index);
   bool isRowEmpty(int index) const;
   bool isColumnEmpty(int index) const;
-  bool hasGreySquares() const;
+  bool hasGraySquares() const;
 
   // LayoutNode
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
@@ -64,9 +64,9 @@ public:
   static MatrixLayout Builder() { return TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(); }
   static MatrixLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4);
 
-  bool hasGreySquares() const { return node()->hasGreySquares(); }
-  void addGreySquares() { node()->addGreySquares(); }
-  void removeGreySquares() { node()->removeGreySquares(); }
+  bool hasGraySquares() const { return node()->hasGraySquares(); }
+  void addGraySquares() { node()->addGraySquares(); }
+  void removeGraySquares() { node()->removeGraySquares(); }
 private:
   MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(Layout::node()); }
 };

@@ -63,7 +63,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   double thirdQuart = m_store->thirdQuartile(m_series);
   double maxVal = m_store->maxValue(m_series);
 
-  KDColor boxColor = isMainViewSelected() ? m_selectedHistogramLightColor : Palette::GreyWhite;
+  KDColor boxColor = isMainViewSelected() ? m_selectedHistogramLightColor : Palette::GrayWhite;
   // Draw the main box
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
@@ -71,7 +71,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     upBoundPixel-lowBoundPixel), boxColor);
 
   // Draw the horizontal lines linking the box to the extreme bounds
-  KDColor horizontalColor = isMainViewSelected() ? m_selectedHistogramColor : Palette::GreyDark;
+  KDColor horizontalColor = isMainViewSelected() ? m_selectedHistogramColor : Palette::GrayDark;
   float segmentOrd = (lowBound + upBound)/ 2.0f;
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, horizontalColor);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, horizontalColor);
@@ -83,7 +83,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
    * lines. This solution could hide the highlighted line by coloring the next
    * quantile if it has the same value. */
   for (int k = 0; k < 5; k++) {
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, k_quantileBarWidth);
+    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GrayMiddle, k_quantileBarWidth);
   }
   if (isMainViewSelected()) {
     drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, k_quantileBarWidth);

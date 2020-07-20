@@ -3,7 +3,7 @@
 
 MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer(const KDFont * labelFont, const KDFont * subAccessoryFont) :
   MessageTableCellWithChevron((I18n::Message)0, labelFont),
-  m_subAccessoryView(subAccessoryFont, 1.0f, 0.5f, Palette::GreyDark)
+  m_subAccessoryView(subAccessoryFont, 1.0f, 0.5f, Palette::GrayDark)
 {
 }
 

@@ -55,13 +55,20 @@ public:
       No,
       Yes
     };
+    enum class OutputSystem {
+      None,
+      Imperial,
+      Metric,
+      All
+    };
     template <size_t N>
-    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix * const (&outputPrefixes)[N]) :
+    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix * const (&outputPrefixes)[N], const OutputSystem outputSystem = OutputSystem::All) :
       m_rootSymbol(rootSymbol),
       m_definition(definition),
       m_prefixable(prefixable),
       m_outputPrefixes(outputPrefixes),
-      m_outputPrefixesLength(N)
+      m_outputPrefixesLength(N),
+      m_outputSystem(outputSystem)
     {
     }
     const char * rootSymbol() const { return m_rootSymbol; }
@@ -73,12 +80,14 @@ public:
         const Prefix * * prefix) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
     const Prefix * bestPrefixForValue(double & value, const float exponent) const;
+    bool canOutputInSystem(Preferences::UnitFormat system) const;
   private:
     const char * m_rootSymbol;
     const char * m_definition;
     const Prefixable m_prefixable;
     const Prefix * const * m_outputPrefixes;
     const size_t m_outputPrefixesLength;
+    const OutputSystem m_outputSystem;
   };
 
   class Dimension {
@@ -287,7 +296,8 @@ public:
     DistanceRepresentatives[] = {
         Representative("m", nullptr,
             Representative::Prefixable::Yes,
-            LongScalePrefixes),
+            LongScalePrefixes,
+            Representative::OutputSystem::Metric),
         Representative("au",  "149597870700*_m",
             Representative::Prefixable::No,
             NoPrefix),
@@ -299,39 +309,49 @@ public:
             NoPrefix),
         Representative("in", "0.0254*_m",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         Representative("ft", "12*_in",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         Representative("yd", "3*_ft",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::None),
         Representative("mi", "1760*_yd",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         },
     MassRepresentatives[] = {
         Representative("kg", nullptr,
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Metric),
         Representative("g", "0.001_kg",
             Representative::Prefixable::Yes,
-            NegativeLongScalePrefixes),
+            NegativeLongScalePrefixes,
+            Representative::OutputSystem::Metric),
         Representative("t", "1000_kg",
             Representative::Prefixable::Yes,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Metric),
         Representative("Da", "(6.02214076*10^23*1000)^-1*_kg",
             Representative::Prefixable::Yes,
             NoPrefix),
         Representative("oz", "0.028349523125*_kg",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         Representative("lb", "16*_oz",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         Representative("ton", "2000*_lb",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         },
     CurrentRepresentatives[] = {
         Representative("A",   nullptr,
@@ -435,36 +455,46 @@ public:
     SurfaceRepresentatives[] = {
         Representative("ha",  "10^4*_m^2",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Metric),
         Representative("acre", "43560*_ft^2",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         },
     VolumeRepresentatives[] = {
         Representative("L", "10^-3*_m^3",
             Representative::Prefixable::Yes,
-            NegativePrefixes),
+            NegativePrefixes,
+            Representative::OutputSystem::Metric),
         Representative("tsp", "4.92892159375*_mL",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::None),
         Representative("Tbsp", "3*_tsp",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::None),
         Representative("floz", "0.0295735295625*_L",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         Representative("cp", "8*_floz",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         Representative("pt", "2*_cp",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::None),
         Representative("qt", "4*_cp",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::None),
         Representative("gal", "4*_qt",
             Representative::Prefixable::No,
-            NoPrefix),
+            NoPrefix,
+            Representative::OutputSystem::Imperial),
         };
   // TODO: find a better way to define these pointers
   static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative and so on might require to be fixed if the TimeRepresentatives table was changed.");

@@ -97,6 +97,16 @@ const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & v
   return bestPre;
 }
 
+bool UnitNode::Representative::canOutputInSystem(Preferences::UnitFormat system) const {
+  if (m_outputSystem == OutputSystem::None) {
+    return false;
+  }
+  if (m_outputSystem == OutputSystem::All) {
+    return true;
+  }
+  return (system == Preferences::UnitFormat::Metric) == (m_outputSystem == OutputSystem::Metric);
+}
+
 template<>
 size_t UnitNode::Dimension::Vector<int>::supportSize() const {
   size_t supportSize = 0;
@@ -383,7 +393,7 @@ void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool t
 
 void Unit::chooseBestMultipleForValue(double * value, const float exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
   assert(!std::isnan(*value) && exponent != 0.0f);
-  if (*value == 0.0 || *value == 1.0 || std::isinf(*value)) {
+  if (*value == 0.0 || std::isinf(*value)) {
     return;
   }
   UnitNode * unitNode = node();
@@ -393,12 +403,15 @@ void Unit::chooseBestMultipleForValue(double * value, const float exponent, bool
    */
   const Representative * bestRep = unitNode->representative();
   const Prefix * bestPre = unitNode->prefix();
-  double bestVal = *value;
+  double bestVal = (tuneRepresentative) ? DBL_MAX : *value;
 
   // Test all representatives if tuneRepresentative is on. Otherwise, force current representative
   const Representative * startRep = tuneRepresentative ? dim->stdRepresentative() : bestRep;
   const Representative * endRep = tuneRepresentative ? dim->representativesUpperBound() : bestRep + 1;
   for (const Representative * rep = startRep; rep < endRep; rep++) {
+    if (!rep->canOutputInSystem(Preferences::sharedPreferences()->unitFormat())) {
+      continue;
+    }
     // evaluate quotient
     double val = *value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
     // Get the best prefix and update val accordingly

@@ -3,7 +3,7 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-EPSILON_VERSION ?= 11.2.1
+EPSILON_VERSION ?= 11.3.0
 EPSILON_ONBOARDING_APP ?= 0
 # Valid values are "none", "update", "beta"
 EPSILON_BOOT_PROMPT ?= none

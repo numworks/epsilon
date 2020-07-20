@@ -118,21 +118,21 @@ LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingEx
   return numberOfChildren() > 0 ? childAtIndex(0) : this;
 }
 
-bool LayoutNode::removeGreySquaresFromAllMatrixAncestors() {
+bool LayoutNode::removeGraySquaresFromAllMatrixAncestors() {
   bool result = false;
-  changeGreySquaresOfAllMatrixRelatives(false, true, &result);
+  changeGraySquaresOfAllMatrixRelatives(false, true, &result);
   return result;
 }
 
-bool LayoutNode::removeGreySquaresFromAllMatrixChildren() {
+bool LayoutNode::removeGraySquaresFromAllMatrixChildren() {
   bool result = false;
-  changeGreySquaresOfAllMatrixRelatives(false, false, &result);
+  changeGraySquaresOfAllMatrixRelatives(false, false, &result);
   return result;
 }
 
-bool LayoutNode::addGreySquaresToAllMatrixAncestors() {
+bool LayoutNode::addGraySquaresToAllMatrixAncestors() {
   bool result = false;
-  changeGreySquaresOfAllMatrixRelatives(true, true, &result);
+  changeGraySquaresOfAllMatrixRelatives(true, true, &result);
   return result;
 }
 
@@ -215,7 +215,7 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
   // If there is a valid result
   Layout resultRef(childResult);
   if ((*childResultPtr) != nullptr) {
-    *shouldRecomputeLayout = childResult->addGreySquaresToAllMatrixAncestors();
+    *shouldRecomputeLayout = childResult->addGraySquaresToAllMatrixAncestors();
     // WARNING: Do not use "this" afterwards
   }
   cursor->setLayout(resultRef);
@@ -260,36 +260,36 @@ void LayoutNode::scoreCursorInDescendantsVertically (
   }
 }
 
-bool addRemoveGreySquaresInLayoutIfNeeded(bool add, Layout * l) {
+bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   if (l->type() != LayoutNode::Type::MatrixLayout) {
     return false;
   }
   if (add) {
-    static_cast<MatrixLayoutNode *>(l->node())->addGreySquares();
+    static_cast<MatrixLayoutNode *>(l->node())->addGraySquares();
   } else {
-    static_cast<MatrixLayoutNode *>(l->node())->removeGreySquares();
+    static_cast<MatrixLayoutNode *>(l->node())->removeGraySquares();
   }
   return true;
 }
 
-void LayoutNode::changeGreySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares) {
+void LayoutNode::changeGraySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares) {
   if (!ancestors) {
     // If in children, we also change the squares for this
     {
       Layout thisLayout = Layout(this);
-      if (addRemoveGreySquaresInLayoutIfNeeded(add, &thisLayout)) {
+      if (addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
         *changedSquares = true;
       }
     }
     for (int i = 0; i < numberOfChildren(); i++) {
       /* We cannot use "for l : children()", as the node addresses might change,
        * especially the iterator stopping address. */
-      childAtIndex(i)->changeGreySquaresOfAllMatrixRelatives(add, false, changedSquares);
+      childAtIndex(i)->changeGraySquaresOfAllMatrixRelatives(add, false, changedSquares);
     }
   } else {
     Layout currentAncestor = Layout(parent());
     while (!currentAncestor.isUninitialized()) {
-      if (addRemoveGreySquaresInLayoutIfNeeded(add, &currentAncestor)) {
+      if (addRemoveGraySquaresInLayoutIfNeeded(add, &currentAncestor)) {
         *changedSquares = true;
       }
       currentAncestor = currentAncestor.parent();

@@ -4,7 +4,7 @@
 
 MessageTableCellWithChevronAndExpression::MessageTableCellWithChevronAndExpression(I18n::Message message, const KDFont * font) :
   MessageTableCellWithChevron(message, font),
-  m_subtitleView(1.0f, 0.5f, Palette::GreyDark)
+  m_subtitleView(1.0f, 0.5f, Palette::GrayDark)
 {
   m_subtitleView.setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }

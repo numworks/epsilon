@@ -59,10 +59,10 @@ void Cell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   ctx->fillRect(KDRect(1, 1, width-2, height-1), backgroundColor);
-  ctx->fillRect(KDRect(0, 0, width, 1), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, 1, 1, height-1), Palette::GreyBright);
-  ctx->fillRect(KDRect(width-1, 1, 1, height-1), Palette::GreyBright);
-  ctx->fillRect(KDRect(0, height-1, width, 1), Palette::GreyBright);
+  ctx->fillRect(KDRect(0, 0, width, 1), Palette::GrayBright);
+  ctx->fillRect(KDRect(0, 1, 1, height-1), Palette::GrayBright);
+  ctx->fillRect(KDRect(width-1, 1, 1, height-1), Palette::GrayBright);
+  ctx->fillRect(KDRect(0, height-1, width, 1), Palette::GrayBright);
  }
 
 }

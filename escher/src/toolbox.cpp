@@ -30,7 +30,7 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithMessage * myCell = (MessageTableCellWithMessage *)cell;
     myCell->setMessage(messageTree->label());
     myCell->setAccessoryMessage(messageTree->text());
-    myCell->setAccessoryTextColor(Palette::GreyDark);
+    myCell->setAccessoryTextColor(Palette::GrayDark);
     return;
   }
   MessageTableCell * myCell = (MessageTableCell *)cell;

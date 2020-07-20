@@ -68,7 +68,7 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
 bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
   EmptyLayout thisRef(this);
   Layout siblingRef(sibling); // Create the reference now, as the node might be moved
-  if (m_color == Color::Grey) {
+  if (m_color == Color::Gray) {
     /* The parent is a MatrixLayout, and the current empty row or column is
      * being filled in, so add a new empty row or column. */
     LayoutNode * parentNode = parent();
@@ -88,7 +88,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
 
 void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   if (m_isVisible) {
-    KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GreyBright;
+    KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GrayBright;
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
   }

@@ -536,8 +536,8 @@ void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float 
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
-  KDColor boldColor = Palette::GreyMiddle;
-  KDColor lightColor = Palette::GreyWhite;
+  KDColor boldColor = Palette::GrayMiddle;
+  KDColor lightColor = Palette::GrayWhite;
   drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->xGridUnit(), boldColor, lightColor);
   drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->yGridUnit(), boldColor, lightColor);
 }

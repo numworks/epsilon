@@ -10,7 +10,7 @@ class EmptyLayoutNode /*final*/ : public LayoutNode {
 public:
   enum class Color {
     Yellow,
-    Grey
+    Gray
   };
 
   // Layout

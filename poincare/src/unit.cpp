@@ -515,6 +515,19 @@ bool Unit::IsSITime(Expression & e) {
   return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
 }
 
+bool Unit::IsSIDistance(Expression & e) {
+  return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isMeter();
+}
+
+bool Unit::IsSIMass(Expression & e) {
+  return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isKilogram();
+}
+
+bool Unit::IsSISurface(Expression & e) {
+  return e.type() == ExpressionNode::Type::Power &&
+    e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
+    e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<const Rational>().isTwo();
+}
 
 double Unit::ConvertedValueInUnit(Expression e, Unit unit, Context * context) {
   Expression conversion = UnitConvert::Builder(e.clone(), unit);

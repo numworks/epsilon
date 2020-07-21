@@ -515,6 +515,15 @@ bool Unit::IsSITime(Expression & e) {
   return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
 }
 
+
+double Unit::ConvertedValueInUnit(Expression e, Unit unit, Context * context) {
+  Expression conversion = UnitConvert::Builder(e.clone(), unit);
+  Expression newUnit;
+  conversion = conversion.simplify(ExpressionNode::ReductionContext(context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::Default));
+  conversion = conversion.removeUnit(&newUnit);
+  return conversion.approximateToScalar<double>(context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+}
+
 Expression Unit::BuildSplit(double baseValue, Unit const * units, double const * conversionFactors, const int numberOfUnits, Context * context) {
   assert(!std::isnan(baseValue));
   if (std::isinf(baseValue) || std::fabs(baseValue) < Expression::Epsilon<double>()) {
@@ -577,6 +586,52 @@ Expression Unit::BuildImperialVolumeSplit(double fluidOunces, Context * context)
   Unit units[numberOfUnits] = {Unit::Gallon(), Unit::Cup(), Unit::FluidOunce()};
   constexpr static double factors[numberOfUnits] = {FluidOuncesPerCup*CupsPerGallon, FluidOuncesPerCup, 1.};
   return BuildSplit(fluidOunces, units, factors, numberOfUnits, context);
+}
+
+Expression Unit::StandardSpeedConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+  return UnitConvert::Builder(e.clone(), Multiplication::Builder(
+        format == Preferences::UnitFormat::Metric ? Unit::Kilometer() : Unit::Mile(),
+        Power::Builder(
+          Unit::Hour(),
+          Rational::Builder(-1)
+          )
+        )
+      );
+}
+
+Expression Unit::StandardDistanceConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+  if (format == Preferences::UnitFormat::Metric) {
+    return UnitConvert::Builder(e.clone(), Unit::Meter());
+  }
+  assert(format == Preferences::UnitFormat::Imperial);
+  double rawValue = ConvertedValueInUnit(e, Unit::Inch(), context);
+  return BuildImperialDistanceSplit(rawValue, context);
+}
+
+Expression Unit::StandardVolumeConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+  if (format == Preferences::UnitFormat::Metric) {
+    return UnitConvert::Builder(e.clone(), Unit::Liter());
+  }
+  assert(format == Preferences::UnitFormat::Imperial);
+  double rawValue = ConvertedValueInUnit(e, Unit::FluidOunce(), context);
+  return BuildImperialVolumeSplit(rawValue, context);
+}
+
+Expression Unit::StandardMassConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+  if (format == Preferences::UnitFormat::Metric) {
+    return UnitConvert::Builder(e.clone(), Unit::Gram());
+  }
+  assert(format == Preferences::UnitFormat::Imperial);
+  double rawValue = ConvertedValueInUnit(e, Unit::Ounce(), context);
+  return BuildImperialMassSplit(rawValue, context);
+}
+
+Expression Unit::StandardSurfaceConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+  if (format == Preferences::UnitFormat::Metric) {
+    return UnitConvert::Builder(e.clone(), Unit::Hectare());
+  }
+  assert(format == Preferences::UnitFormat::Imperial);
+  return UnitConvert::Builder(e.clone(), Unit::Acre());
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

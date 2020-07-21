@@ -62,3 +62,39 @@ mp_obj_t modos_remove(mp_obj_t o_file_name) {
   return mp_const_none;
 }
 
+mp_obj_t modos_rename(mp_obj_t o_old_name, mp_obj_t o_new_name) {
+
+  size_t len;
+  const char* old_name;
+  const char* new_name;
+  old_name = mp_obj_str_get_data(o_old_name, &len);
+  new_name = mp_obj_str_get_data(o_new_name, &len);
+
+  Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordNamed(old_name);
+
+  if (record == Ion::Storage::Record()) {
+    mp_raise_OSError(2);
+  }
+  
+  Ion::Storage::Record::ErrorStatus status = record.setName(new_name);
+
+  switch (status) {
+    case Ion::Storage::Record::ErrorStatus::NameTaken:
+      mp_raise_OSError(17);
+      break;
+    case Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable:
+      mp_raise_OSError(28);
+      break;
+    case Ion::Storage::Record::ErrorStatus::NonCompliantName:
+      mp_raise_OSError(22);
+      break;
+    case Ion::Storage::Record::ErrorStatus::RecordDoesNotExist:
+      mp_raise_OSError(2);
+      break;
+    default:
+      break;
+  }
+  
+  return mp_const_none;
+}
+

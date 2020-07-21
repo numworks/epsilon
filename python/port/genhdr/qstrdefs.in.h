@@ -534,4 +534,5 @@ Q(nodename)
 Q(release)
 Q(version)
 Q(machine)
+Q(rename)
 

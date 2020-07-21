@@ -505,11 +505,28 @@ public:
   static const Representative constexpr * MonthRepresentative = &TimeRepresentatives[5];
   static const Representative constexpr * YearRepresentative = &TimeRepresentatives[6];
   static const Representative constexpr * MeterRepresentative = &DistanceRepresentatives[0];
+  static_assert(sizeof(DistanceRepresentatives)/sizeof(Representative) == 8, "The Unit::MileRepresentative et al. might require to be fixed if the DistanceRepresentatives table was changed.");
+  static const Representative constexpr * InchRepresentative = &DistanceRepresentatives[4];
+  static const Representative constexpr * FootRepresentative = &DistanceRepresentatives[5];
+  static const Representative constexpr * YardRepresentative = &DistanceRepresentatives[6];
+  static const Representative constexpr * MileRepresentative = &DistanceRepresentatives[7];
   static const Representative constexpr * KilogramRepresentative = &MassRepresentatives[0];
+  static const Representative constexpr * GramRepresentative = &MassRepresentatives[1];
+  static_assert(sizeof(MassRepresentatives)/sizeof(Representative) == 7, "The Unit::OunceRepresentative et al. might require to be fixed if the MassRepresentatives table was changed.");
+  static const Representative constexpr * OunceRepresentative = &MassRepresentatives[4];
+  static const Representative constexpr * PoundRepresentative = &MassRepresentatives[5];
   static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
+  static_assert(sizeof(VolumeRepresentatives)/sizeof(Representative) == 8, "The Unit::FluidOunceRepresentative et al. might require to be fixed if the VolumeRepresentatives table was changed.");
+  static const Representative constexpr * FluidOunceRepresentative = &VolumeRepresentatives[3];
+  static const Representative constexpr * CupRepresentative = &VolumeRepresentatives[4];
+  static const Representative constexpr * GallonRepresentative = &VolumeRepresentatives[7];
   static const Representative constexpr * WattRepresentative = &PowerRepresentatives[0];
   static_assert(sizeof(EnergyRepresentatives)/sizeof(Representative) == 2, "The Unit::ElectronVoltRepresentative might require to be fixed if the EnergyRepresentatives table was changed.");
   static const Representative constexpr * ElectronVoltRepresentative = &EnergyRepresentatives[1];
+  static_assert(sizeof(SurfaceRepresentatives)/sizeof(Representative) == 2, "The Unit::HectareRepresentative et al. might require to be fixed if the VolumeRepresentatives table was changed.");
+  static const Representative constexpr * HectareRepresentative = &SurfaceRepresentatives[0];
+  static const Representative constexpr * AcreRepresentative = &SurfaceRepresentatives[1];
+
   static constexpr const Dimension DimensionTable[] = {
     /* The current table is sorted from most to least simple units.
      * The order determines the behavior of simplification.
@@ -821,6 +838,7 @@ public:
   static const Dimension constexpr * MassDimension = &DimensionTable[2];
   static const Dimension constexpr * EnergyDimension = &DimensionTable[10];
   static const Dimension constexpr * PowerDimension = &DimensionTable[11];
+  static const Dimension constexpr * SurfaceDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-2];
   static const Dimension constexpr * VolumeDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-1];
 
   static constexpr const Unit::Dimension * DimensionTableUpperBound =
@@ -830,7 +848,12 @@ public:
 
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
+  static Unit Meter() { return Builder(DistanceDimension, MeterRepresentative, &EmptyPrefix); }
   static Unit Kilometer() { return Builder(DistanceDimension, MeterRepresentative, &KiloPrefix); }
+  static Unit Inch() { return Builder(DistanceDimension, InchRepresentative, &EmptyPrefix); }
+  static Unit Foot() { return Builder(DistanceDimension, FootRepresentative, &EmptyPrefix); }
+  static Unit Yard() { return Builder(DistanceDimension, YardRepresentative, &EmptyPrefix); }
+  static Unit Mile() { return Builder(DistanceDimension, MileRepresentative, &EmptyPrefix); }
   static Unit Second() { return Builder(TimeDimension, SecondRepresentative, &EmptyPrefix); }
   static Unit Minute() { return Builder(TimeDimension, MinuteRepresentative, &EmptyPrefix); }
   static Unit Hour() { return Builder(TimeDimension, HourRepresentative, &EmptyPrefix); }
@@ -840,8 +863,19 @@ public:
   static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
   static Unit ElectronVolt() { return Builder(EnergyDimension, ElectronVoltRepresentative, &EmptyPrefix); }
   static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
-  static Expression BuildSplit(double baseValue, const Unit * units, const double * conversionFactors, int numberOfUnits, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  static Expression BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  static Unit Gram() { return Builder(MassDimension, GramRepresentative, &EmptyPrefix); }
+  static Unit Ounce() { return Builder(MassDimension, OunceRepresentative, &EmptyPrefix); }
+  static Unit Pound() { return Builder(MassDimension, PoundRepresentative, &EmptyPrefix); }
+  static Unit FluidOunce() { return Builder(VolumeDimension, FluidOunceRepresentative, &EmptyPrefix); }
+  static Unit Cup() { return Builder(VolumeDimension, CupRepresentative, &EmptyPrefix); }
+  static Unit Gallon() { return Builder(VolumeDimension, GallonRepresentative, &EmptyPrefix); }
+  static Unit Hectare() { return Builder(SurfaceDimension, HectareRepresentative, &EmptyPrefix); }
+  static Unit Acre() { return Builder(SurfaceDimension, AcreRepresentative, &EmptyPrefix); }
+  static Expression BuildSplit(double baseValue, const Unit * units, const double * conversionFactors, int numberOfUnits, Context * context);
+  static Expression BuildTimeSplit(double seconds, Context * context);
+  static Expression BuildImperialDistanceSplit(double inches, Context * context);
+  static Expression BuildImperialMassSplit(double ounces, Context * context);
+  static Expression BuildImperialVolumeSplit(double fluidOunces, Context * context);
 
   static bool IsSI(Expression & e);
   static bool IsSISpeed(Expression & e);
@@ -866,6 +900,12 @@ private:
   static constexpr double DaysPerYear = 365.25;
   static constexpr double MonthPerYear = 12.0;
   static constexpr double DaysPerMonth = DaysPerYear/MonthPerYear;
+  static constexpr double InchesPerFoot = 12.;
+  static constexpr double FeetPerYard = 3.;
+  static constexpr double YardsPerMile = 1760.;
+  static constexpr double OuncesPerPound = 16.;
+  static constexpr double FluidOuncesPerCup = 8.;
+  static constexpr double CupsPerGallon = 16.;
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
   bool isSI() const;
   static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);

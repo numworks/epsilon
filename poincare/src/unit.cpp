@@ -4,10 +4,11 @@
 #include <poincare/float.h>
 #include <poincare/ieee754.h>
 #include <poincare/infinity.h>
+#include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/layout_helper.h>
+#include <poincare/unit_convert.h>
 #include <algorithm>
 #include <assert.h>
 #include <cmath>
@@ -514,7 +515,7 @@ bool Unit::IsSITime(Expression & e) {
   return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
 }
 
-Expression Unit::BuildSplit(double baseValue, Unit const * units, double const * conversionFactors, const int numberOfUnits, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Unit::BuildSplit(double baseValue, Unit const * units, double const * conversionFactors, const int numberOfUnits, Context * context) {
   assert(!std::isnan(baseValue));
   if (std::isinf(baseValue) || std::fabs(baseValue) < Expression::Epsilon<double>()) {
     return Multiplication::Builder(Number::FloatNumber(baseValue), units[numberOfUnits-1]);
@@ -545,16 +546,37 @@ Expression Unit::BuildSplit(double baseValue, Unit const * units, double const *
     }
   }
 
-  ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion::None);
+  ExpressionNode::ReductionContext reductionContext(context, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion::None);
   // Beautify the addition into an subtraction if necessary
   return a.squashUnaryHierarchyInPlace().shallowBeautify(reductionContext);
 }
 
-Expression Unit::BuildTimeSplit(double seconds, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Unit::BuildTimeSplit(double seconds, Context * context) {
   constexpr static int numberOfTimeUnits = 6;
   Unit units[numberOfTimeUnits] = {Unit::Year(), Unit::Month(), Unit::Day(), Unit::Hour(), Unit::Minute(), Unit::Second()};
   constexpr static double timeFactors[numberOfTimeUnits] = {MonthPerYear*DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, HoursPerDay*MinutesPerHour*SecondsPerMinute, MinutesPerHour*SecondsPerMinute, SecondsPerMinute, 1.0};
-  return BuildSplit(seconds, units, timeFactors, numberOfTimeUnits, context, complexFormat, angleUnit);
+  return BuildSplit(seconds, units, timeFactors, numberOfTimeUnits, context);
+}
+
+Expression Unit::BuildImperialDistanceSplit(double inches, Context * context) {
+  constexpr static int numberOfUnits = 4;
+  Unit units[numberOfUnits] = {Unit::Mile(), Unit::Yard(), Unit::Foot(), Unit::Inch()};
+  constexpr static double factors[numberOfUnits] = {InchesPerFoot*FeetPerYard*YardsPerMile, InchesPerFoot*FeetPerYard, InchesPerFoot, 1.};
+  return BuildSplit(inches, units, factors, numberOfUnits, context);
+}
+
+Expression Unit::BuildImperialMassSplit(double ounces, Context * context) {
+  constexpr static int numberOfUnits = 2;
+  Unit units[numberOfUnits] = {Unit::Pound(), Unit::Ounce()};
+  constexpr static double factors[numberOfUnits] = {OuncesPerPound, 1.};
+  return BuildSplit(ounces, units, factors, numberOfUnits, context);
+}
+
+Expression Unit::BuildImperialVolumeSplit(double fluidOunces, Context * context) {
+  constexpr static int numberOfUnits = 3;
+  Unit units[numberOfUnits] = {Unit::Gallon(), Unit::Cup(), Unit::FluidOunce()};
+  constexpr static double factors[numberOfUnits] = {FluidOuncesPerCup*CupsPerGallon, FluidOuncesPerCup, 1.};
+  return BuildSplit(fluidOunces, units, factors, numberOfUnits, context);
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

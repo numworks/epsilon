@@ -47,6 +47,9 @@ public:
   MatrixComplex<T> inverse() const;
   MatrixComplex<T> transpose() const;
   MatrixComplex<T> ref(bool reduced) const;
+  std::complex<T> norm() const override;
+  std::complex<T> dot(Evaluation<T> * e) const override;
+  Evaluation<T> cross(Evaluation<T> * e) const override;
 private:
   // See comment on Matrix
   uint16_t m_numberOfRows;

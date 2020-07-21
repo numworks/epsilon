@@ -369,6 +369,9 @@ template Tangent TreeHandle::FixedArityBuilder<Tangent, TangentNode>(const Tuple
 template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(const Tuple &);
 template UnitConvert TreeHandle::FixedArityBuilder<UnitConvert, UnitConvertNode>(const Tuple &);
 template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(const Tuple &);
+template VectorCross TreeHandle::FixedArityBuilder<VectorCross, VectorCrossNode>(const Tuple &);
+template VectorDot TreeHandle::FixedArityBuilder<VectorDot, VectorDotNode>(const Tuple &);
+template VectorNorm TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 
 }

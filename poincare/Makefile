@@ -151,6 +151,9 @@ poincare_src += $(addprefix poincare/src/,\
   unit_convert.cpp \
   unreal.cpp \
   variable_context.cpp \
+  vector_cross.cpp \
+  vector_dot.cpp \
+  vector_norm.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/parsing/,\

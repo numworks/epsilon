@@ -1,8 +1,12 @@
 extern "C" {
 #include "modos.h"
+#include <py/obj.h>
+#include <py/runtime.h>
 #include <py/objstr.h>
 #include <py/objtuple.h>
 }
+
+#include <ion/storage.h>
 
 #ifndef OMEGA_VERSION
 #error This file expects OMEGA_VERSION to be defined
@@ -38,6 +42,23 @@ STATIC const mp_rom_map_elem_t modos_uname_info_table[] = {
 STATIC MP_DEFINE_CONST_DICT(modos_uname_info_obj, modos_uname_info_table);
 
 mp_obj_t modos_uname(void) {
-    return (mp_obj_t)&modos_uname_info_obj;
+  return (mp_obj_t)&modos_uname_info_obj;
+}
+
+mp_obj_t modos_remove(mp_obj_t o_file_name) {
+
+  size_t len;
+  const char* file_name;
+  file_name = mp_obj_str_get_data(o_file_name, &len);
+
+  Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+
+  if (record == Ion::Storage::Record()) {
+    mp_raise_OSError(2);
+  }
+
+  record.destroy();
+  
+  return mp_const_none;
 }
 

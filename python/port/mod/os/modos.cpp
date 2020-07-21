@@ -1,5 +1,6 @@
 extern "C" {
 #include "modos.h"
+#include <string.h>
 #include <py/obj.h>
 #include <py/runtime.h>
 #include <py/objstr.h>
@@ -96,5 +97,19 @@ mp_obj_t modos_rename(mp_obj_t o_old_name, mp_obj_t o_new_name) {
   }
   
   return mp_const_none;
+}
+
+mp_obj_t modos_listdir(void) {
+  mp_obj_t list = mp_obj_new_list(0, NULL);
+
+  for(size_t i = 0; i < (size_t)Ion::Storage::sharedStorage()->numberOfRecords(); i++) {
+    Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordAtIndex(i);
+    size_t file_name_length = strlen(record.fullName());
+    
+    mp_obj_t file_name = mp_obj_new_str(record.fullName(), file_name_length);
+    mp_obj_list_append(list, file_name);
+  }
+  
+  return list;
 }
 

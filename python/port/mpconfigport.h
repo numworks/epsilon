@@ -131,6 +131,7 @@ extern const struct _mp_obj_module_t modkandinsky_module;
 extern const struct _mp_obj_module_t modmatplotlib_module;
 extern const struct _mp_obj_module_t modpyplot_module;
 extern const struct _mp_obj_module_t modtime_module;
+extern const struct _mp_obj_module_t modos_module;
 extern const struct _mp_obj_module_t modturtle_module;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
@@ -139,5 +140,6 @@ extern const struct _mp_obj_module_t modturtle_module;
     { MP_ROM_QSTR(MP_QSTR_matplotlib), MP_ROM_PTR(&modmatplotlib_module) }, \
     { MP_ROM_QSTR(MP_QSTR_matplotlib_dot_pyplot), MP_ROM_PTR(&modpyplot_module) }, \
     { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&modos_module) }, \
     { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module) }, \
 

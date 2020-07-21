@@ -876,6 +876,7 @@ public:
   static Expression BuildImperialDistanceSplit(double inches, Context * context);
   static Expression BuildImperialMassSplit(double ounces, Context * context);
   static Expression BuildImperialVolumeSplit(double fluidOunces, Context * context);
+  static double ConvertedValueInUnit(Expression e, Unit unit, Context * context);
 
   static bool IsSI(Expression & e);
   static bool IsSISpeed(Expression & e);
@@ -885,6 +886,12 @@ public:
   bool isMeter() const;
   bool isSecond() const;
   bool isKilogram() const;
+
+  static Expression StandardSpeedConversion(Expression e, Preferences::UnitFormat format, Context * context);
+  static Expression StandardDistanceConversion(Expression e, Preferences::UnitFormat format, Context * context);
+  static Expression StandardVolumeConversion(Expression e, Preferences::UnitFormat format, Context * context);
+  static Expression StandardMassConversion(Expression e, Preferences::UnitFormat format, Context * context);
+  static Expression StandardSurfaceConversion(Expression e, Preferences::UnitFormat format, Context * context);
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

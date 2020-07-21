@@ -103,6 +103,9 @@ class Expression : public TreeHandle {
   friend class TrigonometryCheatTable;
   friend class Unit;
   friend class UnitConvert;
+  friend class VectorCross;
+  friend class VectorDot;
+  friend class VectorNorm;
 
   friend class AdditionNode;
   friend class DerivativeNode;

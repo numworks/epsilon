@@ -89,5 +89,8 @@
 #include <poincare/unit_convert.h>
 #include <poincare/unreal.h>
 #include <poincare/variable_context.h>
+#include <poincare/vector_cross.h>
+#include <poincare/vector_dot.h>
+#include <poincare/vector_norm.h>
 
 #endif

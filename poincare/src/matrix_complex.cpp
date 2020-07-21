@@ -135,6 +135,50 @@ MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
   return MatrixComplex<T>::Builder(operandsCopy, m_numberOfRows, m_numberOfColumns);
 }
 
+template<typename T>
+std::complex<T> MatrixComplexNode<T>::norm() const {
+  if (numberOfChildren() == 0 || numberOfColumns() > 1) {
+    return std::complex<T>(NAN, NAN);
+  }
+  std::complex<T> sum = 0;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    sum += std::norm(complexAtIndex(i));
+  }
+  return std::sqrt(sum);
+}
+
+template<typename T>
+std::complex<T> MatrixComplexNode<T>::dot(Evaluation<T> * e) const {
+  if (e->type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return std::complex<T>(NAN, NAN);
+  }
+  MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
+  if (numberOfChildren() == 0 || numberOfColumns() > 1 || b->numberOfChildren() == 0 || b->numberOfColumns() > 1 || numberOfRows() != b->numberOfRows()) {
+    return std::complex<T>(NAN, NAN);
+  }
+  std::complex<T> sum = 0;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    sum += complexAtIndex(i) * b->complexAtIndex(i);
+  }
+  return sum;
+}
+
+template<typename T>
+Evaluation<T> MatrixComplexNode<T>::cross(Evaluation<T> * e) const {
+  if (e->type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return MatrixComplex<T>::Undefined();
+  }
+  MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
+  if (numberOfChildren() == 0 || numberOfColumns() != 1 || numberOfRows() != 3 || b->numberOfChildren() == 0 || b->numberOfColumns() != 1 || b->numberOfRows() != 3) {
+    return MatrixComplex<T>::Undefined();
+  }
+  std::complex<T> operandsCopy[3];
+  operandsCopy[0] = complexAtIndex(1) * b->complexAtIndex(2) - complexAtIndex(2) * b->complexAtIndex(1);
+  operandsCopy[1] = complexAtIndex(2) * b->complexAtIndex(0) - complexAtIndex(0) * b->complexAtIndex(2);
+  operandsCopy[2] = complexAtIndex(0) * b->complexAtIndex(1) - complexAtIndex(1) * b->complexAtIndex(0);
+  return MatrixComplex<T>::Builder(operandsCopy, 3, 1);
+}
+
 // MATRIX COMPLEX REFERENCE
 
 template<typename T>

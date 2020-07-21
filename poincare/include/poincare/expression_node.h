@@ -23,7 +23,8 @@ class ExpressionNode : public TreeNode {
   friend class PowerNode;
   friend class SymbolNode;
 public:
-   enum class Type : uint8_t {
+  // The types order is important here.
+  enum class Type : uint8_t {
     Uninitialized = 0,
     Undefined = 1,
     Unreal,
@@ -33,6 +34,8 @@ public:
     Double,
     Float,
     Infinity,
+    /* When merging number nodes together, we do a linear scan which stops at
+     * the first non-number child. */
     Multiplication,
     Power,
     Addition,
@@ -95,10 +98,15 @@ public:
     SquareRoot,
     Subtraction,
     Sum,
-
+    VectorDot,
+    VectorNorm,
+    /* When sorting the children of an expression, we assert that the following
+     * nodes are at the end of the list : */
+    // - Units
     Unit,
+    // - Complexes
     ComplexCartesian,
-
+    // - Any kind of matrices :
     ConfidenceInterval,
     MatrixDimension,
     MatrixIdentity,
@@ -107,9 +115,11 @@ public:
     MatrixRowEchelonForm,
     MatrixReducedRowEchelonForm,
     PredictionInterval,
+    VectorCross,
     Matrix,
+
     EmptyExpression
-   };
+  };
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;

@@ -85,6 +85,9 @@ public:
    * not. */
   Expression createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const;
   Expression determinant(ExpressionNode::ReductionContext reductionContext, bool * couldComputeDeterminant, bool inPlace);
+  Expression norm(ExpressionNode::ReductionContext reductionContext) const;
+  Expression dot(Matrix * b, ExpressionNode::ReductionContext reductionContext) const;
+  Matrix cross(Matrix * b, ExpressionNode::ReductionContext reductionContext) const;
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
 

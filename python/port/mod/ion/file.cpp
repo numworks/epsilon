@@ -464,15 +464,22 @@ STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
             file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
             break;
         case APPEND:
-            file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
             file->position = 0;
-            if (file->record == Ion::Storage::Record()) {
-                status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
-                if (status == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
+            status = Ion::Storage::sharedStorage()->createRecordWithFullName(file_name, "", 0);
+            switch (status) {
+                case Ion::Storage::Record::ErrorStatus::NameTaken:
+                    // setValue messes with empty buffer, so we delete record and re-create it.
+                    file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+                    file->record.destroy();
+
+                    break;
+                case Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable:
                     mp_raise_OSError(28);
-                }
+                    break;
+                default:
+                    break;
             }
-            file->position = file->record.value().size;
+            file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
             break;
     }
     

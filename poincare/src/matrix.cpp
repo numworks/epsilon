@@ -6,8 +6,10 @@
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
 #include <assert.h>
@@ -481,6 +483,52 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
   Expression result = computeInverseOrDeterminant(true, reductionContext, couldComputeDeterminant);
   assert(!(*couldComputeDeterminant) || !result.isUninitialized());
   return result;
+}
+
+Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const {
+  assert(numberOfColumns() == 1);
+  Addition sum = Addition::Builder();
+  for (int j = 0; j < numberOfRows(); j++) {
+    Expression absValue = AbsoluteValue::Builder(const_cast<Matrix *>(this)->matrixChild(0, j).clone());
+    Expression squaredAbsValue = Power::Builder(absValue, Rational::Builder(2));
+    absValue.shallowReduce(reductionContext);
+    sum.addChildAtIndexInPlace(squaredAbsValue, sum.numberOfChildren(), sum.numberOfChildren());
+    squaredAbsValue.shallowReduce(reductionContext);
+  }
+  Expression result = SquareRoot::Builder(sum);
+  sum.shallowReduce(reductionContext);
+  return result;
+}
+
+Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
+  // Dot product is defined between two vectors of same size
+  assert(numberOfRows() == b->numberOfRows() && numberOfColumns() == 1 && b->numberOfColumns() == 1);
+  Addition sum = Addition::Builder();
+  for (int j = 0; j < numberOfRows(); j++) {
+    Expression product = Multiplication::Builder(const_cast<Matrix *>(this)->matrixChild(0, j).clone(), const_cast<Matrix *>(b)->matrixChild(0, j).clone());
+    sum.addChildAtIndexInPlace(product, sum.numberOfChildren(), sum.numberOfChildren());
+    product.shallowReduce(reductionContext);
+  }
+  return std::move(sum);
+}
+
+Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionContext) const {
+  // Cross product is defined between two vectors of size 3
+  assert(numberOfRows() == 3 && numberOfColumns() == 1 && b->numberOfRows() == 3 && b->numberOfColumns() == 1);
+  Matrix matrix = Matrix::Builder();
+  for (int j = 0; j < 3; j++) {
+    int j1 = (j+1)%3;
+    int j2 = (j+2)%3;
+    Expression a1b2 = Multiplication::Builder(const_cast<Matrix *>(this)->matrixChild(0, j1).clone(), const_cast<Matrix *>(b)->matrixChild(0, j2).clone());
+    Expression a2b1 = Multiplication::Builder(const_cast<Matrix *>(this)->matrixChild(0, j2).clone(), const_cast<Matrix *>(b)->matrixChild(0, j1).clone());
+    Expression difference  = Subtraction::Builder(a1b2, a2b1);
+    a1b2.shallowReduce(reductionContext);
+    a2b1.shallowReduce(reductionContext);
+    matrix.addChildAtIndexInPlace(difference, matrix.numberOfChildren(), matrix.numberOfChildren());
+    difference.shallowReduce(reductionContext);
+  }
+  matrix.setDimensions(3, 1);
+  return matrix;
 }
 
 Expression Matrix::shallowReduce(Context * context) {

@@ -526,3 +526,5 @@ Q(SEEK_SET)
 Q(SEEK_CUR)
 Q(SEEK_END)
 
+Q(os)
+

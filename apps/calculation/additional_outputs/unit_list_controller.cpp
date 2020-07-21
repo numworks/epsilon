@@ -12,6 +12,34 @@ using namespace Shared;
 
 namespace Calculation {
 
+void storeAndSimplify(Expression e, Expression * dest, bool requireSimplification, bool canChangeUnitPrefix) {
+  assert(!e.isUninitialized());
+  *dest = e;
+  if (requireSimplification) {
+    Shared::PoincareHelpers::Simplify(dest, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
+  }
+  if (canChangeUnitPrefix) {
+    Expression newUnits;
+    /* If the expression has already been simplified, we do not want to reduce
+     * it further, as this would units introduced by a UnitConvert node back to
+     * SI units. */
+    if (!requireSimplification) {
+      // Reduce to be able to removeUnit
+      PoincareHelpers::Reduce(dest, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
+    }
+    *dest = dest->removeUnit(&newUnits);
+    double value = Shared::PoincareHelpers::ApproximateToScalar<double>(*dest, App::app()->localContext());
+    ExpressionNode::ReductionContext reductionContext(
+        App::app()->localContext(),
+        Preferences::sharedPreferences()->complexFormat(),
+        Preferences::sharedPreferences()->angleUnit(),
+        ExpressionNode::ReductionTarget::User,
+        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    Unit::ChooseBestPrefixForValue(&newUnits, &value, reductionContext);
+    *dest = Multiplication::Builder(Number::FloatNumber(value), newUnits);
+  }
+}
+
 void UnitListController::setExpression(Poincare::Expression e) {
   ExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
@@ -24,82 +52,47 @@ void UnitListController::setExpression(Poincare::Expression e) {
   }
 
   size_t numberOfExpressions = 0;
-  // 1. First rows: miscellaneous classic units for some dimensions
+  /* 1. First rows: miscellaneous classic units for some dimensions, in both
+   * metric and imperial units. */
   Expression copy = m_expression.clone();
   Expression units;
   // Reduce to be able to recognize units
   PoincareHelpers::Reduce(&copy, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
   copy = copy.removeUnit(&units);
-  bool requireSimplification = false;
-  bool canChangeUnitPrefix = false;
+  Preferences::UnitFormat chosenFormat = Preferences::sharedPreferences()->unitFormat();
+  Preferences::UnitFormat otherFormat = (chosenFormat == Preferences::UnitFormat::Metric) ? Preferences::UnitFormat::Imperial : Preferences::UnitFormat::Metric;
 
   if (Unit::IsSISpeed(units)) {
-    // 1.a. Turn speed into km/h
-    expressions[numberOfExpressions++] = UnitConvert::Builder(
-        m_expression.clone(),
-        Multiplication::Builder(
-          Unit::Kilometer(),
-          Power::Builder(
-            Unit::Hour(),
-            Rational::Builder(-1)
-            )
-          )
-        );
-    requireSimplification = true; // Simplify the conversion
+    // 1.a. Turn speed into km/h or mi/h
+    storeAndSimplify(Unit::StandardSpeedConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
+    storeAndSimplify(Unit::StandardSpeedConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
   } else if (Unit::IsSIVolume(units)) {
-    // 1.b. Turn volume into L
-    expressions[numberOfExpressions++] = UnitConvert::Builder(
-        m_expression.clone(),
-        Unit::Liter()
-        );
-    requireSimplification = true; // Simplify the conversion
-    canChangeUnitPrefix = true; // Pick best prefix (mL)
+    // 1.b. Turn volume into L or _gal + _cp + _floz
+    storeAndSimplify(Unit::StandardVolumeConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric);
+    storeAndSimplify(Unit::StandardVolumeConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric);
   } else if (Unit::IsSIEnergy(units)) {
     // 1.c. Turn energy into Wh
-    expressions[numberOfExpressions++] = UnitConvert::Builder(
-        m_expression.clone(),
-        Multiplication::Builder(
-          Unit::Watt(),
-          Unit::Hour()
-          )
-        );
-    expressions[numberOfExpressions++] = UnitConvert::Builder(
-        m_expression.clone(),
-        Unit::ElectronVolt()
-        );
-    requireSimplification = true; // Simplify the conversion
-    canChangeUnitPrefix = true; // Pick best prefix (kWh)
+    storeAndSimplify(UnitConvert::Builder(m_expression.clone(), Multiplication::Builder(Unit::Watt(), Unit::Hour())), &expressions[numberOfExpressions++], true, true);
+    storeAndSimplify(UnitConvert::Builder(m_expression.clone(), Unit::ElectronVolt()), &expressions[numberOfExpressions++], true, true);
   } else if (Unit::IsSITime(units)) {
-    // Turn time into ? year + ? month + ? day + ? h + ? min + ? s
+    // 1.d. Turn time into ? year + ? month + ? day + ? h + ? min + ? s
     double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
-    expressions[numberOfExpressions++] = Unit::BuildTimeSplit(value, App::app()->localContext(), Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit());
-  }
-  // 1.d. Simplify and tune prefix of all computed expressions
-  size_t currentExpressionIndex = 0;
-  while (currentExpressionIndex < numberOfExpressions) {
-    assert(!expressions[currentExpressionIndex].isUninitialized());
-    if (requireSimplification) {
-      Shared::PoincareHelpers::Simplify(&expressions[currentExpressionIndex], App::app()->localContext(), ExpressionNode::ReductionTarget::User);
-    }
-    if (canChangeUnitPrefix) {
-      Expression newUnits;
-      // Reduce to be able to removeUnit
-      PoincareHelpers::Reduce(&expressions[currentExpressionIndex], App::app()->localContext(), ExpressionNode::ReductionTarget::User);
-      expressions[currentExpressionIndex] = expressions[currentExpressionIndex].removeUnit(&newUnits);
-      double value = Shared::PoincareHelpers::ApproximateToScalar<double>(expressions[currentExpressionIndex], App::app()->localContext());
-      ExpressionNode::ReductionContext reductionContext(
-          App::app()->localContext(),
-          Preferences::sharedPreferences()->complexFormat(),
-          Preferences::sharedPreferences()->angleUnit(),
-          ExpressionNode::ReductionTarget::User,
-          ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-      Unit::ChooseBestPrefixForValue(&newUnits, &value, reductionContext);
-      expressions[currentExpressionIndex] = Multiplication::Builder(Number::FloatNumber(value), newUnits);
-    }
-    currentExpressionIndex++;
+    expressions[numberOfExpressions++] = Unit::BuildTimeSplit(value, App::app()->localContext());
+  } else if (Unit::IsSIDistance(units)) {
+    // 1.e. Turn distance into _?m or _mi + _yd + _ft + _in
+    storeAndSimplify(Unit::StandardDistanceConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric);
+    storeAndSimplify(Unit::StandardDistanceConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric);
+  } else if (Unit::IsSISurface(units)) {
+    // 1.f. Turn surface into hectares or acres
+    storeAndSimplify(Unit::StandardSurfaceConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
+    storeAndSimplify(Unit::StandardSurfaceConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
+  } else if (Unit::IsSIMass(units)) {
+    // 1.g. Turn mass into _?g and _lb + _oz
+    storeAndSimplify(Unit::StandardMassConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric);
+    storeAndSimplify(Unit::StandardMassConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric);
   }
 
-  // 2. IS units only
+  // 2. SI units only
   assert(numberOfExpressions < k_maxNumberOfRows - 1);
   expressions[numberOfExpressions] = m_expression.clone();
   Shared::PoincareHelpers::Simplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
@@ -109,7 +102,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   Expression reduceExpression = m_expression.clone();
   // Make m_expression comparable to expressions (turn BasedInteger into Rational for instance)
   Shared::PoincareHelpers::Simplify(&reduceExpression, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::None);
-  currentExpressionIndex = 1;
+  int currentExpressionIndex = 1;
   while (currentExpressionIndex < numberOfExpressions) {
     bool duplicateFound = false;
     for (size_t i = 0; i < currentExpressionIndex + 1; i++) {

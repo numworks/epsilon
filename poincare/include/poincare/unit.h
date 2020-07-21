@@ -883,6 +883,9 @@ public:
   static bool IsSIVolume(Expression & e);
   static bool IsSIEnergy(Expression & e);
   static bool IsSITime(Expression & e);
+  static bool IsSIDistance(Expression & e);
+  static bool IsSIMass(Expression & e);
+  static bool IsSISurface(Expression & e);
   bool isMeter() const;
   bool isSecond() const;
   bool isKilogram() const;

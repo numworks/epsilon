@@ -527,6 +527,17 @@ STATIC mp_obj_t file_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
 void check_closed(file_obj_t* file) {
     if (file->closed)
         mp_raise_ValueError("I/O operation on closed file");
+
+    // This is VERY imports, as it eliminates concurrency
+    // issues (eg. removing the file and then writing to it, 
+    // having file move in the store, etc.)
+    size_t l;
+    const char* file_name = mp_obj_str_get_data(file->name, &l);
+    file->record = Ion::Storage::sharedStorage()->recordNamed(file_name);
+
+    if (file->record == Ion::Storage::Record()) {
+        mp_raise_OSError(2);
+    }
 }
 
 

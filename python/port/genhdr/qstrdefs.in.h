@@ -526,5 +526,12 @@ Q(SEEK_SET)
 Q(SEEK_CUR)
 Q(SEEK_END)
 
+// os QSTRs
 Q(os)
+Q(uname)
+Q(sysname)
+Q(nodename)
+Q(release)
+Q(version)
+Q(machine)
 

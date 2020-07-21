@@ -53,7 +53,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       if (childLabel == I18n::Message::OmegaVersion) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         if (strcmp(myCell->accessoryText(), Ion::omegaVersion()) == 0) {
-          myCell->setAccessoryText("Dev"); //Change for public/dev
+          myCell->setAccessoryText("Public"); //Change for public/dev
           return true;
         }
         myCell->setAccessoryText(Ion::omegaVersion());

@@ -208,6 +208,37 @@ int Storage::numberOfRecordsWithExtension(const char * extension) {
   return count;
 }
 
+int Storage::numberOfRecords() {
+  int count = 0;
+  for (char * p : *this) {
+    const char * name = fullNameOfRecordStarting(p);
+    count++;
+  }
+  return count;
+}
+
+Storage::Record Storage::recordAtIndex(int index) {
+  int currentIndex = -1;
+  const char * name = nullptr;
+  char * recordAddress = nullptr;
+  for (char * p : *this) {
+    const char * currentName = fullNameOfRecordStarting(p);
+    currentIndex++;
+    if (currentIndex == index) {
+      recordAddress = p;
+      name = currentName;
+      break;
+    }
+  }
+  if (name == nullptr) {
+    return Record();
+  }
+  Record r = Record(name);
+  m_lastRecordRetrieved = r;
+  m_lastRecordRetrievedPointer = recordAddress;
+  return Record(name);
+}
+
 Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int index) {
   int currentIndex = -1;
   const char * name = nullptr;

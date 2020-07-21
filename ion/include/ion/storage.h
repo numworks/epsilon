@@ -122,6 +122,10 @@ public:
 
   // Useful
   static bool FullNameCompliant(const char * name);
+  
+  // User by Python OS module
+  int numberOfRecords();
+  Record recordAtIndex(int index);
 
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;

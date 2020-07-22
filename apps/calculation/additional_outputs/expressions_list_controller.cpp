@@ -29,6 +29,9 @@ void ExpressionsListController::viewDidDisappear() {
   // Reset layout and cell memoization to avoid taking extra space in the pool
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_cells[i].setLayout(Layout());
+    /* By reseting m_layouts, numberOfRow will go down to 0, and the highlighted
+     * cells won't be unselected. Therefore we unselect them here. */
+    m_cells[i].setHighlighted(false);
     m_layouts[i] = Layout();
   }
   m_expression = Expression();

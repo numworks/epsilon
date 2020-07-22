@@ -65,6 +65,7 @@ QUIZ_CASE(poincare_properties_is_matrix) {
   assert_expression_has_property("transpose([[1,2][3,4]])", &context, Expression::IsMatrix);
   assert_expression_has_property("ref([[1,2][3,4]])", &context, Expression::IsMatrix);
   assert_expression_has_property("rref([[1,2][3,4]])", &context, Expression::IsMatrix);
+  assert_expression_has_property("cross([[1][2][3]],[[3][4][5]])", &context, Expression::IsMatrix);
   assert_expression_has_not_property("2*3+1", &context, Expression::IsMatrix);
 }
 

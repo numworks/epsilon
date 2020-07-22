@@ -42,6 +42,7 @@ void UnitConvert::deepReduceChildren(ExpressionNode::ReductionContext reductionC
       reductionContext.context(),
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
+      reductionContext.unitFormat(),
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined,
       ExpressionNode::UnitConversion::None);
@@ -56,6 +57,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext reducti
         reductionContext.context(),
         reductionContext.complexFormat(),
         reductionContext.angleUnit(),
+        reductionContext.unitFormat(),
         reductionContext.target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
@@ -70,6 +72,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext reducti
       reductionContext.context(),
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
+      reductionContext.unitFormat(),
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined,
       ExpressionNode::UnitConversion::None);

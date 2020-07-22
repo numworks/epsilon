@@ -1,4 +1,5 @@
 #include "equation.h"
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/constant.h>
 #include <poincare/empty_context.h>
@@ -49,7 +50,7 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
       *returnedExpression = Undefined::Builder();
     } else if (expressionRed.type() == ExpressionNode::Type::Equal) {
       Preferences * preferences = Preferences::sharedPreferences();
-      *returnedExpression = static_cast<const Equal&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit());
+      *returnedExpression = static_cast<const Equal&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
     } else {
       assert(expressionRed.type() == ExpressionNode::Type::Rational && static_cast<const Rational&>(expressionRed).isOne());
       // The equality was reduced which means the equality was always true.

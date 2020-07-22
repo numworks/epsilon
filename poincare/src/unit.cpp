@@ -410,7 +410,7 @@ void Unit::chooseBestMultipleForValue(double * value, const float exponent, bool
   const Representative * startRep = tuneRepresentative ? dim->stdRepresentative() : bestRep;
   const Representative * endRep = tuneRepresentative ? dim->representativesUpperBound() : bestRep + 1;
   for (const Representative * rep = startRep; rep < endRep; rep++) {
-    if (!rep->canOutputInSystem(Preferences::sharedPreferences()->unitFormat())) {
+    if (!rep->canOutputInSystem(reductionContext.unitFormat())) {
       continue;
     }
     // evaluate quotient
@@ -529,12 +529,12 @@ bool Unit::IsSISurface(Expression & e) {
     e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<const Rational>().isTwo();
 }
 
-double Unit::ConvertedValueInUnit(Expression e, Unit unit, Context * context) {
+double Unit::ConvertedValueInUnit(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext) {
   Expression conversion = UnitConvert::Builder(e.clone(), unit);
   Expression newUnit;
-  conversion = conversion.simplify(ExpressionNode::ReductionContext(context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::Default));
+  conversion = conversion.simplify(reductionContext);
   conversion = conversion.removeUnit(&newUnit);
-  return conversion.approximateToScalar<double>(context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+  return conversion.approximateToScalar<double>(reductionContext.context(), Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
 }
 
 Expression Unit::BuildSplit(double baseValue, Unit const * units, double const * conversionFactors, const int numberOfUnits, Context * context) {
@@ -568,7 +568,7 @@ Expression Unit::BuildSplit(double baseValue, Unit const * units, double const *
     }
   }
 
-  ExpressionNode::ReductionContext reductionContext(context, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion::None);
+  ExpressionNode::ReductionContext reductionContext(context, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, Preferences::UnitFormat::Imperial, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion::None);
   // Beautify the addition into an subtraction if necessary
   return a.squashUnaryHierarchyInPlace().shallowBeautify(reductionContext);
 }
@@ -601,7 +601,8 @@ Expression Unit::BuildImperialVolumeSplit(double fluidOunces, Context * context)
   return BuildSplit(fluidOunces, units, factors, numberOfUnits, context);
 }
 
-Expression Unit::StandardSpeedConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+Expression Unit::StandardSpeedConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  Preferences::UnitFormat format = reductionContext.unitFormat();
   return UnitConvert::Builder(e.clone(), Multiplication::Builder(
         format == Preferences::UnitFormat::Metric ? Unit::Kilometer() : Unit::Mile(),
         Power::Builder(
@@ -612,34 +613,38 @@ Expression Unit::StandardSpeedConversion(Expression e, Preferences::UnitFormat f
       );
 }
 
-Expression Unit::StandardDistanceConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+Expression Unit::StandardDistanceConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  Preferences::UnitFormat format = reductionContext.unitFormat();
   if (format == Preferences::UnitFormat::Metric) {
     return UnitConvert::Builder(e.clone(), Unit::Meter());
   }
   assert(format == Preferences::UnitFormat::Imperial);
-  double rawValue = ConvertedValueInUnit(e, Unit::Inch(), context);
-  return BuildImperialDistanceSplit(rawValue, context);
+  double rawValue = ConvertedValueInUnit(e, Unit::Inch(), reductionContext);
+  return BuildImperialDistanceSplit(rawValue, reductionContext.context());
 }
 
-Expression Unit::StandardVolumeConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+Expression Unit::StandardVolumeConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  Preferences::UnitFormat format = reductionContext.unitFormat();
   if (format == Preferences::UnitFormat::Metric) {
     return UnitConvert::Builder(e.clone(), Unit::Liter());
   }
   assert(format == Preferences::UnitFormat::Imperial);
-  double rawValue = ConvertedValueInUnit(e, Unit::FluidOunce(), context);
-  return BuildImperialVolumeSplit(rawValue, context);
+  double rawValue = ConvertedValueInUnit(e, Unit::FluidOunce(), reductionContext);
+  return BuildImperialVolumeSplit(rawValue, reductionContext.context());
 }
 
-Expression Unit::StandardMassConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+Expression Unit::StandardMassConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  Preferences::UnitFormat format = reductionContext.unitFormat();
   if (format == Preferences::UnitFormat::Metric) {
     return UnitConvert::Builder(e.clone(), Unit::Gram());
   }
   assert(format == Preferences::UnitFormat::Imperial);
-  double rawValue = ConvertedValueInUnit(e, Unit::Ounce(), context);
-  return BuildImperialMassSplit(rawValue, context);
+  double rawValue = ConvertedValueInUnit(e, Unit::Ounce(), reductionContext);
+  return BuildImperialMassSplit(rawValue, reductionContext.context());
 }
 
-Expression Unit::StandardSurfaceConversion(Expression e, Preferences::UnitFormat format, Context * context) {
+Expression Unit::StandardSurfaceConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  Preferences::UnitFormat format = reductionContext.unitFormat();
   if (format == Preferences::UnitFormat::Metric) {
     return UnitConvert::Builder(e.clone(), Unit::Hectare());
   }

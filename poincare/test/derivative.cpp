@@ -34,7 +34,7 @@ void assert_parses_and_reduces_as(const char * expression, const char * simplifi
   ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllSymbolsWithDefinitionsOrUndefined;
 #endif
 
-  assert_parsed_expression_simplify_to(expression, simplifiedDerivative, User, Radian, Cartesian, symbolicComputation);
+  assert_parsed_expression_simplify_to(expression, simplifiedDerivative, User, Radian, Metric, Cartesian, symbolicComputation);
 }
 
 QUIZ_CASE(poincare_derivative_literals) {

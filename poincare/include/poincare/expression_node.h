@@ -158,10 +158,11 @@ public:
 
   class ReductionContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
       m_context(context),
       m_complexFormat(complexFormat),
       m_angleUnit(angleUnit),
+      m_unitFormat(unitFormat),
       m_target(target),
       m_symbolicComputation(symbolicComputation),
       m_unitConversion(unitConversion)
@@ -169,6 +170,7 @@ public:
     Context * context() { return m_context; }
     Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
     Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
+    Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
     ReductionTarget target() const { return m_target; }
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
     UnitConversion unitConversion() const { return m_unitConversion; }
@@ -176,6 +178,7 @@ public:
     Context * m_context;
     Preferences::ComplexFormat m_complexFormat;
     Preferences::AngleUnit m_angleUnit;
+    Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;
     UnitConversion m_unitConversion;

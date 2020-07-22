@@ -39,7 +39,7 @@ public:
   static Equal Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Equal, EqualNode>({child0, child1}); }
 
   // For the equation A = B, create the reduced expression A-B
-  Expression standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Expression standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat) const;
   // Expression
   Expression shallowReduce();
 };

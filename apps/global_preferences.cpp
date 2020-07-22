@@ -5,11 +5,6 @@ GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
   return &globalPreferences;
 }
 
-void GlobalPreferences::setCountry(I18n::Country country) {
-  m_country = country;
-  Poincare::Preferences::sharedPreferences()->setUnitFormat(unitFormat());
-}
-
 GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
   if (m_examMode == ExamMode::Unknown) {
     uint8_t mode = Ion::ExamMode::FetchExamMode();

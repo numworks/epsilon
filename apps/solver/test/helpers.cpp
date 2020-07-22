@@ -1,4 +1,5 @@
 #include <quiz.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <string.h>
 #include <assert.h>
@@ -147,7 +148,8 @@ void set(const char * variable, const char * value) {
     buffer,
     &globalContext,
     Preferences::sharedPreferences()->complexFormat(),
-    Preferences::sharedPreferences()->angleUnit()
+    Preferences::sharedPreferences()->angleUnit(),
+    GlobalPreferences::sharedGlobalPreferences()->unitFormat()
   );
 }
 

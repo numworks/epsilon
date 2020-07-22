@@ -52,7 +52,7 @@ AppsContainer::AppsContainer() :
 
 bool AppsContainer::poincareCircuitBreaker() {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  return state.keyDown(Ion::Keyboard::Key::Back);
+  return state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::OnOff);
 }
 
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {

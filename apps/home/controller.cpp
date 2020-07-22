@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "app.h"
+#include <apps/home/apps_layout.h>
 #include "../apps_container.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
@@ -60,7 +61,7 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1);
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1));
     if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
       App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
     } else {
@@ -128,7 +129,7 @@ void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(appIndex)->descriptor();
+    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }

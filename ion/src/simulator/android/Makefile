@@ -58,7 +58,7 @@ apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/
 
 $(BUILD_DIR)/%.apk: $(apk_deps)
 	$(call rule_label,GRADLE)
-	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
+	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) OMEGA_VERSION=$(OMEGA_VERSION) BUILD_DIR=$(BUILD_DIR) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
 	$(Q) cp $(BUILD_DIR)/app/outputs/apk/release/android-release*.apk $@
 
 endif

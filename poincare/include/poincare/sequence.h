@@ -1,36 +1,53 @@
 #ifndef POINCARE_SEQUENCE_H
 #define POINCARE_SEQUENCE_H
 
-#include <poincare/parametered_expression.h>
-#include <poincare/symbol.h>
-#include <poincare/approximation_helper.h>
+#include <poincare/symbol_abstract.h>
 
 namespace Poincare {
 
-// Sequences are Product and Sum
-
-class SequenceNode : public ParameteredExpressionNode {
+class SequenceNode : public SymbolAbstractNode {
 public:
-  int numberOfChildren() const override { return 4; }
+  SequenceNode(const char * newName, int length);
+  const char * name() const override { return m_name; }
+
+  int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream & stream) const override {
+    stream << "Sequence";
+  }
+#endif
+
+  Type type() const override { return Type::Sequence; }
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
+
 private:
+  char m_name[0];
+
+  size_t nodeSize() const override { return sizeof(SequenceNode); }
+  // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  virtual Layout createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const = 0;
-  // Simplication
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
-  /* Approximation */
-  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
- template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  virtual float emptySequenceValue() const = 0;
-  virtual Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const = 0;
-  virtual Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const = 0;
+  LayoutShape leftLayoutShape() const override { return strlen(m_name) > 1 ? LayoutShape::MoreLetters : LayoutShape::OneLetter; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
-class Sequence : public Expression {
+class Sequence : public SymbolAbstract {
+friend SequenceNode;
 public:
-  Sequence(const SequenceNode * n) : Expression(n) {}
-  Expression shallowReduce(Context * context);
+  Sequence(const SequenceNode * n) : SymbolAbstract(n) {}
+  static Sequence Builder(const char * name, size_t length, Expression child = Expression());
+
+  // Simplification
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
 };
 
 }

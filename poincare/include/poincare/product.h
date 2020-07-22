@@ -1,11 +1,11 @@
 #ifndef POINCARE_PRODUCT_H
 #define POINCARE_PRODUCT_H
 
-#include <poincare/sequence.h>
+#include <poincare/sum_and_product.h>
 
 namespace Poincare {
 
-class ProductNode final : public SequenceNode {
+class ProductNode final : public SumAndProductNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(ProductNode); }
@@ -18,8 +18,8 @@ public:
   Type type() const override { return Type::Product; }
 
 private:
-  float emptySequenceValue() const override { return 1.0f; }
-  Layout createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
+  float emptySumAndProductValue() const override { return 1.0f; }
+  Layout createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
     return templatedApproximateWithNextTerm<double>(a, b, complexFormat);
@@ -30,10 +30,10 @@ private:
   template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const;
 };
 
-class Product final : public Sequence {
+class Product final : public SumAndProduct {
 friend class ProductNode;
 public:
-  Product(const ProductNode * n) : Sequence(n) {}
+  Product(const ProductNode * n) : SumAndProduct(n) {}
   static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>({child0, child1, child2, child3}); }
   static Expression UntypedBuilder(Expression children);
 

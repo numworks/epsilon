@@ -417,24 +417,10 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(rightDelimiter)) {
       m_status = Status::Error; // Right delimiter missing.
-    } else if (rank.isIdenticalTo(Symbol::Builder('n'))) {
-      constexpr int symbolNameSize = 5;
-      char sym[symbolNameSize] = {name, '(', 'n', ')', 0};
-      leftHandSide = Symbol::Builder(sym, symbolNameSize);
-    } else if (rank.type() == ExpressionNode::Type::BasedInteger) {
-      Integer integer = static_cast<BasedInteger &>(rank).integer();
-      int symbolNameSize = 4 + Integer::NumberOfBase10DigitsWithoutSign(integer);
-      char sym[symbolNameSize];
-      sym[0] = name;
-      sym[1] = '(';
-      integer.serialize(&sym[2], Integer::NumberOfBase10DigitsWithoutSign(integer)+1);
-      sym[symbolNameSize-2] = ')';
-      sym[symbolNameSize-1] = '\0';
-      leftHandSide = Symbol::Builder(sym, symbolNameSize);
-    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder('n'), BasedInteger::Builder("1")))) {
-      constexpr int symbolNameSize = 7;
-      char sym[symbolNameSize] = {name, '(', 'n', '+', '1', ')', 0};
-      leftHandSide = Symbol::Builder(sym, symbolNameSize);
+    } else if (rank.type() == ExpressionNode::Type::BasedInteger
+    || rank.isIdenticalTo(Symbol::Builder('n'))
+    || rank.isIdenticalTo(Addition::Builder(Symbol::Builder('n'), BasedInteger::Builder("1")))) {
+      leftHandSide = Sequence::Builder(&name, 1, rank);
     } else {
       m_status = Status::Error; // Unexpected parameter.
     }

@@ -61,6 +61,8 @@ class SymbolAbstract : public Expression {
   friend class Constant;
   friend class Function;
   friend class FunctionNode;
+  friend class Sequence;
+  friend class SequenceNode;
   friend class Symbol;
   friend class SymbolNode;
   friend class SymbolAbstractNode;

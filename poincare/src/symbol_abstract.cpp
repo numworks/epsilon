@@ -3,6 +3,7 @@
 #include <poincare/constant.h>
 #include <poincare/function.h>
 #include <poincare/rational.h>
+#include <poincare/sequence.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/helpers.h>
@@ -36,6 +37,11 @@ Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, ReductionContext 
 
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   assert(type() == e->type());
+  /* We do not want the sequences to be factorized. Otherwise, u(n) will be
+   * factorized with u(n+1). */
+  if (type() == Type::Sequence) {
+    return -1;
+  }
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
 }
 
@@ -81,6 +87,8 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * conte
 
 template Constant SymbolAbstract::Builder<Constant, ConstantNode>(char const*, int);
 template Function SymbolAbstract::Builder<Function, FunctionNode>(char const*, int);
+template Sequence SymbolAbstract::Builder<Sequence, SequenceNode>(char const*, int);
 template Symbol SymbolAbstract::Builder<Symbol, SymbolNode>(char const*, int);
+
 
 }

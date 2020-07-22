@@ -14,6 +14,7 @@ public:
   enum class SymbolAbstractType : uint8_t {
     None,
     Function,
+    Sequence,
     Symbol
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) = 0;

@@ -1,6 +1,7 @@
 #include "matrix_list_controller.h"
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
+#include <apps/global_preferences.h>
 #include <poincare_nodes.h>
 #include <poincare/matrix.h>
 #include <string.h>
@@ -30,6 +31,7 @@ void MatrixListController::setExpression(Poincare::Expression e) {
     context,
     preferences->complexFormat(),
     preferences->angleUnit(),
+    GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
     ExpressionNode::ReductionTarget::SystemForApproximation,
     ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
 
@@ -78,7 +80,7 @@ Poincare::Layout MatrixListController::getLayoutFromExpression(Expression e, Con
   Expression approximateExpression;
   Expression simplifiedExpression;
   e.simplifyAndApproximate(&simplifiedExpression, &approximateExpression, context,
-    preferences->complexFormat(), preferences->angleUnit(),
+    preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
     ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // simplify might have been interrupted, in which case we use approximate
   if (simplifiedExpression.isUninitialized()) {

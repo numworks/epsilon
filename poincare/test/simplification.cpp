@@ -381,10 +381,12 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("conj(_s)", "undef");
   assert_parsed_expression_simplify_to("cos(_s)", "undef");
   assert_parsed_expression_simplify_to("cosh(_s)", "undef");
+  assert_parsed_expression_simplify_to("cross(_s,[[1][2][3]])", "undef");
   assert_parsed_expression_simplify_to("det(_s)", "undef");
   assert_parsed_expression_simplify_to("diff(_s,x,0)", "undef");
   assert_parsed_expression_simplify_to("diff(0,x,_s)", "undef");
   assert_parsed_expression_simplify_to("dim(_s)", "undef");
+  assert_parsed_expression_simplify_to("dot(_s,[[1][2][3]])", "undef");
   assert_parsed_expression_simplify_to("factor(_s)", "undef");
   assert_parsed_expression_simplify_to("(_s)!", "undef");
   assert_parsed_expression_simplify_to("floor(_s)", "undef");
@@ -411,6 +413,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("log(_s)", "undef");
   assert_parsed_expression_simplify_to("log(_s,2)", "undef");
   assert_parsed_expression_simplify_to("log(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("norm(_s)", "undef");
   assert_parsed_expression_simplify_to("normcdf(_s,2,3)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,_s,3)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,3,_s)", "undef");
@@ -435,10 +438,12 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("randint(_s,1)", "undef");
   assert_parsed_expression_simplify_to("randint(1,_s)", "undef");
   assert_parsed_expression_simplify_to("re(_s)", "undef");
+  assert_parsed_expression_simplify_to("ref(_s)", "undef");
   assert_parsed_expression_simplify_to("rem(_s,1)", "undef");
   assert_parsed_expression_simplify_to("rem(1,_s)", "undef");
   assert_parsed_expression_simplify_to("round(_s,1)", "undef");
   assert_parsed_expression_simplify_to("round(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("rref(_s)", "undef");
   assert_parsed_expression_simplify_to("sign(_s)", "undef");
   assert_parsed_expression_simplify_to("sin(_s)", "undef");
   assert_parsed_expression_simplify_to("sinh(_s)", "undef");
@@ -449,8 +454,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("tanh(_s)", "undef");
   assert_parsed_expression_simplify_to("trace(_s)", "undef");
   assert_parsed_expression_simplify_to("transpose(_s)", "undef");
-  assert_parsed_expression_simplify_to("ref(_s)", "undef");
-  assert_parsed_expression_simplify_to("rref(_s)", "undef");
 
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
@@ -960,6 +963,37 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("ref([[1,0,√(4)][0,1,1/√(2)][0,0,1]])", "[[1,0,2][0,1,√(2)/2][0,0,1]]");
   assert_parsed_expression_simplify_to("rref([[1,0,√(4)][0,1,1/√(2)][0,0,0]])", "[[1,0,2][0,1,√(2)/2][0,0,0]]");
   assert_parsed_expression_simplify_to("ref([[1,0,3,4][5,7,6,8][0,10,11,12]])", "[[1,7/5,6/5,8/5][0,1,11/10,6/5][0,0,1,204/167]]");
+  assert_parsed_expression_simplify_to("ref([[1,0][5,6][0,10]])", "[[1,6/5][0,1][0,0]]");
+  assert_parsed_expression_simplify_to("rref([[1,0][5,6][0,10]])", "[[1,0][0,1][0,0]]");
+  assert_parsed_expression_simplify_to("ref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
+  assert_parsed_expression_simplify_to("rref([[0,0][0,0][0,0]])", "[[0,0][0,0][0,0]]");
+  assert_parsed_expression_simplify_to("rref([[0,1][1ᴇ-100,1]])", "[[1,0][0,1]]");
+  /* Results for ref depend on the implementation. In any case :
+   * - Rows with only zeros must be at the bottom.
+   * - Leading coefficient of other rows must be to the right (strictly) of the
+   * - one above.
+   * - (Optional, but sometimes recommended) Leading coefficients must be 1. */
+  assert_parsed_expression_simplify_to("ref([[3,9][2,5]])", "[[1,3][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[3,2][5,7]])", "[[1,7/5][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[3,11][5,7]])", "[[1,7/5][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[2,5][2,7]])", "[[1,5/2][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[3,12][-4,1]])", "[[1,-1/4][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[0,1][1ᴇ-100,1]])", "[[1,10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000][0,1]]");
+
+  // Cross product
+  assert_parsed_expression_simplify_to("cross([[0][1/√(2)][0]],[[0][0][1]])", "[[√(2)/2][0][0]]");
+  assert_parsed_expression_simplify_to("cross([[1][2][3]],[[4][7][8]])", "[[-5][4][-1]]");
+  assert_parsed_expression_simplify_to("cross([[1][π][𝐢]],[[𝐢π][𝐢π^2][-π]])", "[[0][0][0]]");
+
+  // Dot product
+  assert_parsed_expression_simplify_to("dot([[1/√(2)][0][0]],[[1][0][0]])", "√(2)/2");
+  assert_parsed_expression_simplify_to("dot([[1][1][0]],[[0][0][1]])", "0");
+  assert_parsed_expression_simplify_to("dot([[1][1][1]],[[0][π][𝐢]])", "π+𝐢");
+
+  // Vector norm
+  assert_parsed_expression_simplify_to("norm([[1/√(2)][0][0]])", "√(2)/2");
+  assert_parsed_expression_simplify_to("norm([[1][2][3]])", "√(14)");
+  assert_parsed_expression_simplify_to("norm([[1][𝐢+1][π][-5]])", "√(π^2+28)");
 
   // Expressions with unreduced matrix
   assert_reduce("confidence(cos(2)/25,3)→a");

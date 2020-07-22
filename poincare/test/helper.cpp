@@ -37,10 +37,10 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
   quiz_assert(test);
 }
 
-void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
+void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  Expression m = process(e, ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target, symbolicComputation, unitConversion));
+  Expression m = process(e, ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target, symbolicComputation, unitConversion));
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
@@ -76,23 +76,23 @@ Poincare::Expression parse_expression(const char * expression, Context * context
   return result;
 }
 
-void assert_reduce(const char * expression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
+void assert_reduce(const char * expression, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  assert_expression_reduce(e, angleUnit, complexFormat, target, expression);
+  assert_expression_reduce(e, angleUnit, unitFormat, complexFormat, target, expression);
 }
 
-void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target, const char * printIfFailure) {
+void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target, const char * printIfFailure) {
   Shared::GlobalContext globalContext;
-  e = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, target));
+  e = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target));
   quiz_assert_print_if_failure(!(e.isUninitialized()), printIfFailure);
 }
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
-  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, symbolicComputation, unitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       Expression copy = e.clone();
       if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-        copy.simplifyAndApproximate(&copy, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
+        copy.simplifyAndApproximate(&copy, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
       } else {
         copy = copy.simplify(reductionContext);
       }
@@ -119,29 +119,29 @@ bool IsApproximatelyEqual(double observedValue, double expectedValue, double pre
 }
 
 template<typename T>
-void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);
 }
 
-void assert_expression_simplifies_and_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+void assert_expression_simplifies_and_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : PrintFloat::k_numberOfStoredSignificantDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       Expression reduced;
       Expression approximated;
-      e.simplifyAndApproximate(&reduced, &approximated, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.symbolicComputation());
+      e.simplifyAndApproximate(&reduced, &approximated, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
       return approximated;
     }, numberOfDigits);
 }
 
 template<typename T>
-void assert_expression_simplifies_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+void assert_expression_simplifies_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       e = e.simplify(reductionContext);
       return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);
@@ -166,7 +166,7 @@ void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Lay
   quiz_assert(l.isIdenticalTo(layout));
 }
 
-template void assert_expression_approximates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
-template void assert_expression_approximates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
-template void assert_expression_simplifies_approximates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
-template void assert_expression_simplifies_approximates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+template void assert_expression_approximates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat, int);
+template void assert_expression_approximates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat, int);
+template void assert_expression_simplifies_approximates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat, int);
+template void assert_expression_simplifies_approximates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::UnitFormat, Poincare::Preferences::ComplexFormat, int);

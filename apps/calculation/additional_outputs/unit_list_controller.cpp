@@ -12,11 +12,11 @@ using namespace Shared;
 
 namespace Calculation {
 
-void storeAndSimplify(Expression e, Expression * dest, bool requireSimplification, bool canChangeUnitPrefix) {
+void storeAndSimplify(Expression e, Expression * dest, bool requireSimplification, bool canChangeUnitPrefix, ExpressionNode::ReductionContext reductionContext) {
   assert(!e.isUninitialized());
   *dest = e;
   if (requireSimplification) {
-    Shared::PoincareHelpers::Simplify(dest, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
+    *dest = dest->simplify(reductionContext);
   }
   if (canChangeUnitPrefix) {
     Expression newUnits;
@@ -25,17 +25,10 @@ void storeAndSimplify(Expression e, Expression * dest, bool requireSimplificatio
      * SI units. */
     if (!requireSimplification) {
       // Reduce to be able to removeUnit
-      PoincareHelpers::Reduce(dest, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
+      *dest = dest->reduce(reductionContext);
     }
     *dest = dest->removeUnit(&newUnits);
     double value = Shared::PoincareHelpers::ApproximateToScalar<double>(*dest, App::app()->localContext());
-    ExpressionNode::ReductionContext reductionContext(
-        App::app()->localContext(),
-        Preferences::sharedPreferences()->complexFormat(),
-        Preferences::sharedPreferences()->angleUnit(),
-        ExpressionNode::ReductionTarget::User,
-        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-    Unit::ChooseBestPrefixForValue(&newUnits, &value, reductionContext);
     *dest = Multiplication::Builder(Number::FloatNumber(value), newUnits);
   }
 }
@@ -59,37 +52,51 @@ void UnitListController::setExpression(Poincare::Expression e) {
   // Reduce to be able to recognize units
   PoincareHelpers::Reduce(&copy, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
   copy = copy.removeUnit(&units);
-  Preferences::UnitFormat chosenFormat = Preferences::sharedPreferences()->unitFormat();
+  Preferences::UnitFormat chosenFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
   Preferences::UnitFormat otherFormat = (chosenFormat == Preferences::UnitFormat::Metric) ? Preferences::UnitFormat::Imperial : Preferences::UnitFormat::Metric;
+  ExpressionNode::ReductionContext chosenFormatContext(
+      App::app()->localContext(),
+      Preferences::sharedPreferences()->complexFormat(),
+      Preferences::sharedPreferences()->angleUnit(),
+      chosenFormat,
+      ExpressionNode::ReductionTarget::User,
+      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  ExpressionNode::ReductionContext otherFormatContext(
+      App::app()->localContext(),
+      Preferences::sharedPreferences()->complexFormat(),
+      Preferences::sharedPreferences()->angleUnit(),
+      otherFormat,
+      ExpressionNode::ReductionTarget::User,
+      ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
 
   if (Unit::IsSISpeed(units)) {
     // 1.a. Turn speed into km/h or mi/h
-    storeAndSimplify(Unit::StandardSpeedConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
-    storeAndSimplify(Unit::StandardSpeedConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
+    storeAndSimplify(Unit::StandardSpeedConversion(m_expression.clone(), chosenFormatContext), &expressions[numberOfExpressions++], true, false, chosenFormatContext);
+    storeAndSimplify(Unit::StandardSpeedConversion(m_expression.clone(), otherFormatContext), &expressions[numberOfExpressions++], true, false, otherFormatContext);
   } else if (Unit::IsSIVolume(units)) {
     // 1.b. Turn volume into L or _gal + _cp + _floz
-    storeAndSimplify(Unit::StandardVolumeConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric);
-    storeAndSimplify(Unit::StandardVolumeConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric);
+    storeAndSimplify(Unit::StandardVolumeConversion(m_expression.clone(), chosenFormatContext), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric, chosenFormatContext);
+    storeAndSimplify(Unit::StandardVolumeConversion(m_expression.clone(), otherFormatContext), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric, otherFormatContext);
   } else if (Unit::IsSIEnergy(units)) {
     // 1.c. Turn energy into Wh
-    storeAndSimplify(UnitConvert::Builder(m_expression.clone(), Multiplication::Builder(Unit::Watt(), Unit::Hour())), &expressions[numberOfExpressions++], true, true);
-    storeAndSimplify(UnitConvert::Builder(m_expression.clone(), Unit::ElectronVolt()), &expressions[numberOfExpressions++], true, true);
+    storeAndSimplify(UnitConvert::Builder(m_expression.clone(), Multiplication::Builder(Unit::Watt(), Unit::Hour())), &expressions[numberOfExpressions++], true, true, chosenFormatContext);
+    storeAndSimplify(UnitConvert::Builder(m_expression.clone(), Unit::ElectronVolt()), &expressions[numberOfExpressions++], true, true, chosenFormatContext);
   } else if (Unit::IsSITime(units)) {
     // 1.d. Turn time into ? year + ? month + ? day + ? h + ? min + ? s
     double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
     expressions[numberOfExpressions++] = Unit::BuildTimeSplit(value, App::app()->localContext());
   } else if (Unit::IsSIDistance(units)) {
     // 1.e. Turn distance into _?m or _mi + _yd + _ft + _in
-    storeAndSimplify(Unit::StandardDistanceConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric);
-    storeAndSimplify(Unit::StandardDistanceConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric);
+    storeAndSimplify(Unit::StandardDistanceConversion(m_expression.clone(), chosenFormatContext), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric, chosenFormatContext);
+    storeAndSimplify(Unit::StandardDistanceConversion(m_expression.clone(), otherFormatContext), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric, otherFormatContext);
   } else if (Unit::IsSISurface(units)) {
     // 1.f. Turn surface into hectares or acres
-    storeAndSimplify(Unit::StandardSurfaceConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
-    storeAndSimplify(Unit::StandardSurfaceConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], true, false);
+    storeAndSimplify(Unit::StandardSurfaceConversion(m_expression.clone(), chosenFormatContext), &expressions[numberOfExpressions++], true, false, chosenFormatContext);
+    storeAndSimplify(Unit::StandardSurfaceConversion(m_expression.clone(), otherFormatContext), &expressions[numberOfExpressions++], true, false, otherFormatContext);
   } else if (Unit::IsSIMass(units)) {
     // 1.g. Turn mass into _?g and _lb + _oz
-    storeAndSimplify(Unit::StandardMassConversion(m_expression.clone(), chosenFormat, App::app()->localContext()), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric);
-    storeAndSimplify(Unit::StandardMassConversion(m_expression.clone(), otherFormat, App::app()->localContext()), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric);
+    storeAndSimplify(Unit::StandardMassConversion(m_expression.clone(), chosenFormatContext), &expressions[numberOfExpressions++], chosenFormat == Preferences::UnitFormat::Metric, chosenFormat == Preferences::UnitFormat::Metric, chosenFormatContext);
+    storeAndSimplify(Unit::StandardMassConversion(m_expression.clone(), otherFormatContext), &expressions[numberOfExpressions++], otherFormat == Preferences::UnitFormat::Metric, otherFormat == Preferences::UnitFormat::Metric, otherFormatContext);
   }
 
   // 2. SI units only

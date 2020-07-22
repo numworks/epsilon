@@ -441,6 +441,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
       reductionContext.context(),
       reductionContext.complexFormat(),
       reductionContext.angleUnit(),
+      reductionContext.unitFormat(),
       reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 

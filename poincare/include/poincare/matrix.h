@@ -74,7 +74,7 @@ public:
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */
-  int rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace = false);
+  int rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, bool inPlace = false);
   Expression createTrace();
   // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);

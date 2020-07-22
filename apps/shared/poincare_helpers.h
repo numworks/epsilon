@@ -1,6 +1,7 @@
 #ifndef SHARED_POINCARE_HELPERS_H
 #define SHARED_POINCARE_HELPERS_H
 
+#include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/expression.h>
@@ -53,33 +54,33 @@ template <class T>
 inline T ApproximateToScalar(const char * text, Poincare::Context * context, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), text);
-  return Poincare::Expression::ApproximateToScalar<T>(text, context, complexFormat, preferences->angleUnit(), symbolicComputation);
+  return Poincare::Expression::ApproximateToScalar<T>(text, context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
 inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Context * context, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), text);
-  return Poincare::Expression::ParseAndSimplify(text, context, complexFormat, preferences->angleUnit(), symbolicComputation);
+  return Poincare::Expression::ParseAndSimplify(text, context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
 inline void Simplify(Poincare::Expression * e, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion unitConversion = Poincare::ExpressionNode::UnitConversion::Default) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), *e, context);
 
-  *e = e->simplify(Poincare::ExpressionNode::ReductionContext(context, complexFormat, preferences->angleUnit(), target, symbolicComputation, unitConversion));
+  *e = e->simplify(Poincare::ExpressionNode::ReductionContext(context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
 }
 
 inline void Reduce(Poincare::Expression * e, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion unitConversion = Poincare::ExpressionNode::UnitConversion::Default) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), *e, context);
 
-  *e = e->reduce(Poincare::ExpressionNode::ReductionContext(context, complexFormat, preferences->angleUnit(), target, symbolicComputation, unitConversion));
+  *e = e->reduce(Poincare::ExpressionNode::ReductionContext(context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
 }
 
 inline void ParseAndSimplifyAndApproximate(const char * text, Poincare::Expression * simplifiedExpression, Poincare::Expression * approximateExpression, Poincare::Context * context, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), text);
-  Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, complexFormat, preferences->angleUnit(), symbolicComputation);
+  Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
 inline typename Poincare::Coordinate2D<double> NextMinimum(const Poincare::Expression e, const char * symbol, double start, double step, double max, Poincare::Context * context) {

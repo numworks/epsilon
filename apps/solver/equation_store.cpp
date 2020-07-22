@@ -180,7 +180,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context, replaceFunctionsButNotSymbols).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -218,6 +218,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
           context,
           updatedComplexFormat(context),
           preferences->angleUnit(),
+          GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
           replaceFunctionsButNotSymbols ?
             ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions :
             ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
@@ -259,7 +260,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
        * solutions. */
       m_exactSolutionIdentity[solutionIndex] = forbidExactSolutions || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
-        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit());
+        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
       }
       solutionIndex++;
     }
@@ -269,6 +270,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
 
 EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression constants[k_maxNumberOfEquations], Context * context) {
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
   // n unknown variables
   int n = 0;
   while (n < Expression::k_maxNumberOfVariables && m_variables[n][0] != 0) {
@@ -286,7 +288,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   Ab.setDimensions(m, n+1);
 
   // Compute the rank of (A | b)
-  int rankAb = Ab.rank(context, updatedComplexFormat(context), angleUnit, true);
+  int rankAb = Ab.rank(context, updatedComplexFormat(context), angleUnit, unitFormat, true);
 
   // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;
@@ -311,7 +313,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
         exactSolutions[i] = Ab.matrixChild(i,n);
-        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), angleUnit, unitFormat);
       }
     }
   }
@@ -323,7 +325,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), coefficients[0].clone(), coefficients[2].clone()));
-  delta = delta.simplify(ExpressionNode::ReductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), ExpressionNode::ReductionTarget::SystemForApproximation));
+  delta = delta.simplify(ExpressionNode::ReductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined::Builder();
   }
@@ -340,7 +342,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions-1] = delta;
   for (int i = 0; i < m_numberOfSolutions; i++) {
-    exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+    exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
   }
   return Error::NoError;
 #if 0

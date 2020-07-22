@@ -137,6 +137,7 @@ poincare_src += $(addprefix poincare/src/,\
   solver.cpp \
   square_root.cpp \
   store.cpp \
+  sum_and_product.cpp \
   subtraction.cpp \
   sum.cpp \
   symbol.cpp \

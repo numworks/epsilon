@@ -95,6 +95,7 @@ public:
     Randint,
     RealPart,
     Round,
+    Sequence,
     SignFunction,
     SquareRoot,
     Subtraction,

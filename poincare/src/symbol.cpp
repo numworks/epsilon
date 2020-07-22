@@ -66,39 +66,6 @@ int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char 
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(!isUnknown());
-  // TODO return Parse(m_name).createLayout() ?
-  // Special case for the symbol names: u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
-  const char * sequenceIndex[] = {"n", "n+1"};
-  for (char sequenceName = 'u'; sequenceName <= 'w'; sequenceName++) {
-    if (m_name[0] == sequenceName) {
-      for (size_t i = 0; i < sizeof(sequenceIndex)/sizeof(char *); i++) {
-        size_t sequenceIndexLength = strlen(sequenceIndex[i]);
-        if (m_name[1] == '(' && strncmp(sequenceIndex[i], m_name+2, sequenceIndexLength) == 0 && m_name[2+sequenceIndexLength] == ')' && m_name[3+sequenceIndexLength] == 0) {
-      return HorizontalLayout::Builder(
-          CodePointLayout::Builder(sequenceName),
-          VerticalOffsetLayout::Builder(
-            LayoutHelper::String(sequenceIndex[i], sequenceIndexLength),
-            VerticalOffsetLayoutNode::Position::Subscript));
-        }
-      }
-      /* Checking for u(k) forms with k positive integer. Since the sequence
-       * parser only handles sequenceIndexes like above and BasedIntegers, there
-       * is no need to be carefull with how we process m_name. */
-      if (m_name[1] == '(') {
-        int numberOfDigits = 0;
-        while (m_name[numberOfDigits + 2] != ')') {
-          if (m_name[numberOfDigits + 2] <= '9' && m_name[numberOfDigits + 2] >= '0') {
-            numberOfDigits++;
-          }
-        }
-        return HorizontalLayout::Builder(
-            CodePointLayout::Builder(sequenceName),
-            VerticalOffsetLayout::Builder(
-              LayoutHelper::String(m_name+2, numberOfDigits),
-              VerticalOffsetLayoutNode::Position::Subscript));
-      }
-    }
-  }
   return LayoutHelper::String(m_name, strlen(m_name));
 }
 

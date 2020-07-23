@@ -256,6 +256,15 @@ const ToolboxMessageTree TimeModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSleep, I18n::Message::PythonSleep)
 };
 
+const ToolboxMessageTree OsModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportOs, I18n::Message::PythonImportOs, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromOs, I18n::Message::PythonImportOs, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandUname, I18n::Message::PythonOsUname, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandRemove, I18n::Message::PythonOsRemove, false, I18n::Message::PythonOsCommandRemoveWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandRename, I18n::Message::PythonOsRename, false, I18n::Message::PythonOsCommandRenameWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandListdir, I18n::Message::PythonOsListdir, false)
+};
+
 const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::MathModule, MathModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::CmathModule, CMathModuleChildren),
@@ -264,6 +273,7 @@ const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::RandomModule, RandomModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::IonModule, IonModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::OsModule, OsModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::TimeModule, TimeModuleChildren)
 };
 

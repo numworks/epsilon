@@ -78,18 +78,22 @@ int main(int argc, char * argv[]) {
     arguments.push_back(language);
   }
 
+#ifndef __EMSCRIPTEN__
   if (!argument_volatile) {
     loadPython(&arguments);
     SDL_SetEventFilter(event_filter, NULL);
   }
+#endif
 
   Ion::Simulator::Main::init();
 
   ion_main(arguments.size(), &arguments[0]);
 
+#ifndef __EMSCRIPTEN__
   if (!argument_volatile) {
     savePython();
   }
+#endif
   
   Ion::Simulator::Main::quit();
 

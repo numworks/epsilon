@@ -1,9 +1,10 @@
-#include <poincare/vector_norm.h>
 #include <poincare/addition.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
+#include <poincare/vector_norm.h>
+#include <poincare/vector_norm_layout.h>
 
 namespace Poincare {
 
@@ -16,7 +17,7 @@ Expression VectorNormNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 Layout VectorNormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(VectorNorm(this), floatDisplayMode, numberOfSignificantDigits, VectorNorm::s_functionHelper.name());
+  return VectorNormLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int VectorNormNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -2,7 +2,6 @@ HOSTCC = gcc
 HOSTCXX = g++
 PYTHON = python3
 
-SFLAGS += -DLEDS_CHOICE=$(LEDS_CHOICE)
 ifdef USERNAME
   SFLAGS += -DUSERNAME="$(USERNAME)"
 endif

@@ -30,9 +30,6 @@ private:
   MessageTableCell m_cell[k_maxNumberOfCells];
   PreferencesController m_ledController;
   PreferencesController m_examModeModeController;
-#if LEDS_CHOICE
-  MessageTableCellWithChevronAndMessage m_ledColorCell;
-#endif
   MessageTableCellWithChevronAndMessage m_examModeCell;
 };
 

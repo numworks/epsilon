@@ -3,6 +3,7 @@
 #include <cmath>
 #include "../../shared/poincare_helpers.h"
 #include "../app.h"
+#include <apps/i18n.h>
 
 using namespace Poincare;
 
@@ -51,8 +52,8 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     return;
   }
   if (typeAtLocation(i,j) == k_functionTitleCellType) {
-    SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
-    Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
+    Shared::SequenceTitleCell * myCell = (Shared::SequenceTitleCell *)cell;
+    Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
     myCell->setLayout(sequence->nameLayout());
     myCell->setColor(sequence->color());
   }
@@ -95,7 +96,7 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
 void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   char * buffer = memoizedBufferAtIndex(index);
   double abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
-  Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
+  Shared::ExpiringPointer<Shared::Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
   Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
   Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::LargeNumberOfSignificantDigits);
 }

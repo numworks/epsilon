@@ -3,14 +3,13 @@
 #include <string.h>
 #include <assert.h>
 #include <cmath>
-#include "../sequence_store.h"
-#include "../sequence_context.h"
+#include "../../shared/sequence_store.h"
+#include "../../shared/sequence_context.h"
 #include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;
-using namespace Shared;
 
-namespace Sequence {
+namespace Shared {
 
 Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * definition, const char * condition1, const char * condition2, Context * context) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();

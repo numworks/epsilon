@@ -12,10 +12,9 @@
 #include <apps/i18n.h>
 #include <cmath>
 
-using namespace Shared;
 using namespace Poincare;
 
-namespace Sequence {
+namespace Shared {
 
 I18n::Message Sequence::parameterMessageName() const {
   return I18n::Message::N;

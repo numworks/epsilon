@@ -5,9 +5,8 @@
 #include <cmath>
 
 using namespace Poincare;
-using namespace Shared;
 
-namespace Sequence {
+namespace Shared {
 
 template<typename T>
 TemplatedSequenceContext<T>::TemplatedSequenceContext() :

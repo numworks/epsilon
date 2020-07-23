@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <escher.h>
 
-namespace Sequence {
+namespace Shared {
 
 class SequenceStore : public Shared::FunctionStore {
 public:

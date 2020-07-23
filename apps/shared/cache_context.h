@@ -6,7 +6,7 @@
 #include <poincare/symbol.h>
 #include "sequence_context.h"
 
-namespace Sequence {
+namespace Shared {
 
 template<typename T>
 class CacheContext : public Poincare::ContextWithParent {

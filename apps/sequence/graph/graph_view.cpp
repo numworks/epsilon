@@ -19,7 +19,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   const int step = std::ceil(pixelWidth());
   for (int i = 0; i < m_sequenceStore->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = m_sequenceStore->activeRecordAtIndex(i);
-    Sequence * s = m_sequenceStore->modelForRecord(record);;
+    Shared::Sequence * s = m_sequenceStore->modelForRecord(record);;
     float rectXMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
     rectXMin = rectXMin < 0 ? 0 : rectXMin;
     float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);

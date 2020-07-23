@@ -2,10 +2,7 @@ apps += Sequence::App
 app_headers += apps/sequence/app.h
 
 app_sequence_test_src = $(addprefix apps/sequence/,\
-  cache_context.cpp \
-  sequence.cpp \
-  sequence_context.cpp \
-  sequence_store.cpp \
+ \
 )
 
 app_sequence_src = $(addprefix apps/sequence/,\
@@ -22,7 +19,6 @@ app_sequence_src = $(addprefix apps/sequence/,\
   list/type_parameter_controller.cpp \
   values/interval_parameter_controller.cpp \
   values/values_controller.cpp \
-  sequence_title_cell.cpp \
 )
 
 app_sequence_src += $(app_sequence_test_src)

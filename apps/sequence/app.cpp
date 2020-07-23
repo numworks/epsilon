@@ -64,7 +64,7 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-SequenceContext * App::localContext() {
+Shared::SequenceContext * App::localContext() {
   return &m_sequenceContext;
 }
 

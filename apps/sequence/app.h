@@ -2,8 +2,8 @@
 #define SEQUENCE_APP_H
 
 #include <escher.h>
-#include "sequence_context.h"
-#include "sequence_store.h"
+#include "../shared/sequence_context.h"
+#include "../shared/sequence_store.h"
 #include "graph/graph_controller.h"
 #include "graph/curve_view_range.h"
 #include "list/list_controller.h"
@@ -27,12 +27,12 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    SequenceStore * functionStore() override { return &m_sequenceStore; }
+    Shared::SequenceStore * functionStore() override { return &m_sequenceStore; }
     CurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * interval() { return &m_interval; }
   private:
     void tidy() override;
-    SequenceStore m_sequenceStore;
+    Shared::SequenceStore m_sequenceStore;
     CurveViewRange m_graphRange;
     Shared::Interval m_interval;
   };
@@ -46,8 +46,8 @@ public:
   // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
-  SequenceContext * localContext() override;
-  SequenceStore * functionStore() override { return snapshot()->functionStore(); }
+  Shared::SequenceContext * localContext() override;
+  Shared::SequenceStore * functionStore() override { return snapshot()->functionStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override {
     return &m_valuesController;
@@ -57,7 +57,7 @@ public:
   }
 private:
   App(Snapshot * snapshot);
-  SequenceContext m_sequenceContext;
+  Shared::SequenceContext m_sequenceContext;
   ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;

@@ -114,22 +114,41 @@ int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences:
 void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize childSize = childLayout()->layoutSize();
   KDCoordinate verticalBarHeight = childSize.height() + 2*k_verticalMargin;
-  ctx->fillRect(KDRect(p.x()+externWidthMargin(), p.y()+verticalExternMargin(), k_lineThickness, verticalBarHeight), expressionColor);
-  ctx->fillRect(KDRect(p.x()+externWidthMargin()+childSize.width()+2*widthMargin()+k_lineThickness, p.y()+verticalExternMargin(), k_lineThickness, verticalBarHeight), expressionColor);
+  KDCoordinate horizontalPosition = p.x() + externWidthMargin();
+  KDCoordinate verticalPosition = p.y() + verticalExternMargin();
+  if (renderDoubleBar()) {
+    ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
+    horizontalPosition += k_lineThickness + widthMargin();
+  }
+  ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
   if (renderTopBar()) {
-    ctx->fillRect(KDRect(p.x()+externWidthMargin(), p.y()+verticalExternMargin(), k_bracketWidth, k_lineThickness), expressionColor);
-    ctx->fillRect(KDRect(p.x()+externWidthMargin()+2*k_lineThickness+childSize.width()+2*widthMargin()-k_bracketWidth, p.y() + verticalExternMargin(), k_bracketWidth, k_lineThickness), expressionColor);
+    ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_bracketWidth, k_lineThickness), expressionColor);
   }
   if (renderBottomBar()) {
-    ctx->fillRect(KDRect(p.x()+externWidthMargin(), p.y()+verticalExternMargin()+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
-    ctx->fillRect(KDRect(p.x()+externWidthMargin()+2*k_lineThickness+childSize.width()+2*widthMargin()-k_bracketWidth, p.y()+verticalExternMargin()+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+    ctx->fillRect(KDRect(horizontalPosition, verticalPosition + verticalBarHeight - k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+  }
+  horizontalPosition += k_lineThickness + widthMargin() + childSize.width() + widthMargin();
+  ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
+  horizontalPosition += k_lineThickness;
+  if (renderTopBar()) {
+    ctx->fillRect(KDRect(horizontalPosition - k_bracketWidth, verticalPosition, k_bracketWidth, k_lineThickness), expressionColor);
+  }
+  if (renderBottomBar()) {
+    ctx->fillRect(KDRect(horizontalPosition - k_bracketWidth, verticalPosition + verticalBarHeight - k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+  }
+  if (renderDoubleBar()) {
+    horizontalPosition += widthMargin();
+    ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
   }
 }
 
 KDSize BracketPairLayoutNode::computeSize() {
   KDSize childSize = childLayout()->layoutSize();
-  KDSize result = KDSize(childSize.width() + 2*externWidthMargin() + 2*widthMargin() + 2*k_lineThickness, childSize.height() + 2 * k_verticalMargin + 2*verticalExternMargin());
-  return result;
+  KDCoordinate horizontalCoordinates = childSize.width() + 2*externWidthMargin() + 2*widthMargin() + 2*k_lineThickness;
+  if (renderDoubleBar()) {
+    horizontalCoordinates += 2*k_lineThickness + 2*widthMargin();
+  }
+  return KDSize(horizontalCoordinates, childSize.height() + 2 * k_verticalMargin + 2*verticalExternMargin());
 }
 
 KDCoordinate BracketPairLayoutNode::computeBaseline() {
@@ -138,7 +157,11 @@ KDCoordinate BracketPairLayoutNode::computeBaseline() {
 
 KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode * child) {
   assert(child == childLayout());
-  return KDPoint(widthMargin() + externWidthMargin() + k_lineThickness, k_verticalMargin + verticalExternMargin());
+  KDCoordinate horizontalCoordinates = widthMargin() + externWidthMargin() + k_lineThickness;
+  if (renderDoubleBar()) {
+    horizontalCoordinates += k_lineThickness + widthMargin();
+  }
+  return KDPoint(horizontalCoordinates, k_verticalMargin + verticalExternMargin());
 }
 
 }

@@ -19,9 +19,6 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
   m_cell{},
   m_ledController(this),
   m_examModeModeController(this),
-#if LEDS_CHOICE
-  m_ledColorCell(KDFont::LargeFont, KDFont::SmallFont),
-#endif
   m_examModeCell(KDFont::LargeFont, KDFont::SmallFont)
 {
   for (int i = 0; i < k_maxNumberOfCells; i++) {
@@ -38,14 +35,6 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
       stack->push(&m_examModeModeController);
       return true;
     } 
-#if LEDS_CHOICE
-    else if (m_messageTreeModel->childAtIndex(selectedRow())->label() == I18n::Message::LEDColor) {
-      (&m_ledController)->setMessageTreeModel(m_messageTreeModel->childAtIndex(selectedRow()));
-      StackViewController * stack = stackController();
-      stack->push(&m_ledController);
-      return true;
-    }
-#endif
     else {
       AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
       return true;
@@ -79,11 +68,6 @@ int ExamModeController::numberOfRows() const {
 HighlightCell * ExamModeController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0  && index < 3);
-#if LEDS_CHOICE
-  if (m_messageTreeModel->childAtIndex(index)->label() == I18n::Message::LEDColor) {
-    return &m_ledColorCell;
-  }
-#endif
   if (m_messageTreeModel->childAtIndex(index)->label() == I18n::Message::ExamModeMode) {
     return &m_examModeCell;
   }
@@ -107,13 +91,6 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(I18n::Message::ExamModeActive);
   }
-#if LEDS_CHOICE
-  if (thisLabel == I18n::Message::LEDColor) {
-    MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
-    I18n::Message message = (I18n::Message) m_messageTreeModel->childAtIndex(index)->childAtIndex((int)preferences->colorOfLED())->label();
-    myTextCell->setSubtitle(message);
-  }
-#endif
   if (thisLabel == I18n::Message::ExamModeMode) {
     MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
     I18n::Message message = (I18n::Message) m_messageTreeModel->childAtIndex(index)->childAtIndex((uint8_t)GlobalPreferences::sharedGlobalPreferences()->tempExamMode() - 1)->label();

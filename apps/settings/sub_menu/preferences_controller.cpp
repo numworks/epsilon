@@ -107,43 +107,6 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
         );
     }
 
-    // LED placeholders
-    case I18n::Message::ColorRed:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::ColorWhite:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::ColorBlue:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::ColorGreen:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::ColorYellow:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::ColorPurple:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-    case I18n::Message::ColorOrange:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-
     // Exam mode modes
     case I18n::Message::ExamModeModeStandard:
     {
@@ -242,8 +205,6 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
-  } else if (message == I18n::Message::LEDColor) {
-    preferences->setColorOfLED((Preferences::LEDColor)valueIndex);
   } else if (message == I18n::Message::ExamModeMode) {
     GlobalPreferences::sharedGlobalPreferences()->setTempExamMode((GlobalPreferences::ExamMode)((uint8_t)valueIndex + 1));
   } else if (message == I18n::Message::SymbolMultiplication) {
@@ -269,11 +230,6 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
   }
-#if LEDS_CHOICE
-  if (message == I18n::Message::LEDColor) {
-    return (int)preferences->colorOfLED();
-  }
-#endif
   if (message == I18n::Message::SymbolMultiplication) {
     return (int)preferences->symbolOfMultiplication();
   }

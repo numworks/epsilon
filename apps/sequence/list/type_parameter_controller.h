@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include <poincare/layout.h>
-#include "../sequence_store.h"
+#include "../../shared/sequence_store.h"
 
 namespace Sequence {
 
@@ -28,11 +28,11 @@ public:
   void setRecord(Ion::Storage::Record record);
 private:
   StackViewController * stackController() const;
-  Sequence * sequence() {
+  Shared::Sequence * sequence() {
     assert(!m_record.isNull());
     return sequenceStore()->modelForRecord(m_record);
   }
-  SequenceStore * sequenceStore();
+  Shared::SequenceStore * sequenceStore();
   constexpr static int k_totalNumberOfCell = 3;
   ExpressionTableCellWithPointer m_explicitCell;
   ExpressionTableCellWithPointer m_singleRecurrenceCell;

@@ -7,7 +7,7 @@
 
 using namespace Poincare;
 
-namespace Sequence {
+namespace Shared {
 
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :

@@ -16,6 +16,9 @@ app_shared_test_src = $(addprefix apps/shared/,\
   labeled_curve_view.cpp \
   memoized_curve_view_range.cpp \
   range_1D.cpp \
+  sequence.cpp\
+  sequence_context.cpp\
+  sequence_store.cpp\
   toolbox_helpers.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
@@ -26,6 +29,7 @@ app_shared_src = $(addprefix apps/shared/,\
   buffer_function_title_cell.cpp \
   buffer_text_view_with_text_field.cpp \
   button_with_separator.cpp \
+  cache_context.cpp \
   cursor_view.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
@@ -60,6 +64,10 @@ app_shared_src = $(addprefix apps/shared/,\
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \
+  sequence.cpp\
+  sequence_context.cpp\
+  sequence_store.cpp\
+  sequence_title_cell.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \
   separable.cpp \
@@ -93,9 +101,11 @@ app_shared_test_src += $(addprefix apps/graph/,\
   continuous_function_store.cpp\
 )
 
-app_shared_test_src += $(addprefix apps/sequence/,\
-  sequence.cpp\
-  sequence_store.cpp\
+app_shared_test_src += $(addprefix apps/shared/,\
+  cache_context.cpp \
+  sequence.cpp \
+  sequence_context.cpp \
+  sequence_store.cpp \
 )
 
 tests_src += $(addprefix apps/shared/test/,\

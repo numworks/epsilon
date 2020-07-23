@@ -5,6 +5,7 @@
 #include <float.h>
 #include <cmath>
 #include <algorithm>
+#include <apps/i18n.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -38,7 +39,7 @@ float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
-    Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     nmin = std::min(nmin, s->initialRank());
   }
   assert(nmin < INT_MAX);
@@ -50,7 +51,7 @@ void GraphController::interestingRanges(InteractiveCurveViewRange * range) const
   int nmax = 0;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
-    Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     int firstInterestingIndex = s->initialRank();
     nmin = std::min(nmin, firstInterestingIndex);
     nmax = std::max(nmax, firstInterestingIndex + static_cast<int>(k_defaultXHalfRange));
@@ -95,7 +96,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   if (x < 0.0) {
     return false;
   }
-  Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   double y = s->evaluateXYAtParameter(x, textFieldDelegateApp()->localContext()).x2();
   m_cursor->moveTo(x, x, y);
   return true;

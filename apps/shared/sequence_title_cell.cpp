@@ -1,10 +1,9 @@
 #include "sequence_title_cell.h"
 #include <assert.h>
 
-using namespace Shared;
 using namespace Poincare;
 
-namespace Sequence {
+namespace Shared {
 
 SequenceTitleCell::SequenceTitleCell() :
   Shared::FunctionTitleCell(Orientation::VerticalIndicator),

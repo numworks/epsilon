@@ -41,6 +41,8 @@ private:
   static Ion::Storage::Record::ErrorStatus SetExpressionForFunction(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
   // Record getter
   static Ion::Storage::Record SymbolAbstractRecordWithBaseName(const char * name);
+
+
 };
 
 }

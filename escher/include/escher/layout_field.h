@@ -58,7 +58,7 @@ private:
   constexpr static int k_maxNumberOfLayouts = 220;
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
   void reload(KDSize previousSize);
-  virtual bool privateHandleEvent(Ion::Events::Event event, bool * shouldScrollAndRedraw);
+  virtual bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
   bool privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
   void scrollRightOfLayout(Poincare::Layout layoutR);

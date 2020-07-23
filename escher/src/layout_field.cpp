@@ -262,7 +262,11 @@ void LayoutField::ContentView::layoutSubviews(bool force) {
 
 void LayoutField::ContentView::layoutCursorSubview(bool force) {
   if (!m_isEditing) {
-    m_cursorView.setFrame(KDRectZero, force);
+    /* We keep track of the cursor's position to prevent the input field from
+     * scrolling to the beginning when switching to the history. This way,
+     * when calling scrollToCursor after layoutCursorSubview, we don't lose
+     * sight of the cursor. */
+    m_cursorView.setFrame(KDRect(cursorRect().x(), cursorRect().y(), 0, 0), force);
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
@@ -430,7 +434,6 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (!eventShouldUpdateInsertionCursor(event)) {
     m_contentView.invalidateInsertionCursor();
   }
-  bool shouldScrollAndRedraw = true;
   if (privateHandleMoveEvent(event, &moveEventChangedLayout)) {
     if (!isEditing()) {
       setEditing(true);
@@ -454,12 +457,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       }
       shouldRecomputeLayout = m_contentView.cursor()->layout().removeGraySquaresFromAllMatrixChildren() || removedSquares || shouldRecomputeLayout;
     }
-  } else if (privateHandleEvent(event, &shouldScrollAndRedraw)) {
-    if (!shouldScrollAndRedraw) {
-      /* We escape early to avoid scrolling to the beginning of the expression,
-       * and to mimic the behaviour of the TextField. */
-      return true;
-    }
+  } else if (privateHandleEvent(event)) {
     shouldRecomputeLayout = true;
     didHandleEvent = true;
   }
@@ -507,10 +505,8 @@ static inline bool IsMoveEvent(Ion::Events::Event event) {
     static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::Right);
 }
 
-bool LayoutField::privateHandleEvent(Ion::Events::Event event, bool * shouldScrollAndRedraw) {
-  assert(*shouldScrollAndRedraw);
+bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
-    *shouldScrollAndRedraw = false;
     return true;
   }
   if (handleBoxEvent(event)) {

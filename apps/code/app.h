@@ -34,6 +34,7 @@ public:
   private:
 #if EPSILON_GETOPT
     bool m_lockOnConsole;
+    bool m_hasBeenWiped;
 #endif
     ScriptStore m_scriptStore;
   };

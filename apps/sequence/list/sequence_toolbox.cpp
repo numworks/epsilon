@@ -1,5 +1,5 @@
 #include "sequence_toolbox.h"
-#include "../sequence_store.h"
+#include "../../shared/sequence_store.h"
 #include <poincare/layout_helper.h>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
@@ -75,8 +75,8 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
    * There is a special case for double recurrent sequences because we do not
    * want to parse symbols u(n+2), v(n+2) or w(n+2). */
   m_numberOfAddedCells = 0;
-  int sequenceIndex = SequenceStore::sequenceIndexForName(sequenceName[0]);
-  for (int i = 0; i < MaxNumberOfSequences; i++) {
+  int sequenceIndex = Shared::SequenceStore::sequenceIndexForName(sequenceName[0]);
+  for (int i = 0; i < Shared::MaxNumberOfSequences; i++) {
     for (int j = 0; j < recurrenceDepth+1; j++) {
       // When defining u(n+1) for ex, don't add [u|v|w](n+2) or u(n+1)
       if (j == 2 || (j == recurrenceDepth && sequenceIndex == i)) {
@@ -84,7 +84,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
       }
       const char * indice = j == 0 ? "n" : "n+1";
       m_addedCellLayout[m_numberOfAddedCells++] = HorizontalLayout::Builder(
-          CodePointLayout::Builder(SequenceStore::k_sequenceNames[i][0], KDFont::LargeFont),
+          CodePointLayout::Builder(Shared::SequenceStore::k_sequenceNames[i][0], KDFont::LargeFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
         );
     }

@@ -5,7 +5,7 @@ extern "C" {
 #include <stddef.h>
 }
 
-namespace Sequence {
+namespace Shared {
 
 constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
 

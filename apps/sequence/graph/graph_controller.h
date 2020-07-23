@@ -8,13 +8,13 @@
 #include "term_sum_controller.h"
 #include "../../shared/function_graph_controller.h"
 #include "../../shared/cursor_view.h"
-#include "../sequence_store.h"
+#include "../../shared/sequence_store.h"
 
 namespace Sequence {
 
 class GraphController final : public Shared::FunctionGraphController {
 public:
-  GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
+  GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::SequenceStore * sequenceStore, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
   TermSumController * termSumController() { return &m_termSumController; }
@@ -28,7 +28,7 @@ private:
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   double defaultCursorT(Ion::Storage::Record record) override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
-  SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
+  Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   Shared::CursorView m_cursorView;

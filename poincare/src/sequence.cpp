@@ -8,7 +8,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/parenthesis.h>
 #include <poincare/complex.h>
-#include <apps/sequence/sequence.h>
+#include <apps/shared/sequence.h>
 
 namespace Poincare {
 

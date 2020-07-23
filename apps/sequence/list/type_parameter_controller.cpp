@@ -5,6 +5,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <apps/i18n.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -55,14 +56,14 @@ void TypeParameterController::didBecomeFirstResponder() {
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (!m_record.isNull()) {
-      Sequence::Type sequenceType = (Sequence::Type)selectedRow();
+      Shared::Sequence::Type sequenceType = (Shared::Sequence::Type)selectedRow();
       if (sequence()->type() != sequenceType) {
         m_listController->selectPreviousNewSequenceCell();
         sequence()->setType(sequenceType);
         // Invalidate sequence context cache when changing sequence type
         App::app()->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
-        if (sequenceType == Sequence::Type::Explicit) {
+        if (sequenceType == Shared::Sequence::Type::Explicit) {
           sequence()->setInitialRank(0);
         }
       }
@@ -79,8 +80,8 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
-    Sequence * newSequence = sequenceStore()->modelForRecord(record);
-    newSequence->setType((Sequence::Type)selectedRow());
+    Shared::Sequence * newSequence = sequenceStore()->modelForRecord(record);
+    newSequence->setType((Shared::Sequence::Type)selectedRow());
     Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(0, Ion::Events::OK);
     return true;

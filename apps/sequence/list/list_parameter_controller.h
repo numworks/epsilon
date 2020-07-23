@@ -3,8 +3,8 @@
 
 #include "../../shared/list_parameter_controller.h"
 #include "../../shared/parameter_text_field_delegate.h"
-#include "../sequence.h"
-#include "../sequence_store.h"
+#include "../../shared/sequence.h"
+#include "../../shared/sequence_store.h"
 #include "type_parameter_controller.h"
 
 namespace Sequence {
@@ -31,7 +31,7 @@ private:
   constexpr static int k_totalNumberOfCell = 4;
 #endif
   int totalNumberOfCells() const override;
-  Sequence * sequence() { return static_cast<Sequence *>(function().pointer()); }
+  Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
   bool hasInitialRankRow() const;
   MessageTableCellWithChevronAndExpression m_typeCell;
   MessageTableCellWithEditableText m_initialRankCell;

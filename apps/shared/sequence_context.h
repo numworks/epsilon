@@ -5,7 +5,7 @@
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
 
-namespace Sequence {
+namespace Shared {
 
 constexpr static int MaxRecurrenceDepth = 2;
 static constexpr int MaxNumberOfSequences = 3;

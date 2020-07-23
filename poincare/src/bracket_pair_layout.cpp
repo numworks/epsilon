@@ -10,17 +10,7 @@ extern "C" {
 namespace Poincare {
 
 void BracketPairLayoutNode::RenderWithChildSize(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  KDCoordinate verticalBarHeight = childSize.height() + 2*k_verticalMargin;
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_verticalExternMargin, k_lineThickness, verticalBarHeight), expressionColor);
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+childSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_verticalExternMargin, k_lineThickness, verticalBarHeight), expressionColor);
-
-  // Render top bar
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_verticalExternMargin, k_bracketWidth, k_lineThickness), expressionColor);
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+childSize.width()+2*k_widthMargin-k_bracketWidth, p.y()+k_verticalExternMargin, k_bracketWidth, k_lineThickness), expressionColor);
-
-  // Render bottom bar
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_verticalExternMargin+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+childSize.width()+2*k_widthMargin-k_bracketWidth, p.y()+k_verticalExternMargin+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+  renderWithParameters(childSize, ctx, p, expressionColor, backgroundColor, k_verticalMargin, k_externWidthMargin, k_verticalExternMargin, k_widthMargin, k_renderTopBar, k_renderBottomBar, k_renderDoubleBar);
 }
 
 void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -112,32 +102,42 @@ int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences:
 }
 
 void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  KDSize childSize = childLayout()->layoutSize();
-  KDCoordinate verticalBarHeight = childSize.height() + 2*k_verticalMargin;
-  KDCoordinate horizontalPosition = p.x() + externWidthMargin();
-  KDCoordinate verticalPosition = p.y() + verticalExternMargin();
-  if (renderDoubleBar()) {
+  renderWithParameters(childLayout()->layoutSize(), ctx, p, expressionColor, backgroundColor, verticalMargin(), externWidthMargin(), verticalExternMargin(), widthMargin(), renderTopBar(), renderBottomBar(), renderDoubleBar());
+}
+
+void BracketPairLayoutNode::renderWithParameters(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, KDCoordinate verticalMargin, KDCoordinate externWidthMargin, KDCoordinate verticalExternMargin, KDCoordinate widthMargin, bool renderTopBar, bool renderBottomBar, bool renderDoubleBar) {
+  // This function allow rendering with either static or virtual parameters
+  KDCoordinate verticalBarHeight = childSize.height() + 2 * verticalMargin;
+  KDCoordinate horizontalPosition = p.x() + externWidthMargin;
+  KDCoordinate verticalPosition = p.y() + verticalExternMargin;
+
+  if (renderDoubleBar) {
     ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
-    horizontalPosition += k_lineThickness + widthMargin();
+    horizontalPosition += k_lineThickness + widthMargin;
   }
   ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
-  if (renderTopBar()) {
+
+  if (renderTopBar) {
     ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_bracketWidth, k_lineThickness), expressionColor);
   }
-  if (renderBottomBar()) {
+  if (renderBottomBar) {
     ctx->fillRect(KDRect(horizontalPosition, verticalPosition + verticalBarHeight - k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
   }
-  horizontalPosition += k_lineThickness + widthMargin() + childSize.width() + widthMargin();
+
+  horizontalPosition += k_lineThickness + widthMargin + childSize.width() + widthMargin;
+
   ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
   horizontalPosition += k_lineThickness;
-  if (renderTopBar()) {
+
+  if (renderTopBar) {
     ctx->fillRect(KDRect(horizontalPosition - k_bracketWidth, verticalPosition, k_bracketWidth, k_lineThickness), expressionColor);
   }
-  if (renderBottomBar()) {
+  if (renderBottomBar) {
     ctx->fillRect(KDRect(horizontalPosition - k_bracketWidth, verticalPosition + verticalBarHeight - k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
   }
-  if (renderDoubleBar()) {
-    horizontalPosition += widthMargin();
+
+  if (renderDoubleBar) {
+    horizontalPosition += widthMargin;
     ctx->fillRect(KDRect(horizontalPosition, verticalPosition, k_lineThickness, verticalBarHeight), expressionColor);
   }
 }
@@ -148,11 +148,11 @@ KDSize BracketPairLayoutNode::computeSize() {
   if (renderDoubleBar()) {
     horizontalCoordinates += 2*k_lineThickness + 2*widthMargin();
   }
-  return KDSize(horizontalCoordinates, childSize.height() + 2 * k_verticalMargin + 2*verticalExternMargin());
+  return KDSize(horizontalCoordinates, childSize.height() + 2*verticalMargin() + 2*verticalExternMargin());
 }
 
 KDCoordinate BracketPairLayoutNode::computeBaseline() {
-  return childLayout()->baseline() + k_verticalMargin + verticalExternMargin();
+  return childLayout()->baseline() + verticalMargin() + verticalExternMargin();
 }
 
 KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode * child) {
@@ -161,7 +161,7 @@ KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode * child) {
   if (renderDoubleBar()) {
     horizontalCoordinates += k_lineThickness + widthMargin();
   }
-  return KDPoint(horizontalCoordinates, k_verticalMargin + verticalExternMargin());
+  return KDPoint(horizontalCoordinates, verticalMargin() + verticalExternMargin());
 }
 
 }

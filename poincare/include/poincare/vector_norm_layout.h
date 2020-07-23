@@ -29,6 +29,7 @@ public:
 
 private:
   KDCoordinate widthMargin() const override { return 2; }
+  KDCoordinate verticalMargin() const override { return 0; }
   KDCoordinate verticalExternMargin() const override { return 1; }
   bool renderTopBar() const override { return false; }
   bool renderBottomBar() const override { return false; }

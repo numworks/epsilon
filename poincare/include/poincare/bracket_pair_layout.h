@@ -44,13 +44,18 @@ private:
   constexpr static KDCoordinate k_bracketWidth = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
   constexpr static KDCoordinate k_verticalMargin = 1;
-  KDCoordinate externWidthMargin() const { return k_externWidthMargin; }
+  constexpr static bool k_renderTopBar = true;
+  constexpr static bool k_renderBottomBar = true;
+  constexpr static bool k_renderDoubleBar = false;
+  virtual KDCoordinate externWidthMargin() const { return k_externWidthMargin; }
   virtual KDCoordinate widthMargin() const { return k_widthMargin; }
   virtual KDCoordinate verticalExternMargin() const { return k_verticalExternMargin; }
-  virtual bool renderTopBar() const { return true; }
-  virtual bool renderBottomBar() const { return true; }
-  virtual bool renderDoubleBar() const { return false; }
+  virtual KDCoordinate verticalMargin() const { return k_verticalMargin; }
+  virtual bool renderTopBar() const { return k_renderTopBar; }
+  virtual bool renderBottomBar() const { return k_renderBottomBar; }
+  virtual bool renderDoubleBar() const { return k_renderDoubleBar; }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  static void renderWithParameters(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, KDCoordinate verticalMargin, KDCoordinate externWidthMargin, KDCoordinate verticalExternMargin, KDCoordinate widthMargin, bool renderTopBar, bool renderBottomBar, bool renderDoubleBar);
 };
 
 }

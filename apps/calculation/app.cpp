@@ -71,4 +71,14 @@ bool App::isAcceptableExpression(const Poincare::Expression expression) {
   return !expression.isUninitialized();
 }
 
+void App::didBecomeActive(Window * window) {
+  m_editExpressionController.restoreInput();
+  Shared::ExpressionFieldDelegateApp::didBecomeActive(window);
+}
+
+void App::willBecomeInactive() {
+  m_editExpressionController.memoizeInput();
+  Shared::ExpressionFieldDelegateApp::willBecomeInactive();
+}
+
 }

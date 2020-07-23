@@ -27,9 +27,10 @@ public:
 
   View * view() override { return &m_contentView; }
   void didBecomeFirstResponder() override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
   void viewWillAppear() override;
   void insertTextBody(const char * text);
+  void restoreInput();
+  void memoizeInput();
 
   /* TextFieldDelegate */
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;

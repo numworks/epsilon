@@ -46,6 +46,8 @@ public:
 private:
   App(Snapshot * snapshot);
   HistoryController m_historyController;
+  void didBecomeActive(Window * window) override;
+  void willBecomeInactive() override;
   EditExpressionController m_editExpressionController;
 };
 

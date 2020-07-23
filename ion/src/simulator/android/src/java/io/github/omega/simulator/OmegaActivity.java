@@ -40,9 +40,21 @@ public class OmegaActivity extends SDLActivity {
     return bitmap;
   }
 
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
+    /* This is done to hide the status bar and the bottom navigation buttons.
+     *
+     * In SDLActivity::onCreate, setWindowStyle(false) is called, which means
+     * the fullscreen mode is put to false. We call again the method here with
+     * true, in order not to modify the external sources.
+     *
+     * TODO: This was not needed for v12 of Epsilon, even though
+     * setWindowStyle(false) was already called in SDLActivity::onCreate. Find
+     * out why and make a proper fix? */
     super.onCreate(savedInstanceState);
     if (!mBrokenLibraries) {
+      /* If mBrokenLibraries, SDL is not initialized by onCreate in
+       * SDLActivity.java. */
       setWindowStyle(true);
     }
   }

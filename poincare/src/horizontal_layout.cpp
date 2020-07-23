@@ -217,7 +217,8 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
             || (nextChildType == LayoutNode::Type::NthRootLayout
               && !static_cast<NthRootLayoutNode *>(nextChild)->isSquareRoot())
             || nextChildType == LayoutNode::Type::ProductLayout
-            || nextChildType == LayoutNode::Type::SumLayout)
+            || nextChildType == LayoutNode::Type::SumLayout
+            || nextChildType == LayoutNode::Type::VectorNormLayout)
           && currentChild->canBeOmittedMultiplicationLeftFactor())
       {
         assert(nextChildType != LayoutNode::Type::HorizontalLayout);

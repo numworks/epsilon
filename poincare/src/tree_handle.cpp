@@ -372,6 +372,7 @@ template Unreal TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(const Tuple &)
 template VectorCross TreeHandle::FixedArityBuilder<VectorCross, VectorCrossNode>(const Tuple &);
 template VectorDot TreeHandle::FixedArityBuilder<VectorDot, VectorDotNode>(const Tuple &);
 template VectorNorm TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>(const Tuple &);
+template VectorNormLayout TreeHandle::FixedArityBuilder<VectorNormLayout, VectorNormLayoutNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 
 }

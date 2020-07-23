@@ -1,8 +1,8 @@
 #include <quiz.h>
 #include "../continuous_function.h"
 #include "../../graph/continuous_function_store.h"
-#include "../../sequence/sequence.h"
-#include "../../sequence/sequence_store.h"
+#include "../sequence.h"
+#include "../sequence_store.h"
 
 namespace Shared {
 
@@ -14,12 +14,12 @@ void interactWithBaseRecordMember(F * fct) {
   (void) color; // Silence compilation warning about unused variable.
 }
 
-void interactWithRecordMember(Sequence::SequenceStore * store, Ion::Storage::Record rec) {
-  Sequence::Sequence * seq = store->modelForRecord(rec);
+void interactWithRecordMember(SequenceStore * store, Ion::Storage::Record rec) {
+  Sequence * seq = store->modelForRecord(rec);
   /* Setting Sequence type will write record member m_initialConditionSizes,
    * which has a 2-byte alignment */
-  seq->setType(Sequence::Sequence::Type::SingleRecurrence);
-  interactWithBaseRecordMember<Sequence::Sequence>(seq);
+  seq->setType(Sequence::Type::SingleRecurrence);
+  interactWithBaseRecordMember<Sequence>(seq);
 }
 
 void interactWithRecordMember(Graph::ContinuousFunctionStore * store, Ion::Storage::Record rec) {
@@ -73,7 +73,7 @@ QUIZ_CASE(alignment_handling) {
    * properly. It also ensures that the right test - load and store of
    * differently-aligned objects - is performed (if storage/record
    * implementations change for instance). */
-  testAlignmentHandlingFor<Sequence::SequenceStore>();
+  testAlignmentHandlingFor<SequenceStore>();
   testAlignmentHandlingFor<Graph::ContinuousFunctionStore>();
 }
 

@@ -25,6 +25,7 @@ const Image * App::Descriptor::icon() {
 App::Snapshot::Snapshot() :
 #if EPSILON_GETOPT
   m_lockOnConsole(false),
+  m_hasBeenWiped(false),
 #endif
   m_scriptStore()
 {
@@ -49,10 +50,12 @@ bool App::Snapshot::lockOnConsole() const {
 }
 
 void App::Snapshot::setOpt(const char * name, const char * value) {
-  if (strcmp(name, "wipe") == 0) {
-    m_scriptStore.deleteAllScripts();
-  }
   if (strcmp(name, "script") == 0) {
+    if (!m_hasBeenWiped) {
+      m_hasBeenWiped = true;
+      m_scriptStore.deleteAllScripts();
+    }
+  
     char * separator = const_cast<char *>(UTF8Helper::CodePointSearch(value, ':'));
     if (*separator == 0) {
       return;

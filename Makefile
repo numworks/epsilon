@@ -178,7 +178,7 @@ cleanandcompile:
 .PHONY: start
 start:
 	@echo "INFO Starting output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)"
-	@$(Q) output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE)
+	@$(Q) output/$(BUILD_TYPE)/simulator/$(HOST)/epsilon.$(EXE) -v
 
 .PHONY: clean_run
 clean_run: cleanandcompile

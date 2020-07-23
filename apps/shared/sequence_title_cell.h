@@ -4,7 +4,7 @@
 #include "../shared/function_title_cell.h"
 #include <poincare_layouts.h>
 
-namespace Sequence {
+namespace Shared {
 
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:

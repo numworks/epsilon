@@ -9,7 +9,7 @@
 #include <emscripten.h>
 #endif
 
-namespace Sequence {
+namespace Shared {
 
 /* WARNING: after calling setType, setInitialRank, setContent, setFirstInitialConditionContent
  * or setSecondInitialConditionContent, the sequence context needs to

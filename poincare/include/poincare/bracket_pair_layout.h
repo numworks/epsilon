@@ -49,6 +49,7 @@ private:
   virtual KDCoordinate verticalExternMargin() const { return k_verticalExternMargin; }
   virtual bool renderTopBar() const { return true; }
   virtual bool renderBottomBar() const { return true; }
+  virtual bool renderDoubleBar() const { return false; }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 

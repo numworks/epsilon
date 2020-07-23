@@ -299,6 +299,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, b
   m_calculationDisplayOutput = calculation->displayOutput(context);
 
   // We must set which subviews are displayed before setLayouts to mark the right rectangle as dirty
+  m_scrollableOutputView.setDisplayableCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle);
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || m_calculationExpanded);
   m_scrollableOutputView.setLayouts(Poincare::Layout(), exactOutputLayout, approximateOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;

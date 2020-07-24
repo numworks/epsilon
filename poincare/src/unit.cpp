@@ -31,9 +31,10 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length,
     *prefix = &Unit::EmptyPrefix;
     return length == 0;
   }
-  size_t numberOfPrefixes = sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix *);
+  const Prefix * const * prefixesList = (m_prefixable == Prefixable::PositiveOnly) ? Unit::PositiveLongScalePrefixes : Unit::AllPrefixes;
+  size_t numberOfPrefixes = ((m_prefixable == Prefixable::PositiveOnly) ? sizeof(Unit::PositiveLongScalePrefixes) : sizeof(Unit::AllPrefixes))/sizeof(Unit::Prefix *);
   for (size_t i = 0; i < numberOfPrefixes; i++) {
-    const Prefix * pre = Unit::AllPrefixes[i];
+    const Prefix * pre = prefixesList[i];
     const char * prefixSymbol = pre->symbol();
     if (strncmp(symbol, prefixSymbol, length) == 0 &&
         prefixSymbol[length] == 0)

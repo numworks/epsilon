@@ -53,7 +53,8 @@ public:
      * input, whereas the allowed output prefixes are prescribed manually. */
     enum class Prefixable {
       No,
-      Yes
+      Yes,
+      PositiveOnly
     };
     enum class OutputSystem {
       None,
@@ -73,7 +74,7 @@ public:
     }
     const char * rootSymbol() const { return m_rootSymbol; }
     const char * definition() const { return m_definition; }
-    bool isPrefixable() const { return m_prefixable == Prefixable::Yes; }
+    bool isPrefixable() const { return m_prefixable != Prefixable::No; }
     const Prefix * const * outputPrefixes() const { return m_outputPrefixes; }
     size_t outputPrefixesLength() const { return m_outputPrefixesLength; }
     bool canParse(const char * symbol, size_t length,
@@ -334,7 +335,7 @@ public:
             NegativeLongScalePrefixes,
             Representative::OutputSystem::Metric),
         Representative("t", "1000_kg",
-            Representative::Prefixable::Yes,
+            Representative::Prefixable::PositiveOnly,
             NoPrefix,
             Representative::OutputSystem::Metric),
         Representative("Da", "(6.02214076*10^23*1000)^-1*_kg",

@@ -54,8 +54,8 @@ float InteractiveCurveViewController::addMargin(float y, float range, bool isVer
    *   bottomMarginRatio = bottomMargin / viewHeight.
    * The same goes horizontally.
    */
-  float topMarginRatio = isVertical ? cursorTopMarginRatio() : k_cursorRightMarginRatio;
-  float bottomMarginRatio = isVertical ? cursorBottomMarginRatio() : k_cursorLeftMarginRatio;
+  float topMarginRatio = isVertical ? cursorTopMarginRatio() : cursorRightMarginRatio();
+  float bottomMarginRatio = isVertical ? cursorBottomMarginRatio() : cursorLeftMarginRatio();
   assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
   float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
   float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
@@ -93,7 +93,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (moveCursorVertically(direction)) {
       interactiveCurveViewRange()->panToMakePointVisible(
         m_cursor->x(), m_cursor->y(),
-        cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio,
+        cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(),
         curveView()->pixelWidth()
       );
       reloadBannerView();
@@ -221,7 +221,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   }
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
   m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio, curveView()->pixelWidth());
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   reloadBannerView();
   curveView()->reload();
   return true;
@@ -247,10 +247,10 @@ bool InteractiveCurveViewController::isCursorVisible() {
   float xRange = range->xMax() - range->xMin();
   float yRange = range->yMax() - range->yMin();
   return
-    m_cursor->x() >= range->xMin() +  k_cursorLeftMarginRatio   * xRange &&
-    m_cursor->x() <= range->xMax() - k_cursorRightMarginRatio   * xRange &&
-    m_cursor->y() >= range->yMin() +  cursorBottomMarginRatio() * yRange &&
-    m_cursor->y() <= range->yMax() -     cursorTopMarginRatio() * yRange;
+    m_cursor->x() >= range->xMin() +   cursorLeftMarginRatio() * xRange &&
+    m_cursor->x() <= range->xMax() -  cursorRightMarginRatio() * xRange &&
+    m_cursor->y() >= range->yMin() + cursorBottomMarginRatio() * yRange &&
+    m_cursor->y() <= range->yMax() -    cursorTopMarginRatio() * yRange;
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {

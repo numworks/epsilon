@@ -31,7 +31,7 @@ bool SimpleInteractiveCurveViewController::handleLeftRightEvent(Ion::Events::Eve
   if (moveCursorHorizontally(direction, Ion::Events::repetitionFactor())) {
     interactiveCurveViewRange()->panToMakePointVisible(
       m_cursor->x(), m_cursor->y(),
-      cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio,
+      cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(),
       curveView()->pixelWidth()
     );
     reloadBannerView();

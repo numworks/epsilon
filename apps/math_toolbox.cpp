@@ -143,6 +143,8 @@ const ToolboxMessageTree unitMassGramChildren[] = {
 const ToolboxMessageTree unitMassImperialChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassPoundSymbol, I18n::Message::UnitMassPound),
   ToolboxMessageTree::Leaf(I18n::Message::UnitMassOunceSymbol, I18n::Message::UnitMassOunce),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassShortTonSymbol, I18n::Message::UnitMassShortTon),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitMassLongTonSymbol, I18n::Message::UnitMassLongTon)
 };
 
 const ToolboxMessageTree unitMassChildren[] = {

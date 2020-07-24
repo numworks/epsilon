@@ -589,9 +589,9 @@ Expression Unit::BuildImperialDistanceSplit(double inches, Context * context) {
 }
 
 Expression Unit::BuildImperialMassSplit(double ounces, Context * context) {
-  constexpr static int numberOfUnits = 2;
-  Unit units[numberOfUnits] = {Unit::Pound(), Unit::Ounce()};
-  constexpr static double factors[numberOfUnits] = {OuncesPerPound, 1.};
+  constexpr static int numberOfUnits = 3;
+  Unit units[numberOfUnits] = {Unit::ShortTon(), Unit::Pound(), Unit::Ounce()};
+  constexpr static double factors[numberOfUnits] = {OuncesPerPound*PoundsPerShortTon, OuncesPerPound, 1.};
   return BuildSplit(ounces, units, factors, numberOfUnits, context);
 }
 

@@ -349,10 +349,14 @@ public:
             Representative::Prefixable::No,
             NoPrefix,
             Representative::OutputSystem::Imperial),
-        Representative("ton", "2000*_lb",
+        Representative("shtn", "2000*_lb",
             Representative::Prefixable::No,
             NoPrefix,
             Representative::OutputSystem::Imperial),
+        Representative("lgtn", "2240*_lb",
+            Representative::Prefixable::No,
+            NoPrefix,
+            Representative::OutputSystem::None),
         },
     CurrentRepresentatives[] = {
         Representative("A",   nullptr,
@@ -513,9 +517,10 @@ public:
   static const Representative constexpr * MileRepresentative = &DistanceRepresentatives[7];
   static const Representative constexpr * KilogramRepresentative = &MassRepresentatives[0];
   static const Representative constexpr * GramRepresentative = &MassRepresentatives[1];
-  static_assert(sizeof(MassRepresentatives)/sizeof(Representative) == 7, "The Unit::OunceRepresentative et al. might require to be fixed if the MassRepresentatives table was changed.");
+  static_assert(sizeof(MassRepresentatives)/sizeof(Representative) == 8, "The Unit::OunceRepresentative et al. might require to be fixed if the MassRepresentatives table was changed.");
   static const Representative constexpr * OunceRepresentative = &MassRepresentatives[4];
   static const Representative constexpr * PoundRepresentative = &MassRepresentatives[5];
+  static const Representative constexpr * ShortTonRepresentative = &MassRepresentatives[6];
   static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
   static_assert(sizeof(VolumeRepresentatives)/sizeof(Representative) == 8, "The Unit::FluidOunceRepresentative et al. might require to be fixed if the VolumeRepresentatives table was changed.");
   static const Representative constexpr * FluidOunceRepresentative = &VolumeRepresentatives[3];
@@ -867,6 +872,7 @@ public:
   static Unit Gram() { return Builder(MassDimension, GramRepresentative, &EmptyPrefix); }
   static Unit Ounce() { return Builder(MassDimension, OunceRepresentative, &EmptyPrefix); }
   static Unit Pound() { return Builder(MassDimension, PoundRepresentative, &EmptyPrefix); }
+  static Unit ShortTon() { return Builder(MassDimension, ShortTonRepresentative, &EmptyPrefix); }
   static Unit FluidOunce() { return Builder(VolumeDimension, FluidOunceRepresentative, &EmptyPrefix); }
   static Unit Cup() { return Builder(VolumeDimension, CupRepresentative, &EmptyPrefix); }
   static Unit Gallon() { return Builder(VolumeDimension, GallonRepresentative, &EmptyPrefix); }
@@ -915,6 +921,7 @@ private:
   static constexpr double FeetPerYard = 3.;
   static constexpr double YardsPerMile = 1760.;
   static constexpr double OuncesPerPound = 16.;
+  static constexpr double PoundsPerShortTon = 2000.;
   static constexpr double FluidOuncesPerCup = 8.;
   static constexpr double CupsPerGallon = 16.;
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }

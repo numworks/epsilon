@@ -4,10 +4,10 @@ set -e
 REPO="${1:-https://github.com/Omega-Numworks/Omega.git}"
 BRANCH="${2:-master}"
 MODEL="${3:-MODEL=n0110}"
-USERNAME="${4:- }"
+OMEGA_USERNAME="${4:- }"
 OPTIONS="${5:-epsilon_flash}"
 
 echo Building ${REPO} branch ${BRANCH} for ${MODEL} with options ${OPTIONS} !
 
 git clone --recurse-submodules -j $(nproc) --depth 1 --branch ${BRANCH} ${REPO} omega
-time make cleanall && time make -j $(nproc) -C omega ${MODEL} ${USERNAME} ${OPTIONS} 
+time make cleanall && time make -j $(nproc) -C omega ${MODEL} ${OMEGA_USERNAME} ${OPTIONS} 

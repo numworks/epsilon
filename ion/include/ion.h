@@ -30,7 +30,7 @@ void ion_main(int argc, const char * const argv[]);
 namespace Ion {
 
 const char * serialNumber();
-#ifdef USERNAME
+#ifdef OMEGA_USERNAME
 const char * username();
 #endif
 const char * softwareVersion();

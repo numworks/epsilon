@@ -33,8 +33,8 @@ public:
     m_footer(Magic),
     m_ohm_header(OmegaMagic),
     m_omegaVersion{OMEGA_VERSION},
-#ifdef USERNAME
-    m_username{USERNAME},
+#ifdef OMEGA_USERNAME
+    m_username{OMEGA_USERNAME},
 #else
     m_username{"\0"},
 #endif
@@ -57,7 +57,7 @@ public:
     assert(m_ohm_footer == OmegaMagic);
     return m_omegaVersion;
   }
-#ifdef USERNAME
+#ifdef OMEGA_USERNAME
   const char * username() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
@@ -102,7 +102,7 @@ const char * Ion::omegaVersion() {
   return platform_infos.omegaVersion();
 }
 
-#ifdef USERNAME
+#ifdef OMEGA_USERNAME
 const char * Ion::username() {
   return platform_infos.username();
 }

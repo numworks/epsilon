@@ -12,6 +12,9 @@ public:
   TELEMETRY_ID("Minimum");
 private:
   Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
+  // Prevent horizontal panning to preserve search interval
+  float cursorRightMarginRatio() override { return 0.0f; }
+  float cursorLeftMarginRatio() override { return 0.0f; }
 };
 
 class MaximumGraphController : public CalculationGraphController {
@@ -21,6 +24,9 @@ public:
   TELEMETRY_ID("Maximum");
 private:
   Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
+  // Prevent horizontal panning to preserve search interval
+  float cursorRightMarginRatio() override { return 0.0f; }
+  float cursorLeftMarginRatio() override { return 0.0f; }
 };
 
 }

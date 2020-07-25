@@ -16,6 +16,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool handleEvent(Ion::Events::Event event) override;
+  void setRange(InteractiveCurveViewRange * range);
   TELEMETRY_ID("Range");
 private:
   class MessageTableCellWithConvertibleEditableText : public MessageTableCellWithEditableText {
@@ -39,9 +40,11 @@ private:
   constexpr static int k_numberOfConvertibleTextCell = 2;
   constexpr static int k_numberOfTextCell = k_numberOfEditableTextCell+k_numberOfConvertibleTextCell;
   InteractiveCurveViewRange * m_interactiveRange;
+  InteractiveCurveViewRange m_tempInteractiveRange;
   MessageTableCellWithEditableText m_xRangeCells[k_numberOfEditableTextCell];
   MessageTableCellWithConvertibleEditableText m_yRangeCells[k_numberOfConvertibleTextCell];
   MessageTableCellWithSwitch m_yAutoCell;
+  void buttonAction() override;
 };
 
 }

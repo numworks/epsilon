@@ -13,9 +13,9 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_modelVersion(modelVersion),
   m_previousModelsVersions(previousModelsVersions),
   m_rangeVersion(rangeVersion),
-  m_interactiveRange(interactiveRange),
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
+  m_interactiveRange(interactiveRange),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->rangeParameterController()->setRange(graphController->interactiveRange());

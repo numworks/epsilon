@@ -19,7 +19,7 @@ public:
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("Graph");
 
-  ViewController * rangeParameterController();
+  RangeParameterController * rangeParameterController();
   ViewController * zoomParameterController();
   virtual ViewController * initialisationParameterController() = 0;
 
@@ -35,6 +35,7 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+
 protected:
   Responder * tabController() const;
   virtual StackViewController * stackController() const;
@@ -57,6 +58,8 @@ protected:
   float cursorBottomMarginRatio() override;
 
   OkView m_okView;
+
+  InteractiveCurveViewRange * interactiveRange(){return m_interactiveRange;}
 private:
   /* The value 21 is the actual height of the ButtonRow, that is
    * ButtonRowController::ContentView::k_plainStyleHeight + 1.
@@ -75,6 +78,7 @@ private:
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
   ZoomParameterController m_zoomParameterController;
+  InteractiveCurveViewRange * m_interactiveRange;
   Button m_rangeButton;
   Button m_zoomButton;
   Button m_defaultInitialisationButton;

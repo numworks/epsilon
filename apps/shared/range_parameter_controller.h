@@ -36,6 +36,7 @@ private:
   int reusableParameterCellCount(int type) override;
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
+  void buttonAction() override;
   constexpr static int k_numberOfEditableTextCell = 2;
   constexpr static int k_numberOfConvertibleTextCell = 2;
   constexpr static int k_numberOfTextCell = k_numberOfEditableTextCell+k_numberOfConvertibleTextCell;
@@ -44,7 +45,6 @@ private:
   MessageTableCellWithEditableText m_xRangeCells[k_numberOfEditableTextCell];
   MessageTableCellWithConvertibleEditableText m_yRangeCells[k_numberOfConvertibleTextCell];
   MessageTableCellWithSwitch m_yAutoCell;
-  void buttonAction() override;
 };
 
 }

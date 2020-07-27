@@ -47,7 +47,7 @@ void Interval::reset() {
 
 void Interval::clear() {
   m_parameters.setStart(1.0);
-  m_parameters.setEnd(10.0);
+  m_parameters.setEnd(0.0);
   m_parameters.setStep(1.0);
   m_needCompute = true;
 }

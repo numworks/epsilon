@@ -57,9 +57,9 @@ protected:
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() override;
 
-  OkView m_okView;
+  InteractiveCurveViewRange * interactiveRange() { return m_interactiveRange; }
 
-  InteractiveCurveViewRange * interactiveRange(){return m_interactiveRange;}
+  OkView m_okView;
 private:
   /* The value 21 is the actual height of the ButtonRow, that is
    * ButtonRowController::ContentView::k_plainStyleHeight + 1.

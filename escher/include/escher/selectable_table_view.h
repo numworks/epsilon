@@ -25,7 +25,7 @@ public:
   void selectRow(int j);
   void selectColumn(int i);
   void reloadData(bool setFirstResponder = true);
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event event, bool setFirstResponder = true);
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
   void deselectTable(bool withinTemporarySelection = false);

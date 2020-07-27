@@ -9,13 +9,16 @@ namespace Shared {
 class FunctionGoToParameterController : public GoToParameterController {
 public:
   FunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
-  const char * title() override;
+  const char * title() override { return I18n::translate(I18n::Message::Goto); }
   void setRecord(Ion::Storage::Record record);
 protected:
-  bool setParameterAtIndex(int parameterIndex, double f) override;
+  bool confirmParameterAtIndex(int parameterIndex, double f) override;
   Ion::Storage::Record m_record;
 private:
-  double parameterAtIndex(int index) override;
+  double extractParameterAtIndex(int index) override {
+    assert(index == 0);
+    return m_cursor->t();
+  }
 };
 
 }

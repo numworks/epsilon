@@ -21,10 +21,6 @@ PreimageParameterController::PreimageParameterController(
 {
 }
 
-const char * PreimageParameterController::title() {
-  return I18n::translate(I18n::Message::Preimage);
-}
-
 void PreimageParameterController::viewWillAppear() {
   setParameterName(I18n::Message::Y);
   m_preimageGraphController->setImage(m_cursor->y());
@@ -32,19 +28,17 @@ void PreimageParameterController::viewWillAppear() {
 }
 
 void PreimageParameterController::buttonAction() {
-  m_preimageGraphController->setRecord(m_record);
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  stack->pop();
-  stack->pop();
-  stack->pop();
-  stack->push(m_preimageGraphController);
+  if (confirmParameterAtIndex(0, m_tempParameter)) {
+    m_preimageGraphController->setRecord(m_record);
+    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+    stack->pop();
+    stack->pop();
+    stack->pop();
+    stack->push(m_preimageGraphController);
+  }
 }
 
-double PreimageParameterController::parameterAtIndex(int index) {
-  assert(index == 0);
-  return m_preimageGraphController->image();
-}
-bool PreimageParameterController::setParameterAtIndex(int parameterIndex, double f) {
+bool PreimageParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   m_preimageGraphController->setImage(f);
   return true;

@@ -11,17 +11,9 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
 {
 }
 
-int GoToParameterController::numberOfRows() const {
-  return 2;
-}
-
 HighlightCell * GoToParameterController::reusableParameterCell(int index, int type) {
   assert(index == 0);
   return &m_parameterCell;
-}
-
-int GoToParameterController::reusableParameterCellCount(int type) {
-  return 1;
 }
 
 bool GoToParameterController::handleEvent(Ion::Events::Event event) {
@@ -32,10 +24,25 @@ bool GoToParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void GoToParameterController::viewWillAppear() {
+  // Initialize m_tempParameter to the extracted value.
+  setParameterAtIndex(0, extractParameterAtIndex(0));
+  FloatParameterController::viewWillAppear();
+}
+
+bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
+  assert(parameterIndex == 0);
+  m_tempParameter = f;
+  return true;
+}
+
 void GoToParameterController::buttonAction() {
-  StackViewController * stack = (StackViewController *)parentResponder();
-  stack->pop();
-  stack->pop();
+  // Update parameter value to m_tempParameter, and proceed if value is valid
+  if (confirmParameterAtIndex(0, m_tempParameter)) {
+    StackViewController * stack = (StackViewController *)parentResponder();
+    stack->pop();
+    stack->pop();
+  }
 }
 
 }

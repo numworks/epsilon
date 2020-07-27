@@ -24,6 +24,7 @@ protected:
   Interval * m_interval;
   bool handleEvent(Ion::Events::Event event) override;
 private:
+  static Interval::IntervalParameters * SharedTempIntervalParameters();
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   double parameterAtIndex(int index) override;

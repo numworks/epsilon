@@ -131,5 +131,4 @@ void RangeParameterController::buttonAction() {
   stack->pop();
 }
 
-
 }

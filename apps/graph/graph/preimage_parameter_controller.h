@@ -15,13 +15,16 @@ public:
     Shared::CurveViewCursor * cursor,
     PreimageGraphController * preimageGraphController
   );
-  const char * title() override;
+  const char * title() override { return I18n::translate(I18n::Message::Preimage); }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   void viewWillAppear() override;
 private:
   void buttonAction() override;
-  double parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, double f) override;
+  double extractParameterAtIndex(int index) override {
+    assert(index == 0);
+    return m_preimageGraphController->image();
+  }
+  bool confirmParameterAtIndex(int parameterIndex, double f) override;
   Ion::Storage::Record m_record;
   PreimageGraphController * m_preimageGraphController;
 };

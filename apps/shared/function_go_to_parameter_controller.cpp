@@ -11,16 +11,7 @@ FunctionGoToParameterController::FunctionGoToParameterController(Responder * par
 {
 }
 
-const char * FunctionGoToParameterController::title() {
-  return I18n::translate(I18n::Message::Goto);
-}
-
-double FunctionGoToParameterController::parameterAtIndex(int index) {
-  assert(index == 0);
-  return m_cursor->t();
-}
-
-bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
+bool FunctionGoToParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   FunctionApp * myApp = FunctionApp::app();
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);

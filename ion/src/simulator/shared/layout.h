@@ -16,6 +16,7 @@ void getScreenRect(SDL_Rect * rect);
 void getBackgroundRect(SDL_Rect * rect);
 
 Ion::Keyboard::Key highlightKeyAt(SDL_Point * p);
+void unhighlightKey();
 void init(SDL_Renderer * renderer);
 void draw(SDL_Renderer * renderer);
 void quit();

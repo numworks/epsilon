@@ -1,9 +1,7 @@
 #include "main.h"
 #include "display.h"
 #include "haptics.h"
-#if !EPSILON_SDL_SCREEN_ONLY
 #include "layout.h"
-#endif
 #include "platform.h"
 #include "telemetry.h"
 #include "random.h"
@@ -98,7 +96,9 @@ void init() {
   assert(sRenderer);
 
   Display::init(sRenderer);
+#if !EPSILON_SDL_SCREEN_ONLY
   Layout::init(sRenderer);
+#endif
 
   relayout();
 }
@@ -147,7 +147,9 @@ void refresh() {
 }
 
 void quit() {
+#if !EPSILON_SDL_SCREEN_ONLY
   Layout::quit();
+#endif
   Display::quit();
   SDL_DestroyWindow(sWindow);
   SDL_Quit();

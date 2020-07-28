@@ -610,6 +610,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
   float previousY = NAN;
   float y = NAN;
   int i = 0;
+  bool isLastSegment = false;
   do {
     previousT = t;
     t = tStart + (i++) * tStep;
@@ -618,9 +619,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
     }
     if (t >= tEnd) {
       t = tEnd - FLT_EPSILON;
+      isLastSegment = true;
     }
     if (previousT == t) {
-      break;
+      // No need to draw segment. Happens when tStep << tStart .
+      continue;
     }
     previousX = x;
     previousY = y;
@@ -631,7 +634,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, std::min(0.0f, y), std::max(0.0f, y), color, 1);
     }
     joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
-  } while (true);
+  } while (!isLastSegment);
 }
 
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {

@@ -129,6 +129,8 @@ void refresh() {
   if (!sNeedsRefresh) {
     return;
   }
+  sNeedsRefresh = false;
+
 #if EPSILON_SDL_SCREEN_ONLY
   Display::draw(sRenderer, &sScreenRect);
 #else
@@ -137,11 +139,11 @@ void refresh() {
 
   SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
   SDL_RenderClear(sRenderer);
+  // Can change sNeedsRefresh state if a key is highlighted and needs to be reset
   Layout::draw(sRenderer);
   Display::draw(sRenderer, &screenRect);
 #endif
   SDL_RenderPresent(sRenderer);
-  sNeedsRefresh = false;
 
   IonSimulatorCallbackDidRefresh();
 }

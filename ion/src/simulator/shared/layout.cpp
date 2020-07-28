@@ -115,10 +115,10 @@ private:
 };
 
 static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
-  KeyLayout(185, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
-  KeyLayout(273, 941, KeyLayout::Shape::VerticalArrow), // A2, Up
-  KeyLayout(273, 1117, KeyLayout::Shape::VerticalArrow), // A3, Down
-  KeyLayout(361, 1029, KeyLayout::Shape::HorizontalArrow), // A4, Right
+  KeyLayout(191, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
+  KeyLayout(273, 945, KeyLayout::Shape::VerticalArrow), // A2, Up
+  KeyLayout(273, 1110, KeyLayout::Shape::VerticalArrow), // A3, Down
+  KeyLayout(355, 1029, KeyLayout::Shape::HorizontalArrow), // A4, Right
   KeyLayout(810, 1029, KeyLayout::Shape::Round), // A5, OK
   KeyLayout(963, 1029, KeyLayout::Shape::Round), // A6, Back
 

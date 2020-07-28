@@ -282,6 +282,10 @@ void drawHighlightedKey(SDL_Renderer * renderer) {
   getKeyRectangle(sHighlightedKeyIndex, &rect);
   SDL_RenderCopy(renderer, framebufferTexture, nullptr, &rect);
   SDL_DestroyTexture(framebufferTexture);
+
+  // Reset highlighted key
+  sHighlightedKeyIndex = -1;
+  Main::setNeedsRefresh();
 }
 
 static SDL_Texture * sBackgroundTexture = nullptr;

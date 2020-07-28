@@ -240,13 +240,12 @@ Keyboard::Key highlightKeyAt(SDL_Point * p) {
 
 SDL_PixelFormat * sRgbaPixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
 
-// LargeSquircle png file is ? x ? = ?
-static constexpr size_t k_maxKeyLayoutWidth = 125; // TODO: recompute
-static constexpr size_t k_maxKeyLayoutHeight = 125; // TODO: recompute
+// round.png file is 130 x 130 and is the largest key layout
+static constexpr size_t k_maxKeyLayoutSize = 130*130;
 static constexpr uint8_t k_blendingRatio = 0x44;
 
 void fillRGBABufferWithImage(Uint32 * buffer, const Image * img) {
-  KDColor pixelBuffer[k_maxKeyLayoutWidth*k_maxKeyLayoutHeight];
+  KDColor pixelBuffer[k_maxKeyLayoutSize];
   Ion::decompress(
     img->compressedPixelData(),
     reinterpret_cast<uint8_t *>(pixelBuffer),

@@ -14,6 +14,8 @@ namespace Ion {
 namespace Simulator {
 namespace Layout {
 
+#if !EPSILON_SDL_SCREEN_ONLY
+
 static constexpr int backgroundWidth = 1160;
 static constexpr int backgroundHeight = 2220;
 
@@ -282,14 +284,10 @@ void drawHighlightedKey(SDL_Renderer * renderer) {
   SDL_DestroyTexture(framebufferTexture);
 }
 
-#if !EPSILON_SDL_SCREEN_ONLY
 static SDL_Texture * sBackgroundTexture = nullptr;
-#endif
 
 void init(SDL_Renderer * renderer) {
-#if !EPSILON_SDL_SCREEN_ONLY
   sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
-#endif
 }
 
 void draw(SDL_Renderer * renderer) {
@@ -303,6 +301,8 @@ void quit() {
   SDL_DestroyTexture(sBackgroundTexture);
   sBackgroundTexture = nullptr;
 }
+
+#endif
 
 }
 }

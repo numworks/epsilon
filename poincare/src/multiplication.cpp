@@ -259,8 +259,10 @@ Expression Multiplication::removeUnit(Expression * unit) {
   Multiplication unitMult = Multiplication::Builder();
   int resultChildrenCount = 0;
   for (int i = 0; i < numberOfChildren(); i++) {
+    Expression childI = childAtIndex(i);
+    assert(!childI.isUndefined());
     Expression currentUnit;
-    Expression childI = childAtIndex(i).removeUnit(&currentUnit);
+    childI = childI.removeUnit(&currentUnit);
     if (childI.isUndefined()) {
       /* If the child was a unit convert, it replaced itself with an undefined
        * during the removeUnit. */

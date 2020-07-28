@@ -4,11 +4,11 @@
 #include <ion.h>
 #include <limits.h>
 #include <cmath>
-#include "key_layouts/horizontal_arrow.h"
-#include "key_layouts/large_squircle.h"
-#include "key_layouts/round.h"
-#include "key_layouts/small_squircle.h"
-#include "key_layouts/vertical_arrow.h"
+#include "../assets/key_layouts/horizontal_arrow.h"
+#include "../assets/key_layouts/large_squircle.h"
+#include "../assets/key_layouts/round.h"
+#include "../assets/key_layouts/small_squircle.h"
+#include "../assets/key_layouts/vertical_arrow.h"
 
 namespace Ion {
 namespace Simulator {

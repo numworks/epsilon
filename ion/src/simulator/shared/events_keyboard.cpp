@@ -1,5 +1,6 @@
 #include "main.h"
 #include "platform.h"
+#include "layout.h"
 
 #include <assert.h>
 #include <ion/events.h>
@@ -193,6 +194,11 @@ Event getPlatformEvent() {
       result = eventFromSDLTextInputEvent(event.text);
       break;
     }
+#if !EPSILON_SDL_SCREEN_ONLY
+    if (event.type == SDL_MOUSEBUTTONUP) {
+      Simulator::Layout::unhighlightKey();
+    }
+#endif
   }
   if (result != None) {
     /* When events are not being processed - for instance when a Python script

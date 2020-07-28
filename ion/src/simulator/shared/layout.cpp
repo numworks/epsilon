@@ -3,6 +3,7 @@
 #include "platform.h"
 #include <ion.h>
 #include <limits.h>
+#include <cmath>
 #include "key_layouts/horizontal_arrow.h"
 #include "key_layouts/large_squircle.h"
 #include "key_layouts/round.h"
@@ -25,10 +26,10 @@ static constexpr SDL_FRect screenRect = {X(192), Y(191), X(776), Y(582)};
 static SDL_Rect sFrame;
 
 static void makeAbsolute(const SDL_FRect f, SDL_Rect * r) {
-  r->x = f.x * sFrame.w + sFrame.x;
-  r->y = f.y * sFrame.h + sFrame.y;
-  r->w = f.w * sFrame.w;
-  r->h = f.h * sFrame.h;
+  r->x = std::round(f.x * static_cast<float>(sFrame.w) + static_cast<float>(sFrame.x));
+  r->y = std::round(f.y * static_cast<float>(sFrame.h) + static_cast<float>(sFrame.y));
+  r->w = std::round(f.w * static_cast<float>(sFrame.w));
+  r->h = std::round(f.h * static_cast<float>(sFrame.h));
 }
 
 static void makeAbsolute(const SDL_FPoint f, SDL_Point * p) {

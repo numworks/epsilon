@@ -284,6 +284,10 @@ void drawHighlightedKey(SDL_Renderer * renderer) {
   SDL_DestroyTexture(framebufferTexture);
 
   // Reset highlighted key
+  unhighlightKey();
+}
+
+void unhighlightKey() {
   sHighlightedKeyIndex = -1;
   Main::setNeedsRefresh();
 }

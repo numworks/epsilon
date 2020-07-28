@@ -817,7 +817,11 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
 
 Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
   sSimplificationHasBeenInterrupted = false;
-  return deepReduce(reductionContext);
+  Expression result = deepReduce(reductionContext);
+  if (sSimplificationHasBeenInterrupted) {
+    return replaceWithUndefinedInPlace();
+  }
+  return result;
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {

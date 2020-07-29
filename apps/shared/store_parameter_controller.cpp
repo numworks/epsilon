@@ -51,10 +51,12 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       } else {
         m_store->resetColumn(m_series, !m_xColumnSelected);
       }
+      break;
     }
     case 1:
     {
       m_storeController->displayFormulaInput();
+      break;
     }
     case 2:
     {
@@ -85,6 +87,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       } else {
         Poincare::Helpers::Sort(swapRows, compareY, (m_store->data() + m_series), m_store->numberOfPairsOfSeries(m_series));
       }
+      break;
     }
   }
   assert(selectedRow() >= 0 && selectedRow() <= 2);

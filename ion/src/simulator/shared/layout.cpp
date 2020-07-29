@@ -246,6 +246,7 @@ SDL_PixelFormat * sRgbaPixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
 static constexpr size_t k_maxKeyLayoutSize = 130*130;
 static constexpr uint8_t k_blendingRatio = 0x44;
 
+// TODO: use a "native" image decompressor instead of LZ4
 void fillRGBABufferWithImage(Uint32 * buffer, const Image * img) {
   KDColor pixelBuffer[k_maxKeyLayoutSize];
   Ion::decompress(

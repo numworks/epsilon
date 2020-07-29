@@ -195,6 +195,7 @@ Event getPlatformEvent() {
       break;
     }
 #if !EPSILON_SDL_SCREEN_ONLY
+    // This works but it is selected right after. We should highlight on mouse movement?
     if (event.type == SDL_MOUSEBUTTONUP) {
       Simulator::Layout::unhighlightKey();
     }

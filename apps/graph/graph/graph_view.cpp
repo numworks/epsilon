@@ -46,6 +46,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     float tCacheMin, tCacheStep;
     if (type == ContinuousFunction::PlotType::Cartesian) {
       float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+      /* Here, tCacheMin can depend on rect (and change as the user move)
+       * because cache can be panned for cartesian curves, instead of being
+       * entirely invalidated. */
       tCacheMin = std::isnan(rectLeft) ? tmin : std::max(tmin, rectLeft);
       tCacheStep = pixelWidth();
     } else {
@@ -54,8 +57,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }
     ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 
-    // Cartesian
     if (type == Shared::ContinuousFunction::PlotType::Cartesian) {
+      // Cartesian
       drawCartesianCurve(ctx, rect, tmin, tmax, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
@@ -70,18 +73,22 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());
         drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GrayVeryDark, false);
       }
-      continue;
+    } else if (type == Shared::ContinuousFunction::PlotType::Polar) {
+      // Polar
+      drawPolarCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
+            ContinuousFunction * f = (ContinuousFunction *)model;
+            Poincare::Context * c = (Poincare::Context *)context;
+            return f->evaluateXYAtParameter(t, c);
+          }, f.operator->(), context(), false, f->color());
+    } else {
+      // Parametric
+      assert(type == Shared::ContinuousFunction::PlotType::Parametric);
+      drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
+          ContinuousFunction * f = (ContinuousFunction *)model;
+          Poincare::Context * c = (Poincare::Context *)context;
+          return f->evaluateXYAtParameter(t, c);
+        }, f.operator->(), context(), false, f->color());
     }
-
-    // Polar or parametric
-    assert(
-        type == Shared::ContinuousFunction::PlotType::Polar ||
-        type == Shared::ContinuousFunction::PlotType::Parametric);
-    drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
-        ContinuousFunction * f = (ContinuousFunction *)model;
-        Poincare::Context * c = (Poincare::Context *)context;
-        return f->evaluateXYAtParameter(t, c);
-      }, f.operator->(), context(), false, f->color());
   }
 }
 

@@ -271,13 +271,13 @@ QUIZ_CASE(poincare_simplification_units) {
    *    t, Hz, S, ha, L. These exceptions are tested below. */
   for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
     for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
-      if (strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "ha") == 0 || strcmp(rep->rootSymbol(), "L") == 0) {
+      if (strcmp(rep->rootSymbol(), "Hz") == 0 || strcmp(rep->rootSymbol(), "S") == 0 || strcmp(rep->rootSymbol(), "ha") == 0 || strcmp(rep->rootSymbol(), "L") == 0 || strcmp(rep->rootSymbol(), "yd") || strcmp(rep->rootSymbol(), "tsp") || strcmp(rep->rootSymbol(), "Tbsp") || strcmp(rep->rootSymbol(), "pt") || strcmp(rep->rootSymbol(), "qt") || strcmp(rep->rootSymbol(), "lgtn")) {
         continue;
       }
       static constexpr size_t bufferSize = 12;
       char buffer[bufferSize] = "1×";
       Unit::Builder(dim, rep, &Unit::EmptyPrefix).serialize(buffer+strlen("1×"), bufferSize-strlen("1×"), Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
-      assert_parsed_expression_simplify_to(buffer, buffer);
+      assert_parsed_expression_simplify_to(buffer, buffer, User, Radian, (rep->canOutputInSystem(Metric) ? Metric : Imperial));
       if (rep->isPrefixable()) {
         for (size_t i = 0; i < rep->outputPrefixesLength(); i++) {
           const Unit::Prefix * pre = rep->outputPrefixes()[i];

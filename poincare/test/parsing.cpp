@@ -294,9 +294,11 @@ QUIZ_CASE(poincare_parsing_units) {
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
       if (rep->isPrefixable()) {
-        size_t numberOfPrefixes = sizeof(Unit::AllPrefixes)/sizeof(Unit::Prefix *);
+        /* ton is only prefixable by positive prefixes */
+        bool isTon = strcmp("t", rep->rootSymbol()) == 0;
+        size_t numberOfPrefixes = ((isTon) ? sizeof(Unit::PositiveLongScalePrefixes) : sizeof(Unit::AllPrefixes))/sizeof(Unit::Prefix *);
         for (size_t i = 0; i < numberOfPrefixes; i++) {
-          const Unit::Prefix * pre = Unit::AllPrefixes[i];
+          const Unit::Prefix * pre = (isTon) ? Unit::PositiveLongScalePrefixes[i] : Unit::AllPrefixes[i];
           Unit::Builder(dim, rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");

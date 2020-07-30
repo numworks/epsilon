@@ -17,7 +17,10 @@ private:
    static constexpr int k_sizeOfCache = Ion::Display::Width;
 public:
   static constexpr int k_numberOfAvailableCaches = 2;
-  static constexpr int k_parametricStepFactor = k_sizeOfCache / int(Graph::GraphView::k_graphStepDenominator);
+  /* Parametric and polar functions require caching both x and y values,
+   * with the same k_sizeOfCache. To cover the entire range,
+   * k_numberOfParametricCacheablePoints is halved. */
+  static constexpr int k_numberOfParametricCacheablePoints = k_sizeOfCache / 2;
 
   static void PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep);
 
@@ -35,7 +38,7 @@ private:
    *
    * The value 128*FLT_EPSILON has been found to be the lowest for which all
    * indices verify indexForParameter(tMin + index * tStep) = index. */
-  static constexpr float k_cacheHitTolerance = 128 * FLT_EPSILON;
+  static constexpr float k_cacheHitTolerance = 128.0f * FLT_EPSILON;
 
   void invalidateBetween(int iInf, int iSup);
   void setRange(ContinuousFunction * function, float tMin, float tStep);

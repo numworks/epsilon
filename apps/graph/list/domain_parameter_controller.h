@@ -6,6 +6,7 @@
 #include "../../shared/continuous_function.h"
 #include "../../shared/expiring_pointer.h"
 #include "../../shared/float_parameter_controller.h"
+#include "../../shared/range_1D.h"
 
 namespace Graph {
 
@@ -14,17 +15,18 @@ public:
   DomainParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // ViewController
-  const char * title() override;
+  const char * title() override { return I18n::translate(I18n::Message::FunctionDomain); }
   TELEMETRY_ID("DomainParameter");
 
   // ListViewDataSource
-  int numberOfRows() const override;
+  int numberOfRows() const override { return k_totalNumberOfCell+1; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 private:
   constexpr static int k_totalNumberOfCell = 2;
-  int reusableParameterCellCount(int type) override;
+  void viewWillAppear() override;
+  int reusableParameterCellCount(int type) override { return k_totalNumberOfCell; }
   HighlightCell * reusableParameterCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
@@ -32,8 +34,13 @@ private:
   void buttonAction() override;
   InfinityTolerance infinityAllowanceForRow(int row) const override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  // Applies temporary parameters to function.
+  void confirmParameters();
+  // Extracts parameters from function, setting m_tempDomain parameters.
+  void extractParameters();
   MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
+  Shared::Range1D m_tempDomain;
 };
 
 }

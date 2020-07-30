@@ -41,7 +41,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     float tmin = f->tMin();
     float tmax = f->tMax();
 
-    float tstep = (tmax-tmin)/k_graphStepDenominator;
+    float tstep = (tmax-tmin) / k_graphStepDenominator;
 
     float tCacheMin, tCacheStep;
     if (type == ContinuousFunction::PlotType::Cartesian) {
@@ -50,7 +50,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       tCacheStep = pixelWidth();
     } else {
       tCacheMin = tmin;
-      tCacheStep = tstep / ContinuousFunctionCache::k_parametricStepFactor;
+      tCacheStep = int(k_graphStepDenominator) * tstep / ContinuousFunctionCache::k_numberOfParametricCacheablePoints;
     }
     ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 

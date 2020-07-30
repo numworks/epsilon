@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 #include <float.h>
+#include <complex>
+#include <poincare/trigonometry.h>
 
 using namespace Poincare;
 
@@ -648,6 +650,92 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, flo
   }
   float tStep = pixelWidth();
   drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+}
+
+float PolarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {
+  // Return θ, between -π and π in given angleUnit for a (x,y) position.
+  return Trigonometry::ConvertRadianToAngleUnit<float>(std::arg(std::complex<float>(x,y)), angleUnit).real();
+}
+
+void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForParameter xyEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+  // Compute rect limits
+  float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+  float rectUp = pixelToFloat(Axis::Vertical, rect.top() + k_externRectMargin);
+  float rectDown = pixelToFloat(Axis::Vertical, rect.bottom() - k_externRectMargin);
+
+  if (std::isnan(rectLeft) || std::isnan(rectRight) || std::isnan(rectUp) || std::isnan(rectDown)) {
+    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+  }
+
+  bool rectOverlapsNegativeAbscissaAxis = false;
+  if (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f) {
+    if (rectRight > 0.0f) {
+      // Origin is inside rect, tStart and tEnd cannot be optimized
+      return drawCurve(ctx, rect, tStart, tEnd, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+    }
+    // Rect view overlaps the abscissa, on the left of the origin.
+    rectOverlapsNegativeAbscissaAxis = true;
+  }
+
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+
+  float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
+  /* Compute angular coordinate of each corners of rect.
+   * t4 --- t3
+   *  |      |
+   * t1 --- t2 */
+  float t1 = PolarThetaFromCoordinates(rectLeft, rectDown, angleUnit);
+  float t2 = PolarThetaFromCoordinates(rectRight, rectDown, angleUnit);
+  float t3 = PolarThetaFromCoordinates(rectRight, rectUp, angleUnit);
+  float t4 = PolarThetaFromCoordinates(rectLeft, rectUp, angleUnit);
+
+  /* The area between tMin and tMax (modulo π) is the area where something might
+   * be plotted. */
+  float tMin = std::min(std::min(t1,t2),std::min(t3,t4));
+  float tMax = std::max(std::max(t1,t2),std::max(t3,t4));
+
+  if (rectOverlapsNegativeAbscissaAxis) {
+    /* PolarThetaFromCoordinates yields coordinates between -π and π. When rect
+     * is overlapping the negative abscissa (at this point, the origin cannot be
+     * inside rect), t1 and t2 have a negative angle whereas t3 and t4 have a
+     * positive angle. We ensure here that tMin is t3 (modulo 2π), tMax is t2,
+     * and that tMax-tMin is minimal and positive. */
+    tMin = t3 - 2 * piInAngleUnit;
+    tMax = t2;
+  }
+
+  /* Draw curve on intervals where (tMin%π,tMax%π) intersects (tStart,tEnd).
+   * For instance : if tStart=-π, tEnd=3π, tMin=π/4 and tMax=π/3, a curve is
+   * drawn between the intervals :
+   * - [ π/4, π/3 ], [ 2π + π/4, 2π + π/3 ]
+   * - [ -π + π/4, -π + π/3 ], [ π + π/4, π + π/3 ] in case f(θ) is negative*/
+
+  // 1 - Translate tMin and tMax to the left so that no intersection is missed
+  while (tMax - piInAngleUnit > tStart) {
+    tMin -= piInAngleUnit;
+    tMax -= piInAngleUnit;
+  }
+
+  // 2 - Translate tMin and tMax to the right until tMin is greater than tEnd
+  while (tMin < tEnd) {
+    float t1 = std::max(tMin, tStart);
+    float t2 = std::min(tMax, tEnd);
+    // Draw curve if there is an intersection
+    if (t1 <= t2) {
+      /* To maximize cache hits, we floor (and ceil) t1 (and t2) to the closest
+       * cached value. More of the curve is drawn. */
+      int i = std::floor((t1 - tStart) / tStep);
+      float tCache1 = tStart + tStep * i;
+
+      int j = std::ceil((t2 - tStart) / tStep);
+      float tCache2 = std::min(tStart + tStep * j, tEnd);
+
+      drawCurve(ctx, rect, tCache1, tCache2, tStep, xyEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound);
+    }
+    tMin += piInAngleUnit;
+    tMax += piInAngleUnit;
+  }
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,

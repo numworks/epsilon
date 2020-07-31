@@ -55,29 +55,24 @@ using namespace Regs;
  * the operation is stalled until enough data is present or until the transfer is complete, whichever happens first. */
 
 enum class Command : uint8_t {
-  ReadStatusRegister1 = 0x05,
-  ReadStatusRegister2 = 0x35,
-  WriteStatusRegister = 0x01,
-  WriteStatusRegister2 = 0x31,
-  WriteEnable = 0x06,
-  ReadData = 0x03,
-  FastRead = 0x0B,
-  FastReadQuadIO = 0xEB,
-  // Program previously erased memory areas as being "0"
-  PageProgram = 0x02,
-  QuadPageProgram = 0x33,
-  EnableQPI = 0x38,
-  EnableReset = 0x66,
-  Reset = 0x99,
-  // Erase the whole chip or a 64-Kbyte block as being "1"
-  ChipErase = 0xC7,
-  Erase4KbyteBlock = 0x20,
-  Erase32KbyteBlock = 0x52,
-  Erase64KbyteBlock = 0xD8,
-  SetReadParameters = 0xC0,
-  DeepPowerDown = 0xB9,
-  ReleaseDeepPowerDown = 0xAB,
-  ReadJEDECID = 0x9F
+  WriteStatusRegister   = 0x01,
+  PageProgram           = 0x02, // Program previously erased memory areas as being "0"
+  ReadData              = 0x03,
+  ReadStatusRegister1   = 0x05,
+  WriteEnable           = 0x06,
+  Erase4KbyteBlock      = 0x20,
+  WriteStatusRegister2  = 0x31,
+  QuadPageProgram       = 0x32, // WARNING! Changed from 33
+  ReadStatusRegister2   = 0x35,
+  Erase32KbyteBlock     = 0x52,
+  EnableReset           = 0x66,
+  Reset                 = 0x99,
+  ReadJEDECID           = 0x9F,
+  ReleaseDeepPowerDown  = 0xAB,
+  DeepPowerDown         = 0xB9,
+  ChipErase             = 0xC7, // Erase the whole chip or a 64-Kbyte block as being "1"
+  Erase64KbyteBlock     = 0xD8,
+  FastReadQuadIO        = 0xEB
 };
 
 static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
@@ -98,53 +93,78 @@ public:
   };
 };
 
+class OperatingModes {
+public:
+  constexpr OperatingModes(QUADSPI::CCR::OperatingMode instruction, QUADSPI::CCR::OperatingMode address, QUADSPI::CCR::OperatingMode data) :
+    m_instructionOperatingMode(instruction),
+    m_addressOperatingMode(address),
+    m_dataOperatingMode(data)
+  {}
+  QUADSPI::CCR::OperatingMode instructionOperatingMode() const { return m_instructionOperatingMode; }
+  QUADSPI::CCR::OperatingMode addressOperatingMode() const { return m_addressOperatingMode; }
+  QUADSPI::CCR::OperatingMode dataOperatingMode() const { return m_dataOperatingMode; }
+private:
+  QUADSPI::CCR::OperatingMode m_instructionOperatingMode;
+  QUADSPI::CCR::OperatingMode m_addressOperatingMode;
+  QUADSPI::CCR::OperatingMode m_dataOperatingMode;
+};
+
+/* TODO LEA 641B has quadSPI-1-*-4, not QPI-4-4-4*/
+static constexpr OperatingModes sOperatingModesNoData(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::NoData);
+static constexpr OperatingModes sOperatingModesSingle(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single);
+static constexpr OperatingModes sOperatingModes114(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad);
+static constexpr OperatingModes sOperatingModes144(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Quad, QUADSPI::CCR::OperatingMode::Quad);
+static constexpr OperatingModes sOperatingModes101(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData, QUADSPI::CCR::OperatingMode::Single);
+static constexpr OperatingModes sOperatingModes110(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::NoData);
+static constexpr OperatingModes sOperatingModes111(QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single, QUADSPI::CCR::OperatingMode::Single);
+
+
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
+static QUADSPI::CCR::OperatingMode sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
+
 static constexpr int ClockFrequencyDivisor = 2;
-static constexpr bool ajustNumberOfDummyCycles = Clocks::Config::AHBFrequency > (80 * ClockFrequencyDivisor);
-static constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad && ajustNumberOfDummyCycles) ? 4 : 2;
+static constexpr int QuadIOFastReadDummyCycles = 4;
 
-static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
-static inline void send_command(Command c, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, OperatingModes operatingModes, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
+
+static inline void send_command(Command c) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
-    operatingMode,
+    sOperatingModesNoData,
     c,
     reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
     0, 0,
     0,
-    nullptr, 0
-  );
+    nullptr, 0);
 }
 
-static inline void send_write_command(Command c, uint8_t * address, const uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+static inline void send_write_command(Command c, uint8_t * address, const uint8_t * data, size_t dataLength, OperatingModes operatingModes) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
-    operatingMode,
+    operatingModes,
     c,
     address,
     0, 0,
     0,
-    const_cast<uint8_t *>(data), dataLength
-  );
+    const_cast<uint8_t *>(data), dataLength);
 }
 
-static inline void send_read_command(Command c, uint8_t * address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+static inline void send_read_command(Command c, uint8_t * address, uint8_t * data, size_t dataLength) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectRead,
-    operatingMode,
+    sOperatingModes101,
     c,
     address,
     0, 0,
     0,
-    data, dataLength
-  );
+    data, dataLength);
 }
 
-static inline void wait(QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+static inline void wait() {
   ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
   do {
-    send_read_command(Command::ReadStatusRegister1, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
+    send_read_command(Command::ReadStatusRegister1, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1));
   } while (statusRegister1.getBUSY());
 }
 
@@ -160,11 +180,11 @@ static void set_as_memory_mapped() {
    * (Flash memories tend to consume more when nCS is held low.) */
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
-    DefaultOperatingMode,
+    sOperatingModes144,
     Command::FastReadQuadIO,
     reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
     0xA0, 1,
-    FastReadDummyCycles,
+    QuadIOFastReadDummyCycles,
     nullptr, 0
   );
 }
@@ -174,16 +194,16 @@ static void unset_memory_mapped_mode() {
   uint8_t dummyData;
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectRead,
-    DefaultOperatingMode,
+    sOperatingModes144,
     Command::FastReadQuadIO,
     0,
     ~(0xA0), 1,
-    FastReadDummyCycles,
+    QuadIOFastReadDummyCycles,
     &dummyData, 1
   );
 }
 
-static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
+static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, OperatingModes operatingModes, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
   /* According to ST's Errata Sheet ES0360, "Wrong data can be read in
    * memory-mapped after an indirect mode operation". This is the workaround. */
   if (functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
@@ -214,22 +234,22 @@ static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADS
   class QUADSPI::CCR ccr(0);
   ccr.setFMODE(functionalMode);
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
-    ccr.setDMODE(operatingMode);
+    ccr.setDMODE(operatingModes.dataOperatingMode());
   }
   if (functionalMode != QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
   }
   ccr.setDCYC(dummyCycles);
   if (numberOfAltBytes > 0) {
-    ccr.setABMODE(operatingMode);
+    ccr.setABMODE(operatingModes.addressOperatingMode()); // Seems to always be the same as address mode
     ccr.setABSIZE(static_cast<QUADSPI::CCR::Size>(numberOfAltBytes - 1));
     QUADSPI.ABR()->set(altBytes);
   }
   if (address != reinterpret_cast<uint8_t *>(FlashAddressSpaceSize) || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
-    ccr.setADMODE(operatingMode);
+    ccr.setADMODE(operatingModes.addressOperatingMode());
     ccr.setADSIZE(QUADSPI::CCR::Size::ThreeBytes);
   }
-  ccr.setIMODE(operatingMode);
+  ccr.setIMODE(operatingModes.instructionOperatingMode());
   ccr.setINSTRUCTION(static_cast<uint8_t>(c));
   if (functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setSIOO(true);
@@ -288,36 +308,20 @@ static void initQSPI() {
   QUADSPI.CR()->set(cr);
 }
 
-static QUADSPI::CCR::OperatingMode sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
-
 static void initChip() {
   // Release sleep deep
-  send_command(Command::ReleaseDeepPowerDown, sOperatingMode);
+  send_command(Command::ReleaseDeepPowerDown);
   Timing::usleep(3);
 
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
-   * it to switch to QPI. */
+   * it to switch to QuadSPI/QPI. */
   if (sOperatingMode == QUADSPI::CCR::OperatingMode::Single && DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
-    send_command(Command::WriteEnable, QUADSPI::CCR::OperatingMode::Single);
+    send_command(Command::WriteEnable);
     ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
     statusRegister2.setQE(true);
-    wait(QUADSPI::CCR::OperatingMode::Single);
-    send_write_command(Command::WriteStatusRegister2, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister2), sizeof(statusRegister2), QUADSPI::CCR::OperatingMode::Single);
-    wait(QUADSPI::CCR::OperatingMode::Single);
-    send_command(Command::EnableQPI, QUADSPI::CCR::OperatingMode::Single);
     wait();
-    if (ajustNumberOfDummyCycles) {
-      class ReadParameters : Register8 {
-      public:
-        /* Parameters sent along with SetReadParameters instruction in order
-         * to configure the number of dummy cycles for the QPI Read instructions. */
-        using Register8::Register8;
-        REGS_BOOL_FIELD_W(P5, 5);
-      };
-      ReadParameters readParameters(0);
-      readParameters.setP5(true);
-      send_write_command(Command::SetReadParameters, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&readParameters), sizeof(readParameters));
-    }
+    send_write_command(Command::WriteStatusRegister2, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister2), sizeof(statusRegister2), sOperatingModes101);
+    wait();
     sOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
   }
   set_as_memory_mapped();
@@ -346,10 +350,10 @@ static void shutdownChip() {
   send_command(Command::EnableReset);
   send_command(Command::Reset);
   sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
-  Ion::Timing::usleep(30);
+  Timing::usleep(30);
 
   // Sleep deep
-  send_command(Command::DeepPowerDown, sOperatingMode);
+  send_command(Command::DeepPowerDown);
   Timing::usleep(3);
 }
 
@@ -402,7 +406,7 @@ void unlockFlash() {
   statusRegister2.setQE(currentStatusRegister2.getQE());
 
   uint8_t registers[] = {statusRegister1.get(), statusRegister2.get()};
-  send_write_command(Command::WriteStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(registers), sizeof(registers));
+  send_write_command(Command::WriteStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(registers), sizeof(registers), sOperatingModes101);
   wait();
 }
 
@@ -428,18 +432,18 @@ void __attribute__((noinline)) EraseSector(int i) {
   /* WARNING: this code assumes that the flash sectors are of increasing size:
    * first all 4K sectors, then all 32K sectors, and finally all 64K sectors. */
   if (i < Config::NumberOf4KSectors) {
-    send_write_command(Command::Erase4KbyteBlock, reinterpret_cast<uint8_t *>(i << NumberOfAddressBitsIn4KbyteBlock), nullptr, 0);
+    send_write_command(Command::Erase4KbyteBlock, reinterpret_cast<uint8_t *>(i << NumberOfAddressBitsIn4KbyteBlock), nullptr, 0, sOperatingModes110);
   } else if (i < Config::NumberOf4KSectors + Config::NumberOf32KSectors) {
     /* If the sector is the number Config::NumberOf4KSectors, we want to write
      * at the address 1 << NumberOfAddressBitsIn32KbyteBlock, hence the formula
      * (i - Config::NumberOf4KSectors + 1). */
-    send_write_command(Command::Erase32KbyteBlock, reinterpret_cast<uint8_t *>((i - Config::NumberOf4KSectors + 1) << NumberOfAddressBitsIn32KbyteBlock), nullptr, 0);
+    send_write_command(Command::Erase32KbyteBlock, reinterpret_cast<uint8_t *>((i - Config::NumberOf4KSectors + 1) << NumberOfAddressBitsIn32KbyteBlock), nullptr, 0, sOperatingModes110);
   } else {
     /* If the sector is the number
      * Config::NumberOf4KSectors - Config::NumberOf32KSectors, we want to write
      * at the address 1 << NumberOfAddressBitsIn32KbyteBlock, hence the formula
      * (i - Config::NumberOf4KSectors - Config::NumberOf32KSectors + 1). */
-    send_write_command(Command::Erase64KbyteBlock, reinterpret_cast<uint8_t *>((i - Config::NumberOf4KSectors - Config::NumberOf32KSectors + 1) << NumberOfAddressBitsIn64KbyteBlock), nullptr, 0);
+    send_write_command(Command::Erase64KbyteBlock, reinterpret_cast<uint8_t *>((i - Config::NumberOf4KSectors - Config::NumberOf32KSectors + 1) << NumberOfAddressBitsIn64KbyteBlock), nullptr, 0, sOperatingModes110);
   }
   wait();
   set_as_memory_mapped();
@@ -455,7 +459,6 @@ void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t 
    * However, when the end of a page is reached, the addressing wraps to the beginning.
    * Hence a Page Program instruction must be issued for each page. */
   static constexpr size_t PageSize = 256;
-  constexpr Command pageProgram = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) ? Command::PageProgram : Command::QuadPageProgram;
   uint8_t offset = reinterpret_cast<uint32_t>(destination) & (PageSize - 1);
   size_t lengthThatFitsInPage = PageSize - offset;
   while (length > 0) {
@@ -464,7 +467,12 @@ void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t 
     }
     send_command(Command::WriteEnable);
     wait();
-    send_write_command(pageProgram, destination, source, lengthThatFitsInPage);
+    if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) {
+      send_write_command(Command::PageProgram, destination, source, lengthThatFitsInPage, sOperatingModes111);
+    } else {
+      assert(DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad);
+      send_write_command(Command::QuadPageProgram, destination, source, lengthThatFitsInPage, sOperatingModes114);
+    }
     length -= lengthThatFitsInPage;
     destination += lengthThatFitsInPage;
     source += lengthThatFitsInPage;

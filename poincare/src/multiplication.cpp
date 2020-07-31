@@ -322,14 +322,14 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
 }
 
 static bool CanSimplifyUnitProduct(
-    const Unit::Dimension::Vector<int> &unitsExponents, size_t &unitsSupportSize,
-    const Unit::Dimension::Vector<int8_t> *entryUnitExponents, int8_t entryUnitExponent,
-    int8_t &bestUnitExponent, Unit::Dimension::Vector<int> &bestRemainderExponents, size_t &bestRemainderSupportSize) {
+    const UnitNode::Vector<int> &unitsExponents, size_t &unitsSupportSize,
+    const UnitNode::Vector<int> * entryUnitExponents, int entryUnitExponent,
+    int8_t &bestUnitExponent, UnitNode::Vector<int> &bestRemainderExponents, size_t &bestRemainderSupportSize) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' int array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
-  Unit::Dimension::Vector<int> simplifiedExponents;
+  UnitNode::Vector<int> simplifiedExponents;
 
   #if 0
   /* In the current algorithm, simplification is attempted using derived units
@@ -369,7 +369,7 @@ static bool CanSimplifyUnitProduct(
   n -= step;
   #endif
 
-  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+  for (size_t i = 0; i < UnitNode::k_numberOfBaseUnits; i++) {
     #if 0
     // Undo last step as it did not reduce the norm
     simplifiedExponents.setCoefficientAtIndex(i, simplifiedExponents.coefficientAtIndex(i) + entryUnitExponent * step * entryUnitExponents->coefficientAtIndex(i));
@@ -444,26 +444,27 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
        * representation of units with base units and integer exponents.
        * It cause no problem because once the best derived units are found,
        * units is divided then multiplied by them. */
-      Unit::Dimension::Vector<int> unitsExponents = Unit::Dimension::Vector<int>::FromBaseUnits(units);
+      UnitNode::Vector<int> unitsExponents = UnitNode::Vector<int>::FromBaseUnits(units);
       size_t unitsSupportSize = unitsExponents.supportSize();
-      Unit::Dimension::Vector<int> bestRemainderExponents;
+      UnitNode::Vector<int> bestRemainderExponents;
       size_t bestRemainderSupportSize;
       while (unitsSupportSize > 1) {
-        const Unit::Dimension * bestDim = nullptr;
+        const UnitNode::Representative * bestDim = nullptr;
         int8_t bestUnitExponent = 0;
         // Look up in the table of derived units.
-        for (const Unit::Dimension * dim = Unit::DimensionTable + Unit::NumberOfBaseUnits; dim < Unit::DimensionTableUpperBound; dim++) {
-          const Unit::Dimension::Vector<int8_t> * entryUnitExponents = dim->vector();
+        for (int i = UnitNode::k_numberOfBaseUnits; i < UnitNode::Representative::k_numberOfDimensions - 1; i++) {
+          const UnitNode::Representative * dim = UnitNode::Representative::DefaultRepresentatives()[i];
+          const UnitNode::Vector<int> entryUnitExponents = dim->dimensionVector();
           // A simplification is tried by either multiplying or dividing
           if (CanSimplifyUnitProduct(
                 unitsExponents, unitsSupportSize,
-                entryUnitExponents, 1,
+                &entryUnitExponents, 1,
                 bestUnitExponent, bestRemainderExponents, bestRemainderSupportSize
                 )
               ||
               CanSimplifyUnitProduct(
                 unitsExponents, unitsSupportSize,
-                entryUnitExponents, -1,
+                &entryUnitExponents, -1,
                 bestUnitExponent, bestRemainderExponents, bestRemainderSupportSize
                 ))
           {
@@ -477,7 +478,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
           break;
         }
         // Build and add the best derived unit
-        Expression derivedUnit = Unit::Builder(bestDim, bestDim->stdRepresentative(), bestDim->stdRepresentativePrefix());
+        Expression derivedUnit = Unit::Builder(bestDim->representativesOfSameDimension(), bestDim->basePrefix());
 
         #if 0
         if (bestUnitExponent != 1) {
@@ -533,7 +534,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     } else {
       if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
         // Find the right unit prefix
-        Unit::ChooseBestRepresentativeAndPrefixForValue(&units, &value, reductionContext);
+        Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, reductionContext);
       }
       // Build final Expression
       result = Multiplication::Builder(Number::FloatNumber(value), units);

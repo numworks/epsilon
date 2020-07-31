@@ -5,6 +5,8 @@
 #include <poincare/absolute_value_layout.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/multiplication.h>
+#include <poincare/power.h>
+#include <poincare/derivative.h>
 #include <assert.h>
 #include <cmath>
 
@@ -29,6 +31,10 @@ int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 
 Expression AbsoluteValueNode::shallowReduce(ReductionContext reductionContext) {
   return AbsoluteValue(this).shallowReduce(reductionContext);
+}
+
+bool AbsoluteValueNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return AbsoluteValue(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -111,6 +117,20 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   // abs(-x) = abs(x)
   c.makePositiveAnyNegativeNumeralFactor(reductionContext);
   return *this;
+}
+
+// Derivate of |f(x)| is f'(x)*sg(x) (and undef in 0) = f'(x)*(f(x)/|f(x)|)
+bool AbsoluteValue::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Expression f = childAtIndex(0);
+  Multiplication result = Multiplication::Builder();
+  result.addChildAtIndexInPlace(Derivative::Builder(f.clone(),
+    symbol.clone().convert<Symbol>(),
+    symbolValue.clone()
+    ),0,0);
+  result.addChildAtIndexInPlace(f.clone(),1,1);
+  replaceWithInPlace(result);
+  result.addChildAtIndexInPlace(Power::Builder(*this,Rational::Builder(-1)),2,2);
+  return true;
 }
 
 }

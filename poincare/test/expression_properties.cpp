@@ -394,51 +394,62 @@ QUIZ_CASE(poincare_properties_remove_unit) {
   assert_reduced_expression_unit_is("_L^2×3×_s", "_m^6×_s");
 }
 
-void assert_seconds_split_to(double totalSeconds, const char * splittedTime, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  Expression time = Unit::BuildTimeSplit(totalSeconds, context);
-  constexpr static int bufferSize = 100;
-  char buffer[bufferSize];
-  time.serialize(buffer, bufferSize, DecimalMode);
-  quiz_assert_print_if_failure(strcmp(buffer, splittedTime) == 0, splittedTime);
-}
-
-Expression extract_unit(const char * expression) {
+void assert_additional_results_compute_to(const char * expression, const char * * results, int length) {
   Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, Metric, User, ReplaceAllSymbolsWithUndefined, NoUnitConversion);
+  constexpr int maxNumberOfResults = 5;
+  assert(length <= maxNumberOfResults);
+  Expression additional[maxNumberOfResults];
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, Metric, User, ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
   Expression e = parse_expression(expression, &globalContext, false).reduce(reductionContext);
-  Expression unit;
-  e.removeUnit(&unit);
-  return unit;
+  Expression units;
+  e = e.removeUnit(&units);
+  double value = e.approximateToScalar<double>(&globalContext, Cartesian, Degree);
+
+  if (!Unit::ShouldDisplayAdditionalOutputs(value, units)) {
+    quiz_assert(length == 0);
+    return;
+  }
+  const int numberOfResults = Unit::SetAdditionalExpressions(units, value, additional, maxNumberOfResults, reductionContext);
+
+  quiz_assert(numberOfResults == length);
+  for (int i = 0; i < length; i++) {
+    assert_expression_serialize_to(additional[i], results[i], Preferences::PrintFloatMode::Decimal);
+  }
 }
 
-QUIZ_CASE(poincare_expression_unit_helper) {
-  // 1. Time
-  Expression s = extract_unit("_s");
-  quiz_assert(s.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(s).isSecond());
-  quiz_assert(!static_cast<Unit &>(s).isMeter());
+QUIZ_CASE(poincare_expression_additional_results) {
+  // Time
+  assert_additional_results_compute_to("3×_s", nullptr, 0);
+  const char * array1[1] = {"1×_min+1×_s"};
+  assert_additional_results_compute_to("61×_s", array1, 1);
+  const char * array2[1] = {"1×_day+10×_h+17×_min+36×_s"};
+  assert_additional_results_compute_to("123456×_s", array2, 1);
+  const char * array3[1] = {"7×_day"};
+  assert_additional_results_compute_to("1×_week", array3, 1);
 
-  Shared::GlobalContext globalContext;
-  assert_seconds_split_to(1234567890, "39×_year+1×_month+13×_day+19×_h+1×_min+30×_s", &globalContext, Cartesian, Degree);
-  assert_seconds_split_to(-122, "-2×_min-2×_s", &globalContext, Cartesian, Degree);
+  // Distance
+  const char * array4[1] = {"19×_mi+853×_yd+1×_ft+7×_in"};
+  assert_additional_results_compute_to("1234567×_in", array4, 1);
+  const char * array5[1] = {"1×_yd+7.700787×_in"};
+  assert_additional_results_compute_to("1.11×_m", array5, 1);
 
-  // 2. Speed
-  Expression meterPerSecond = extract_unit("_m×_s^-1");
-  quiz_assert(Unit::IsSISpeed(meterPerSecond));
+  // Masses
+  const char * array6[1] = {"1×_shtn+240×_lb"};
+  assert_additional_results_compute_to("1×_lgtn", array6, 1);
+  const char * array7[1] = {"2×_lb+3.273962×_oz"};
+  assert_additional_results_compute_to("1×_kg", array7, 1);
 
-  // 3. Volume
-  Expression meter3 = extract_unit("_m^3");
-  quiz_assert(Unit::IsSIVolume(meter3));
+  // Energy
+  const char * array8[2] = {"1×_kW×_h", "2.246943ᴇ13×_TeV"};
+  assert_additional_results_compute_to("3.6×_MN_m", array8, 2);
 
-  // 4. Energy
-  Expression kilogramMeter2PerSecond2 = extract_unit("_kg×_m^2×_s^-2");
-  quiz_assert(Unit::IsSIEnergy(kilogramMeter2PerSecond2));
-  Expression kilogramMeter3PerSecond2 = extract_unit("_kg×_m^3×_s^-2");
-  quiz_assert(!Unit::IsSIEnergy(kilogramMeter3PerSecond2));
+  // Volume
+  const char * array9[2] = {"1000×_L", "264×_gal+2×_cp+6.022702×_floz"};
+  assert_additional_results_compute_to("1×_m^3", array9, 2);
+  const char * array10[2] = {"182.5426×_L", "48×_gal+3×_cp+4.5×_floz"};
+  assert_additional_results_compute_to("12345×_Tbsp", array10, 2);
 
-  // 5. International System
-  quiz_assert(Unit::IsSI(kilogramMeter2PerSecond2));
-  quiz_assert(Unit::IsSI(meter3));
-  quiz_assert(Unit::IsSI(meterPerSecond));
-  Expression joule = extract_unit("_J");
-  quiz_assert(!Unit::IsSI(joule));
+  // Speed
+  const char * array11[2] = {"3.6×_km×_h^\x12-1\x13", "2.236936×_mi×_h^\x12-1\x13"};
+  assert_additional_results_compute_to("1×_m/_s", array11, 2);
 }

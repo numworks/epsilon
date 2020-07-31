@@ -347,13 +347,11 @@ void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) 
 
 void Parser::parseUnit(Expression & leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const Unit::Dimension * unitDimension = nullptr;
   const Unit::Representative * unitRepresentative = nullptr;
-  const Unit::Prefix * unitPrefix = nullptr;  leftHandSide = Constant::Builder(m_currentToken.codePoint());
-  if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
-        &unitDimension, &unitRepresentative, &unitPrefix))
-  {
-    leftHandSide = Unit::Builder(unitDimension, unitRepresentative, unitPrefix);
+  const Unit::Prefix * unitPrefix = nullptr;
+  leftHandSide = Constant::Builder(m_currentToken.codePoint());
+  if (Unit::CanParse(m_currentToken.text(), m_currentToken.length(), &unitRepresentative, &unitPrefix)) {
+    leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
   } else {
     m_status = Status::Error; // Unit does not exist
     return;

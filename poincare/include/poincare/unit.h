@@ -5,22 +5,21 @@
 
 namespace Poincare {
 
-class UnitNode final : public ExpressionNode {
-public:
-
   /* The units having the same physical dimension are grouped together.
    * Each such group has a standard representative with a standard prefix.
    *
    * Each representative has
    *  - a root symbol
-   *  - a definition
-   *  - a list of allowed output prefixes
-   * Given a Dimension, a representative in that Dimension and a Prefix
-   * allowed for that representative, one may get a symbol and an Expression.
+   *  - a definition, as the conversion ratio with the SI unit of the same
+   *    dimensions
+   *  - informations on how the representative should be prefixed.
+   *
+   * Given an representative and a Prefix allowed for that representative, one may get
+   * a symbol and an Expression.
    *
    * FIXME ?
-   * The UnitNode class holds as members pointers to a Dimension, a
-   * Representative, a Prefix. Those nested classes may not be forward
+   * The UnitNode class holds as members pointers to a Representative and a
+   * Prefix. Those nested classes may not be forward
    * declared and must be defined in UnitNode and then aliased in Unit so as
    * to be used outside. That technical limitation could have been avoided if
    * UnitNode were itself a nested class of Unit, say Unit::Node. More
@@ -29,115 +28,401 @@ public:
    * and scopes.
    */
 
-  // There are 7 base units from which all other units are derived.
-  static constexpr size_t NumberOfBaseUnits = 7;
+class Unit;
+
+class UnitNode final : public ExpressionNode {
+public:
+  static constexpr int k_numberOfBaseUnits = 7;
 
   class Prefix {
+    friend class Unit;
   public:
-    constexpr Prefix(const char * symbol, int8_t exponent) :
-      m_symbol(symbol),
-      m_exponent(exponent)
-    {}
+    static constexpr int k_numberOfPrefixes = 13;
+    static const Prefix * Prefixes();
+    static const Prefix * EmptyPrefix();
     const char * symbol() const { return m_symbol; }
     int8_t exponent() const { return m_exponent; }
     int serialize(char * buffer, int bufferSize) const;
   private:
+    constexpr Prefix(const char * symbol, int8_t exponent) :
+      m_symbol(symbol),
+      m_exponent(exponent)
+    {}
+
     const char * m_symbol;
     int8_t m_exponent;
   };
 
+  template<typename T>
+  struct Vector {
+    // SupportSize is defined as the number of distinct base units.
+    size_t supportSize() const;
+    static Vector FromBaseUnits(const Expression baseUnits);
+    const T coefficientAtIndex(size_t i) const {
+      assert(i < k_numberOfBaseUnits);
+      const T coefficients[k_numberOfBaseUnits] = {time, distance, mass, current, temperature, amountOfSubstance, luminuousIntensity};
+      return coefficients[i];
+    }
+    void setCoefficientAtIndex(size_t i, T c) {
+      assert(i < k_numberOfBaseUnits);
+      T * coefficientsAddresses[k_numberOfBaseUnits] = {&time, &distance, &mass, &current, &temperature, &amountOfSubstance, &luminuousIntensity};
+      *(coefficientsAddresses[i]) = c;
+    }
+    bool operator==(const Vector &rhs) const { return time == rhs.time && distance == rhs.distance && mass == rhs.mass && current == rhs.current && temperature == rhs.temperature && amountOfSubstance == rhs.amountOfSubstance && luminuousIntensity == rhs.luminuousIntensity; }
+    void addAllCoefficients(const Vector other, int factor);
+    Expression toBaseUnits() const;
+    T time;
+    T distance;
+    T mass;
+    T current;
+    T temperature;
+    T amountOfSubstance;
+    T luminuousIntensity;
+  };
+
   class Representative {
+    friend class Unit;
   public:
-    /* The following class is meant to be an attribute determining whether a
-     * unit symbol is prefixable at all. If Yes, any prefix is accepted as
-     * input, whereas the allowed output prefixes are prescribed manually. */
     enum class Prefixable {
-      No,
-      Yes,
-      PositiveOnly
-    };
-    enum class OutputSystem {
       None,
-      Imperial,
-      Metric,
-      All
+      PositiveLongScale,
+      NegativeLongScale,
+      Positive,
+      Negative,
+      NegativeAndKilo,
+      LongScale,
+      All,
     };
-    template <size_t N>
-    constexpr Representative(const char * rootSymbol, const char * definition, const Prefixable prefixable, const Prefix * const (&outputPrefixes)[N], const OutputSystem outputSystem = OutputSystem::All) :
+    static constexpr int k_numberOfDimensions = 24;
+    static const Representative * const * DefaultRepresentatives();
+    static const Representative * RepresentativeForDimension(Vector<int> vector);
+    constexpr Representative(const char * rootSymbol, double ratio, Prefixable inputPrefixable, Prefixable outputPrefixable) :
       m_rootSymbol(rootSymbol),
-      m_definition(definition),
-      m_prefixable(prefixable),
-      m_outputPrefixes(outputPrefixes),
-      m_outputPrefixesLength(N),
-      m_outputSystem(outputSystem)
-    {
-    }
+      m_ratio(ratio),
+      m_inputPrefixable(inputPrefixable),
+      m_outputPrefixable(outputPrefixable)
+    {}
+    virtual const Vector<int> dimensionVector() const { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; };
+    virtual int numberOfRepresentatives() const { return 0; };
+    /* representativesOfSameDimension returns a pointer to the array containing
+     * all representatives for this's dimension. */
+    virtual const Representative * representativesOfSameDimension() const { return nullptr; };
+    virtual const Prefix * basePrefix() const { return Prefix::EmptyPrefix(); }
+    virtual bool isBaseUnit() const { return false; }
+    virtual const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const { return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), numberOfRepresentatives(), prefix); }
+    virtual bool hasAdditionalExpressions(double value) const { return true; }
+    virtual int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const { return 0; }
     const char * rootSymbol() const { return m_rootSymbol; }
-    const char * definition() const { return m_definition; }
-    bool isPrefixable() const { return m_prefixable != Prefixable::No; }
-    const Prefix * const * outputPrefixes() const { return m_outputPrefixes; }
-    size_t outputPrefixesLength() const { return m_outputPrefixesLength; }
-    bool canParse(const char * symbol, size_t length,
-        const Prefix * * prefix) const;
+    double ratio() const { return m_ratio; }
+    bool isInputPrefixable() const { return m_inputPrefixable != Prefixable::None; }
+    bool isOutputPrefixable() const { return m_outputPrefixable != Prefixable::None; }
+    bool canPrefix(const Prefix * prefix, bool input) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
-    const Prefix * bestPrefixForValue(double & value, const float exponent) const;
-    bool canOutputInSystem(Preferences::UnitFormat system) const;
-  private:
+    bool canParseWithEquivalents(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix) const;
+    bool canParse(const char * symbol, size_t length, const Prefix * * prefix) const;
+    Expression toBaseUnits() const;
+    const Prefix * findBestPrefix(double value, double exponent) const;
+  protected:
+    static const Representative * DefaultFindBestRepresentative(double value, double exponent, const Representative * representatives, int length, const Prefix * * prefix);
     const char * m_rootSymbol;
-    const char * m_definition;
-    const Prefixable m_prefixable;
-    const Prefix * const * m_outputPrefixes;
-    const size_t m_outputPrefixesLength;
-    const OutputSystem m_outputSystem;
+    /* m_ratio is the factor used to convert a unit made of the representative
+     * and its base prefix into base SI units.
+     * ex : m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m).
+     *      m_ratio for gram is 1 (as k is its best prefix and _kg is SI) */
+    const double m_ratio;
+    const Prefixable m_inputPrefixable;
+    const Prefixable m_outputPrefixable;
   };
 
-  class Dimension {
+  class TimeRepresentative : public Representative {
+    friend class Unit;
   public:
-    template<typename T>
-    struct Vector {
-      // SupportSize is defined as the number of distinct base units.
-      size_t supportSize() const;
-      static Vector FromBaseUnits(const Expression baseUnits);
-      const T coefficientAtIndex(size_t i) const {
-        assert(i < NumberOfBaseUnits);
-        return *(reinterpret_cast<const T*>(this) + i);
-      }
-      void setCoefficientAtIndex(size_t i, T c) {
-        assert(i < NumberOfBaseUnits);
-        *(reinterpret_cast<T*>(this) + i) = c;
-      }
-      T time;
-      T distance;
-      T mass;
-      T current;
-      T temperature;
-      T amountOfSubstance;
-      T luminuousIntensity;
-    };
-    template <size_t N>
-    constexpr Dimension(Vector<int8_t> vector, const Representative (&representatives)[N], const Prefix * stdRepresentativePrefix) :
-      m_vector(vector),
-      m_representatives(representatives),
-      m_representativesUpperBound(representatives + N),
-      m_stdRepresentativePrefix(stdRepresentativePrefix)
-    {
-    }
-    const Vector<int8_t> * vector() const { return &m_vector; }
-    const Representative * stdRepresentative() const { return m_representatives; }
-    const Representative * representativesUpperBound() const { return m_representativesUpperBound; }
-    const Prefix * stdRepresentativePrefix() const { return m_stdRepresentativePrefix; }
-    bool canParse(const char * symbol, size_t length,
-        const Representative * * representative, const Prefix * * prefix) const;
+    constexpr static TimeRepresentative Default() { return TimeRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 1, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 7; }
+    const Representative * representativesOfSameDimension() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    bool hasAdditionalExpressions(double value) const override { return m_ratio * value >= representativesOfSameDimension()[1].ratio(); }
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
-    Vector<int8_t> m_vector;
-    const Representative * m_representatives;
-    const Representative * m_representativesUpperBound;
-    const Prefix * m_stdRepresentativePrefix;
+    using Representative::Representative;
   };
 
-  UnitNode(const Dimension * dimension, const Representative * representative, const Prefix * prefix) :
+  class DistanceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static DistanceRepresentative Default() { return DistanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 8; }
+    const Representative * representativesOfSameDimension() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class MassRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static MassRepresentative Default() { return MassRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 7; }
+    const Representative * representativesOfSameDimension() const override;
+    const Prefix * basePrefix() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class CurrentRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static CurrentRepresentative Default() { return CurrentRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    bool hasAdditionalExpressions(double value) const override { return false; }
+  private:
+    using Representative::Representative;
+  };
+
+  class TemperatureRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static TemperatureRepresentative Default() { return TemperatureRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 1, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    bool hasAdditionalExpressions(double value) const override { return false; }
+  private:
+    using Representative::Representative;
+  };
+
+  class AmountOfSubstanceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static AmountOfSubstanceRepresentative Default() { return AmountOfSubstanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 1, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    bool hasAdditionalExpressions(double value) const override { return false; }
+  private:
+    using Representative::Representative;
+  };
+
+  class LuminousIntensityRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static LuminousIntensityRepresentative Default() { return LuminousIntensityRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 1}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    bool hasAdditionalExpressions(double value) const override { return false; }
+  private:
+    using Representative::Representative;
+  };
+
+  class FrequencyRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static FrequencyRepresentative Default() { return FrequencyRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -1, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+    bool hasAdditionalExpressions(double value) const override { return false; }
+  private:
+    using Representative::Representative;
+  };
+
+  class ForceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static ForceRepresentative Default() { return ForceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 1, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class PressureRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static PressureRepresentative Default() { return PressureRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = -1, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 3; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class EnergyRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static EnergyRepresentative Default() { return EnergyRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 2; }
+    const Representative * representativesOfSameDimension() const override;
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class PowerRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static PowerRepresentative Default() { return PowerRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class ElectricChargeRepresentative : public Representative {
+    friend class Unit;
+  public:
+    using Representative::Representative;
+    constexpr static ElectricChargeRepresentative Default() { return ElectricChargeRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 1, .distance = 0, .mass = 0, .current = 1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  };
+
+  class ElectricPotentialRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static ElectricPotentialRepresentative Default() { return ElectricPotentialRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = -1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class ElectricCapacitanceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static ElectricCapacitanceRepresentative Default() { return ElectricCapacitanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 4, .distance = -2, .mass = -1, .current = 2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class ElectricResistanceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static ElectricResistanceRepresentative Default() { return ElectricResistanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = -2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class ElectricConductanceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static ElectricConductanceRepresentative Default() { return ElectricConductanceRepresentative(nullptr, 1., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 3, .distance = -2, .mass = -1, .current = 2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class MagneticFluxRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static MagneticFluxRepresentative Default() { return MagneticFluxRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = -1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class MagneticFieldRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static MagneticFieldRepresentative Default() { return MagneticFieldRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 0, .mass = 1, .current = -1, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class InductanceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static InductanceRepresentative Default() { return InductanceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = -2, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class CatalyticActivityRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static CatalyticActivityRepresentative Default() { return CatalyticActivityRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = -1, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 1, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 1; }
+    const Representative * representativesOfSameDimension() const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class SurfaceRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static SurfaceRepresentative Default() { return SurfaceRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 2, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 2; }
+    const Representative * representativesOfSameDimension() const override;
+    const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class VolumeRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static VolumeRepresentative Default() { return VolumeRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 3, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 8; }
+    const Representative * representativesOfSameDimension() const override;
+    const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class SpeedRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static SpeedRepresentative Default() { return SpeedRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
+    const Vector<int>dimensionVector() const override { return Vector<int>{.time = -1, .distance = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override { return nullptr; }
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
+  private:
+    using Representative::Representative;
+  };
+
+  UnitNode(const Representative * representative, const Prefix * prefix) :
     ExpressionNode(),
-    m_dimension(dimension),
     m_representative(representative),
     m_prefix(prefix)
   {}
@@ -176,758 +461,208 @@ public:
   Expression shallowBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; } // TODO
 
-  const Dimension * dimension() const { return m_dimension; }
   const Representative * representative() const { return m_representative; }
   const Prefix * prefix() const { return m_prefix; }
   void setRepresentative(const Representative * representative) { m_representative = representative; }
   void setPrefix(const Prefix * prefix) { m_prefix = prefix; }
 
 private:
-  const Dimension * m_dimension;
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
   const Representative * m_representative;
   const Prefix * m_prefix;
-
-  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
-class Unit final : public Expression {
+/* FIXME : This can be replaced by std::string_view when moving to C++17 */
+constexpr bool strings_equal(const char * s1, const char * s2) { return *s1 == *s2 && (*s1 == '\0' || strings_equal(s1 + 1, s2 + 1)); }
+
+class Unit : public Expression {
   friend class UnitNode;
 public:
+  /* Prefixes and Representativees defined below must be defined only once and
+   * all units must be constructed from their pointers. This way we can easily
+   * check if two Unit objects are equal by comparing pointers. This saves us
+   * from overloading the == operator on Prefix and Representative and saves
+   * time at execution. As such, their constructor are private and can only be
+   * accessed by their friend class Unit. */
   typedef UnitNode::Prefix Prefix;
-  typedef UnitNode::Representative Representative;
-  typedef UnitNode::Dimension Dimension;
-  /* TODO: Prefix, Representative and Dimension defined below must be defined
-   * only once and all units must be constructed from their pointers. This way
-   * we can easily check if two Unit objects are equal by comparing pointers.
-   * This saves us from overloading the == operator on Prefix, Representative
-   * and Dimension and saves time at execution. We should assert at compilation
-   * that only one occurence of each is built by maybe privatizing constructors
-   * on these classes? */
-  static constexpr const Prefix
-    PicoPrefix  = Prefix("p", -12),
-    NanoPrefix  = Prefix("n",  -9),
-    MicroPrefix = Prefix("μ",  -6),
-    MilliPrefix = Prefix("m",  -3),
-    CentiPrefix = Prefix("c",  -2),
-    DeciPrefix  = Prefix("d",  -1),
-    EmptyPrefix = Prefix("",    0),
-    DecaPrefix  = Prefix("da",  1),
-    HectoPrefix = Prefix("h",   2),
-    KiloPrefix  = Prefix("k",   3),
-    MegaPrefix  = Prefix("M",   6),
-    GigaPrefix  = Prefix("G",   9),
-    TeraPrefix  = Prefix("T",  12);
-  static constexpr const Prefix * NoPrefix[] = {
-      &EmptyPrefix
-    };
-  static constexpr const Prefix * NegativeLongScalePrefixes[] = {
-      &PicoPrefix,
-      &NanoPrefix,
-      &MicroPrefix,
-      &MilliPrefix,
-      &EmptyPrefix,
-    };
-  static constexpr const Prefix * PositiveLongScalePrefixes[] = {
-      &EmptyPrefix,
-      &KiloPrefix,
-      &MegaPrefix,
-      &GigaPrefix,
-      &TeraPrefix,
-    };
-  static constexpr const Prefix * LongScalePrefixes[] = {
-      &PicoPrefix,
-      &NanoPrefix,
-      &MicroPrefix,
-      &MilliPrefix,
-      &EmptyPrefix,
-      &KiloPrefix,
-      &MegaPrefix,
-      &GigaPrefix,
-      &TeraPrefix,
-    };
-  static constexpr const Prefix * NegativePrefixes[] = {
-      &PicoPrefix,
-      &NanoPrefix,
-      &MicroPrefix,
-      &MilliPrefix,
-      &CentiPrefix,
-      &DeciPrefix,
-      &EmptyPrefix,
-    };
-  static constexpr const Prefix * AllPrefixes[] = {
-      &PicoPrefix,
-      &NanoPrefix,
-      &MicroPrefix,
-      &MilliPrefix,
-      &CentiPrefix,
-      &DeciPrefix,
-      &EmptyPrefix,
-      &DecaPrefix,
-      &HectoPrefix,
-      &KiloPrefix,
-      &MegaPrefix,
-      &GigaPrefix,
-      &TeraPrefix,
-    };
-  static constexpr size_t NumberOfBaseUnits = UnitNode::NumberOfBaseUnits;
-  static constexpr const Representative
-    TimeRepresentatives[] = {
-        Representative("s",   nullptr,
-            Representative::Prefixable::Yes,
-            NegativeLongScalePrefixes),
-        Representative("min", "60*_s",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("h",   "60*60*_s",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("day", "24*60*60*_s",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("week", "7*24*60*60*_s",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("month", "365.25/12*24*60*60*_s",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("year", "365.25*24*60*60*_s",
-            Representative::Prefixable::No,
-            NoPrefix),
-        },
-    DistanceRepresentatives[] = {
-        Representative("m", nullptr,
-            Representative::Prefixable::Yes,
-            LongScalePrefixes,
-            Representative::OutputSystem::Metric),
-        Representative("au",  "149597870700*_m",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("ly", "299792458*_m/_s*_year",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("pc", "180*60*60/π*_au",
-            Representative::Prefixable::No,
-            NoPrefix),
-        Representative("in", "0.0254*_m",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        Representative("ft", "12*0.0254*_m",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        Representative("yd", "3*12*0.0254*_m",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::None),
-        Representative("mi", "1760*3*12*0.0254*_m",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        },
-    MassRepresentatives[] = {
-        Representative("kg", nullptr,
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Metric),
-        Representative("g", "0.001_kg",
-            Representative::Prefixable::Yes,
-            NegativeLongScalePrefixes,
-            Representative::OutputSystem::Metric),
-        Representative("t", "1000_kg",
-            Representative::Prefixable::PositiveOnly,
-            NoPrefix,
-            Representative::OutputSystem::Metric),
-        Representative("Da", "(6.02214076*10^23*1000)^-1*_kg",
-            Representative::Prefixable::Yes,
-            NoPrefix),
-        Representative("oz", "0.028349523125*_kg",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        Representative("lb", "16*0.028349523125*_kg",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        Representative("shtn", "2000*16*0.028349523125*_kg",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        Representative("lgtn", "2240*16*0.028349523125*_kg",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::None),
-        },
-    CurrentRepresentatives[] = {
-        Representative("A",   nullptr,
-            Representative::Prefixable::Yes,
-            NegativeLongScalePrefixes),
-        },
-    TemperatureRepresentatives[] = {
-        Representative("K",   nullptr,
-            Representative::Prefixable::No,
-            NoPrefix),
-        },
-    AmountOfSubstanceRepresentatives[] = {
-        Representative("mol", nullptr,
-            Representative::Prefixable::Yes,
-            NegativeLongScalePrefixes),
-        },
-    LuminousIntensityRepresentatives[] = {
-        Representative("cd",  nullptr,
-            Representative::Prefixable::No,
-            NoPrefix),
-        },
-    FrequencyRepresentatives[] = {
-        Representative("Hz",  "_s^-1",
-            Representative::Prefixable::Yes,
-            PositiveLongScalePrefixes),
-        },
-    ForceRepresentatives[] = {
-        Representative("N",   "_kg*_m*_s^-2",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    PressureRepresentatives[] = {
-        Representative("Pa",  "_kg*_m^-1*_s^-2",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        Representative("bar", "1000_hPa",
-            Representative::Prefixable::Yes,
-            NoPrefix),
-        Representative("atm", "101325_Pa",
-            Representative::Prefixable::Yes,
-            NoPrefix),
-        },
-    EnergyRepresentatives[] = {
-        Representative("J",   "_kg*_m^2*_s^-2",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        Representative("eV",  "1.602176634ᴇ-19*_J",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    PowerRepresentatives[] = {
-        Representative("W",   "_kg*_m^2*_s^-3",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    ElectricChargeRepresentatives[] = {
-        Representative("C",   "_A*_s",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    ElectricPotentialRepresentatives[] = {
-        Representative("V",   "_kg*_m^2*_s^-3*_A^-1",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    ElectricCapacitanceRepresentatives[] = {
-        Representative("F",   "_A^2*_s^4*_kg^-1*_m^-2",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    ElectricResistanceRepresentatives[] = {
-        Representative("Ω", "_kg*_m^2*_s^-3*_A^-2",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    ElectricConductanceRepresentatives[] = {
-        Representative("S",   "_A^2*_s^3*_kg^-1*_m^-2",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    MagneticFluxRepresentatives[] = {
-        Representative("Wb",  "_kg*_m^2*_s^-2*_A^-1",
-            Representative::Prefixable::Yes,
-            NoPrefix),
-        },
-    MagneticFieldRepresentatives[] = {
-        Representative("T",   "_kg*_s^-2*_A^-1",
-            Representative::Prefixable::Yes,
-            NoPrefix),
-        },
-    InductanceRepresentatives[] = {
-        Representative("H",   "_kg*_m^2*_s^-2*_A^-2",
-            Representative::Prefixable::Yes,
-            LongScalePrefixes),
-        },
-    CatalyticActivityRepresentatives[] = {
-        Representative("kat", "_mol*_s^-1",
-            Representative::Prefixable::Yes,
-            NoPrefix),
-        },
-    SurfaceRepresentatives[] = {
-        Representative("ha",  "10^4*_m^2",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Metric),
-        Representative("acre", "4046.8564224*_m^2",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        },
-    VolumeRepresentatives[] = {
-        Representative("L", "10^-3*_m^3",
-            Representative::Prefixable::Yes,
-            NegativePrefixes,
-            Representative::OutputSystem::Metric),
-        Representative("tsp", "0.00492892159375*_L",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::None),
-        Representative("Tbsp", "3*0.00492892159375*_L",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::None),
-        Representative("floz", "0.0295735295625*_L",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        Representative("cp", "8*0.0295735295625*_L",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        Representative("pt", "16*0.0295735295625*_L",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::None),
-        Representative("qt", "32*0.0295735295625*_L",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::None),
-        Representative("gal", "128*0.0295735295625*_L",
-            Representative::Prefixable::No,
-            NoPrefix,
-            Representative::OutputSystem::Imperial),
-        };
-  // TODO: find a better way to define these pointers
-  static_assert(sizeof(TimeRepresentatives)/sizeof(Representative) == 7, "The Unit::SecondRepresentative, Unit::HourRepresentative and so on might require to be fixed if the TimeRepresentatives table was changed.");
-  static const Representative constexpr * SecondRepresentative = &TimeRepresentatives[0];
-  static const Representative constexpr * MinuteRepresentative = &TimeRepresentatives[1];
-  static const Representative constexpr * HourRepresentative = &TimeRepresentatives[2];
-  static const Representative constexpr * DayRepresentative = &TimeRepresentatives[3];
-  static const Representative constexpr * MonthRepresentative = &TimeRepresentatives[5];
-  static const Representative constexpr * YearRepresentative = &TimeRepresentatives[6];
-  static const Representative constexpr * MeterRepresentative = &DistanceRepresentatives[0];
-  static_assert(sizeof(DistanceRepresentatives)/sizeof(Representative) == 8, "The Unit::MileRepresentative et al. might require to be fixed if the DistanceRepresentatives table was changed.");
-  static const Representative constexpr * InchRepresentative = &DistanceRepresentatives[4];
-  static const Representative constexpr * FootRepresentative = &DistanceRepresentatives[5];
-  static const Representative constexpr * YardRepresentative = &DistanceRepresentatives[6];
-  static const Representative constexpr * MileRepresentative = &DistanceRepresentatives[7];
-  static const Representative constexpr * KilogramRepresentative = &MassRepresentatives[0];
-  static const Representative constexpr * GramRepresentative = &MassRepresentatives[1];
-  static_assert(sizeof(MassRepresentatives)/sizeof(Representative) == 8, "The Unit::OunceRepresentative et al. might require to be fixed if the MassRepresentatives table was changed.");
-  static const Representative constexpr * OunceRepresentative = &MassRepresentatives[4];
-  static const Representative constexpr * PoundRepresentative = &MassRepresentatives[5];
-  static const Representative constexpr * ShortTonRepresentative = &MassRepresentatives[6];
-  static const Representative constexpr * LiterRepresentative = &VolumeRepresentatives[0];
-  static_assert(sizeof(VolumeRepresentatives)/sizeof(Representative) == 8, "The Unit::FluidOunceRepresentative et al. might require to be fixed if the VolumeRepresentatives table was changed.");
-  static const Representative constexpr * FluidOunceRepresentative = &VolumeRepresentatives[3];
-  static const Representative constexpr * CupRepresentative = &VolumeRepresentatives[4];
-  static const Representative constexpr * GallonRepresentative = &VolumeRepresentatives[7];
-  static const Representative constexpr * WattRepresentative = &PowerRepresentatives[0];
-  static_assert(sizeof(EnergyRepresentatives)/sizeof(Representative) == 2, "The Unit::ElectronVoltRepresentative might require to be fixed if the EnergyRepresentatives table was changed.");
-  static const Representative constexpr * ElectronVoltRepresentative = &EnergyRepresentatives[1];
-  static_assert(sizeof(SurfaceRepresentatives)/sizeof(Representative) == 2, "The Unit::HectareRepresentative et al. might require to be fixed if the VolumeRepresentatives table was changed.");
-  static const Representative constexpr * HectareRepresentative = &SurfaceRepresentatives[0];
-  static const Representative constexpr * AcreRepresentative = &SurfaceRepresentatives[1];
-
-  static constexpr const Dimension DimensionTable[] = {
-    /* The current table is sorted from most to least simple units.
-     * The order determines the behavior of simplification.
-     */
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 1,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        TimeRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 1,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        DistanceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 0,
-          .mass               = 1,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        MassRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 1,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        CurrentRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 1,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        TemperatureRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 1,
-          .luminuousIntensity = 0,
-        },
-        AmountOfSubstanceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 1,
-        },
-        LuminousIntensityRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-1,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        FrequencyRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-2,
-          .distance           = 1,
-          .mass               = 1,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        ForceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-2,
-          .distance           =-1,
-          .mass               = 1,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        PressureRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-2,
-          .distance           = 2,
-          .mass               = 1,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        EnergyRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-3,
-          .distance           = 2,
-          .mass               = 1,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        PowerRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 1,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 1,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        ElectricChargeRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-3,
-          .distance           = 2,
-          .mass               = 1,
-          .current            =-1,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        ElectricPotentialRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 4,
-          .distance           =-2,
-          .mass               =-1,
-          .current            = 2,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        ElectricCapacitanceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-3,
-          .distance           = 2,
-          .mass               = 1,
-          .current            =-2,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        ElectricResistanceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 3,
-          .distance           =-2,
-          .mass               =-1,
-          .current            = 2,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        ElectricConductanceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-2,
-          .distance           = 2,
-          .mass               = 1,
-          .current            =-1,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        MagneticFluxRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-2,
-          .distance           = 0,
-          .mass               = 1,
-          .current            =-1,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        MagneticFieldRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-2,
-          .distance           = 2,
-          .mass               = 1,
-          .current            =-2,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        InductanceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               =-1,
-          .distance           = 0,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 1,
-          .luminuousIntensity = 0,
-        },
-        CatalyticActivityRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 2,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        SurfaceRepresentatives,
-        &EmptyPrefix
-        ),
-    Dimension(
-        Dimension::Vector<int8_t> {
-          .time               = 0,
-          .distance           = 3,
-          .mass               = 0,
-          .current            = 0,
-          .temperature        = 0,
-          .amountOfSubstance  = 0,
-          .luminuousIntensity = 0,
-        },
-        VolumeRepresentatives,
-        &EmptyPrefix
-        ),
+  static constexpr const Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
+    Prefix("p", -12),
+    Prefix("n", -9),
+    Prefix("μ", -6),
+    Prefix("m", -3),
+    Prefix("c", -2),
+    Prefix("d", -1),
+    Prefix("", 0),
+    Prefix("da", 1),
+    Prefix("h", 2),
+    Prefix("k", 3),
+    Prefix("M", 6),
+    Prefix("G", 9),
+    Prefix("T", 12),
   };
-  // TODO: find a better way to find defines these pointers
-  static_assert(sizeof(DimensionTable)/sizeof(Dimension) == 23, "The Unit::TimeDimension, Unit::DistanceDimension and so on might require to be fixed if the Dimension table was changed.");
-  static const Dimension constexpr * TimeDimension = &DimensionTable[0] ;
-  static const Dimension constexpr * DistanceDimension = &DimensionTable[1];
-  static const Dimension constexpr * MassDimension = &DimensionTable[2];
-  static const Dimension constexpr * EnergyDimension = &DimensionTable[10];
-  static const Dimension constexpr * PowerDimension = &DimensionTable[11];
-  static const Dimension constexpr * SurfaceDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-2];
-  static const Dimension constexpr * VolumeDimension = &DimensionTable[sizeof(DimensionTable)/sizeof(Dimension)-1];
+  typedef UnitNode::Representative Representative;
+  typedef Representative::Prefixable Prefixable;
+  typedef UnitNode::TimeRepresentative TimeRepresentative;
+  static constexpr const TimeRepresentative k_timeRepresentatives[] = {
+    TimeRepresentative("s", 1., Prefixable::All, Prefixable::NegativeLongScale),
+    TimeRepresentative("min", 60., Prefixable::None, Prefixable::None),
+    TimeRepresentative("h", 3600., Prefixable::None, Prefixable::None),
+    TimeRepresentative("day", 24.*3600., Prefixable::None, Prefixable::None),
+    TimeRepresentative("week", 7.*24.*3600., Prefixable::None, Prefixable::None),
+    TimeRepresentative("month", 365.25/12.*24.*3600., Prefixable::None, Prefixable::None),
+    TimeRepresentative("year", 365.25*24.*3600., Prefixable::None, Prefixable::None),
+  };
+  typedef UnitNode::DistanceRepresentative DistanceRepresentative;
+  static constexpr const DistanceRepresentative k_distanceRepresentatives[] = {
+    DistanceRepresentative("m", 1., Prefixable::All, Prefixable::NegativeAndKilo),
+    DistanceRepresentative("au", 149597870700., Prefixable::None, Prefixable::None),
+    DistanceRepresentative("ly", 299792458.*365.25*24.*3600., Prefixable::None, Prefixable::None),
+    DistanceRepresentative("pc", 180.*3600./M_PI*149587870700., Prefixable::None, Prefixable::None),
+    DistanceRepresentative("in", 0.0254, Prefixable::None, Prefixable::None),
+    DistanceRepresentative("ft", 12*0.0254, Prefixable::None, Prefixable::None),
+    DistanceRepresentative("yd", 3*12*0.0254, Prefixable::None, Prefixable::None),
+    DistanceRepresentative("mi", 1760*3*12*0.0254, Prefixable::None, Prefixable::None),
+  };
+  typedef UnitNode::MassRepresentative MassRepresentative;
+  static constexpr const MassRepresentative k_massRepresentatives[] = {
+    MassRepresentative("g", 1., Prefixable::All, Prefixable::NegativeAndKilo),
+    MassRepresentative("t", 1e3, Prefixable::PositiveLongScale, Prefixable::PositiveLongScale),
+    MassRepresentative("Da", 1/(6.02214076e26), Prefixable::All, Prefixable::All),
+    MassRepresentative("oz", 0.028349523125, Prefixable::None, Prefixable::None),
+    MassRepresentative("lb", 16*0.028349523125, Prefixable::None, Prefixable::None),
+    MassRepresentative("shtn", 2000*16*0.028349523125, Prefixable::None, Prefixable::None),
+    MassRepresentative("lgtn", 2240*16*0.028349523125, Prefixable::None, Prefixable::None),
+  };
+  typedef UnitNode::CurrentRepresentative CurrentRepresentative;
+  static constexpr const CurrentRepresentative k_currentRepresentatives[] = { CurrentRepresentative("A", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::TemperatureRepresentative TemperatureRepresentative;
+  static constexpr const TemperatureRepresentative k_temperatureRepresentatives[] = { TemperatureRepresentative("K", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::AmountOfSubstanceRepresentative AmountOfSubstanceRepresentative;
+  static constexpr const AmountOfSubstanceRepresentative k_amountOfSubstanceRepresentatives[] = { AmountOfSubstanceRepresentative("mol", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::LuminousIntensityRepresentative LuminousIntensityRepresentative;
+  static constexpr const LuminousIntensityRepresentative k_luminousIntensityRepresentatives[] = { LuminousIntensityRepresentative("cd", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::FrequencyRepresentative FrequencyRepresentative;
+  static constexpr const FrequencyRepresentative k_frequencyRepresentatives[] = { FrequencyRepresentative("Hz", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::ForceRepresentative ForceRepresentative;
+  static constexpr const ForceRepresentative k_forceRepresentatives[] = { ForceRepresentative("N", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::PressureRepresentative PressureRepresentative;
+  static constexpr const PressureRepresentative k_pressureRepresentatives[] = {
+    PressureRepresentative("Pa", 1., Prefixable::All, Prefixable::LongScale),
+    PressureRepresentative("bar", 100000, Prefixable::All, Prefixable::LongScale),
+    PressureRepresentative("atm", 101325, Prefixable::None, Prefixable::None),
+  };
+  typedef UnitNode::EnergyRepresentative EnergyRepresentative;
+  static constexpr const EnergyRepresentative k_energyRepresentatives[] = {
+    EnergyRepresentative("J", 1., Prefixable::All, Prefixable::LongScale),
+    EnergyRepresentative("eV", 1.602176634e-19, Prefixable::All, Prefixable::LongScale),
+  };
+  typedef UnitNode::PowerRepresentative PowerRepresentative;
+  static constexpr const PowerRepresentative k_powerRepresentatives[] = { PowerRepresentative("W", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::ElectricChargeRepresentative ElectricChargeRepresentative;
+  static constexpr const ElectricChargeRepresentative k_electricChargeRepresentatives[] = { ElectricChargeRepresentative("C", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::ElectricPotentialRepresentative ElectricPotentialRepresentative;
+  static constexpr const ElectricPotentialRepresentative k_electricPotentialRepresentatives[] = { ElectricPotentialRepresentative("V", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::ElectricCapacitanceRepresentative ElectricCapacitanceRepresentative;
+  static constexpr const ElectricCapacitanceRepresentative k_electricCapacitanceRepresentatives[] = { ElectricCapacitanceRepresentative("F", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::ElectricResistanceRepresentative ElectricResistanceRepresentative;
+  static constexpr const ElectricResistanceRepresentative k_electricResistanceRepresentatives[] = { ElectricResistanceRepresentative("Ω", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::ElectricConductanceRepresentative ElectricConductanceRepresentative;
+  static constexpr const ElectricConductanceRepresentative k_electricConductanceRepresentatives[] = { ElectricConductanceRepresentative("S", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::MagneticFluxRepresentative MagneticFluxRepresentative;
+  static constexpr const MagneticFluxRepresentative k_magneticFluxRepresentatives[] = { MagneticFluxRepresentative("Wb", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::MagneticFieldRepresentative MagneticFieldRepresentative;
+  static constexpr const MagneticFieldRepresentative k_magneticFieldRepresentatives[] = { MagneticFieldRepresentative("T", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::InductanceRepresentative InductanceRepresentative;
+  static constexpr const InductanceRepresentative k_inductanceRepresentatives[] = { InductanceRepresentative("H", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::CatalyticActivityRepresentative CatalyticActivityRepresentative;
+  static constexpr const CatalyticActivityRepresentative k_catalyticActivityRepresentatives[] = { CatalyticActivityRepresentative("kat", 1., Prefixable::All, Prefixable::LongScale) };
+  typedef UnitNode::SurfaceRepresentative SurfaceRepresentative;
+  static constexpr const SurfaceRepresentative k_surfaceRepresentatives[] = {
+    SurfaceRepresentative("ha", 10000., Prefixable::None, Prefixable::None),
+    SurfaceRepresentative("acre", 4046.8564224, Prefixable::None, Prefixable::None),
+  };
+  typedef UnitNode::VolumeRepresentative VolumeRepresentative;
+  static constexpr const VolumeRepresentative k_volumeRepresentatives[] = {
+    VolumeRepresentative("L", 0.001, Prefixable::All, Prefixable::Negative),
+    VolumeRepresentative("tsp", 0.00000492892159375, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("Tbsp", 3*0.00000492892159375, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("floz", 0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("cp", 8*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("pt", 16*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("qt", 32*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("gal", 128*0.0000295735295625, Prefixable::None, Prefixable::None),
+  };
+  /* FIXME : Some ratio are too precise too be well approximated by double.
+   * Maybe switch to a rationnal representation with two int. */
 
-  static constexpr const Unit::Dimension * DimensionTableUpperBound =
-    DimensionTable + sizeof(DimensionTable)/sizeof(Dimension);
-  static bool CanParse(const char * symbol, size_t length,
-      const Dimension * * dimension, const Representative * * representative, const Prefix * * prefix);
+  /* Define access points to some prefixes and representatives. */
+  static constexpr int k_emptyPrefixIndex = 6;
+  static_assert(k_prefixes[k_emptyPrefixIndex].m_exponent == 0, "Index for the Empty Prefix is incorrect.");
+  static constexpr int k_kiloPrefixIndex = 9;
+  static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3, "Index for the Kilo Prefix is incorrect.");
+  static constexpr int k_secondRepresentativeIndex = 0;
+  static_assert(strings_equal(k_timeRepresentatives[k_secondRepresentativeIndex].m_rootSymbol, "s"), "Index for the Second Representative is incorrect.");
+  static constexpr int k_minuteRepresentativeIndex = 1;
+  static_assert(strings_equal(k_timeRepresentatives[k_minuteRepresentativeIndex].m_rootSymbol, "min"), "Index for the Minute Representative is incorrect.");
+  static constexpr int k_hourRepresentativeIndex = 2;
+  static_assert(strings_equal(k_timeRepresentatives[k_hourRepresentativeIndex].m_rootSymbol, "h"), "Index for the Hour Representative is incorrect.");
+  static constexpr int k_dayRepresentativeIndex = 3;
+  static_assert(strings_equal(k_timeRepresentatives[k_dayRepresentativeIndex].m_rootSymbol, "day"), "Index for the Day Representative is incorrect.");
+  static constexpr int k_monthRepresentativeIndex = 5;
+  static_assert(strings_equal(k_timeRepresentatives[k_monthRepresentativeIndex].m_rootSymbol, "month"), "Index for the Month Representative is incorrect.");
+  static constexpr int k_yearRepresentativeIndex = 6;
+  static_assert(strings_equal(k_timeRepresentatives[k_yearRepresentativeIndex].m_rootSymbol, "year"), "Index for the Year Representative is incorrect.");
+  static constexpr int k_meterRepresentativeIndex = 0;
+  static_assert(strings_equal(k_distanceRepresentatives[k_meterRepresentativeIndex].m_rootSymbol, "m"), "Index for the Meter Representative is incorrect.");
+  static constexpr int k_inchRepresentativeIndex = 4;
+  static_assert(strings_equal(k_distanceRepresentatives[k_inchRepresentativeIndex].m_rootSymbol, "in"), "Index for the Inch Representative is incorrect.");
+  static constexpr int k_footRepresentativeIndex = 5;
+  static_assert(strings_equal(k_distanceRepresentatives[k_footRepresentativeIndex].m_rootSymbol, "ft"), "Index for the Foot Representative is incorrect.");
+  static constexpr int k_yardRepresentativeIndex = 6;
+  static_assert(strings_equal(k_distanceRepresentatives[k_yardRepresentativeIndex].m_rootSymbol, "yd"), "Index for the Yard Representative is incorrect.");
+  static constexpr int k_mileRepresentativeIndex = 7;
+  static_assert(strings_equal(k_distanceRepresentatives[k_mileRepresentativeIndex].m_rootSymbol, "mi"), "Index for the Mile Representative is incorrect.");
+  static constexpr int k_ounceRepresentativeIndex = 3;
+  static_assert(strings_equal(k_massRepresentatives[k_ounceRepresentativeIndex].m_rootSymbol, "oz"), "Index for the Ounce Representative is incorrect.");
+  static constexpr int k_poundRepresentativeIndex = 4;
+  static_assert(strings_equal(k_massRepresentatives[k_poundRepresentativeIndex].m_rootSymbol, "lb"), "Index for the Pound Representative is incorrect.");
+  static constexpr int k_shortTonRepresentativeIndex = 5;
+  static_assert(strings_equal(k_massRepresentatives[k_shortTonRepresentativeIndex].m_rootSymbol, "shtn"), "Index for the Short Ton Representative is incorrect.");
+  static constexpr int k_electronVoltRepresentativeIndex = 1;
+  static_assert(strings_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbol, "eV"), "Index for the Electron Volt Representative is incorrect.");
+  static constexpr int k_wattRepresentativeIndex = 0;
+  static_assert(strings_equal(k_powerRepresentatives[k_wattRepresentativeIndex].m_rootSymbol, "W"), "Index for the Watt Representative is incorrect.");
+  static constexpr int k_hectareRepresentativeIndex = 0;
+  static_assert(strings_equal(k_surfaceRepresentatives[k_hectareRepresentativeIndex].m_rootSymbol, "ha"), "Index for the Hectare Representative is incorrect.");
+  static constexpr int k_acreRepresentativeIndex = 1;
+  static_assert(strings_equal(k_surfaceRepresentatives[k_acreRepresentativeIndex].m_rootSymbol, "acre"), "Index for the Acre Representative is incorrect.");
+  static constexpr int k_literRepresentativeIndex = 0;
+  static_assert(strings_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbol, "L"), "Index for the Liter Representative is incorrect.");
+  static constexpr int k_fluidOunceRepresentativeIndex = 3;
+  static_assert(strings_equal(k_volumeRepresentatives[k_fluidOunceRepresentativeIndex].m_rootSymbol, "floz"), "Index for the Fluid Ounce Representative is incorrect.");
+  static constexpr int k_cupRepresentativeIndex = 4;
+  static_assert(strings_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbol, "cp"), "Index for the Cup Representative is incorrect.");
+  static constexpr int k_gallonRepresentativeIndex = 7;
+  static_assert(strings_equal(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbol, "gal"), "Index for the Gallon Representative is incorrect.");
 
   Unit(const UnitNode * node) : Expression(node) {}
-  static Unit Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix);
-  static Unit Meter() { return Builder(DistanceDimension, MeterRepresentative, &EmptyPrefix); }
-  static Unit Kilometer() { return Builder(DistanceDimension, MeterRepresentative, &KiloPrefix); }
-  static Unit Inch() { return Builder(DistanceDimension, InchRepresentative, &EmptyPrefix); }
-  static Unit Foot() { return Builder(DistanceDimension, FootRepresentative, &EmptyPrefix); }
-  static Unit Yard() { return Builder(DistanceDimension, YardRepresentative, &EmptyPrefix); }
-  static Unit Mile() { return Builder(DistanceDimension, MileRepresentative, &EmptyPrefix); }
-  static Unit Second() { return Builder(TimeDimension, SecondRepresentative, &EmptyPrefix); }
-  static Unit Minute() { return Builder(TimeDimension, MinuteRepresentative, &EmptyPrefix); }
-  static Unit Hour() { return Builder(TimeDimension, HourRepresentative, &EmptyPrefix); }
-  static Unit Day() { return Builder(TimeDimension, DayRepresentative, &EmptyPrefix); }
-  static Unit Month() { return Builder(TimeDimension, MonthRepresentative, &EmptyPrefix); }
-  static Unit Year() { return Builder(TimeDimension, YearRepresentative, &EmptyPrefix); }
-  static Unit Liter() { return Builder(VolumeDimension, LiterRepresentative, &EmptyPrefix); }
-  static Unit ElectronVolt() { return Builder(EnergyDimension, ElectronVoltRepresentative, &EmptyPrefix); }
-  static Unit Watt() { return Builder(PowerDimension, WattRepresentative, &EmptyPrefix); }
-  static Unit Gram() { return Builder(MassDimension, GramRepresentative, &EmptyPrefix); }
-  static Unit Ounce() { return Builder(MassDimension, OunceRepresentative, &EmptyPrefix); }
-  static Unit Pound() { return Builder(MassDimension, PoundRepresentative, &EmptyPrefix); }
-  static Unit ShortTon() { return Builder(MassDimension, ShortTonRepresentative, &EmptyPrefix); }
-  static Unit FluidOunce() { return Builder(VolumeDimension, FluidOunceRepresentative, &EmptyPrefix); }
-  static Unit Cup() { return Builder(VolumeDimension, CupRepresentative, &EmptyPrefix); }
-  static Unit Gallon() { return Builder(VolumeDimension, GallonRepresentative, &EmptyPrefix); }
-  static Unit Hectare() { return Builder(SurfaceDimension, HectareRepresentative, &EmptyPrefix); }
-  static Unit Acre() { return Builder(SurfaceDimension, AcreRepresentative, &EmptyPrefix); }
-  static Expression BuildSplit(double baseValue, const Unit * units, const double * conversionFactors, int numberOfUnits, Context * context);
-  static Expression BuildTimeSplit(double seconds, Context * context);
-  static Expression BuildImperialDistanceSplit(double inches, Context * context);
-  static Expression BuildImperialMassSplit(double ounces, Context * context);
-  static Expression BuildImperialVolumeSplit(double fluidOunces, Context * context);
-  static double ConvertedValueInUnit(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext);
-
-  static bool IsSI(Expression & e);
-  static bool IsSISpeed(Expression & e);
-  static bool IsSIVolume(Expression & e);
-  static bool IsSIEnergy(Expression & e);
-  static bool IsSITime(Expression & e);
-  static bool IsSIDistance(Expression & e);
-  static bool IsSIMass(Expression & e);
-  static bool IsSISurface(Expression & e);
-  bool isMeter() const;
-  bool isSecond() const;
-  bool isKilogram() const;
-
-  static Expression StandardSpeedConversion(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression StandardDistanceConversion(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression StandardVolumeConversion(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression StandardMassConversion(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression StandardSurfaceConversion(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Unit Builder(const Representative * representative, const Prefix * prefix);
+  static bool CanParse(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix);
+  static void ChooseBestRepresentativeAndPrefixForValue(Expression units, double * value, ExpressionNode::ReductionContext reductionContext);
+  static bool ShouldDisplayAdditionalOutputs(double value, Expression unit);
+  static int SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext);
+  static Expression BuildSplit(double value, const Unit * units, int length, ExpressionNode::ReductionContext reductionContext);
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
-  static void ChooseBestRepresentativeAndPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, true, reductionContext); }
-  static void ChooseBestPrefixForValue(Expression * units, double * value, ExpressionNode::ReductionContext reductionContext) { return ChooseBestMultipleForValue(units, value, false, reductionContext); }
 
-  // This could be computed from the time representatives but we save time by using constexpr double
-  static constexpr double SecondsPerMinute = 60.0;
+  bool isBaseUnit() const { return node()->representative()->isBaseUnit() && node()->prefix() == node()->representative()->basePrefix(); }
+  void chooseBestRepresentativeAndPrefix(double * value, double exponent, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix);
+
 private:
-  static constexpr double MinutesPerHour = 60.0;
-  static constexpr double HoursPerDay = 24.0;
-  static constexpr double DaysPerYear = 365.25;
-  static constexpr double MonthPerYear = 12.0;
-  static constexpr double DaysPerMonth = DaysPerYear/MonthPerYear;
-  static constexpr double InchesPerFoot = 12.;
-  static constexpr double FeetPerYard = 3.;
-  static constexpr double YardsPerMile = 1760.;
-  static constexpr double OuncesPerPound = 16.;
-  static constexpr double PoundsPerShortTon = 2000.;
-  static constexpr double FluidOuncesPerCup = 8.;
-  static constexpr double CupsPerGallon = 16.;
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }
-  bool isSI() const;
-  static void ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
-  void chooseBestMultipleForValue(double * value, const float exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext);
   Expression removeUnit(Expression * unit);
 };
 

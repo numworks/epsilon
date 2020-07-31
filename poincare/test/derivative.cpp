@@ -159,6 +159,10 @@ QUIZ_CASE(poincare_derivative_functions) {
   assert_parses_and_reduces_as("diff(diff(ln(x),x,1/tan(x)),x,z)", "undef");
   assert_parses_and_reduces_as("diff(sinh(x),x,z)", "undef");
   assert_parses_and_reduces_as("diff(cosh(x),x,z)", "undef");
+
+  assert_parses_and_reduces_as("diff(abs(x),x,0)", "undef");
+  assert_parses_and_reduces_as("diff(abs(x),x,1)", "1");
+  assert_parses_and_reduces_as("diff(abs(-2x),x,1)", "2");
 #endif
 
   emptyGlobalContext();

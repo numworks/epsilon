@@ -1,120 +1,83 @@
 #include <poincare/unit.h>
 #include <poincare/addition.h>
-#include <poincare/division.h>
 #include <poincare/float.h>
-#include <poincare/ieee754.h>
-#include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/unit_convert.h>
 #include <algorithm>
 #include <assert.h>
-#include <cmath>
-#include <float.h>
 #include <limits.h>
-#include <string.h>
 #include <utility>
 
 namespace Poincare {
 
-int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
-  assert(bufferSize >= 0);
-  return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
+constexpr const UnitNode::Prefix Unit::k_prefixes[];
+constexpr const UnitNode::TimeRepresentative Unit::k_timeRepresentatives[];
+constexpr const UnitNode::DistanceRepresentative Unit::k_distanceRepresentatives[];
+constexpr const UnitNode::MassRepresentative Unit::k_massRepresentatives[];
+constexpr const UnitNode::CurrentRepresentative Unit::k_currentRepresentatives[];
+constexpr const UnitNode::TemperatureRepresentative Unit::k_temperatureRepresentatives[];
+constexpr const UnitNode::AmountOfSubstanceRepresentative Unit::k_amountOfSubstanceRepresentatives[];
+constexpr const UnitNode::LuminousIntensityRepresentative Unit::k_luminousIntensityRepresentatives[];
+constexpr const UnitNode::FrequencyRepresentative Unit::k_frequencyRepresentatives[];
+constexpr const UnitNode::ForceRepresentative Unit::k_forceRepresentatives[];
+constexpr const UnitNode::PressureRepresentative Unit::k_pressureRepresentatives[];
+constexpr const UnitNode::EnergyRepresentative Unit::k_energyRepresentatives[];
+constexpr const UnitNode::PowerRepresentative Unit::k_powerRepresentatives[];
+constexpr const UnitNode::ElectricChargeRepresentative Unit::k_electricChargeRepresentatives[];
+constexpr const UnitNode::ElectricPotentialRepresentative Unit::k_electricPotentialRepresentatives[];
+constexpr const UnitNode::ElectricCapacitanceRepresentative Unit::k_electricCapacitanceRepresentatives[];
+constexpr const UnitNode::ElectricResistanceRepresentative Unit::k_electricResistanceRepresentatives[];
+constexpr const UnitNode::ElectricConductanceRepresentative Unit::k_electricConductanceRepresentatives[];
+constexpr const UnitNode::MagneticFluxRepresentative Unit::k_magneticFluxRepresentatives[];
+constexpr const UnitNode::MagneticFieldRepresentative Unit::k_magneticFieldRepresentatives[];
+constexpr const UnitNode::InductanceRepresentative Unit::k_inductanceRepresentatives[];
+constexpr const UnitNode::CatalyticActivityRepresentative Unit::k_catalyticActivityRepresentatives[];
+constexpr const UnitNode::SurfaceRepresentative Unit::k_surfaceRepresentatives[];
+constexpr const UnitNode::VolumeRepresentative Unit::k_volumeRepresentatives[];
+
+constexpr const int
+  Unit::k_emptyPrefixIndex,
+  Unit::k_kiloPrefixIndex,
+  Unit::k_secondRepresentativeIndex,
+  Unit::k_minuteRepresentativeIndex,
+  Unit::k_hourRepresentativeIndex,
+  Unit::k_dayRepresentativeIndex,
+  Unit::k_monthRepresentativeIndex,
+  Unit::k_yearRepresentativeIndex,
+  Unit::k_meterRepresentativeIndex,
+  Unit::k_inchRepresentativeIndex,
+  Unit::k_footRepresentativeIndex,
+  Unit::k_yardRepresentativeIndex,
+  Unit::k_mileRepresentativeIndex,
+  Unit::k_ounceRepresentativeIndex,
+  Unit::k_poundRepresentativeIndex,
+  Unit::k_shortTonRepresentativeIndex,
+  Unit::k_electronVoltRepresentativeIndex,
+  Unit::k_wattRepresentativeIndex,
+  Unit::k_hectareRepresentativeIndex,
+  Unit::k_acreRepresentativeIndex,
+  Unit::k_literRepresentativeIndex,
+  Unit::k_fluidOunceRepresentativeIndex,
+  Unit::k_cupRepresentativeIndex,
+  Unit::k_gallonRepresentativeIndex;
+
+// UnitNode::Prefix
+const UnitNode::Prefix * UnitNode::Prefix::Prefixes() {
+  return Unit::k_prefixes;
 }
 
-bool UnitNode::Representative::canParse(const char * symbol, size_t length,
-    const Prefix * * prefix) const
-{
-  if (!isPrefixable()) {
-    *prefix = &Unit::EmptyPrefix;
-    return length == 0;
-  }
-  const Prefix * const * prefixesList = (m_prefixable == Prefixable::PositiveOnly) ? Unit::PositiveLongScalePrefixes : Unit::AllPrefixes;
-  size_t numberOfPrefixes = ((m_prefixable == Prefixable::PositiveOnly) ? sizeof(Unit::PositiveLongScalePrefixes) : sizeof(Unit::AllPrefixes))/sizeof(Unit::Prefix *);
-  for (size_t i = 0; i < numberOfPrefixes; i++) {
-    const Prefix * pre = prefixesList[i];
-    const char * prefixSymbol = pre->symbol();
-    if (strncmp(symbol, prefixSymbol, length) == 0 &&
-        prefixSymbol[length] == 0)
-    {
-      *prefix = pre;
-      return true;
-    }
-    pre++;
-  }
-  return false;
+const UnitNode::Prefix * UnitNode::Prefix::EmptyPrefix() {
+  return Prefixes() + Unit::k_emptyPrefixIndex;
 }
 
-int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Prefix * prefix) const {
-  int length = 0;
-  length += prefix->serialize(buffer, bufferSize);
-  assert(length == 0 || isPrefixable());
-  assert(length < bufferSize);
-  buffer += length;
-  bufferSize -= length;
-  assert(bufferSize >= 0);
-  length += std::min<int>(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
-  return length;
-}
-
-static bool compareMagnitudeOrders(float order, float otherOrder) {
-  /* Precision can be lost (with a year conversion for instance), so the order
-   * value is rounded */
-  if (std::fabs(order) < Expression::Epsilon<float>()) {
-    order = 0.0f;
-  }
-  if (std::fabs(otherOrder) < Expression::Epsilon<float>()) {
-    otherOrder = 0.0f;
-  }
-  if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) < 3.0f && order * otherOrder < 0.0f) {
-    /* If the two values are close, and their sign are opposed, the positive
-     * order is preferred */
-    return (order >= 0.0f);
-  }
-  // Otherwise, the closest order to 0 is preferred
-  return (std::fabs(order) < std::fabs(otherOrder));
-}
-
-const UnitNode::Prefix * UnitNode::Representative::bestPrefixForValue(double & value, const float exponent) const {
-  if (!isPrefixable()) {
-    return &Unit::EmptyPrefix;
-  }
-  float bestOrder;
-  const Prefix * bestPre = nullptr;
-  /* Find the 'Prefix' with the most adequate 'exponent' for the order of
-   * magnitude of 'value'.
-   */
-  const float orderOfMagnitude = std::log10(std::fabs(value));
-  for (size_t i = 0; i < m_outputPrefixesLength; i++) {
-    const Prefix * pre = m_outputPrefixes[i];
-    float order = orderOfMagnitude - pre->exponent() * exponent;
-    if (bestPre == nullptr || compareMagnitudeOrders(order, bestOrder)) {
-      bestOrder = order;
-      bestPre = pre;
-    }
-  }
-  value *= std::pow(10.0, -bestPre->exponent() * exponent);
-  return bestPre;
-}
-
-bool UnitNode::Representative::canOutputInSystem(Preferences::UnitFormat system) const {
-  if (m_outputSystem == OutputSystem::None) {
-    return false;
-  }
-  if (m_outputSystem == OutputSystem::All) {
-    return true;
-  }
-  return (system == Preferences::UnitFormat::Metric) == (m_outputSystem == OutputSystem::Metric);
-}
-
+// UnitNode::Vector
 template<>
-size_t UnitNode::Dimension::Vector<int>::supportSize() const {
+size_t UnitNode::Vector<int>::supportSize() const {
   size_t supportSize = 0;
-  for (const int * i = reinterpret_cast<const int*>(this); i < reinterpret_cast<const int*>(this) + NumberOfBaseUnits; i++) {
-    int coefficient = *i;
-    if (coefficient == 0) {
+  for (int i = 0; i < k_numberOfBaseUnits; i++) {
+    if (coefficientAtIndex(i) == 0) {
       continue;
     }
     supportSize++;
@@ -123,7 +86,14 @@ size_t UnitNode::Dimension::Vector<int>::supportSize() const {
 }
 
 template<>
-Unit::Dimension::Vector<int> UnitNode::Dimension::Vector<int>::FromBaseUnits(const Expression baseUnits) {
+void UnitNode::Vector<int>::addAllCoefficients(const Vector<int> other, int factor) {
+  for (int i = 0; i < UnitNode::k_numberOfBaseUnits; i++) {
+    setCoefficientAtIndex(i, coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor);
+  }
+}
+
+template<>
+UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(const Expression baseUnits) {
   /* Returns the vector of Base units with integer exponents. If rational, the
    * closest integer will be used. */
   Vector<int> vector = {
@@ -169,9 +139,7 @@ Unit::Dimension::Vector<int> UnitNode::Dimension::Vector<int>::FromBaseUnits(con
     }
     // Fill the vector with the unit's exponent
     assert(factor.type() == ExpressionNode::Type::Unit);
-    const ptrdiff_t indexInTable = static_cast<UnitNode *>(factor.node())->dimension() - Unit::DimensionTable;
-    assert(0 <= indexInTable && indexInTable < NumberOfBaseUnits);
-    vector.setCoefficientAtIndex(indexInTable, exponent);
+    vector.addAllCoefficients(static_cast<Unit &>(factor).node()->representative()->dimensionVector(), exponent);
     if (++factorIndex >= numberOfFactors) {
       break;
     }
@@ -180,55 +148,430 @@ Unit::Dimension::Vector<int> UnitNode::Dimension::Vector<int>::FromBaseUnits(con
   return vector;
 }
 
-bool UnitNode::Dimension::canParse(const char * symbol, size_t length,
-    const Representative * * representative, const Prefix * * prefix) const
-{
-  const Representative * rep = m_representatives;
-  while (rep < m_representativesUpperBound) {
-    const char * rootSymbol = rep->rootSymbol();
+template<>
+Expression UnitNode::Vector<int>::toBaseUnits() const {
+  Expression result = Multiplication::Builder();
+  int numberOfChildren = 0;
+  for (int i = 0; i < k_numberOfBaseUnits; i++) {
+    // We require the base units to be the first seven in DefaultRepresentatives
+    const Representative * representative = Representative::DefaultRepresentatives()[i];
+    assert(representative);
+    const Prefix * prefix = representative->basePrefix();
+    int exponent = coefficientAtIndex(i);
+    Expression e;
+    if (exponent == 0) {
+      continue;
+    }
+    if (exponent == 1) {
+      e = Unit::Builder(representative, prefix);
+    } else {
+      e = Power::Builder(Unit::Builder(representative, prefix), Rational::Builder(exponent));
+    }
+    static_cast<Multiplication &>(result).addChildAtIndexInPlace(e, numberOfChildren, numberOfChildren);
+    numberOfChildren++;
+  }
+  assert(numberOfChildren > 0);
+  result = static_cast<Multiplication &>(result).squashUnaryHierarchyInPlace();
+  return result;
+}
+
+// UnitNode::Representative
+const UnitNode::Representative * const * UnitNode::Representative::DefaultRepresentatives() {
+  static constexpr SpeedRepresentative defaultSpeedRepresentative = SpeedRepresentative::Default();
+  static constexpr const Representative * defaultRepresentatives[k_numberOfDimensions] = {
+    Unit::k_timeRepresentatives,
+    Unit::k_distanceRepresentatives,
+    Unit::k_massRepresentatives,
+    Unit::k_currentRepresentatives,
+    Unit::k_temperatureRepresentatives,
+    Unit::k_amountOfSubstanceRepresentatives,
+    Unit::k_luminousIntensityRepresentatives,
+    Unit::k_frequencyRepresentatives,
+    Unit::k_forceRepresentatives,
+    Unit::k_pressureRepresentatives,
+    Unit::k_energyRepresentatives,
+    Unit::k_powerRepresentatives,
+    Unit::k_electricChargeRepresentatives,
+    Unit::k_electricPotentialRepresentatives,
+    Unit::k_electricCapacitanceRepresentatives,
+    Unit::k_electricResistanceRepresentatives,
+    Unit::k_electricConductanceRepresentatives,
+    Unit::k_magneticFluxRepresentatives,
+    Unit::k_magneticFieldRepresentatives,
+    Unit::k_inductanceRepresentatives,
+    Unit::k_catalyticActivityRepresentatives,
+    Unit::k_surfaceRepresentatives,
+    Unit::k_volumeRepresentatives,
+    &defaultSpeedRepresentative,
+  };
+  return defaultRepresentatives;
+}
+
+const UnitNode::Representative * UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int> vector) {
+  for (int i = 0; i < k_numberOfDimensions; i++) {
+    const Representative * representative = Representative::DefaultRepresentatives()[i];
+    if (vector == representative->dimensionVector()) {
+      return representative;
+    }
+  }
+  return nullptr;
+}
+
+static bool compareMagnitudeOrders(float order, float otherOrder) {
+  /* Precision can be lost (with a year conversion for instance), so the order
+   * value is rounded */
+  if (std::fabs(order) < Expression::Epsilon<float>()) {
+    order = 0.0f;
+  }
+  if (std::fabs(otherOrder) < Expression::Epsilon<float>()) {
+    otherOrder = 0.0f;
+  }
+  if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <= 3.0f + Expression::Epsilon<float>() && order * otherOrder < 0.0f) {
+    /* If the two values are close, and their sign are opposed, the positive
+     * order is preferred */
+    return (order >= 0.0f);
+  }
+  // Otherwise, the closest order to 0 is preferred
+  return (std::fabs(order) < std::fabs(otherOrder));
+}
+
+int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
+  assert(bufferSize >= 0);
+  return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
+}
+
+const UnitNode::Representative * UnitNode::Representative::DefaultFindBestRepresentative(double value, double exponent, const UnitNode::Representative * representatives, int length, const Prefix * * prefix) {
+  assert(length >= 1);
+  const Representative * res = representatives;
+  double acc = value / std::pow(res->ratio(), exponent);
+  if (*prefix) {
+    *prefix = res->findBestPrefix(acc, exponent);
+  }
+  if (length == 1) {
+    return res;
+  }
+  const Prefix * pre = Prefix::EmptyPrefix();
+  const Representative * iter = res + 1;
+  while (iter < representatives + length) {
+    double temp = value / std::pow(iter->ratio(), exponent);
+    if (*prefix) {
+      pre = iter->findBestPrefix(temp, exponent);
+    }
+    if (compareMagnitudeOrders(std::log10(temp) - pre->exponent() * exponent, std::log10(acc) - ((!*prefix) ? 0 : (*prefix)->exponent() * exponent))) {
+      acc = temp;
+      res = iter;
+      *prefix = pre;
+    }
+    iter++;
+  }
+  if (!*prefix) {
+    *prefix = res->basePrefix();
+  }
+  return res;
+}
+
+int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Prefix * prefix) const {
+  int length = 0;
+  length += prefix->serialize(buffer, bufferSize);
+  assert(length == 0 || isInputPrefixable());
+  assert(length < bufferSize);
+  buffer += length;
+  bufferSize -= length;
+  assert(bufferSize >= 0);
+  length += std::min<int>(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
+  return length;
+}
+
+bool UnitNode::Representative::canParseWithEquivalents(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix) const {
+  const Representative * candidate = representativesOfSameDimension();
+  if (!candidate) {
+    return false;
+  }
+  for (int i = 0; i < numberOfRepresentatives(); i++) {
+    const char * rootSymbol = (candidate + i)->rootSymbol();
     size_t rootSymbolLength = strlen(rootSymbol);
     int potentialPrefixLength = length - rootSymbolLength;
-    if (potentialPrefixLength >= 0 &&
-        strncmp(rootSymbol, symbol + potentialPrefixLength, rootSymbolLength) == 0 &&
-        rep->canParse(symbol, potentialPrefixLength, prefix))
-    {
-      *representative = rep;
+    if (potentialPrefixLength >= 0
+     && strncmp(rootSymbol, symbol + potentialPrefixLength, rootSymbolLength) == 0
+     && candidate[i].canParse(symbol, potentialPrefixLength, prefix)) {
+      *representative = (candidate + i);
       return true;
     }
-    rep++;
   }
   return false;
 }
 
+bool UnitNode::Representative::canParse(const char * symbol, size_t length, const Prefix * * prefix) const {
+  if (!isInputPrefixable()) {
+    *prefix = Prefix::EmptyPrefix();
+    return length == 0;
+  }
+  for (size_t i = 0; i < Prefix::k_numberOfPrefixes; i++) {
+    const Prefix * pre = Prefix::Prefixes() + i;
+    const char * prefixSymbol = pre->symbol();
+    if (prefixSymbol[length] == 0
+     && canPrefix(pre, true)
+     && strncmp(symbol, prefixSymbol, length) == 0)
+    {
+      *prefix = pre;
+      return true;
+    }
+  }
+  return false;
+}
+
+Expression UnitNode::Representative::toBaseUnits() const {
+  Expression result;
+  if (isBaseUnit()) {
+    result =  Unit::Builder(this, basePrefix());
+  } else {
+    result = dimensionVector().toBaseUnits();
+  }
+  return Multiplication::Builder(Float<double>::Builder(m_ratio * std::pow(10., - basePrefix()->exponent())), result);
+}
+
+bool UnitNode::Representative::canPrefix(const UnitNode::Prefix * prefix, bool input) const {
+  Prefixable prefixable = (input) ? m_inputPrefixable : m_outputPrefixable;
+  if (prefix->exponent() == 0) {
+    return true;
+  }
+  if (prefixable == Prefixable::None) {
+    return false;
+  }
+  if (prefixable == Prefixable::All) {
+    return true;
+  }
+  if (prefixable == Prefixable::LongScale) {
+    return prefix->exponent() % 3 == 0;
+  }
+  if (prefixable == Prefixable::NegativeAndKilo) {
+    return prefix->exponent() < 0 || prefix->exponent() == 3;
+  }
+  if (prefixable == Prefixable::NegativeLongScale) {
+    return prefix->exponent() < 0 && prefix->exponent() % 3 == 0;
+  }
+  if (prefixable == Prefixable::PositiveLongScale) {
+    return prefix->exponent() > 0 && prefix->exponent() % 3 == 0;
+  }
+  if (prefixable == Prefixable::Negative) {
+    return prefix->exponent() < 0;
+  }
+  if (prefixable == Prefixable::Positive) {
+    return prefix->exponent() > 0;
+  }
+  assert(false);
+  return false;
+}
+
+const UnitNode::Prefix * UnitNode::Representative::findBestPrefix(double value, double exponent) const {
+  if (!isOutputPrefixable()) {
+    return Prefix::EmptyPrefix();
+  }
+  if (value < Expression::Epsilon<double>()) {
+    return basePrefix();
+  }
+  const Prefix * res = basePrefix();
+  const float magnitude = std::log10(std::fabs(value));
+  float bestOrder = magnitude;
+  for (int i = 0; i < Prefix::k_numberOfPrefixes; i++) {
+    if (!canPrefix(Prefix::Prefixes() + i, false)) {
+      continue;
+    }
+    float order = magnitude - (Prefix::Prefixes()[i].exponent() - basePrefix()->exponent()) * exponent;
+    if (compareMagnitudeOrders(order, bestOrder)) {
+      bestOrder = order;
+      res = Prefix::Prefixes() + i;
+    }
+  }
+  return res;
+}
+
+// UnitNode::___Representative
+const UnitNode::Representative * UnitNode::TimeRepresentative::representativesOfSameDimension() const { return Unit::k_timeRepresentatives; }
+const UnitNode::Representative * UnitNode::DistanceRepresentative::representativesOfSameDimension() const { return Unit::k_distanceRepresentatives; }
+const UnitNode::Representative * UnitNode::MassRepresentative::representativesOfSameDimension() const { return Unit::k_massRepresentatives; }
+const UnitNode::Representative * UnitNode::CurrentRepresentative::representativesOfSameDimension() const { return Unit::k_currentRepresentatives; }
+const UnitNode::Representative * UnitNode::TemperatureRepresentative::representativesOfSameDimension() const { return Unit::k_temperatureRepresentatives; }
+const UnitNode::Representative * UnitNode::AmountOfSubstanceRepresentative::representativesOfSameDimension() const { return Unit::k_amountOfSubstanceRepresentatives; }
+const UnitNode::Representative * UnitNode::LuminousIntensityRepresentative::representativesOfSameDimension() const { return Unit::k_luminousIntensityRepresentatives; }
+const UnitNode::Representative * UnitNode::FrequencyRepresentative::representativesOfSameDimension() const { return Unit::k_frequencyRepresentatives; }
+const UnitNode::Representative * UnitNode::ForceRepresentative::representativesOfSameDimension() const { return Unit::k_forceRepresentatives; }
+const UnitNode::Representative * UnitNode::PressureRepresentative::representativesOfSameDimension() const { return Unit::k_pressureRepresentatives; }
+const UnitNode::Representative * UnitNode::EnergyRepresentative::representativesOfSameDimension() const { return Unit::k_energyRepresentatives; }
+const UnitNode::Representative * UnitNode::PowerRepresentative::representativesOfSameDimension() const { return Unit::k_powerRepresentatives; }
+const UnitNode::Representative * UnitNode::ElectricChargeRepresentative::representativesOfSameDimension() const { return Unit::k_electricChargeRepresentatives; }
+const UnitNode::Representative * UnitNode::ElectricPotentialRepresentative::representativesOfSameDimension() const { return Unit::k_electricPotentialRepresentatives; }
+const UnitNode::Representative * UnitNode::ElectricCapacitanceRepresentative::representativesOfSameDimension() const { return Unit::k_electricCapacitanceRepresentatives; }
+const UnitNode::Representative * UnitNode::ElectricResistanceRepresentative::representativesOfSameDimension() const { return Unit::k_electricResistanceRepresentatives; }
+const UnitNode::Representative * UnitNode::ElectricConductanceRepresentative::representativesOfSameDimension() const { return Unit::k_electricConductanceRepresentatives; }
+const UnitNode::Representative * UnitNode::MagneticFluxRepresentative::representativesOfSameDimension() const { return Unit::k_magneticFluxRepresentatives; }
+const UnitNode::Representative * UnitNode::MagneticFieldRepresentative::representativesOfSameDimension() const { return Unit::k_magneticFieldRepresentatives; }
+const UnitNode::Representative * UnitNode::InductanceRepresentative::representativesOfSameDimension() const { return Unit::k_inductanceRepresentatives; }
+const UnitNode::Representative * UnitNode::CatalyticActivityRepresentative::representativesOfSameDimension() const { return Unit::k_catalyticActivityRepresentatives; }
+const UnitNode::Representative * UnitNode::SurfaceRepresentative::representativesOfSameDimension() const { return Unit::k_surfaceRepresentatives; }
+const UnitNode::Representative * UnitNode::VolumeRepresentative::representativesOfSameDimension() const { return Unit::k_volumeRepresentatives; }
+
+int UnitNode::TimeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 1);
+  /* Use all representatives but week */
+  const Unit splitUnits[] = {
+    Unit::Builder(representativesOfSameDimension() + Unit::k_secondRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_minuteRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_hourRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_dayRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_monthRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_yearRepresentativeIndex, Prefix::EmptyPrefix()),
+  };
+  dest[0] = Unit::BuildSplit(value, splitUnits, numberOfRepresentatives() - 1, reductionContext);
+  return 1;
+}
+
+const UnitNode::Representative * UnitNode::DistanceRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+  return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ?
+    /* Exclude imperial units from the search. */
+    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), Unit::k_inchRepresentativeIndex, prefix) :
+    /* Exclude m form the search. */
+    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
+}
+
+int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 1);
+  const Unit splitUnits[] = {
+    Unit::Builder(representativesOfSameDimension() + Unit::k_inchRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_footRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_yardRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_mileRepresentativeIndex, Prefix::EmptyPrefix()),
+  };
+  dest[0] = Unit::BuildSplit(value, splitUnits, 4, reductionContext);
+  return 1;
+}
+
+const UnitNode::Prefix * UnitNode::MassRepresentative::basePrefix() const {
+  return isBaseUnit() ? Prefix::Prefixes() + Unit::k_kiloPrefixIndex : Prefix::EmptyPrefix();
+}
+
+const UnitNode::Representative * UnitNode::MassRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+  return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ?
+    /* Only search in g. */
+    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), 1, prefix) :
+    /* Only search in imperial units without the long ton. */
+    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Unit::k_shortTonRepresentativeIndex - Unit::k_ounceRepresentativeIndex + 1, prefix);
+}
+
+int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 1);
+  const Unit splitUnits[] = {
+    Unit::Builder(representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_poundRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_shortTonRepresentativeIndex, Prefix::EmptyPrefix()),
+  };
+  dest[0] = Unit::BuildSplit(value, splitUnits, 3, reductionContext);
+  return 1;
+}
+
+int UnitNode::EnergyRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 2);
+  /* 1. Convert into Wh
+   * As value is expressed in SI units (ie _kg_m^2_s^-2), the ratio is that of
+   * hours to seconds. */
+  const Representative * hour = TimeRepresentative::Default().representativesOfSameDimension() + Unit::k_hourRepresentativeIndex;
+  const Representative * watt = PowerRepresentative::Default().representativesOfSameDimension() + Unit::k_wattRepresentativeIndex;
+  double adjustedValue = value / hour->ratio() / watt->ratio();
+  const Prefix * wattPrefix = watt->findBestPrefix(adjustedValue, 1.);
+  dest[0] = Multiplication::Builder(
+      Float<double>::Builder(adjustedValue * std::pow(10., -wattPrefix->exponent())),
+      Multiplication::Builder(
+        Unit::Builder(watt, wattPrefix),
+        Unit::Builder(hour, Prefix::EmptyPrefix())));
+  /* 2. Convert into eV */
+  const Representative * eV = representativesOfSameDimension() + Unit::k_electronVoltRepresentativeIndex;
+  adjustedValue = value / eV->ratio();
+  const Prefix * eVPrefix = eV->findBestPrefix(adjustedValue, 1.);
+  dest[1] = Multiplication::Builder(
+      Float<double>::Builder(adjustedValue * std::pow(10., -eVPrefix->exponent())),
+      Unit::Builder(eV, eVPrefix));
+  return 2;
+}
+
+const UnitNode::Representative * UnitNode::SurfaceRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+  *prefix = Prefix::EmptyPrefix();
+  return representativesOfSameDimension() + (reductionContext.unitFormat() == Preferences::UnitFormat::Metric ? Unit::k_hectareRepresentativeIndex : Unit::k_acreRepresentativeIndex);
+}
+
+int UnitNode::SurfaceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 2);
+  int k = (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ? 0 : 1;
+  Expression * destMetric = dest + k;
+  Expression * destImperial = dest + (1 - k);
+  // 1. Convert to hectares
+  const Representative * hectare = representativesOfSameDimension() + Unit::k_hectareRepresentativeIndex;
+  *destMetric = Multiplication::Builder(Float<double>::Builder(value / hectare->ratio()), Unit::Builder(hectare, Prefix::EmptyPrefix()));
+  // 2. Convert to acres
+  const Representative * acre = representativesOfSameDimension() + Unit::k_acreRepresentativeIndex;
+  *destImperial = Multiplication::Builder(Float<double>::Builder(value / acre->ratio()), Unit::Builder(acre, Prefix::EmptyPrefix()));
+  return 2;
+}
+
+const UnitNode::Representative * UnitNode::VolumeRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+    *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
+    return representativesOfSameDimension();
+  }
+  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
+}
+
+int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 2);
+  int k = (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ? 0 : 1;
+  Expression * destMetric = dest + k;
+  Expression * destImperial = dest + (1 - k);
+  // 1. Convert to liters
+  const Representative * liter = representativesOfSameDimension() + Unit::k_literRepresentativeIndex;
+  double adjustedValue = value / liter->ratio();
+  const Prefix * literPrefix = liter->findBestPrefix(adjustedValue, 1.);
+  *destMetric = Multiplication::Builder(
+      Float<double>::Builder(adjustedValue * pow(10., -literPrefix->exponent())),
+      Unit::Builder(liter, literPrefix));
+  // 2. Convert to imperial volumes
+  const Unit splitUnits[] = {
+    Unit::Builder(representativesOfSameDimension() + Unit::k_fluidOunceRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_cupRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_gallonRepresentativeIndex, Prefix::EmptyPrefix()),
+  };
+  *destImperial = Unit::BuildSplit(value, splitUnits, numberOfRepresentatives() - 5, reductionContext);
+  return 2;
+}
+
+int UnitNode::SpeedRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 2);
+  int k = (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ? 0 : 1;
+  Expression * destMetric = dest + k;
+  Expression * destImperial = dest + (1 - k);
+  // 1. Convert to km/h
+  const Representative * meter = DistanceRepresentative::Default().representativesOfSameDimension() + Unit::k_meterRepresentativeIndex;
+  const Representative * hour = TimeRepresentative::Default().representativesOfSameDimension() + Unit::k_hourRepresentativeIndex;
+  *destMetric = Multiplication::Builder(
+      Float<double>::Builder(value / 1000. * hour->ratio()),
+      Multiplication::Builder(
+        Unit::Builder(meter, Prefix::Prefixes() + Unit::k_kiloPrefixIndex),
+        Power::Builder(Unit::Builder(hour, Prefix::EmptyPrefix()), Rational::Builder(-1))));
+  // 2. Convert to mph
+  const Representative * mile = DistanceRepresentative::Default().representativesOfSameDimension() + Unit::k_mileRepresentativeIndex;
+  *destImperial = Multiplication::Builder(
+      Float<double>::Builder(value / mile->ratio() * hour->ratio()),
+      Multiplication::Builder(
+        Unit::Builder(mile, Prefix::EmptyPrefix()),
+        Power::Builder(Unit::Builder(hour, Prefix::EmptyPrefix()), Rational::Builder(-1))));
+  return 2;
+}
+
+// UnitNode
 ExpressionNode::Sign UnitNode::sign(Context * context) const {
   return Sign::Positive;
 }
 
 Expression UnitNode::removeUnit(Expression * unit) {
   return Unit(this).removeUnit(unit);
-}
-
-int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
-  if (!ascending) {
-    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
-  }
-  assert(type() == e->type());
-  const UnitNode * eNode = static_cast<const UnitNode *>(e);
-  // This works because dimensions are ordered in a table
-  const ptrdiff_t dimdiff = eNode->dimension() - m_dimension;
-  if (dimdiff != 0) {
-    return dimdiff;
-  }
-  // This works because representatives are ordered in a table
-  const ptrdiff_t repdiff = eNode->representative() - m_representative;
-  if (repdiff != 0) {
-    /* We order representatives in the reverse order as how they're stored in
-     * the representatives table. This enables to sort addition of time as:
-     * year + month + days + hours + minutes + seconds. */
-    return -repdiff;
-  }
-  const ptrdiff_t prediff = eNode->prefix()->exponent() - m_prefix->exponent();
-  return prediff;
 }
 
 Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -250,9 +593,25 @@ int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix);
 }
 
-template<typename T>
-Evaluation<T> UnitNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return Complex<T>::Undefined();
+int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, canBeInterrupted, ignoreParentheses);
+  }
+  assert(type() == e->type());
+  const UnitNode * eNode = static_cast<const UnitNode *>(e);
+  Vector<int> v = representative()->dimensionVector();
+  Vector<int> w = eNode->representative()->dimensionVector();
+  for (int i = 0; i < k_numberOfBaseUnits; i++) {
+    if (v.coefficientAtIndex(i) != w.coefficientAtIndex(i)) {
+      return v.coefficientAtIndex(i) - w.coefficientAtIndex(i);
+    }
+  }
+  const ptrdiff_t representativeDiff = m_representative - eNode->representative();
+  if (representativeDiff != 0) {
+    return representativeDiff;
+  }
+  const ptrdiff_t prediff = eNode->prefix()->exponent() - m_prefix->exponent();
+  return prediff;
 }
 
 Expression UnitNode::shallowReduce(ReductionContext reductionContext) {
@@ -263,100 +622,124 @@ Expression UnitNode::shallowBeautify(ReductionContext reductionContext) {
   return Unit(this).shallowBeautify(reductionContext);
 }
 
-constexpr const Unit::Prefix
-  Unit::PicoPrefix,
-  Unit::NanoPrefix,
-  Unit::MicroPrefix,
-  Unit::MilliPrefix,
-  Unit::CentiPrefix,
-  Unit::DeciPrefix,
-  Unit::EmptyPrefix,
-  Unit::DecaPrefix,
-  Unit::HectoPrefix,
-  Unit::KiloPrefix,
-  Unit::MegaPrefix,
-  Unit::GigaPrefix,
-  Unit::TeraPrefix;
-constexpr const Unit::Prefix * const Unit::NoPrefix[];
-constexpr const Unit::Prefix * const Unit::NegativeLongScalePrefixes[];
-constexpr const Unit::Prefix * const Unit::PositiveLongScalePrefixes[];
-constexpr const Unit::Prefix * const Unit::LongScalePrefixes[];
-constexpr const Unit::Prefix * const Unit::NegativePrefixes[];
-constexpr const Unit::Prefix * const Unit::AllPrefixes[];
-constexpr const Unit::Representative
-  Unit::TimeRepresentatives[],
-  Unit::DistanceRepresentatives[],
-  Unit::MassRepresentatives[],
-  Unit::CurrentRepresentatives[],
-  Unit::TemperatureRepresentatives[],
-  Unit::AmountOfSubstanceRepresentatives[],
-  Unit::LuminousIntensityRepresentatives[],
-  Unit::FrequencyRepresentatives[],
-  Unit::ForceRepresentatives[],
-  Unit::PressureRepresentatives[],
-  Unit::EnergyRepresentatives[],
-  Unit::PowerRepresentatives[],
-  Unit::ElectricChargeRepresentatives[],
-  Unit::ElectricPotentialRepresentatives[],
-  Unit::ElectricCapacitanceRepresentatives[],
-  Unit::ElectricResistanceRepresentatives[],
-  Unit::ElectricConductanceRepresentatives[],
-  Unit::MagneticFluxRepresentatives[],
-  Unit::MagneticFieldRepresentatives[],
-  Unit::InductanceRepresentatives[],
-  Unit::CatalyticActivityRepresentatives[],
-  Unit::SurfaceRepresentatives[],
-  Unit::VolumeRepresentatives[];
-const Unit::Representative constexpr * Unit::SecondRepresentative;
-const Unit::Representative constexpr * Unit::HourRepresentative;
-const Unit::Representative constexpr * Unit::MeterRepresentative;
-constexpr const Unit::Dimension Unit::DimensionTable[];
-const Unit::Dimension constexpr * Unit::TimeDimension;
-const Unit::Dimension constexpr * Unit::DistanceDimension;
-constexpr const Unit::Dimension * Unit::DimensionTableUpperBound;
+template<typename T>
+Evaluation<T> UnitNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return Complex<T>::Undefined();
+}
 
-bool Unit::CanParse(const char * symbol, size_t length,
-    const Dimension * * dimension, const Representative * * representative, const Prefix * * prefix)
-{
-  for (const Dimension * dim = DimensionTable; dim < DimensionTableUpperBound; dim++) {
-    if (dim->canParse(symbol, length, representative, prefix)) {
-      *dimension = dim;
+// Unit
+Unit Unit::Builder(const Unit::Representative * representative, const Prefix * prefix) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(UnitNode));
+  UnitNode * node = new (bufferNode) UnitNode(representative, prefix);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  return static_cast<Unit &>(h);
+}
+
+bool Unit::CanParse(const char * symbol, size_t length, const Unit::Representative * * representative, const Unit::Prefix * * prefix) {
+  for (int i = 0; i < Representative::k_numberOfDimensions; i++) {
+    if (Representative::DefaultRepresentatives()[i]->canParseWithEquivalents(symbol, length, representative, prefix)) {
       return true;
     }
   }
   return false;
 }
 
-Unit Unit::Builder(const Dimension * dimension, const Representative * representative, const Prefix * prefix) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(UnitNode));
-  UnitNode * node = new (bufferNode) UnitNode(dimension, representative, prefix);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
-  return static_cast<Unit &>(h);
+static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(Expression unit, double * value, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix) {
+  double exponent = 1.f;
+  Expression factor = unit;
+  if (factor.type() == ExpressionNode::Type::Power) {
+    Expression childExponent = factor.childAtIndex(1);
+    assert(factor.childAtIndex(0).type() == ExpressionNode::Type::Unit);
+    assert(factor.childAtIndex(1).type() == ExpressionNode::Type::Rational);
+    exponent = static_cast<Rational &>(childExponent).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    factor = factor.childAtIndex(0);
+  }
+  assert(factor.type() == ExpressionNode::Type::Unit);
+  static_cast<Unit &>(factor).chooseBestRepresentativeAndPrefix(value, exponent, reductionContext, optimizePrefix);
+}
+
+void Unit::ChooseBestRepresentativeAndPrefixForValue(Expression units, double * value, ExpressionNode::ReductionContext reductionContext) {
+  int numberOfFactors;
+  Expression factor;
+  if (units.type() == ExpressionNode::Type::Multiplication) {
+    numberOfFactors = units.numberOfChildren();
+    factor = units.childAtIndex(0);
+  } else {
+    numberOfFactors = 1;
+    factor = units;
+  }
+  chooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value, reductionContext, true);
+  for (int i = 1; i < numberOfFactors; i++) {
+    chooseBestRepresentativeAndPrefixForValueOnSingleUnit(units.childAtIndex(i), value, reductionContext, false);
+  }
+}
+
+bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit) {
+  UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
+  const Representative * representative = Representative::RepresentativeForDimension(vector);
+  return representative != nullptr && representative->hasAdditionalExpressions(value);
+}
+
+int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {
+  const Representative * representative = UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
+  assert(representative);
+  return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
+}
+
+Expression Unit::BuildSplit(double value, const Unit * units, int length, ExpressionNode::ReductionContext reductionContext) {
+  assert(!std::isnan(value));
+  assert(units);
+  assert(length > 0);
+
+  double baseRatio = units->node()->representative()->ratio();
+  double basedValue = value / baseRatio;
+  if (std::isinf(value) || std::fabs(value) < Expression::Epsilon<double>()) {
+    return Multiplication::Builder(Number::FloatNumber(value), units[0]);
+  }
+  double err = std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 1 - std::ceil(log10(std::fabs(basedValue))));
+  double remain = std::round(basedValue*err)/err;
+
+  Addition res = Addition::Builder();
+  for (int i = length - 1; i >= 0; i--) {
+    assert(units[i].node()->prefix() == Prefix::EmptyPrefix());
+    double factor = std::round(units[i].node()->representative()->ratio() / baseRatio);
+    double share = remain / factor;
+    if (i > 0) {
+      share = (share > 0.0) ? std::floor(share) : std::ceil(share);
+    }
+    remain -= share * factor;
+    if (std::abs(share) > Expression::Epsilon<double>()) {
+      res.addChildAtIndexInPlace(Multiplication::Builder(Float<double>::Builder(share), units[i]), res.numberOfChildren(), res.numberOfChildren());
+    }
+  }
+  ExpressionNode::ReductionContext keepUnitsContext(
+      reductionContext.context(),
+      reductionContext.complexFormat(),
+      reductionContext.angleUnit(),
+      reductionContext.unitFormat(),
+      ExpressionNode::ReductionTarget::User,
+      ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      ExpressionNode::UnitConversion::None);
+  return res.squashUnaryHierarchyInPlace().shallowBeautify(keepUnitsContext);
 }
 
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None) {
+  if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
+   || isBaseUnit()) {
+    /* We escape early if we are one of the seven base units.
+     * Nb : For masses, k is considered the base prefix, so kg will be escaped
+     * here but not g */
     return *this;
   }
   UnitNode * unitNode = node();
-  const Dimension * dim = unitNode->dimension();
-  const Representative * rep = unitNode->representative();
-  const Prefix * pre = unitNode->prefix();
-  int8_t prefixMultiplier = pre->exponent();
-  if (rep == dim->stdRepresentative()) {
-    const Prefix * stdPre = dim->stdRepresentativePrefix();
-    unitNode->setPrefix(stdPre);
-    prefixMultiplier -= stdPre->exponent();
-  }
-  Expression result;
-  if (rep->definition() == nullptr) {
-    result = clone();
-  } else {
-    result = Expression::Parse(rep->definition(), nullptr, false).deepReduce(reductionContext);
-  }
-  if (prefixMultiplier != 0) {
-    Expression multiplier = Power::Builder(Rational::Builder(10), Rational::Builder(prefixMultiplier)).shallowReduce(reductionContext);
-    result = Multiplication::Builder(multiplier, result).shallowReduce(reductionContext);
+  const Representative * representative = unitNode->representative();
+  const Prefix * prefix = unitNode->prefix();
+
+  Expression result = representative->toBaseUnits().deepReduce(reductionContext);
+  if (prefix != Prefix::EmptyPrefix()) {
+    Expression prefixFactor = Power::Builder(Rational::Builder(10), Rational::Builder(prefix->exponent()));
+    prefixFactor = prefixFactor.shallowReduce(reductionContext);
+    result = Multiplication::Builder(prefixFactor, result).shallowReduce(reductionContext);
   }
   replaceWithInPlace(result);
   return result;
@@ -373,63 +756,6 @@ Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionConte
   return *this;
 }
 
-void Unit::ChooseBestMultipleForValue(Expression * units, double * value, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
-  // Identify the first Unit factor and its exponent
-  Expression firstFactor = *units;
-  float exponent = 1.0f;
-  if (firstFactor.type() == ExpressionNode::Type::Multiplication) {
-    firstFactor = firstFactor.childAtIndex(0);
-  }
-  if (firstFactor.type() == ExpressionNode::Type::Power) {
-    Expression exp = firstFactor.childAtIndex(1);
-    firstFactor = firstFactor.childAtIndex(0);
-    assert(exp.type() == ExpressionNode::Type::Rational);
-    exponent = static_cast<const Rational &>(exp).node()->templatedApproximate<float>();
-  }
-  assert(firstFactor.type() == ExpressionNode::Type::Unit);
-  // Choose its multiple and update value accordingly
-  if (exponent != 0.0f) {
-    static_cast<Unit&>(firstFactor).chooseBestMultipleForValue(value, exponent, tuneRepresentative, reductionContext);
-  }
-}
-
-void Unit::chooseBestMultipleForValue(double * value, const float exponent, bool tuneRepresentative, ExpressionNode::ReductionContext reductionContext) {
-  assert(!std::isnan(*value) && exponent != 0.0f);
-  if (*value == 0.0 || std::isinf(*value)) {
-    return;
-  }
-  UnitNode * unitNode = node();
-  const Dimension * dim = unitNode->dimension();
-  /* Find in the Dimension 'dim' which unit (Prefix and optionally
-   * Representative) make the value closer to 1.
-   */
-  const Representative * bestRep = unitNode->representative();
-  const Prefix * bestPre = unitNode->prefix();
-  double bestVal = (tuneRepresentative) ? DBL_MAX : *value;
-
-  // Test all representatives if tuneRepresentative is on. Otherwise, force current representative
-  const Representative * startRep = tuneRepresentative ? dim->stdRepresentative() : bestRep;
-  const Representative * endRep = tuneRepresentative ? dim->representativesUpperBound() : bestRep + 1;
-  for (const Representative * rep = startRep; rep < endRep; rep++) {
-    if (!rep->canOutputInSystem(reductionContext.unitFormat())) {
-      continue;
-    }
-    // evaluate quotient
-    double val = *value * std::pow(Division::Builder(clone(), Unit::Builder(dim, rep, &EmptyPrefix)).deepReduce(reductionContext).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()), exponent);
-    // Get the best prefix and update val accordingly
-    const Prefix * pre = rep->bestPrefixForValue(val, exponent);
-    if (compareMagnitudeOrders(std::log10(std::fabs(val)), std::log10(std::fabs(bestVal)))) {
-      /* At this point, val is closer to one than bestVal is.*/
-      bestRep = rep;
-      bestPre = pre;
-      bestVal = val;
-    }
-  }
-  unitNode->setRepresentative(bestRep);
-  unitNode->setPrefix(bestPre);
-  *value = bestVal;
-}
-
 Expression Unit::removeUnit(Expression * unit) {
   *unit = *this;
   Expression one = Rational::Builder(1);
@@ -437,220 +763,25 @@ Expression Unit::removeUnit(Expression * unit) {
   return one;
 }
 
-bool Unit::isSecond() const {
-  // TODO: comparing pointers suffices because all time dimension are built from the same pointers. This should be asserted some way at compile-time?
-  return node()->dimension() == TimeDimension && node()->representative() == SecondRepresentative && node()->prefix() == &EmptyPrefix;
-}
-
-bool Unit::isMeter() const {
-  // See comment on isSecond
-  return node()->dimension() == DistanceDimension && node()->representative() == MeterRepresentative && node()->prefix() == &EmptyPrefix;
-}
-
-
-bool Unit::isKilogram() const {
-  // See comment on isSecond
-  return node()->dimension() == MassDimension && node()->representative() == KilogramRepresentative && node()->prefix() == &EmptyPrefix;
-}
-
-bool Unit::isSI() const {
-  UnitNode * unitNode = node();
-  const Dimension * dim = unitNode->dimension();
-  const Representative * rep = unitNode->representative();
-  return rep == dim->stdRepresentative() &&
-         rep->definition() == nullptr &&
-         unitNode->prefix() == dim->stdRepresentativePrefix();
-}
-
-bool Unit::IsSI(Expression & e) {
-  if (e.type() == ExpressionNode::Type::Multiplication) {
-    for (int i = 0; i < e.numberOfChildren(); i++) {
-      Expression child = e.childAtIndex(i);
-      assert(child.type() == ExpressionNode::Type::Power || child.type() == ExpressionNode::Type::Unit);
-      if (!IsSI(child)) {
-        return false;
-      }
-    }
-    return true;
+void Unit::chooseBestRepresentativeAndPrefix(double * value, double exponent, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix) {
+  assert(exponent != 0.f);
+  if (std::isinf(*value) || *value == 0.0) {
+    node()->setRepresentative(node()->representative()->representativesOfSameDimension());
+    node()->setPrefix(node()->representative()->basePrefix());
+    return;
   }
-  if (e.type() == ExpressionNode::Type::Power) {
-    // Rational exponents are accepted in IS system
-    assert(e.childAtIndex(1).type() == ExpressionNode::Type::Rational);
-    Expression child = e.childAtIndex(0);
-    assert(child.type() == ExpressionNode::Type::Unit);
-    return IsSI(child);
+  // Convert value to base units
+  double baseValue = *value * std::pow(node()->representative()->ratio() * std::pow(10., node()->prefix()->exponent() - node()->representative()->basePrefix()->exponent()), exponent);
+  const Prefix * bestPrefix = (optimizePrefix) ? Prefix::EmptyPrefix() : nullptr;
+  const Representative * bestRepresentative = node()->representative()->standardRepresentative(baseValue, exponent, reductionContext, &bestPrefix);
+  if (bestRepresentative != node()->representative()) {
+    *value = *value * std::pow(node()->representative()->ratio() / bestRepresentative->ratio() * std::pow(10., bestRepresentative->basePrefix()->exponent() - node()->representative()->basePrefix()->exponent()), exponent);
+    node()->setRepresentative(bestRepresentative);
   }
-  assert(e.type() == ExpressionNode::Type::Unit);
-  return static_cast<Unit &>(e).isSI();
-}
-
-bool Unit::IsSISpeed(Expression & e) {
-  // Form m*s^-1
-  return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 2 &&
-    e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
-    e.childAtIndex(1).type() == ExpressionNode::Type::Power &&
-    e.childAtIndex(1).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isMinusOne() &&
-    e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isSecond();
-}
-
-bool Unit::IsSIVolume(Expression & e) {
-  // Form m^3
-  return e.type() == ExpressionNode::Type::Power &&
-    e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
-    e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<const Rational>().isThree();
-}
-
-bool Unit::IsSIEnergy(Expression & e) {
-  // Form _kg*_m^2*_s^-2
-  return e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() == 3 &&
-    e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isKilogram() &&
-    e.childAtIndex(1).type() == ExpressionNode::Type::Power &&
-    e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(1).childAtIndex(0).convert<Unit>().isMeter() &&
-    e.childAtIndex(1).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).childAtIndex(1).convert<const Rational>().isTwo() &&
-    e.childAtIndex(2).type() == ExpressionNode::Type::Power &&
-    e.childAtIndex(2).childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(2).childAtIndex(0).convert<Unit>().isSecond() &&
-    e.childAtIndex(2).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(2).childAtIndex(1).convert<const Rational>().isMinusTwo();
-}
-
-bool Unit::IsSITime(Expression & e) {
-  return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isSecond();
-}
-
-bool Unit::IsSIDistance(Expression & e) {
-  return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isMeter();
-}
-
-bool Unit::IsSIMass(Expression & e) {
-  return e.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(e).isKilogram();
-}
-
-bool Unit::IsSISurface(Expression & e) {
-  return e.type() == ExpressionNode::Type::Power &&
-    e.childAtIndex(0).type() == ExpressionNode::Type::Unit && e.childAtIndex(0).convert<Unit>().isMeter() &&
-    e.childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).convert<const Rational>().isTwo();
-}
-
-double Unit::ConvertedValueInUnit(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext) {
-  Expression conversion = UnitConvert::Builder(e.clone(), unit);
-  Expression newUnit;
-  conversion = conversion.simplify(reductionContext);
-  conversion = conversion.removeUnit(&newUnit);
-  return conversion.approximateToScalar<double>(reductionContext.context(), Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
-}
-
-Expression Unit::BuildSplit(double baseValue, Unit const * units, double const * conversionFactors, const int numberOfUnits, Context * context) {
-  assert(!std::isnan(baseValue));
-  if (std::isinf(baseValue) || std::fabs(baseValue) < Expression::Epsilon<double>()) {
-    return Multiplication::Builder(Number::FloatNumber(baseValue), units[numberOfUnits-1]);
+  if (optimizePrefix && bestPrefix != node()->prefix()) {
+    *value = *value * std::pow(10., exponent * (node()->prefix()->exponent() - bestPrefix->exponent()));
+    node()->setPrefix(bestPrefix);
   }
-
-  /* Round the base value to 13 significant digits
-   * (= k_numberOfStoredSignificantDigits - 1).
-   * Indeed, the user input has been converted to the most adequate unit
-   * which might have led to approximating the value to 14 significants
-   * digits. The value was then computed from this approximation.
-   * We thus round it to avoid displaying small numbers that are
-   * artifacts of the previous approximations. */
-  double err = std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 1 - std::ceil(log10(std::fabs(baseValue))));
-  double remain = std::round(baseValue*err)/err;
-
-  double valuesPerUnit[numberOfUnits];
-  Addition a = Addition::Builder();
-  for (int i = 0; i < numberOfUnits; i++) {
-    valuesPerUnit[i] = remain/conversionFactors[i];
-    // Keep only the floor of the values except for the last unit (seconds)
-    if (i < numberOfUnits - 1) {
-      valuesPerUnit[i] = valuesPerUnit[i] >= 0.0 ? std::floor(valuesPerUnit[i]) : std::ceil(valuesPerUnit[i]);
-    }
-    remain -= valuesPerUnit[i] * conversionFactors[i];
-    if (std::fabs(valuesPerUnit[i]) > Expression::Epsilon<double>()) {
-      Multiplication m = Multiplication::Builder(Float<double>::Builder(valuesPerUnit[i]), units[i]);
-      a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
-    }
-  }
-
-  ExpressionNode::ReductionContext reductionContext(context, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, Preferences::UnitFormat::Imperial, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion::None);
-  // Beautify the addition into an subtraction if necessary
-  return a.squashUnaryHierarchyInPlace().shallowBeautify(reductionContext);
-}
-
-Expression Unit::BuildTimeSplit(double seconds, Context * context) {
-  constexpr static int numberOfTimeUnits = 6;
-  Unit units[numberOfTimeUnits] = {Unit::Year(), Unit::Month(), Unit::Day(), Unit::Hour(), Unit::Minute(), Unit::Second()};
-  constexpr static double timeFactors[numberOfTimeUnits] = {MonthPerYear*DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, DaysPerMonth*HoursPerDay*MinutesPerHour*SecondsPerMinute, HoursPerDay*MinutesPerHour*SecondsPerMinute, MinutesPerHour*SecondsPerMinute, SecondsPerMinute, 1.0};
-  return BuildSplit(seconds, units, timeFactors, numberOfTimeUnits, context);
-}
-
-Expression Unit::BuildImperialDistanceSplit(double inches, Context * context) {
-  constexpr static int numberOfUnits = 4;
-  Unit units[numberOfUnits] = {Unit::Mile(), Unit::Yard(), Unit::Foot(), Unit::Inch()};
-  constexpr static double factors[numberOfUnits] = {InchesPerFoot*FeetPerYard*YardsPerMile, InchesPerFoot*FeetPerYard, InchesPerFoot, 1.};
-  return BuildSplit(inches, units, factors, numberOfUnits, context);
-}
-
-Expression Unit::BuildImperialMassSplit(double ounces, Context * context) {
-  constexpr static int numberOfUnits = 3;
-  Unit units[numberOfUnits] = {Unit::ShortTon(), Unit::Pound(), Unit::Ounce()};
-  constexpr static double factors[numberOfUnits] = {OuncesPerPound*PoundsPerShortTon, OuncesPerPound, 1.};
-  return BuildSplit(ounces, units, factors, numberOfUnits, context);
-}
-
-Expression Unit::BuildImperialVolumeSplit(double fluidOunces, Context * context) {
-  constexpr static int numberOfUnits = 3;
-  Unit units[numberOfUnits] = {Unit::Gallon(), Unit::Cup(), Unit::FluidOunce()};
-  constexpr static double factors[numberOfUnits] = {FluidOuncesPerCup*CupsPerGallon, FluidOuncesPerCup, 1.};
-  return BuildSplit(fluidOunces, units, factors, numberOfUnits, context);
-}
-
-Expression Unit::StandardSpeedConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  Preferences::UnitFormat format = reductionContext.unitFormat();
-  return UnitConvert::Builder(e.clone(), Multiplication::Builder(
-        format == Preferences::UnitFormat::Metric ? Unit::Kilometer() : Unit::Mile(),
-        Power::Builder(
-          Unit::Hour(),
-          Rational::Builder(-1)
-          )
-        )
-      );
-}
-
-Expression Unit::StandardDistanceConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  Preferences::UnitFormat format = reductionContext.unitFormat();
-  if (format == Preferences::UnitFormat::Metric) {
-    return UnitConvert::Builder(e.clone(), Unit::Meter());
-  }
-  assert(format == Preferences::UnitFormat::Imperial);
-  double rawValue = ConvertedValueInUnit(e, Unit::Inch(), reductionContext);
-  return BuildImperialDistanceSplit(rawValue, reductionContext.context());
-}
-
-Expression Unit::StandardVolumeConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  Preferences::UnitFormat format = reductionContext.unitFormat();
-  if (format == Preferences::UnitFormat::Metric) {
-    return UnitConvert::Builder(e.clone(), Unit::Liter());
-  }
-  assert(format == Preferences::UnitFormat::Imperial);
-  double rawValue = ConvertedValueInUnit(e, Unit::FluidOunce(), reductionContext);
-  return BuildImperialVolumeSplit(rawValue, reductionContext.context());
-}
-
-Expression Unit::StandardMassConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  Preferences::UnitFormat format = reductionContext.unitFormat();
-  if (format == Preferences::UnitFormat::Metric) {
-    return UnitConvert::Builder(e.clone(), Unit::Gram());
-  }
-  assert(format == Preferences::UnitFormat::Imperial);
-  double rawValue = ConvertedValueInUnit(e, Unit::Ounce(), reductionContext);
-  return BuildImperialMassSplit(rawValue, reductionContext.context());
-}
-
-Expression Unit::StandardSurfaceConversion(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  Preferences::UnitFormat format = reductionContext.unitFormat();
-  if (format == Preferences::UnitFormat::Metric) {
-    return UnitConvert::Builder(e.clone(), Unit::Hectare());
-  }
-  assert(format == Preferences::UnitFormat::Imperial);
-  return UnitConvert::Builder(e.clone(), Unit::Acre());
 }
 
 template Evaluation<float> UnitNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

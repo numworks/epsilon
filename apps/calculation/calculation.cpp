@@ -254,32 +254,13 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   }
   if (o.hasUnit()) {
     Expression unit;
-    PoincareHelpers::Reduce(&o,
-        App::app()->localContext(),
-        ExpressionNode::ReductionTarget::User,
-        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        ExpressionNode::UnitConversion::None);
+    /* FIXME : When this method is accessed via leaving the additional outputs,
+     * ie via a press on BACK, the reduction is interrupted, and removeUnit
+     * goes badly.*/
+    PoincareHelpers::Reduce(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     o = o.removeUnit(&unit);
-    // There might be no unit in the end, if the reduction was interrupted.
-    if (!unit.isUninitialized()) {
-      if (Unit::IsSI(unit)) {
-        if (Unit::IsSISpeed(unit) || Unit::IsSIVolume(unit) || Unit::IsSIEnergy(unit)) {
-          /* All these units will provide misc. classic representatives in
-           * addition to the SI unit in additional information. */
-          return AdditionalInformationType::Unit;
-        }
-        if (Unit::IsSITime(unit)) {
-          /* If the number of seconds is above 60s, we can write it in the form
-           * of an addition: 23_min + 12_s for instance. */
-          double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
-          if (value >  Unit::SecondsPerMinute) {
-            return AdditionalInformationType::Unit;
-          }
-        }
-        return AdditionalInformationType::None;
-      }
-      return AdditionalInformationType::Unit;
-    }
+    double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
+    return (Unit::ShouldDisplayAdditionalOutputs(value, unit)) ? AdditionalInformationType::Unit : AdditionalInformationType::None;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;

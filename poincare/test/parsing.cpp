@@ -286,20 +286,19 @@ QUIZ_CASE(poincare_parsing_matrices) {
 
 QUIZ_CASE(poincare_parsing_units) {
   // Units
-  for (const Unit::Dimension * dim = Unit::DimensionTable; dim < Unit::DimensionTableUpperBound; dim++) {
-    for (const Unit::Representative * rep = dim->stdRepresentative(); rep < dim->representativesUpperBound(); rep++) {
+  for (int i = 0; i < Unit::Representative::k_numberOfDimensions; i++) {
+    const Unit::Representative * dim = Unit::Representative::DefaultRepresentatives()[i];
+    for (int j = 0; j < dim->numberOfRepresentatives(); j++) {
+      const Unit::Representative * rep = dim->representativesOfSameDimension() + j;
       static constexpr size_t bufferSize = 10;
       char buffer[bufferSize];
-      Unit::Builder(dim, rep, &Unit::EmptyPrefix).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+      Unit::Builder(rep, Unit::Prefix::EmptyPrefix()).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
-      if (rep->isPrefixable()) {
-        /* ton is only prefixable by positive prefixes */
-        bool isTon = strcmp("t", rep->rootSymbol()) == 0;
-        size_t numberOfPrefixes = ((isTon) ? sizeof(Unit::PositiveLongScalePrefixes) : sizeof(Unit::AllPrefixes))/sizeof(Unit::Prefix *);
-        for (size_t i = 0; i < numberOfPrefixes; i++) {
-          const Unit::Prefix * pre = (isTon) ? Unit::PositiveLongScalePrefixes[i] : Unit::AllPrefixes[i];
-          Unit::Builder(dim, rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
+      if (rep->isInputPrefixable()) {
+        for (size_t i = 0; i < Unit::Prefix::k_numberOfPrefixes; i++) {
+          const Unit::Prefix * pre = Unit::Prefix::Prefixes();
+          Unit::Builder(rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
         }

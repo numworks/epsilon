@@ -35,116 +35,40 @@ void GraphController::viewWillAppear() {
   selectFunctionWithCursor(indexFunctionSelectedByCursor());
 }
 
-bool GraphController::defautRangeIsNormalized() const {
+bool GraphController::defaultRangeIsNormalized() const {
   return functionStore()->displaysNonCartesianFunctions();
 }
 
-void GraphController::interestingFunctionRange(ExpiringPointer<ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  const int balancedBound = std::floor((tMax-tMin)/2/step);
-  for (int j = -balancedBound; j <= balancedBound ; j++) {
-    float t = (tMin+tMax)/2 + step * j;
-    Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
-    float x = xy.x1();
-    float y = xy.x2();
-    if (!std::isnan(x) && !std::isinf(x) && !std::isnan(y) && !std::isinf(y)) {
-      *xm = std::min(*xm, x);
-      *xM = std::max(*xM, x);
-      *ym = std::min(*ym, y);
-      *yM = std::max(*yM, y);
-    }
-  }
+void GraphController::interestingRanges(float * xm, float * xM, float * ym, float * yM) const {
+  privateComputeRanges(true, xm, xM, ym, yM);
 }
 
-void GraphController::interestingRanges(float * xm, float * xM, float * ym, float * yM) const {
-  float resultxMin = FLT_MAX;
-  float resultxMax = -FLT_MAX;
-  float resultyMin = FLT_MAX;
-  float resultyMax = -FLT_MAX;
+Shared::InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) {
+  float xm = interactiveCurveViewRange->xMin(),
+        xM = interactiveCurveViewRange->xMax(),
+        ym = FLT_MAX,
+        yM = -FLT_MAX;
+  privateComputeRanges(false, &xm, &xM, &ym, &yM);
+  return Shared::InteractiveCurveViewRangeDelegate::Range{.min = ym, .max = yM};
+}
+
+void GraphController::privateComputeRanges(bool tuneXRange, float * xm, float * xM, float * ym, float * yM) const {
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  float resultXMin = tuneXRange ? FLT_MAX : *xm;
+  float resultXMax = tuneXRange ? -FLT_MAX : *xM;
+  float resultYMin = FLT_MAX;
+  float resultYMax = -FLT_MAX;
   assert(functionStore()->numberOfActiveFunctions() > 0);
-  int functionsCount = 0;
-  if (functionStore()->displaysNonCartesianFunctions(&functionsCount)) {
-    for (int i = 0; i < functionsCount; i++) {
-      ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-      if (f->plotType() == ContinuousFunction::PlotType::Cartesian) {
-        continue;
-      }
-      /* Scan x-range from the middle to the extrema in order to get balanced
-       * y-range for even functions (y = 1/x). */
-      double tMin = f->tMin();
-      double tMax = f->tMax();
-      assert(!std::isnan(tMin));
-      assert(!std::isnan(tMax));
-      assert(!std::isnan(f->rangeStep()));
-      interestingFunctionRange(f, tMin, tMax, f->rangeStep(), &resultxMin, &resultxMax, &resultyMin, &resultyMax);
-    }
-    if (resultxMin > resultxMax) {
-      resultxMin = - Range1D::k_default;
-      resultxMax = Range1D::k_default;
-    }
-  } else {
-    resultxMin = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMin();
-    resultxMax = const_cast<GraphController *>(this)->interactiveCurveViewRange()->xMax();
-  }
-  /* In practice, a step smaller than a pixel's width is needed for sampling
-   * the values of a function. Otherwise some relevant extremal values may be
-   * missed. */
+  int functionsCount = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < functionsCount; i++) {
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    if (f->plotType() != ContinuousFunction::PlotType::Cartesian) {
-      continue;
-    }
-    /* Scan x-range from the middle to the extrema in order to get balanced
-     * y-range for even functions (y = 1/x). */
-    assert(!std::isnan(f->tMin()));
-    assert(!std::isnan(f->tMax()));
-    const double tMin = std::max(f->tMin(), resultxMin);
-    const double tMax = std::min(f->tMax(), resultxMax);
-    const double step = (tMax - tMin) / (2.0 * (m_view.bounds().width() - 1.0));
-    interestingFunctionRange(f, tMin, tMax, step, &resultxMin, &resultxMax, &resultyMin, &resultyMax);
-  }
-  if (resultyMin > resultyMax) {
-    resultyMin = - Range1D::k_default;
-    resultyMax = Range1D::k_default;
+    f->rangeForDisplay(&resultXMin, &resultXMax, &resultYMin, &resultYMax, context, tuneXRange);
   }
 
-  *xm = resultxMin;
-  *xM = resultxMax;
-  *ym = resultyMin;
-  *yM = resultyMax;
-}
-
-float GraphController::interestingXHalfRange() const {
-  float characteristicRange = 0.0f;
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  ContinuousFunctionStore * store = functionStore();
-  int nbActiveFunctions = store->numberOfActiveFunctions();
-  double tMin = INFINITY;
-  double tMax = -INFINITY;
-  for (int i = 0; i < nbActiveFunctions; i++) {
-    ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
-    float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
-    if (!std::isnan(fRange) && !std::isinf(fRange)) {
-      characteristicRange = std::max(fRange, characteristicRange);
-    }
-    // Compute the combined range of the functions
-    assert(f->plotType() == ContinuousFunction::PlotType::Cartesian); // So that tMin tMax represents xMin xMax
-    tMin = std::min<double>(tMin, f->tMin());
-    tMax = std::max<double>(tMax, f->tMax());
-  }
-  constexpr float rangeMultiplicator = 1.6f;
-  if (characteristicRange > 0.0f ) {
-    return rangeMultiplicator * characteristicRange;
-  }
-  float defaultXHalfRange = InteractiveCurveViewRangeDelegate::interestingXHalfRange();
-  assert(tMin <= tMax);
-  if (tMin >= -defaultXHalfRange && tMax <= defaultXHalfRange) {
-    /* If the combined Range of the functions is smaller than the default range,
-     * use it. */
-    float f = rangeMultiplicator * (float)std::max(std::fabs(tMin), std::fabs(tMax));
-    return (std::isnan(f) || std::isinf(f)) ? defaultXHalfRange : f;
-  }
-  return defaultXHalfRange;
+  *xm = resultXMin;
+  *xM = resultXMax;
+  *ym = resultYMin;
+  *yM = resultYMax;
 }
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {

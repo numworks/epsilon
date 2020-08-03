@@ -101,4 +101,52 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
   return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorT(record)));
 }
 
+InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  float min = FLT_MAX;
+  float max = -FLT_MAX;
+  float xMin = interactiveCurveViewRange->xMin();
+  float xMax = interactiveCurveViewRange->xMax();
+  assert(functionStore()->numberOfActiveFunctions() > 0);
+  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+    ExpiringPointer<Shared::Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    /* Scan x-range from the middle to the extrema in order to get balanced
+     * y-range for even functions (y = 1/x). */
+    double tMin = f->tMin();
+    if (std::isnan(tMin)) {
+      tMin = xMin;
+    } else if (f->shouldClipTRangeToXRange()) {
+      tMin = std::max<double>(tMin, xMin);
+    }
+    double tMax = f->tMax();
+    if (std::isnan(tMax)) {
+      tMax = xMax;
+    } else if (f->shouldClipTRangeToXRange()) {
+      tMax = std::min<double>(tMax, xMax);
+    }
+  /* In practice, a step smaller than a pixel's width is needed for sampling
+   * the values of a function. Otherwise some relevant extremal values may be
+   * missed. */
+    float rangeStep = f->rangeStep();
+    const float step = std::isnan(rangeStep) ? curveView()->pixelWidth() / 2.0f : rangeStep;
+    const int balancedBound = std::floor((tMax-tMin)/2/step);
+    for (int j = -balancedBound; j <= balancedBound ; j++) {
+      float t = (tMin+tMax)/2 + step * j;
+      Coordinate2D<float> xy = f->evaluateXYAtParameter(t, context);
+      float x = xy.x1();
+      if (!std::isnan(x) && !std::isinf(x) && x >= xMin && x <= xMax) {
+        float y = xy.x2();
+        if (!std::isnan(y) && !std::isinf(y)) {
+          min = std::min(min, y);
+          max = std::max(max, y);
+        }
+      }
+    }
+  }
+  InteractiveCurveViewRangeDelegate::Range range;
+  range.min = min;
+  range.max = max;
+  return range;
+}
+
 }

@@ -12,7 +12,7 @@ public:
   bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange);
   virtual float interestingXMin() const { return -interestingXHalfRange(); }
   virtual float interestingXHalfRange() const { return 10.0f; }
-  virtual bool defautRangeIsNormalized() const { return false; }
+  virtual bool defaultRangeIsNormalized() const { return false; }
   virtual void interestingRanges(float * xm, float * xM, float * ym, float * yM) const { assert(false); }
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;
 protected:

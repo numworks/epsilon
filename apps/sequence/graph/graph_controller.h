@@ -27,6 +27,7 @@ private:
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   double defaultCursorT(Ion::Storage::Record record) override;
+  InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }

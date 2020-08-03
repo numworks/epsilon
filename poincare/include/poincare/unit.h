@@ -288,7 +288,7 @@ public:
         Representative("m",   nullptr,
             Representative::Prefixable::Yes,
             LongScalePrefixes),
-        Representative("au",  "149587870700*_m",
+        Representative("au",  "149597870700*_m",
             Representative::Prefixable::No,
             NoPrefix),
         Representative("ly",  "299792458*_m/_s*_year",

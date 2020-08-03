@@ -70,6 +70,8 @@ public:
   void setTMax(float tMax);
   float rangeStep() const override { return plotType() == PlotType::Cartesian ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints; }
 
+  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange = true) const;
+
   // Extremum
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Coordinate2D<double> nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
@@ -88,6 +90,12 @@ private:
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, char * symbol, double start, double step, double max, Poincare::Context * context);
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double step, double max, Poincare::Context * context, ComputePointOfInterest compute) const;
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
+
+  // Ranges
+  void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
+  void interestingXAndYRangesForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange = true) const;
+  void refinedYRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const;
+
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a ContinuousFunction. See comment on
    * Shared::Function::RecordDataBuffer about packing. */

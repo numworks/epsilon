@@ -90,72 +90,11 @@ void InteractiveCurveViewRange::roundAbscissa() {
 void InteractiveCurveViewRange::normalize() {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
-  m_yAuto = false;
-
-  const float unit = std::max(xGridUnit(), yGridUnit());
-
-  // Set x range
-  float newXHalfRange = NormalizedXHalfRange(unit);
-  float newXMin = xCenter() - newXHalfRange;
-  float newXMax = xCenter() + newXHalfRange;
-  if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
-    m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
-  }
-  // Set y range
-  float newYHalfRange = NormalizedYHalfRange(unit);
-  float newYMin = yCenter() - newYHalfRange;
-  float newYMax = yCenter() + newYHalfRange;
-  if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
-    m_yRange.setMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
-  }
-}
-
-void InteractiveCurveViewRange::setTrigonometric() {
-  m_yAuto = false;
-  // Set x range
-  float x = (Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Degree) ? 600.0f : 10.5f;
-  m_xRange.setMax(x, k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetXMin(-x, k_lowerMaxFloat, k_upperMaxFloat);
-  // Set y range
-  float y = 1.6f;
-  m_yRange.setMax(y, k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetYMin(-y, k_lowerMaxFloat, k_upperMaxFloat);
-}
-
-void InteractiveCurveViewRange::setDefault() {
-  if (m_delegate == nullptr) {
-    return;
-  }
-  if (!m_delegate->defautRangeIsNormalized()) {
-    m_yAuto = true;
-    m_xRange.setMax(m_delegate->interestingXHalfRange(), k_lowerMaxFloat, k_upperMaxFloat);
-    setXMin(-xMax());
-    return;
-  }
 
   m_yAuto = false;
-  // Compute the interesting ranges
-  float a,b,c,d;
-  m_delegate->interestingRanges(&a, &b, &c, &d);
-  m_xRange.setMin(a, k_lowerMaxFloat, k_upperMaxFloat);
-  m_xRange.setMax(b, k_lowerMaxFloat, k_upperMaxFloat);
-  m_yRange.setMin(c, k_lowerMaxFloat, k_upperMaxFloat);
-  m_yRange.setMax(d, k_lowerMaxFloat, k_upperMaxFloat);
 
-  // Add margins
   float xRange = xMax() - xMin();
   float yRange = yMax() - yMin();
-  m_xRange.setMin(m_delegate->addMargin(xMin(), xRange, false, true), k_lowerMaxFloat, k_upperMaxFloat);
-  // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
-  MemoizedCurveViewRange::protectedSetXMax(m_delegate->addMargin(xMax(), xRange, false, false), k_lowerMaxFloat, k_upperMaxFloat);
-  m_yRange.setMin(m_delegate->addMargin(yMin(), yRange, true, true), k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetYMax(m_delegate->addMargin(yMax(), yRange, true, false), k_lowerMaxFloat, k_upperMaxFloat);
-
-  // Normalize the axes, so that a polar circle is displayed as a circle
-  xRange = xMax() - xMin();
-  yRange = yMax() - yMin();
   float xyRatio = xRange/yRange;
 
   const float unit = std::max(xGridUnit(), yGridUnit());
@@ -175,6 +114,49 @@ void InteractiveCurveViewRange::setDefault() {
     m_yRange.setMin(yMin() - delta, k_lowerMaxFloat, k_upperMaxFloat);
     MemoizedCurveViewRange::protectedSetYMax(yMax()+delta, k_lowerMaxFloat, k_upperMaxFloat);
   }
+}
+
+void InteractiveCurveViewRange::setTrigonometric() {
+  m_yAuto = false;
+  // Set x range
+  float x = (Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Degree) ? 600.0f : 10.5f;
+  m_xRange.setMax(x, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMin(-x, k_lowerMaxFloat, k_upperMaxFloat);
+  // Set y range
+  float y = 1.6f;
+  m_yRange.setMax(y, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMin(-y, k_lowerMaxFloat, k_upperMaxFloat);
+}
+
+void InteractiveCurveViewRange::setDefault() {
+  if (m_delegate == nullptr) {
+    return;
+  }
+
+  // Compute the interesting range
+  m_yAuto = false;
+  float xm, xM, ym, yM;
+  m_delegate->interestingRanges(&xm, &xM, &ym, &yM);
+  m_xRange.setMin(xm, k_lowerMaxFloat, k_upperMaxFloat);
+  m_xRange.setMax(xM, k_lowerMaxFloat, k_upperMaxFloat);
+  m_yRange.setMin(ym, k_lowerMaxFloat, k_upperMaxFloat);
+  m_yRange.setMax(yM, k_lowerMaxFloat, k_upperMaxFloat);
+
+  // Add margins
+  float xRange = xMax() - xMin();
+  float yRange = yMax() - yMin();
+  m_xRange.setMin(m_delegate->addMargin(xMin(), xRange, false, true), k_lowerMaxFloat, k_upperMaxFloat);
+  // Use MemoizedCurveViewRange::protectedSetXMax to update xGridUnit
+  MemoizedCurveViewRange::protectedSetXMax(m_delegate->addMargin(xMax(), xRange, false, false), k_lowerMaxFloat, k_upperMaxFloat);
+  m_yRange.setMin(m_delegate->addMargin(yMin(), yRange, true, true), k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMax(m_delegate->addMargin(yMax(), yRange, true, false), k_lowerMaxFloat, k_upperMaxFloat);
+
+  if (!m_delegate->defaultRangeIsNormalized()) {
+    return;
+  }
+
+  // Normalize the axes, so that a polar circle is displayed as a circle
+  normalize();
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {

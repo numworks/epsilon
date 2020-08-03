@@ -20,7 +20,6 @@ public:
   void viewWillAppear() override;
   bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
   void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
-  float interestingXHalfRange() const override;
   void interestingRanges(float * xm, float * xM, float * ym, float * yM) const override;
 private:
   int estimatedBannerNumberOfLines() const override { return 1 + m_displayDerivativeInBanner; }
@@ -34,10 +33,12 @@ private:
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
-  bool defautRangeIsNormalized() const override;
+  bool defaultRangeIsNormalized() const override;
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
   bool shouldSetDefaultOnModelChange() const override;
   void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
+  Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
+  void privateComputeRanges(bool tuneXRange, float * xm, float * xM, float * ym, float * yM) const;
 
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;

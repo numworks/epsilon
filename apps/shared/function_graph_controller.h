@@ -44,9 +44,6 @@ private:
   virtual FunctionGraphView * functionGraphView() = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
 
-  // InteractiveCurveViewRangeDelegate
-  InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
-
   // InteractiveCurveViewController
   bool moveCursorVertically(int direction) override;
   uint32_t modelVersion() override;

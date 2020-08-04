@@ -9,6 +9,7 @@
 #include <poincare/complex.h>
 #include <poincare/solver.h>
 #include <ion/storage.h>
+#include <utility>
 
 namespace Poincare {
 

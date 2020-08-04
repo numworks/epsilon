@@ -64,4 +64,7 @@ Expression GreatCommonDivisor::shallowReduce(Context * context) {
   return result;
 }
 
+template Evaluation<float> GreatCommonDivisorNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> GreatCommonDivisorNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
 }

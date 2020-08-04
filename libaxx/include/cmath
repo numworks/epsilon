@@ -39,6 +39,7 @@
 #undef modff
 #undef nanf
 #undef nearbyintf
+#undef nextafter
 #undef powf
 #undef roundf
 #undef scalbnf
@@ -81,6 +82,7 @@
 #undef modf
 #undef nan
 #undef nearbyint
+#undef nextafter
 #undef pow
 #undef rint
 #undef round
@@ -134,6 +136,7 @@ inline constexpr float logb(float x) { return __builtin_logbf(x); }
 inline constexpr float modf(float x, float *iptr) { return __builtin_modff(x, iptr); }
 inline constexpr float nanf(const char *tagp) { return __builtin_nanf(tagp); }
 inline constexpr float nearbyint(float x) { return __builtin_nearbyintf(x); }
+inline constexpr float nextafter(float from, float to) { return __builtin_nextafterf(from, to); }
 inline constexpr float pow(float x, float y) { return __builtin_powf(x, y); }
 inline constexpr float round(float x) { return __builtin_roundf(x); }
 inline constexpr float scalbn(float x, int exp) { return __builtin_scalbnf(x, exp); }
@@ -183,6 +186,7 @@ inline constexpr double logb(double x) { return __builtin_logb(x); }
 inline constexpr double modf(double x, double *iptr) { return __builtin_modf(x, iptr); }
 inline constexpr double nan(const char *tagp) { return __builtin_nan(tagp); }
 inline constexpr double nearbyint(double x) { return __builtin_nearbyint(x); }
+inline constexpr double nextafter(double from, double to) { return __builtin_nextafter(from, to); }
 inline constexpr double pow(double x, double y) { return __builtin_pow(x, y); }
 inline constexpr double rint(double x) { return __builtin_rint(x); }
 inline constexpr double round(double x) { return __builtin_round(x); }

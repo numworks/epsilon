@@ -178,7 +178,6 @@ tests_src += $(addprefix poincare/test/,\
   function_solver.cpp\
   helper.cpp\
   helpers.cpp\
-  ieee754.cpp\
   integer.cpp\
   layout.cpp\
   layout_cursor.cpp\

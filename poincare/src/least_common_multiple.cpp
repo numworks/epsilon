@@ -64,4 +64,7 @@ Expression LeastCommonMultiple::shallowReduce(Context * context) {
   return result;
 }
 
+template Evaluation<float> LeastCommonMultipleNode::templatedApproximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> LeastCommonMultipleNode::templatedApproximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
 }

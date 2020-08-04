@@ -2,6 +2,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <utility>
 #include <algorithm>
+#include <stdlib.h>
 
 namespace Poincare {
 

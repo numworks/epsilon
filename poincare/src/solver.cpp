@@ -196,10 +196,14 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
      * representable double between min and max strictly. If there is, we choose
      * it instead, otherwise, we reached the most precise result possible. */
     if (currentAbscissa == min) {
-      currentAbscissa = IEEE754<double>::next(min);
+      if (currentAbscissa != -INFINITY) {
+        currentAbscissa = std::nextafter(currentAbscissa, INFINITY);
+      }
     }
     if (currentAbscissa == max) {
-      currentAbscissa = IEEE754<double>::previous(max);
+      if (currentAbscissa != INFINITY) {
+        currentAbscissa = std::nextafter(currentAbscissa, -INFINITY);
+      }
     }
     if (currentAbscissa == min || currentAbscissa == max) {
       break;

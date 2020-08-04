@@ -13,6 +13,8 @@ void * calloc(size_t count, size_t size);
 
 void abort(void) __attribute__((noreturn));
 
+int abs(int n);
+
 LIBA_END_DECLS
 
 #endif

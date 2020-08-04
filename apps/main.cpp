@@ -1,19 +1,56 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include <poincare/init.h>
+#include <ion/src/device/n0110/drivers/cache.h>
 
-#define DUMMY_MAIN 0
+#define DUMMY_MAIN 1
 #if DUMMY_MAIN
 
+using namespace Ion::Device;
+using namespace Ion::Device::Regs;
+
 void ion_main(int argc, const char * const argv[]) {
-  // Initialize the backlight
+  // Initialization
   Ion::Backlight::init();
-  while (1) {
-    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorRed);
-    Ion::Timing::msleep(100);
-    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorBlue);
-    Ion::Timing::msleep(100);
-  }
+  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
+
+
+  // CODE BOOTLOADER SECURE
+  // Shutdown the LED
+  AFGPIOPin(GPIOB, 0,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
+
+  /* Quand MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION la LED bleue ne s'allume pas
+   * et le soft crash à l'initialisation de la LED. Sinon, la LED bleue
+   * s'allume. */
+#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 0
+#if MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION
+  // MPU on Blue LED
+  Cache::dmb();
+  MPU.RNR()->setREGION(10);
+  MPU.RBAR()->setADDR(0x40020400);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_64B);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(2);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+  Cache::dsb();
+  Cache::isb();
+#endif
+
+  // CODE EN EXTERNAL FLASH
+  // Témoin
+  Ion::LED::setColor(KDColorRed);
+  Ion::Timing::msleep(2000);
+
+  // Essaie d'allumer la LED bleue
+  // Restart the LED
+  AFGPIOPin(GPIOB, 0,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Low).init();
+  Ion::LED::setColor(KDColorBlue);
+
+  while (1) {}
 }
 
 #else

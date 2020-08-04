@@ -33,6 +33,7 @@ ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
 
 # DFU code
 
+ion_device_dfu_src += liba/src/abs.c
 ion_device_dfu_src += liba/src/assert.c
 ion_device_dfu_src += liba/src/strlen.c
 ion_device_dfu_src += liba/src/strlcpy.c

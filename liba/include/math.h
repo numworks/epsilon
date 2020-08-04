@@ -70,6 +70,7 @@ float log10f(float x);
 float logf(float x);
 float modff(float x, float *iptr);
 float nearbyintf(float x);
+float nextafterf(float from, float to);
 float powf(float x, float y);
 float roundf(float x);
 float scalbnf(float x, int exp);
@@ -110,6 +111,7 @@ double log2(double x);
 double logb(double x);
 double modf(double x, double *iptr);
 double nearbyint(double x);
+double nextafter(double from, double to);
 double pow(double x, double y);
 double rint(double x);
 double round(double x);
@@ -156,6 +158,7 @@ extern int signgam;
 #define modff(x, iptr) __builtin_modff(x, iptr)
 #define nanf(tagp) __builtin_nanf(tagp)
 #define nearbyintf(x) __builtin_nearbyintf(x)
+#define nextafterf(from, to) __builtin_nextafterf(from, to)
 #define powf(x, y) __builtin_powf(x, y)
 #define roundf(x) __builtin_roundf(x)
 #define scalbnf(x, exp) __builtin_scalbnf(x, exp)
@@ -196,6 +199,7 @@ extern int signgam;
 #define modf(x, iptr) __builtin_modf(x, iptr)
 #define nan(tagp) __builtin_nan(tagp)
 #define nearbyint(x) __builtin_nearbyint(x)
+#define nextafter(from, to) __builtin_nextafter(from, to)
 #define pow(x, y) __builtin_pow(x, y)
 #define rint(x) __builtin_rint(x)
 #define round(x) __builtin_round(x)

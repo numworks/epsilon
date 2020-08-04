@@ -41,7 +41,7 @@ git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
 make MODEL=n0100 clean
-make MODEL=n0100 USERNAME="{Your name, max 15 characters}" -j4
+make MODEL=n0100 OMEGA_USERNAME="{Your name, max 15 characters}" -j4
 make MODEL=n0100 epsilon_flash
 ```
 
@@ -58,7 +58,7 @@ git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
 make clean
-make USERNAME="{Your name, max 15 characters}" -j4
+make OMEGA_USERNAME="{Your name, max 15 characters}" -j4
 make epsilon_flash
 ```
 
@@ -77,10 +77,10 @@ git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
 make clean
-make MODEL=n0100 USERNAME="" -j8
-make MODEL=n0100 USERNAME="" binpack -j8
-make USERNAME="" -j8
-make USERNAME="" binpack -j8
+make MODEL=n0100 OMEGA_USERNAME="" -j8
+make MODEL=n0100 OMEGA_USERNAME="" binpack -j8
+make OMEGA_USERNAME="" -j8
+make OMEGA_USERNAME="" binpack -j8
 ```
 
 Important: Don't forget the `--recursive` tag, because Omega relies on submodules.
@@ -108,7 +108,7 @@ git clone --recursive https://github.com/Omega-Numworks/Omega.git
 cd Omega
 git checkout omega-master
 make clean
-make PLATFORM=simulator TARGET=web USERNAME="{Your name, max 15 characters}" -j4
+make PLATFORM=simulator TARGET=web OMEGA_USERNAME="{Your name, max 15 characters}" -j4
 ```
 
 The simulator is now in `output/release/simulator/web/simulator.zip`

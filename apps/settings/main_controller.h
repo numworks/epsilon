@@ -23,7 +23,7 @@ extern const Shared::SettingsMessageTree s_modelMathOptionsChildren[6];
 extern const Shared::SettingsMessageTree s_modelFontChildren[2];
 extern const Shared::SettingsMessageTree s_accessibilityChildren[6];
 extern const Shared::SettingsMessageTree s_contributorsChildren[20];
-#ifdef USERNAME
+#ifdef OMEGA_USERNAME
 extern const Shared::SettingsMessageTree s_modelAboutChildren[8];
 #else
 extern const Shared::SettingsMessageTree s_modelAboutChildren[7];

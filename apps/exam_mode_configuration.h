@@ -8,11 +8,7 @@
 namespace ExamModeConfiguration {
 
 // Settings menu
-#if LEDS_CHOICE
-extern const Shared::SettingsMessageTree s_modelExamChildren[3];
-#else
 extern const Shared::SettingsMessageTree s_modelExamChildren[2];
-#endif
 int numberOfAvailableExamMode();
 GlobalPreferences::ExamMode examModeAtIndex(int index);
 I18n::Message examModeActivationMessage(int index);

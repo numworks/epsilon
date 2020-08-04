@@ -13,7 +13,6 @@ Preferences::Preferences() :
   m_editionMode(EditionMode::Edition2D),
   m_complexFormat(Preferences::ComplexFormat::Real),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits),
-  m_colorOfLED(Preferences::LEDColor::Red),
   m_symbolMultiplication(Preferences::SymbolMultiplication::Auto),
   m_symbolFunction(Preferences::SymbolFunction::Default),
   m_pythonFont(Preferences::PythonFont::Large)

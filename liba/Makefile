@@ -3,6 +3,7 @@ SFLAGS += -Iliba/include
 liba_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \
+  abs.c \
   assert.c \
   bzero.c \
   ctype.c \

@@ -84,8 +84,10 @@ SECTIONS {
     *(.text.*3Ion6Device4Regs4GPIO5PUPDR*)
     *(.text._ZNK3Ion6Device4Regs9AFGPIOPin*)
     *(.text._ZN3Ion6Device13ExternalFlash*)
+    *(.text._ZZN3Ion6Device13ExternalFlash*)
     *(.text._ZN3Ion6Device5Cache*)
     *(.text._ZN3Ion6Timing6usleepEj)
+    *(.text._ZNK3Ion6Device4Regs*)
 
     /* 'abort' dependencies */
     *(.text._ZN3Ion6Device5Reset4coreEv)
@@ -109,11 +111,14 @@ SECTIONS {
 
   .rodata.internal : {
     . = ALIGN(4);
+    *(.rodata)
     *(.rodata._ZN3Ion6Device13ExternalFlash*)
     /* 'start' dependencies */
     *(.rodata._ZN3Ion6Device4RegsL5GPIOAE)
     *(.rodata._ZN3Ion6Device4RegsL5GPIOBE)
     *(.rodata._ZN3Ion6Device5Board4initEv.str1.4)
+    *(.rodata._ZN3Ion6Device5Cache35privateCleanInvalidateDisableDCacheEbbb.str1.4)
+    *(.rodata._ZN3Ion6Device4Regs*)
   } >INTERNAL_FLASH
 
   .exam_mode_buffer ORIGIN(EXTERNAL_FLASH) : {

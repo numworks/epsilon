@@ -11,7 +11,7 @@ base_src = $(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $
 
 epsilon_src = $(base_src) $(apps_src)
 
-$(BUILD_DIR)/epsilon.$(EXE): $(call flavored_object_for,$(epsilon_src))
+$(BUILD_DIR)/epsilon.$(EXE): $(call flavored_object_for,$(epsilon_src),usbxip)
 
 HANDY_TARGETS += epsilon
 
@@ -23,7 +23,7 @@ epsilon_flavors = \
   onboarding.beta
 
 define rule_for_epsilon_flavor
-$$(BUILD_DIR)/epsilon.$(1).$$(EXE): $$(call flavored_object_for,$$(epsilon_src),$(1))
+$$(BUILD_DIR)/epsilon.$(1).$$(EXE): $$(call flavored_object_for,$$(epsilon_src),$(1) usbxip)
 endef
 
 $(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor,$(flavor))))

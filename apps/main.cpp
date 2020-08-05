@@ -9,6 +9,10 @@
 using namespace Ion::Device;
 using namespace Ion::Device::Regs;
 
+extern "C" {
+extern void switch_to_unpriviledged();
+}
+
 void ion_main(int argc, const char * const argv[]) {
   // Initialization
   Ion::Backlight::init();
@@ -22,11 +26,11 @@ void ion_main(int argc, const char * const argv[]) {
   /* Quand MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION la LED bleue ne s'allume pas
    * et le soft crash à l'initialisation de la LED. Sinon, la LED bleue
    * s'allume. */
-#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 0
+#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 1
 #if MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION
   // MPU on Blue LED
   Cache::dmb();
-  MPU.RNR()->setREGION(10);
+  MPU.RNR()->setREGION(7);
   MPU.RBAR()->setADDR(0x40020400);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_64B);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
@@ -39,16 +43,38 @@ void ion_main(int argc, const char * const argv[]) {
   Cache::dsb();
   Cache::isb();
 #endif
+#define SWITCH_TO_UNPRIVILEDGED 1
+#if SWITCH_TO_UNPRIVILEDGED
+  switch_to_unpriviledged();
+  Cache::isb();
+#endif
 
   // CODE EN EXTERNAL FLASH
   // Témoin
-  Ion::LED::setColor(KDColorRed);
-  Ion::Timing::msleep(2000);
+  Ion::Timing::usleep(2000000);
+  Ion::LED::setColor(KDColorGreen);
+  Ion::Timing::usleep(2000000);
+
+  // Essaie de changer la configuration du MPU
+  Cache::dmb();
+  MPU.RNR()->setREGION(7);
+  MPU.RBAR()->setADDR(0x40020400);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_64B);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(1);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(1);
+  MPU.RASR()->setENABLE(true);
+  Cache::dsb();
+  Cache::isb();
 
   // Essaie d'allumer la LED bleue
   // Restart the LED
   AFGPIOPin(GPIOB, 0,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Low).init();
   Ion::LED::setColor(KDColorBlue);
+  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorYellow);
 
   while (1) {}
 }

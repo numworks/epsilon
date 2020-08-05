@@ -7,6 +7,7 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   console_display.cpp:+consoledisplay \
   console_dummy.cpp:-consoledisplay \
   console_dummy.cpp:-consoleuart \
+  cortex_control.s \
   crc32.cpp \
   display.cpp \
   events_keyboard_platform.cpp \

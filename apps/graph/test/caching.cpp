@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include "../app.h"
+#include "helper.h"
 #include <cmath>
 
 using namespace Poincare;
@@ -11,17 +11,6 @@ bool floatEquals(float a, float b, float tolerance = 1.f/static_cast<float>(Ion:
   /* The default value for the tolerance is chosen so that the error introduced
    * by caching would not typically be visible on screen. */
   return a == b || std::abs(a - b) <= tolerance * std::abs(a + b) / 2.f || (std::isnan(a) && std::isnan(b));
-}
-
-ContinuousFunction * addFunction(ContinuousFunctionStore * store, ContinuousFunction::PlotType type, const char * definition, Context * context) {
-  Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
-  assert(err == Ion::Storage::Record::ErrorStatus::None);
-  (void) err; // Silence compilation warning about unused variable.
-  Ion::Storage::Record record = store->recordAtIndex(store->numberOfModels() - 1);
-  ContinuousFunction * f = static_cast<ContinuousFunction *>(store->modelForRecord(record).operator->());
-  f->setPlotType(type, Poincare::Preferences::AngleUnit::Degree, context);
-  f->setContent(definition, context);
-  return f;
 }
 
 void assert_check_cartesian_cache_against_function(ContinuousFunction * function, ContinuousFunctionCache * cache, Context * context, float tMin) {
@@ -97,11 +86,11 @@ void assert_cache_stays_valid(ContinuousFunction::PlotType type, const char * de
   graphRange.setYMax(3.f);
 
   CurveViewCursor cursor;
-  ContinuousFunction * function = addFunction(&functionStore, type, definition, &globalContext);
+  ContinuousFunction * function = addFunction(definition, type, &functionStore, &globalContext);
   Coordinate2D<float> origin = function->evaluateXYAtParameter(0.f, &globalContext);
   cursor.moveTo(0.f, origin.x1(), origin.x2());
 
-  if (type == ContinuousFunction::PlotType::Cartesian) {
+  if (type == Cartesian) {
     assert_cartesian_cache_stays_valid_while_panning(function, &globalContext, &graphRange, &cursor, &functionStore, 2.f);
     assert_cartesian_cache_stays_valid_while_panning(function, &globalContext, &graphRange, &cursor, &functionStore, -0.4f);
   } else {
@@ -112,21 +101,21 @@ void assert_cache_stays_valid(ContinuousFunction::PlotType type, const char * de
 }
 
 QUIZ_CASE(graph_caching) {
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "x");
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "x^2");
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "sin(x)");
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "sin(x)", -1e6f, 2e8f);
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "sin(x^2)");
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "1/x");
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "1/x", -5e-5f, 5e-5f);
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Cartesian, "-ℯ^x");
+  assert_cache_stays_valid(Cartesian, "x");
+  assert_cache_stays_valid(Cartesian, "x^2");
+  assert_cache_stays_valid(Cartesian, "sin(x)");
+  assert_cache_stays_valid(Cartesian, "sin(x)", -1e6f, 2e8f);
+  assert_cache_stays_valid(Cartesian, "sin(x^2)");
+  assert_cache_stays_valid(Cartesian, "1/x");
+  assert_cache_stays_valid(Cartesian, "1/x", -5e-5f, 5e-5f);
+  assert_cache_stays_valid(Cartesian, "-ℯ^x");
 
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Polar, "1", 0.f, 360.f);
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Polar, "θ", 0.f, 360.f);
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Polar, "sin(θ)", 0.f, 360.f);
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Polar, "sin(θ)", 2e-4f, 1e-3f);
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Polar, "cos(5θ)", 0.f, 360.f);
-  assert_cache_stays_valid(ContinuousFunction::PlotType::Polar, "cos(5θ)", -1e8f, 1e8f);
+  assert_cache_stays_valid(Polar, "1", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "θ", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "sin(θ)", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "sin(θ)", 2e-4f, 1e-3f);
+  assert_cache_stays_valid(Polar, "cos(5θ)", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "cos(5θ)", -1e8f, 1e8f);
 }
 
 }

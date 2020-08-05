@@ -240,45 +240,6 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
-void assert_reduced_expression_has_characteristic_range(Expression e, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree, Preferences::UnitFormat unitFormat = Metric) {
-  Shared::GlobalContext globalContext;
-  e = e.reduce(ExpressionNode::ReductionContext(&globalContext, Preferences::ComplexFormat::Cartesian, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation));
-  if (std::isnan(range)) {
-    quiz_assert(std::isnan(e.characteristicXRange(&globalContext, angleUnit)));
-  } else {
-    quiz_assert(std::fabs(e.characteristicXRange(&globalContext, angleUnit) - range) < 0.0000001f);
-  }
-}
-
-QUIZ_CASE(poincare_properties_characteristic_range) {
-  // cos(x), degree
-  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Symbol::Builder(UCodePointUnknown)), 360.0f);
-  // cos(-x), degree
-  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(UCodePointUnknown))), 360.0f);
-  // cos(x), radian
-  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Symbol::Builder(UCodePointUnknown)), 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  // cos(-x), radian
-  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(UCodePointUnknown))), 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  // sin(9x+10), degree
-  assert_reduced_expression_has_characteristic_range(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknown)),Rational::Builder(10))), 40.0f);
-  // sin(9x+10)+cos(x/2), degree
-  assert_reduced_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknown)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknown),Rational::Builder(2)))), 720.0f);
-  // sin(9x+10)+cos(x/2), radian
-  assert_reduced_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknown)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknown),Rational::Builder(2)))), 4.0f*M_PI, Preferences::AngleUnit::Radian);
-  // x, degree
-  assert_reduced_expression_has_characteristic_range(Symbol::Builder(UCodePointUnknown), NAN);
-  // cos(3)+2, degree
-  assert_reduced_expression_has_characteristic_range(Addition::Builder(Cosine::Builder(Rational::Builder(3)),Rational::Builder(2)), 0.0f);
-  // log(cos(40x), degree
-  assert_reduced_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(Multiplication::Builder(Rational::Builder(40),Symbol::Builder(UCodePointUnknown)))), 9.0f);
-  // cos(cos(x)), degree
-  assert_reduced_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol::Builder(UCodePointUnknown))), 360.0f);
-  // f(x) with f : x --> cos(x), degree
-  assert_reduce("cos(x)→f(x)");
-  assert_reduced_expression_has_characteristic_range(Function::Builder("f",1,Symbol::Builder(UCodePointUnknown)), 360.0f);
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-}
-
 void assert_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);

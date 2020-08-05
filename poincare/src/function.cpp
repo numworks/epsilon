@@ -44,15 +44,6 @@ int FunctionNode::getVariables(Context * context, isVariableTest isVariable, cha
   return e.node()->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
 }
 
-float FunctionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  Function f(this);
-  Expression e = SymbolAbstract::Expand(f,context, true);
-  if (e.isUninitialized()) {
-    return 0.0f;
-  }
-  return e.characteristicXRange(context, angleUnit);
-}
-
 Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Function(this), floatDisplayMode, numberOfSignificantDigits, name());
 }

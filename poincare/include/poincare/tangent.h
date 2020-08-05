@@ -20,7 +20,6 @@ public:
 
   // Properties
   Type type() const override { return Type::Tangent; }
-  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
 private:
   // Layout

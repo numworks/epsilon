@@ -64,10 +64,6 @@ int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char 
   return nextVariableIndex;
 }
 
-float SymbolNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  return isUnknown() ? NAN : 0.0f;
-}
-
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(!isUnknown());
   // TODO return Parse(m_name).createLayout() ?

@@ -55,32 +55,6 @@ double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   return 200.0;
 }
 
-float Trigonometry::characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit) {
-  assert(e.numberOfChildren() == 1);
-
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char x[bufferSize];
-  SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknown);
-
-  int d = e.childAtIndex(0).polynomialDegree(context, x);
-  if (d < 0 || d > 1) {
-    // child(0) is not linear so we cannot easily find an interesting range
-    return e.childAtIndex(0).characteristicXRange(context, angleUnit);
-  }
-  // The expression e is x-independent
-  if (d == 0) {
-    return 0.0f;
-  }
-  // e has the form cos/sin/tan(ax+b) so it is periodic of period 2*π/a
-  assert(d == 1);
-  /* To compute a, the slope of the expression child(0), we compute the
-   * derivative of child(0) for any x value. */
-  Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol::Builder(x, 1), Float<float>::Builder(1.0f));
-  double a = derivative.node()->approximate(double(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
-  double pi = PiInAngleUnit(angleUnit);
-  return std::fabs(a) < Expression::Epsilon<double>() ? NAN : 2.0*pi/std::fabs(a);
-}
-
 bool Trigonometry::isDirectTrigonometryFunction(const Expression & e) {
   return e.type() == ExpressionNode::Type::Cosine
     || e.type() == ExpressionNode::Type::Sine

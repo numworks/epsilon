@@ -23,8 +23,8 @@ int main(int argc, char * argv[]) {
 
   char * language = IonSimulatorGetLanguageCode();
   if (language != nullptr) {
-    arguments.push_back("--language");
-    arguments.push_back(language);
+    arguments.insert(arguments.begin(), language);
+    arguments.insert(arguments.begin(), "--language");
   }
 
 #if EPSILON_TELEMETRY

@@ -15,10 +15,6 @@ constexpr Expression::FunctionHelper Cosine::s_functionHelper;
 
 int CosineNode::numberOfChildren() const { return Cosine::s_functionHelper.numberOfChildren(); }
 
-float CosineNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  return Trigonometry::characteristicXRange(Cosine(this), context, angleUnit);
-}
-
 template<typename T>
 Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);

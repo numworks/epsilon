@@ -135,12 +135,7 @@ void InteractiveCurveViewRange::setDefault() {
 
   // Compute the interesting range
   m_yAuto = false;
-  float xm, xM, ym, yM;
-  m_delegate->interestingRanges(&xm, &xM, &ym, &yM);
-  m_xRange.setMin(xm, k_lowerMaxFloat, k_upperMaxFloat);
-  m_xRange.setMax(xM, k_lowerMaxFloat, k_upperMaxFloat);
-  m_yRange.setMin(ym, k_lowerMaxFloat, k_upperMaxFloat);
-  m_yRange.setMax(yM, k_lowerMaxFloat, k_upperMaxFloat);
+  m_delegate->interestingRanges(this);
 
   // Add margins
   float xRange = xMax() - xMin();

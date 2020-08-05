@@ -13,7 +13,7 @@ public:
   virtual float interestingXMin() const { return -interestingXHalfRange(); }
   virtual float interestingXHalfRange() const { return 10.0f; }
   virtual bool defaultRangeIsNormalized() const { return false; }
-  virtual void interestingRanges(float * xm, float * xM, float * ym, float * yM) const { assert(false); }
+  virtual void interestingRanges(InteractiveCurveViewRange * range) const { assert(false); }
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;
 protected:
   struct Range {

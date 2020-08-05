@@ -200,7 +200,6 @@ public:
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const;
-  virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
 
   virtual Expression removeUnit(Expression * unit); // Only reduced nodes should answer

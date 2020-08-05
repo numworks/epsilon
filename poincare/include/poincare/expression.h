@@ -170,15 +170,6 @@ public:
   static bool IsRandom(const Expression e, Context * context);
   static bool IsMatrix(const Expression e, Context * context);
   static bool IsInfinity(const Expression e, Context * context);
-  /* 'characteristicXRange' tries to assess the range on x where the expression
-   * (considered as a function on x) has an interesting evolution. For example,
-   * the period of the function on 'x' if it is periodic. If
-   * the function is x-independent, the return value is 0.0f (because any
-   * x-range is equivalent). If the function does not have an interesting range,
-   * the return value is NAN.
-   * NB: so far, we consider that the only way of building a periodic function
-   * is to use sin/tan/cos(f(x)) with f a linear function. */
-  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const { return node()->characteristicXRange(context, angleUnit); }
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */

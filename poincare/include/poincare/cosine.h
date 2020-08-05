@@ -21,7 +21,6 @@ public:
 
   // Properties
   Type type() const override { return Type::Cosine; }
-  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
 

@@ -51,22 +51,6 @@ int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, c
   return nextVariableIndex;
 }
 
-float ExpressionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  /* A expression has a characteristic range if at least one of its childAtIndex has
-   * one and the other are x-independant. We keep the biggest interesting range
-   * among the childAtIndex interesting ranges. */
-  float range = 0.0f;
-  for (ExpressionNode * c : children()) {
-    float opRange = c->characteristicXRange(context, angleUnit);
-    if (std::isnan(opRange)) {
-      return NAN;
-    } else if (range < opRange) {
-      range = opRange;
-    }
-  }
-  return range;
-}
-
 int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted, bool ignoreParentheses) {
   // Depending on ignoreParentheses, check if e1 or e2 are parenthesis
   ExpressionNode::Type type1 = e1->type();

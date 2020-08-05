@@ -15,6 +15,6 @@ include build/platform.simulator.$(TARGET).mak
 SFLAGS += -DEPSILON_SIMULATOR_HAS_LIBPNG=$(EPSILON_SIMULATOR_HAS_LIBPNG)
 
 ifeq ($(EPSILON_SIMULATOR_HAS_LIBPNG),1)
-SFLAGS += `libpng-config --cflags`
-LDFLAGS += `libpng-config --ldflags`
+SFLAGS += $(shell libpng-config --cflags)
+LDFLAGS += $(shell libpng-config --ldflags)
 endif

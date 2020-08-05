@@ -13,10 +13,6 @@ constexpr Expression::FunctionHelper Sine::s_functionHelper;
 
 int SineNode::numberOfChildren() const { return Sine::s_functionHelper.numberOfChildren(); }
 
-float SineNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
-  return Trigonometry::characteristicXRange(Sine(this), context, angleUnit);
-}
-
 template<typename T>
 Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);

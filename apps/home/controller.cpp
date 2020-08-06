@@ -110,17 +110,6 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     return true;
   }
 
-  if((numberOfIcons() % k_numberOfColumns) 
-      && event == Ion::Events::Down 
-      && selectionDataSource()->selectedRow() == numberOfRows() - 2
-      && (numberOfIcons() % k_numberOfColumns) <= selectionDataSource()->selectedColumn()){
-      return m_view.selectableTableView()->selectCellAtLocation(numberOfIcons() % k_numberOfColumns - 1, numberOfRows()-1);
-  }
-
-  if(m_view.selectableTableView()->handleEvent(event, false)){
-    return true;
-  }
-
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
     return m_view.selectableTableView()->selectCellAtLocation(0,0);
   }
@@ -137,8 +126,9 @@ bool Controller::handleEvent(Ion::Events::Event event) {
 
 void Controller::didBecomeFirstResponder() {
   if (selectionDataSource()->selectedRow() == -1) {
-    m_view.selectableTableView()->selectCellAtLocation(0, 0, false);
+    selectionDataSource()->selectCellAtLocation(0, 0);
   }
+  Container::activeApp()->setFirstResponder(m_view.selectableTableView());
 }
 
 void Controller::viewWillAppear() {

@@ -251,8 +251,13 @@ IntegralLayoutNode * IntegralLayoutNode::previousNestedIntegral() {
     return nullptr;
   }
   if (p->type() == Type::IntegralLayout) {
-    // Parent can be an integral
-    return static_cast<IntegralLayoutNode *>(p);
+    // Parent is an integral. Checking if the child is its integrand or not
+    if (p->childAtIndex(0) == this) {
+      return static_cast<IntegralLayoutNode *>(p);
+    } else {
+      // If this is not parent's integrand, it means that it is either a bound or differential
+      return nullptr;
+    }
   } else if (p->type() == Type::HorizontalLayout) {
     // Or can be a Horizontal layout himself contained in an integral
     LayoutNode * prev = p->parent();

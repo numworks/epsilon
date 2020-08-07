@@ -19,13 +19,66 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
 
 
-  // CODE BOOTLOADER SECURE
+  // ----------------------- CODE BOOTLOADER SECURE ---------------------------
+
+  while (1) {
+    Ion::Keyboard::State state = Ion::Keyboard::scan();
+    if (state.keyDown(Ion::Keyboard::Key::OK)) {
+      /* ACTIVATE RPD */
+      // Unlock option bytes programming
+      if (FLASH.OPTCR()->getOPTLOCK()) {
+        FLASH.OPTKEYR()->set(0x08192A3B);
+        FLASH.OPTKEYR()->set(0x4C5D6E7F);
+      }
+      assert(FLASH.OPTCR()->getOPTLOCK() == false);
+
+      // 1. Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
+      assert(!FLASH.SR()->getBSY());
+      // 2. Write the desired option value in the FLASH_OPTCR register.
+      FLASH.OPTCR()->setRDP(FLASH::OPTCR::RDP::Level1);
+      Cache::dsb();
+      //3. Set the option start bit (OPTSTRT) in the FLASH_OPTCR register
+      FLASH.OPTCR()->setOPTSTRT(true);
+      //4. Wait for the BSY bit to be cleared.
+      while (FLASH.SR()->getBSY()) {}
+
+      // Lock option bytes programming
+      FLASH.OPTCR()->setOPTLOCK(true);
+      Ion::LED::setColor(KDColorRed);
+      break;
+    }
+    if (state.keyDown(Ion::Keyboard::Key::Back)) {
+      /* DESACTIVATE RPD */
+      // Unlock option bytes programming
+      if (FLASH.OPTCR()->getOPTLOCK()) {
+        FLASH.OPTKEYR()->set(0x08192A3B);
+        FLASH.OPTKEYR()->set(0x4C5D6E7F);
+      }
+      //assert(FLASH.OPTCR()->getOPTLOCK() == false);
+
+      // 1. Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
+      //assert(!FLASH.SR()->getBSY());
+      // 2. Write the desired option value in the FLASH_OPTCR register.
+      FLASH.OPTCR()->setRDP(FLASH::OPTCR::RDP::Level0);
+      Cache::dsb();
+      //3. Set the option start bit (OPTSTRT) in the FLASH_OPTCR register
+      FLASH.OPTCR()->setOPTSTRT(true);
+      //4. Wait for the BSY bit to be cleared.
+      while (FLASH.SR()->getBSY()) {}
+
+      // Lock option bytes programming
+      FLASH.OPTCR()->setOPTLOCK(true);
+      Ion::LED::setColor(KDColorGreen);
+      break;
+    }
+  }
+  while (1) {}
+
+#if 0
+  /* MPU */
   // Shutdown the LED
   AFGPIOPin(GPIOB, 0,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
 
-  /* Quand MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION la LED bleue ne s'allume pas
-   * et le soft crash à l'initialisation de la LED. Sinon, la LED bleue
-   * s'allume. */
 #define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 1
 #if MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION
   // MPU on Blue LED
@@ -43,13 +96,16 @@ void ion_main(int argc, const char * const argv[]) {
   Cache::dsb();
   Cache::isb();
 #endif
+
+  /* Unprivileged mode */
 #define SWITCH_TO_UNPRIVILEDGED 1
 #if SWITCH_TO_UNPRIVILEDGED
   switch_to_unpriviledged();
   Cache::isb();
 #endif
 
-  // CODE EN EXTERNAL FLASH
+  // ----------------------- CODE THIRD PARTY ---------------------------
+
   // Témoin
   Ion::Timing::usleep(2000000);
   Ion::LED::setColor(KDColorGreen);
@@ -77,6 +133,8 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorYellow);
 
   while (1) {}
+#endif
+
 }
 
 #else

@@ -26,10 +26,10 @@ void ComplexListController::setExpression(Poincare::Expression e) {
   }
   Poincare::Context * context = App::app()->localContext();
   // Fill Calculation Store
-  m_calculationStore.push("im(z)", context);
-  m_calculationStore.push("re(z)", context);
-  m_calculationStore.push("arg(z)", context);
-  m_calculationStore.push("abs(z)", context);
+  m_calculationStore.push("im(z)", context, CalculationHeight);
+  m_calculationStore.push("re(z)", context, CalculationHeight);
+  m_calculationStore.push("arg(z)", context, CalculationHeight);
+  m_calculationStore.push("abs(z)", context, CalculationHeight);
 
   // Set Complex illustration
   // Compute a and b as in Expression::hasDefinedComplexApproximation to ensure the same defined result

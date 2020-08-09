@@ -38,12 +38,6 @@ Calculation * Calculation::next() const {
   return reinterpret_cast<Calculation *>(const_cast<char *>(result));
 }
 
-void Calculation::tidy() {
-  /* Reset height memoization (the complex format could have changed when
-   * re-entering Calculation app which would impact the heights). */
-  resetHeightMemoization();
-}
-
 const char * Calculation::approximateOutputText(NumberOfSignificantDigits numberOfSignificantDigits) const {
   const char * exactOutput = exactOutputText();
   const char * approximateOutputTextWithMaxNumberOfDigits = exactOutput + strlen(exactOutput) + 1;
@@ -126,12 +120,15 @@ Layout Calculation::createApproximateOutputLayout(Context * context, bool * coul
   }
 }
 
-void Calculation::setMemoizedHeight(bool expanded, KDCoordinate height) {
-  if (expanded) {
-    m_expandedHeight = height;
-  } else {
-    m_height = height;
-  }
+KDCoordinate Calculation::height(bool expanded) {
+  KDCoordinate h = expanded ? m_expandedHeight : m_height;
+  assert(h >= 0);
+  return h;
+}
+
+void Calculation::setHeights(KDCoordinate height, KDCoordinate expandedHeight) {
+  m_height = height;
+  m_expandedHeight = expandedHeight;
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
@@ -190,9 +187,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
 }
 
 void Calculation::forceDisplayOutput(DisplayOutput d) {
+  // Heights haven't been computed yet
+  assert(m_height == -1 && m_expandedHeight == -1);
   m_displayOutput = d;
-  // Reset heights memoization as it might have changed when we modify the display output
-  resetHeightMemoization();
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
@@ -219,6 +216,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Preferences * preferences = Preferences::sharedPreferences();
+    // TODO: complex format should not be needed here (as it is not used to create layouts)
     Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
     m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, complexFormat, preferences->angleUnit()) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
@@ -256,25 +254,32 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   }
   if (o.hasUnit()) {
     Expression unit;
-    PoincareHelpers::Reduce(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User,ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+    PoincareHelpers::Reduce(&o,
+        App::app()->localContext(),
+        ExpressionNode::ReductionTarget::User,
+        ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+        ExpressionNode::UnitConversion::None);
     o = o.removeUnit(&unit);
-    if (Unit::IsSI(unit)) {
-      if (Unit::IsSISpeed(unit) || Unit::IsSIVolume(unit) || Unit::IsSIEnergy(unit)) {
-        /* All these units will provide misc. classic representatives in
-         * addition to the SI unit in additional information. */
-        return AdditionalInformationType::Unit;
-      }
-      if (Unit::IsSITime(unit)) {
-        /* If the number of seconds is above 60s, we can write it in the form
-         * of an addition: 23_min + 12_s for instance. */
-        double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
-        if (value >  Unit::SecondsPerMinute) {
+    // There might be no unit in the end, if the reduction was interrupted.
+    if (!unit.isUninitialized()) {
+      if (Unit::IsSI(unit)) {
+        if (Unit::IsSISpeed(unit) || Unit::IsSIVolume(unit) || Unit::IsSIEnergy(unit)) {
+          /* All these units will provide misc. classic representatives in
+           * addition to the SI unit in additional information. */
           return AdditionalInformationType::Unit;
         }
+        if (Unit::IsSITime(unit)) {
+          /* If the number of seconds is above 60s, we can write it in the form
+           * of an addition: 23_min + 12_s for instance. */
+          double value = Shared::PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
+          if (value >  Unit::SecondsPerMinute) {
+            return AdditionalInformationType::Unit;
+          }
+        }
+        return AdditionalInformationType::None;
       }
-      return AdditionalInformationType::None;
+      return AdditionalInformationType::Unit;
     }
-    return AdditionalInformationType::Unit;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;
@@ -287,11 +292,6 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     return AdditionalInformationType::Complex;
   }
   return AdditionalInformationType::None;
-}
-
-void  Calculation::resetHeightMemoization() {
-  m_height = -1;
-  m_expandedHeight = -1;
 }
 
 }

@@ -407,8 +407,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   {
     Expression indexUnit;
     index = index.removeUnit(&indexUnit);
-    if (!indexUnit.isUninitialized()) {
-      // There must be no unit in the exponent
+    if (!indexUnit.isUninitialized() || index.isUndefined()) {
+      // There must be no unit nor undefined in the exponent
       return replaceWithUndefinedInPlace();
     }
     assert(index == childAtIndex(1));

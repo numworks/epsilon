@@ -29,21 +29,6 @@ double Interval::element(int i) {
   return m_intervalBuffer[i];
 }
 
-void Interval::setStart(double f) {
-  m_start = f;
-  m_needCompute = true;
-}
-
-void Interval::setEnd(double f) {
-  m_end = f;
-  m_needCompute = true;
-}
-
-void Interval::setStep(double f) {
-  m_step = f;
-  m_needCompute = true;
-}
-
 void Interval::setElement(int i, double f) {
   assert(i <= numberOfElements() && i < k_maxNumberOfElements);
   computeElements();
@@ -54,16 +39,16 @@ void Interval::setElement(int i, double f) {
 }
 
 void Interval::reset() {
-  m_start = 0.0;
-  m_end = 10.0;
-  m_step = 1.0;
+  m_parameters.setStart(0.0);
+  m_parameters.setEnd(10.0);
+  m_parameters.setStep(1.0);
   m_needCompute = true;
 }
 
 void Interval::clear() {
-  m_start = 1.0;
-  m_end = 0.0;
-  m_step = 1.0;
+  m_parameters.setStart(1.0);
+  m_parameters.setEnd(0.0);
+  m_parameters.setStep(1.0);
   m_needCompute = true;
 }
 
@@ -71,14 +56,14 @@ void Interval::computeElements() {
   if (!m_needCompute) {
     return;
   }
-  if (m_start > m_end) {
+  if (m_parameters.start() > m_parameters.end()) {
     m_numberOfElements = 0;
   } else {
-    m_numberOfElements = m_step > 0 ? 1 + (m_end - m_start)/m_step : k_maxNumberOfElements;
+    m_numberOfElements = m_parameters.step() > 0 ? 1 + (m_parameters.end() - m_parameters.start())/m_parameters.step() : k_maxNumberOfElements;
     m_numberOfElements = m_numberOfElements > k_maxNumberOfElements || m_numberOfElements < 0 ? k_maxNumberOfElements : m_numberOfElements;
   }
   for (int i = 0; i < m_numberOfElements; i += 1) {
-    m_intervalBuffer[i] = m_start + i * m_step;
+    m_intervalBuffer[i] = m_parameters.start() + i * m_parameters.step();
   }
   m_needCompute = false;
 }

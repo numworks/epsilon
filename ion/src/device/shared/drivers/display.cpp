@@ -434,8 +434,9 @@ void initPanel() {
   // Calibration
   const uint8_t * gammaCalibration = nullptr;
   uint32_t panelId = panelIdentifier();
-  if (panelId == 0x4E4101) {
-    // Don't forget the "static" qualifier, otherwise this array can be deleted before reaching send_long_command
+  if (panelId == 0x4E4101 || panelId == 0x4E4801) {
+    /* Don't forget the "static" qualifier, otherwise this array can be deleted
+     * before reaching send_long_command. */
     static const uint8_t calibration[] = {0xA2, 0xA, 0x11, 0xA, 0xC, 0x1A, 0x34, 0x22, 0x4D, 0x28, 0x15, 0x13, 0x29, 0x2D};
     gammaCalibration = calibration;
   }

@@ -8,8 +8,8 @@ void ScrollableThreeExpressionsView::resetMemoization() {
   setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
 }
 
-void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, bool * didForceOutput) {
-  assert(!didForceOutput || *didForceOutput == false);
+// TODO: factorize with HistoryViewCell!
+void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, bool canChangeDisplayOutput) {
   Poincare::Context * context = App::app()->localContext();
 
   // Clean the layouts to make room in the pool
@@ -24,13 +24,10 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, b
     bool couldNotCreateExactLayout = false;
     exactOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
-      if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactOnly) {
-        Poincare::ExceptionCheckpoint::Raise();
-      } else {
+      if (canChangeDisplayOutput && calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ExactOnly) {
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
-        if (didForceOutput) {
-          *didForceOutput = true;
-        }
+      } else {
+        Poincare::ExceptionCheckpoint::Raise();
       }
     }
   }
@@ -44,21 +41,18 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, b
     bool couldNotCreateApproximateLayout = false;
     approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
-      if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
-        Poincare::ExceptionCheckpoint::Raise();
-      } else {
+      if (canChangeDisplayOutput && calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
         /* Set the display output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, and retry to create the approximate layout */
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
-        if (didForceOutput) {
-          *didForceOutput = true;
-        }
         exactOutputLayout = Poincare::Layout();
         couldNotCreateApproximateLayout = false;
         approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           Poincare::ExceptionCheckpoint::Raise();
         }
+      } else {
+        Poincare::ExceptionCheckpoint::Raise();
       }
     }
 
@@ -74,16 +68,7 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, b
 
 KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation) {
   ScrollableThreeExpressionsCell cell;
-  bool didForceOutput = false;
-  cell.setCalculation(calculation, &didForceOutput);
-  if (didForceOutput) {
-    /* We could not compute the height of the calculation as it is (the display
-     * output was forced to another value during the height computation).
-     * Warning: the display output of calculation was actually changed, so it
-     * will cause problems if we already did some computations with another
-     * display value. */
-    return -1;
-  }
+  cell.setCalculation(calculation, true);
   KDRect leftFrame = KDRectZero;
   KDRect centerFrame = KDRectZero;
   KDRect approximateSignFrame = KDRectZero;
@@ -103,8 +88,8 @@ void ScrollableThreeExpressionsCell::reinitSelection() {
   m_view.reloadScroll();
 }
 
-void ScrollableThreeExpressionsCell::setCalculation(Calculation * calculation, bool * didForceOutput) {
-  m_view.setCalculation(calculation, didForceOutput);
+void ScrollableThreeExpressionsCell::setCalculation(Calculation * calculation, bool canChangeDisplayOutput) {
+  m_view.setCalculation(calculation, canChangeDisplayOutput);
   layoutSubviews();
 }
 

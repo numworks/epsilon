@@ -66,7 +66,7 @@ public:
         0,      // bInterfaceNumber
         k_dfuInterfaceAlternateSetting,      // bAlternateSetting
         0,      // bNumEndpoints: Other than endpoint 0
-        0xFE,   // bInterfaceClass: DFU (http://www.usb.org/developers/defined_class)
+        0xFE,   // bInterfaceClass: DFU (https://www.usb.org/defined-class-codes)
         1,      // bInterfaceSubClass: DFU
         2,      // bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be 1)
         4,      // iInterface: Index of the Interface string, see m_descriptor

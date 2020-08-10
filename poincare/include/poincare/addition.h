@@ -2,15 +2,15 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/n_ary_expression.h>
+#include <poincare/n_ary_infix_expression.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
 
-class AdditionNode final : public NAryExpressionNode {
+class AdditionNode final : public NAryInfixExpressionNode {
   friend class Addition;
 public:
-  using NAryExpressionNode::NAryExpressionNode;
+  using NAryInfixExpressionNode::NAryInfixExpressionNode;
 
   // Tree
   size_t size() const override { return sizeof(AdditionNode); }

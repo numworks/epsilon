@@ -2,14 +2,14 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/n_ary_expression.h>
+#include <poincare/n_ary_infix_expression.h>
 
 namespace Poincare {
 
-class MultiplicationNode final : public NAryExpressionNode {
+class MultiplicationNode final : public NAryInfixExpressionNode {
   friend class Addition;
 public:
-  using NAryExpressionNode::NAryExpressionNode;
+  using NAryInfixExpressionNode::NAryInfixExpressionNode;
 
   // Tree
   size_t size() const override { return sizeof(MultiplicationNode); }

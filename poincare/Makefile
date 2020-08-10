@@ -106,6 +106,7 @@ poincare_src += $(addprefix poincare/src/,\
   matrix_reduced_row_echelon_form.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
+  n_ary_infix_expression.cpp \
   naperian_logarithm.cpp \
   norm_cdf.cpp \
   norm_cdf2.cpp \

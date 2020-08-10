@@ -120,6 +120,7 @@ class Expression : public TreeHandle {
   friend class MatrixNode;
   friend class NaperianLogarithmNode;
   friend class NAryExpressionNode;
+  friend class NAryInfixExpressionNode;
   friend class StoreNode;
   friend class SymbolNode;
   friend class UnitNode;

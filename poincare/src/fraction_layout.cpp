@@ -175,8 +175,10 @@ bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool going
   int indexOfAbsorbingSibling = indexInParent + (goingLeft ? 1 : -1);
   assert(indexOfAbsorbingSibling >= 0 && indexOfAbsorbingSibling < p.numberOfChildren());
   Layout absorbingSibling = p.childAtIndex(indexOfAbsorbingSibling);
-  Layout absorbingChild = absorbingSibling.childAtIndex((goingLeft) ? absorbingSibling.leftCollapsingAbsorbingChildIndex() : absorbingSibling.rightCollapsingAbsorbingChildIndex());
-  return absorbingChild.type() == LayoutNode::Type::HorizontalLayout && absorbingChild.isEmpty();
+  if (absorbingSibling.numberOfChildren() > 0) {
+    absorbingSibling = absorbingSibling.childAtIndex((goingLeft) ? absorbingSibling.leftCollapsingAbsorbingChildIndex() : absorbingSibling.rightCollapsingAbsorbingChildIndex());
+  }
+  return absorbingSibling.type() == LayoutNode::Type::HorizontalLayout && absorbingSibling.isEmpty();
 }
 
 void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {

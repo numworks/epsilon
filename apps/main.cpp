@@ -72,6 +72,11 @@ void ion_main(int argc, const char * const argv[]) {
       break;
     }
   }
+
+  // Passer en mode DFU pour voir si on peut flasher un truc en flash externe
+  Ion::USB::enable();
+  Ion::USB::DFU();
+  // Lire la flash externe et le recopier en flash interne ?
   while (1) {}
 
 #if 0

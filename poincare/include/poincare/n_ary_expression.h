@@ -3,8 +3,6 @@
 
 #include <poincare/expression.h>
 
-// NAryExpressions are additions and multiplications
-
 namespace Poincare {
 
 class NAryExpressionNode : public ExpressionNode { // TODO: VariableArityExpressionNode?
@@ -20,9 +18,6 @@ public:
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 
-  // Properties
-  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
-
   // Comparison
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
 
@@ -37,9 +32,6 @@ protected:
   /* With a pool of size < 120k and TreeNode of size 20, a node can't have more
    * than 6144 children which fit in uint16_t. */
   uint16_t m_numberOfChildren;
-private:
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
-  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 };
 
 class NAryExpression : public Expression {

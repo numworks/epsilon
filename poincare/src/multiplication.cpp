@@ -57,7 +57,7 @@ int MultiplicationNode::getPolynomialCoefficients(Context * context, const char 
 }
 
 bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
-  if (NAryExpressionNode::childAtIndexNeedsUserParentheses(child, childIndex)) {
+  if (NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(child, childIndex)) {
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Addition};

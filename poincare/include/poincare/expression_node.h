@@ -20,6 +20,7 @@ class ExpressionNode : public TreeNode {
   friend class AdditionNode;
   friend class DivisionNode;
   friend class NAryExpressionNode;
+  friend class NAryInfixExpressionNode;
   friend class PowerNode;
   friend class SymbolNode;
 public:

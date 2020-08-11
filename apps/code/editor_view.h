@@ -42,6 +42,7 @@ private:
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
     static constexpr KDCoordinate k_margin = 2;
+    static constexpr int k_lineNumberCharLength = 3;
     const KDFont * m_font;
     KDCoordinate m_offset;
   };

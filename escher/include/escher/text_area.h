@@ -94,6 +94,9 @@ protected:
     size_t textLength() const {
       return strlen(m_buffer);
     }
+    int textLineTotal() const {
+      return positionAtPointer(m_buffer+textLength()).line();
+    }
   private:
     char * m_buffer;
     size_t m_bufferSize;
@@ -133,6 +136,8 @@ protected:
 private:
   void selectUpDown(bool up, int step);
   TextAreaDelegate * m_delegate;
+  // Due to rect size limitation, the editor cannot display more than 1800 lines
+  constexpr static int k_maxLines = 999;
 };
 
 #endif

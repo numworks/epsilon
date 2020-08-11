@@ -63,6 +63,11 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
     }
   }
 
+  // Check the text will not overflow the max number of lines
+  if (contentView()->getText()->textLineTotal() + UTF8Helper::CountOccurrences(text, '\n') >= k_maxLines) {
+    return false;
+  }
+
   // Insert the text
   if (!insertTextAtLocation(text, insertionPosition)) {
     return true;

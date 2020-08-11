@@ -266,7 +266,10 @@ IntegralLayoutNode * IntegralLayoutNode::previousNestedIntegral() {
     }
     if (p->numberOfChildren() == 1 && prev->type() == Type::IntegralLayout) {
       // We can consider the integrals in a row only if the horizontal layout just contains an integral
-      return static_cast<IntegralLayoutNode *>(prev);
+      // The horizontal layout must be the previous integral's integrand
+      if (prev->childAtIndex(0) == p) {
+        return static_cast<IntegralLayoutNode *>(prev);
+      }
     }
   }
   return nullptr;

@@ -67,11 +67,19 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate firstLine = m_offset / glyphSize.height();
   KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
 
-  char lineNumber[4];
+  char lineNumber[k_lineNumberCharLength];
   int numberOfLines = bounds().height() / glyphSize.height() + 1;
   for (int i=0; i<numberOfLines; i++) {
-    Poincare::Integer line(i + firstLine + 1);
-    line.serialize(lineNumber, 4);
+    // Only the first two digits are displayed
+    int lineNumberValue = (i + firstLine + 1) % 100;
+    Poincare::Integer line(lineNumberValue);
+    if (firstLine < 10 || lineNumberValue >= 10) {
+      line.serialize(lineNumber, k_lineNumberCharLength);
+    } else {
+      // Add a leading "0"
+      lineNumber[0] = '0';
+      line.serialize(lineNumber + 1, k_lineNumberCharLength - 1);
+    }
     KDCoordinate leftPadding = (2 - strlen(lineNumber)) * glyphSize.width();
     ctx->drawString(
       lineNumber,

@@ -444,9 +444,9 @@ QUIZ_CASE(poincare_expression_additional_results) {
   assert_additional_results_compute_to("3.6×_MN_m", array8, 2);
 
   // Volume
-  const char * array9[2] = {"1000×_L", "264×_gal+2×_cup+6.022702×_floz"};
+  const char * array9[2] = {"1000×_L", "264×_gal+1×_pt+0.7528377×_cup"};
   assert_additional_results_compute_to("1×_m^3", array9, 2);
-  const char * array10[2] = {"182.5426×_L", "48×_gal+3×_cup+4.5×_floz"};
+  const char * array10[2] = {"182.5426×_L", "48×_gal+1×_pt+1.5625×_cup"};
   assert_additional_results_compute_to("12345×_tbsp", array10, 2);
 
   // Speed

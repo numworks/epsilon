@@ -59,8 +59,9 @@ constexpr const int
   Unit::k_hectareRepresentativeIndex,
   Unit::k_acreRepresentativeIndex,
   Unit::k_literRepresentativeIndex,
-  Unit::k_fluidOunceRepresentativeIndex,
   Unit::k_cupRepresentativeIndex,
+  Unit::k_pintRepresentativeIndex,
+  Unit::k_quartRepresentativeIndex,
   Unit::k_gallonRepresentativeIndex;
 
 // UnitNode::Prefix
@@ -442,7 +443,7 @@ int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Exp
     Unit::Builder(representativesOfSameDimension() + Unit::k_yardRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_mileRepresentativeIndex, Prefix::EmptyPrefix()),
   };
-  dest[0] = Unit::BuildSplit(value, splitUnits, 4, reductionContext);
+  dest[0] = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
   return 1;
 }
 
@@ -465,7 +466,7 @@ int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Express
     Unit::Builder(representativesOfSameDimension() + Unit::k_poundRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_shortTonRepresentativeIndex, Prefix::EmptyPrefix()),
   };
-  dest[0] = Unit::BuildSplit(value, splitUnits, 3, reductionContext);
+  dest[0] = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
   return 1;
 }
 
@@ -534,11 +535,12 @@ int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expre
       Unit::Builder(liter, literPrefix));
   // 2. Convert to imperial volumes
   const Unit splitUnits[] = {
-    Unit::Builder(representativesOfSameDimension() + Unit::k_fluidOunceRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_cupRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_pintRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_quartRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_gallonRepresentativeIndex, Prefix::EmptyPrefix()),
   };
-  *destImperial = Unit::BuildSplit(value, splitUnits, numberOfRepresentatives() - 5, reductionContext);
+  *destImperial = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
   return 2;
 }
 

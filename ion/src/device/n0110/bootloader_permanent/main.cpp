@@ -27,44 +27,46 @@ void ion_main(int argc, const char * const argv[]) {
 
 
   // TODO LEA factorize
-  // Unlock option bytes programming
-  if (FLASH.OPTCR()->getOPTLOCK()) {
-    FLASH.OPTKEYR()->set(0x08192A3B);
-    FLASH.OPTKEYR()->set(0x4C5D6E7F);
-  }
-  assert(FLASH.OPTCR()->getOPTLOCK() == false);
-
-//TODO LEA remove the "#if 0" to replace ST's bootloader by our permanent bootloader
+  // TODO LEA remove the "#if 0" to replace ST's bootloader by our permanent bootloader
 #if 0
-  // 1. Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
-  assert(!FLASH.SR()->getBSY());
-  // 2. Write the desired option value in the FLASH_OPTCR register.
-  FLASH.OPTCR1()->setBOOT_ADD1(0x0080); // Boot from Flash on ITCM interface (0x0020 0000);
-  Cache::dsb();
-  //3. Set the option start bit (OPTSTRT) in the FLASH_OPTCR register
-  FLASH.OPTCR()->setOPTSTRT(true);
-  //4. Wait for the BSY bit to be cleared.
-  while (FLASH.SR()->getBSY()) {}
-  FLASH.OPTCR()->setOPTLOCK(true);
+  // Set the reset address when the 6 key is pressed
+  constexpr uint16_t Boot0Address = 0x0081; // TODO LEA Compute from 0x00200000 + fetch 0x00200000 elsewhere
+  if (FLASH.OPTCR1()->getBOOT_ADD1() != Boot1Address) {
+    // Unlock option bytes programming
+    if (FLASH.OPTCR()->getOPTLOCK()) {
+      FLASH.OPTKEYR()->set(0x08192A3B);
+      FLASH.OPTKEYR()->set(0x4C5D6E7F);
+    }
+    assert(FLASH.OPTCR()->getOPTLOCK() == false);
 
-  // Unlock option bytes programming
-  if (FLASH.OPTCR()->getOPTLOCK()) {
-    FLASH.OPTKEYR()->set(0x08192A3B);
-    FLASH.OPTKEYR()->set(0x4C5D6E7F);
+    // 1. Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
+    assert(!FLASH.SR()->getBSY());
+    // 2. Write the desired option value in the FLASH_OPTCR register.
+    FLASH.OPTCR1()->setBOOT_ADD1(Boot1Address); // Boot from the geginning of the internal Flash on ITCM interface (0x00200000)
+    Cache::dsb();
+    //3. Set the option start bit (OPTSTRT) in the FLASH_OPTCR register
+    FLASH.OPTCR()->setOPTSTRT(true);
+    //4. Wait for the BSY bit to be cleared.
+    while (FLASH.SR()->getBSY()) {}
+    FLASH.OPTCR()->setOPTLOCK(true);
   }
-  assert(FLASH.OPTCR()->getOPTLOCK() == false);
 #endif
 
-  // 1. Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
-  assert(!FLASH.SR()->getBSY());
-  // 2. Write the desired option value in the FLASH_OPTCR register.
-  FLASH.OPTCR1()->setBOOT_ADD0(0x0081); // Boot from updatable bootloader on ITCM interface (0x00204000);
-  Cache::dsb();
-  //3. Set the option start bit (OPTSTRT) in the FLASH_OPTCR register
-  FLASH.OPTCR()->setOPTSTRT(true);
-  //4. Wait for the BSY bit to be cleared.
-  while (FLASH.SR()->getBSY()) {}
-  FLASH.OPTCR()->setOPTLOCK(true);
+  constexpr uint16_t Boot0Address = 0x0081; // TODO LEA Compute from 0x00204000 + fetch 0x00204000 elsewhere
+  if (FLASH.OPTCR1()->getBOOT_ADD0() != Boot0Address) {
+    // Set the reset address when the 6 key is not pressed
+    if (FLASH.OPTCR()->getOPTLOCK()) {
+      FLASH.OPTKEYR()->set(0x08192A3B);
+      FLASH.OPTKEYR()->set(0x4C5D6E7F);
+    }
+    assert(FLASH.OPTCR()->getOPTLOCK() == false);
+    assert(!FLASH.SR()->getBSY());
+    FLASH.OPTCR1()->setBOOT_ADD0(0x0081); // Boot from updatable bootloader on ITCM interface (0x00204000);
+    Cache::dsb();
+    FLASH.OPTCR()->setOPTSTRT(true);
+    while (FLASH.SR()->getBSY()) {}
+    FLASH.OPTCR()->setOPTLOCK(true);
+  }
   // TODO LEA end factorize
 
 

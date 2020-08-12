@@ -64,4 +64,10 @@ void App::willBecomeInactive() {
   ::App::willBecomeInactive();
 }
 
+
+bool App::isAcceptableExpression(const Poincare::Expression exp) {
+  return TextFieldDelegateApp::ExpressionCanBeSerialized(exp, false, Poincare::Expression(), localContext())
+      && !(exp.isUninitialized() || exp.type() == Poincare::ExpressionNode::Type::Store);
+}
+
 }

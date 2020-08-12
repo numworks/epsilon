@@ -639,10 +639,12 @@ public:
   static_assert(strings_equal(k_surfaceRepresentatives[k_acreRepresentativeIndex].m_rootSymbol, "acre"), "Index for the Acre Representative is incorrect.");
   static constexpr int k_literRepresentativeIndex = 0;
   static_assert(strings_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbol, "L"), "Index for the Liter Representative is incorrect.");
-  static constexpr int k_fluidOunceRepresentativeIndex = 3;
-  static_assert(strings_equal(k_volumeRepresentatives[k_fluidOunceRepresentativeIndex].m_rootSymbol, "floz"), "Index for the Fluid Ounce Representative is incorrect.");
   static constexpr int k_cupRepresentativeIndex = 4;
   static_assert(strings_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbol, "cup"), "Index for the Cup Representative is incorrect.");
+  static constexpr int k_pintRepresentativeIndex = 5;
+  static_assert(strings_equal(k_volumeRepresentatives[k_pintRepresentativeIndex].m_rootSymbol, "pt"), "Index for the Pint Representative is incorrect.");
+  static constexpr int k_quartRepresentativeIndex = 6;
+  static_assert(strings_equal(k_volumeRepresentatives[k_quartRepresentativeIndex].m_rootSymbol, "qt"), "Index for the Quart Representative is incorrect.");
   static constexpr int k_gallonRepresentativeIndex = 7;
   static_assert(strings_equal(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbol, "gal"), "Index for the Gallon Representative is incorrect.");
 

@@ -394,18 +394,18 @@ QUIZ_CASE(poincare_properties_remove_unit) {
   assert_reduced_expression_unit_is("_L^2×3×_s", "_m^6×_s");
 }
 
-void assert_additional_results_compute_to(const char * expression, const char * * results, int length) {
+void assert_additional_results_compute_to(const char * expression, const char * * results, int length, Preferences::UnitFormat unitFormat = Metric) {
   Shared::GlobalContext globalContext;
   constexpr int maxNumberOfResults = 5;
   assert(length <= maxNumberOfResults);
   Expression additional[maxNumberOfResults];
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, Metric, User, ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(&globalContext, Cartesian, Degree, unitFormat, User, ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
   Expression e = parse_expression(expression, &globalContext, false).reduce(reductionContext);
   Expression units;
   e = e.removeUnit(&units);
   double value = e.approximateToScalar<double>(&globalContext, Cartesian, Degree);
 
-  if (!Unit::ShouldDisplayAdditionalOutputs(value, units)) {
+  if (!Unit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
     quiz_assert(length == 0);
     return;
   }
@@ -429,27 +429,33 @@ QUIZ_CASE(poincare_expression_additional_results) {
 
   // Distance
   const char * array4[1] = {"19×_mi+853×_yd+1×_ft+7×_in"};
-  assert_additional_results_compute_to("1234567×_in", array4, 1);
+  assert_additional_results_compute_to("1234567×_in", array4, 1, Imperial);
   const char * array5[1] = {"1×_yd+7.700787×_in"};
-  assert_additional_results_compute_to("1.11×_m", array5, 1);
+  assert_additional_results_compute_to("1.11×_m", array5, 1, Imperial);
+  assert_additional_results_compute_to("1.11×_m", nullptr, 0, Metric);
 
   // Masses
   const char * array6[1] = {"1×_shtn+240×_lb"};
-  assert_additional_results_compute_to("1×_lgtn", array6, 1);
+  assert_additional_results_compute_to("1×_lgtn", array6, 1, Imperial);
   const char * array7[1] = {"2×_lb+3.273962×_oz"};
-  assert_additional_results_compute_to("1×_kg", array7, 1);
+  assert_additional_results_compute_to("1×_kg", array7, 1, Imperial);
+  assert_additional_results_compute_to("1×_kg", nullptr, 0, Metric);
 
   // Energy
   const char * array8[2] = {"1×_kW×_h", "2.246943ᴇ13×_TeV"};
   assert_additional_results_compute_to("3.6×_MN_m", array8, 2);
 
   // Volume
-  const char * array9[2] = {"1000×_L", "264×_gal+1×_pt+0.7528377×_cup"};
-  assert_additional_results_compute_to("1×_m^3", array9, 2);
-  const char * array10[2] = {"182.5426×_L", "48×_gal+1×_pt+1.5625×_cup"};
-  assert_additional_results_compute_to("12345×_tbsp", array10, 2);
+  const char * array9[2] = {"264×_gal+1×_pt+0.7528377×_cup", "1000×_L"};
+  assert_additional_results_compute_to("1×_m^3", array9, 2, Imperial);
+  const char * array10[2] = {"48×_gal+1×_pt+1.5625×_cup", "182.5426×_L"};
+  assert_additional_results_compute_to("12345×_tbsp", array10, 2, Imperial);
+  const char * array11[2] = {"182.5426×_L"};
+  assert_additional_results_compute_to("12345×_tbsp", array11, 1, Metric);
 
   // Speed
-  const char * array11[2] = {"3.6×_km×_h^\x12-1\x13", "2.236936×_mi×_h^\x12-1\x13"};
-  assert_additional_results_compute_to("1×_m/_s", array11, 2);
+  const char * array12[1] = {"3.6×_km×_h^\x12-1\x13"};
+  assert_additional_results_compute_to("1×_m/_s", array12, 1, Metric);
+  const char * array13[2] = {"2.236936×_mi×_h^\x12-1\x13", "3.6×_km×_h^\x12-1\x13"};
+  assert_additional_results_compute_to("1×_m/_s", array13, 2, Imperial);
 }

@@ -33,6 +33,20 @@ void Calculator::PollAndReset(bool exitWithKeyboard) {
   }
 }
 
+bool Calculator::PollWithoutReset() {
+  char serialNumber[Ion::Device::SerialNumber::Length+1];
+  Ion::Device::SerialNumber::copy(serialNumber);
+  Calculator c(serialNumber);
+
+  while (Ion::USB::isPlugged() && !c.isSoftDisconnected()) {
+    c.poll();
+  }
+  if (!c.isSoftDisconnected()) {
+    c.detach();
+  }
+  return c.resetOnDisconnect();
+}
+
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {
   /* Special case: Microsoft OS String Descriptor should be returned when
    * searching for string descriptor at index 0xEE. */

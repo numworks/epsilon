@@ -586,9 +586,9 @@ public:
   static constexpr const VolumeRepresentative k_volumeRepresentatives[] = {
     VolumeRepresentative("L", 0.001, Prefixable::All, Prefixable::Negative),
     VolumeRepresentative("tsp", 0.00000492892159375, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("Tbsp", 3*0.00000492892159375, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("tbsp", 3*0.00000492892159375, Prefixable::None, Prefixable::None),
     VolumeRepresentative("floz", 0.0000295735295625, Prefixable::None, Prefixable::None),
-    VolumeRepresentative("cp", 8*0.0000295735295625, Prefixable::None, Prefixable::None),
+    VolumeRepresentative("cup", 8*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("pt", 16*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("qt", 32*0.0000295735295625, Prefixable::None, Prefixable::None),
     VolumeRepresentative("gal", 128*0.0000295735295625, Prefixable::None, Prefixable::None),
@@ -642,7 +642,7 @@ public:
   static constexpr int k_fluidOunceRepresentativeIndex = 3;
   static_assert(strings_equal(k_volumeRepresentatives[k_fluidOunceRepresentativeIndex].m_rootSymbol, "floz"), "Index for the Fluid Ounce Representative is incorrect.");
   static constexpr int k_cupRepresentativeIndex = 4;
-  static_assert(strings_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbol, "cp"), "Index for the Cup Representative is incorrect.");
+  static_assert(strings_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbol, "cup"), "Index for the Cup Representative is incorrect.");
   static constexpr int k_gallonRepresentativeIndex = 7;
   static_assert(strings_equal(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbol, "gal"), "Index for the Gallon Representative is incorrect.");
 

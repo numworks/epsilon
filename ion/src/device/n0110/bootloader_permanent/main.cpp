@@ -70,6 +70,24 @@ void ion_main(int argc, const char * const argv[]) {
   // TODO LEA end factorize
 
 
+  // TODO LEA remove #if 0
+#if 0
+  constexpr FLASH::OPTCR::RDP RDPLevel = FLASH::OPTCR::RDP::Level1;
+  if (FLASH.OPTCR()->getRDP() != RDPLevel) {
+    // Set the RDP to Level 2
+    if (FLASH.OPTCR()->getOPTLOCK()) {
+      FLASH.OPTKEYR()->set(0x08192A3B);
+      FLASH.OPTKEYR()->set(0x4C5D6E7F);
+    }
+    assert(FLASH.OPTCR()->getOPTLOCK() == false);
+    assert(!FLASH.SR()->getBSY());
+    FLASH.OPTCR()->setRDP(FLASH::OPTCR::RDP::Level1); // TODO LEA put to level 2 for production
+    Cache::dsb();
+    FLASH.OPTCR()->setOPTSTRT(true);
+    while (FLASH.SR()->getBSY()) {}
+    FLASH.OPTCR()->setOPTLOCK(true);
+  }
+#endif
 
   /* Step 2. Process DFU requests on external flash only. If there is a reset
    * with BOOT pin to 1, this acts as the "ST bootloader". */

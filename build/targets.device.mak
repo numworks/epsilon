@@ -1,6 +1,6 @@
 include build/targets.device.$(MODEL).mak
 
-HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash
+HANDY_TARGETS += flasher.light flasher.verbose bench.ram bench.flash bootloader.permanent bootloader.updatable
 HANDY_TARGETS_EXTENSIONS += dfu hex bin
 
 $(eval $(call rule_for, \

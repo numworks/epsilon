@@ -14,6 +14,6 @@ ion_src += ion/src/shared/collect_registers.cpp
 
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
-$(call object_for,$(ion_device_src) $(ion_device_flasher_src) $(ion_device_bench_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
+$(call object_for,$(ion_device_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(ion_device_n0110_bootloader_permanent_src) $(ion_device_n0110_bootloader_updatable_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
 
 ion_src += $(ion_device_src)

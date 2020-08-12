@@ -29,4 +29,4 @@ LDFLAGS += -Wl,--gc-sections
 LDFLAGS += $(SFLAGS) -lgcc -Wl,-T,$(LDSCRIPT)
 
 # To debug linker scripts, add the following line
-# LDFLAGS += -Wl,-M
+LDFLAGS += -Wl,-M

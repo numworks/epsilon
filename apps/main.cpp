@@ -89,8 +89,11 @@ void ion_main(int argc, const char * const argv[]) {
   // MPU on Blue LED
   Cache::dmb();
   MPU.RNR()->setREGION(7);
-  MPU.RBAR()->setADDR(0x40020400);
-  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_64B);
+  /* We want to forbid access to the 2 first 32-bit registers of GPIOB (MODER &
+   * TYPER) but the smallest MPU region size is 32-byte long. So we offset the
+   * MPU region by 6 bytes - nothing seems to there? */
+  MPU.RBAR()->setADDR(0x40020400-6);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32B);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
   MPU.RASR()->setXN(false);
   MPU.RASR()->setTEX(2);

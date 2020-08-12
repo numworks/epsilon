@@ -341,6 +341,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_in", "1×_in", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_ft", "1×_ft", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("1_qt", "1×_qt", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("1_qt", "946.352946×_cm^3");
 
   /* Unit sum/subtract */
   assert_parsed_expression_simplify_to("_m+_m", "2×_m");

@@ -85,13 +85,7 @@ bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
 }
 
 bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
-  if (exp.isUninitialized()) {
-    return false;
-  }
-  if (exp.type() == ExpressionNode::Type::Store) {
-    return false;
-  }
-  return true;
+  return !(exp.isUninitialized() || exp.type() == ExpressionNode::Type::Store || exp.type() == ExpressionNode::Type::Equal);
 }
 
 bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression, Context * context) {

@@ -68,7 +68,7 @@ bool App::isAcceptableExpression(const Poincare::Expression expression) {
       return false;
     }
   }
-  return !expression.isUninitialized();
+  return !(expression.isUninitialized() || expression.type() == ExpressionNode::Type::Equal);
 }
 
 void App::didBecomeActive(Window * window) {

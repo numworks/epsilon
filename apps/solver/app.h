@@ -46,6 +46,9 @@ public:
   void willBecomeInactive() override;
   TELEMETRY_ID("Solver");
 private:
+  // TextFieldDelegateApp
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
+
   App(Snapshot * snapshot);
   SolutionsController m_solutionsController;
   IntervalController m_intervalController;

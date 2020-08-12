@@ -6,7 +6,25 @@
 using namespace Ion::Device;
 using namespace Ion::Device::Regs;
 
-void updateUpdatableBootloader() {
+bool StartOfExternalFlashIsAuthenticated() {
+  // TODO LEA + instead of complicated cryptographic computations, we can start by simply checking if there are only 0s.
+  return false;
+}
+
+void UpdateUpdatableBootloader() {
+  if (!StartOfExternalFlashIsAuthenticated()) {
+    // Nothing to update
+    return;
+  }
+
+  /* To run the permanent bootloader, the device must haven been reset, so there
+   * is no ongoing Write protection of the internal flash. We can simply memcpy
+   * the data. */
+  // TODO LEA Get values from elsewhere
+  constexpr void * UpdatableBootloaderAddress = reinterpret_cast<void *>(0x00200000 + 16*1024);
+  constexpr void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
+  constexpr size_t SizeOfUpdatableBootloader = (64 - 16) * 1024; // TODO LEA we could try not to copy the padding, only the real length
+  memcpy(UpdatableBootloaderAddress, StartOfExternalFlashAddress, SizeOfUpdatableBootloader);
 }
 
 void ColorScreen(uint32_t color) {
@@ -105,7 +123,7 @@ void ion_main(int argc, const char * const argv[]) {
   }
 
   /* Step 3. Update the updatable bootloader if needed and if authenticated. */
-  updateUpdatableBootloader();
+  UpdateUpdatableBootloader();
 
   /* Step 4. Reset. Always jump to the internal flash, no matter the reset
    * address the dfu transaction asked for. TODO LEA */

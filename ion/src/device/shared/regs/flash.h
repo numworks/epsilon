@@ -72,6 +72,12 @@ public:
     REGS_TYPE_FIELD(RDP, 15, 8);
   };
 
+  class OPTCR1 : public Register32 {
+  public:
+    using Register32::Register32;
+    REGS_FIELD(BOOT_ADD1, uint16_t, 31, 16);
+    REGS_FIELD(BOOT_ADD0, uint16_t, 15, 0);
+  };
 
   constexpr FLASH() {};
   REGS_REGISTER_AT(ACR, 0x00);
@@ -80,6 +86,7 @@ public:
   REGS_REGISTER_AT(SR, 0x0C);
   REGS_REGISTER_AT(CR, 0x10);
   REGS_REGISTER_AT(OPTCR, 0x14);
+  REGS_REGISTER_AT(OPTCR1, 0x18);
 private:
   constexpr uint32_t Base() const {
     return 0x40023C00;

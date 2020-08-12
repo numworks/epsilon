@@ -437,6 +437,9 @@ const UnitNode::Representative * UnitNode::DistanceRepresentative::standardRepre
 
 int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
   assert(availableLength >= 1);
+  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+    return 0;
+  }
   const Unit splitUnits[] = {
     Unit::Builder(representativesOfSameDimension() + Unit::k_inchRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_footRepresentativeIndex, Prefix::EmptyPrefix()),
@@ -461,6 +464,9 @@ const UnitNode::Representative * UnitNode::MassRepresentative::standardRepresent
 
 int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
   assert(availableLength >= 1);
+  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+    return 0;
+  }
   const Unit splitUnits[] = {
     Unit::Builder(representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_poundRepresentativeIndex, Prefix::EmptyPrefix()),
@@ -501,13 +507,21 @@ const UnitNode::Representative * UnitNode::SurfaceRepresentative::standardRepres
 
 int UnitNode::SurfaceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
   assert(availableLength >= 2);
-  int k = (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ? 0 : 1;
-  Expression * destMetric = dest + k;
-  Expression * destImperial = dest + (1 - k);
+  Expression * destMetric;
+  Expression * destImperial = nullptr;
+  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+    destMetric = dest;
+  } else {
+    destImperial = dest;
+    destMetric = dest + 1;
+  }
   // 1. Convert to hectares
   const Representative * hectare = representativesOfSameDimension() + Unit::k_hectareRepresentativeIndex;
   *destMetric = Multiplication::Builder(Float<double>::Builder(value / hectare->ratio()), Unit::Builder(hectare, Prefix::EmptyPrefix()));
   // 2. Convert to acres
+  if (!destImperial) {
+    return 1;
+  }
   const Representative * acre = representativesOfSameDimension() + Unit::k_acreRepresentativeIndex;
   *destImperial = Multiplication::Builder(Float<double>::Builder(value / acre->ratio()), Unit::Builder(acre, Prefix::EmptyPrefix()));
   return 2;
@@ -523,9 +537,14 @@ const UnitNode::Representative * UnitNode::VolumeRepresentative::standardReprese
 
 int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
   assert(availableLength >= 2);
-  int k = (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ? 0 : 1;
-  Expression * destMetric = dest + k;
-  Expression * destImperial = dest + (1 - k);
+  Expression * destMetric;
+  Expression * destImperial = nullptr;
+  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+    destMetric = dest;
+  } else {
+    destImperial = dest;
+    destMetric = dest + 1;
+  }
   // 1. Convert to liters
   const Representative * liter = representativesOfSameDimension() + Unit::k_literRepresentativeIndex;
   double adjustedValue = value / liter->ratio();
@@ -534,6 +553,9 @@ int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expre
       Float<double>::Builder(adjustedValue * pow(10., -literPrefix->exponent())),
       Unit::Builder(liter, literPrefix));
   // 2. Convert to imperial volumes
+  if (!destImperial) {
+    return 1;
+  }
   const Unit splitUnits[] = {
     Unit::Builder(representativesOfSameDimension() + Unit::k_cupRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_pintRepresentativeIndex, Prefix::EmptyPrefix()),
@@ -546,9 +568,14 @@ int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expre
 
 int UnitNode::SpeedRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
   assert(availableLength >= 2);
-  int k = (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ? 0 : 1;
-  Expression * destMetric = dest + k;
-  Expression * destImperial = dest + (1 - k);
+  Expression * destMetric;
+  Expression * destImperial = nullptr;
+  if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
+    destMetric = dest;
+  } else {
+    destImperial = dest;
+    destMetric = dest + 1;
+  }
   // 1. Convert to km/h
   const Representative * meter = DistanceRepresentative::Default().representativesOfSameDimension() + Unit::k_meterRepresentativeIndex;
   const Representative * hour = TimeRepresentative::Default().representativesOfSameDimension() + Unit::k_hourRepresentativeIndex;
@@ -558,6 +585,9 @@ int UnitNode::SpeedRepresentative::setAdditionalExpressions(double value, Expres
         Unit::Builder(meter, Prefix::Prefixes() + Unit::k_kiloPrefixIndex),
         Power::Builder(Unit::Builder(hour, Prefix::EmptyPrefix()), Rational::Builder(-1))));
   // 2. Convert to mph
+  if (!destImperial) {
+    return 1;
+  }
   const Representative * mile = DistanceRepresentative::Default().representativesOfSameDimension() + Unit::k_mileRepresentativeIndex;
   *destImperial = Multiplication::Builder(
       Float<double>::Builder(value / mile->ratio() * hour->ratio()),
@@ -676,10 +706,12 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Expression units, double * 
   }
 }
 
-bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit) {
+bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat) {
   UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
   const Representative * representative = Representative::RepresentativeForDimension(vector);
-  return representative != nullptr && representative->hasAdditionalExpressions(value);
+  return representative != nullptr
+      && ((unit.type() == ExpressionNode::Type::Unit && !unit.convert<Unit>().isBaseUnit())
+       || representative->hasAdditionalExpressions(value, unitFormat));
 }
 
 int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {

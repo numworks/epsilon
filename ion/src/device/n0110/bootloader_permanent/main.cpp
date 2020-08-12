@@ -60,7 +60,7 @@ void ion_main(int argc, const char * const argv[]) {
     // 1. Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
     assert(!FLASH.SR()->getBSY());
     // 2. Write the desired option value in the FLASH_OPTCR register.
-    FLASH.OPTCR1()->setBOOT_ADD1(Boot1Address); // Boot from the geginning of the internal Flash on ITCM interface (0x00200000)
+    FLASH.OPTCR1()->setBOOT_ADD1(Boot1Address); // Boot from the permanent bootloader on ITCM interface (0x00200000)
     Cache::dsb();
     //3. Set the option start bit (OPTSTRT) in the FLASH_OPTCR register
     FLASH.OPTCR()->setOPTSTRT(true);

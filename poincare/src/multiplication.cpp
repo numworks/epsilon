@@ -534,7 +534,21 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
     } else {
       if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
         // Find the right unit prefix
-        Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, reductionContext);
+        /* In most cases, unit composition works the same for imperial and
+         * metric units. However, in imperial, we want volumes to be displayed
+         * using volume units instead of cubic length. */
+        const bool forceVolumeRepresentative = reductionContext.unitFormat() == Preferences::UnitFormat::Imperial && UnitNode::Vector<int>::FromBaseUnits(units) == UnitNode::VolumeRepresentative::Default().dimensionVector();
+        const UnitNode::Representative * repr;
+        if (forceVolumeRepresentative) {
+          /* The choice of representative doesn't matter, as it will be tuned to a
+           * system appropriate one in Step 2b. */
+          repr = UnitNode::VolumeRepresentative::Default().representativesOfSameDimension();
+          units = Unit::Builder(repr, UnitNode::Prefix::EmptyPrefix());
+          value /= repr->ratio();
+          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, reductionContext);
+        } else {
+          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value, reductionContext);
+        }
       }
       // Build final Expression
       result = Multiplication::Builder(Number::FloatNumber(value), units);

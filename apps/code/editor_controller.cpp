@@ -23,7 +23,7 @@ void EditorController::setScript(Script script, int scriptIndex) {
   m_script = script;
   m_scriptIndex = scriptIndex;
 
-  /* We edit the script direclty in the storage buffer. We thus put all the
+  /* We edit the script directly in the storage buffer. We thus put all the
    * storage available space at the end of the current edited script and we set
    * its size.
    *
@@ -36,8 +36,8 @@ void EditorController::setScript(Script script, int scriptIndex) {
    *
    * */
 
-  size_t newScriptSize = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(m_script);
-  m_editorView.setText(const_cast<char *>(m_script.content()), newScriptSize - Script::StatusSize());
+  Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(m_script);
+  m_editorView.setText(const_cast<char *>(m_script.content()), m_script.contentSize());
 }
 
 void EditorController::willExitApp() {

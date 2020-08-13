@@ -109,9 +109,6 @@ void ion_main(int argc, const char * const argv[]) {
 
   // ----------------------- CODE THIRD PARTY ---------------------------
 
-  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorGreen);
-  while(1) {}
-
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
   AppsContainer::sharedAppsContainer()->run();

@@ -21,6 +21,7 @@ parser.add_argument('--locales', nargs='+', help='locale to actually generate')
 parser.add_argument('--countries', nargs='+', help='countries to actually generate')
 parser.add_argument('--codepoints', help='the code_points.h file')
 parser.add_argument('--countrypreferences', help='the country_preferences.csv file')
+parser.add_argument('--languagepreferences', help='the language_preferences.csv file')
 parser.add_argument('--files', nargs='+', help='an i18n file')
 parser.add_argument('--generateISO6391locales', type=int, nargs='+', help='whether to generate the ISO6391 codes for the languages (for instance "en" for english)')
 
@@ -117,16 +118,31 @@ def parse_codepoints(file):
 
 codepoints = parse_codepoints(args.codepoints)
 
+def parse_csv_with_header(file):
+    res = []
+    with io.open(file, 'r', encoding='utf-8') as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=',')
+        for row in csvreader:
+            res.append(row)
+    return (res[0], res[1:])
+
 def parse_country_preferences(file):
     countryPreferences = {}
-    with io.open(file, "r", encoding="utf-8") as csvfile:
-        csvreader = csv.reader(csvfile, delimiter=',')
-        headers = next(csvreader, None)
-        for row in csvreader:
-            countryPreferences[row[0]] = [headers[i] + "::" + row[i] for i in range(1, len(row))]
+    header, records = parse_csv_with_header(file)
+    for record in records:
+        countryPreferences[record[0]] = [header[i] + "::" + record[i] for i in range(1, len(record))]
     return countryPreferences
 
 countryPreferences = parse_country_preferences(args.countrypreferences)
+
+def parse_language_preferences(file):
+    languagePreferences = {}
+    header, records = parse_csv_with_header(file)
+    for record in records:
+        languagePreferences[record[0]] = (header[1], record[1])
+    return languagePreferences
+
+languagePreferences = parse_language_preferences(args.languagepreferences)
 
 def print_block_from_list(target, header, data, beautify=lambda arg: arg, prefix="  ", footer="};\n\n"):
     target.write(header)
@@ -179,6 +195,7 @@ def print_header(data, path, locales, countries):
             "enum class Country : uint8_t {\n",
             countries,
             lambda arg: arg.upper())
+    defaultCountry = countries[-1]
 
     # Country names
     print_block_from_list(f,
@@ -187,10 +204,19 @@ def print_header(data, path, locales, countries):
             lambda arg: arg.upper(),
             "  Message::Country")
 
+    # Language preferences
+    f.write("constexpr static Country DefaultCountryForLanguage[NumberOfLanguages] = {\n")
+    for language in locales:
+        key = language if (language in languagePreferences) else '??'
+        header, country = languagePreferences[key]
+        line = "  " + header + "::" + (country if country in countries else defaultCountry)
+        f.write(line + ",\n")
+    f.write("};\n\n")
+
     # Country preferences
     f.write("constexpr static CountryPreferences CountryPreferencesArray[] = {\n")
     for country in countries:
-        key = country if (country in countryPreferences) else 'inl'
+        key = country if (country in countryPreferences) else defaultCountry
         line = "  CountryPreferences("
         for param in countryPreferences[key]:
             line += param + ", "

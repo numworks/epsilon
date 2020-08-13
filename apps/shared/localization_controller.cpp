@@ -127,7 +127,7 @@ LocalizationController::LocalizationController(Responder * parentResponder, KDCo
 
 void LocalizationController::resetSelection() {
   selectableTableView()->deselectTable();
-  selectCellAtLocation(0, (shouldResetSelectionToTopCell()) ? 0 : (mode() == Mode::Language) ? static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->language()) : IndexOfCountry(GlobalPreferences::sharedGlobalPreferences()->country()));
+  selectCellAtLocation(0, indexOfCellToSelectOnReset());
 }
 
 void LocalizationController::setMode(LocalizationController::Mode mode) {

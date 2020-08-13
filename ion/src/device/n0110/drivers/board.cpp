@@ -50,7 +50,7 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  /*MPU.RNR()->setREGION(sector++);
+  MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x20000000);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_512MB);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
@@ -59,7 +59,7 @@ void initMPU() {
   MPU.RASR()->setS(1);
   MPU.RASR()->setC(1);
   MPU.RASR()->setB(0);
-  MPU.RASR()->setENABLE(true);*/
+  MPU.RASR()->setENABLE(true);
 
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x40000000);

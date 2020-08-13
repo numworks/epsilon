@@ -57,7 +57,7 @@ SECTIONS {
     _init_array_end = .;
   } >EXTERNAL_FLASH
 
-  .data : {
+  .data (ORIGIN(SRAM) + RAM_DATA_OFFSET): {
     /* The data section is written to Flash but linked as if it were in RAM.
      *
      * This is required because its initial value matters (so it has to be in
@@ -73,7 +73,6 @@ SECTIONS {
     . = ALIGN(4);
     _data_section_start_flash = LOADADDR(.data);
     /* Let the first part of the RAM free to be used by the internal flash. */
-    . = (ORIGIN(SRAM) + RAM_DATA_OFFSET);
     _data_section_start_ram = .;
     *(.data)
     *(.data.*)

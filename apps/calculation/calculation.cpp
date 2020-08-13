@@ -254,9 +254,6 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   }
   if (o.hasUnit()) {
     Expression unit;
-    /* FIXME : When this method is accessed via leaving the additional outputs,
-     * ie via a press on BACK, the reduction is interrupted, and removeUnit
-     * goes badly.*/
     PoincareHelpers::Reduce(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
     o = o.removeUnit(&unit);
     double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());

@@ -10,8 +10,8 @@ class LocalizationController : public Shared::LocalizationController {
 public:
   using Shared::LocalizationController::LocalizationController;
 
-  bool shouldDisplayTitle() override { return false; }
-  bool shouldResetSelectionToTopCell() override { return false; }
+  int indexOfCellToSelectOnReset() const override;
+  bool shouldDisplayTitle() const override { return false; }
 
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Localization");

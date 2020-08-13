@@ -10,8 +10,8 @@ class LocalizationController : public Shared::LocalizationController {
 public:
   using Shared::LocalizationController::LocalizationController;
 
-  bool shouldDisplayTitle() override { return mode() == Mode::Country; }
-  bool shouldResetSelectionToTopCell() override { return true; }
+  int indexOfCellToSelectOnReset() const override;
+  bool shouldDisplayTitle() const override { return mode() == Mode::Country; }
 
   bool handleEvent(Ion::Events::Event event) override;
 };

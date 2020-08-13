@@ -13,18 +13,33 @@ int TotalNumberOfSectors() {
   return InternalFlash::Config::NumberOfSectors + ExternalFlash::Config::NumberOfSectors;
 }
 
+bool AddressIsInInternalFlash(uint32_t address) {
+  return address >= InternalFlash::Config::StartAddress
+      && address <= InternalFlash::Config::EndAddress;
+}
+
+bool AddressIsInExternalFlash(uint32_t address) {
+  return address >= ExternalFlash::Config::StartAddress
+      && address <= ExternalFlash::Config::EndAddress;
+}
+
 int SectorAtAddress(uint32_t address) {
-  if (address >= InternalFlash::Config::StartAddress
-      && address <= InternalFlash::Config::EndAddress)
-  {
+  if (AddressIsInInternalFlash(address)) {
     return InternalFlash::SectorAtAddress(address);
   }
-  if (address >= ExternalFlash::Config::StartAddress
-      && address <= ExternalFlash::Config::EndAddress)
-  {
+  if (AddressIsInExternalFlash(address)) {
     return InternalFlash::Config::NumberOfSectors + ExternalFlash::SectorAtAddress(address - ExternalFlash::Config::StartAddress);
   }
   return -1;
+}
+
+bool SectorIsInInternalFlash(int i) {
+  return i >= 0 && i < InternalFlash::Config::NumberOfSectors;
+}
+
+bool SectorIsInExternalFlash(int i) {
+  assert(i >= 0 && i < TotalNumberOfSectors());
+  return i >= InternalFlash::Config::NumberOfSectors;
 }
 
 void MassErase() {
@@ -34,7 +49,7 @@ void MassErase() {
 
 void EraseSector(int i) {
   assert(i >= 0 && i < TotalNumberOfSectors());
-  if (i < InternalFlash::Config::NumberOfSectors) {
+  if (SectorIsInInternalFlash(i)) {
     InternalFlash::EraseSector(i);
   } else {
     ExternalFlash::EraseSector(i - InternalFlash::Config::NumberOfSectors);
@@ -43,7 +58,7 @@ void EraseSector(int i) {
 
 void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
   assert(SectorAtAddress((uint32_t)destination) >= 0);
-  if (SectorAtAddress((uint32_t)destination) < InternalFlash::Config::NumberOfSectors) {
+  if (AddressIsInInternalFlash(destination)) {
     InternalFlash::WriteMemory(destination, source, length);
   } else {
     ExternalFlash::WriteMemory(destination - ExternalFlash::Config::StartAddress, source, length);

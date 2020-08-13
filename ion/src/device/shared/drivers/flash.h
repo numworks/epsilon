@@ -10,6 +10,9 @@ namespace Flash {
 
 int TotalNumberOfSectors();
 int SectorAtAddress(uint32_t address);
+bool SectorIsInInternalFlash(int i);
+bool SectorIsInExternalFlash(int i);
+bool SectorIsWritable(int i);
 
 void MassErase();
 void EraseSector(int i);

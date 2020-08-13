@@ -378,7 +378,7 @@ void ContinuousFunction::interestingXAndYRangesForDisplay(float * xMin, float * 
   float firstResult;
   float dXOld, dXPrev, dXNext, yOld, yPrev, yNext;
 
-  /* Look for an point of interest at the center. */
+  /* Look for a point of interest at the center. */
   const float a = center - minDistance - FLT_EPSILON, b = center + FLT_EPSILON, c = center + minDistance + FLT_EPSILON;
   const float ya = evaluateAndRound(this, a, context), yb = evaluateAndRound(this, b, context), yc = evaluateAndRound(this, c, context);
   if (boundOfIntervalOfDefinitionIsReached(ya, yc) ||
@@ -502,7 +502,8 @@ void ContinuousFunction::refinedYRangeForDisplay(float xMin, float xMax, float *
   assert(plotType() == PlotType::Cartesian);
   assert(yMin && yMax);
 
-  constexpr int sampleSize = 80;
+  constexpr int sampleSize = Ion::Display::Width / 4;
+  constexpr float boundNegligigbleThreshold = 0.2f;
 
   float sampleYMin = FLT_MAX, sampleYMax = -FLT_MAX;
   const float step = (xMax - xMin) / (sampleSize - 1);
@@ -520,7 +521,7 @@ void ContinuousFunction::refinedYRangeForDisplay(float xMin, float xMax, float *
       pop++;
     }
   }
-  /* sum/n is the log mean value of the function, which can be interpreted as
+  /* sum/pop is the log mean value of the function, which can be interpreted as
    * its average order of magnitude. Then, bound is the value for the next
    * order of magnitude and is used to cut the Y range. */
   float bound = (pop > 0) ? std::exp(sum / pop + 1.f) : FLT_MAX;
@@ -530,6 +531,14 @@ void ContinuousFunction::refinedYRangeForDisplay(float xMin, float xMax, float *
     float d = (*yMin == 0.f) ? 1.f : *yMin * 0.2f;
     *yMin -= d;
     *yMax += d;
+  }
+  /* Round out the smallest bound to 0 if it is negligible compare to the
+   * other one. This way, we can display the X axis for positive functions such
+   * as sqrt(x) even if we do not sample close to 0. */
+  if (*yMin > 0.f && *yMin / *yMax < boundNegligigbleThreshold) {
+    *yMin = 0.f;
+  } else if (*yMax < 0.f && *yMax / *yMin < boundNegligigbleThreshold) {
+    *yMax = 0.f;
   }
 }
 

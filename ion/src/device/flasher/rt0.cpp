@@ -2,9 +2,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
-#include "../drivers/board.h"
-#include "../drivers/reset.h"
-#include "../drivers/timing.h"
+#include "../shared/drivers/board.h"
+#include "../shared/drivers/reset.h"
+#include "../shared/drivers/timing.h"
 
 typedef void (*cxx_constructor)();
 
@@ -27,20 +27,6 @@ void __attribute__((noinline)) abort() {
 #endif
 }
 
-/* In order to ensure that this method is execute from the external flash, we
- * forbid inlining it.*/
-
-static void __attribute__((noinline)) external_flash_start() {
-  /* Init the peripherals. We do not initialize the backlight in case there is
-   * an on boarding app: indeed, we don't want the user to see the LCD tests
-   * happening during the on boarding app. The backlight will be initialized
-   * after the Power-On Self-Test if there is one or before switching to the
-   * home app otherwise. */
-  Ion::Device::Board::initPeripherals(false);
-
-  return ion_main(0, nullptr);
-}
-
 /* This additional function call 'jump_to_external_flash' serves two purposes:
  * - By default, the compiler is free to inline any function call he wants. If
  *   the compiler decides to inline some functions that make use of VFP
@@ -59,8 +45,17 @@ static void __attribute__((noinline)) external_flash_start() {
  *   internal flash section. We can than forbid cross references from the
  *   internal flash to the external flash. */
 
-static void __attribute__((noinline)) jump_to_external_flash() {
-  external_flash_start();
+typedef void (*ExternalStartPointer)();
+
+static void __attribute__((noinline)) jump_to_main() {
+  /* Init the peripherals. We do not initialize the backlight in case there is
+   * an on boarding app: indeed, we don't want the user to see the LCD tests
+   * happening during the on boarding app. The backlight will be initialized
+   * after the Power-On Self-Test if there is one or before switching to the
+   * home app otherwise. */
+  Ion::Device::Board::initPeripherals(false);
+
+  ion_main(0, nullptr);
 }
 
 /* When 'start' is executed, the external flash is supposed to be shutdown. We
@@ -113,7 +108,7 @@ void __attribute__((noinline)) start() {
   /* At this point, we initialized clocks and the external flash but no other
    * peripherals. */
 
-  jump_to_external_flash();
+  jump_to_main();
 
   abort();
 }

@@ -1,8 +1,15 @@
 #include "localization_controller.h"
 #include <algorithm>
 #include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 
 namespace OnBoarding {
+
+int LocalizationController::indexOfCellToSelectOnReset() const {
+  return mode() == Mode::Language ?
+    0 :
+    IndexOfCountry(I18n::DefaultCountryForLanguage[static_cast<uint8_t>(GlobalPreferences::sharedGlobalPreferences()->language())]);
+}
 
 bool LocalizationController::handleEvent(Ion::Events::Event event) {
   if (Shared::LocalizationController::handleEvent(event)) {

@@ -4,6 +4,7 @@ include ion/src/device/n0110/bootloader_updatable/Makefile
 ion_device_src += $(addprefix ion/src/device/n0110/drivers/, \
   board.cpp \
   cache.cpp \
+  flash.cpp \
   led.cpp \
   power.cpp \
   reset.cpp \

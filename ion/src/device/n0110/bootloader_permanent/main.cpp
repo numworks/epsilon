@@ -21,8 +21,8 @@ void UpdateUpdatableBootloader() {
    * is no ongoing Write protection of the internal flash. We can simply memcpy
    * the data. */
   // TODO LEA Get values from elsewhere
-  constexpr void * UpdatableBootloaderAddress = reinterpret_cast<void *>(0x00200000 + 16*1024);
-  constexpr void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
+  void * UpdatableBootloaderAddress = reinterpret_cast<void *>(0x00200000 + 16*1024);
+  void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
   constexpr size_t SizeOfUpdatableBootloader = (64 - 16) * 1024; // TODO LEA we could try not to copy the padding, only the real length
   memcpy(UpdatableBootloaderAddress, StartOfExternalFlashAddress, SizeOfUpdatableBootloader);
 }

@@ -7,7 +7,11 @@ KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
    * dealt with. So let's make a special case for them. */
   if (alpha == 0) {
     return second;
-  } else if (alpha == 0xFF) {
+  }
+  if (alpha == 0xFF) {
+    return first;
+  }
+  if (first == second) {
     return first;
   }
 
@@ -21,8 +25,8 @@ KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
   uint16_t blue = first.blue()*alpha + second.blue()*oneMinusAlpha;
   return RGB888(red>>8, green>>8, blue>>8);
 
-
-  // Blend White + black, ask for white
-  // white.red() = 0x1F << 3 = 0xF8
-//  white.red() * 0xFF = 0xF708, we wanted 0xF800
+  /* The formula used to blend colors produces some unwanted results :
+   * blend white + black, alpha = OxFF (should be white)
+   * white.red() * OxFF = OxF708, while we would like 0xF800
+   * Escaping early solves this issue. */
 }

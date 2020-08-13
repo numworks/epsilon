@@ -14,13 +14,8 @@ extern void switch_to_unpriviledged();
 }
 
 void ion_main(int argc, const char * const argv[]) {
-  // Initialization
-  Ion::Backlight::init();
-  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
-
-
   // ----------------------- CODE BOOTLOADER SECURE ---------------------------
-
+#if 0
   while (1) {
     Ion::Keyboard::State state = Ion::Keyboard::scan();
     if (state.keyDown(Ion::Keyboard::Key::OK)) {
@@ -78,13 +73,13 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::USB::DFU();
   // Lire la flash externe et le recopier en flash interne ?
   while (1) {}
+#endif
 
-#if 0
   /* MPU */
   // Shutdown the LED
   AFGPIOPin(GPIOB, 0,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
 
-#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 1
+#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 0
 #if MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION
   // MPU on Blue LED
   Cache::dmb();
@@ -106,7 +101,7 @@ void ion_main(int argc, const char * const argv[]) {
 #endif
 
   /* Unprivileged mode */
-#define SWITCH_TO_UNPRIVILEDGED 1
+#define SWITCH_TO_UNPRIVILEDGED 0
 #if SWITCH_TO_UNPRIVILEDGED
   switch_to_unpriviledged();
   Cache::isb();
@@ -114,35 +109,12 @@ void ion_main(int argc, const char * const argv[]) {
 
   // ----------------------- CODE THIRD PARTY ---------------------------
 
-  // Témoin
-  Ion::Timing::usleep(2000000);
-  Ion::LED::setColor(KDColorGreen);
-  Ion::Timing::usleep(2000000);
+  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorGreen);
+  while(1) {}
 
-  // Essaie de changer la configuration du MPU
-  Cache::dmb();
-  MPU.RNR()->setREGION(7);
-  MPU.RBAR()->setADDR(0x40020400);
-  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_64B);
-  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
-  MPU.RASR()->setXN(false);
-  MPU.RASR()->setTEX(0);
-  MPU.RASR()->setS(1);
-  MPU.RASR()->setC(0);
-  MPU.RASR()->setB(1);
-  MPU.RASR()->setENABLE(true);
-  Cache::dsb();
-  Cache::isb();
-
-  // Essaie d'allumer la LED bleue
-  // Restart the LED
-  AFGPIOPin(GPIOB, 0,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Low).init();
-  Ion::LED::setColor(KDColorBlue);
-  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorYellow);
-
-  while (1) {}
-#endif
-
+  // Initialize Poincare::TreePool::sharedPool
+  Poincare::Init();
+  AppsContainer::sharedAppsContainer()->run();
 }
 
 #else

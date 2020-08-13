@@ -1,5 +1,6 @@
 include ion/src/device/n0110/bootloader_permanent/Makefile
 include ion/src/device/n0110/bootloader_updatable/Makefile
+include ion/src/device/n0110/external_flash/Makefile
 
 ion_device_src += $(addprefix ion/src/device/n0110/drivers/, \
   board.cpp \
@@ -10,4 +11,4 @@ ion_device_src += $(addprefix ion/src/device/n0110/drivers/, \
   reset.cpp \
 )
 
-LDSCRIPT ?= ion/src/device/n0110/flash.ld
+LDSCRIPT ?= ion/src/device/n0110/external_flash.ld

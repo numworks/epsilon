@@ -3,6 +3,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/wakeup.h>
 #include <regs/regs.h>
+#include <drivers/svcall_handler.h>
 
 namespace Ion {
 namespace Power {

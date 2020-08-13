@@ -2,7 +2,7 @@
 extern const void * _stack_start;
 
 /* Interrupt Service Routines are void->void functions */
-typedef void(*ISR)(void);
+typedef void * ISR;
 
 /* Notice: The Cortex-M4 expects all jumps to be made at an odd address when
  * jumping to Thumb code. For example, if you want to execute Thumb code at
@@ -16,19 +16,19 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   __attribute__((section(".isr_vector_table")))
   __attribute__((used))
   = {
-  (ISR)&_stack_start, // Stack start
-  start, // Reset service routine,
+  &_stack_start, // Stack start
+  (ISR)start, // Reset service routine,
   0, // NMI service routine,
-  abort, // HardFault service routine,
+  (ISR)abort, // HardFault service routine,
   0, // MemManage service routine,
   0, // BusFault service routine,
   0, // UsageFault service routine,
   0, 0, 0, 0, // Reserved
-  0, // SVCall service routine,
+  0, //(ISR)svcall_handler, // SVCall service routine,
   0, // DebugMonitor service routine,
   0, // Reserved
   0, // PendSV service routine,
-  isr_systick, // SysTick service routine
+  (ISR)isr_systick, // SysTick service routine
   0, // WWDG service routine
   0, // PVD service routine
   0, // TampStamp service routine

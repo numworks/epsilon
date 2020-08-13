@@ -9,7 +9,7 @@ HANDY_TARGETS_EXTENSIONS ?=
 
 base_src = $(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src)
 
-epsilon_src = $(base_src) $(apps_src)
+epsilon_src = $(base_src) $(apps_src) $(ion_device_n0110_external_flash_src)
 
 $(BUILD_DIR)/epsilon.$(EXE): $(call flavored_object_for,$(epsilon_src),usbxip)
 

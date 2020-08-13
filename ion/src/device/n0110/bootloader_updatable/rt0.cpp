@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ion.h>
 #include "../../shared/drivers/board.h"
+#include "../../n0110/drivers/cache.h"
 #include "../../shared/drivers/reset.h"
 #include "../../shared/drivers/timing.h"
 
@@ -16,6 +17,7 @@ extern "C" {
   extern char _bss_section_end_ram;
   extern cxx_constructor _init_array_start;
   extern cxx_constructor _init_array_end;
+  extern void switch_to_unpriviledged();
 }
 
 void __attribute__((noinline)) abort() {
@@ -54,6 +56,34 @@ static void __attribute__((noinline)) jump_to_external_flash() {
    * after the Power-On Self-Test if there is one or before switching to the
    * home app otherwise. */
   Ion::Device::Board::initPeripherals(true);
+
+  /* Re-configurate the MPU to forbid access to blue LED if required */
+#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 0
+#if MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION
+  // Shutdown the LED
+  Ion::Device::Regs::AFGPIOPin(Ion::Device::Regs::GPIOB, 0,  Ion::Device::Regs::GPIO::AFR::AlternateFunction::AF2, Ion::Device::Regs::GPIO::PUPDR::Pull::None, Ion::Device::Regs::GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
+  // MPU on Blue LED
+  Ion::Device::Cache::dmb();
+  Ion::Device::Regs::MPU.RNR()->setREGION(7);
+  /* We want to forbid access to the 2 first 32-bit registers of GPIOB (MODER &
+   * TYPER) but the smallest MPU region size is 32-byte long. So we offset the
+   * MPU region by 6 bytes - nothing seems to there? */
+  Ion::Device::Regs::MPU.RBAR()->setADDR(0x40020400-6);
+  Ion::Device::Regs::MPU.RASR()->setSIZE(Ion::Device::Regs::MPU::RASR::RegionSize::_32B);
+  Ion::Device::Regs::MPU.RASR()->setAP(Ion::Device::Regs::MPU::RASR::AccessPermission::NoAccess);
+  Ion::Device::Regs::MPU.RASR()->setXN(false);
+  Ion::Device::Regs::MPU.RASR()->setTEX(2);
+  Ion::Device::Regs::MPU.RASR()->setS(0);
+  Ion::Device::Regs::MPU.RASR()->setC(0);
+  Ion::Device::Regs::MPU.RASR()->setB(0);
+  Ion::Device::Regs::MPU.RASR()->setENABLE(true);
+  Ion::Device::Cache::dsb();
+  Ion::Device::Cache::isb();
+#endif
+
+  /* Unprivileged mode */
+  //switch_to_unpriviledged();
+  //Ion::Device::Cache::isb();
 
   ExternalStartPointer * externalFlashFirstAddress = reinterpret_cast<ExternalStartPointer *>(0x90001000);
   ExternalStartPointer external_flash_entry = *externalFlashFirstAddress;

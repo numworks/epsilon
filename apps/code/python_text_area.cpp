@@ -441,9 +441,7 @@ void PythonTextArea::addAutocompletion() {
   const int scriptIndex = m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
   m_contentView.pythonDelegate()->variableBoxController()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
 
-  if (addAutocompletionTextAtIndex(0)) {
-    m_contentView.setAutocompleting(true);
-  }
+  addAutocompletionTextAtIndex(0);
 }
 
 bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate) {
@@ -468,6 +466,7 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIn
       return false;
     }
     autocompletionLocation += textToInsertLength;
+    m_contentView.setAutocompleting(true);
     m_contentView.setAutocompletionEnd(autocompletionLocation);
   }
 
@@ -480,8 +479,9 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIn
   if (addParentheses && m_contentView.insertTextAtLocation(parentheses, const_cast<char *>(autocompletionLocation), parenthesesLength)) {
     m_contentView.setAutocompleting(true);
     m_contentView.setAutocompletionEnd(autocompletionLocation + parenthesesLength);
+    return true;
   }
-  return true;
+  return (textToInsertLength > 0);
 }
 
 void PythonTextArea::cycleAutocompletion(bool downwards) {

@@ -22,9 +22,9 @@ public:
   Mode mode() const { return m_mode; }
   void setMode(Mode mode);
 
-  virtual bool shouldDisplayTitle() = 0;
-  virtual bool shouldResetSelectionToTopCell() = 0;
-  bool shouldDisplayWarning() { return mode() == Mode::Country; }
+  virtual int indexOfCellToSelectOnReset() const = 0;
+  virtual bool shouldDisplayTitle() const = 0;
+  bool shouldDisplayWarning() const { return mode() == Mode::Country; }
 
   View * view() override { return &m_contentView; }
   const char * title() override;

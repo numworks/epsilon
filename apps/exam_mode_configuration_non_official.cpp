@@ -26,7 +26,7 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
 
 KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
   assert(mode == GlobalPreferences::ExamMode::Standard);
-  return KDColorRed;
+  return KDColorBlue;
 }
 
 bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode) {

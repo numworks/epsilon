@@ -67,7 +67,7 @@ void initMPU() {
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x60000000);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
-  MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
   MPU.RASR()->setXN(true);
   MPU.RASR()->setTEX(2);
   MPU.RASR()->setS(0);
@@ -75,7 +75,7 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  MPU.RNR()->setREGION(sector++);
+  /*MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x60000000);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32B);
   MPU.RASR()->setXN(true);
@@ -95,7 +95,7 @@ void initMPU() {
   MPU.RASR()->setS(0);
   MPU.RASR()->setC(0);
   MPU.RASR()->setB(0);
-  MPU.RASR()->setENABLE(true);
+  MPU.RASR()->setENABLE(true);*/
 
   // 2.2 Configure MPU regions for the QUADSPI peripheral
   /* L1 Cache can issue speculative reads to any memory address. But, when the

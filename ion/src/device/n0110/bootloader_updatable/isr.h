@@ -8,7 +8,7 @@ extern "C" {
 void start();
 void abort();
 void isr_systick();
-//void svcall_handler(unsigned int * args);
+void svcall_handler(unsigned int * args);
 
 #ifdef __cplusplus
 }

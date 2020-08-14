@@ -81,11 +81,11 @@ void setClockFrequency(Frequency f) {
   // TODO: Update TIM3 prescaler or ARR to avoid irregular LED blinking
   if (f == Frequency::High) {
     RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
-    Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKFrequency);
+    Device::Timing::setHighSysTickFrequency();
   } else {
     assert(f == Frequency::Low);
     // Change the systick frequency to compensate the KCLK frequency change
-    Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKLowFrequency);
+    Device::Timing::setLowSysTickFrequency();
     RCC.CFGR()->setHPRE(Clocks::Config::AHBLowFrequencyPrescalerReg);
   }
 }

@@ -58,7 +58,7 @@ static void __attribute__((noinline)) jump_to_external_flash() {
   Ion::Device::Board::initPeripherals(true);
 
   /* Re-configurate the MPU to forbid access to blue LED if required */
-#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 0
+#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 1
 #if MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION
   // Shutdown the LED
   Ion::Device::Regs::AFGPIOPin(Ion::Device::Regs::GPIOB, 0,  Ion::Device::Regs::GPIO::AFR::AlternateFunction::AF2, Ion::Device::Regs::GPIO::PUPDR::Pull::None, Ion::Device::Regs::GPIO::OSPEEDR::OutputSpeed::Low).shutdown();

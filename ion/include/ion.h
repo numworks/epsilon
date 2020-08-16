@@ -10,6 +10,7 @@
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
+#include <ion/rtc.h>
 #include <ion/storage.h>
 #include <ion/timing.h>
 #include <ion/usb.h>

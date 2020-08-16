@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ion.h>
 #include "../drivers/board.h"
+#include "../drivers/rtc.h"
 #include "../drivers/reset.h"
 #include "../drivers/timing.h"
 

@@ -17,6 +17,7 @@
 #include "rng.h"
 #include "otg.h"
 #include "quadspi.h"
+#include "rtc.h"
 #include "sdio.h"
 #include "spi.h"
 #include "syscfg.h"

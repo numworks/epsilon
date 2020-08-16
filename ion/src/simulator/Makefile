@@ -9,6 +9,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/stack.cpp \
   dummy/usb.cpp \
   console_stdio.cpp:-consoledisplay \
+  rtc.cpp \
   crc32.cpp \
   display.cpp:-headless \
   events_keyboard.cpp:-headless \

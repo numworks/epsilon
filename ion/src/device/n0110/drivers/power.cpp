@@ -14,9 +14,7 @@ namespace Power {
 
 void standby() {
   Device::Power::waitUntilOnOffKeyReleased();
-  Device::Power::standbyConfiguration();
-  Device::Board::shutdownPeripherals();
-  Device::Power::internalFlashStandby();
+  svc(SVC_POWER_STANDBY);
 }
 
 }
@@ -25,6 +23,12 @@ void standby() {
 namespace Ion {
 namespace Device {
 namespace Power {
+
+void standbyHandler() {
+  Device::Power::standbyConfiguration();
+  Device::Board::shutdownPeripherals();
+  Device::Power::internalFlashStandby();
+}
 
 void configWakeUp() {
   Device::WakeUp::onOnOffKeyDown();

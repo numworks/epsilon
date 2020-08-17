@@ -15,6 +15,7 @@ void stopConfiguration();
 void waitUntilOnOffKeyReleased();
 void enterLowPowerMode();
 
+void sleepStopHandler();
 void standbyHandler();
 
 }

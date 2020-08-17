@@ -14,19 +14,22 @@
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
 #include "events_keyboard_platform.h"
+#include "svcall_handler.h"
 
 namespace Ion {
 
 namespace Power {
 
 void suspend(bool checkIfOnOffKeyReleased) {
-  bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
-  bool plugged = USB::isPlugged();
-
   if (checkIfOnOffKeyReleased) {
     Device::Power::waitUntilOnOffKeyReleased();
   }
+  svc(SVC_POWER_SLEEP_OR_STOP);
+}
 
+void sleepStopHandler() {
+  bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
+  bool plugged = USB::isPlugged();
   /* First, shutdown all peripherals except LED. Indeed, the charging pin state
    * might change when we shutdown peripherals that draw current. */
   Device::Board::shutdownPeripherals(true);

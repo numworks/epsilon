@@ -3,4 +3,5 @@ ion_device_n0110_bootloader_permanent_src += $(addprefix ion/src/device/n0110/bo
   isr.c \
   main.cpp \
   rt0.cpp \
+  timing.cpp \
 )

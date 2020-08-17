@@ -8,7 +8,8 @@ namespace Device {
 namespace Timing {
 namespace Config {
 
-constexpr static int LoopsPerMillisecond = 4811;
+constexpr static int LoopsPerMillisecondLowFrequency = 4811;
+constexpr static int LoopsPerMillisecondHighFrequency = 8*4811;
 constexpr static int LoopsPerMicrosecond = 38;
 
 }

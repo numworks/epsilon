@@ -16,6 +16,9 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
     case SVC_POWER_STANDBY:
       Ion::Device::Power::standbyHandler();
       return;
+    case SVC_POWER_SLEEP_OR_STOP:
+      Ion::Device::Power::standbyHandler();
+      return;
     default:
       return;
   }

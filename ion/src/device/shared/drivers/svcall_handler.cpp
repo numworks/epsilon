@@ -13,6 +13,9 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
     case SVC_SYSTICK_LOW_FREQUENCY:
       Ion::Device::Timing::sysTickFrequencyHandler(Ion::Device::Clocks::Config::HCLKLowFrequency);
       return;
+    case SVC_POWER_STANDBY:
+      Ion::Device::Power::standbyHandler();
+      return;
     default:
       return;
   }

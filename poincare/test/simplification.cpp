@@ -67,6 +67,7 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("0/inf", "0");
   assert_parsed_expression_simplify_to("inf/0", Undefined::Name());
   assert_parsed_expression_simplify_to("0×inf", Undefined::Name());
+  assert_parsed_expression_simplify_to("0×inf×π", Undefined::Name());
   assert_parsed_expression_simplify_to("3×inf/inf", "undef");
   assert_parsed_expression_simplify_to("1ᴇ1000", "inf");
   assert_parsed_expression_simplify_to("-1ᴇ1000", "-inf");

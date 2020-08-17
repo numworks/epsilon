@@ -77,8 +77,22 @@ static void __attribute__((noinline)) jump_to_external_flash() {
   Ion::Device::Regs::MPU.RASR()->setC(0);
   Ion::Device::Regs::MPU.RASR()->setB(0);
   Ion::Device::Regs::MPU.RASR()->setENABLE(true);
+
+  // INTERNAL FLASH
+  Ion::Device::Regs::MPU.RNR()->setREGION(6);
+  Ion::Device::Regs::MPU.RBAR()->setADDR(0x40023C00);
+  Ion::Device::Regs::MPU.RASR()->setSIZE(Ion::Device::Regs::MPU::RASR::RegionSize::_32B);
+  Ion::Device::Regs::MPU.RASR()->setAP(Ion::Device::Regs::MPU::RASR::AccessPermission::NoAccess);
+  Ion::Device::Regs::MPU.RASR()->setXN(false);
+  Ion::Device::Regs::MPU.RASR()->setTEX(2);
+  Ion::Device::Regs::MPU.RASR()->setS(0);
+  Ion::Device::Regs::MPU.RASR()->setC(0);
+  Ion::Device::Regs::MPU.RASR()->setB(0);
+  Ion::Device::Regs::MPU.RASR()->setENABLE(true);
+
   Ion::Device::Cache::dsb();
   Ion::Device::Cache::isb();
+
 #endif
 
   /* Unprivileged mode */

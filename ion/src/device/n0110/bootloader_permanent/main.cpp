@@ -1,4 +1,7 @@
 #include "../../shared/usb/calculator.h"
+#include "../../shared/drivers/external_flash.h"
+#include "../../shared/drivers/board.h"
+#include "../../shared/drivers/flash.h"
 #include "../../shared/drivers/reset.h"
 #include <ion/src/device/n0110/drivers/cache.h>
 #include <ion.h>
@@ -34,11 +37,16 @@ bool IsAuthenticated(void * pointer) {
   return decryptedSignature == digest;
 }
 
+void ColorScreen(uint32_t color) {
+  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColor::RGB24(color));
+  Ion::Timing::msleep(300);
+}
+
 bool StartOfExternalFlashIsAuthenticated() {
   // TODO LEA + instead of complicated cryptographic computations, we can start by simply checking if there are only 0s.
   // void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
   // return IsAuthenticated(StartOfExternalFlashAddress);
-  return false;
+  return true;
 }
 
 void UpdateUpdatableBootloader() {
@@ -51,15 +59,13 @@ void UpdateUpdatableBootloader() {
    * is no ongoing Write protection of the internal flash. We can simply memcpy
    * the data. */
   // TODO LEA Get values from elsewhere
-  void * UpdatableBootloaderAddress = reinterpret_cast<void *>(0x00200000 + 16*1024);
-  void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
+  uint8_t * UpdatableBootloaderAddress = reinterpret_cast<uint8_t *>(0x08000000 + 16*1024);
+  uint8_t * StartOfExternalFlashAddress = reinterpret_cast<uint8_t *>(0x90000000);
   constexpr size_t SizeOfUpdatableBootloader = (64 - 16) * 1024; // TODO LEA we could try not to copy the padding, only the real length
-  memcpy(UpdatableBootloaderAddress, StartOfExternalFlashAddress, SizeOfUpdatableBootloader);
-}
-
-void ColorScreen(uint32_t color) {
-  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColor::RGB24(color));
-  Ion::Timing::msleep(300);
+  for (int i = 1; i < 4; i++) {
+    Ion::Device::Flash::EraseSector(i); //TODO LEA erase only what needed?
+  }
+  Ion::Device::Flash::WriteMemory(UpdatableBootloaderAddress, StartOfExternalFlashAddress, SizeOfUpdatableBootloader);
 }
 
 void ion_main(int argc, const char * const argv[]) {
@@ -98,7 +104,7 @@ void ion_main(int argc, const char * const argv[]) {
     while (FLASH.SR()->getBSY()) {}
     FLASH.OPTCR()->setOPTLOCK(true);
   }
-#endif
+//#endif
 
   constexpr uint16_t Boot0Address = 0x0081; // TODO LEA Compute from 0x00204000 + fetch 0x00204000 elsewhere
   if (FLASH.OPTCR1()->getBOOT_ADD0() != Boot0Address) {
@@ -109,7 +115,7 @@ void ion_main(int argc, const char * const argv[]) {
     }
     assert(FLASH.OPTCR()->getOPTLOCK() == false);
     assert(!FLASH.SR()->getBSY());
-    FLASH.OPTCR1()->setBOOT_ADD0(0x0081); // Boot from updatable bootloader on ITCM interface (0x00204000);
+    FLASH.OPTCR1()->setBOOT_ADD0(Boot0Address); // Boot from updatable bootloader on ITCM interface (0x00204000);
     Cache::dsb();
     FLASH.OPTCR()->setOPTSTRT(true);
     while (FLASH.SR()->getBSY()) {}
@@ -119,7 +125,7 @@ void ion_main(int argc, const char * const argv[]) {
 
 
   // TODO LEA remove #if 0
-#if 0
+//#if 0
   constexpr FLASH::OPTCR::RDP RDPLevel = FLASH::OPTCR::RDP::Level1;
   if (FLASH.OPTCR()->getRDP() != RDPLevel) {
     // Set the RDP to Level 2
@@ -140,6 +146,7 @@ void ion_main(int argc, const char * const argv[]) {
   /* Step 2. Process DFU requests on external flash only. If there is a reset
    * with BOOT pin to 1, this acts as the "ST bootloader". */
 
+#if 0
   // TODO LEA Do we need to disable/enable all the time?
   while (true) {
     Ion::USB::enable();
@@ -147,15 +154,21 @@ void ion_main(int argc, const char * const argv[]) {
       Ion::Timing::msleep(10);
     }
     if (Ion::Device::USB::Calculator::PollWithoutReset()) {
+      Ion::USB::disable();
       break;
     }
     Ion::USB::disable();
   }
+#endif
+  ColorScreen(0x00FF00);
 
   /* Step 3. Update the updatable bootloader if needed and if authenticated. */
   UpdateUpdatableBootloader();
+  ColorScreen(0x0000FF);
+  Ion::Timing::msleep(2000);
 
   /* Step 4. Reset. Always jump to the internal flash, no matter the reset
    * address the dfu transaction asked for. TODO LEA */
+  Ion::Device::ExternalFlash::shutdown(); //TODO LEA Remove?
   Ion::Device::Reset::coreWhilePlugged();
 }

@@ -2,4 +2,5 @@ ion_device_n0110_external_flash_src += $(addprefix ion/src/device/n0110/external
   board.cpp \
   isr.c \
   rt0.cpp \
+  timing.cpp \
 )

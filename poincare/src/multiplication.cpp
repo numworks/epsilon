@@ -778,6 +778,9 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
           SetInterruption(true);
           return *this;
         }
+        if (m.isUndefined()) {
+          return replaceWithUndefinedInPlace();
+        }
         replaceChildAtIndexInPlace(0, m);
         removeChildAtIndexInPlace(i);
       } else {

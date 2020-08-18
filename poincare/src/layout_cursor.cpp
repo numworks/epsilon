@@ -177,6 +177,8 @@ void LayoutCursor::addEmptyPowerLayout() {
 void LayoutCursor::addEmptySquarePowerLayout() {
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
+  m_layout = offsetLayout;
+  m_position = Position::Right;
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {

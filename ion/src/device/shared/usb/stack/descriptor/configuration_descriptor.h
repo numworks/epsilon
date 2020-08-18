@@ -28,9 +28,12 @@ public:
     m_interfaces(interfaces)
   {
   }
+  constexpr static uint8_t BLength() {
+    return Descriptor::BLength() + sizeof(uint16_t) + 5*sizeof(uint8_t);
+  }
 protected:
   void push(Channel * c) const override;
-  uint8_t bLength() const override;
+  uint8_t bLength() const override { return BLength(); }
 private:
   uint16_t m_wTotalLength;
   uint8_t m_bNumInterfaces;

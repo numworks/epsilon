@@ -71,7 +71,6 @@ void UpdateUpdatableBootloader() {
 void ion_main(int argc, const char * const argv[]) {
   // TODO LEA Initialize display with message ?
   Ion::Backlight::init();
-  ColorScreen(0xFF0000);
 
   /* Step 1. Initialize the option bytes if needed:
    * - First, set BOOT1_ADDRESS to the permanent bootloader and BOOT0_ADDRESS to
@@ -146,7 +145,8 @@ void ion_main(int argc, const char * const argv[]) {
   /* Step 2. Process DFU requests on external flash only. If there is a reset
    * with BOOT pin to 1, this acts as the "ST bootloader". */
 
-#if 0
+  ColorScreen(0x00FF00);
+
   // TODO LEA Do we need to disable/enable all the time?
   while (true) {
     Ion::USB::enable();
@@ -159,8 +159,6 @@ void ion_main(int argc, const char * const argv[]) {
     }
     Ion::USB::disable();
   }
-#endif
-  ColorScreen(0x00FF00);
 
   /* Step 3. Update the updatable bootloader if needed and if authenticated. */
   UpdateUpdatableBootloader();

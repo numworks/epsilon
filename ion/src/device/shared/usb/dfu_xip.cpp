@@ -1,10 +1,11 @@
 #include "calculator.h"
+#include <drivers/svcall_handler.h>
 
 namespace Ion {
 namespace USB {
 
 void DFU() {
-  Ion::Device::USB::Calculator::PollAndReset(true);
+  svc(SVC_DFU);
 }
 
 }

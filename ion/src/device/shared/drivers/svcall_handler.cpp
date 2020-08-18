@@ -2,6 +2,8 @@
 #include <drivers/timing.h>
 #include <drivers/power.h>
 #include <drivers/config/clocks.h>
+#include <drivers/usb.h>
+#include "../usb/calculator.h"
 
 extern "C" {
 void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
@@ -19,6 +21,8 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
     case SVC_POWER_SLEEP_OR_STOP:
       Ion::Device::Power::standbyHandler();
       return;
+    case SVC_DFU:
+      Ion::Device::USB::DFUHandler();
     default:
       return;
   }

@@ -11,7 +11,7 @@ extern "C" {
 #define SVC_SYSTICK_HIGH_FREQUENCY 2
 #define SVC_POWER_SLEEP_OR_STOP 3
 #define SVC_POWER_STANDBY 4
-#define SVC_RESET_CORE 5
+#define SVC_DFU 5
 
 #ifdef __cplusplus
 }

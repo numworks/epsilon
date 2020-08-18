@@ -382,8 +382,8 @@ int SectorAtAddress(uint32_t address) {
   }
   i = address >> NumberOfAddressBitsIn32KbyteBlock;
   if (i >= 1) {
-    i = Config::NumberOf4KSectors + i - 1;
     assert(i >= 0 && i <= Config::NumberOf32KSectors);
+    i = Config::NumberOf4KSectors + i - 1;
     return i;
   }
   i = address >> NumberOfAddressBitsIn4KbyteBlock;

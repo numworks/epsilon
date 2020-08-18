@@ -14,6 +14,8 @@ bootloader_updatable_src = $(ion_src) $(ion_device_n0110_bootloader_updatable_sr
 $(BUILD_DIR)/bootloader.updatable.$(EXE): $(call flavored_object_for,$(bootloader_updatable_src), usbxip)
 $(BUILD_DIR)/bootloader.updatable.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash_updatable.ld
 
+$(BUILD_DIR)/bootloader.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)
+
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu $(BUILD_DIR)/flasher.light.dfu
 	@echo "DFU     $@"

@@ -9,37 +9,39 @@
  * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
  * be stored in Flash. */
 
-MEMORY {
-  INTERNAL_FLASH_UPDATABLE (rx) : ORIGIN = 0x00200000+16K, LENGTH = 64K - 16K
-  SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
-}
+INCLUDE config_flash.ld
 
-STACK_SIZE = 32K;
+MEMORY {
+  INTERNAL_FLASH_UPDATABLE (rx) : ORIGIN = INTERNAL_FLASH_UPDATABLE_ORIGIN, LENGTH = INTERNAL_FLASH_UPDATABLE_LENGTH
+  EXTERNAL_FLASH (rw) : ORIGIN = EXTERNAL_FLASH_UPDATABLE_INTERNAL_FLASH_BUFFER_ORIGIN, LENGTH = INTERNAL_FLASH_UPDATABLE_LENGTH
+  SRAM_DATA_BSS (rw) : ORIGIN = INTERNAL_FLASH_SRAM_ORIGIN, LENGTH = INTERNAL_FLASH_SRAM_DATA_BSS_LENGTH
+  SRAM_HEAP_STACK (rw) : ORIGIN = INTERNAL_FLASH_SRAM_ORIGIN + INTERNAL_FLASH_SRAM_DATA_BSS_LENGTH, LENGTH = SRAM_LENGTH - INTERNAL_FLASH_SRAM_DATA_BSS_LENGTH
+}
 
 SECTIONS {
   .isr_vector_table ORIGIN(INTERNAL_FLASH_UPDATABLE) : {
     _isr_start = .;
     KEEP(*(.isr_vector_table))
-  } >INTERNAL_FLASH_UPDATABLE
+  } >INTERNAL_FLASH_UPDATABLE AT> EXTERNAL_FLASH
 
   .text : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >INTERNAL_FLASH_UPDATABLE
+  } >INTERNAL_FLASH_UPDATABLE AT> EXTERNAL_FLASH
 
   .rodata : {
     . = ALIGN(4);
     *(.rodata)
     *(.rodata.*)
-  } >INTERNAL_FLASH_UPDATABLE
+  } >INTERNAL_FLASH_UPDATABLE AT> EXTERNAL_FLASH
 
   .init_array : {
     . = ALIGN(4);
     _init_array_start = .;
     KEEP (*(.init_array*))
     _init_array_end = .;
-  } >INTERNAL_FLASH_UPDATABLE
+  } >INTERNAL_FLASH_UPDATABLE AT> EXTERNAL_FLASH
 
   .data : {
     /* The data section is written to Flash but linked as if it were in RAM.
@@ -55,12 +57,12 @@ SECTIONS {
      * That's why we're defining three symbols that we'll use in the initial-
      * -ization routine. */
     . = ALIGN(4);
-    _data_section_start_flash = LOADADDR(.data);
+    _data_section_start_flash = ORIGIN(INTERNAL_FLASH_UPDATABLE) + (LOADADDR(.data) - LOADADDR(.isr_vector_table));
     _data_section_start_ram = .;
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
-  } >SRAM AT> INTERNAL_FLASH_UPDATABLE
+  } >SRAM_DATA_BSS AT> EXTERNAL_FLASH
 
   .bss : {
     /* The bss section contains data for all uninitialized variables
@@ -77,14 +79,14 @@ SECTIONS {
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
     _bss_section_end_ram = .;
-  } >SRAM
+  } >SRAM_DATA_BSS
 
   .heap : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(SRAM) + LENGTH(SRAM) - STACK_SIZE);
+    . = (ORIGIN(SRAM_HEAP_STACK) + LENGTH(SRAM_HEAP_STACK) - STACK_SIZE);
     _heap_end = .;
-  } >SRAM
+  } >SRAM_HEAP_STACK
 
   .stack : {
     . = ALIGN(8);
@@ -92,7 +94,7 @@ SECTIONS {
     . += (STACK_SIZE - 8);
     . = ALIGN(8);
     _stack_start = .;
-  } >SRAM
+  } >SRAM_HEAP_STACK
 
   /DISCARD/ : {
     /* exidx and extab are needed for unwinding, which we don't use */

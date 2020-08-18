@@ -11,4 +11,5 @@ ion_device_src += $(addprefix ion/src/device/n0110/drivers/, \
   reset.cpp \
 )
 
+LDFLAGS += -Lion/src/device/n0110
 LDSCRIPT ?= ion/src/device/n0110/external_flash.ld

@@ -37,17 +37,18 @@ xPSR, ReturnAddress, LR (R14), R12, R3, R2, R1, and R0
 end
 
 # Let's connect to OpenOCD
-target remote localhost:3333
+target extended-remote localhost:3333
 
-# GDB pagniation is annoying
+# GDB pagination is annoying
 set pagination off
 
 # Load our executable
-load
+#load
+
 
 # Tell OpenOCD to reset and halt
 # monitor itm ports on
 # monitor tpiu config internal swo.log.bin uart off 16000000
-# monitor reset halt
+#monitor reset halt
 
 # continue

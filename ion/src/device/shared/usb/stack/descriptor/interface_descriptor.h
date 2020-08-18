@@ -34,9 +34,12 @@ public:
      * this for now. */
   {
   }
+  constexpr static uint8_t BLength() {
+    return Descriptor::BLength() + 7*sizeof(uint8_t);
+  }
 protected:
   void push(Channel * c) const override;
-  uint8_t bLength() const override;
+  uint8_t bLength() const override { return BLength(); }
 private:
   uint8_t m_bInterfaceNumber;
   uint8_t m_bAlternateSetting;

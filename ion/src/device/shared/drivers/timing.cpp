@@ -3,6 +3,7 @@
 #include "svcall_handler.h"
 #include <ion/timing.h>
 #include <drivers/config/timing.h>
+#include <drivers/config/clocks.h>
 
 namespace Ion {
 
@@ -32,7 +33,7 @@ using namespace Regs;
 volatile uint64_t MillisElapsed = 0;
 
 void init() {
-  setHighSysTickFrequency();
+  sysTickFrequencyHandler(Clocks::Config::HCLKFrequency);
   CORTEX.SYST_CSR()->setCLKSOURCE(CORTEX::SYST_CSR::CLKSOURCE::AHB_DIV8);
   CORTEX.SYST_CSR()->setTICKINT(true);
   CORTEX.SYST_CSR()->setENABLE(true);

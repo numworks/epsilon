@@ -9,12 +9,12 @@
  * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
  * be stored in Flash. */
 
-MEMORY {
-  INTERNAL_FLASH_PERMANENT (rx) : ORIGIN = 0x00200000, LENGTH = 16K
-  SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
-}
+INCLUDE config_flash.ld
 
-STACK_SIZE = 32K;
+MEMORY {
+  INTERNAL_FLASH_PERMANENT (rx) : ORIGIN = INTERNAL_FLASH_ORIGIN, LENGTH = INTERNAL_FLASH_PERMANENT_LENGTH
+  SRAM (rw)  : ORIGIN = SRAM_ORIGIN, LENGTH = SRAM_LENGTH
+}
 
 SECTIONS {
   .isr_vector_table ORIGIN(INTERNAL_FLASH_PERMANENT) : {

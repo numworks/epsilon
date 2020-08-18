@@ -29,6 +29,11 @@ void __attribute__((noinline)) abort() {
 #endif
 }
 
+void ColorScreen(uint32_t color) {
+  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColor::RGB24(color));
+  Ion::Timing::msleep(500);
+}
+
 /* This additional function call 'jump_to_external_flash' serves two purposes:
  * - By default, the compiler is free to inline any function call he wants. If
  *   the compiler decides to inline some functions that make use of VFP
@@ -55,6 +60,7 @@ static void __attribute__((noinline)) jump_to_external_flash() {
    * happening during the on boarding app. The backlight will be initialized
    * after the Power-On Self-Test if there is one or before switching to the
    * home app otherwise. */
+
   Ion::Device::Board::initPeripherals(true);
 
   /* Re-configurate the MPU to forbid access to blue LED if required */
@@ -95,9 +101,13 @@ static void __attribute__((noinline)) jump_to_external_flash() {
 
 #endif
 
+  ColorScreen(0xFF0000);
+
   /* Unprivileged mode */
   switch_to_unpriviledged();
   Ion::Device::Cache::isb();
+
+  ColorScreen(0x00FF00);
 
   ExternalStartPointer * externalFlashFirstAddress = reinterpret_cast<ExternalStartPointer *>(0x90001000);
   ExternalStartPointer external_flash_entry = *externalFlashFirstAddress;

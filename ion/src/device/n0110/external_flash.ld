@@ -9,32 +9,24 @@
  * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
  * be stored in Flash. */
 
-MEMORY {
-  SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
-  EXTERNAL_FLASH (rx) : ORIGIN = 0x90000000, LENGTH = 8M
-  /*
-  ITCM (rwx) : ORIGIN = 0x00000000, LENGTH = 16K
-  DTCM (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
-  SRAM1 (rwx) : ORIGIN = 0x20010000, LENGTH = 176K
-  SRAM2 (rwx) : ORIGIN = 0x2003C000, LENGTH = 16K
-   */
-}
+INCLUDE config_flash.ld
 
-STACK_SIZE = 32K;
-FIRST_EXTERNAL_FLASH_SECTOR_SIZE = 4K;
-RAM_DATA_OFFSET = 16K; /* TODO! */
+MEMORY {
+  EXTERNAL_FLASH (rx) : ORIGIN = EXTERNAL_FLASH_EXAM_MODE_ORIGIN, LENGTH = EXTERNAL_FLASH_LENGTH - INTERNAL_FLASH_UPDATABLE_LENGTH
+  SRAM (rw) : ORIGIN = EXTERNAL_FLASH_SRAM_ORIGIN, LENGTH = EXTERNAL_FLASH_SRAM_LENGTH
+}
 
 SECTIONS {
   .exam_mode_buffer ORIGIN(EXTERNAL_FLASH) : {
     _exam_mode_buffer_start = .;
     KEEP(*(.exam_mode_buffer))
     /* Note: We don't increment "." here, we set it. */
-    . = ORIGIN(EXTERNAL_FLASH) + FIRST_EXTERNAL_FLASH_SECTOR_SIZE;
+    . = ORIGIN(EXTERNAL_FLASH) + EXTERNAL_FLASH_EXAM_MODE_LENGTH;
     _exam_mode_buffer_end = .;
   } >EXTERNAL_FLASH
 
-  .isr_vector_table : {
-    _isr_start = (ORIGIN(EXTERNAL_FLASH) + FIRST_EXTERNAL_FLASH_SECTOR_SIZE);
+  .isr_vector_table ORIGIN(ORIGIN(EXTERNAL_FLASH) + EXTERNAL_FLASH_EXAM_MODE_LENGTH) : {
+    _isr_start = .;
     KEEP(*(.isr_vector_table))
   } >EXTERNAL_FLASH
 
@@ -57,7 +49,7 @@ SECTIONS {
     _init_array_end = .;
   } >EXTERNAL_FLASH
 
-  .data (ORIGIN(SRAM) + RAM_DATA_OFFSET): {
+  .data ORIGIN(SRAM) : {
     /* The data section is written to Flash but linked as if it were in RAM.
      *
      * This is required because its initial value matters (so it has to be in
@@ -72,7 +64,6 @@ SECTIONS {
      * -ization routine. */
     . = ALIGN(4);
     _data_section_start_flash = LOADADDR(.data);
-    /* Let the first part of the RAM free to be used by the internal flash. */
     _data_section_start_ram = .;
     *(.data)
     *(.data.*)

@@ -15,6 +15,7 @@ constexpr static AFGPIOPin DmPin = AFGPIOPin(GPIOA, 11, GPIO::AFR::AlternateFunc
 constexpr static AFGPIOPin DpPin = AFGPIOPin(GPIOA, 12, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast);
 
 constexpr static const char * InterfaceFlashStringDescriptor = "@External Flash/0x90000000/08*004Kg,01*032Kg,63*064Kg,64*064Kg";
+constexpr static int BCDDevice = 0x0110;
 
 }
 }

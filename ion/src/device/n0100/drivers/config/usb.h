@@ -15,6 +15,7 @@ constexpr static AFGPIOPin DmPin(GPIOA, 11, GPIO::AFR::AlternateFunction::AF10, 
 constexpr static AFGPIOPin DpPin(GPIOA, 12, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast);
 
 constexpr static const char * InterfaceFlashStringDescriptor = "@Internal Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg";
+constexpr static int BCDDevice = 0x0100;
 
 }
 }

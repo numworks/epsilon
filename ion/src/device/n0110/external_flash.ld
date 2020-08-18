@@ -25,7 +25,7 @@ SECTIONS {
     _exam_mode_buffer_end = .;
   } >EXTERNAL_FLASH
 
-  .isr_vector_table ORIGIN(ORIGIN(EXTERNAL_FLASH) + EXTERNAL_FLASH_EXAM_MODE_LENGTH) : {
+  .isr_vector_table (ORIGIN(EXTERNAL_FLASH) + EXTERNAL_FLASH_EXAM_MODE_LENGTH) : {
     _isr_start = .;
     KEEP(*(.isr_vector_table))
   } >EXTERNAL_FLASH

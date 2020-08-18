@@ -91,7 +91,7 @@ void modpyplot_flush_used_heap() {
   }
 }
 
-/* arrow(x,y,dx,dy, KW : head_width, color)
+/* arrow(x,y,dx,dy, KW : head_width, color, ec, fc)
  * x, y, dx, dy scalars
  * */
 
@@ -110,15 +110,30 @@ mp_obj_t modpyplot_arrow(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args)
    * coordinates which is handled by CurveView::drawArrow. */
   mp_obj_t arrowWidth = (elem == nullptr) ? mp_obj_new_float(0.0f) : elem->value;
 
-  // Setting arrow color
-  KDColor color;
+  // Edge color (= segment color)
+  KDColor ec;
+  // Face color (= arrow color)
+  KDColor fc;
   // color keyword
-  elem = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
-  colorFromKeywordArgument(elem, &color);
+  mp_map_elem_t * color = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_color), MP_MAP_LOOKUP);
+  if(color != nullptr){
+    colorFromKeywordArgument(color, &ec);
+    fc = ec;
+  } else {
+    mp_map_elem_t * ecArg = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_ec), MP_MAP_LOOKUP);
+    mp_map_elem_t * fcArg = mp_map_lookup(kw_args, MP_OBJ_NEW_QSTR(MP_QSTR_fc), MP_MAP_LOOKUP);
+    if(ecArg != nullptr && fcArg != nullptr) {
+      colorFromKeywordArgument(ecArg, &ec);
+      colorFromKeywordArgument(fcArg, &fc);
+    } else {
+      ec = Palette::nextDataColor(&paletteIndex);
+      fc = ec;
+    }
+  }
 
   // Adding the object to the plot
   assert(n_args >= 4);
-  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0]) + mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1]) + mp_obj_get_float(args[3])), color, arrowWidth);
+  sPlotStore->addSegment(args[0], args[1], mp_obj_new_float(mp_obj_get_float(args[0]) + mp_obj_get_float(args[2])), mp_obj_new_float(mp_obj_get_float(args[1]) + mp_obj_get_float(args[3])), ec, fc, arrowWidth);
   return mp_const_none;
 }
 
@@ -427,7 +442,7 @@ mp_obj_t modpyplot_plot(size_t n_args, const mp_obj_t *args,mp_map_t* kw_args) {
   }
 
   for (int i=0; i<(int)length-1; i++) {
-    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color);
+    sPlotStore->addSegment(xItems[i], yItems[i], xItems[i+1], yItems[i+1], color, color);
   }
 
   return mp_const_none;

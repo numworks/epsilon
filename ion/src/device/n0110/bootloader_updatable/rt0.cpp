@@ -101,15 +101,13 @@ static void __attribute__((noinline)) jump_to_external_flash() {
 
 #endif
 
-  ColorScreen(0xFF0000);
+  ColorScreen(0x00FF00);
 
   /* Unprivileged mode */
   switch_to_unpriviledged();
   Ion::Device::Cache::isb();
 
-  ColorScreen(0x00FF00);
-
-  ExternalStartPointer * externalFlashFirstAddress = reinterpret_cast<ExternalStartPointer *>(0x90001000);
+  ExternalStartPointer * externalFlashFirstAddress = reinterpret_cast<ExternalStartPointer *>(0x9000D000);
   ExternalStartPointer external_flash_entry = *externalFlashFirstAddress;
   external_flash_entry();
 }

@@ -18,10 +18,6 @@ void InterfaceDescriptor::push(Channel * c) const {
   }
 }
 
-uint8_t InterfaceDescriptor::bLength() const {
-  return Descriptor::bLength() + 7*sizeof(uint8_t);
-}
-
 }
 }
 }

@@ -84,7 +84,7 @@ public:
         5,      // iInterface: Index of the Interface string, see m_descriptor
         &m_dfuFunctionalDescriptor),
     m_configurationDescriptor(
-        9 + 9 + 9 + 9, // wTotalLength: configuration descriptor + flash interface descriptor + sram interfae descriptor + dfu functional descriptor lengths //TODO TODO LEA
+        m_configurationDescriptor.BLength() + m_interfaceFlashDescriptor.BLength() + m_interfaceSRAMDescriptor.BLength() + m_dfuFunctionalDescriptor.BLength(), // wTotalLength
         1,      // bNumInterfaces
         k_bConfigurationValue, // bConfigurationValue
         0,      // iConfiguration: No string descriptor for the configuration
@@ -99,7 +99,7 @@ public:
         k_webUSBVendorCode,
         k_webUSBLandingPageIndex),
     m_bosDescriptor(
-        5 + 24, // wTotalLength: BOS descriptor + webusb platform descriptor lengths
+        m_bosDescriptor.BLength() + m_webUSBPlatformDescriptor.BLength(), // wTotalLength
         1,      // bNumDeviceCapabilities
         &m_webUSBPlatformDescriptor),
     m_languageStringDescriptor(),

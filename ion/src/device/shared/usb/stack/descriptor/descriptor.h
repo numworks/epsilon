@@ -17,9 +17,12 @@ public:
   {
   }
   uint8_t type() const { return m_bDescriptorType; }
+  constexpr static uint8_t BLength() {
+    return 2*sizeof(uint8_t);
+  }
 protected:
   void push(Channel * c) const override;
-  virtual uint8_t bLength() const { return 2*sizeof(uint8_t); }
+  virtual uint8_t bLength() const { return BLength(); }
 private:
   uint8_t m_bDescriptorType;
 };

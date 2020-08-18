@@ -7,6 +7,10 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
+void DFUHandler() {
+  Calculator::PollAndReset(true);
+}
+
 void Calculator::PollAndReset(bool exitWithKeyboard) {
   char serialNumber[Ion::Device::SerialNumber::Length+1];
   Ion::Device::SerialNumber::copy(serialNumber);

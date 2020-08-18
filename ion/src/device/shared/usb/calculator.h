@@ -23,6 +23,8 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
+void DFUHandler(); // TODO: tidy me
+
 class Calculator : public Device {
 public:
   static void PollAndReset(bool exitWithKeyboard)

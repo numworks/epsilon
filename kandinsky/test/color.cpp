@@ -17,10 +17,25 @@ QUIZ_CASE(kandinsky_color_rgb) {
   quiz_assert(KDColor::RGB24(0x123456) == 0x11AA);
 }
 
+void assert_colors_blend_to(KDColor c1, KDColor c2, uint8_t alpha, KDColor res) {
+  quiz_assert(KDColor::blend(c1, c2, alpha) == res );
+}
+
 QUIZ_CASE(kandinsky_color_blend) {
   KDColor midGray = KDColor::RGB24(0x7F7F7F);
-  KDColor res = KDColor::blend(KDColorWhite, KDColorBlack, 0xFF);
-  quiz_assert(res == KDColorWhite);
-  quiz_assert(KDColor::blend(KDColorWhite, KDColorBlack, 0) == KDColorBlack);
-  quiz_assert(KDColor::blend(KDColorWhite, KDColorBlack, 0x7F) == midGray);
+  KDColor midTurquoise = KDColor::RGB24(0x007F7F);
+
+  assert_colors_blend_to(KDColorWhite, KDColorBlack, 0x00, KDColorBlack);
+  assert_colors_blend_to(KDColorWhite, KDColorBlack, 0xFF, KDColorWhite);
+  assert_colors_blend_to(KDColorWhite, KDColorBlack, 0x7F, midGray);
+
+  assert_colors_blend_to(KDColorGreen, KDColorBlue, 0x00, KDColorBlue);
+  assert_colors_blend_to(KDColorGreen, KDColorBlue, 0xFF, KDColorGreen);
+  assert_colors_blend_to(KDColorGreen, KDColorBlue, 0x7F, midTurquoise);
+
+  // Assert that blending two identical colors does not produce strange colors.
+  for (uint16_t col = 0; col < 0xFFFF; col++) {
+    KDColor color = KDColor::RGB16(col);
+    assert_colors_blend_to(color, color, col>>8, color);
+  }
 }

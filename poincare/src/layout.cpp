@@ -176,7 +176,13 @@ void Layout::addSibling(LayoutCursor * cursor, Layout sibling, bool moveCursor) 
   assert(!p.isUninitialized());
   if (p.type() == LayoutNode::Type::HorizontalLayout) {
     int indexInParent = p.indexOfChild(*this);
-    int siblingIndex = cursor->position() == LayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
+    int indexOfCursor = p.indexOfChild(cursor->layout());
+    /* indexOfCursor == -1 if cursor->layout() is not a child of p. This should
+     * never happen, as addSibling is only called from inside
+     * LayoutField::handleEventWithText, and LayoutField is supposed to keep
+     * its cursor up to date.*/
+    assert(indexOfCursor >= 0);
+    int siblingIndex = cursor->position() == LayoutCursor::Position::Left ? indexOfCursor : indexOfCursor + 1;
 
     /* Special case: If the neighbour sibling is a VerticalOffsetLayout, let it
      * handle the insertion of the new sibling. Do not enter the special case if

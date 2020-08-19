@@ -69,6 +69,7 @@ public:
       *(coefficientsAddresses[i]) = c;
     }
     bool operator==(const Vector &rhs) const { return time == rhs.time && distance == rhs.distance && mass == rhs.mass && current == rhs.current && temperature == rhs.temperature && amountOfSubstance == rhs.amountOfSubstance && luminuousIntensity == rhs.luminuousIntensity; }
+    bool operator!=(const Vector &rhs) const { return !(*this == rhs); }
     void addAllCoefficients(const Vector other, int factor);
     Expression toBaseUnits() const;
     T time;
@@ -102,6 +103,7 @@ public:
       m_inputPrefixable(inputPrefixable),
       m_outputPrefixable(outputPrefixable)
     {}
+
     virtual const Vector<int> dimensionVector() const { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; };
     virtual int numberOfRepresentatives() const { return 0; };
     /* representativesOfSameDimension returns a pointer to the array containing
@@ -110,18 +112,20 @@ public:
     virtual const Prefix * basePrefix() const { return Prefix::EmptyPrefix(); }
     virtual bool isBaseUnit() const { return false; }
     virtual const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const { return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), numberOfRepresentatives(), prefix); }
-    virtual bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const { return true; }
+    virtual bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const { return false; }
     virtual int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const { return 0; }
+
     const char * rootSymbol() const { return m_rootSymbol; }
     double ratio() const { return m_ratio; }
     bool isInputPrefixable() const { return m_inputPrefixable != Prefixable::None; }
     bool isOutputPrefixable() const { return m_outputPrefixable != Prefixable::None; }
-    bool canPrefix(const Prefix * prefix, bool input) const;
     int serialize(char * buffer, int bufferSize, const Prefix * prefix) const;
     bool canParseWithEquivalents(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix) const;
     bool canParse(const char * symbol, size_t length, const Prefix * * prefix) const;
     Expression toBaseUnits() const;
+    bool canPrefix(const Prefix * prefix, bool input) const;
     const Prefix * findBestPrefix(double value, double exponent) const;
+
   protected:
     static const Representative * DefaultFindBestRepresentative(double value, double exponent, const Representative * representatives, int length, const Prefix * * prefix);
     const char * m_rootSymbol;
@@ -187,7 +191,6 @@ public:
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return false; }
   private:
     using Representative::Representative;
   };
@@ -195,13 +198,18 @@ public:
   class TemperatureRepresentative : public Representative {
     friend class Unit;
   public:
+    static double ConvertTemperatures(double value, const Representative * source, const Representative * target);
     constexpr static TemperatureRepresentative Default() { return TemperatureRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 1, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override { return 3; }
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return false; }
+    const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override { return this; }
+    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
+    static constexpr double k_celsiusOrigin = 273.15;
+    static constexpr double k_fahrenheitOrigin = 459.67;
     using Representative::Representative;
   };
 
@@ -213,7 +221,6 @@ public:
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return false; }
   private:
     using Representative::Representative;
   };
@@ -226,7 +233,6 @@ public:
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return false; }
   private:
     using Representative::Representative;
   };
@@ -238,7 +244,6 @@ public:
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -1, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 1; }
     const Representative * representativesOfSameDimension() const override;
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return false; }
   private:
     using Representative::Representative;
   };
@@ -272,6 +277,7 @@ public:
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
+    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -394,6 +400,7 @@ public:
     int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
+    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -407,6 +414,7 @@ public:
     int numberOfRepresentatives() const override { return 8; }
     const Representative * representativesOfSameDimension() const override;
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
+    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -418,6 +426,7 @@ public:
     constexpr static SpeedRepresentative Default() { return SpeedRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
     const Vector<int>dimensionVector() const override { return Vector<int>{.time = -1, .distance = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override { return nullptr; }
+    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -539,7 +548,11 @@ public:
   typedef UnitNode::CurrentRepresentative CurrentRepresentative;
   static constexpr const CurrentRepresentative k_currentRepresentatives[] = { CurrentRepresentative("A", 1., Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::TemperatureRepresentative TemperatureRepresentative;
-  static constexpr const TemperatureRepresentative k_temperatureRepresentatives[] = { TemperatureRepresentative("K", 1., Prefixable::All, Prefixable::LongScale) };
+  static constexpr const TemperatureRepresentative k_temperatureRepresentatives[] = {
+    TemperatureRepresentative("K", 1., Prefixable::All, Prefixable::None),
+    TemperatureRepresentative("Cel", 1., Prefixable::None, Prefixable::None),
+    TemperatureRepresentative("Fah", 5./9., Prefixable::None, Prefixable::None),
+  };
   typedef UnitNode::AmountOfSubstanceRepresentative AmountOfSubstanceRepresentative;
   static constexpr const AmountOfSubstanceRepresentative k_amountOfSubstanceRepresentatives[] = { AmountOfSubstanceRepresentative("mol", 1., Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::LuminousIntensityRepresentative LuminousIntensityRepresentative;
@@ -631,6 +644,12 @@ public:
   static_assert(strings_equal(k_massRepresentatives[k_poundRepresentativeIndex].m_rootSymbol, "lb"), "Index for the Pound Representative is incorrect.");
   static constexpr int k_shortTonRepresentativeIndex = 5;
   static_assert(strings_equal(k_massRepresentatives[k_shortTonRepresentativeIndex].m_rootSymbol, "shtn"), "Index for the Short Ton Representative is incorrect.");
+  static constexpr int k_kelvinRepresentativeIndex = 0;
+  static_assert(strings_equal(k_temperatureRepresentatives[k_kelvinRepresentativeIndex].m_rootSymbol, "K"), "Index for the Kelvin Representative is incorrect.");
+  static constexpr int k_celsiusRepresentativeIndex = 1;
+  static_assert(strings_equal(k_temperatureRepresentatives[k_celsiusRepresentativeIndex].m_rootSymbol, "Cel"), "Index for the Celsius Representative is incorrect.");
+  static constexpr int k_fahrenheitRepresentativeIndex = 2;
+  static_assert(strings_equal(k_temperatureRepresentatives[k_fahrenheitRepresentativeIndex].m_rootSymbol, "Fah"), "Index for the Fahrenheit Representative is incorrect.");
   static constexpr int k_electronVoltRepresentativeIndex = 1;
   static_assert(strings_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbol, "eV"), "Index for the Electron Volt Representative is incorrect.");
   static constexpr int k_wattRepresentativeIndex = 0;
@@ -657,6 +676,7 @@ public:
   static bool ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat);
   static int SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext);
   static Expression BuildSplit(double value, const Unit * units, int length, ExpressionNode::ReductionContext reductionContext);
+  static Expression ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext);
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
@@ -664,6 +684,8 @@ public:
 
   bool isBaseUnit() const { return node()->representative()->isBaseUnit() && node()->prefix() == node()->representative()->basePrefix(); }
   void chooseBestRepresentativeAndPrefix(double * value, double exponent, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix);
+
+  const Representative * representative() const { return node()->representative(); }
 
 private:
   UnitNode * node() const { return static_cast<UnitNode *>(Expression::node()); }

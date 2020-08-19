@@ -9,32 +9,24 @@
 using namespace Ion::Device;
 using namespace Ion::Device::Regs;
 
-uint32_t hash(uint8_t * code, size_t size) {
-  // Hash code with size
-  /* CRC32 should not be used for signature. Any code could easily be altered
-   * to match any hash.
-   * TODO : Implement a secured Cryptographic hash function such as :
-   * - SHA-256, SHA-512, RIPEMD-160, Whirlpool, BLAKE2
-  */
-  return Ion::crc32Byte(code, size);
-}
-
-uint32_t decrypt(uint32_t signature) {
+void decrypt(uint8_t * signature, uint8_t * decryptedSignature) {
   // TODO : Decrypt signature with public key
-  return signature;
+  memcpy(decryptedSignature, signature, 32);
 }
 
 bool IsAuthenticated(void * pointer) {
   // Extract size and code
   size_t size = *(size_t*) pointer; // Code size is assumed to be stored as size_t at start of the pointer
-  uint8_t * code = (uint8_t *)(pointer + sizeof(size_t));
+  uint8_t * code = (uint8_t *)pointer + sizeof(size_t);
   // Hash code
-  uint32_t digest = hash(code, size);
+  uint8_t digest[32];
+  Ion::sha256(code, size, digest);
   // Extract and Decrypt signature
-  uint32_t signature = *(uint32_t *)(pointer + sizeof(size_t) + size);
-  uint32_t decryptedSignature = decrypt(signature);
-  // Code is authenticated if signature decrypt to digest
-  return decryptedSignature == digest;
+  uint8_t * signature = (uint8_t *)pointer + sizeof(size_t) + size;
+  uint8_t decryptedSignature[32];
+  decrypt(signature, decryptedSignature);
+  // Code is authenticated if signature decrypts to digest
+  return memcmp(digest, decryptedSignature, 32) == 0;
 }
 
 void ColorScreen(uint32_t color) {

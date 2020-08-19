@@ -83,6 +83,17 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext reducti
     return replaceWithUndefinedInPlace();
   }
 
+  /* Handle temperatures, as converting between Kelvin, Celsius and Fahrenheit
+   * cannot be done with a division. */
+  if (unit.type() == ExpressionNode::Type::Unit) {
+    Unit unitRef = static_cast<Unit &>(unit);
+    if (unitRef.representative()->dimensionVector() == Unit::TemperatureRepresentative::Default().dimensionVector()) {
+      Expression result = Unit::ConvertTemperatureUnits(childAtIndex(0), unitRef, reductionContext);
+      replaceWithInPlace(result);
+      return result;
+    }
+  }
+
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), unit.clone());
   division = division.deepReduce(reductionContext);

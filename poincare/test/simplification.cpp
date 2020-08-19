@@ -309,6 +309,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_shtn", "1×_shtn", User, Radian, Imperial);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_currentRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_temperatureRepresentatives);
+  assert_parsed_expression_simplify_to("_Cel", "1×_Cel");
+  assert_parsed_expression_simplify_to("_Fah", "1×_Fah");
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_amountOfSubstanceRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_luminousIntensityRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_forceRepresentatives);
@@ -343,6 +345,21 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("1_qt", "1×_qt", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("1_qt", "946.352946×_cm^3");
+
+  /* Tests for non-absolute units */
+  assert_parsed_expression_simplify_to("273.15×_K→_Cel", "0×_Cel");
+  assert_parsed_expression_simplify_to("0×_Cel", "0×_Cel");
+  assert_parsed_expression_simplify_to("-32×_Fah", "-32×_Fah");
+  assert_parsed_expression_simplify_to("273.16×_K", "273.16×_K");
+  assert_parsed_expression_simplify_to("100×_Cel→_K", "373.15×_K");
+  assert_parsed_expression_simplify_to("-100×_Cel→_K", "173.15×_K");
+  assert_parsed_expression_simplify_to("_Cel+_Cel", Undefined::Name());
+  assert_parsed_expression_simplify_to("_Cel+_Fah", Undefined::Name());
+  assert_parsed_expression_simplify_to("_K+_Fah", Undefined::Name());
+  assert_parsed_expression_simplify_to("2*20_Fah", Undefined::Name());
+  assert_parsed_expression_simplify_to("_Cel^2", Undefined::Name());
+  assert_parsed_expression_simplify_to("1/(-3_Cel)", Undefined::Name());
+  assert_parsed_expression_simplify_to("-1×100×_Cel→_K", Undefined::Name());
 
   /* Unit sum/subtract */
   assert_parsed_expression_simplify_to("_m+_m", "2×_m");
@@ -1204,6 +1221,13 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
   assert_parsed_expression_simplify_to("4→_km/_m", Undefined::Name());
   assert_parsed_expression_simplify_to("3×_min→_s+1-1", Undefined::Name());
+
+  assert_parsed_expression_simplify_to("0_K→_Cel", "-273.15×_Cel");
+  assert_parsed_expression_simplify_to("0_Cel→_K", "273.15×_K");
+  assert_parsed_expression_simplify_to("_Cel→_K", "274.15×_K");
+  assert_parsed_expression_simplify_to("0_K→_Fah", "-459.67×_Fah");
+  assert_parsed_expression_simplify_to("0_Fah→_K", "255.37222222222×_K");
+  assert_parsed_expression_simplify_to("_Fah→_K", "255.92777777778×_K");
 
   assert_reduce("_m→a", Radian, Metric, Real);
   assert_reduce("_m→b", Radian, Metric, Real);

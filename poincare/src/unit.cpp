@@ -5,6 +5,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
+#include <poincare/undefined.h>
 #include <algorithm>
 #include <assert.h>
 #include <limits.h>
@@ -54,6 +55,9 @@ constexpr const int
   Unit::k_ounceRepresentativeIndex,
   Unit::k_poundRepresentativeIndex,
   Unit::k_shortTonRepresentativeIndex,
+  Unit::k_kelvinRepresentativeIndex,
+  Unit::k_celsiusRepresentativeIndex,
+  Unit::k_fahrenheitRepresentativeIndex,
   Unit::k_electronVoltRepresentativeIndex,
   Unit::k_wattRepresentativeIndex,
   Unit::k_hectareRepresentativeIndex,
@@ -476,6 +480,44 @@ int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Express
   return 1;
 }
 
+double UnitNode::TemperatureRepresentative::ConvertTemperatures(double value, const  Representative * source, const Representative * target) {
+  assert(source->dimensionVector() == TemperatureRepresentative::Default().dimensionVector());
+  assert(target->dimensionVector() == TemperatureRepresentative::Default().dimensionVector());
+  if (source == target) {
+    return value;
+  }
+  constexpr double origin[] = {0, k_celsiusOrigin, k_fahrenheitOrigin};
+  assert(sizeof(origin) == source->numberOfRepresentatives() * sizeof(double));
+  double sourceOrigin = origin[source - source->representativesOfSameDimension()];
+  double targetOrigin = origin[target - target->representativesOfSameDimension()];
+  /* (T + origin) * ration converts T to Kelvin.
+   * T/ratio - origin converts T from Kelvin. */
+  return (value + sourceOrigin) * source->ratio() / target->ratio() - targetOrigin;
+}
+
+int UnitNode::TemperatureRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 2);
+  const Representative * celsius = TemperatureRepresentative::Default().representativesOfSameDimension() + Unit::k_celsiusRepresentativeIndex;
+  const Representative * fahrenheit = TemperatureRepresentative::Default().representativesOfSameDimension() + Unit::k_fahrenheitRepresentativeIndex;
+  const Representative * kelvin = TemperatureRepresentative::Default().representativesOfSameDimension() + Unit::k_kelvinRepresentativeIndex;
+  const Representative * targets[] =  {
+    reductionContext.unitFormat() == Preferences::UnitFormat::Metric ? celsius : fahrenheit,
+    reductionContext.unitFormat() == Preferences::UnitFormat::Metric ? fahrenheit : celsius,
+    kelvin};
+  int numberOfExpressionsSet = 0;
+  int numberOfTargets = sizeof(targets) / sizeof(Representative *);
+  for (int i = 0; i < numberOfTargets; i++) {
+    if (targets[i] == this) {
+      continue;
+    }
+    dest[numberOfExpressionsSet++] = Multiplication::Builder(
+      Float<double>::Builder(TemperatureRepresentative::ConvertTemperatures(value, this, targets[i])),
+      Unit::Builder(targets[i], Prefix::EmptyPrefix()));
+  }
+  assert(numberOfExpressionsSet == 2);
+  return numberOfExpressionsSet;
+}
+
 int UnitNode::EnergyRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
   assert(availableLength >= 2);
   /* 1. Convert into Wh
@@ -717,12 +759,12 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
   UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
   const Representative * representative = Representative::RepresentativeForDimension(vector);
   return representative != nullptr
-      && ((unit.type() == ExpressionNode::Type::Unit && !unit.convert<Unit>().isBaseUnit())
+      && ((unit.type() == ExpressionNode::Type::Unit && !static_cast<Unit &>(unit).isBaseUnit())
        || representative->hasAdditionalExpressions(value, unitFormat));
 }
 
 int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {
-  const Representative * representative = UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
+  const Representative * representative = units.type() == ExpressionNode::Type::Unit ? static_cast<Unit &>(units).node()->representative() : UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
   assert(representative);
   return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
 }
@@ -764,6 +806,28 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, Expres
   return res.squashUnaryHierarchyInPlace().shallowBeautify(keepUnitsContext);
 }
 
+Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext) {
+  const Representative * targetRepr = unit.representative();
+  const Prefix * targetPrefix = unit.node()->prefix();
+  assert(unit.representative()->dimensionVector() == TemperatureRepresentative::Default().dimensionVector());
+
+  Expression startUnit;
+  e = e.removeUnit(&startUnit);
+  if (startUnit.type() != ExpressionNode::Type::Unit) {
+    return Undefined::Builder();
+  }
+  const Representative * startRepr = static_cast<Unit &>(startUnit).representative();
+  if (startRepr->dimensionVector() != TemperatureRepresentative::Default().dimensionVector()) {
+    return Undefined::Builder();
+  }
+
+  const Prefix * startPrefix = static_cast<Unit &>(startUnit).node()->prefix();
+  double value = e.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  return Multiplication::Builder(
+      Float<double>::Builder(TemperatureRepresentative::ConvertTemperatures(value * std::pow(10., startPrefix->exponent()), startRepr, targetRepr) * std::pow(10., - targetPrefix->exponent())),
+      unit.clone());
+}
+
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
    || isBaseUnit()) {
@@ -772,6 +836,39 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
      * here but not g */
     return *this;
   }
+
+  /* Handle temperatures : Celsius and Fahrenheit should not be used in
+   * calculations, only in conversions and results.
+   * These are the seven legal forms for writing non-kelvin temperatures :
+   * (1)  _°C
+   * (2)  _°C->_?
+   * (3)  123_°C
+   * (4)  -123_°C
+   * (5)  123_°C->_K
+   * (6)  -123_°C->_K
+   * (7)  Right member of a unit convert - this is handled above, as
+   *      UnitConversion is set to None in this case. */
+  if (node()->representative()->dimensionVector() == TemperatureRepresentative::Default().dimensionVector()) {
+    Expression p = parent();
+    if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert) {
+      // Form (1) and (2)
+      return *this;
+    }
+    if (p.type() == ExpressionNode::Type::Multiplication && p.numberOfChildren() == 2) {
+      Expression pp = p.parent();
+      if (pp.isUninitialized() || pp.type() == UnitNode::Type::UnitConvert) {
+        // Form (3) and (5)
+        return *this;
+      }
+      Expression ppp = pp.parent();
+      if (pp.type() == UnitNode::Type::Opposite && (ppp.isUninitialized() || ppp.type() == UnitNode::Type::UnitConvert)) {
+        // Form (4) and (6)
+        return *this;
+      }
+    }
+    return replaceWithUndefinedInPlace();
+  }
+
   UnitNode * unitNode = node();
   const Representative * representative = unitNode->representative();
   const Prefix * prefix = unitNode->prefix();
@@ -789,7 +886,7 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
 Expression Unit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   // Force Float(1) in front of an orphan Unit
   if (parent().isUninitialized() || parent().type() == ExpressionNode::Type::Opposite) {
-    Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
+    Multiplication m = Multiplication::Builder(Float<double>::Builder(1.));
     replaceWithInPlace(m);
     m.addChildAtIndexInPlace(*this, 1, 1);
     return std::move(m);
@@ -806,7 +903,11 @@ Expression Unit::removeUnit(Expression * unit) {
 
 void Unit::chooseBestRepresentativeAndPrefix(double * value, double exponent, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix) {
   assert(exponent != 0.f);
-  if (std::isinf(*value) || *value == 0.0) {
+
+  if ((std::isinf(*value) || (*value == 0.0 && node()->representative()->dimensionVector() != TemperatureRepresentative::Default().dimensionVector()))) {
+    /* Use the base unit to represent an infinite or null value, as all units
+     * are equivalent.
+     * This is not true for temperatures (0 K != 0°C != 0°F). */
     node()->setRepresentative(node()->representative()->representativesOfSameDimension());
     node()->setPrefix(node()->representative()->basePrefix());
     return;

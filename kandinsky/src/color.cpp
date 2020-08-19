@@ -19,14 +19,9 @@ KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
   // First is RRRRR GGGGGG BBBBB
   // Second is same
 
-  uint8_t oneMinusAlpha = 0xFF-alpha;
+  uint16_t oneMinusAlpha = 0x100-alpha;
   uint16_t red = first.red()*alpha + second.red()*oneMinusAlpha;
   uint16_t green = first.green()*alpha + second.green()*oneMinusAlpha;
   uint16_t blue = first.blue()*alpha + second.blue()*oneMinusAlpha;
   return RGB888(red>>8, green>>8, blue>>8);
-
-  /* The formula used to blend colors produces some unwanted results :
-   * blend white + black, alpha = OxFF (should be white)
-   * white.red() * OxFF = OxF708, while we would like 0xF800
-   * Escaping early solves this issue. */
 }

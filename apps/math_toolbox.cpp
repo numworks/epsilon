@@ -160,7 +160,10 @@ const ToolboxMessageTree unitCurrentAmpereChildren[] = {
 };
 
 const ToolboxMessageTree unitTemperatureChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin)};
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureCelsiusSymbol, I18n::Message::UnitTemperatureCelsius),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureFahrenheitSymbol, I18n::Message::UnitTemperatureFahrenheit),
+};
 
 const ToolboxMessageTree unitAmountMoleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitAmountMoleSymbol, I18n::Message::UnitAmountMole),

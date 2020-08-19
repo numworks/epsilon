@@ -236,7 +236,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       // Add the Right parenthesis
       RightParenthesisLayout rightParenthesis = RightParenthesisLayout::Builder();
       if (cursor->position() == LayoutCursor::Position::Right) {
-         parentRef.addChildAtIndex(rightParenthesis, idxInParent + 1, parentRef.numberOfChildren(), nullptr);
+        parentRef.addChildAtIndex(rightParenthesis, idxInParent + 1, parentRef.numberOfChildren(), nullptr);
       } else {
         assert(cursor->position() == LayoutCursor::Position::Left);
         parentRef.addChildAtIndex(rightParenthesis, idxInParent, parentRef.numberOfChildren(), nullptr);

@@ -4,8 +4,9 @@ namespace Ion {
 
 const size_t ChunkBytes = 64;
 
+const size_t HashVariables = 8;
 // First 32 bits of the fractional parts of the square roots of the first 8 primes 2..19
-const uint32_t k_h[8] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
+const uint32_t k_h[HashVariables] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
 
 // First 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311
 const uint32_t k_k[64] = {
@@ -22,15 +23,16 @@ template <class T>
 void bigEndianMemcpy(uint8_t * target, T object) {
   // Perform a memcpy of an object at an address, using big-endian Endianness.
   size_t num = sizeof(T);
-  for (size_t i = 0; i < num; ++i) {
-    // Bytes are copied one by one, from the most significant to the least one
-    target[i] = (uint8_t)((object >> ((num - (i + 1)) * 8)) & 0xFF);
+  for (size_t i = 1; i <= num; ++i) {
+    // Bytes are copied right to left, from least to most significant byte
+    target[num-i] = reinterpret_cast<uint8_t>(object & 0xFF);
+    object = (object >> 8);
   }
 }
 
 void computeDigest(uint8_t * digest, uint32_t * h) {
   // Compute digest from hash value
-  for (size_t i = 0; i < 8; ++i) {
+  for (size_t i = 0; i < HashVariables; ++i) {
     // Copying hash value variable into digest
     bigEndianMemcpy<uint32_t>(digest + i * sizeof(uint32_t), h[i]);
   }
@@ -44,28 +46,30 @@ uint32_t rotate(uint32_t a, size_t c) {
 void processChunk(uint8_t * chunk, uint32_t * h) {
   // Update Hash Values using chunk
   // Create a 64-entry message schedule array of 32-bit words
-  uint32_t w[64];
+  const size_t messageScheduleArrayWords = 64;
+  uint32_t w[messageScheduleArrayWords];
   /* Note : Spacial complexity could be improved by only keeping last 16 words
    * from message schedule array, and computing it in compression function loop.
   */
-  // Copy chunk into first 16 words of the message schedule array
+  // Cast chunk as an array of 16 uint32_t (64 * 8 bits to 16 * 32 bits)
+  uint32_t * chunk32 = reinterpret_cast<uint32_t *>(chunk);
+  // Copy chunk into first 16 words of the message schedule array (Big-endian)
   for (int i = 0; i < 16; ++i) {
-    w[i] = ((uint32_t) chunk[4 * i] << 24) | ((uint32_t) chunk[1 + 4 * i] << 16)
-      | ((uint32_t) chunk[2 + 4 * i] << 8) | ((uint32_t) chunk[3 + 4 * i]);
+    bigEndianMemcpy<uint32_t>(reinterpret_cast<uint8_t *>(w + i), chunk32[i]);
   }
   // Extend the first 16 words into the remaining 48 words of the message schedule array
-  for (int i = 16; i < 64; ++i) {
-      uint32_t s0 = rotate(w[i-15],  7) ^ rotate(w[i-15], 18) ^ (w[i-15] >>  3);
-      uint32_t s1 = rotate(w[i- 2], 17) ^ rotate(w[i- 2], 19) ^ (w[i- 2] >> 10);
+  for (int i = 16; i < messageScheduleArrayWords; ++i) {
+      uint32_t s0 = rotate(w[i-15], 7) ^ rotate(w[i-15], 18) ^ (w[i-15] >>  3);
+      uint32_t s1 = rotate(w[i-2], 17) ^ rotate(w[i-2], 19) ^ (w[i-2] >> 10);
       w[i] = w[i-16] + s0 + w[i-7] + s1;
   }
 
   // Initialize working variables to current hash value
-  uint32_t v[8];
-  memcpy(v, h, 8*sizeof(uint32_t));
+  uint32_t v[HashVariables];
+  memcpy(v, h, HashVariables * sizeof(uint32_t));
 
   // Compression function main loop
-  for (int i = 0; i < 64; ++i) {
+  for (int i = 0; i < messageScheduleArrayWords; ++i) {
     uint32_t S1 = rotate(v[4], 6) ^ rotate(v[4], 11) ^ rotate(v[4], 25);
     uint32_t ch = (v[4] & v[5]) ^ (~v[4] & v[6]);
     uint32_t temp1 = v[7] + S1 + ch + k_k[i] + w[i];
@@ -83,30 +87,31 @@ void processChunk(uint8_t * chunk, uint32_t * h) {
   }
 
   // Add the compressed chunk to the current hash value
-  for (int i = 0; i < 8; ++i) {
+  for (int i = 0; i < HashVariables; ++i) {
     h[i] += v[i];
   }
 }
 
 void loadChunk(const uint8_t * data, uint32_t dataLength, uint8_t * chunk, int chunkIndex) {
   // Load data into chunk
+  size_t dataOffset = chunkIndex * ChunkBytes;
   if ( dataLength >= (chunkIndex + 1) * ChunkBytes ) {
     // Chunk only contains data
-    memcpy(chunk, data + chunkIndex * ChunkBytes, ChunkBytes);
+    memcpy(chunk, data + dataOffset, ChunkBytes);
     return;
   }
 
   int lastDataChunkLength = 0;
 
-  if ( dataLength >= chunkIndex * ChunkBytes) {
+  if ( dataLength >= dataOffset) {
     // There is data left to copy. It is strictly shorter than chunk size
-    lastDataChunkLength = dataLength - chunkIndex * ChunkBytes;
+    lastDataChunkLength = dataLength - dataOffset;
     // Copying data
-    memcpy(chunk, data + chunkIndex * ChunkBytes, lastDataChunkLength);
-    // Setting following chunk's bits to 0
-    memset(chunk + lastDataChunkLength, 0, ChunkBytes - lastDataChunkLength);
+    memcpy(chunk, data + dataOffset, lastDataChunkLength);
     // Setting a bit to 1 right after data
     memset(chunk + lastDataChunkLength, 0x80, 1);
+    // Setting following chunk's bits to 0
+    memset(chunk + lastDataChunkLength + 1, 0, ChunkBytes - lastDataChunkLength - 1);
   } else {
     // Data and bit 1 are in previous chunk. Setting chunk's bits to 0
     memset(chunk, 0, ChunkBytes);
@@ -114,9 +119,9 @@ void loadChunk(const uint8_t * data, uint32_t dataLength, uint8_t * chunk, int c
 
   if (ChunkBytes - lastDataChunkLength > sizeof(uint64_t)) {
     // There is enough space left for dataLength
-    uint64_t bitLenght = dataLength * 8;
-    // Copying bitLenght as bigEndian uint64 at the end of last chunk
-    bigEndianMemcpy<uint64_t>(chunk + ChunkBytes - sizeof(uint64_t), bitLenght);
+    uint64_t bitLength = static_cast<uint64_t>(dataLength) * 8;
+    // Copying bitLength as bigEndian uint64 at the end of last chunk
+    bigEndianMemcpy<uint64_t>(chunk + ChunkBytes - sizeof(uint64_t), bitLength);
   }
 }
 
@@ -135,8 +140,8 @@ int totalchunks(uint32_t dataLength) {
 
 void sha256(const uint8_t * data, uint32_t dataLength, uint8_t * digest) {
   // Initialize hash value variables
-  uint32_t h[8];
-  for (int i = 0; i < 8; ++i) {
+  uint32_t h[HashVariables];
+  for (int i = 0; i < HashVariables; ++i) {
     h[i] = k_h[i];
   }
   // Create chunk

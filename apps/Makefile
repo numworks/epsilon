@@ -93,7 +93,3 @@ apps_tests_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \
   global_preferences.cpp \
 )
-
-ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
-
-$(call object_for,apps/main.cpp): SFLAGS += $(ION_DEVICE_SFLAGS)

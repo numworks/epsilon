@@ -32,3 +32,8 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   usb.cpp \
   wakeup.cpp \
 )
+
+# Extract the Ion::Device::Timing::MillisElapsed variable address to link it in the external flash
+$(BUILD_DIR)/ion/src/device/shared/drivers/timing.sym: $(BUILD_DIR)/bootloader.updatable.elf
+	$(eval TIMING_MILLIS_ELAPSED_ADDRESS := $(shell arm-none-eabi-nm $^ | grep "_ZN3Ion6Device6Timing13MillisElapsedE" | cut -d ' ' -f 1))
+	echo "_ZN3Ion6Device6Timing13MillisElapsedE = 0x$(TIMING_MILLIS_ELAPSED_ADDRESS);" > $@

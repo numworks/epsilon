@@ -16,7 +16,7 @@ $(BUILD_DIR)/bootloader.updatable.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL
 $(BUILD_DIR)/bootloader.updatable.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)
 
 .PHONY: secure_bootloader_external
-secure_bootloader_external: $(BUILD_DIR)/epsilon.elf $(BUILD_DIR)/bootloader.updatable.elf
+secure_bootloader_external: $(BUILD_DIR)/bootloader.updatable.elf $(BUILD_DIR)/epsilon.elf
 	$(Q) python3 build/device/elf2dfuTwoElf.py $< $(word 2,$^) $(BUILD_DIR)/epsilon.dfu
 
 .PHONY: %_flash

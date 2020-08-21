@@ -1,7 +1,7 @@
-#include "reset.h"
+#include "reset_privileged.h"
 #include <regs/regs.h>
 #include <drivers/cache.h>
-#include <drivers/board.h>
+#include <drivers/board_privileged.h>
 #include <drivers/external_flash.h>
 
 namespace Ion {
@@ -11,6 +11,10 @@ namespace Reset {
 using namespace Regs;
 
 void core() {
+  coreHandler();
+}
+
+void coreHandler() {
   // Perform a full core reset
   Ion::Device::Cache::dsb(); // Complete all memory accesses
   CORTEX.AIRCR()->requestReset();
@@ -21,11 +25,16 @@ void core() {
   }
 }
 
-/* We isolate the jump code that needs to be executed from the internal
- * flash (because the external flash is then shut down). We forbid
- * inlining these instructions in the external flash. */
 
-void __attribute__((noinline)) internalFlashJump(uint32_t jumpIsrVectorAddress) {
+/* jump is executed from the internal flash only as it shutdowns the external
+ * flash. */
+
+void jump(uint32_t jumpIsrVectorAddress) {
+  // Disable cache before reset
+  Ion::Device::Cache::disable();
+
+  /* Shutdown all clocks and periherals to mimic a hardware reset. */
+  Board::shutdownPeripherals();
   ExternalFlash::shutdown();
   Board::shutdownClocks();
 
@@ -43,15 +52,6 @@ void __attribute__((noinline)) internalFlashJump(uint32_t jumpIsrVectorAddress) 
       [stackPointer] "r" (*stackPointerAddress),
       [resetHandler] "r" (*resetHandlerAddress)
   );
-}
-
-void jump(uint32_t jumpIsrVectorAddress) {
-  // Disable cache before reset
-  Ion::Device::Cache::disable();
-
-  /* Shutdown all clocks and periherals to mimic a hardware reset. */
-  Board::shutdownPeripherals();
-  internalFlashJump(jumpIsrVectorAddress);
 
 }
 

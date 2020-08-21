@@ -2,10 +2,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
-#include "../../shared/drivers/board.h"
-#include "../../n0110/drivers/cache.h"
-#include "../../shared/drivers/reset.h"
-#include "../../shared/drivers/timing.h"
+#include <drivers/board_privileged.h>
+#include <drivers/cache.h>
+#include <drivers/reset.h>
+#include <drivers/timing.h>
+#include <regs/regs.h>
 
 typedef void (*cxx_constructor)();
 

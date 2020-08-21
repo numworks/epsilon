@@ -1,5 +1,5 @@
-#include "board.h"
 #include <drivers/board.h>
+#include <drivers/board_privileged.h>
 #include <drivers/backlight.h>
 #include <drivers/battery.h>
 #include <drivers/console.h>
@@ -8,7 +8,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/led.h>
 #include <drivers/swd.h>
-#include <drivers/timing.h>
+#include <drivers/timing_privileged.h>
 #include <drivers/usb.h>
 #include <drivers/config/clocks.h>
 
@@ -54,7 +54,7 @@ void initPeripherals(bool initBacklight) {
 
 void shutdownPeripherals(bool keepLEDAwake) {
   Timing::shutdown();
-  SWD::shutdown();
+  //SWD::shutdown();
   Console::shutdown();
   USB::shutdown();
   Battery::shutdown();
@@ -69,25 +69,34 @@ void shutdownPeripherals(bool keepLEDAwake) {
 
 static Frequency sStandardFrequency = Frequency::High;
 
-Frequency standardFrequency() {
-  return sStandardFrequency;
-}
-
 void setStandardFrequency(Frequency f) {
   sStandardFrequency = f;
 }
 
-void setClockFrequency(Frequency f) {
+void setClockLowFrequency() {
+  setLowClockFrequencyHandler();
+}
+
+void setClockStandardFrequency() {
+  setStandardClockFrequencyHandler();
+}
+
+void setLowClockFrequencyHandler() {
   // TODO: Update TIM3 prescaler or ARR to avoid irregular LED blinking
-  if (f == Frequency::High) {
-    RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
-    Device::Timing::setHighSysTickFrequency();
-  } else {
-    assert(f == Frequency::Low);
-    // Change the systick frequency to compensate the KCLK frequency change
-    Device::Timing::setLowSysTickFrequency();
-    RCC.CFGR()->setHPRE(Clocks::Config::AHBLowFrequencyPrescalerReg);
+  // Change the systick frequency to compensate the KCLK frequency change
+  Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKLowFrequency);
+  RCC.CFGR()->setHPRE(Clocks::Config::AHBLowFrequencyPrescalerReg);
+}
+
+void setStandardClockFrequencyHandler() {
+  if (sStandardFrequency == Frequency::Low) {
+    return setLowClockFrequencyHandler();
   }
+  assert(sStandardFrequency = Frequency::High);
+  // TODO: Update TIM3 prescaler or ARR to avoid irregular LED blinking
+  // Change the systick frequency to compensate the KCLK frequency change
+  RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
+  Device::Timing::setSysTickFrequency(Ion::Device::Clocks::Config::HCLKFrequency);
 }
 
 }

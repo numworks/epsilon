@@ -7,12 +7,6 @@ namespace Ion {
 namespace Device {
 namespace Timing {
 
-void init();
-void setLowSysTickFrequency();
-void setHighSysTickFrequency();
-void sysTickFrequencyHandler(int frequencyInMHz);
-void shutdown();
-
 extern volatile uint64_t MillisElapsed;
 
 }

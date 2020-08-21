@@ -1,9 +1,9 @@
-#include <drivers/board.h>
+#include <drivers/board_privileged.h>
 #include <drivers/power.h>
 #include <drivers/keyboard.h>
 #include <drivers/wakeup.h>
 #include <regs/regs.h>
-#include <drivers/svcall_handler.h>
+#include "power_privileged.h"
 
 namespace Ion {
 namespace Power {
@@ -12,9 +12,11 @@ namespace Power {
  * flash (because the external flash is then shut down). We forbid inlining to
  * avoid inlining these instructions in the external flash. */
 
+using namespace Device::Power;
+
 void standby() {
   Device::Power::waitUntilOnOffKeyReleased();
-  svc(SVC_POWER_STANDBY);
+  standbyHandler();
 }
 
 }

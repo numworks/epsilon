@@ -3,11 +3,13 @@ include ion/src/device/n0110/bootloader_updatable/Makefile
 include ion/src/device/n0110/external_flash/Makefile
 
 ion_device_src += $(addprefix ion/src/device/n0110/drivers/, \
-  board.cpp \
-  cache.cpp \
+  board_privileged.cpp:+privileged \
+  board.cpp\
+  cache.cpp:+privileged \
   flash.cpp \
   led.cpp \
-  power.cpp \
+  power_unprivileged.cpp:-privileged \
+  power_privileged.cpp:+privileged \
   reset.cpp \
 )
 

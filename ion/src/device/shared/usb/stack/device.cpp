@@ -1,6 +1,6 @@
 #include "device.h"
 #include <drivers/config/internal_flash.h>
-#include <drivers/reset.h>
+#include <drivers/reset_privileged.h>
 #include <regs/regs.h>
 
 namespace Ion {

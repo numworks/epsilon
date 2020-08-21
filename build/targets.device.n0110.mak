@@ -7,21 +7,20 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 
 
 bootloader_permanent_src = $(ion_src) $(ion_device_n0110_bootloader_permanent_src) $(liba_src) $(kandinsky_src)
-$(BUILD_DIR)/bootloader.permanent.$(EXE): $(call flavored_object_for,$(bootloader_permanent_src), usbxip)
+$(BUILD_DIR)/bootloader.permanent.$(EXE): $(call flavored_object_for,$(bootloader_permanent_src), usbxip privileged)
 $(BUILD_DIR)/bootloader.permanent.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash_permanent.ld
 
 bootloader_updatable_src = $(ion_src) $(ion_device_n0110_bootloader_updatable_src) $(liba_src) $(kandinsky_src)
-$(BUILD_DIR)/bootloader.updatable.$(EXE): $(call flavored_object_for,$(bootloader_updatable_src), usbxip)
+$(BUILD_DIR)/bootloader.updatable.$(EXE): $(call flavored_object_for,$(bootloader_updatable_src), usbxip svcallhandler privileged)
 $(BUILD_DIR)/bootloader.updatable.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash_updatable.ld
-
-$(BUILD_DIR)/bootloader.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)
+$(BUILD_DIR)/bootloader.updatable.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)
 
 .PHONY: secure_bootloader_external
 secure_bootloader_external: $(BUILD_DIR)/epsilon.elf $(BUILD_DIR)/bootloader.updatable.elf
 	$(Q) python3 build/device/elf2dfuTwoElf.py $< $(word 2,$^) $(BUILD_DIR)/epsilon.dfu
 
 .PHONY: %_flash
-%_flash: $(BUILD_DIR)/%.dfu $(BUILD_DIR)/flasher.light.dfu
+%_flash: $(BUILD_DIR)/%.dfu flasher.dfu
 	@echo "DFU     $@"
 	@echo "INFO    About to flash your device. Please plug your device to your computer"
 	@echo "        using an USB cable and press at the same time the 6 key and the RESET"

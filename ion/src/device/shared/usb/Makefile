@@ -1,38 +1,39 @@
 # USB code
 
 ion_device_usb_src += $(addprefix ion/src/device/shared/usb/, \
-  calculator.cpp \
-  dfu_interface.cpp\
+  calculator.cpp:+privileged \
+  dfu_interface.cpp:+privileged \
 )
 
 ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/, \
-  device.cpp\
-  endpoint0.cpp \
-  interface.cpp\
-  request_recipient.cpp\
-  setup_packet.cpp\
-  streamable.cpp\
+  device.cpp:+privileged \
+  endpoint0.cpp:+privileged \
+  interface.cpp:+privileged \
+  request_recipient.cpp:+privileged \
+  setup_packet.cpp:+privileged \
+  streamable.cpp:+privileged \
 )
 
 ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
-  bos_descriptor.cpp\
-  configuration_descriptor.cpp \
-  descriptor.cpp\
-  device_descriptor.cpp\
-  device_capability_descriptor.cpp\
-  dfu_functional_descriptor.cpp\
-  extended_compat_id_descriptor.cpp \
-  interface_descriptor.cpp\
-  language_id_string_descriptor.cpp \
-  microsoft_os_string_descriptor.cpp\
-  platform_device_capability_descriptor.cpp\
-  string_descriptor.cpp\
-  url_descriptor.cpp\
-  webusb_platform_descriptor.cpp\
+  bos_descriptor.cpp:+privileged \
+  configuration_descriptor.cpp:+privileged \
+  descriptor.cpp:+privileged \
+  device_descriptor.cpp:+privileged \
+  device_capability_descriptor.cpp:+privileged \
+  dfu_functional_descriptor.cpp:+privileged \
+  extended_compat_id_descriptor.cpp:+privileged \
+  interface_descriptor.cpp:+privileged \
+  language_id_string_descriptor.cpp:+privileged \
+  microsoft_os_string_descriptor.cpp:+privileged \
+  platform_device_capability_descriptor.cpp:+privileged \
+  string_descriptor.cpp:+privileged \
+  url_descriptor.cpp:+privileged \
+  webusb_platform_descriptor.cpp:+privileged \
 )
 
 # DFU code
 
+# TODO: remove? or at least update the sources from shared/drivers to select the privileged version?
 ion_device_dfu_src += liba/src/abs.c
 ion_device_dfu_src += liba/src/assert.c
 ion_device_dfu_src += liba/src/strlen.c
@@ -69,7 +70,8 @@ ion_device_dfu_src += $(addprefix ion/src/device/shared/drivers/, \
 )
 
 # Sources required to execute DFU in place
-ion_device_src += ion/src/device/shared/usb/dfu_xip.cpp:+usbxip
+ion_device_src += ion/src/device/shared/usb/dfu_xip_privileged.cpp:+usbxip,+privileged
+ion_device_src += ion/src/device/shared/usb/dfu_xip_unprivileged.cpp:+usbxip,-privileged
 ion_device_src += $(addsuffix :+usbxip,$(ion_device_usb_src))
 
 # Sources required to execute DFU in RAM

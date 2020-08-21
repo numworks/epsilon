@@ -2,7 +2,8 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
   battery.cpp \
   base64.cpp \
-  board.cpp \
+  board_privileged.cpp:+privileged \
+  board_unprivileged.cpp:-privileged \
   console_uart.cpp:+consoleuart \
   console_display.cpp:+consoledisplay \
   console_dummy.cpp:-consoledisplay \
@@ -18,12 +19,16 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   keyboard.cpp \
   led.cpp \
   power.cpp\
+  power_unprivileged.cpp:-privileged \
+  power_privileged.cpp:+privileged \
   random.cpp\
-  reset.cpp \
+  reset_privileged.cpp:+privileged \
+  reset_unprivileged.cpp:-privileged \
   serial_number.cpp \
+  svcall_handler.cpp:+svcallhandler \
   swd.cpp \
-  svcall_handler.cpp \
   timing.cpp \
+  timing_privileged.cpp:+privileged \
   usb.cpp \
   wakeup.cpp \
 )

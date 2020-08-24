@@ -1,5 +1,5 @@
-#ifndef ION_EXAM_MODE_H
-#define ION_EXAM_MODE_H
+#ifndef ION_EXAM_MODE_UNPRIVILEGED_H
+#define ION_EXAM_MODE_UNPRIVILEGED_H
 
 extern "C" {
 #include <stdint.h>

@@ -1,4 +1,5 @@
 #include "global_preferences.h"
+#include <ion/include/ion/exam_mode_unprivileged.h>
 
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
   static GlobalPreferences globalPreferences;

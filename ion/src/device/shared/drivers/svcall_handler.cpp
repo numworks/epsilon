@@ -3,6 +3,7 @@
 #include <drivers/power_privileged.h>
 #include <drivers/reset_privileged.h>
 #include <ion/src/device/shared/usb/dfu_privileged.h>
+#include <drivers/exam_mode_privileged.h>
 
 extern "C" {
 void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
@@ -25,6 +26,9 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
       return;
     case SVC_RESET_CORE:
       Ion::Device::Reset::coreHandler();
+      return;
+    case SVC_EXTERNAL_FLASH_WRITE:
+      Ion::Device::ExamMode::externalFlashWrite((uint8_t *)args[0], (uint8_t *)args[1]);
       return;
     default:
       return;

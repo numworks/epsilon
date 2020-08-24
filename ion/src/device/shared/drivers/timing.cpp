@@ -9,9 +9,6 @@ namespace Timing {
 
 using namespace Device::Timing;
 
-// Warning: this is not a real definition
-volatile uint64_t MillisElapsed = 0;
-
 uint64_t millis() {
   return MillisElapsed;
 }

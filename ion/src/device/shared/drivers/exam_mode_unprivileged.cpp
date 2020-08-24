@@ -1,5 +1,6 @@
-#include <ion/exam_mode.h>
+#include <ion/exam_mode_unprivileged.h>
 #include <drivers/config/exam_mode.h>
+#include <drivers/svcall.h>
 #include "flash.h"
 #include <assert.h>
 
@@ -82,6 +83,11 @@ uint8_t FetchExamMode() {
   return (nbOfZerosBefore + numberOfLeading0) % 3;
 }
 
+__attribute__ ((noinline)) void svcWriteFlash(uint8_t * address, uint8_t value[])
+{
+  svc(SVC_EXTERNAL_FLASH_WRITE);
+}
+
 void IncrementExamMode(uint8_t delta) {
   assert(delta == 1 || delta == 2);
   uint8_t * writingAddress = SignificantExamModeAddress();
@@ -106,14 +112,7 @@ void IncrementExamMode(uint8_t delta) {
     newValue[1] = ((uint16_t)1 << nbOfTargetedOnes) - 1;
   }
 
-  // Write the value in flash
-  /* As the number of changed bits is capped by 2, if *writingAddress has more
-   * than one remaining 1 bit, we know we toggle bits only in the first byte of
-   * newValue. We can settle for writing one byte instead of two. */
-  size_t writtenFlash = *writingAddress == 1 ? sizeof(uint16_t) : sizeof(uint8_t);
-  /* Avoid writing out of sector */
-  assert(writingAddress < (uint8_t *)&_exam_mode_buffer_end - 1 || (writingAddress == (uint8_t *)&_exam_mode_buffer_end - 1 && writtenFlash == 1));
-  Ion::Device::Flash::WriteMemory(writingAddress, newValue, writtenFlash);
+  svcWriteFlash(writingAddress, newValue);
 }
 
 }

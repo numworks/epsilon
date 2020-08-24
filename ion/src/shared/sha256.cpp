@@ -25,7 +25,7 @@ void bigEndianMemcpy(uint8_t * target, T object) {
   size_t num = sizeof(T);
   for (size_t i = 1; i <= num; ++i) {
     // Bytes are copied right to left, from least to most significant byte
-    target[num-i] = reinterpret_cast<uint8_t>(object & 0xFF);
+    target[num-i] = static_cast<uint8_t>(object & 0xFF);
     object = (object >> 8);
   }
 }

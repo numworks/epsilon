@@ -277,3 +277,29 @@ QUIZ_CASE(poincare_integer_serialize) {
   assert_integer_serializes_to(MaxInteger(), MaxIntegerString());
   assert_integer_serializes_to(OverflowedInteger(), Infinity::Name());
 }
+
+// Euclidian Division
+
+void assert_division_computes_to(int n, int m, const char * div) {
+  assert_expression_serialize_to(Integer::CreateEuclideanDivision(Integer(n), Integer(m)), div);
+}
+
+QUIZ_CASE(poincare_integer_euclidian_division) {
+  assert_division_computes_to(47, 8, "47=8×5+7");
+  assert_division_computes_to(1, 5, "1=5×0+1");
+  assert_division_computes_to(12, 4, "12=4×3+0");
+  assert_division_computes_to(-33, 7, "-33=7×(-5)+2");
+  assert_division_computes_to(-28, 101, "-28=101×(-1)+73");
+  assert_division_computes_to(-40, 2, "-40=2×(-20)+0");
+}
+
+void assert_mixed_fraction_computes_to(int n, int m, const char * frac) {
+  assert_expression_serialize_to(Integer::CreateMixedFraction(Integer(n), Integer(m)), frac);
+}
+
+QUIZ_CASE(poincare_integer_mixed_fraction) {
+  assert_mixed_fraction_computes_to(47, 8, "5+7/8");
+  assert_mixed_fraction_computes_to(1, 5, "0+1/5");
+  assert_mixed_fraction_computes_to(-33, 7, "-4-5/7");
+  assert_mixed_fraction_computes_to(-28, 101, "0-28/101");
+}

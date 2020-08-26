@@ -36,16 +36,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 
 KDCoordinate HistoryViewCell::Height(Calculation * calculation, bool expanded) {
   HistoryViewCell cell(nullptr);
-  bool didForceOutput = false;
-  cell.setCalculation(calculation, expanded, &didForceOutput);
-  if (didForceOutput) {
-    /* We could not compute the height of the calculation as it is (the display
-     * output was forced to another value during the height computation).
-     * Warning: the display output of calculation was actually changed, so it
-     * will cause problems if we already did some computations with another
-     * display value. */
-    return -1;
-  }
+  cell.setCalculation(calculation, expanded, true);
   KDRect ellipsisFrame = KDRectZero;
   KDRect inputFrame = KDRectZero;
   KDRect outputFrame = KDRectZero;
@@ -246,8 +237,7 @@ void HistoryViewCell::resetMemoization() {
   m_calculationCRC32 = 0;
 }
 
-void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, bool * didForceOutput) {
-  assert(!didForceOutput || *didForceOutput == false);
+void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, bool canChangeDisplayOutput) {
   uint32_t newCalculationCRC = Ion::crc32Byte((const uint8_t *)calculation, ((char *)calculation->next()) - ((char *) calculation));
   if (newCalculationCRC == m_calculationCRC32 && m_calculationExpanded == expanded) {
     return;
@@ -273,11 +263,8 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, b
     bool couldNotCreateExactLayout = false;
     exactOutputLayout = calculation->createExactOutputLayout(&couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
-      if (calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ExactOnly) {
+      if (canChangeDisplayOutput && calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ExactOnly) {
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
-        if (didForceOutput) {
-          *didForceOutput = true;
-        }
       } else {
         /* We should only display the exact result, but we cannot create it
          * -> raise an exception. */
@@ -294,21 +281,18 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, b
     bool couldNotCreateApproximateLayout = false;
     approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
-      if (calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
-        Poincare::ExceptionCheckpoint::Raise();
-      } else {
+      if (canChangeDisplayOutput && calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
         /* Set the display output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, and retry to create the approximate layout */
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
-        if (didForceOutput) {
-          *didForceOutput = true;
-        }
         exactOutputLayout = Poincare::Layout();
         couldNotCreateApproximateLayout = false;
         approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           Poincare::ExceptionCheckpoint::Raise();
         }
+      } else {
+        Poincare::ExceptionCheckpoint::Raise();
       }
     }
   }

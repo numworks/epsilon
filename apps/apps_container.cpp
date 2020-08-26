@@ -374,30 +374,7 @@ void AppsContainer::redrawWindow(bool force) {
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
   reset();
-  Preferences * preferences = Preferences::sharedPreferences();
-  switch ((int)preferences->colorOfLED()) {
-    case 0:
-      Ion::LED::setColor(KDColorRed);
-      break;
-    case 1:
-      Ion::LED::setColor(KDColorWhite);
-      break;
-    case 2:
-      Ion::LED::setColor(KDColorGreen);
-      break;
-    case 3:
-      Ion::LED::setColor(KDColorBlue);
-      break;
-    case 4:
-      Ion::LED::setColor(KDColorYellow);
-      break;
-    case 5:
-      Ion::LED::setColor(KDColorPurple);
-      break;
-    case 6:
-      Ion::LED::setColor(KDColorOrange);
-      break;
-  }
+  Ion::LED::setColor(KDColorRed);
   /* The Dutch exam mode LED is supposed to be orange but we can only make
    * blink "pure" colors: with RGB leds on or off (as the PWM is used for
    * blinking). The closest "pure" color is Yellow. Moreover, Orange LED is

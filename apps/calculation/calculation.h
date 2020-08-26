@@ -61,8 +61,6 @@ public:
   bool operator==(const Calculation& c);
   Calculation * next() const;
 
-  void tidy();
-
   // Texts
   enum class NumberOfSignificantDigits {
     Maximal,
@@ -83,9 +81,8 @@ public:
   Poincare::Layout createExactOutputLayout(bool * couldNotCreateExactLayout);
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context, bool * couldNotCreateApproximateLayout);
 
-  // Memoization of height
-  KDCoordinate memoizedHeight(bool expanded) { return expanded ? m_expandedHeight : m_height; }
-  void setMemoizedHeight(bool expanded, KDCoordinate height);
+  // Heights
+  KDCoordinate height(bool expanded);
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context * context);
@@ -100,7 +97,9 @@ private:
   static constexpr int k_numberOfExpressions = 4;
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
-  void resetHeightMemoization();
+
+  void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
+
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::maxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...) */

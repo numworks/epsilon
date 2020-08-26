@@ -10,13 +10,22 @@ public:
   Interval(const Interval&) = delete;
   int numberOfElements();
   void deleteElementAtIndex(int index);
+  class IntervalParameters {
+  public:
+    void setStart(double f) { m_start = f; }
+    void setEnd(double f) { m_end = f; }
+    void setStep(double f) { m_step = f; }
+    double start() const { return m_start; }
+    double end() const { return m_end; }
+    double step() const { return m_step; }
+  private:
+    double m_start;
+    double m_end;
+    double m_step;
+  };
   double element(int i);
-  double start() const { return m_start; }
-  double end() const { return m_end; }
-  double step() const { return m_step; }
-  void setStart(double f);
-  void setEnd(double f);
-  void setStep(double f);
+  IntervalParameters * parameters() { return &m_parameters; }
+  void setParameters(IntervalParameters parameters) { m_parameters = parameters; }
   void setElement(int i, double f);
   void forceRecompute(){ m_needCompute = true;}
   void reset();
@@ -27,14 +36,12 @@ private:
   void computeElements();
   int m_numberOfElements;
   double m_intervalBuffer[k_maxNumberOfElements];
-  double m_start;
-  double m_end;
-  double m_step;
   bool m_needCompute;
+  IntervalParameters m_parameters;
 };
 
-typedef void (Interval::*SetterPointer)(double);
-typedef double (Interval::*GetterPointer)() const;
+typedef void (Interval::IntervalParameters::*SetterPointer)(double);
+typedef double (Interval::IntervalParameters::*GetterPointer)() const;
 
 }
 

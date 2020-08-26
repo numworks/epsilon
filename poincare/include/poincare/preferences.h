@@ -37,15 +37,6 @@ public:
     Radian = 1,
     Gradian = 2
   };
-  enum class LEDColor : uint8_t {
-    Red = 0,
-    White = 1,
-    Green = 2,
-    Blue = 3,
-    Yellow = 4,
-    Purple = 5,
-    Orange = 6,
-  };
   enum class SymbolMultiplication : uint8_t {
     Cross = 0,
     MiddleDot = 1,
@@ -73,8 +64,6 @@ public:
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
   uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
-  LEDColor colorOfLED() const { return m_colorOfLED; }
-  void setColorOfLED(LEDColor color) { m_colorOfLED = color; }
   SymbolMultiplication symbolOfMultiplication() const { return m_symbolMultiplication; }
   void setSymbolMultiplication(SymbolMultiplication symbolOfMultiplication) { m_symbolMultiplication = symbolOfMultiplication; }
   SymbolFunction symbolOfFunction() const { return m_symbolFunction; }
@@ -88,7 +77,6 @@ private:
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
-  LEDColor m_colorOfLED;
   SymbolMultiplication m_symbolMultiplication;
   SymbolFunction m_symbolFunction;
   PythonFont m_pythonFont;

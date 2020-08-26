@@ -3,19 +3,10 @@
 using namespace Poincare;
 
 constexpr Shared::SettingsMessageTree s_examModeMode[] = {Shared::SettingsMessageTree(I18n::Message::ExamModeModeStandard), Shared::SettingsMessageTree(I18n::Message::ExamModeModeNoSym), Shared::SettingsMessageTree(I18n::Message::ExamModeModeNoSymNoText)};
-#if LEDS_CHOICE
-constexpr Shared::SettingsMessageTree s_ledColorChildren[] = {Shared::SettingsMessageTree(I18n::Message::ColorRed), Shared::SettingsMessageTree(I18n::Message::ColorWhite), Shared::SettingsMessageTree(I18n::Message::ColorGreen), Shared::SettingsMessageTree(I18n::Message::ColorBlue), Shared::SettingsMessageTree(I18n::Message::ColorYellow), Shared::SettingsMessageTree(I18n::Message::ColorPurple), Shared::SettingsMessageTree(I18n::Message::ColorOrange)};
-constexpr Shared::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[] = {Shared::SettingsMessageTree(I18n::Message::LEDColor, s_ledColorChildren), Shared::SettingsMessageTree(I18n::Message::ExamModeMode, s_examModeMode), Shared::SettingsMessageTree(I18n::Message::ActivateExamMode)};
-#else
 constexpr Shared::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[] = {Shared::SettingsMessageTree(I18n::Message::ExamModeMode, s_examModeMode), Shared::SettingsMessageTree(I18n::Message::ActivateExamMode)};
-#endif
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
-#if LEDS_CHOICE
-  return 3;
-#else
   return 2;
-#endif
 }
 
 GlobalPreferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {
@@ -38,24 +29,7 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
 
 KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
   assert(mode == GlobalPreferences::ExamMode::Standard || mode == GlobalPreferences::ExamMode::NoSym || mode == GlobalPreferences::ExamMode::NoSymNoText);
-  Preferences * preferences = Preferences::sharedPreferences();
-
-  switch((int) preferences->colorOfLED()) {
-    case 1:
-      return KDColorWhite;
-    case 2:
-      return KDColorGreen;
-    case 3:
-      return KDColorBlue;
-    case 4:
-      return KDColorYellow;
-    case 5:
-      return KDColorPurple;
-    case 6:
-      return KDColorOrange;
-    default:
-      return KDColorRed;
-  }
+  return KDColorRed;
 }
 
 bool ExamModeConfiguration::appIsForbiddenInExamMode(App::Descriptor::ExaminationLevel appExaminationLevel, GlobalPreferences::ExamMode mode) {

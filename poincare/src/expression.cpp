@@ -366,8 +366,8 @@ Expression Expression::defaultHandleUnitsInChildren() {
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     Expression unit;
-    childAtIndex(i).removeUnit(&unit);
-    if (!unit.isUninitialized()) {
+    Expression childI = childAtIndex(i).removeUnit(&unit);
+    if (childI.isUndefined() || !unit.isUninitialized()) {
       return replaceWithUndefinedInPlace();
     }
   }
@@ -817,7 +817,11 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
 
 Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
   sSimplificationHasBeenInterrupted = false;
-  return deepReduce(reductionContext);
+  Expression result = deepReduce(reductionContext);
+  if (sSimplificationHasBeenInterrupted) {
+    return replaceWithUndefinedInPlace();
+  }
+  return result;
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {

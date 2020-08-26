@@ -80,16 +80,7 @@ KDCoordinate IllustratedListController::rowHeight(int j) {
   }
   Shared::ExpiringPointer<Calculation> calculation = m_calculationStore.calculationAtIndex(calculationIndex);
   constexpr bool expanded = true;
-  KDCoordinate result = calculation->memoizedHeight(expanded);
-  if (result < 0) {
-    result = ScrollableThreeExpressionsCell::Height(calculation.pointer());
-    if (result < 0) {
-      // Raise, because Height modified the calculation and failed.
-      Poincare::ExceptionCheckpoint::Raise();
-    }
-    calculation->setMemoizedHeight(expanded, result);
-  }
-  return result + Metric::CellSeparatorThickness;
+  return calculation->height(expanded) + Metric::CellSeparatorThickness;
 }
 
 int IllustratedListController::typeAtLocation(int i, int j) {
@@ -98,7 +89,6 @@ int IllustratedListController::typeAtLocation(int i, int j) {
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == 0) {
-    // TODO ?
     return;
   }
   Poincare::Context * context = App::app()->localContext();
@@ -106,7 +96,6 @@ void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, in
   Calculation * c = m_calculationStore.calculationAtIndex(index-1).pointer();
   myCell->setCalculation(c);
   myCell->setDisplayCenter(c->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);
-  //myCell->setHighlighted(myCell->isHighlighted()); //TODO??
 }
 
 void IllustratedListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

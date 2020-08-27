@@ -65,7 +65,11 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    assert(rowIndex != k_indexOfBrightnessCell);
+    if (rowIndex == k_indexOfBrightnessCell) {
+      /* Nothing is supposed to happen when OK or EXE are pressed on the
+       * brightness cell. The case of pressing Right has been handled above. */
+      return true;
+    }
 
     if (rowIndex == k_indexOfLanguageCell) {
       m_localizationController.setMode(LocalizationController::Mode::Language);

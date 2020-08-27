@@ -122,15 +122,16 @@ void MicroPython::init(void * heapStart, void * heapEnd) {
   static mp_obj_t pystack[1024];
   mp_pystack_init(pystack, &pystack[MP_ARRAY_SIZE(pystack)]);
 #endif
-
-  volatile int stackTop;
-  void * stackTopAddress = (void *)(&stackTop);
   /* We delimit the stack part that will be used by Python. The stackTop is the
    * address of the first object that can be allocated on Python stack. This
    * boundaries are used:
    * - by gc_collect to determine where to collect roots of the objects that
    *   must be kept on the heap
-   * - to check if the maximal recursion depth has been reached. */
+   * - to check if the maximal recursion depth has been reached.
+   * Current stack pointer could go backward after initialization. A stack start
+   * pointer defined in main is therefore used. */
+  void * stackTopAddress = Ion::stackStart();
+
 #if MP_PORT_USE_STACK_SYMBOLS
   mp_stack_set_top(stackTopAddress);
   size_t stackLimitInBytes = (char *)stackTopAddress - (char *)&_stack_end;

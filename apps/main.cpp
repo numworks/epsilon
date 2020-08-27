@@ -2,6 +2,19 @@
 #include "global_preferences.h"
 #include <poincare/init.h>
 
+#if PLATFORM_DEVICE
+// On device, stack start address is always known. TODO : Factorize address
+static void * s_stackStart = reinterpret_cast<void *>(0x20000000 + 256*1024);
+#else
+// Stack start will be defined in ion_main.
+static void * s_stackStart = nullptr;
+#endif
+
+void * Ion::stackStart() {
+  assert(s_stackStart != nullptr);
+  return s_stackStart;
+}
+
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
@@ -60,6 +73,16 @@ void ion_main(int argc, const char * const argv[]) {
     }
   }
 #endif
+
+#if !PLATFORM_DEVICE
+  /* s_stackStart must be defined as early as possible to ensure that there
+   * cannot be allocated memory pointers before. Otherwise, with MicroPython for
+   * example, stack pointer could go backward after initialization and allocated
+   * memory pointers could be overlooked during mark procedure. */
+  volatile int stackTop;
+  s_stackStart = (void *)(&stackTop);
+#endif
+
   AppsContainer::sharedAppsContainer()->run();
 }
 

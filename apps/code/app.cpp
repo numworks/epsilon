@@ -19,9 +19,6 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
-#if EPSILON_GETOPT
-  m_lockOnConsole(false),
-#endif
   m_scriptStore()
 {
 }
@@ -40,10 +37,6 @@ ScriptStore * App::Snapshot::scriptStore() {
 }
 
 #if EPSILON_GETOPT
-bool App::Snapshot::lockOnConsole() const {
-  return m_lockOnConsole;
-}
-
 void App::Snapshot::setOpt(const char * name, const char * value) {
   if (strcmp(name, "script") == 0) {
     m_scriptStore.deleteAllScripts();
@@ -64,10 +57,6 @@ void App::Snapshot::setOpt(const char * name, const char * value) {
     ScriptStore::ScriptNamed(scriptName).toggleAutoimportationStatus(); // set Importation Status to 1
     return;
   }
-  if (strcmp(name, "lock-on-console") == 0) {
-    m_lockOnConsole = true;
-    return;
-  }
 }
 #endif
 
@@ -75,11 +64,7 @@ App::App(Snapshot * snapshot) :
   Shared::InputEventHandlerDelegateApp(snapshot, &m_codeStackViewController),
   m_pythonHeap{},
   m_pythonUser(nullptr),
-  m_consoleController(nullptr, this, snapshot->scriptStore()
-#if EPSILON_GETOPT
-      , snapshot->lockOnConsole()
-#endif
-      ),
+  m_consoleController(nullptr, this, snapshot->scriptStore()),
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
   m_menuController(&m_listFooter, this, snapshot->scriptStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter),

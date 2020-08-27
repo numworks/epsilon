@@ -36,7 +36,8 @@ epsilon_official_flavors = \
   official \
   official.onboarding \
   official.onboarding.update \
-  official.onboarding.beta
+  official.onboarding.beta \
+  official.codeconsole
 
 define rule_for_unconfirmed_official_flavor
 $$(BUILD_DIR)/epsilon.$(1).$$(EXE):

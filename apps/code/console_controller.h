@@ -18,11 +18,7 @@ class App;
 
 class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public Shared::InputEventHandlerDelegate, public MicroPython::ExecutionEnvironment {
 public:
-  ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
-#if EPSILON_GETOPT
-      , bool m_lockOnConsole
-#endif
-      );
+  ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore);
 
   bool loadPythonEnvironment();
   void unloadPythonEnvironment();
@@ -72,12 +68,6 @@ public:
   void refreshPrintOutput() override;
   void printText(const char * text, size_t length) override;
   const char * inputText(const char * prompt) override;
-
-#if EPSILON_GETOPT
-  bool locked() const {
-    return m_locked;
-  }
-#endif
 private:
   static constexpr const char * k_importCommand1 = "from ";
   static constexpr const char * k_importCommand2 = " import *";
@@ -94,6 +84,8 @@ private:
   void emptyOutputAccumulationBuffer();
   size_t firstNewLineCharIndex(const char * text, size_t length);
   StackViewController * stackViewController();
+  bool handleQuitEvent(Ion::Events::Event event);
+  void popStackViewController(TextField * textField);
   App * m_pythonDelegate;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
@@ -110,9 +102,6 @@ private:
   SandboxController m_sandboxController;
   bool m_inputRunLoopActive;
   bool m_autoImportScripts;
-#if EPSILON_GETOPT
-  bool m_locked;
-#endif
 };
 }
 

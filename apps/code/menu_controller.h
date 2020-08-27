@@ -80,6 +80,7 @@ private:
   void numberedDefaultScriptName(char * buffer);
   void updateAddScriptRowDisplay();
   bool privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain);
+  void bypassIfLocked();
   ScriptStore * m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];

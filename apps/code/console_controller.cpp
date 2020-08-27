@@ -18,11 +18,7 @@ namespace Code {
 
 static const char * sStandardPromptText = ">>> ";
 
-ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
-#if EPSILON_GETOPT
-      , bool lockOnConsole
-#endif
-    ) :
+ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore) :
   ViewController(parentResponder),
   SelectableTableViewDataSource(),
   TextFieldDelegate(),
@@ -34,9 +30,6 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_scriptStore(scriptStore),
   m_sandboxController(this),
   m_inputRunLoopActive(false)
-#if EPSILON_GETOPT
-  , m_locked(lockOnConsole)
-#endif
 {
   m_selectableTableView.setMargins(0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
@@ -220,15 +213,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.selectCellAtLocation(0, firstDeletedLineIndex);
     return true;
   }
-#if EPSILON_GETOPT
-  if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) {
-    if (m_inputRunLoopActive) {
-      terminateInputLoop();
-    }
-    return true;
-  }
-#endif
-  return false;
+  return handleQuitEvent(event);
 }
 
 int ConsoleController::numberOfRows() const {
@@ -352,20 +337,7 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
   if (m_inputRunLoopActive) {
     m_inputRunLoopActive = false;
   } else {
-#if EPSILON_GETOPT
-    /* In order to lock the console controller, we disable poping controllers
-     * below the console controller included. The stack should only hold:
-     * - the menu controller
-     * - the console controller
-     * The depth of the stack controller must always be above or equal to 2. */
-    if (!m_locked || stackViewController()->depth() > 2) {
-#endif
-      stackViewController()->pop();
-#if EPSILON_GETOPT
-    } else {
-      textField->setEditing(true);
-    }
-#endif
+    popStackViewController(textField);
   }
   return true;
 }

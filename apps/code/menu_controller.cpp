@@ -69,13 +69,7 @@ void MenuController::didBecomeFirstResponder() {
   }
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts() + 1);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
-#if EPSILON_GETOPT
-  if (consoleController()->locked()) {
-    consoleController()->setAutoImport(true);
-    stackViewController()->push(consoleController());
-    return;
-  }
-#endif
+  bypassIfLocked();
 }
 
 void MenuController::viewWillAppear() {

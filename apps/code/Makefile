@@ -4,6 +4,8 @@ app_headers += apps/code/app.h
 app_code_src = $(addprefix apps/code/,\
   app.cpp \
   console_controller.cpp \
+  console_controller_default.cpp:-codeconsole \
+  console_controller_locked.cpp:+codeconsole \
   console_edit_cell.cpp \
   console_line_cell.cpp \
   console_store.cpp \
@@ -11,6 +13,8 @@ app_code_src = $(addprefix apps/code/,\
   editor_view.cpp \
   helpers.cpp \
   menu_controller.cpp \
+  menu_controller_default.cpp:-codeconsole \
+  menu_controller_locked.cpp:+codeconsole \
   python_text_area.cpp \
   sandbox_controller.cpp \
   script_name_cell.cpp \

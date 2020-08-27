@@ -27,13 +27,9 @@ public:
     Descriptor * descriptor() override;
     ScriptStore * scriptStore();
 #if EPSILON_GETOPT
-    bool lockOnConsole() const;
     void setOpt(const char * name, const char * value) override;
 #endif
   private:
-#if EPSILON_GETOPT
-    bool m_lockOnConsole;
-#endif
     ScriptStore m_scriptStore;
   };
   static App * app() {

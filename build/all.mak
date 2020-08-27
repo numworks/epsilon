@@ -47,8 +47,8 @@ all:
 	@ cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.js
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
-	@ $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.official.js
-	@ cp output/release/simulator/web/epsilon.official.js output/all_official/epsilon.python.js
+	@ $(MAKE) PLATFORM=simulator TARGET=web EPSILON_APPS=code epsilon.official.codeconsole.js
+	@ cp output/release/simulator/web/epsilon.official.codeconsole.js output/all_official/epsilon.python.js
 	@ echo "BUILD_FIRMWARE    SIMULATOR ANDROID"
 	@ $(MAKE) PLATFORM=simulator TARGET=android clean
 	@ $(MAKE) PLATFORM=simulator TARGET=android epsilon.official.apk

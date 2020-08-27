@@ -46,6 +46,8 @@ uint32_t random();
 // Decompress data
 void decompress(const uint8_t * src, uint8_t * dst, int srcSize, int dstSize);
 
+// Returns address to the first object that can be allocated on stack
+void * stackStart();
 // Tells whether the stack pointer is within acceptable bounds
 bool stackSafe();
 

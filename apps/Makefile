@@ -65,9 +65,6 @@ language_preferences = apps/language_preferences.csv
 SFLAGS += -I$(BUILD_DIR)
 
 i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))
-ifeq ($(EPSILON_GETOPT),1)
-i18n_files += $(addprefix apps/language_,$(addsuffix _iso6391.universal.i18n, $(EPSILON_I18N)))
-endif
 
 i18n_files += $(call i18n_with_universal_for,shared)
 i18n_files += $(call i18n_with_universal_for,toolbox)
@@ -77,7 +74,7 @@ $(eval $(call rule_for, \
   I18N, \
   apps/i18n.cpp, \
   $(i18n_files), \
-  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $$^ --generateISO6391locales $$(EPSILON_GETOPT), \
+  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $$^, \
   global \
 ))
 

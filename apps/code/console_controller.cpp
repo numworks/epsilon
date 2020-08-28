@@ -450,7 +450,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
    * the sandbox. */
   hideAnyDisplayedViewController();
 
-  if (script.autoImportationStatus() || force) {
+  if (script.autoImportation() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
     assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);

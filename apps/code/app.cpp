@@ -54,7 +54,7 @@ void App::Snapshot::setOpt(const char * name, const char * value) {
     const char * scriptContent = separator;
     Code::ScriptTemplate script(scriptName, scriptContent);
     m_scriptStore.addScriptFromTemplate(&script);
-    ScriptStore::ScriptNamed(scriptName).toggleAutoimportationStatus(); // set Importation Status to 1
+    ScriptStore::ScriptNamed(scriptName).toggleAutoImportation(); // set Importation Status to 1
     return;
   }
 }

@@ -14,7 +14,7 @@ public:
   static const ScriptTemplate * Polynomial();
   static const ScriptTemplate * Parabola();
   const char * name() const { return m_name; }
-  const char * content() const { return m_value + Script::StatusSize(); }
+  const char * content() const { return m_value + sizeof(Script::Status); }
   const char * value() const { return m_value; }
 private:
   const char * m_name;

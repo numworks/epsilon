@@ -53,7 +53,7 @@ void ScriptStore::clearConsoleFetchInformation() {
 }
 
 Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
-  size_t valueSize = Script::StatusSize() + strlen(scriptTemplate->content()) + 1; // (auto importation status + content fetched status) + scriptcontent size + null-terminating char
+  size_t valueSize = sizeof(Script::Status) + strlen(scriptTemplate->content()) + 1; // (auto importation status + content fetched status) + scriptcontent size + null-terminating char
   assert(Script::nameCompliant(scriptTemplate->name()));
   Script::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithFullName(scriptTemplate->name(), scriptTemplate->value(), valueSize);
   assert(err != Script::ErrorStatus::NonCompliantName);

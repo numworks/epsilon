@@ -153,10 +153,7 @@ void EditorController::cleanStorageEmptySpace() {
   if (m_script.isNull() || !Ion::Storage::sharedStorage()->hasRecord(m_script)) {
     return;
   }
-  Ion::Storage::Record::Data scriptValue = m_script.value();
-  Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
-      m_script,
-      scriptValue.size - Script::StatusSize() - (strlen(m_script.content()) + 1)); // TODO optimize number of script fetches
+  Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(m_script, m_script.usedSize());
 }
 
 

@@ -59,9 +59,7 @@ void App::Snapshot::setOpt(const char * name, const char * value) {
      * importation status; we cannot set it to 1 before adding the script to
      * storage. */
     const char * scriptContent = separator;
-    Code::ScriptTemplate script(scriptName, scriptContent);
-    m_scriptStore.addScriptFromTemplate(&script);
-    ScriptStore::ScriptNamed(scriptName).toggleAutoImportation(); // set Importation Status to 1
+    Script::Create(scriptName, scriptContent);
     return;
   }
   if (strcmp(name, "lock-on-console") == 0) {

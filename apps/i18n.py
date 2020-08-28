@@ -23,12 +23,8 @@ parser.add_argument('--codepoints', help='the code_points.h file')
 parser.add_argument('--countrypreferences', help='the country_preferences.csv file')
 parser.add_argument('--languagepreferences', help='the language_preferences.csv file')
 parser.add_argument('--files', nargs='+', help='an i18n file')
-parser.add_argument('--generateISO6391locales', type=int, nargs='+', help='whether to generate the ISO6391 codes for the languages (for instance "en" for english)')
 
 args = parser.parse_args()
-
-def generate_ISO6391():
-    return args.generateISO6391locales[0] == 1
 
 def has_glyph(glyph):
     return glyph in codepoints
@@ -196,13 +192,6 @@ def print_header(data, path, locales, countries):
             lambda arg: arg.upper(),
             "  Message::Language")
 
-    if generate_ISO6391():
-        print_block_from_list(f,
-                "constexpr const Message LanguageISO6391Names[NumberOfLanguages] = {\n",
-                locales,
-                lambda arg: arg.upper(),
-                "  Message::LanguageISO6391")
-
     # Countries enumeration
     print_block_from_list(f,
             "enum class Country : uint8_t {\n",
@@ -234,6 +223,12 @@ def print_header(data, path, locales, countries):
         for param in countryPreferences[key]:
             line += param + ", "
         f.write(line[:-2] + "),\n")
+    f.write("};\n\n")
+
+    # Language ISO639-1 codes
+    f.write("constexpr const char * LanguageISO6391Codes[NumberOfLanguages] = {\n");
+    for locale in locales:
+        f.write("  \"" + locale + "\",\n")
     f.write("};\n\n")
 
     f.write("}\n\n")

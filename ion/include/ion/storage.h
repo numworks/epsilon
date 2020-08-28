@@ -104,7 +104,7 @@ public:
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation
-  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * data, size_t size);
+  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks);
   Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size);
 
   // Record getters

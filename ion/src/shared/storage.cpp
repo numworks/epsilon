@@ -144,8 +144,12 @@ Storage::Record::ErrorStatus Storage::notifyFullnessToDelegate() const {
   return Record::ErrorStatus::NotEnoughSpaceAvailable;
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
-  size_t recordSize = sizeOfRecordWithFullName(fullName, size);
+Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+  size_t totalSize = 0;
+  for (size_t i=0; i<numberOfChunks; i++) {
+    totalSize += sizeChunks[i];
+  }
+  size_t recordSize = sizeOfRecordWithFullName(fullName, totalSize);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
   }
@@ -160,7 +164,9 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
   // Fill name
   newRecord += overrideFullNameAtPosition(newRecord, fullName);
   // Fill data
-  newRecord += overrideValueAtPosition(newRecord, data, size);
+  for (size_t i=0; i<numberOfChunks; i++) {
+    newRecord += overrideValueAtPosition(newRecord, dataChunks[i], sizeChunks[i]);
+  }
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(fullName);

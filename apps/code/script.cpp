@@ -65,4 +65,15 @@ bool Script::nameCompliant(const char * name) {
   return false;
 }
 
+Script::ErrorStatus Script::Create(const char * name, const char * content) {
+  assert(nameCompliant(name));
+  Status status;
+  status.setAutoImportation(true); // toggleAutoImportation();
+  const void * dataChunks[] = {&status, content};
+  size_t sizeChunks[] = {sizeof(status), strlen(content)+1};
+  ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithFullName(name, dataChunks, sizeChunks, 2);
+  assert(err != ErrorStatus::NonCompliantName);
+  return err;
+}
+
 }

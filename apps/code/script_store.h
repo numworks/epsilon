@@ -43,7 +43,7 @@ public:
   void clearVariableBoxFetchInformation();
   void clearConsoleFetchInformation();
 
-  Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
+
 private:
   /* If the storage available space has a smaller size than
    * k_fullFreeSpaceSizeLimit, we consider the script store as full.
@@ -52,6 +52,10 @@ private:
    * importation status (1 char), the default content "from math import *\n"
    * (20 char) and 10 char of free space. */
   static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10;
+
+  Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
+    return Script::Create(scriptTemplate->name(), scriptTemplate->content());
+  }
 };
 
 }

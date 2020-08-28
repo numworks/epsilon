@@ -36,7 +36,7 @@ void ion_main(int argc, const char * const argv[]) {
         continue;
       }
       for (int j = 0; j < I18n::NumberOfLanguages; j++) {
-        if (strcmp(requestedLanguageId, I18n::translate(I18n::LanguageISO6391Names[j])) == 0) {
+        if (strcmp(requestedLanguageId, I18n::LanguageISO6391Codes[j]) == 0) {
           GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)j);
           GlobalPreferences::sharedGlobalPreferences()->setCountry(I18n::DefaultCountryForLanguage[j]);
           break;

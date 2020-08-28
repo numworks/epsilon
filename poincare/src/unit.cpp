@@ -687,6 +687,13 @@ static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(Expression uni
     factor = factor.childAtIndex(0);
   }
   assert(factor.type() == ExpressionNode::Type::Unit);
+  if (exponent == 0.f) {
+    /* Finding the best representative for a unit with exponent 0 doesn't
+     * really make sense, and should only happen with a weak ReductionTarget
+     * (such as in Graph app), that only rely on approximations. We keep the
+     * unit unchanged as it will approximate to undef anyway. */
+    return;
+  }
   static_cast<Unit &>(factor).chooseBestRepresentativeAndPrefix(value, exponent, reductionContext, optimizePrefix);
 }
 

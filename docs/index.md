@@ -12,7 +12,7 @@ First of all, you should learn [how to build and run](build/) your very own vers
 
 ## Discover Epsilon's architecture
 
-Epsilon's code is comprehensive, as it goes from a keyboard driver up to a math engine. Epsilon is made out of five main bricks: [Ion](<%= p "ion" %>), Kandinsky, [Poincaré](<%= p "poincare" %>), Escher, and Apps.
+Epsilon's code is comprehensive, as it goes from a keyboard driver up to a math engine. Epsilon is made out of five main bricks: [Ion](<%= p "ion" %>), Kandinsky, [Poincaré](<%= p "poincare" %>), [Escher](<%= p "escher" %>), and Apps.
 
 ![Epsilon's architecture](<%= p "architecture.svg" %>)
 

@@ -16,7 +16,7 @@ public:
    * 1 = null-terminating char */
 
   static bool DefaultName(char buffer[], size_t bufferSize);
-  static bool nameCompliant(const char * name);
+  static bool NameCompliant(const char * name);
   static ErrorStatus Create(const char * name, const char * content);
 
   // Status accessors

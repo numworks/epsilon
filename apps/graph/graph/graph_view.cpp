@@ -41,9 +41,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     float tmin = f->tMin();
     float tmax = f->tMax();
 
-    float tstep = (tmax-tmin) / k_graphStepDenominator;
-
-    float tCacheMin, tCacheStep;
+    float tCacheMin, tCacheStep, tStepNonCartesian;
     if (type == ContinuousFunction::PlotType::Cartesian) {
       float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
       /* Here, tCacheMin can depend on rect (and change as the user move)
@@ -53,7 +51,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       tCacheStep = pixelWidth();
     } else {
       tCacheMin = tmin;
-      tCacheStep = int(k_graphStepDenominator) * tstep / ContinuousFunctionCache::k_numberOfParametricCacheablePoints;
+      // Compute tCacheStep and tStepNonCartesian
+      ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
     }
     ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
 
@@ -75,7 +74,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }
     } else if (type == Shared::ContinuousFunction::PlotType::Polar) {
       // Polar
-      drawPolarCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
+      drawPolarCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
@@ -83,7 +82,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     } else {
       // Parametric
       assert(type == Shared::ContinuousFunction::PlotType::Parametric);
-      drawCurve(ctx, rect, tmin, tmax, tstep, [](float t, void * model, void * context) {
+      drawCurve(ctx, rect, tmin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
           ContinuousFunction * f = (ContinuousFunction *)model;
           Poincare::Context * c = (Poincare::Context *)context;
           return f->evaluateXYAtParameter(t, c);

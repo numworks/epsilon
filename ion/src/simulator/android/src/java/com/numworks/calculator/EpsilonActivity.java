@@ -28,13 +28,6 @@ public class EpsilonActivity extends SDLActivity {
     };
   }
 
-  @Override
-  protected String[] getArguments() {
-    Locale currentLocale = getResources().getConfiguration().locale;
-    String[] arguments = {"--language", currentLocale.getLanguage()};
-    return arguments;
-  }
-
   public Bitmap retrieveBitmapAsset(String identifier) {
     Bitmap bitmap = null;
     try {
@@ -45,6 +38,10 @@ public class EpsilonActivity extends SDLActivity {
       Log.w("LoadTexture", "Coundn't load a file:" + identifier);
     }
     return bitmap;
+  }
+
+  public String retrieveLanguage() {
+    return getResources().getConfiguration().locale.getLanguage();
   }
 
   public void telemetryInit() {

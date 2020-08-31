@@ -38,7 +38,7 @@ static void __attribute__((noinline)) external_flash_start() {
    * home app otherwise. */
   Ion::Device::Board::initPeripherals(false);
 
-  return ion_main(0, nullptr);
+  return ion_main();
 }
 
 /* This additional function call 'jump_to_external_flash' serves two purposes:

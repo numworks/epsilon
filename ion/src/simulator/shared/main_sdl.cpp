@@ -24,7 +24,7 @@ int main(int argc, char * argv[]) {
   Ion::Simulator::Telemetry::init();
 #endif
   Ion::Simulator::Main::init();
-  ion_main(arguments.size(), &arguments[0]);
+  ion_main();
   Ion::Simulator::Main::quit();
 #if EPSILON_TELEMETRY
   Ion::Simulator::Telemetry::shutdown();

@@ -18,7 +18,7 @@ void ion_main(int argc, const char * const argv[]) {
 
 #else
 
-void ion_main(int argc, const char * const argv[]) {
+void ion_main() {
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
 

@@ -7,7 +7,6 @@ namespace Shared {
 constexpr int ContinuousFunctionCache::k_sizeOfCache;
 constexpr float ContinuousFunctionCache::k_cacheHitTolerance;
 constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
-constexpr int ContinuousFunctionCache::k_numberOfParametricCacheablePoints;
 
 // public
 void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
@@ -50,6 +49,26 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const C
     return function->privateEvaluateXYAtParameter(t, context);
   }
   return valuesAtIndex(function, context, t, resIndex);
+}
+
+void ContinuousFunctionCache::ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin) {
+  // Expected step length
+  *tStep = (tMax - tMin) / Graph::GraphView::k_graphStepDenominator;
+  /* Parametric and polar functions require caching both x and y values,
+   * with the same k_sizeOfCache. To cover the entire range,
+   * number of cacheable points is half the cache size. */
+  const int numberOfCacheablePoints = k_sizeOfCache / 2;
+  const int numberOfWholeSteps = static_cast<int>(Graph::GraphView::k_graphStepDenominator);
+  static_assert(numberOfCacheablePoints % numberOfWholeSteps == 0, "numberOfCacheablePoints should be a multiple of numberOfWholeSteps for optimal caching");
+  /* Define cacheStep such that every whole graph steps are equally divided
+   * For instance, with :
+   *    graphStepDenominator = 10.1
+   *    numberOfCacheablePoints = 160
+   * tMin [----------------|----------------| ... |----------------|**] tMax
+   *             step1           step2                  step10       step11
+   * There are 11 steps, the first 10 are whole and have an equal size (tStep).
+   * There are 16 cache points in the first 10 steps, 160 total cache points. */
+  *tCacheStep = *tStep * numberOfWholeSteps / numberOfCacheablePoints;
 }
 
 // private

@@ -37,7 +37,7 @@ bool Script::DefaultName(char buffer[], size_t bufferSize) {
   return false;
 }
 
-bool Script::nameCompliant(const char * name) {
+bool Script::NameCompliant(const char * name) {
   /* We allow here the empty script name ".py", because it is the name used to
    * create a new empty script. When naming or renaming a script, we check
    * elsewhere that the name is no longer empty.
@@ -66,7 +66,7 @@ bool Script::nameCompliant(const char * name) {
 }
 
 Script::ErrorStatus Script::Create(const char * name, const char * content) {
-  assert(nameCompliant(name));
+  assert(NameCompliant(name));
   Status status;
   status.setAutoImportation(true); // toggleAutoImportation();
   const void * dataChunks[] = {&status, content};

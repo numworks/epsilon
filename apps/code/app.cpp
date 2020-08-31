@@ -36,27 +36,10 @@ ScriptStore * App::Snapshot::scriptStore() {
   return &m_scriptStore;
 }
 
-#if EPSILON_GETOPT
-void App::Snapshot::setOpt(const char * name, const char * value) {
-  if (strcmp(name, "script") == 0) {
-    m_scriptStore.deleteAllScripts();
-    char * separator = const_cast<char *>(UTF8Helper::CodePointSearch(value, ':'));
-    if (*separator == 0) {
-      return;
-    }
-    *separator = 0;
-    const char * scriptName = value;
-    /* We include the 0 in the scriptContent to represent the importation
-     * status. It is set to 1 after addScriptFromTemplate. Indeed, this '/0'
-     * char has two goals: ending the scriptName and representing the
-     * importation status; we cannot set it to 1 before adding the script to
-     * storage. */
-    const char * scriptContent = separator;
-    Script::Create(scriptName, scriptContent);
-    return;
-  }
+void App::Snapshot::loadScript(const char * scriptName, const char * scriptContent) {
+  m_scriptStore.deleteAllScripts();
+  Script::Create(scriptName, scriptContent);
 }
-#endif
 
 App::App(Snapshot * snapshot) :
   Shared::InputEventHandlerDelegateApp(snapshot, &m_codeStackViewController),

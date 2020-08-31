@@ -26,9 +26,7 @@ public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
     ScriptStore * scriptStore();
-#if EPSILON_GETOPT
-    void setOpt(const char * name, const char * value) override;
-#endif
+    void loadScript(const char * scriptName, const char * scriptContent);
   private:
     ScriptStore m_scriptStore;
   };

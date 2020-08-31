@@ -4,6 +4,7 @@
 #if !EPSILON_SDL_SCREEN_ONLY
 #include "layout.h"
 #endif
+#include "options.h"
 #include "telemetry.h"
 #include "random.h"
 
@@ -12,21 +13,13 @@
 #include <ion/timing.h>
 #include <ion/events.h>
 #include <SDL.h>
-#include <vector>
 
 void Ion::Timing::msleep(uint32_t ms) {
   SDL_Delay(ms);
 }
 
 int main(int argc, char * argv[]) {
-  std::vector<const char *> arguments(argv, argv + argc);
-
-  char * language = IonSimulatorGetLanguageCode();
-  if (language != nullptr) {
-    arguments.push_back("--language");
-    arguments.push_back(language);
-  }
-
+  Ion::Simulator::Options::parse(argc, argv);
 #if EPSILON_TELEMETRY
   Ion::Simulator::Telemetry::init();
 #endif
@@ -36,7 +29,6 @@ int main(int argc, char * argv[]) {
 #if EPSILON_TELEMETRY
   Ion::Simulator::Telemetry::shutdown();
 #endif
-
   return 0;
 }
 
@@ -55,12 +47,16 @@ static SDL_Rect sScreenRect;
 #endif
 
 void init() {
+  Random::init();
+
+  if (Options::headless()) {
+    return;
+  }
+
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Could not init video");
     return;
   }
-
-  Random::init();
 
   sWindow = SDL_CreateWindow(
     "Epsilon",
@@ -148,6 +144,9 @@ void refresh() {
 }
 
 void quit() {
+  if (Options::headless()) {
+    return;
+  }
   SDL_DestroyWindow(sWindow);
   SDL_Quit();
 }

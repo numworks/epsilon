@@ -55,6 +55,16 @@ bool AppsContainer::poincareCircuitBreaker() {
   return state.keyDown(Ion::Keyboard::Key::Back);
 }
 
+App::Snapshot * AppsContainer::snapshotNamed(const char * name) {
+  const char * appNames[] = {"home", EPSILON_APPS_NAMES};
+  for (int i=0; i<numberOfApps(); i++) {
+    if (strcmp(name, appNames[i]) == 0) {
+      return appSnapshotAtIndex(i);
+    }
+  }
+  return nullptr;
+}
+
 App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
   return &m_hardwareTestSnapshot;
 }

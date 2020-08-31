@@ -27,6 +27,7 @@ public:
   static bool poincareCircuitBreaker();
   virtual int numberOfApps() = 0;
   virtual App::Snapshot * appSnapshotAtIndex(int index) = 0;
+  App::Snapshot * snapshotNamed(const char * name);
   App::Snapshot * initialAppSnapshot();
   App::Snapshot * hardwareTestAppSnapshot();
   App::Snapshot * onBoardingAppSnapshot();

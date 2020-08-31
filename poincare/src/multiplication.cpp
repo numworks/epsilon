@@ -731,6 +731,11 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       }
       if (shouldFactorizeBase) {
         factorizeBase(i, i+1, reductionContext);
+        /* An undef term could have appeared when factorizing 1^inf and 1^-inf
+         * for instance. In that case, we escape and return undef. */
+        if (childAtIndex(i).isUndefined()) {
+          return replaceWithUndefinedInPlace();
+        }
         continue;
       }
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {

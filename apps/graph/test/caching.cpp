@@ -55,8 +55,11 @@ void assert_check_polar_cache_against_function(ContinuousFunction * function, Co
 
   float tMin = range->xMin();
   float tMax = range->xMax();
-  float tStep = ((tMax - tMin) / Graph::GraphView::k_graphStepDenominator) / ContinuousFunctionCache::k_parametricStepFactor;
-  ContinuousFunctionCache::PrepareForCaching(function, cache, tMin, tStep);
+
+  float tStep, tCacheStep;
+  ContinuousFunctionCache::ComputeNonCartesianSteps(&tStep, &tCacheStep, tMax, tMin);
+
+  ContinuousFunctionCache::PrepareForCaching(function, cache, tMin, tCacheStep);
 
   // Fill the cache
   float t;

@@ -11,16 +11,8 @@ namespace Shared {
 class ContinuousFunction;
 
 class ContinuousFunctionCache {
-private:
-  /* The size of the cache is chosen to optimize the display of cartesian
-   * functions */
-   static constexpr int k_sizeOfCache = Ion::Display::Width;
 public:
   static constexpr int k_numberOfAvailableCaches = 2;
-  /* Parametric and polar functions require caching both x and y values,
-   * with the same k_sizeOfCache. To cover the entire range,
-   * k_numberOfParametricCacheablePoints is halved. */
-  static constexpr int k_numberOfParametricCacheablePoints = k_sizeOfCache / 2;
 
   static void PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep);
 
@@ -29,7 +21,12 @@ public:
   float step() const { return m_tStep; }
   void clear();
   Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t);
+  // Sets step parameters for non-cartesian curves
+  static void ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin);
 private:
+  /* The size of the cache is chosen to optimize the display of cartesian
+   * functions */
+  static constexpr int k_sizeOfCache = Ion::Display::Width;
   /* We need a certain amount of tolerance since we try to evaluate the
    * equality of floats. But the value has to be chosen carefully. Too high of
    * a tolerance causes false positives, which lead to errors in curves

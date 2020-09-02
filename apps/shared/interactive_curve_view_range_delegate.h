@@ -9,9 +9,9 @@ class InteractiveCurveViewRange;
 
 class InteractiveCurveViewRangeDelegate {
 public:
+  static constexpr float k_defaultXHalfRange = 10.0f;
   bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange);
-  virtual float interestingXMin() const { return -interestingXHalfRange(); }
-  virtual float interestingXHalfRange() const { return 10.0f; }
+  virtual float interestingXMin() const { return -k_defaultXHalfRange; }
   virtual bool defaultRangeIsNormalized() const { return false; }
   virtual void interestingRanges(InteractiveCurveViewRange * range) const { assert(false); }
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;

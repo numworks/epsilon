@@ -53,6 +53,10 @@ public:
   virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context) const = 0;
   virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context) const = 0;
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
+
+  // Range
+  virtual void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange = true) const;
+
 protected:
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Function. We want to avoid padding which would:
@@ -88,7 +92,12 @@ protected:
 #endif
     bool m_active;
   };
+
+  void protectedRefinedYRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context, bool boundByMagnitude) const;
+
 private:
+  virtual void refinedYRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const = 0;
+
   RecordDataBuffer * recordData() const;
 };
 

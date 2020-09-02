@@ -39,58 +39,6 @@ bool GraphController::defaultRangeIsNormalized() const {
   return functionStore()->displaysNonCartesianFunctions();
 }
 
-void GraphController::interestingRanges(InteractiveCurveViewRange * range) const {
-  privateComputeRanges(true, range);
-}
-
-Shared::InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) {
-  InteractiveCurveViewRange tempRange = *interactiveCurveViewRange;
-  tempRange.setYAuto(false);
-  privateComputeRanges(false, &tempRange);
-  return Shared::InteractiveCurveViewRangeDelegate::Range{.min = tempRange.yMin(), .max = tempRange.yMax()};
-}
-
-void GraphController::privateComputeRanges(bool tuneXRange, InteractiveCurveViewRange * range) const {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  float resultXMin = tuneXRange ? FLT_MAX : range->xMin();
-  float resultXMax = tuneXRange ? -FLT_MAX : range->xMax();
-  float resultYMin = FLT_MAX;
-  float resultYMax = -FLT_MAX;
-  assert(functionStore()->numberOfActiveFunctions() > 0);
-  int functionsCount = functionStore()->numberOfActiveFunctions();
-  for (int i = 0; i < functionsCount; i++) {
-    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    f->rangeForDisplay(&resultXMin, &resultXMax, &resultYMin, &resultYMax, context, tuneXRange);
-  }
-
-  range->setXMin(resultXMin);
-  range->setXMax(resultXMax);
-  range->setYMin(resultYMin);
-  range->setYMax(resultYMax);
-  /* We can only call this method once the X range has been fully computed. */
-  yRangeForCursorFirstMove(range);
-}
-
-void GraphController::yRangeForCursorFirstMove(InteractiveCurveViewRange * range) const {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  assert(functionStore()->numberOfActiveFunctions() > 0);
-  int functionsCount = functionStore()->numberOfActiveFunctions();
-
-  float cursorStep = range->xGridUnit() / k_numberOfCursorStepsInGradUnit;
-  float yN, yP;
-
-  for (int i = 0; i < functionsCount; i++) {
-    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    if (f->plotType() != ContinuousFunction::PlotType::Cartesian) {
-      continue;
-    }
-    yN = f->evaluateXYAtParameter(range->xCenter() - cursorStep, context).x2();
-    yP = f->evaluateXYAtParameter(range->xCenter() + cursorStep, context).x2();
-    range->setYMin(std::min(range->yMin(), std::min(yN, yP)));
-    range->setYMax(std::max(range->yMax(), std::max(yN, yP)));
-  }
-}
-
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));

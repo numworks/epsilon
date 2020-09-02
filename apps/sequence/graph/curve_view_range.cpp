@@ -75,15 +75,4 @@ void CurveViewRange::setTrigonometric() {
   MemoizedCurveViewRange::protectedSetYMin(-y, k_lowerMaxFloat, k_upperMaxFloat);
 }
 
-void CurveViewRange::setDefault() {
-  if (m_delegate == nullptr) {
-    return;
-  }
-  m_yAuto = true;
-  float interestingXMin = m_delegate->interestingXMin();
-  float interestingXRange = m_delegate->interestingXHalfRange();
-  m_xRange.setMax(interestingXMin + interestingXRange, k_lowerMaxFloat, k_upperMaxFloat);
-  setXMin(interestingXMin - k_displayLeftMarginRatio * interestingXRange);
-}
-
 }

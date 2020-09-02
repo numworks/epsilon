@@ -20,6 +20,8 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
+  void interestingRanges(Shared::InteractiveCurveViewRange * range) const override;
+
 protected:
   float cursorTopMarginRatio() override { return 0.068f; }
   void reloadBannerView() override;
@@ -39,6 +41,10 @@ protected:
   int numberOfCurves() const override;
   void initCursorParameters() override;
   CurveView * curveView() override;
+
+  Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
+  void privateComputeRanges(bool tuneXRange, Shared::InteractiveCurveViewRange * range) const;
+  void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;

@@ -148,6 +148,7 @@ private:
   };
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
+  void refinedYRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const override { protectedRefinedYRangeForDisplay(xMin, xMax, yMin, yMax, context, false); }
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_definition; }
   RecordDataBuffer * recordData() const;

@@ -20,7 +20,6 @@ public:
   void viewWillAppear() override;
   bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
   void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
-  void interestingRanges(Shared::InteractiveCurveViewRange * range) const override;
 private:
   int estimatedBannerNumberOfLines() const override { return 1 + m_displayDerivativeInBanner; }
   void selectFunctionWithCursor(int functionIndex) override;
@@ -37,9 +36,6 @@ private:
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
   bool shouldSetDefaultOnModelChange() const override;
   void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
-  Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
-  void privateComputeRanges(bool tuneXRange, Shared::InteractiveCurveViewRange * range) const;
-  void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;

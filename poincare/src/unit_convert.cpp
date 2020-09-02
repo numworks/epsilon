@@ -94,7 +94,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext reducti
   }
   Expression result = Multiplication::Builder(division, unit);
   replaceWithInPlace(result);
-  result.shallowReduce(reductionContextWithoutUnits);
+  result = result.shallowReduce(reductionContextWithoutUnits);
   return result.shallowBeautify(reductionContextWithoutUnits);
 }
 

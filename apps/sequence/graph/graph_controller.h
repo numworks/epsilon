@@ -20,14 +20,13 @@ public:
   TermSumController * termSumController() { return &m_termSumController; }
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
-  float interestingXHalfRange() const override;
+  void interestingRanges(Shared::InteractiveCurveViewRange * range) const override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   double defaultCursorT(Ion::Storage::Record record) override;
-  InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }

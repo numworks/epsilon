@@ -11,7 +11,6 @@ public:
   void roundAbscissa() override;
   void normalize() override;
   void setTrigonometric() override;
-  void setDefault() override;
 private:
   constexpr static float k_displayLeftMarginRatio = 0.1f;
 };

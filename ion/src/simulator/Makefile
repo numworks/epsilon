@@ -20,6 +20,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   keyboard_dummy.cpp:+headless \
   keyboard_sdl.cpp:-headless \
   layout.cpp:-headless \
+  main.cpp \
   power.cpp \
   random.cpp \
   timing.cpp \

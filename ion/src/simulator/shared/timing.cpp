@@ -1,4 +1,4 @@
-#include <ion.h>
+#include <ion/timing.h>
 #include <chrono>
 
 static auto start = std::chrono::steady_clock::now();

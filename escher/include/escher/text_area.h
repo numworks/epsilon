@@ -138,6 +138,7 @@ private:
   TextAreaDelegate * m_delegate;
   // Due to rect size limitation, the editor cannot display more than 1800 lines
   constexpr static int k_maxLines = 999;
+  constexpr static int k_maxLineChars = 3000;
 };
 
 #endif

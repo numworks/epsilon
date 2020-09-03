@@ -89,6 +89,9 @@ const char * BeginningOfWord(const char * text, const char * word);
 // Returns the position of the first following char ' ', '\n' or 0
 const char * EndOfWord(const char * word);
 
+// On a line, count number of glyphs before and after locations
+void countGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation = nullptr);
+
 };
 
 #endif

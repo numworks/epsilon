@@ -30,6 +30,7 @@ KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
     currentStringPosition = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
+  assert(stringSize.width() >= 0 && stringSize.height() >= 0);
   return stringSize;
 }
 

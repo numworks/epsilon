@@ -1,14 +1,18 @@
+ion_src += $(addprefix ion/src/shared/dummy/, \
+  backlight.cpp \
+  battery.cpp \
+  display.cpp \
+  exam_mode.cpp \
+  fcc_id.cpp \
+  led.cpp \
+  power.cpp \
+  serial_number.cpp \
+  stack.cpp \
+  timing_msleep.cpp:+headless \
+  usb.cpp \
+)
+
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  dummy/backlight.cpp \
-  dummy/battery.cpp \
-  dummy/display.cpp \
-  dummy/exam_mode.cpp \
-  dummy/fcc_id.cpp \
-  dummy/led.cpp \
-  dummy/serial_number.cpp \
-  dummy/stack.cpp \
-  dummy/timing_msleep.cpp:+headless \
-  dummy/usb.cpp \
   console_stdio.cpp:-consoledisplay \
   crc32.cpp \
   display.cpp:-headless \
@@ -21,7 +25,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   keyboard_sdl.cpp:-headless \
   layout.cpp:-headless \
   main.cpp \
-  power.cpp \
   random.cpp \
   timing.cpp \
   timing_msleep.cpp:-headless \

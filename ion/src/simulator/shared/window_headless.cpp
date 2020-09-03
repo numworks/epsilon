@@ -1,4 +1,4 @@
-#include "main.h"
+#include "window.h"
 #include "display.h"
 #include "platform.h"
 #include "framebuffer.h"
@@ -52,7 +52,7 @@ int main(int argc, char * argv[]) {
 
 namespace Ion {
 namespace Simulator {
-namespace Main {
+namespace Window {
 
 void init() {
 }

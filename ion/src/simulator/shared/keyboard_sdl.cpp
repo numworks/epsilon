@@ -1,6 +1,6 @@
-#include "main.h"
-#include "platform.h"
 #include "layout.h"
+#include "platform.h"
+#include "window.h"
 
 #include <ion/keyboard.h>
 #include <SDL.h>
@@ -58,7 +58,7 @@ State scan() {
   IonSimulatorCallbackDidScanKeyboard();
 
   // Grab this opportunity to refresh the display if needed
-  Simulator::Main::refresh();
+  Simulator::Window::refresh();
 
   // Start with a "clean" state
   State state;

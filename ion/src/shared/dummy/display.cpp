@@ -1,16 +1,22 @@
 #include <ion/display.h>
 
-void Ion::Display::POSTPushMulticolor(int rootNumberTiles, int tileSize) {
+namespace Ion {
+namespace Display {
+
+void POSTPushMulticolor(int rootNumberTiles, int tileSize) {
 }
 
-int Ion::Display::displayUniformTilingSize10(KDColor c) {
+int displayUniformTilingSize10(KDColor c) {
   return 0;
 }
 
-int Ion::Display::displayColoredTilingSize10() {
+int displayColoredTilingSize10() {
   return 0;
 }
 
-bool Ion::Display::waitForVBlank() {
+bool waitForVBlank() {
   return true;
+}
+
+}
 }

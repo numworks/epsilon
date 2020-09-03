@@ -4,6 +4,3 @@
 [submodule "apps/atom"]
 	path = apps/atom
 	url = https://github.com/Omega-Numworks/Omega-Atom.git
-[submodule "themes"]
-	path = themes
-	url = https://github.com/Omega-Numworks/Omega-Themes.git

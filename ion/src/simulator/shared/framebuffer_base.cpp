@@ -1,6 +1,6 @@
 #include "framebuffer.h"
+#include "window.h"
 #include <ion/display.h>
-#include "main.h"
 
 /* Drawing on an SDL texture
  * In SDL2, drawing bitmap data happens through textures, whose data lives in
@@ -23,14 +23,14 @@ static KDFrameBuffer sFrameBuffer = KDFrameBuffer(sPixels, KDSize(Ion::Display::
 
 void pushRect(KDRect r, const KDColor * pixels) {
   if (sFrameBufferActive) {
-    Simulator::Main::setNeedsRefresh();
+    Simulator::Window::setNeedsRefresh();
     sFrameBuffer.pushRect(r, pixels);
   }
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
   if (sFrameBufferActive) {
-    Simulator::Main::setNeedsRefresh();
+    Simulator::Window::setNeedsRefresh();
     sFrameBuffer.pushRectUniform(r, c);
   }
 }

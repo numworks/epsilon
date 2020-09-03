@@ -1,4 +1,4 @@
-#include "main.h"
+#include "window.h"
 #include "display.h"
 #include "haptics.h"
 #include "layout.h"
@@ -25,14 +25,14 @@ int main(int argc, char * argv[]) {
 #if EPSILON_TELEMETRY
   Ion::Simulator::Telemetry::init();
 #endif
-  Ion::Simulator::Main::init();
+  Ion::Simulator::Window::init();
   Ion::Simulator::Haptics::init();
 
   ion_main(arguments.size(), &arguments[0]);
 
   // Shutdown
   Ion::Simulator::Haptics::shutdown();
-  Ion::Simulator::Main::quit();
+  Ion::Simulator::Window::quit();
 #if EPSILON_TELEMETRY
   Ion::Simulator::Telemetry::shutdown();
 #endif
@@ -42,7 +42,7 @@ int main(int argc, char * argv[]) {
 
 namespace Ion {
 namespace Simulator {
-namespace Main {
+namespace Window {
 
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;

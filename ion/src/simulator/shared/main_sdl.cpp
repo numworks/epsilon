@@ -8,14 +8,9 @@
 
 #include <assert.h>
 #include <ion.h>
-#include <ion/timing.h>
 #include <ion/events.h>
 #include <SDL.h>
 #include <vector>
-
-void Ion::Timing::msleep(uint32_t ms) {
-  SDL_Delay(ms);
-}
 
 int main(int argc, char * argv[]) {
   std::vector<const char *> arguments(argv, argv + argc);

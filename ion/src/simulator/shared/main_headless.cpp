@@ -5,7 +5,6 @@
 #include "events.h"
 
 #include <ion.h>
-#include <ion/timing.h>
 #include <ion/events.h>
 #include <stdlib.h>
 #ifndef __WIN32__
@@ -26,9 +25,6 @@ char heap[kHeapSize];
 extern "C" {
   char * _heap_start = (char *)heap;
   char * _heap_end = _heap_start+kHeapSize;
-}
-
-void Ion::Timing::msleep(uint32_t ms) {
 }
 
 int main(int argc, char * argv[]) {

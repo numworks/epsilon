@@ -47,24 +47,79 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
    * indentation, stop here. */
   int spacesCount = 0;
   int totalIndentationSize = 0;
-  int textLen = strlen(text);
+  int addedTextLength = strlen(text);
+  size_t previousTextLength = contentView()->getText()->textLength();
   char * insertionPosition = const_cast<char *>(cursorLocation());
+  const char * textAreaBuffer = contentView()->text();
   if (indentation) {
     // Compute the indentation
     spacesCount = indentationBeforeCursor();
-    const char * textAreaBuffer = contentView()->text();
     if (insertionPosition > textAreaBuffer && UTF8Helper::PreviousCodePointIs(textAreaBuffer, insertionPosition, ':')) {
       spacesCount += k_indentationSpaces;
     }
     // Check the text will not overflow the buffer
     totalIndentationSize = UTF8Helper::CountOccurrences(text, '\n') * spacesCount;
-    if (contentView()->getText()->textLength() + textLen + totalIndentationSize >= contentView()->getText()->bufferSize()) {
+    if (previousTextLength + addedTextLength + totalIndentationSize >= contentView()->getText()->bufferSize()) {
       return false;
     }
   }
 
-  // Check the text will not overflow the max number of lines
-  if (contentView()->getText()->textLineTotal() + UTF8Helper::CountOccurrences(text, '\n') >= k_maxLines) {
+  /* KDCoordinate is a int16. We must limit the number of characters per line,
+   * and lines per scripts, otherwise the line rects or content rect
+   * height/width can overflow int16, which results in weird visual effects.*/
+  // 1 - Number of Characters per line :
+  if (previousTextLength + addedTextLength > k_maxLineChars) {
+    /* Only check for long lines in long scripts. PreviousTextLength and
+     * addedTextLength being greater than the actual number of glyphs is not an
+     * issue here. After insertion, text buffer will have this structure :
+     * ".../n"+"before"+"inserted1"+("/n.../n")?+"inserted2"+"after"+"\n..."
+     * Lengths :  b         ib                      ia          a
+     * As maxBufferSize is lower than k_maxLineChars, there is no need to check
+     * for inserted lines between "\n...\n" */
+    static_assert(TextField::maxBufferSize() < k_maxLineChars, "Pasting text might cause content rect overflow.");
+
+    // Counting line text lengths before and after insertion.
+    int b = 0;
+    int a = 0;
+    UTF8Helper::countGlyphsInLine(textAreaBuffer, &b, &a, insertionPosition);
+
+    if (a + b + addedTextLength > k_maxLineChars) {
+      /* Overflow expected, depending on '/n' code point presence and position.
+       * Counting : Glyphs inserted before first '/n' : ib
+       *            Glyphs inserted after last '/n' : ia
+       *            Number of '/n' : n */
+      int glyphCount[3] = {0, 0, 0};
+      UTF8Helper::PerformAtCodePoints(text, '\n',
+        [](int, void * intArray, int, int) {
+          // '\n' found, Increment n
+          int * n = (int *)intArray + 2;
+          *n = *n + 1;
+          // Reset ia
+          int * ia = (int *)intArray + 1;
+          *ia = 0;
+        },
+        [](int, void * intArray, int, int) {
+          if (((int *)intArray)[2] == 0) {
+            // While no '\n' found, increment ib
+            int * ib = (int *)intArray;
+            *ib = *ib + 1;
+          } else {
+            // Increment ia
+            int * ia = (int *)intArray + 1;
+            *ia = *ia + 1;
+          }
+        },
+        &glyphCount, 0, 0);
+      // Insertion is not possible if one of the produced line is too long.
+      if ((glyphCount[2] == 0 && a + glyphCount[0] + b > k_maxLineChars) || b + glyphCount[0] > k_maxLineChars || a + glyphCount[1] > k_maxLineChars) {
+        return false;
+      }
+    }
+  }
+
+  // 2 - Total number of line :
+  if (previousTextLength + addedTextLength > k_maxLines && contentView()->getText()->textLineTotal() + UTF8Helper::CountOccurrences(text, '\n') > k_maxLines) {
+    // Only check for overflowed lines in long scripts to save computation
     return false;
   }
 
@@ -89,9 +144,9 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
         UCodePointNull,
         true,
         nullptr,
-        insertionPosition + textLen);
+        insertionPosition + addedTextLength);
   }
-  const char * endOfInsertedText = insertionPosition + textLen + totalIndentationSize;
+  const char * endOfInsertedText = insertionPosition + addedTextLength + totalIndentationSize;
   const char * cursorPositionInCommand = TextInputHelpers::CursorPositionInCommand(insertionPosition, endOfInsertedText);
 
   // Remove the Empty code points
@@ -268,9 +323,16 @@ CodePoint TextArea::Text::removePreviousGlyph(char * * position) {
   assert(m_buffer <= *position && *position < m_buffer + m_bufferSize);
 
   CodePoint removedCodePoint = 0;
-  int removedSize = UTF8Helper::RemovePreviousGlyph(m_buffer, *position, &removedCodePoint);
-  assert(removedSize > 0);
-
+  int removedSize = 0;
+  if (UTF8Helper::PreviousCodePoint(m_buffer, *position) == '\n') {
+    // See comments in handleEventWithText about max number of glyphs per line
+    removedCodePoint = '\n';
+    // removeText will handle max number of glyphs per line
+    removedSize = removeText(*position-1, *position);
+  } else {
+    removedSize = UTF8Helper::RemovePreviousGlyph(m_buffer, *position, &removedCodePoint);
+    assert(removedSize > 0);
+  }
   // Set the new cursor position
   *position = *position - removedSize;
   return removedCodePoint;
@@ -286,6 +348,24 @@ size_t TextArea::Text::removeText(const char * start, const char * end) {
 
   if (delta == 0) {
     return 0;
+  }
+
+  /* Removing text can increase line length. See comments in handleEventWithText
+   * about max number of glyphs per line. */
+  if (textLength() - delta >= k_maxLineChars) {
+    /* Only check for line length on long enough scripts. TextLength() and delta
+     * being greater than the actual number of glyphs is not an issue here. */
+
+    // Counting text lengths between previous and last '/n' (non removed).
+    int b = 0;
+    int a = 0;
+    UTF8Helper::countGlyphsInLine(text(), &b, &a, start, end);
+
+    if (a + b > k_maxLineChars) {
+      // Resulting line would exceed limits, no text is removed
+      // TODO error message: Add Message to explain failure to remove text
+      return 0;
+    }
   }
 
   for (size_t index = src - m_buffer; index < m_bufferSize; index++) {
@@ -550,6 +630,9 @@ KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char
   }
   assert(found);
   (void) found;
+
+  // Check for KDCoordinate overflow
+  assert(x < KDCOORDINATE_MAX - glyphSize.width() && p.line() * glyphSize.height() < KDCOORDINATE_MAX - glyphSize.height());
 
   return KDRect(
     x,

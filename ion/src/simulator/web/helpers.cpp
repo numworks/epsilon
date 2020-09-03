@@ -1,5 +1,5 @@
 #include <ion.h>
-#include "../shared/main.h"
+#include "../shared/window.h"
 
 extern "C" const char * IonSoftwareVersion() {
   return Ion::softwareVersion();
@@ -10,6 +10,6 @@ extern "C" const char * IonPatchLevel() {
 }
 
 extern "C" void IonDisplayForceRefresh() {
-  Ion::Simulator::Main::setNeedsRefresh();
-  Ion::Simulator::Main::refresh();
+  Ion::Simulator::Window::setNeedsRefresh();
+  Ion::Simulator::Window::refresh();
 }

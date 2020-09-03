@@ -1,5 +1,5 @@
 #include "layout.h"
-#include "main.h"
+#include "window.h"
 #include "platform.h"
 #include <ion.h>
 #include <limits.h>
@@ -239,13 +239,13 @@ void highlightKeyAt(SDL_Point * p) {
   }
   if (newHighlightedKeyIndex != sHighlightedKeyIndex) {
     sHighlightedKeyIndex = newHighlightedKeyIndex;
-    Main::setNeedsRefresh();
+    Window::setNeedsRefresh();
   }
 }
 
 void unhighlightKey() {
   sHighlightedKeyIndex = -1;
-  Main::setNeedsRefresh();
+  Window::setNeedsRefresh();
 }
 
 void drawHighlightedKey(SDL_Renderer * renderer) {

@@ -20,12 +20,12 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   keyboard_dummy.cpp:+headless \
   keyboard_sdl.cpp:-headless \
   layout.cpp:-headless \
-  main_headless.cpp:+headless \
-  main_sdl.cpp:-headless \
   power.cpp \
   random.cpp \
   timing.cpp \
   timing_msleep.cpp:-headless \
+  window_headless.cpp:+headless \
+  window_sdl.cpp:-headless \
 )
 
 ion_simulator_assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png

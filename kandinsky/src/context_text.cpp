@@ -28,6 +28,7 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
   while (codePoint != UCodePointNull && (maxByteLength < 0 || codePointPointer < text + maxByteLength)) {
     codePointPointer = decoder.stringPosition();
     if (codePoint == UCodePointLineFeed) {
+      assert(position.y() < KDCOORDINATE_MAX - glyphSize.height());
       position = KDPoint(0, position.y() + glyphSize.height());
       codePoint = decoder.nextCodePoint();
     } else if (codePoint == UCodePointTabulation) {

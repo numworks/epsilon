@@ -1,6 +1,6 @@
-#include "main.h"
 #include "platform.h"
 #include "layout.h"
+#include "window.h"
 
 #include <assert.h>
 #include <ion/events.h>
@@ -176,7 +176,7 @@ Event getPlatformEvent() {
   while (SDL_PollEvent(&event)) {
     // The while is important: it'll do a fast-pass over all useless SDL events
     if (event.type == SDL_WINDOWEVENT) {
-      Ion::Simulator::Main::relayout();
+      Ion::Simulator::Window::relayout();
       break;
     }
     if (event.type == SDL_QUIT) {

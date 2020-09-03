@@ -1,21 +1,27 @@
 #include <ion/usb.h>
 
-bool Ion::USB::isPlugged() {
+namespace Ion {
+namespace USB {
+
+bool isPlugged() {
   return false;
 }
 
-bool Ion::USB::isEnumerated() {
+bool isEnumerated() {
   return false;
 }
 
-void Ion::USB::clearEnumerationInterrupt() {
+void clearEnumerationInterrupt() {
 }
 
-void Ion::USB::DFU() {
+void DFU() {
 }
 
-void Ion::USB::enable() {
+void enable() {
 }
 
-void Ion::USB::disable() {
+void disable() {
+}
+
+}
 }

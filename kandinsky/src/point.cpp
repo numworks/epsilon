@@ -1,6 +1,10 @@
 #include <kandinsky/point.h>
+#include <assert.h>
 
 KDPoint KDPoint::translatedBy(KDPoint other) const {
+  assert((other.x() >= 0 && m_x <= KDCOORDINATE_MAX - other.x()) || (other.x() < 0 && m_x >= KDCOORDINATE_MIN - other.x()));
+  assert((other.y() >= 0 && m_y <= KDCOORDINATE_MAX - other.y()) || (other.y() < 0 && m_y >= KDCOORDINATE_MIN - other.y()));
+
   return KDPoint(m_x+other.x(), m_y+other.y());
 }
 

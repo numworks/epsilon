@@ -1,4 +1,3 @@
-#include "main.h"
 #include "platform.h"
 #include "framebuffer.h"
 #include "events.h"

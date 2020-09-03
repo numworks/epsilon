@@ -1,13 +1,24 @@
 #include <ion/backlight.h>
 
-uint8_t Ion::Backlight::brightness() {
+namespace Ion {
+namespace Backlight {
+
+uint8_t brightness() {
   return 0;
 }
 
-void Ion::Backlight::setBrightness(uint8_t b) {}
+void setBrightness(uint8_t b) {
+}
 
-void Ion::Backlight::init() {}
+void init() {
+}
 
-bool Ion::Backlight::isInitialized() { return true; }
+bool isInitialized() {
+  return true;
+}
 
-void Ion::Backlight::shutdown() {}
+void shutdown() {
+}
+
+}
+}

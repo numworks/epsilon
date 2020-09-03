@@ -7,6 +7,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/led.cpp \
   dummy/serial_number.cpp \
   dummy/stack.cpp \
+  dummy/timing_msleep.cpp:+headless \
   dummy/usb.cpp \
   clipboard.cpp \
   console_stdio.cpp:-consoledisplay \
@@ -25,6 +26,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   power.cpp \
   random.cpp \
   timing.cpp \
+  timing_msleep.cpp:-headless \
 )
 
 ion_simulator_assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png

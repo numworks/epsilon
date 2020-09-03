@@ -1,44 +1,12 @@
 #include "window.h"
 #include "display.h"
-#include "haptics.h"
 #include "layout.h"
 #include "platform.h"
-#include "telemetry.h"
 #include "random.h"
 
 #include <assert.h>
 #include <ion.h>
-#include <ion/events.h>
 #include <SDL.h>
-#include <vector>
-
-int main(int argc, char * argv[]) {
-  std::vector<const char *> arguments(argv, argv + argc);
-
-  char * language = IonSimulatorGetLanguageCode();
-  if (language != nullptr) {
-    arguments.push_back("--language");
-    arguments.push_back(language);
-  }
-
-  // Init
-#if EPSILON_TELEMETRY
-  Ion::Simulator::Telemetry::init();
-#endif
-  Ion::Simulator::Window::init();
-  Ion::Simulator::Haptics::init();
-
-  ion_main(arguments.size(), &arguments[0]);
-
-  // Shutdown
-  Ion::Simulator::Haptics::shutdown();
-  Ion::Simulator::Window::quit();
-#if EPSILON_TELEMETRY
-  Ion::Simulator::Telemetry::shutdown();
-#endif
-
-  return 0;
-}
 
 namespace Ion {
 namespace Simulator {

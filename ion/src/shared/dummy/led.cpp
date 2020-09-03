@@ -7,9 +7,11 @@ KDColor getColor() {
   return KDColorBlack;
 }
 
-void setColor(KDColor c) {}
+void setColor(KDColor c) {
+}
 
-void setBlinking(uint16_t period, float dutyCycle) {}
+void setBlinking(uint16_t period, float dutyCycle) {
+}
 
 KDColor updateColorWithPlugAndCharge() {
   return KDColorBlack;

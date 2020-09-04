@@ -5,22 +5,7 @@
 #include <ion/keyboard.h>
 #include <SDL.h>
 
-#if EPSILON_SDL_SCREEN_ONLY
 static Ion::Keyboard::State sKeyboardState;
-
-void IonSimulatorKeyboardKeyDown(int keyNumber) {
-  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
-  sKeyboardState.setKey(key);
-}
-
-void IonSimulatorKeyboardKeyUp(int keyNumber) {
-  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
-  sKeyboardState.clearKey(key);
-}
-#endif
-
-namespace Ion {
-namespace Keyboard {
 
 class KeySDLKeyPair {
 public:
@@ -50,6 +35,9 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
 
 constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);
 
+namespace Ion {
+namespace Keyboard {
+
 State scan() {
   // We need to tell SDL to get new state from the host OS
   SDL_PumpEvents();
@@ -60,12 +48,8 @@ State scan() {
   // Grab this opportunity to refresh the display if needed
   Simulator::Window::refresh();
 
-  // Start with a "clean" state
-  State state;
-#if EPSILON_SDL_SCREEN_ONLY
-  // In this case, keyboard states are sent over another channel.
-  state = sKeyboardState;
-#else
+  State state = sKeyboardState;
+#if !EPSILON_SDL_SCREEN_ONLY
   // Register a key for the mouse, if any
   Key k = Simulator::Layout::getHighlightedKey();
   if (SDL_GetMouseState(nullptr, nullptr) && SDL_BUTTON(SDL_BUTTON_LEFT)) {
@@ -87,11 +71,27 @@ State scan() {
 }
 }
 
-bool IonSimulatorSDLKeyDetectedByScan(SDL_Scancode key) {
-  for (int i = 0; i < Ion::Keyboard::sNumberOfKeyPairs; i++) {
-    if (key == Ion::Keyboard::sKeyPairs[i].SDLKey()) {
+namespace Ion {
+namespace Simulator {
+namespace Keyboard {
+
+void keyDown(Ion::Keyboard::Key k) {
+  sKeyboardState.setKey(k);
+}
+
+void keyUp(Ion::Keyboard::Key k) {
+  sKeyboardState.clearKey(k);
+}
+
+bool scanHandlesSDLKey(SDL_Scancode key) {
+  for (int i = 0; i < sNumberOfKeyPairs; i++) {
+    if (key == sKeyPairs[i].SDLKey()) {
       return true;
     }
   }
   return false;
+}
+
+}
+}
 }

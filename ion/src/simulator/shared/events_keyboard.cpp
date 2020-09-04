@@ -1,4 +1,4 @@
-#include "platform.h"
+#include "keyboard.h"
 #include "layout.h"
 #include "events.h"
 #include "window.h"
@@ -191,7 +191,7 @@ Event getPlatformEvent() {
       break;
     }
     if (event.type == SDL_KEYDOWN) {
-      if (IonSimulatorSDLKeyDetectedByScan(event.key.keysym.scancode)) {
+      if (Simulator::Keyboard::scanHandlesSDLKey(event.key.keysym.scancode)) {
         continue;
       }
       result = eventFromSDLKeyboardEvent(event.key);

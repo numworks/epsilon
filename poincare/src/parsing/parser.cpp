@@ -416,13 +416,9 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     Expression rank = parseUntil(rightDelimiter);
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(rightDelimiter)) {
-      m_status = Status::Error; // Right delimiter missing.
-    } else if (rank.type() == ExpressionNode::Type::BasedInteger
-    || rank.isIdenticalTo(Symbol::Builder('n'))
-    || rank.isIdenticalTo(Addition::Builder(Symbol::Builder('n'), BasedInteger::Builder("1")))) {
-      leftHandSide = Sequence::Builder(&name, 1, rank);
+      m_status = Status::Error; // Right delimiter missing
     } else {
-      m_status = Status::Error; // Unexpected parameter.
+      leftHandSide = Sequence::Builder(&name, 1, rank);
     }
   }
 }

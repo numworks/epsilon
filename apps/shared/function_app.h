@@ -6,12 +6,13 @@
 #include "function_store.h"
 #include "curve_view_cursor.h"
 #include "values_controller.h"
+#include "shared_app.h"
 
 namespace Shared {
 
 class FunctionApp : public ExpressionFieldDelegateApp {
 public:
-  class Snapshot : public ::App::Snapshot, public TabViewDataSource {
+  class Snapshot : public ::SharedApp::Snapshot, public TabViewDataSource {
   public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }

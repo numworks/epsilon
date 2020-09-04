@@ -10,6 +10,8 @@
 #include "values/values_controller.h"
 #include "../shared/function_app.h"
 #include "../shared/interval.h"
+#include "../shared/global_context.h"
+#include "../apps_container.h"
 
 namespace Sequence {
 
@@ -27,12 +29,11 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    Shared::SequenceStore * functionStore() override { return &m_sequenceStore; }
+    Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
     CurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * interval() { return &m_interval; }
   private:
     void tidy() override;
-    Shared::SequenceStore m_sequenceStore;
     CurveViewRange m_graphRange;
     Shared::Interval m_interval;
   };
@@ -47,7 +48,7 @@ public:
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
   Shared::SequenceContext * localContext() override;
-  Shared::SequenceStore * functionStore() override { return snapshot()->functionStore(); }
+  Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override {
     return &m_valuesController;

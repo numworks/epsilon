@@ -1,5 +1,5 @@
-#ifndef SEQUENCE_SEQUENCE_CONTEXT_H
-#define SEQUENCE_SEQUENCE_CONTEXT_H
+#ifndef APPS_SHARED_SEQUENCE_CONTEXT_H
+#define APPS_SHARED_SEQUENCE_CONTEXT_H
 
 #include <poincare/context_with_parent.h>
 #include <poincare/expression.h>
@@ -17,14 +17,14 @@ template<typename T>
 class TemplatedSequenceContext {
 public:
   TemplatedSequenceContext();
-  T valueOfSequenceAtPreviousRank(int sequenceIndex, int rank) const;
+  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const;
   void resetCache();
   bool iterateUntilRank(int n, SequenceStore * sequenceStore, SequenceContext * sqctx);
 
-  int independantSequenceRank(int sequenceIndex) { return m_independantRanks[sequenceIndex]; }
-  void setIndependantSequenceRank(int rank, int sequenceIndex) { m_independantRanks[sequenceIndex] = rank; }
-  T independantSequenceValue(int sequenceIndex, int depth) { return m_independantRankValues[sequenceIndex][depth]; }
-  void setIndependantSequenceValue(T value, int sequenceIndex, int depth) { m_independantRankValues[sequenceIndex][depth] = value; }
+  int independentSequenceRank(int sequenceIndex) { return m_independentRanks[sequenceIndex]; }
+  void setIndependentSequenceRank(int rank, int sequenceIndex) { m_independentRanks[sequenceIndex] = rank; }
+  T independentSequenceValue(int sequenceIndex, int depth) { return m_independentRankValues[sequenceIndex][depth]; }
+  void setIndependentSequenceValue(T value, int sequenceIndex, int depth) { m_independentRankValues[sequenceIndex][depth] = value; }
   void step(SequenceContext * sqctx, int sequenceIndex = -1);
 private:
   constexpr static int k_maxRecurrentRank = 10000;
@@ -41,16 +41,16 @@ private:
    * sequence is defined using a fixed term of another, u(3) for instance, we
    * compute its value through the second type of cache. This way, we do not
    * erase the data stored in the first type of cache and we can compute the
-   * values of each sequence at independant rank. This means that
+   * values of each sequence at independent rank. This means that
    * (u(3), v(5), w(10)) can be computed at the same time.
-   * This cache is therefore used for independant steps of sequences
+   * This cache is therefore used for independent steps of sequences
    */
   int m_commonRank;
   T m_commonRankValues[MaxNumberOfSequences][MaxRecurrenceDepth+1];
 
   // Used for fixed computations
-  int m_independantRanks[MaxNumberOfSequences];
-  T m_independantRankValues[MaxNumberOfSequences][MaxRecurrenceDepth+1];
+  int m_independentRanks[MaxNumberOfSequences];
+  T m_independentRankValues[MaxNumberOfSequences][MaxRecurrenceDepth+1];
 };
 
 class SequenceContext : public Poincare::ContextWithParent {
@@ -64,8 +64,8 @@ public:
    * context respective methods. Indeed, special chars like n, u(n), u(n+1),
    * v(n), v(n+1) are taken into accound only when evaluating sequences which
    * is done in another context. */
-  template<typename T> T valueOfSequenceAtPreviousRank(int sequenceIndex, int rank) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->valueOfSequenceAtPreviousRank(sequenceIndex, rank);
+  template<typename T> T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) {
+    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->valueOfCommonRankSequenceAtPreviousRank(sequenceIndex, rank);
   }
 
   void resetCache() {
@@ -77,20 +77,20 @@ public:
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->iterateUntilRank(n, m_sequenceStore, this);
   }
 
-  template<typename T> int independantSequenceRank(int sequenceIndex) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->independantSequenceRank(sequenceIndex);
+  template<typename T> int independentSequenceRank(int sequenceIndex) {
+    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->independentSequenceRank(sequenceIndex);
   }
 
-  template<typename T> void setIndependantSequenceRank(int rank, int sequenceIndex) {
-    static_cast<TemplatedSequenceContext<T>*>(helper<T>())->setIndependantSequenceRank(rank, sequenceIndex);
+  template<typename T> void setIndependentSequenceRank(int rank, int sequenceIndex) {
+    static_cast<TemplatedSequenceContext<T>*>(helper<T>())->setIndependentSequenceRank(rank, sequenceIndex);
   }
 
-  template<typename T> T independantSequenceValue(int sequenceIndex, int depth) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->independantSequenceValue(sequenceIndex, depth);
+  template<typename T> T independentSequenceValue(int sequenceIndex, int depth) {
+    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->independentSequenceValue(sequenceIndex, depth);
   }
 
-  template<typename T> void setIndependantSequenceValue(T value, int sequenceIndex, int depth) {
-    static_cast<TemplatedSequenceContext<T>*>(helper<T>())->setIndependantSequenceValue(value, sequenceIndex, depth);
+  template<typename T> void setIndependentSequenceValue(T value, int sequenceIndex, int depth) {
+    static_cast<TemplatedSequenceContext<T>*>(helper<T>())->setIndependentSequenceValue(value, sequenceIndex, depth);
   }
 
   template<typename T> void stepSequenceAtIndex(int sequenceIndex) {

@@ -66,6 +66,7 @@ class SymbolAbstract : public Expression {
   friend class Symbol;
   friend class SymbolNode;
   friend class SymbolAbstractNode;
+  friend class SumAndProductNode;
 public:
   const char * name() const { return node()->name(); }
   bool hasSameNameAs(const SymbolAbstract & other) const;

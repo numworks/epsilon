@@ -45,7 +45,7 @@ public:
 
   // Name
   int name(char * buffer, size_t bufferSize);
-  int nameWithArgument(char * buffer, size_t bufferSize);
+  virtual int nameWithArgument(char * buffer, size_t bufferSize);
   virtual int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
   virtual I18n::Message parameterMessageName() const = 0;
 

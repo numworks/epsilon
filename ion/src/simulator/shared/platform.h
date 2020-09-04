@@ -15,12 +15,9 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
 char * IonSimulatorGetLanguageCode();
 
 #if EPSILON_SDL_SCREEN_ONLY
-void IonSimulatorKeyboardKeyDown(int keyNumber);
-void IonSimulatorKeyboardKeyUp(int keyNumber);
 void IonSimulatorEventsPushEvent(int eventNumber);
 #endif
 
-bool IonSimulatorSDLKeyDetectedByScan(SDL_Scancode key);
 void IonSimulatorCallbackDidRefresh();
 void IonSimulatorCallbackDidScanKeyboard();
 

@@ -4,6 +4,7 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
   display.cpp \
   exam_mode.cpp \
   fcc_id.cpp \
+  keyboard.cpp:+headless \
   led.cpp \
   power.cpp \
   serial_number.cpp \
@@ -13,6 +14,7 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  dummy/keyboard.cpp:+headless \
   console_stdio.cpp:-consoledisplay \
   crc32.cpp \
   display.cpp:-headless \
@@ -21,8 +23,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   events_stdin.cpp:+headless \
   framebuffer_base.cpp \
   framebuffer_png.cpp:+headless \
-  keyboard_dummy.cpp:+headless \
-  keyboard_sdl.cpp:-headless \
+  keyboard.cpp:-headless \
   layout.cpp:-headless \
   main.cpp \
   random.cpp \

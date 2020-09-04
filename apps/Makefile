@@ -41,7 +41,10 @@ apps_src += $(addprefix apps/,\
   title_bar_view.cpp \
 )
 
-tests_src += apps/exam_mode_configuration_official.cpp
+tests_src += $(addprefix apps/,\
+  exam_mode_configuration_official.cpp \
+)
+
 
 snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
 apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)

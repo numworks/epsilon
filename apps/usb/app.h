@@ -3,6 +3,7 @@
 
 #include "escher/include/escher/app.h"
 #include "usb_connected_controller.h"
+#include "../shared/shared_app.h"
 
 namespace USB {
 
@@ -13,7 +14,7 @@ public:
     I18n::Message name() override;
     I18n::Message upperName() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;

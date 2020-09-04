@@ -1,8 +1,7 @@
-#ifndef SEQUENCE_SEQUENCE_STORE_H
-#define SEQUENCE_SEQUENCE_STORE_H
+#ifndef APPS_SHARED_SEQUENCE_STORE_H
+#define APPS_SHARED_SEQUENCE_STORE_H
 
 #include "../shared/function_store.h"
-#include "../shared/global_context.h"
 #include "sequence.h"
 #include <stdint.h>
 #include <escher.h>

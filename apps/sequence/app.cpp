@@ -1,6 +1,7 @@
 #include "app.h"
 #include "../apps_container.h"
 #include "sequence_icon.h"
+#include "../shared/global_context.h"
 
 using namespace Poincare;
 
@@ -20,7 +21,6 @@ const Image * App::Descriptor::icon() {
 
 App::Snapshot::Snapshot() :
   Shared::FunctionApp::Snapshot::Snapshot(),
-  m_sequenceStore(),
   m_graphRange()
 {
 }
@@ -40,13 +40,12 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 void App::Snapshot::tidy() {
-  m_sequenceStore.tidy();
   m_graphRange.setDelegate(nullptr);
 }
 
 App::App(Snapshot * snapshot) :
   FunctionApp(snapshot, &m_inputViewController),
-  m_sequenceContext(AppsContainer::sharedAppsContainer()->globalContext(), snapshot->functionStore()),
+  m_sequenceContext(AppsContainer::sharedAppsContainer()->globalContext(), static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore()),
   m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray),
   m_listHeader(nullptr, &m_listFooter, &m_listController),

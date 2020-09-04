@@ -64,14 +64,15 @@ app_shared_src = $(addprefix apps/shared/,\
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \
+  scrollable_multiple_expressions_view.cpp \
+  scrollable_two_expressions_cell.cpp \
   sequence.cpp\
   sequence_context.cpp\
   sequence_store.cpp\
   sequence_title_cell.cpp \
-  scrollable_multiple_expressions_view.cpp \
-  scrollable_two_expressions_cell.cpp \
   separable.cpp \
   separator_even_odd_buffer_text_cell.cpp \
+  shared_app.cpp \
   simple_interactive_curve_view_controller.cpp \
   store_cell.cpp \
   store_controller.cpp \

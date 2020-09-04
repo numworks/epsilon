@@ -7,6 +7,7 @@
 #include "equation_store.h"
 #include "interval_controller.h"
 #include "solutions_controller.h"
+#include "../shared/shared_app.h"
 
 namespace Solver {
 
@@ -18,7 +19,7 @@ public:
       I18n::Message upperName() override;
       const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;

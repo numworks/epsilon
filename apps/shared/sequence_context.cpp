@@ -12,13 +12,13 @@ template<typename T>
 TemplatedSequenceContext<T>::TemplatedSequenceContext() :
   m_commonRank(-1),
   m_commonRankValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
-  m_independantRanks{-1, -1, -1},
-  m_independantRankValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}}
+  m_independentRanks{-1, -1, -1},
+  m_independentRankValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}}
 {
 }
 
 template<typename T>
-T TemplatedSequenceContext<T>::valueOfSequenceAtPreviousRank(int sequenceIndex, int rank) const {
+T TemplatedSequenceContext<T>::valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const {
   return m_commonRankValues[sequenceIndex][rank];
 }
 
@@ -26,11 +26,11 @@ template<typename T>
 void TemplatedSequenceContext<T>::resetCache() {
   /* We only need to reset the ranks. Indeed, when we compute the values of the
    * sequences, we use ranks as memoization indexes. Therefore, we know that the
-   * values stored in m_commomValues and m_independantRankValues are dirty
+   * values stored in m_commomValues and m_independentRankValues are dirty
    * and do not use them. */
   m_commonRank = -1;
   for (int i = 0; i < MaxNumberOfSequences; i ++) {
-    m_independantRanks[i] = -1;
+    m_independentRanks[i] = -1;
   }
 }
 
@@ -55,7 +55,7 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
   if (stepMultipleSequences) {
     m_commonRank++;
   } else {
-    setIndependantSequenceRank(independantSequenceRank(sequenceIndex) + 1, sequenceIndex);
+    setIndependentSequenceRank(independentSequenceRank(sequenceIndex) + 1, sequenceIndex);
   }
 
   // Then we shift the values stored in the arrays
@@ -69,8 +69,8 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
   } else {
     start = sequenceIndex;
     stop = sequenceIndex + 1;
-    sequenceArray = reinterpret_cast<T*>(&m_independantRankValues);
-    rank = independantSequenceRank(sequenceIndex);
+    sequenceArray = reinterpret_cast<T*>(&m_independentRankValues);
+    rank = independentSequenceRank(sequenceIndex);
   }
 
   for (int i = start; i < stop; i++) {
@@ -107,7 +107,7 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
       T * pointerToUpdate = sequenceArray + i * (MaxRecurrenceDepth + 1);
       if (std::isnan(*(pointerToUpdate))) {
         int j = stepMultipleSequences ? i : 0;
-        *(pointerToUpdate) = sequences[j] ? sequences[j]->template approximateToNextRank<T>(rank, sqctx, sequenceIndex) : NAN;
+        *pointerToUpdate = sequences[j] ? sequences[j]->template approximateToNextRank<T>(rank, sqctx, sequenceIndex) : NAN;
       }
     }
   }

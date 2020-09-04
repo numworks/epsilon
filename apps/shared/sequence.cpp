@@ -20,6 +20,31 @@ I18n::Message Sequence::parameterMessageName() const {
   return I18n::Message::N;
 }
 
+int Sequence::nameWithArgument(char * buffer, size_t bufferSize) {
+  int seqNameSize = name(buffer, bufferSize);
+  assert(seqNameSize > 0);
+  size_t result = seqNameSize;
+  assert(result <= bufferSize);
+  buffer[result++] = '(';
+  assert(result <= bufferSize);
+  assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
+  result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
+  assert(result <= bufferSize);
+  switch (type())
+  {
+  case Type::Explicit:
+    result += strlcpy(buffer+result, ")", bufferSize-result);
+    break;
+  case Type::SingleRecurrence:
+    result += strlcpy(buffer+result, "+1)", bufferSize-result);
+    break;
+  default:
+    result += strlcpy(buffer+result, "+2)", bufferSize-result);
+    break;
+  }
+  return result;
+}
+
 void Sequence::tidy() {
   m_definition.tidyName();
   Function::tidy(); // m_definitionName.tidy()
@@ -111,7 +136,7 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
   T n = std::round(x);
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
   if (sqctx->iterateUntilRank<T>(n)) {
-    return sqctx->valueOfSequenceAtPreviousRank<T>(sequenceIndex, 0);
+    return sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(sequenceIndex, 0);
   }
   return NAN;
 }
@@ -122,20 +147,19 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  if (sqctx->independantSequenceRank<T>(sequenceIndex) > n || sqctx->independantSequenceRank<T>(sequenceIndex) < 0) {
+  if (sqctx->independentSequenceRank<T>(sequenceIndex) > n || sqctx->independentSequenceRank<T>(sequenceIndex) < 0) {
     // Reset cache indexes and cache values
-    sqctx->setIndependantSequenceRank<T>(-1, sequenceIndex);
+    sqctx->setIndependentSequenceRank<T>(-1, sequenceIndex);
     for (int i = 0 ; i < MaxRecurrenceDepth+1; i++) {
-      sqctx->setIndependantSequenceValue(NAN, sequenceIndex, i);
+      sqctx->setIndependentSequenceValue(NAN, sequenceIndex, i);
     }
   }
-
-  while(sqctx->independantSequenceRank<T>(sequenceIndex) < n) {
+  while(sqctx->independentSequenceRank<T>(sequenceIndex) < n) {
     sqctx->stepSequenceAtIndex<T>(sequenceIndex);
   }
-  /* In case we have sqctx->independantSequenceRank<T>(sequenceIndex) = n, we can return the
+  /* In case we have sqctx->independentSequenceRank<T>(sequenceIndex) = n, we can return the
    * value */
-  T value = sqctx->independantSequenceValue<T>(sequenceIndex, 0);
+  T value = sqctx->independentSequenceValue<T>(sequenceIndex, 0);
   return value;
 }
 
@@ -156,22 +180,22 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
 
   /* In case we step only one sequence to the next step, the data stored in
    * values is not necessarily u(n), u(n-1).... Indeed, since the indexes are
-   * independant, if the index for u is 3 but the one for v is 5, value will
+   * independent, if the index for u is 3 but the one for v is 5, value will
    * hold u(3), u(2), u(1) | v(5), v(4), v(3). Therefore, the calculation will
    * be wrong if they relay on a symbol such as u(n). To prevent this, we align
    * all the values around the index of the sequence we are stepping. */
-  int independantRank = sqctx->independantSequenceRank<T>(sequenceIndex);
+  int independentRank = sqctx->independentSequenceRank<T>(sequenceIndex);
   for (int i = 0; i < MaxNumberOfSequences; i++) {
-    if (sequenceIndex != -1 && sqctx->independantSequenceRank<T>(i) != independantRank) {
-      int offset = independantRank - sqctx->independantSequenceRank<T>(i);
+    if (sequenceIndex != -1 && sqctx->independentSequenceRank<T>(i) != independentRank) {
+      int offset = independentRank - sqctx->independentSequenceRank<T>(i);
       if (offset != 0) {
         for (int j = MaxRecurrenceDepth; j >= 0; j--) {
-            values[i][j] = j-offset < 0 ? NAN : sqctx->independantSequenceValue<T>(i, j-offset);
+            values[i][j] = j-offset < 0 ? NAN : sqctx->independentSequenceValue<T>(i, j-offset);
         }
       }
     } else {
       for (int j = 0; j < MaxRecurrenceDepth+1; j++) {
-        values[i][j] = sequenceIndex != -1 ? sqctx->independantSequenceValue<T>(i, j) : sqctx->valueOfSequenceAtPreviousRank<T>(i, j);
+        values[i][j] = sequenceIndex != -1 ? sqctx->independentSequenceValue<T>(i, j) : sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(i, j);
       }
     }
   }
@@ -184,7 +208,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
       symbols[i][j] = Symbol::Builder(name[j], strlen(name[j]));
     }
   }
-
+  ctx.setNValue(n);
   switch (type()) {
     case Type::Explicit:
     {

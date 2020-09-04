@@ -50,7 +50,11 @@ void resetLongRepetition() {
   ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
-Event getEvent(int * timeout) {
+static Keyboard::Key keyFromState(Keyboard::State state) {
+  return static_cast<Keyboard::Key>(63 - __builtin_clzll(state));
+}
+
+static inline Event innerGetEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
   int time = 0;
@@ -113,6 +117,28 @@ Event getEvent(int * timeout) {
     }
   }
 }
+
+static Journal * sSourceJournal = nullptr;
+static Journal * sDestinationJournal = nullptr;
+void replayFrom(Journal * l) { sSourceJournal = l; }
+void logTo(Journal * l) { sDestinationJournal = l; }
+
+Event getEvent(int * timeout) {
+  if (sSourceJournal != nullptr) {
+    Event e = sSourceJournal->popEvent();
+    if (e == None) {
+      sSourceJournal = nullptr;
+    } else {
+      return e;
+    }
+  }
+  Event e = innerGetEvent(timeout);
+  if (sDestinationJournal != nullptr && e != None) {
+    sDestinationJournal->pushEvent(e);
+  }
+  return e;
+}
+
 
 }
 }

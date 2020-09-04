@@ -4,11 +4,6 @@
 #include <ion.h>
 #include <limits.h>
 #include <cmath>
-#include "../assets/key_layouts/horizontal_arrow.h"
-#include "../assets/key_layouts/large_squircle.h"
-#include "../assets/key_layouts/round.h"
-#include "../assets/key_layouts/small_squircle.h"
-#include "../assets/key_layouts/vertical_arrow.h"
 
 namespace Ion {
 namespace Simulator {
@@ -98,13 +93,23 @@ void getBackgroundRect(SDL_Rect * rect) {
 
 class KeyLayout {
 public:
-  enum class Shape {
+  enum class Shape : uint8_t {
     HorizontalArrow,
     VerticalArrow,
     Round,
     SmallSquircle,
-    LargeSquircle
+    LargeSquircle,
+    NumberOfShapes
   };
+  static constexpr size_t NumberOfShapes = (size_t)Shape::NumberOfShapes;
+  static constexpr const char * imagePathForKey[KeyLayout::NumberOfShapes] = {
+    "horizontal_arrow.jpg",
+    "vertical_arrow.jpg",
+    "round.jpg",
+    "small_squircle.jpg",
+    "large_squircle.jpg"
+  };
+
   constexpr KeyLayout(float x, float y, Shape shape) :
     m_center{X(x), Y(y)},
     m_shape(shape) {}
@@ -115,6 +120,8 @@ private:
   SDL_FPoint m_center;
   Shape m_shape;
 };
+
+constexpr const char * const KeyLayout::imagePathForKey[KeyLayout::NumberOfShapes];
 
 static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
   KeyLayout(191, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
@@ -173,44 +180,38 @@ static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
   KeyLayout(950, 2040, KeyLayout::Shape::LargeSquircle), // I5, EXE
 };
 
-const Image * imageForKey(int keyIndex) {
-  if (keyIndex == -1) {
-    return nullptr;
-  }
-  assert(keyIndex >= 0 && keyIndex < Keyboard::NumberOfValidKeys);
-  switch (sKeyLayouts[keyIndex].shape()) {
-    case KeyLayout::Shape::Round:
-      return ImageStore::Round;
-    case KeyLayout::Shape::LargeSquircle:
-      return ImageStore::LargeSquircle;
-    case KeyLayout::Shape::SmallSquircle:
-      return ImageStore::SmallSquircle;
-    case KeyLayout::Shape::VerticalArrow:
-      return ImageStore::VerticalArrow;
-    default:
-      assert(sKeyLayouts[keyIndex].shape() == KeyLayout::Shape::HorizontalArrow);
-      return ImageStore::HorizontalArrow;
-  }
-}
-
 static void getKeyCenter(int validKeyIndex, SDL_Point * point) {
   assert(validKeyIndex >= 0 && validKeyIndex < Keyboard::NumberOfValidKeys);
   makeAbsolute(sKeyLayouts[validKeyIndex].center(), point);
 }
 
-static void getKeyRectangle(int validKeyIndex, SDL_Rect * rect) {
+static void getKeyRectangle(int validKeyIndex, SDL_Texture * texture, SDL_Rect * rect) {
   assert(validKeyIndex >= 0 && validKeyIndex < Keyboard::NumberOfValidKeys);
   SDL_FPoint point = sKeyLayouts[validKeyIndex].center();
-  const Image * img = imageForKey(validKeyIndex);
+  int w, h;
+  SDL_QueryTexture(texture, NULL, NULL, &w, &h);
   SDL_FRect fRect;
-  fRect.w = X(img->width());
-  fRect.h = Y(img->height());
+  fRect.w = X(w);
+  fRect.h = Y(h);
   fRect.x = point.x - fRect.w/2.0f;
   fRect.y = point.y - fRect.h/2.0f;
   makeAbsolute(fRect, rect);
 }
 
-int sHighlightedKeyIndex;
+static constexpr uint8_t k_blendingRatio = 0x44;
+static SDL_Texture * sBackgroundTexture = nullptr;
+static SDL_Texture * sKeyLayoutTextures[KeyLayout::NumberOfShapes];
+
+void init(SDL_Renderer * renderer) {
+  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
+  for (size_t i = 0; i < KeyLayout::NumberOfShapes; i++) {
+    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::imagePathForKey[i]);
+    SDL_SetTextureBlendMode(sKeyLayoutTextures[i], SDL_BLENDMODE_BLEND);
+    SDL_SetTextureAlphaMod(sKeyLayoutTextures[i], k_blendingRatio);
+  }
+}
+
+static int sHighlightedKeyIndex;
 
 Keyboard::Key highlightKeyAt(SDL_Point * p) {
   int newHighlightedKeyIndex = -1;
@@ -240,63 +241,22 @@ Keyboard::Key highlightKeyAt(SDL_Point * p) {
   return nearestKey;
 }
 
-SDL_PixelFormat * sRgbaPixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
-
-// round.png file is 130 x 130 and is the largest key layout
-static constexpr size_t k_maxKeyLayoutSize = 130*130;
-static constexpr uint8_t k_blendingRatio = 0x44;
-
-// TODO: use a "native" image decompressor instead of LZ4
-void fillRGBABufferWithImage(Uint32 * buffer, const Image * img) {
-  KDColor pixelBuffer[k_maxKeyLayoutSize];
-  Ion::decompress(
-    img->compressedPixelData(),
-    reinterpret_cast<uint8_t *>(pixelBuffer),
-    img->compressedPixelDataSize(),
-    img->width() * img->height() * sizeof(KDColor)
-  );
-  for (int i = 0; i < img->width() * img->height(); i++) {
-    buffer[i] = SDL_MapRGBA(sRgbaPixelFormat, pixelBuffer[i].red(), pixelBuffer[i].green(), pixelBuffer[i].blue(), k_blendingRatio);
-  }
+void unhighlightKey() {
+  sHighlightedKeyIndex = -1;
+  Main::setNeedsRefresh();
 }
 
 void drawHighlightedKey(SDL_Renderer * renderer) {
   if (sHighlightedKeyIndex < 0) {
     return;
   }
-  const Image * img = imageForKey(sHighlightedKeyIndex);
-  SDL_Texture * framebufferTexture = SDL_CreateTexture(
-    renderer,
-    SDL_PIXELFORMAT_RGBA32,
-    SDL_TEXTUREACCESS_STREAMING,
-    img->width(),
-    img->height()
-  );
-  SDL_SetTextureBlendMode(framebufferTexture, SDL_BLENDMODE_BLEND);
-  int pitch = 0;
-  void * pixels = nullptr;
-  SDL_LockTexture(framebufferTexture, nullptr, &pixels, &pitch);
-  assert(pitch == sizeof(Uint32) * img->width());
-  fillRGBABufferWithImage(static_cast<Uint32 *>(pixels), img);
-  SDL_UnlockTexture(framebufferTexture);
+  int shape = static_cast<int>(sKeyLayouts[sHighlightedKeyIndex].shape());
+  SDL_Texture * keyTexture = sKeyLayoutTextures[shape];
   SDL_Rect rect;
-  getKeyRectangle(sHighlightedKeyIndex, &rect);
-  SDL_RenderCopy(renderer, framebufferTexture, nullptr, &rect);
-  SDL_DestroyTexture(framebufferTexture);
-
+  getKeyRectangle(sHighlightedKeyIndex, keyTexture, &rect);
+  SDL_RenderCopy(renderer, keyTexture, nullptr, &rect);
   // Reset highlighted key
   unhighlightKey();
-}
-
-void unhighlightKey() {
-  sHighlightedKeyIndex = -1;
-  Main::setNeedsRefresh();
-}
-
-static SDL_Texture * sBackgroundTexture = nullptr;
-
-void init(SDL_Renderer * renderer) {
-  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
 }
 
 void draw(SDL_Renderer * renderer) {

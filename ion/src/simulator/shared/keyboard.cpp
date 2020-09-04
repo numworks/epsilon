@@ -1,5 +1,5 @@
+#include "keyboard.h"
 #include "layout.h"
-#include "platform.h"
 #include "window.h"
 
 #include <ion/keyboard.h>
@@ -43,7 +43,7 @@ State scan() {
   SDL_PumpEvents();
 
   // Notify callbacks in case we need to do something
-  IonSimulatorCallbackDidScanKeyboard();
+  Simulator::Keyboard::didScan();
 
   // Grab this opportunity to refresh the display if needed
   Simulator::Window::refresh();

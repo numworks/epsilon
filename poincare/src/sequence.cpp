@@ -20,28 +20,29 @@ Expression SequenceNode::replaceSymbolWithExpression(const SymbolAbstract & symb
   return Sequence(this).replaceSymbolWithExpression(symbol, expression);
 }
 
+int SequenceNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
+  /* This function ensures that terms like u(n) and u(n+1), u(n) and v(n),
+   * u(a) and u(b) do not factorize.
+   * We never want to factorize. The only cases where it could be useful are
+   * like the following : u(n)+u(n). But thanks to the cache system, no
+   * computation is needed for the second term.*/
+  assert(type() == e->type());
+  assert(numberOfChildren() == 1);
+  assert(e->numberOfChildren() == 1);
+  ExpressionNode * seq = const_cast<ExpressionNode*>(e);
+  int delta = strcmp(name(), reinterpret_cast<SequenceNode *>(seq)->name());
+  if (delta == 0) {
+    return SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending, canBeInterrupted, ignoreParentheses);
+  }
+  return delta;
+}
+
 Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(name()[0] >= 'u' && name()[0] <= 'w');
-  Layout rank;
-  for (char sequenceName = 'u'; sequenceName <= 'w'; sequenceName++) {
-    if (name()[0] == sequenceName) {
-      // Checking for the sequence children
-      if (childAtIndex(0)->type() == Type::Symbol) {
-        // u(n)
-        rank = LayoutHelper::String("n", strlen("n"));
-      } else if (childAtIndex(0)->type() == Type::Addition) {
-        rank = LayoutHelper::String("n+1", strlen("n+1"));
-      } else {
-        assert(childAtIndex(0)->type() ==  Type::BasedInteger);
-        rank = static_cast<BasedIntegerNode &>(*childAtIndex(0)).integer().createLayout();
-      }
-      return HorizontalLayout::Builder(
-        CodePointLayout::Builder(sequenceName),
-        VerticalOffsetLayout::Builder(rank, VerticalOffsetLayoutNode::Position::Subscript));
-    }
-  }
-  assert(false);
-  return LayoutHelper::String(name(), strlen(name()));
+  Layout rank = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  return HorizontalLayout::Builder(
+    CodePointLayout::Builder(name()[0]),
+    VerticalOffsetLayout::Builder(rank, VerticalOffsetLayoutNode::Position::Subscript));
 }
 
 int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -49,7 +50,7 @@ int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
-  return Sequence(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
+  return Sequence(this).shallowReduce(reductionContext);
 }
 
 Evaluation<float> SequenceNode::approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
@@ -95,8 +96,12 @@ Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-// Those two functions will be updated in a comming commit
 Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
+      || childAtIndex(0).isUndefined())
+  {
+    return replaceWithUndefinedInPlace();
+  }
   return *this;
 }
 

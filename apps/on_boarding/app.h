@@ -4,12 +4,13 @@
 #include <escher.h>
 #include "logo_controller.h"
 #include "localization_controller.h"
+#include "../shared/shared_app.h"
 
 namespace OnBoarding {
 
 class App : public ::App {
 public:
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;

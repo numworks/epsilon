@@ -2,7 +2,6 @@
 #include <poincare/preferences.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
-
 #include <cmath>
 
 namespace Poincare {

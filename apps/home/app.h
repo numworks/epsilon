@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "controller.h"
+#include "../shared/shared_app.h"
 
 namespace Home {
 
@@ -13,7 +14,7 @@ public:
     I18n::Message name() override;
     I18n::Message upperName() override;
   };
-  class Snapshot : public ::App::Snapshot, public SelectableTableViewDataSource {
+  class Snapshot : public ::SharedApp::Snapshot, public SelectableTableViewDataSource {
   public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;

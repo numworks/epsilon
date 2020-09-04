@@ -23,6 +23,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/language.cpp \
   dummy/haptics_enabled.cpp \
   haptics.cpp \
+  journal.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp

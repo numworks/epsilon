@@ -8,6 +8,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/haptics_enabled.cpp \
   clipboard_helper.cpp \
   haptics.cpp \
+  dummy/journal.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp

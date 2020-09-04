@@ -7,60 +7,6 @@
 #include <SDL.h>
 #include <string.h>
 
-#if EPSILON_SDL_SCREEN_ONLY
-
-template<typename T, int N>
-class Queue {
-public:
-  Queue() : m_first(&m_elements[0]), m_last(&m_elements[0]) {}
-  int size() {
-    if (m_last >= m_first) {
-      return m_last - m_first;
-    } else {
-      return m_last - (m_first - N);
-    }
-  }
-
-  void enqueue(T element) {
-    if (size() > N) {
-      // Queue is full
-      return;
-    }
-    *m_last = element;
-    m_last = next(m_last);
-  }
-
-  T dequeue() {
-    if (size() <= 0) {
-      // Dequeueing an empty queue
-      return T();
-    }
-    T e = *m_first;
-    m_first = next(m_first);
-    return e;
-  }
-
-private:
-  T * next(T * p) {
-    if (p >= m_elements + N) {
-      return m_elements;
-    } else {
-      return p + 1;
-    }
-  }
-  T * m_first;
-  T * m_last;
-  T m_elements[N];
-};
-
-static Queue<Ion::Events::Event, 1024> sEventQueue;
-
-void IonSimulatorEventsPushEvent(int eventNumber) {
-  sEventQueue.enqueue(Ion::Events::Event(eventNumber));
-}
-
-#endif
-
 namespace Ion {
 namespace Events {
 
@@ -165,12 +111,6 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
 }
 
 Event getPlatformEvent() {
-#if EPSILON_SDL_SCREEN_ONLY
-  if (sEventQueue.size() > 0) {
-    Event event = sEventQueue.dequeue();
-    return event;
-  }
-#endif
   SDL_Event event;
   Event result = None;
   while (SDL_PollEvent(&event)) {

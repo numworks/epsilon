@@ -14,13 +14,13 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  dummy/events_platform.cpp:+headless \
   dummy/keyboard.cpp:+headless \
   console_stdio.cpp:-consoledisplay \
   crc32.cpp \
   display.cpp:-headless \
   events.cpp \
-  events_keyboard.cpp:-headless \
-  events_stdin.cpp:+headless \
+  events_platform.cpp:-headless \
   framebuffer_base.cpp \
   framebuffer_png.cpp:+headless \
   keyboard.cpp:-headless \

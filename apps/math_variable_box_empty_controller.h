@@ -13,7 +13,8 @@ public:
   enum class Type {
     None = 0,
     Expressions = 1,
-    Functions = 2
+    Functions = 2,
+    Sequence = 3
   };
   void setType(Type type);
   // View Controller

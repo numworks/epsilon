@@ -8,6 +8,7 @@
 #include "regression_controller.h"
 #include "store.h"
 #include "store_controller.h"
+#include "../shared/shared_app.h"
 
 namespace Regression {
 
@@ -19,7 +20,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot, public TabViewDataSource {
+  class Snapshot : public ::SharedApp::Snapshot, public TabViewDataSource {
   public:
     Snapshot();
     App * unpack(Container * container) override;

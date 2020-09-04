@@ -1,7 +1,7 @@
 SettingsApp = "Instellingen"
 SettingsAppCapital = "INSTELLINGEN"
 AngleUnit = "Hoekmaat"
-DisplayMode = "Resultaat formaat"
+DisplayMode = "Resultaatformaat"
 EditionMode = "Schrijfformaat"
 EditionLinear = "Lineair "
 Edition2D = "Natuurlijk "

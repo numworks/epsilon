@@ -108,7 +108,7 @@ void refresh() {
 #endif
   SDL_RenderPresent(sRenderer);
 
-  IonSimulatorCallbackDidRefresh();
+  didRefresh();
 }
 
 void quit() {

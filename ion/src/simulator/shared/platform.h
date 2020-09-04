@@ -14,13 +14,6 @@ extern "C" {
 SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier);
 char * IonSimulatorGetLanguageCode();
 
-#if EPSILON_SDL_SCREEN_ONLY
-void IonSimulatorEventsPushEvent(int eventNumber);
-#endif
-
-void IonSimulatorCallbackDidRefresh();
-void IonSimulatorCallbackDidScanKeyboard();
-
 #ifdef __cplusplus
 }
 #endif

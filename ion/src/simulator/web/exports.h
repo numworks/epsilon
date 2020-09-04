@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+const char * IonSoftwareVersion();
+const char * IonPatchLevel();
+void IonDisplayForceRefresh();
 void IonSimulatorKeyboardKeyDown(int keyNumber);
 void IonSimulatorKeyboardKeyUp(int keyNumber);
 void IonSimulatorEventsPushEvent(int eventNumber);

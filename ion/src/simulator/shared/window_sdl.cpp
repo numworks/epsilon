@@ -32,8 +32,8 @@ void init() {
     SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED,
 #if EPSILON_SDL_SCREEN_ONLY
-    // When rendering the screen only, make a non-resizeable window that whose
-    // size matches the screen's
+    // When rendering the screen only, make a non-resizeable window whose size
+    // matches the screen's
     Ion::Display::Width,
     Ion::Display::Height,
     0 // Default flags: no high-dpi, not resizeable.

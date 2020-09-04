@@ -45,6 +45,12 @@ void MathVariableBoxEmptyController::setType(Type type) {
       layout = Poincare::LayoutHelper::String(storeFunction, strlen(storeFunction), MathVariableBoxEmptyView::k_font);
       break;
     }
+    case Type::Sequence:
+    {
+      messages[0] = I18n::Message::EmptySequenceBox0;
+      messages[3] = I18n::Message::Default;
+      break;
+    }
     default:
       assert(false);
   }

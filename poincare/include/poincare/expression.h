@@ -98,6 +98,7 @@ class Expression : public TreeHandle {
   friend class SubtractionNode;
   friend class Sum;
   friend class SumAndProduct;
+  friend class SumAndProductNode;
   friend class Symbol;
   friend class SymbolAbstractNode;
   friend class Tangent;

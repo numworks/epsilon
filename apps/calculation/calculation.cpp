@@ -169,7 +169,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::Sum,
             ExpressionNode::Type::Derivative,
             ExpressionNode::Type::ConfidenceInterval,
-            ExpressionNode::Type::PredictionInterval
+            ExpressionNode::Type::PredictionInterval,
+            ExpressionNode::Type::Sequence
           };
           return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes)/sizeof(ExpressionNode::Type));
         }, context)

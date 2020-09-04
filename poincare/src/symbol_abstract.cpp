@@ -37,11 +37,6 @@ Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, ReductionContext 
 
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const {
   assert(type() == e->type());
-  /* We do not want the sequences to be factorized. Otherwise, u(n) will be
-   * factorized with u(n+1). */
-  if (type() == Type::Sequence) {
-    return -1;
-  }
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
 }
 

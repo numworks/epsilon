@@ -1,4 +1,5 @@
 #include "haptics.h"
+#include "journal.h"
 #include "platform.h"
 #include "telemetry.h"
 #include "window.h"
@@ -60,6 +61,7 @@ int main(int argc, char * argv[]) {
   }
 
   using namespace Ion::Simulator;
+  Journal::init();
 #if EPSILON_TELEMETRY
   Telemetry::init();
 #endif

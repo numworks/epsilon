@@ -16,6 +16,7 @@ LDFLAGS += --pre-js ion/src/simulator/web/preamble_env.js
 ion_src += $(addprefix ion/src/simulator/web/, \
   callback.cpp \
   clipboard_helper.cpp \
+  exports.cpp \
   helpers.cpp \
 )
 

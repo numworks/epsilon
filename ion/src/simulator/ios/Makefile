@@ -4,10 +4,11 @@ ion_src += $(addprefix ion/src/simulator/ios/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   apple/language.m \
-  dummy/callback.cpp \
   dummy/haptics_enabled.cpp \
-  haptics.cpp \
   dummy/journal.cpp \
+  dummy/keyboard_callback.cpp \
+  dummy/window_callback.cpp \
+  haptics.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp

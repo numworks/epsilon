@@ -14,9 +14,9 @@ SFLAGS += -DEPSILON_SDL_SCREEN_ONLY=1
 LDFLAGS += --pre-js ion/src/simulator/web/preamble_env.js
 
 ion_src += $(addprefix ion/src/simulator/web/, \
-  callback.cpp \
   exports.cpp \
-  helpers.cpp \
+  keyboard_callback.cpp \
+  window_callback.cpp \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \

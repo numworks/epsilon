@@ -1,5 +1,5 @@
-#ifndef SEQUENCE_SEQUENCE_H
-#define SEQUENCE_SEQUENCE_H
+#ifndef APPS_SHARED_SEQUENCE_H
+#define APPS_SHARED_SEQUENCE_H
 
 #include "../shared/function.h"
 #include "sequence_context.h"
@@ -29,6 +29,7 @@ public:
   }
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return 'n'; }
+  int nameWithArgument(char * buffer, size_t bufferSize) override;
   void tidy() override;
   // MetaData getters
   Type type() const;

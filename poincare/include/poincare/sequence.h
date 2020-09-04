@@ -19,6 +19,7 @@ public:
 
   Type type() const override { return Type::Sequence; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
 private:
   char m_name[0];

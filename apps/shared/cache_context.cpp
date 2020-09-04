@@ -1,8 +1,10 @@
 #include "cache_context.h"
 #include "sequence.h"
 #include "sequence_store.h"
-#include "../shared/poincare_helpers.h"
+#include "poincare_helpers.h"
 #include <poincare/serialization_helper.h>
+#include <poincare/addition.h>
+#include <poincare/rational.h>
 #include <cmath>
 
 using namespace Poincare;
@@ -20,23 +22,22 @@ template<typename T>
 const Expression CacheContext<T>::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
   // [u|v|w](n(+1)?)
   if (symbol.type() == ExpressionNode::Type::Sequence) {
-    Symbol s = const_cast<Symbol &>(static_cast<const Symbol &>(symbol));
-    if (s.childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
-      return Float<T>::Builder(m_values[nameIndexForSymbol(s)][0]);
-    } else if (s.childAtIndex(0).type() == ExpressionNode::Type::Addition) {
-      return Float<T>::Builder(m_values[nameIndexForSymbol(s)][1]);
+    int index = nameIndexForSymbol(const_cast<Symbol &>(static_cast<const Symbol &>(symbol)));
+    Expression rank = symbol.childAtIndex(0).clone();
+    if (rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
+      return Float<T>::Builder(m_values[index][0]);
+    } if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
+      return Float<T>::Builder(m_values[index][1]);
+    }
+    Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtIndex(index);
+    Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
+    rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(m_nValue));
+    T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);
+    // In case the rank is not int or sequence referenced is not defined, return NAN
+    if (std::floor(n) == n && seq->fullName() != nullptr) {
+      return Float<T>::Builder(seq->valueAtRank<T>(n, m_sequenceContext));
     } else {
-      Sequence seq = m_sequenceContext->sequenceStore()->sequenceAtIndex(nameIndexForSymbol(s));
-      // In case the sequence referenced is not defined, return NAN
-      if (seq.fullName() == nullptr) {
-        return Float<T>::Builder(NAN);
-      }
-      Expression rank = symbol.childAtIndex(0);
-      if (rank.isNumber()) {
-        return Float<T>::Builder(seq.valueAtRank<T>(rank.approximateToScalar<double>(this, Poincare::Preferences::ComplexFormat::Cartesian, Poincare::Preferences::AngleUnit::Radian), m_sequenceContext));
-      } else {
-        return Float<T>::Builder(NAN);
-      }
+      return Float<T>::Builder(NAN);
     }
   }
   return ContextWithParent::expressionForSymbolAbstract(symbol, clone);

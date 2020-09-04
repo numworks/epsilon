@@ -6,6 +6,7 @@
 #include "history_controller.h"
 #include "../shared/text_field_delegate_app.h"
 #include <escher.h>
+#include "../shared/shared_app.h"
 
 namespace Calculation {
 
@@ -17,7 +18,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;

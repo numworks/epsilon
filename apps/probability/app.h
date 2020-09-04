@@ -14,6 +14,7 @@
 #include "calculation/left_integral_calculation.h"
 #include "calculation/right_integral_calculation.h"
 #include "calculation/finite_integral_calculation.h"
+#include "../shared/shared_app.h"
 
 constexpr static size_t max(const int * data, int seed = 0) {
   return (*data == 0 ? seed : max(data+1, *data > seed ? *data : seed));
@@ -29,7 +30,7 @@ public:
       I18n::Message upperName() override;
       const Image * icon() override;
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot : public ::SharedApp::Snapshot {
   public:
     enum class Page {
       Distribution,

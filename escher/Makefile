@@ -91,3 +91,34 @@ escher_src += $(addprefix escher/src/,\
 tests_src += $(addprefix escher/test/,\
   layout_field.cpp\
 )
+
+$(eval $(call rule_for, \
+  HOSTCC, \
+  escher/image/inliner, \
+  escher/image/inliner.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
+  $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@, \
+  global \
+))
+
+INLINER := $(BUILD_DIR)/escher/image/inliner
+
+.PRECIOUS: $(BUILD_DIR)/%.h $(BUILD_DIR)/%.cpp
+$(eval $(call rule_for, \
+  INLINER, \
+  %.h %.cpp, \
+  %.png $$(INLINER), \
+  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp, \
+  global \
+))
+
+# Mark a .cpp file as depending on a .png one
+# This is called with $1 = code.cpp and $2 = image.png
+# First, we mark code.o as requiring image.o. Rules will take care of inlining
+# the PNG and building the inlined cpp file. Second, we add the directory
+# corresponding to the one of code.cpp in the output dir as a header search
+# path. Since $1 can be a list, we have to map with foreach.
+define depends_on_image
+$(call object_for,$(1)): $(call object_for,$(2))
+$(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
+escher_src += $(2)
+endef

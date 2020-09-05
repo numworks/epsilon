@@ -1,8 +1,11 @@
 #include "../shared/platform.h"
-
 #include <locale.h>
 
-char * IonSimulatorGetLanguageCode() {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+const char * languageCode() {
   static char buffer[3] = {0};
   char * locale = setlocale(LC_ALL, "");
   if (locale[2] == '_') {
@@ -11,4 +14,8 @@ char * IonSimulatorGetLanguageCode() {
     return buffer;
   }
   return nullptr;
+}
+
+}
+}
 }

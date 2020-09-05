@@ -5,7 +5,11 @@
 #include <png.h>
 #include <assert.h>
 
-#include <ion/src/simulator/linux/images.h>
+#include <ion/src/simulator/linux/platform_images.h>
+
+namespace Ion {
+namespace Simulator {
+namespace Platform {
 
 enum class AssetFormat {
   JPG,
@@ -95,7 +99,7 @@ bool readJPG(const unsigned char * start, size_t size, unsigned char ** bitmapDa
   return true;
 }
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   static constexpr const char * jpgExtension = ".jpg";
   static constexpr const char * pngExtension = ".png";
 
@@ -160,4 +164,8 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   delete[] bitmapData;
 
   return texture;
+}
+
+}
+}
 }

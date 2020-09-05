@@ -3,7 +3,11 @@
 #include <SDL.h>
 #include <AppKit/AppKit.h>
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   NSImage * nsImage = [NSImage imageNamed:[NSString stringWithUTF8String:identifier]];
   CGImageRef cgImage = [nsImage CGImageForProposedRect:NULL
                                                context:NULL
@@ -54,4 +58,8 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   free(bitmapData);
 
   return texture;
+}
+
+}
+}
 }

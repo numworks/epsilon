@@ -12,7 +12,7 @@
  * Note that this adds an extra runtime dependency (as compared to just SDL),
  * but this should not be an issue. */
 
-HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
+static inline HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
   HINSTANCE hInstance = GetModuleHandle(0);
   *stream = nullptr;
   HRSRC hC = FindResource(hInstance, name, RT_RCDATA);
@@ -36,7 +36,11 @@ HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
   return hr;
 }
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
   ULONG_PTR gdiplusToken;
   Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
@@ -86,4 +90,8 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   Gdiplus::GdiplusShutdown(gdiplusToken);
 
   return texture;
+}
+
+}
+}
 }

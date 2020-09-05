@@ -4,6 +4,7 @@
 #include "random.h"
 #include "telemetry.h"
 #include "window.h"
+#include <algorithm>
 #include <vector>
 #include <ion.h>
 #ifndef __WIN32__
@@ -68,11 +69,13 @@ std::vector<const char *>::const_iterator Args::find(const char * name) const {
   );
 }
 
+using namespace Ion::Simulator;
+
 int main(int argc, char * argv[]) {
   Args args(argc, argv);
 
   if (!args.has("--language")) {
-    args.push("--language", IonSimulatorGetLanguageCode());
+    args.push("--language", Platform::languageCode());
   }
 
 #ifndef __WIN32__
@@ -88,7 +91,6 @@ int main(int argc, char * argv[]) {
 
   bool headless = args.popFlag("--headless");
 
-  using namespace Ion::Simulator;
   Random::init();
   if (!headless) {
     Journal::init();

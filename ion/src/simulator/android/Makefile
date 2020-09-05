@@ -1,6 +1,6 @@
 ion_src += $(addprefix ion/src/simulator/android/src/cpp/, \
-  images.cpp \
   haptics_enabled.cpp \
+  platform_images.cpp \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \

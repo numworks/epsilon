@@ -1,8 +1,11 @@
 #include "../shared/platform.h"
-
 #include <winnls.h>
 
-char * IonSimulatorGetLanguageCode() {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+const char * languageCode() {
   /* Per documentation, the maximum number of characters allowed for the
    * language string is nine, including a terminating null character. */
   static char buffer[9] = {0};
@@ -18,4 +21,8 @@ char * IonSimulatorGetLanguageCode() {
     }
   }
   return buffer;
+}
+
+}
+}
 }

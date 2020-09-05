@@ -8,6 +8,8 @@ namespace Window {
 void init();
 void quit();
 
+bool isHeadless();
+
 void setNeedsRefresh();
 void refresh();
 void relayout();

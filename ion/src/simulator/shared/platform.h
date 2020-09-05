@@ -2,20 +2,16 @@
 #define ION_SIMULATOR_PLATFORM_H
 
 #include <SDL.h>
-#include <stdbool.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace Ion {
+namespace Simulator {
+namespace Platform {
 
-/* Those functions should be implemented per-platform.
- * They are defined as C function for easier interop. */
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier);
+const char * languageCode();
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier);
-char * IonSimulatorGetLanguageCode();
-
-#ifdef __cplusplus
 }
-#endif
+}
+}
 
 #endif

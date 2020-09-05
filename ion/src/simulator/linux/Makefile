@@ -8,9 +8,9 @@ SFLAGS += -DUSING_GENERATED_CONFIG_H
 SFLAGS += -Iion/src/simulator/linux/include
 
 ion_src += $(addprefix ion/src/simulator/linux/, \
-  images.cpp \
-  language.cpp \
   assets.s \
+  platform_images.cpp \
+  platform_language.cpp \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
@@ -31,13 +31,13 @@ LDFLAGS += -ljpeg
 
 $(eval $(call rule_for, \
   INCBIN, \
-  ion/src/simulator/linux/assets.s ion/src/simulator/linux/images.h, \
+  ion/src/simulator/linux/assets.s ion/src/simulator/linux/platform_images.h, \
   $(ion_simulator_assets_paths), \
   $$(PYTHON) ion/src/simulator/linux/incbin.py $(ion_simulator_assets) -o $$@, \
   global \
 ))
 
-$(call object_for,ion/src/simulator/linux/images.cpp): $(BUILD_DIR)/ion/src/simulator/linux/images.h
+$(call object_for,ion/src/simulator/linux/platform_images.cpp): $(BUILD_DIR)/ion/src/simulator/linux/platform_images.h
 
-# The header is refered to as <ion/src/simulator/linux/images.h> so make sure it's findable this way
+# The header is refered to as <ion/src/simulator/linux/platform_images.h> so make sure it's findable this way
 SFLAGS += -I$(BUILD_DIR)

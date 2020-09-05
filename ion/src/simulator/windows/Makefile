@@ -1,6 +1,6 @@
 ion_src += $(addprefix ion/src/simulator/windows/, \
-  images.cpp \
-  language.cpp \
+  platform_images.cpp \
+  platform_language.cpp \
   resources.rc \
 )
 
@@ -35,6 +35,6 @@ $(eval $(call rule_for, \
   global \
 ))
 
-$(call object_for,ion/src/simulator/windows/images.cpp): $(BUILD_DIR)/ion/src/simulator/windows/images.h
+$(call object_for,ion/src/simulator/windows/platform_images.cpp): $(BUILD_DIR)/ion/src/simulator/windows/images.h
 $(call object_for,ion/src/simulator/windows/resources.rc): $(BUILD_DIR)/ion/src/simulator/windows/resources_gen.rc
 

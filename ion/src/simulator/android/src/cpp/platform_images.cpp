@@ -4,7 +4,11 @@
 #include <android/bitmap.h>
 #include <assert.h>
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
@@ -53,4 +57,8 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   env->DeleteLocalRef(j_class);
   env->DeleteLocalRef(activity);
   return texture;
+}
+
+}
+}
 }

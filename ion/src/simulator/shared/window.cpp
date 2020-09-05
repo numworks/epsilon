@@ -2,7 +2,6 @@
 #include "display.h"
 #include "layout.h"
 #include "platform.h"
-#include "random.h"
 
 #include <assert.h>
 #include <ion.h>
@@ -19,13 +18,15 @@ static bool sNeedsRefresh = false;
 static SDL_Rect sScreenRect;
 #endif
 
+bool isHeadless() {
+  return sWindow == nullptr;
+}
+
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Could not init video");
     return;
   }
-
-  Random::init();
 
   sWindow = SDL_CreateWindow(
     "Epsilon",
@@ -67,6 +68,9 @@ void init() {
 }
 
 void relayout() {
+  if (isHeadless()) {
+    return;
+  }
   int windowWidth = 0;
   int windowHeight = 0;
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
@@ -89,7 +93,7 @@ void setNeedsRefresh() {
 }
 
 void refresh() {
-  if (!sNeedsRefresh) {
+  if (!sNeedsRefresh || isHeadless()) {
     return;
   }
   sNeedsRefresh = false;
@@ -112,11 +116,15 @@ void refresh() {
 }
 
 void quit() {
+  if (isHeadless()) {
+    return;
+  }
 #if !EPSILON_SDL_SCREEN_ONLY
   Layout::quit();
 #endif
   Display::quit();
   SDL_DestroyWindow(sWindow);
+  sWindow = nullptr;
   SDL_Quit();
 }
 

@@ -2,7 +2,11 @@
 
 #include <Foundation/Foundation.h>
 
-char * IonSimulatorGetLanguageCode() {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+const char * languageCode() {
   static char buffer[4] = {0};
   if (buffer[0] == 0) {
     NSString * preferredLanguage = [[NSLocale preferredLanguages] firstObject];
@@ -14,4 +18,8 @@ char * IonSimulatorGetLanguageCode() {
     strlcpy(buffer, name, sizeof(buffer));
   }
   return buffer;
+}
+
+}
+}
 }

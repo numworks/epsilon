@@ -39,6 +39,11 @@ namespace Ion {
 namespace Keyboard {
 
 State scan() {
+  State state = sKeyboardState;
+
+  if (Simulator::Window::isHeadless()) {
+    return state;
+  }
   // We need to tell SDL to get new state from the host OS
   SDL_PumpEvents();
 
@@ -48,7 +53,6 @@ State scan() {
   // Grab this opportunity to refresh the display if needed
   Simulator::Window::refresh();
 
-  State state = sKeyboardState;
 #if !EPSILON_SDL_SCREEN_ONLY
   // Register a key for the mouse, if any
   Key k = Simulator::Layout::getHighlightedKey();
@@ -65,6 +69,7 @@ State scan() {
       state.setKey(pair.key());
     }
   }
+
   return state;
 }
 

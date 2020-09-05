@@ -1,6 +1,7 @@
 #include "haptics.h"
 #include "journal.h"
 #include "platform.h"
+#include "random.h"
 #include "telemetry.h"
 #include "window.h"
 #include <vector>
@@ -85,19 +86,26 @@ int main(int argc, char * argv[]) {
   }
 #endif
 
+  bool headless = args.popFlag("--headless");
+
   using namespace Ion::Simulator;
-  Journal::init();
+  Random::init();
+  if (!headless) {
+    Journal::init();
 #if EPSILON_TELEMETRY
-  Telemetry::init();
+    Telemetry::init();
 #endif
-  Window::init();
-  Haptics::init();
+    Window::init();
+    Haptics::init();
+  }
   ion_main(args.argc(), args.argv());
-  Haptics::shutdown();
-  Window::quit();
+  if (!headless) {
+    Haptics::shutdown();
+    Window::quit();
 #if EPSILON_TELEMETRY
-  Telemetry::shutdown();
+    Telemetry::shutdown();
 #endif
+  }
 
   return 0;
 }

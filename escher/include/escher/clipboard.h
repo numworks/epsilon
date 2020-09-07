@@ -9,7 +9,7 @@ class Clipboard {
 public:
   static Clipboard * sharedClipboard();
   void store(const char * storedText, int length = -1);
-  const char * storedText() { return m_textBuffer; }
+  const char * storedText();
   void reset();
   void enterPython() { replaceCharForPython(true); }
   void exitPython() { replaceCharForPython(false); }

@@ -13,7 +13,7 @@ namespace USB {
 
 typedef void (*PollFunctionPointer)(bool exitWithKeyboard);
 
-void DFU() {
+void DFU(bool exitWithKeyboard) {
 
   /* DFU transfers can serve two purposes:
    *  - Transfering RAM data between the machine and a host, e.g. Python scripts
@@ -74,7 +74,7 @@ void DFU() {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  dfu_bootloader_entry(true);
+  dfu_bootloader_entry(exitWithKeyboard);
 
   /* 5- Restore interrupts */
   Device::Timing::init();

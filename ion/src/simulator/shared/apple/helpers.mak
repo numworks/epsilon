@@ -14,11 +14,17 @@ $(simulator_app_binary): $(foreach arch,$(ARCHS),$(BUILD_DIR)/$(arch)/%.bin) | $
 	$(call rule_label,LIPO)
 	$(Q) $(LIPO) -create $^ -output $@
 
-# Background image
+# Background & Keys images
 
-$(call simulator_app_resource,background.jpg): ion/src/simulator/assets/background.jpg | $$(@D)/.
+define rule_for_jpg_asset
+simulator_app_deps += $(call simulator_app_resource,$(1).jpg)
+$(call simulator_app_resource,$(1).jpg): ion/src/simulator/assets/$(1).jpg | $$$$(@D)/.
 	$(call rule_label,COPY)
-	$(Q) cp $^ $@
+	$(Q) cp $$^ $$@
+endef
+
+JPG_ASSETS = background horizontal_arrow large_squircle round small_squircle vertical_arrow
+$(foreach ASSET,$(JPG_ASSETS),$(eval $(call rule_for_jpg_asset,$(ASSET))))
 
 # Process icons
 
@@ -40,4 +46,3 @@ $(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logo.svg
 
 simulator_app_deps += $(simulator_app_binary)
 simulator_app_deps += $(call simulator_app_plist,Info.plist)
-simulator_app_deps += $(call simulator_app_resource,background.jpg)

@@ -4,8 +4,18 @@
 #include <jpeglib.h>
 #include <assert.h>
 
-extern unsigned char _ion_simulator_background_start;
-extern unsigned char _ion_simulator_background_end;
+#ifndef ASSETS_ADDRESS_RANGES_DECLARATION
+#error Missing assets adress range declarations
+#endif
+
+ASSETS_ADDRESS_RANGES_DECLARATION
+static struct {
+  const char * identifier;
+  unsigned char start;
+  unsigned char end;
+} resources_addresses[] = {
+  ASSETS_ADDRESS_RANGES_DEFINITION
+};
 
 SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   struct jpeg_decompress_struct info;
@@ -14,8 +24,17 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
 
   jpeg_create_decompress(&info);
 
-  unsigned char * jpegStart = &_ion_simulator_background_start;
-  unsigned long jpegSize = &_ion_simulator_background_end - &_ion_simulator_background_start;
+  unsigned char * jpegStart = nullptr;
+  unsigned long jpegSize = 0;
+
+  for (size_t i = 0; i < sizeof(resources_addresses)/sizeof(resources_addresses[0]); i++) {
+    if (strcmp(identifier, resources_addresses[i].identifier) == 0) {
+      jpegStart = &resources_addresses[i].start;
+      jpegSize = &resources_addresses[i].end - &resources_addresses[i].start;
+      break;
+    }
+  }
+  assert(jpegStart);
   jpeg_mem_src(&info, jpegStart, jpegSize);
 
   if (jpeg_read_header(&info, TRUE) != 1) {

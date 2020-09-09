@@ -32,6 +32,7 @@ const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstra
   } else {
     Symbol unknownSymbol = Symbol::Builder(UCodePointUnknown);
     if (m_name != nullptr && strcmp(m_name, unknownSymbol.name()) == 0) {
+      assert(std::isnan(unknownSymbolValue));
       unknownSymbolValue = m_value.approximateToScalar<float>(this, Preferences::sharedPreferences()->complexFormat(),Preferences::sharedPreferences()->angleUnit());
     }
     return ContextWithParent::expressionForSymbolAbstract(symbol, clone, unknownSymbolValue);

@@ -31,10 +31,16 @@ static inline void ion_main_inner() {
 
 
 void ion_main(int argc, const char * const argv[]) {
-  // Initialize the backlight
   Ion::Backlight::init();
-  // Initialize Poincare::TreePool::sharedPool
-  Poincare::Init();
+  Poincare::Init(); // Initialize Poincare::TreePool::sharedPool
+#if !PLATFORM_DEVICE
+  /* s_stackStart must be defined as early as possible to ensure that there
+   * cannot be allocated memory pointers before. Otherwise, with MicroPython for
+   * example, stack pointer could go backward after initialization and allocated
+   * memory pointers could be overlooked during mark procedure. */
+  volatile int stackTop;
+  Ion::setStackStart((void *)(&stackTop));
+#endif
 
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {

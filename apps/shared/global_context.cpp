@@ -2,6 +2,7 @@
 #include "continuous_function.h"
 #include "sequence.h"
 #include "poincare_helpers.h"
+#include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
 
@@ -56,9 +57,9 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
   }
 }
 
-const Expression GlobalContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
+const Expression GlobalContext::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
-  return ExpressionForSymbolAndRecord(symbol, r, this);
+  return ExpressionForSymbolAndRecord(symbol, r, this, unknownSymbolValue);
 }
 
 void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
@@ -83,14 +84,14 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
   }
 }
 
-const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
+const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue ) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
   } else if (symbol.type() == ExpressionNode::Type::Function) {
     return ExpressionForFunction(symbol, r);
   }
   assert(symbol.type() == ExpressionNode::Type::Sequence);
-  return ExpressionForSequence(symbol, r, ctx);
+  return ExpressionForSequence(symbol, r, ctx, unknownSymbolValue);
 }
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
@@ -115,14 +116,17 @@ const Expression GlobalContext::ExpressionForFunction(const SymbolAbstract & sym
   return e;
 }
 
-const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
+const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue) {
   if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::seqExtension, strlen(Ion::Storage::seqExtension))) {
     return Expression();
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Sequence seq(r);
-  double rank = PoincareHelpers::ApproximateToScalar<float>(symbol.childAtIndex(0), ctx);
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownN[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
+  float rank = symbol.childAtIndex(0).approximateWithValueForSymbol<float>(unknownN, unknownSymbolValue, ctx, Preferences::sharedPreferences()->complexFormat(),Preferences::sharedPreferences()->angleUnit());
   if (std::floor(rank) == rank) {
     SequenceContext sqctx(ctx, sequenceStore());
     return Float<double>::Builder(seq.evaluateXYAtParameter(rank, &sqctx).x2());

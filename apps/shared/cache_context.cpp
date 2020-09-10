@@ -19,7 +19,7 @@ CacheContext<T>::CacheContext(Context * parentContext) :
 }
 
 template<typename T>
-const Expression CacheContext<T>::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) {
+const Expression CacheContext<T>::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
   // [u|v|w](n(+1)?)
   if (symbol.type() == ExpressionNode::Type::Sequence) {
     int index = nameIndexForSymbol(const_cast<Symbol &>(static_cast<const Symbol &>(symbol)));

@@ -18,7 +18,7 @@ public:
 
   // Context
   void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override;
-  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone) override;
+  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
 
 private:
   const char * m_name;

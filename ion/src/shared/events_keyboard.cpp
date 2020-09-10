@@ -127,11 +127,10 @@ void logTo(Journal * l) { sDestinationJournal = l; }
 
 Event getEvent(int * timeout) {
   if (sSourceJournal != nullptr) {
-    Event e = sSourceJournal->popEvent();
-    if (e == None) {
+    if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
     } else {
-      return e;
+      return sSourceJournal->popEvent();
     }
   }
   Event e = innerGetEvent(timeout);

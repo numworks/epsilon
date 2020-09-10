@@ -55,6 +55,7 @@ class Journal {
 public:
   virtual void pushEvent(Event e) = 0;
   virtual Event popEvent() = 0;
+  virtual bool isEmpty() = 0;
 };
 
 void replayFrom(Journal * l);

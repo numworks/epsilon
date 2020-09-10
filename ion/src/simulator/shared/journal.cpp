@@ -12,9 +12,15 @@ public:
     m_eventStorage.push(e);
   }
   virtual Event popEvent() override {
+    if (isEmpty()) {
+      return Ion::Events::None;
+    }
     Event e = m_eventStorage.front();
     m_eventStorage.pop();
     return e;
+  }
+  virtual bool isEmpty() override {
+    return m_eventStorage.empty();
   }
 private:
   std::queue<Event> m_eventStorage;

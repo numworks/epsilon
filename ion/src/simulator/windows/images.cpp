@@ -1,4 +1,5 @@
 #include "../shared/platform.h"
+#include <ion/src/simulator/windows/resources.h>
 
 #include <SDL.h>
 #include <windows.h>
@@ -40,7 +41,14 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
 
   LPSTREAM stream;
-  const char * resname = MAKEINTRESOURCE(300);
+  int resourceID = -1;
+  for (size_t i = 0; i < sizeof(resourcesIdentifiers)/sizeof(resourcesIdentifiers[0]); i++) {
+    if (strcmp(identifier, resourcesIdentifiers[i].identifier) == 0) {
+      resourceID = resourcesIdentifiers[i].id;
+    }
+  }
+  assert(resourceID >= 0);
+  const char * resname = MAKEINTRESOURCE(resourceID);
   CreateStreamOnResource(resname, &stream);
 
   Gdiplus::Bitmap * image = Gdiplus::Bitmap::FromStream(stream);

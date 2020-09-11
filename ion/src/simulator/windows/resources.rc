@@ -1,4 +1,5 @@
 #include <ion/src/simulator/windows/resources_gen.rc>
+400 ICON "logo.ico"
 
 1 VERSIONINFO
 FILEVERSION     1,0,0,0

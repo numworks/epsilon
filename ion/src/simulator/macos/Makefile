@@ -1,4 +1,5 @@
 ion_src += $(addprefix ion/src/simulator/macos/, \
+  platform_files.mm \
   platform_images.mm \
 )
 
@@ -9,8 +10,10 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/window_callback.cpp \
   collect_registers_x86_64.s \
   collect_registers.cpp \
+  actions.cpp \
   haptics.cpp \
   journal.cpp \
+  state_file.cpp \
 )
 
 ifeq ($(EPSILON_TELEMETRY),1)

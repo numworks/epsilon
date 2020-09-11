@@ -62,6 +62,7 @@ protected:
     SelectableTableView m_selectableTableView;
     MessageTextView m_countryTitleMessage;
     MessageTextView m_countryWarningLines[k_numberOfCountryWarningLines];
+    SolidColorView m_borderView;
   };
 
   SelectableTableView * selectableTableView() { return m_contentView.selectableTableView(); }

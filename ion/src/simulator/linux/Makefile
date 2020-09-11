@@ -41,6 +41,6 @@ $(eval $(call rule_for, \
 
 assets_address_ranges_declaration = $(foreach i,$(jpg_assets),extern unsigned char _ion_simulator_$(i)_start;)
 assets_address_ranges_declaration += $(foreach i,$(jpg_assets),extern unsigned char _ion_simulator_$(i)_end;)
-assets_address_ranges_definition = $(foreach i,$(jpg_assets), {"$(i).jpg", _ion_simulator_$(i)_start, _ion_simulator_$(i)_end},)
+assets_address_ranges_definition = $(foreach i,$(jpg_assets), {"$(i).jpg", &_ion_simulator_$(i)_start, &_ion_simulator_$(i)_end},)
 
 $(call object_for,ion/src/simulator/linux/images.cpp): CXXFLAGS += -DASSETS_ADDRESS_RANGES_DECLARATION='$(assets_address_ranges_declaration)' -DASSETS_ADDRESS_RANGES_DEFINITION='$(assets_address_ranges_definition)'

@@ -2,6 +2,7 @@
 #include "journal.h"
 #include "platform.h"
 #include "random.h"
+#include "state_file.h"
 #include "telemetry.h"
 #include "window.h"
 #include <algorithm>

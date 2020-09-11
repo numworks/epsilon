@@ -1,8 +1,5 @@
-ion_src += $(addprefix ion/src/simulator/ios/, \
-  platform_images.mm \
-)
-
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  apple/platform_images.mm \
   apple/platform_language.mm \
   dummy/haptics_enabled.cpp \
   dummy/journal.cpp \

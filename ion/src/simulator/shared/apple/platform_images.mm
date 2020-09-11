@@ -1,17 +1,27 @@
 #include "../shared/platform.h"
-
 #include <SDL.h>
+#include <TargetConditionals.h>
+#if TARGET_OS_MAC
 #include <AppKit/AppKit.h>
+#else
+#include <UIKit/UIKit.h>
+#endif
 
 namespace Ion {
 namespace Simulator {
 namespace Platform {
 
 SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
+  CGImageRef cgImage = NULL;
+#if TARGET_OS_MAC
+  //http://lists.libsdl.org/pipermail/commits-libsdl.org/2016-December/001235.html
+  [[[NSApp windows] firstObject] setColorSpace:[NSColorSpace sRGBColorSpace]];
+
   NSImage * nsImage = [NSImage imageNamed:[NSString stringWithUTF8String:identifier]];
-  CGImageRef cgImage = [nsImage CGImageForProposedRect:NULL
-                                               context:NULL
-                                                 hints:0];
+  cgImage = [nsImage CGImageForProposedRect:NULL context:NULL hints:0];
+#else
+  cgImage = [[UIImage imageNamed:[NSString stringWithUTF8String:identifier]] CGImage];
+#endif
   if (cgImage == NULL) {
     return NULL;
   }

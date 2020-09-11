@@ -1,9 +1,9 @@
 ion_src += $(addprefix ion/src/simulator/macos/, \
   platform_files.mm \
-  platform_images.mm \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
+  apple/platform_images.mm \
   apple/platform_language.mm \
   dummy/haptics_enabled.cpp \
   dummy/keyboard_callback.cpp \

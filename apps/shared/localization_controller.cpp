@@ -10,7 +10,8 @@ constexpr int LocalizationController::ContentView::k_numberOfCountryWarningLines
 LocalizationController::ContentView::ContentView(LocalizationController * controller, SelectableTableViewDataSource * dataSource) :
   m_controller(controller),
   m_selectableTableView(controller, controller, dataSource),
-  m_countryTitleMessage(KDFont::LargeFont, I18n::Message::Country)
+  m_countryTitleMessage(KDFont::LargeFont, I18n::Message::Country),
+  m_borderView(Palette::GrayBright)
 {
   m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
   m_countryTitleMessage.setAlignment(0.5f, 0.5f);
@@ -24,16 +25,19 @@ LocalizationController::ContentView::ContentView(LocalizationController * contro
 }
 
 int LocalizationController::ContentView::numberOfSubviews() const {
-  return 1 + m_controller->shouldDisplayTitle() + k_numberOfCountryWarningLines * m_controller->shouldDisplayWarning();
+  return 1 + m_controller->shouldDisplayTitle() + (k_numberOfCountryWarningLines + 1) * m_controller->shouldDisplayWarning();
 }
 
 View * LocalizationController::ContentView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
-  /* FIXME : This relies on the fact that the title is never displayed without the warning. */
+  /* This relies on the fact that the title is never displayed without the warning. */
+  assert((!m_controller->shouldDisplayTitle()) || m_controller->shouldDisplayWarning());
   switch (i) {
   case 0:
     return &m_selectableTableView;
   case 3:
+    return &m_borderView;
+  case 4:
     return &m_countryTitleMessage;
   default:
     return &m_countryWarningLines[i-1];
@@ -52,6 +56,7 @@ void LocalizationController::ContentView::layoutSubviews(bool force) {
   }
   if (m_controller->shouldDisplayWarning()) {
     origin = layoutWarningSubview(force, Metric::CommonTopMargin + origin) + Metric::CommonTopMargin;
+    m_borderView.setFrame(KDRect(Metric::CommonLeftMargin, origin, bounds().width() - Metric::CommonLeftMargin - Metric::CommonRightMargin, Metric::CellSeparatorThickness), force);
   }
   origin = layoutTableSubview(force, origin);
   assert(origin <= bounds().height());

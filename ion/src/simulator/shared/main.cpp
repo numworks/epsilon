@@ -24,8 +24,10 @@ public:
   const char * pop(const char * key);
   bool popFlag(const char * flag);
   void push(const char * key, const char * value) {
-    m_arguments.push_back(key);
-    m_arguments.push_back(value);
+    if (key != nullptr && value != nullptr) {
+      m_arguments.push_back(key);
+      m_arguments.push_back(value);
+    }
   }
   void push(const char * argument) { m_arguments.push_back(argument); }
   int argc() const { return m_arguments.size(); }

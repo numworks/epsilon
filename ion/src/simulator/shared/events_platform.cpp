@@ -19,7 +19,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   Ion::Events::ShiftAlphaStatus previousShiftAlphaStatus = Ion::Events::shiftAlphaStatus();
   Ion::Events::removeShift();
 
-  if (event.keysym.mod & KMOD_CTRL) {
+  if (event.keysym.mod & (KMOD_CTRL|KMOD_GUI)) {
     switch (event.keysym.sym) {
       case SDLK_x:
         return Cut;

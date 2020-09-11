@@ -9,17 +9,22 @@ SFLAGS += -Iion/src/simulator/linux/include
 
 ion_src += $(addprefix ion/src/simulator/linux/, \
   assets.s \
+  platform_files.cpp \
   platform_images.cpp \
   platform_language.cpp \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  dummy/callback.cpp \
   dummy/haptics_enabled.cpp \
+  dummy/keyboard_callback.cpp \
+  dummy/window_callback.cpp \
+  actions.cpp \
   collect_registers_x86_64.s \
   collect_registers.cpp \
   haptics.cpp \
   journal.cpp \
+  platform_action_modifier_ctrl.cpp \
+  state_file.cpp \
 )
 
 ifeq ($(EPSILON_TELEMETRY),1)

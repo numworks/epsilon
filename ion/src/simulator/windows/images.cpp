@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <olectl.h>
 #include <gdiplus.h>
+#include <assert.h>
 
 /* Loading images using GDI+
  * On Windows, we decompress JPEG images using GDI+ which is widely available.

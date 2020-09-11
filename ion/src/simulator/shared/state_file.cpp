@@ -48,7 +48,12 @@ static inline bool load(FILE * f) {
 }
 
 void load(const char * filename) {
-  FILE * f = fopen(filename, "rb");
+  FILE * f = nullptr;
+  if (strcmp(filename, "-") == 0) {
+    f = stdin;
+  } else {
+    f = fopen(filename, "rb");
+  }
   if (f == nullptr) {
     return;
   }

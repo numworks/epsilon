@@ -211,12 +211,19 @@ void init(SDL_Renderer * renderer) {
   }
 }
 
-static int sHighlightedKeyIndex;
+static int sHighlightedKeyIndex = -1;
 
-Keyboard::Key highlightKeyAt(SDL_Point * p) {
+Keyboard::Key getHighlightedKey() {
+  Keyboard::Key k = Keyboard::Key::None;
+  if (sHighlightedKeyIndex >= 0) {
+    k = Keyboard::ValidKeys[sHighlightedKeyIndex];
+  }
+  return k;
+}
+
+void highlightKeyAt(SDL_Point * p) {
   int newHighlightedKeyIndex = -1;
   int minSquaredDistance = INT_MAX;
-  Keyboard::Key nearestKey = Keyboard::Key::None;
   /* The closenessThreshold is apportioned to the size of the frame. As the
    * width and the height have a constant ratio, we can compute the
    * closenessThreshold from the frame width exclusively. */
@@ -230,7 +237,6 @@ Keyboard::Key highlightKeyAt(SDL_Point * p) {
     int squaredDistance = dx*dx + dy*dy;
     if (squaredDistance < squaredClosenessThreshold && squaredDistance < minSquaredDistance) {
       minSquaredDistance = squaredDistance;
-      nearestKey = Keyboard::ValidKeys[i];
       newHighlightedKeyIndex = i;
     }
   }
@@ -238,7 +244,6 @@ Keyboard::Key highlightKeyAt(SDL_Point * p) {
     sHighlightedKeyIndex = newHighlightedKeyIndex;
     Main::setNeedsRefresh();
   }
-  return nearestKey;
 }
 
 void unhighlightKey() {
@@ -255,8 +260,6 @@ void drawHighlightedKey(SDL_Renderer * renderer) {
   SDL_Rect rect;
   getKeyRectangle(sHighlightedKeyIndex, keyTexture, &rect);
   SDL_RenderCopy(renderer, keyTexture, nullptr, &rect);
-  // Reset highlighted key
-  unhighlightKey();
 }
 
 void draw(SDL_Renderer * renderer) {

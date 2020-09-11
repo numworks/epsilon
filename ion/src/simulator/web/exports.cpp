@@ -1,6 +1,7 @@
 #include "exports.h"
-#include "../shared/events_journal.h"
+#include "../shared/journal.h"
 #include "../shared/keyboard.h"
+#include "../shared/window.h"
 #include <ion.h>
 
 const char * IonSoftwareVersion() {
@@ -27,7 +28,7 @@ void IonSimulatorKeyboardKeyUp(int keyNumber) {
 }
 
 void IonSimulatorEventsPushEvent(int eventNumber) {
-  Ion::Events::Journal * j = Ion::Simulator::Events::replayJournal();
+  Ion::Events::Journal * j = Ion::Simulator::Journal::replayJournal();
   if (j != nullptr) {
     Ion::Events::Event event(eventNumber);
     j->pushEvent(event);

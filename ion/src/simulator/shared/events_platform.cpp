@@ -1,5 +1,7 @@
+#include "actions.h"
 #include "keyboard.h"
 #include "layout.h"
+#include "state_file.h"
 #include "window.h"
 
 #include <assert.h>
@@ -10,7 +12,7 @@
 namespace Ion {
 namespace Events {
 
-static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
+static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   /* If an event is detected, we want to remove the Shift modifier to mimic the
    * device behaviour. If no event was detected, we restore the previous
    * ShiftAlphaStatus. */
@@ -113,8 +115,7 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
 Event getPlatformEvent() {
   SDL_Event event;
   Event result = None;
-  while (SDL_PollEvent(&event)) {
-    // The while is important: it'll do a fast-pass over all useless SDL events
+  while (SDL_PollEvent(&event)) { // That "while" is important: it'll do a fast-pass over all useless SDL events
     if (event.type == SDL_WINDOWEVENT) {
       Ion::Simulator::Window::relayout();
       break;

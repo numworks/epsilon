@@ -11,8 +11,8 @@
 ASSETS_ADDRESS_RANGES_DECLARATION
 static struct {
   const char * identifier;
-  unsigned char start;
-  unsigned char end;
+  unsigned char * start;
+  unsigned char * end;
 } resources_addresses[] = {
   ASSETS_ADDRESS_RANGES_DEFINITION
 };
@@ -29,8 +29,8 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
 
   for (size_t i = 0; i < sizeof(resources_addresses)/sizeof(resources_addresses[0]); i++) {
     if (strcmp(identifier, resources_addresses[i].identifier) == 0) {
-      jpegStart = &resources_addresses[i].start;
-      jpegSize = &resources_addresses[i].end - &resources_addresses[i].start;
+      jpegStart = resources_addresses[i].start;
+      jpegSize = resources_addresses[i].end - resources_addresses[i].start;
       break;
     }
   }

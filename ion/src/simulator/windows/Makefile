@@ -21,11 +21,14 @@ endif
 
 # RC file dependencies
 $(call object_for,ion/src/simulator/windows/resources.rc): WRFLAGS += -I $(BUILD_DIR)
+$(call object_for,ion/src/simulator/windows/resources.rc): $(addprefix $(BUILD_DIR)/,logo.ico)
 
-# The header of images is refered to as <ion/src/simulator/windows/resources.h> so make sure it's findable this way
-SFLAGS += -I$(BUILD_DIR)
+$(addprefix $(BUILD_DIR)/,logo.ico): ion/src/simulator/assets/logo.svg | $$(@D)/.
+	$(call rule_label,CONVERT)
+	$(Q) convert -background "#FFB734" -resize 256x256 $< $@
 
-LDFLAGS += -lgdiplus
+# Linker flags
+LDFLAGS += -lgdiplus -lcomdlg32
 
 $(eval $(call rule_for, \
   RESGEN, \
@@ -37,4 +40,3 @@ $(eval $(call rule_for, \
 
 $(call object_for,ion/src/simulator/windows/platform_images.cpp): $(BUILD_DIR)/ion/src/simulator/windows/images.h
 $(call object_for,ion/src/simulator/windows/resources.rc): $(BUILD_DIR)/ion/src/simulator/windows/resources_gen.rc
-

@@ -20,6 +20,41 @@
     <array>
       <string>MacOSX</string>
     </array>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeName</key>
+        <string>Nacho MNDL file</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+          <string>com.numworks.savefile</string>
+        </array>
+      </dict>
+    </array>
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+      <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.numworks.savefile</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+          <string>public.data</string>
+        </array>
+        <key>UTTypeDescription</key>
+        <string>NumWorks save file</string>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+          <key>public.filename-extension</key>
+          <array>
+            <string>nws</string>
+          </array>
+        </dict>
+      </dict>
+    </array>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright © 2019 NumWorks. All rights reserved.</string>
     <key>NSPrincipalClass</key>

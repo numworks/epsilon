@@ -1,5 +1,6 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
+#include <ion/clipboard.h>
 #include <algorithm>
 
 static Clipboard s_clipboard;
@@ -10,9 +11,12 @@ Clipboard * Clipboard::sharedClipboard() {
 
 void Clipboard::store(const char * storedText, int length) {
   strlcpy(m_textBuffer, storedText, length == -1 ? TextField::maxBufferSize() : std::min(TextField::maxBufferSize(), length + 1));
+  Ion::Clipboard::write(m_textBuffer);
 }
 
 const char * Clipboard::storedText() {
+  Ion::Clipboard::read(m_textBuffer, TextField::maxBufferSize());
+
   /* In order to allow copy/paste of empty formulas, we need to add empty
    * layouts between empty system parenthesis. This way, when the expression
    * is parsed, it is recognized as a proper formula and appears with the correct
@@ -39,6 +43,8 @@ const char * Clipboard::storedText() {
 
 void Clipboard::reset() {
   strlcpy(m_textBuffer, "", 1);
+  /* As we do not want to empty the user's computer's clipboard when entering
+   * exam mode, we do not reset Ion::Clipboard. */
 }
 
 void Clipboard::replaceCharForPython(bool entersPythonApp) {

@@ -1,4 +1,5 @@
 #include "actions.h"
+#include <ion/display.h>
 #include "framebuffer.h"
 #include "platform.h"
 #include "state_file.h"
@@ -29,7 +30,11 @@ void loadState() {
 void takeScreenshot() {
   const char * path = Platform::filePathForWriting("png");
   if (path != nullptr) {
-//    Framebuffer::writeToFile(path);
+    Platform::saveImage(
+      Framebuffer::address(),
+      Display::Width, Display::Height,
+      path
+    );
   }
 }
 

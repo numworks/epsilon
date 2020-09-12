@@ -9,7 +9,6 @@ namespace Framebuffer {
 
 const KDColor * address();
 void setActive(bool enabled);
-void writeToFile(const char * filename);
 
 }
 }

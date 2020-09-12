@@ -94,6 +94,13 @@ int main(int argc, char * argv[]) {
 
   bool headless = args.popFlag("--headless");
 
+#if ION_SIMULATOR_FILES
+  const char * stateFile = args.pop("--load-state-file");
+  if (stateFile) {
+    StateFile::load(stateFile);
+  }
+#endif
+
   Random::init();
   if (!headless) {
     Journal::init();

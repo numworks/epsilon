@@ -1,3 +1,5 @@
+ION_SIMULATOR_FILES = 1
+
 ion_src += $(addprefix ion/src/simulator/windows/, \
   platform_files.cpp \
   platform_images.cpp \

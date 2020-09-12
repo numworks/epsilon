@@ -27,6 +27,14 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return Copy;
       case SDLK_v:
         return Paste;
+#if ION_SIMULATOR_FILES
+      case SDLK_s:
+        Simulator::Actions::saveState();
+        return None;
+      case SDLK_p:
+        Simulator::Actions::takeScreenshot();
+        return None;
+#endif
     }
   }
   if (event.keysym.mod & KMOD_ALT) {

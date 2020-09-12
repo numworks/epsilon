@@ -1,9 +1,10 @@
 #include "../shared/platform.h"
 
-#include <SDL.h>
+#include <assert.h>
 #include <jpeglib.h>
 #include <png.h>
-#include <assert.h>
+#include <SDL.h>
+#include <stdlib.h>
 
 #include <ion/src/simulator/linux/platform_images.h>
 
@@ -164,6 +165,54 @@ SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   delete[] bitmapData;
 
   return texture;
+}
+
+class RGB888Pixel {
+public:
+  RGB888Pixel() {}
+  RGB888Pixel(KDColor c) :
+    m_red(c.red()),
+    m_green(c.green()),
+    m_blue(c.blue()) {
+  }
+private:
+  uint8_t m_red;
+  uint8_t m_green;
+  uint8_t m_blue;
+};
+static_assert(sizeof(RGB888Pixel) == 3, "RGB888Pixel shall be 3 bytes long");
+
+void saveImage(const KDColor * pixels, int width, int height, const char * path) {
+  FILE * file = fopen(path, "wb"); // Write in binary mode
+
+  png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+  png_infop info = png_create_info_struct(png);
+  png_init_io(png, file);
+
+  png_set_IHDR(png, info,
+      width, height,
+      8, // Number of bits per channel
+      PNG_COLOR_TYPE_RGB,
+      PNG_INTERLACE_NONE,
+      PNG_COMPRESSION_TYPE_DEFAULT,
+      PNG_FILTER_TYPE_DEFAULT);
+
+  png_write_info(png, info);
+
+  RGB888Pixel * row = new RGB888Pixel[3*width];
+  for (int j=0;j<height;j++) {
+    for (int i=0; i<width; i++) {
+      row[i] = RGB888Pixel(pixels[i+width*j]);
+    }
+    png_write_row(png, reinterpret_cast<png_bytep>(row));
+  }
+  delete row;
+
+  png_write_end(png, NULL);
+
+  png_free_data(png, info, PNG_FREE_ALL, -1); // -1 = all items
+  png_destroy_write_struct(&png, nullptr);
+  fclose(file);
 }
 
 }

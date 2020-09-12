@@ -1,5 +1,6 @@
-# The following lines allow us to use our own SDL_config.h
+ION_SIMULATOR_FILES = 1
 
+# The following lines allow us to use our own SDL_config.h
 # First, make sure an error is raised if we ever use the standard SDL_config.h
 SFLAGS += -DUSING_GENERATED_CONFIG_H
 # Then use our very own include dir if either SDL.h or SDL_config.h are included
@@ -32,7 +33,7 @@ ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
-LDFLAGS += -ljpeg
+LDFLAGS += -ljpeg -lpng
 
 $(eval $(call rule_for, \
   INCBIN, \
@@ -45,4 +46,4 @@ $(eval $(call rule_for, \
 $(call object_for,ion/src/simulator/linux/platform_images.cpp): $(BUILD_DIR)/ion/src/simulator/linux/platform_images.h
 
 # The header is refered to as <ion/src/simulator/linux/platform_images.h> so make sure it's findable this way
-SFLAGS += -I$(BUILD_DIR)
+$(call object_for,ion/src/simulator/linux/platform_images.cpp): SFLAGS += -I$(BUILD_DIR)

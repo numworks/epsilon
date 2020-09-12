@@ -143,6 +143,12 @@ Event getPlatformEvent() {
       result = eventFromSDLTextInputEvent(event.text);
       break;
     }
+#if ION_SIMULATOR_FILES
+    if (event.type == SDL_DROPFILE) {
+      Simulator::StateFile::load(event.drop.file);
+      break;
+    }
+#endif
 #if !EPSILON_SDL_SCREEN_ONLY
     if (event.type == SDL_MOUSEMOTION) {
       SDL_Point p;

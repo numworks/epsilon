@@ -22,7 +22,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   display.cpp:-headless \
   events.cpp \
   events_platform.cpp:-headless \
-  framebuffer_base.cpp \
+  framebuffer.cpp \
   framebuffer_png.cpp:+headless \
   keyboard.cpp:-headless \
   layout.cpp:-headless \
@@ -38,3 +38,11 @@ ion_simulator_assets_paths = $(add_prefix ion/src/simulator/assets/,$(ion_simula
 
 include ion/src/simulator/$(TARGET)/Makefile
 include ion/src/simulator/external/Makefile
+
+ifeq ($(ION_SIMULATOR_FILES),1)
+ion_src += $(addprefix ion/src/simulator/shared/, \
+  actions.cpp \
+  state_file.cpp \
+)
+SFLAGS += -DION_SIMULATOR_FILES=1
+endif

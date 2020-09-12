@@ -8,7 +8,7 @@
 #include <assert.h>
 
 /* Loading images using GDI+
- * On Windows, we decompress JPEG images using GDI+ which is widely available.
+ * On Windows, we manipulate images using GDI+ which is widely available.
  * Note that this adds an extra runtime dependency (as compared to just SDL),
  * but this should not be an issue. */
 
@@ -36,14 +36,63 @@ static inline HRESULT CreateStreamOnResource(const char * name, LPSTREAM * strea
   return hr;
 }
 
+// Helper class to init/shutdown Gdiplus using RAII
+class GdiplusSession {
+public:
+  GdiplusSession() {
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    Gdiplus::GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, nullptr);
+  }
+  ~GdiplusSession() {
+    Gdiplus::GdiplusShutdown(m_gdiplusToken);
+  }
+private:
+  ULONG_PTR m_gdiplusToken;
+};
+
+// Helper function from MSDN
+// https://docs.microsoft.com/en-us/windows/win32/gdiplus/-gdiplus-retrieving-the-class-identifier-for-an-encoder-use
+int GetEncoderClsid(const WCHAR * format, CLSID * pClsid) {
+   UINT num = 0; // number of image encoders
+   UINT size = 0; // size of the image encoder array in bytes
+
+   Gdiplus::ImageCodecInfo * pImageCodecInfo = nullptr;
+   Gdiplus::GetImageEncodersSize(&num, &size);
+   if (size == 0) {
+      return -1;
+   }
+   pImageCodecInfo = static_cast<Gdiplus::ImageCodecInfo *>(malloc(size));
+   if (pImageCodecInfo == nullptr) {
+      return -1;
+   }
+
+   Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+
+   for (UINT i=0; i<num; i++) {
+      if (wcscmp(pImageCodecInfo[i].MimeType, format) == 0) {
+         *pClsid = pImageCodecInfo[i].Clsid;
+         free(pImageCodecInfo);
+         return i; // Success
+      }
+   }
+
+   free(pImageCodecInfo);
+   return -1;
+}
+
+static wchar_t * createWideCharArray(const char * src) {
+  int wchars_num = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
+  wchar_t * wstr = new wchar_t[wchars_num];
+  MultiByteToWideChar(CP_UTF8, 0, src, -1, wstr, wchars_num);
+  return wstr;
+}
+
 namespace Ion {
 namespace Simulator {
 namespace Platform {
 
 SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
-  Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  ULONG_PTR gdiplusToken;
-  Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+  GdiplusSession session;
 
   LPSTREAM stream;
   int resourceID = -1;
@@ -87,9 +136,22 @@ SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   image->UnlockBits(bitmapData);
   delete bitmapData;
   delete image;
-  Gdiplus::GdiplusShutdown(gdiplusToken);
 
   return texture;
+}
+
+void saveImage(const KDColor * pixels, int width, int height, const char * path) {
+  static_assert(sizeof(KDColor) == 2, "KDColor expected to be RGB565");
+  GdiplusSession session;
+
+  Gdiplus::Bitmap bitmap(width, height, 2*width, PixelFormat16bppRGB565, reinterpret_cast<BYTE *>(const_cast<KDColor *>(pixels)));
+
+  CLSID pngClsid;
+  if (GetEncoderClsid(L"image/png", &pngClsid) > 0) {
+    wchar_t * widePath = createWideCharArray(path);
+    bitmap.Save(widePath, &pngClsid, nullptr);
+    delete[] widePath;
+  }
 }
 
 }

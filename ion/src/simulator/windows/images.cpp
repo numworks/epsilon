@@ -36,7 +36,7 @@ HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
   return hr;
 }
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Surface * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
   ULONG_PTR gdiplusToken;
   Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
@@ -61,25 +61,20 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData;
   image->LockBits(&rc, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, bitmapData);
 
-  SDL_Texture * texture = SDL_CreateTexture(
-    renderer,
-    SDL_PIXELFORMAT_ARGB8888,
-    SDL_TEXTUREACCESS_STATIC,
-    width,
-    height
-  );
-
-  SDL_UpdateTexture(
-    texture,
-    NULL,
+  size_t bytesPerPixel = 4;
+  size_t bitsPerPixel = bytesPerPixel*8;
+  SDL_Surface * surface = SDL_CreateRGBSurfaceWithFormatFrom(
     bitmapData->Scan0,
-    4 * width
-  );
+    width,
+    height,
+    bitsPerPixel,
+    bytesPerPixel*width,
+    SDL_PIXELFORMAT_ABGR8888);
 
   image->UnlockBits(bitmapData);
   delete bitmapData;
   delete image;
   Gdiplus::GdiplusShutdown(gdiplusToken);
 
-  return texture;
+  return surface;
 }

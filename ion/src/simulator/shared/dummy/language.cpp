@@ -1,5 +1,13 @@
 #include "../platform.h"
 
-char * IonSimulatorGetLanguageCode() {
+namespace Ion {
+namespace Simulator {
+namespace Platform {
+
+const char * languageCode() {
   return nullptr;
+}
+
+}
+}
 }

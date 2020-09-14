@@ -67,4 +67,11 @@ Shared::SequenceContext * App::localContext() {
   return &m_sequenceContext;
 }
 
+NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
+  varBox->setSender(textInput);
+  varBox->lockDeleteEvent(MathVariableBoxController::Page::Sequence);
+  return varBox;
+}
+
 }

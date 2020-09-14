@@ -17,7 +17,7 @@ static struct {
   ASSETS_ADDRESS_RANGES_DEFINITION
 };
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier, bool withTransparency, uint8_t alpha) {
   struct jpeg_decompress_struct info;
   struct jpeg_error_mgr err;
   info.err = jpeg_std_error(&err);
@@ -70,7 +70,13 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
       width * bytesPerPixel,
       surfacePixelFormat);
 
+  SDL_SetColorKey(surface, withTransparency, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
+  SDL_SetSurfaceAlphaMod(surface, alpha);
+
+  SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+
   delete[] bitmapData;
+  SDL_FreeSurface(surface);
 
   return texture;
 }

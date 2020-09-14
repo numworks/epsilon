@@ -3,7 +3,7 @@
 #include <jni.h>
 #include <android/bitmap.h>
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Surface * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
@@ -25,22 +25,17 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   AndroidBitmap_lockPixels(env, j_bitmap, &bitmapPixels);
   // TODO: Handle the case where lockPixels fails
 
-  SDL_Texture * texture = SDL_CreateTexture(
-    renderer,
-    SDL_PIXELFORMAT_ABGR8888,
-    SDL_TEXTUREACCESS_STATIC,
+  size_t bytesPerPixel = 4;
+  size_t bitsPerPixel = bytesPerPixel*8;
+  SDL_Surface * surface = SDL_CreateRGBSurfaceWithFormatFrom(
+    bitmapPixels,
     bitmapInfo.width,
-    bitmapInfo.height
-  );
-
-  SDL_UpdateTexture(
-      texture,
-      nullptr,
-      bitmapPixels,
-      4 * bitmapInfo.width
-  );
+    bitmapInfo.height,
+    bitsPerPixel,
+    bytesPerPixel * bitmapInfo.width,
+    SDL_PIXELFORMAT_ABGR8888);
 
   AndroidBitmap_unlockPixels(env, j_bitmap);
 
-  return texture;
+  return surface;
 }

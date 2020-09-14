@@ -46,6 +46,7 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   int width = info.output_width;
   int height = info.output_height;
   int bytesPerPixel = info.output_components;
+  int bitsPerPixel = bytesPerPixel*8;
 
   unsigned char * bitmapData = new unsigned char[height * width * bytesPerPixel];
 
@@ -58,23 +59,16 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   jpeg_finish_decompress(&info);
   jpeg_destroy_decompress(&info);
 
-  Uint32 texturePixelFormat = SDL_PIXELFORMAT_RGB24;
-  assert(bytesPerPixel == SDL_BYTESPERPIXEL(texturePixelFormat));
+  Uint32 surfacePixelFormat = SDL_PIXELFORMAT_RGB24;
+  assert(bytesPerPixel == SDL_BYTESPERPIXEL(surfacePixelFormat));
 
-  SDL_Texture * texture = SDL_CreateTexture(
-    renderer,
-    texturePixelFormat,
-    SDL_TEXTUREACCESS_STATIC,
-    width,
-    height
-  );
-
-  SDL_UpdateTexture(
-    texture,
-    NULL,
-    bitmapData,
-    width * bytesPerPixel
-  );
+  SDL_Surface * surface = SDL_CreateRGBSurfaceWithFormatFrom(
+      bitmapData,
+      width,
+      height,
+      bitsPerPixel,
+      width * bytesPerPixel,
+      surfacePixelFormat);
 
   delete[] bitmapData;
 

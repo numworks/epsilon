@@ -87,9 +87,14 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
   SequenceStore * sequenceStore = sqctx->sequenceStore();
   stop = stepMultipleSequences ? sequenceStore->numberOfModels() : start + 1;
   for (int i = start; i < stop; i++) {
-    Sequence * u = sequenceStore->modelForRecord(sequenceStore->recordAtIndex(i));
-    int index = stepMultipleSequences ? SequenceStore::sequenceIndexForName(u->fullName()[0]) : 0;
-    sequences[index] = u->isDefined() ? u : nullptr;
+    Ion::Storage::Record record = sequenceStore->recordAtIndex(i);
+    if (!record.isNull()) {
+      Sequence * u = sequenceStore->modelForRecord(record);
+      int index = stepMultipleSequences ? SequenceStore::sequenceIndexForName(u->fullName()[0]) : 0;
+      sequences[index] = u->isDefined() ? u : nullptr;
+    } else {
+      sequences[i] = nullptr;
+    }
   }
 
   // We approximate the value of the next rank for each sequence we want to update

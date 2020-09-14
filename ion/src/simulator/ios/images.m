@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <UIKit/UIKit.h>
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Surface * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   CGImageRef cgImage = [[UIImage imageNamed:[NSString stringWithUTF8String:identifier]] CGImage];
   if (cgImage == NULL) {
     return NULL;
@@ -13,6 +13,7 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
 
 
   size_t bytesPerPixel = 4;
+  size_t bitsPerPixel = bytesPerPixel*8;
   size_t bytesPerRow = bytesPerPixel * width;
   size_t bitsPerComponent = 8;
 
@@ -30,22 +31,15 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   CGContextRelease(context);
   CGColorSpaceRelease(colorSpace);
 
-  SDL_Texture * texture = SDL_CreateTexture(
-    renderer,
-    SDL_PIXELFORMAT_ABGR8888,
-    SDL_TEXTUREACCESS_STATIC,
-    width,
-    height
-  );
-
-  SDL_UpdateTexture(
-    texture,
-    NULL,
+  SDL_Surface * surface = SDL_CreateRGBSurfaceWithFormatFrom(
     bitmapData,
-    4 * width
-  );
+    width,
+    height,
+    bitsPerPixel,
+    bytesPerRow,
+    SDL_PIXELFORMAT_ABGR8888);
 
   free(bitmapData);
 
-  return texture;
+  return surface;
 }

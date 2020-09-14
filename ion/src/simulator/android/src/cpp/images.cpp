@@ -3,7 +3,7 @@
 #include <jni.h>
 #include <android/bitmap.h>
 
-SDL_Surface * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier, bool withTransparency, uint8_t alpha) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
@@ -35,7 +35,13 @@ SDL_Surface * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
     bytesPerPixel * bitmapInfo.width,
     SDL_PIXELFORMAT_ABGR8888);
 
-  AndroidBitmap_unlockPixels(env, j_bitmap);
+  SDL_SetColorKey(surface, withTransparency, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
+  SDL_SetSurfaceAlphaMod(surface, alpha);
 
-  return surface;
+  SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+  AndroidBitmap_unlockPixels(env, j_bitmap);
+  SDL_FreeSurface(surface);
+
+  return texture;
 }

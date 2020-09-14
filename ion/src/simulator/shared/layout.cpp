@@ -202,19 +202,10 @@ static constexpr uint8_t k_blendingRatio = 0x44;
 static SDL_Texture * sBackgroundTexture = nullptr;
 static SDL_Texture * sKeyLayoutTextures[KeyLayout::NumberOfShapes];
 
-SDL_Texture * textureFromSurface(SDL_Renderer * renderer, SDL_Surface * surface, bool transparencyFlag, KDColor transparentColor) {
-  SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-  SDL_SetColorKey(surface, transparencyFlag, SDL_MapRGB(surface->format, transparentColor.red(), transparentColor.green(), transparentColor.blue()));
-  SDL_FreeSurface(surface);
-  return texture;
-}
-
 void init(SDL_Renderer * renderer) {
-  sBackgroundTexture = textureFromSurface(renderer, IonSimulatorLoadImage(renderer, "background.jpg"), false, KDColorWhite);
+  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg", false, 0xFF);
   for (size_t i = 0; i < KeyLayout::NumberOfShapes; i++) {
-    sKeyLayoutTextures[i] = textureFromSurface(renderer, IonSimulatorLoadImage(renderer, KeyLayout::imagePathForKey[i]), true, KDColorWhite);
-    SDL_SetTextureBlendMode(sKeyLayoutTextures[i], SDL_BLENDMODE_BLEND);
-    SDL_SetTextureAlphaMod(sKeyLayoutTextures[i], k_blendingRatio);
+    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::imagePathForKey[i], true, k_blendingRatio);
   }
 }
 

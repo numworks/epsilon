@@ -30,12 +30,14 @@ const Expression CacheContext<T>::expressionForSymbolAbstract(const Poincare::Sy
       return Float<T>::Builder(m_values[index][1]);
     }
     Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtIndex(index);
-    Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
-    rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(m_nValue));
-    T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);
-    // In case the rank is not int or sequence referenced is not defined, return NAN
-    if (std::floor(n) == n && seq->fullName() != nullptr) {
-      return Float<T>::Builder(seq->valueAtRank<T>(n, m_sequenceContext));
+    if (!record.isNull()) {
+      Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
+      rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(m_nValue));
+      T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);
+      // In case the rank is not int or sequence referenced is not defined, return NAN
+      if (std::floor(n) == n && seq->fullName() != nullptr) {
+        return Float<T>::Builder(seq->valueAtRank<T>(n, m_sequenceContext));
+      }
     } else {
       return Float<T>::Builder(NAN);
     }

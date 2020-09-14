@@ -124,10 +124,10 @@ private:
 constexpr const char * const KeyLayout::imagePathForKey[KeyLayout::NumberOfShapes];
 
 static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
-  KeyLayout(191, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
-  KeyLayout(273, 945, KeyLayout::Shape::VerticalArrow), // A2, Up
-  KeyLayout(273, 1110, KeyLayout::Shape::VerticalArrow), // A3, Down
-  KeyLayout(355, 1029, KeyLayout::Shape::HorizontalArrow), // A4, Right
+  KeyLayout(195, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
+  KeyLayout(273, 948, KeyLayout::Shape::VerticalArrow), // A2, Up
+  KeyLayout(273, 1108, KeyLayout::Shape::VerticalArrow), // A3, Down
+  KeyLayout(353, 1029, KeyLayout::Shape::HorizontalArrow), // A4, Right
   KeyLayout(810, 1029, KeyLayout::Shape::Round), // A5, OK
   KeyLayout(963, 1029, KeyLayout::Shape::Round), // A6, Back
 

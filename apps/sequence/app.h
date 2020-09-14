@@ -47,6 +47,7 @@ public:
   // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
+  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   Shared::SequenceContext * localContext() override;
   Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }

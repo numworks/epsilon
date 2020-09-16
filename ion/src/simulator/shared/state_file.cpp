@@ -22,7 +22,6 @@ static inline bool load(FILE * f) {
   if (fread(buffer, sHeaderLength, 1, f) != 1) {
     return false;
   }
-  printf("READ\n");
   if (strcmp(buffer, sHeader) != 0) {
     return false;
   }

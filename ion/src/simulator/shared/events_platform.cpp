@@ -1,4 +1,5 @@
 #include "actions.h"
+#include "journal.h"
 #include "keyboard.h"
 #include "layout.h"
 #include "state_file.h"
@@ -174,6 +175,13 @@ Event getPlatformEvent() {
      * event -> the first event from the queue will still be processed, but not
      * the subsequent ones. */
     SDL_FlushEvents(0, UINT32_MAX);
+  }
+  if (Simulator::Window::isHeadless()) {
+    if (Simulator::Journal::replayJournal() == nullptr || Simulator::Journal::replayJournal()->isEmpty()) {
+      /* We don't want to keep the simulator process alive if there's no chance
+       * we're ever going to provide it with new events to process. */
+      return Termination;
+    }
   }
   return result;
 }

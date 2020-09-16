@@ -50,14 +50,23 @@ public:
   private:
     constexpr static int k_distributionSizes[] = {sizeof(BinomialDistribution),sizeof(ExponentialDistribution), sizeof(NormalDistribution), sizeof(PoissonDistribution), sizeof(UniformDistribution), 0};
     constexpr static size_t k_distributionSize = max(k_distributionSizes);
+    constexpr static int k_calculationSizes[] = {sizeof(LeftIntegralCalculation),sizeof(FiniteIntegralCalculation), sizeof(RightIntegralCalculation), 0};
+    constexpr static size_t k_calculationSize = max(k_calculationSizes);
 
     void deleteDistributionAndCalculation();
     void initializeDistributionAndCalculation();
 
+#if __EMSCRIPTEN__
+    constexpr static int k_distributionAlignments[] = {alignof(BinomialDistribution),alignof(ExponentialDistribution), alignof(NormalDistribution), alignof(PoissonDistribution), alignof(UniformDistribution), 0};
+    constexpr static size_t k_distributionAlignment = max(k_distributionAlignments);
+    constexpr static int k_calculationAlignments[] = {alignof(LeftIntegralCalculation),alignof(FiniteIntegralCalculation), alignof(RightIntegralCalculation), 0};
+    constexpr static size_t k_calculationAlignment = max(k_calculationAlignments);
+    alignas(k_distributionAlignment) char m_distribution[k_distributionSize];
+    alignas(k_calculationAlignment) char m_calculation[k_calculationSize];
+#else
     char m_distribution[k_distributionSize];
-    constexpr static int k_calculationSizes[] = {sizeof(LeftIntegralCalculation),sizeof(FiniteIntegralCalculation), sizeof(RightIntegralCalculation), 0};
-    constexpr static size_t k_calculationSize = max(k_calculationSizes);
     char m_calculation[k_calculationSize];
+#endif
     Page m_activePage;
   };
   static App * app() {

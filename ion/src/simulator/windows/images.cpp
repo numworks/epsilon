@@ -69,7 +69,7 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
     height,
     bitsPerPixel,
     bytesPerPixel*width,
-    SDL_PIXELFORMAT_ABGR8888);
+    SDL_PIXELFORMAT_ARGB8888);
 
   SDL_SetColorKey(surface, withTransparency, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
   SDL_SetSurfaceAlphaMod(surface, alpha);

@@ -261,6 +261,9 @@ bool InteractiveCurveViewController::isCursorVisible() {
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
   double x = m_cursor->x();
   double y = m_cursor->y();
+  if (std::isnan(y)) {
+    y = goingUp ? -INFINITY : INFINITY;
+  }
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
   int nextCurveIndex = -1;
   int curvesCount = numberOfCurves();

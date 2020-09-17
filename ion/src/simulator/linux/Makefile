@@ -27,20 +27,20 @@ endif
 
 LDFLAGS += -ljpeg
 
-jpg_assets = background horizontal_arrow vertical_arrow round small_squircle large_squircle
+assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
 
-jpg_images = $(foreach i,$(jpg_assets),ion/src/simulator/assets/$(i).jpg)
+assets_paths = $(foreach i,$(assets),ion/src/simulator/assets/$(i))
 
 $(eval $(call rule_for, \
   LINUX_ASSETS, \
   ion/src/simulator/linux/assets.s, \
-  $(jpg_images), \
-  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(jpg_assets) --implementation $$@, \
+  $(assets_paths), \
+  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --implementation $$@, \
   global \
 ))
 
-assets_address_ranges_declaration = $(foreach i,$(jpg_assets),extern unsigned char _ion_simulator_$(i)_start;)
-assets_address_ranges_declaration += $(foreach i,$(jpg_assets),extern unsigned char _ion_simulator_$(i)_end;)
-assets_address_ranges_definition = $(foreach i,$(jpg_assets), {"$(i).jpg", &_ion_simulator_$(i)_start, &_ion_simulator_$(i)_end},)
+assets_address_ranges_declaration = $(foreach i,$(assets),extern unsigned char _ion_simulator_$(basename $(i))_start;)
+assets_address_ranges_declaration += $(foreach i,$(assets),extern unsigned char _ion_simulator_$(basename $(i))_end;)
+assets_address_ranges_definition = $(foreach i,$(assets), {"$(i)", &_ion_simulator_$(basename $(i))_start, &_ion_simulator_$(basename $(i))_end},)
 
 $(call object_for,ion/src/simulator/linux/images.cpp): CXXFLAGS += -DASSETS_ADDRESS_RANGES_DECLARATION='$(assets_address_ranges_declaration)' -DASSETS_ADDRESS_RANGES_DEFINITION='$(assets_address_ranges_definition)'

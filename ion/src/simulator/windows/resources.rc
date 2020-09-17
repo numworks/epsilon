@@ -1,9 +1,9 @@
 300 RCDATA "../assets/background.jpg"
-301 RCDATA "../assets/horizontal_arrow.jpg"
-302 RCDATA "../assets/large_squircle.jpg"
-303 RCDATA "../assets/round.jpg"
-304 RCDATA "../assets/small_squircle.jpg"
-305 RCDATA "../assets/vertical_arrow.jpg"
+301 RCDATA "../assets/horizontal_arrow.png"
+302 RCDATA "../assets/large_squircle.png"
+303 RCDATA "../assets/round.png"
+304 RCDATA "../assets/small_squircle.png"
+305 RCDATA "../assets/vertical_arrow.png"
 
 1 VERSIONINFO
 FILEVERSION     1,0,0,0

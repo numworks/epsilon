@@ -16,15 +16,15 @@ $(simulator_app_binary): $(foreach arch,$(ARCHS),$(BUILD_DIR)/$(arch)/%.bin) | $
 
 # Background & Keys images
 
-define rule_for_jpg_asset
-simulator_app_deps += $(call simulator_app_resource,$(1).jpg)
-$(call simulator_app_resource,$(1).jpg): ion/src/simulator/assets/$(1).jpg | $$$$(@D)/.
+define rule_for_asset
+simulator_app_deps += $(call simulator_app_resource,$(1))
+$(call simulator_app_resource,$(1)): ion/src/simulator/assets/$(1) | $$$$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $$^ $$@
 endef
 
-JPG_ASSETS = background horizontal_arrow large_squircle round small_squircle vertical_arrow
-$(foreach ASSET,$(JPG_ASSETS),$(eval $(call rule_for_jpg_asset,$(ASSET))))
+ASSETS = background.jpg horizontal_arrow.png large_squircle.png round.png small_squircle.png vertical_arrow.png
+$(foreach ASSET,$(ASSETS),$(eval $(call rule_for_asset,$(ASSET))))
 
 # Process icons
 

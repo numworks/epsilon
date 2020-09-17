@@ -11,7 +11,7 @@ extern "C" {
 /* Those functions should be implemented per-platform.
  * They are defined as C function for easier interop. */
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier, bool withTransparency, uint8_t alpha);
+SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier);
 char * IonSimulatorGetLanguageCode();
 
 #if EPSILON_SDL_SCREEN_ONLY

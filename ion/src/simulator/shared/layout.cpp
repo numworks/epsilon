@@ -103,11 +103,11 @@ public:
   };
   static constexpr size_t NumberOfShapes = (size_t)Shape::NumberOfShapes;
   static constexpr const char * imagePathForKey[KeyLayout::NumberOfShapes] = {
-    "horizontal_arrow.jpg",
-    "vertical_arrow.jpg",
-    "round.jpg",
-    "small_squircle.jpg",
-    "large_squircle.jpg"
+    "horizontal_arrow.png",
+    "vertical_arrow.png",
+    "round.png",
+    "small_squircle.png",
+    "large_squircle.png"
   };
 
   constexpr KeyLayout(float x, float y, Shape shape) :
@@ -198,14 +198,13 @@ static void getKeyRectangle(int validKeyIndex, SDL_Texture * texture, SDL_Rect *
   makeAbsolute(fRect, rect);
 }
 
-static constexpr uint8_t k_blendingRatio = 0x44;
 static SDL_Texture * sBackgroundTexture = nullptr;
 static SDL_Texture * sKeyLayoutTextures[KeyLayout::NumberOfShapes];
 
 void init(SDL_Renderer * renderer) {
-  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg", false, 0xFF);
+  sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
   for (size_t i = 0; i < KeyLayout::NumberOfShapes; i++) {
-    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::imagePathForKey[i], true, k_blendingRatio);
+    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::imagePathForKey[i]);
   }
 }
 

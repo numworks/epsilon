@@ -11,11 +11,10 @@ namespace Shared {
 template<typename T>
 class CacheContext : public Poincare::ContextWithParent {
 public:
-  CacheContext(Poincare::Context * parentContext);
+  CacheContext(SequenceContext * sequenceContext);
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
   void setNValue(int n) { m_nValue = n; }
-  void setSequenceContext(SequenceContext * sequenceContext) { m_sequenceContext = sequenceContext;}
 private:
   int nameIndexForSymbol(const Poincare::Symbol & symbol);
   int rankIndexForSymbol(const Poincare::Symbol & symbol);

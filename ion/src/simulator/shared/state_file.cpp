@@ -11,6 +11,7 @@ namespace StateFile {
 static constexpr const char * sHeader = "NWSF";
 static constexpr int sHeaderLength = 4;
 static constexpr int sVersionLength = 8;
+static constexpr const char * sWildcardVersion = "**.**.**";
 
 /* File format: * "NWSF" + "XXXXXXXX" (version) + EVENTS... */
 
@@ -31,7 +32,7 @@ static inline bool load(FILE * f) {
   if (fread(buffer, sVersionLength, 1, f) != 1) {
     return false;
   }
-  if (strcmp(buffer, softwareVersion()) != 0) {
+  if (strcmp(buffer, softwareVersion()) != 0 && strcmp(buffer, sWildcardVersion) != 0) {
     return false;
   }
 

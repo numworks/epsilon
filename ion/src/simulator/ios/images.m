@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <UIKit/UIKit.h>
 
-SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier, bool withTransparency, uint8_t alpha) {
+SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identifier) {
   CGImageRef cgImage = [[UIImage imageNamed:[NSString stringWithUTF8String:identifier]] CGImage];
   if (cgImage == NULL) {
     return NULL;
@@ -17,7 +17,9 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   size_t bytesPerRow = bytesPerPixel * width;
   size_t bitsPerComponent = 8;
 
-  void * bitmapData = malloc(height * width * bytesPerPixel);
+  size_t size = height * width * bytesPerPixel;
+  void * bitmapData = malloc(size);
+  memset(bitmapData, 0, size);
 
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
   CGContextRef context = CGBitmapContextCreate(
@@ -31,21 +33,24 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   CGContextRelease(context);
   CGColorSpaceRelease(colorSpace);
 
-  SDL_Surface * surface = SDL_CreateRGBSurfaceWithFormatFrom(
-    bitmapData,
+  SDL_Texture * texture = SDL_CreateTexture(
+    renderer,
+    SDL_PIXELFORMAT_ABGR8888,
+    SDL_TEXTUREACCESS_STATIC,
     width,
-    height,
-    bitsPerPixel,
-    bytesPerRow,
-    SDL_PIXELFORMAT_ABGR8888);
+    height
+  );
 
-  SDL_SetColorKey(surface, withTransparency, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
-  SDL_SetSurfaceAlphaMod(surface, alpha);
+  SDL_UpdateTexture(
+    texture,
+    NULL,
+    bitmapData,
+    bytesPerPixel * width
+  );
 
-  SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+  SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
   free(bitmapData);
-  SDL_FreeSurface(surface);
 
   return texture;
 }

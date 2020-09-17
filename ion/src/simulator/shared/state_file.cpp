@@ -40,7 +40,10 @@ static inline bool load(FILE * f) {
   int c = 0;
   while ((c = getc(f)) != EOF) {
     Ion::Events::Event e = Ion::Events::Event(c);
-    journal->pushEvent(e);
+    if (e.isDefined() && e.isKeyboardEvent()) {
+      // Avoid pushing invalid events - useful when fuzzing
+      journal->pushEvent(e);
+    }
   }
   Ion::Events::replayFrom(journal);
 

@@ -97,9 +97,12 @@ Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
-      || childAtIndex(0).isUndefined())
-  {
+  Expression e = Expression::defaultShallowReduce();
+  e = e.defaultHandleUnitsInChildren();
+  if (e.isUndefined()) {
+    return e;
+  }
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

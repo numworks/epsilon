@@ -59,7 +59,8 @@ public:
   Poincare::Layout nameLayout();
   bool isDefined() override;
   bool isEmpty() override;
-  bool hasValidExpression() { return m_definition.hasValidExpression(); }
+  bool hasValidExpression(Poincare::Context * context) { return m_definition.hasValidExpression() && !badlyReferencesItself(context); }
+  bool badlyReferencesItself(Poincare::Context * context);
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context) const override {
     return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));

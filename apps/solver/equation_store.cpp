@@ -102,7 +102,7 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
     root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, step, m_intervalApproximateSolutions[1], context);
     if (i == k_maxNumberOfApproximateSolutions) {
-      m_hasMoreThanMaxNumberOfApproximateSolution = !isnan(root);
+      m_hasMoreThanMaxNumberOfApproximateSolution = !std::isnan(root);
       break;
     }
     m_approximateSolutions[i] = root;

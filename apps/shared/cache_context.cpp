@@ -12,9 +12,10 @@ using namespace Poincare;
 namespace Shared {
 
 template<typename T>
-CacheContext<T>::CacheContext(Context * parentContext) :
-  ContextWithParent(parentContext),
-  m_values{{NAN, NAN},{NAN, NAN},{NAN,NAN}}
+CacheContext<T>::CacheContext(SequenceContext * sequenceContext) :
+  ContextWithParent(sequenceContext),
+  m_values{{NAN, NAN},{NAN, NAN},{NAN,NAN}},
+  m_sequenceContext(sequenceContext)
 {
 }
 
@@ -34,9 +35,14 @@ const Expression CacheContext<T>::expressionForSymbolAbstract(const Poincare::Sy
       Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
       rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(m_nValue));
       T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);
-      // In case the rank is not int or sequence referenced is not defined, return NAN
-      if (std::floor(n) == n && seq->fullName() != nullptr) {
-        return Float<T>::Builder(seq->valueAtRank<T>(n, m_sequenceContext));
+      // In case the sequence referenced is not defined or if the rank is not an int, return NAN
+      if (seq->fullName() != nullptr) {
+        if (std::floor(n) == n) {
+          Expression sequenceExpression = seq->expressionReduced(this);
+          if (seq->hasValidExpression(this)) {
+            return Float<T>::Builder(seq->valueAtRank<T>(n, m_sequenceContext));
+          }
+        }
       }
     } else {
       return Float<T>::Builder(NAN);

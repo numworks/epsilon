@@ -58,7 +58,9 @@ void load(const char * filename) {
     return;
   }
   load(f);
-  fclose(f);
+  if (f != stdin) {
+    fclose(f);
+  }
 }
 
 static inline bool save(FILE * f) {

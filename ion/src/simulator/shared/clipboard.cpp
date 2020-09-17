@@ -2,6 +2,9 @@
 #include <SDL.h>
 #include <string.h>
 
+/* This file implements the methods to access the system clipboard on all
+ * targets but the web simulator. */
+
 namespace Ion {
 
 void Clipboard::write(const char * text) {

@@ -77,6 +77,7 @@ _closure_call \
 _do_load \
 _do_load_from_lexer \
 _emscripten_sleep \
+_emscripten_sleep_with_yield \
 _fun_bc_call \
 _fun_builtin_1_call \
 _fun_builtin_var_call \
@@ -103,6 +104,14 @@ _mp_execute_bytecode \
 _mp_hal_input \
 _mp_import_name \
 _mp_parse_compile_execute \
+_get_clipboard_text \
+__ZN3Ion9Clipboard4readEPcm \
+__ZN9Clipboard10storedTextEv \
+__ZN11LayoutField18privateHandleEventEN3Ion6Events5EventE \
+__ZN11LayoutField11handleEventEN3Ion6Events5EventE \
+__ZN8TextArea18privateHandleEventEN3Ion6Events5EventE \
+__ZN8TextArea11handleEventEN3Ion6Events5EventE \
+__ZN15ExpressionField11handleEventEN3Ion6Events5EventE \
 _msleep
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END

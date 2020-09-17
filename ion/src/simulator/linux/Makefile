@@ -15,6 +15,9 @@ ion_src += $(addprefix ion/src/simulator/linux/, \
   platform_language.cpp \
 )
 
+SFLAGS += $(shell pkg-config libpng libjpeg --cflags)
+LDFLAGS += $(shell pkg-config libpng libjpeg --libs)
+
 ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/haptics_enabled.cpp \
   dummy/keyboard_callback.cpp \
@@ -32,8 +35,6 @@ ifeq ($(EPSILON_TELEMETRY),1)
 ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
-
-LDFLAGS += -ljpeg -lpng
 
 $(eval $(call rule_for, \
   INCBIN, \

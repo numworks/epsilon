@@ -120,6 +120,8 @@ static inline Event innerGetEvent(int * timeout) {
   }
 }
 
+#if ION_EVENTS_JOURNAL
+
 static Journal * sSourceJournal = nullptr;
 static Journal * sDestinationJournal = nullptr;
 void replayFrom(Journal * l) { sSourceJournal = l; }
@@ -139,6 +141,14 @@ Event getEvent(int * timeout) {
   }
   return e;
 }
+
+#else
+
+Event getEvent(int * timeout) {
+  return innerGetEvent(timeout);
+}
+
+#endif
 
 
 }

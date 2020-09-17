@@ -7,6 +7,8 @@
 #include <poincare/sum.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/integer.h>
+#include <poincare/rational.h>
+#include <poincare/addition.h>
 #include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <apps/i18n.h>
@@ -131,6 +133,40 @@ bool Sequence::isEmpty() {
         (type == Type::SingleRecurrence || data->initialConditionSize(1) == 0)));
 }
 
+bool Sequence::badlyReferencesItself(Context * context) {
+  Expression e = expressionReduced(context);
+  bool value = e.hasExpression([](Expression e, const void * sequencePointer) {
+    if (e.type() != ExpressionNode::Type::Sequence) {
+      return false;
+    }
+    Sequence * seq = (Sequence *)(sequencePointer);
+    const char * symbolName = static_cast<Symbol&>(e).name();
+    /* symbolName is either u, v or w while seq->fullName has the extention .seq
+     * at the end. Therefore we cannot use strcmp on the two strings. We just
+     * want to check if the first char are identical*/
+    if (strncmp(symbolName, seq->fullName(), strlen(symbolName)) == 0) {
+      /* The expression of the sequence contains a reference to itself.
+       * We must check if the sequence can be calculated before continuing
+       * If the sequence is of explicit type, it cannot reference itself.
+       * If the sequence is of SingleRecurrent type, it can be defined by:
+       * u(initialRank and u(n).
+       * If the sequence is of DoubleRecurrent type, it can be defined by:
+       * u(initialRank), u(initialRank+1), u(n) and u(n+1).
+       * In any other case, the value of the sequence cannot be computed.
+       * We therefore return NAN. */
+      Expression rank = e.childAtIndex(0);
+      if (seq->type() == Sequence::Type::Explicit ||
+         (!(rank.isIdenticalTo(Rational::Builder(seq->initialRank())) || rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) &&
+         (seq->type() == Sequence::Type::SingleRecurrence || (seq->type() == Sequence::Type::DoubleRecurrence && !(rank.isIdenticalTo(Rational::Builder(seq->initialRank()+1)) || rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))))))))
+         {
+        return true;
+      }
+    }
+      return false;
+    }, reinterpret_cast<const void *>(this));
+    return value;
+}
+
 template<typename T>
 T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
   T n = std::round(x);
@@ -143,7 +179,7 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
 
 template<typename T>
 T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
-  if (n < 0) {
+  if (n < 0 || badlyReferencesItself(sqctx)) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
@@ -174,7 +210,6 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
   Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
 
   CacheContext<T> ctx = CacheContext<T>(sqctx);
-  ctx.setSequenceContext(sqctx);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
   T values[MaxNumberOfSequences][MaxRecurrenceDepth+1];
 

@@ -200,7 +200,7 @@ Event getPlatformEvent() {
       SDL_GetMouseState(&p.x, &p.y);
       Simulator::Layout::highlightKeyAt(&p);
     }
-    if (event.type == SDL_MOUSEBUTTONUP) {
+    if (event.type == SDL_FINGERUP) {
       Simulator::Layout::unhighlightKey();
     }
 #endif

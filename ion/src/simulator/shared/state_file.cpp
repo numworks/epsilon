@@ -37,8 +37,9 @@ static inline bool load(FILE * f) {
 
   // Events
   Ion::Events::Journal * journal = Journal::replayJournal();
-  while (fread(buffer, 1, 1, f) == 1) {
-    Ion::Events::Event e = Ion::Events::Event(buffer[0]);
+  int c = 0;
+  while ((c = getc(f)) != EOF) {
+    Ion::Events::Event e = Ion::Events::Event(c);
     journal->pushEvent(e);
   }
   Ion::Events::replayFrom(journal);

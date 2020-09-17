@@ -134,12 +134,12 @@ static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
   KeyLayout(580, 958, KeyLayout::Shape::LargeSquircle), // B1, Home
   KeyLayout(580, 1094, KeyLayout::Shape::LargeSquircle), // B2, Power
 
-  KeyLayout(198, 1252, KeyLayout::Shape::SmallSquircle), // C1, Shift
-  KeyLayout(352, 1252, KeyLayout::Shape::SmallSquircle), // C2, Alpha
-  KeyLayout(506, 1252, KeyLayout::Shape::SmallSquircle), // C3, xnt
-  KeyLayout(656, 1252, KeyLayout::Shape::SmallSquircle), // C4, var
-  KeyLayout(810, 1252, KeyLayout::Shape::SmallSquircle), // C5, toolbox
-  KeyLayout(963, 1252, KeyLayout::Shape::SmallSquircle), // C6, Delete
+  KeyLayout(198, 1253, KeyLayout::Shape::SmallSquircle), // C1, Shift
+  KeyLayout(352, 1253, KeyLayout::Shape::SmallSquircle), // C2, Alpha
+  KeyLayout(506, 1253, KeyLayout::Shape::SmallSquircle), // C3, xnt
+  KeyLayout(656, 1253, KeyLayout::Shape::SmallSquircle), // C4, var
+  KeyLayout(810, 1253, KeyLayout::Shape::SmallSquircle), // C5, toolbox
+  KeyLayout(963, 1253, KeyLayout::Shape::SmallSquircle), // C6, Delete
 
   KeyLayout(198, 1375, KeyLayout::Shape::SmallSquircle), // D1, exp
   KeyLayout(352, 1375, KeyLayout::Shape::SmallSquircle), // D2, ln

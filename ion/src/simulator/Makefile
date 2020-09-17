@@ -3,34 +3,27 @@ ion_src += $(addprefix ion/src/shared/dummy/, \
   battery.cpp \
   display.cpp \
   exam_mode.cpp \
-  events_platform.cpp:+headless \
   fcc_id.cpp \
-  keyboard.cpp:+headless \
   led.cpp \
   power.cpp \
   serial_number.cpp \
   stack.cpp \
-  timing_msleep.cpp:+headless \
   usb.cpp \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  dummy/keyboard.cpp:+headless \
-  dummy/window.cpp:+headless \
-  console_stdio.cpp:-consoledisplay \
+  console.cpp \
   crc32.cpp \
-  display.cpp:-headless \
+  display.cpp \
   events.cpp \
-  events_platform.cpp:-headless \
+  events_platform.cpp \
   framebuffer.cpp \
-  framebuffer_png.cpp:+headless \
-  keyboard.cpp:-headless \
-  layout.cpp:-headless \
+  keyboard.cpp \
+  layout.cpp \
   main.cpp \
   random.cpp \
   timing.cpp \
-  timing_msleep.cpp:-headless \
-  window.cpp:-headless \
+  window.cpp \
 )
 
 ion_simulator_assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png

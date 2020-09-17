@@ -941,7 +941,7 @@ void CurveView::layoutSubviews(bool force) {
 
 KDRect CurveView::cursorFrame() {
   KDRect cursorFrame = KDRectZero;
-  if (m_cursorView && m_mainViewSelected && !std::isnan(m_curveViewCursor->x()) && !std::isnan(m_curveViewCursor->y())) {
+  if (m_cursorView && m_mainViewSelected && std::isfinite(m_curveViewCursor->x()) && std::isfinite(m_curveViewCursor->y())) {
     KDSize cursorSize = m_cursorView->minimalSizeForOptimalDisplay();
     KDCoordinate xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));

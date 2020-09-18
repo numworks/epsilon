@@ -5,18 +5,7 @@
 #include <png.h>
 #include <assert.h>
 
-#ifndef ASSETS_ADDRESS_RANGES_DECLARATION
-#error Missing assets adress range declarations
-#endif
-
-ASSETS_ADDRESS_RANGES_DECLARATION
-static struct {
-  const char * identifier;
-  unsigned char * start;
-  unsigned char * end;
-} resources_addresses[] = {
-  ASSETS_ADDRESS_RANGES_DEFINITION
-};
+#include <ion/src/simulator/linux/images.h>
 
 enum class AssetFormat {
   JPG,

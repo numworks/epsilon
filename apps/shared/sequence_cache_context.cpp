@@ -1,4 +1,4 @@
-#include "cache_context.h"
+#include "sequence_cache_context.h"
 #include "sequence.h"
 #include "sequence_store.h"
 #include "poincare_helpers.h"
@@ -12,7 +12,7 @@ using namespace Poincare;
 namespace Shared {
 
 template<typename T>
-CacheContext<T>::CacheContext(SequenceContext * sequenceContext) :
+SequenceCacheContext<T>::SequenceCacheContext(SequenceContext * sequenceContext) :
   ContextWithParent(sequenceContext),
   m_values{{NAN, NAN},{NAN, NAN},{NAN,NAN}},
   m_sequenceContext(sequenceContext)
@@ -20,7 +20,7 @@ CacheContext<T>::CacheContext(SequenceContext * sequenceContext) :
 }
 
 template<typename T>
-const Expression CacheContext<T>::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
+const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
   // [u|v|w](n(+1)?)
   if (symbol.type() == ExpressionNode::Type::Sequence) {
     int index = nameIndexForSymbol(const_cast<Symbol &>(static_cast<const Symbol &>(symbol)));
@@ -52,12 +52,12 @@ const Expression CacheContext<T>::expressionForSymbolAbstract(const Poincare::Sy
 }
 
 template<typename T>
-void CacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol & symbol) {
+void SequenceCacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol & symbol) {
   m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = value;
 }
 
 template<typename T>
-int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
+int SequenceCacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
   assert(symbol.name()[0] >= 'u' && symbol.name()[0] <= 'w'); //  [u|v|w]
   char name = symbol.name()[0];
   assert(name >= SequenceStore::k_sequenceNames[0][0] && name <= SequenceStore::k_sequenceNames[MaxNumberOfSequences-1][0]); // u, v or w
@@ -65,7 +65,7 @@ int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
 }
 
 template<typename T>
-int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
+int SequenceCacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
   assert(strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0); // u(n) or u(n+1)
   if (symbol.name()[3] == ')') { // (n)
     return 0;
@@ -74,7 +74,7 @@ int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
   return 1;
 }
 
-template class CacheContext<float>;
-template class CacheContext<double>;
+template class SequenceCacheContext<float>;
+template class SequenceCacheContext<double>;
 
 }

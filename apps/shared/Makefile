@@ -29,7 +29,6 @@ app_shared_src = $(addprefix apps/shared/,\
   buffer_function_title_cell.cpp \
   buffer_text_view_with_text_field.cpp \
   button_with_separator.cpp \
-  cache_context.cpp \
   cursor_view.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
@@ -67,6 +66,7 @@ app_shared_src = $(addprefix apps/shared/,\
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \
   sequence.cpp\
+  sequence_cache_context.cpp \
   sequence_context.cpp\
   sequence_store.cpp\
   sequence_title_cell.cpp \
@@ -103,8 +103,8 @@ app_shared_test_src += $(addprefix apps/graph/,\
 )
 
 app_shared_test_src += $(addprefix apps/shared/,\
-  cache_context.cpp \
   sequence.cpp \
+  sequence_cache_context.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
 )

@@ -23,7 +23,7 @@ void init(SDL_Renderer * renderer) {
   );
 }
 
-void quit() {
+void shutdown() {
   SDL_DestroyTexture(sFramebufferTexture);
   sFramebufferTexture = nullptr;
 }

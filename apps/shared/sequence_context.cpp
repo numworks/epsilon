@@ -1,6 +1,6 @@
 #include "sequence_context.h"
 #include "sequence_store.h"
-#include "cache_context.h"
+#include "sequence_cache_context.h"
 #include "../shared/poincare_helpers.h"
 #include <cmath>
 

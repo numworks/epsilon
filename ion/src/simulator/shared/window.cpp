@@ -122,7 +122,7 @@ void quit() {
 #if !EPSILON_SDL_SCREEN_ONLY
   Layout::quit();
 #endif
-  Display::quit();
+  Display::shutdown();
   SDL_DestroyWindow(sWindow);
   sWindow = nullptr;
   SDL_Quit();

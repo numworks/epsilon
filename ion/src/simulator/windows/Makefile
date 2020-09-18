@@ -22,12 +22,22 @@ LDFLAGS += -lgdiplus
 SFLAGS += -I$(BUILD_DIR)
 
 $(eval $(call rule_for, \
-  WINDOWS_RESOURCES, \
+  WINDOWS_ASSETS, \
   ion/src/simulator/windows/resources.h, \
-  ion/src/simulator/windows/resources.rc, \
-  $$(PYTHON) ion/src/simulator/windows/resources.py --resource $$^ --header $$@, \
+  $(assets_paths), \
+  $$(PYTHON) ion/src/simulator/windows/assets.py --files $$^ --header-resource-rc $$@, \
   global \
 ))
 
-$(BUILD_DIR)/ion/src/simulator/windows/images.o: $(BUILD_DIR)/ion/src/simulator/windows/resources.h
+$(eval $(call rule_for, \
+  WINDOWS_ASSETS, \
+  ion/src/simulator/windows/resource_mapping.h, \
+  $(assets_paths), \
+  $$(PYTHON) ion/src/simulator/windows/assets.py --files $$^ --header-resource-mapping $$@, \
+  global \
+))
+
+
+$(BUILD_DIR)/ion/src/simulator/windows/images.o: $(BUILD_DIR)/ion/src/simulator/windows/resource_mapping.h
+$(BUILD_DIR)/ion/src/simulator/windows/resources.o: $(BUILD_DIR)/ion/src/simulator/windows/resources.h
 

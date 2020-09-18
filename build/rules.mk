@@ -56,7 +56,7 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   WINDRES, %.o, %.rc, \
-  $$(WINDRES) $$< -O coff -o $$@, \
+  $$(WINDRES) $$< -Ioutput/release/simulator/windows -O coff -o $$@, \
   global \
 ))
 

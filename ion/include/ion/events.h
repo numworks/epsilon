@@ -60,7 +60,7 @@ bool isLockActive();
 void setLongRepetition(bool longRepetition);
 bool isLongRepetition();
 void updateModifiersFromEvent(Event e);
-void didPressNewKey(); // Used for haptic feedback on simulators
+void didPressNewKey();
 
 // Plain
 

@@ -19,7 +19,7 @@ static bool sFrameBufferActive = false;
 namespace Ion {
 namespace Display {
 
-static KDFrameBuffer sFrameBuffer = KDFrameBuffer(sPixels, KDSize(Ion::Display::Width, Ion::Display::Height));
+static KDFrameBuffer sFrameBuffer = KDFrameBuffer(sPixels, KDSize(Width, Height));
 
 void pushRect(KDRect r, const KDColor * pixels) {
   if (sFrameBufferActive) {

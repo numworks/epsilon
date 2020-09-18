@@ -5,32 +5,34 @@
 #include <ion/keyboard.h>
 #include <SDL.h>
 
-static Ion::Keyboard::State sKeyboardState;
+using namespace Ion::Keyboard;
+
+static State sKeyboardState;
 
 class KeySDLKeyPair {
 public:
-  constexpr KeySDLKeyPair(Ion::Keyboard::Key key, SDL_Scancode SDLKey) :
+  constexpr KeySDLKeyPair(Key key, SDL_Scancode SDLKey) :
     m_key(key),
     m_SDLKey(SDLKey)
   {}
-  Ion::Keyboard::Key key() const { return m_key; }
+  Key key() const { return m_key; }
   SDL_Scancode SDLKey() const { return m_SDLKey; }
 private:
-  Ion::Keyboard::Key m_key;
+  Key m_key;
   SDL_Scancode m_SDLKey;
 };
 
 constexpr static KeySDLKeyPair sKeyPairs[] = {
-  KeySDLKeyPair(Ion::Keyboard::Key::Down,      SDL_SCANCODE_DOWN),
-  KeySDLKeyPair(Ion::Keyboard::Key::Up,        SDL_SCANCODE_UP),
-  KeySDLKeyPair(Ion::Keyboard::Key::Left,      SDL_SCANCODE_LEFT),
-  KeySDLKeyPair(Ion::Keyboard::Key::Right,     SDL_SCANCODE_RIGHT),
-  KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_LSHIFT),
-  KeySDLKeyPair(Ion::Keyboard::Key::Shift,     SDL_SCANCODE_RSHIFT),
-  KeySDLKeyPair(Ion::Keyboard::Key::EXE,       SDL_SCANCODE_RETURN),
-  KeySDLKeyPair(Ion::Keyboard::Key::Back,      SDL_SCANCODE_ESCAPE),
-  KeySDLKeyPair(Ion::Keyboard::Key::Toolbox,   SDL_SCANCODE_TAB),
-  KeySDLKeyPair(Ion::Keyboard::Key::Backspace, SDL_SCANCODE_BACKSPACE)
+  KeySDLKeyPair(Key::Down,      SDL_SCANCODE_DOWN),
+  KeySDLKeyPair(Key::Up,        SDL_SCANCODE_UP),
+  KeySDLKeyPair(Key::Left,      SDL_SCANCODE_LEFT),
+  KeySDLKeyPair(Key::Right,     SDL_SCANCODE_RIGHT),
+  KeySDLKeyPair(Key::Shift,     SDL_SCANCODE_LSHIFT),
+  KeySDLKeyPair(Key::Shift,     SDL_SCANCODE_RSHIFT),
+  KeySDLKeyPair(Key::EXE,       SDL_SCANCODE_RETURN),
+  KeySDLKeyPair(Key::Back,      SDL_SCANCODE_ESCAPE),
+  KeySDLKeyPair(Key::Toolbox,   SDL_SCANCODE_TAB),
+  KeySDLKeyPair(Key::Backspace, SDL_SCANCODE_BACKSPACE)
 };
 
 constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);

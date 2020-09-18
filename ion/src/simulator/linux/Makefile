@@ -30,8 +30,8 @@ LDFLAGS += -ljpeg
 $(eval $(call rule_for, \
   LINUX_ASSETS, \
   ion/src/simulator/linux/assets.s, \
-  $(assets_paths), \
-  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --implementation $$@, \
+  $(ion_simulator_assets_paths), \
+  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(ion_simulator_assets) --implementation $$@, \
   global \
 ))
 
@@ -41,7 +41,7 @@ SFLAGS += -I$(BUILD_DIR)
 $(eval $(call rule_for, \
   LINUX_ASSETS, \
   ion/src/simulator/linux/images.h, \
-  $(assets_paths), \
-  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --header $$@, \
+  $(ion_simulator_assets_paths), \
+  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(ion_simulator_assets) --header $$@, \
   global \
 ))

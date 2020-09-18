@@ -403,14 +403,14 @@ QUIZ_CASE(poincare_expression_additional_results) {
   assert_additional_results_compute_to("1×_kg", nullptr, 0, Metric);
 
   // Temperatures
-  const char * array14[2] = {"-273.15×_Cel", "-459.67×_Fah"};
+  const char * array14[2] = {"-273.15×_°C", "-459.67×_°F"};
   assert_additional_results_compute_to("0×_K", array14, 2, Metric);
-  const char * array15[2] = {"-279.67×_Fah", "-173.15×_Cel"};
+  const char * array15[2] = {"-279.67×_°F", "-173.15×_°C"};
   assert_additional_results_compute_to("100×_K", array15, 2, Imperial);
-  const char * array16[2] = {"12.02×_Fah", "262.05×_K"};
-  assert_additional_results_compute_to("-11.1×_Cel", array16, 2);
-  const char * array17[2] = {"-20×_Cel", "253.15×_K"};
-  assert_additional_results_compute_to("-4×_Fah", array17, 2);
+  const char * array16[2] = {"12.02×_°F", "262.05×_K"};
+  assert_additional_results_compute_to("-11.1×_°C", array16, 2);
+  const char * array17[2] = {"-20×_°C", "253.15×_K"};
+  assert_additional_results_compute_to("-4×_°F", array17, 2);
 
   // Energy
   const char * array8[2] = {"1×_kW×_h", "2.246943ᴇ13×_TeV"};

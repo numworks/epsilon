@@ -23,7 +23,7 @@ $(call simulator_app_resource,$(1)): ion/src/simulator/assets/$(1) | $$$$(@D)/.
 	$(Q) cp $$^ $$@
 endef
 
-$(foreach asset,$(assets),$(eval $(call rule_for_asset,$(asset))))
+$(foreach asset,$(ion_simulator_assets),$(eval $(call rule_for_asset,$(asset))))
 
 # Process icons
 

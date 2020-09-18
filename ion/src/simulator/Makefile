@@ -26,5 +26,8 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   timing.cpp \
 )
 
+assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
+assets_paths = $(foreach i,$(assets),ion/src/simulator/assets/$(i))
+
 include ion/src/simulator/$(TARGET)/Makefile
 include ion/src/simulator/external/Makefile

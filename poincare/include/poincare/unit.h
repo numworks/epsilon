@@ -550,8 +550,8 @@ public:
   typedef UnitNode::TemperatureRepresentative TemperatureRepresentative;
   static constexpr const TemperatureRepresentative k_temperatureRepresentatives[] = {
     TemperatureRepresentative("K", 1., Prefixable::All, Prefixable::None),
-    TemperatureRepresentative("Cel", 1., Prefixable::None, Prefixable::None),
-    TemperatureRepresentative("Fah", 5./9., Prefixable::None, Prefixable::None),
+    TemperatureRepresentative("°C", 1., Prefixable::None, Prefixable::None),
+    TemperatureRepresentative("°F", 5./9., Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::AmountOfSubstanceRepresentative AmountOfSubstanceRepresentative;
   static constexpr const AmountOfSubstanceRepresentative k_amountOfSubstanceRepresentatives[] = { AmountOfSubstanceRepresentative("mol", 1., Prefixable::All, Prefixable::LongScale) };
@@ -647,9 +647,9 @@ public:
   static constexpr int k_kelvinRepresentativeIndex = 0;
   static_assert(strings_equal(k_temperatureRepresentatives[k_kelvinRepresentativeIndex].m_rootSymbol, "K"), "Index for the Kelvin Representative is incorrect.");
   static constexpr int k_celsiusRepresentativeIndex = 1;
-  static_assert(strings_equal(k_temperatureRepresentatives[k_celsiusRepresentativeIndex].m_rootSymbol, "Cel"), "Index for the Celsius Representative is incorrect.");
+  static_assert(strings_equal(k_temperatureRepresentatives[k_celsiusRepresentativeIndex].m_rootSymbol, "°C"), "Index for the Celsius Representative is incorrect.");
   static constexpr int k_fahrenheitRepresentativeIndex = 2;
-  static_assert(strings_equal(k_temperatureRepresentatives[k_fahrenheitRepresentativeIndex].m_rootSymbol, "Fah"), "Index for the Fahrenheit Representative is incorrect.");
+  static_assert(strings_equal(k_temperatureRepresentatives[k_fahrenheitRepresentativeIndex].m_rootSymbol, "°F"), "Index for the Fahrenheit Representative is incorrect.");
   static constexpr int k_electronVoltRepresentativeIndex = 1;
   static_assert(strings_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbol, "eV"), "Index for the Electron Volt Representative is incorrect.");
   static constexpr int k_wattRepresentativeIndex = 0;

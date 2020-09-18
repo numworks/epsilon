@@ -200,6 +200,8 @@ Event getPlatformEvent() {
       SDL_GetMouseState(&p.x, &p.y);
       Simulator::Layout::highlightKeyAt(&p);
     }
+    /* On smarphones, don't forget to unhighlight the key when the finger is up.
+     * (finger up doesn't imply a mouse motion!) */
     if (event.type == SDL_FINGERUP) {
       Simulator::Layout::unhighlightKey();
     }

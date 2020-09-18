@@ -14,7 +14,7 @@
  * framebuffer to a PNG file. */
 
 static KDColor sPixels[Ion::Display::Width * Ion::Display::Height];
-static bool sFrameBufferActive = true;
+static bool sFrameBufferActive = false;
 
 namespace Ion {
 namespace Display {

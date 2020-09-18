@@ -133,7 +133,7 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
 }
 
 static constexpr Event sEventForASCIICharAbove32[95] = {
-  Space, Exclamation, DoubleQuotes, None, None, None, None, None,
+  Space, Exclamation, DoubleQuotes, None, None, Percent, None, None,
   LeftParenthesis, RightParenthesis, Multiplication, Plus, Comma, Minus, Dot, Division,
   Zero, One, Two, Three, Four, Five, Six, Seven,
   Eight, Nine, Colon, SemiColon, Lower, Equal, Greater, Question,

@@ -105,15 +105,15 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
 
   // Find the asset corresponding to identifier
   for (size_t i = 0; i < sizeof(resources_addresses)/sizeof(resources_addresses[0]); i++) {
-    if (strcmp(identifier, resources_addresses[i].identifier) == 0) {
+    if (strcmp(identifier, resources_addresses[i].identifier()) == 0) {
       if (strcmp(jpgExtension, identifier + strlen(identifier) - strlen(jpgExtension)) == 0) {
         format = AssetFormat::JPG;
       } else {
         assert(strcmp(pngExtension, identifier + strlen(identifier) - strlen(pngExtension)) == 0);
         format = AssetFormat::PNG;
       }
-      assetStart = resources_addresses[i].start;
-      assertSize = resources_addresses[i].end - resources_addresses[i].start;
+      assetStart = resources_addresses[i].start();
+      assertSize = resources_addresses[i].end() - resources_addresses[i].start();
       break;
     }
   }

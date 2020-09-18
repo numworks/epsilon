@@ -28,20 +28,14 @@ endif
 LDFLAGS += -ljpeg
 
 $(eval $(call rule_for, \
-  LINUX_ASSETS, \
-  ion/src/simulator/linux/assets.s, \
+  INCBIN, \
+  ion/src/simulator/linux/assets.s ion/src/simulator/linux/images.h, \
   $(ion_simulator_assets_paths), \
-  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(ion_simulator_assets) --implementation $$@, \
+  $$(PYTHON) ion/src/simulator/linux/incbin.py $(ion_simulator_assets) -o $$@, \
   global \
 ))
+
+$(call object_for,ion/src/simulator/linux/images.cpp): $(BUILD_DIR)/ion/src/simulator/linux/images.h
 
 # The header is refered to as <ion/src/simulator/linux/images.h> so make sure it's findable this way
 SFLAGS += -I$(BUILD_DIR)
-
-$(eval $(call rule_for, \
-  LINUX_ASSETS, \
-  ion/src/simulator/linux/images.h, \
-  $(ion_simulator_assets_paths), \
-  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(ion_simulator_assets) --header $$@, \
-  global \
-))

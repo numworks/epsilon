@@ -1,5 +1,6 @@
 #include "console.h"
 #include <ion/console.h>
+#include <kandinsky/ion_context.h>
 
 namespace Ion {
 namespace Console {
@@ -9,6 +10,7 @@ char readChar() {
 }
 
 void writeChar(char c) {
+  KDIonContext::putchar(c);
 }
 
 bool transmissionDone() {

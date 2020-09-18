@@ -29,9 +29,9 @@ LDFLAGS += -ljpeg
 
 $(eval $(call rule_for, \
   LINUX_ASSETS, \
-  ion/src/simulator/linux/assets.s, \
+  ion/src/simulator/linux/assets.s ion/src/simulator/linux/images.h, \
   $(assets_paths), \
-  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --implementation $$@, \
+  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --header $$@ --implementation $$@, \
   global \
 ))
 

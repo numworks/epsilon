@@ -1,5 +1,5 @@
 #include "../shared/platform.h"
-#include <ion/src/simulator/windows/resources.h>
+#include <ion/src/simulator/windows/resource_mapping.h>
 
 #include <SDL.h>
 #include <windows.h>

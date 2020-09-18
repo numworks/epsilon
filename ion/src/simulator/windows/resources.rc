@@ -1,9 +1,4 @@
-300 RCDATA "../assets/background.jpg"
-301 RCDATA "../assets/horizontal_arrow.png"
-302 RCDATA "../assets/large_squircle.png"
-303 RCDATA "../assets/round.png"
-304 RCDATA "../assets/small_squircle.png"
-305 RCDATA "../assets/vertical_arrow.png"
+#include <ion/src/simulator/windows/resources.h>
 
 1 VERSIONINFO
 FILEVERSION     1,0,0,0

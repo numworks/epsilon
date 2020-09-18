@@ -5,6 +5,8 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   board.cpp \
   clipboard.cpp \
   console_uart.cpp:+consoleuart \
+  console_display.cpp:+consoledisplay \
+  console_dummy.cpp:-consoledisplay \
   console_dummy.cpp:-consoleuart \
   crc32.cpp \
   display.cpp \

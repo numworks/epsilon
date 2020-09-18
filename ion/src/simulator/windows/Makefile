@@ -16,10 +16,13 @@ ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
-LDFLAGS += -lgdiplus
+# RC file dependencies
+$(call object_for,ion/src/simulator/windows/resources.rc): WRFLAGS += -I $(BUILD_DIR)
 
-# The header is refered to as <ion/src/simulator/windows/resources.h> so make sure it's findable this way
+# The header of images is refered to as <ion/src/simulator/windows/resources.h> so make sure it's findable this way
 SFLAGS += -I$(BUILD_DIR)
+
+LDFLAGS += -lgdiplus
 
 $(eval $(call rule_for, \
   WINDOWS_ASSETS, \

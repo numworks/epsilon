@@ -6,6 +6,7 @@
 class KDIonContext : public KDContext {
 public:
   static KDIonContext * sharedContext();
+  static void putchar(char c);
 private:
   KDIonContext();
   void pushRect(KDRect rect, const KDColor * pixels) override;

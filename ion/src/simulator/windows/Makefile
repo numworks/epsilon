@@ -27,16 +27,16 @@ LDFLAGS += -lgdiplus
 $(eval $(call rule_for, \
   WINDOWS_ASSETS, \
   ion/src/simulator/windows/resources.h, \
-  $(assets_paths), \
-  $$(PYTHON) ion/src/simulator/windows/assets.py --files $$^ --header-resource-rc $$@, \
+  $(ion_simulator_assets_paths), \
+  $$(PYTHON) ion/src/simulator/windows/assets.py --files $(ion_simulator_assets) --header-resource-rc $$@, \
   global \
 ))
 
 $(eval $(call rule_for, \
   WINDOWS_ASSETS, \
   ion/src/simulator/windows/resource_mapping.h, \
-  $(assets_paths), \
-  $$(PYTHON) ion/src/simulator/windows/assets.py --files $$^ --header-resource-mapping $$@, \
+  $(ion_simulator_assets_paths), \
+  $$(PYTHON) ion/src/simulator/windows/assets.py --files $(ion_simulator_assets) --header-resource-mapping $$@, \
   global \
 ))
 

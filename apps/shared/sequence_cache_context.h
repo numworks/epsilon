@@ -1,5 +1,5 @@
-#ifndef SEQUENCE_CACHE_CONTEXT_H
-#define SEQUENCE_CACHE_CONTEXT_H
+#ifndef SHARED_SEQUENCE_CACHE_CONTEXT_H
+#define SHARED_SEQUENCE_CACHE_CONTEXT_H
 
 #include <poincare/context.h>
 #include <poincare/expression.h>
@@ -9,9 +9,9 @@
 namespace Shared {
 
 template<typename T>
-class CacheContext : public Poincare::ContextWithParent {
+class SequenceCacheContext : public Poincare::ContextWithParent {
 public:
-  CacheContext(SequenceContext * sequenceContext);
+  SequenceCacheContext(SequenceContext * sequenceContext);
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
   void setNValue(int n) { m_nValue = n; }

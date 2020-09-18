@@ -29,14 +29,19 @@ LDFLAGS += -ljpeg
 
 $(eval $(call rule_for, \
   LINUX_ASSETS, \
-  ion/src/simulator/linux/assets.s ion/src/simulator/linux/images.h, \
+  ion/src/simulator/linux/assets.s, \
   $(assets_paths), \
-  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --header $$@ --implementation $$@, \
+  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --implementation $$@, \
   global \
 ))
 
-assets_address_ranges_declaration = $(foreach i,$(assets),extern unsigned char _ion_simulator_$(basename $(i))_start;)
-assets_address_ranges_declaration += $(foreach i,$(assets),extern unsigned char _ion_simulator_$(basename $(i))_end;)
-assets_address_ranges_definition = $(foreach i,$(assets), {"$(i)", &_ion_simulator_$(basename $(i))_start, &_ion_simulator_$(basename $(i))_end},)
+# The header is refered to as <ion/src/simulator/linux/images.h> so make sure it's findable this way
+SFLAGS += -I$(BUILD_DIR)
 
-$(call object_for,ion/src/simulator/linux/images.cpp): CXXFLAGS += -DASSETS_ADDRESS_RANGES_DECLARATION='$(assets_address_ranges_declaration)' -DASSETS_ADDRESS_RANGES_DEFINITION='$(assets_address_ranges_definition)'
+$(eval $(call rule_for, \
+  LINUX_ASSETS, \
+  ion/src/simulator/linux/images.h, \
+  $(assets_paths), \
+  $$(PYTHON) ion/src/simulator/linux/assets.py --files $(assets) --header $$@, \
+  global \
+))

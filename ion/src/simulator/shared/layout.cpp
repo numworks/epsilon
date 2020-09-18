@@ -102,7 +102,7 @@ public:
     NumberOfShapes
   };
   static constexpr size_t NumberOfShapes = (size_t)Shape::NumberOfShapes;
-  static constexpr const char * imagePathForKey[KeyLayout::NumberOfShapes] = {
+  static constexpr const char * assetName[KeyLayout::NumberOfShapes] = {
     "horizontal_arrow.png",
     "vertical_arrow.png",
     "round.png",
@@ -121,7 +121,7 @@ private:
   Shape m_shape;
 };
 
-constexpr const char * const KeyLayout::imagePathForKey[KeyLayout::NumberOfShapes];
+constexpr const char * const KeyLayout::assetName[KeyLayout::NumberOfShapes];
 
 static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
   KeyLayout(195, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
@@ -204,7 +204,7 @@ static SDL_Texture * sKeyLayoutTextures[KeyLayout::NumberOfShapes];
 void init(SDL_Renderer * renderer) {
   sBackgroundTexture = IonSimulatorLoadImage(renderer, "background.jpg");
   for (size_t i = 0; i < KeyLayout::NumberOfShapes; i++) {
-    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::imagePathForKey[i]);
+    sKeyLayoutTextures[i] = IonSimulatorLoadImage(renderer, KeyLayout::assetName[i]);
   }
 }
 

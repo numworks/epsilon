@@ -1,5 +1,5 @@
 #include "sequence.h"
-#include "cache_context.h"
+#include "sequence_cache_context.h"
 #include "sequence_store.h"
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -209,7 +209,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
   char unknownN[bufferSize];
   Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
 
-  CacheContext<T> ctx = CacheContext<T>(sqctx);
+  SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
   T values[MaxNumberOfSequences][MaxRecurrenceDepth+1];
 

@@ -27,10 +27,6 @@ endif
 
 LDFLAGS += -ljpeg
 
-assets = background.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
-
-assets_paths = $(foreach i,$(assets),ion/src/simulator/assets/$(i))
-
 $(eval $(call rule_for, \
   LINUX_ASSETS, \
   ion/src/simulator/linux/assets.s, \

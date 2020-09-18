@@ -23,8 +23,7 @@ $(call simulator_app_resource,$(1)): ion/src/simulator/assets/$(1) | $$$$(@D)/.
 	$(Q) cp $$^ $$@
 endef
 
-ASSETS = background.jpg horizontal_arrow.png large_squircle.png round.png small_squircle.png vertical_arrow.png
-$(foreach ASSET,$(ASSETS),$(eval $(call rule_for_asset,$(ASSET))))
+$(foreach asset,$(assets),$(eval $(call rule_for_asset,$(asset))))
 
 # Process icons
 

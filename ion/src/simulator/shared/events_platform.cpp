@@ -17,8 +17,8 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   /* If an event is detected, we want to remove the Shift modifier to mimic the
    * device behaviour. If no event was detected, we restore the previous
    * ShiftAlphaStatus. */
-  Ion::Events::ShiftAlphaStatus previousShiftAlphaStatus = Ion::Events::shiftAlphaStatus();
-  Ion::Events::removeShift();
+  ShiftAlphaStatus previousShiftAlphaStatus = shiftAlphaStatus();
+  removeShift();
 
   if (event.keysym.mod & (KMOD_CTRL|KMOD_GUI)) {
     switch (event.keysym.sym) {
@@ -85,7 +85,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
       return Termination;
   }
   // No event was detected, restore the previous ShiftAlphaStatus.
-  Ion::Events::setShiftAlphaStatus(previousShiftAlphaStatus);
+  setShiftAlphaStatus(previousShiftAlphaStatus);
   return None;
 }
 
@@ -115,7 +115,7 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
      * (which activates the Shift modifier on the calculator), then we press
      * "&", transformed by eventFromSDLTextInputEvent into the text "1". If we
      * do not remove the Shift here, it would still be pressed afterwards. */
-    Ion::Events::removeShift();
+    removeShift();
     return sEventForASCIICharAbove32[character-32];
   }
   return None;
@@ -126,7 +126,7 @@ Event getPlatformEvent() {
   Event result = None;
   while (SDL_PollEvent(&event)) { // That "while" is important: it'll do a fast-pass over all useless SDL events
     if (event.type == SDL_WINDOWEVENT) {
-      Ion::Simulator::Window::relayout();
+      Simulator::Window::relayout();
       break;
     }
     if (event.type == SDL_QUIT) {

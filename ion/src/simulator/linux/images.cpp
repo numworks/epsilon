@@ -23,7 +23,10 @@ void ReadDataFromMemory(png_structp png, png_bytep outBytes, png_size_t byteSize
 bool readPNG(unsigned char * start, size_t size, unsigned char ** bitmapData, unsigned int * width, unsigned int * height, unsigned int * bytesPerPixel, Uint32 * pixelFormat) {
   readSize = 0;
   png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!png) { return false; } // Memory failure
+  if (!png) {
+    // Memory failure
+    return false;
+  }
   png_infop info = png_create_info_struct(png);
   if (!info) {
     // Memory failure
@@ -31,7 +34,10 @@ bool readPNG(unsigned char * start, size_t size, unsigned char ** bitmapData, un
     return false;
   }
   static constexpr size_t k_pngSignatureLength = 8;
-  if(png_sig_cmp((png_const_bytep)start, 0, k_pngSignatureLength) != 0) { return false; } // Corrupted PNG
+  if (png_sig_cmp((png_const_bytep)start, 0, k_pngSignatureLength) != 0) {
+    // Corrupted PNG
+    return false;
+  }
 
   png_set_read_fn(png, start, ReadDataFromMemory);
 
@@ -48,9 +54,8 @@ bool readPNG(unsigned char * start, size_t size, unsigned char ** bitmapData, un
   const png_uint_32 bytesPerRow = png_get_rowbytes(png, info);
   *bitmapData = new unsigned char[*height * bytesPerRow];
   unsigned char * rowData = *bitmapData;
-  // read single row at a time
-  for(unsigned int rowIndex = 0; rowIndex < *height; rowIndex++) {
-    png_read_row(png, (png_bytep)rowData, nullptr);
+  for (unsigned int rowIndex = 0; rowIndex < *height; rowIndex++) {
+    png_read_row(png, static_cast<png_bytep>(rowData), nullptr);
     rowData += bytesPerRow;
   }
 

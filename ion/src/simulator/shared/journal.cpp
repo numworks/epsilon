@@ -27,15 +27,15 @@ private:
 };
 
 void init() {
-  Ion::Events::logTo(logJournal());
+  Events::logTo(logJournal());
 }
 
-Ion::Events::Journal * replayJournal() {
+Events::Journal * replayJournal() {
   static Journal journal;
   return &journal;
 }
 
-Ion::Events::Journal * logJournal() {
+Events::Journal * logJournal() {
   static Journal journal;
   return &journal;
 }

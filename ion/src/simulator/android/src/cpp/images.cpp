@@ -26,7 +26,6 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   // TODO: Handle the case where lockPixels fails
 
   size_t bytesPerPixel = 4;
-  size_t bitsPerPixel = bytesPerPixel*8;
 
   SDL_Texture * texture = SDL_CreateTexture(
     renderer,

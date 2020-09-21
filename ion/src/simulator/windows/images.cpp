@@ -1,5 +1,5 @@
 #include "../shared/platform.h"
-#include <ion/src/simulator/windows/resource_mapping.h>
+#include <ion/src/simulator/windows/images.h>
 
 #include <SDL.h>
 #include <windows.h>
@@ -44,8 +44,8 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
   LPSTREAM stream;
   int resourceID = -1;
   for (size_t i = 0; i < sizeof(resourcesIdentifiers)/sizeof(resourcesIdentifiers[0]); i++) {
-    if (strcmp(identifier, resourcesIdentifiers[i].identifier) == 0) {
-      resourceID = resourcesIdentifiers[i].id;
+    if (strcmp(identifier, resourcesIdentifiers[i].identifier()) == 0) {
+      resourceID = resourcesIdentifiers[i].id();
     }
   }
   assert(resourceID >= 0);

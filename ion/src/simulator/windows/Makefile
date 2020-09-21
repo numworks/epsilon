@@ -25,22 +25,13 @@ SFLAGS += -I$(BUILD_DIR)
 LDFLAGS += -lgdiplus
 
 $(eval $(call rule_for, \
-  WINDOWS_ASSETS, \
-  ion/src/simulator/windows/resources.h, \
+  RESGEN, \
+  ion/src/simulator/windows/resources_gen.rc ion/src/simulator/windows/images.h, \
   $(ion_simulator_assets_paths), \
-  $$(PYTHON) ion/src/simulator/windows/assets.py --files $(ion_simulator_assets) --header-resource-rc $$@, \
+  $$(PYTHON) ion/src/simulator/windows/resgen.py $(ion_simulator_assets) -o $$@, \
   global \
 ))
 
-$(eval $(call rule_for, \
-  WINDOWS_ASSETS, \
-  ion/src/simulator/windows/resource_mapping.h, \
-  $(ion_simulator_assets_paths), \
-  $$(PYTHON) ion/src/simulator/windows/assets.py --files $(ion_simulator_assets) --header-resource-mapping $$@, \
-  global \
-))
-
-
-$(BUILD_DIR)/ion/src/simulator/windows/images.o: $(BUILD_DIR)/ion/src/simulator/windows/resource_mapping.h
-$(BUILD_DIR)/ion/src/simulator/windows/resources.o: $(BUILD_DIR)/ion/src/simulator/windows/resources.h
+$(call object_for,ion/src/simulator/windows/images.cpp): $(BUILD_DIR)/ion/src/simulator/windows/images.h
+$(call object_for,ion/src/simulator/windows/resources.rc): $(BUILD_DIR)/ion/src/simulator/windows/resources_gen.rc
 

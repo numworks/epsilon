@@ -1,4 +1,5 @@
 #include "math_toolbox.h"
+#include "global_preferences.h"
 #include "./shared/toolbox_helpers.h"
 #include <assert.h>
 #include <string.h>
@@ -384,3 +385,13 @@ MessageTableCellWithChevron* MathToolbox::nodeCellAtIndex(int index) {
 int MathToolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
 }
+
+int MathToolbox::indexAfterFork() const {
+    Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+    if (unitFormat == Preferences::UnitFormat::Metric) {
+      return 0;
+    }
+    assert(unitFormat == Preferences::UnitFormat::Imperial);
+    return 1;
+}
+

@@ -13,7 +13,6 @@ SDL_Texture * IonSimulatorLoadImage(SDL_Renderer * renderer, const char * identi
 
 
   size_t bytesPerPixel = 4;
-  size_t bitsPerPixel = bytesPerPixel*8;
   size_t bytesPerRow = bytesPerPixel * width;
   size_t bitsPerComponent = 8;
 

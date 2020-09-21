@@ -15,23 +15,23 @@ public:
         stripInsertedText);
   };
   template <int N>
-  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree (&children)[N]) {
+  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree (&children)[N], bool fork = false) {
     return ToolboxMessageTree(
         label,
         (I18n::Message)0,
         (I18n::Message)0,
         children,
-        N,
+        fork ? -N : N,
         true);
   }
   template <int N>
-  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree * (&children)[N]) {
+  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree * (&children)[N], bool fork = false) {
     return ToolboxMessageTree(
         label,
         (I18n::Message)0,
         (I18n::Message)0,
         children,
-        N,
+        fork ? -N : N,
         true);
   }
   const MessageTree * childAtIndex(int index) const override {
@@ -40,6 +40,7 @@ public:
   I18n::Message text() const { return m_text; }
   I18n::Message insertedText() const { return m_insertedText; }
   bool stripInsertedText() const { return m_stripInsertedText; }
+  bool isFork() const { return numberOfChildren() < 0; }
 private:
   constexpr ToolboxMessageTree(I18n::Message label, I18n::Message text, I18n::Message insertedText, const ToolboxMessageTree * children, int numberOfChildren, bool stripInsertedText) :
     MessageTree(label, numberOfChildren),

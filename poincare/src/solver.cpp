@@ -197,12 +197,12 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
      * it instead, otherwise, we reached the most precise result possible. */
     if (currentAbscissa == min) {
       if (currentAbscissa != -INFINITY) {
-        currentAbscissa = std::nextafter(currentAbscissa, INFINITY);
+        currentAbscissa = std::nextafter(currentAbscissa, static_cast<double>(INFINITY));
       }
     }
     if (currentAbscissa == max) {
       if (currentAbscissa != INFINITY) {
-        currentAbscissa = std::nextafter(currentAbscissa, -INFINITY);
+        currentAbscissa = std::nextafter(currentAbscissa, -static_cast<double>(INFINITY));
       }
     }
     if (currentAbscissa == min || currentAbscissa == max) {

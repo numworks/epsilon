@@ -31,6 +31,10 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
     function->setCache(cache);
   }
 
+  if (tStep != 0. && tStep != cache->step()) {
+    cache->clear();
+  }
+
   if (function->plotType() == ContinuousFunction::PlotType::Cartesian && tStep != 0) {
     function->cache()->pan(function, tMin);
   }

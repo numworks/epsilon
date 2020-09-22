@@ -44,10 +44,10 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * indexToUpdate = 
 /* Slides a string by a number of chars. If slidingSize < 0, the string is slided
  * to the left losing the first chars. Returns true if successful.
  * Exemples :
- * slideStringByNumberOfChar("12345", 2, 7) gives "1212345"
- * slideStringByNumberOfChar("12345", 2, 5) gives "12123"
- * slideStringByNumberOfChar("12345", -2, 5) gives "34545"*/
-bool slideStringByNumberOfChar(char * text, int slidingSize, int textMaxLength);
+ * SlideStringByNumberOfChar("12345", 2, 7) gives "1212345"
+ * SlideStringByNumberOfChar("12345", 2, 5) gives "12123"
+ * SlideStringByNumberOfChar("12345", -2, 5) gives "34545"*/
+bool SlideStringByNumberOfChar(char * text, int slidingSize, size_t textMaxLength);
 
 /* Looks for patterns in a string. If a pattern is found, it is replaced by
  * the one associated in the TextPair struct.
@@ -58,7 +58,7 @@ bool slideStringByNumberOfChar(char * text, int slidingSize, int textMaxLength);
  * - stoppingPosition allows partial replacement in the string.
  *
  * Ensure null termination of the string or set the value of stoppingPosition*/
-void tryAndReplacePatternsInStringByPatterns(char * text, int textMaxSize, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
+void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxSize, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * indexToUpdate = nullptr, const char * stoppingPosition = nullptr);
 
 /* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);

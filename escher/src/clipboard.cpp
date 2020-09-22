@@ -33,7 +33,7 @@ const char * Clipboard::storedText() {
     UTF8Helper::TextPair("\x12\x13", "\x12\x11\x13"),
   };
 
-  UTF8Helper::tryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize(), (UTF8Helper::TextPair *) &textPairs, numberOfPairs, true);
+  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize(), (UTF8Helper::TextPair *) &textPairs, numberOfPairs, true);
   return m_textBuffer;
 }
 
@@ -42,5 +42,5 @@ void Clipboard::reset() {
 }
 
 void Clipboard::replaceCharForPython(bool entersPythonApp) {
-  UTF8Helper::tryAndReplacePatternsInStringByPatterns((char *)m_textBuffer, TextField::maxBufferSize(), (UTF8Helper::TextPair *)&PythonTextPairs, NumberOfPythonTextPairs, entersPythonApp);
+  UTF8Helper::TryAndReplacePatternsInStringByPatterns((char *)m_textBuffer, TextField::maxBufferSize(), (UTF8Helper::TextPair *)&PythonTextPairs, NumberOfPythonTextPairs, entersPythonApp);
 }

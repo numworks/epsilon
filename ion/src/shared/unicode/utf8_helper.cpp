@@ -138,11 +138,11 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
   UTF8Decoder::CodePointToChars(c, pattern, codePointCharSize);
   pattern[codePointCharSize] = '\0';
   TextPair pair(pattern, "");
-  tryAndReplacePatternsInStringByPatterns(buffer, strlen(buffer), &pair, 1, true, pointerToUpdate, stoppingPosition);
+  TryAndReplacePatternsInStringByPatterns(buffer, strlen(buffer), &pair, 1, true, pointerToUpdate, stoppingPosition);
 }
 
-bool slideStringByNumberOfChar(char * text, int slidingSize, int textMaxLength) {
-  int lenText = strlen(text);
+bool SlideStringByNumberOfChar(char * text, int slidingSize, size_t textMaxLength) {
+  size_t lenText = strlen(text);
   if (lenText + slidingSize > textMaxLength || lenText + slidingSize < 0) {
     return false;
   }
@@ -158,10 +158,10 @@ bool slideStringByNumberOfChar(char * text, int slidingSize, int textMaxLength) 
 /* Replaces the first chars of a string by other ones. If the sizes are different
  * the rest of the string will be moved right after the replacement chars.
  * If successful returns true.*/
-static bool replaceFirstCharsByPattern(char * text, int lengthOfPatternToRemove, const char * replacementPattern, int textMaxLength) {
-  int lengthOfReplacementPattern = strlen(replacementPattern);
-  if (lengthOfPatternToRemove <= strlen(text) && slideStringByNumberOfChar(text, lengthOfReplacementPattern-lengthOfPatternToRemove, textMaxLength)) {
-    for (int i = 0; i < lengthOfReplacementPattern; i++) {
+static bool replaceFirstCharsByPattern(char * text, size_t lengthOfPatternToRemove, const char * replacementPattern, size_t textMaxLength) {
+  size_t lengthOfReplacementPattern = strlen(replacementPattern);
+  if (lengthOfPatternToRemove <= strlen(text) && SlideStringByNumberOfChar(text, lengthOfReplacementPattern-lengthOfPatternToRemove, textMaxLength)) {
+    for (size_t i = 0; i < lengthOfReplacementPattern; i++) {
       text[i] = replacementPattern[i];
     }
     return true;
@@ -169,7 +169,7 @@ static bool replaceFirstCharsByPattern(char * text, int lengthOfPatternToRemove,
   return false;
 }
 
-void tryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * pointerToUpdate, const char * stoppingPosition) {
+void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * * pointerToUpdate, const char * stoppingPosition) {
   size_t i = 0;
   size_t iPrev = 0;
   size_t textLength = strlen(text);

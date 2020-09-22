@@ -121,7 +121,7 @@ constexpr ToolboxMessageTree unitDistanceYard = ToolboxMessageTree::Leaf(I18n::M
 constexpr ToolboxMessageTree unitDistanceMile = ToolboxMessageTree::Leaf(I18n::Message::UnitDistanceMileSymbol, I18n::Message::UnitDistanceMile);
 
 const ToolboxMessageTree * unitDistanceMeterChildren[] = {&unitDistanceMeterPico, &unitDistanceMeterNano, &unitDistanceMeterMicro, &unitDistanceMeterMilli, &unitDistanceMeter, &unitDistanceMeterKilo};
-const ToolboxMessageTree unitDistanceMeterNode = ToolboxMessageTree::Node(I18n::Message::UnitDistanceMeter, unitDistanceMeterChildren);
+const ToolboxMessageTree unitDistanceMeterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitDistanceMeterChildren);
 const ToolboxMessageTree * unitDistanceChildrenForImperialToolbox[] = {
   &unitDistanceInch,
   &unitDistanceFoot,
@@ -162,7 +162,7 @@ constexpr ToolboxMessageTree unitMassShortTon = ToolboxMessageTree::Leaf(I18n::M
 constexpr ToolboxMessageTree unitMassLongTon = ToolboxMessageTree::Leaf(I18n::Message::UnitMassLongTonSymbol, I18n::Message::UnitMassLongTon);
 
 const ToolboxMessageTree * unitMassGramChildren[] = {&unitMassGramMicro, &unitMassGramMilli, &unitMassGram, &unitMassGramKilo, &unitMassTonne};
-const ToolboxMessageTree unitMassGramNode = ToolboxMessageTree::Node(I18n::Message::UnitMassGram, unitMassGramChildren);
+const ToolboxMessageTree unitMassGramNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitMassGramChildren);
 const ToolboxMessageTree * unitMassChildrenForImperialToolbox[] = {
   &unitMassOunce,
   &unitMassPound,
@@ -308,7 +308,7 @@ constexpr ToolboxMessageTree unitVolumeQuart = ToolboxMessageTree::Leaf(I18n::Me
 constexpr ToolboxMessageTree unitVolumeGallon = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeGallonSymbol, I18n::Message::UnitVolumeGallon);
 
 const ToolboxMessageTree * unitVolumeLiterChildren[] = {&unitVolumeLiterMilli, &unitVolumeLiterCenti, &unitVolumeLiterDeci, &unitVolumeLiter};
-const ToolboxMessageTree unitVolumeLiterNode = ToolboxMessageTree::Node(I18n::Message::UnitVolumeLiter, unitVolumeLiterChildren);
+const ToolboxMessageTree unitVolumeLiterNode = ToolboxMessageTree::Node(I18n::Message::UnitMetricMenu, unitVolumeLiterChildren);
 const ToolboxMessageTree * unitVolumeChildrenForImperialToolbox[] = {
   &unitVolumeTeaspoon,
   &unitVolumeTablespoon,

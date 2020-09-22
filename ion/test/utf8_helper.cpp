@@ -166,7 +166,7 @@ QUIZ_CASE(ion_utf8_remove_code_point) {
 void assert_slide_string_by_number_of_char_gives(const char * string, int slidingSize, bool successResult, const char * stringResult = nullptr) {
   char buffer[bufferSize];
   strlcpy(buffer, string, bufferSize);
-  bool success = UTF8Helper::slideStringByNumberOfChar((char *)buffer, slidingSize, bufferSize);
+  bool success = UTF8Helper::SlideStringByNumberOfChar((char *)buffer, slidingSize, bufferSize);
   quiz_assert(success == successResult);
   if (successResult) {
     quiz_assert(strncmp(buffer, stringResult, bufferSize) == 0);
@@ -187,7 +187,7 @@ QUIZ_CASE(ion_utf8_move_string_from_index_by_number_of_char) {
 }
 
 void assert_try_and_replace_pattern_in_string_by_pattern_gives(char * buffer, int bufferSize, UTF8Helper::TextPair * textPairs, int numberOfPairs, bool firstToSecond, const char * stringResult, const char ** indexToUpdate = nullptr, const char * indexToUpdateResult = nullptr, const char * stoppingPosition = nullptr) {
-  UTF8Helper::tryAndReplacePatternsInStringByPatterns(buffer, bufferSize, textPairs, numberOfPairs, firstToSecond, indexToUpdate, stoppingPosition);
+  UTF8Helper::TryAndReplacePatternsInStringByPatterns(buffer, bufferSize, textPairs, numberOfPairs, firstToSecond, indexToUpdate, stoppingPosition);
   quiz_assert(strncmp(buffer, stringResult, bufferSize) == 0);
   if (indexToUpdateResult != nullptr) {
     quiz_assert(*indexToUpdate == indexToUpdateResult);

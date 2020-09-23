@@ -4,9 +4,17 @@
 #include <ion/unicode/utf8_helper.h>
 #include <python/port/port.h>
 
+/* py/parsenum.h is a C header which uses C keyword restrict.
+ * It does not exist in C++ so we define it here in order to be able to include
+ * py/parsenum.h header. */
+#ifdef __cplusplus
+#define restrict   // disable
+#endif
+
 extern "C" {
 #include "py/nlr.h"
 #include "py/lexer.h"
+#include "py/parsenum.h"
 }
 #include <stdlib.h>
 #include <algorithm>
@@ -287,6 +295,25 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
       // If the token is being autocompleted, use DefaultColor
       KDColor color = (tokenFrom <= autocompleteStart && autocompleteStart < tokenEnd) ? DefaultColor : TokenColor(lex->tok_kind);
+
+      if (color != DefaultColor && (lex->tok_kind == MP_TOKEN_INTEGER || lex->tok_kind == MP_TOKEN_FLOAT_OR_IMAG)) {
+        /* Check if the token can actually be parsed because lexer might label
+         * tokens that cannot be parsed as integer or float */
+        nlr_buf_t nlrNumberColorParse;
+        if (nlr_push(&nlrNumberColorParse) == 0) {
+          /* Use ex->vstr.len instead of tokenLength because it translates
+           * escaped chars as the interpreter would do. */
+          if (lex->tok_kind == MP_TOKEN_INTEGER) {
+            mp_parse_num_integer(tokenFrom, lex->vstr.len, 0, NULL);
+          } else {
+            mp_parse_num_decimal(tokenFrom, lex->vstr.len, true, false, NULL);
+          }
+          nlr_pop();
+        } else {
+          // Parsing raised an exception, use DefaultColor.
+          color = DefaultColor;
+        }
+      }
 
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,

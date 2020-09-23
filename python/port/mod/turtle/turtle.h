@@ -82,6 +82,13 @@ public:
 
   void viewDidDisappear();
 
+  /* isOutOfBounds returns true if nothing should be drawn at current position.
+   * We avoid drawing at extreme position (far from screen bounds) to prevent
+   * coordinate overflows. However, this solution makes the turtle go faster
+   * when out of bound, and can prevent text that would have been visible to be
+   * drawn. We use very large bounds to temper these effects. */
+  bool isOutOfBounds() const;
+
 private:
   static constexpr mp_float_t k_headingScale = M_PI / 180;
   /* The Y axis is oriented upwards in Turtle and downwards in Kandinsky, so we
@@ -94,6 +101,7 @@ private:
   static constexpr KDColor k_defaultColor = KDColorBlack;
   static constexpr uint8_t k_defaultPenSize = 1;
   static constexpr const KDFont * k_font = KDFont::LargeFont;
+  static constexpr mp_float_t k_maxPosition = KDCOORDINATE_MAX * 0.75f;
 
   enum class PawType : uint8_t {
     FrontRight = 0,

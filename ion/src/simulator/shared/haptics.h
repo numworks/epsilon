@@ -6,7 +6,8 @@ namespace Simulator {
 namespace Haptics {
 
 void init();
-void perform();
+bool isEnabled();
+void rumble();
 void shutdown();
 
 }

@@ -6,7 +6,7 @@ namespace Ion {
 namespace Events {
 
 void didPressNewKey() {
-  Simulator::Haptics::perform();
+  Simulator::Haptics::rumble();
 }
 
 }

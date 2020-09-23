@@ -15,9 +15,10 @@ ion_src += $(addprefix ion/src/simulator/linux/, \
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
   dummy/callback.cpp \
-  dummy/haptics.cpp \
+  dummy/haptics_enabled.cpp \
   collect_registers_x86_64.s \
   collect_registers.cpp \
+  haptics.cpp \
 )
 
 ifeq ($(EPSILON_TELEMETRY),1)

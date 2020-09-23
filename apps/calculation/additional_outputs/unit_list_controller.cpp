@@ -46,18 +46,25 @@ void UnitListController::setExpression(Poincare::Expression e) {
   Shared::PoincareHelpers::Simplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
   numberOfExpressions++;
 
-  // 3. Get rid of duplicates
+  /* 3. Get rid of duplicates
+   * We find duplicates by comparing the serializations, to eliminate
+   * expressions that only differ by the types of their number nodes. */
   Expression reduceExpression = m_expression.clone();
   // Make m_expression comparable to expressions (turn BasedInteger into Rational for instance)
   Shared::PoincareHelpers::Simplify(&reduceExpression, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::None);
-  int currentExpressionIndex = 1;
+  int currentExpressionIndex = 0;
   while (currentExpressionIndex < numberOfExpressions) {
     bool duplicateFound = false;
+    constexpr int buffersSize = Constant::MaxSerializedExpressionSize;
+    char buffer1[buffersSize];
+    int size1 = PoincareHelpers::Serialize(expressions[currentExpressionIndex], buffer1, buffersSize);
     for (int i = 0; i < currentExpressionIndex + 1; i++) {
       // Compare the currentExpression to all previous expressions and to m_expression
       Expression comparedExpression = i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());
-      if (comparedExpression.isIdenticalTo(expressions[currentExpressionIndex])) {
+      char buffer2[buffersSize];
+      int size2 = PoincareHelpers::Serialize(comparedExpression, buffer2, buffersSize);
+      if (size1 == size2 && strcmp(buffer1, buffer2) == 0) {
         numberOfExpressions--;
         // Shift next expressions
         for (int j = currentExpressionIndex; j < numberOfExpressions; j++) {

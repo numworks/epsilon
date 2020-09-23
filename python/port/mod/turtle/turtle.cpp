@@ -177,6 +177,9 @@ void Turtle::setVisible(bool visible) {
 
 void Turtle::write(const char * string) {
   // We erase the turtle to redraw it on top of the text
+  if (isOutOfBounds()) {
+    return;
+  }
   erase();
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDContext * ctx = KDIonContext::sharedContext();
@@ -194,6 +197,10 @@ void Turtle::write(const char * string) {
 void Turtle::viewDidDisappear() {
   m_drawn = false;
 }
+
+bool Turtle::isOutOfBounds() const {
+  return absF(x()) > k_maxPosition || absF(y()) > k_maxPosition;
+};
 
 // Private functions
 
@@ -255,6 +262,7 @@ bool Turtle::hasDotBuffers() {
 }
 
 KDRect Turtle::iconRect() const {
+  assert(!isOutOfBounds());
   KDPoint iconOffset = KDPoint(-k_iconSize/2, -k_iconSize/2);
   return KDRect(position().translatedBy(iconOffset), k_iconSize, k_iconSize);
 }
@@ -262,7 +270,7 @@ KDRect Turtle::iconRect() const {
 bool Turtle::draw(bool force) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
-  if ((m_speed > 0 || force) && m_visible && !m_drawn && hasUnderneathPixelBuffer()) {
+  if ((m_speed > 0 || force) && m_visible && !m_drawn && hasUnderneathPixelBuffer() && !isOutOfBounds()) {
     KDContext * ctx = KDIonContext::sharedContext();
 
     // Get the pixels underneath the turtle
@@ -344,7 +352,7 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
   // Draw the dot if the pen is down
-  if (m_penDown && hasDotBuffers()) {
+  if (m_penDown && hasDotBuffers() && !isOutOfBounds()) {
     KDContext * ctx = KDIonContext::sharedContext();
     KDRect rect(
       position(x, y).translatedBy(KDPoint(-m_penSize/2, -m_penSize/2)),
@@ -369,6 +377,7 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
 void Turtle::drawPaw(PawType type, PawPosition pos) {
   assert(!m_drawn);
   assert(m_underneathPixelBuffer != nullptr);
+  assert(!isOutOfBounds());
   KDCoordinate pawOffset = 5;
   constexpr float crawlOffset = 0.6f;
   constexpr float angles[] = {M_PI_4, 3*M_PI_4, -3*M_PI_4, -M_PI_4};
@@ -391,7 +400,7 @@ void Turtle::drawPaw(PawType type, PawPosition pos) {
 }
 
 void Turtle::erase() {
-  if (!m_drawn || m_underneathPixelBuffer == nullptr) {
+  if (!m_drawn || m_underneathPixelBuffer == nullptr || isOutOfBounds()) {
     return;
   }
   KDContext * ctx = KDIonContext::sharedContext();

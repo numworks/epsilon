@@ -127,7 +127,7 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
   char unknownN[bufferSize];
   Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
   float rank = symbol.childAtIndex(0).approximateWithValueForSymbol<float>(unknownN, unknownSymbolValue, ctx, Preferences::sharedPreferences()->complexFormat(),Preferences::sharedPreferences()->angleUnit());
-  if (std::floor(rank) == rank) {
+  if (std::floor(rank) == rank && !seq.badlyReferencesItself(ctx)) {
     SequenceContext sqctx(ctx, sequenceStore());
     return Float<double>::Builder(seq.evaluateXYAtParameter(rank, &sqctx).x2());
   } else {

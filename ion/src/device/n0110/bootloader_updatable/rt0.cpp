@@ -102,7 +102,7 @@ static void __attribute__((noinline)) jump_to_external_flash() {
 
 #endif
 
-  ColorScreen(0x00FF00);
+  //ColorScreen(0x00FF00);
 
   /* Unprivileged mode */
   switch_to_unpriviledged();

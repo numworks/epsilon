@@ -140,7 +140,7 @@ void ion_main(int argc, const char * const argv[]) {
   /* Step 2. Process DFU requests on external flash only. If there is a reset
    * with BOOT pin to 1, this acts as the "ST bootloader". */
 
-  ColorScreen(0x00FF00);
+  //ColorScreen(0x00FF00);
 
   // TODO LEA Do we need to disable/enable all the time?
   while (true) {
@@ -157,8 +157,8 @@ void ion_main(int argc, const char * const argv[]) {
 
   /* Step 3. Update the updatable bootloader if needed and if authenticated. */
   UpdateUpdatableBootloader();
-  ColorScreen(0x0000FF);
-  Ion::Timing::msleep(2000);
+  //ColorScreen(0x0000FF);
+  Ion::Timing::msleep(1);
 
   /* Step 4. Reset. Always jump to the internal flash, no matter the reset
    * address the dfu transaction asked for. TODO LEA */

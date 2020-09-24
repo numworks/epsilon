@@ -769,7 +769,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
     return e.type() == ExpressionNode::Type::Unit && !e.convert<Unit>().isBaseUnit();
   };
 
-  return (representative != nullptr && representative->hasAdditionalExpressions(value, unitFormat))
+  return (representative != nullptr && representative->hasSpecialAdditionalExpressions(value, unitFormat))
       || unit.hasExpression(isNonBase, nullptr);
 }
 

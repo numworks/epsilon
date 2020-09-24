@@ -112,7 +112,10 @@ public:
     virtual const Prefix * basePrefix() const { return Prefix::EmptyPrefix(); }
     virtual bool isBaseUnit() const { return false; }
     virtual const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const { return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), numberOfRepresentatives(), prefix); }
-    virtual bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const { return false; }
+    /* hasSpecialAdditionalExpressions return true if the unit has special
+     * forms suchas as splits (for time and imperial units) or common
+     * conversions (such as speed and energy). */
+    virtual bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const { return false; }
     virtual int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const { return 0; }
 
     const char * rootSymbol() const { return m_rootSymbol; }
@@ -146,7 +149,7 @@ public:
     int numberOfRepresentatives() const override { return 7; }
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return m_ratio * value >= representativesOfSameDimension()[1].ratio(); }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return m_ratio * value >= representativesOfSameDimension()[1].ratio(); }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -161,7 +164,7 @@ public:
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return unitFormat == Preferences::UnitFormat::Imperial; }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return unitFormat == Preferences::UnitFormat::Imperial; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -177,7 +180,7 @@ public:
     const Prefix * basePrefix() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return unitFormat == Preferences::UnitFormat::Imperial; }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return unitFormat == Preferences::UnitFormat::Imperial; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -205,7 +208,7 @@ public:
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override { return this; }
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     static constexpr double k_celsiusOrigin = 273.15;
@@ -277,7 +280,7 @@ public:
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -400,7 +403,7 @@ public:
     int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -414,7 +417,7 @@ public:
     int numberOfRepresentatives() const override { return 8; }
     const Representative * representativesOfSameDimension() const override;
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override;
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
@@ -426,7 +429,7 @@ public:
     constexpr static SpeedRepresentative Default() { return SpeedRepresentative(nullptr, 0., Prefixable::None, Prefixable::None); }
     const Vector<int>dimensionVector() const override { return Vector<int>{.time = -1, .distance = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     const Representative * standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const override { return nullptr; }
-    bool hasAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;

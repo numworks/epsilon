@@ -70,7 +70,7 @@ i18n_files += $(addprefix apps/language_,$(addsuffix _iso6391.universal.i18n, $(
 endif
 
 i18n_files += $(call i18n_with_universal_for,shared)
-i18n_files += $(call i18n_without_universal_for,toolbox)
+i18n_files += $(call i18n_with_universal_for,toolbox)
 i18n_files += $(call i18n_without_universal_for,variables)
 
 $(eval $(call rule_for, \

@@ -8,7 +8,7 @@ namespace Flash {
 bool SectorIsWritable(int i) {
   assert(i >= 0 && i < TotalNumberOfSectors());
   return true;
-}}
+}
 
 }
 }

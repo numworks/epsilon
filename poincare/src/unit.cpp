@@ -764,14 +764,20 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Expression units, double * 
 bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat) {
   UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
   const Representative * representative = Representative::RepresentativeForDimension(vector);
-  return representative != nullptr
-      && ((unit.type() == ExpressionNode::Type::Unit && !static_cast<Unit &>(unit).isBaseUnit())
-       || representative->hasAdditionalExpressions(value, unitFormat));
+
+  ExpressionTypeTest isNonBase = [](const Expression e, const void * context) {
+    return e.type() == ExpressionNode::Type::Unit && !e.convert<Unit>().isBaseUnit();
+  };
+
+  return (representative != nullptr && representative->hasAdditionalExpressions(value, unitFormat))
+      || unit.hasExpression(isNonBase, nullptr);
 }
 
 int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {
   const Representative * representative = units.type() == ExpressionNode::Type::Unit ? static_cast<Unit &>(units).node()->representative() : UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
-  assert(representative);
+  if (!representative) {
+    return 0;
+  }
   return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
 }
 

@@ -361,6 +361,13 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("1/(-3_°C)", Undefined::Name());
   assert_parsed_expression_simplify_to("-1×100×_°C→_K", Undefined::Name());
 
+  /* Rational exponents */
+  assert_parsed_expression_simplify_to("√(_m)", "1×_m^\u00121/2\u0013");
+  assert_parsed_expression_simplify_to("√(_N)", "1×_kg^\u00121/2\u0013×_m^\u00121/2\u0013×_s^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("√(_N)", "1.5527410012845×_lb^\u00121/2\u0013×_yd^\u00121/2\u0013×_s^\u0012-1\u0013", User, Radian, Imperial);
+  assert_parsed_expression_simplify_to("_C^0.3", "1×_A^\u00123/10\u0013×_s^\u00123/10\u0013");
+  assert_parsed_expression_simplify_to("_kat_kg^-2.8", "1×_mol×_kg^\u0012-14/5\u0013×_s^\u0012-1\u0013");
+
   /* Unit sum/subtract */
   assert_parsed_expression_simplify_to("_m+_m", "2×_m");
   assert_parsed_expression_simplify_to("_m-_m", "0×_m");
@@ -528,6 +535,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
   assert_parsed_expression_simplify_to("cos(1_s/1_s)", "cos(1)");
   assert_parsed_expression_simplify_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
+  assert_parsed_expression_simplify_to("√(16×_m^2)", "4×_m");
 }
 
 QUIZ_CASE(poincare_simplification_power) {

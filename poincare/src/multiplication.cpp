@@ -440,10 +440,9 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext redu
        * - Repeat those steps until no more simplification is possible.
        */
       Multiplication unitsAccu = Multiplication::Builder();
-      /* If exponents are not integers, FromBaseUnits will return the closest
-       * representation of units with base units and integer exponents.
-       * It cause no problem because once the best derived units are found,
-       * units is divided then multiplied by them. */
+      /* If exponents are not integers, FromBaseUnits will return a null
+       * vector, preventing any attempt at simplification. This protects us
+       * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
       UnitNode::Vector<int> unitsExponents = UnitNode::Vector<int>::FromBaseUnits(units);
       size_t unitsSupportSize = unitsExponents.supportSize();
       UnitNode::Vector<int> bestRemainderExponents;

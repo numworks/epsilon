@@ -1,7 +1,6 @@
 RegressionApp = "Regressão"
 RegressionAppCapital = "REGRESSÃO"
 Regression = "Regressão"
-Reg = "reg"
 MeanDot = "média"
 RegressionCurve = "Curva de regressão"
 XPrediction = "Predição dado X"

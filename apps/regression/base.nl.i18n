@@ -1,7 +1,6 @@
 RegressionApp = "Regressie"
 RegressionAppCapital = "REGRESSIE"
 Regression = "Regressie"
-Reg = "reg"
 MeanDot = "gemiddelde"
 RegressionCurve = "Regressielijn"
 XPrediction = "Voorspelling gegeven X"

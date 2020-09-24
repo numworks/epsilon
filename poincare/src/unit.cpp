@@ -128,6 +128,12 @@ UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(const Expression base
       assert(exp.type() == ExpressionNode::Type::Rational);
       // Using the closest integer to the exponent.
       float exponentFloat = static_cast<const Rational &>(exp).node()->templatedApproximate<float>();
+      if (exponentFloat != std::round(exponentFloat)) {
+        /* If non-integer exponents are found, we round a null vector so that
+         * Multiplication::shallowBeautify will not attempt to find derived
+         * units. */
+        return vector;
+      }
       /* We limit to INT_MAX / 3 because an exponent might get bigger with
        * simplification. As a worst case scenario, (_s²_m²_kg/_A²)^n should be
        * simplified to (_s^5_S)^n. If 2*n is under INT_MAX, 5*n might not. */

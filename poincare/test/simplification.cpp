@@ -536,6 +536,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("cos(1_s/1_s)", "cos(1)");
   assert_parsed_expression_simplify_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
   assert_parsed_expression_simplify_to("√(16×_m^2)", "4×_m");
+  assert_parsed_expression_simplify_to("1×_A_kg", "2.2046226218488×_A×_lb", User, Radian, Imperial);
 }
 
 QUIZ_CASE(poincare_simplification_power) {

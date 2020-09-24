@@ -71,6 +71,18 @@ def split_line(line):
 def locale_from_filename(filename):
     return re.match(r".*\.([a-z]+)\.i18n", filename).group(1)
 
+def check_redundancy(messages, data, locales):
+    redundant_names = set()
+    for name in messages:
+        redundancy = True
+        for i in range(1, len(locales)):
+            redundancy = redundancy and data[locales[i]][name] == data[locales[i-1]][name]
+        if redundancy:
+            redundant_names.add(name)
+    if (len(redundant_names) > 0):
+        sys.stderr.write("Some localized messages are redundant and can be made universal :\n\t" + "\n\t".join(sorted(redundant_names)) + "\n")
+        sys.exit(-1)
+
 def parse_files(files):
     data = {}
     messages = set()
@@ -95,6 +107,7 @@ def parse_files(files):
                 else:
                     messages.add(name)
                 data[locale][name] = definition
+    check_redundancy(messages, data, args.locales)
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
 
 def parse_codepoints(file):

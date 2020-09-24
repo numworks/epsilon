@@ -922,11 +922,15 @@ void Unit::chooseBestRepresentativeAndPrefix(double * value, double exponent, Ex
   double baseValue = *value * std::pow(node()->representative()->ratio() * std::pow(10., node()->prefix()->exponent() - node()->representative()->basePrefix()->exponent()), exponent);
   const Prefix * bestPrefix = (optimizePrefix) ? Prefix::EmptyPrefix() : nullptr;
   const Representative * bestRepresentative = node()->representative()->standardRepresentative(baseValue, exponent, reductionContext, &bestPrefix);
+  if (!optimizePrefix) {
+    bestPrefix = bestRepresentative->basePrefix();
+  }
+
   if (bestRepresentative != node()->representative()) {
     *value = *value * std::pow(node()->representative()->ratio() / bestRepresentative->ratio() * std::pow(10., bestRepresentative->basePrefix()->exponent() - node()->representative()->basePrefix()->exponent()), exponent);
     node()->setRepresentative(bestRepresentative);
   }
-  if (optimizePrefix && bestPrefix != node()->prefix()) {
+  if (bestPrefix != node()->prefix()) {
     *value = *value * std::pow(10., exponent * (node()->prefix()->exponent() - bestPrefix->exponent()));
     node()->setPrefix(bestPrefix);
   }

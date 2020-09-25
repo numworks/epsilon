@@ -79,7 +79,10 @@ def elf2dfu(elf_file1, elf_file2, usb_vid_pid, dfu_file, verbose):
     # open(bin_file(b), "a").write("\xFF\xFF\xFF\xFF")
     sha = "0x" +subprocess.check_output(["shasum", "-a", "256", bin_file(b)]).decode('utf-8').split(" ")[0]
     hex_sha = int(sha, 16)
-    data = open(bin_file(b), "rb").read() + hex_sha.to_bytes(32, byteorder='big')
+    data = open(bin_file(b), "rb").read()
+    dataSize = len(data)
+    data = dataSize.to_bytes(4, byteorder="little") + data + hex_sha.to_bytes(32, byteorder='little')
+    address -= 4
     targets.append({'address': address, 'name': name, 'data': data})
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
   for b in blocks:

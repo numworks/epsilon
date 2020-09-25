@@ -112,7 +112,7 @@ static void __attribute__((noinline)) jump_to_external_flash() {
   switch_to_unpriviledged();
   Ion::Device::Cache::isb();
 
-  ExternalStartPointer * externalFlashFirstAddress = reinterpret_cast<ExternalStartPointer *>(0x9000D000);
+  ExternalStartPointer * externalFlashFirstAddress = reinterpret_cast<ExternalStartPointer *>(0x9000D028); // TODO EMILIE explain + magic number
   ExternalStartPointer external_flash_entry = *externalFlashFirstAddress;
   external_flash_entry();
 }

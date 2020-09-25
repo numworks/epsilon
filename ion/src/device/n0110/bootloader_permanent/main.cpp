@@ -20,12 +20,12 @@ void decrypt(uint8_t * signature, uint8_t * decryptedSignature) {
 }
 
 bool IsAuthenticated(void * pointer) {
+  constexpr size_t SizeOfUpdatableBootloader = (64 - 16) * 1024; // TODO EMILIE duplicated variable
   /* Data structure at pointer must be :
    * | code size |         code        |   signature   | */
   // Extract size and code
   uint32_t size = *(uint32_t*) pointer;
-  if (size == 0xFFFFFFFF) {
-    // The code to authenticate is empty
+  if (size > SizeOfUpdatableBootloader) { // the size is 0xFFFFFFFF when the bootloader space is empty
     return false;
   }
   uint8_t * code = (uint8_t *)pointer + sizeof(uint32_t);

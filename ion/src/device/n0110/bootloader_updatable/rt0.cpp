@@ -7,6 +7,7 @@
 #include <drivers/reset.h>
 #include <drivers/timing.h>
 #include <regs/regs.h>
+#include <ion.h>
 
 typedef void (*cxx_constructor)();
 
@@ -30,9 +31,36 @@ void __attribute__((noinline)) abort() {
 #endif
 }
 
+// TODO EMILIE: Duplicate
+
+void decrypt(uint8_t * signature, uint8_t * decryptedSignature) {
+  // TODO : Decrypt signature with public key
+  memcpy(decryptedSignature, signature, Ion::Sha256DigestBytes);
+}
+
+// TODO EMILIE: Duplicate
+
+bool IsAuthenticated(void * pointer) {
+  /* Data structure at pointer must be :
+   * | code size |         code        |   signature   | */
+  // Extract size and code
+  uint32_t size = *(uint32_t*) pointer;
+  uint8_t * code = (uint8_t *)pointer + sizeof(uint32_t);
+  // Hash code
+  uint8_t digest[Ion::Sha256DigestBytes];
+  // By construction, Sha256 also hashes code size into digest
+  Ion::sha256(code, size, digest);
+  // Extract and Decrypt signature
+  uint8_t * signature = (uint8_t *)pointer + sizeof(uint32_t) + size;
+  uint8_t decryptedSignature[Ion::Sha256DigestBytes];
+  decrypt(signature, decryptedSignature);
+  // Code is authenticated if signature decrypts to digest
+  return memcmp(digest, decryptedSignature, Ion::Sha256DigestBytes) == 0;
+}
+
 bool ExternalFlashIsAuthenticated() {
-  // TODO LEA, see bootloader_permanent/rt0.cpp
-  return true;
+  void * externalFlashEpsilonAddress = reinterpret_cast<void *>(0x9000C024); // TODO EMILIE no magic number
+  return IsAuthenticated(externalFlashEpsilonAddress);
 }
 
 void ColorScreen(uint32_t color) {

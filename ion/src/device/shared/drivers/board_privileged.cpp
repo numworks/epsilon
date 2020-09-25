@@ -92,7 +92,7 @@ void setStandardClockFrequencyHandler() {
   if (sStandardFrequency == Frequency::Low) {
     return setLowClockFrequencyHandler();
   }
-  assert(sStandardFrequency = Frequency::High);
+  assert(sStandardFrequency == Frequency::High);
   // TODO: Update TIM3 prescaler or ARR to avoid irregular LED blinking
   // Change the systick frequency to compensate the KCLK frequency change
   RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);

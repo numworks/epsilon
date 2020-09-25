@@ -13,7 +13,7 @@ void externalFlashWrite(uint8_t * writingAddress, uint8_t newValue[]) {
    * newValue. We can settle for writing one byte instead of two. */
   size_t writtenFlash = *writingAddress == 1 ? sizeof(uint16_t) : sizeof(uint8_t);
   /* Avoid writing out of sector */
-  assert(writingAddress < (uint8_t *)&_exam_mode_buffer_end - 1 || (writingAddress == (uint8_t *)&_exam_mode_buffer_end - 1 && writtenFlash == 1));
+  //assert(writingAddress < (uint8_t *)&_exam_mode_buffer_end - 1 || (writingAddress == (uint8_t *)&_exam_mode_buffer_end - 1 && writtenFlash == 1));
   Ion::Device::Flash::WriteMemory(writingAddress, newValue, writtenFlash);
 }
 

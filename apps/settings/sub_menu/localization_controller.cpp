@@ -6,7 +6,7 @@ namespace Settings {
 
 int LocalizationController::indexOfCellToSelectOnReset() const {
   return mode() == Mode::Language ?
-    static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->language()) :
+    Shared::LocalizationController::indexOfCellToSelectOnReset() :
     IndexOfCountry(GlobalPreferences::sharedGlobalPreferences()->country());
 }
 

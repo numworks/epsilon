@@ -7,7 +7,7 @@ namespace OnBoarding {
 
 int LocalizationController::indexOfCellToSelectOnReset() const {
   return mode() == Mode::Language ?
-    0 :
+    Shared::LocalizationController::indexOfCellToSelectOnReset() :
     IndexOfCountry(I18n::DefaultCountryForLanguage[static_cast<uint8_t>(GlobalPreferences::sharedGlobalPreferences()->language())]);
 }
 

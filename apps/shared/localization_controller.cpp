@@ -142,6 +142,11 @@ void LocalizationController::setMode(LocalizationController::Mode mode) {
   m_contentView.modeHasChanged();
 }
 
+int LocalizationController::indexOfCellToSelectOnReset() const {
+  assert(mode() == Mode::Language);
+  return static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->language());
+}
+
 const char * LocalizationController::title() {
   if (mode() == Mode::Language) {
     return I18n::translate(I18n::Message::Language);

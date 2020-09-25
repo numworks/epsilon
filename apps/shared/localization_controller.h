@@ -22,7 +22,7 @@ public:
   Mode mode() const { return m_mode; }
   void setMode(Mode mode);
 
-  virtual int indexOfCellToSelectOnReset() const = 0;
+  virtual int indexOfCellToSelectOnReset() const;
   virtual bool shouldDisplayTitle() const = 0;
   bool shouldDisplayWarning() const { return mode() == Mode::Country; }
 

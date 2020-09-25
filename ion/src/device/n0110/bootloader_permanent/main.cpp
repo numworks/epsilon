@@ -55,7 +55,8 @@ void UpdateUpdatableBootloader() {
    * the data. */
   // TODO LEA Get values from elsewhere
   uint8_t * UpdatableBootloaderAddress = reinterpret_cast<uint8_t *>(0x08000000 + 16*1024);
-  uint8_t * StartOfExternalFlashAddress = reinterpret_cast<uint8_t *>(0x90000000);
+  /* External flash : size_of_updatable_bootloader | updatable_bootloader | signature |... */
+  uint8_t * StartOfExternalFlashAddress = reinterpret_cast<uint8_t *>(0x90000000 + 4);
   constexpr size_t SizeOfUpdatableBootloader = (64 - 16) * 1024; // TODO LEA we could try not to copy the padding, only the real length
   for (int i = 1; i < 4; i++) {
     Ion::Device::Flash::EraseSector(i); //TODO LEA erase only what needed?

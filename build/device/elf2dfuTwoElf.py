@@ -77,7 +77,10 @@ def elf2dfu(elf_file1, elf_file2, usb_vid_pid, dfu_file, verbose):
     # version (< 1.8.0) of the dfu code, and it did not upload properly a binary
     # of length non-multiple of 32 bits.
     # open(bin_file(b), "a").write("\xFF\xFF\xFF\xFF")
-    targets.append({'address': address, 'name': name, 'data': open(bin_file(b), "rb").read()})
+    sha = "0x" +subprocess.check_output(["shasum", "-a", "256", bin_file(b)]).decode('utf-8').split(" ")[0]
+    hex_sha = int(sha, 16)
+    data = open(bin_file(b), "rb").read() + hex_sha.to_bytes(32, byteorder='big')
+    targets.append({'address': address, 'name': name, 'data': data})
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
   for b in blocks:
     subprocess.call(["rm", bin_file(b)])

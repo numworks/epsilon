@@ -18,14 +18,14 @@ bool IsAuthenticated(void * pointer) {
   /* Data structure at pointer must be :
    * | code size |         code        |   signature   | */
   // Extract size and code
-  size_t size = *(size_t*) pointer;
-  uint8_t * code = (uint8_t *)pointer + sizeof(size_t);
+  uint32_t size = *(uint32_t*) pointer;
+  uint8_t * code = (uint8_t *)pointer + sizeof(uint32_t);
   // Hash code
   uint8_t digest[Ion::Sha256DigestBytes];
   // By construction, Sha256 also hashes code size into digest
   Ion::sha256(code, size, digest);
   // Extract and Decrypt signature
-  uint8_t * signature = (uint8_t *)pointer + sizeof(size_t) + size;
+  uint8_t * signature = (uint8_t *)pointer + sizeof(uint32_t) + size;
   uint8_t decryptedSignature[Ion::Sha256DigestBytes];
   decrypt(signature, decryptedSignature);
   // Code is authenticated if signature decrypts to digest
@@ -39,17 +39,18 @@ void ColorScreen(uint32_t color) {
 
 bool StartOfExternalFlashIsAuthenticated() {
   // TODO LEA + instead of complicated cryptographic computations, we can start by simply checking if there are only 0s.
-  // void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
-  // return IsAuthenticated(StartOfExternalFlashAddress);
-  return true;
+  void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
+  return IsAuthenticated(StartOfExternalFlashAddress);
 }
 
 void UpdateUpdatableBootloader() {
   if (!StartOfExternalFlashIsAuthenticated()) {
     // Nothing to update
+    ColorScreen(0x0F37B9);
     return;
   }
 
+  ColorScreen(0xFF0000);
   /* To run the permanent bootloader, the device must haven been reset, so there
    * is no ongoing Write protection of the internal flash. We can simply memcpy
    * the data. */

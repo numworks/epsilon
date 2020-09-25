@@ -653,6 +653,8 @@ public:
   static_assert(strings_equal(k_temperatureRepresentatives[k_celsiusRepresentativeIndex].m_rootSymbol, "°C"), "Index for the Celsius Representative is incorrect.");
   static constexpr int k_fahrenheitRepresentativeIndex = 2;
   static_assert(strings_equal(k_temperatureRepresentatives[k_fahrenheitRepresentativeIndex].m_rootSymbol, "°F"), "Index for the Fahrenheit Representative is incorrect.");
+  static constexpr int k_jouleRepresentativeIndex = 0;
+  static_assert(strings_equal(k_energyRepresentatives[k_jouleRepresentativeIndex].m_rootSymbol, "J"), "Index for the Joule Representative is incorrect.");
   static constexpr int k_electronVoltRepresentativeIndex = 1;
   static_assert(strings_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbol, "eV"), "Index for the Electron Volt Representative is incorrect.");
   static constexpr int k_wattRepresentativeIndex = 0;

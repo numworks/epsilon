@@ -50,11 +50,12 @@ bool StartOfExternalFlashIsAuthenticated() {
 void UpdateUpdatableBootloader() {
   if (!StartOfExternalFlashIsAuthenticated()) {
     // Nothing to update
-    ColorScreen(0x00FF00);
+    ColorScreen(0x0000FF);
     return;
   }
 
-  ColorScreen(0xFF0000);
+
+  ColorScreen(0x00FF00);
   /* To run the permanent bootloader, the device must haven been reset, so there
    * is no ongoing Write protection of the internal flash. We can simply memcpy
    * the data. */
@@ -74,7 +75,6 @@ void UpdateUpdatableBootloader() {
 
 void ion_main(int argc, const char * const argv[]) {
   // TODO LEA Initiali e display with message ?
-  ColorScreen(0xFF00FF);
   Ion::Backlight::init();
 
   /* Step 1. Initialize the option bytes if needed:
@@ -165,10 +165,9 @@ void ion_main(int argc, const char * const argv[]) {
     }
     Ion::USB::disable();
   }
-
   /* Step 4. Update the updatable bootloader if needed and if authenticated. */
+  Cache::disable(); // TODO EMILIE understand why it is required
   UpdateUpdatableBootloader();
-  Ion::Timing::msleep(1);
 
   /* Step 5. Reset. Always jump to the internal flash, no matter the reset
    * address the dfu transaction asked for. TODO LEA */

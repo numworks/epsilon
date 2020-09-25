@@ -30,6 +30,11 @@ void __attribute__((noinline)) abort() {
 #endif
 }
 
+bool ExternalFlashIsAuthenticated() {
+  // TODO LEA, see bootloader_permanent/rt0.cpp
+  return true;
+}
+
 void ColorScreen(uint32_t color) {
   Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColor::RGB24(color));
   Ion::Timing::msleep(500);
@@ -65,42 +70,41 @@ static void __attribute__((noinline)) jump_to_external_flash() {
   Ion::Device::Board::initPeripherals(true);
 
   /* Re-configurate the MPU to forbid access to blue LED if required */
-#define MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION 1
-#if MPU_ON_GPIO_B_MODER_ALTERNATE_FUNCTION
-  // Shutdown the LED
-  Ion::Device::Regs::AFGPIOPin(Ion::Device::Regs::GPIOB, 0,  Ion::Device::Regs::GPIO::AFR::AlternateFunction::AF2, Ion::Device::Regs::GPIO::PUPDR::Pull::None, Ion::Device::Regs::GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
-  // MPU on Blue LED
-  Ion::Device::Cache::dmb();
-  Ion::Device::Regs::MPU.RNR()->setREGION(7);
-  /* We want to forbid access to the 2 first 32-bit registers of GPIOB (MODER &
-   * TYPER) but the smallest MPU region size is 32-byte long. So we offset the
-   * MPU region by 6 bytes - nothing seems to there? */
-  Ion::Device::Regs::MPU.RBAR()->setADDR(0x40020400-6);
-  Ion::Device::Regs::MPU.RASR()->setSIZE(Ion::Device::Regs::MPU::RASR::RegionSize::_32B);
-  Ion::Device::Regs::MPU.RASR()->setAP(Ion::Device::Regs::MPU::RASR::AccessPermission::NoAccess);
-  Ion::Device::Regs::MPU.RASR()->setXN(false);
-  Ion::Device::Regs::MPU.RASR()->setTEX(2);
-  Ion::Device::Regs::MPU.RASR()->setS(0);
-  Ion::Device::Regs::MPU.RASR()->setC(0);
-  Ion::Device::Regs::MPU.RASR()->setB(0);
-  Ion::Device::Regs::MPU.RASR()->setENABLE(true);
+  if (!ExternalFlashIsAuthenticated()) {
+    // TODO EMILIE
+    // Shutdown the LED
+    Ion::Device::Regs::AFGPIOPin(Ion::Device::Regs::GPIOB, 0,  Ion::Device::Regs::GPIO::AFR::AlternateFunction::AF2, Ion::Device::Regs::GPIO::PUPDR::Pull::None, Ion::Device::Regs::GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
+    // MPU on Blue LED
+    Ion::Device::Cache::dmb();
+    Ion::Device::Regs::MPU.RNR()->setREGION(7);
+    /* We want to forbid access to the 2 first 32-bit registers of GPIOB (MODER &
+     * TYPER) but the smallest MPU region size is 32-byte long. So we offset the
+     * MPU region by 6 bytes - nothing seems to there? */
+    Ion::Device::Regs::MPU.RBAR()->setADDR(0x40020400-6);
+    Ion::Device::Regs::MPU.RASR()->setSIZE(Ion::Device::Regs::MPU::RASR::RegionSize::_32B);
+    Ion::Device::Regs::MPU.RASR()->setAP(Ion::Device::Regs::MPU::RASR::AccessPermission::NoAccess);
+    Ion::Device::Regs::MPU.RASR()->setXN(false);
+    Ion::Device::Regs::MPU.RASR()->setTEX(2);
+    Ion::Device::Regs::MPU.RASR()->setS(0);
+    Ion::Device::Regs::MPU.RASR()->setC(0);
+    Ion::Device::Regs::MPU.RASR()->setB(0);
+    Ion::Device::Regs::MPU.RASR()->setENABLE(true);
 
-  // INTERNAL FLASH
-  Ion::Device::Regs::MPU.RNR()->setREGION(6);
-  Ion::Device::Regs::MPU.RBAR()->setADDR(0x40023C00);
-  Ion::Device::Regs::MPU.RASR()->setSIZE(Ion::Device::Regs::MPU::RASR::RegionSize::_32B);
-  Ion::Device::Regs::MPU.RASR()->setAP(Ion::Device::Regs::MPU::RASR::AccessPermission::NoAccess);
-  Ion::Device::Regs::MPU.RASR()->setXN(false);
-  Ion::Device::Regs::MPU.RASR()->setTEX(2);
-  Ion::Device::Regs::MPU.RASR()->setS(0);
-  Ion::Device::Regs::MPU.RASR()->setC(0);
-  Ion::Device::Regs::MPU.RASR()->setB(0);
-  Ion::Device::Regs::MPU.RASR()->setENABLE(true);
+    // INTERNAL FLASH //TODO EMILIE true comment?
+    Ion::Device::Regs::MPU.RNR()->setREGION(6);
+    Ion::Device::Regs::MPU.RBAR()->setADDR(0x40023C00);
+    Ion::Device::Regs::MPU.RASR()->setSIZE(Ion::Device::Regs::MPU::RASR::RegionSize::_32B);
+    Ion::Device::Regs::MPU.RASR()->setAP(Ion::Device::Regs::MPU::RASR::AccessPermission::NoAccess);
+    Ion::Device::Regs::MPU.RASR()->setXN(false);
+    Ion::Device::Regs::MPU.RASR()->setTEX(2);
+    Ion::Device::Regs::MPU.RASR()->setS(0);
+    Ion::Device::Regs::MPU.RASR()->setC(0);
+    Ion::Device::Regs::MPU.RASR()->setB(0);
+    Ion::Device::Regs::MPU.RASR()->setENABLE(true);
 
-  Ion::Device::Cache::dsb();
-  Ion::Device::Cache::isb();
-
-#endif
+    Ion::Device::Cache::dsb();
+    Ion::Device::Cache::isb();
+  }
 
   //ColorScreen(0x00FF00);
 

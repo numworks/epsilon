@@ -687,6 +687,11 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("arg(1+𝐢)", "π/4");
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
+  assert_parsed_expression_simplify_to("binomial(10,20)", "0");
+  assert_parsed_expression_simplify_to("binomial(-10,10)", "92378");
+  assert_parsed_expression_simplify_to("binomial(2.5,3)", "binomial(5/2,3)");
+  assert_parsed_expression_simplify_to("binomial(-200,120)", "binomial(-200,120)");
+  assert_parsed_expression_simplify_to("binomial(400,1)", "binomial(400,1)");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
   assert_parsed_expression_simplify_to("ceil(2π)", "7");
   assert_parsed_expression_simplify_to("ceil(123456789012345678901234567892/3)", "41152263004115226300411522631");

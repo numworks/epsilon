@@ -58,6 +58,7 @@ constexpr const int
   Unit::k_kelvinRepresentativeIndex,
   Unit::k_celsiusRepresentativeIndex,
   Unit::k_fahrenheitRepresentativeIndex,
+  Unit::k_jouleRepresentativeIndex,
   Unit::k_electronVoltRepresentativeIndex,
   Unit::k_wattRepresentativeIndex,
   Unit::k_hectareRepresentativeIndex,
@@ -526,26 +527,32 @@ int UnitNode::TemperatureRepresentative::setAdditionalExpressions(double value, 
 
 int UnitNode::EnergyRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
   assert(availableLength >= 2);
-  /* 1. Convert into Wh
+  int index = 0;
+  /* 1. Convert into Joules
+   * As J is just a shorthand for _kg_m^2_s^-2, the value is used as is. */
+  const Representative * joule = representativesOfSameDimension() + Unit::k_jouleRepresentativeIndex;
+  const Prefix * joulePrefix = joule->findBestPrefix(value, 1.);
+  dest[index++] = Multiplication::Builder(Float<double>::Builder(value * std::pow(10., -joulePrefix->exponent())), Unit::Builder(joule, joulePrefix));
+  /* 2. Convert into Wh
    * As value is expressed in SI units (ie _kg_m^2_s^-2), the ratio is that of
    * hours to seconds. */
   const Representative * hour = TimeRepresentative::Default().representativesOfSameDimension() + Unit::k_hourRepresentativeIndex;
   const Representative * watt = PowerRepresentative::Default().representativesOfSameDimension() + Unit::k_wattRepresentativeIndex;
   double adjustedValue = value / hour->ratio() / watt->ratio();
   const Prefix * wattPrefix = watt->findBestPrefix(adjustedValue, 1.);
-  dest[0] = Multiplication::Builder(
+  dest[index++] = Multiplication::Builder(
       Float<double>::Builder(adjustedValue * std::pow(10., -wattPrefix->exponent())),
       Multiplication::Builder(
         Unit::Builder(watt, wattPrefix),
         Unit::Builder(hour, Prefix::EmptyPrefix())));
-  /* 2. Convert into eV */
+  /* 3. Convert into eV */
   const Representative * eV = representativesOfSameDimension() + Unit::k_electronVoltRepresentativeIndex;
   adjustedValue = value / eV->ratio();
   const Prefix * eVPrefix = eV->findBestPrefix(adjustedValue, 1.);
-  dest[1] = Multiplication::Builder(
+  dest[index++] = Multiplication::Builder(
       Float<double>::Builder(adjustedValue * std::pow(10., -eVPrefix->exponent())),
       Unit::Builder(eV, eVPrefix));
-  return 2;
+  return index;
 }
 
 const UnitNode::Representative * UnitNode::SurfaceRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {

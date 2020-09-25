@@ -769,6 +769,9 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Expression units, double * 
 }
 
 bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat) {
+  if (unit.isUninitialized()) {
+    return false;
+  }
   UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
   const Representative * representative = Representative::RepresentativeForDimension(vector);
 
@@ -781,6 +784,9 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
 }
 
 int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {
+  if (units.isUninitialized()) {
+    return 0;
+  }
   const Representative * representative = units.type() == ExpressionNode::Type::Unit ? static_cast<Unit &>(units).node()->representative() : UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
   if (!representative) {
     return 0;

@@ -7,7 +7,7 @@
 #include <drivers/reset.h>
 #include <drivers/timing.h>
 #include <regs/regs.h>
-#include <ion.h>
+#include <kandinsky.h>
 
 typedef void (*cxx_constructor)();
 
@@ -63,6 +63,39 @@ bool ExternalFlashIsAuthenticated() {
   return IsAuthenticated(externalFlashEpsilonAddress);
 }
 
+constexpr static int sNumberOfMessages = 7;
+constexpr static const char * sMessages[sNumberOfMessages] = {
+  "NON-AUTHENTICATED SOFTWARE",
+  "Caution: you're using an",
+  "unofficial software version.",
+  "NumWorks can't be held responsible",
+  "for any resulting damage.",
+  " Some features (blue LED) might be",
+  "unavailable."
+};
+
+void displayWarningMessage() {
+  KDRect screen = KDRect(0,0,Ion::Display::Width,Ion::Display::Height);
+  Ion::Display::pushRectUniform(screen, KDColorWhite);
+  KDContext * ctx = KDIonContext::sharedContext();
+  ctx->setOrigin(KDPointZero);
+  ctx->setClippingRect(screen);
+  KDCoordinate margin = 60;
+  KDCoordinate currentHeight = 0;
+  currentHeight += margin;
+  const char * title = sMessages[0];
+  KDSize titleSize = KDFont::LargeFont->stringSize(title);
+  ctx->drawString(title, KDPoint((Ion::Display::Width-titleSize.width())/2, currentHeight), KDFont::LargeFont);
+  currentHeight += 2*titleSize.height();
+  for (int j = 1; j < sNumberOfMessages; j++) {
+    const char * message = sMessages[j];
+    KDSize messageSize = KDFont::SmallFont->stringSize(message);
+    ctx->drawString(message, KDPoint((Ion::Display::Width-messageSize.width())/2, currentHeight), KDFont::SmallFont);
+    currentHeight += messageSize.height();
+  }
+  Ion::Timing::msleep(5000);
+}
+
 void ColorScreen(uint32_t color) {
   Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColor::RGB24(color));
   Ion::Timing::msleep(500);
@@ -89,6 +122,7 @@ void ColorScreen(uint32_t color) {
 typedef void (*ExternalStartPointer)();
 
 static void __attribute__((noinline)) jump_to_external_flash() {
+  bool authenticated = ExternalFlashIsAuthenticated();
   /* Init the peripherals. We do not initialize the backlight in case there is
    * an on boarding app: indeed, we don't want the user to see the LCD tests
    * happening during the on boarding app. The backlight will be initialized
@@ -98,7 +132,7 @@ static void __attribute__((noinline)) jump_to_external_flash() {
   Ion::Device::Board::initPeripherals(true);
 
   /* Re-configurate the MPU to forbid access to blue LED if required */
-  if (!ExternalFlashIsAuthenticated()) {
+  if (!authenticated) {
     // TODO EMILIE
     // Shutdown the LED
     Ion::Device::Regs::AFGPIOPin(Ion::Device::Regs::GPIOB, 0,  Ion::Device::Regs::GPIO::AFR::AlternateFunction::AF2, Ion::Device::Regs::GPIO::PUPDR::Pull::None, Ion::Device::Regs::GPIO::OSPEEDR::OutputSpeed::Low).shutdown();
@@ -132,6 +166,8 @@ static void __attribute__((noinline)) jump_to_external_flash() {
 
     Ion::Device::Cache::dsb();
     Ion::Device::Cache::isb();
+
+    displayWarningMessage();
   }
 
   //ColorScreen(0x00FF00);

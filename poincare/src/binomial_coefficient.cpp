@@ -87,32 +87,40 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
   }
 
   if (!r0.isInteger()) {
-    // Generalized binomial coefficient
+    // Generalized binomial coefficient (n is not an integer)
     return *this;
   }
 
   Integer n = r0.signedIntegerNumerator();
   Integer k = r1.signedIntegerNumerator();
+  /* Check for situations where there should be no reduction in order to avoid
+   * too long computation and a huge result. The binomial coefficient will be
+   * approximatively evaluated later. */
   if (n.isLowerThan(k)) {
-    // Generalized binomial coefficient
-    return *this;
-  }
-  /* If n is too big, we do not reduce in order to avoid too long computation.
-   * The binomial coefficient will be approximatively evaluated later. */
-  if (Integer(k_maxNValue).isLowerThan(n)) {
+    // Generalized binomial coefficient (n < k)
+    if (!n.isNegative()) {
+      // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
+      return Rational::Builder(0);
+    }
+    if (Integer(k_maxNValue).isLowerThan(Integer::Subtraction(k, n))) {
+      return *this;
+    }
+  } else if (Integer(k_maxNValue).isLowerThan(n)) {
     return *this;
   }
   Rational result = Rational::Builder(1);
   Integer kBis = Integer::Subtraction(n, k);
-  k = kBis.isLowerThan(k) ? kBis : k;
-  int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
+  // Take advantage of symmetry if n >= k
+  k = !n.isLowerThan(k) && kBis.isLowerThan(k) ? kBis : k;
+  int clippedK = k.extractedInt(); // Authorized because k < k_maxNValue
   for (int i = 0; i < clippedK; i++) {
     Integer nMinusI = Integer::Subtraction(n, Integer(i));
     Integer kMinusI = Integer::Subtraction(k, Integer(i));
     Rational factor = Rational::Builder(nMinusI, kMinusI);
     result = Rational::Multiplication(result, factor);
   }
-  // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89
+  // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~10^89
+  // If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
   assert(!result.numeratorOrDenominatorIsInfinity());
   replaceWithInPlace(result);
   return std::move(result);

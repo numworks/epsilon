@@ -50,12 +50,12 @@ bool StartOfExternalFlashIsAuthenticated() {
 void UpdateUpdatableBootloader() {
   if (!StartOfExternalFlashIsAuthenticated()) {
     // Nothing to update
-    ColorScreen(0x0000FF);
+    ColorScreen(0xFf00FF);
     return;
   }
 
 
-  ColorScreen(0x00FF00);
+  ColorScreen(0xFFFF00);
   /* To run the permanent bootloader, the device must haven been reset, so there
    * is no ongoing Write protection of the internal flash. We can simply memcpy
    * the data. */
@@ -86,9 +86,8 @@ void ion_main(int argc, const char * const argv[]) {
 
   // TODO LEA factorize
   // TODO LEA remove the "#if 0" to replace ST's bootloader by our permanent bootloader
-#if 0
   // Set the reset address when the 6 key is pressed
-  constexpr uint16_t Boot0Address = 0x0081; // TODO LEA Compute from 0x00200000 + fetch 0x00200000 elsewhere
+  constexpr uint16_t Boot1Address = 0x0080; // TODO LEA Compute from 0x00200000 + fetch 0x00200000 elsewhere
   if (FLASH.OPTCR1()->getBOOT_ADD1() != Boot1Address) {
     // Unlock option bytes programming
     if (FLASH.OPTCR()->getOPTLOCK()) {
@@ -128,8 +127,6 @@ void ion_main(int argc, const char * const argv[]) {
   // TODO LEA end factorize
 
 
-  // TODO LEA remove #if 0
-//#if 0
   constexpr FLASH::OPTCR::RDP RDPLevel = FLASH::OPTCR::RDP::Level1;
   if (FLASH.OPTCR()->getRDP() != RDPLevel) {
     // Set the RDP to Level 2
@@ -145,7 +142,6 @@ void ion_main(int argc, const char * const argv[]) {
     while (FLASH.SR()->getBSY()) {}
     FLASH.OPTCR()->setOPTLOCK(true);
   }
-#endif
 
   // Step 2. Update Updatable bootloader if present in external flash and authenticated
   UpdateUpdatableBootloader();

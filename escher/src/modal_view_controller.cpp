@@ -56,11 +56,13 @@ KDRect ModalViewController::ContentView::modalViewFrame() const {
 
 void ModalViewController::ContentView::layoutSubviews(bool force) {
   assert(m_regularView != nullptr);
-  m_regularView->setFrame(bounds(), force);
   if (m_isDisplayingModal) {
     assert(m_currentModalView != nullptr);
-    m_currentModalView->setFrame(modalViewFrame(), force);
+    KDRect modalFrame = modalViewFrame();
+    m_regularView->setFrame(modalFrame == bounds() ? KDRectZero : bounds(), force);
+    m_currentModalView->setFrame(modalFrame, force);
   } else {
+    m_regularView->setFrame(bounds(), force);
     if (m_currentModalView) {
       m_currentModalView->setFrame(KDRectZero, force);
     }

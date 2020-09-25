@@ -9,6 +9,11 @@
 using namespace Ion::Device;
 using namespace Ion::Device::Regs;
 
+void ColorScreen(uint32_t color) {
+  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColor::RGB24(color));
+  Ion::Timing::msleep(300);
+}
+
 void decrypt(uint8_t * signature, uint8_t * decryptedSignature) {
   // TODO : Decrypt signature with public key
   memcpy(decryptedSignature, signature, Ion::Sha256DigestBytes);
@@ -19,6 +24,10 @@ bool IsAuthenticated(void * pointer) {
    * | code size |         code        |   signature   | */
   // Extract size and code
   uint32_t size = *(uint32_t*) pointer;
+  if (size == 0xFFFFFFFF) {
+    // The code to authenticate is empty
+    return false;
+  }
   uint8_t * code = (uint8_t *)pointer + sizeof(uint32_t);
   // Hash code
   uint8_t digest[Ion::Sha256DigestBytes];
@@ -32,11 +41,6 @@ bool IsAuthenticated(void * pointer) {
   return memcmp(digest, decryptedSignature, Ion::Sha256DigestBytes) == 0;
 }
 
-void ColorScreen(uint32_t color) {
-  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColor::RGB24(color));
-  Ion::Timing::msleep(300);
-}
-
 bool StartOfExternalFlashIsAuthenticated() {
   // TODO LEA + instead of complicated cryptographic computations, we can start by simply checking if there are only 0s.
   void * StartOfExternalFlashAddress = reinterpret_cast<void *>(0x90000000);
@@ -46,7 +50,7 @@ bool StartOfExternalFlashIsAuthenticated() {
 void UpdateUpdatableBootloader() {
   if (!StartOfExternalFlashIsAuthenticated()) {
     // Nothing to update
-    ColorScreen(0x0F37B9);
+    ColorScreen(0x00FF00);
     return;
   }
 
@@ -63,10 +67,14 @@ void UpdateUpdatableBootloader() {
     Ion::Device::Flash::EraseSector(i); //TODO LEA erase only what needed?
   }
   Ion::Device::Flash::WriteMemory(UpdatableBootloaderAddress, StartOfExternalFlashAddress, SizeOfUpdatableBootloader);
+
+  // Erase the first sector to avoid updating again the bootloader next time
+  Ion::Device::ExternalFlash::EraseSector(0);
 }
 
 void ion_main(int argc, const char * const argv[]) {
-  // TODO LEA Initialize display with message ?
+  // TODO LEA Initiali e display with message ?
+  ColorScreen(0xFF00FF);
   Ion::Backlight::init();
 
   /* Step 1. Initialize the option bytes if needed:
@@ -139,10 +147,11 @@ void ion_main(int argc, const char * const argv[]) {
   }
 #endif
 
-  /* Step 2. Process DFU requests on external flash only. If there is a reset
-   * with BOOT pin to 1, this acts as the "ST bootloader". */
+  // Step 2. Update Updatable bootloader if present in external flash and authenticated
+  UpdateUpdatableBootloader();
 
-  //ColorScreen(0x00FF00);
+  /* Step 3. Process DFU requests on external flash only. If there is a reset
+   * with BOOT pin to 1, this acts as the "ST bootloader". */
 
   // TODO LEA Do we need to disable/enable all the time?
   while (true) {
@@ -157,12 +166,11 @@ void ion_main(int argc, const char * const argv[]) {
     Ion::USB::disable();
   }
 
-  /* Step 3. Update the updatable bootloader if needed and if authenticated. */
+  /* Step 4. Update the updatable bootloader if needed and if authenticated. */
   UpdateUpdatableBootloader();
-  //ColorScreen(0x0000FF);
   Ion::Timing::msleep(1);
 
-  /* Step 4. Reset. Always jump to the internal flash, no matter the reset
+  /* Step 5. Reset. Always jump to the internal flash, no matter the reset
    * address the dfu transaction asked for. TODO LEA */
   Ion::Device::ExternalFlash::shutdown(); //TODO LEA Remove?
   Ion::Device::Reset::coreWhilePlugged();

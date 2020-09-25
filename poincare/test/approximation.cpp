@@ -249,6 +249,16 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("binomial(10, 4)", "210");
   assert_expression_approximates_to<double>("binomial(10, 4)", "210");
+  assert_expression_approximates_to<float>("binomial(12, 3)", "220");
+  assert_expression_approximates_to<double>("binomial(12, 3)", "220");
+  assert_expression_approximates_to<float>("binomial(-4.6, 3)", "-28.336");
+  assert_expression_approximates_to<double>("binomial(-4.6, 3)", "-28.336");
+  assert_expression_approximates_to<float>("binomial(π, 3)", "1.280108");
+  assert_expression_approximates_to<double>("binomial(π, 3)", "1.2801081307019");
+  assert_expression_approximates_to<float>("binomial(7, 9)", "0");
+  assert_expression_approximates_to<double>("binomial(7, 9)", "0");
+  assert_expression_approximates_to<float>("binomial(-7, 9)", "-5005");
+  assert_expression_approximates_to<double>("binomial(-7, 9)", "-5005");
 
   assert_expression_approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", Degree, Metric, Cartesian, 6); // FIXME: precision problem
   assert_expression_approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
@@ -461,15 +471,6 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0f, 45.0f, true);
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0, 45.0, true);
-
-  assert_expression_approximates_to<float>("binomial(12, 3)", "220");
-  assert_expression_approximates_to<double>("binomial(12, 3)", "220");
-
-  assert_expression_approximates_to<float>("binomial(-4.6, 3)", "-28.336");
-  assert_expression_approximates_to<double>("binomial(-4.6, 3)", "-28.336");
-
-  assert_expression_approximates_to<float>("binomial(π, 3)", "1.280108");
-  assert_expression_approximates_to<double>("binomial(π, 3)", "1.2801081307019");
 }
 
 QUIZ_CASE(poincare_approximation_trigonometry_functions) {

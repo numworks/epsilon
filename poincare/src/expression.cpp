@@ -289,12 +289,13 @@ bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::
   }
   /* We return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
-  Expression imag = ImaginaryPart::Builder(*this);
+  Expression e = clone();
+  Expression imag = ImaginaryPart::Builder(e);
   float b = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
   if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
     return false;
   }
-  Expression real = RealPart::Builder(*this);
+  Expression real = RealPart::Builder(e);
   float a = real.approximateToScalar<float>(context, complexFormat, angleUnit);
   if (std::isinf(a) || std::isnan(a)) {
     return false;

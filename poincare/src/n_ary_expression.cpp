@@ -74,13 +74,26 @@ int NAryExpression::allChildrenAreReal(Context * context) const {
   return result;
 }
 
-Expression NAryExpression::checkChildrenAreRationalIntegers(Context * context) {
+Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(ExpressionNode::ReductionContext reductionContext) {
   for (int i = 0; i < numberOfChildren(); ++i) {
     Expression c = childAtIndex(i);
-    if (c.deepIsMatrix(context)) {
+    if (c.deepIsMatrix(reductionContext.context())) {
       return replaceWithUndefinedInPlace();
     }
     if (c.type() != ExpressionNode::Type::Rational) {
+      /* Replace expression with undefined if child can be approximated to a
+       * complex or finite non-integer number. Otherwise, rely on template
+       * approximations. hasDefinedComplexApproximation is given Cartesian
+       * complex format to force imaginary part approximation. */
+      if (!c.isReal(reductionContext.context()) && c.hasDefinedComplexApproximation(reductionContext.context(), Preferences::ComplexFormat::Cartesian, reductionContext.angleUnit())) {
+        return replaceWithUndefinedInPlace();
+      }
+      // If c was complex but with a null imaginary part, real part is checked.
+      float app = c.approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      if (std::isfinite(app) && app != std::round(app)) {
+        return replaceWithUndefinedInPlace();
+      }
+      // Note : Child could be replaced with the approximation (if finite) here.
       return *this;
     }
     if (!static_cast<Rational &>(c).isInteger()) {

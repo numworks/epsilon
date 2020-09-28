@@ -13,7 +13,7 @@ extern "C" {
 #define SVC_POWER_STANDBY 4
 #define SVC_DFU 5
 #define SVC_RESET_CORE 6
-#define SVC_EXTERNAL_FLASH_WRITE 7
+#define SVC_EXAM_MODE_TOGGLE 7
 
 #ifdef __cplusplus
 }

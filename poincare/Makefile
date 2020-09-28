@@ -156,6 +156,7 @@ poincare_src += $(addprefix poincare/src/,\
   vector_cross.cpp \
   vector_dot.cpp \
   vector_norm.cpp \
+  zoom.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/parsing/,\

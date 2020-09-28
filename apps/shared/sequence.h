@@ -74,6 +74,10 @@ public:
 
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
+
+  //Range
+  void rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange = true) const override { protectedRangeForDisplay(xMin, xMax, yMin, yMax, context, tuneXRange, false); };
+
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
 
@@ -153,7 +157,6 @@ private:
   };
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
-  void refinedYRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const override { protectedRefinedYRangeForDisplay(xMin, xMax, yMin, yMax, context, false); }
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_definition; }
   RecordDataBuffer * recordData() const;

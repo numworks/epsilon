@@ -27,8 +27,8 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
     case SVC_RESET_CORE:
       Ion::Device::Reset::coreHandler();
       return;
-    case SVC_EXTERNAL_FLASH_WRITE:
-      Ion::Device::ExamMode::externalFlashWrite((uint8_t *)args[0], (uint8_t *)args[1]);
+    case SVC_EXAM_MODE_TOGGLE:
+      Ion::Device::ExamMode::ToggleExamMode();
       return;
     default:
       return;

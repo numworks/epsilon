@@ -83,36 +83,11 @@ uint8_t FetchExamMode() {
   return (nbOfZerosBefore + numberOfLeading0) % 3;
 }
 
-__attribute__ ((noinline)) void svcWriteFlash(uint8_t * address, uint8_t value[])
-{
-  svc(SVC_EXTERNAL_FLASH_WRITE);
-}
-
 void IncrementExamMode(uint8_t delta) {
   assert(delta == 1 || delta == 2);
-  uint8_t * writingAddress = SignificantExamModeAddress();
-  assert(*writingAddress != 0);
-  size_t nbOfTargetedOnes = numberOfBitsAfterLeadingZeroes(*writingAddress);
-
-  // Compute the new value with delta bits switched to 0.
-  /* We write in 2 bytes instead of 1, in case there was only one bit
-   * left to 1 in writingAddress. */
-  nbOfTargetedOnes += numberOfBitsInByte;
-  nbOfTargetedOnes -= delta;
-  constexpr size_t newValueSize = sizeof(uint16_t)/sizeof(uint8_t);
-  uint8_t newValue[newValueSize];
-  if (nbOfTargetedOnes > numberOfBitsInByte) {
-    size_t nbOfTargetedOnesInFirstByte = nbOfTargetedOnes - numberOfBitsInByte;
-    assert(nbOfTargetedOnesInFirstByte <= numberOfBitsInByte);
-    newValue[0] = ((uint16_t)1 << nbOfTargetedOnesInFirstByte) - 1;
-    newValue[1] = 0xFF;
-  } else {
-    assert(nbOfTargetedOnes <= numberOfBitsInByte);
-    newValue[0] = 0;
-    newValue[1] = ((uint16_t)1 << nbOfTargetedOnes) - 1;
+  for (uint8_t i = 0; i < delta; i++) {
+    svc(SVC_EXAM_MODE_TOGGLE);
   }
-
-  svcWriteFlash(writingAddress, newValue);
 }
 
 }

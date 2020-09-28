@@ -30,9 +30,11 @@ __ZN3Ion6Events13isShiftActiveEv \
 __ZN3Ion6Events5EventC2Ei \
 __ZN3Ion6Events5EventC2ENS_8Keyboard3KeyEbb \
 __ZN3Ion6Events8getEventEPi \
+__ZN3Ion6EventsL13innerGetEventEPi \
 __ZN3Ion6EventsL16sleepWithTimeoutEiPi \
 __ZN3Ion6Timing6msleepEj \
 __ZN3Ion8Keyboard4scanEv \
+__ZN3Ion9Simulator8Keyboard7didScanEv \
 __ZN4Code14MenuController21openConsoleWithScriptENS_6ScriptE \
 __ZN4Code14MenuController23didBecomeFirstResponderEv \
 __ZN4Code14MenuController28openConsoleWithScriptAtIndexEi \

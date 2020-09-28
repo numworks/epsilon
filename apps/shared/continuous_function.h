@@ -92,7 +92,6 @@ private:
   template <typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context) const;
 
   void fullXYRange(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context) const;
-  void refinedYRangeForDisplay(float xMin, float xMax, float * yMin, float * yMax, Poincare::Context * context) const override { protectedRefinedYRangeForDisplay(xMin, xMax, yMin, yMax, context, true); }
 
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a ContinuousFunction. See comment on

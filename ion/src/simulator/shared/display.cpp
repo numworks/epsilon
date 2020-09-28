@@ -33,7 +33,7 @@ void draw(SDL_Renderer * renderer, SDL_Rect * rect) {
   int pitch = 0;
   void * pixels = nullptr;
   SDL_LockTexture(sFramebufferTexture, nullptr, &pixels, &pitch);
-  assert(pitch == sizeof(KDColor)*Display::Width);
+  assert(pitch == sizeof(KDColor)*Ion::Display::Width);
   memcpy(pixels, Framebuffer::address(), sizeof(KDColor)*Ion::Display::Width*Ion::Display::Height);
   SDL_UnlockTexture(sFramebufferTexture);
 

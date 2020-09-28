@@ -162,7 +162,8 @@ void ion_main(int argc, const char * const argv[]) {
     Ion::USB::disable();
   }
   /* Step 4. Update the updatable bootloader if needed and if authenticated. */
-  Cache::disable(); // TODO EMILIE understand why it is required
+  Cache::invalidateDCache(); // Required to read updated memory at 0x90000000
+
   UpdateUpdatableBootloader();
 
   /* Step 5. Reset. Always jump to the internal flash, no matter the reset

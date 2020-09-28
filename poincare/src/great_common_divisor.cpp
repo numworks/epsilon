@@ -16,7 +16,7 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 Expression GreatCommonDivisorNode::shallowReduce(ReductionContext reductionContext) {
-  return GreatCommonDivisor(this).shallowReduce(reductionContext.context());
+  return GreatCommonDivisor(this).shallowReduce(reductionContext);
 }
 
 Expression GreatCommonDivisorNode::shallowBeautify(ReductionContext reductionContext) {
@@ -36,7 +36,7 @@ Expression GreatCommonDivisor::shallowBeautify(Context * context) {
   return *this;
 }
 
-Expression GreatCommonDivisor::shallowReduce(Context * context) {
+Expression GreatCommonDivisor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     e = e.defaultHandleUnitsInChildren();
@@ -51,7 +51,7 @@ Expression GreatCommonDivisor::shallowReduce(Context * context) {
 
   // Step 1: check that all children are compatible
   {
-    Expression checkChildren = checkChildrenAreRationalIntegers(context);
+    Expression checkChildren = checkChildrenAreRationalIntegersAndUpdate(reductionContext);
     if (!checkChildren.isUninitialized()) {
       return checkChildren;
     }

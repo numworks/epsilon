@@ -16,7 +16,7 @@ int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 Expression LeastCommonMultipleNode::shallowReduce(ReductionContext reductionContext) {
-  return LeastCommonMultiple(this).shallowReduce(reductionContext.context());
+  return LeastCommonMultiple(this).shallowReduce(reductionContext);
 }
 
 Expression LeastCommonMultipleNode::shallowBeautify(ReductionContext reductionContext) {
@@ -36,7 +36,7 @@ Expression LeastCommonMultiple::shallowBeautify(Context * context) {
   return *this;
 }
 
-Expression LeastCommonMultiple::shallowReduce(Context * context) {
+Expression LeastCommonMultiple::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     e = e.defaultHandleUnitsInChildren();
@@ -51,7 +51,7 @@ Expression LeastCommonMultiple::shallowReduce(Context * context) {
 
   // Step 1: check that all children are compatible
   {
-    Expression checkChildren = checkChildrenAreRationalIntegers(context);
+    Expression checkChildren = checkChildrenAreRationalIntegersAndUpdate(reductionContext);
     if (!checkChildren.isUninitialized()) {
       return checkChildren;
     }

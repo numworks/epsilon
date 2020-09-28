@@ -17,7 +17,7 @@ $(BUILD_DIR)/bootloader.updatable.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MOD
 
 .PHONY: secure_bootloader_external
 secure_bootloader_external: $(BUILD_DIR)/bootloader.updatable.elf $(BUILD_DIR)/epsilon.official.elf
-	$(Q) python3 build/device/elf2dfuTwoElf.py $< $(word 2,$^) $(BUILD_DIR)/epsilon.dfu
+	$(Q) python3 build/device/elf2dfuTwoElf.py $< $(word 2,$^) $(BUILD_DIR)/epsilon.dfu #TODO LEA warning,t he files ned to be called in this order for now, see TODO in elf2dfuTwoElf.py
 
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu flasher.dfu

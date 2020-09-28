@@ -46,6 +46,13 @@ bool IsAuthenticated(void * pointer) {
   // Extract size and code
   uint32_t size = *(uint32_t*) pointer;
   uint8_t * code = (uint8_t *)pointer + sizeof(uint32_t);
+
+  //TODO LEA FIXME FIXME Dirty trick to not sha the eam mode
+  constexpr uint32_t ExamModeSize = 4 * 1024;
+  size -= ExamModeSize;
+  code += ExamModeSize;
+
+
   // Hash code
   uint8_t digest[Ion::Sha256DigestBytes];
   // By construction, Sha256 also hashes code size into digest

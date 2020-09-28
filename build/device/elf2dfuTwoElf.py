@@ -53,8 +53,9 @@ def elf2dfu(elf_file1, elf_file2, usb_vid_pid, dfu_file, verbose):
   # internal or the external flash depending on which targets is built (ie
   # flasher executes dfu in place but epsilon executes dfu relocated in RAM)
 
-  external_block_1 = {'name': "external_1", 'elf_file': elf_file1, 'sections': loadable_sections(elf_file1, external_address_prefix)}
-  external_block_2 = {'name': "external_2", 'elf_file': elf_file2, 'sections': loadable_sections(elf_file2, external_address_prefix)}
+  #TODO LEA FIXME FIXME: get the sha offset in a clean way
+  external_block_1 = {'name': "external_1", 'elf_file': elf_file1, 'sections': loadable_sections(elf_file1, external_address_prefix), 'shasum-offset': 0}
+  external_block_2 = {'name': "external_2", 'elf_file': elf_file2, 'sections': loadable_sections(elf_file2, external_address_prefix), 'shasum-offset': 4096}
   blocks = [external_block_1, external_block_2]
   blocks = [b for b in blocks if b['sections']]
   if verbose:
@@ -77,10 +78,12 @@ def elf2dfu(elf_file1, elf_file2, usb_vid_pid, dfu_file, verbose):
     # version (< 1.8.0) of the dfu code, and it did not upload properly a binary
     # of length non-multiple of 32 bits.
     # open(bin_file(b), "a").write("\xFF\xFF\xFF\xFF")
-    sha = "0x" +subprocess.check_output(["shasum", "-a", "256", bin_file(b)]).decode('utf-8').split(" ")[0]
-    hex_sha = int(sha, 16)
     data = open(bin_file(b), "rb").read()
     dataSize = len(data)
+    p1 = subprocess.Popen(["tail", "-c", str(dataSize - b['shasum-offset']), bin_file(b)], stdout=subprocess.PIPE)
+    sha = "0x" + subprocess.check_output(["shasum", "-a", "256"], stdin=p1.stdout).decode('utf-8').split(" ")[0]
+    print(sha)
+    hex_sha = int(sha, 16)
     data = dataSize.to_bytes(4, byteorder="little") + data + hex_sha.to_bytes(32, byteorder='big')
     address -= 4
     targets.append({'address': address, 'name': name, 'data': data})

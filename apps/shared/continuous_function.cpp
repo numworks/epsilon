@@ -263,7 +263,7 @@ void ContinuousFunction::setTMax(float tMax) {
 
 void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMin, float * yMax, Poincare::Context * context, bool tuneXRange) const {
   if (plotType() == PlotType::Cartesian) {
-    Function::rangeForDisplay(xMin, xMax, yMin, yMax, context, tuneXRange);
+    protectedRangeForDisplay(xMin, xMax, yMin, yMax, context, tuneXRange, true);
   } else {
     fullXYRange(xMin, xMax, yMin, yMax, context);
   }

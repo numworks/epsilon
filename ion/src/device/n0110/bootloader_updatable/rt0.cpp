@@ -58,7 +58,7 @@ bool IsAuthenticated(void * pointer) {
   // By construction, Sha256 also hashes code size into digest
   Ion::sha256(code, size, digest);
   // Extract and Decrypt signature
-  uint8_t * signature = (uint8_t *)pointer + sizeof(uint32_t) + size;
+  uint8_t * signature = code + size;
   uint8_t decryptedSignature[Ion::Sha256DigestBytes];
   decrypt(signature, decryptedSignature);
   // Code is authenticated if signature decrypts to digest

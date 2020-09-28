@@ -314,7 +314,7 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length, cons
   for (size_t i = 0; i < Prefix::k_numberOfPrefixes; i++) {
     const Prefix * pre = Prefix::Prefixes() + i;
     const char * prefixSymbol = pre->symbol();
-    if (prefixSymbol[length] == 0
+    if (strlen(prefixSymbol) == length
      && canPrefix(pre, true)
      && strncmp(symbol, prefixSymbol, length) == 0)
     {

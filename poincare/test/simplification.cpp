@@ -948,7 +948,9 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(tan(1808))", "8", User, Degree);
   assert_parsed_expression_simplify_to("atan(tan(-180/7))", "-180/7", User, Degree);
   assert_parsed_expression_simplify_to("atan(√(3))", "60", User, Degree);
-  assert_parsed_expression_simplify_to("atan(1/x)", "\u0012π×sign(x)-2×atan(x)\u0013/2", User, Degree);
+  assert_parsed_expression_simplify_to("atan(1/x)", "\u0012π×sign(x)-2×atan(x)\u0013/2");
+  assert_parsed_expression_simplify_to("atan(1/x)", "90×sign(x)-atan(x)", User, Degree);
+  assert_parsed_expression_simplify_to("atan(1/x)", "100×sign(x)-atan(x)", User, Gradian);
 
   // cos(asin)
   assert_parsed_expression_simplify_to("cos(asin(x))", "√(-x^2+1)", User, Degree);

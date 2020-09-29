@@ -28,6 +28,11 @@ void __attribute__((interrupt, noinline)) svcall_handler(unsigned int * args) {
       Ion::Device::Reset::coreHandler();
       return;
     case SVC_EXAM_MODE_TOGGLE:
+      // TODO EMILIE:
+      // We probably want to change the API here to something like:
+      // case SVC_EXTERNAL_FLASH_WRITE:
+      //  Ion::Device::ExamMode::externalFlashWrite((uint8_t *)args[0], (uint8_t *)args[1]);
+      //  But I haven't fully understood passing args to SVChandler yet - the previous code fails with optim...
       Ion::Device::ExamMode::ToggleExamMode();
       return;
     default:

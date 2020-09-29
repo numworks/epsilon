@@ -12,8 +12,8 @@ base_src = $(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $
 epsilon_src = $(base_src) $(apps_src) $(ion_device_n0110_external_flash_src)
 
 
-$(BUILD_DIR)/epsilon.$(EXE): LDFLAGS += -Wl,--just-symbols $(BUILD_DIR)/ion/src/device/shared/drivers/timing.sym
-$(BUILD_DIR)/epsilon.$(EXE): $(BUILD_DIR)/ion/src/device/shared/drivers/timing.sym $(call flavored_object_for,$(epsilon_src),usbxip unprivileged)
+$(BUILD_DIR)/epsilon.$(EXE): LDFLAGS += -Wl,--just-symbols $(BUILD_DIR)/ion/src/device/shared/drivers/bootloader_updatable.sym
+$(BUILD_DIR)/epsilon.$(EXE): $(BUILD_DIR)/ion/src/device/shared/drivers/bootloader_updatable.sym $(call flavored_object_for,$(epsilon_src),usbxip unprivileged)
 
 HANDY_TARGETS += epsilon
 
@@ -27,8 +27,8 @@ epsilon_flavors = \
 # TODO: do we want to add the flavor 'unprivileged' on N0100? In that case, it needs to have the 'svcallhandler' as well.
 # Clean the targets.*.mak to
 define rule_for_epsilon_flavor
-$$(BUILD_DIR)/epsilon.$(1).$$(EXE): LDFLAGS += -Wl,--just-symbols $(BUILD_DIR)/ion/src/device/shared/drivers/timing.sym
-$$(BUILD_DIR)/epsilon.$(1).$$(EXE): $(BUILD_DIR)/ion/src/device/shared/drivers/timing.sym $$(call flavored_object_for,$$(epsilon_src),$(1) usbxip unprivileged)
+$$(BUILD_DIR)/epsilon.$(1).$$(EXE): LDFLAGS += -Wl,--just-symbols $(BUILD_DIR)/ion/src/device/shared/drivers/bootloader_updatable.sym
+$$(BUILD_DIR)/epsilon.$(1).$$(EXE): $(BUILD_DIR)/ion/src/device/shared/drivers/bootloader_updatable.sym $$(call flavored_object_for,$$(epsilon_src),$(1) usbxip unprivileged)
 endef
 
 $(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor,$(flavor))))

@@ -19,6 +19,7 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   internal_flash.cpp \
   keyboard.cpp \
   led.cpp \
+  led_privileged.cpp:+privileged \
   power.cpp\
   power_unprivileged.cpp:-privileged \
   power_privileged.cpp:+privileged \
@@ -34,7 +35,9 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   wakeup.cpp \
 )
 
-# Extract the Ion::Device::Timing::MillisElapsed variable address to link it in the external flash
-$(BUILD_DIR)/ion/src/device/shared/drivers/timing.sym: $(BUILD_DIR)/bootloader.updatable.elf
+# Extract the Ion::Device::Timing::MillisElapsed and Ion::Device::LED::sLedColor variable addresses to link it in the external flash
+$(BUILD_DIR)/ion/src/device/shared/drivers/bootloader_updatable.sym: $(BUILD_DIR)/bootloader.updatable.elf
 	$(eval TIMING_MILLIS_ELAPSED_ADDRESS := $(shell arm-none-eabi-nm $^ | grep "_ZN3Ion6Device6Timing13MillisElapsedE" | cut -d ' ' -f 1))
-	echo "_ZN3Ion6Device6Timing13MillisElapsedE = 0x$(TIMING_MILLIS_ELAPSED_ADDRESS);" > $@
+	$(eval LED_COLOR_ADDRESS := $(shell arm-none-eabi-nm $^ | grep "_ZN3Ion6Device3LED9sLedColorE" | cut -d ' ' -f 1))
+	echo "_ZN3Ion6Device6Timing13MillisElapsedE = 0x$(TIMING_MILLIS_ELAPSED_ADDRESS);" >> $@
+	echo "_ZN3Ion6Device3LED9sLedColorE = 0x$(LED_COLOR_ADDRESS);" >> $@

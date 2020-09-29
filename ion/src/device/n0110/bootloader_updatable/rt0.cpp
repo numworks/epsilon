@@ -129,14 +129,14 @@ void ColorScreen(uint32_t color) {
 typedef void (*ExternalStartPointer)();
 
 static void __attribute__((noinline)) jump_to_external_flash() {
+  Ion::Device::Board::initPeripherals(false);
+
   bool authenticated = ExternalFlashIsAuthenticated();
   /* Init the peripherals. We do not initialize the backlight in case there is
    * an on boarding app: indeed, we don't want the user to see the LCD tests
    * happening during the on boarding app. The backlight will be initialized
    * after the Power-On Self-Test if there is one or before switching to the
    * home app otherwise. */
-
-  Ion::Device::Board::initPeripherals(true);
 
   /* Re-configurate the MPU to forbid access to blue LED if required */
   if (!authenticated) {

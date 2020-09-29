@@ -2,10 +2,13 @@
 #define ION_DEVICE_SHARED_LED_H
 
 #include <stdint.h>
+#include <kandinsky/color.h>
 
 namespace Ion {
 namespace Device {
 namespace LED {
+
+extern KDColor sLedColor;
 
 enum class Mode {
   PWM,

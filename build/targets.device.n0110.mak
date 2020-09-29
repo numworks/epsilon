@@ -16,7 +16,7 @@ $(BUILD_DIR)/bootloader.updatable.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL
 $(BUILD_DIR)/bootloader.updatable.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/$(MODEL)
 
 .PHONY: secure_bootloader_external
-secure_bootloader_external: $(BUILD_DIR)/bootloader.updatable.elf $(BUILD_DIR)/epsilon.official.elf
+secure_bootloader_external: $(BUILD_DIR)/bootloader.updatable.elf $(BUILD_DIR)/epsilon.official.onboarding.beta.elf
 	$(Q) python3 build/device/elf2dfuTwoElf.py $< $(word 2,$^) $(BUILD_DIR)/epsilon.dfu #TODO LEA warning,t he files ned to be called in this order for now, see TODO in elf2dfuTwoElf.py
 
 .PHONY: %_flash

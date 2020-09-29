@@ -1,6 +1,7 @@
 #include <ion/exam_mode_unprivileged.h>
 #include <drivers/config/exam_mode.h>
 #include <drivers/svcall.h>
+#include "exam_mode.h"
 #include "flash.h"
 #include <assert.h>
 
@@ -31,6 +32,9 @@ char ones[Config::ExamModeBufferSize]
  * if it has only one 1, it is erased (to 1) and significantExamModeAddress
  * returns the start of the sector. */
 
+// TODO EMILIE: this code is duplicated in exam_mode.cpp but should be implemented using _exam_mode_buffer_start, _exam_mode_buffer_end...
+
+#if 0
 constexpr static size_t numberOfBitsInByte = 8;
 
 // if i = 0b000011101, firstOneBitInByte(i) returns 5
@@ -73,15 +77,7 @@ uint8_t * SignificantExamModeAddress() {
 
   return persitence_start_8;
 }
-
-uint8_t FetchExamMode() {
-  uint8_t * readingAddress = SignificantExamModeAddress();
-  // Count the number of 0[3] before reading address
-  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)&_exam_mode_buffer_start) * numberOfBitsInByte) % 3;
-  // Count the number of 0[3] at reading address
-  size_t numberOfLeading0 = (numberOfBitsInByte - numberOfBitsAfterLeadingZeroes(*readingAddress)) % 3;
-  return (nbOfZerosBefore + numberOfLeading0) % 3;
-}
+#endif
 
 void IncrementExamMode(uint8_t delta) {
   assert(delta == 1 || delta == 2);

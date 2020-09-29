@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
+#include <drivers/backlight.h>
 #include <drivers/board_privileged.h>
 #include <drivers/cache.h>
 #include <drivers/reset.h>
@@ -41,16 +42,24 @@ void decrypt(uint8_t * signature, uint8_t * decryptedSignature) {
 // TODO EMILIE: Duplicate
 
 bool IsAuthenticated(void * pointer) {
+  constexpr uint32_t SizeOfExternalFlash = 8 * 1024 * 1024; // TODO EMILIE duplicated variable
+  constexpr uint32_t SizeOfUpdatableBootloader = (64 - 16) * 1024; // TODO EMILIE duplicated variable
+  constexpr uint32_t SizeOfExamModeSection = 4 * 1024;
+  //| size | updatable bootloader | signature | size | exam mode | available external flash | signature |
+  constexpr uint32_t SizeOfAvailableExternalFlash = SizeOfExternalFlash - SizeOfUpdatableBootloader - SizeOfExamModeSection - sizeof(uint32_t)*2 - 32*2; // 32 = sizeof(signature)
+
   /* Data structure at pointer must be :
    * | code size |         code        |   signature   | */
   // Extract size and code
   uint32_t size = *(uint32_t*) pointer;
   uint8_t * code = (uint8_t *)pointer + sizeof(uint32_t);
+  if (size <= SizeOfExamModeSection || size >= SizeOfAvailableExternalFlash) {
+    return false;
+  }
 
   //TODO LEA FIXME FIXME Dirty trick to not sha the eam mode
-  constexpr uint32_t ExamModeSize = 4 * 1024;
-  size -= ExamModeSize;
-  code += ExamModeSize;
+  size -= SizeOfExamModeSection;
+  code += SizeOfExamModeSection;
 
 
   // Hash code
@@ -174,6 +183,7 @@ static void __attribute__((noinline)) jump_to_external_flash() {
     Ion::Device::Cache::dsb();
     Ion::Device::Cache::isb();
 
+    Ion::Device::Backlight::init();
     displayWarningMessage();
   }
 

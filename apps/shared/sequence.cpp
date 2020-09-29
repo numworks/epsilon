@@ -187,7 +187,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
     // Reset cache indexes and cache values
     sqctx->setIndependentSequenceRank<T>(-1, sequenceIndex);
     for (int i = 0 ; i < MaxRecurrenceDepth+1; i++) {
-      sqctx->setIndependentSequenceValue(NAN, sequenceIndex, i);
+      sqctx->setIndependentSequenceValue<T>(NAN, sequenceIndex, i);
     }
   }
   while(sqctx->independentSequenceRank<T>(sequenceIndex) < n) {

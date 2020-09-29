@@ -1,5 +1,6 @@
 #include "exam_mode_privileged.h"
 #include "flash.h"
+#include <drivers/cache.h>
 #include <assert.h>
 
 namespace Ion {
@@ -73,7 +74,6 @@ uint8_t * SignificantExamModeAddress() {
 }
 
 void ToggleExamMode() {
-  assert(delta == 1 | delta == 2);
   uint8_t * writingAddress = SignificantExamModeAddress();
   assert(*writingAddress != 0);
   size_t nbOfTargetedOnes = numberOfBitsAfterLeadingZeroes(*writingAddress);
@@ -104,6 +104,7 @@ void ToggleExamMode() {
   /* Avoid writing out of sector */
   //assert(writingAddress < _exam_mode_buffer_end_address - 1 || (writingAddress == _exam_mode_buffer_end_address - 1 && writtenFlash == 1));
   Ion::Device::Flash::WriteMemory(writingAddress, newValue, writtenFlash);
+  Ion::Device::Cache::invalidateDCache();
 }
 
 }

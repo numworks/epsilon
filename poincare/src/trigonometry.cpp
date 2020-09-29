@@ -331,14 +331,16 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
      *   reduced to undef) */
     if (reductionContext.target() == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(UCodePointGreekSmallLetterPi));
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, piExpression(angleUnit));
       sign.shallowReduce(reductionContext);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a = Addition::Builder(m0);
+      m0.shallowReduce(reductionContext);
       e.replaceWithInPlace(a);
       Multiplication m1 = Multiplication::Builder(Rational::Builder(-1), e);
       e.shallowReduce(reductionContext);
       a.addChildAtIndexInPlace(m1, 1, 1);
+      m1.shallowReduce(reductionContext);
       return a.shallowReduce(reductionContext);
     }
   }

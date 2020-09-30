@@ -172,7 +172,12 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   T operands[2*k_maxNumberOfCoefficients];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      operands[i*2*dim+j] = array[i*numberOfColumns+j];
+      T cell = array[i*numberOfColumns+j];
+      // Using abs function to be compatible with both double and std::complex
+      if (!std::isfinite(std::abs(cell))) {
+        return -2;
+      }
+      operands[i*2*dim+j] = cell;
     }
     for (int j = dim; j < 2*dim; j++) {
       operands[i*2*dim+j] = j-dim == i ? 1.0 : 0.0;
@@ -181,7 +186,8 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   ArrayRowCanonize(operands, dim, 2*dim);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
-    if (std::abs(operands[i*2*dim+i] - (T)1.0) > Expression::Epsilon<float>()) {
+    T cell = operands[i*2*dim+i];
+    if (!std::isfinite(std::abs(cell)) || std::abs(cell - (T)1.0) > Expression::Epsilon<float>()) {
       return -2;
     }
   }

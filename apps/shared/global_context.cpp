@@ -2,6 +2,7 @@
 #include "continuous_function.h"
 #include "sequence.h"
 #include "poincare_helpers.h"
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <assert.h>
@@ -123,16 +124,29 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Sequence seq(r);
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknownN[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
-  float rank = symbol.childAtIndex(0).approximateWithValueForSymbol<float>(unknownN, unknownSymbolValue, ctx, Preferences::sharedPreferences()->complexFormat(),Preferences::sharedPreferences()->angleUnit());
-  if (std::floor(rank) == rank && !seq.badlyReferencesItself(ctx)) {
-    SequenceContext sqctx(ctx, sequenceStore());
-    return Float<double>::Builder(seq.evaluateXYAtParameter(rank, &sqctx).x2());
-  } else {
-    return Float<double>::Builder(NAN);
+  Expression rank = symbol.childAtIndex(0).clone();
+  rank = rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<float>::Builder(unknownSymbolValue));
+  rank = rank.simplify(ExpressionNode::ReductionContext(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
+  if (!rank.isUninitialized()) {
+    bool rankIsInteger = false;
+    double rankValue = rank.approximateToScalar<double>(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
+    if (rank.type() == ExpressionNode::Type::Rational) {
+      Rational n = static_cast<Rational &>(rank);
+      rankIsInteger = n.isInteger();
+    } else if (!std::isnan(unknownSymbolValue)) {
+      /* If unknownSymbolValue is not nan, then we are in the graph app. In order
+       * to allow functions like f(x) = u(x+0.5) to be ploted, we need to
+       * approximate the rank and check if it is an integer. Unfortunatly this
+       * leads to some edge cases were, because of quantification, we have
+       * floor(x) = x while x is not integer.*/
+      rankIsInteger = std::floor(rankValue) == rankValue;
+    }
+    if (rankIsInteger && !seq.badlyReferencesItself(ctx)) {
+      SequenceContext sqctx(ctx, sequenceStore());
+      return Float<double>::Builder(seq.evaluateXYAtParameter(rankValue, &sqctx).x2());
+    }
   }
+  return Float<double>::Builder(NAN);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

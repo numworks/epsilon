@@ -50,6 +50,10 @@ void resetLongRepetition() {
   ComputeAndSetRepetionFactor(sEventRepetitionCount);
 }
 
+static Keyboard::Key keyFromState(Keyboard::State state) {
+  return static_cast<Keyboard::Key>(63 - __builtin_clzll(state));
+}
+
 Event getEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
@@ -66,6 +70,11 @@ Event getEvent(int * timeout) {
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;
 
+    Keyboard::Key key;
+    bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
+    bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
+    bool lock = isLockActive();
+
     if (keysSeenTransitionningFromUpToDown != 0) {
       sEventIsRepeating = false;
       resetLongRepetition();
@@ -75,10 +84,7 @@ Event getEvent(int * timeout) {
        * processors have an instruction (ARM thumb uses CLZ).
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
-      Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
-      bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
-      bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
-      bool lock = isLockActive();
+      key = keyFromState(keysSeenTransitionningFromUpToDown);
       Event event(key, shift, alpha, lock);
       sLastEventShift = shift;
       sLastEventAlpha = alpha;
@@ -97,10 +103,11 @@ Event getEvent(int * timeout) {
 
     // At this point, we know that keysSeenTransitionningFromUpToDown has *always* been zero
     // In other words, no new key has been pressed
+    key = keyFromState(state);
+    Event event(key, shift, alpha, lock);
     if (canRepeatEvent(sLastEvent)
         && state == sLastKeyboardState
-        && sLastEventShift == state.keyDown(Keyboard::Key::Shift)
-        && sLastEventAlpha == state.keyDown(Keyboard::Key::Alpha))
+        && sLastEvent == event)
     {
       int delay = (sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat);
       if (time >= delay) {

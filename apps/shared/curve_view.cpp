@@ -112,6 +112,10 @@ float CurveView::pixelHeight() const {
   return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
 }
 
+float CurveView::pixelLength(Axis axis) const {
+  return axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
+}
+
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
   return (axis == Axis::Horizontal) ?
     m_curveViewRange->xMin() + p * pixelWidth() :
@@ -140,8 +144,7 @@ float CurveView::floatToPixel(Axis axis, float f) const {
 }
 
 float CurveView::floatLengthToPixelLength(Axis axis, float f) const {
-  float pixelLength = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
-  float dist = f / pixelLength;
+  float dist = f / pixelLength(axis);
   return clippedFloat(dist);
 }
 

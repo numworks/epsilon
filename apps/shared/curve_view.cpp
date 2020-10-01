@@ -155,8 +155,7 @@ float CurveView::floatLengthToPixelLength(float dx, float dy) const {
 }
 
 float CurveView::pixelLengthToFloatLength(Axis axis, float f) const {
-  f = axis == Axis::Vertical ? -f : f;
-  return pixelToFloat(axis, floatToPixel(axis, 0.0f) + f);
+  return f*pixelLength(axis);
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {

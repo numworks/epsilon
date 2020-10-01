@@ -84,6 +84,14 @@ void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients
    * that is "close enough" to c to seed the coefficient, without being too
    * dependent on outliers.*/
   modelCoefficients[2] = 2.0 * store->standardDeviationOfColumn(series, 1);
+  /* TODO : Try two different sets of seeds to find a better fit for both
+   * x = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}
+   * y = {5.0, 9.0, 40.0, 64.0, 144.0, 200.0, 269.0, 278.0, 290.0, 295.0}
+   * (Coefficients should be {64.9, 1.0, 297.4})
+   * And
+   * x = {4, 3, 21, 1, 6}
+   * y = {0, 4, 5, 4, 58}
+   * (Coefficients should be {370162529, 4.266, 31.445} with R2=0.4 at least) */
 }
 
 

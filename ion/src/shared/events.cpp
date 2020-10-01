@@ -48,23 +48,8 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   assert(m_id != Events::None.m_id);
 }
 
-const char * Event::text() const {
-  if (m_id >= 4*PageSize) {
-    return nullptr;
-  }
-  return s_dataForEvent[m_id].text();
-}
-
 bool Event::hasText() const {
   return text() != nullptr;
-}
-
-bool Event::isDefined() const {
-  if (isKeyboardEvent()) {
-    return s_dataForEvent[m_id].isDefined();
-  } else {
-    return (*this == None || *this == Termination || *this == USBEnumeration || *this == USBPlug || *this == BatteryCharging);
-  }
 }
 
 }

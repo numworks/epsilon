@@ -41,6 +41,7 @@ public:
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float pixelWidth() const;
   float pixelHeight() const;
+  float pixelLength(Axis axis) const;
 protected:
   CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);

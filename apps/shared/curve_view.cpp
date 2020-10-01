@@ -118,26 +118,31 @@ float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
     m_curveViewRange->yMax() - p * pixelHeight();
 }
 
+static float clippedFloat(float f) {
+  /* Make sure that the returned value is between the maximum and minimum
+   * possible values of KDCoordinate. */
+  if (f == NAN) {
+    return NAN;
+  } else if (f < KDCOORDINATE_MIN) {
+    return KDCOORDINATE_MIN;
+  } else if (f > KDCOORDINATE_MAX) {
+    return KDCOORDINATE_MAX;
+  } else {
+    return f;
+  }
+}
+
 float CurveView::floatToPixel(Axis axis, float f) const {
   float result = (axis == Axis::Horizontal) ?
     (f - m_curveViewRange->xMin()) / pixelWidth() :
     (m_curveViewRange->yMax() - f) / pixelHeight();
-  /* Make sure that the returned value is between the maximum and minimum
-   * possible values of KDCoordinate. */
-  if (result == NAN) {
-    return NAN;
-  } else if (result < KDCOORDINATE_MIN) {
-    return KDCOORDINATE_MIN;
-  } else if (result > KDCOORDINATE_MAX) {
-    return KDCOORDINATE_MAX;
-  } else {
-    return result;
-  }
+  return clippedFloat(result);
 }
 
 float CurveView::floatLengthToPixelLength(Axis axis, float f) const {
-  float dist = floatToPixel(axis, f) - floatToPixel(axis, 0.0f);
-  return axis == Axis::Vertical ? - dist : dist;
+  float pixelLength = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
+  float dist = f / pixelLength;
+  return clippedFloat(dist);
 }
 
 float CurveView::floatLengthToPixelLength(float dx, float dy) const {

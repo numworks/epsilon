@@ -1,5 +1,6 @@
 #include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <kandinsky/font.h>
 #include <string.h>
 #include <assert.h>
 #include <algorithm>
@@ -486,6 +487,20 @@ void countGlyphsInLine(const char * text, int * before, int * after, const char 
   }
   // Count glyphs after
   UTF8Helper::PerformAtCodePoints(afterLocation, UCodePointLineFeed, nullptr, countGlyph, after, 0, 0, UCodePointLineFeed);
+}
+
+bool CanBeWrittenWithGlyphs(const char * text) {
+  UTF8Decoder decoder(text);
+  CodePoint cp = decoder.nextCodePoint();
+  while(cp != UCodePointNull) {
+    if (KDFont::LargeFont->indexForCodePoint(cp) == KDFont::IndexForReplacementCharacterCodePoint
+     || KDFont::SmallFont->indexForCodePoint(cp) == KDFont::IndexForReplacementCharacterCodePoint)
+    {
+      return false;
+    }
+    cp = decoder.nextCodePoint();
+  }
+  return true;
 }
 
 }

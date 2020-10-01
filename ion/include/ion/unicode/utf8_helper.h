@@ -124,6 +124,10 @@ const char * EndOfWord(const char * word);
 // On a line, count number of glyphs before and after locations
 void countGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation = nullptr);
 
+/* Returns false if one of text's code points does not have a corresponding
+ * glyph in Epsilon's fonts.*/
+bool CanBeWrittenWithGlyphs(const char * text);
+
 };
 
 #endif

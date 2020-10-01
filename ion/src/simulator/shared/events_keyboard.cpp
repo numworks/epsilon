@@ -1,9 +1,11 @@
 #include "main.h"
 #include "platform.h"
 #include "layout.h"
+#include "events.h"
 
 #include <assert.h>
 #include <ion/events.h>
+#include <ion/unicode/utf8_helper.h>
 #include <SDL.h>
 #include <string.h>
 
@@ -148,20 +150,28 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
 };
 
 static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
-  if (strlen(event.text) != 1) {
+  if (strlen(event.text) == 1) {
+    char character = event.text[0];
+    if (character >= 32 && character < 127) {
+      /* We remove the shift, otherwise it might stay activated when it
+       * shouldn't. For instance on a French keyboard, to input "1", we first
+       * press "Shift" (which activates the Shift modifier on the calculator),
+       * then we press "&", transformed by eventFromSDLTextInputEvent into the
+       * text "1". If we do not remove the Shift here, it would still be
+       * pressed afterwards. */
+      Ion::Events::removeShift();
+      Event res = sEventForASCIICharAbove32[character-32];
+      if (res != None) {
+        return res;
+      }
+    }
+  }
+  if (!UTF8Helper::CanBeWrittenWithGlyphs(event.text)) {
     return None;
   }
-  char character = event.text[0];
-  if (character >= 32 && character < 127) {
-    /* We remove the shift, otherwise it might stay activated when it shouldn't.
-     * For instance on a French keyboard, to input "1", we first press "Shift"
-     * (which activates the Shift modifier on the calculator), then we press
-     * "&", transformed by eventFromSDLTextInputEvent into the text "1". If we
-     * do not remove the Shift here, it would still be pressed afterwards. */
-    Ion::Events::removeShift();
-    return sEventForASCIICharAbove32[character-32];
-  }
-  return None;
+  Ion::Events::removeShift();
+  strlcpy(sharedExternalTextBuffer(), event.text, strlen(event.text) + 1);
+  return ExternalText;
 }
 
 Event getPlatformEvent() {

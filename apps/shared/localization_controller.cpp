@@ -56,7 +56,6 @@ void LocalizationController::ContentView::layoutSubviews(bool force) {
   }
   if (m_controller->shouldDisplayWarning()) {
     origin = layoutWarningSubview(force, Metric::CommonTopMargin + origin) + Metric::CommonTopMargin;
-    m_borderView.setFrame(KDRect(Metric::CommonLeftMargin, origin, bounds().width() - Metric::CommonLeftMargin - Metric::CommonRightMargin, Metric::CellSeparatorThickness), force);
   }
   origin = layoutTableSubview(force, origin);
   assert(origin <= bounds().height());
@@ -82,6 +81,20 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force,
   KDCoordinate tableHeight = std::min<KDCoordinate>(
       bounds().height() - verticalOrigin,
       m_selectableTableView.minimalSizeForOptimalDisplay().height());
+  KDCoordinate tableHeightSansMargin = tableHeight - m_selectableTableView.bottomMargin();
+
+  if (m_controller->shouldDisplayWarning()) {
+    /* If the top cell is cut, bot not enough to hide part of the text, it will
+     * appear squashed. To prevent that, we increase the top margin slightly,
+     * so that the top cell will be cropped in the middle. */
+    KDCoordinate rowHeight = m_controller->cellHeight() + Metric::CellSeparatorThickness;
+    KDCoordinate incompleteCellHeight = tableHeightSansMargin - (tableHeightSansMargin / rowHeight) * rowHeight;
+    KDCoordinate offset = std::max(0, incompleteCellHeight - rowHeight / 2);
+    tableHeight -= offset;
+    verticalOrigin += offset;
+
+    m_borderView.setFrame(KDRect(Metric::CommonLeftMargin, verticalOrigin, bounds().width() - Metric::CommonLeftMargin - Metric::CommonRightMargin, Metric::CellSeparatorThickness), force);
+  }
   m_selectableTableView.setFrame(KDRect(0, verticalOrigin, bounds().width(), tableHeight), force);
   return verticalOrigin + tableHeight;
 }

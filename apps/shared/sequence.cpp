@@ -243,7 +243,6 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
       symbols[i][j] = Symbol::Builder(name[j], strlen(name[j]));
     }
   }
-  ctx.setNValue(n);
   switch (type()) {
     case Type::Explicit:
     {

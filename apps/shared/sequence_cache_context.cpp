@@ -33,7 +33,7 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
     Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtIndex(index);
     if (!record.isNull()) {
       Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
-      rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(m_nValue));
+      rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(unknownSymbolValue));
       T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);
       // In case the sequence referenced is not defined or if the rank is not an int, return NAN
       if (seq->fullName() != nullptr) {

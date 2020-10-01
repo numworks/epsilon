@@ -407,7 +407,7 @@ void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::
   }
 }
 
-void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2) {
+void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2) {
   bool delimiterTypeIsOne = popTokenIfType(leftDelimiter1);
   if (!delimiterTypeIsOne && !popTokenIfType(leftDelimiter2)) {
     m_status = Status::Error; // Left delimiter missing.
@@ -418,7 +418,7 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     } else if (!popTokenIfType(rightDelimiter)) {
       m_status = Status::Error; // Right delimiter missing
     } else {
-      leftHandSide = Sequence::Builder(&name, 1, rank);
+      leftHandSide = Sequence::Builder(name, 1, rank);
     }
   }
 }
@@ -439,7 +439,7 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
     /* Special case for sequences (e.g. "u(n)", "u{n}", ...)
      * We know that m_currentToken.text()[0] is either 'u', 'v' or 'w', so we do
      * not need to pass a code point to parseSequence. */
-    parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftParenthesis, Token::RightParenthesis, Token::LeftBrace, Token::RightBrace);
+    parseSequence(leftHandSide, m_currentToken.text(), Token::LeftParenthesis, Token::RightParenthesis, Token::LeftBrace, Token::RightBrace);
   }
 }
 

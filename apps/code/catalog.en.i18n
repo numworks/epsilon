@@ -1,7 +1,7 @@
 PythonPound = "Comment"
 PythonPercent = "Modulo"
 Python1J = "Imaginary i"
-PythonLF = "line feed"
+PythonLF = "Line feed"
 PythonTab = "Tabulation"
 PythonAmpersand = "Bitwise and"
 PythonSymbolExp = "Bitwise exclusive or"

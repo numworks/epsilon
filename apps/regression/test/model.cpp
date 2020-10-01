@@ -194,6 +194,13 @@ QUIZ_CASE(logistic_regression) {
   double coefficients2[] = {64.9, 1.0, 297.4};
   double r22 = 0.9984396821656006;
   assert_regression_is(x2, y2, 10, Model::Type::Logistic, coefficients2, r22);
+
+  // TODO : This data produce a wrong fit currently
+  // double x3[] = {4.0, 3.0, 21.0, 1.0, 6.0};
+  // double y3[] = {0.0, 4.0, 5.0, 4.0, 58.0};
+  // double coefficients3[] = {370162529.359743, 4.266439, 31.445238};
+  // double r23 = 0.401040;
+  // assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, r23);
 }
 
 // Testing column and regression calculation

@@ -75,7 +75,7 @@ private:
   Expression parseCommaSeparatedList();
   void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
   void parseSpecialIdentifier(Expression & leftHandSide);
-  void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2);
+  void parseSequence(Expression & leftHandSide, const char * name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2);
   void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 

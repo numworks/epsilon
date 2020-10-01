@@ -309,10 +309,12 @@ double Store::correlationCoefficient(int series) const {
 
 double Store::computeDeterminationCoefficient(int series, Poincare::Context * globalContext) {
   /* Computes and returns the determination coefficient (R2) of the regression.
-   * For regressions, it is equal to the square of the correlation coefficient between
-   * the series Y and the evaluated values from the series X and the selected model
-   * Computing the coefficient using the latter equality would require more calls to the evaluated
-   * values and would be less precise. */
+   * For linear regressions, it is equal to the square of the correlation
+   * coefficient between the series Y and the evaluated values.
+   * With proportional regression or badly fitted models, R2 can technically be
+   * negative. R2<0 means that the regression is less effective than a
+   * constant set to the series average. It should not happen with regression
+   * models that can fit a constant observation. */
   // Residual sum of squares
   double ssr = 0;
   // Total sum of squares
@@ -327,7 +329,15 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
     double difference = m_data[series][1][k] - mean;
     sst += difference * difference;
   }
-  return sst == 0.0 ? 1.0 : 1.0 - ssr / sst;
+  if (sst == 0.0) {
+    /* Observation was constant, r2 is undefined. Return 1 if estimations
+     * exactly matched observations. 0 is usually returned otherwise. */
+    return (ssr <= DBL_EPSILON) ? 1.0 : 0.0;
+  }
+  double r2 = 1.0 - ssr / sst;
+  // Check if regression fit was optimal.
+  assert(r2 >= 0 || seriesRegressionType(series) == Model::Type::Proportional);
+  return r2;
 }
 
 Model * Store::regressionModel(int index) {

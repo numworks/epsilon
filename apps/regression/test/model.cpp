@@ -34,7 +34,7 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
 
   double precision = 1e-2;
   // When trueCoefficients = 0, a DBL_EPSILON reference ensures that the only accepted errors are due to double approximations
-  double reference = 100.0 * DBL_EPSILON;
+  double reference = 1e6 * DBL_EPSILON;
 
   // Compute and compare the coefficients
   double * coefficients = store.coefficientsForSeries(series, &context);
@@ -45,7 +45,7 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
 
   // Compute and check r2 value and sign
   double r2 = store.determinationCoefficientForSeries(series, &globalContext);
-  quiz_assert(r2 >= 0.0);
+  quiz_assert(r2 <= 1.0 && (r2 >= 0.0 || modelType == Model::Type::Proportional));
   quiz_assert(IsApproximatelyEqual(r2, trueR2, precision, reference));
 }
 
@@ -79,6 +79,36 @@ QUIZ_CASE(proportional_regression2) {
   double y[numberOfPoints] = {10.0, 6.0, 7.0, 8.0};
   double coefficients[] = {2.12963963};
   double r2 = 0.53227513227513223;
+  assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional, coefficients, r2);
+}
+
+QUIZ_CASE(proportional_regression3) {
+  constexpr int numberOfPoints = 4;
+  double x[numberOfPoints] = {1.0, 2.0, 3.0, 4.0};
+  double y[numberOfPoints] = {0.0, 0.0, 0.0, 0.0};
+  double coefficients[] = {0.0};
+  double r2 = 1.0;
+  assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional, coefficients, r2);
+}
+
+QUIZ_CASE(proportional_regression4) {
+  constexpr int numberOfPoints = 3;
+  double x[numberOfPoints] = {-1.0, 0.0, 1.0};
+  double y[numberOfPoints] = {1.0, 1.0, 1.0};
+  double coefficients[] = {0.0};
+  // Y is constant, and proportional regression cannot fit it, R2 is null.
+  double r2 = 0.0;
+  assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional, coefficients, r2);
+}
+
+QUIZ_CASE(proportional_regression5) {
+  constexpr int numberOfPoints = 3;
+  double x[numberOfPoints] = {-1.0, 0.0, 1.0};
+  double y[numberOfPoints] = {1.0, 1.01, 1.0};
+  double coefficients[] = {0.0};
+  /* In this case, proportional regression performed poorly compared to a
+   * constant regression, R2 is negative. */
+  double r2 = -45300.5;
   assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional, coefficients, r2);
 }
 

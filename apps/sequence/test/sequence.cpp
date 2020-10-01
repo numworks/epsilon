@@ -399,6 +399,19 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[2] = "6";
   conditions2[2] = nullptr;
   check_sequences_defined_by(results32, types, definitions, conditions1, conditions2);
+
+  // u independent, v depends on u(n+6)
+  // u(n) = 9n; v(n+1) = u(n+6)+v(0); v(0) = 9
+  double results33[MaxNumberOfSequences][10] = {{0.0, 9.0, 18.0, 27.0, 36.0, 45.0, 54.0, 63.0, 72.0, 81.0},
+    {9.0, 63.0, 72.0, 81.0, 90.0, 99.0, 108.0, 117.0, 126.0, 135.0},
+    {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "9n";
+  definitions[1] = "u(n+6)+v(0)";
+  definitions[2] = nullptr;
+  conditions1[1] = "9";
+  check_sequences_defined_by(results33, types, definitions, conditions1, conditions2);
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {

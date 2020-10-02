@@ -366,23 +366,6 @@ int GraphController::estimatedBannerNumberOfLines() const {
   return (selectedSeriesIndex() < 0) ? 3 : m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
 }
 
-InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  float minY = FLT_MAX;
-  float maxY = -FLT_MAX;
-  for (int series = 0; series < Store::k_numberOfSeries; series++) {
-    for (int k = 0; k < m_store->numberOfPairsOfSeries(series); k++) {
-      if (m_store->xMin() <= m_store->get(series, 0, k) && m_store->get(series, 0, k) <= m_store->xMax()) {
-        minY = std::min<float>(minY, m_store->get(series, 1, k));
-        maxY = std::max<float>(maxY, m_store->get(series, 1, k));
-      }
-    }
-  }
-  InteractiveCurveViewRangeDelegate::Range range;
-  range.min = minY;
-  range.max = maxY;
-  return range;
-}
-
 void GraphController::setRoundCrossCursorView() {
   /* At this point, the model (selected series and dot indices) should be up
    * to date. */

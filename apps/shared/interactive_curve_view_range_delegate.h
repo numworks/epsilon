@@ -20,8 +20,6 @@ protected:
     float min;
     float max;
   };
-private:
-  virtual Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) = 0;
 };
 
 }

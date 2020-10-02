@@ -295,6 +295,7 @@ bool InteractiveCurveViewController::autoButtonAction() {
     m_interactiveRange->setDefault();
     m_interactiveRange->setZoomAuto(true);
     m_interactiveRange->checkForNormalizedRange();
+    initCursorParameters();
     setCurveViewAsMainView();
   }
   return m_interactiveRange->zoomAuto();

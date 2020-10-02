@@ -19,12 +19,10 @@ uint32_t InteractiveCurveViewRange::rangeChecksum() {
 
 void InteractiveCurveViewRange::setXMin(float xMin) {
   MemoizedCurveViewRange::protectedSetXMin(xMin, k_lowerMaxFloat, k_upperMaxFloat);
-  notifyRangeChange();
 }
 
 void InteractiveCurveViewRange::setXMax(float xMax) {
   MemoizedCurveViewRange::protectedSetXMax(xMax, k_lowerMaxFloat, k_upperMaxFloat);
-  notifyRangeChange();
 }
 
 void InteractiveCurveViewRange::setYMin(float yMin) {
@@ -176,10 +174,10 @@ void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   }
 }
 
-void InteractiveCurveViewRange::notifyRangeChange() {
-  if (m_delegate) {
-    m_delegate->didChangeRange(this);
-  }
+void InteractiveCurveViewRange::checkForNormalizedRange() {
+  float pixelHeight = std::round(Ion::Display::Height * (NormalizedYHalfRange(100.f) / Ion::Display::HeightInTenthOfMillimeter));
+  float pixelWidth = std::round(Ion::Display::Width * (NormalizedXHalfRange(100.f) / Ion::Display::WidthInTenthOfMillimeter));
+  m_zoomNormalize = std::round(pixelHeight * (xMax() - xMin())) == std::round(pixelWidth * (yMax() - yMin()));
 }
 
 }

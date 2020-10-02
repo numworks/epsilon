@@ -13,11 +13,18 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
-    m_delegate(delegate)
+    m_delegate(delegate),
+    m_zoomAuto(true),
+    m_zoomNormalize(false)
   {}
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate) { m_delegate = delegate; }
   uint32_t rangeChecksum() override;
+
+  bool zoomAuto() const { return m_zoomAuto; }
+  void setZoomAuto(bool v) { m_zoomAuto = v; }
+  bool zoomNormalize() const { return m_zoomNormalize; }
+  void setZoomNormalize(bool v) { m_zoomNormalize = v; }
 
   // CurveViewWindow
   void setXMin(float f) override;
@@ -32,6 +39,8 @@ public:
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
+  void checkForNormalizedRange();
+
 protected:
   constexpr static float k_upperMaxFloat = 1E+8f;
   constexpr static float k_lowerMaxFloat = 9E+7f;
@@ -53,7 +62,8 @@ protected:
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
-  void notifyRangeChange();
+  bool m_zoomAuto;
+  bool m_zoomNormalize;
 };
 
 static_assert(Ion::Display::WidthInTenthOfMillimeter == 576, "Use the new screen width to compute Shared::InteractiveCurveViewRange::NormalizedXHalfRange");

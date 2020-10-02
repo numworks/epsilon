@@ -48,7 +48,6 @@ app_shared_src = $(addprefix apps/shared/,\
   hideable_even_odd_buffer_text_cell.cpp \
   hideable_even_odd_cell.cpp \
   hideable_even_odd_editable_text_cell.cpp \
-  initialisation_parameter_controller.cpp \
   input_event_handler_delegate_app.cpp \
   interactive_curve_view_controller.cpp \
   interval.cpp \

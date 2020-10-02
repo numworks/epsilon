@@ -1,5 +1,0 @@
-_*epsilon_frame_buffer
-_*epsilon_main
-_*epsilon_send_event
-_*epsilon_wait_event_processed
-_*epsilon_write_frame_buffer_to_file

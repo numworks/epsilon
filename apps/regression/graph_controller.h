@@ -49,9 +49,6 @@ private:
   int numberOfCurves() const override;
   int estimatedBannerNumberOfLines() const override;
 
-  // InteractiveCurveViewRangeDelegate
-  Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
-
   void setRoundCrossCursorView();
   Shared::CursorView m_crossCursorView;
   Shared::RoundCursorView m_roundCursorView;

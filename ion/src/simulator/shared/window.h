@@ -6,7 +6,7 @@ namespace Simulator {
 namespace Window {
 
 void init();
-void quit();
+void shutdown();
 
 bool isHeadless();
 

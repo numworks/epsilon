@@ -60,7 +60,7 @@ jobs:
       - run: msys2do make -j2 PLATFORM=simulator
       - run: msys2do make -j2 PLATFORM=simulator epsilon.official.exe
       - run: msys2do make -j2 PLATFORM=simulator test.exe
-      - run: cmd /c output\release\simulator\windows\test.exe --headless
+      - run: cmd /c output\release\simulator\windows\test.exe --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-windows.exe
@@ -75,7 +75,7 @@ jobs:
       - run: make -j2 PLATFORM=simulator TARGET=web
       - run: make -j2 PLATFORM=simulator TARGET=web epsilon.official.zip
       - run: make -j2 PLATFORM=simulator TARGET=web test.js
-      - run: node output/release/simulator/web/test.js --headless
+      - run: node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-web.zip
@@ -88,7 +88,7 @@ jobs:
       - run: make -j2 PLATFORM=simulator
       - run: make -j2 PLATFORM=simulator epsilon.official.bin
       - run: make -j2 PLATFORM=simulator test.bin
-      - run: output/release/simulator/linux/test.bin --headless
+      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-linux.bin
@@ -101,7 +101,7 @@ jobs:
       - run: make -j2 PLATFORM=simulator
       - run: make -j2 PLATFORM=simulator epsilon.official.app
       - run: make -j2 PLATFORM=simulator ARCH=x86_64 test.bin
-      - run: output/release/simulator/macos/x86_64/test.bin --headless
+      - run: output/release/simulator/macos/x86_64/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-macos.zip

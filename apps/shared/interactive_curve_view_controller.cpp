@@ -15,6 +15,16 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
   m_interactiveRange(interactiveRange),
+  m_autoButton(this, I18n::Message::DefaultSetting, Invocation([](void * context, void * sender) {
+    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+    graphController->autoButtonAction();
+    return true;
+  }, this), KDFont::SmallFont),
+  m_normalizeButton(this, I18n::Message::Orthonormal, Invocation([](void * context, void * sender) {
+    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+    graphController->normalizeButtonAction();
+    return true;
+  }, this), KDFont::SmallFont),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->rangeParameterController()->setRange(graphController->interactiveRange());
@@ -64,14 +74,18 @@ const char * InteractiveCurveViewController::title() {
   return I18n::translate(I18n::Message::GraphTab);
 }
 
+void InteractiveCurveViewController::setCurveViewAsMainView() {
+  header()->setSelectedButton(-1);
+  curveView()->selectMainView(true);
+  Container::activeApp()->setFirstResponder(this);
+  reloadBannerView();
+  curveView()->reload();
+}
+
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->isMainViewSelected()) {
     if (event == Ion::Events::Down) {
-      header()->setSelectedButton(-1);
-      curveView()->selectMainView(true);
-      Container::activeApp()->setFirstResponder(this);
-      reloadBannerView();
-      curveView()->reload();
+      setCurveViewAsMainView();
       return true;
     }
     if (event == Ion::Events::Up) {
@@ -121,11 +135,11 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
   if (isEmpty()) {
     return 0;
   }
-  return 2;
+  return 4;
 }
 
 Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[] = {&m_rangeButton, &m_zoomButton};
+  const Button * buttons[] = {&m_autoButton, &m_normalizeButton, &m_rangeButton, &m_zoomButton};
   return (Button *)buttons[index];
 }
 
@@ -274,5 +288,30 @@ float InteractiveCurveViewController::cursorBottomMarginRatio() {
 float InteractiveCurveViewController::estimatedBannerHeight() const {
   return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
 }
+
+bool InteractiveCurveViewController::autoButtonAction() {
+  if (m_interactiveRange->zoomAuto()) {
+    m_interactiveRange->setZoomAuto(false);
+  } else {
+    m_interactiveRange->setDefault();
+    m_interactiveRange->setZoomAuto(true);
+    m_interactiveRange->checkForNormalizedRange();
+    setCurveViewAsMainView();
+  }
+  return m_interactiveRange->zoomAuto();
+}
+
+bool InteractiveCurveViewController::normalizeButtonAction() {
+  if (m_interactiveRange->zoomNormalize()) {
+    m_interactiveRange->setZoomNormalize(false);
+  } else {
+    m_interactiveRange->normalize();
+    m_interactiveRange->setZoomAuto(false);
+    m_interactiveRange->setZoomNormalize(true);
+    setCurveViewAsMainView();
+  }
+  return m_interactiveRange->zoomNormalize();
+}
+
 
 }

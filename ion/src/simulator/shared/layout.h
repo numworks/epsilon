@@ -21,7 +21,7 @@ void unhighlightKey();
 
 void init(SDL_Renderer * renderer);
 void draw(SDL_Renderer * renderer);
-void quit();
+void shutdown();
 
 #endif
 

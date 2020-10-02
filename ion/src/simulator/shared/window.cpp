@@ -115,12 +115,12 @@ void refresh() {
   didRefresh();
 }
 
-void quit() {
+void shutdown() {
   if (isHeadless()) {
     return;
   }
 #if !EPSILON_SDL_SCREEN_ONLY
-  Layout::quit();
+  Layout::shutdown();
 #endif
   Display::shutdown();
   SDL_DestroyWindow(sWindow);

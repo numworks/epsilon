@@ -60,6 +60,19 @@ void GraphController::interestingRanges(InteractiveCurveViewRange * range) const
 
   range->setXMin(nmin);
   range->setXMax(nmax);
+
+  Context * context = textFieldDelegateApp()->localContext();
+  float yMin = FLT_MAX, yMax = -FLT_MAX;
+  for (int i = 0; i < nbOfActiveModels; i++) {
+    Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+      return static_cast<const Shared::Sequence *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
+    };
+    Zoom::RefinedYRangeForDisplay(evaluation, nmin, nmax, &yMin, &yMax, context, s);
+  }
+
+  range->setYMin(yMin);
+  range->setYMax(yMax);
 }
 
 bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

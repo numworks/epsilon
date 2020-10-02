@@ -16,8 +16,6 @@ public:
   public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
-    uint32_t * modelVersion() { return &m_modelVersion; }
-    uint32_t * previousModelsVersions() { return m_previousModelsVersions; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
     Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
     virtual FunctionStore * functionStore() = 0;
@@ -28,8 +26,6 @@ public:
     CurveViewCursor m_cursor;
   private:
     int m_indexFunctionSelectedByCursor;
-    uint32_t m_modelVersion;
-    uint32_t m_previousModelsVersions[FunctionGraphController::sNumberOfMemoizedModelVersions];
     uint32_t m_rangeVersion;
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
   };

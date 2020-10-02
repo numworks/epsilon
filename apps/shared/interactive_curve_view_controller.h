@@ -21,7 +21,6 @@ public:
 
   RangeParameterController * rangeParameterController();
   ViewController * zoomParameterController();
-  virtual ViewController * initialisationParameterController() = 0;
 
   int numberOfButtons(ButtonRowController::Position position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
@@ -81,7 +80,6 @@ private:
   InteractiveCurveViewRange * m_interactiveRange;
   Button m_rangeButton;
   Button m_zoomButton;
-  Button m_defaultInitialisationButton;
 };
 
 }

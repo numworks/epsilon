@@ -12,8 +12,7 @@ namespace Shared {
 
 class FunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
 public:
-  static constexpr size_t sNumberOfMemoizedModelVersions = 5;
-  FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion);
+  FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion);
   bool isEmpty() const override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -50,10 +49,7 @@ private:
 
   // InteractiveCurveViewController
   bool moveCursorVertically(int direction) override;
-  uint32_t modelVersion() override;
-  uint32_t modelVersionAtIndex(int i) override;
   uint32_t rangeVersion() override;
-  size_t numberOfMemoizedVersions() const override { return sNumberOfMemoizedModelVersions; }
 
   Poincare::Preferences::AngleUnit * m_angleUnitVersion;
   int * m_indexFunctionSelectedByCursor;

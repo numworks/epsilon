@@ -13,15 +13,11 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
-    m_yAuto(true),
     m_delegate(delegate)
   {}
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate) { m_delegate = delegate; }
   uint32_t rangeChecksum() override;
-
-  bool yAuto() const { return m_yAuto; }
-  void setYAuto(bool yAuto);
 
   // CurveViewWindow
   void setXMin(float f) override;
@@ -55,7 +51,6 @@ protected:
    *   2 * 1 unit -> 10.0mm
    * So normalizedYHalfRange = 43.2mm * 170/240 * 1 unit / 10.0mm */
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
-  bool m_yAuto;
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
   void notifyRangeChange();

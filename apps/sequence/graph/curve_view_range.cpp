@@ -36,7 +36,6 @@ void CurveViewRange::normalize() {
   }
 
   // Compute the Y
-  m_yAuto = false;
   const float newYHalfRange = NormalizedYHalfRange(unit);
   float newYMin = yMean - newYHalfRange;
   float newYMax = clipped(yMean + newYHalfRange, true);

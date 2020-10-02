@@ -19,7 +19,7 @@ $(simulator_app_binary): $(foreach arch,$(ARCHS),$(BUILD_DIR)/$(arch)/%.bin) | $
 define rule_for_asset
 simulator_app_deps += $(call simulator_app_resource,$(1))
 $(call simulator_app_resource,$(1)): ion/src/simulator/assets/$(1) | $$$$(@D)/.
-	$(call rule_label,COPY)
+	$$(call rule_label,COPY)
 	$(Q) cp $$^ $$@
 endef
 

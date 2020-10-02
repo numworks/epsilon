@@ -39,7 +39,7 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
 KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
   /* The Dutch exam mode LED is blue and only available on official NumWorks
    * software. */
-  return mode == GlobalPreferences::ExamMode::Dutch ? KDColorWhite : KDColorRed;
+  return mode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed;
 }
 
 bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode) {

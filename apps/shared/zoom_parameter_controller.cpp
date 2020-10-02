@@ -12,7 +12,7 @@ ZoomParameterController::ZoomParameterController(Responder * parentResponder, In
 }
 
 const char * ZoomParameterController::title() {
-  return I18n::translate(I18n::Message::Zoom);
+  return I18n::translate(I18n::Message::Navigate);
 }
 
 void ZoomParameterController::viewWillAppear() {

@@ -20,6 +20,10 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
     m_rangeCells[i].setParentResponder(&m_selectableTableView);
     m_rangeCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
   }
+  int margin = Metric::CommonLargeMargin;
+  m_selectableTableView.setTopMargin(margin);
+  m_selectableTableView.setBottomMargin(margin);
+  static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->verticalBar()->setMargin(margin);
 }
 
 const char * RangeParameterController::title() {

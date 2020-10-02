@@ -136,6 +136,10 @@ Responder * InteractiveCurveViewController::defaultController() {
 void InteractiveCurveViewController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
 
+  if (m_interactiveRange->zoomAuto()) {
+    m_interactiveRange->setDefault();
+  }
+
   /* Warning: init cursor parameter before reloading banner view. Indeed,
    * reloading banner view needs an updated cursor to load the right data. */
   initCursorParameters();

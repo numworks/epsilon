@@ -34,8 +34,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   }, this), KDFont::SmallFont),
   m_zoomButton(this, I18n::Message::Zoom, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
-    StackViewController * stack = graphController->stackController();
-    stack->push(graphController->zoomParameterController());
+    graphController->navigationButtonAction();
     return true;
   }, this), KDFont::SmallFont)
 {
@@ -311,6 +310,11 @@ bool InteractiveCurveViewController::normalizeButtonAction() {
     setCurveViewAsMainView();
   }
   return m_interactiveRange->zoomNormalize();
+}
+
+void InteractiveCurveViewController::navigationButtonAction() {
+  m_interactiveRange->setZoomAuto(false);
+  stackController()->push(zoomParameterController());
 }
 
 

@@ -266,7 +266,7 @@ void draw(SDL_Renderer * renderer) {
   drawHighlightedKey(renderer);
 }
 
-void quit() {
+void shutdown() {
   SDL_DestroyTexture(sBackgroundTexture);
   sBackgroundTexture = nullptr;
 }

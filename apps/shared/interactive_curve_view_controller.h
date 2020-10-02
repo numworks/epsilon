@@ -68,7 +68,8 @@ private:
 
   void setCurveViewAsMainView();
 
-  /* Those methods return the new status for the button, ie either
+  void navigationButtonAction();
+  /* Those  two methods return the new status for the button, ie either
    * m_interactiveRange->m_zoomAuto or m_zoomNormalize respectively. */
   bool autoButtonAction();
   bool normalizeButtonAction();

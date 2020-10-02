@@ -59,7 +59,6 @@ void GraphController::interestingRanges(InteractiveCurveViewRange * range) const
   assert(nmax - nmin >= k_defaultXHalfRange);
 
   range->setXMin(nmin);
-  range->setYAuto(true);
   range->setXMax(nmax);
 }
 

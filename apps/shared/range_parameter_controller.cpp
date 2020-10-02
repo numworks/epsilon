@@ -9,23 +9,16 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
   FloatParameterController<float>(parentResponder),
   m_interactiveRange(interactiveRange),
   m_tempInteractiveRange(*interactiveRange),
-  m_xRangeCells{},
-  m_yRangeCells{},
-  m_yAutoCell(I18n::Message::YAuto),
+  m_rangeCells{},
   m_confirmPopUpController(Invocation([](void * context, void * sender) {
     Container::activeApp()->dismissModalViewController();
     ((RangeParameterController *)context)->stackController()->pop();
     return true;
   }, this))
 {
-  for (int i = 0; i < k_numberOfEditableTextCell; i++) {
-    m_xRangeCells[i].setParentResponder(&m_selectableTableView);
-    m_xRangeCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-  }
-  for (int i = 0; i < k_numberOfConvertibleTextCell; i++) {
-    m_yRangeCells[i].setParentResponder(&m_selectableTableView);
-    m_yRangeCells[i].setInteractiveCurveViewRange(&m_tempInteractiveRange);
-    m_yRangeCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
+  for (int i = 0; i < k_numberOfTextCell; i++) {
+    m_rangeCells[i].setParentResponder(&m_selectableTableView);
+    m_rangeCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
   }
 }
 
@@ -34,46 +27,18 @@ const char * RangeParameterController::title() {
 }
 
 int RangeParameterController::numberOfRows() const {
-  return k_numberOfTextCell+2;
-}
-
-int RangeParameterController::typeAtLocation(int i, int j) {
-  if (j == numberOfRows()-1) {
-    return 0;
-  }
-  if (j >= 0 && j < 2) {
-    return 1;
-  }
-  if (j == 2) {
-    return 2;
-  }
-  return 3;
+  return k_numberOfTextCell+1;
 }
 
 void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == numberOfRows()-1) {
     return;
   }
-  if (index == 2) {
-    SwitchView * switchView = (SwitchView *)m_yAutoCell.accessoryView();
-    switchView->setState(m_tempInteractiveRange.yAuto());
-    return;
-  }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_numberOfTextCell+1] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::Default, I18n::Message::YMin, I18n::Message::YMax};
+  I18n::Message labels[k_numberOfTextCell] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::YMin, I18n::Message::YMax};
   myCell->setMessage(labels[index]);
-  KDColor yColor = m_tempInteractiveRange.yAuto() ? Palette::GrayDark : KDColorBlack;
-  KDColor colors[k_numberOfTextCell+1] = {KDColorBlack, KDColorBlack, KDColorBlack, yColor, yColor};
-  myCell->setTextColor(colors[index]);
+  myCell->setTextColor(KDColorBlack);
   FloatParameterController::willDisplayCellForIndex(cell, index);
-}
-
-bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
-    m_selectableTableView.reloadData();
-    return true;
-  }
-  return false;
 }
 
 void RangeParameterController::setRange(InteractiveCurveViewRange * range){
@@ -82,11 +47,6 @@ void RangeParameterController::setRange(InteractiveCurveViewRange * range){
 }
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
-  if (activeCell() == 2 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    m_tempInteractiveRange.setYAuto(!m_tempInteractiveRange.yAuto());
-    m_selectableTableView.reloadData();
-    return true;
-  }
   if (event == Ion::Events::Back && m_interactiveRange->rangeChecksum() != m_tempInteractiveRange.rangeChecksum()) {
     // Open pop-up to confirm discarding values
     Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
@@ -98,41 +58,25 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
 float RangeParameterController::parameterAtIndex(int parameterIndex) {
   ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
     &InteractiveCurveViewRange::xMax, &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax};
-  int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
-  return (m_tempInteractiveRange.*getters[index])();
+  return (m_tempInteractiveRange.*getters[parameterIndex])();
 }
 
 bool RangeParameterController::setParameterAtIndex(int parameterIndex, float f) {
   ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
     &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
-  int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
-  (m_tempInteractiveRange.*setters[index])(f);
+  (m_tempInteractiveRange.*setters[parameterIndex])(f);
   return true;
 }
 
 HighlightCell * RangeParameterController::reusableParameterCell(int index, int type) {
-  if (type == 2) {
-    assert(index == 0);
-    return &m_yAutoCell;
-  }
-  if (type == 1) {
-    assert(index >= 0);
-    assert(index < k_numberOfEditableTextCell);
-    return &m_xRangeCells[index];
-  }
-  assert(index >= 0);
-  assert(index < k_numberOfConvertibleTextCell);
-  return &m_yRangeCells[index];
+  assert(type == 1);
+  assert(index >= 0 && index < k_numberOfTextCell);
+  return m_rangeCells + index;
 }
 
 int RangeParameterController::reusableParameterCellCount(int type) {
-  if (type == 2) {
-    return 1;
-  }
-  if (type == 1) {
-    return k_numberOfEditableTextCell;
-  }
-  return k_numberOfConvertibleTextCell;
+  assert(type == 1);
+  return k_numberOfTextCell;
 }
 
 void RangeParameterController::buttonAction() {

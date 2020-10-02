@@ -18,7 +18,6 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
-  m_initialisationParameterController(this, m_store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex)
@@ -27,10 +26,6 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
     m_modelType[i] = (Model::Type) -1;
   }
   m_store->setDelegate(this);
-}
-
-ViewController * GraphController::initialisationParameterController() {
-  return &m_initialisationParameterController;
 }
 
 bool GraphController::isEmpty() const {

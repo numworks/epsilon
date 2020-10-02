@@ -32,9 +32,7 @@ public:
   // Window
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
-  virtual void roundAbscissa();
   virtual void normalize();
-  virtual void setTrigonometric();
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);

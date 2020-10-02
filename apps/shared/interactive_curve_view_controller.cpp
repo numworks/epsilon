@@ -8,11 +8,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   ButtonRowDelegate(header, nullptr),
-  m_modelVersion(modelVersion),
-  m_previousModelsVersions(previousModelsVersions),
   m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
@@ -135,58 +133,13 @@ Responder * InteractiveCurveViewController::defaultController() {
   return tabController();
 }
 
-bool InteractiveCurveViewController::previousModelsWereAllDeleted() {
-  bool result = true;
-  const int modelsCount = numberOfCurves();
-  const int memoizationCount = numberOfMemoizedVersions();
-
-  // Look for a current model that is the same as in the previous version
-  for (int i = 0; i < modelsCount; i++) {
-    uint32_t currentVersion = modelVersionAtIndex(i);
-    for (int j = 0; j < memoizationCount; j++) {
-      uint32_t * previousVersion = m_previousModelsVersions + j;
-      if (currentVersion == *previousVersion) {
-        result = false;
-        break;
-      }
-    }
-    if (!result) {
-      break;
-    }
-  }
-
-  // Update the memoization
-  for (int i = 0; i < memoizationCount; i++) {
-    uint32_t * previousVersion = m_previousModelsVersions + i;
-    uint32_t newVersion = modelVersionAtIndex(i);
-    if (*previousVersion != newVersion) {
-      *previousVersion = newVersion;
-    }
-  }
-  return result;
-}
-
 void InteractiveCurveViewController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
-  uint32_t newModelVersion = modelVersion();
-  if (*m_modelVersion != newModelVersion) {
-    // Put previousModelsWereAllDeleted first to update the model versions
-    if (previousModelsWereAllDeleted() || *m_modelVersion == 0 || numberOfCurves() == 1 || shouldSetDefaultOnModelChange()) {
-      interactiveCurveViewRange()->setDefault();
-    }
-    *m_modelVersion = newModelVersion;
-    didChangeRange(interactiveCurveViewRange());
-    /* Warning: init cursor parameter before reloading banner view. Indeed,
-     * reloading banner view needs an updated cursor to load the right data. */
-    initCursorParameters();
-  }
-  uint32_t newRangeVersion = rangeVersion();
-  if (*m_rangeVersion != newRangeVersion) {
-    *m_rangeVersion = newRangeVersion;
-    if (!isCursorVisible()) {
-      initCursorParameters();
-    }
-  }
+
+  /* Warning: init cursor parameter before reloading banner view. Indeed,
+   * reloading banner view needs an updated cursor to load the right data. */
+  initCursorParameters();
+
   curveView()->setOkView(&m_okView);
   if (!curveView()->isMainViewSelected()) {
     curveView()->selectMainView(true);

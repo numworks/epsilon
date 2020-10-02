@@ -11,8 +11,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * previousModelsVersions, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, previousModelsVersions, rangeVersion),
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, rangeVersion),
   m_angleUnitVersion(angleUnitVersion),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
@@ -118,14 +118,6 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
 
 CurveView * FunctionGraphController::curveView() {
   return functionGraphView();
-}
-
-uint32_t FunctionGraphController::modelVersion() {
-  return functionStore()->storeChecksum();
-}
-
-uint32_t FunctionGraphController::modelVersionAtIndex(int i) {
-  return functionStore()->storeChecksumAtIndex(i);
 }
 
 uint32_t FunctionGraphController::rangeVersion() {
